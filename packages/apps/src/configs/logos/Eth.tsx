@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function EtherLogo() {
   return (
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+    <svg width={'100%'} xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
       <g fill='none' fillRule='evenodd'>
         <circle cx='16' cy='16' r='16' fill='#627EEA' />
         <g fill='#FFF' fillRule='nonzero'>

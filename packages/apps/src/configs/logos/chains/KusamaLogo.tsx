@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function KusamaLogo() {
   return (
-    <svg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'>
+    <svg width={'100%'} viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'>
       <g fill='none'>
         <circle fill='#000' cx='16' cy='16' r='16' />
         <path

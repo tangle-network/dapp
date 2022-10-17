@@ -15,12 +15,15 @@ fragment SessionAuthValidatorNode on SessionValidator {
     ...ValidatorMeta
   }
   reputation
+  uptime
   isBest
   isNext
   isNextBest
   bestOrder
   nextBestOrder
 }
+
+
 fragment SessionAuthValidator on SessionValidatorsConnection {
   edges {
     node {

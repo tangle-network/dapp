@@ -29,7 +29,11 @@ export type Account = Node & {
   blocksByAccountCreatorIdAndCreateAtBlockId: AccountBlocksByAccountCreatorIdAndCreateAtBlockIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Block`. */
   blocksByExtrinsicSignerIdAndBlockId: AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyConnection;
-  countryCode?: Maybe<Scalars['String']>;
+  /** Reads a single `CountryCode` that is related to this `Account`. */
+  countryCode?: Maybe<CountryCode>;
+  countryCodeId?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `CountryCode`. */
+  countryCodesByAccountCreatorIdAndCountryCodeId: AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyConnection;
   /** Reads a single `Block` that is related to this `Account`. */
   createAtBlock?: Maybe<Block>;
   createAtBlockId?: Maybe<Scalars['String']>;
@@ -84,6 +88,16 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
+};
+
+export type AccountCountryCodesByAccountCreatorIdAndCountryCodeIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<CountryCodeFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<CountryCodesOrderBy>>;
 };
 
 export type AccountExtrinsicsArgs = {
@@ -213,10 +227,55 @@ export type AccountBlocksByExtrinsicSignerIdAndBlockIdManyToManyEdgeExtrinsicsAr
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
 };
 
+/** A connection to a list of `CountryCode` values, with data from `Account`. */
+export type AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyConnection = {
+  __typename?: 'AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<CountryCodeAggregates>;
+  /** A list of edges which contains the `CountryCode`, info from the `Account`, and the cursor to aid in pagination. */
+  edges: Array<AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<CountryCodeAggregates>>;
+  /** A list of `CountryCode` objects. */
+  nodes: Array<Maybe<CountryCode>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `CountryCode` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `CountryCode` values, with data from `Account`. */
+export type AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<CountryCodesGroupBy>;
+  having?: InputMaybe<CountryCodesHavingInput>;
+};
+
+/** A `CountryCode` edge in the connection, with data from `Account`. */
+export type AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyEdge = {
+  __typename?: 'AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyEdge';
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `CountryCode` at the end of the edge. */
+  node?: Maybe<CountryCode>;
+};
+
+/** A `CountryCode` edge in the connection, with data from `Account`. */
+export type AccountCountryCodesByAccountCreatorIdAndCountryCodeIdManyToManyEdgeAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
 export type AccountDistinctCountAggregates = {
   __typename?: 'AccountDistinctCountAggregates';
-  /** Distinct count of countryCode across the matching connection */
-  countryCode?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of countryCodeId across the matching connection */
+  countryCodeId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createAtBlockId across the matching connection */
   createAtBlockId?: Maybe<Scalars['BigInt']>;
   /** Distinct count of createdAt across the matching connection */
@@ -247,8 +306,8 @@ export type AccountDistinctCountAggregates = {
 export type AccountFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<AccountFilter>>;
-  /** Filter by the object’s `countryCode` field. */
-  countryCode?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `countryCodeId` field. */
+  countryCodeId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createAtBlockId` field. */
   createAtBlockId?: InputMaybe<StringFilter>;
   /** Filter by the object’s `createdAt` field. */
@@ -313,7 +372,7 @@ export type AccountsEdge = {
 
 /** Grouping methods for `Account` for usage during aggregation. */
 export enum AccountsGroupBy {
-  CountryCode = 'COUNTRY_CODE',
+  CountryCodeId = 'COUNTRY_CODE_ID',
   CreatedAt = 'CREATED_AT',
   CreateAtBlockId = 'CREATE_AT_BLOCK_ID',
   CreatorId = 'CREATOR_ID',
@@ -335,8 +394,8 @@ export type AccountsHavingInput = {
 
 /** Methods to use when ordering `Account`. */
 export enum AccountsOrderBy {
-  AccountsByCreatorIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdAverageCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdAverageCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreatorIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreatorIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
@@ -363,8 +422,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdAverageWebDesc = 'ACCOUNTS_BY_CREATOR_ID_AVERAGE_WEB_DESC',
   AccountsByCreatorIdCountAsc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_ASC',
   AccountsByCreatorIdCountDesc = 'ACCOUNTS_BY_CREATOR_ID_COUNT_DESC',
-  AccountsByCreatorIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdDistinctCountCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdDistinctCountCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreatorIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreatorIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
@@ -389,8 +448,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_TWITTER_DESC',
   AccountsByCreatorIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_ASC',
   AccountsByCreatorIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATOR_ID_DISTINCT_COUNT_WEB_DESC',
-  AccountsByCreatorIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdMaxCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdMaxCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_ASC',
   AccountsByCreatorIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATED_AT_DESC',
   AccountsByCreatorIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
@@ -415,8 +474,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_TWITTER_DESC',
   AccountsByCreatorIdMaxWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_ASC',
   AccountsByCreatorIdMaxWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MAX_WEB_DESC',
-  AccountsByCreatorIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdMinCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdMinCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_ASC',
   AccountsByCreatorIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATED_AT_DESC',
   AccountsByCreatorIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
@@ -441,8 +500,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdMinTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_TWITTER_DESC',
   AccountsByCreatorIdMinWebAsc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_ASC',
   AccountsByCreatorIdMinWebDesc = 'ACCOUNTS_BY_CREATOR_ID_MIN_WEB_DESC',
-  AccountsByCreatorIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdStddevPopulationCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdStddevPopulationCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
@@ -467,8 +526,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_TWITTER_DESC',
   AccountsByCreatorIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_ASC',
   AccountsByCreatorIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_POPULATION_WEB_DESC',
-  AccountsByCreatorIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdStddevSampleCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdStddevSampleCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
@@ -493,8 +552,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_TWITTER_DESC',
   AccountsByCreatorIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_ASC',
   AccountsByCreatorIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_STDDEV_SAMPLE_WEB_DESC',
-  AccountsByCreatorIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdSumCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdSumCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_ASC',
   AccountsByCreatorIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATED_AT_DESC',
   AccountsByCreatorIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
@@ -519,8 +578,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdSumTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_TWITTER_DESC',
   AccountsByCreatorIdSumWebAsc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_ASC',
   AccountsByCreatorIdSumWebDesc = 'ACCOUNTS_BY_CREATOR_ID_SUM_WEB_DESC',
-  AccountsByCreatorIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdVariancePopulationCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdVariancePopulationCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreatorIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreatorIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
@@ -545,8 +604,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_TWITTER_DESC',
   AccountsByCreatorIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_ASC',
   AccountsByCreatorIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_POPULATION_WEB_DESC',
-  AccountsByCreatorIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
-  AccountsByCreatorIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
+  AccountsByCreatorIdVarianceSampleCountryCodeIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreatorIdVarianceSampleCountryCodeIdDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ID_DESC',
   AccountsByCreatorIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreatorIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreatorIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
@@ -571,8 +630,8 @@ export enum AccountsOrderBy {
   AccountsByCreatorIdVarianceSampleTwitterDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_TWITTER_DESC',
   AccountsByCreatorIdVarianceSampleWebAsc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_ASC',
   AccountsByCreatorIdVarianceSampleWebDesc = 'ACCOUNTS_BY_CREATOR_ID_VARIANCE_SAMPLE_WEB_DESC',
-  CountryCodeAsc = 'COUNTRY_CODE_ASC',
-  CountryCodeDesc = 'COUNTRY_CODE_DESC',
+  CountryCodeIdAsc = 'COUNTRY_CODE_ID_ASC',
+  CountryCodeIdDesc = 'COUNTRY_CODE_ID_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
   CreatedAtDesc = 'CREATED_AT_DESC',
   CreateAtBlockIdAsc = 'CREATE_AT_BLOCK_ID_ASC',
@@ -1041,6 +1100,8 @@ export type Block = Node & {
   accountsByExtrinsicBlockIdAndSignerId: BlockAccountsByExtrinsicBlockIdAndSignerIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Authority`. */
   authorities: AuthoritiesConnection;
+  /** Reads and enables pagination through a set of `CountryCode`. */
+  countryCodesByAccountCreateAtBlockIdAndCountryCodeId: BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyConnection;
   /** Reads and enables pagination through a set of `Event`. */
   events: EventsConnection;
   /** Reads and enables pagination through a set of `Extrinsic`. */
@@ -1121,6 +1182,16 @@ export type BlockAuthoritiesArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AuthoritiesOrderBy>>;
+};
+
+export type BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<CountryCodeFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<CountryCodesOrderBy>>;
 };
 
 export type BlockEventsArgs = {
@@ -1390,6 +1461,51 @@ export type BlockAverageAggregates = {
   __typename?: 'BlockAverageAggregates';
   /** Mean average of number across the matching connection */
   number?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `CountryCode` values, with data from `Account`. */
+export type BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyConnection = {
+  __typename?: 'BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<CountryCodeAggregates>;
+  /** A list of edges which contains the `CountryCode`, info from the `Account`, and the cursor to aid in pagination. */
+  edges: Array<BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<CountryCodeAggregates>>;
+  /** A list of `CountryCode` objects. */
+  nodes: Array<Maybe<CountryCode>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `CountryCode` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `CountryCode` values, with data from `Account`. */
+export type BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<CountryCodesGroupBy>;
+  having?: InputMaybe<CountryCodesHavingInput>;
+};
+
+/** A `CountryCode` edge in the connection, with data from `Account`. */
+export type BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyEdge = {
+  __typename?: 'BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyEdge';
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `CountryCode` at the end of the edge. */
+  node?: Maybe<CountryCode>;
+};
+
+/** A `CountryCode` edge in the connection, with data from `Account`. */
+export type BlockCountryCodesByAccountCreateAtBlockIdAndCountryCodeIdManyToManyEdgeAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
 };
 
 export type BlockDistinctCountAggregates = {
@@ -1766,8 +1882,8 @@ export type BlocksHavingVarianceSampleInput = {
 
 /** Methods to use when ordering `Block`. */
 export enum BlocksOrderBy {
-  AccountsByCreateAtBlockIdAverageCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdAverageCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdAverageCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdAverageCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdAverageCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdAverageCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdAverageCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
@@ -1794,8 +1910,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdAverageWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_AVERAGE_WEB_DESC',
   AccountsByCreateAtBlockIdCountAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_ASC',
   AccountsByCreateAtBlockIdCountDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_COUNT_DESC',
-  AccountsByCreateAtBlockIdDistinctCountCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdDistinctCountCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdDistinctCountCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdDistinctCountCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
@@ -1820,8 +1936,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdDistinctCountTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_TWITTER_DESC',
   AccountsByCreateAtBlockIdDistinctCountWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_ASC',
   AccountsByCreateAtBlockIdDistinctCountWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_DISTINCT_COUNT_WEB_DESC',
-  AccountsByCreateAtBlockIdMaxCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdMaxCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdMaxCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdMaxCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdMaxCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMaxCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMaxCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_CREATE_AT_BLOCK_ID_ASC',
@@ -1846,8 +1962,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdMaxTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_TWITTER_DESC',
   AccountsByCreateAtBlockIdMaxWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_ASC',
   AccountsByCreateAtBlockIdMaxWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MAX_WEB_DESC',
-  AccountsByCreateAtBlockIdMinCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdMinCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdMinCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdMinCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdMinCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdMinCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdMinCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_CREATE_AT_BLOCK_ID_ASC',
@@ -1872,8 +1988,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdMinTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_TWITTER_DESC',
   AccountsByCreateAtBlockIdMinWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_ASC',
   AccountsByCreateAtBlockIdMinWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_MIN_WEB_DESC',
-  AccountsByCreateAtBlockIdStddevPopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdStddevPopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdStddevPopulationCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevPopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
@@ -1898,8 +2014,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdStddevPopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_TWITTER_DESC',
   AccountsByCreateAtBlockIdStddevPopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_ASC',
   AccountsByCreateAtBlockIdStddevPopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_POPULATION_WEB_DESC',
-  AccountsByCreateAtBlockIdStddevSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdStddevSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdStddevSampleCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdStddevSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
@@ -1924,8 +2040,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdStddevSampleTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_TWITTER_DESC',
   AccountsByCreateAtBlockIdStddevSampleWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_ASC',
   AccountsByCreateAtBlockIdStddevSampleWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_STDDEV_SAMPLE_WEB_DESC',
-  AccountsByCreateAtBlockIdSumCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdSumCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdSumCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdSumCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdSumCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdSumCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdSumCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_CREATE_AT_BLOCK_ID_ASC',
@@ -1950,8 +2066,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdSumTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_TWITTER_DESC',
   AccountsByCreateAtBlockIdSumWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_ASC',
   AccountsByCreateAtBlockIdSumWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_SUM_WEB_DESC',
-  AccountsByCreateAtBlockIdVariancePopulationCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdVariancePopulationCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdVariancePopulationCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVariancePopulationCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
@@ -1976,8 +2092,8 @@ export enum BlocksOrderBy {
   AccountsByCreateAtBlockIdVariancePopulationTwitterDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_TWITTER_DESC',
   AccountsByCreateAtBlockIdVariancePopulationWebAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_ASC',
   AccountsByCreateAtBlockIdVariancePopulationWebDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_POPULATION_WEB_DESC',
-  AccountsByCreateAtBlockIdVarianceSampleCountryCodeAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ASC',
-  AccountsByCreateAtBlockIdVarianceSampleCountryCodeDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_DESC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsByCreateAtBlockIdVarianceSampleCountryCodeIdDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_COUNTRY_CODE_ID_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_ASC',
   AccountsByCreateAtBlockIdVarianceSampleCreatedAtDesc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATED_AT_DESC',
   AccountsByCreateAtBlockIdVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_BY_CREATE_AT_BLOCK_ID_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
@@ -3422,6 +3538,459 @@ export type BooleanFilter = {
   /** Not included in the specified list. */
   notIn?: InputMaybe<Array<Scalars['Boolean']>>;
 };
+
+export type CountryCode = Node & {
+  __typename?: 'CountryCode';
+  /** Reads and enables pagination through a set of `Account`. */
+  accounts: AccountsConnection;
+  /** Reads and enables pagination through a set of `Account`. */
+  accountsByAccountCountryCodeIdAndCreatorId: CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyConnection;
+  /** Reads and enables pagination through a set of `Block`. */
+  blocksByAccountCountryCodeIdAndCreateAtBlockId: CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyConnection;
+  code: Scalars['String'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+};
+
+export type CountryCodeAccountsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+export type CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+export type CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<BlockFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<BlocksOrderBy>>;
+};
+
+/** A connection to a list of `Account` values, with data from `Account`. */
+export type CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyConnection = {
+  __typename?: 'CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<AccountAggregates>;
+  /** A list of edges which contains the `Account`, info from the `Account`, and the cursor to aid in pagination. */
+  edges: Array<CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountAggregates>>;
+  /** A list of `Account` objects. */
+  nodes: Array<Maybe<Account>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Account` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `Account` values, with data from `Account`. */
+export type CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountsGroupBy>;
+  having?: InputMaybe<AccountsHavingInput>;
+};
+
+/** A `Account` edge in the connection, with data from `Account`. */
+export type CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyEdge = {
+  __typename?: 'CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyEdge';
+  /** Reads and enables pagination through a set of `Account`. */
+  accountsByCreatorId: AccountsConnection;
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Account` at the end of the edge. */
+  node?: Maybe<Account>;
+};
+
+/** A `Account` edge in the connection, with data from `Account`. */
+export type CountryCodeAccountsByAccountCountryCodeIdAndCreatorIdManyToManyEdgeAccountsByCreatorIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+export type CountryCodeAggregates = {
+  __typename?: 'CountryCodeAggregates';
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<CountryCodeDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+};
+
+/** A connection to a list of `Block` values, with data from `Account`. */
+export type CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyConnection = {
+  __typename?: 'CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<BlockAggregates>;
+  /** A list of edges which contains the `Block`, info from the `Account`, and the cursor to aid in pagination. */
+  edges: Array<CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<BlockAggregates>>;
+  /** A list of `Block` objects. */
+  nodes: Array<Maybe<Block>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Block` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `Block` values, with data from `Account`. */
+export type CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<BlocksGroupBy>;
+  having?: InputMaybe<BlocksHavingInput>;
+};
+
+/** A `Block` edge in the connection, with data from `Account`. */
+export type CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyEdge = {
+  __typename?: 'CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyEdge';
+  /** Reads and enables pagination through a set of `Account`. */
+  accountsByCreateAtBlockId: AccountsConnection;
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `Block` at the end of the edge. */
+  node?: Maybe<Block>;
+};
+
+/** A `Block` edge in the connection, with data from `Account`. */
+export type CountryCodeBlocksByAccountCountryCodeIdAndCreateAtBlockIdManyToManyEdgeAccountsByCreateAtBlockIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+export type CountryCodeDistinctCountAggregates = {
+  __typename?: 'CountryCodeDistinctCountAggregates';
+  /** Distinct count of code across the matching connection */
+  code?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `CountryCode` object types. All fields are combined with a logical ‘and.’ */
+export type CountryCodeFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<CountryCodeFilter>>;
+  /** Filter by the object’s `code` field. */
+  code?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<CountryCodeFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<CountryCodeFilter>>;
+};
+
+/** A connection to a list of `CountryCode` values. */
+export type CountryCodesConnection = {
+  __typename?: 'CountryCodesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<CountryCodeAggregates>;
+  /** A list of edges which contains the `CountryCode` and cursor to aid in pagination. */
+  edges: Array<CountryCodesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<CountryCodeAggregates>>;
+  /** A list of `CountryCode` objects. */
+  nodes: Array<Maybe<CountryCode>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `CountryCode` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+/** A connection to a list of `CountryCode` values. */
+export type CountryCodesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<CountryCodesGroupBy>;
+  having?: InputMaybe<CountryCodesHavingInput>;
+};
+
+/** A `CountryCode` edge in the connection. */
+export type CountryCodesEdge = {
+  __typename?: 'CountryCodesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `CountryCode` at the end of the edge. */
+  node?: Maybe<CountryCode>;
+};
+
+/** Grouping methods for `CountryCode` for usage during aggregation. */
+export enum CountryCodesGroupBy {
+  Code = 'CODE',
+}
+
+/** Conditions for `CountryCode` aggregates. */
+export type CountryCodesHavingInput = {
+  AND?: InputMaybe<Array<CountryCodesHavingInput>>;
+  OR?: InputMaybe<Array<CountryCodesHavingInput>>;
+};
+
+/** Methods to use when ordering `CountryCode`. */
+export enum CountryCodesOrderBy {
+  AccountsAverageCountryCodeIdAsc = 'ACCOUNTS_AVERAGE_COUNTRY_CODE_ID_ASC',
+  AccountsAverageCountryCodeIdDesc = 'ACCOUNTS_AVERAGE_COUNTRY_CODE_ID_DESC',
+  AccountsAverageCreatedAtAsc = 'ACCOUNTS_AVERAGE_CREATED_AT_ASC',
+  AccountsAverageCreatedAtDesc = 'ACCOUNTS_AVERAGE_CREATED_AT_DESC',
+  AccountsAverageCreateAtBlockIdAsc = 'ACCOUNTS_AVERAGE_CREATE_AT_BLOCK_ID_ASC',
+  AccountsAverageCreateAtBlockIdDesc = 'ACCOUNTS_AVERAGE_CREATE_AT_BLOCK_ID_DESC',
+  AccountsAverageCreatorIdAsc = 'ACCOUNTS_AVERAGE_CREATOR_ID_ASC',
+  AccountsAverageCreatorIdDesc = 'ACCOUNTS_AVERAGE_CREATOR_ID_DESC',
+  AccountsAverageDisplayAsc = 'ACCOUNTS_AVERAGE_DISPLAY_ASC',
+  AccountsAverageDisplayDesc = 'ACCOUNTS_AVERAGE_DISPLAY_DESC',
+  AccountsAverageEmailAsc = 'ACCOUNTS_AVERAGE_EMAIL_ASC',
+  AccountsAverageEmailDesc = 'ACCOUNTS_AVERAGE_EMAIL_DESC',
+  AccountsAverageIdAsc = 'ACCOUNTS_AVERAGE_ID_ASC',
+  AccountsAverageIdDesc = 'ACCOUNTS_AVERAGE_ID_DESC',
+  AccountsAverageImageAsc = 'ACCOUNTS_AVERAGE_IMAGE_ASC',
+  AccountsAverageImageDesc = 'ACCOUNTS_AVERAGE_IMAGE_DESC',
+  AccountsAverageLegalAsc = 'ACCOUNTS_AVERAGE_LEGAL_ASC',
+  AccountsAverageLegalDesc = 'ACCOUNTS_AVERAGE_LEGAL_DESC',
+  AccountsAveragePgpFingerprintAsc = 'ACCOUNTS_AVERAGE_PGP_FINGERPRINT_ASC',
+  AccountsAveragePgpFingerprintDesc = 'ACCOUNTS_AVERAGE_PGP_FINGERPRINT_DESC',
+  AccountsAverageRiotAsc = 'ACCOUNTS_AVERAGE_RIOT_ASC',
+  AccountsAverageRiotDesc = 'ACCOUNTS_AVERAGE_RIOT_DESC',
+  AccountsAverageTwitterAsc = 'ACCOUNTS_AVERAGE_TWITTER_ASC',
+  AccountsAverageTwitterDesc = 'ACCOUNTS_AVERAGE_TWITTER_DESC',
+  AccountsAverageWebAsc = 'ACCOUNTS_AVERAGE_WEB_ASC',
+  AccountsAverageWebDesc = 'ACCOUNTS_AVERAGE_WEB_DESC',
+  AccountsCountAsc = 'ACCOUNTS_COUNT_ASC',
+  AccountsCountDesc = 'ACCOUNTS_COUNT_DESC',
+  AccountsDistinctCountCountryCodeIdAsc = 'ACCOUNTS_DISTINCT_COUNT_COUNTRY_CODE_ID_ASC',
+  AccountsDistinctCountCountryCodeIdDesc = 'ACCOUNTS_DISTINCT_COUNT_COUNTRY_CODE_ID_DESC',
+  AccountsDistinctCountCreatedAtAsc = 'ACCOUNTS_DISTINCT_COUNT_CREATED_AT_ASC',
+  AccountsDistinctCountCreatedAtDesc = 'ACCOUNTS_DISTINCT_COUNT_CREATED_AT_DESC',
+  AccountsDistinctCountCreateAtBlockIdAsc = 'ACCOUNTS_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_ASC',
+  AccountsDistinctCountCreateAtBlockIdDesc = 'ACCOUNTS_DISTINCT_COUNT_CREATE_AT_BLOCK_ID_DESC',
+  AccountsDistinctCountCreatorIdAsc = 'ACCOUNTS_DISTINCT_COUNT_CREATOR_ID_ASC',
+  AccountsDistinctCountCreatorIdDesc = 'ACCOUNTS_DISTINCT_COUNT_CREATOR_ID_DESC',
+  AccountsDistinctCountDisplayAsc = 'ACCOUNTS_DISTINCT_COUNT_DISPLAY_ASC',
+  AccountsDistinctCountDisplayDesc = 'ACCOUNTS_DISTINCT_COUNT_DISPLAY_DESC',
+  AccountsDistinctCountEmailAsc = 'ACCOUNTS_DISTINCT_COUNT_EMAIL_ASC',
+  AccountsDistinctCountEmailDesc = 'ACCOUNTS_DISTINCT_COUNT_EMAIL_DESC',
+  AccountsDistinctCountIdAsc = 'ACCOUNTS_DISTINCT_COUNT_ID_ASC',
+  AccountsDistinctCountIdDesc = 'ACCOUNTS_DISTINCT_COUNT_ID_DESC',
+  AccountsDistinctCountImageAsc = 'ACCOUNTS_DISTINCT_COUNT_IMAGE_ASC',
+  AccountsDistinctCountImageDesc = 'ACCOUNTS_DISTINCT_COUNT_IMAGE_DESC',
+  AccountsDistinctCountLegalAsc = 'ACCOUNTS_DISTINCT_COUNT_LEGAL_ASC',
+  AccountsDistinctCountLegalDesc = 'ACCOUNTS_DISTINCT_COUNT_LEGAL_DESC',
+  AccountsDistinctCountPgpFingerprintAsc = 'ACCOUNTS_DISTINCT_COUNT_PGP_FINGERPRINT_ASC',
+  AccountsDistinctCountPgpFingerprintDesc = 'ACCOUNTS_DISTINCT_COUNT_PGP_FINGERPRINT_DESC',
+  AccountsDistinctCountRiotAsc = 'ACCOUNTS_DISTINCT_COUNT_RIOT_ASC',
+  AccountsDistinctCountRiotDesc = 'ACCOUNTS_DISTINCT_COUNT_RIOT_DESC',
+  AccountsDistinctCountTwitterAsc = 'ACCOUNTS_DISTINCT_COUNT_TWITTER_ASC',
+  AccountsDistinctCountTwitterDesc = 'ACCOUNTS_DISTINCT_COUNT_TWITTER_DESC',
+  AccountsDistinctCountWebAsc = 'ACCOUNTS_DISTINCT_COUNT_WEB_ASC',
+  AccountsDistinctCountWebDesc = 'ACCOUNTS_DISTINCT_COUNT_WEB_DESC',
+  AccountsMaxCountryCodeIdAsc = 'ACCOUNTS_MAX_COUNTRY_CODE_ID_ASC',
+  AccountsMaxCountryCodeIdDesc = 'ACCOUNTS_MAX_COUNTRY_CODE_ID_DESC',
+  AccountsMaxCreatedAtAsc = 'ACCOUNTS_MAX_CREATED_AT_ASC',
+  AccountsMaxCreatedAtDesc = 'ACCOUNTS_MAX_CREATED_AT_DESC',
+  AccountsMaxCreateAtBlockIdAsc = 'ACCOUNTS_MAX_CREATE_AT_BLOCK_ID_ASC',
+  AccountsMaxCreateAtBlockIdDesc = 'ACCOUNTS_MAX_CREATE_AT_BLOCK_ID_DESC',
+  AccountsMaxCreatorIdAsc = 'ACCOUNTS_MAX_CREATOR_ID_ASC',
+  AccountsMaxCreatorIdDesc = 'ACCOUNTS_MAX_CREATOR_ID_DESC',
+  AccountsMaxDisplayAsc = 'ACCOUNTS_MAX_DISPLAY_ASC',
+  AccountsMaxDisplayDesc = 'ACCOUNTS_MAX_DISPLAY_DESC',
+  AccountsMaxEmailAsc = 'ACCOUNTS_MAX_EMAIL_ASC',
+  AccountsMaxEmailDesc = 'ACCOUNTS_MAX_EMAIL_DESC',
+  AccountsMaxIdAsc = 'ACCOUNTS_MAX_ID_ASC',
+  AccountsMaxIdDesc = 'ACCOUNTS_MAX_ID_DESC',
+  AccountsMaxImageAsc = 'ACCOUNTS_MAX_IMAGE_ASC',
+  AccountsMaxImageDesc = 'ACCOUNTS_MAX_IMAGE_DESC',
+  AccountsMaxLegalAsc = 'ACCOUNTS_MAX_LEGAL_ASC',
+  AccountsMaxLegalDesc = 'ACCOUNTS_MAX_LEGAL_DESC',
+  AccountsMaxPgpFingerprintAsc = 'ACCOUNTS_MAX_PGP_FINGERPRINT_ASC',
+  AccountsMaxPgpFingerprintDesc = 'ACCOUNTS_MAX_PGP_FINGERPRINT_DESC',
+  AccountsMaxRiotAsc = 'ACCOUNTS_MAX_RIOT_ASC',
+  AccountsMaxRiotDesc = 'ACCOUNTS_MAX_RIOT_DESC',
+  AccountsMaxTwitterAsc = 'ACCOUNTS_MAX_TWITTER_ASC',
+  AccountsMaxTwitterDesc = 'ACCOUNTS_MAX_TWITTER_DESC',
+  AccountsMaxWebAsc = 'ACCOUNTS_MAX_WEB_ASC',
+  AccountsMaxWebDesc = 'ACCOUNTS_MAX_WEB_DESC',
+  AccountsMinCountryCodeIdAsc = 'ACCOUNTS_MIN_COUNTRY_CODE_ID_ASC',
+  AccountsMinCountryCodeIdDesc = 'ACCOUNTS_MIN_COUNTRY_CODE_ID_DESC',
+  AccountsMinCreatedAtAsc = 'ACCOUNTS_MIN_CREATED_AT_ASC',
+  AccountsMinCreatedAtDesc = 'ACCOUNTS_MIN_CREATED_AT_DESC',
+  AccountsMinCreateAtBlockIdAsc = 'ACCOUNTS_MIN_CREATE_AT_BLOCK_ID_ASC',
+  AccountsMinCreateAtBlockIdDesc = 'ACCOUNTS_MIN_CREATE_AT_BLOCK_ID_DESC',
+  AccountsMinCreatorIdAsc = 'ACCOUNTS_MIN_CREATOR_ID_ASC',
+  AccountsMinCreatorIdDesc = 'ACCOUNTS_MIN_CREATOR_ID_DESC',
+  AccountsMinDisplayAsc = 'ACCOUNTS_MIN_DISPLAY_ASC',
+  AccountsMinDisplayDesc = 'ACCOUNTS_MIN_DISPLAY_DESC',
+  AccountsMinEmailAsc = 'ACCOUNTS_MIN_EMAIL_ASC',
+  AccountsMinEmailDesc = 'ACCOUNTS_MIN_EMAIL_DESC',
+  AccountsMinIdAsc = 'ACCOUNTS_MIN_ID_ASC',
+  AccountsMinIdDesc = 'ACCOUNTS_MIN_ID_DESC',
+  AccountsMinImageAsc = 'ACCOUNTS_MIN_IMAGE_ASC',
+  AccountsMinImageDesc = 'ACCOUNTS_MIN_IMAGE_DESC',
+  AccountsMinLegalAsc = 'ACCOUNTS_MIN_LEGAL_ASC',
+  AccountsMinLegalDesc = 'ACCOUNTS_MIN_LEGAL_DESC',
+  AccountsMinPgpFingerprintAsc = 'ACCOUNTS_MIN_PGP_FINGERPRINT_ASC',
+  AccountsMinPgpFingerprintDesc = 'ACCOUNTS_MIN_PGP_FINGERPRINT_DESC',
+  AccountsMinRiotAsc = 'ACCOUNTS_MIN_RIOT_ASC',
+  AccountsMinRiotDesc = 'ACCOUNTS_MIN_RIOT_DESC',
+  AccountsMinTwitterAsc = 'ACCOUNTS_MIN_TWITTER_ASC',
+  AccountsMinTwitterDesc = 'ACCOUNTS_MIN_TWITTER_DESC',
+  AccountsMinWebAsc = 'ACCOUNTS_MIN_WEB_ASC',
+  AccountsMinWebDesc = 'ACCOUNTS_MIN_WEB_DESC',
+  AccountsStddevPopulationCountryCodeIdAsc = 'ACCOUNTS_STDDEV_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsStddevPopulationCountryCodeIdDesc = 'ACCOUNTS_STDDEV_POPULATION_COUNTRY_CODE_ID_DESC',
+  AccountsStddevPopulationCreatedAtAsc = 'ACCOUNTS_STDDEV_POPULATION_CREATED_AT_ASC',
+  AccountsStddevPopulationCreatedAtDesc = 'ACCOUNTS_STDDEV_POPULATION_CREATED_AT_DESC',
+  AccountsStddevPopulationCreateAtBlockIdAsc = 'ACCOUNTS_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_ASC',
+  AccountsStddevPopulationCreateAtBlockIdDesc = 'ACCOUNTS_STDDEV_POPULATION_CREATE_AT_BLOCK_ID_DESC',
+  AccountsStddevPopulationCreatorIdAsc = 'ACCOUNTS_STDDEV_POPULATION_CREATOR_ID_ASC',
+  AccountsStddevPopulationCreatorIdDesc = 'ACCOUNTS_STDDEV_POPULATION_CREATOR_ID_DESC',
+  AccountsStddevPopulationDisplayAsc = 'ACCOUNTS_STDDEV_POPULATION_DISPLAY_ASC',
+  AccountsStddevPopulationDisplayDesc = 'ACCOUNTS_STDDEV_POPULATION_DISPLAY_DESC',
+  AccountsStddevPopulationEmailAsc = 'ACCOUNTS_STDDEV_POPULATION_EMAIL_ASC',
+  AccountsStddevPopulationEmailDesc = 'ACCOUNTS_STDDEV_POPULATION_EMAIL_DESC',
+  AccountsStddevPopulationIdAsc = 'ACCOUNTS_STDDEV_POPULATION_ID_ASC',
+  AccountsStddevPopulationIdDesc = 'ACCOUNTS_STDDEV_POPULATION_ID_DESC',
+  AccountsStddevPopulationImageAsc = 'ACCOUNTS_STDDEV_POPULATION_IMAGE_ASC',
+  AccountsStddevPopulationImageDesc = 'ACCOUNTS_STDDEV_POPULATION_IMAGE_DESC',
+  AccountsStddevPopulationLegalAsc = 'ACCOUNTS_STDDEV_POPULATION_LEGAL_ASC',
+  AccountsStddevPopulationLegalDesc = 'ACCOUNTS_STDDEV_POPULATION_LEGAL_DESC',
+  AccountsStddevPopulationPgpFingerprintAsc = 'ACCOUNTS_STDDEV_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsStddevPopulationPgpFingerprintDesc = 'ACCOUNTS_STDDEV_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsStddevPopulationRiotAsc = 'ACCOUNTS_STDDEV_POPULATION_RIOT_ASC',
+  AccountsStddevPopulationRiotDesc = 'ACCOUNTS_STDDEV_POPULATION_RIOT_DESC',
+  AccountsStddevPopulationTwitterAsc = 'ACCOUNTS_STDDEV_POPULATION_TWITTER_ASC',
+  AccountsStddevPopulationTwitterDesc = 'ACCOUNTS_STDDEV_POPULATION_TWITTER_DESC',
+  AccountsStddevPopulationWebAsc = 'ACCOUNTS_STDDEV_POPULATION_WEB_ASC',
+  AccountsStddevPopulationWebDesc = 'ACCOUNTS_STDDEV_POPULATION_WEB_DESC',
+  AccountsStddevSampleCountryCodeIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsStddevSampleCountryCodeIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_COUNTRY_CODE_ID_DESC',
+  AccountsStddevSampleCreatedAtAsc = 'ACCOUNTS_STDDEV_SAMPLE_CREATED_AT_ASC',
+  AccountsStddevSampleCreatedAtDesc = 'ACCOUNTS_STDDEV_SAMPLE_CREATED_AT_DESC',
+  AccountsStddevSampleCreateAtBlockIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
+  AccountsStddevSampleCreateAtBlockIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
+  AccountsStddevSampleCreatorIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_CREATOR_ID_ASC',
+  AccountsStddevSampleCreatorIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_CREATOR_ID_DESC',
+  AccountsStddevSampleDisplayAsc = 'ACCOUNTS_STDDEV_SAMPLE_DISPLAY_ASC',
+  AccountsStddevSampleDisplayDesc = 'ACCOUNTS_STDDEV_SAMPLE_DISPLAY_DESC',
+  AccountsStddevSampleEmailAsc = 'ACCOUNTS_STDDEV_SAMPLE_EMAIL_ASC',
+  AccountsStddevSampleEmailDesc = 'ACCOUNTS_STDDEV_SAMPLE_EMAIL_DESC',
+  AccountsStddevSampleIdAsc = 'ACCOUNTS_STDDEV_SAMPLE_ID_ASC',
+  AccountsStddevSampleIdDesc = 'ACCOUNTS_STDDEV_SAMPLE_ID_DESC',
+  AccountsStddevSampleImageAsc = 'ACCOUNTS_STDDEV_SAMPLE_IMAGE_ASC',
+  AccountsStddevSampleImageDesc = 'ACCOUNTS_STDDEV_SAMPLE_IMAGE_DESC',
+  AccountsStddevSampleLegalAsc = 'ACCOUNTS_STDDEV_SAMPLE_LEGAL_ASC',
+  AccountsStddevSampleLegalDesc = 'ACCOUNTS_STDDEV_SAMPLE_LEGAL_DESC',
+  AccountsStddevSamplePgpFingerprintAsc = 'ACCOUNTS_STDDEV_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsStddevSamplePgpFingerprintDesc = 'ACCOUNTS_STDDEV_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsStddevSampleRiotAsc = 'ACCOUNTS_STDDEV_SAMPLE_RIOT_ASC',
+  AccountsStddevSampleRiotDesc = 'ACCOUNTS_STDDEV_SAMPLE_RIOT_DESC',
+  AccountsStddevSampleTwitterAsc = 'ACCOUNTS_STDDEV_SAMPLE_TWITTER_ASC',
+  AccountsStddevSampleTwitterDesc = 'ACCOUNTS_STDDEV_SAMPLE_TWITTER_DESC',
+  AccountsStddevSampleWebAsc = 'ACCOUNTS_STDDEV_SAMPLE_WEB_ASC',
+  AccountsStddevSampleWebDesc = 'ACCOUNTS_STDDEV_SAMPLE_WEB_DESC',
+  AccountsSumCountryCodeIdAsc = 'ACCOUNTS_SUM_COUNTRY_CODE_ID_ASC',
+  AccountsSumCountryCodeIdDesc = 'ACCOUNTS_SUM_COUNTRY_CODE_ID_DESC',
+  AccountsSumCreatedAtAsc = 'ACCOUNTS_SUM_CREATED_AT_ASC',
+  AccountsSumCreatedAtDesc = 'ACCOUNTS_SUM_CREATED_AT_DESC',
+  AccountsSumCreateAtBlockIdAsc = 'ACCOUNTS_SUM_CREATE_AT_BLOCK_ID_ASC',
+  AccountsSumCreateAtBlockIdDesc = 'ACCOUNTS_SUM_CREATE_AT_BLOCK_ID_DESC',
+  AccountsSumCreatorIdAsc = 'ACCOUNTS_SUM_CREATOR_ID_ASC',
+  AccountsSumCreatorIdDesc = 'ACCOUNTS_SUM_CREATOR_ID_DESC',
+  AccountsSumDisplayAsc = 'ACCOUNTS_SUM_DISPLAY_ASC',
+  AccountsSumDisplayDesc = 'ACCOUNTS_SUM_DISPLAY_DESC',
+  AccountsSumEmailAsc = 'ACCOUNTS_SUM_EMAIL_ASC',
+  AccountsSumEmailDesc = 'ACCOUNTS_SUM_EMAIL_DESC',
+  AccountsSumIdAsc = 'ACCOUNTS_SUM_ID_ASC',
+  AccountsSumIdDesc = 'ACCOUNTS_SUM_ID_DESC',
+  AccountsSumImageAsc = 'ACCOUNTS_SUM_IMAGE_ASC',
+  AccountsSumImageDesc = 'ACCOUNTS_SUM_IMAGE_DESC',
+  AccountsSumLegalAsc = 'ACCOUNTS_SUM_LEGAL_ASC',
+  AccountsSumLegalDesc = 'ACCOUNTS_SUM_LEGAL_DESC',
+  AccountsSumPgpFingerprintAsc = 'ACCOUNTS_SUM_PGP_FINGERPRINT_ASC',
+  AccountsSumPgpFingerprintDesc = 'ACCOUNTS_SUM_PGP_FINGERPRINT_DESC',
+  AccountsSumRiotAsc = 'ACCOUNTS_SUM_RIOT_ASC',
+  AccountsSumRiotDesc = 'ACCOUNTS_SUM_RIOT_DESC',
+  AccountsSumTwitterAsc = 'ACCOUNTS_SUM_TWITTER_ASC',
+  AccountsSumTwitterDesc = 'ACCOUNTS_SUM_TWITTER_DESC',
+  AccountsSumWebAsc = 'ACCOUNTS_SUM_WEB_ASC',
+  AccountsSumWebDesc = 'ACCOUNTS_SUM_WEB_DESC',
+  AccountsVariancePopulationCountryCodeIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_COUNTRY_CODE_ID_ASC',
+  AccountsVariancePopulationCountryCodeIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_COUNTRY_CODE_ID_DESC',
+  AccountsVariancePopulationCreatedAtAsc = 'ACCOUNTS_VARIANCE_POPULATION_CREATED_AT_ASC',
+  AccountsVariancePopulationCreatedAtDesc = 'ACCOUNTS_VARIANCE_POPULATION_CREATED_AT_DESC',
+  AccountsVariancePopulationCreateAtBlockIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_ASC',
+  AccountsVariancePopulationCreateAtBlockIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_CREATE_AT_BLOCK_ID_DESC',
+  AccountsVariancePopulationCreatorIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_CREATOR_ID_ASC',
+  AccountsVariancePopulationCreatorIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_CREATOR_ID_DESC',
+  AccountsVariancePopulationDisplayAsc = 'ACCOUNTS_VARIANCE_POPULATION_DISPLAY_ASC',
+  AccountsVariancePopulationDisplayDesc = 'ACCOUNTS_VARIANCE_POPULATION_DISPLAY_DESC',
+  AccountsVariancePopulationEmailAsc = 'ACCOUNTS_VARIANCE_POPULATION_EMAIL_ASC',
+  AccountsVariancePopulationEmailDesc = 'ACCOUNTS_VARIANCE_POPULATION_EMAIL_DESC',
+  AccountsVariancePopulationIdAsc = 'ACCOUNTS_VARIANCE_POPULATION_ID_ASC',
+  AccountsVariancePopulationIdDesc = 'ACCOUNTS_VARIANCE_POPULATION_ID_DESC',
+  AccountsVariancePopulationImageAsc = 'ACCOUNTS_VARIANCE_POPULATION_IMAGE_ASC',
+  AccountsVariancePopulationImageDesc = 'ACCOUNTS_VARIANCE_POPULATION_IMAGE_DESC',
+  AccountsVariancePopulationLegalAsc = 'ACCOUNTS_VARIANCE_POPULATION_LEGAL_ASC',
+  AccountsVariancePopulationLegalDesc = 'ACCOUNTS_VARIANCE_POPULATION_LEGAL_DESC',
+  AccountsVariancePopulationPgpFingerprintAsc = 'ACCOUNTS_VARIANCE_POPULATION_PGP_FINGERPRINT_ASC',
+  AccountsVariancePopulationPgpFingerprintDesc = 'ACCOUNTS_VARIANCE_POPULATION_PGP_FINGERPRINT_DESC',
+  AccountsVariancePopulationRiotAsc = 'ACCOUNTS_VARIANCE_POPULATION_RIOT_ASC',
+  AccountsVariancePopulationRiotDesc = 'ACCOUNTS_VARIANCE_POPULATION_RIOT_DESC',
+  AccountsVariancePopulationTwitterAsc = 'ACCOUNTS_VARIANCE_POPULATION_TWITTER_ASC',
+  AccountsVariancePopulationTwitterDesc = 'ACCOUNTS_VARIANCE_POPULATION_TWITTER_DESC',
+  AccountsVariancePopulationWebAsc = 'ACCOUNTS_VARIANCE_POPULATION_WEB_ASC',
+  AccountsVariancePopulationWebDesc = 'ACCOUNTS_VARIANCE_POPULATION_WEB_DESC',
+  AccountsVarianceSampleCountryCodeIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_COUNTRY_CODE_ID_ASC',
+  AccountsVarianceSampleCountryCodeIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_COUNTRY_CODE_ID_DESC',
+  AccountsVarianceSampleCreatedAtAsc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATED_AT_ASC',
+  AccountsVarianceSampleCreatedAtDesc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATED_AT_DESC',
+  AccountsVarianceSampleCreateAtBlockIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_ASC',
+  AccountsVarianceSampleCreateAtBlockIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATE_AT_BLOCK_ID_DESC',
+  AccountsVarianceSampleCreatorIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATOR_ID_ASC',
+  AccountsVarianceSampleCreatorIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_CREATOR_ID_DESC',
+  AccountsVarianceSampleDisplayAsc = 'ACCOUNTS_VARIANCE_SAMPLE_DISPLAY_ASC',
+  AccountsVarianceSampleDisplayDesc = 'ACCOUNTS_VARIANCE_SAMPLE_DISPLAY_DESC',
+  AccountsVarianceSampleEmailAsc = 'ACCOUNTS_VARIANCE_SAMPLE_EMAIL_ASC',
+  AccountsVarianceSampleEmailDesc = 'ACCOUNTS_VARIANCE_SAMPLE_EMAIL_DESC',
+  AccountsVarianceSampleIdAsc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_ASC',
+  AccountsVarianceSampleIdDesc = 'ACCOUNTS_VARIANCE_SAMPLE_ID_DESC',
+  AccountsVarianceSampleImageAsc = 'ACCOUNTS_VARIANCE_SAMPLE_IMAGE_ASC',
+  AccountsVarianceSampleImageDesc = 'ACCOUNTS_VARIANCE_SAMPLE_IMAGE_DESC',
+  AccountsVarianceSampleLegalAsc = 'ACCOUNTS_VARIANCE_SAMPLE_LEGAL_ASC',
+  AccountsVarianceSampleLegalDesc = 'ACCOUNTS_VARIANCE_SAMPLE_LEGAL_DESC',
+  AccountsVarianceSamplePgpFingerprintAsc = 'ACCOUNTS_VARIANCE_SAMPLE_PGP_FINGERPRINT_ASC',
+  AccountsVarianceSamplePgpFingerprintDesc = 'ACCOUNTS_VARIANCE_SAMPLE_PGP_FINGERPRINT_DESC',
+  AccountsVarianceSampleRiotAsc = 'ACCOUNTS_VARIANCE_SAMPLE_RIOT_ASC',
+  AccountsVarianceSampleRiotDesc = 'ACCOUNTS_VARIANCE_SAMPLE_RIOT_DESC',
+  AccountsVarianceSampleTwitterAsc = 'ACCOUNTS_VARIANCE_SAMPLE_TWITTER_ASC',
+  AccountsVarianceSampleTwitterDesc = 'ACCOUNTS_VARIANCE_SAMPLE_TWITTER_DESC',
+  AccountsVarianceSampleWebAsc = 'ACCOUNTS_VARIANCE_SAMPLE_WEB_ASC',
+  AccountsVarianceSampleWebDesc = 'ACCOUNTS_VARIANCE_SAMPLE_WEB_DESC',
+  CodeAsc = 'CODE_ASC',
+  CodeDesc = 'CODE_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+}
 
 /** A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’ */
 export type DatetimeFilter = {
@@ -7340,6 +7909,11 @@ export type Query = Node & {
   blockByNodeId?: Maybe<Block>;
   /** Reads and enables pagination through a set of `Block`. */
   blocks?: Maybe<BlocksConnection>;
+  countryCode?: Maybe<CountryCode>;
+  /** Reads a single `CountryCode` using its globally unique `ID`. */
+  countryCodeByNodeId?: Maybe<CountryCode>;
+  /** Reads and enables pagination through a set of `CountryCode`. */
+  countryCodes?: Maybe<CountryCodesConnection>;
   event?: Maybe<Event>;
   /** Reads a single `Event` using its globally unique `ID`. */
   eventByNodeId?: Maybe<Event>;
@@ -7502,6 +8076,27 @@ export type QueryBlocksArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<BlocksOrderBy>>;
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryCountryCodeArgs = {
+  id: Scalars['String'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryCountryCodeByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+/** The root query type which gives access points into the data universe. */
+export type QueryCountryCodesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<CountryCodeFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<CountryCodesOrderBy>>;
 };
 
 /** The root query type which gives access points into the data universe. */
@@ -8209,10 +8804,11 @@ export type SessionValidator = Node & {
   nextBestOrder: Scalars['Int'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
-  reputation: Scalars['String'];
+  reputation: Scalars['Int'];
   /** Reads a single `Session` that is related to this `SessionValidator`. */
   session?: Maybe<Session>;
   sessionId: Scalars['String'];
+  uptime: Scalars['Int'];
   /** Reads a single `Validator` that is related to this `SessionValidator`. */
   validator?: Maybe<Validator>;
   validatorId: Scalars['String'];
@@ -8249,6 +8845,10 @@ export type SessionValidatorAverageAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Mean average of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigFloat']>;
+  /** Mean average of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigFloat']>;
 };
 
 export type SessionValidatorDistinctCountAggregates = {
@@ -8271,6 +8871,8 @@ export type SessionValidatorDistinctCountAggregates = {
   reputation?: Maybe<Scalars['BigInt']>;
   /** Distinct count of sessionId across the matching connection */
   sessionId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigInt']>;
   /** Distinct count of validatorId across the matching connection */
   validatorId?: Maybe<Scalars['BigInt']>;
 };
@@ -8298,9 +8900,11 @@ export type SessionValidatorFilter = {
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<SessionValidatorFilter>>;
   /** Filter by the object’s `reputation` field. */
-  reputation?: InputMaybe<StringFilter>;
+  reputation?: InputMaybe<IntFilter>;
   /** Filter by the object’s `sessionId` field. */
   sessionId?: InputMaybe<StringFilter>;
+  /** Filter by the object’s `uptime` field. */
+  uptime?: InputMaybe<IntFilter>;
   /** Filter by the object’s `validatorId` field. */
   validatorId?: InputMaybe<StringFilter>;
 };
@@ -8313,6 +8917,10 @@ export type SessionValidatorMaxAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Maximum of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['Int']>;
+  /** Maximum of reputation across the matching connection */
+  reputation?: Maybe<Scalars['Int']>;
+  /** Maximum of uptime across the matching connection */
+  uptime?: Maybe<Scalars['Int']>;
 };
 
 export type SessionValidatorMinAggregates = {
@@ -8323,6 +8931,10 @@ export type SessionValidatorMinAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Minimum of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['Int']>;
+  /** Minimum of reputation across the matching connection */
+  reputation?: Maybe<Scalars['Int']>;
+  /** Minimum of uptime across the matching connection */
+  uptime?: Maybe<Scalars['Int']>;
 };
 
 export type SessionValidatorStddevPopulationAggregates = {
@@ -8333,6 +8945,10 @@ export type SessionValidatorStddevPopulationAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population standard deviation of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigFloat']>;
+  /** Population standard deviation of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigFloat']>;
 };
 
 export type SessionValidatorStddevSampleAggregates = {
@@ -8343,6 +8959,10 @@ export type SessionValidatorStddevSampleAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample standard deviation of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigFloat']>;
+  /** Sample standard deviation of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigFloat']>;
 };
 
 export type SessionValidatorSumAggregates = {
@@ -8353,6 +8973,10 @@ export type SessionValidatorSumAggregates = {
   blockNumber: Scalars['BigFloat'];
   /** Sum of nextBestOrder across the matching connection */
   nextBestOrder: Scalars['BigInt'];
+  /** Sum of reputation across the matching connection */
+  reputation: Scalars['BigInt'];
+  /** Sum of uptime across the matching connection */
+  uptime: Scalars['BigInt'];
 };
 
 export type SessionValidatorVariancePopulationAggregates = {
@@ -8363,6 +8987,10 @@ export type SessionValidatorVariancePopulationAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Population variance of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigFloat']>;
+  /** Population variance of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigFloat']>;
 };
 
 export type SessionValidatorVarianceSampleAggregates = {
@@ -8373,6 +9001,10 @@ export type SessionValidatorVarianceSampleAggregates = {
   blockNumber?: Maybe<Scalars['BigFloat']>;
   /** Sample variance of nextBestOrder across the matching connection */
   nextBestOrder?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of reputation across the matching connection */
+  reputation?: Maybe<Scalars['BigFloat']>;
+  /** Sample variance of uptime across the matching connection */
+  uptime?: Maybe<Scalars['BigFloat']>;
 };
 
 /** A connection to a list of `Validator` values, with data from `SessionValidator`. */
@@ -8462,6 +9094,7 @@ export enum SessionValidatorsGroupBy {
   NextBestOrder = 'NEXT_BEST_ORDER',
   Reputation = 'REPUTATION',
   SessionId = 'SESSION_ID',
+  Uptime = 'UPTIME',
   ValidatorId = 'VALIDATOR_ID',
 }
 
@@ -8469,12 +9102,16 @@ export type SessionValidatorsHavingAverageInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingDistinctCountInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 /** Conditions for `SessionValidator` aggregates. */
@@ -8496,42 +9133,56 @@ export type SessionValidatorsHavingMaxInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingMinInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingStddevPopulationInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingStddevSampleInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingSumInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingVariancePopulationInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 export type SessionValidatorsHavingVarianceSampleInput = {
   bestOrder?: InputMaybe<HavingIntFilter>;
   blockNumber?: InputMaybe<HavingBigfloatFilter>;
   nextBestOrder?: InputMaybe<HavingIntFilter>;
+  reputation?: InputMaybe<HavingIntFilter>;
+  uptime?: InputMaybe<HavingIntFilter>;
 };
 
 /** Methods to use when ordering `SessionValidator`. */
@@ -8557,6 +9208,8 @@ export enum SessionValidatorsOrderBy {
   ReputationDesc = 'REPUTATION_DESC',
   SessionIdAsc = 'SESSION_ID_ASC',
   SessionIdDesc = 'SESSION_ID_DESC',
+  UptimeAsc = 'UPTIME_ASC',
+  UptimeDesc = 'UPTIME_DESC',
   ValidatorIdAsc = 'VALIDATOR_ID_ASC',
   ValidatorIdDesc = 'VALIDATOR_ID_DESC',
 }
@@ -8750,6 +9403,8 @@ export enum SessionsOrderBy {
   SessionValidatorsAverageReputationDesc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC',
   SessionValidatorsAverageSessionIdAsc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC',
   SessionValidatorsAverageSessionIdDesc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC',
+  SessionValidatorsAverageUptimeAsc = 'SESSION_VALIDATORS_AVERAGE_UPTIME_ASC',
+  SessionValidatorsAverageUptimeDesc = 'SESSION_VALIDATORS_AVERAGE_UPTIME_DESC',
   SessionValidatorsAverageValidatorIdAsc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC',
   SessionValidatorsAverageValidatorIdDesc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC',
   SessionValidatorsCountAsc = 'SESSION_VALIDATORS_COUNT_ASC',
@@ -8772,6 +9427,8 @@ export enum SessionsOrderBy {
   SessionValidatorsDistinctCountReputationDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC',
   SessionValidatorsDistinctCountSessionIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC',
   SessionValidatorsDistinctCountSessionIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC',
+  SessionValidatorsDistinctCountUptimeAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_UPTIME_ASC',
+  SessionValidatorsDistinctCountUptimeDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_UPTIME_DESC',
   SessionValidatorsDistinctCountValidatorIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC',
   SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
   SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
@@ -8792,6 +9449,8 @@ export enum SessionsOrderBy {
   SessionValidatorsMaxReputationDesc = 'SESSION_VALIDATORS_MAX_REPUTATION_DESC',
   SessionValidatorsMaxSessionIdAsc = 'SESSION_VALIDATORS_MAX_SESSION_ID_ASC',
   SessionValidatorsMaxSessionIdDesc = 'SESSION_VALIDATORS_MAX_SESSION_ID_DESC',
+  SessionValidatorsMaxUptimeAsc = 'SESSION_VALIDATORS_MAX_UPTIME_ASC',
+  SessionValidatorsMaxUptimeDesc = 'SESSION_VALIDATORS_MAX_UPTIME_DESC',
   SessionValidatorsMaxValidatorIdAsc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC',
   SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
   SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
@@ -8812,6 +9471,8 @@ export enum SessionsOrderBy {
   SessionValidatorsMinReputationDesc = 'SESSION_VALIDATORS_MIN_REPUTATION_DESC',
   SessionValidatorsMinSessionIdAsc = 'SESSION_VALIDATORS_MIN_SESSION_ID_ASC',
   SessionValidatorsMinSessionIdDesc = 'SESSION_VALIDATORS_MIN_SESSION_ID_DESC',
+  SessionValidatorsMinUptimeAsc = 'SESSION_VALIDATORS_MIN_UPTIME_ASC',
+  SessionValidatorsMinUptimeDesc = 'SESSION_VALIDATORS_MIN_UPTIME_DESC',
   SessionValidatorsMinValidatorIdAsc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC',
   SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
   SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
@@ -8832,6 +9493,8 @@ export enum SessionsOrderBy {
   SessionValidatorsStddevPopulationReputationDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC',
   SessionValidatorsStddevPopulationSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC',
   SessionValidatorsStddevPopulationSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsStddevPopulationUptimeAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_UPTIME_ASC',
+  SessionValidatorsStddevPopulationUptimeDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_UPTIME_DESC',
   SessionValidatorsStddevPopulationValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC',
   SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
@@ -8852,6 +9515,8 @@ export enum SessionsOrderBy {
   SessionValidatorsStddevSampleReputationDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC',
   SessionValidatorsStddevSampleSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsStddevSampleSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsStddevSampleUptimeAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_UPTIME_ASC',
+  SessionValidatorsStddevSampleUptimeDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_UPTIME_DESC',
   SessionValidatorsStddevSampleValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
   SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
@@ -8872,6 +9537,8 @@ export enum SessionsOrderBy {
   SessionValidatorsSumReputationDesc = 'SESSION_VALIDATORS_SUM_REPUTATION_DESC',
   SessionValidatorsSumSessionIdAsc = 'SESSION_VALIDATORS_SUM_SESSION_ID_ASC',
   SessionValidatorsSumSessionIdDesc = 'SESSION_VALIDATORS_SUM_SESSION_ID_DESC',
+  SessionValidatorsSumUptimeAsc = 'SESSION_VALIDATORS_SUM_UPTIME_ASC',
+  SessionValidatorsSumUptimeDesc = 'SESSION_VALIDATORS_SUM_UPTIME_DESC',
   SessionValidatorsSumValidatorIdAsc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC',
   SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
   SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
@@ -8892,6 +9559,8 @@ export enum SessionsOrderBy {
   SessionValidatorsVariancePopulationReputationDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC',
   SessionValidatorsVariancePopulationSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC',
   SessionValidatorsVariancePopulationSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsVariancePopulationUptimeAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_UPTIME_ASC',
+  SessionValidatorsVariancePopulationUptimeDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_UPTIME_DESC',
   SessionValidatorsVariancePopulationValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC',
   SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
@@ -8912,6 +9581,8 @@ export enum SessionsOrderBy {
   SessionValidatorsVarianceSampleReputationDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC',
   SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsVarianceSampleUptimeAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_UPTIME_ASC',
+  SessionValidatorsVarianceSampleUptimeDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_UPTIME_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
   ThresholdsAverageCurrentAsc = 'THRESHOLDS_AVERAGE_CURRENT_ASC',
@@ -10462,6 +11133,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsAverageReputationDesc = 'SESSION_VALIDATORS_AVERAGE_REPUTATION_DESC',
   SessionValidatorsAverageSessionIdAsc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_ASC',
   SessionValidatorsAverageSessionIdDesc = 'SESSION_VALIDATORS_AVERAGE_SESSION_ID_DESC',
+  SessionValidatorsAverageUptimeAsc = 'SESSION_VALIDATORS_AVERAGE_UPTIME_ASC',
+  SessionValidatorsAverageUptimeDesc = 'SESSION_VALIDATORS_AVERAGE_UPTIME_DESC',
   SessionValidatorsAverageValidatorIdAsc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_ASC',
   SessionValidatorsAverageValidatorIdDesc = 'SESSION_VALIDATORS_AVERAGE_VALIDATOR_ID_DESC',
   SessionValidatorsCountAsc = 'SESSION_VALIDATORS_COUNT_ASC',
@@ -10484,6 +11157,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsDistinctCountReputationDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_REPUTATION_DESC',
   SessionValidatorsDistinctCountSessionIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_ASC',
   SessionValidatorsDistinctCountSessionIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_SESSION_ID_DESC',
+  SessionValidatorsDistinctCountUptimeAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_UPTIME_ASC',
+  SessionValidatorsDistinctCountUptimeDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_UPTIME_DESC',
   SessionValidatorsDistinctCountValidatorIdAsc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_ASC',
   SessionValidatorsDistinctCountValidatorIdDesc = 'SESSION_VALIDATORS_DISTINCT_COUNT_VALIDATOR_ID_DESC',
   SessionValidatorsMaxBestOrderAsc = 'SESSION_VALIDATORS_MAX_BEST_ORDER_ASC',
@@ -10504,6 +11179,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsMaxReputationDesc = 'SESSION_VALIDATORS_MAX_REPUTATION_DESC',
   SessionValidatorsMaxSessionIdAsc = 'SESSION_VALIDATORS_MAX_SESSION_ID_ASC',
   SessionValidatorsMaxSessionIdDesc = 'SESSION_VALIDATORS_MAX_SESSION_ID_DESC',
+  SessionValidatorsMaxUptimeAsc = 'SESSION_VALIDATORS_MAX_UPTIME_ASC',
+  SessionValidatorsMaxUptimeDesc = 'SESSION_VALIDATORS_MAX_UPTIME_DESC',
   SessionValidatorsMaxValidatorIdAsc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_ASC',
   SessionValidatorsMaxValidatorIdDesc = 'SESSION_VALIDATORS_MAX_VALIDATOR_ID_DESC',
   SessionValidatorsMinBestOrderAsc = 'SESSION_VALIDATORS_MIN_BEST_ORDER_ASC',
@@ -10524,6 +11201,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsMinReputationDesc = 'SESSION_VALIDATORS_MIN_REPUTATION_DESC',
   SessionValidatorsMinSessionIdAsc = 'SESSION_VALIDATORS_MIN_SESSION_ID_ASC',
   SessionValidatorsMinSessionIdDesc = 'SESSION_VALIDATORS_MIN_SESSION_ID_DESC',
+  SessionValidatorsMinUptimeAsc = 'SESSION_VALIDATORS_MIN_UPTIME_ASC',
+  SessionValidatorsMinUptimeDesc = 'SESSION_VALIDATORS_MIN_UPTIME_DESC',
   SessionValidatorsMinValidatorIdAsc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_ASC',
   SessionValidatorsMinValidatorIdDesc = 'SESSION_VALIDATORS_MIN_VALIDATOR_ID_DESC',
   SessionValidatorsStddevPopulationBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_BEST_ORDER_ASC',
@@ -10544,6 +11223,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsStddevPopulationReputationDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_REPUTATION_DESC',
   SessionValidatorsStddevPopulationSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_ASC',
   SessionValidatorsStddevPopulationSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsStddevPopulationUptimeAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_UPTIME_ASC',
+  SessionValidatorsStddevPopulationUptimeDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_UPTIME_DESC',
   SessionValidatorsStddevPopulationValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_ASC',
   SessionValidatorsStddevPopulationValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsStddevSampleBestOrderAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_BEST_ORDER_ASC',
@@ -10564,6 +11245,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsStddevSampleReputationDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_REPUTATION_DESC',
   SessionValidatorsStddevSampleSessionIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsStddevSampleSessionIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsStddevSampleUptimeAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_UPTIME_ASC',
+  SessionValidatorsStddevSampleUptimeDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_UPTIME_DESC',
   SessionValidatorsStddevSampleValidatorIdAsc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsStddevSampleValidatorIdDesc = 'SESSION_VALIDATORS_STDDEV_SAMPLE_VALIDATOR_ID_DESC',
   SessionValidatorsSumBestOrderAsc = 'SESSION_VALIDATORS_SUM_BEST_ORDER_ASC',
@@ -10584,6 +11267,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsSumReputationDesc = 'SESSION_VALIDATORS_SUM_REPUTATION_DESC',
   SessionValidatorsSumSessionIdAsc = 'SESSION_VALIDATORS_SUM_SESSION_ID_ASC',
   SessionValidatorsSumSessionIdDesc = 'SESSION_VALIDATORS_SUM_SESSION_ID_DESC',
+  SessionValidatorsSumUptimeAsc = 'SESSION_VALIDATORS_SUM_UPTIME_ASC',
+  SessionValidatorsSumUptimeDesc = 'SESSION_VALIDATORS_SUM_UPTIME_DESC',
   SessionValidatorsSumValidatorIdAsc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_ASC',
   SessionValidatorsSumValidatorIdDesc = 'SESSION_VALIDATORS_SUM_VALIDATOR_ID_DESC',
   SessionValidatorsVariancePopulationBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_BEST_ORDER_ASC',
@@ -10604,6 +11289,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVariancePopulationReputationDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_REPUTATION_DESC',
   SessionValidatorsVariancePopulationSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_ASC',
   SessionValidatorsVariancePopulationSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  SessionValidatorsVariancePopulationUptimeAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_UPTIME_ASC',
+  SessionValidatorsVariancePopulationUptimeDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_UPTIME_DESC',
   SessionValidatorsVariancePopulationValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_ASC',
   SessionValidatorsVariancePopulationValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_POPULATION_VALIDATOR_ID_DESC',
   SessionValidatorsVarianceSampleBestOrderAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_BEST_ORDER_ASC',
@@ -10624,6 +11311,8 @@ export enum ValidatorsOrderBy {
   SessionValidatorsVarianceSampleReputationDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_REPUTATION_DESC',
   SessionValidatorsVarianceSampleSessionIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_ASC',
   SessionValidatorsVarianceSampleSessionIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_SESSION_ID_DESC',
+  SessionValidatorsVarianceSampleUptimeAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_UPTIME_ASC',
+  SessionValidatorsVarianceSampleUptimeDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_UPTIME_DESC',
   SessionValidatorsVarianceSampleValidatorIdAsc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_ASC',
   SessionValidatorsVarianceSampleValidatorIdDesc = 'SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC',
 }
@@ -10679,35 +11368,28 @@ export type ValidatorListingQueryVariables = Exact<{
   sessionId: Scalars['String'];
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
+  uptimeFilter?: InputMaybe<IntFilter>;
+  reputationFilter?: InputMaybe<IntFilter>;
+  validatorId?: InputMaybe<StringFilter>;
 }>;
 
 export type ValidatorListingQuery = {
   __typename?: 'Query';
-  validators?: {
-    __typename?: 'ValidatorsConnection';
+  sessionValidators?: {
+    __typename?: 'SessionValidatorsConnection';
     totalCount: number;
     nodes: Array<{
-      __typename?: 'Validator';
-      authorityId: string;
+      __typename?: 'SessionValidator';
       id: string;
-      sessionValidators: {
-        __typename?: 'SessionValidatorsConnection';
-        edges: Array<{
-          __typename?: 'SessionValidatorsEdge';
-          node?: {
-            __typename?: 'SessionValidator';
-            id: string;
-            sessionId: string;
-            reputation: string;
-            isBest: boolean;
-            isNext: boolean;
-            isNextBest: boolean;
-            bestOrder: number;
-            nextBestOrder: number;
-            validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
-          } | null;
-        }>;
-      };
+      sessionId: string;
+      reputation: number;
+      uptime: number;
+      isBest: boolean;
+      isNext: boolean;
+      isNextBest: boolean;
+      bestOrder: number;
+      nextBestOrder: number;
+      validator?: { __typename?: 'Validator'; authorityId: string; id: string } | null;
     } | null>;
     pageInfo: {
       __typename?: 'PageInfo';
@@ -10753,7 +11435,8 @@ export type ValidatorSessionsQuery = {
               __typename?: 'SessionValidator';
               id: string;
               sessionId: string;
-              reputation: string;
+              reputation: number;
+              uptime: number;
               isBest: boolean;
               isNext: boolean;
               isNextBest: boolean;
@@ -10786,7 +11469,8 @@ export type ValidatorOfSessionQuery = {
     __typename?: 'SessionValidator';
     id: string;
     sessionId: string;
-    reputation: string;
+    reputation: number;
+    uptime: number;
     isBest: boolean;
     isNext: boolean;
     isNextBest: boolean;
@@ -10830,7 +11514,8 @@ export type SessionAuthValidatorNodeFragment = {
   __typename?: 'SessionValidator';
   id: string;
   sessionId: string;
-  reputation: string;
+  reputation: number;
+  uptime: number;
   isBest: boolean;
   isNext: boolean;
   isNextBest: boolean;
@@ -10847,7 +11532,8 @@ export type SessionAuthValidatorFragment = {
       __typename?: 'SessionValidator';
       id: string;
       sessionId: string;
-      reputation: string;
+      reputation: number;
+      uptime: number;
       isBest: boolean;
       isNext: boolean;
       isNextBest: boolean;
@@ -10887,7 +11573,8 @@ export type SessionAuthFragment = {
         __typename?: 'SessionValidator';
         id: string;
         sessionId: string;
-        reputation: string;
+        reputation: number;
+        uptime: number;
         isBest: boolean;
         isNext: boolean;
         isNextBest: boolean;
@@ -10950,6 +11637,16 @@ export type LastBlockQuery = {
   } | null;
 };
 
+export type CountriesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type CountriesQuery = {
+  __typename?: 'Query';
+  countryCodes?: {
+    __typename?: 'CountryCodesConnection';
+    nodes: Array<{ __typename?: 'CountryCode'; code: string; id: string } | null>;
+  } | null;
+};
+
 export type ProposalCounterQueryVariables = Exact<{ [key: string]: never }>;
 
 export type ProposalCounterQuery = {
@@ -10972,6 +11669,7 @@ export type ProposalCounterQuery = {
 export type ProposalsQueryVariables = Exact<{
   perPage: Scalars['Int'];
   offset: Scalars['Int'];
+  filter?: InputMaybe<ProposalItemFilter>;
 }>;
 
 export type ProposalsQuery = {
@@ -11209,7 +11907,8 @@ export type PublicKeysQuery = {
                 __typename?: 'SessionValidator';
                 id: string;
                 sessionId: string;
-                reputation: string;
+                reputation: number;
+                uptime: number;
                 isBest: boolean;
                 isNext: boolean;
                 isNextBest: boolean;
@@ -11269,7 +11968,8 @@ export type PublicKeyQuery = {
               __typename?: 'SessionValidator';
               id: string;
               sessionId: string;
-              reputation: string;
+              reputation: number;
+              uptime: number;
               isBest: boolean;
               isNext: boolean;
               isNextBest: boolean;
@@ -11330,7 +12030,8 @@ export type CurrentSessionAuthoritiesQuery = {
             __typename?: 'SessionValidator';
             id: string;
             sessionId: string;
-            reputation: string;
+            reputation: number;
+            uptime: number;
             isBest: boolean;
             isNext: boolean;
             isNextBest: boolean;
@@ -11371,7 +12072,8 @@ export type SessionKeysQuery = {
             __typename?: 'SessionValidator';
             id: string;
             sessionId: string;
-            reputation: string;
+            reputation: number;
+            uptime: number;
             isBest: boolean;
             isNext: boolean;
             isNextBest: boolean;
@@ -11456,7 +12158,8 @@ export type SessionThresholdsQuery = {
           __typename?: 'SessionValidator';
           id: string;
           sessionId: string;
-          reputation: string;
+          reputation: number;
+          uptime: number;
           isBest: boolean;
           isNext: boolean;
           isNextBest: boolean;
@@ -11533,6 +12236,7 @@ export const SessionAuthValidatorNodeFragmentDoc = gql`
       ...ValidatorMeta
     }
     reputation
+    uptime
     isBest
     isNext
     isNextBest
@@ -11596,12 +12300,29 @@ export const ProposalsVoteListViewFragmentDoc = gql`
   }
 `;
 export const ValidatorListingDocument = gql`
-  query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
-    validators(offset: $offset, first: $perPage) {
+  query ValidatorListing(
+    $sessionId: String!
+    $perPage: Int!
+    $offset: Int!
+    $uptimeFilter: IntFilter
+    $reputationFilter: IntFilter
+    $validatorId: StringFilter
+  ) {
+    sessionValidators(
+      orderBy: [BLOCK_NUMBER_DESC]
+      filter: {
+        validatorId: $validatorId
+        reputation: $reputationFilter
+        uptime: $uptimeFilter
+        sessionId: { equalTo: $sessionId }
+      }
+      offset: $offset
+      first: $perPage
+    ) {
       nodes {
-        ...ValidatorMeta
-        sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
-          ...SessionAuthValidator
+        ...SessionAuthValidatorNode
+        validator {
+          ...ValidatorMeta
         }
       }
       totalCount
@@ -11610,8 +12331,8 @@ export const ValidatorListingDocument = gql`
       }
     }
   }
+  ${SessionAuthValidatorNodeFragmentDoc}
   ${ValidatorMetaFragmentDoc}
-  ${SessionAuthValidatorFragmentDoc}
   ${PageInfoMetaFragmentDoc}
 `;
 
@@ -11630,6 +12351,9 @@ export const ValidatorListingDocument = gql`
  *      sessionId: // value for 'sessionId'
  *      perPage: // value for 'perPage'
  *      offset: // value for 'offset'
+ *      uptimeFilter: // value for 'uptimeFilter'
+ *      reputationFilter: // value for 'reputationFilter'
+ *      validatorId: // value for 'validatorId'
  *   },
  * });
  */
@@ -11871,6 +12595,45 @@ export function useLastBlockLazyQuery(
 export type LastBlockQueryHookResult = ReturnType<typeof useLastBlockQuery>;
 export type LastBlockLazyQueryHookResult = ReturnType<typeof useLastBlockLazyQuery>;
 export type LastBlockQueryResult = Apollo.QueryResult<LastBlockQuery, LastBlockQueryVariables>;
+export const CountriesDocument = gql`
+  query countries {
+    countryCodes {
+      nodes {
+        code
+        id
+      }
+    }
+  }
+`;
+
+/**
+ * __useCountriesQuery__
+ *
+ * To run a query within a React component, call `useCountriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCountriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCountriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCountriesQuery(baseOptions?: Apollo.QueryHookOptions<CountriesQuery, CountriesQueryVariables>) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<CountriesQuery, CountriesQueryVariables>(CountriesDocument, options);
+}
+export function useCountriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<CountriesQuery, CountriesQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<CountriesQuery, CountriesQueryVariables>(CountriesDocument, options);
+}
+export type CountriesQueryHookResult = ReturnType<typeof useCountriesQuery>;
+export type CountriesLazyQueryHookResult = ReturnType<typeof useCountriesLazyQuery>;
+export type CountriesQueryResult = Apollo.QueryResult<CountriesQuery, CountriesQueryVariables>;
 export const ProposalCounterDocument = gql`
   query ProposalCounter {
     proposalCounters(first: 2, offset: 1, orderBy: [BLOCK_NUMBER_DESC]) {
@@ -11918,8 +12681,8 @@ export type ProposalCounterQueryHookResult = ReturnType<typeof useProposalCounte
 export type ProposalCounterLazyQueryHookResult = ReturnType<typeof useProposalCounterLazyQuery>;
 export type ProposalCounterQueryResult = Apollo.QueryResult<ProposalCounterQuery, ProposalCounterQueryVariables>;
 export const ProposalsDocument = gql`
-  query Proposals($perPage: Int!, $offset: Int!) {
-    proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
+  query Proposals($perPage: Int!, $offset: Int!, $filter: ProposalItemFilter) {
+    proposalItems(filter: $filter, orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
       nodes {
         ...ProposalListView
       }
@@ -11947,6 +12710,7 @@ export const ProposalsDocument = gql`
  *   variables: {
  *      perPage: // value for 'perPage'
  *      offset: // value for 'offset'
+ *      filter: // value for 'filter'
  *   },
  * });
  */

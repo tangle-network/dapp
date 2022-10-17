@@ -1,9 +1,23 @@
-query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!) {
-  validators(offset: $offset, first: $perPage) {
+query ValidatorListing(
+  $sessionId: String!
+  $perPage: Int!
+  $offset: Int!
+  $uptimeFilter: IntFilter
+  $reputationFilter: IntFilter
+  $validatorId: StringFilter
+) {
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: {
+      validatorId: $validatorId
+      reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: { equalTo: $sessionId } }
+    offset: $offset
+    first: $perPage
+  ) {
     nodes {
-      ...ValidatorMeta
-      sessionValidators(first: 1, filter: { sessionId: { equalTo: $sessionId } }) {
-        ...SessionAuthValidator
+      ...SessionAuthValidatorNode
+      validator {
+        ...ValidatorMeta
       }
     }
 
@@ -60,7 +74,8 @@ query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
   }
   sessionValidators(
     orderBy: [BLOCK_NUMBER_DESC]
-    filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }) {
+    filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }
+  ) {
     aggregates {
       distinctCount {
         id

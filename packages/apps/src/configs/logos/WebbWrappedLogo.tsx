@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-function WebbWrappedLogo(element: JSX.Element) {
+function WebbWrappedLogo(element: JSX.Element): JSX.Element {
   return (
     <div
       style={{

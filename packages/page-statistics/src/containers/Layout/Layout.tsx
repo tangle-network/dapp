@@ -17,6 +17,10 @@ export const Layout: FC = ({ children }) => {
     return new ApolloClient({
       cache: new InMemoryCache(),
       uri: connectedEndpoint,
+      // @ts-ignore
+      fetchOptions: {
+        mode: 'cors',
+      },
     });
   }, [connectedEndpoint]);
 

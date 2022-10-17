@@ -250,11 +250,16 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
   }, [query]);
   return proposalsOverview;
 }
-
+type ProposalsFilters = {
+  type?: ProposalType[];
+  status?: ProposalStatus[];
+  chains?: number[];
+};
+export type ProposalsQuery = PageInfoQuery<ProposalsFilters>;
 /**
  * Listing query for proposals
  * */
-export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
+export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
   const [proposalsPage, setProposalsPage] = useState<ProposalsPage>({
     isLoading: false,
     val: null,
@@ -266,6 +271,14 @@ export function useProposals(reqQuery: PageInfoQuery): ProposalsPage {
       variables: {
         offset: reqQuery.offset,
         perPage: reqQuery.perPage,
+        filter:
+          reqQuery.filter.type || reqQuery.filter.status || reqQuery.filter.chains
+            ? {
+                status: reqQuery.filter.status ? { in: reqQuery.filter.status } : undefined,
+                type: reqQuery.filter.type ? { in: reqQuery.filter.type } : undefined,
+                chainId: reqQuery.filter.chains ? { in: reqQuery.filter.chains } : undefined,
+              }
+            : undefined,
       },
     }).catch((e) => {
       setProposalsPage({

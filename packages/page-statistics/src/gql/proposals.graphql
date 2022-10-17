@@ -4,9 +4,10 @@ query Proposals(
   $perPage: Int!
   # The number of proposals to skip
   $offset: Int!
+  $filter: ProposalItemFilter
 ) {
   # Listing proposals items
-  proposalItems(orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
+  proposalItems(filter: $filter, orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
     nodes {
       ...ProposalListView
     }
@@ -37,8 +38,6 @@ query ProposalsCounter(
     }
   }
 }
-
-
 
 # Proposals over view query
 query ProposalsOverview(

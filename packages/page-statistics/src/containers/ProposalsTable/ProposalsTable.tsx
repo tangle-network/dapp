@@ -7,9 +7,10 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { ProposalStatus } from '@webb-dapp/page-statistics/generated/graphql';
-import { fetchProposalsData } from '@webb-dapp/page-statistics/hooks';
-import { PageInfoQuery, ProposalListItem, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
+import { ChainConfig } from '@webb-dapp/api-providers';
+import { chainsConfig } from '@webb-dapp/apps/configs';
+import { ProposalStatus, ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
+import { ProposalListItem, ProposalsQuery, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
   Avatar,
@@ -17,13 +18,19 @@ import {
   Button,
   CardTable,
   Chip,
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+  Filter,
   LabelWithValue,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
+import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
-import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -92,6 +99,50 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     ),
   }),
 ];
+const PROPOSAL_TYPES: ProposalType[] = [
+  ProposalType.AnchorCreateProposal,
+  ProposalType.AnchorUpdateProposal,
+  ProposalType.EvmProposal,
+  ProposalType.FeeRecipientUpdateProposal,
+  ProposalType.MaxDepositLimitUpdateProposal,
+  ProposalType.MinWithdrawalLimitUpdateProposal,
+  ProposalType.ProposerSetUpdateProposal,
+  ProposalType.RefreshVote,
+  ProposalType.RescueTokensProposal,
+  ProposalType.ResourceIdUpdateProposal,
+  ProposalType.SetTreasuryHandlerProposal,
+  ProposalType.SetVerifierProposal,
+  ProposalType.TokenAddProposal,
+  ProposalType.TokenRemoveProposal,
+  ProposalType.WrappingFeeUpdateProposal,
+];
+const PROPOSAL_STATUS: ProposalStatus[] = [
+  ProposalStatus.Accepted,
+  ProposalStatus.Executed,
+  ProposalStatus.FailedToExecute,
+  ProposalStatus.Open,
+  ProposalStatus.Rejected,
+  ProposalStatus.Signed,
+];
+
+function mapProposalStatusToChipColor(status: ProposalStatus): ChipColors {
+  switch (status) {
+    case ProposalStatus.Accepted:
+      return 'blue';
+    case ProposalStatus.Executed:
+      return 'purple';
+    case ProposalStatus.FailedToExecute:
+      return 'purple';
+    case ProposalStatus.Open:
+      return 'green';
+    case ProposalStatus.Rejected:
+      return 'red';
+    case ProposalStatus.Removed:
+      return 'red';
+    case ProposalStatus.Signed:
+      return 'blue';
+  }
+}
 
 export const ProposalsTable = () => {
   // Pagination state
@@ -108,13 +159,35 @@ export const ProposalsTable = () => {
     }),
     [pageIndex, pageSize]
   );
-  const pageQuery: PageInfoQuery = useMemo(
+
+  const chains = useMemo<Array<[string, ChainConfig]>>(
+    () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
+    []
+  );
+
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
+  const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
+  const [selectedChains, setSelectedChains] = useState<'all' | [string, ChainConfig][]>('all');
+
+  const pageQuery: ProposalsQuery = useMemo(
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
-      filter: null,
+      filter: {
+        status: selectedProposalsStatuses === 'all' ? undefined : selectedProposalsStatuses,
+        type: selectedProposalTypes === 'all' ? undefined : selectedProposalTypes,
+        chains: selectedChains === 'all' ? undefined : selectedChains.map(([i]) => Number(i)),
+      },
     }),
-    [pageSize, pagination.pageIndex, pagination.pageSize]
+    [
+      pageSize,
+      pagination.pageIndex,
+      pagination.pageSize,
+      selectedProposalTypes,
+      selectedProposalsStatuses,
+      selectedChains,
+    ]
   );
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
 
@@ -152,6 +225,104 @@ export const ProposalsTable = () => {
       titleProps={{
         title: 'All Proposals',
       }}
+      leftTitle={
+        <Filter
+          searchPlaceholder={'Search  proposal type ,Chain , proposal status'}
+          searchText={globalFilter}
+          onSearchChange={(nextValue: string | number) => {
+            setGlobalFilter(nextValue.toString());
+          }}
+          clearAllFilters={() => {
+            table.setColumnFilters([]);
+            table.setGlobalFilter('');
+          }}
+        >
+          <Collapsible>
+            <CollapsibleButton>Proposal Type</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenuGroup
+                  value={selectedProposalTypes}
+                  options={PROPOSAL_TYPES}
+                  onChange={(v) => {
+                    setSelectedProposalTypes(v);
+                  }}
+                  labelGetter={(proposalType) => <span className={'text-xs'}>{proposalType}</span>}
+                  keyGetter={(proposalType) => `Filter_proposals${proposalType}`}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible>
+            <CollapsibleButton>Proposal Status</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenuGroup
+                  value={selectedProposalsStatuses}
+                  options={PROPOSAL_STATUS}
+                  onChange={(v) => {
+                    setSelectedProposalStatuses(v);
+                  }}
+                  labelGetter={(proposalStatus) => (
+                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>
+                  )}
+                  keyGetter={(proposalStatus) => `Filter_proposals${proposalStatus}`}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Chain</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenuGroup
+                  value={selectedChains}
+                  options={chains}
+                  onChange={(v) => {
+                    setSelectedChains(v);
+                  }}
+                  iconGetter={([_key, chainConfig]) => (
+                    <div
+                      style={{
+                        maxWidth: 20,
+                        maxHeight: 20,
+                        overflow: 'hidden',
+                        backgroundSize: '20px 20px',
+                      }}
+                    >
+                      {<chainConfig.logo />}
+                    </div>
+                  )}
+                  labelGetter={([_, chain]) => chain.name}
+                  keyGetter={([chainId]) => `Filter_proposals${chainId}`}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </Filter>
+      }
     >
       <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} />
     </CardTable>

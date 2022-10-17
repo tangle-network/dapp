@@ -271,7 +271,6 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const [call, query] = useSessionKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
   const activeSession = useActiveSession();
-  console.log(activeSession);
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -279,7 +278,6 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   });
   useEffect(() => {
     if (metaData.val) {
-      console.log(`Active session ${metaData.val.activeSession}`);
       call({
         variables: {
           SessionId: [metaData.val.activeSession, String(Number(metaData.val.activeSession) + 1)],
@@ -298,7 +296,6 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
     const subscription = query.observable
       .map((res): Loadable<[PublicKey, PublicKey]> => {
         if (res.data) {
-          console.log(`Res.data.session (keys)`, res.data.sessions);
           const val: PublicKey[] =
             res.data.sessions?.nodes
               .filter((i) => i?.publicKey)
@@ -323,7 +320,6 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                   isDone: Number(activeSession) > Number(session.id),
                 };
               }) || [];
-          console.log(`val of keys`, val);
           const activeKey = val[0];
           const nextKey = val[1];
           return {
@@ -415,8 +411,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
                 account: auth.id,
                 id: auth.id,
                 location: 'any',
-                reputation: Number(auth.reputation),
-                uptime: 100,
+                reputation: Number(auth.reputation) * Math.pow(10, -7),
+                uptime: auth.uptime,
               };
             });
           const validators = sessionAuthorities.length;

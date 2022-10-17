@@ -13,4 +13,8 @@ export interface FilterProps extends WebbComponentBase, PropsOf<'div'> {
    * Clear all filters function
    */
   clearAllFilters?: () => void;
+
+  /**
+   * Search field place holder*/
+  searchPlaceholder?: string;
 }
