@@ -280,14 +280,17 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
         if (res.data && res.data.validators) {
           const validators = res.data.validators;
           const items = validators.nodes
-            .filter((v) => v !== null && v.sessionValidators.edges[0])
+            .filter((v) => v !== null)
             .map((validator): AuthorityListItem => {
-              const auth = mapAuthorities(validator?.sessionValidators!);
+              const hasSessionValidator = Boolean(validator?.sessionValidators.edges[0]);
+              const reputation = hasSessionValidator
+                ? mapAuthorities(validator?.sessionValidators!)[0].reputation
+                : '0';
               return {
                 id: validator?.id!,
                 location: 'any',
                 uptime: '50',
-                reputation: auth[0].reputation ?? '0',
+                reputation,
               };
             });
           return {
