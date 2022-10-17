@@ -1,4 +1,4 @@
-import { BridgeInputGroup } from '@webb-dapp/webb-ui-components/components/BridgeInputGroup';
+import { BridgeInputGroup } from '@webb-dapp/webb-ui-components/components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

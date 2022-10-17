@@ -1,9 +1,22 @@
-import { DepositCard } from '@webb-dapp/webb-ui-components/containers';
+import { DepositCard, WithdrawCard } from '@webb-dapp/webb-ui-components/containers';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 
 const BridgeControlShowcase = () => {
   return (
-    <div className='p-4 bg-mono-0 dark:bg-mono-200 rounded-xl'>
-      <DepositCard buttonProps={{ children: 'Connect wallet' }} />
+    <div className='p-4 space-y-10 justify-items-stretch bg-mono-0 dark:bg-mono-200 rounded-xl'>
+      <div>
+        <Typography variant='h3' ta='center' fw='bold' className='mb-4'>
+          Deposit Card
+        </Typography>
+        <DepositCard className='mx-auto' buttonProps={{ children: 'Connect wallet' }} />
+      </div>
+
+      <div>
+        <Typography variant='h3' ta='center' fw='bold' className='mb-4'>
+          Withdraw Card
+        </Typography>
+        <WithdrawCard className='mx-auto' />
+      </div>
     </div>
   );
 };

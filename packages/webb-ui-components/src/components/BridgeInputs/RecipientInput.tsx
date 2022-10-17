@@ -31,7 +31,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     }, [value, setAddress]);
 
     return (
-      <InputWrapper {...props} className={twMerge('cursor-auto', className)} ref={ref}>
+      <InputWrapper {...props} className={twMerge('cursor-auto space-x-2', className)} ref={ref}>
         <div className='flex flex-col w-full space-y-1'>
           <Label htmlFor={id}>
             <TitleWithInfo
