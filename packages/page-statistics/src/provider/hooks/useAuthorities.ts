@@ -319,7 +319,6 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
             .filter((v) => v !== null)
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator!);
-              console.log(`Session validator`, auth);
               return {
                 id: sessionValidator?.validator?.id!,
                 location: 'any',
