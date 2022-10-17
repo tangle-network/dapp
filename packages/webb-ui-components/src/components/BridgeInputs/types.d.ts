@@ -1,6 +1,7 @@
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
 import { ComponentProps, ReactElement } from 'react';
 
+import { AmountMenu } from '../AmountMenu';
 import { InputProps } from '../Input/types';
 import { TitleWithInfo } from '../TitleWithInfo';
 
@@ -125,6 +126,11 @@ export interface AmountInputProps extends InputWrapperProps {
    * Callback function when the max button is clicked
    */
   onMaxBtnClick?: PropsOf<'button'>['onClick'];
+
+  /**
+   * The amount menu props to pass into the AmountMenu component
+   */
+  amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
 export interface FixedAmountProps extends InputWrapperProps {
@@ -148,6 +154,11 @@ export interface FixedAmountProps extends InputWrapperProps {
    * The callback function to control the component
    */
   onChange?: (nextVal: number) => void;
+
+  /**
+   * The amount menu props to pass into the AmountMenu component
+   */
+  amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
 export interface RecipientInputProps extends InputWrapperProps {
