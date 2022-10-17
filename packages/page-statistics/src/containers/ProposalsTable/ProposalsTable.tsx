@@ -164,7 +164,6 @@ export const ProposalsTable = () => {
     () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
     []
   );
-  const chainIds = useMemo(() => chains.map(([key]) => key), [chains]);
 
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
@@ -178,7 +177,7 @@ export const ProposalsTable = () => {
       filter: {
         status: selectedProposalsStatuses === 'all' ? undefined : selectedProposalsStatuses,
         type: selectedProposalTypes === 'all' ? undefined : selectedProposalTypes,
-        chains: selectedChains === 'all' ? undefined : selectedChains.map((i) => Number(i)),
+        chains: selectedChains === 'all' ? undefined : selectedChains.map(([i]) => Number(i)),
       },
     }),
     [
@@ -221,25 +220,6 @@ export const ProposalsTable = () => {
     },
   });
 
-  const isAllProposalStatusesSelected = useMemo(
-    () =>
-      selectedProposalsStatuses === 'all' ||
-      (Array.isArray(selectedProposalsStatuses) && selectedProposalsStatuses.length === PROPOSAL_STATUS.length),
-    [selectedProposalsStatuses]
-  );
-
-  const isAllProposalTypesSelected = useMemo(
-    () =>
-      selectedProposalTypes === 'all' ||
-      (Array.isArray(selectedProposalTypes) && selectedProposalTypes.length === PROPOSAL_TYPES.length),
-    [selectedProposalTypes]
-  );
-
-  const isAllChainsSelected = useMemo(
-    () => selectedChains === 'all' || (Array.isArray(selectedChains) && selectedChains.length === chains.length),
-    [selectedChains, chains]
-  );
-
   return (
     <CardTable
       titleProps={{
@@ -268,40 +248,15 @@ export const ProposalsTable = () => {
                   overflowY: 'auto',
                 }}
               >
-                <CheckBoxMenu
-                  checkboxProps={{
-                    isChecked: isAllProposalTypesSelected,
+                <CheckBoxMenuGroup
+                  value={selectedProposalTypes}
+                  options={PROPOSAL_TYPES}
+                  onChange={(v) => {
+                    setSelectedProposalTypes(v);
                   }}
-                  className={'text-xs'}
-                  onChange={() => {
-                    const next = isAllProposalTypesSelected ? [] : 'all';
-                    setSelectedProposalTypes(next);
-                  }}
-                  label={'All'}
+                  labelGetter={(proposalType) => <span className={'text-xs'}>{proposalType}</span>}
+                  keyGetter={(proposalType) => `Filter_proposals${proposalType}`}
                 />
-                {PROPOSAL_TYPES.map((proposalType) => (
-                  <CheckBoxMenu
-                    className={'text-xs'}
-                    checkboxProps={{
-                      isChecked: isAllProposalTypesSelected ? true : selectedProposalTypes.indexOf(proposalType) > -1,
-                    }}
-                    onChange={() => {
-                      const isSelected = selectedProposalTypes.indexOf(proposalType) > -1;
-                      // IF all the countries are selected
-                      if (isAllProposalTypesSelected) {
-                        setSelectedProposalTypes(PROPOSAL_TYPES.filter((c) => c !== proposalType));
-                      } else if (Array.isArray(selectedProposalTypes)) {
-                        if (isSelected) {
-                          setSelectedProposalTypes(selectedProposalTypes.filter((c) => c !== proposalType));
-                        } else {
-                          setSelectedProposalTypes([...selectedProposalTypes, proposalType]);
-                        }
-                      }
-                    }}
-                    label={proposalType}
-                    key={`Filter_proposals${proposalType}`}
-                  />
-                ))}
               </div>
             </CollapsibleContent>
           </Collapsible>

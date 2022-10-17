@@ -225,13 +225,6 @@ const LocationFilter: FC<{
   onChange(nextValue: 'all' | string[]): void;
   countries: string[];
 }> = ({ countries, onChange, selected }) => {
-  const isAllSelected = useMemo(() => {
-    if (selected === 'all' || (Array.isArray(selected) && selected.length === countries.length)) {
-      return true;
-    }
-    return false;
-  }, [selected, countries]);
-
   return (
     <div
       style={{
