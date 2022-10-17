@@ -138,7 +138,6 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     () => headers[0].filter((header) => header.column.getCanFilter()),
     [headers]
   );
-  console.log({ authorities });
   return (
     <CardTable
       titleProps={{

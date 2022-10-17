@@ -8,7 +8,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ProposalStatus } from '@webb-dapp/page-statistics/generated/graphql';
-import { fetchProposalsData } from '@webb-dapp/page-statistics/hooks';
 import { PageInfoQuery, ProposalListItem, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
@@ -23,7 +22,6 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
-import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
