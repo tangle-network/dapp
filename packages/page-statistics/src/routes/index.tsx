@@ -20,6 +20,8 @@ const PageProposalDetail = lazy(() => import('@webb-dapp/page-statistics/pages/P
 
 const PageComponentsShowcase = lazy(() => import('@webb-dapp/page-statistics/pages/ComponentsShowcase'));
 
+const PageBridgeControlShowcase = lazy(() => import('@webb-dapp/page-statistics/pages/BridgeControlShowcase'));
+
 const CSuspense: FC = ({ children }) => {
   return (
     <Suspense
@@ -37,6 +39,14 @@ const CSuspense: FC = ({ children }) => {
 export const routes: RouterConfigData[] = [
   {
     children: [
+      {
+        element: (
+          <CSuspense>
+            <PageBridgeControlShowcase />
+          </CSuspense>
+        ),
+        path: 'bridge-control-showcase/*',
+      },
       {
         element: (
           <CSuspense>

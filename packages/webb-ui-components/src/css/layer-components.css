@@ -71,10 +71,10 @@
 
 /* Small utility used for labels and warnings */
 .utility {
-  @apply font-bold;
-
   font-size: 12px;
   line-height: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 @media screen and (max-width: 800px) {
