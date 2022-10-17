@@ -272,7 +272,7 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
         offset: reqQuery.offset,
         perPage: reqQuery.perPage,
         filter:
-          reqQuery.filter.type || reqQuery.filter.status
+          reqQuery.filter.type || reqQuery.filter.status || reqQuery.filter.chains
             ? {
                 status: reqQuery.filter.status ? { in: reqQuery.filter.status } : undefined,
                 type: reqQuery.filter.type ? { in: reqQuery.filter.type } : undefined,

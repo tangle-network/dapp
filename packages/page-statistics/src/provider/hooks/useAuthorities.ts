@@ -281,7 +281,9 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
   // fetch the data once the filter has changed
   useEffect(() => {
     const filter = reqQuery.filter;
-    const reputation = rangeIntoIntFilter(filter.reputation ?? []);
+    const reputation = rangeIntoIntFilter(
+      filter.reputation ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range) : []
+    );
     const uptime = rangeIntoIntFilter(filter.uptime ?? []);
     if (metaData.val) {
       call({

@@ -172,10 +172,9 @@ export const ProposalsTable = () => {
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
       filter: {
-        status: selectedProposalsStatuses === 'all' ? PROPOSAL_STATUS : selectedProposalsStatuses,
-        type: selectedProposalTypes === 'all' ? PROPOSAL_TYPES : selectedProposalTypes,
-        chains:
-          selectedChains === 'all' ? chains.map(([chain]) => Number(chain)) : selectedChains.map((i) => Number(i)),
+        status: selectedProposalsStatuses === 'all' ? undefined : selectedProposalsStatuses,
+        type: selectedProposalTypes === 'all' ? undefined : selectedProposalTypes,
+        chains: selectedChains === 'all' ? undefined : selectedChains.map((i) => Number(i)),
       },
     }),
     [
@@ -185,7 +184,6 @@ export const ProposalsTable = () => {
       selectedProposalTypes,
       selectedProposalsStatuses,
       selectedChains,
-      chains,
     ]
   );
   const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
@@ -381,10 +379,8 @@ export const ProposalsTable = () => {
                     onChange={() => {
                       const isSelected = selectedChains.indexOf(chainId) > -1;
                       // IF all the countries are selected
-                      if (isAllProposalStatusesSelected) {
-                        setSelectedChains(
-                          chains.filter(([chainId]) => chainId !== chainId).map(([chainId]) => chainId)
-                        );
+                      if (isAllChainsSelected) {
+                        setSelectedChains(chains.filter(([c]) => c !== chainId).map(([chainId]) => chainId));
                       } else if (Array.isArray(selectedChains)) {
                         if (isSelected) {
                           setSelectedChains(selectedChains.filter((c) => c !== chainId));
