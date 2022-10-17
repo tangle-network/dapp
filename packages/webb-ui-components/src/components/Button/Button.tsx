@@ -49,38 +49,41 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
 
   const [buttonProps, { tagName: Component }] = useButtonProps({ tagName: asProps, isDisabled, ...restProps });
 
-  const mergedClassName = twMerge(getButtonClassNameByVariant(variant, size), className);
+  const mergedClassName = twMerge(
+    'max-w-max',
+    cx({ 'w-full max-w-none': isFullWidth }),
+    getButtonClassNameByVariant(variant, size),
+    className
+  );
 
   const contentProps = { children, leftIcon, rightIcon };
 
   return (
-    <div className={cx('inline-block', { 'w-full': isFullWidth })}>
-      <Component
-        {...restProps}
-        {...buttonProps}
-        disabled={buttonProps.disabled || isLoading}
-        className={cx(mergedClassName, { 'w-full': isFullWidth })}
-        ref={ref}
-      >
-        {isLoading && spinnerPlacement === 'start' && <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>}
+    <Component
+      {...restProps}
+      {...buttonProps}
+      disabled={buttonProps.disabled || isLoading}
+      className={cx(mergedClassName)}
+      ref={ref}
+    >
+      {isLoading && spinnerPlacement === 'start' && <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>}
 
-        {isLoading ? (
-          loadingText || (
-            <span className='opacity-0'>
-              <ButtonContent {...contentProps} />
-            </span>
-          )
-        ) : (
-          <ButtonContent {...contentProps} />
-        )}
+      {isLoading ? (
+        loadingText || (
+          <span className='opacity-0'>
+            <ButtonContent {...contentProps} />
+          </span>
+        )
+      ) : (
+        <ButtonContent {...contentProps} />
+      )}
 
-        {isLoading && spinnerPlacement === 'end' && (
-          <ButtonSpinner label={loadingText} placement='end'>
-            {spinner}
-          </ButtonSpinner>
-        )}
-      </Component>
-    </div>
+      {isLoading && spinnerPlacement === 'end' && (
+        <ButtonSpinner label={loadingText} placement='end'>
+          {spinner}
+        </ButtonSpinner>
+      )}
+    </Component>
   );
 });
 

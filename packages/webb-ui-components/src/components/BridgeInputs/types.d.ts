@@ -1,6 +1,9 @@
 import { PropsOf, WebbComponentBase } from '@webb-dapp/webb-ui-components/types';
+import { ComponentProps, ReactElement } from 'react';
 
+import { AmountMenu } from '../AmountMenu';
 import { InputProps } from '../Input/types';
+import { TitleWithInfo } from '../TitleWithInfo';
 
 export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {
   /**
@@ -8,10 +11,16 @@ export interface InputWrapperProps extends WebbComponentBase, PropsOf<'div'> {
    * @default "amount"
    */
   id?: string;
+
+  /**
+   * Used to override the default title of an input
+   */
+  title?: string;
+
   /**
    * The tooltip info
    */
-  info?: string;
+  info?: ComponentProps<typeof TitleWithInfo>['info'];
 }
 
 /**
@@ -22,6 +31,7 @@ export type ChainType = {
    * The chain name
    */
   name: string;
+
   /**
    * The token symbol to display of the chain
    */
@@ -36,10 +46,12 @@ export type TokenType = {
    * The token symbol to display token logo
    */
   symbol: string;
+
   /**
    * The token balance
    */
   balance?: number | string;
+
   /**
    * Token token balance in usd
    */
@@ -64,6 +76,7 @@ export type AssetType = {
    * The token balance
    */
   balance?: number | string;
+
   /**
    * Token token balance in usd
    */
@@ -76,6 +89,7 @@ export interface ChainInputProps extends InputWrapperProps {
    * Will display `select chain` when the chain not provided
    */
   chain?: ChainType;
+
   /**
    * The chain type
    * @type "source" | "dest"
@@ -97,22 +111,26 @@ export interface AmountInputProps extends InputWrapperProps {
    * @default "amount"
    */
   id?: string;
-  /**
-   * The tooltip info
-   */
-  info?: string;
+
   /**
    * The amount value
    */
   amount?: InputProps['value'];
+
   /**
    * Callback function to control the amount value
    */
   onAmountChange?: InputProps['onChange'];
+
   /**
    * Callback function when the max button is clicked
    */
   onMaxBtnClick?: PropsOf<'button'>['onClick'];
+
+  /**
+   * The amount menu props to pass into the AmountMenu component
+   */
+  amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
 export interface FixedAmountProps extends InputWrapperProps {
@@ -121,22 +139,26 @@ export interface FixedAmountProps extends InputWrapperProps {
    * @default "amount"
    */
   id?: string;
-  /**
-   * The tooltip info
-   */
-  info?: string;
+
   /**
    * The fixed number list to display
    */
   values: number[];
+
   /**
    * The value prop
    */
   value?: number;
+
   /**
    * The callback function to control the component
    */
   onChange?: (nextVal: number) => void;
+
+  /**
+   * The amount menu props to pass into the AmountMenu component
+   */
+  amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
 export interface RecipientInputProps extends InputWrapperProps {
@@ -144,6 +166,7 @@ export interface RecipientInputProps extends InputWrapperProps {
    * The input value
    */
   value?: InputProps['value'];
+
   /**
    * Callback function to control the input value
    */
@@ -159,8 +182,23 @@ export interface RelayerInputProps extends InputWrapperProps {
    * The relayer address to display
    */
   relayerAddress?: string;
+
   /**
    * The external url of a relayer
    */
   externalLink?: string;
 }
+
+export interface InfoItemProps extends PropsOf<'div'> {
+  /**
+   * The left text props (props of TitleWithInfo component)
+   */
+  leftTextProps: ComponentProps<typeof TitleWithInfo>;
+
+  /**
+   * Right content
+   */
+  rightContent?: string | ReactElement;
+}
+
+export interface BridgeInputGroupProps extends PropsOf<'div'> {}
