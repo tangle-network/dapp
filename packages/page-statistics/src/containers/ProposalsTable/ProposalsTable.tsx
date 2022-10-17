@@ -31,7 +31,6 @@ import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types'
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
-import * as flags from 'country-flag-icons/react/3x2';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -125,6 +124,7 @@ const PROPOSAL_STATUS: ProposalStatus[] = [
   ProposalStatus.Rejected,
   ProposalStatus.Signed,
 ];
+
 function mapProposalStatusToChipColor(status: ProposalStatus): ChipColors {
   switch (status) {
     case ProposalStatus.Accepted:
@@ -143,6 +143,7 @@ function mapProposalStatusToChipColor(status: ProposalStatus): ChipColors {
       return 'blue';
   }
 }
+
 export const ProposalsTable = () => {
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -347,7 +348,7 @@ export const ProposalsTable = () => {
                   onChange={(v) => {
                     setSelectedChains(v);
                   }}
-                  icon={([_key, chainConfig]) => (
+                  iconGetter={([_key, chainConfig]) => (
                     <div
                       style={{
                         maxWidth: 20,
@@ -362,7 +363,7 @@ export const ProposalsTable = () => {
                   labelGetter={([_, chain]) => chain.name}
                   keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 />
-
+              </div>
             </CollapsibleContent>
           </Collapsible>
         </Filter>
