@@ -7,13 +7,10 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { ChainConfig } from '@webb-dapp/api-providers';
+import { chainsConfig } from '@webb-dapp/apps/configs';
 import { ProposalStatus, ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
-import {
-  PageInfoQuery,
-  ProposalListItem,
-  ProposalsQuery,
-  useProposals,
-} from '@webb-dapp/page-statistics/provider/hooks';
+import { ProposalListItem, ProposalsQuery, useProposals } from '@webb-dapp/page-statistics/provider/hooks';
 import { getChipColorByProposalType } from '@webb-dapp/page-statistics/utils';
 import {
   Avatar,
@@ -163,6 +160,7 @@ export const ProposalsTable = () => {
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
   const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
+  const [selectedChains, setSelectedChains] = useState<'all' | string[]>('all');
 
   const pageQuery: ProposalsQuery = useMemo(
     () => ({
@@ -219,6 +217,16 @@ export const ProposalsTable = () => {
       (Array.isArray(selectedProposalTypes) && selectedProposalTypes.length === PROPOSAL_TYPES.length),
     [selectedProposalTypes]
   );
+
+  const chains = useMemo<Array<[string, ChainConfig]>>(
+    () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
+    []
+  );
+  const isAllChainsSelected = useMemo(
+    () => selectedChains === 'all' || (Array.isArray(selectedChains) && selectedChains.length === chains.length),
+    [selectedChains, chains]
+  );
+
   return (
     <CardTable
       titleProps={{
@@ -327,6 +335,67 @@ export const ProposalsTable = () => {
                     }}
                     label={<Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>}
                     key={`Filter_proposals${proposalStatus}`}
+                  />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Chain</CollapsibleButton>
+            <CollapsibleContent>
+              <div
+                style={{
+                  maxWidth: '300px',
+                  maxHeight: 300,
+                  overflow: 'hidden',
+                  overflowY: 'auto',
+                }}
+              >
+                <CheckBoxMenu
+                  checkboxProps={{
+                    isChecked: isAllChainsSelected,
+                  }}
+                  onChange={() => {
+                    const next = isAllChainsSelected ? [] : 'all';
+                    setSelectedChains(next);
+                  }}
+                  label={'All'}
+                />
+                {chains.map(([chainId, chainConfig]) => (
+                  <CheckBoxMenu
+                    checkboxProps={{
+                      isChecked: isAllChainsSelected ? true : selectedChains.indexOf(chainId) > -1,
+                    }}
+                    onChange={() => {
+                      const isSelected = selectedChains.indexOf(chainId) > -1;
+                      // IF all the countries are selected
+                      if (isAllProposalStatusesSelected) {
+                        setSelectedChains(
+                          chains.filter(([chainId]) => chainId !== chainId).map(([chainId]) => chainId)
+                        );
+                      } else if (Array.isArray(selectedChains)) {
+                        if (isSelected) {
+                          setSelectedChains(selectedChains.filter((c) => c !== chainId));
+                        } else {
+                          setSelectedChains([...selectedChains, chainId]);
+                        }
+                      }
+                    }}
+                    icon={
+                      <div
+                        style={{
+                          maxWidth: 20,
+                          maxHeight: 20,
+                          overflow: 'hidden',
+                          backgroundSize: '20px 20px',
+                        }}
+                      >
+                        {<chainConfig.logo />}
+                      </div>
+                    }
+                    label={<div>{chainConfig.name}</div>}
+                    key={`Filter_proposals${chainId}`}
                   />
                 ))}
               </div>

@@ -10,6 +10,7 @@ function PolkadotLogo() {
       y='0px'
       viewBox='0 0 1326.1 1410.3'
       fill='#E6007A'
+      width={'100%'}
     >
       <ellipse cx='663' cy='147.9' rx='254.3' ry='147.9' />
       <ellipse cx='663' cy='1262.3' rx='254.3' ry='147.9' />

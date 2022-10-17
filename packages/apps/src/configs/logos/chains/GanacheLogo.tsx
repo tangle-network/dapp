@@ -3,8 +3,7 @@ import * as React from 'react';
 function GanacheLogo() {
   return (
     <svg
-      width='256px'
-      height='288px'
+      width={'100%'}
       viewBox='0 0 256 288'
       version='1.1'
       xmlns='http://www.w3.org/2000/svg'

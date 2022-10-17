@@ -22,7 +22,6 @@ import { DonutChartContainer, ProposalsTable, TimeRange } from '../containers';
 import { ProposalListItem, ProposalStatus, useProposalsOverview } from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
-
 const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('height', {
     header: 'Height',
