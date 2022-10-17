@@ -1,5 +1,5 @@
 import { ChevronDown } from '@webb-dapp/webb-ui-components/icons';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -30,7 +30,19 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
     },
     ref
   ) => {
-    const mergedClsx = useMemo(() => twMerge('cursor-auto space-x-2', className), [className]);
+    const mergedClsx = useMemo(() => twMerge('cursor-auto select-none space-x-2', className), [className]);
+
+    // Tooltip state
+    const [isOpen, setIsOpen] = useState(false);
+
+    // The amount menu callback
+    const onAmountTypeChange = useCallback(
+      (nextVal: 'fixed' | 'custom') => {
+        setIsOpen(false);
+        amountMenuProps?.onChange?.(nextVal);
+      },
+      [amountMenuProps]
+    );
 
     return (
       <InputWrapper {...props} className={mergedClsx} ref={ref}>
@@ -45,15 +57,17 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
               titleClassName='uppercase !text-inherit'
             />
 
-            <Tooltip>
-              <TooltipTrigger>
-                <ChevronDown />
-              </TooltipTrigger>
+            {amountMenuProps && (
+              <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
+                <TooltipTrigger>
+                  <ChevronDown />
+                </TooltipTrigger>
 
-              <TooltipBody>
-                <AmountMenu {...amountMenuProps} />
-              </TooltipBody>
-            </Tooltip>
+                <TooltipBody>
+                  <AmountMenu {...amountMenuProps} onChange={onAmountTypeChange} />
+                </TooltipBody>
+              </Tooltip>
+            )}
           </Label>
 
           <Input id={id} name={id} value={amount} onChange={onAmountChange} placeholder='0' size='sm' />

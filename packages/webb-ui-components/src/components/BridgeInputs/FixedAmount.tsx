@@ -16,12 +16,24 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   ) => {
     const [value, setValue] = useState(() => valueProp);
 
+    // Tooltip state
+    const [isOpen, setIsOpen] = useState(false);
+
     const onClick = useCallback(
       (nextVal: number) => {
         setValue(nextVal);
         onChangeProp?.(nextVal);
       },
       [onChangeProp, setValue]
+    );
+
+    // The amount menu callback
+    const onAmountTypeChange = useCallback(
+      (nextVal: 'fixed' | 'custom') => {
+        setIsOpen(false);
+        amountMenuProps?.onChange?.(nextVal);
+      },
+      [amountMenuProps]
     );
 
     useEffect(() => {
@@ -41,15 +53,17 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
               titleClassName='uppercase !text-inherit'
             />
 
-            <Tooltip>
-              <TooltipTrigger>
-                <ChevronDown />
-              </TooltipTrigger>
+            {amountMenuProps && (
+              <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
+                <TooltipTrigger>
+                  <ChevronDown />
+                </TooltipTrigger>
 
-              <TooltipBody>
-                <AmountMenu {...amountMenuProps} />
-              </TooltipBody>
-            </Tooltip>
+                <TooltipBody>
+                  <AmountMenu {...amountMenuProps} onChange={onAmountTypeChange} />
+                </TooltipBody>
+              </Tooltip>
+            )}
           </Label>
 
           <div className='flex space-x-2'>
