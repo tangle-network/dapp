@@ -11557,6 +11557,7 @@ export type ValidatorListingQueryVariables = Exact<{
   offset: Scalars['Int'];
   uptimeFilter?: InputMaybe<IntFilter>;
   reputationFilter?: InputMaybe<IntFilter>;
+  validatorId?: InputMaybe<StringFilter>;
 }>;
 
 
@@ -11823,10 +11824,10 @@ export const ProposalsVoteListViewFragmentDoc = gql`
 }
     `;
 export const ValidatorListingDocument = gql`
-    query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!, $uptimeFilter: IntFilter, $reputationFilter: IntFilter) {
+    query ValidatorListing($sessionId: String!, $perPage: Int!, $offset: Int!, $uptimeFilter: IntFilter, $reputationFilter: IntFilter, $validatorId: StringFilter) {
   sessionValidators(
     orderBy: [BLOCK_NUMBER_DESC]
-    filter: {reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: {equalTo: $sessionId}}
+    filter: {validatorId: $validatorId, reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: {equalTo: $sessionId}}
     offset: $offset
     first: $perPage
   ) {
@@ -11863,6 +11864,7 @@ ${PageInfoMetaFragmentDoc}`;
  *      offset: // value for 'offset'
  *      uptimeFilter: // value for 'uptimeFilter'
  *      reputationFilter: // value for 'reputationFilter'
+ *      validatorId: // value for 'validatorId'
  *   },
  * });
  */

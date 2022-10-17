@@ -267,6 +267,7 @@ type AuthorizesFilter = {
   uptime?: Range;
   reputation?: Range;
   countries?: string[];
+  search?: string;
 };
 export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
 export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loadable<Page<AuthorityListItem>> {
@@ -282,7 +283,6 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
     const filter = reqQuery.filter;
     const reputation = rangeIntoIntFilter(filter.reputation ?? []);
     const uptime = rangeIntoIntFilter(filter.uptime ?? []);
-    console.log({ uptime });
     if (metaData.val) {
       call({
         variables: {
@@ -291,6 +291,11 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
           sessionId: String(Number(metaData.val.activeSession) - 1),
           reputationFilter: reputation ?? undefined,
           uptimeFilter: uptime ?? undefined,
+          validatorId: filter.search
+            ? {
+                equalTo: filter.search,
+              }
+            : undefined,
         },
       }).catch((e) => {
         setAuthorities({

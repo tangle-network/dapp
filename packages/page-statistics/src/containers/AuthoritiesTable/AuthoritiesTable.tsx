@@ -109,6 +109,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
 
   const [uptimeFilter, setUptimeFilter] = useState<[number, number]>([0, 100]);
   const [reputationFilter, setReputationFilter] = useState<[number, number]>([0, 100]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const query = useMemo<AuthorisesQuery>(
     () => ({
@@ -117,13 +118,13 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
       filter: {
         uptime: uptimeFilter,
         reputation: reputationFilter,
-        countries: [],
+        countries: selectedCountries === 'all' ? countries : selectedCountries,
+        search: globalFilter,
       },
     }),
-    [pageIndex, pageSize, uptimeFilter, reputationFilter]
+    [pageIndex, pageSize, uptimeFilter, reputationFilter, selectedCountries, countries, globalFilter]
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
 
   const authorities = useAuthorities(query);
   const totalItems = useMemo(() => authorities.val?.pageInfo.count ?? 0, [authorities]);

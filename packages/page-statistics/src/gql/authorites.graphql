@@ -4,11 +4,12 @@ query ValidatorListing(
   $offset: Int!
   $uptimeFilter: IntFilter
   $reputationFilter: IntFilter
-#  $countryFilter: CountryCodeFilter
+  $validatorId: StringFilter
 ) {
   sessionValidators(
     orderBy: [BLOCK_NUMBER_DESC]
     filter: {
+      validatorId: $validatorId
       reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: { equalTo: $sessionId } }
     offset: $offset
     first: $perPage
