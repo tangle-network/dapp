@@ -49,7 +49,7 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   recipientInputProps?: ComponentProps<typeof RecipientInput>;
 
   /**
-   * The recived amount
+   * The received amount
    */
   receivedAmount?: number;
 

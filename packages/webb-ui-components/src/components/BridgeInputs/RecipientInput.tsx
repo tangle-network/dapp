@@ -49,7 +49,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
 
         {!address && (
           <Button variant='utility' size='sm' onClick={onClick}>
-            Patse
+            Paste
           </Button>
         )}
       </InputWrapper>
