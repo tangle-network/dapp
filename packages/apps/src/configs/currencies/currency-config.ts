@@ -19,7 +19,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.ETH,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(EtherLogo),
+    icon: EtherLogo,
     addresses: new Map([
       [PresetTypedChainId.Ropsten, zeroAddress],
       [PresetTypedChainId.Rinkeby, zeroAddress],
@@ -40,7 +40,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.ONE,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(HarmonyLogo),
+    icon: HarmonyLogo,
     addresses: new Map([
       [PresetTypedChainId.HarmonyMainnet0, zeroAddress],
       [PresetTypedChainId.HarmonyTestnet0, zeroAddress],
@@ -57,7 +57,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.WEBB,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(WEBBLogo),
+    icon: WEBBLogo,
     addresses: new Map([
       [PresetTypedChainId.LocalTangleStandalone, '0'],
       [PresetTypedChainId.DkgSubstrateStandalone, '0'],
@@ -72,7 +72,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.WEBBSQR,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Governable,
-    icon: React.createElement(WEBBLogo),
+    icon: WEBBLogo,
     addresses: new Map([
       [PresetTypedChainId.LocalTangleStandalone, '2'],
       [PresetTypedChainId.DkgSubstrateStandalone, '2'],
@@ -87,7 +87,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.SDN,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(ShidenLogo),
+    icon: ShidenLogo,
     addresses: new Map([[PresetTypedChainId.Shiden, zeroAddress]]),
   },
   [CurrencyId.WETH]: {
@@ -99,7 +99,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Wrappable,
     imageUrl: 'https://www.polysa.finance/images/farms/weth.png',
-    icon: React.createElement(EtherLogo),
+    icon: EtherLogo,
     addresses: new Map([
       [PresetTypedChainId.Ropsten, '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
       [PresetTypedChainId.Rinkeby, '0xc778417E063141139Fce010982780140Aa0cD5Ab'],
@@ -119,7 +119,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.MATIC,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(PolygonLogo),
+    icon: PolygonLogo,
     addresses: new Map([[PresetTypedChainId.PolygonTestnet, zeroAddress]]),
   },
   [CurrencyId.webbETH]: {
@@ -130,7 +130,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.webbETH,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
-    icon: WebbWrappedLogo(EtherLogo()),
+    icon: () => WebbWrappedLogo(EtherLogo()),
     addresses: new Map([
       [PresetTypedChainId.Ropsten, '0x81dd8320d6dd5e98f5db83c9b1c1041be8bbb15d'],
       [PresetTypedChainId.Rinkeby, '0x3ed5390eb606064fdd1610eab6904751bf4753a8'],
@@ -149,7 +149,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.DEV,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(GanacheLogo),
+    icon: GanacheLogo,
     addresses: new Map([
       [PresetTypedChainId.HermesLocalnet, '0x2946259E0334f33A064106302415aD3391BeD384'],
       [PresetTypedChainId.AthenaLocalnet, '0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7'],
@@ -164,7 +164,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.webbDEV,
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
-    icon: WebbWrappedLogo(GanacheLogo()),
+    icon: () => WebbWrappedLogo(GanacheLogo()),
     addresses: new Map([
       [PresetTypedChainId.HermesLocalnet, '0x7758F98C1c487E5653795470eEab6C4698bE541b'],
       [PresetTypedChainId.AthenaLocalnet, '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577'],
@@ -179,7 +179,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.TEST,
     type: CurrencyType.ORML,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(GanacheLogo),
+    icon: GanacheLogo,
     addresses: new Map([[PresetTypedChainId.ProtocolSubstrateStandalone, '1']]),
   },
   [CurrencyId.KSM]: {
@@ -190,7 +190,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.KSM,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(WEBBLogo),
+    icon: WEBBLogo,
     addresses: new Map([[PresetTypedChainId.Kusama, '0']]),
   },
   [CurrencyId.DOT]: {
@@ -201,7 +201,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.DOT,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(WEBBLogo),
+    icon: WEBBLogo,
     addresses: new Map([[PresetTypedChainId.Polkadot, '0']]),
   },
   [CurrencyId.moonDEV]: {
@@ -212,7 +212,7 @@ export const currenciesConfig: AppConfig['currencies'] = {
     id: CurrencyId.moonDEV,
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
-    icon: React.createElement(MoonbeamLogo),
+    icon: MoonbeamLogo,
     addresses: new Map([[PresetTypedChainId.MoonbaseAlpha, '0']]),
   },
 };

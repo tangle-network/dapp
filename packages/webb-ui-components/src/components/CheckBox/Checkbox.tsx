@@ -37,6 +37,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     spacing = 4,
     labelClassName: labelClsxProp,
     wrapperClassName,
+    id,
   } = props;
 
   const inputClsx = 'form-checkbox peer transition-none bg-mono-0 w-[18px] h-[18px] rounded border border-mono-80 ';
@@ -59,6 +60,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     <span className={wrapperClassName}>
       <label className='inline-flex justify-center items-center min-h-[28px]'>
         <input
+          id={id}
           type='checkbox'
           className={mergedInputClsx}
           checked={isChecked}

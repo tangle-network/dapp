@@ -8,8 +8,7 @@ function ArbitrumLogo() {
       xmlnsXlink='http://www.w3.org/1999/xlink'
       x='0px'
       y='0px'
-      width='470.287px'
-      height='514.251px'
+      width={'100%'}
       viewBox='0 0 470.287 514.251'
       enableBackground='new 0 0 470.287 514.251'
       xmlSpace='preserve'

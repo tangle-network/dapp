@@ -2,7 +2,7 @@ import * as React from 'react';
 
 function WEBBLogo() {
   return (
-    <svg width='47' height='47' viewBox='0 0 47 47' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg width={'100%'} viewBox='0 0 47 47' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path
         d='M23.1407 46.3571C35.921 46.3571 46.2814 35.9797 46.2814 23.1786C46.2814 10.3774 35.921 0 23.1407 0C10.3605 0 0 10.3774 0 23.1786C0 35.9797 10.3605 46.3571 23.1407 46.3571Z'
         fill='#3351F2'

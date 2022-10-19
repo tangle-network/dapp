@@ -10,13 +10,14 @@ import { ProposalListItem } from '@webb-dapp/page-statistics/provider/hooks';
 export type Authority = {
   id: string;
   sessionId: string;
-  reputation: string;
+  reputation: number;
   isBest: boolean;
   isNext: boolean;
   isNextBest: boolean;
   bestOrder: number;
   nextBestOrder: number;
   authorityId: string;
+  uptime: number;
 };
 
 export function mapSessionAuthValidatorNode(node: SessionAuthValidatorNodeFragment): Authority {
@@ -24,6 +25,7 @@ export function mapSessionAuthValidatorNode(node: SessionAuthValidatorNodeFragme
     id: node!.validator?.id!,
     sessionId: node.sessionId,
     reputation: node.reputation,
+    uptime: node.uptime,
     isBest: node.isBest,
     isNext: node.isNext,
     isNextBest: node.isNextBest,

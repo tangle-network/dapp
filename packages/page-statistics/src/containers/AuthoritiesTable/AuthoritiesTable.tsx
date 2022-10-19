@@ -1,4 +1,3 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,12 +12,12 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { AuthorityListItem, PageInfoQuery, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
+import { useCountriesQuery } from '@webb-dapp/page-statistics/generated/graphql';
+import { AuthorisesQuery, AuthorityListItem, Range, useAuthorities } from '@webb-dapp/page-statistics/provider/hooks';
 import {
   Avatar,
   Button,
   CardTable,
-  CheckBox,
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
@@ -28,8 +27,11 @@ import {
   Slider,
   Table,
 } from '@webb-dapp/webb-ui-components/components';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-dapp/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -37,10 +39,10 @@ import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
-const countries = ['eg', 'uk'];
 const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('id', {
     header: 'Participant',
+    enableColumnFilter: false,
     cell: (props) => (
       <div className='flex items-center space-x-2'>
         <Avatar sourceVariant={'address'} value={props.getValue<string>()} />
@@ -51,6 +53,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
 
   columnHelper.accessor('location', {
     header: 'Location',
+    enableColumnFilter: true,
     cell: (props) => (
       <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
         {getUnicodeFlagIcon(props.getValue())}
@@ -60,11 +63,13 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
 
   columnHelper.accessor('uptime', {
     header: 'Uptime',
+    enableColumnFilter: true,
     cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
   columnHelper.accessor('reputation', {
     header: 'Reputation',
+    enableColumnFilter: true,
     cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
   }),
 
@@ -92,16 +97,35 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     }),
     [pageIndex, pageSize]
   );
-  const query = useMemo<PageInfoQuery>(
+
+  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
+  const countriesQuery = useCountriesQuery();
+  const countries = useMemo(() => {
+    return (
+      countriesQuery.data?.countryCodes?.nodes?.map((country) => {
+        return country?.code!;
+      }) ?? []
+    );
+  }, [countriesQuery]);
+
+  const [uptimeFilter, setUptimeFilter] = useState<[number, number]>([0, 100]);
+  const [reputationFilter, setReputationFilter] = useState<[number, number]>([0, 100]);
+  const [globalFilter, setGlobalFilter] = useState('');
+
+  const query = useMemo<AuthorisesQuery>(
     () => ({
       offset: pageIndex * pageSize,
       perPage: pageSize,
-      filter: null,
+      filter: {
+        uptime: uptimeFilter,
+        reputation: reputationFilter,
+        countries: selectedCountries === 'all' ? countries : selectedCountries,
+        search: globalFilter,
+      },
     }),
-    [pageIndex, pageSize]
+    [pageIndex, pageSize, uptimeFilter, reputationFilter, selectedCountries, countries, globalFilter]
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
 
   const authorities = useAuthorities(query);
   const totalItems = useMemo(() => authorities.val?.pageInfo.count ?? 0, [authorities]);
@@ -129,16 +153,6 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const headers = useMemo(
-    () => table.getHeaderGroups().map((headerGroup) => headerGroup.headers.map((header) => header)),
-    [table]
-  );
-
-  const [{ column: keygenFilterCol }, { column: signatureFilterCol }] = useMemo(
-    () => headers[0].filter((header) => header.column.getCanFilter()),
-    [headers]
-  );
-  console.log({ authorities });
   return (
     <CardTable
       titleProps={{
@@ -148,6 +162,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
       }}
       leftTitle={
         <Filter
+          searchPlaceholder={'Search  authority account'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());
@@ -158,13 +173,26 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
           }}
         >
           <Collapsible>
-            <CollapsibleButton>Keygen Threshold</CollapsibleButton>
+            <CollapsibleButton>Location</CollapsibleButton>
+            <CollapsibleContent className={`space-x-1 `}>
+              <LocationFilter
+                selected={selectedCountries}
+                countries={countries}
+                onChange={(c) => {
+                  setSelectedCountries(c);
+                }}
+              />
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible>
+            <CollapsibleButton>Uptime</CollapsibleButton>
             <CollapsibleContent>
               <Slider
-                max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i ? 0 : i))}
-                value={keygenFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
+                max={100}
+                defaultValue={[0, 100]}
+                value={uptimeFilter}
+                onChange={(val) => setUptimeFilter(val as any)}
                 className='w-full min-w-0'
                 hasLabel
               />
@@ -172,24 +200,16 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
           </Collapsible>
 
           <Collapsible>
-            <CollapsibleButton>Location</CollapsibleButton>
-            <CollapsibleContent
-              className={`space-x-1 `}
-              style={{
-                backgroundColor: 'red',
-              }}
-            >
-              {countries.map((country) => {
-                return (
-                  <FormControlLabel
-                    key={country}
-                    value={country}
-                    label={<Typography variant='label'>{country}</Typography>}
-                    onChange={() => {}}
-                    control={<CheckBox color='primary' />}
-                  />
-                );
-              })}
+            <CollapsibleButton>Reputation</CollapsibleButton>
+            <CollapsibleContent>
+              <Slider
+                max={100}
+                defaultValue={[0, 100]}
+                value={reputationFilter}
+                onChange={(val) => setReputationFilter(val as any)}
+                className='w-full min-w-0'
+                hasLabel
+              />
             </CollapsibleContent>
           </Collapsible>
         </Filter>
@@ -199,4 +219,34 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     </CardTable>
   );
 };
-const LocationFilter = () => {};
+
+const LocationFilter: FC<{
+  selected: 'all' | string[];
+  onChange(nextValue: 'all' | string[]): void;
+  countries: string[];
+}> = ({ countries, onChange, selected }) => {
+  return (
+    <div
+      style={{
+        maxWidth: '300px',
+        maxHeight: 300,
+        overflow: 'hidden',
+        overflowY: 'auto',
+      }}
+    >
+      <CheckBoxMenuGroup
+        value={selected}
+        options={countries}
+        onChange={(v) => {
+          onChange(v);
+        }}
+        iconGetter={(c) => {
+          // @ts-ignore
+          return flags[c.toUpperCase() as unknown as any];
+        }}
+        labelGetter={(c) => c}
+        keyGetter={(c) => c}
+      />
+    </div>
+  );
+};

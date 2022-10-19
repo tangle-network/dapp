@@ -1,4 +1,5 @@
 import {
+  IntFilter,
   useSessionThresholdHistoryLazyQuery,
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
@@ -62,8 +63,8 @@ export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, Upcom
 export type AuthorityListItem = {
   id: string;
   location: string;
-  uptime: string;
-  reputation: string;
+  uptime: number;
+  reputation: number;
 };
 
 /**
@@ -245,8 +246,31 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   }, [query, activeSession]);
   return data;
 }
+export type Range = [number | undefined, number | undefined] | [];
+function rangeIntoIntFilter(range: Range): IntFilter | null {
+  const filter = {} as IntFilter;
 
-export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<AuthorityListItem>> {
+  if (typeof range[0] !== 'undefined') {
+    filter.greaterThanOrEqualTo = range[0];
+  }
+  if (typeof range[1] !== 'undefined') {
+    filter.lessThanOrEqualTo = range[1];
+  }
+
+  if (!range[0]) {
+    return null;
+  }
+  return filter;
+}
+
+type AuthorizesFilter = {
+  uptime?: Range;
+  reputation?: Range;
+  countries?: string[];
+  search?: string;
+};
+export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
+export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loadable<Page<AuthorityListItem>> {
   const [authorities, setAuthorities] = useState<Loadable<Page<AuthorityListItem>>>({
     val: null,
     isLoading: true,
@@ -256,12 +280,24 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   const [call, query] = useValidatorListingLazyQuery();
   // fetch the data once the filter has changed
   useEffect(() => {
+    const filter = reqQuery.filter;
+    const reputation = rangeIntoIntFilter(
+      filter.reputation ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range) : []
+    );
+    const uptime = rangeIntoIntFilter(filter.uptime ?? []);
     if (metaData.val) {
       call({
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
-          sessionId: metaData.val.activeSession,
+          sessionId: String(Number(metaData.val.activeSession) - 1),
+          reputationFilter: reputation ?? undefined,
+          uptimeFilter: uptime ?? undefined,
+          validatorId: filter.search
+            ? {
+                equalTo: filter.search,
+              }
+            : undefined,
         },
       }).catch((e) => {
         setAuthorities({
@@ -277,20 +313,17 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<Page<AuthorityListItem>> => {
-        if (res.data && res.data.validators) {
-          const validators = res.data.validators;
-          const items = validators.nodes
+        if (res.data && res.data.sessionValidators) {
+          const sessionValidators = res.data.sessionValidators;
+          const items = sessionValidators.nodes
             .filter((v) => v !== null)
-            .map((validator): AuthorityListItem => {
-              const hasSessionValidator = Boolean(validator?.sessionValidators.edges[0]);
-              const reputation = hasSessionValidator
-                ? mapAuthorities(validator?.sessionValidators!)[0].reputation
-                : '0';
+            .map((sessionValidator): AuthorityListItem => {
+              const auth = mapSessionAuthValidatorNode(sessionValidator!);
               return {
-                id: validator?.id!,
+                id: sessionValidator?.validator?.id!,
                 location: 'any',
-                uptime: '50',
-                reputation,
+                uptime: auth?.uptime ?? 0,
+                reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
             });
           return {
@@ -299,9 +332,9 @@ export function useAuthorities(reqQuery: PageInfoQuery): Loadable<Page<Authority
             val: {
               items,
               pageInfo: {
-                count: validators.totalCount,
-                hasPrevious: validators.pageInfo.hasPreviousPage,
-                hasNext: validators.pageInfo.hasNextPage,
+                count: sessionValidators.totalCount,
+                hasPrevious: sessionValidators.pageInfo.hasPreviousPage,
+                hasNext: sessionValidators.pageInfo.hasNextPage,
               },
             },
           };
@@ -441,8 +474,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               val: String(keyGen?.pending ?? '-'),
               inTheSet: auth.isBest,
             },
-            reputation: Number(auth.reputation),
-            uptime: 100,
+            reputation: Number(auth.reputation) * Math.pow(10, -7),
+            uptime: auth.uptime,
           };
           return {
             error: '',

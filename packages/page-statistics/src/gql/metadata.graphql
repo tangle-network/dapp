@@ -18,3 +18,12 @@ query LastBlock {
     }
   }
 }
+
+query countries {
+  countryCodes {
+    nodes {
+      code
+      id
+    }
+  }
+}
