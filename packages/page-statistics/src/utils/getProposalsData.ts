@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/sdk-core';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
-export function getProposalText(propType: ProposalType, data: string): Record<string, string> {
+export function getProposalsData(propType: ProposalType, data: string): Record<string, string> {
   const bytes = hexToU8a(data);
   switch (propType) {
     case ProposalType.AnchorCreateProposal:
