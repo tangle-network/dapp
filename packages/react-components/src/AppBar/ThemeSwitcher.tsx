@@ -20,6 +20,7 @@ const ThemeSwitcherWrapper = styled.label`
     width: 0;
     height: 0;
     padding: 0;
+    visibility: hidden;
   }
 
   .theme-entry {
