@@ -13,16 +13,16 @@ export const Layout: FC = ({ children }) => {
     }
     return defaultEndpoint;
   });
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const apolloClient = useMemo(() => {
     const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
         graphQLErrors.forEach(({ locations, message, path }) =>
-          console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+          setErrorMessage(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
         );
       }
       if (networkError) {
-        console.log(`[Network error]: ${networkError}`);
+        setErrorMessage(`[Network error]: ${networkError}`);
       }
     });
     const httpLink = new HttpLink({
@@ -32,7 +32,7 @@ export const Layout: FC = ({ children }) => {
       cache: new InMemoryCache(),
       link: from([errorLink, httpLink]),
     });
-  }, [connectedEndpoint]);
+  }, [connectedEndpoint, setErrorMessage]);
 
   const setEndpoint = async (endpoint: string) => {
     localStorage.setItem('statsEndpoint', endpoint);
@@ -41,6 +41,13 @@ export const Layout: FC = ({ children }) => {
 
   return (
     <div className='min-w-full min-h-full'>
+      <div
+        onClick={() => {
+          setErrorMessage(null);
+        }}
+      >
+        {errorMessage}
+      </div>
       <Header connectedEndpoint={connectedEndpoint} setConnectedEndpoint={setEndpoint} />
       <ApolloProvider client={apolloClient}>
         <StatsProvider blockTime={6} sessionHeight={600}>

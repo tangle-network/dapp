@@ -321,7 +321,7 @@ function createWebpack(env, mode = 'production') {
         ? {
             client: {
               overlay: {
-                errors: true,
+                errors: false,
                 warnings: false, // Hide warnings as they present on the terminal
               },
             },

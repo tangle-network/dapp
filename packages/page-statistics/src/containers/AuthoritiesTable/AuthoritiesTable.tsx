@@ -198,4 +198,3 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     </CardTable>
   );
 };
-const LocationFilter = () => {};
