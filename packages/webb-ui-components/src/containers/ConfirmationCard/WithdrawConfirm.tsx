@@ -60,9 +60,7 @@ export const WithdrawConfirm = forwardRef<HTMLDivElement, WithdrawConfirmationPr
         {/** Token ring */}
         <div>
           <TokensRing
-            sourceLabel='depositing from'
-            destLabel='depositing to'
-            sourceChain={sourceChain}
+            destLabel='Withdrawing to'
             destChain={destChain}
             amount={amount}
             tokenPairString={token1Symbol && token2Symbol ? `${token1Symbol}/${token2Symbol}` : ''}

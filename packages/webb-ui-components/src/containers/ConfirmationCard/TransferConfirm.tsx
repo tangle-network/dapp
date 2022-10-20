@@ -60,8 +60,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         {/** Token ring */}
         <div>
           <TokensRing
-            sourceLabel='depositing from'
-            destLabel='depositing to'
+            sourceLabel='Sender'
+            destLabel='Recipient'
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
