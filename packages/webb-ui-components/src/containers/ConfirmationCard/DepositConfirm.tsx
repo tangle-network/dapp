@@ -3,7 +3,7 @@ import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, CheckBox, InfoItem, TitleWithInfo, TokensRing, TokenWithAmount } from '../../components';
+import { Button, CheckBox, InfoItem, Progress, TitleWithInfo, TokensRing, TokenWithAmount } from '../../components';
 import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
@@ -19,6 +19,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       onClose,
       onCopy,
       onDownload,
+      progress = null,
       sourceChain,
       title = 'Confirm Deposit',
       token1Symbol,
@@ -54,6 +55,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             tokenPairString={token1Symbol && token2Symbol ? `${token1Symbol}/${token2Symbol}` : ''}
           />
         </div>
+
+        {/** Transaction progress */}
+        {progress && <Progress value={progress} />}
 
         {/** Unwrapping info */}
         <div className='space-y-4'>

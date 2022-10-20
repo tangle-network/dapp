@@ -48,6 +48,11 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   token2Symbol?: string;
 
   /**
+   * The transaction progress
+   */
+  progress?: number;
+
+  /**
    * Fee amount
    */
   fee?: number | string;
@@ -74,3 +79,5 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
    */
   checkboxProps?: ComponentProps<typeof CheckBox>;
 }
+
+export interface WithdrawConfirmationProps extends ConfirmationCardProps {}
