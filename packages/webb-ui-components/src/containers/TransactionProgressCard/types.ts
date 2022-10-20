@@ -25,13 +25,13 @@ type StepInfo =
  * @param status - in
  * @param note - Information note for the notification item
  * */
-export interface TransactionCardItemProps extends PropsOf<'div'> {
+export interface TransactionCardItemProps<Token> extends PropsOf<'div'> {
   method: TransactionItemVariant;
   firedAt: Date;
   note?: string;
   stepInfo?: StepInfo;
   status: TransactionItemStatus;
-  tokens: JSX.Element[];
+  tokens: Record<Token, JSX.Element>;
   headerAction?: JSX.Element;
   wallets: {
     src: JSX.Element;

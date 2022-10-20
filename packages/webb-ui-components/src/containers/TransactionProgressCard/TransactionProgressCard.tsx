@@ -1,17 +1,17 @@
 import { Chip } from '@webb-dapp/webb-ui-components';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { forwardRef, useMemo } from 'react';
+import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeLabel, TransactionCardItemProps } from './types';
-
+import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
+type Variant = 'bridge' | 'native';
 /**
  *
  * TransactionProgressCard
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
   ({ className, label, method, ...props }, ref) => {
-    const labelVariant = useMemo(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
+    const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     return (
       <div
         className={twMerge(
@@ -38,3 +38,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     );
   }
 );
+
+const NativeLabel: FC<{ label: NativeLabel }> = ({ label }) => {
+  const amount = label.amount;
+};
