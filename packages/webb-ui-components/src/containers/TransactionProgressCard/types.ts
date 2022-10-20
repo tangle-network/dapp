@@ -1,4 +1,6 @@
-export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer ';
+import { PropsOf } from '@webb-dapp/webb-ui-components/types';
+
+export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
 export type TransactionItemStatus = 'In-progress' | 'warning' | 'completed';
 
 export type BridgeLabel = {
@@ -23,8 +25,8 @@ type StepInfo =
  * @param status - in
  * @param note - Information note for the notification item
  * */
-export type TransactionItem = {
-  method: string;
+export interface TransactionCardItemProps extends PropsOf<'div'> {
+  method: TransactionItemVariant;
   firedAt: Date;
   note?: string;
   stepInfo?: StepInfo;
@@ -38,9 +40,9 @@ export type TransactionItem = {
   label: BridgeLabel | NativeLabel;
   onDismiss(): void;
   onDetails(): void;
-};
+}
 
 export type TransactionProgressCardProps = {
-  transactions: TransactionItem[];
+  transactions: TransactionCardItemProps[];
   collapsed?: boolean;
 };
