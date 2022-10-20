@@ -5,6 +5,11 @@ import { Button, CheckBox, TokensRing } from '../../components';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
+   * The transaction amount
+   */
+  amount?: number | string;
+
+  /**
    * The card title
    */
   title?: string;
@@ -19,9 +24,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The card action button props
    */
   actionBtnProps?: ComponentProps<typeof Button>;
-}
 
-export interface DepositConfirmProps extends ConfirmationCardProps {
   /**
    * The source chain symbol
    */
@@ -31,21 +34,6 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
    * The destination chain symbol
    */
   destChain?: ComponentProps<typeof TokensRing>['destChain'];
-
-  /**
-   * The transaction amount
-   */
-  amount?: number | string;
-
-  /**
-   * The first token symbol
-   */
-  token1Symbol?: string;
-
-  /**
-   * The second token symbol
-   */
-  token2Symbol?: string;
 
   /**
    * The transaction progress
@@ -80,22 +68,19 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   checkboxProps?: ComponentProps<typeof CheckBox>;
 }
 
+export interface DepositConfirmProps extends ConfirmationCardProps {
+  /**
+   * The first token symbol
+   */
+  token1Symbol?: string;
+
+  /**
+   * The second token symbol
+   */
+  token2Symbol?: string;
+}
+
 export interface WithdrawConfirmationProps extends ConfirmationCardProps {
-  /**
-   * The source chain symbol
-   */
-  sourceChain?: ComponentProps<typeof TokensRing>['sourceChain'];
-
-  /**
-   * The destination chain symbol
-   */
-  destChain?: ComponentProps<typeof TokensRing>['destChain'];
-
-  /**
-   * The receiving amount
-   */
-  amount?: number | string;
-
   /**
    * The change amount
    */
@@ -113,11 +98,6 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   token2Symbol?: string;
 
   /**
-   * The transaction progress
-   */
-  progress?: number;
-
-  /**
    * The relayer address
    */
   relayerAddress?: string;
@@ -131,31 +111,37 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    * Unshielded address
    */
   unshieldedAddress?: string;
+}
+
+export interface TransferConfirmProps extends ConfirmationCardProps {
+  /**
+   * The change amount
+   */
+  changeAmount?: number | string;
 
   /**
-   * Fee amount
+   * The first token symbol
    */
-  fee?: number | string;
+  token1Symbol?: string;
 
   /**
-   * The note string
+   * The second token symbol
    */
-  note?: string;
+
+  token2Symbol?: string;
 
   /**
-   * Callback when user hits copy button
-   * @returns void
+   * The relayer address
    */
-  onCopy?: () => void;
+  relayerAddress?: string;
 
   /**
-   * Callback when user hits download button
-   * @returns void
+   * The relayer external url
    */
-  onDownload?: () => void;
+  relayerExternalUrl?: string;
 
   /**
-   * The checkbox props
+   * Recipient address
    */
-  checkboxProps?: ComponentProps<typeof CheckBox>;
+  recipientAddress?: string;
 }
