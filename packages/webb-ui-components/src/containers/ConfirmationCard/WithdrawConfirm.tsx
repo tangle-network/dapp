@@ -1,16 +1,26 @@
-import { ArrowRight, Close, Download, FileCopyLine } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, Close, Download, ExternalLinkLine, FileCopyLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, CheckBox, InfoItem, Progress, TitleWithInfo, TokensRing, TokenWithAmount } from '../../components';
-import { DepositConfirmProps } from './types';
+import {
+  Avatar,
+  Button,
+  CheckBox,
+  InfoItem,
+  Progress,
+  TitleWithInfo,
+  TokensRing,
+  TokenWithAmount,
+} from '../../components';
+import { WithdrawConfirmationProps } from './types';
 
-export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
+export const WithdrawConfirm = forwardRef<HTMLDivElement, WithdrawConfirmationProps>(
   (
     {
       actionBtnProps,
       amount,
+      changeAmount,
       checkboxProps,
       className,
       destChain,
@@ -19,11 +29,14 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       onClose,
       onCopy,
       onDownload,
-      progress = null,
+      progress,
+      relayerAddress,
+      relayerExternalUrl,
       sourceChain,
-      title = 'Confirm Deposit',
+      title = 'Confirm Withdrawal',
       token1Symbol,
       token2Symbol,
+      unshieldedAddress,
       ...props
     },
     ref
@@ -69,18 +82,57 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             titleClassName='text-mono-100 dark:text-mono-80'
             className='text-mono-100 dark:text-mono-80'
           />
-          {token1Symbol && (
+          {token1Symbol && token2Symbol && (
             <div className='flex items-center space-x-4'>
+              <TokenWithAmount token1Symbol={token1Symbol} token2Symbol={token2Symbol} amount={amount} />
+              <ArrowRight />
               <TokenWithAmount token1Symbol={token1Symbol} amount={amount} />
-              {token2Symbol && (
-                <>
-                  <ArrowRight />
-                  <TokenWithAmount token1Symbol={token1Symbol} token2Symbol={token2Symbol} amount={amount} />
-                </>
-              )}
             </div>
           )}
         </div>
+
+        {/** Relayer */}
+        {relayerAddress && (
+          <div className='space-y-4'>
+            <TitleWithInfo
+              titleComponent='h6'
+              title='Relayer'
+              info='Relayer'
+              variant='utility'
+              titleClassName='text-mono-100 dark:text-mono-80'
+              className='text-mono-100 dark:text-mono-80'
+            />
+
+            <div className='flex items-center space-x-1'>
+              <Avatar value={relayerAddress} />
+
+              <Typography variant='body1' fw='bold'>
+                {relayerAddress}
+              </Typography>
+
+              <a target='_blank' href={relayerExternalUrl} rel='noreferrer noopener'>
+                <ExternalLinkLine />
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/** Unshielded address */}
+        {unshieldedAddress && (
+          <div className='space-y-4'>
+            <TitleWithInfo
+              titleComponent='h6'
+              title='Unshielded address'
+              variant='utility'
+              titleClassName='text-mono-100 dark:text-mono-80'
+              className='text-mono-100 dark:text-mono-80'
+            />
+
+            <Typography variant='body1' fw='bold'>
+              {unshieldedAddress}
+            </Typography>
+          </div>
+        )}
 
         {/** Transaction Details */}
         <div className='space-y-2'>
@@ -95,9 +147,17 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             <InfoItem
               leftTextProps={{
                 variant: 'body1',
-                title: 'Depositing',
+                title: 'Receiving',
               }}
               rightContent={amount?.toString()}
+            />
+            <InfoItem
+              leftTextProps={{
+                variant: 'body1',
+                title: 'Change Amount',
+                info: 'Change Amount',
+              }}
+              rightContent={changeAmount?.toString()}
             />
             <InfoItem
               leftTextProps={{
