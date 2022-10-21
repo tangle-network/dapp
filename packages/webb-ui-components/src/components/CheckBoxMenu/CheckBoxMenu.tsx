@@ -18,14 +18,9 @@ import { CheckBoxMenuProps } from './types';
  * ```jsx
  *  <CheckBoxMenu icon={<Filter />} label={Filter}/>
  *  <CheckBoxMenu
- *  checkboxProps={{
- *               isChecked: isChecked
- *             }}
- *  icon={<Filter />} label={<h3>Filter</Filter>} onChange={() =>{
- *
- *  }/>
-
- *
+ *    checkboxProps={{ isChecked: isChecked }}
+ *    icon={<Filter />} label={<h3>Filter</Filter>} onChange={() =>{ }
+ *  />
  * ```
  */
 export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
