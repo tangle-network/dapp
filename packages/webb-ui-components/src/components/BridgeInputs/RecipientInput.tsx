@@ -8,6 +8,22 @@ import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
 
+/**
+ * The `RecipientInput` component
+ *
+ * Props:
+ *
+ * - `value`: The input value
+ * - `onChange`: Callback function to control the input value
+ *
+ * @example
+ *
+ * ```jsx
+ *   <RecipientInput {...recipientInputProps} />
+ *  <RecipientInput value={recipient} onChange={(nextVal) => setRecipient(nextVal.toString())} />
+ * ```
+ */
+
 export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
   ({ className, id = 'recipient', info, onChange: onChangeProp, value, ...props }, ref) => {
     const [address, setAddress] = useState<string | undefined>(() => value);

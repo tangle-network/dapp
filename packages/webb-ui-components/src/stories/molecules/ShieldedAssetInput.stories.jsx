@@ -1,27 +1,28 @@
 import React from 'react';
 
-import { Progress } from '@webb-dapp/webb-ui-components/components';
+import { ShieldedAssetInput } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/Progress',
-  component: Progress,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  title: 'Design System/Molecules/ShieldedAssetInput',
+  component: ShieldedAssetInput,
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Progress {...args} />;
+const Template = (args) => <ShieldedAssetInput {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-  size: 'md',
-  value: '60',
-};
+Default.args = {};
 
-export const withMax = Template.bind({});
+export const withAsset = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withMax.args = {
+withAsset.args = {
   ...Default.args,
-  max: '70',
+  asset: {
+    token1Symbol: 'webb',
+    token2Symbol: 'eth',
+    balance: 2.1,
+    balanceInUsd: 100,
+  },
 };

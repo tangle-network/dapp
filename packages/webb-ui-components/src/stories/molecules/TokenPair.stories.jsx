@@ -23,7 +23,7 @@ export const WithBalance = Template.bind({});
 WithBalance.args = {
   ...Default.args,
   balance: '100',
-  balanceInUsd: '2500' 
+  balanceInUsd: '2500',
 };
 
 export const WithPoolName = Template.bind({});
@@ -31,5 +31,5 @@ export const WithPoolName = Template.bind({});
 WithPoolName.args = {
   ...Default.args,
   ...WithBalance.args,
-  name: 'Pool : ETH/DOT'
+  name: 'Pool : ETH/DOT',
 };

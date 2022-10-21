@@ -5,6 +5,28 @@ import { twMerge } from 'tailwind-merge';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InfoItemProps } from './types';
 
+/**
+ * The `InfoItem` component
+ *
+ * Props:
+ *
+ * - `leftTextProps`: The left text props (props of TitleWithInfo component)
+ * - `rightContent`: Right-sided content
+ *
+ * @example
+ *
+ * ```jsx
+ *   <InfoItem
+ *     leftTextProps={{
+ *      title: 'Depositing',
+ *      variant: 'utility',
+ *      info: 'Depositing',
+ *     }}
+ *    rightContent={amount}
+ *  />
+ * ```
+ */
+
 export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
   ({ className, leftTextProps, rightContent, ...props }, ref) => {
     return (

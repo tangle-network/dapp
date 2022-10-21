@@ -1,27 +1,29 @@
 import React from 'react';
 
-import { Progress } from '@webb-dapp/webb-ui-components/components';
+import { InfoItem } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/Progress',
-  component: Progress,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  title: 'Design System/Molecules/InfoItem',
+  component: InfoItem,
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <Progress {...args} />;
+const Template = (args) => <InfoItem {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  size: 'md',
-  value: '60',
+  leftTextProps: {
+    title: 'Depositing',
+    variant: 'utility',
+    info: 'Depositing',
+  },
 };
-
-export const withMax = Template.bind({});
+// TODO: investigate rightContent props
+export const withRightContent = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withMax.args = {
+withRightContent.args = {
   ...Default.args,
-  max: '70',
+  rightContent: '100/ETH',
 };

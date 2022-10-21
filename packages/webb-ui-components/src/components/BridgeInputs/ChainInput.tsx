@@ -7,6 +7,22 @@ import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { ChainInputProps } from './types';
 
+/**
+ * The `ChainInput` component
+ *
+ * Props:
+ *
+ * - `chain`: Will display `select chain` when the chain not provided
+ * - `chainType`:  Input "source" | "dest"
+ *
+ * @example
+ *
+ * ```jsx
+ * <ChainInput />
+ * <ChainInput chainType='dest' chain={{ name: 'Optimism', symbol: 'op' }} />
+ * ```
+ */
+
 export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(
   ({ chain, chainType, id, info, ...props }, ref) => {
     return (

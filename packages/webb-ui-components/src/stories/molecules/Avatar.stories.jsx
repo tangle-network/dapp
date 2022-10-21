@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Avatar } from '@webb-dapp/webb-ui-components/components';
-import LogoSVG from '../assets/Logo.png'
+
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Design System/Molecules/Avatar',

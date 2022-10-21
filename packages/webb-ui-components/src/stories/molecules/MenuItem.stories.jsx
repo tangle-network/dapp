@@ -10,12 +10,11 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <MenuItem {...args}>Item 1</MenuItem>
+const Template = (args) => <MenuItem {...args}>Item 1</MenuItem>;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-};
+Default.args = {};
 
 //TODO: how to pass component as prop
 // export const withIcon = Template.bind({});
