@@ -1,6 +1,7 @@
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { Avatar, Chip } from '@webb-dapp/webb-ui-components';
+import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
 import { ArrowLeft, ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, forwardRef, useMemo } from 'react';
@@ -18,8 +19,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     return (
       <div
         className={twMerge(
-          `rounded-b-lg shadow-xl py-4  px-4
-border-t-4 border-indigo-500
+          `rounded-b-lg shadow-xl py-4  px-4 border-t-2 border-mono-80
        flex flex-col space-y-4 max-w-[318px] dark:bg-mono-160`,
           className
         )}
@@ -62,13 +62,18 @@ border-t-4 border-indigo-500
               1789.12 USD
             </Typography>
           </div>
-          <div className={'h-full self-start py-2 flex items-center'}>
+          <div className={'h-full self-start py-2 flex items-center grow justify-end flex '}>
             <div className={`w-6  h-6 rounded-full flex items-center justify-center`} children={<PolygonLogo />} />
-            <ArrowRight />
+            <div className='px-2'>
+              <ArrowRight />
+            </div>
+
             <div className={`w-6  h-6 rounded-full flex items-center justify-center`} children={<OptimismLogo />} />
           </div>
         </div>
-        <div></div>
+        <div>
+          <Disclaimer />
+        </div>
         {/*Card Info*/}
         {/*Card Footer*/}
       </div>
