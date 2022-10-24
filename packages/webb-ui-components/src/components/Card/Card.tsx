@@ -5,14 +5,19 @@ import { CardProps } from './types';
 
 /**
  * The `Card` component
- * Setup styles, spacing vertically between `block` components
+ * Sets up styles, and spacing vertically between `block` components
  *
  * @example
  *
  * ```jsx
- *  <Card>
- *    ...
- *  </Card>
+ * <Card>
+ *   <TitleWithInfo title='Token Selector' variant='h4' />
+ *   <div className='flex items-center space-x-4'>
+ *     <TokenSelector>ETH</TokenSelector>
+ *     <TokenSelector>DOT</TokenSelector>
+ *     <TokenSelector isActive>KSM</TokenSelector>
+ *   </div>
+ * </Card>;
  * ```
  */
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(({ children, className, ...props }, ref) => {

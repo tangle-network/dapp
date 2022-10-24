@@ -15,6 +15,26 @@ import {
 } from '..';
 import { AmountInputProps } from './types';
 
+/**
+ * The Webb AmountInput Component
+ *
+ * Props:
+ *
+ * - `id`: The `id` prop for label and input (default: "amount")
+ * - `amount`:  The amount value (e.g. 100)
+ * - `title`: The title text that sits above input
+ * - `onAmountChange`: Callback function to control the amount value
+ * - `onMaxBtnClick`: Callback function when the max button is clicked
+ * - `amountMenuProps`: The amount menu props to pass into the AmountMenu component
+ *
+ * @example
+ *
+ * ```jsx
+ *     <AmountInput {...amountInputProps} />
+ *
+ * ```
+ */
+
 export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
   (
     {

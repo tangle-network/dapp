@@ -6,6 +6,21 @@ import { twMerge } from 'tailwind-merge';
 import { Button, Chip, Divider } from '../';
 import { AmountMenuProps } from './types';
 
+/**
+ * The Webb AmountMenu Component
+ *
+ * Props:
+ *
+ * - `selected`: Represents the selected value - 'fixed' | 'custom';
+ * - `onChange`: Callback when user hits change input button
+ *
+ * @example
+ *
+ * ```jsx
+ *  <AmountMenu {...amountMenuProps} onChange={onAmountTypeChange} />
+ * ```
+ */
+
 export const AmountMenu = forwardRef<HTMLDivElement, AmountMenuProps>(
   ({ className, onChange, selected, ...props }, ref) => {
     return (

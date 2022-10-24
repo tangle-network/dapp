@@ -1,33 +1,27 @@
 import React from 'react';
 
-import { AmountInput } from '@webb-dapp/webb-ui-components/components';
+import { Progress } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/AmountInput',
-  component: AmountInput,
+  title: 'Design System/Molecules/Progress',
+  component: Progress,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <AmountInput {...args} />;
+const Template = (args) => <Progress {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  id: 'amount',
+  size: 'md',
+  value: '60',
 };
 
-export const withAmount = Template.bind({});
+export const withMax = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withAmount.args = {
-  id: 'amount',
-  amount: '200',
-};
-
-export const withTitle = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-withAmount.args = {
-  ...withAmount.args,
-  title: 'Enter Amount:',
+withMax.args = {
+  ...Default.args,
+  max: '70',
 };
