@@ -17,6 +17,7 @@ export * from './Coin';
 export * from './CommonWealth';
 export * from './Copyright';
 export * from './DiscordFill';
+export * from './Download';
 export * from './EditLine';
 export * from './ExchangeFunds';
 export * from './ExchangeLine';
