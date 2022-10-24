@@ -3,7 +3,7 @@ import React from 'react';
 export const ErrorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
-      color='rgb(244, 67, 54)'
+      color='rgb(41, 182, 246)'
       focusable='false'
       aria-hidden='true'
       viewBox='0 0 24 24'

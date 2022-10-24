@@ -2,6 +2,13 @@ import React from 'react';
 
 import { ErrorIcon } from './Error';
 
-export const InfoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
-  return <ErrorIcon {...props} color='rgb(41, 182, 246)' />;
+export const InfoIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ color, ...props }) => {
+  return (
+    <svg width='21' height='20' viewBox='0 0 21 20' fill='none' xmlns='http://www.w3.org/2000/svg' {...props}>
+      <path
+        d='M10.998 20C5.47505 20 0.998047 15.523 0.998047 10C0.998047 4.477 5.47505 0 10.998 0C16.521 0 20.998 4.477 20.998 10C20.998 15.523 16.521 20 10.998 20ZM10.998 18C13.1198 18 15.1546 17.1571 16.6549 15.6569C18.1552 14.1566 18.998 12.1217 18.998 10C18.998 7.87827 18.1552 5.84344 16.6549 4.34315C15.1546 2.84285 13.1198 2 10.998 2C8.87632 2 6.84148 2.84285 5.34119 4.34315C3.8409 5.84344 2.99805 7.87827 2.99805 10C2.99805 12.1217 3.8409 14.1566 5.34119 15.6569C6.84148 17.1571 8.87632 18 10.998 18ZM9.99805 5H11.998V7H9.99805V5ZM9.99805 9H11.998V15H9.99805V9Z'
+        fill={color}
+      />
+    </svg>
+  );
 };

@@ -72,7 +72,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </div>
         </div>
         <div>
-          <Disclaimer />
+          <Disclaimer variant={'Error'} />
         </div>
         {/*Card Info*/}
         {/*Card Footer*/}
