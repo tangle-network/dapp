@@ -17,6 +17,6 @@ export const Default = Template.bind({});
 Default.args = {
   key: '2',
   size: 'md',
-  src: './assets/Logo.png',
+  src: 'https://webb-assets.s3.amazonaws.com/WebbLogo.svg',
   sourceVariant: 'address',
 };

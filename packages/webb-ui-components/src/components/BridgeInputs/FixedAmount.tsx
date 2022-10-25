@@ -9,6 +9,25 @@ import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { FixedAmountProps } from './types';
 import { InputWrapper } from '.';
 
+/**
+ * The `FixedAmount` component
+ *
+ * Props:
+ *
+ * - `id`: The `id` prop for label and input (defaults to "amount")
+ * - `values`:  The fixed number list to display
+ * - `value`: The value prop
+ * - `onChange`: The callback function to control the component
+ * - `amountMenuProps`: The amount menu props to pass into the AmountMenu component
+ *
+ * @example
+ *
+ * ```jsx
+ * <FixedAmount info='Fix amount' values={values} value={value} onChange={(nextVal) => setValue(nextVal)} />
+ * <FixedAmount {...fixedAmountProps} className={cx({ hidden: amountType !== 'fixed' })} hidden={amountType !== 'fixed'} />
+ * ```
+ */
+
 export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   (
     { amountMenuProps, id, info, onChange: onChangeProp, title = 'Fixed amount', value: valueProp, values, ...props },

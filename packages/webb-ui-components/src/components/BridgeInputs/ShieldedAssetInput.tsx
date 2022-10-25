@@ -11,6 +11,21 @@ import { TokenPair } from '../TokenPair';
 import { InputWrapper } from './InputWrapper';
 import { ShieldedAssetInputProps } from './types';
 
+/**
+ * The `ShieldedAssetInput` component
+ *
+ * Props:
+ *
+ * - `asset`: The asset type
+ *
+ * @example
+ *
+ * ```jsx
+ *  <ShieldedAssetInput />
+ *  <ShieldedAssetInput asset={{ token1Symbol: 'webb', token2Symbol: 'eth', balance: 2.1, balanceInUsd: 1000 }} />
+ * ```
+ */
+
 export const ShieldedAssetInput = forwardRef<HTMLDivElement, ShieldedAssetInputProps>(
   ({ asset, className, id, info, title = 'Shielded Asset', ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {

@@ -9,6 +9,7 @@ module.exports = {
     '@storybook/addon-interactions',
     'storybook-addon-react-router-v6',
     '@storybook/theming',
+    '@storybook/addon-a11y',
     {
       name: '@storybook/addon-postcss',
       options: {
@@ -21,6 +22,9 @@ module.exports = {
   framework: '@storybook/react',
   core: {
     builder: '@storybook/builder-webpack5',
+  },
+  features: {
+    interactionsDebugger: true,
   },
   webpackFinal: (config) => {
     const extraRules = [

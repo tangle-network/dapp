@@ -37,4 +37,6 @@ export * from './TimeProgress';
 export * from './TitleWithInfo';
 export * from './TokenPair';
 export * from './TokenSelector';
+export * from './TokensRing';
+export * from './TokenWithAmount';
 export * from './Tooltip';

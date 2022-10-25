@@ -3,6 +3,22 @@ import { twMerge } from 'tailwind-merge';
 
 import { BridgeInputGroupProps } from './types';
 
+/**
+ * The `BridgeInputGroup` component
+ *
+ * Props:
+ *
+ * - `children`: Consumes component children
+ *
+ * @example
+ *
+ * ```jsx
+ * <BridgeInputGroup>
+ *   <AmountInput  />
+ * </BridgeInputGroup>
+ * ```
+ */
+
 export const BridgeInputGroup = forwardRef<HTMLDivElement, BridgeInputGroupProps>(
   ({ children, className, ...props }, ref) => {
     return (
