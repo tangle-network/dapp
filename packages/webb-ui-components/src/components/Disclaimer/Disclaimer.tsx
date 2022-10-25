@@ -1,11 +1,10 @@
-import { WebbColorsType } from '@webb-dapp/page-statistics/types';
 import { IconByVariant } from '@webb-dapp/ui-components/AlertCard/icons';
 import { AlertVariant } from '@webb-dapp/ui-components/AlertCard/types';
-import { Pallet } from '@webb-dapp/ui-components/styling/colors';
 import { useThemeColorsConfig } from '@webb-dapp/webb-ui-components/hooks/useThemeColorsConfig';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { FC, useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import Color from 'tinycolor2';
 
 type DisclaimerVariant = AlertVariant;
 type DisclaimerWrapperProps = {
@@ -34,20 +33,20 @@ export const Disclaimer: FC<{
       default:
     }
     return {
-      bgColor: theme.blue['10'],
+      bgColor: new Color(theme.blue['10']).setAlpha(0.5).toRgbString(),
       textColor: theme.blue['70'],
       borderColor: theme.blue['20'],
     };
   }, [theme, variant]);
   return (
-    <DisclaimerWrapper {...colors} className={'rounded-xl p-3 flex items-stretch'}>
-      <div className={'w-12 h-12  '}>
+    <DisclaimerWrapper {...colors} className={'rounded-xl px-3 py-2  flex items-stretch'}>
+      <div>
         <IconWrapper variant={variant}>
           <IconByVariant variant={variant} />
         </IconWrapper>
       </div>
       <div className={'px-2'}>
-        <Typography variant={'body3'} className='disclaimer-text'>
+        <Typography variant={'body4'} fw={'semibold'} className='disclaimer-text'>
           {message}
         </Typography>
       </div>
@@ -86,10 +85,13 @@ const DisclaimerWrapper = styled.div<DisclaimerWrapperProps>`
     background: ${bgColor};
     .disclaimer-text {
       color: ${textColor};
+      line-height: 15px;
+      vertical-align: top;
+      letter-spacing: 4%;
     }
     svg {
-      width: 22px;
-      height: 22px;
+      width: 13.33px;
+      height: 13.33px;
       fill: ${textColor};
     }
   `}

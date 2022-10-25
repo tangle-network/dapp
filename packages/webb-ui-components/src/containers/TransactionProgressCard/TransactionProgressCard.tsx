@@ -20,8 +20,8 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     return (
       <div
         className={twMerge(
-          `rounded-b-lg shadow-xl py-4  px-4 border-t-2 border-mono-80
-       flex flex-col space-y-4 max-w-[418px] dark:bg-mono-160`,
+          `rounded-b-lg shadow-xl py-2  px-4 border-t-2 border-mono-80
+       flex flex-col space-y-3 max-w-[295px] dark:bg-mono-160`,
           className
         )}
         {...props}
@@ -37,67 +37,54 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </Typography>
         </div>
         {/*Card Content*/}
-        <div className={'my-0 flex items-center'}>
+        <div className={'m-0 flex items-center'}>
           <div className={'h-full self-start py-2'}>
             <TokenIcon size={'lg'} name={'ETH'} />
           </div>
           <div className={'px-2'}>
-            <Typography
-              variant={'h4'}
-              fw={'bold'}
-              className={'py-0'}
-              style={{
-                color: '#000000',
-              }}
-            >
+            <Typography variant={'h5'} fw={'bold'} className={'py-0 text-mono-200'}>
               0.990
             </Typography>
-            <Typography
-              style={{
-                color: '#000000',
-              }}
-              fw={'bold'}
-              className={'py-0'}
-              variant={'body2'}
-            >
+            <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
               1789.12 USD
             </Typography>
           </div>
-          <div className={'h-full self-start py-2 flex items-center grow justify-end flex '}>
-            <div className={`w-6  h-6 rounded-full flex items-center justify-center`} children={<PolygonLogo />} />
-            <div className='px-2'>
-              <ArrowRight />
-            </div>
+          <div className={'h-full self-start  flex items-end grow  flex flex-col '}>
+            <Button variant={'link'} size={'sm'}>
+              SYNC NOTE
+            </Button>
 
-            <div className={`w-6  h-6 rounded-full flex items-center justify-center`} children={<OptimismLogo />} />
+            <div className='flex items-center mt-1'>
+              <div className={`w-5  h-5 rounded-full flex items-center justify-center`} children={<PolygonLogo />} />
+              <div className='px-2'>
+                <ArrowRight />
+              </div>
+              <div className={`w-5  h-5 rounded-full flex items-center justify-center`} children={<OptimismLogo />} />
+            </div>
           </div>
         </div>
         {/*Card Info or Disclaimer*/}
-        <div>
-          <Disclaimer
-            variant={'info'}
-            message={'New spend note is added to your account to reflect updated balance on Webb.'}
-          />
-        </div>
+        <Disclaimer
+          variant={'info'}
+          message={'New spend note is added to your account to reflect updated balance on Webb.'}
+        />
         {/*Card Footer*/}
         <div className={'my-0 flex items-center'}>
           <div>
-            <Typography variant={'body2'} fw={'bold'} className={'py-0 text-mono-100'}>
-              <Typography variant={'body1'} className={'inline-block px-2'}>
+            <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
+              <Typography variant={'body4'} className={'inline-block pr-2'}>
                 🎉{' '}
               </Typography>
               Successfully Deposited!
             </Typography>
           </div>
           <div className={'flex grow justify-end'}>
-            <Button variant={'link'}>DISMISS</Button>
+            <Button variant={'link'} size={'sm'}>
+              DISMISS
+            </Button>
           </div>
         </div>
       </div>
     );
   }
 );
-
-const NativeTokenLabel: FC<{ label: NativeLabel }> = ({ label }) => {
-  const amount = label.amount;
-};

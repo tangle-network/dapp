@@ -46,7 +46,7 @@ const classNames: ButtonClassNames = {
       disabled: 'disabled:text-blue-30 disabled:dark:text-blue-110',
     },
     md: 'body1 font-semibold',
-    sm: 'utility font-bold uppercase',
+    sm: '`utility` font-bold uppercase',
   },
 };
 
