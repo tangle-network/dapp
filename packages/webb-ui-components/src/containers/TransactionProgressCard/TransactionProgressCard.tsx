@@ -4,10 +4,10 @@ import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
 import { ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
+import { BridgeLabel, TransactionCardItemProps } from './types';
 
 type Variant = 'bridge' | 'native';
 /**
@@ -72,10 +72,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         <div className={'my-0 flex items-center'}>
           <div>
             <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
-              <Typography variant={'body4'} className={'inline-block pr-2'}>
-                🎉{' '}
-              </Typography>
-              Successfully Deposited!
+              <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
             </Typography>
           </div>
           <div className={'flex grow justify-end'}>
