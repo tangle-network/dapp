@@ -1,6 +1,6 @@
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
-import { Chip } from '@webb-dapp/webb-ui-components';
+import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
 import { ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
@@ -72,14 +72,27 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
             <div className={`w-6  h-6 rounded-full flex items-center justify-center`} children={<OptimismLogo />} />
           </div>
         </div>
+        {/*Card Info or Disclaimer*/}
         <div>
           <Disclaimer
             variant={'info'}
             message={'New spend note is added to your account to reflect updated balance on Webb.'}
           />
         </div>
-        {/*Card Info*/}
         {/*Card Footer*/}
+        <div className={'my-0 flex items-center'}>
+          <div>
+            <Typography variant={'body2'} fw={'bold'} className={'py-0 text-mono-100'}>
+              <Typography variant={'body1'} className={'inline-block px-2'}>
+                🎉{' '}
+              </Typography>
+              Successfully Deposited!
+            </Typography>
+          </div>
+          <div className={'flex grow justify-end'}>
+            <Button variant={'link'}>DISMISS</Button>
+          </div>
+        </div>
       </div>
     );
   }
