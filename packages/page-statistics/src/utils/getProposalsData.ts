@@ -1,11 +1,16 @@
 import { ProposalType } from '@webb-dapp/page-statistics/generated/graphql';
 import {
+  AnchorCreateProposal,
   AnchorUpdateProposal,
+  EVMProposal,
   FeeRecipientUpdateProposal,
   MaxDepositLimitProposal,
   MinWithdrawalLimitProposal,
+  ProposerSetUpdateProposal,
+  RefreshVoteProposal,
   RescueTokensProposal,
   ResourceIdUpdateProposal,
+  SetTreasuryHandlerProposal,
   SetVerifierProposal,
   TokenAddProposal,
   TokenRemoveProposal,
@@ -13,11 +18,21 @@ import {
 } from '@webb-tools/sdk-core';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
-export function getProposalsData(propType: ProposalType, data: string): Record<string, string> {
+export function getProposalsData(propType: ProposalType, data: string): Record<string, string | Record<string, any>> {
   const bytes = hexToU8a(data);
   switch (propType) {
-    case ProposalType.AnchorCreateProposal:
-      break;
+    case ProposalType.AnchorCreateProposal: {
+      const decoded = AnchorCreateProposal.fromBytes(bytes);
+      return {
+        encodedCall: decoded.encodedCall,
+        functionSignature: u8aToHex(decoded.header.functionSignature),
+        nonce: String(decoded.header.nonce),
+        chainType: String(decoded.header.resourceId.chainType),
+        chainId: String(decoded.header.resourceId.chainId),
+        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
+      };
+    }
+
     case ProposalType.AnchorUpdateProposal: {
       const decoded = AnchorUpdateProposal.fromBytes(bytes);
       return {
@@ -29,8 +44,15 @@ export function getProposalsData(propType: ProposalType, data: string): Record<s
         targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
       };
     }
-    case ProposalType.EvmProposal:
-      break;
+    case ProposalType.EvmProposal: {
+      const decoded = EVMProposal.fromBytes(bytes);
+      return {
+        merkleRoot: String(decoded.nonce),
+        chainId: String(decoded.chainId),
+        tx: { ...decoded.tx },
+      };
+    }
+
     case ProposalType.FeeRecipientUpdateProposal: {
       const decoded = FeeRecipientUpdateProposal.fromBytes(bytes);
       return {
@@ -65,10 +87,24 @@ export function getProposalsData(propType: ProposalType, data: string): Record<s
       };
     }
 
-    case ProposalType.ProposerSetUpdateProposal:
-      break;
-    case ProposalType.RefreshVote:
-      break;
+    case ProposalType.ProposerSetUpdateProposal: {
+      const decoded = ProposerSetUpdateProposal.fromBytes(bytes);
+      return {
+        numberOfProposers: String(decoded.numberOfProposers),
+        averageSessionLength: String(decoded.averageSessionLength),
+        nonce: String(decoded.nonce),
+        merkleRoot: decoded.merkleRoot,
+      };
+    }
+
+    case ProposalType.RefreshVote: {
+      const decoded = RefreshVoteProposal.fromBytes(bytes);
+      return {
+        nonce: String(decoded.nonce),
+        publicKey: String(decoded.publicKey),
+      };
+    }
+
     case ProposalType.RescueTokensProposal: {
       const decoded = RescueTokensProposal.fromBytes(bytes);
       return {
@@ -95,8 +131,18 @@ export function getProposalsData(propType: ProposalType, data: string): Record<s
         targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
       };
     }
-    case ProposalType.SetTreasuryHandlerProposal:
-      break;
+    case ProposalType.SetTreasuryHandlerProposal: {
+      const decoded = SetTreasuryHandlerProposal.fromBytes(bytes);
+      return {
+        newTreasuryHandler: decoded.newTreasuryHandler,
+        chainType: String(decoded.header.resourceId.chainType),
+        chainId: String(decoded.header.resourceId.chainId),
+        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
+        functionSignature: u8aToHex(decoded.header.functionSignature),
+        nonce: String(decoded.header.nonce),
+      };
+    }
+
     case ProposalType.SetVerifierProposal: {
       const decoded = SetVerifierProposal.fromBytes(bytes);
       return {
