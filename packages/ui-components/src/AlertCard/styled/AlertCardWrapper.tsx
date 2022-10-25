@@ -71,19 +71,27 @@ const getColorsByVariant = (
   }
 };
 
-export const AlertCardWrapper = styled.div<{ variant?: AlertVariant }>`
+export const AlertCardWrapper = styled.div<{ variant?: AlertVariant; fill: boolean }>`
   display: flex;
   align-items: center;
   margin-bottom: 16px;
   padding: 6px 16px;
   border-radius: 4px;
 
-  ${({ theme, variant }) => {
+  ${({ theme, variant, fill }) => {
     const { backgroundColor, color } = getColorsByVariant(theme, variant);
-
-    return css`
+    if (fill) {
+      return css`
       background-color: ${backgroundColor};
       color: ${color};
-    `;
+    `;  
+    }
+    
+    return css`
+        color: ${color};
+        border: 1px solid ${backgroundColor};
+        border-radius: 0.5rem;
+        background: transparent;
+      `;
   }}
 `;

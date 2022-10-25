@@ -1,17 +1,20 @@
 import { InfoIcon } from '@webb-dapp/ui-components/AlertCard/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, useMemo } from 'react';
-type DisclaimerVariant = 'Error' | 'Warning' | 'Info' | 'Success';
+import styled from 'styled-components';
+import { AlertVariant } from '@webb-dapp/ui-components/AlertCard/types';
+type DisclaimerVariant = AlertVariant;
+
 export const Disclaimer: FC<{ variant: DisclaimerVariant }> = ({ variant }) => {
   const typographyClasses = useMemo(() => {
     switch (variant) {
-      case 'Error':
+      case 'error':
         return 'text-red-500';
-      case 'Warning':
+      case 'warning':
         return 'text-yellow-500';
-      case 'Info':
+      case 'info':
         return 'text-sky-500';
-      case 'Success':
+      case 'success':
         return 'text-green-500';
     }
   }, [variant]);
@@ -21,10 +24,13 @@ export const Disclaimer: FC<{ variant: DisclaimerVariant }> = ({ variant }) => {
         <InfoIcon color={'#3D7BCE'} />
       </div>
       <div className={'px-2'}>
-        <Typography variant={'body3'} fw={'bold'} className={typographyClasses}>
-          New spend note is added to your account to reflect updated balance on Webb.
-        </Typography>
+        <Typography variant={'body3'} fw={'bold'} className={typographyClasses}></Typography>
       </div>
     </div>
   );
 };
+
+const DisclaimerWrapper = styled.div<{
+  theme: 'dark' | 'light';
+  variant: DisclaimerVariant;
+}>``;

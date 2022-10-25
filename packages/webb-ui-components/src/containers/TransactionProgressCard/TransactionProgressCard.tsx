@@ -8,6 +8,7 @@ import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
+import { AlertCard } from '@webb-dapp/ui-components';
 type Variant = 'bridge' | 'native';
 /**
  *
@@ -72,7 +73,12 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </div>
         </div>
         <div>
-          <Disclaimer variant={'Error'} />
+          <AlertCard
+            text={'New spend note is added to your account to reflect updated balance on Webb.'}
+            variant={'info'}
+            isDisclaimer
+            hasIcon
+          />
         </div>
         {/*Card Info*/}
         {/*Card Footer*/}
