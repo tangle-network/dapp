@@ -21,6 +21,12 @@ export type WalletType = {
   name: string;
 
   /**
+   * The wallet title to display.
+   * If not provided, it will use the wallet name to display
+   */
+  title?: string;
+
+  /**
    * The wallet logo
    */
   logo: React.ReactElement;
@@ -36,17 +42,17 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
   wallets: WalletType[];
 
   /**
-   * The wallet which is being connected.
+   * The wallet id which is being connected.
    * The component will display as connecting wallet state
    */
-  connectingWallet?: WalletId;
+  connectingWalletId?: WalletId;
 
   /**
-   * The wallet which is being connected, but failed.
+   * The wallet id which is being connected, but failed.
    * The component will display as failed wallet state
    * this has higher precedence than the connecting state
    */
-  failedWallet?: WalletId;
+  failedWalletId?: WalletId;
 
   /**
    * The callback which is invoked when user hits the close button
