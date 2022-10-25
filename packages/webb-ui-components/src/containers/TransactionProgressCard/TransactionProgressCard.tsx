@@ -1,14 +1,14 @@
 import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
-import { Avatar, Chip } from '@webb-dapp/webb-ui-components';
+import { Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowLeft, ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
-import { AlertCard } from '@webb-dapp/ui-components';
+
 type Variant = 'bridge' | 'native';
 /**
  *
@@ -73,11 +73,9 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </div>
         </div>
         <div>
-          <AlertCard
-            text={'New spend note is added to your account to reflect updated balance on Webb.'}
+          <Disclaimer
             variant={'info'}
-            isDisclaimer
-            hasIcon
+            message={'New spend note is added to your account to reflect updated balance on Webb.'}
           />
         </div>
         {/*Card Info*/}

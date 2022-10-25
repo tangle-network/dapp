@@ -1,11 +1,38 @@
-import { InfoIcon } from '@webb-dapp/ui-components/AlertCard/icons';
+import { IconByVariant } from '@webb-dapp/ui-components/AlertCard/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
+import React, { FC, useMemo } from 'react';
+import styled, { css } from 'styled-components';
 import { AlertVariant } from '@webb-dapp/ui-components/AlertCard/types';
+import { IconWrapper } from '@webb-dapp/ui-components/AlertCard/styled';
+import Color from 'tinycolor2';
+import { Pallet } from '@webb-dapp/ui-components/styling/colors';
+
 type DisclaimerVariant = AlertVariant;
 
-export const Disclaimer: FC<{ variant: DisclaimerVariant }> = ({ variant }) => {
+function getColors(theme: Pallet, variant: DisclaimerVariant): { color: string; backgroundColor: string } {
+  const infoColor = `#3D7BCE`;
+  const infoBgColor = `rgba(236, 244, 255, 0.5);`;
+  switch (variant) {
+    case 'info':
+      break;
+    case 'error':
+      break;
+    case 'warning':
+      break;
+    case 'success':
+      break;
+    default:
+  }
+  return {
+    color: infoColor,
+    backgroundColor: infoBgColor,
+  };
+}
+
+export const Disclaimer: FC<{
+  message: string;
+  variant: DisclaimerVariant;
+}> = ({ variant, message }) => {
   const typographyClasses = useMemo(() => {
     switch (variant) {
       case 'error':
@@ -19,18 +46,33 @@ export const Disclaimer: FC<{ variant: DisclaimerVariant }> = ({ variant }) => {
     }
   }, [variant]);
   return (
-    <div className={'rounded-xl p-3 border-2 border-mono-80 flex items-stretch'}>
+    <DisclaimerWrapper variant={variant} className={'rounded-xl p-3 flex items-stretch'}>
       <div className={'w-12 h-12  '}>
-        <InfoIcon color={'#3D7BCE'} />
+        <IconWrapper variant={variant}>
+          <IconByVariant variant={variant} />
+        </IconWrapper>
       </div>
       <div className={'px-2'}>
-        <Typography variant={'body3'} fw={'bold'} className={typographyClasses}></Typography>
+        <Typography variant={'body3'} fw={'bold'} className='disclaimer-text'>
+          {message}
+        </Typography>
       </div>
-    </div>
+    </DisclaimerWrapper>
   );
 };
 
 const DisclaimerWrapper = styled.div<{
-  theme: 'dark' | 'light';
   variant: DisclaimerVariant;
-}>``;
+}>`
+  ${({ theme, variant }) => {
+    console.log({ theme });
+    const { backgroundColor, color } = getColors(theme, variant);
+    return css`
+      border: 1px solid ${color};
+      background: ${backgroundColor};
+      .disclaimer-text {
+        color: ${color};
+      }
+    `;
+  }}
+`;

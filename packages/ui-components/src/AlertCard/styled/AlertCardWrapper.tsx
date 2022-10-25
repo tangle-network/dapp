@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { AlertVariant } from '../types';
 
-const getColorsByVariant = (
+export const getColorsByVariant = (
   theme: Pallet,
   variant: AlertVariant = 'info'
 ): { color: string; backgroundColor: string } => {
@@ -71,27 +71,19 @@ const getColorsByVariant = (
   }
 };
 
-export const AlertCardWrapper = styled.div<{ variant?: AlertVariant; fill: boolean }>`
+export const AlertCardWrapper = styled.div<{ variant?: AlertVariant }>`
   display: flex;
   align-items: center;
   margin-bottom: 16px;
   padding: 6px 16px;
   border-radius: 4px;
 
-  ${({ theme, variant, fill }) => {
+  ${({ theme, variant }) => {
     const { backgroundColor, color } = getColorsByVariant(theme, variant);
-    if (fill) {
-      return css`
+
+    return css`
       background-color: ${backgroundColor};
       color: ${color};
-    `;  
-    }
-    
-    return css`
-        color: ${color};
-        border: 1px solid ${backgroundColor};
-        border-radius: 0.5rem;
-        background: transparent;
-      `;
+    `;
   }}
 `;

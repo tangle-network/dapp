@@ -9,18 +9,11 @@ export type AlertCardProps = {
   hasIcon?: boolean;
   text: string;
   style?: React.CSSProperties;
-  isDisclaimer?: boolean;
 };
 
-export const AlertCard: React.FC<AlertCardProps> = ({
-  hasIcon,
-  isDisclaimer = false,
-  style,
-  text,
-  variant = 'info',
-}) => {
+export const AlertCard: React.FC<AlertCardProps> = ({ hasIcon, style, text, variant = 'info' }) => {
   return (
-    <AlertCardWrapper variant={variant} style={style} fill={!isDisclaimer}>
+    <AlertCardWrapper variant={variant} style={style}>
       {hasIcon && (
         <IconWrapper variant={variant}>
           <IconByVariant variant={variant} />
