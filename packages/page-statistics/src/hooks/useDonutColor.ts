@@ -18,7 +18,7 @@ export const useDonutColor = () => {
   return {
     [DonutDataType.Open]: {
       bg: webbColors.green['10'],
-      textColor: isDark ? webbColors.green['50'] : webbColors.green['70'],
+      textColor: isDark ? webbColors.green['10'] : webbColors.green['70'],
       borderColor: webbColors.green['70'],
     },
 

@@ -21,7 +21,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
       <div
         className={twMerge(
           `rounded-b-lg shadow-xl py-4  px-4 border-t-2 border-mono-80
-       flex flex-col space-y-4 max-w-[318px] dark:bg-mono-160`,
+       flex flex-col space-y-4 max-w-[418px] dark:bg-mono-160`,
           className
         )}
         {...props}
