@@ -23,9 +23,9 @@ export const WalletConnectionCard = forwardRef<HTMLDivElement, WalletConnectionC
     ref
   ) => {
     return (
-      <div {...props} className={twMerge('flex', className)} ref={ref}>
+      <div {...props} className={twMerge('flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-180', className)} ref={ref}>
         {/** Wallets list */}
-        <div className='w-[288px]'>
+        <div className='w-[288px] border-r border-r-mono-40 dark:border-r-mono-160'>
           <div className='px-6 py-4'>
             <Typography variant='h5' fw='bold'>
               Connect a Wallet
