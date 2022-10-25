@@ -41,3 +41,6 @@ export * from './SunLine';
 export * from './TelegramFill';
 export * from './TokenIcon';
 export * from './TwitterFill';
+
+// Wallet icons
+export * from './wallets';
