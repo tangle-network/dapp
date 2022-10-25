@@ -87,7 +87,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     );
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)} ref={ref}>
+      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
         <BridgeInputGroup className='flex flex-col space-y-2'>
           <div className='flex space-x-2'>
             <ShieldedAssetInput {...bridgeAssetProps} className='grow shrink-0 basis-1' />

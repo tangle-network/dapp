@@ -35,7 +35,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     }, [amountInputProps.amount, feePercentage, feeToken, token]);
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)} ref={ref}>
+      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
         <BridgeInputGroup className='flex flex-col space-y-2'>
           <ChainInput {...sourceChainProps} chainType='source' />
 

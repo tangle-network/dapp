@@ -2,7 +2,7 @@ import React, { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { WebbTypographyProps } from '../types';
-import { getFontWeightClassName, getTextAlignClassName } from '../utils';
+import { getDefaultTextColor, getFontWeightClassName, getTextAlignClassName } from '../utils';
 
 const defaultComponent = {
   h1: 'h1' as const,
@@ -45,7 +45,14 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
   const _component = useMemo(() => component ?? defaultComponent[variant], [component, variant]);
 
   const _className = useMemo(
-    () => twMerge(`${variant}` as const, getTextAlignClassName(ta), getFontWeightClassName(variant, fw), className),
+    () =>
+      twMerge(
+        `${variant}` as const,
+        getTextAlignClassName(ta),
+        getFontWeightClassName(variant, fw),
+        getDefaultTextColor(variant),
+        className
+      ),
     [className, fw, ta, variant]
   );
 
