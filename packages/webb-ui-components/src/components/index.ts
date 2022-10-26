@@ -22,6 +22,7 @@ export * from './LabelWithValue';
 export * from './ListCard';
 export * from './Logo';
 export * from './MenuItem';
+export * from './NagivationMenu';
 export * from './NetworkThresholdsCard';
 export * from './Pagination';
 export * from './Popover';
