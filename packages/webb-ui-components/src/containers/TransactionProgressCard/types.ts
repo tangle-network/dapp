@@ -3,6 +3,14 @@ import { PropsOf } from '@webb-dapp/webb-ui-components/types';
 export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
 export type TransactionItemStatus = 'In-progress' | 'warning' | 'completed';
 
+type TXCardFooterProp = {
+  isLoading?: boolean;
+  message?: string;
+  link?: {
+    text: string;
+    uri: string;
+  };
+};
 export type BridgeLabel = {
   amount: string;
   token: string;
@@ -25,19 +33,20 @@ type StepInfo =
  * @param status - in
  * @param note - Information note for the notification item
  * */
-export interface TransactionCardItemProps<Token> extends PropsOf<'div'> {
+export interface TransactionCardItemProps extends PropsOf<'div'> {
   method: TransactionItemVariant;
   firedAt: Date;
   note?: string;
   stepInfo?: StepInfo;
   status: TransactionItemStatus;
-  tokens: Record<Token, JSX.Element>;
+  tokens: Array<JSX.Element>;
   headerAction?: JSX.Element;
   wallets: {
     src: JSX.Element;
     dist: JSX.Element;
   };
   label: BridgeLabel | NativeLabel;
+  footer: TXCardFooterProp;
   onDismiss(): void;
   onDetails(): void;
 }

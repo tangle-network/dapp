@@ -2,7 +2,7 @@ import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, ExternalLinkLine, Link as LinkIcon, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { forwardRef, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -67,7 +67,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
               </Typography>
             ) : (
               <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-200'>
-                {label.token}
+                {label.token} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
               </Typography>
             )}
           </div>

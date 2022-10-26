@@ -194,7 +194,7 @@ const Proposals = () => {
         tokens={[<PolygonLogo />, <WalletLine />]}
         wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
         label={{
-          amount: '.999',
+          amount: '0.999',
           nativeValue: '1430',
         }}
         onDismiss={() => {}}
