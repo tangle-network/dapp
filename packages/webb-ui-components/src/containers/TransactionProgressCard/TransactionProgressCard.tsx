@@ -6,7 +6,6 @@ import { ArrowRight, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { forwardRef, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { BridgeLabel, TransactionCardItemProps } from './types';
 
 type Variant = 'bridge' | 'native';
@@ -22,7 +21,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     const [open, setOpen] = useState(true);
     return (
-      <Toast.Provider>
+      <Toast.Provider swipeDirection='right'>
         <Toast.Root
           duration={2000}
           type={'foreground'}
