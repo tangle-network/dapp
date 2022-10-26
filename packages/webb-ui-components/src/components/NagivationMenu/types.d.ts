@@ -30,6 +30,11 @@ export interface NavigationMenuContentProps extends ComponentProps<typeof Dropdo
    * The callback when user hits about menu item
    */
   onAboutClick?: ComponentProps<typeof MenuItem>['onClick'];
+
+  /**
+   * The app version
+   */
+  version?: string;
 }
 
 export interface NavigationMenuTriggerProps extends ComponentProps<typeof DropdownBasicButton> {}

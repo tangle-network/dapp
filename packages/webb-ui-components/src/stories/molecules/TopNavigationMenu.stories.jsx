@@ -12,7 +12,7 @@ export default {
 const Template = () => (
   <NavigationMenu>
     <NavigationMenuTrigger />
-    <NavigationMenuContent />
+    <NavigationMenuContent version='2.0.7' />
   </NavigationMenu>
 );
 

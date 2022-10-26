@@ -1,4 +1,5 @@
 import { BookOpenLineIcon, FlaskLineIcon, HelpLineIcon, InformationLine } from '@webb-dapp/webb-ui-components/icons';
+import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { ComponentProps, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -20,12 +21,13 @@ export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuCo
       onHelpCenterClick,
       onRequestFeaturesClick,
       onTestnetClick,
+      version,
       ...props
     },
     ref
   ) => {
     return (
-      <DropdownBody {...props} className={twMerge('pt-2 pb-4 mt-6 w-full min-w-[200px]', className)} ref={ref}>
+      <DropdownBody {...props} className={twMerge('py-2 mt-6 w-full min-w-[200px]', className)} ref={ref}>
         <ThemeSwitcherMenuItem />
 
         <Collapsible>
@@ -56,6 +58,15 @@ export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuCo
         <MenuItem icon={<InformationLine size='lg' />} onClick={onAboutClick}>
           About
         </MenuItem>
+
+        {/** Bottom version */}
+        {version && (
+          <div className='px-4 pt-1 pb-2'>
+            <Typography variant='body4' ta='right' className='text-mono-100 dark:text-mono-40'>
+              {version.toLowerCase().startsWith('v') ? version : `v${version}`}
+            </Typography>
+          </div>
+        )}
       </DropdownBody>
     );
   }
