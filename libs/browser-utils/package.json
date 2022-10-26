@@ -1,0 +1,9 @@
+{
+  "name": "@nepoche/browser-utils",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/storage": "0.0.1",
+    "@webb-tools/sdk-core": "0.1.4-105"
+  }
+}

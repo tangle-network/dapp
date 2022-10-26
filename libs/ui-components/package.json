@@ -1,0 +1,9 @@
+{
+  "name": "@nepoche/ui-components",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "numbro": "^2.3.6",
+    "react-motion": "^0.5.2"
+  }
+}

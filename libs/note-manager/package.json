@@ -1,0 +1,9 @@
+{
+  "name": "@nepoche/note-manager",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/browser-utils": "0.0.1",
+    "@nepoche/storage": "0.0.1"
+  }
+}

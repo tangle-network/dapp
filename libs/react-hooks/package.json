@@ -1,0 +1,19 @@
+{
+  "name": "@nepoche/react-hooks",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.8.0",
+    "@nepoche/react-environment": "0.0.1",
+    "@nepoche/abstract-api-provider": "0.0.1",
+    "@nepoche/storage": "0.0.1",
+    "@polkadot/api": "9.2.4",
+    "@polkadot/extension-dapp": "0.43.1",
+    "@umijs/use-request": "1.4.3",
+    "@webb-tools/api": "0.1.4-105",
+    "@webb-tools/protocol-substrate-types": "0.0.3",
+    "axios": "^0.21.0",
+    "copy-to-clipboard": "^3.3.1",
+    "csv": "^5.3.2"
+  }
+}

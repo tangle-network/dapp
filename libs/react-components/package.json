@@ -1,0 +1,17 @@
+{
+  "name": "@nepoche/react-components",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/ui-components": "0.0.1",
+    "@polkadot/api": "9.2.4",
+    "@polkadot/ui-keyring": "2.9.8",
+    "@webb-tools/api": "0.1.4-105",
+    "@webb-tools/app-util": "0.1.4-105",
+    "@webb-tools/sdk-core": "0.1.4-105",
+    "@webb-tools/protocol-substrate-types": "0.0.3",
+    "dayjs": "^1.8.25",
+    "i18next": "^19.7.0",
+    "react-i18next": "^11.7.1"
+  }  
+}

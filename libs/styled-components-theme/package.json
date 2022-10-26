@@ -1,0 +1,9 @@
+{
+  "name": "@nepoche/styled-components-theme",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/react-environment": "0.0.1",
+    "tinycolor2": "^1.4.2"
+  }
+}

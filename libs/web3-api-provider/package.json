@@ -1,0 +1,5 @@
+{
+  "name": "@nepoche/web3-api-provider",
+  "version": "0.0.1",
+  "main": "./src/index.js"
+}

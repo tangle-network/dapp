@@ -1,0 +1,8 @@
+{
+  "name": "@nepoche/responsive-utils",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "styled-components": "5.3.6"
+  }
+}

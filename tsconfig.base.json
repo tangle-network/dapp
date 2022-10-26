@@ -1,0 +1,82 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["dom.iterable", "dom", "esnext"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nepoche/abstract-api-provider": [
+        "libs/abstract-api-provider/src/index.ts"
+      ],
+      "@nepoche/abstract-api-provider/*": ["libs/abstract-api-provider/src/*"],
+      "@nepoche/api-provider-environment": [
+        "libs/api-provider-environment/src/index.ts"
+      ],
+      "@nepoche/api-provider-environment/*": [
+        "libs/api-provider-environment/src/*"
+      ],
+      "@nepoche/browser-utils": ["libs/browser-utils/src/index.ts"],
+      "@nepoche/browser-utils/*": ["libs/browser-utils/src/*"],
+      "@nepoche/dapp-config": ["libs/dapp-config/src/index.ts"],
+      "@nepoche/dapp-config/*": ["libs/dapp-config/src/*"],
+      "@nepoche/dapp-types": ["libs/dapp-types/src/index.ts"],
+      "@nepoche/dapp-types/*": ["libs/dapp-types/src/*"],
+      "@nepoche/evm-contracts": ["libs/evm-contracts/src/index.ts"],
+      "@nepoche/evm-contracts/*": ["libs/evm-contracts/src/*"],
+      "@nepoche/fixtures-deployments": [
+        "libs/fixtures-deployments/src/index.ts"
+      ],
+      "@nepoche/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
+      "@nepoche/logos": ["libs/logos/src/index.ts"],
+      "@nepoche/logos/*": ["libs/logos/src/*"],
+      "@nepoche/note-manager": ["libs/note-manager/src/index.ts"],
+      "@nepoche/note-manager/*": ["libs/note-manager/src/*"],
+      "@nepoche/polkadot-api-provider": [
+        "libs/polkadot-api-provider/src/index.ts"
+      ],
+      "@nepoche/react-components": ["libs/react-components/src/index.ts"],
+      "@nepoche/react-components/*": ["libs/react-components/src/*"],
+      "@nepoche/react-environment": ["libs/react-environment/src/index.ts"],
+      "@nepoche/react-environment/*": ["libs/react-environment/src/*"],
+      "@nepoche/react-hooks": ["libs/react-hooks/src/index.ts"],
+      "@nepoche/react-hooks/*": ["libs/react-hooks/src/*"],
+      "@nepoche/relayer-manager-factory": [
+        "libs/relayer-manager-factory/src/index.ts"
+      ],
+      "@nepoche/relayer-manager-factory/*": [
+        "libs/relayer-manager-factory/src/*"
+      ],
+      "@nepoche/responsive-utils": ["libs/responsive-utils/src/index.ts"],
+      "@nepoche/stats-dapp/*": ["apps/stats-dapp/src/*"],
+      "@nepoche/storage": ["libs/storage/src/index.ts"],
+      "@nepoche/storage/*": ["libs/storage/src/*"],
+      "@nepoche/styled-components-theme": [
+        "libs/styled-components-theme/src/index.ts"
+      ],
+      "@nepoche/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
+      "@nepoche/tailwind-preset": ["libs/tailwind-preset/index.js"],
+      "@nepoche/ui-components": ["libs/ui-components/src/index.ts"],
+      "@nepoche/ui-components/*": ["libs/ui-components/src/*"],
+      "@nepoche/ui-hooks": ["libs/ui-hooks/src/index.ts"],
+      "@nepoche/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
+      "@nepoche/webb-ui-components": ["libs/webb-ui-components/src/index.ts"],
+      "@nepoche/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

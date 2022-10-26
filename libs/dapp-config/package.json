@@ -1,0 +1,10 @@
+{
+  "name": "@nepoche/dapp-config",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/dapp-types": "0.0.1",
+    "@nepoche/browser-utils": "0.0.1",
+    "@nepoche/logos": "0.0.1"
+  }
+}

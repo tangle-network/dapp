@@ -1,0 +1,9 @@
+{
+  "name": "@nepoche/relayer-manager-factory",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@nepoche/dapp-types": "0.0.1",
+    "@nepoche/dapp-config": "0.0.1"
+  }
+}
