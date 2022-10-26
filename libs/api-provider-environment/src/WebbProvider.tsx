@@ -736,7 +736,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
     appEvent.on('setActiveAccount', (nextAccount) => {
       setActiveAccount(nextAccount);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

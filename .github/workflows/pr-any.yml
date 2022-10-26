@@ -17,10 +17,10 @@ jobs:
       - name: lint
         run: |
           yarn install --frozen-lockfile
-          yarn lint
+          yarn nx run-many --all --target=lint
 
   ts-check:
-    name: ts-check
+    name: Lint Code
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,7 +34,7 @@ jobs:
       - name: check
         run: |
           yarn install --frozen-lockfile
-          yarn ts-check
+          yarn nx run-many --all --target=lint
 
   build_code:
     name: Build Code
@@ -51,4 +51,4 @@ jobs:
       - name: build
         run: |
           yarn install --frozen-lockfile
-          yarn build:dapp:production
+          yarn nx run-many --all --target=build

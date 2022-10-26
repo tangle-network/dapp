@@ -29,7 +29,7 @@ import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, provide
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
-const { poseidon } = require('circomlibjs');
+import { poseidon } from 'circomlibjs';
 const logger = LoggerService.get('AnchorContract');
 
 export interface IVariableAnchorPublicInputs {
@@ -253,7 +253,7 @@ export class VAnchorContract {
       );
     }
 
-    let extAmount = BigNumber.from(0)
+    const extAmount = BigNumber.from(0)
       .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
       .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 
@@ -322,7 +322,7 @@ export class VAnchorContract {
       );
     }
 
-    let extAmount = BigNumber.from(0)
+    const extAmount = BigNumber.from(0)
       .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
       .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 
@@ -516,6 +516,7 @@ export class VAnchorContract {
     );
 
     // Unsure why the following filter statement does not change type from (Utxo | undefined)[] to Utxo[]
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const decryptedUtxos: Utxo[] = utxos.filter((value) => value !== undefined);
 
@@ -551,7 +552,7 @@ export class VAnchorContract {
     const neighborRoots = neighborEdges.map((rootData) => {
       return rootData.root;
     });
-    let thisRoot = await this._contract.getLastRoot();
+    const thisRoot = await this._contract.getLastRoot();
     return [thisRoot, ...neighborRoots];
   }
 
@@ -575,8 +576,8 @@ export class VAnchorContract {
     // Start creating notes to satisfy vanchor input
     // Only the sourceChainId and secrets (amount, nullifier, secret, blinding)
     // is required
-    let inputNotes: Note[] = [];
-    let inputIndices: number[] = [];
+    const inputNotes: Note[] = [];
+    const inputIndices: number[] = [];
 
     // calculate the sum of input notes (for calculating the public amount)
     let sumInputNotes: BigNumberish = 0;

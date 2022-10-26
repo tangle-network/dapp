@@ -115,7 +115,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       let sumInputNotes: BigNumber = BigNumber.from(0);
 
       // Create input UTXOs for convenience calculations
-      let inputUtxos: Utxo[] = [];
+      const inputUtxos: Utxo[] = [];
       this.cancelToken.throwIfCancel();
 
       // For all notes, get any leaves in parallel
@@ -150,7 +150,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       // Populate the leaves for the destination if not already populated
       if (!leavesMap[destChainIdType.toString()]) {
         const leafStorage = await bridgeStorageFactory(destChainIdType);
-        let leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal);
+        const leaves = await this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal);
 
         leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
           return hexToU8a(leaf);
@@ -201,7 +201,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       });
       const outputUtxos = [changeUtxo, dummyUtxo];
 
-      let extAmount = BigNumber.from(0)
+      const extAmount = BigNumber.from(0)
         .add(outputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
         .sub(inputUtxos.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
 

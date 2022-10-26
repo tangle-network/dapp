@@ -11,7 +11,7 @@ import { WebbWeb3Provider } from '../webb-provider';
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
     const bridge = this.getBridge();
-    let wrappableTokens: Currency[] = [];
+    const wrappableTokens: Currency[] = [];
 
     if (!bridge) {
       return wrappableTokens;

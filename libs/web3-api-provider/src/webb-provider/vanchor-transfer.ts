@@ -103,7 +103,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
       let sumInputNotes: BigNumber = BigNumber.from(0);
 
       // Create input UTXOs for convenience calculations
-      let inputUtxos: Utxo[] = [];
+      const inputUtxos: Utxo[] = [];
       this.cancelToken.throwIfCancel();
 
       // For all notes, get any leaves in parallel

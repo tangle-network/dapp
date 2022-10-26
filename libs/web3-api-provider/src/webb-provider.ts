@@ -106,14 +106,14 @@ export class WebbWeb3Provider
 
     // Take the configured values in the config and create objects used in the
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
-    let initialSupportedCurrencies: Record<number, Currency> = {};
-    for (let currencyConfig of Object.values(config.currencies)) {
+    const initialSupportedCurrencies: Record<number, Currency> = {};
+    for (const currencyConfig of Object.values(config.currencies)) {
       initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
     }
 
     // All supported bridges are supplied by the config, before passing to the state.
-    let initialSupportedBridges: Record<number, Bridge> = {};
-    for (let bridgeConfig of Object.values(config.bridgeByAsset)) {
+    const initialSupportedBridges: Record<number, Bridge> = {};
+    for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (Object.keys(bridgeConfig.anchors).includes(calculateTypedChainId(ChainType.EVM, chainId).toString())) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
         const bridgeTargets = bridgeConfig.anchors;

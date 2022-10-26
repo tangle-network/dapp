@@ -77,5 +77,5 @@
     "appsDir": "apps",
     "libsDir": "libs"
   },
-  "defaultProject": "bridge-dapp"
+  "defaultProject": "stats-dapp"
 }

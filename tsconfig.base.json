@@ -78,5 +78,5 @@
       "@nepoche/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp", "**/node_modules/*"]
 }

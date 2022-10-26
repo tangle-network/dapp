@@ -61,48 +61,48 @@ export class WebbState implements WebbStateInterface {
     return this.wrappableToken.value;
   }
 
-  get $wrappableCurrency() {
-    return this.wrappableToken.asObservable();
-  }
-
   set wrappableCurrency(value: Currency | null) {
     this.wrappableToken.next(value);
+  }
+
+  get $wrappableCurrency() {
+    return this.wrappableToken.asObservable();
   }
 
   get wrappableCurrencies() {
     return this.wrappableTokens.value;
   }
 
-  get $wrappableCurrencies() {
-    return this.wrappableTokens.asObservable();
-  }
-
   set wrappableCurrencies(value: Record<number, Currency>) {
     this.wrappableTokens.next(value);
+  }
+
+  get $wrappableCurrencies() {
+    return this.wrappableTokens.asObservable();
   }
 
   get wrappedCurrency() {
     return this.wrappedToken.value;
   }
 
-  get $wrappedCurrency() {
-    return this.wrappedToken.asObservable();
-  }
-
   set wrappedCurrency(value: Currency | null) {
     this.wrappedToken.next(value);
+  }
+
+  get $wrappedCurrency() {
+    return this.wrappedToken.asObservable();
   }
 
   get wrappedCurrencies() {
     return this.wrappedTokens.value;
   }
 
-  get $wrappedCurrencies() {
-    return this.wrappedTokens.asObservable();
-  }
-
   set wrappedCurrencies(value: Record<number, Currency>) {
     this.wrappedTokens.next(value);
+  }
+
+  get $wrappedCurrencies() {
+    return this.wrappedTokens.asObservable();
   }
 
   get $activeBridge() {
@@ -122,7 +122,7 @@ export class WebbState implements WebbStateInterface {
   }
 
   getReverseCurrencyMap(): Map<string, number> {
-    let contractMapping = new Map();
+    const contractMapping = new Map();
 
     Object.values(this.supportedCurrencies).forEach((currency) => {
       currency.getAddresses().forEach((addressEntry) => {
@@ -134,7 +134,7 @@ export class WebbState implements WebbStateInterface {
   }
 
   getReverseCurrencyMapWithChainId(typedChainId: number): Map<string, number> {
-    let contractMapping = new Map();
+    const contractMapping = new Map();
     Object.values(this.supportedCurrencies).forEach((currency) => {
       if (currency.getAddressOfChain(typedChainId) !== undefined) {
         currency.getAddresses().forEach((addressEntry) => {
