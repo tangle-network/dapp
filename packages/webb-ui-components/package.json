@@ -58,5 +58,8 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -o docs-build -s ./src/stories/assets"
+  },
+  "dependencies": {
+    "@radix-ui/react-toast": "^1.1.1"
   }
 }
