@@ -27,7 +27,11 @@ export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuCo
     ref
   ) => {
     return (
-      <DropdownBody {...props} className={twMerge('py-2 mt-6 w-full min-w-[200px]', className)} ref={ref}>
+      <DropdownBody
+        {...props}
+        className={twMerge('pt-2 mt-6 w-full min-w-[200px]', !version ? 'pb-2' : '', className)}
+        ref={ref}
+      >
         <ThemeSwitcherMenuItem />
 
         <Collapsible>
