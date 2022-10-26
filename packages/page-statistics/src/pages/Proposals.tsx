@@ -13,7 +13,7 @@ import {
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import { TransactionProgressCard } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
-import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ExternalLinkLine, TokenIcon, WalletLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
@@ -181,7 +181,34 @@ const Proposals = () => {
         wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
         label={{
           tokenURI: 'https://polygon.technology/',
-          amount: '3',
+          amount: '0.999',
+          token: 'ETH/WETH',
+        }}
+        onDismiss={() => {}}
+        onDetails={() => {}}
+      />
+      <TransactionProgressCard
+        method={'Withdraw'}
+        firedAt={new Date()}
+        status={'In-progress'}
+        tokens={[<PolygonLogo />, <WalletLine />]}
+        wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
+        label={{
+          amount: '.999',
+          nativeValue: '1430',
+        }}
+        onDismiss={() => {}}
+        onDetails={() => {}}
+      />
+      <TransactionProgressCard
+        method={'Deposit'}
+        firedAt={new Date()}
+        status={'In-progress'}
+        tokens={[<PolygonLogo />, <EthLogo />]}
+        wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+        label={{
+          tokenURI: 'https://polygon.technology/',
+          amount: '0.999',
           token: 'ETH/WETH',
         }}
         onDismiss={() => {}}
