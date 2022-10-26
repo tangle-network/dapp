@@ -12,6 +12,7 @@ import {
   MenuItem,
   ThemeSwitcherMenuItem,
 } from '@nepoche/webb-ui-components/components';
+import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-dapp/webb-ui-components';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState } from 'react';
