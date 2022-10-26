@@ -65,13 +65,8 @@
       "@nepoche/stats-dapp/*": ["apps/stats-dapp/src/*"],
       "@nepoche/storage": ["libs/storage/src/index.ts"],
       "@nepoche/storage/*": ["libs/storage/src/*"],
-      "@nepoche/styled-components-theme": [
-        "libs/styled-components-theme/src/index.ts"
-      ],
       "@nepoche/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
       "@nepoche/tailwind-preset": ["libs/tailwind-preset/index.js"],
-      "@nepoche/ui-components": ["libs/ui-components/src/index.ts"],
-      "@nepoche/ui-components/*": ["libs/ui-components/src/*"],
       "@nepoche/ui-hooks": ["libs/ui-hooks/src/index.ts"],
       "@nepoche/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
       "@nepoche/webb-ui-components": ["libs/webb-ui-components/src/index.ts"],

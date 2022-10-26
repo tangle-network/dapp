@@ -1,5 +1,5 @@
 import { Loadable, Page } from '../provider/hooks/types';
-import { Spinner } from '@nepoche/ui-components/Spinner/Spinner';
+import { Spinner } from '@nepoche/webb-ui-components/icons/Spinner';
 import { useMemo } from 'react';
 
 export function DemoTable<T>(data: { page: Loadable<Page<T>> }) {

@@ -1,7 +1,6 @@
 import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
 
 export function misbehavingRelayer(): InteractiveFeedback {
-  let interactiveFeedback: InteractiveFeedback;
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: `Bad Relayer`,
@@ -19,7 +18,7 @@ export function misbehavingRelayer(): InteractiveFeedback {
       'success'
     )
     .actions();
-  interactiveFeedback = new InteractiveFeedback(
+  const interactiveFeedback = new InteractiveFeedback(
     'error',
     actions,
     () => {

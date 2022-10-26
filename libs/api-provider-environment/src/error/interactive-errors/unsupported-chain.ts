@@ -2,7 +2,6 @@ import { ApiConfig } from '@nepoche/dapp-config';
 import { EVMChainId, InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
 
 export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
-  let interactiveFeedback: InteractiveFeedback;
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: 'Switched to unsupported chain',
@@ -30,7 +29,7 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       'success'
     )
     .actions();
-  interactiveFeedback = new InteractiveFeedback(
+  const interactiveFeedback = new InteractiveFeedback(
     'error',
     actions,
     () => {
