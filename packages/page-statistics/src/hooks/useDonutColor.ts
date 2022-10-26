@@ -1,5 +1,5 @@
 import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
-import { WebbColorsType } from 'page-statistics/types/index.js';
+import { WebbColorsType } from '@webb-dapp/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
 import tailwindConfig from /* preval */ '../../tailwind.config.js';

@@ -6,10 +6,6 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@layer base {
-  @import './css/layer-base.css';
-}
+@import './css/layer-base.css';
 
-@layer components {
-  @import './css/layer-components.css';
-}
+@import './css/layer-components.css';

@@ -70,3 +70,12 @@ export function isMonospaceVariant(variant: WebbTypographyVariant): variant is M
   const monoKeys = ['mono1', 'mono2'];
   return monoKeys.indexOf(variant) !== -1;
 }
+
+/**
+ * Get the default text color tailwind className based on variant
+ * @param variant Represent the typo variant
+ * @returns the default text color className
+ */
+export function getDefaultTextColor(variant: WebbTypographyVariant) {
+  return variant.startsWith('h') ? 'text-mono-200 dark:text-mono-40' : 'text-mono-160 dark:text-mono-60';
+}

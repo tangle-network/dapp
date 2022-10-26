@@ -2,6 +2,7 @@ import { useSessionThreshold } from '@webb-dapp/page-statistics/provider/hooks/u
 import { Button, DropdownMenu, TitleWithInfo } from '@webb-dapp/webb-ui-components/components';
 import { useDarkMode } from '@webb-dapp/webb-ui-components/hooks';
 import { ArrowLeft } from '@webb-dapp/webb-ui-components/icons';
+import { WebbColorsType } from '@webb-dapp/webb-ui-components/types';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import {
   BarElement,
@@ -15,7 +16,6 @@ import {
   Tooltip,
 } from 'chart.js';
 import cx from 'classnames';
-import { WebbColorsType } from 'page-statistics/types';
 import { ComponentProps, FC, useCallback, useMemo, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';

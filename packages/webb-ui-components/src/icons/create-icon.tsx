@@ -33,6 +33,11 @@ interface CreateIconOptions extends IconBase {
   defaultProps?: React.SVGProps<SVGSVGElement>;
 }
 
+/**
+ * Create icon from `d` or `path` attribute
+ * @param {CreateIconOptions} options create icon options
+ * @returns the icon component
+ */
 export function createIcon(options: CreateIconOptions) {
   const {
     className,
