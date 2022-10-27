@@ -230,7 +230,7 @@ const Proposals = () => {
           }}
           onDismiss={() => {}}
           footer={{
-            isLoading: true,
+            isLoading: false,
             hasWarning: true,
             link: {
               uri: '#',

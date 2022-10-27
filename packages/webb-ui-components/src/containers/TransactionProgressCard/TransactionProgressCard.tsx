@@ -1,6 +1,6 @@
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon, ChevronUp } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, ChevronUp, ExternalLinkLine, Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -19,6 +19,96 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
 /**
  *
  * TransactionProgressCard
+ * @description A card component that represent the status change of a transaction over time
+ *
+ * @example Transfer transaction card when the transaction is done
+ *  ```jsx
+ *  <TransactionProgressCard
+       method={'Transfer'}
+       firedAt={new Date()}
+       status={'in-progress'}
+       tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
+       wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+       label={{
+                  tokenURI: 'https://polygon.technology/',
+                  amount: '0.999',
+                  token: 'ETH/WETH',
+                }}
+       onDismiss={() => {}}
+       footer={{
+                  isLoading: false,
+                  message: (
+                    <>
+                      <span className={'inline-block pr-2'}>🎉</span>Successfully Transfer!
+                    </>
+                  ),
+                }}
+       onDetails={() => {}}
+      />
+ *  ```
+ *  @example Withdraw transaction card when generating the zero knowledge proof
+ *
+ *  ```jsx
+ *  <TransactionProgressCard
+       method={'Withdraw'}
+       firedAt={new Date()}
+       status={'in-progress'}
+       syncNote={() => {}}
+       tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
+       wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
+       label={{
+                  amount: '0.999',
+                  nativeValue: '1430',
+                }}
+       onDismiss={() => {}}
+       footer={{
+                  isLoading: true,
+                  message: 'Generating ZK  proofs..',
+                }}
+       onDetails={() => {}}
+       />
+ *  ```
+ *
+ *  @example Deposit transaction card when the transction has failed
+ *
+ *   ```jsx
+ *   <TransactionProgressCard
+         method={'Deposit'}
+         firedAt={new Date()}
+         status={'in-progress'}
+         tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
+         wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+         label={{
+                    tokenURI: 'https://polygon.technology/',
+                    amount: '0.999',
+                    token: 'ETH/WEBB',
+                  }}
+         onDismiss={() => {}}
+         footer={{
+                    isLoading: false,
+                    hasWarning: true,
+                    link: {
+                      uri: '#',
+                      text: (
+                        <>
+                          <span
+                            className={'inline-block pr-2'}
+                            style={{
+                              fontSize: 18,
+                            }}
+                          >
+                            ⚠️
+                          </span>
+                          Deposit Failed
+                        </>
+                      ),
+                    },
+                  }}
+         onDetails={() => {}}
+         />
+ *   ```
+ *
+ *
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
   ({ className, label, tokens, syncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
@@ -115,6 +205,46 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
   }
 );
 
+/**
+ *  Transaction card footer
+ *  @description An internal component that is used for the `TransactionProcessingCard`
+ *
+ *  @example Footer for success Transfer Transaction
+ *  ```jsx
+ *  <TxCardFooter
+ *   isLoading={false}
+ *   message={ (
+              <>
+                <span className={'inline-block pr-2'}>🎉</span>Successfully Transfer!
+              </>
+            )}
+ onDetails={() =>{
+        window.open(...)
+      }
+ *  />
+ *  ```
+ *  @example Footer for failed transaction
+ *  <TxCardFooter
+ *    hasWarning
+ *    link= {{
+              uri: '#',
+              text: (
+                <>
+                  <span
+                    className={'inline-block pr-2'}
+                    style={{
+                      fontSize: 18,
+                    }}
+                  >
+                    ⚠️
+                  </span>
+                  Deposit Failed
+                </>
+              ),
+            }}
+ />
+ *
+ * */
 const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDismiss' | 'onDetails'>> = ({
   isLoading,
   message,
