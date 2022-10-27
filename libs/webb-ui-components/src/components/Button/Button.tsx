@@ -103,7 +103,15 @@ function ButtonContent(props: ButtonContentProps) {
       {leftIcon && (
         <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>
       )}
-      <span className="block !text-inherit">{children}</span>
+      <span
+        className={cx(
+          'block !text-inherit',
+          'border-b-[1.6px]',
+          'border-b-transparent group-hover:border-inherit dark:group-hover:border-inherit'
+        )}
+      >
+        {children}
+      </span>
       {rightIcon && (
         <span className={cx(`ml-2`, 'block !text-inherit')}>{rightIcon}</span>
       )}
