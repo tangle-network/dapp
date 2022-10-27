@@ -2,7 +2,6 @@ import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
 import { TAppEvent } from '../../app-event';
 
 export function insufficientApiInterface(appEvent: TAppEvent): InteractiveFeedback {
-  let interactiveFeedback: InteractiveFeedback;
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: `The active API isn't providing the expected functionality`,
@@ -11,19 +10,18 @@ export function insufficientApiInterface(appEvent: TAppEvent): InteractiveFeedba
       content: 'Please consider switching back to a another chain',
     },
   ]);
-  const actions = InteractiveFeedback.actionsBuilder()
-    .action(
-      'Switch',
-      () => {
-        interactiveFeedback?.cancelWithoutHandler();
-        appEvent.send('changeNetworkSwitcherVisibility', true);
-      },
-      'success'
-    )
-    .actions();
-  interactiveFeedback = new InteractiveFeedback(
+  const interactiveFeedback = new InteractiveFeedback(
     'error',
-    actions,
+    InteractiveFeedback.actionsBuilder()
+      .action(
+        'Switch',
+        () => {
+          interactiveFeedback?.cancelWithoutHandler();
+          appEvent.send('changeNetworkSwitcherVisibility', true);
+        },
+        'success'
+      )
+      .actions(),
     () => {
       interactiveFeedback?.cancel();
     },

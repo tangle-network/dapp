@@ -28,7 +28,7 @@ import {
   Table,
 } from '@nepoche/webb-ui-components/components';
 import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@nepoche/webb-ui-components/icons';
+import { ExternalLinkLine, TokenIcon } from '@nepoche/icons';
 import { shortenHex } from '@nepoche/webb-ui-components/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import { Search } from '../../icons';
+import { Search } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo, useState } from 'react';

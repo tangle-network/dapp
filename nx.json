@@ -77,5 +77,10 @@
     "appsDir": "apps",
     "libsDir": "libs"
   },
+  "pluginsConfig": {
+    "@nrwl/js": {
+      "analyzeSourceFiles": true
+    }
+  },
   "defaultProject": "stats-dapp"
 }

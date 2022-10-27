@@ -39,7 +39,7 @@ import {
   QRCode,
   Spinner,
   TwitterFill,
-} from '@nepoche/webb-ui-components/icons';
+} from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import { shortenString } from '@nepoche/webb-ui-components/utils';
 import cx from 'classnames';

@@ -15,7 +15,7 @@ import {
   TitleWithInfo,
 } from '@nepoche/webb-ui-components';
 import { fuzzyFilter } from '@nepoche/webb-ui-components';
-import { Spinner } from '@nepoche/webb-ui-components';
+import { Spinner } from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components';
 import { ComponentProps, useMemo } from 'react';
 import { Link } from 'react-router-dom';

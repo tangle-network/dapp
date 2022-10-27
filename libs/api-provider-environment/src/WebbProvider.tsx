@@ -36,16 +36,15 @@ import { DimensionsProvider } from '@nepoche/responsive-utils';
 import { StoreProvider } from '@nepoche/react-environment/store';
 import { WebbContext } from './webb-context';
 import { getRelayerManagerFactory } from '@nepoche/relayer-manager-factory';
-import { notificationApi } from '@nepoche/ui-components/notification';
-import { AccountSwitchNotification } from '@nepoche/ui-components/notification/AccountSwitchNotification';
-import { Spinner } from '@nepoche/ui-components/Spinner/Spinner';
+import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
+import { Spinner } from '@nepoche/icons';
 import { Web3Provider, Web3RelayerManager, WebbWeb3Provider } from '@nepoche/web3-api-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType, Keypair, Note } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { extensionNotInstalled, getWalletByWebbErrorCodes, unsupportedChain } from './error';
+import { unsupportedChain } from './error';
 import { SettingProvider } from '@nepoche/react-environment';
 
 interface WebbProviderProps extends BareProps {
@@ -141,7 +140,7 @@ notificationHandler.remove = (key: string | number) => {
 
 const appEvent = new AppEvent();
 
-export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
+export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
@@ -256,19 +255,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       nextActiveApi?.on('newAccounts', async (accounts) => {
         const acs = await accounts.accounts();
         const active = acs[0] || null;
-        notificationApi({
-          variant: 'info',
-          Icon: (
-            <div>
-              <Icon>people-alt</Icon>
-            </div>
-          ),
-          key: 'account-change',
-          message: 'Account changed from provider',
-          secondaryMessage: React.createElement(AccountSwitchNotification, {
-            account: active?.address ?? 'UNKNOWN',
-          }),
-        });
         setAccounts(acs);
         _setActiveAccount(acs[0] || null);
       });
@@ -302,9 +288,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Da
       case WebbErrorCodes.TalismanExtensionNotInstalled:
       case WebbErrorCodes.SubWalletExtensionNotInstalled:
         {
-          const interactiveFeedback = extensionNotInstalled(getWalletByWebbErrorCodes(code));
-          setActiveChain(undefined);
-          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+          // TODO: Implement interactive feedback with new components from webb-ui-components:
         }
         break;
       case WebbErrorCodes.InsufficientProviderInterface:

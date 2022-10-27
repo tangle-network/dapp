@@ -1,6 +1,6 @@
 import { Half2Icon } from '@radix-ui/react-icons';
 import { useDarkMode } from '../../hooks';
-import { MoonLine, SunLine } from '../../icons';
+import { MoonLine, SunLine } from '@nepoche/icons';
 import { useMemo } from 'react';
 
 const ThemeSwitcherButton = () => {

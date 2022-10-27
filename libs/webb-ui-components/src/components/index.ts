@@ -24,6 +24,7 @@ export * from './ListCard';
 export * from './Logo';
 export * from './MenuItem';
 export * from './NetworkThresholdsCard';
+export * from './Notification';
 export * from './Pagination';
 export * from './Popover';
 export * from './Progress';

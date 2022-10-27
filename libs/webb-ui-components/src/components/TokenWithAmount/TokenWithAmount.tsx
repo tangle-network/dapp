@@ -1,4 +1,4 @@
-import { TokenIcon } from '../../icons';
+import { TokenIcon } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

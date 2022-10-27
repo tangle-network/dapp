@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ECDSAClaims } from '@nepoche/abstract-api-provider/ecdsa-claims';
+import { ECDSAClaims } from './ecdsa-claims';
 import { InteractiveFeedback } from '@nepoche/dapp-types';
 import { NoteManager } from '@nepoche/note-manager';
 import { EventBus } from '@webb-tools/app-util';

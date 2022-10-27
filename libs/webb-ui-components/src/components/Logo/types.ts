@@ -1,4 +1,4 @@
-import { IconBase } from '../../icons/types';
+import { IconBase } from '@nepoche/icons/types';
 
 /**
  * The Logo props

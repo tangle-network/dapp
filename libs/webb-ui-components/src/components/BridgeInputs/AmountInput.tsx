@@ -1,4 +1,4 @@
-import { ChevronDown } from '../../icons';
+import { ChevronDown } from '@nepoche/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

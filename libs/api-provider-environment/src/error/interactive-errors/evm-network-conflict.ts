@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
 import { TAppEvent } from '../../app-event';
-import { notificationApi } from '@nepoche/ui-components/notification';
+import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
 import React from 'react';
 
 type EvmNetworkConflictParams = {
@@ -13,7 +13,6 @@ type EvmNetworkConflictParams = {
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
 export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
-  let interactiveFeedback: InteractiveFeedback;
   const addChainContent = [
     {
       any: () => {
@@ -50,19 +49,17 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
     },
     ...(params.switchChain ? addChainContent : []),
   ]);
-  const actions = InteractiveFeedback.actionsBuilder()
-    .action(
-      'Reselect chain',
-      () => {
-        interactiveFeedback?.cancelWithoutHandler();
-        appEvent.send('changeNetworkSwitcherVisibility', true);
-      },
-      'info'
-    )
-    .actions();
-  interactiveFeedback = new InteractiveFeedback(
+  const interactiveFeedback = new InteractiveFeedback(
     'error',
-    actions,
+    InteractiveFeedback.actionsBuilder()
+      .action(
+        'Reselect chain',
+        () => {
+          appEvent.send('changeNetworkSwitcherVisibility', true);
+        },
+        'info'
+      )
+      .actions(),
     () => {
       interactiveFeedback?.cancelWithoutHandler();
     },

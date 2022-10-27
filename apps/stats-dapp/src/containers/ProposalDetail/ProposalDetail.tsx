@@ -19,7 +19,7 @@ import {
   ExternalLinkLine,
   Spinner,
   TokenIcon,
-} from '@nepoche/webb-ui-components/icons';
+} from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import { shortenHex } from '@nepoche/webb-ui-components/utils';
 import cx from 'classnames';

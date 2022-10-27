@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from '../../icons';
+import { ChevronLeft, ChevronRight } from '@nepoche/icons';
 import { getPaginationItems } from '../../utils';
 import cx from 'classnames';
 import React, { useMemo } from 'react';
