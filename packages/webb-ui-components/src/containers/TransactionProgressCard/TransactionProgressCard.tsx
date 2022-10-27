@@ -8,12 +8,14 @@ import { BridgeLabel, TransactionCardItemProps, TXCardFooterProps } from './type
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 
 type Variant = 'bridge' | 'native';
+const sectionPadding = 'py-2  px-4 m-0 mt-0';
+
 /**
  *
  * TransactionProgressCard
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
-  ({ className, label, method, wallets, ...props }, ref) => {
+  ({ className, label, method, wallets, onDismiss, onDetails, ...props }, ref) => {
     const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     const [open, setOpen] = useState(true);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
@@ -34,15 +36,15 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     return (
       <div
         className={twMerge(
-          `rounded-b-lg shadow-xl py-2  px-4 border-t-2 border-mono-80
-            flex flex-col space-y-3 max-w-[295px] dark:bg-mono-160`,
+          `rounded-b-lg shadow-xl  border-t-2 border-mono-80
+            flex flex-col  max-w-[295px] dark:bg-mono-160`,
           className
         )}
         {...props}
         ref={ref}
       >
         {/*Card Header*/}
-        <div className={'my-0 flex items-center'}>
+        <div className={twMerge('my-0 flex items-center', sectionPadding)}>
           <div className={'basis-full'}>
             <Chip color={chipColor}>{method}</Chip>
           </div>
@@ -51,7 +53,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </Typography>
         </div>
         {/*Card Content*/}
-        <div className={'m-0 flex items-center'}>
+        <div className={twMerge('my-0 flex items-center', sectionPadding)}>
           <div className={'h-full self-start py-2'}>
             <TokenIcon size={'lg'} name={'ETH'} />
           </div>
@@ -87,41 +89,57 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         </div>
         {/*Card Info or Disclaimer*/}
         {hasSyncNote && (
-          <Disclaimer
-            variant={'info'}
-            message={'New spend note is added to your account to reflect updated balance on Webb.'}
-          />
+          <div className={sectionPadding}>
+            <Disclaimer
+              variant={'info'}
+              message={'New spend note is added to your account to reflect updated balance on Webb.'}
+            />
+          </div>
         )}
         {/*Card Footer*/}
-        <TXCardFooter {...props.footer} />
+        <TXCardFooter {...props.footer} onDismiss={onDismiss} onDetails={onDetails} />
       </div>
     );
   }
 );
 
-const TXCardFooter: FC<TXCardFooterProps> = ({ isLoading, message, link }) => {
+const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDismiss' | 'onDetails'>> = ({
+  isLoading,
+  message,
+  link,
+  hasWarning,
+  onDetails,
+  onDismiss,
+}) => {
+  const textClass = useMemo(() => `py-0 align middle text-${hasWarning ? 'yellow' : 'mono'}-100`, [hasWarning]);
+  const wrapperClasses = useMemo(() => {
+    const classes = hasWarning
+      ? `my-0 p-4 flex items-center bg-yellow-70 border-t-2 border-yellow-90`
+      : 'my-0 flex items-center ' + sectionPadding;
+    return twMerge(classes);
+  }, [hasWarning]);
   return (
-    <div className={'my-0 flex items-center'}>
+    <div className={wrapperClasses}>
       <div className='flex items-center'>
-        {isLoading && (
+        {isLoading && !hasWarning && (
           <div className='pr-2'>
             <Spinner />
           </div>
         )}
 
         {message && (
-          <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
+          <Typography variant={'body4'} fw={'bold'} className={textClass}>
             {message}
           </Typography>
         )}
         {link && (
-          <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-100'>
+          <Typography variant={'body4'} fw={'bold'} className={twMerge(textClass, 'flex items-center')}>
             {link.text}
           </Typography>
         )}
       </div>
       <div className={'flex grow justify-end'}>
-        <Button onClick={() => {}} variant={'link'} size={'sm'}>
+        <Button onClick={onDismiss} variant={'link'} size={'sm'} className={textClass}>
           DISMISS
         </Button>
       </div>

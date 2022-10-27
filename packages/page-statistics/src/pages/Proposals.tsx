@@ -176,7 +176,7 @@ const Proposals = () => {
       <TransactionProgressCard
         method={'Transfer'}
         firedAt={new Date()}
-        status={'In-progress'}
+        status={'in-progress'}
         tokens={[<PolygonLogo />, <EthLogo />]}
         wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
         label={{
@@ -198,7 +198,7 @@ const Proposals = () => {
       <TransactionProgressCard
         method={'Withdraw'}
         firedAt={new Date()}
-        status={'In-progress'}
+        status={'in-progress'}
         tokens={[<PolygonLogo />, <WalletLine />]}
         wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
         label={{
@@ -212,7 +212,7 @@ const Proposals = () => {
       <TransactionProgressCard
         method={'Deposit'}
         firedAt={new Date()}
-        status={'In-progress'}
+        status={'in-progress'}
         tokens={[<PolygonLogo />, <EthLogo />]}
         wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
         label={{
@@ -223,9 +223,22 @@ const Proposals = () => {
         onDismiss={() => {}}
         footer={{
           isLoading: true,
+          hasWarning: true,
           link: {
             uri: '#',
-            text: 'Recipient:0x1a..23d',
+            text: (
+              <>
+                <span
+                  className={'inline-block pr-2'}
+                  style={{
+                    fontSize: 18,
+                  }}
+                >
+                  ⚠️
+                </span>
+                Deposit Failed
+              </>
+            ),
           },
         }}
         onDetails={() => {}}
