@@ -2,7 +2,15 @@ import { Typography } from '../../typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { AmountInput, BridgeInputGroup, Button, ChainInput, InfoItem, ShieldedAssetInput, TokenInput } from '../../components';
+import {
+  AmountInput,
+  BridgeInputGroup,
+  Button,
+  ChainInput,
+  InfoItem,
+  ShieldedAssetInput,
+  TokenInput,
+} from '../../components';
 import { DepositCardProps } from './types';
 
 export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
@@ -29,31 +37,44 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
 
       return {
         amount: `${amountInputProps.amount} ${token}`,
-        fee: `${parseFloat(amountInputProps.amount) * feePercentage * 0.01} ${feeToken}`,
+        fee: `${
+          parseFloat(amountInputProps.amount) * feePercentage * 0.01
+        } ${feeToken}`,
       };
     }, [amountInputProps.amount, feePercentage, feeToken, token]);
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)} ref={ref}>
-        <BridgeInputGroup className='flex flex-col space-y-2'>
-          <ChainInput {...sourceChainProps} chainType='source' />
+      <div
+        {...props}
+        className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)}
+        ref={ref}
+      >
+        <BridgeInputGroup className="flex flex-col space-y-2">
+          <ChainInput {...sourceChainProps} chainType="source" />
 
-          <div className='flex space-x-2'>
-            <TokenInput {...tokenInputProps} className='grow shrink-0 basis-1' />
+          <div className="flex space-x-2">
+            <TokenInput
+              {...tokenInputProps}
+              className="grow shrink-0 basis-1"
+            />
 
             {bridgingTokenProps && (
-              <ShieldedAssetInput asset={bridgingTokenProps} title='Bridging Token' className='grow shrink-0 basis-1' />
+              <ShieldedAssetInput
+                asset={bridgingTokenProps}
+                title="Bridging Token"
+                className="grow shrink-0 basis-1"
+              />
             )}
           </div>
         </BridgeInputGroup>
 
-        <BridgeInputGroup className='flex flex-col space-y-2'>
-          <ChainInput {...destChainProps} chainType='dest' />
+        <BridgeInputGroup className="flex flex-col space-y-2">
+          <ChainInput {...destChainProps} chainType="dest" />
           <AmountInput {...amountInputProps} />
         </BridgeInputGroup>
 
         {/** Info */}
-        <div className='flex flex-col space-y-1'>
+        <div className="flex flex-col space-y-1">
           <InfoItem
             leftTextProps={{
               title: 'Depositing',
@@ -73,13 +94,17 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           />
         </div>
 
-        <Button {...buttonProps} isFullWidth className={twMerge('justify-center', buttonProps.className)}>
+        <Button
+          {...buttonProps}
+          isFullWidth
+          className={twMerge('justify-center', buttonProps.className)}
+        >
           {typeof buttonProps.children === 'string' ? (
-            <Typography variant='body1' fw='bold' className='!text-inherit'>
+            <Typography variant="body1" fw="bold" className="!text-inherit">
               {buttonProps.children}
             </Typography>
           ) : (
-            buttonProps.children
+            buttonProps.children ?? 'Deposit'
           )}
         </Button>
       </div>
