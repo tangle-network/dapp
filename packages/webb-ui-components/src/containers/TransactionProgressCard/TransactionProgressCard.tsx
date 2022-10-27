@@ -1,6 +1,6 @@
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon, ChevronUp } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -33,6 +33,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     const hasSyncNote = useMemo(() => {
       return method === 'Withdraw';
     }, [method]);
+
     return (
       <div
         className={twMerge(
@@ -123,7 +124,7 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   }, [hasWarning]);
 
   const showDetails = Boolean(onDetails) && isLoading;
-  const buttonHanlder = useCallback(() => {
+  const buttonHandler = useCallback(() => {
     return showDetails ? onDetails?.() : onDismiss();
   }, [showDetails]);
   return (
@@ -147,9 +148,48 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
         )}
       </div>
       <div className={'flex grow justify-end'}>
-        <Button onClick={onDismiss} variant={'link'} size={'sm'} className={hasWarning ? textClass : undefined}>
+        <Button onClick={buttonHandler} variant={'link'} size={'sm'} className={hasWarning ? textClass : undefined}>
           {showDetails ? 'DETAILS' : 'DISMISS'}
         </Button>
+      </div>
+    </div>
+  );
+};
+
+export const TransactionsToggler = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className={`rounded-b-lg shadow-xl  
+      p-3
+            flex flex-col  max-w-[295px] dark:bg-mono-160`}
+    >
+      <div className='flex row items-center'>
+        <div className={'pr-4'}>
+          <Spinner width={18} height={18} />
+        </div>
+
+        <div className={'grow'}>
+          <Typography variant={'body2'} fw={'bold'} className={' text-mono-180 dark:text-mono'}>
+            Transaction Processing
+          </Typography>
+          <Typography variant={'body4'} className={'text-mono-120 dark:text-mono-80'}>
+            1 transaction in progress
+          </Typography>
+        </div>
+        <b>
+          <div
+            style={{
+              transition: 'transform .33s ease',
+              transform: open ? 'rotate(180deg)' : 'rotate(0)',
+            }}
+            role={'button'}
+            className={'w-4 h-4'}
+            onClick={() => setOpen((o) => !o)}
+          >
+            <ChevronUp />
+          </div>
+        </b>
       </div>
     </div>
   );

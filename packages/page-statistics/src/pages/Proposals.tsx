@@ -12,7 +12,10 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { TransactionProgressCard } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
+import {
+  TransactionProgressCard,
+  TransactionsToggler,
+} from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
 import { ExternalLinkLine, TokenIcon, WalletLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
@@ -173,6 +176,7 @@ const Proposals = () => {
 
   return (
     <div className='flex flex-col space-y-4'>
+      <TransactionsToggler />
       <TransactionProgressCard
         method={'Transfer'}
         firedAt={new Date()}
