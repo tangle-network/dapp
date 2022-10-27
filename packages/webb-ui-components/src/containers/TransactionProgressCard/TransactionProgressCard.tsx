@@ -54,7 +54,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         </div>
         {/*Card Content*/}
         <div className={twMerge('my-0 flex items-center', sectionPadding)}>
-          <div className={'h-full self-start py-2'}>
+          <div className={'h-full self-start'}>
             <TokenIcon size={'lg'} name={'ETH'} />
           </div>
           <div className={'px-2'}>
