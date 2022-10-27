@@ -1,5 +1,4 @@
 import { PropsOf } from '@webb-dapp/webb-ui-components/types';
-import { jsx } from '@storybook/theming';
 
 export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
 export type TransactionItemStatus = 'in-progress' | 'warning' | 'completed';

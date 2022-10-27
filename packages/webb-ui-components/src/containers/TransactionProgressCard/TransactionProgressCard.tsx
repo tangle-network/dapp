@@ -56,7 +56,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         {/*Card Content*/}
         <div className={twMerge('my-0 flex items-center', sectionPadding)}>
           <div className={'h-full self-start'}>
-            <div className={'h-full self-start w-8 pt-2'}>
+            <div className={'h-full self-start w-8 '}>
               <div className={'relative'}>
                 {tokens[0] && <div className={'absolute h-5 w-5 inset-0'}>{tokens[0]}</div>}
                 {tokens[1] && <div className={'absolute h-5 w-5 inset-x-2'}>{tokens[1]}</div>}
