@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { KeyCard } from '@webb-tools/webb-ui-components/components';
+import { KeyCard } from '@webb-dapp/webb-ui-components/components';
 
 export default {
   title: 'Design System/Organisms/KeyCard',

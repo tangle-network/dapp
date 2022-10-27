@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Avatar } from '../../components';
+import { Avatar } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -17,6 +17,6 @@ export const Default = Template.bind({});
 Default.args = {
   key: '2',
   size: 'md',
-  src: './assets/Logo.png',
+  src: 'https://webb-assets.s3.amazonaws.com/WebbLogo.svg',
   sourceVariant: 'address',
 };

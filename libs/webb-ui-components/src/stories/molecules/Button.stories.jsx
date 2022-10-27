@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button } from '@webb-tools/webb-ui-components/components';
-import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-tools/icons';
+import { Button } from '@webb-dapp/webb-ui-components/components';
+import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-dapp/webb-ui-components/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -102,4 +102,23 @@ export const SmallLink = Template.bind({});
 SmallLink.args = {
   size: 'sm',
   variant: 'link',
+};
+
+export const MediumLink = Template.bind({});
+MediumLink.args = {
+  size: 'md',
+  variant: 'link',
+};
+
+export const LargeLink = Template.bind({});
+LargeLink.args = {
+  size: 'lg',
+  variant: 'link',
+};
+
+export const FullWidth = Template.bind({});
+FullWidth.args = {
+  size: 'lg',
+  variant: 'primary',
+  isFullWidth: true,
 };

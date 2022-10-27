@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { ChainInput } from '@webb-tools/webb-ui-components/components';
+import { ChainInput } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Design System/Molecules/ChainInput',
   component: ChainInput,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
@@ -16,14 +15,22 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {};
 
-export const Dest = Template.bind({});
+export const asDestinationChain = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Dest.args = {
+asDestinationChain.args = {
   chainType: 'dest',
+  chain: {
+    name: 'Optimism',
+    symbol: 'op',
+  },
 };
 
-export const Source = Template.bind({});
+export const asSourceChain = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Source.args = {
+asSourceChain.args = {
   chainType: 'source',
+  chain: {
+    name: 'Ethereum',
+    symbol: 'eth',
+  },
 };

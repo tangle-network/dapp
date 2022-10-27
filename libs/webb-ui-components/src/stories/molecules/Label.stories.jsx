@@ -1,19 +1,20 @@
 import React from 'react';
 
-import { TokenSelector } from '@webb-dapp/webb-ui-components/components';
+import { Label } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/TokenSelector',
-  component: TokenSelector,
+  title: 'Design System/Molecules/Label',
+  component: Label,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <TokenSelector {...args}>ETH</TokenSelector>;
+const Template = (args) => <Label {...args}>BitCat</Label>;
 
-export const Primary = Template.bind({});
+export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  isActive: false,
+Default.args = {
+  className: 'font-bold uppercase body4',
+  htmlFor: 'username',
 };

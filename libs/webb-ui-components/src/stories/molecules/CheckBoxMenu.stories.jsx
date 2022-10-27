@@ -1,19 +1,21 @@
 import React from 'react';
 
-import { TokenSelector } from '@webb-dapp/webb-ui-components/components';
+import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components';
+import { Filter } from '@webb-dapp/webb-ui-components/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/TokenSelector',
-  component: TokenSelector,
+  title: 'Design System/Molecules/CheckBoxMenu',
+  component: CheckBoxMenu,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <TokenSelector {...args}>ETH</TokenSelector>;
+const Template = (args) => <CheckBoxMenu {...args} />;
 
-export const Primary = Template.bind({});
+export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  isActive: false,
+Default.args = {
+  label: 'Filter',
+  icon: <Filter />,
 };

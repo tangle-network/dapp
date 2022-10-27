@@ -1,19 +1,29 @@
 import React from 'react';
 
-import { TokenSelector } from '@webb-dapp/webb-ui-components/components';
+import { Stats } from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/TokenSelector',
-  component: TokenSelector,
+  title: 'Design System/Molecules/Stats',
+  component: Stats,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <TokenSelector {...args}>ETH</TokenSelector>;
+const Template = (args) => <Stats {...args} />;
 
-export const Primary = Template.bind({});
+const statsItems = [
+  {
+    titleProps: {
+      title: 'Proposal Threshold',
+      info: 'Proposal Threshold',
+    },
+    value: 3,
+  },
+];
+
+export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  isActive: false,
+Default.args = {
+  items: statsItems,
 };
