@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbApiProvider } from '@nepoche/abstract-api-provider';
+import { WebbApiProvider } from '..';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 

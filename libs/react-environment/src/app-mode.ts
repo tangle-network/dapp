@@ -7,8 +7,7 @@ export type AppMode = 'development' | 'production';
 const appLogger = LoggerService.get('App');
 
 export function appMode(): AppMode {
-  // @ts-ignore
-  return process.env.NODE_ENV;
+  return process.env.NODE_ENV as AppMode;
 }
 
 export function isProduction() {
