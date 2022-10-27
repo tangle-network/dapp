@@ -56,4 +56,5 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
 export type TransactionProgressCardProps = {
   transactions: TransactionCardItemProps[];
   collapsed?: boolean;
+  onCollapseChange?(collapsed: boolean): void;
 };

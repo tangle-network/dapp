@@ -14,7 +14,7 @@ import {
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import {
   TransactionProgressCard,
-  TransactionsToggler,
+  TransactionQueue,
 } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
 import { ExternalLinkLine, TokenIcon, WalletLine } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
@@ -176,7 +176,7 @@ const Proposals = () => {
 
   return (
     <div className='flex flex-col space-y-4'>
-      <TransactionsToggler>
+      <TransactionQueue onCollapseChange={() => {}} collapsed={false}>
         <TransactionProgressCard
           method={'Transfer'}
           firedAt={new Date()}
@@ -190,10 +190,10 @@ const Proposals = () => {
           }}
           onDismiss={() => {}}
           footer={{
-            isLoading: true,
+            isLoading: false,
             message: (
               <>
-                <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
+                <span className={'inline-block pr-2'}>🎉</span>Successfully Transfer!
               </>
             ),
           }}
@@ -251,7 +251,7 @@ const Proposals = () => {
           }}
           onDetails={() => {}}
         />
-      </TransactionsToggler>
+      </TransactionQueue>
       {/** Proposals Status */}
       <Card>
         <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />

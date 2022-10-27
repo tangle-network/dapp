@@ -2,9 +2,15 @@ import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
 import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon, ChevronUp } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, forwardRef, useCallback, useMemo, useState } from 'react';
+import { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { BridgeLabel, NativeLabel, TransactionCardItemProps, TXCardFooterProps } from './types';
+import {
+  BridgeLabel,
+  NativeLabel,
+  TransactionCardItemProps,
+  TransactionProgressCardProps,
+  TXCardFooterProps,
+} from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 
 type Variant = 'bridge' | 'native';
@@ -161,8 +167,37 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   );
 };
 
-export const TransactionsToggler: React.FC = ({ children }) => {
-  const [open, setOpen] = useState(false);
+/**
+ * Transaction Queue
+ * @description The wrapper component for the transaction processing card
+ *
+ * @example
+ *
+ * ```jsx
+ *  <TransactionQueue  collapsed={collapsed} onCollapseChange={c => setCollapsed(c)}
+ *   transactions={transactionsList}
+ *  />
+ * ```
+ *
+ * */
+export const TransactionQueue: FC<TransactionProgressCardProps> = ({ collapsed, onCollapseChange, children }) => {
+  const [open, setOpen] = useState(!collapsed);
+  // Sync the state of open to the parent component
+  useEffect(() => {
+    if (collapsed !== open) {
+      return;
+    }
+    setOpen(collapsed);
+  }, [collapsed]);
+
+  // if the component is controlled change the parent state
+  const handleCollapsed = useCallback(() => {
+    if (onCollapseChange) {
+      onCollapseChange?.(!open);
+    } else {
+      setOpen(!open);
+    }
+  }, [onCollapseChange, setOpen, open]);
   return (
     <div
       className={`rounded-lg shadow-xl  overflow-hidden
@@ -189,7 +224,7 @@ export const TransactionsToggler: React.FC = ({ children }) => {
             }}
             role={'button'}
             className={'w-4 h-4'}
-            onClick={() => setOpen((o) => !o)}
+            onClick={handleCollapsed}
           >
             <ChevronUp />
           </div>
