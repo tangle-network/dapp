@@ -1,10 +1,8 @@
-import { IconByVariant } from '@webb-dapp/ui-components/AlertCard/icons';
 import { AlertVariant } from '@webb-dapp/ui-components/AlertCard/types';
-import { useThemeColorsConfig } from '@webb-dapp/webb-ui-components/hooks/useThemeColorsConfig';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { FC, useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import Color from 'tinycolor2';
+import { twMerge } from 'tailwind-merge';
+import { InformationLine } from '@webb-dapp/webb-ui-components/icons';
 
 type DisclaimerVariant = AlertVariant;
 type DisclaimerWrapperProps = {
@@ -17,55 +15,32 @@ export const Disclaimer: FC<{
   message: string;
   variant: DisclaimerVariant;
 }> = ({ message, variant }) => {
-  const theme = useThemeColorsConfig();
-  const colors = useMemo((): DisclaimerWrapperProps => {
-    const infoColor = `#3D7BCE`;
-    const infoBgColor = `rgba(236, 244, 255, 0.5);`;
+  const colorName = useMemo(() => {
     switch (variant) {
       case 'info':
-        break;
+        return 'blue';
       case 'error':
-        break;
+        return 'red';
       case 'warning':
-        break;
+        return 'yellow';
       case 'success':
-        break;
-      default:
+        return 'green';
     }
-    return {
-      bgColor: new Color(theme.blue['10']).setAlpha(0.5).toRgbString(),
-      textColor: theme.blue['70'],
-      borderColor: theme.blue['20'],
-    };
-  }, [theme, variant]);
+  }, [variant]);
+  const disclaimerWrapperClasses = useMemo(() => {
+    const color = `border-2 border-${colorName}-90 bg-${colorName}-10 text-${colorName}-70 dark:bg-${colorName}-120 dark:border-${colorName}-90`;
+    return twMerge(color, 'rounded-xl px-3 py-2  flex items-stretch');
+  }, [colorName]);
   return (
-    <DisclaimerWrapper {...colors} className={'rounded-xl px-3 py-2  flex items-stretch'}>
-      <div>
-        <IconByVariant variant={variant} />
+    <div className={disclaimerWrapperClasses}>
+      <div className={`text-${colorName}-70 dark:text-${colorName}-50`}>
+        <InformationLine className='!fill-current pointer-events-none' />
       </div>
       <div className={'px-2'}>
-        <Typography variant={'body4'} fw={'semibold'} className='disclaimer-text'>
+        <Typography variant={'body4'} fw={'semibold'} className={`text-${colorName}-70 dark:text-${colorName}-50`}>
           {message}
         </Typography>
       </div>
-    </DisclaimerWrapper>
+    </div>
   );
 };
-
-const DisclaimerWrapper = styled.div<DisclaimerWrapperProps>`
-  ${({ bgColor, borderColor, textColor }) => css`
-    border: 1px solid ${borderColor};
-    background: ${bgColor};
-    .disclaimer-text {
-      color: ${textColor};
-      line-height: 15px;
-      vertical-align: top;
-      letter-spacing: 4%;
-    }
-    svg {
-      width: 13.33px;
-      height: 13.33px;
-      fill: ${textColor};
-    }
-  `}
-`;
