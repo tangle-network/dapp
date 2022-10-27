@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
+    "noEmit": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -69,7 +70,7 @@
       "@webb-tools/storage": ["libs/storage/src/index.ts"],
       "@webb-tools/storage/*": ["libs/storage/src/*"],
       "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
-      "@webb-tools/tailwind-preset": ["libs/tailwind-preset/index.js"],
+      "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
       "@webb-tools/ui-hooks": ["libs/ui-hooks/src/index.ts"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
       "@webb-tools/webb-ui-components": [

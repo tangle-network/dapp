@@ -1,12 +1,12 @@
-import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { Layout } from '../containers';
-import { RouterConfigData } from '@webb-tools/react-environment';
-import { Spinner } from '@webb-tools/icons';
 import { BareProps } from '@webb-tools/dapp-types';
-import React, { FC, Suspense } from 'react';
+import { Spinner } from '@webb-tools/icons';
+import { RouterConfigData } from '@webb-tools/react-environment';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { FC, lazy, Suspense } from 'react';
+import { Layout } from '../containers';
 
 // TODO: Implement these pages for the Bridge Dapp
-// const PageVBridge = lazy(() => import('@webb-tools/vbridge'));
+const PageBridge = lazy(() => import('../pages/PageBridge'));
 // const PageWrapUnwrap = lazy(() => import('@webb-tools/page-wrap-unwrap'));
 // const PageNoteAccount = lazy(() => import('@webb-tools/page-note-account'));
 
@@ -30,8 +30,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant="h1">Bridges</Typography>
-            <Button>Some button</Button>
+            <PageBridge />
           </CSuspense>
         ),
         path: 'bridge/*',
