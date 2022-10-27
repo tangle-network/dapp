@@ -25,7 +25,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async canWrap(wrapPayload: PolkadotWrapPayload): Promise<boolean> {
     const { amount: amountNumber } = wrapPayload;
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       return false;
     }
@@ -75,10 +75,10 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
       wrappableToken.getDecimals()
     );
     const chainID = this.inner.typedChainId;
-    const governableATreeId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const governableATreeId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
@@ -109,10 +109,10 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
       wrappableToken.getDecimals()
     );
     const chainID = this.inner.typedChainId;
-    const wrappedTokenId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const wrappedTokenId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
@@ -137,7 +137,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async canUnwrap(unwrapPayload: PolkadotUnwrapPayload): Promise<boolean> {
     const { amount: amountNumber } = unwrapPayload;
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       return false;
     }
@@ -148,8 +148,8 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
       wrappableToken.getDecimals()
     );
     const chainID = this.inner.typedChainId;
-    const governableTokenId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const governableTokenId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
     const poolShare = await this.inner.api.query.assetRegistry.assets(
       governableTokenId

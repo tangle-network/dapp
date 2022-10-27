@@ -15,8 +15,19 @@ const Template = (args) => <AmountInput {...args} />;
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  title: 'md',
-  info: 'Amount',
-  variant: 'body4',
-  titleComponent: 'span',
+  id: 'amount',
+};
+
+export const withAmount = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+withAmount.args = {
+  id: 'amount',
+  amount: '200',
+};
+
+export const withTitle = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+withAmount.args = {
+  ...withAmount.args,
+  title: 'Enter Amount:',
 };

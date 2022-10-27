@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 // TODO: Resolve the below issue with new types package.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { AccountId, CurrencyId } from '@webb-tools/protocol-substrate-types/interfaces';
 

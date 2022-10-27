@@ -128,7 +128,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       backend: 'Arkworks',
       curve: 'Bn254',
     });
-    let publicAmount = -amount;
+    const publicAmount = -amount;
 
     // When a user submits a note, it may be that the index is not correct.
     // We should validate the index and update before proof generation.
@@ -169,7 +169,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     const root = await rootOfLeaves(leaves);
     const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
       .getNeighborRoots(treeId)
-      .then((roots: any) => roots.toHuman());
+      .then((roots) => roots.toHuman());
     const rootsSet = [root, hexToU8a(neighborRoots[0])];
     const outputNote = await Note.deserialize(inputNotes[0].serialize());
     const outputCommitment = output1.commitment;
@@ -341,7 +341,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       const results = await relayedVAnchorWithdraw.await();
       if (results) {
         const [, message] = results;
-        txHash = message!;
+        txHash = message;
       }
     } else {
       this.emit('stateChange', TransactionState.SendingTransaction);

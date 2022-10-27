@@ -40,6 +40,7 @@
     "D": "^1.0.0",
     "chart.js": "^3.8.0",
     "circomlibjs": "0.0.8",
+    "chai": "4.3.6",
     "core-js": "^3.6.5",
     "country-flag-icons": "^1.5.5",
     "detect-browser": "^5.2.0",

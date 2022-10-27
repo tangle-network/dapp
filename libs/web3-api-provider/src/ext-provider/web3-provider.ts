@@ -157,8 +157,6 @@ export class Web3Provider<T = unknown> {
     return this._capabilities;
   }
 
-  enable() {}
-
   intoEthersProvider() {
     return new ethers.providers.Web3Provider(this.provider as any, 'any');
   }

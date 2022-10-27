@@ -22,12 +22,12 @@ export class ORMLCurrency {
       console.log('tried to get assets from a chain without support');
       return [];
     }
-    let assets = await this.api.api.query.assetRegistry.assets.entries();
+    const assets = await this.api.api.query.assetRegistry.assets.entries();
 
     return assets
       .map(([storageKey, i]) => {
         if (i) {
-          let assetRegistryValues = i.unwrap();
+          const assetRegistryValues = i.unwrap();
           return {
             name: assetRegistryValues.name.toString(),
             existentialDeposit: assetRegistryValues.existentialDeposit.toString(),

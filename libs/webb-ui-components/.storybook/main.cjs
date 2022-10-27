@@ -8,7 +8,9 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     'storybook-addon-react-router-v6',
+    'storybook-tailwind-dark-mode',
     '@storybook/theming',
+    '@storybook/addon-a11y',
     {
       name: '@storybook/addon-postcss',
       options: {
@@ -21,6 +23,9 @@ module.exports = {
   framework: '@storybook/react',
   core: {
     builder: '@storybook/builder-webpack5',
+  },
+  features: {
+    interactionsDebugger: true,
   },
   webpackFinal: (config) => {
     const extraRules = [

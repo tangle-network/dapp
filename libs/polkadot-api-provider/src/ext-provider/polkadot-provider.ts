@@ -31,7 +31,7 @@ type ExtensionProviderEvents = {
   error: undefined;
   ready: undefined;
 
-  updateMetaData: Record<string, any>;
+  updateMetaData: Record<string, unknown>;
 
   accountsChange: PolkadotAccount[];
 };
@@ -206,42 +206,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     const apiPromise = await ApiPromise.create(
       options({
         provider: wsProvider,
-        rpc: {
-          lt: {
-            getNeighborEdges: {
-              description: 'Query for the neighbor edges',
-              params: [
-                {
-                  name: 'tree_id',
-                  type: 'u32',
-                  isOptional: false,
-                },
-                {
-                  name: 'at',
-                  type: 'Hash',
-                  isOptional: true,
-                },
-              ],
-              type: 'Vec<PalletLinkableTreeEdgeMetadata>',
-            },
-            getNeighborRoots: {
-              description: 'Query for the neighbor roots',
-              params: [
-                {
-                  name: 'tree_id',
-                  type: 'u32',
-                  isOptional: false,
-                },
-                {
-                  name: 'at',
-                  type: 'Hash',
-                  isOptional: true,
-                },
-              ],
-              type: 'Vec<[u8; 32]>',
-            },
-          },
-        },
       })
     );
 
@@ -342,7 +306,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   }
 
   /// metaData:MetadataDef
-  updateMetaData(metaData: any) {
+  updateMetaData(metaData) {
     return this.injectedExtension.metadata?.provide(metaData);
   }
 
@@ -369,7 +333,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         ? this.apiPromise.registry.chainDecimals
         : 12,
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
-      types: options({}).types as any,
+      types: options({}).types,
     };
 
     logger.trace('Polkadot api metadata', metadataDef);

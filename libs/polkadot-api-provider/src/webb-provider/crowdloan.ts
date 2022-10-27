@@ -4,6 +4,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import '@webb-tools/protocol-substrate-types';
+import {
+  ContributePayload,
+  Crowdloan,
+  CrowdloanFundInfo,
+} from '@webb-tools/abstract-api-provider/crowdloan';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 
 import {
   ContributePayload,
@@ -63,7 +69,7 @@ export class PolkadotCrowdloan extends Crowdloan<
     tx.on('finalize', () => {
       console.log('contribution done');
     });
-    tx.on('failed', (e: any) => {
+    tx.on('failed', (e) => {
       console.log('contribution failed', e);
     });
     tx.on('extrinsicSuccess', () => {

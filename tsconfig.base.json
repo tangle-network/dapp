@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
+    "typeRoots": ["node_modules/@types"],
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

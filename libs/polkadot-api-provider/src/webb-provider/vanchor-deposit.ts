@@ -176,21 +176,21 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         chainId: targetChainId,
         amount: '0',
       });
-      let publicAmount = note.amount;
+      const publicAmount = note.amount;
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
 
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingLeaves);
 
       // While depositing use an empty leaves
-      const leavesMap: any = {};
+      const leavesMap = {};
       leavesMap[targetChainId] = [];
       // fetch latest root / neighbor roots
       const tree = await this.inner.api.query.merkleTreeBn254.trees(treeId);
       const root = tree.unwrap().root.toHex();
       const neighborRoots: string[] = await (this.inner.api.rpc as any).lt
         .getNeighborRoots(treeId)
-        .then((roots: any) => roots.toHuman());
+        .then((roots) => roots.toHuman());
 
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.GeneratingZk);
@@ -270,7 +270,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
           await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
         const wrappableAssetId = this.inner.state
           .getReverseCurrencyMapWithChainId(chainId)
-          .get(String(wrappableAssetRaw))!;
+          .get(String(wrappableAssetRaw));
 
         const wrappableToken = wrappableAssets.find(
           (asset) => asset.id === wrappableAssetId
