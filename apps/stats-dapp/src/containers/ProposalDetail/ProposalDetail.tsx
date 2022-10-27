@@ -12,7 +12,7 @@ import {
 import {
   ArrowLeft,
   ArrowRight,
-  Block,
+  BlockIcon,
   Close,
   ExchangeLine,
   Expand,
