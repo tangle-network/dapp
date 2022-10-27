@@ -179,11 +179,9 @@ const Authorities = () => {
                 <KeyValueWithButton size="sm" keyValue={publicKey.compressed} />
               </div>
 
-              <Link to="history">
-                <Button variant="link" size="sm">
-                  <Link to="history">View history</Link>
-                </Button>
-              </Link>
+              <Button variant="link" size="sm">
+                <Link to="history">View history</Link>
+              </Button>
             </div>
           </>
         )}
