@@ -55,6 +55,8 @@ const PageBridge = () => {
           <div className="grid grid-cols-2 gap-4 mt-4">
             <Button
               leftIcon={<CoinIcon size="lg" className="!fill-current" />}
+              href="https://webb.tools" // TODO: Determine link here
+              target="_blank"
               variant="link"
             >
               Usage Guide
@@ -62,6 +64,8 @@ const PageBridge = () => {
 
             <Button
               leftIcon={<BlockIcon size="lg" className="!stroke-current" />}
+              href="https://webb.tools" // TODO: Determine link here
+              target="_blank"
               variant="link"
             >
               FAQ
@@ -69,6 +73,8 @@ const PageBridge = () => {
 
             <Button
               leftIcon={<HelpLineIcon size="lg" className="!fill-current" />}
+              href="https://webb.tools" // TODO: Determine link here
+              target="_blank"
               variant="link"
             >
               Get Started
@@ -76,6 +82,8 @@ const PageBridge = () => {
 
             <Button
               leftIcon={<SosLineIcon size="lg" className="!fill-current" />}
+              href="https://webb.tools" // TODO: Determine link here
+              target="_blank"
               variant="link"
             >
               Support
