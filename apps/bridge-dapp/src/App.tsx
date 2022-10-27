@@ -1,4 +1,3 @@
-import { StyledEngineProvider } from '@mui/styled-engine';
 import { WebbUIErrorBoudary } from '@nepoche/webb-ui-components/containers/WebbUIErrorBoudary';
 import { RouterProvider } from '@nepoche/react-environment';
 import { WebbProvider, AppEvent } from '@nepoche/api-provider-environment';
@@ -14,9 +13,7 @@ const App: FC = () => {
   return (
     <WebbUIErrorBoudary logger={appLogger}>
       <WebbProvider appEvent={appEvent} applicationName={'Webb DApp'}>
-        <StyledEngineProvider injectFirst>
-          <RouterProvider config={routerConfig} />
-        </StyledEngineProvider>
+        <RouterProvider config={routerConfig} />
       </WebbProvider>
     </WebbUIErrorBoudary>
   );

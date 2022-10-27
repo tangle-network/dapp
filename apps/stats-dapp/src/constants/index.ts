@@ -1,5 +1,5 @@
 import { ExternalLink, FooterNavsType, Link, SocialConfigsType } from '../../types';
-import { CommonWealth, DiscordFill, GithubFill, TelegramFill, TwitterFill } from '@nepoche/webb-ui-components/icons';
+import { CommonWealth, DiscordFill, GithubFill, TelegramFill, TwitterFill } from '@nepoche/icons';
 
 const commonExternalProps = {
   target: '_blank' as const,

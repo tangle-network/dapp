@@ -1,4 +1,4 @@
-import { DynamicSVGImportOptions } from '../hooks';
+import { DynamicSVGImportOptions } from './hooks';
 
 type SVGBase = Omit<React.SVGProps<SVGSVGElement>, 'path' | 'd'>;
 

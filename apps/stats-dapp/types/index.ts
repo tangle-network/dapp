@@ -1,4 +1,4 @@
-import { IconBase } from '@nepoche/webb-ui-components/icons/types';
+import { IconBase } from '@nepoche/icons/types';
 
 /**
  * The internal link type
@@ -17,7 +17,7 @@ export interface Link {
 /**
  * The external link type
  */
-export interface ExternalLink extends ExternalType {
+export interface ExternalLink {
   /**
    * The name of the link
    */

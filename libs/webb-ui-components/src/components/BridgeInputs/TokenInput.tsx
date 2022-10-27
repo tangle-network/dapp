@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChevronRight, TokenIcon } from '../../icons';
+import { ChevronRight, TokenIcon } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 

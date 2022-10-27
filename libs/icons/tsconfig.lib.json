@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "../../dist/libs/icons",
+    "declarationDir": "../../dist/libs/icons",
+    "declaration": true,
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "noImplicitReturns": false,
+    "emitDeclarationOnly": true,
+    "module": "esnext"
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
+}

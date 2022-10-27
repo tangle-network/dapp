@@ -1,4 +1,4 @@
-import { InformationLine } from '../../icons';
+import { InformationLine } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

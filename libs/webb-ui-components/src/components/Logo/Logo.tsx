@@ -1,4 +1,4 @@
-import { createIcon } from '../../icons/create-icon';
+import { createIcon } from '@nepoche/icons/create-icon';
 import React, { useMemo } from 'react';
 
 import { LogoProps } from './types';

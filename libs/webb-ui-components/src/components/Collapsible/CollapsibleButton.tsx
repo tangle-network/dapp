@@ -1,5 +1,5 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import { ChevronDown } from '../../icons';
+import { ChevronDown } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef } from 'react';

@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES6",
     "module": "esnext",
     "lib": ["dom.iterable", "dom", "esnext"],
     "skipLibCheck": true,
@@ -42,6 +42,8 @@
         "libs/fixtures-deployments/src/index.ts"
       ],
       "@nepoche/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
+      "@nepoche/icons": ["libs/icons/src/index.ts"],
+      "@nepoche/icons/*": ["libs/icons/src/*"],
       "@nepoche/logos": ["libs/logos/src/index.ts"],
       "@nepoche/logos/*": ["libs/logos/src/*"],
       "@nepoche/note-manager": ["libs/note-manager/src/index.ts"],

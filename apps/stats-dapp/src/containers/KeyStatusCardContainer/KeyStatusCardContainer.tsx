@@ -1,6 +1,6 @@
 import { KeyStatusCard } from '@nepoche/webb-ui-components/components/KeyStatusCard';
 import { KeyStatusCardProps } from '@nepoche/webb-ui-components/components/KeyStatusCard/types';
-import { Spinner } from '@nepoche/webb-ui-components/icons';
+import { Spinner } from '@nepoche/icons';
 import React, { FC, forwardRef, useMemo } from 'react';
 
 import { KeyStatusCardContainerProps } from './types';

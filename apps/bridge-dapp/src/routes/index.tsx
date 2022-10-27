@@ -1,9 +1,9 @@
-import { Typography } from '@nepoche/webb-ui-components';
+import { Button, Typography } from '@nepoche/webb-ui-components';
 import { Layout } from '../containers';
 import { RouterConfigData } from '@nepoche/react-environment';
-import { Spinner } from '@nepoche/webb-ui-components';
+import { Spinner } from '@nepoche/icons';
 import { BareProps } from '@nepoche/dapp-types';
-import { FC, Suspense } from 'react';
+import React, { FC, Suspense } from 'react';
 
 // TODO: Implement these pages for the Bridge Dapp
 // const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
@@ -31,6 +31,7 @@ export const config: RouterConfigData[] = [
         element: (
           <CSuspense>
             <Typography variant='h1'>Bridges</Typography>
+            <Button>Some button</Button>
           </CSuspense>
         ),
         path: 'bridge/*',
@@ -56,10 +57,10 @@ export const config: RouterConfigData[] = [
       },
       {
         path: '*',
-        redirectTo: 'mixer',
+        redirectTo: 'bridge',
       },
     ],
-    element: <Layout.Main />,
+    element: <Layout />,
     path: '*',
   },
 ].filter((elt) => elt.path !== 'null');

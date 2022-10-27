@@ -1,4 +1,4 @@
-import { ExternalLinkLine, Search } from '../../icons';
+import { ExternalLinkLine, Search } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 import { getRoundedAmountString } from '../../utils';

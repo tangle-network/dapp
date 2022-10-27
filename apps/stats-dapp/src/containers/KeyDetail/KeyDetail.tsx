@@ -26,7 +26,7 @@ import {
   TitleWithInfo,
 } from '@nepoche/webb-ui-components/components';
 import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@nepoche/webb-ui-components/icons';
+import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';

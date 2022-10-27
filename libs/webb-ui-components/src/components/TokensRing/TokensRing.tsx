@@ -1,4 +1,4 @@
-import { TokenIcon } from '../../icons';
+import { TokenIcon } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef } from 'react';

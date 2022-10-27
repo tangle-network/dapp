@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useDynamicSVGImport } from '../hooks/useDynamicSVGImport';
+import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 

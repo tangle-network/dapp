@@ -1,5 +1,5 @@
+import { DefaultTokenIcon } from '../DefaultTokenIcon';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { DefaultTokenIcon } from '../icons/DefaultTokenIcon';
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
@@ -8,10 +8,7 @@ export interface DynamicSVGImportOptions {
   /**
    * A optional function which is called when finish loading SVG icon
    */
-  onCompleted?: (
-    name: string,
-    SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined
-  ) => void;
+  onCompleted?: (name: string, SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined) => void;
   /**
    * An optional function for handle error when loading SVG icon
    */
@@ -24,10 +21,7 @@ export interface DynamicSVGImportOptions {
  * @param options Represent the option when using the hooks
  * @returns `error`, `loading` and `SvgIcon` in an object
  */
-export function useDynamicSVGImport(
-  name: string,
-  options: DynamicSVGImportOptions = {}
-) {
+export function useDynamicSVGImport(name: string, options: DynamicSVGImportOptions = {}) {
   const ImportedIconRef = useRef<React.FC<React.SVGProps<SVGSVGElement>>>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
@@ -41,9 +35,7 @@ export function useDynamicSVGImport(
     const importIcon = async (): Promise<void> => {
       try {
         ImportedIconRef.current = (
-          await import(
-            `!!@svgr/webpack?+svgo,+titleProp,+ref!../icons/tokens/${_name}.svg`
-          )
+          await import(`!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/${_name}.svg`)
         ).default;
         onCompleted?.(_name, ImportedIconRef.current);
       } catch (err) {

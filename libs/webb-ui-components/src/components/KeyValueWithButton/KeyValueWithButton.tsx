@@ -1,5 +1,5 @@
 import { useCopyable } from '../../hooks';
-import { FileCopyLine } from '../../icons';
+import { FileCopyLine } from '@nepoche/icons';
 import { shortenHex } from '../../utils';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo } from 'react';

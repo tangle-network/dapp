@@ -5,24 +5,24 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nrwl/web:webpack",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
+      "defaultConfiguration": "development",
       "options": {
+        "outputPath": "apps/bridge-dapp/build",
         "compiler": "babel",
-        "outputPath": "dist/apps/bridge-dapp",
-        "index": "apps/bridge-dapp/src/index.html",
+        "index": "apps/bridge-dapp/src/public/index.html",
         "baseHref": "/",
         "main": "apps/bridge-dapp/src/main.tsx",
-        "polyfills": "apps/bridge-dapp/src/polyfills.ts",
         "tsConfig": "apps/bridge-dapp/tsconfig.app.json",
         "assets": [
-          "apps/bridge-dapp/src/favicon.ico",
-          "apps/bridge-dapp/src/assets"
+          "apps/bridge-dapp/src/public/favicon.png",
+          "apps/bridge-dapp/src/public/logo.png"
         ],
-        "styles": ["apps/bridge-dapp/src/styles.css"],
+        "generateIndexHtml": false,
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "postcssConfig": "./postcss.config.js",
+        "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
       },
       "configurations": {
         "development": {
@@ -48,19 +48,14 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/webpack:dev-server",
-      "defaultConfiguration": "development",
+      "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "bridge-dapp:build",
-        "hmr": true
+        "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
       },
       "configurations": {
-        "development": {
-          "buildTarget": "bridge-dapp:build:development"
-        },
         "production": {
-          "buildTarget": "bridge-dapp:build:production",
-          "hmr": false
+          "buildTarget": "bridge-dapp:build:production"
         }
       }
     },

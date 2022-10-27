@@ -1,4 +1,4 @@
-import { FilterIcon, Search } from '../../icons';
+import { FilterIcon, Search } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 

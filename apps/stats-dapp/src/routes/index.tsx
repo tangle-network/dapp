@@ -1,5 +1,5 @@
 import { RouterConfigData } from '@nepoche/react-environment';
-import { Spinner } from '@nepoche/webb-ui-components';
+import { Spinner } from '@nepoche/icons';
 import { BareProps } from '@nepoche/dapp-types';
 import { FC, lazy, Suspense } from 'react';
 

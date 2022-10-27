@@ -1,4 +1,4 @@
-import { TokenIcon } from '../../icons';
+import { TokenIcon } from '@nepoche/icons';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

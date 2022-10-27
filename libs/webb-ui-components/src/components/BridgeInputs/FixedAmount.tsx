@@ -1,4 +1,4 @@
-import { ChevronDown } from '../../icons';
+import { ChevronDown } from '@nepoche/icons';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { AmountMenu } from '../AmountMenu';

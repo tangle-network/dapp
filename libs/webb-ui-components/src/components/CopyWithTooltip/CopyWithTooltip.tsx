@@ -1,5 +1,5 @@
 import { useCopyable } from '../../hooks';
-import { FileCopyLine } from '../../icons';
+import { FileCopyLine } from '@nepoche/icons';
 import cx from 'classnames';
 import { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';

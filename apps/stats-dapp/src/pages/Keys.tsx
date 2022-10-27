@@ -1,5 +1,5 @@
 import { useStatsContext } from '../provider/stats-provider';
-import { Spinner } from '@nepoche/webb-ui-components/icons';
+import { Spinner } from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';

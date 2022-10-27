@@ -37,7 +37,7 @@ import { StoreProvider } from '@nepoche/react-environment/store';
 import { WebbContext } from './webb-context';
 import { getRelayerManagerFactory } from '@nepoche/relayer-manager-factory';
 import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
-import { Spinner } from '@nepoche/webb-ui-components/icons/Spinner';
+import { Spinner } from '@nepoche/icons';
 import { Web3Provider, Web3RelayerManager, WebbWeb3Provider } from '@nepoche/web3-api-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType, Keypair, Note } from '@webb-tools/sdk-core';
@@ -140,7 +140,7 @@ notificationHandler.remove = (key: string | number) => {
 
 const appEvent = new AppEvent();
 
-export const WebbProvider: FC<WebbProviderProps> = ({ applicationName = 'Webb Dapp', children }) => {
+export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);

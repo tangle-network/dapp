@@ -1,4 +1,4 @@
-import { Close } from '../../icons';
+import { Close } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

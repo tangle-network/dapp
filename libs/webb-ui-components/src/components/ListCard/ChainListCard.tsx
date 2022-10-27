@@ -1,4 +1,4 @@
-import { Search, TokenIcon } from '../../icons';
+import { Search, TokenIcon } from '@nepoche/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 

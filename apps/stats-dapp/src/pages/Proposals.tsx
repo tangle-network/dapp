@@ -10,7 +10,7 @@ import {
   TitleWithInfo,
 } from '@nepoche/webb-ui-components/components';
 import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@nepoche/webb-ui-components/icons';
+import { ExternalLinkLine, TokenIcon } from '@nepoche/icons';
 import { Typography } from '@nepoche/webb-ui-components/typography';
 import { shortenHex } from '@nepoche/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
