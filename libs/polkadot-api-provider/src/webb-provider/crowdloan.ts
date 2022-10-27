@@ -7,13 +7,10 @@ import '@webb-tools/protocol-substrate-types';
 
 import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '@nepoche/abstract-api-provider/crowdloan';
 import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
-import { LoggerService } from '@webb-tools/app-util';
 
 import { FundInfo } from '@polkadot/types/interfaces';
 
 import { WebbPolkadot } from '../webb-provider';
-
-const logger = LoggerService.get('PolkadotTx');
 
 export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload> {
   constructor(protected inner: WebbPolkadot) {
@@ -21,9 +18,8 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
   }
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
-    // @ts-ignore
-    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(parachainId);
-    let fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
+    const fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(parachainId);
+    const fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {
       raised: BigInt(fundInfoJSON.raised?.toString() || 0),
@@ -54,7 +50,7 @@ export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload
     tx.on('finalize', () => {
       console.log('contribution done');
     });
-    tx.on('failed', (e: any) => {
+    tx.on('failed', (e) => {
       console.log('contribution failed', e);
     });
     tx.on('extrinsicSuccess', () => {

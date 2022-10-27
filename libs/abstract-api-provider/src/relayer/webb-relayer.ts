@@ -176,7 +176,7 @@ export class WebbRelayer {
 
   async getLeaves(typedChainId: number, contractAddress: string, abortSignal?: AbortSignal): Promise<RelayerLeaves> {
     const { chainId, chainType } = parseTypedChainId(typedChainId);
-    let url: string = '';
+    let url = '';
     switch (chainType) {
       case ChainType.EVM:
         url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;

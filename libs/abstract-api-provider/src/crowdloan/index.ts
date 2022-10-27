@@ -16,9 +16,9 @@ export type ContributePayload = {
 };
 
 export type CrowdloanFundInfo = {
-  raised: BigInt;
-  end: BigInt;
-  cap: BigInt;
+  raised: bigint;
+  end: bigint;
+  cap: bigint;
 };
 
 /**

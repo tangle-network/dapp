@@ -126,8 +126,7 @@ export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedbac
       return;
     }
 
-    // @ts-ignore
-    const action = this.actions[key] as Action;
+    const action = this.actions[key as string] as Action;
 
     if (action) {
       this.selectedAction = action;
