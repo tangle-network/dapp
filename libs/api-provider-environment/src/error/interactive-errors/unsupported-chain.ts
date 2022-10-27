@@ -1,5 +1,5 @@
-import { ApiConfig } from '@nepoche/dapp-config';
-import { EVMChainId, InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { ApiConfig } from '@webb-tools/dapp-config';
+import { EVMChainId, InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([

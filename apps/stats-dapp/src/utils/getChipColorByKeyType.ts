@@ -1,4 +1,4 @@
-import { ChipProps } from '@nepoche/webb-ui-components/components/Chip/types';
+import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
 export function getChipColorByKeyType(type: 'Next' | 'Current' | 'Pending'): ChipProps['color'] {
   switch (type) {

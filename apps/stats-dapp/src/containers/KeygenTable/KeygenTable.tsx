@@ -27,9 +27,9 @@ import {
   Slider,
   Table,
   TitleWithInfo,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { KeygenType } from '@nepoche/webb-ui-components/types';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { KeygenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 

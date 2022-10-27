@@ -8,11 +8,11 @@ import {
   shuffleRelayers,
   WebbRelayer,
   WebbRelayerManager,
-} from '@nepoche/abstract-api-provider/relayer';
-import { BridgeStorage } from '@nepoche/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
-import { VAnchorContract } from '@nepoche/evm-contracts';
-import { Storage } from '@nepoche/storage';
+} from '@webb-tools/abstract-api-provider/relayer';
+import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { VAnchorContract } from '@webb-tools/evm-contracts';
+import { Storage } from '@webb-tools/storage';
 import { calculateTypedChainId, ChainType, MerkleTree, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 

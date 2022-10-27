@@ -1,6 +1,6 @@
-import { WebbUIErrorBoudary } from '@nepoche/webb-ui-components/containers/WebbUIErrorBoudary';
-import { RouterProvider } from '@nepoche/react-environment';
-import { WebbProvider, AppEvent } from '@nepoche/api-provider-environment';
+import { WebbUIErrorBoudary } from '@webb-tools/webb-ui-components/containers/WebbUIErrorBoudary';
+import { RouterProvider } from '@webb-tools/react-environment';
+import { WebbProvider, AppEvent } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { FC } from 'react';
 

@@ -13,10 +13,10 @@ import {
 } from '@tanstack/react-table';
 import { VoteStatus } from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
-import { Avatar, Chip, Table, Tabs } from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { Typography } from '@nepoche/webb-ui-components/typography';
-import { shortenString } from '@nepoche/webb-ui-components/utils';
+import { Avatar, Chip, Table, Tabs } from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { shortenString } from '@webb-tools/webb-ui-components/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { FC, useCallback, useMemo, useState } from 'react';
 

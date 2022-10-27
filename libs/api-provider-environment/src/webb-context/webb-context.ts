@@ -1,7 +1,7 @@
-import { Account, WebbApiProvider } from '@nepoche/abstract-api-provider';
-import { ApiConfig, Chain, Wallet } from '@nepoche/dapp-config';
-import { InteractiveFeedback } from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
+import { Account, WebbApiProvider } from '@webb-tools/abstract-api-provider';
+import { ApiConfig, Chain, Wallet } from '@webb-tools/dapp-config';
+import { InteractiveFeedback } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 
 export interface WebbContextState<T = unknown> {

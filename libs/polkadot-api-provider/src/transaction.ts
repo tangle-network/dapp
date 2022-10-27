@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { NotificationHandler } from '@nepoche/abstract-api-provider/webb-provider.interface';
+import { NotificationHandler } from '@webb-tools/abstract-api-provider/webb-provider.interface';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import lodash from 'lodash';
 

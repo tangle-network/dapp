@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { TypedChainId } from '@nepoche/dapp-types/ChainId';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
+import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';

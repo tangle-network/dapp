@@ -1,4 +1,4 @@
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
 
 export function insufficientApiInterface(appEvent: TAppEvent): InteractiveFeedback {

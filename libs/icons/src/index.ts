@@ -5,6 +5,7 @@ export * from './ArrowRight';
 export * from './AuctionLine';
 export * from './BankLine';
 export * from './Block';
+export * from './BookOpenLineIcon';
 export * from './CheckboxBlankCircleLine';
 export * from './CheckboxCircleLine';
 export * from './CheckboxFill';
@@ -28,6 +29,7 @@ export * from './FileCopyLine';
 export * from './FilterIcon';
 export * from './GithubFill';
 export * from './Graph';
+export * from './HelpLineIcon';
 export * from './InformationLine';
 export * from './Key';
 export * from './Link';
@@ -40,9 +42,9 @@ export * from './ShuffleLine';
 export * from './Spinner';
 export * from './SunLine';
 export * from './TelegramFill';
+export * from './ThreeDotsVerticalIcon';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './WalletLineIcon';
-
 // Wallet icons
 export * from './wallets';

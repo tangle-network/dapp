@@ -4,8 +4,8 @@ import {
   NewNotesTxResult,
   TransactionState,
   VAnchorDeposit,
-} from '@nepoche/abstract-api-provider';
-import { useWebContext } from '@nepoche/api-provider-environment';
+} from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<NewNotesTxResult>;

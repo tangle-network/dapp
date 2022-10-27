@@ -1,12 +1,12 @@
-import { CurrencyId, CurrencyRole, CurrencyType, PresetTypedChainId, zeroAddress } from '@nepoche/dapp-types';
-import GanacheLogo from '@nepoche/logos/chains/GanacheLogo';
-import HarmonyLogo from '@nepoche/logos/chains/HarmonyLogo';
-import { MoonbeamLogo } from '@nepoche/logos/chains/MoonbeamLogo';
-import PolygonLogo from '@nepoche/logos/chains/PolygonLogo';
-import ShidenLogo from '@nepoche/logos/chains/ShidenLogo';
-import WEBBLogo from '@nepoche/logos/chains/WebbLogo';
-import EtherLogo from '@nepoche/logos/Eth';
-import WebbWrappedLogo from '@nepoche/logos/WebbWrappedLogo';
+import { CurrencyId, CurrencyRole, CurrencyType, PresetTypedChainId, zeroAddress } from '@webb-tools/dapp-types';
+import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
+import HarmonyLogo from '@webb-tools/logos/chains/HarmonyLogo';
+import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
+import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
+import ShidenLogo from '@webb-tools/logos/chains/ShidenLogo';
+import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
+import EtherLogo from '@webb-tools/logos/Eth';
+import WebbWrappedLogo from '@webb-tools/logos/WebbWrappedLogo';
 import React from 'react';
 
 import { CurrencyConfig } from './currency-config.interface';

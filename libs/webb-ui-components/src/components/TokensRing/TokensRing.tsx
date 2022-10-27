@@ -1,4 +1,4 @@
-import { TokenIcon } from '@nepoche/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef } from 'react';

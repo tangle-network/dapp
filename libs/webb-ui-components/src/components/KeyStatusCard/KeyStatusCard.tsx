@@ -11,7 +11,7 @@ import { KeyStatusCardProps } from './types';
  * The `KeyStatusCard` component displays the current key and next key data
  *
  * ```jsx
- *  import { useKeyStatusSeedData } from "@nepoche/webb-ui-components";
+ *  import { useKeyStatusSeedData } from "@webb-tools/webb-ui-components";
  *
  *  const statusCardData = useKeyStatusSeedData();
  *

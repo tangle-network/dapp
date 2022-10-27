@@ -8,7 +8,7 @@ import {
   ShieldedAssetInput,
   TitleWithInfo,
   TokenInput,
-} from '@nepoche/webb-ui-components';
+} from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
 
 import { ShowcaseProps } from './types';

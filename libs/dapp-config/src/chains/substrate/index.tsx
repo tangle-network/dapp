@@ -1,7 +1,7 @@
-import { CurrencyId, PresetTypedChainId, SubstrateChainId } from '@nepoche/dapp-types';
-import KSMLogo from '@nepoche/logos/chains/KusamaLogo';
-import DOTLogo from '@nepoche/logos/chains/PolkadotLogo';
-import WEBBLogo from '@nepoche/logos/chains/WebbLogo';
+import { CurrencyId, PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
+import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
+import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
+import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
 import { ChainType } from '@webb-tools/sdk-core';
 
 import { ChainConfig } from '../chain-config.interface';

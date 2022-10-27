@@ -1,4 +1,4 @@
-import { ArrowRight, Close, Download, ExternalLinkLine, FileCopyLine } from '@nepoche/icons';
+import { ArrowRight, Close, Download, ExternalLinkLine, FileCopyLine } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

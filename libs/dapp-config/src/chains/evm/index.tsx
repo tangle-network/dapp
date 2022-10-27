@@ -1,10 +1,10 @@
-import { CurrencyId, EVMChainId } from '@nepoche/dapp-types';
-import ArbitrumLogo from '@nepoche/logos/chains/ArbitrumLogo';
-import GanacheLogo from '@nepoche/logos/chains/GanacheLogo';
-import { MoonbeamLogo } from '@nepoche/logos/chains/MoonbeamLogo';
-import OptimismLogo from '@nepoche/logos/chains/OptimismLogo';
-import PolygonLogo from '@nepoche/logos/chains/PolygonLogo';
-import EtherLogo from '@nepoche/logos/Eth';
+import { CurrencyId, EVMChainId } from '@webb-tools/dapp-types';
+import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
+import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
+import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
+import OptimismLogo from '@webb-tools/logos/chains/OptimismLogo';
+import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
+import EtherLogo from '@webb-tools/logos/Eth';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 import { ChainConfig } from '../chain-config.interface';

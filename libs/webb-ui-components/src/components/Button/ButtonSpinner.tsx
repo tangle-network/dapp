@@ -1,4 +1,4 @@
-import { Spinner } from '@nepoche/icons';
+import { Spinner } from '@webb-tools/icons';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 

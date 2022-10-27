@@ -1,10 +1,10 @@
 {
-  "name": "@nepoche/dapp-config",
+  "name": "@webb-tools/dapp-config",
   "version": "0.0.1",
   "main": "./src/index.js",
   "dependencies": {
-    "@nepoche/dapp-types": "0.0.1",
-    "@nepoche/browser-utils": "0.0.1",
-    "@nepoche/logos": "0.0.1"
+    "@webb-tools/dapp-types": "0.0.1",
+    "@webb-tools/browser-utils": "0.0.1",
+    "@webb-tools/logos": "0.0.1"
   }
 }

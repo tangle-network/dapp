@@ -1,4 +1,4 @@
-import { ChevronRight, ExternalLinkLine } from '@nepoche/icons';
+import { ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 import { forwardRef } from 'react';

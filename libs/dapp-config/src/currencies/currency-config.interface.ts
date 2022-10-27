@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { CurrencyRole, CurrencyType } from '@nepoche/dapp-types/Currency';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types/Currency';
 
 export interface CurrencyView {
   id: number;

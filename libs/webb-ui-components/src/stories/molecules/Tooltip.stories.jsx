@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Chip, Tooltip, TooltipBody, TooltipTrigger } from '@nepoche/webb-ui-components/components';
+import { Chip, Tooltip, TooltipBody, TooltipTrigger } from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -1,5 +1,5 @@
 import { randBic, randBrand, randEthereumAddress, randHexaDecimal, randNumber, randRecentDate } from '@ngneat/falso';
-import { arrayFrom } from '@nepoche/webb-ui-components/utils';
+import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 
 import { ProposalType } from '../generated/graphql';
 import { ProposalListItem, ProposalStatus } from '../provider/hooks';

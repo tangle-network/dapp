@@ -12,9 +12,9 @@ import {
   NewNotesTxResult,
   TransactionState,
   VAnchorDeposit,
-} from '@nepoche/abstract-api-provider';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
-import { fetchSubstrateVAnchorProvingKey } from '@nepoche/fixtures-deployments';
+} from '@webb-tools/abstract-api-provider';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { fetchSubstrateVAnchorProvingKey } from '@webb-tools/fixtures-deployments';
 import { LoggerService } from '@webb-tools/app-util';
 import {
   ArkworksProvingManager,

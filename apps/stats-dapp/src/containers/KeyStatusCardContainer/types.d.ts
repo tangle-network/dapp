@@ -1,5 +1,5 @@
 import { PublicKey } from '../../provider/hooks';
-import { ISubQlTime } from '@nepoche/dapp-types';
+import { ISubQlTime } from '@webb-tools/dapp-types';
 
 export interface KeyStatusCardContainerProps {
   keyType: 'current' | 'next';

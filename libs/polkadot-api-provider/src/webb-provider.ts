@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import '@webb-tools/protocol-substrate-types';
 
-import { Currency, RelayChainMethods } from '@nepoche/abstract-api-provider';
+import { Currency, RelayChainMethods } from '@webb-tools/abstract-api-provider';
 import {
   ApiInitHandler,
   NotificationHandler,
@@ -11,12 +11,12 @@ import {
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
-} from '@nepoche/abstract-api-provider';
-import { AccountsAdapter } from '@nepoche/abstract-api-provider/account/Accounts.adapter';
-import { Bridge, WebbState } from '@nepoche/abstract-api-provider/state';
-import { ActionsBuilder, CurrencyRole, InteractiveFeedback, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { ApiConfig, Wallet } from '@nepoche/dapp-config';
-import { NoteManager } from '@nepoche/note-manager';
+} from '@webb-tools/abstract-api-provider';
+import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
+import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
+import { ActionsBuilder, CurrencyRole, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
+import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 

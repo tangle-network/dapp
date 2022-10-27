@@ -1,6 +1,6 @@
-import { Account } from '@nepoche/abstract-api-provider';
-import { Chain, Wallet } from '@nepoche/dapp-config';
-import { TypedChainId, WalletId } from '@nepoche/dapp-types';
+import { Account } from '@webb-tools/abstract-api-provider';
+import { Chain, Wallet } from '@webb-tools/dapp-config';
+import { TypedChainId, WalletId } from '@webb-tools/dapp-types';
 import { EventBus } from '@webb-tools/app-util';
 
 export type AppEvents = {

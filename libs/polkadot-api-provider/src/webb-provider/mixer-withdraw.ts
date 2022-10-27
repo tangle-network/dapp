@@ -9,10 +9,10 @@ import {
   RelayedChainInput,
   RelayedWithdrawResult,
   TransactionState,
-} from '@nepoche/abstract-api-provider';
-import { typedChainIdToSubstrateRelayerName } from '@nepoche/dapp-config/relayer-config';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { fetchSubstrateMixerProvingKey } from '@nepoche/fixtures-deployments';
+} from '@webb-tools/abstract-api-provider';
+import { typedChainIdToSubstrateRelayerName } from '@webb-tools/dapp-config/relayer-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { fetchSubstrateMixerProvingKey } from '@webb-tools/fixtures-deployments';
 import { LoggerService } from '@webb-tools/app-util';
 import { ArkworksProvingManager, Note, ProvingManagerSetupInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';

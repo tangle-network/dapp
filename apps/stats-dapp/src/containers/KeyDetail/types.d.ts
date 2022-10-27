@@ -1,6 +1,6 @@
 import type { KeyGenAuthority } from '../../provider/hooks';
 
-import { PropsOf, WebbComponentBase } from '@nepoche/webb-ui-components/types';
+import { PropsOf, WebbComponentBase } from '@webb-tools/webb-ui-components/types';
 
 export interface KeyDetailProps extends PropsOf<'div'>, WebbComponentBase {
   /**

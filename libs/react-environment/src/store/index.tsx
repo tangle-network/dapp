@@ -1,5 +1,5 @@
 import { useMemorized } from './useMemorized';
-import { BareProps } from '@nepoche/dapp-types';
+import { BareProps } from '@webb-tools/dapp-types';
 import { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo } from 'react';
 
 import { useApiQueryStore } from './modules/api-query';

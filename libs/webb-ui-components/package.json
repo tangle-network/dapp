@@ -1,10 +1,10 @@
 {
-  "name": "@nepoche/webb-ui-components",
+  "name": "@webb-tools/webb-ui-components",
   "version": "0.0.2",
   "type": "commonjs",
   "main": "src/index.js",
   "dependencies": {
-    "@nepoche/icons": "0.0.1",
+    "@webb-tools/icons": "0.0.1",
     "@ngneat/falso": "^6.1.0",
     "@polkadot/react-identicon": "^2.9.9",
     "@radix-ui/react-avatar": "^1.0.0",

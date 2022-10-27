@@ -13,10 +13,10 @@ import {
   Table,
   TimeProgress,
   TitleWithInfo,
-} from '@nepoche/webb-ui-components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components';
-import { Spinner } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components';
+} from '@webb-tools/webb-ui-components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components';
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { ComponentProps, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';

@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { CurrencyRole } from '@nepoche/dapp-types';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';

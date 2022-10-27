@@ -1,5 +1,5 @@
-import { Currency } from '@nepoche/abstract-api-provider';
-import { useWebContext } from '@nepoche/api-provider-environment';
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 

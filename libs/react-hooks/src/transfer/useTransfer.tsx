@@ -6,10 +6,10 @@ import {
   VAnchorTransfer,
   VanchorTransferPayload,
   WebbRelayer,
-} from '@nepoche/abstract-api-provider';
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
-import { misbehavingRelayer, useWebContext } from '@nepoche/api-provider-environment';
+} from '@webb-tools/abstract-api-provider';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import { misbehavingRelayer, useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId, ChainType, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';

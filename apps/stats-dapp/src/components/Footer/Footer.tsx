@@ -1,6 +1,6 @@
 import * as constants from '../../constants';
-import { Divider, Logo } from '@nepoche/webb-ui-components/components';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+import { Divider, Logo } from '@webb-tools/webb-ui-components/components';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { ExternalLink, Link } from '../../../types';
 import { FC } from 'react';
 import { NavLink } from 'react-router-dom';

@@ -1,7 +1,7 @@
 import '@webb-tools/protocol-substrate-types';
 
-import { ECDSAClaims } from '@nepoche/abstract-api-provider/ecdsa-claims';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
+import { ECDSAClaims } from '@webb-tools/abstract-api-provider/ecdsa-claims';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 
 import { Option, U128 } from '@polkadot/types';
 import { BN } from '@polkadot/util';

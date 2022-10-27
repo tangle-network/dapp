@@ -1,5 +1,5 @@
 import { ApiConfig } from '..';
-import { CurrencyId } from '@nepoche/dapp-types';
+import { CurrencyId } from '@webb-tools/dapp-types';
 
 import { anchorsConfig } from '../anchors/anchor-config';
 

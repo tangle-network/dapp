@@ -1,10 +1,10 @@
-import { SupportedBrowsers } from '@nepoche/browser-utils/platform';
-import { PresetTypedChainId } from '@nepoche/dapp-types';
-import { WalletId } from '@nepoche/dapp-types/WalletId';
-import { WalletConnectLogo } from '@nepoche/logos/wallets/WalletConnectLogo';
-import { SubWalletLogo, TalismanLogo } from '@nepoche/logos/wallets';
-import { MetaMaskLogo } from '@nepoche/logos/wallets/MetaMaskLogo';
-import { PolkaLogo } from '@nepoche/logos/wallets/PolkaLogo';
+import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { WalletConnectLogo } from '@webb-tools/logos/wallets/WalletConnectLogo';
+import { SubWalletLogo, TalismanLogo } from '@webb-tools/logos/wallets';
+import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
+import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
 import { WalletConfig } from '.';
 

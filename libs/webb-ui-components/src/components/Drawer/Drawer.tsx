@@ -1,5 +1,5 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { Close } from '@nepoche/icons';
+import { Close } from '@webb-tools/icons';
 import { PropsOf } from '../../types';
 import cx from 'classnames';
 import { forwardRef } from 'react';

@@ -8,11 +8,11 @@ import {
   Stats,
   Table,
   TitleWithInfo,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
-import { shortenHex } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
 import React, { useMemo, useState } from 'react';

@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Account, AccountsAdapter, PromiseOrT } from '@nepoche/abstract-api-provider/account';
+import { Account, AccountsAdapter, PromiseOrT } from '@webb-tools/abstract-api-provider/account';
 
 import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
 

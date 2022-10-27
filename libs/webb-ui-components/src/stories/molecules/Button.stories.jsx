@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button } from '@nepoche/webb-ui-components/components';
-import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@nepoche/icons';
+import { Button } from '@webb-tools/webb-ui-components/components';
+import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

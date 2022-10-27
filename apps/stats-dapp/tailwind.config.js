@@ -2,7 +2,7 @@
 
 const { createGlobPatternsForDependencies } = require('@nrwl/react/tailwind');
 const { join } = require('path');
-const preset = require('@nepoche/tailwind-preset');
+const preset = require('@webb-tools/tailwind-preset');
 
 module.exports = {
   presets: [preset],

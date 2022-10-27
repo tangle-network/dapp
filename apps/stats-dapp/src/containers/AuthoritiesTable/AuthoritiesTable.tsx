@@ -28,11 +28,11 @@ import {
   Progress,
   Slider,
   Table,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { CheckBoxMenu } from '@nepoche/webb-ui-components/components/CheckBoxMenu';
-import { CheckBoxMenuGroup } from '@nepoche/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
-import { Typography } from '@nepoche/webb-ui-components';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
+import { Typography } from '@webb-tools/webb-ui-components';
 import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';

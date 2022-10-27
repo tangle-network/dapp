@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { withLocalFixtures } from '@nepoche/react-environment/app-mode';
+import { withLocalFixtures } from '@webb-tools/react-environment/app-mode';
 
 import { getCachedFixtureURI } from '..';
 

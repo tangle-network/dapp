@@ -1,4 +1,4 @@
-import { CheckboxCircleLine, ExternalLinkLine, Spinner } from '@nepoche/icons';
+import { CheckboxCircleLine, ExternalLinkLine, Spinner } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { shortenHex } from '../../utils';
 import { formatDistanceToNow } from 'date-fns';

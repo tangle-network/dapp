@@ -1,5 +1,5 @@
 import { randBic, randBrand, randCountryCode, randNumber } from '@ngneat/falso';
-import { arrayFrom } from '@nepoche/webb-ui-components/utils';
+import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 
 import { AuthorityRowType } from '../containers/KeyDetail/types';
 

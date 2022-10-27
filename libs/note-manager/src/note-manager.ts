@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { NoteStorage } from '@nepoche/browser-utils/storage';
-import { Storage } from '@nepoche/storage';
+import { NoteStorage } from '@webb-tools/browser-utils/storage';
+import { Storage } from '@webb-tools/storage';
 import { Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';

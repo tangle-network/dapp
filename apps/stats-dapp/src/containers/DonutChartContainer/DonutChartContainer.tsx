@@ -1,8 +1,8 @@
 import { useDonutColor } from '../../hooks';
 import { ProposalStatus } from '../../provider/hooks';
-import { Card, DropdownMenu, Label, TitleWithInfo } from '@nepoche/webb-ui-components/components';
-import { Spinner } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+import { Card, DropdownMenu, Label, TitleWithInfo } from '@webb-tools/webb-ui-components/components';
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { FC, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 

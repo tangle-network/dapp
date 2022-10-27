@@ -7,15 +7,15 @@ import {
   RelayerInfo,
   WebbRelayer,
   WebbRelayerManager,
-} from '@nepoche/abstract-api-provider/relayer';
+} from '@webb-tools/abstract-api-provider/relayer';
 import {
   RelayerCMDBase,
   RelayerConfig,
   chainNameAdapter,
   relayerConfig
-} from '@nepoche/dapp-config/relayer-config';
-import { PolkadotRelayerManager } from '@nepoche/polkadot-api-provider';
-import { Web3RelayerManager } from '@nepoche/web3-api-provider';
+} from '@webb-tools/dapp-config/relayer-config';
+import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
+import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 

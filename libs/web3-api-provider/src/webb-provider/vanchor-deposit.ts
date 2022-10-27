@@ -8,10 +8,10 @@ import {
   NewNotesTxResult,
   TransactionState,
   VAnchorDeposit,
-} from '@nepoche/abstract-api-provider';
-import { bridgeStorageFactory } from '@nepoche/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '@nepoche/fixtures-deployments';
+} from '@webb-tools/abstract-api-provider';
+import { bridgeStorageFactory } from '@webb-tools/browser-utils/storage';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '@webb-tools/fixtures-deployments';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import {
   calculateTypedChainId,

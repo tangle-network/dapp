@@ -1,5 +1,5 @@
-import { RouterProvider } from '@nepoche/react-environment';
-import { WebbUIProvider } from '@nepoche/webb-ui-components';
+import { RouterProvider } from '@webb-tools/react-environment';
+import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { routes } from './routes';

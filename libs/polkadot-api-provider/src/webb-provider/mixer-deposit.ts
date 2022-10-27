@@ -5,8 +5,8 @@
 
 import '@webb-tools/protocol-substrate-types';
 
-import { Currency, DepositPayload as TDepositPayload, MixerDeposit, MixerSize } from '@nepoche/abstract-api-provider';
-import { CurrencyRole, CurrencyType, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import { Currency, DepositPayload as TDepositPayload, MixerDeposit, MixerSize } from '@webb-tools/abstract-api-provider';
+import { CurrencyRole, CurrencyType, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';

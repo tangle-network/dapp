@@ -6,9 +6,9 @@ import {
   TokenListCard,
   WithDrawListCard,
   WrapAssetListCard,
-} from '@nepoche/webb-ui-components/components';
-import { ArrayElement } from '@nepoche/webb-ui-components/types';
-import { arrayFrom } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/webb-ui-components/components';
+import { ArrayElement } from '@webb-tools/webb-ui-components/types';
+import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 import { ComponentProps } from 'react';
 
 const chains: ComponentProps<typeof ChainListCard>['chains'] = [

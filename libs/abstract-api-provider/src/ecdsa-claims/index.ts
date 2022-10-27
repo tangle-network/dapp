@@ -1,4 +1,4 @@
-import { WebbApiProvider } from '@nepoche/abstract-api-provider';
+import { WebbApiProvider } from '@webb-tools/abstract-api-provider';
 
 export abstract class ECDSAClaims<T extends WebbApiProvider<any> = WebbApiProvider<any>> {
   constructor(readonly inner: T) {}

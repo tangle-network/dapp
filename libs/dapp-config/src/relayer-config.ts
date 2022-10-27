@@ -1,4 +1,4 @@
-import { PresetTypedChainId } from '@nepoche/dapp-types';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 /**
@@ -22,7 +22,7 @@ export const relayerConfig: RelayerConfig[] = [
     endpoint: 'http://localhost:9955',
   },
   {
-    endpoint: 'https://relayer.nepoche.com',
+    endpoint: 'https://relayer.webb-tools.com',
   },
   {
     endpoint: 'https://relayer.webb.tools',

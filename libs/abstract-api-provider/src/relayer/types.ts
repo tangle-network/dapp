@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ActiveWebbRelayer, WebbRelayer } from '.';
-import { RelayerCMDBase } from '@nepoche/dapp-config/relayer-config';
+import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 
 /**
  * Relayer configuration for a chain

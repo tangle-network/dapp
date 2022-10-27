@@ -1,5 +1,5 @@
 import { ApiConfig } from '..';
-import { CurrencyId, EVMChainId, PresetTypedChainId } from '@nepoche/dapp-types';
+import { CurrencyId, EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 // Anchor config is indexed by WebbCurrencyId

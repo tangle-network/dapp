@@ -1,4 +1,4 @@
-import { TokenIcon } from '@nepoche/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

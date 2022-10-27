@@ -1,4 +1,4 @@
-import { ChipProps } from '@nepoche/webb-ui-components/components/Chip/types';
+import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
 import { ProposalStatus } from '../generated/graphql';
 

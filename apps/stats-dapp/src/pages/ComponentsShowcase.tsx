@@ -1,5 +1,5 @@
-import { Card, Switcher, TitleWithInfo, TokenSelector } from '@nepoche/webb-ui-components/components';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+import { Card, Switcher, TitleWithInfo, TokenSelector } from '@webb-tools/webb-ui-components/components';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 
 import { BridgeInputsShowCase, ListCardsShowcase } from '../containers';
 

@@ -4,9 +4,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import '@webb-tools/protocol-substrate-types';
 
-import { ApiInitHandler } from '@nepoche/abstract-api-provider';
-import { Wallet } from '@nepoche/dapp-config';
-import { WalletId, InteractiveFeedback, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import { ApiInitHandler } from '@webb-tools/abstract-api-provider';
+import { Wallet } from '@webb-tools/dapp-config';
+import { WalletId, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { options } from '@webb-tools/api';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import lodash from 'lodash';

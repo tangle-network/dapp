@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
-import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
+import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React from 'react';
 
 type EvmNetworkConflictParams = {

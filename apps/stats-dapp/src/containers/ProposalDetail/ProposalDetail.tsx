@@ -8,7 +8,7 @@ import {
   Progress,
   TimeLine,
   TimeLineItem,
-} from '@nepoche/webb-ui-components/components';
+} from '@webb-tools/webb-ui-components/components';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,9 +19,9 @@ import {
   ExternalLinkLine,
   Spinner,
   TokenIcon,
-} from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
-import { shortenHex } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';

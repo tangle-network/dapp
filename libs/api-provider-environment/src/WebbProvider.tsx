@@ -1,13 +1,13 @@
 import { Icon, Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Account, Currency, NotificationPayload, WebbApiProvider } from '@nepoche/abstract-api-provider';
-import { Bridge } from '@nepoche/abstract-api-provider/state';
+import { Account, Currency, NotificationPayload, WebbApiProvider } from '@webb-tools/abstract-api-provider';
+import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import {
   keypairStorageFactory,
   netStorageFactory,
   NetworkStorage,
   noteStorageFactory,
-} from '@nepoche/browser-utils/storage';
+} from '@webb-tools/browser-utils/storage';
 import {
   anchorsConfig,
   ApiConfig,
@@ -18,7 +18,7 @@ import {
   currenciesConfig,
   Wallet,
   walletsConfig,
-} from '@nepoche/dapp-config';
+} from '@webb-tools/dapp-config';
 import {
   BareProps,
   CurrencyRole,
@@ -27,25 +27,25 @@ import {
   WalletId,
   WebbError,
   WebbErrorCodes,
-} from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
-import { WebbPolkadot } from '@nepoche/polkadot-api-provider';
+} from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { AppEvent, TAppEvent } from './app-event';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import { DimensionsProvider } from '@nepoche/responsive-utils';
-import { StoreProvider } from '@nepoche/react-environment/store';
+import { DimensionsProvider } from '@webb-tools/responsive-utils';
+import { StoreProvider } from '@webb-tools/react-environment/store';
 import { WebbContext } from './webb-context';
-import { getRelayerManagerFactory } from '@nepoche/relayer-manager-factory';
-import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
-import { Spinner } from '@nepoche/icons';
-import { Web3Provider, Web3RelayerManager, WebbWeb3Provider } from '@nepoche/web3-api-provider';
+import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
+import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
+import { Spinner } from '@webb-tools/icons';
+import { Web3Provider, Web3RelayerManager, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType, Keypair, Note } from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { unsupportedChain } from './error';
-import { SettingProvider } from '@nepoche/react-environment';
+import { SettingProvider } from '@webb-tools/react-environment';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -395,7 +395,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               relayerManager,
               apiConfig,
               notificationHandler,
-              () => new Worker(new URL('@nepoche/react-environment/arkworks-proving-manager.worker')),
+              () => new Worker(new URL('@webb-tools/react-environment/arkworks-proving-manager.worker')),
               typedChainId,
               wallet
             );
@@ -471,7 +471,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               noteManager,
               apiConfig,
               notificationHandler,
-              () => new Worker(new URL('@nepoche/react-environment/circom-proving-manager.worker', import.meta.url))
+              () => new Worker(new URL('@webb-tools/react-environment/circom-proving-manager.worker', import.meta.url))
             );
 
             const providerUpdateHandler = async ([updatedChainId]: number[]) => {

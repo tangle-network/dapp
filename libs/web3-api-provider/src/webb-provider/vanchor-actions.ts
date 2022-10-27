@@ -1,5 +1,5 @@
-import { CancellationToken, VAnchorActions } from '@nepoche/abstract-api-provider';
-import { registrationStorageFactory } from '@nepoche/browser-utils/storage';
+import { CancellationToken, VAnchorActions } from '@webb-tools/abstract-api-provider';
+import { registrationStorageFactory } from '@webb-tools/browser-utils/storage';
 import { Keypair, Note } from '@webb-tools/sdk-core';
 
 import { WebbWeb3Provider } from '../webb-provider';

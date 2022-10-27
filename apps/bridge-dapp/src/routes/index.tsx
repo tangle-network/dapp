@@ -1,8 +1,8 @@
-import { Button, Typography } from '@nepoche/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { Layout } from '../containers';
-import { RouterConfigData } from '@nepoche/react-environment';
-import { Spinner } from '@nepoche/icons';
-import { BareProps } from '@nepoche/dapp-types';
+import { RouterConfigData } from '@webb-tools/react-environment';
+import { Spinner } from '@webb-tools/icons';
+import { BareProps } from '@webb-tools/dapp-types';
 import React, { FC, Suspense } from 'react';
 
 // TODO: Implement these pages for the Bridge Dapp

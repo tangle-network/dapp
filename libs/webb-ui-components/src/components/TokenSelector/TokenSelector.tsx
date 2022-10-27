@@ -1,4 +1,4 @@
-import { TokenIcon } from '@nepoche/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

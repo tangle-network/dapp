@@ -5,8 +5,8 @@
 
 import '@webb-tools/protocol-substrate-types';
 
-import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '@nepoche/abstract-api-provider/crowdloan';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
+import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '@webb-tools/abstract-api-provider/crowdloan';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { LoggerService } from '@webb-tools/app-util';
 
 import { FundInfo } from '@polkadot/types/interfaces';

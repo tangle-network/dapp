@@ -8,7 +8,7 @@ import {
   shuffleRelayers,
   WebbRelayer,
   WebbRelayerManager,
-} from '@nepoche/abstract-api-provider/relayer';
+} from '@webb-tools/abstract-api-provider/relayer';
 import { Note } from '@webb-tools/sdk-core';
 
 export class PolkadotRelayerManager extends WebbRelayerManager {

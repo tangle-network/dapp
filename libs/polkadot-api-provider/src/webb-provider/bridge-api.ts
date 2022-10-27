@@ -3,9 +3,9 @@
 
 import '@webb-tools/protocol-substrate-types';
 
-import { Currency } from '@nepoche/abstract-api-provider';
-import { BridgeApi } from '@nepoche/abstract-api-provider';
-import { CurrencyId, CurrencyRole, CurrencyType } from '@nepoche/dapp-types';
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { BridgeApi } from '@webb-tools/abstract-api-provider';
+import { CurrencyId, CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 
 import { WebbPolkadot } from '../webb-provider';
 

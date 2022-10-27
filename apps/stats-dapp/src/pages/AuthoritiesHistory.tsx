@@ -1,8 +1,8 @@
 import { useSessionThreshold } from '../provider/hooks/useSession';
-import { Button, DropdownMenu, TitleWithInfo } from '@nepoche/webb-ui-components';
-import { useDarkMode } from '@nepoche/webb-ui-components';
-import { ArrowLeft } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components';
+import { Button, DropdownMenu, TitleWithInfo } from '@webb-tools/webb-ui-components';
+import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { ArrowLeft } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import {
   BarElement,
   CategoryScale,

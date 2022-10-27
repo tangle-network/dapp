@@ -1,4 +1,4 @@
-import { useModal } from '@nepoche/ui-hooks';
+import { useModal } from '@webb-tools/ui-hooks';
 import { noop } from 'lodash';
 import React, { createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 

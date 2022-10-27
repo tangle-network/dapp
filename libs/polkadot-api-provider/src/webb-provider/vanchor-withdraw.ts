@@ -11,10 +11,10 @@ import {
   RelayedChainInput,
   RelayedWithdrawResult,
   VAnchorWithdraw,
-} from '@nepoche/abstract-api-provider';
-import { typedChainIdToSubstrateRelayerName } from '@nepoche/dapp-config/relayer-config';
-import { TransactionState, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { fetchSubstrateVAnchorProvingKey } from '@nepoche/fixtures-deployments';
+} from '@webb-tools/abstract-api-provider';
+import { typedChainIdToSubstrateRelayerName } from '@webb-tools/dapp-config/relayer-config';
+import { TransactionState, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { fetchSubstrateVAnchorProvingKey } from '@webb-tools/fixtures-deployments';
 import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';

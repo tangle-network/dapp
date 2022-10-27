@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ProvideCapabilities } from '@nepoche/abstract-api-provider';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
+import { ProvideCapabilities } from '@webb-tools/abstract-api-provider';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';

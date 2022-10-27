@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { CurrencyId } from '@nepoche/dapp-types';
+import { CurrencyId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core';
 
 export interface ChainConfig {

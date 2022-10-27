@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@nepoche/abstract-api-provider';
+import { DepositPayload as IDepositPayload, MixerDeposit, MixerSize } from '@webb-tools/abstract-api-provider';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
 import { Note } from '@webb-tools/sdk-core';
 

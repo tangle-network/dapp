@@ -26,8 +26,8 @@ import {
   Progress,
   Table,
   TitleWithInfo,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import {
   ArrowLeft,
   CheckboxBlankCircleLine,
@@ -39,9 +39,9 @@ import {
   QRCode,
   Spinner,
   TwitterFill,
-} from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
-import { shortenString } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { shortenString } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';

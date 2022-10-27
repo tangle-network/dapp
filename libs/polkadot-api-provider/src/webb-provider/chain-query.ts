@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainQuery } from '@nepoche/abstract-api-provider';
-import { CurrencyId } from '@nepoche/dapp-types';
+import { ChainQuery } from '@webb-tools/abstract-api-provider';
+import { CurrencyId } from '@webb-tools/dapp-types';
 
 import { SignedBlock } from '@polkadot/types/interfaces';
 import { OrmlTokensAccountData } from '@polkadot/types/lookup';

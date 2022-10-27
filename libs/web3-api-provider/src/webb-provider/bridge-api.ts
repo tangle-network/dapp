@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { BridgeApi, Currency } from '@nepoche/abstract-api-provider';
-import { CurrencyRole, CurrencyType } from '@nepoche/dapp-types';
-import { CurrencyId } from '@nepoche/dapp-types';
+import { BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
+import { CurrencyId } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { GovernedTokenWrapper } from '@webb-tools/tokens';
 

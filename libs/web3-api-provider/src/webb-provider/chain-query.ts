@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainQuery } from '@nepoche/abstract-api-provider';
-import { zeroAddress } from '@nepoche/dapp-types';
+import { ChainQuery } from '@webb-tools/abstract-api-provider';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { ethers } from 'ethers';
 

@@ -1,5 +1,5 @@
 import { getRoundedAmountString } from '../../utils';
-import { ChevronRight, TokenIcon } from '@nepoche/icons';
+import { ChevronRight, TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';

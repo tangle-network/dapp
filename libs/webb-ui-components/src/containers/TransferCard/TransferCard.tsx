@@ -42,7 +42,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
     );
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)} ref={ref}>
+      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
         <BridgeInputGroup className='flex flex-col space-y-2'>
           <ShieldedAssetInput {...bridgeAssetProps} />
         </BridgeInputGroup>

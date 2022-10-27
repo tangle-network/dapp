@@ -1,4 +1,4 @@
-import { Search } from '@nepoche/icons';
+import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo, useState } from 'react';

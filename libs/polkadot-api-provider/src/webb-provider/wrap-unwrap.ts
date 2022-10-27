@@ -4,8 +4,8 @@
 import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/api-derive';
 
-import { Amount, WrappingEvent, WrapUnwrap } from '@nepoche/abstract-api-provider/wrap-unwrap';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import { Amount, WrappingEvent, WrapUnwrap } from '@webb-tools/abstract-api-provider/wrap-unwrap';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 

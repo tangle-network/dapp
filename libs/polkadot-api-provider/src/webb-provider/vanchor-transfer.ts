@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { NewNotesTxResult, VAnchorTransfer, VanchorTransferPayload } from '@nepoche/abstract-api-provider';
+import { NewNotesTxResult, VAnchorTransfer, VanchorTransferPayload } from '@webb-tools/abstract-api-provider';
 
 import { WebbPolkadot } from '..';
 

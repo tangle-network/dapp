@@ -1,9 +1,9 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Amount, Currency, WrappingEvent, WrapUnwrap } from '@nepoche/abstract-api-provider';
-import { CurrencyType, zeroAddress } from '@nepoche/dapp-types';
-import { WebbGovernedToken } from '@nepoche/evm-contracts';
+import { Amount, Currency, WrappingEvent, WrapUnwrap } from '@webb-tools/abstract-api-provider';
+import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
+import { WebbGovernedToken } from '@webb-tools/evm-contracts';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ContractTransaction } from 'ethers';

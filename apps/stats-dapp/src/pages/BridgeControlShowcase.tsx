@@ -1,5 +1,5 @@
-import { DepositCard, TransferCard, WithdrawCard } from '@nepoche/webb-ui-components/containers';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+import { DepositCard, TransferCard, WithdrawCard } from '@webb-tools/webb-ui-components/containers';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 
 const BridgeControlShowcase = () => {
   return (

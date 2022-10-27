@@ -1,5 +1,5 @@
-import { ManagedWallet } from '@nepoche/dapp-config/wallets';
-import { useWebContext } from '@nepoche/api-provider-environment';
+import { ManagedWallet } from '@webb-tools/dapp-config/wallets';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useEffect, useState } from 'react';
 
 /**

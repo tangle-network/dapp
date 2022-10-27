@@ -1,4 +1,4 @@
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export function misbehavingRelayer(): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([

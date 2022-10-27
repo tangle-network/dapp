@@ -7,7 +7,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChainConfig, chainsConfig } from '@nepoche/dapp-config';
+import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
 import { ProposalStatus, ProposalType } from '../../generated/graphql';
 import { ProposalListItem, ProposalsQuery, useProposals } from '../../provider/hooks';
 import { getChipColorByProposalType } from '../../utils';
@@ -26,10 +26,10 @@ import {
   Filter,
   LabelWithValue,
   Table,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@nepoche/icons';
-import { shortenHex } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 

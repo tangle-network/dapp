@@ -3,7 +3,7 @@
 
 /* eslint-disable camelcase */
 
-import { zeroAddress } from '@nepoche/dapp-types';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
 import { GovernedTokenWrapper, GovernedTokenWrapper__factory } from '@webb-tools/contracts';
 import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';

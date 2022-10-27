@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ECDSAClaims } from './ecdsa-claims';
-import { InteractiveFeedback } from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
+import { InteractiveFeedback } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from './account/Accounts.adapter';
@@ -12,7 +12,7 @@ import { VAnchorTransfer } from './anchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
 import { ChainQuery } from './chain-query';
-import { ApiConfig } from '@nepoche/dapp-config';
+import { ApiConfig } from '@webb-tools/dapp-config';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { DepositPayload, MixerDeposit, MixerDepositEvents, MixerWithdraw } from './mixer';
 import { WebbState } from './state';

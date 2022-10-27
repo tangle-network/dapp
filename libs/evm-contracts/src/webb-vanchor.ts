@@ -5,8 +5,8 @@
 import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { retryPromise } from '@nepoche/browser-utils/retry-promise';
-import { zeroAddress } from '@nepoche/dapp-types';
+import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
 import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';

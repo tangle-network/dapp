@@ -21706,6 +21706,11 @@ storybook-addon-react-router-v6@^0.2.1:
   dependencies:
     react-inspector "^5.1.1"
 
+storybook-tailwind-dark-mode@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/storybook-tailwind-dark-mode/-/storybook-tailwind-dark-mode-1.0.15.tgz#ae86d30122b720d63c4a425335d40da6c4ca5de5"
+  integrity sha512-rIN8vNqzKYN1wyZLfd1Wm4OwbNsaOJfnyc8gAkXTEMbmwaOF8vzOQMznuVdera4GdRtvCFkhhsf/IcYOkrrg1g==
+
 stream-browserify@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/stream-browserify/-/stream-browserify-2.0.2.tgz#87521d38a44aa7ee91ce1cd2a47df0cb49dd660b"

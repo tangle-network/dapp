@@ -1,5 +1,5 @@
-import { Wallet, walletsConfig } from '@nepoche/dapp-config';
-import { WalletId, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import { Wallet, walletsConfig } from '@webb-tools/dapp-config';
+import { WalletId, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export function getWalletByWebbErrorCodes(code: WebbErrorCodes): Wallet {
   switch (code) {
