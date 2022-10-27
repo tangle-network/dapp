@@ -176,80 +176,81 @@ const Proposals = () => {
 
   return (
     <div className='flex flex-col space-y-4'>
-      <TransactionsToggler />
-      <TransactionProgressCard
-        method={'Transfer'}
-        firedAt={new Date()}
-        status={'in-progress'}
-        tokens={[<PolygonLogo />, <EthLogo />]}
-        wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-        label={{
-          tokenURI: 'https://polygon.technology/',
-          amount: '0.999',
-          token: 'ETH/WETH',
-        }}
-        onDismiss={() => {}}
-        footer={{
-          isLoading: true,
-          message: (
-            <>
-              <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
-            </>
-          ),
-        }}
-        onDetails={() => {}}
-      />
-      <TransactionProgressCard
-        method={'Withdraw'}
-        firedAt={new Date()}
-        status={'in-progress'}
-        tokens={[<PolygonLogo />, <WalletLine />]}
-        wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
-        label={{
-          amount: '0.999',
-          nativeValue: '1430',
-        }}
-        onDismiss={() => {}}
-        footer={{
-          isLoading: true,
-          message: 'Generating ZK  proofs..',
-        }}
-        onDetails={() => {}}
-      />
-      <TransactionProgressCard
-        method={'Deposit'}
-        firedAt={new Date()}
-        status={'in-progress'}
-        tokens={[<PolygonLogo />, <EthLogo />]}
-        wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-        label={{
-          tokenURI: 'https://polygon.technology/',
-          amount: '0.999',
-          token: 'ETH/WETH',
-        }}
-        onDismiss={() => {}}
-        footer={{
-          isLoading: true,
-          hasWarning: true,
-          link: {
-            uri: '#',
-            text: (
+      <TransactionsToggler>
+        <TransactionProgressCard
+          method={'Transfer'}
+          firedAt={new Date()}
+          status={'in-progress'}
+          tokens={[<PolygonLogo />, <EthLogo />]}
+          wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+          label={{
+            tokenURI: 'https://polygon.technology/',
+            amount: '0.999',
+            token: 'ETH/WETH',
+          }}
+          onDismiss={() => {}}
+          footer={{
+            isLoading: true,
+            message: (
               <>
-                <span
-                  className={'inline-block pr-2'}
-                  style={{
-                    fontSize: 18,
-                  }}
-                >
-                  ⚠️
-                </span>
-                Deposit Failed
+                <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
               </>
             ),
-          },
-        }}
-        onDetails={() => {}}
-      />
+          }}
+          onDetails={() => {}}
+        />
+        <TransactionProgressCard
+          method={'Withdraw'}
+          firedAt={new Date()}
+          status={'in-progress'}
+          tokens={[<PolygonLogo />, <WalletLine />]}
+          wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
+          label={{
+            amount: '0.999',
+            nativeValue: '1430',
+          }}
+          onDismiss={() => {}}
+          footer={{
+            isLoading: true,
+            message: 'Generating ZK  proofs..',
+          }}
+          onDetails={() => {}}
+        />
+        <TransactionProgressCard
+          method={'Deposit'}
+          firedAt={new Date()}
+          status={'in-progress'}
+          tokens={[<PolygonLogo />, <EthLogo />]}
+          wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+          label={{
+            tokenURI: 'https://polygon.technology/',
+            amount: '0.999',
+            token: 'ETH/WETH',
+          }}
+          onDismiss={() => {}}
+          footer={{
+            isLoading: true,
+            hasWarning: true,
+            link: {
+              uri: '#',
+              text: (
+                <>
+                  <span
+                    className={'inline-block pr-2'}
+                    style={{
+                      fontSize: 18,
+                    }}
+                  >
+                    ⚠️
+                  </span>
+                  Deposit Failed
+                </>
+              ),
+            },
+          }}
+          onDetails={() => {}}
+        />
+      </TransactionsToggler>
       {/** Proposals Status */}
       <Card>
         <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />

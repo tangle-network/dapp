@@ -37,8 +37,8 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     return (
       <div
         className={twMerge(
-          `rounded-b-lg shadow-xl  border-t border-mono-80 dark:border-mono-120
-            flex flex-col  max-w-[295px] dark:bg-mono-160`,
+          `border-t border-mono-80 dark:border-mono-120
+            flex flex-col  dark:bg-mono-160`,
           className
         )}
         {...props}
@@ -156,15 +156,14 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   );
 };
 
-export const TransactionsToggler = () => {
+export const TransactionsToggler: React.FC = ({ children }) => {
   const [open, setOpen] = useState(false);
   return (
     <div
-      className={`rounded-b-lg shadow-xl  
-      p-3
+      className={`rounded-b-lg shadow-xl  overflow-hidden
             flex flex-col  max-w-[295px] dark:bg-mono-160`}
     >
-      <div className='flex row items-center'>
+      <div className='flex row items-center    p-3'>
         <div className={'pr-4'}>
           <Spinner width={18} height={18} />
         </div>
@@ -191,6 +190,7 @@ export const TransactionsToggler = () => {
           </div>
         </b>
       </div>
+      {open && children}
     </div>
   );
 };
