@@ -206,7 +206,10 @@ const Proposals = () => {
           nativeValue: '1430',
         }}
         onDismiss={() => {}}
-        footer={{}}
+        footer={{
+          isLoading: true,
+          message: 'Generating ZK  proofs..',
+        }}
         onDetails={() => {}}
       />
       <TransactionProgressCard

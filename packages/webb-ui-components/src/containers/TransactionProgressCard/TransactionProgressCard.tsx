@@ -2,7 +2,7 @@ import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
 import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, forwardRef, useMemo, useState } from 'react';
+import { FC, forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { BridgeLabel, TransactionCardItemProps, TXCardFooterProps } from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
@@ -111,13 +111,21 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   onDetails,
   onDismiss,
 }) => {
-  const textClass = useMemo(() => `py-0 align middle text-${hasWarning ? 'yellow' : 'mono'}-100`, [hasWarning]);
+  const textClass = useMemo(
+    () => `py-0 align-middle ${hasWarning ? 'text-yellow-100 dark:text-yellow-50' : 'text-mono-100'}`,
+    [hasWarning]
+  );
   const wrapperClasses = useMemo(() => {
     const classes = hasWarning
-      ? `my-0 p-4 flex items-center bg-yellow-70 border-t-2 border-yellow-90`
-      : 'my-0 flex items-center ' + sectionPadding;
+      ? `my-0 p-4 flex items-center bg-yellow-70 border-t-2 border-yellow-90 dark:bg-yellow-120`
+      : 'my-0 flex items-center p-4';
     return twMerge(classes);
   }, [hasWarning]);
+
+  const showDetails = Boolean(onDetails) && isLoading;
+  const buttonHanlder = useCallback(() => {
+    return showDetails ? onDetails?.() : onDismiss();
+  }, [showDetails]);
   return (
     <div className={wrapperClasses}>
       <div className='flex items-center'>
@@ -139,8 +147,8 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
         )}
       </div>
       <div className={'flex grow justify-end'}>
-        <Button onClick={onDismiss} variant={'link'} size={'sm'} className={textClass}>
-          DISMISS
+        <Button onClick={onDismiss} variant={'link'} size={'sm'} className={hasWarning ? textClass : undefined}>
+          {showDetails ? 'DETAILS' : 'DISMISS'}
         </Button>
       </div>
     </div>
