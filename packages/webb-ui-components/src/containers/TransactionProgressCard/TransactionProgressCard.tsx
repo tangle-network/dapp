@@ -160,7 +160,7 @@ export const TransactionsToggler: React.FC = ({ children }) => {
   const [open, setOpen] = useState(false);
   return (
     <div
-      className={`rounded-b-lg shadow-xl  overflow-hidden
+      className={`rounded-lg shadow-xl  overflow-hidden
             flex flex-col  max-w-[295px] dark:bg-mono-160`}
     >
       <div className='flex row items-center    p-3'>
@@ -190,7 +190,7 @@ export const TransactionsToggler: React.FC = ({ children }) => {
           </div>
         </b>
       </div>
-      {open && children}
+      <div className={'max-h-96 overflow-auto'}>{open && children}</div>
     </div>
   );
 };
