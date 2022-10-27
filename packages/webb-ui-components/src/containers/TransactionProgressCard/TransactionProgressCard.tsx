@@ -4,7 +4,7 @@ import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon, ChevronUp } from '@we
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { FC, forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { BridgeLabel, TransactionCardItemProps, TXCardFooterProps } from './types';
+import { BridgeLabel, NativeLabel, TransactionCardItemProps, TXCardFooterProps } from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 
 type Variant = 'bridge' | 'native';
@@ -15,7 +15,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  * TransactionProgressCard
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
-  ({ className, label, method, wallets, onDismiss, onDetails, ...props }, ref) => {
+  ({ className, label, syncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
     const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     const [open, setOpen] = useState(true);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
@@ -31,7 +31,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     }, [method]);
 
     const hasSyncNote = useMemo(() => {
-      return method === 'Withdraw';
+      return method === 'Withdraw' && Boolean(syncNote);
     }, [method]);
 
     return (
@@ -64,17 +64,17 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
             </Typography>
             {labelVariant === 'native' ? (
               <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
-                {label.nativeValue!} USD
+                {(label as NativeLabel).nativeValue} USD
               </Typography>
             ) : (
               <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-200'>
-                {label.token!} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+                {(label as BridgeLabel).token} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
               </Typography>
             )}
           </div>
           <div className={'h-full self-start  flex items-end grow  flex flex-col '}>
             {hasSyncNote && (
-              <Button variant={'link'} size={'sm'}>
+              <Button variant={'link'} size={'sm'} onClick={syncNote}>
                 SYNC NOTE
               </Button>
             )}

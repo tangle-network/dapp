@@ -51,6 +51,7 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
   footer: TXCardFooterProps;
   onDismiss(): void;
   onDetails?(): void;
+  syncNote?(): void;
 }
 
 export type TransactionProgressCardProps = {
