@@ -32,7 +32,7 @@ function createWebpack(env, mode = 'production') {
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(__dirname, `../../libs/${dir}/src`);
-  
+
     return alias;
   }, {});
   alias['@nepoche/bridge-dapp'] = path.resolve(__dirname, `src`);
@@ -115,6 +115,10 @@ function createWebpack(env, mode = 'production') {
             {
               loader: require.resolve('babel-loader'),
               options: {
+                assumptions: {
+                  privateFieldsAsProperties: true,
+                  setPublicClassFields: true,
+                },
                 presets: [
                   [
                     '@babel/preset-env',
@@ -128,17 +132,21 @@ function createWebpack(env, mode = 'production') {
                     },
                   ],
                   '@babel/preset-typescript',
-                  ['@babel/preset-react', { development: isDevelopment, runtime: "automatic" }],
+                  [
+                    '@babel/preset-react',
+                    { development: isDevelopment, runtime: 'automatic' },
+                  ],
                 ],
                 plugins: [
                   ...(polkadotBabelWebpackConfig.plugins ?? []),
+                  isDevelopment && require.resolve('react-refresh/babel'),
+                  ['@babel/plugin-transform-runtime', { loose: false }],
                   ['@babel/plugin-proposal-class-properties', { loose: false }],
                   [
                     '@babel/plugin-proposal-private-property-in-object',
                     { loose: false },
                   ],
                   ['@babel/plugin-proposal-private-methods', { loose: false }],
-                  isDevelopment && require.resolve('react-refresh/babel'),
                 ].filter(Boolean),
               },
             },
@@ -146,7 +154,10 @@ function createWebpack(env, mode = 'production') {
         },
         {
           test: /\.md$/,
-          use: [require.resolve('html-loader'), require.resolve('markdown-loader')],
+          use: [
+            require.resolve('html-loader'),
+            require.resolve('markdown-loader'),
+          ],
         },
         {
           exclude: [/semantic-ui-css/],
@@ -166,7 +177,16 @@ function createWebpack(env, mode = 'production') {
         },
         {
           include: [/semantic-ui-css/],
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.eot$/, /\.ttf$/, /\.woff$/, /\.woff2$/],
+          test: [
+            /\.bmp$/,
+            /\.gif$/,
+            /\.jpe?g$/,
+            /\.png$/,
+            /\.eot$/,
+            /\.ttf$/,
+            /\.woff$/,
+            /\.woff2$/,
+          ],
           use: [
             {
               loader: require.resolve('null-loader'),
@@ -233,7 +253,9 @@ function createWebpack(env, mode = 'production') {
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(mode),
         'process.env.LOCAL_FIXTURES': JSON.stringify(env.LOCAL_FIXTURES),
-        'process.env.DEPLOYMENT': JSON.stringify(process.env.DEPLOYMENT ?? 'develop'),
+        'process.env.DEPLOYMENT': JSON.stringify(
+          process.env.DEPLOYMENT ?? 'develop'
+        ),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -275,9 +297,8 @@ function createWebpack(env, mode = 'production') {
         const port = devServer.server.address().port;
         console.log('Listening on port:', port);
       },
-      hot: true
+      hot: true,
     },
-    
   };
 }
 
