@@ -2,7 +2,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
-    "noEmit": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -79,5 +78,9 @@
       "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
     }
   },
+  "include": [
+    "./libs/**/src/**/*.{js,jsx,ts,tsx}",
+    "./apps/**/src/**/*.{js,jsx,ts,tsx}"
+  ],
   "exclude": ["node_modules", "tmp", "**/node_modules/*"]
 }
