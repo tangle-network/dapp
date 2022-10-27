@@ -1,4 +1,4 @@
-import * as constants from '../../constants';
+import * as constants from '@webb-tools/webb-ui-components/constants';
 import {
   Button,
   Collapsible,
@@ -11,14 +11,11 @@ import {
   Logo,
   MenuItem,
   ThemeSwitcherMenuItem,
-} from '@webb-tools/p/webb-ui-components/components';
-import {
-  BookOpenLineIcon,@webb-tools/
-  ThreeDotsVerticalIcon,
 } from '@webb-tools/webb-ui-components';
+import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useState, PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 
 type HeaderProps = {
@@ -33,7 +30,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { name, ...webbApiConfig } = constants.webbApiConfig;
+  const { name, ...webbAppConfig } = constants.webbApiConfig;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -81,7 +78,7 @@ export const Header: FC<HeaderProps> = ({
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Button size="sm" className="block" {...webbApiConfig}>
+          <Button size="sm" className="block" {...webbAppConfig}>
             <Typography
               variant="body1"
               fw="bold"
@@ -95,14 +92,7 @@ export const Header: FC<HeaderProps> = ({
           <div>
             <Dropdown className="flex items-center justify-center">
               <DropdownBasicButton>
-                <svg
-                  width={24}
-                  height={24}
-                  className="fill-mono-180 dark:fill-mono-0"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                </svg>
+                <ThreeDotsVerticalIcon size="lg" />
               </DropdownBasicButton>
 
               <DropdownBody
@@ -120,16 +110,7 @@ export const Header: FC<HeaderProps> = ({
                 <ThemeSwitcherMenuItem />
 
                 <MenuItem
-                  icon={
-                    <svg
-                      width={24}
-                      height={24}
-                      className="fill-current"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M13 21v2h-2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1h6a3.99 3.99 0 013 1.354A3.99 3.99 0 0115 3h6a1 1 0 011 1v16a1 1 0 01-1 1h-8zm7-2V5h-5a2 2 0 00-2 2v12h7zm-9 0V7a2 2 0 00-2-2H4v14h7z" />
-                    </svg>
-                  }
+                  icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
                     window.open('https://docs.webb.tools', '_blank');
                   }}
@@ -138,7 +119,7 @@ export const Header: FC<HeaderProps> = ({
                 </MenuItem>
 
                 <Collapsible>
-                  <CollapsibleButton>Advanced Options</CollapsibleButton>
+                  <CollapsibleButton>Keygen Threshold</CollapsibleButton>
                   <CollapsibleContent className="p-0">
                     <div className="flex items-center justify-between px-4 py-2">
                       <Typography variant="body1">
@@ -173,7 +154,7 @@ export const Header: FC<HeaderProps> = ({
   );
 };
 
-const SettingItem: FC<{ children: React.ReactNode }> = ({ children }) => (
+const SettingItem: FC<PropsWithChildren> = ({ children }) => (
   <div className="px-4 py-2 w-[298px] flex items-center justify-between text-mono-180 dark:text-mono-0">
     {children}
   </div>
@@ -183,7 +164,7 @@ const SettingItem: FC<{ children: React.ReactNode }> = ({ children }) => (
  * Internal components *
  ***********************/
 
-const NavButton: FC<{ children: React.ReactNode; path: string }> = ({
+const NavButton: FC<PropsWithChildren<{ path: string }>> = ({
   children,
   path,
 }) => (

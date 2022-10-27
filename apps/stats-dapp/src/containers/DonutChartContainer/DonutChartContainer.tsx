@@ -1,4 +1,4 @@
-import { useDonutColor } from '../../hooks';
+import { useDonutColor } from '../../hooks/useDonutColor';
 import { ProposalStatus } from '../../provider/hooks';
 import {
   Card,

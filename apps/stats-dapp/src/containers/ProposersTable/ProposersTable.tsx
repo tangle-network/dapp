@@ -13,10 +13,10 @@ import {
 } from '@tanstack/react-table';
 import { VoteStatus } from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
-import {@webb-tools/
-  Avatar,@webb-tools/
-  Chip,@webb-tools/
-  Table,@webb-tools/
+import {
+  Avatar,
+  Chip,
+  Table,
   Tabs,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';

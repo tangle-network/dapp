@@ -28,7 +28,7 @@ import React, {
 } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
-import { WebbColorsType } from '../../types';
+import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
 import tailwindConfig from /* preval */ '../../tailwind.config.js';
