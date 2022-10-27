@@ -2,13 +2,12 @@
 
 const { createGlobPatternsForDependencies } = require('@nrwl/react/tailwind');
 const { join } = require('path');
-const preset = require('@webb-tools/tailwind-preset');
+const config = require('../../tailwind.config');
+const merge = require('lodash.merge');
 
-module.exports = {
-  presets: [preset],
-  mode: 'jit',
+module.exports = merge(config, {
   content: [
     join(__dirname, 'src/**/*!(*.stories|*.spec).{ts,tsx,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
-};
+});

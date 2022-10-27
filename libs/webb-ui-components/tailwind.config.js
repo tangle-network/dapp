@@ -1,12 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 
-const preset = require('@webb-tools/tailwind-preset');
+const config = require('../../tailwind.config');
+const merge = require('lodash.merge');
 
-module.exports = {
-  presets: [preset],
-  mode: 'jit',
+module.exports = merge(config, {
   content: [
     './src/**/*.{js,jsx,ts,tsx,css}',
     './.storybook/**/*.{js,jsx,ts,tsx}',
   ],
-};
+});

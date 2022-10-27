@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 const preset = require('./libs/tailwind-preset');
 
 module.exports = {

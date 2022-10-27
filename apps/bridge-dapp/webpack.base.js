@@ -245,6 +245,7 @@ function createWebpack(env, mode = 'production') {
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         process: 'process/browser.js',
+        React: 'react',
       }),
       new webpack.IgnorePlugin({
         contextRegExp: /moment$/,
