@@ -1,6 +1,6 @@
-import { Close, Spinner, WalletLineIcon } from '@webb-dapp/webb-ui-components/icons';
-import { PropsOf } from '@webb-dapp/webb-ui-components/types';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
+import { PropsOf } from '../../types';
+import { Typography } from '../../typography';
 import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 

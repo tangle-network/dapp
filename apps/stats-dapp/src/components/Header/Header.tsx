@@ -12,7 +12,7 @@ import {
   MenuItem,
   ThemeSwitcherMenuItem,
 } from '@webb-tools/webb-ui-components/components';
-import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-tools/webb-ui-components';
+import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState } from 'react';

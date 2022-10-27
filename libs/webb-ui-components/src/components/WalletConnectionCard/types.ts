@@ -1,4 +1,4 @@
-import { PropsOf } from '@webb-dapp/webb-ui-components/types';
+import { PropsOf } from '../../types';
 
 /**
  * The wallet id, add a new id when the app supports a new wallet

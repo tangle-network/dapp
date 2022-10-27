@@ -1,12 +1,12 @@
-import { BookOpenLineIcon, FlaskLineIcon, HelpLineIcon, InformationLine } from '@webb-dapp/webb-ui-components/icons';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
+import { BookOpenLineIcon, FlaskLineIcon, HelpLineIcon, InformationLine } from '@webb-tools/icons';
+import { Typography } from '../../typography';
 import { ComponentProps, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Collapsible, CollapsibleButton, CollapsibleContent } from '../Collapsible';
 import { DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem/MenuItem';
-import { ThemeSwitcherMenuItem } from '../ThemeSwitcher/';
+import { ThemeSwitcherMenuItem } from '../ThemeSwitcher';
 import { NavigationMenuContentProps } from './types';
 
 /**

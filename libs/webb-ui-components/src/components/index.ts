@@ -23,7 +23,7 @@ export * from './LabelWithValue';
 export * from './ListCard';
 export * from './Logo';
 export * from './MenuItem';
-export * from './NagivationMenu';
+export * from './NavigationMenu';
 export * from './NetworkThresholdsCard';
 export * from './Notification';
 export * from './Pagination';

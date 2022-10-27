@@ -1,4 +1,4 @@
-import { ThreeDotsVerticalIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import { ComponentProps, forwardRef } from 'react';
 
 import { DropdownBasicButton } from '../Dropdown/DropdownBasicButton';

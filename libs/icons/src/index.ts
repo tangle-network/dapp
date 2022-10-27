@@ -27,6 +27,7 @@ export * from './Expand';
 export * from './ExternalLinkLine';
 export * from './FileCopyLine';
 export * from './FilterIcon';
+export * from './FlaskLineIcon';
 export * from './GithubFill';
 export * from './Graph';
 export * from './HelpLineIcon';
