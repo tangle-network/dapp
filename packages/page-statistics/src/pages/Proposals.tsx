@@ -181,7 +181,7 @@ const Proposals = () => {
           method={'Transfer'}
           firedAt={new Date()}
           status={'in-progress'}
-          tokens={[<PolygonLogo />, <EthLogo />]}
+          tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
           wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
           label={{
             tokenURI: 'https://polygon.technology/',
@@ -203,7 +203,8 @@ const Proposals = () => {
           method={'Withdraw'}
           firedAt={new Date()}
           status={'in-progress'}
-          tokens={[<PolygonLogo />, <WalletLine />]}
+          syncNote={() => {}}
+          tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
           wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
           label={{
             amount: '0.999',
@@ -220,12 +221,12 @@ const Proposals = () => {
           method={'Deposit'}
           firedAt={new Date()}
           status={'in-progress'}
-          tokens={[<PolygonLogo />, <EthLogo />]}
+          tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
           wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
           label={{
             tokenURI: 'https://polygon.technology/',
             amount: '0.999',
-            token: 'ETH/WETH',
+            token: 'ETH/WEBB',
           }}
           onDismiss={() => {}}
           footer={{

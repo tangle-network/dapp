@@ -15,7 +15,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  * TransactionProgressCard
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
-  ({ className, label, syncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
+  ({ className, label, tokens, syncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
     const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     const [open, setOpen] = useState(true);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
@@ -56,7 +56,12 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         {/*Card Content*/}
         <div className={twMerge('my-0 flex items-center', sectionPadding)}>
           <div className={'h-full self-start'}>
-            <TokenIcon size={'lg'} name={'ETH'} />
+            <div className={'h-full self-start w-8 pt-2'}>
+              <div className={'relative'}>
+                {tokens[0] && <div className={'absolute h-5 w-5 inset-0'}>{tokens[0]}</div>}
+                {tokens[1] && <div className={'absolute h-5 w-5 inset-x-2'}>{tokens[1]}</div>}
+              </div>
+            </div>
           </div>
           <div className={'px-2'}>
             <Typography variant={'h5'} fw={'bold'} className={'py-0 text-mono-200'}>
