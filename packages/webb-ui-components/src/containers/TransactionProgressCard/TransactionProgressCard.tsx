@@ -1,12 +1,10 @@
-import OptimismLogo from '@webb-dapp/apps/configs/logos/chains/OptimismLogo';
-import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, ExternalLinkLine, Link as LinkIcon, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { forwardRef, useMemo, useState } from 'react';
+import { FC, forwardRef, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { BridgeLabel, TransactionCardItemProps } from './types';
+import { BridgeLabel, TransactionCardItemProps, TXCardFooterProps } from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 
 type Variant = 'bridge' | 'native';
@@ -63,11 +61,11 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
             </Typography>
             {labelVariant === 'native' ? (
               <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
-                {label.nativeValue} USD
+                {label.nativeValue!} USD
               </Typography>
             ) : (
               <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-200'>
-                {label.token} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+                {label.token!} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
               </Typography>
             )}
           </div>
@@ -95,26 +93,38 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           />
         )}
         {/*Card Footer*/}
-        <div className={'my-0 flex items-center'}>
-          <div>
-            <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
-              <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
-            </Typography>
-          </div>
-          <div className={'flex grow justify-end'}>
-            <Button
-              onClick={() => {
-                setOpen(false);
-                setTimeout(() => setOpen(true), 1000);
-              }}
-              variant={'link'}
-              size={'sm'}
-            >
-              DISMISS
-            </Button>
-          </div>
-        </div>
+        <TXCardFooter {...props.footer} />
       </div>
     );
   }
 );
+
+const TXCardFooter: FC<TXCardFooterProps> = ({ isLoading, message, link }) => {
+  return (
+    <div className={'my-0 flex items-center'}>
+      <div className='flex items-center'>
+        {isLoading && (
+          <div className='pr-2'>
+            <Spinner />
+          </div>
+        )}
+
+        {message && (
+          <Typography variant={'body4'} fw={'bold'} className={'py-0 text-mono-100'}>
+            {message}
+          </Typography>
+        )}
+        {link && (
+          <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-100'>
+            {link.text}
+          </Typography>
+        )}
+      </div>
+      <div className={'flex grow justify-end'}>
+        <Button onClick={() => {}} variant={'link'} size={'sm'}>
+          DISMISS
+        </Button>
+      </div>
+    </div>
+  );
+};

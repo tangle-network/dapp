@@ -185,6 +185,14 @@ const Proposals = () => {
           token: 'ETH/WETH',
         }}
         onDismiss={() => {}}
+        footer={{
+          isLoading: true,
+          message: (
+            <>
+              <span className={'inline-block pr-2'}>🎉</span>Successfully Deposited!
+            </>
+          ),
+        }}
         onDetails={() => {}}
       />
       <TransactionProgressCard
@@ -198,6 +206,7 @@ const Proposals = () => {
           nativeValue: '1430',
         }}
         onDismiss={() => {}}
+        footer={{}}
         onDetails={() => {}}
       />
       <TransactionProgressCard
@@ -212,6 +221,13 @@ const Proposals = () => {
           token: 'ETH/WETH',
         }}
         onDismiss={() => {}}
+        footer={{
+          isLoading: true,
+          link: {
+            uri: '#',
+            text: 'Recipient:0x1a..23d',
+          },
+        }}
         onDetails={() => {}}
       />
       {/** Proposals Status */}

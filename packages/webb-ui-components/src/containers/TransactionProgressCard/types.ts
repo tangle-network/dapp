@@ -1,13 +1,14 @@
 import { PropsOf } from '@webb-dapp/webb-ui-components/types';
+import { jsx } from '@storybook/theming';
 
 export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
 export type TransactionItemStatus = 'In-progress' | 'warning' | 'completed';
 
-type TXCardFooterProp = {
+export type TXCardFooterProps = {
   isLoading?: boolean;
-  message?: string;
+  message?: string | JSX.Element;
   link?: {
-    text: string;
+    text: string | JSX.Element;
     uri: string;
   };
 };
@@ -46,7 +47,7 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
     dist: JSX.Element;
   };
   label: BridgeLabel | NativeLabel;
-  footer: TXCardFooterProp;
+  footer: TXCardFooterProps;
   onDismiss(): void;
   onDetails(): void;
 }
