@@ -1,9 +1,14 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Amount, Currency, WrappingEvent, WrapUnwrap } from '@nepoche/abstract-api-provider';
-import { CurrencyType, zeroAddress } from '@nepoche/dapp-types';
-import { WebbGovernedToken } from '@nepoche/evm-contracts';
+import {
+  Amount,
+  Currency,
+  WrappingEvent,
+  WrapUnwrap,
+} from '@webb-tools/abstract-api-provider';
+import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
+import { WebbGovernedToken } from '@webb-tools/evm-contracts';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ContractTransaction } from 'ethers';
@@ -29,7 +34,9 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     inner
       .getChainId()
       .then((evmChainId) => {
-        this._currentChainId.next(calculateTypedChainId(ChainType.EVM, evmChainId));
+        this._currentChainId.next(
+          calculateTypedChainId(ChainType.EVM, evmChainId)
+        );
         this._event.next({
           ready: null,
         });
@@ -39,7 +46,9 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
       });
 
     inner.on('providerUpdate', ([evmChainId]) => {
-      this._currentChainId.next(calculateTypedChainId(ChainType.EVM, evmChainId));
+      this._currentChainId.next(
+        calculateTypedChainId(ChainType.EVM, evmChainId)
+      );
       this._event.next({
         stateUpdate: null,
       });
@@ -85,10 +94,14 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         message: 'GovernedTokenwrapper:unwrap',
         name: 'Transaction',
       });
-      const wrappableTokenAddress = await wrappableToken.getAddress(await this.inner.getChainId());
+      const wrappableTokenAddress = await wrappableToken.getAddress(
+        await this.inner.getChainId()
+      );
 
       if (!wrappableTokenAddress) {
-        throw new Error(`No wrappable token address for ${wrappableToken.view.name} on selected chain`);
+        throw new Error(
+          `No wrappable token address for ${wrappableToken.view.name} on selected chain`
+        );
       }
       const tx = await webbGovernedToken.unwrap(wrappableTokenAddress, amount);
 
@@ -177,13 +190,19 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             name: 'Transaction',
             persist: true,
           });
-          tx = await wrappableTokenInstance.approve(webbGovernedToken.address, amount);
+          tx = await wrappableTokenInstance.approve(
+            webbGovernedToken.address,
+            amount
+          );
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
         }
       }
 
-      tx = await webbGovernedToken.wrap(this.getAddressFromCurrency(wrappableToken), amount);
+      tx = await webbGovernedToken.wrap(
+        this.getAddressFromCurrency(wrappableToken),
+        amount
+      );
       await tx.wait();
       this.inner.notificationHandler({
         description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
@@ -218,6 +237,9 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
   governedTokenwrapper(currency: Currency): WebbGovernedToken {
     const contractAddress = this.getAddressFromCurrency(currency);
 
-    return new WebbGovernedToken(this.inner.getEthersProvider(), contractAddress);
+    return new WebbGovernedToken(
+      this.inner.getEthersProvider(),
+      contractAddress
+    );
   }
 }

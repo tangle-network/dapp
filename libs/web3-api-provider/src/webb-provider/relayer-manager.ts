@@ -8,16 +8,25 @@ import {
   shuffleRelayers,
   WebbRelayer,
   WebbRelayerManager,
-} from '@nepoche/abstract-api-provider/relayer';
-import { BridgeStorage } from '@nepoche/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
-import { VAnchorContract } from '@nepoche/evm-contracts';
-import { Storage } from '@nepoche/storage';
-import { calculateTypedChainId, ChainType, MerkleTree, Note, parseTypedChainId } from '@webb-tools/sdk-core';
+} from '@webb-tools/abstract-api-provider/relayer';
+import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import { VAnchorContract } from '@webb-tools/evm-contracts';
+import { Storage } from '@webb-tools/storage';
+import {
+  calculateTypedChainId,
+  ChainType,
+  MerkleTree,
+  Note,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 export class Web3RelayerManager extends WebbRelayerManager {
-  async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
+  async mapRelayerIntoActive(
+    relayer: OptionalRelayer,
+    typedChainId: number
+  ): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
     }
@@ -50,8 +59,12 @@ export class Web3RelayerManager extends WebbRelayerManager {
           throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
         }
 
-        const principleBig = ethers.utils.parseUnits(supportedContract.size.toString(), evmNote.denomination);
-        const withdrawFeeMill = supportedContract.withdrawFeePercentage * 1000000;
+        const principleBig = ethers.utils.parseUnits(
+          supportedContract.size.toString(),
+          evmNote.denomination
+        );
+        const withdrawFeeMill =
+          supportedContract.withdrawFeePercentage * 1000000;
 
         const withdrawFeeMillBig = ethers.BigNumber.from(withdrawFeeMill);
         const feeBigMill = principleBig.mul(withdrawFeeMillBig);
@@ -88,7 +101,9 @@ export class Web3RelayerManager extends WebbRelayerManager {
             capabilities.supportedChains[baseOn]
               .get(typedChainId)
               ?.contracts?.find(
-                (contract) => contract.address === contractAddress.toLowerCase() && contract.eventsWatcher.enabled
+                (contract) =>
+                  contract.address === contractAddress.toLowerCase() &&
+                  contract.eventsWatcher.enabled
               )
           );
         }
@@ -98,7 +113,9 @@ export class Web3RelayerManager extends WebbRelayerManager {
         const relayerIndex =
           capabilities.supportedChains['evm']
             .get(typedChainId)
-            ?.contracts.findIndex((contract) => contract.contract === query.contract) ?? -1;
+            ?.contracts.findIndex(
+              (contract) => contract.contract === query.contract
+            ) ?? -1;
         return relayerIndex > -1;
       }
 
@@ -161,7 +178,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      const relayerLeaves = await relayers[i].getLeaves(typedChainId, contract.inner.address, abortSignal);
+      const relayerLeaves = await relayers[i].getLeaves(
+        typedChainId,
+        contract.inner.address,
+        abortSignal
+      );
 
       const validLatestLeaf = await contract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
@@ -172,7 +193,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
         const levels = await contract.inner.levels();
-        const tree = MerkleTree.createTreeWithRoot(levels, relayerLeaves.leaves, await contract.getLastRoot());
+        const tree = MerkleTree.createTreeWithRoot(
+          levels,
+          relayerLeaves.leaves,
+          await contract.getLastRoot()
+        );
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {

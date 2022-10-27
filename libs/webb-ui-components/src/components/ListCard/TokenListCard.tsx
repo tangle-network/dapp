@@ -1,4 +1,4 @@
-import { Search } from '@nepoche/icons';
+import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
@@ -64,23 +64,27 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         {/** The search input */}
         <div className={cx('px-2 py-4')}>
           <Input
-            id='token'
+            id="token"
             rightIcon={<Search />}
-            placeholder='Search token or enter token address'
+            placeholder="Search token or enter token address"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
           />
         </div>
 
         {/** Popular tokens */}
-        <div className='flex flex-col p-2 space-y-2'>
-          <Typography variant='utility' className='uppercase mb-0.5'>
+        <div className="flex flex-col p-2 space-y-2">
+          <Typography variant="utility" className="uppercase mb-0.5">
             Popular tokens
           </Typography>
 
-          <div className='flex flex-wrap gap-2'>
+          <div className="flex flex-wrap gap-2">
             {filteredPopular.map((current, idx) => (
-              <TokenSelector className='uppercase' key={`${current.name}-${idx}`} onClick={() => onItemChange(current)}>
+              <TokenSelector
+                className="uppercase"
+                key={`${current.name}-${idx}`}
+                onClick={() => onItemChange(current)}
+              >
                 {current.symbol}
               </TokenSelector>
             ))}
@@ -88,8 +92,8 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         </div>
 
         {/** Select tokens */}
-        <div className='flex flex-col p-2 space-y-2'>
-          <Typography variant='utility' className='uppercase'>
+        <div className="flex flex-col p-2 space-y-2">
+          <Typography variant="utility" className="uppercase">
             Select token
           </Typography>
 
@@ -97,28 +101,48 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           <ScrollArea className={cx('min-w-[350px] h-[376px]')}>
             <ul>
               {filteredSelect.map((current, idx) => (
-                <AssetListItem key={`${current.name}-${idx}`} {...current} onClick={() => onItemChange(current)} />
+                <AssetListItem
+                  key={`${current.name}-${idx}`}
+                  {...current}
+                  onClick={() => onItemChange(current)}
+                />
               ))}
-              <Typography variant='utility' className='uppercase text-mono-100 dark:text-mono-80'>
+              <Typography
+                variant="utility"
+                className="uppercase text-mono-100 dark:text-mono-80"
+              >
                 Unavailable
               </Typography>
               {filteredUnavailable.map((current, idx) => (
-                <AssetListItem key={`${current.name}-${idx}`} {...current} onClick={() => onItemChange(current)} />
+                <AssetListItem
+                  key={`${current.name}-${idx}`}
+                  {...current}
+                  onClick={() => onItemChange(current)}
+                />
               ))}
             </ul>
           </ScrollArea>
         </div>
 
-        <div className={cx('flex flex-col items-center justify-center px-2 py-1 mt-9')}>
+        <div
+          className={cx(
+            'flex flex-col items-center justify-center px-2 py-1 mt-9'
+          )}
+        >
           <Typography
-            variant='utility'
-            className='uppercase text-mono-100 dark:text-mono-80  max-w-[334px]'
-            ta='center'
+            variant="utility"
+            className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
+            ta="center"
           >
             Dont see your asset?
           </Typography>
 
-          <Button variant='link' size='sm' className='mt-1 text-center' onClick={onConnect}>
+          <Button
+            variant="link"
+            size="sm"
+            className="mt-1 text-center"
+            onClick={onConnect}
+          >
             Try another account or wallet
           </Button>
         </div>

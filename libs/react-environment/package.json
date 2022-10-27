@@ -1,5 +1,5 @@
 {
-  "name": "@nepoche/react-environment",
+  "name": "@webb-tools/react-environment",
   "version": "0.0.1",
   "description": "react environment",
   "main": "./src/index.js",

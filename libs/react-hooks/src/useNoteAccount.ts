@@ -1,4 +1,4 @@
-import { useWebContext } from '@nepoche/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Note } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 

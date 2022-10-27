@@ -1,8 +1,10 @@
-import { ChipProps } from '@nepoche/webb-ui-components/components/Chip/types';
+import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
 import { ProposalStatus } from '../generated/graphql';
 
-export function getChipColorByProposalType(type: ProposalStatus): ChipProps['color'] {
+export function getChipColorByProposalType(
+  type: ProposalStatus
+): ChipProps['color'] {
   switch (type) {
     case ProposalStatus.Accepted: {
       return 'purple';
@@ -33,7 +35,9 @@ export function getChipColorByProposalType(type: ProposalStatus): ChipProps['col
     }
 
     default: {
-      throw new Error('Unknow ProposalStatus inside `getChipColorByProposalType` functioni');
+      throw new Error(
+        'Unknow ProposalStatus inside `getChipColorByProposalType` functioni'
+      );
     }
   }
 }

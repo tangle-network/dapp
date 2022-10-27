@@ -12,15 +12,28 @@ import {
   WebbMethods,
   WebbProviderEvents,
   WebbState,
-} from '@nepoche/abstract-api-provider';
-import { BridgeStorage } from '@nepoche/browser-utils/storage';
-import { ApiConfig, getAnchorDeploymentBlockNumber } from '@nepoche/dapp-config';
-import { CurrencyRole, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { VAnchorContract } from '@nepoche/evm-contracts';
-import { NoteManager } from '@nepoche/note-manager';
-import { Storage } from '@nepoche/storage';
+} from '@webb-tools/abstract-api-provider';
+import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import {
+  ApiConfig,
+  getAnchorDeploymentBlockNumber,
+} from '@webb-tools/dapp-config';
+import {
+  CurrencyRole,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
+import { VAnchorContract } from '@webb-tools/evm-contracts';
+import { NoteManager } from '@webb-tools/note-manager';
+import { Storage } from '@webb-tools/storage';
 import { EventBus } from '@webb-tools/app-util';
-import { calculateTypedChainId, ChainType, Keypair, Note, toFixedHex } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  Keypair,
+  Note,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
@@ -44,7 +57,9 @@ export class WebbWeb3Provider
 {
   state: WebbState;
   readonly methods: WebbMethods<WebbWeb3Provider>;
-  readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbWeb3Provider>> | null;
+  readonly relayChainMethods: RelayChainMethods<
+    WebbApiProvider<WebbWeb3Provider>
+  > | null;
   private ethersProvider: providers.Web3Provider;
 
   private constructor(
@@ -108,22 +123,34 @@ export class WebbWeb3Provider
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
     const initialSupportedCurrencies: Record<number, Currency> = {};
     for (const currencyConfig of Object.values(config.currencies)) {
-      initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
+      initialSupportedCurrencies[currencyConfig.id] = new Currency(
+        currencyConfig
+      );
     }
 
     // All supported bridges are supplied by the config, before passing to the state.
     const initialSupportedBridges: Record<number, Bridge> = {};
     for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
-      if (Object.keys(bridgeConfig.anchors).includes(calculateTypedChainId(ChainType.EVM, chainId).toString())) {
+      if (
+        Object.keys(bridgeConfig.anchors).includes(
+          calculateTypedChainId(ChainType.EVM, chainId).toString()
+        )
+      ) {
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
         const bridgeTargets = bridgeConfig.anchors;
         if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
-          initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+          initialSupportedBridges[bridgeConfig.asset] = new Bridge(
+            bridgeCurrency,
+            bridgeTargets
+          );
         }
       }
     }
 
-    this.state = new WebbState(initialSupportedCurrencies, initialSupportedBridges);
+    this.state = new WebbState(
+      initialSupportedCurrencies,
+      initialSupportedBridges
+    );
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
@@ -187,7 +214,10 @@ export class WebbWeb3Provider
     return new VAnchorContract(this.ethersProvider, address);
   }
 
-  getVariableAnchorByAddressAndProvider(address: string, provider: providers.Web3Provider): VAnchorContract {
+  getVariableAnchorByAddressAndProvider(
+    address: string,
+    provider: providers.Web3Provider
+  ): VAnchorContract {
     return new VAnchorContract(provider, address, true);
   }
 
@@ -203,18 +233,36 @@ export class WebbWeb3Provider
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     // First, try to fetch the leaves from the supported relayers
-    const relayers = await this.relayerManager.getRelayersByChainAndAddress(typedChainId, contract.inner.address);
-    let leaves = await this.relayerManager.fetchLeavesFromRelayers(relayers, contract, storage, abortSignal);
+    const relayers = await this.relayerManager.getRelayersByChainAndAddress(
+      typedChainId,
+      contract.inner.address
+    );
+    let leaves = await this.relayerManager.fetchLeavesFromRelayers(
+      relayers,
+      contract,
+      storage,
+      abortSignal
+    );
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
-      const storedContractInfo: BridgeStorage[0] = (await storage.get(contract.inner.address.toLowerCase())) || {
-        lastQueriedBlock: getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 0,
+      const storedContractInfo: BridgeStorage[0] = (await storage.get(
+        contract.inner.address.toLowerCase()
+      )) || {
+        lastQueriedBlock:
+          getAnchorDeploymentBlockNumber(
+            typedChainId,
+            contract.inner.address
+          ) || 0,
         leaves: [] as string[],
       };
 
-      const leavesFromChain = await contract.getDepositLeaves(storedContractInfo.lastQueriedBlock + 1, 0, abortSignal);
+      const leavesFromChain = await contract.getDepositLeaves(
+        storedContractInfo.lastQueriedBlock + 1,
+        0,
+        abortSignal
+      );
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
     }
@@ -222,7 +270,11 @@ export class WebbWeb3Provider
     return leaves;
   }
 
-  async getVAnchorNotesFromChain(contract: VAnchorContract, owner: Keypair, abortSignal: AbortSignal): Promise<Note[]> {
+  async getVAnchorNotesFromChain(
+    contract: VAnchorContract,
+    owner: Keypair,
+    abortSignal: AbortSignal
+  ): Promise<Note[]> {
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = await this.methods.bridgeApi.getCurrency()!;
@@ -236,9 +288,12 @@ export class WebbWeb3Provider
     const notes = Promise.all(
       utxos.map(async (utxo) => {
         console.log(utxo.serialize());
-        const secrets = [toFixedHex(utxo.chainId, 8), toFixedHex(utxo.amount), utxo.secret_key, utxo.blinding].join(
-          ':'
-        );
+        const secrets = [
+          toFixedHex(utxo.chainId, 8),
+          toFixedHex(utxo.amount),
+          utxo.secret_key,
+          utxo.blinding,
+        ].join(':');
 
         const note: Note = await Note.generateNote({
           amount: utxo.amount,

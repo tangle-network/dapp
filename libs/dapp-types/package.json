@@ -1,5 +1,5 @@
 {
-  "name": "@nepoche/dapp-types",
+  "name": "@webb-tools/dapp-types",
   "version": "0.0.1",
   "type": "commonjs",
   "dependencies": {

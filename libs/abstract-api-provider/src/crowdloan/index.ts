@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { CurrencyId } from '@nepoche/dapp-types';
+import { CurrencyId } from '@webb-tools/dapp-types';
 import { EventBus } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
@@ -24,8 +24,12 @@ export type CrowdloanFundInfo = {
 /**
  * Webb crowdloan contributing interface
  **/
-export abstract class Crowdloan<T, CrowdloanPayload extends ContributePayload> extends EventBus<CrowdloanEvent> {
-  protected crowdloanToken: BehaviorSubject<CurrencyId | null> = new BehaviorSubject<null | CurrencyId>(null);
+export abstract class Crowdloan<
+  T,
+  CrowdloanPayload extends ContributePayload
+> extends EventBus<CrowdloanEvent> {
+  protected crowdloanToken: BehaviorSubject<CurrencyId | null> =
+    new BehaviorSubject<null | CurrencyId>(null);
 
   constructor(protected inner: T) {
     super();

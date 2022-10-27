@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-
-const preset = require('@nepoche/tailwind-preset');
+const preset = require('./libs/tailwind-preset');
 
 module.exports = {
   presets: [preset],

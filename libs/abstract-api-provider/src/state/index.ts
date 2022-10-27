@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { CurrencyRole } from '@nepoche/dapp-types';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { Currency } from '../currency';
@@ -20,7 +20,10 @@ export interface WebbStateInterface {
 // These fields are all readonly, because an observable for an activeBridge is
 // exposed on the WebbState, and updates are encouraged via the 'bridgeApi'.
 export class Bridge {
-  constructor(readonly currency: Currency, readonly targets: Record<number, string>) {
+  constructor(
+    readonly currency: Currency,
+    readonly targets: Record<number, string>
+  ) {
     this.currency = currency;
     this.targets = targets;
   }
@@ -50,8 +53,12 @@ export class WebbState implements WebbStateInterface {
 
     Object.keys(this.supportedBridges).forEach((key) => {
       const currencyId = Number(key);
-      if (this.supportedBridges[currencyId].currency.getRole() === CurrencyRole.Governable) {
-        wrappedCurrencies[currencyId] = this.supportedBridges[currencyId].currency;
+      if (
+        this.supportedBridges[currencyId].currency.getRole() ===
+        CurrencyRole.Governable
+      ) {
+        wrappedCurrencies[currencyId] =
+          this.supportedBridges[currencyId].currency;
       }
     });
     this.wrappedCurrencies = wrappedCurrencies;

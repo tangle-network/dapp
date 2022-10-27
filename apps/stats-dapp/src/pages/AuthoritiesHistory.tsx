@@ -1,8 +1,12 @@
 import { useSessionThreshold } from '../provider/hooks/useSession';
-import { Button, DropdownMenu, TitleWithInfo } from '@nepoche/webb-ui-components';
-import { useDarkMode } from '@nepoche/webb-ui-components';
-import { ArrowLeft } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components';
+import {
+  Button,
+  DropdownMenu,
+  TitleWithInfo,
+} from '@webb-tools/webb-ui-components';
+import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { ArrowLeft } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import {
   BarElement,
   CategoryScale,
@@ -15,7 +19,13 @@ import {
   Tooltip,
 } from 'chart.js';
 import cx from 'classnames';
-import React, { ComponentProps, FC, useCallback, useMemo, useState } from 'react';
+import React, {
+  ComponentProps,
+  FC,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import { WebbColorsType } from '../../types';
@@ -28,7 +38,14 @@ const fullConfig = resolveConfig(tailwindConfig as Config);
 
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, CLegend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  CLegend
+);
 
 const AuthoritiesHistory = () => {
   const historyOpts = useMemo(() => ['lastest session', 'all time'], []);
@@ -36,7 +53,9 @@ const AuthoritiesHistory = () => {
 
   const [isDarkMode, _] = useDarkMode();
 
-  const menuOptions = useMemo<ComponentProps<typeof DropdownMenu>['menuOptions']>(
+  const menuOptions = useMemo<
+    ComponentProps<typeof DropdownMenu>['menuOptions']
+  >(
     () =>
       historyOpts.reduce((acc, cur) => {
         return [...acc, { value: cur }];
@@ -117,40 +136,52 @@ const AuthoritiesHistory = () => {
   );
 
   return (
-    <div className='flex flex-col p-8 space-y-4 rounded-lg bg-mono-0 dark:bg-mono-180'>
-      <Link to='/authorities'>
-        <Button variant='utility' size='sm' leftIcon={<ArrowLeft className='!fill-current' />}>
+    <div className="flex flex-col p-8 space-y-4 rounded-lg bg-mono-0 dark:bg-mono-180">
+      <Link to="/authorities">
+        <Button
+          variant="utility"
+          size="sm"
+          leftIcon={<ArrowLeft className="!fill-current" />}
+        >
           Back
         </Button>
       </Link>
 
       {/** Graph */}
-      <div className='flex flex-col space-y-4'>
+      <div className="flex flex-col space-y-4">
         {/** Title */}
-        <div className='flex items-center justify-between px-8'>
-          <TitleWithInfo title='Network Thresholds History' info='Network Thresholds History' variant='h5' />
+        <div className="flex items-center justify-between px-8">
+          <TitleWithInfo
+            title="Network Thresholds History"
+            info="Network Thresholds History"
+            variant="h5"
+          />
 
           <DropdownMenu
             menuOptions={menuOptions}
-            size='sm'
+            size="sm"
             value={menuOptions[selectedIdx].value}
             onChange={onChange}
           />
         </div>
 
-        <div className='px-4 pt-4'>
+        <div className="px-4 pt-4">
           <Bar options={options} data={data} />
         </div>
 
         <TitleWithInfo
           title={selectedIdx ? 'Month' : 'Session'}
           info={selectedIdx ? 'Month' : 'Session'}
-          className='justify-center'
+          className="justify-center"
         />
 
-        <div className='flex items-center justify-center space-x-2'>
-          <Legend bgColorClsx='bg-purple-100'>{selectedIdx ? 'Avarage ' : ''}Keygen Threshold</Legend>
-          <Legend bgColorClsx='bg-purple'>{selectedIdx ? 'Avarage ' : ''}Signature Threshold</Legend>
+        <div className="flex items-center justify-center space-x-2">
+          <Legend bgColorClsx="bg-purple-100">
+            {selectedIdx ? 'Avarage ' : ''}Keygen Threshold
+          </Legend>
+          <Legend bgColorClsx="bg-purple">
+            {selectedIdx ? 'Avarage ' : ''}Signature Threshold
+          </Legend>
         </div>
       </div>
     </div>
@@ -161,12 +192,15 @@ const AuthoritiesHistory = () => {
  * Internal components *
  ***********************/
 
-const Legend: FC<{ bgColorClsx: string, children: React.ReactNode }> = ({ bgColorClsx, children }) => {
+const Legend: FC<{ bgColorClsx: string; children: React.ReactNode }> = ({
+  bgColorClsx,
+  children,
+}) => {
   return (
-    <div className='flex items-center space-x-2'>
+    <div className="flex items-center space-x-2">
       <div className={cx('w-1 h-1', bgColorClsx)} />
 
-      <Typography variant='body3' component='span' className='inline-block'>
+      <Typography variant="body3" component="span" className="inline-block">
         {children}
       </Typography>
     </div>

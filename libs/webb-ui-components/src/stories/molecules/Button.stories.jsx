@@ -1,7 +1,13 @@
 import React from 'react';
 
-import { Button } from '@nepoche/webb-ui-components/components';
-import { ArrowLeft, ArrowRight, Close, Expand, Spinner } from '@nepoche/icons';
+import { Button } from '@webb-tools/webb-ui-components/components';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Close,
+  Expand,
+  Spinner,
+} from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -88,14 +94,14 @@ export const SmallRightIcon = Template.bind({});
 SmallRightIcon.args = {
   size: 'sm',
   variant: 'secondary',
-  rightIcon: <ArrowRight className='!fill-current' />,
+  rightIcon: <ArrowRight className="!fill-current" />,
 };
 
 export const SmallLeftIcon = Template.bind({});
 SmallLeftIcon.args = {
   size: 'sm',
   variant: 'secondary',
-  leftIcon: <ArrowLeft className='!fill-current' />,
+  leftIcon: <ArrowLeft className="!fill-current" />,
 };
 
 export const SmallLink = Template.bind({});

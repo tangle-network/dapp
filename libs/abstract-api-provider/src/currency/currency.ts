@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { CurrencyConfig, CurrencyView } from '@nepoche/dapp-config';
-import { CurrencyRole } from '@nepoche/dapp-types';
+import { CurrencyConfig, CurrencyView } from '@webb-tools/dapp-config';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 
 /**
  * The abstract class for representing the values need to display a Currency on the UI

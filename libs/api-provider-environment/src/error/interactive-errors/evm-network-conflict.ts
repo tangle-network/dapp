@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
-import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
+import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React from 'react';
 
 type EvmNetworkConflictParams = {
@@ -12,7 +12,10 @@ type EvmNetworkConflictParams = {
 
 export const USER_SWITCHED_TO_EXPECT_CHAIN = 'OK';
 
-export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAppEvent): InteractiveFeedback {
+export function evmChainConflict(
+  params: EvmNetworkConflictParams,
+  appEvent: TAppEvent
+): InteractiveFeedback {
   const addChainContent = [
     {
       any: () => {
@@ -22,7 +25,8 @@ export function evmChainConflict(params: EvmNetworkConflictParams, appEvent: TAp
             if (clicked) {
               notificationApi({
                 message: 'Please approve on the extension',
-                secondaryMessage: 'The network adding request sent to extension please approve it',
+                secondaryMessage:
+                  'The network adding request sent to extension please approve it',
                 variant: 'warning',
                 key: 'add-new-network',
               });

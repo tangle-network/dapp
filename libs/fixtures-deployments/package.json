@@ -1,9 +1,9 @@
 {
-  "name": "@nepoche/fixtures-deployments",
+  "name": "@webb-tools/fixtures-deployments",
   "version": "0.0.1",
   "main": "./src/index.js",
   "dependencies": {
-    "@nepoche/dapp-types": "0.0.1",
-    "@nepoche/react-environment": "0.0.1"
+    "@webb-tools/dapp-types": "0.0.1",
+    "@webb-tools/react-environment": "0.0.1"
   }
 }

@@ -5,8 +5,12 @@
 
 import '@webb-tools/protocol-substrate-types';
 
-import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '@nepoche/abstract-api-provider/crowdloan';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types/WebbError';
+import {
+  ContributePayload,
+  Crowdloan,
+  CrowdloanFundInfo,
+} from '@webb-tools/abstract-api-provider/crowdloan';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { LoggerService } from '@webb-tools/app-util';
 
 import { FundInfo } from '@polkadot/types/interfaces';
@@ -15,14 +19,19 @@ import { WebbPolkadot } from '../webb-provider';
 
 const logger = LoggerService.get('PolkadotTx');
 
-export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload> {
+export class PolkadotCrowdloan extends Crowdloan<
+  WebbPolkadot,
+  ContributePayload
+> {
   constructor(protected inner: WebbPolkadot) {
     super(inner);
   }
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
     // @ts-ignore
-    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(parachainId);
+    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(
+      parachainId
+    );
     let fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {

@@ -1,23 +1,37 @@
-import { CancellationToken, VAnchorActions } from '@nepoche/abstract-api-provider';
-import { registrationStorageFactory } from '@nepoche/browser-utils/storage';
+import {
+  CancellationToken,
+  VAnchorActions,
+} from '@webb-tools/abstract-api-provider';
+import { registrationStorageFactory } from '@webb-tools/browser-utils/storage';
 import { Keypair, Note } from '@webb-tools/sdk-core';
 
 import { WebbWeb3Provider } from '../webb-provider';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   // Check if the evm address and keyData pairing has already registered.
-  async isPairRegistered(anchorAddress: string, account: string, keyData: string): Promise<boolean> {
+  async isPairRegistered(
+    anchorAddress: string,
+    account: string,
+    keyData: string
+  ): Promise<boolean> {
     // Check the localStorage for now.
     // TODO: Implement a query on relayers?
     const registration = await registrationStorageFactory(account);
     const registeredKeydatas = await registration.get(anchorAddress);
-    if (registeredKeydatas && registeredKeydatas.find((entry) => entry === keyData) != undefined) {
+    if (
+      registeredKeydatas &&
+      registeredKeydatas.find((entry) => entry === keyData) != undefined
+    ) {
       return true;
     }
     return false;
   }
 
-  async register(anchorAddress: string, account: string, keyData: string): Promise<boolean> {
+  async register(
+    anchorAddress: string,
+    account: string,
+    keyData: string
+  ): Promise<boolean> {
     const vanchor = await this.inner.getVariableAnchorByAddress(anchorAddress);
     this.inner.notificationHandler({
       description: 'Registering Account',
@@ -64,10 +78,17 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     return true;
   }
 
-  async syncNotesForKeypair(anchorAddress: string, owner: Keypair): Promise<Note[]> {
+  async syncNotesForKeypair(
+    anchorAddress: string,
+    owner: Keypair
+  ): Promise<Note[]> {
     const cancelToken = new CancellationToken();
     const vanchor = this.inner.getVariableAnchorByAddress(anchorAddress);
-    const notes = await this.inner.getVAnchorNotesFromChain(vanchor, owner, cancelToken.abortSignal);
+    const notes = await this.inner.getVAnchorNotesFromChain(
+      vanchor,
+      owner,
+      cancelToken.abortSignal
+    );
     return notes;
   }
 }

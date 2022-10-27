@@ -11,9 +11,12 @@ import {
   Logo,
   MenuItem,
   ThemeSwitcherMenuItem,
-} from '@nepoche/webb-ui-components/components';
-import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-dapp/webb-ui-components';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+} from '@webb-tools/p/webb-ui-components/components';
+import {
+  BookOpenLineIcon,@webb-tools/
+  ThreeDotsVerticalIcon,
+} from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -26,7 +29,10 @@ type HeaderProps = {
 /**
  * The statistic `Header` for `Layout` container
  */
-export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoint }) => {
+export const Header: FC<HeaderProps> = ({
+  connectedEndpoint,
+  setConnectedEndpoint,
+}) => {
   const { name, ...webbApiConfig } = constants.webbApiConfig;
 
   // This state variable tracks the user input of the 'Custom Data Source'
@@ -57,15 +63,15 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
   );
 
   return (
-    <header className='bg-mono-0 dark:bg-mono-180'>
-      <div className='relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto'>
+    <header className="bg-mono-0 dark:bg-mono-180">
+      <div className="relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto">
         <NavLink to={constants.logoConfig.path}>
           <Logo />
         </NavLink>
 
         {/** Center the nav */}
-        <nav className='absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
-          <ul className='flex items-center space-x-9'>
+        <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+          <ul className="flex items-center space-x-9">
             {constants.headerNavs.map(({ name, path }) => (
               <NavButton key={`${name}-${path}`} path={path}>
                 {name}
@@ -74,32 +80,39 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
           </ul>
         </nav>
 
-        <div className='flex items-center space-x-4'>
-          <Button size='sm' className='block' {...webbApiConfig}>
-            <Typography variant='body1' fw='bold' className='!text-inherit' component='span'>
+        <div className="flex items-center space-x-4">
+          <Button size="sm" className="block" {...webbApiConfig}>
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="!text-inherit"
+              component="span"
+            >
               {name}
             </Typography>
           </Button>
 
           <div>
-            <Dropdown className='flex items-center justify-center'>
+            <Dropdown className="flex items-center justify-center">
               <DropdownBasicButton>
                 <svg
                   width={24}
                   height={24}
-                  className='fill-mono-180 dark:fill-mono-0'
-                  xmlns='http://www.w3.org/2000/svg'
+                  className="fill-mono-180 dark:fill-mono-0"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d='M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z' />
+                  <path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
               </DropdownBasicButton>
 
               <DropdownBody
-                className='pt-2 pb-4 mt-6'
-                onInteractOutside={async () => await setEndpoint(endpointUserInput)}
+                className="pt-2 pb-4 mt-6"
+                onInteractOutside={async () =>
+                  await setEndpoint(endpointUserInput)
+                }
               >
                 <SettingItem>
-                  <Typography variant='h5' fw='bold'>
+                  <Typography variant="h5" fw="bold">
                     Settings
                   </Typography>
                 </SettingItem>
@@ -108,8 +121,13 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
 
                 <MenuItem
                   icon={
-                    <svg width={24} height={24} className='fill-current' xmlns='http://www.w3.org/2000/svg'>
-                      <path d='M13 21v2h-2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1h6a3.99 3.99 0 013 1.354A3.99 3.99 0 0115 3h6a1 1 0 011 1v16a1 1 0 01-1 1h-8zm7-2V5h-5a2 2 0 00-2 2v12h7zm-9 0V7a2 2 0 00-2-2H4v14h7z' />
+                    <svg
+                      width={24}
+                      height={24}
+                      className="fill-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M13 21v2h-2v-2H3a1 1 0 01-1-1V4a1 1 0 011-1h6a3.99 3.99 0 013 1.354A3.99 3.99 0 0115 3h6a1 1 0 011 1v16a1 1 0 01-1 1h-8zm7-2V5h-5a2 2 0 00-2 2v12h7zm-9 0V7a2 2 0 00-2-2H4v14h7z" />
                     </svg>
                   }
                   onClick={() => {
@@ -121,13 +139,15 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
 
                 <Collapsible>
                   <CollapsibleButton>Advanced Options</CollapsibleButton>
-                  <CollapsibleContent className='p-0'>
-                    <div className='flex items-center justify-between px-4 py-2'>
-                      <Typography variant='body1'>Custom Data Source</Typography>
+                  <CollapsibleContent className="p-0">
+                    <div className="flex items-center justify-between px-4 py-2">
+                      <Typography variant="body1">
+                        Custom Data Source
+                      </Typography>
 
                       <Button
-                        size='sm'
-                        variant='link'
+                        size="sm"
+                        variant="link"
                         onClick={() => {
                           setEndpointUserInput(connectedEndpoint);
                         }}
@@ -137,8 +157,8 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
                     </div>
 
                     <Input
-                      id='endpoint'
-                      className='px-4 py-2'
+                      id="endpoint"
+                      className="px-4 py-2"
                       onChange={(val) => setEndpointUserInput(val.toString())}
                       value={endpointUserInput}
                     />
@@ -154,14 +174,19 @@ export const Header: FC<HeaderProps> = ({ connectedEndpoint, setConnectedEndpoin
 };
 
 const SettingItem: FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className='px-4 py-2 w-[298px] flex items-center justify-between text-mono-180 dark:text-mono-0'>{children}</div>
+  <div className="px-4 py-2 w-[298px] flex items-center justify-between text-mono-180 dark:text-mono-0">
+    {children}
+  </div>
 );
 
 /***********************
  * Internal components *
  ***********************/
 
-const NavButton: FC<{ children: React.ReactNode; path: string }> = ({ children, path }) => (
+const NavButton: FC<{ children: React.ReactNode; path: string }> = ({
+  children,
+  path,
+}) => (
   <li>
     <NavLink to={path}>
       {({ isActive }) => (
@@ -169,10 +194,14 @@ const NavButton: FC<{ children: React.ReactNode; path: string }> = ({ children, 
           className={cx(
             'px-3 py-1 font-bold rounded-full body1',
             'bg-mono-0 dark:bg-mono-180',
-            isActive ? 'text-blue dark:text-blue-40' : 'text-mono-160 dark:text-mono-40',
+            isActive
+              ? 'text-blue dark:text-blue-40'
+              : 'text-mono-160 dark:text-mono-40',
             isActive && 'pointer-events-none',
-            !isActive && ' hover:bg-blue-0 dark:hover:bg-blue-120 dark:hover:text-blue-10 ',
-            !isActive && 'active:bg-blue-0 active:text-blue dark:active:bg-blue-120 dark:active:text-blue-30'
+            !isActive &&
+              ' hover:bg-blue-0 dark:hover:bg-blue-120 dark:hover:text-blue-10 ',
+            !isActive &&
+              'active:bg-blue-0 active:text-blue dark:active:bg-blue-120 dark:active:text-blue-30'
           )}
         >
           {children}

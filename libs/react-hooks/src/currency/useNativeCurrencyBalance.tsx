@@ -1,9 +1,10 @@
-import { useWebContext } from '@nepoche/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useEffect, useState } from 'react';
 
 export const useNativeCurrencyBalance = () => {
-  const { activeAccount, activeApi, activeChain, isConnecting, loading } = useWebContext();
+  const { activeAccount, activeApi, activeChain, isConnecting, loading } =
+    useWebContext();
 
   const [balance, setBalance] = useState('');
 

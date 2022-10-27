@@ -5,8 +5,18 @@
 
 import '@webb-tools/protocol-substrate-types';
 
-import { Currency, DepositPayload as TDepositPayload, MixerDeposit, MixerSize } from '@nepoche/abstract-api-provider';
-import { CurrencyRole, CurrencyType, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import {
+  Currency,
+  DepositPayload as TDepositPayload,
+  MixerDeposit,
+  MixerSize,
+} from '@webb-tools/abstract-api-provider';
+import {
+  CurrencyRole,
+  CurrencyType,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
 import { Note, NoteGenInput } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
@@ -21,7 +31,10 @@ import { WebbPolkadot } from '../webb-provider';
 type DepositPayload = TDepositPayload<Note, [number, string]>;
 const logger = LoggerService.get('tornado-deposit');
 
-export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayload> {
+export class PolkadotMixerDeposit extends MixerDeposit<
+  WebbPolkadot,
+  DepositPayload
+> {
   constructor(protected inner: WebbPolkadot) {
     super(inner);
   }
@@ -44,7 +57,9 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         // parse number from amount string
         // TODO: Get and parse native / non-native token denomination
         // TODO replace `replaceAll` or target es2021
-        const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
+        const amountNumber =
+          (Number(amount?.toString().replaceAll(',', '')) * 1.0) /
+          Math.pow(10, 12);
 
         // const chainId = await this.inner.getProvider().api.consts.linkableTreeBn254.chainIdentifier;
         const asset = ormlAssets.find((asset) => Number(asset.id) === cId)!;
@@ -82,7 +97,10 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   }
 
   // MixerId is the treeId for deposit, chainIdType is the destination (and source because this is mixer)
-  async generateNote(mixerId: number, chainIdType: number): Promise<DepositPayload> {
+  async generateNote(
+    mixerId: number,
+    chainIdType: number
+  ): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
     let sizes: MixerSize[];
     sizes = await this.getSizes();
@@ -98,7 +116,9 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
 
     logger.info(`Depositing to tree id ${treeId}`);
     const noteInput: NoteGenInput = {
-      amount: ethers.utils.parseUnits(mixer.amount.toString(), Number(denomination)).toString(),
+      amount: ethers.utils
+        .parseUnits(mixer.amount.toString(), Number(denomination))
+        .toString(),
       backend: 'Arkworks',
       curve: 'Bn254',
       denomination: `${denomination}`,

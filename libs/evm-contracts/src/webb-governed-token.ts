@@ -3,10 +3,19 @@
 
 /* eslint-disable camelcase */
 
-import { zeroAddress } from '@nepoche/dapp-types';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
-import { GovernedTokenWrapper, GovernedTokenWrapper__factory } from '@webb-tools/contracts';
-import { BigNumberish, Contract, PayableOverrides, providers, Signer } from 'ethers';
+import {
+  GovernedTokenWrapper,
+  GovernedTokenWrapper__factory,
+} from '@webb-tools/contracts';
+import {
+  BigNumberish,
+  Contract,
+  PayableOverrides,
+  providers,
+  Signer,
+} from 'ethers';
 
 const logger = LoggerService.get('WebbGovernedToken');
 
@@ -25,7 +34,11 @@ export class WebbGovernedToken {
   constructor(private web3Provider: providers.Web3Provider, address: string) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = new Contract(address, GovernedTokenWrapper__factory.abi, this.signer) as any;
+    this._contract = new Contract(
+      address,
+      GovernedTokenWrapper__factory.abi,
+      this.signer
+    ) as any;
   }
 
   get address() {
@@ -37,7 +50,10 @@ export class WebbGovernedToken {
   }
 
   async getInfo() {
-    const [symbol, name] = await Promise.all([this._contract.symbol(), this._contract.name()]);
+    const [symbol, name] = await Promise.all([
+      this._contract.symbol(),
+      this._contract.name(),
+    ]);
 
     return {
       name,
@@ -62,7 +78,11 @@ export class WebbGovernedToken {
       overrides.value = amount;
     }
 
-    logger.info(`Wrapping ${isNative ? 'native' : `non-native (${address})`} amount ${amount.toString()}`);
+    logger.info(
+      `Wrapping ${
+        isNative ? 'native' : `non-native (${address})`
+      } amount ${amount.toString()}`
+    );
 
     return this._contract.wrap(address, amountParam, overrides);
   }
@@ -73,7 +93,9 @@ export class WebbGovernedToken {
     };
 
     logger.info(
-      `Unwrapping ${checkNativeAddress(address) ? 'native' : `non-native (${address})`} amount ${amount.toString()}`
+      `Unwrapping ${
+        checkNativeAddress(address) ? 'native' : `non-native (${address})`
+      } amount ${amount.toString()}`
     );
 
     return this._contract.unwrap(address, amount, overrides);
@@ -93,7 +115,10 @@ export class WebbGovernedToken {
       this.web3Provider.getBalance(this._contract.address),
     ]);
 
-    if (currentWrappedLiquidity.lt(amount) || currentWrappedLiquidity.lt(amount)) {
+    if (
+      currentWrappedLiquidity.lt(amount) ||
+      currentWrappedLiquidity.lt(amount)
+    ) {
       // no enough liquidity
       return false;
     }

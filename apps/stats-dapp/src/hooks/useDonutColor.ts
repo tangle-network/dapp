@@ -1,4 +1,4 @@
-import { useDarkMode } from '@nepoche/webb-ui-components/hooks';
+import { useDarkMode } from '@webb-tools/webb-ui-components/hooks';
 import { WebbColorsType } from '../../types/index.js';
 import resolveConfig from 'tailwindcss/resolveConfig';
 

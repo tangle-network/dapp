@@ -1,4 +1,4 @@
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export function misbehavingRelayer(): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([
@@ -6,7 +6,8 @@ export function misbehavingRelayer(): InteractiveFeedback {
       header: `Bad Relayer`,
     },
     {
-      content: 'The selected relayer is not operating properly. Please select a different relayer.',
+      content:
+        'The selected relayer is not operating properly. Please select a different relayer.',
     },
   ]);
   const actions = InteractiveFeedback.actionsBuilder()

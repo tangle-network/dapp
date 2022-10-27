@@ -22,7 +22,7 @@ const alias = findPackages().reduce((alias, { dir, name }) => {
 
   return alias;
 }, {});
-alias['@nepoche/stats-dapp'] = path.resolve(__dirname, `src`);
+alias['@webb-tools/stats-dapp'] = path.resolve(__dirname, `src`);
 
 const plugins = fs.existsSync(path.join(__dirname, 'src/public'))
   ? [

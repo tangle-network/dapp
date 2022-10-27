@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { MixerWithdraw } from '@nepoche/abstract-api-provider';
+import { MixerWithdraw } from '@webb-tools/abstract-api-provider';
 
 import { WebbWeb3Provider } from '../webb-provider';
 

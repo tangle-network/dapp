@@ -1,10 +1,10 @@
-import { SupportedBrowsers } from '@nepoche/browser-utils/platform';
-import { PresetTypedChainId } from '@nepoche/dapp-types';
-import { WalletId } from '@nepoche/dapp-types/WalletId';
-import { WalletConnectLogo } from '@nepoche/logos/wallets/WalletConnectLogo';
-import { SubWalletLogo, TalismanLogo } from '@nepoche/logos/wallets';
-import { MetaMaskLogo } from '@nepoche/logos/wallets/MetaMaskLogo';
-import { PolkaLogo } from '@nepoche/logos/wallets/PolkaLogo';
+import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { WalletConnectLogo } from '@webb-tools/logos/wallets/WalletConnectLogo';
+import { SubWalletLogo, TalismanLogo } from '@webb-tools/logos/wallets';
+import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
+import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
 import { WalletConfig } from '.';
 
@@ -49,7 +49,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
     },
@@ -71,7 +72,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/ether-metamask/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/ether-metamask/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
@@ -117,7 +119,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
     },
@@ -137,7 +140,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     installLinks: {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/subwallet/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/subwallet/',
     },
   },
 };

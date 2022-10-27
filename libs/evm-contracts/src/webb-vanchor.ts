@@ -5,10 +5,15 @@
 import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { retryPromise } from '@nepoche/browser-utils/retry-promise';
-import { zeroAddress } from '@nepoche/dapp-types';
+import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
-import { ERC20, ERC20__factory as ERC20Factory, VAnchor, VAnchor__factory } from '@webb-tools/contracts';
+import {
+  ERC20,
+  ERC20__factory as ERC20Factory,
+  VAnchor,
+  VAnchor__factory,
+} from '@webb-tools/contracts';
 import { IAnchorDepositInfo } from '@webb-tools/interfaces';
 import {
   calculateTypedChainId,
@@ -25,7 +30,15 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { BigNumber, BigNumberish, Contract, ContractTransaction, ethers, providers, Signer } from 'ethers';
+import {
+  BigNumber,
+  BigNumberish,
+  Contract,
+  ContractTransaction,
+  ethers,
+  providers,
+  Signer,
+} from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
@@ -52,7 +65,10 @@ export type ExtData = {
   encryptedOutput2: string;
 };
 
-export async function utxoFromVAnchorNote(note: JsNote, leafIndex: number): Promise<Utxo> {
+export async function utxoFromVAnchorNote(
+  note: JsNote,
+  leafIndex: number
+): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
   const chainId = note.targetChainId;
   const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
@@ -93,10 +109,17 @@ export class VAnchorContract {
   public _contract: VAnchor;
   private readonly signer: Signer;
 
-  constructor(private web3Provider: providers.Web3Provider, address: string, useProvider = false) {
+  constructor(
+    private web3Provider: providers.Web3Provider,
+    address: string,
+    useProvider = false
+  ) {
     this.signer = this.web3Provider.getSigner();
     logger.info(`Init with address ${address} `);
-    this._contract = VAnchor__factory.connect(address, useProvider ? this.web3Provider : this.signer);
+    this._contract = VAnchor__factory.connect(
+      address,
+      useProvider ? this.web3Provider : this.signer
+    );
   }
 
   get inner() {
@@ -139,7 +162,10 @@ export class VAnchorContract {
   async isWebbTokenApprovalRequired(depositAmount: BigNumberish) {
     const userAddress = await this.signer.getAddress();
     const tokenInstance = await this.getWebbToken();
-    const tokenAllowance = await tokenInstance.allowance(userAddress, this._contract.address);
+    const tokenAllowance = await tokenInstance.allowance(
+      userAddress,
+      this._contract.address
+    );
 
     if (tokenAllowance < depositAmount) {
       return true;
@@ -148,7 +174,10 @@ export class VAnchorContract {
     return false;
   }
 
-  async isWrappableTokenApprovalRequired(tokenAddress: string, depositAmount: BigNumberish) {
+  async isWrappableTokenApprovalRequired(
+    tokenAddress: string,
+    depositAmount: BigNumberish
+  ) {
     // Native token never requires approval
     if (tokenAddress === zeroAddress) {
       return false;
@@ -156,7 +185,10 @@ export class VAnchorContract {
 
     const userAddress = await this.signer.getAddress();
     const webbToken = await this.getWebbToken();
-    const tokenAllowance = await webbToken.allowance(userAddress, webbToken.address);
+    const tokenAllowance = await webbToken.allowance(
+      userAddress,
+      webbToken.address
+    );
 
     if (tokenAllowance < depositAmount) {
       return true;
@@ -208,7 +240,10 @@ export class VAnchorContract {
     }
 
     if (tokenInstance != null) {
-      const tx = await tokenInstance.approve(this._contract.address, depositAmount);
+      const tx = await tokenInstance.approve(
+        this._contract.address,
+        depositAmount
+      );
 
       await tx.wait();
     }
@@ -224,7 +259,10 @@ export class VAnchorContract {
     worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
-    const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
+    const sourceChainId = calculateTypedChainId(
+      ChainType.EVM,
+      await this.signer.getChainId()
+    );
 
     // Build up the inputs for proving manager
     const randomKeypair = new Keypair();
@@ -254,8 +292,18 @@ export class VAnchorContract {
     }
 
     const extAmount = BigNumber.from(0)
-      .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
-      .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+      .add(
+        outputs.reduce(
+          (sum: BigNumber, x: Utxo) => sum.add(x.amount),
+          BigNumber.from(0)
+        )
+      )
+      .sub(
+        inputs.reduce(
+          (sum: BigNumber, x: Utxo) => sum.add(x.amount),
+          BigNumber.from(0)
+        )
+      );
 
     const { extData, publicInputs } = await this.setupTransaction(
       inputs,
@@ -276,7 +324,10 @@ export class VAnchorContract {
     const tx = await this.inner.transact(
       {
         ...publicInputs,
-        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+        outputCommitments: [
+          publicInputs.outputCommitments[0],
+          publicInputs.outputCommitments[1],
+        ],
       },
       extData
     );
@@ -293,7 +344,10 @@ export class VAnchorContract {
     worker: Worker
   ): Promise<ContractTransaction> {
     const sender = await this.signer.getAddress();
-    const sourceChainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
+    const sourceChainId = calculateTypedChainId(
+      ChainType.EVM,
+      await this.signer.getChainId()
+    );
 
     // Build up the inputs for proving manager
     const randomKeypair = new Keypair();
@@ -323,8 +377,18 @@ export class VAnchorContract {
     }
 
     const extAmount = BigNumber.from(0)
-      .add(outputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)))
-      .sub(inputs.reduce((sum: BigNumber, x: Utxo) => sum.add(x.amount), BigNumber.from(0)));
+      .add(
+        outputs.reduce(
+          (sum: BigNumber, x: Utxo) => sum.add(x.amount),
+          BigNumber.from(0)
+        )
+      )
+      .sub(
+        inputs.reduce(
+          (sum: BigNumber, x: Utxo) => sum.add(x.amount),
+          BigNumber.from(0)
+        )
+      );
 
     const { extData, publicInputs } = await this.setupTransaction(
       inputs,
@@ -349,7 +413,10 @@ export class VAnchorContract {
       tx = await this.inner.transactWrap(
         {
           ...publicInputs,
-          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+          outputCommitments: [
+            publicInputs.outputCommitments[0],
+            publicInputs.outputCommitments[1],
+          ],
         },
         extData,
         tokenAddress,
@@ -361,7 +428,10 @@ export class VAnchorContract {
       tx = await this.inner.transactWrap(
         {
           ...publicInputs,
-          outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+          outputCommitments: [
+            publicInputs.outputCommitments[0],
+            publicInputs.outputCommitments[1],
+          ],
         },
         extData,
         tokenAddress
@@ -373,7 +443,10 @@ export class VAnchorContract {
 
   // Verify the leaf occurred at the reported block
   // This is important to check the behavior of relayers before modifying local storage
-  async leafCreatedAtBlock(leaf: string, blockNumber: number): Promise<boolean> {
+  async leafCreatedAtBlock(
+    leaf: string,
+    blockNumber: number
+  ): Promise<boolean> {
     const filter = this._contract.filters.NewCommitment(null, null, null);
     const logs = await this.web3Provider.getLogs({
       fromBlock: blockNumber,
@@ -503,7 +576,9 @@ export class VAnchorContract {
             keypair: owner,
             index: index.toString(),
           });
-          const alreadySpent = await this._contract.isSpent(toFixedHex(regeneratedUtxo.nullifier, 32));
+          const alreadySpent = await this._contract.isSpent(
+            toFixedHex(regeneratedUtxo.nullifier, 32)
+          );
           if (!alreadySpent) {
             return regeneratedUtxo;
           } else {
@@ -523,7 +598,11 @@ export class VAnchorContract {
     return decryptedUtxos;
   }
 
-  async generateLinkedMerkleProof(sourceDeposit: IAnchorDepositInfo, sourceLeaves: string[], sourceChainId: number) {
+  async generateLinkedMerkleProof(
+    sourceDeposit: IAnchorDepositInfo,
+    sourceLeaves: string[],
+    sourceChainId: number
+  ) {
     // Grab the root of the source chain to prove against
     const edgeIndex = await this._contract.edgeIndex(sourceChainId);
     const edge = await this._contract.edgeList(edgeIndex);
@@ -531,7 +610,11 @@ export class VAnchorContract {
     const latestSourceRoot = edge[1];
 
     const levels = await this._contract.levels();
-    const tree = MerkleTree.createTreeWithRoot(levels, sourceLeaves, latestSourceRoot);
+    const tree = MerkleTree.createTreeWithRoot(
+      levels,
+      sourceLeaves,
+      latestSourceRoot
+    );
 
     if (tree) {
       const index = tree.getIndexByElement(sourceDeposit.commitment);
@@ -570,7 +653,10 @@ export class VAnchorContract {
     wasmBuffer: Buffer,
     worker: Worker
   ) {
-    const chainId = calculateTypedChainId(ChainType.EVM, await this.signer.getChainId());
+    const chainId = calculateTypedChainId(
+      ChainType.EVM,
+      await this.signer.getChainId()
+    );
     const roots = await this.getRootsForProof();
 
     // Start creating notes to satisfy vanchor input
@@ -605,7 +691,9 @@ export class VAnchorContract {
         index: inputUtxo.index,
         protocol: 'vanchor',
         secrets,
-        sourceChain: inputUtxo.originChainId ? inputUtxo.originChainId.toString() : chainId.toString(),
+        sourceChain: inputUtxo.originChainId
+          ? inputUtxo.originChainId.toString()
+          : chainId.toString(),
         sourceIdentifyingData: '0',
         targetChain: chainId.toString(),
         targetIdentifyingData: this.inner.address,
@@ -631,7 +719,11 @@ export class VAnchorContract {
       chainId: chainId.toString(),
       output: outputs,
       encryptedCommitments,
-      publicAmount: BigNumber.from(extAmount).sub(fee).add(FIELD_SIZE).mod(FIELD_SIZE).toString(),
+      publicAmount: BigNumber.from(extAmount)
+        .sub(fee)
+        .add(FIELD_SIZE)
+        .mod(FIELD_SIZE)
+        .toString(),
       provingKey,
       relayer: hexToU8a(relayer),
       recipient: hexToU8a(recipient),
@@ -690,7 +782,10 @@ export class VAnchorContract {
       proof: `0x${proof}`,
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
       inputNullifiers: inputs.map((x) => toFixedHex(x.nullifier)),
-      outputCommitments: [toFixedHex(u8aToHex(outputs[0].commitment)), toFixedHex(u8aToHex(outputs[1].commitment))],
+      outputCommitments: [
+        toFixedHex(u8aToHex(outputs[0].commitment)),
+        toFixedHex(u8aToHex(outputs[1].commitment)),
+      ],
       publicAmount: toFixedHex(publicAmount),
       extDataHash: toFixedHex(extDataHash),
     };

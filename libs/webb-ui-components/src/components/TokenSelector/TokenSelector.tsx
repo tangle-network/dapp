@@ -1,4 +1,4 @@
-import { TokenIcon } from '@nepoche/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -23,13 +23,16 @@ export const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       [className]
     );
 
-    const isDisabled = useMemo(() => isActive || disabled, [disabled, isActive]);
+    const isDisabled = useMemo(
+      () => isActive || disabled,
+      [disabled, isActive]
+    );
 
     return (
       <button {...props} disabled={isDisabled} className={mergedClsx} ref={ref}>
-        <TokenIcon name={children.toLowerCase()} size='lg' />
+        <TokenIcon name={children.toLowerCase()} size="lg" />
 
-        <span className='inline-block text-inherit'>{children}</span>
+        <span className="inline-block text-inherit">{children}</span>
       </button>
     );
   }

@@ -15,64 +15,67 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@nepoche/abstract-api-provider": [
+      "@webb-tools/abstract-api-provider": [
         "libs/abstract-api-provider/src/index.ts"
       ],
-      "@nepoche/abstract-api-provider/*": ["libs/abstract-api-provider/src/*"],
-      "@nepoche/api-provider-environment": [
+      "@webb-tools/abstract-api-provider/*": [
+        "libs/abstract-api-provider/src/*"
+      ],
+      "@webb-tools/api-provider-environment": [
         "libs/api-provider-environment/src/index.ts"
       ],
-      "@nepoche/api-provider-environment/*": [
+      "@webb-tools/api-provider-environment/*": [
         "libs/api-provider-environment/src/*"
       ],
-      "@nepoche/browser-utils": ["libs/browser-utils/src/index.ts"],
-      "@nepoche/browser-utils/*": ["libs/browser-utils/src/*"],
-      "@nepoche/dapp-config": ["libs/dapp-config/src/index.ts"],
-      "@nepoche/dapp-config/*": ["libs/dapp-config/src/*"],
-      "@nepoche/dapp-types": ["libs/dapp-types/src/index.ts"],
-      "@nepoche/dapp-types/*": ["libs/dapp-types/src/*"],
-      "@nepoche/evm-contracts": ["libs/evm-contracts/src/index.ts"],
-      "@nepoche/evm-contracts/*": ["libs/evm-contracts/src/*"],
-      "@nepoche/fixtures-deployments": [
+      "@webb-tools/browser-utils": ["libs/browser-utils/src/index.ts"],
+      "@webb-tools/browser-utils/*": ["libs/browser-utils/src/*"],
+      "@webb-tools/dapp-config": ["libs/dapp-config/src/index.ts"],
+      "@webb-tools/dapp-config/*": ["libs/dapp-config/src/*"],
+      "@webb-tools/dapp-types": ["libs/dapp-types/src/index.ts"],
+      "@webb-tools/dapp-types/*": ["libs/dapp-types/src/*"],
+      "@webb-tools/evm-contracts": ["libs/evm-contracts/src/index.ts"],
+      "@webb-tools/evm-contracts/*": ["libs/evm-contracts/src/*"],
+      "@webb-tools/fixtures-deployments": [
         "libs/fixtures-deployments/src/index.ts"
       ],
-      "@nepoche/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
-      "@nepoche/icons": ["libs/icons/src/index.ts"],
-      "@nepoche/icons/*": ["libs/icons/src/*"],
-      "@nepoche/logos": ["libs/logos/src/index.ts"],
-      "@nepoche/logos/*": ["libs/logos/src/*"],
-      "@nepoche/note-manager": ["libs/note-manager/src/index.ts"],
-      "@nepoche/note-manager/*": ["libs/note-manager/src/*"],
-      "@nepoche/polkadot-api-provider": [
+      "@webb-tools/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
+      "@webb-tools/icons": ["libs/icons/src/index.ts"],
+      "@webb-tools/icons/*": ["libs/icons/src/*"],
+      "@webb-tools/logos": ["libs/logos/src/index.ts"],
+      "@webb-tools/logos/*": ["libs/logos/src/*"],
+      "@webb-tools/note-manager": ["libs/note-manager/src/index.ts"],
+      "@webb-tools/note-manager/*": ["libs/note-manager/src/*"],
+      "@webb-tools/polkadot-api-provider": [
         "libs/polkadot-api-provider/src/index.ts"
       ],
-      "@nepoche/react-components": ["libs/react-components/src/index.ts"],
-      "@nepoche/react-components/*": ["libs/react-components/src/*"],
-      "@nepoche/react-environment": ["libs/react-environment/src/index.ts"],
-      "@nepoche/react-environment/*": ["libs/react-environment/src/*"],
-      "@nepoche/react-hooks": ["libs/react-hooks/src/index.ts"],
-      "@nepoche/react-hooks/*": ["libs/react-hooks/src/*"],
-      "@nepoche/relayer-manager-factory": [
+      "@webb-tools/react-components": ["libs/react-components/src/index.ts"],
+      "@webb-tools/react-components/*": ["libs/react-components/src/*"],
+      "@webb-tools/react-environment": ["libs/react-environment/src/index.ts"],
+      "@webb-tools/react-environment/*": ["libs/react-environment/src/*"],
+      "@webb-tools/react-hooks": ["libs/react-hooks/src/index.ts"],
+      "@webb-tools/react-hooks/*": ["libs/react-hooks/src/*"],
+      "@webb-tools/relayer-manager-factory": [
         "libs/relayer-manager-factory/src/index.ts"
       ],
-      "@nepoche/relayer-manager-factory/*": [
+      "@webb-tools/relayer-manager-factory/*": [
         "libs/relayer-manager-factory/src/*"
       ],
-      "@nepoche/responsive-utils": ["libs/responsive-utils/src/index.ts"],
-      "@nepoche/stats-dapp/*": ["apps/stats-dapp/src/*"],
-      "@nepoche/storage": ["libs/storage/src/index.ts"],
-      "@nepoche/storage/*": ["libs/storage/src/*"],
-      "@nepoche/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
-      "@nepoche/tailwind-preset": ["libs/tailwind-preset/index.js"],
-      "@nepoche/ui-hooks": ["libs/ui-hooks/src/index.ts"],
-      "@nepoche/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
-      "@nepoche/webb-ui-components": ["libs/webb-ui-components/src/index.ts"],
-      "@nepoche/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
+      "@webb-tools/responsive-utils": ["libs/responsive-utils/src/index.ts"],
+      "@webb-tools/stats-dapp/*": ["apps/stats-dapp/src/*"],
+      "@webb-tools/storage": ["libs/storage/src/index.ts"],
+      "@webb-tools/storage/*": ["libs/storage/src/*"],
+      "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
+      "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
+      "@webb-tools/ui-hooks": ["libs/ui-hooks/src/index.ts"],
+      "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
+      "@webb-tools/webb-ui-components": [
+        "libs/webb-ui-components/src/index.ts"
+      ],
+      "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp", "**/node_modules/*"]

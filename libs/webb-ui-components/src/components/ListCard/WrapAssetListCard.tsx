@@ -1,4 +1,4 @@
-import { TokenIcon } from '@nepoche/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 import cx from 'classnames';
@@ -11,7 +11,10 @@ import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
 import { AssetType, WrapAssetListCardProps } from './types';
 
-export const WrapAssetListCard = forwardRef<HTMLDivElement, WrapAssetListCardProps>(
+export const WrapAssetListCard = forwardRef<
+  HTMLDivElement,
+  WrapAssetListCardProps
+>(
   (
     {
       assets,
@@ -47,33 +50,46 @@ export const WrapAssetListCard = forwardRef<HTMLDivElement, WrapAssetListCardPro
       [onChange, setRelayer]
     );
 
-    const disconnectClsx = useMemo(() => cx({ 'opacity-40 pointer-events-none': isDisconnected }), [isDisconnected]);
+    const disconnectClsx = useMemo(
+      () => cx({ 'opacity-40 pointer-events-none': isDisconnected }),
+      [isDisconnected]
+    );
 
     return (
       <ListCardWrapper {...props} title={title} onClose={onClose} ref={ref}>
         {/** Token list */}
         <ScrollArea className={cx('min-w-[350px] h-[376px]', disconnectClsx)}>
-          <ul className='p-2'>
+          <ul className="p-2">
             {assets.map((current, idx) => {
-              return <AssetListItem key={`${current.name}-${idx}`} {...current} />;
+              return (
+                <AssetListItem key={`${current.name}-${idx}`} {...current} />
+              );
             })}
           </ul>
         </ScrollArea>
 
         {/** Disconnect view */}
         <div
-          className={cx('flex flex-col items-center justify-center px-2 py-1 mt-9', !isDisconnected && 'hidden')}
+          className={cx(
+            'flex flex-col items-center justify-center px-2 py-1 mt-9',
+            !isDisconnected && 'hidden'
+          )}
           hidden={!isDisconnected}
         >
           <Typography
-            variant='utility'
-            className='uppercase text-mono-100 dark:text-mono-80  max-w-[334px]'
-            ta='center'
+            variant="utility"
+            className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
+            ta="center"
           >
             Don't see your asset?
           </Typography>
 
-          <Button variant='link' size='sm' className='mt-1 text-center' onClick={onConnect}>
+          <Button
+            variant="link"
+            size="sm"
+            className="mt-1 text-center"
+            onClick={onConnect}
+          >
             Try another account or wallet
           </Button>
         </div>

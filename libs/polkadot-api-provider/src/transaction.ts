@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { NotificationHandler } from '@nepoche/abstract-api-provider/webb-provider.interface';
+import { NotificationHandler } from '@webb-tools/abstract-api-provider/webb-provider.interface';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
@@ -61,12 +61,16 @@ type PolkadotTXEvents = {
 
 export type NotificationConfig = {
   loading: (data: PolkadotTXEventsPayload<any>) => string | number;
-  finalize: (data: PolkadotTXEventsPayload<string | void | undefined>) => string | number;
+  finalize: (
+    data: PolkadotTXEventsPayload<string | void | undefined>
+  ) => string | number;
   failed: (data: PolkadotTXEventsPayload<string>) => string | number;
 };
 const txLogger = LoggerService.get('PolkadotTx');
 
-export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents> {
+export class PolkadotTx<
+  P extends Array<any>
+> extends EventBus<PolkadotTXEvents> {
   public notificationKey = '';
   private transactionAddress: AddressOrPair | null = null;
   private isWrapped = false;
@@ -85,7 +89,11 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
     for (let i = 0; i < this.paths.length; i++) {
       const path = this.paths[i];
-      txLogger.info(`Sending ${path.section} ${path.method} transaction by`, signAddress, this.parms);
+      txLogger.info(
+        `Sending ${path.section} ${path.method} transaction by`,
+        signAddress,
+        this.parms
+      );
       this.transactionAddress = signAddress;
 
       await api.isReady;
@@ -111,9 +119,11 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       const parms = this.parms[0];
 
       txResults = signAddress
-        ? await api.tx[path.section][path.method](...parms).signAsync(signAddress, {
-            nonce: -1,
-          })
+        ? await api.tx[path.section]
+            [path.method](...parms)
+            .signAsync(signAddress, {
+              nonce: -1,
+            })
         : api.tx[path.section][path.method](...parms);
     } else {
       const parms = this.parms;
@@ -136,7 +146,10 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
     await this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
     this.paths.forEach((path) => {
-      txLogger.info(`Tx ${path.section} ${path.method} is Done: TX hash=`, hash);
+      txLogger.info(
+        `Tx ${path.section} ${path.method} is Done: TX hash=`,
+        hash
+      );
     });
 
     return hash;
@@ -169,7 +182,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
 
         message = `${error.section}.${error.name}`;
       } catch (error) {
-        message = Reflect.has(error as any, 'toString') ? (error as any)?.toString() : error;
+        message = Reflect.has(error as any, 'toString')
+          ? (error as any)?.toString()
+          : error;
       }
     }
 
@@ -185,7 +200,9 @@ export class PolkadotTx<P extends Array<any>> extends EventBus<PolkadotTXEvents>
       try {
         await tx.send(async (result) => {
           const status = result.status;
-          const events = result.events.filter(({ event: { section } }) => section === 'system');
+          const events = result.events.filter(
+            ({ event: { section } }) => section === 'system'
+          );
 
           if (status.isInBlock || status.isFinalized) {
             for (const event of events) {
@@ -242,8 +259,16 @@ export class PolkaTXBuilder {
     private readonly injectedExtension: InjectedExtension
   ) {}
 
-  buildWithoutNotification<P extends Array<any>>(paths: MethodPath[], params: P[]): PolkadotTx<P> {
-    return new PolkadotTx<P>(this.apiPromise.clone(), paths, params, this.injectedExtension);
+  buildWithoutNotification<P extends Array<any>>(
+    paths: MethodPath[],
+    params: P[]
+  ): PolkadotTx<P> {
+    return new PolkadotTx<P>(
+      this.apiPromise.clone(),
+      paths,
+      params,
+      this.injectedExtension
+    );
   }
 
   build<P extends Array<any>>(
@@ -258,7 +283,9 @@ export class PolkaTXBuilder {
     const handler = notificationHandler || this.notificationHandler;
     const notificationMessage = isBatchCall
       ? path.reduce(
-          (acc, item, index, { length }) => acc + `${item.section}:${item.method}${index + 1 === length ? '' : '&'}`,
+          (acc, item, index, { length }) =>
+            acc +
+            `${item.section}:${item.method}${index + 1 === length ? '' : '&'}`,
           ''
         )
       : `${path[0].section}:${path[0].method}`;

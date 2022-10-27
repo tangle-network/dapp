@@ -1,10 +1,13 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Storage } from '@nepoche/storage';
+import { Storage } from '@webb-tools/storage';
 import { Keypair } from '@webb-tools/sdk-core';
 
-export type BridgeStorage = Record<string, { lastQueriedBlock: number; leaves: string[] }>;
+export type BridgeStorage = Record<
+  string,
+  { lastQueriedBlock: number; leaves: string[] }
+>;
 export const bridgeStorageFactory = (chainIdType: number) => {
   // localStorage will have key: <Currency name>, value: { Record<contractAddress: string, info: DynamicMixerInfoStore> }
   return Storage.newFromCache<BridgeStorage>(chainIdType.toString(), {

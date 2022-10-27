@@ -1,6 +1,8 @@
-import { ChipProps } from '@nepoche/webb-ui-components/components/Chip/types';
+import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
-export function getChipColorByKeyType(type: 'Next' | 'Current' | 'Pending'): ChipProps['color'] {
+export function getChipColorByKeyType(
+  type: 'Next' | 'Current' | 'Pending'
+): ChipProps['color'] {
   switch (type) {
     case 'Current': {
       return 'green';
@@ -15,7 +17,9 @@ export function getChipColorByKeyType(type: 'Next' | 'Current' | 'Pending'): Chi
     }
 
     default: {
-      throw new Error('Unknow ProposalStatus inside `getChipColorByKeyType` function');
+      throw new Error(
+        'Unknow ProposalStatus inside `getChipColorByKeyType` function'
+      );
     }
   }
 }

@@ -1,4 +1,7 @@
-import { SettingContext, SettingDate } from '@nepoche/react-environment/SettingProvider';
+import {
+  SettingContext,
+  SettingDate,
+} from '@webb-tools/react-environment/SettingProvider';
 import { useContext } from 'react';
 
 export const useSetting = (): SettingDate => {

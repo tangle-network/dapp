@@ -35,7 +35,7 @@ function createWebpack(env, mode = 'production') {
 
     return alias;
   }, {});
-  alias['@nepoche/bridge-dapp'] = path.resolve(__dirname, `src`);
+  alias['@webb-tools/bridge-dapp'] = path.resolve(__dirname, `src`);
   const plugins = fs.existsSync(path.join(env.context, 'src/public'))
     ? [
         new CopyWebpackPlugin({

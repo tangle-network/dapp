@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbApiProvider } from '@nepoche/abstract-api-provider';
+import { WebbApiProvider } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 
@@ -44,7 +44,10 @@ export abstract class MixerDeposit<
    * @param mixerId - Mixer size identifier
    * @param chainId - optional chainId
    **/
-  abstract generateNote(mixerId: number | string, chainId?: number | string): Promise<K>;
+  abstract generateNote(
+    mixerId: number | string,
+    chainId?: number | string
+  ): Promise<K>;
 
   /**
    * The deposit call it should receive the payload of type `K`

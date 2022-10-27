@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ActiveWebbRelayer, WebbRelayer } from '.';
-import { RelayerCMDBase } from '@nepoche/dapp-config/relayer-config';
+import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 
 /**
  * Relayer configuration for a chain
@@ -97,7 +97,10 @@ export type RelayerQuery = {
   typedChainId?: number;
 };
 
-export type ChainNameIntoChainId = (name: string, basedOn: RelayerCMDBase) => number | null;
+export type ChainNameIntoChainId = (
+  name: string,
+  basedOn: RelayerCMDBase
+) => number | null;
 
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
@@ -327,15 +330,23 @@ export const shuffleRelayers = (arr: WebbRelayer[]): WebbRelayer[] => {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
-    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+    [arr[currentIndex], arr[randomIndex]] = [
+      arr[randomIndex],
+      arr[currentIndex],
+    ];
   }
 
   return arr;
 };
 
-export type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm' ? EVMCMDKeys : SubstrateCMDKeys;
+export type CMDSwitcher<T extends RelayerCMDBase> = T extends 'evm'
+  ? EVMCMDKeys
+  : SubstrateCMDKeys;
 
-export type RelayerCMDs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A extends 'evm'
+export type RelayerCMDs<
+  A extends RelayerCMDBase,
+  C extends CMDSwitcher<A>
+> = A extends 'evm'
   ? C extends keyof RelayerEVMCommands
     ? RelayerEVMCommands[C]
     : never
@@ -343,10 +354,10 @@ export type RelayerCMDs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = A 
   ? RelayerSubstrateCommands[C]
   : never;
 
-export type WithdrawRelayerArgs<A extends RelayerCMDBase, C extends CMDSwitcher<A>> = Omit<
-  RelayerCMDs<A, C>,
-  keyof RelayedChainInput
->;
+export type WithdrawRelayerArgs<
+  A extends RelayerCMDBase,
+  C extends CMDSwitcher<A>
+> = Omit<RelayerCMDs<A, C>, keyof RelayedChainInput>;
 
 export type OptionalRelayer = WebbRelayer | null;
 export type OptionalActiveRelayer = ActiveWebbRelayer | null;

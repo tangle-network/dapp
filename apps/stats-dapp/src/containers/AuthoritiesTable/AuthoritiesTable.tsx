@@ -14,7 +14,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useCountriesQuery } from '../../generated/graphql';
-import { AuthorityListItem, AuthorisesQuery, Range, useAuthorities } from '../../provider/hooks';
+import {
+  AuthorityListItem,
+  AuthorisesQuery,
+  Range,
+  useAuthorities,
+} from '../../provider/hooks';
 import {
   Avatar,
   Button,
@@ -28,11 +33,11 @@ import {
   Progress,
   Slider,
   Table,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { CheckBoxMenu } from '@nepoche/webb-ui-components/components/CheckBoxMenu';
-import { CheckBoxMenuGroup } from '@nepoche/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
-import { Typography } from '@nepoche/webb-ui-components';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components/CheckBoxMenu';
+import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
+import { Typography } from '@webb-tools/webb-ui-components';
 import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
@@ -48,9 +53,13 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     header: 'Participant',
     enableColumnFilter: false,
     cell: (props) => (
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         <Avatar sourceVariant={'address'} value={props.getValue<string>()} />
-        <KeyValueWithButton keyValue={props.getValue<string>()} size='sm' isHiddenLabel />
+        <KeyValueWithButton
+          keyValue={props.getValue<string>()}
+          size="sm"
+          isHiddenLabel
+        />
       </div>
     ),
   }),
@@ -59,7 +68,12 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     header: 'Location',
     enableColumnFilter: false,
     cell: (props) => (
-      <Typography variant='h5' fw='bold' component='span' className='!text-inherit'>
+      <Typography
+        variant="h5"
+        fw="bold"
+        component="span"
+        className="!text-inherit"
+      >
         {getUnicodeFlagIcon(props.getValue())}
       </Typography>
     ),
@@ -68,27 +82,45 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('uptime', {
     header: 'Uptime',
     enableColumnFilter: false,
-    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
+    cell: (props) => (
+      <Progress
+        size="sm"
+        value={parseInt(props.getValue())}
+        className="w-[100px]"
+        suffixLabel="%"
+      />
+    ),
   }),
 
   columnHelper.accessor('reputation', {
     header: 'Reputation',
     enableColumnFilter: false,
-    cell: (props) => <Progress size='sm' value={parseInt(props.getValue())} className='w-[100px]' suffixLabel='%' />,
+    cell: (props) => (
+      <Progress
+        size="sm"
+        value={parseInt(props.getValue())}
+        className="w-[100px]"
+        suffixLabel="%"
+      />
+    ),
   }),
 
   columnHelper.accessor('id', {
     header: '',
     id: 'details',
     cell: (props) => (
-      <Button variant='link' size='sm'>
-        <Link to={`/authorities/drawer/${props.getValue<string>()}`}>Details</Link>
+      <Button variant="link" size="sm">
+        <Link to={`/authorities/drawer/${props.getValue<string>()}`}>
+          Details
+        </Link>
       </Button>
     ),
   }),
 ];
 
-export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) => {
+export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
+  data: dataProp,
+}) => {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -102,7 +134,9 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
     [pageIndex, pageSize]
   );
 
-  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>('all');
+  const [selectedCountries, setSelectedCountries] = useState<'all' | string[]>(
+    'all'
+  );
   const countriesQuery = useCountriesQuery();
   const countries = useMemo(() => {
     return (
@@ -113,7 +147,9 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
   }, [countriesQuery]);
 
   const [uptimeFilter, setUptimeFilter] = useState<[number, number]>([0, 100]);
-  const [reputationFilter, setReputationFilter] = useState<[number, number]>([0, 100]);
+  const [reputationFilter, setReputationFilter] = useState<[number, number]>([
+    0, 100,
+  ]);
   const [globalFilter, setGlobalFilter] = useState('');
 
   const query = useMemo<AuthorisesQuery>(
@@ -127,13 +163,27 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
         search: globalFilter,
       },
     }),
-    [pageIndex, pageSize, uptimeFilter, reputationFilter, selectedCountries, countries, globalFilter]
+    [
+      pageIndex,
+      pageSize,
+      uptimeFilter,
+      reputationFilter,
+      selectedCountries,
+      countries,
+      globalFilter,
+    ]
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const authorities = useAuthorities(query);
-  const totalItems = useMemo(() => authorities.val?.pageInfo.count ?? 0, [authorities]);
-  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
+  const totalItems = useMemo(
+    () => authorities.val?.pageInfo.count ?? 0,
+    [authorities]
+  );
+  const pageCount = useMemo(
+    () => Math.ceil(totalItems / pageSize),
+    [pageSize, totalItems]
+  );
   const data = useMemo(() => authorities.val?.items ?? [], [authorities]);
   const table = useReactTable<AuthorityListItem>({
     data: data ?? ([] as AuthorityListItem[]),
@@ -177,7 +227,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
           }}
         >
           <Collapsible>
-          <CollapsibleButton>Location</CollapsibleButton>
+            <CollapsibleButton>Location</CollapsibleButton>
             <CollapsibleContent className={`space-x-1 `}>
               <LocationFilter
                 selected={selectedCountries}
@@ -197,21 +247,21 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
                 defaultValue={[0, 100]}
                 value={uptimeFilter}
                 onChange={(val) => setUptimeFilter(val as any)}
-                className='w-full min-w-0'
+                className="w-full min-w-0"
                 hasLabel
               />
             </CollapsibleContent>
           </Collapsible>
 
           <Collapsible>
-          <CollapsibleButton>Reputation</CollapsibleButton>
+            <CollapsibleButton>Reputation</CollapsibleButton>
             <CollapsibleContent>
               <Slider
                 max={100}
                 defaultValue={[0, 100]}
                 value={reputationFilter}
                 onChange={(val) => setReputationFilter(val as any)}
-                className='w-full min-w-0'
+                className="w-full min-w-0"
                 hasLabel
               />
             </CollapsibleContent>
@@ -219,7 +269,11 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({ data: dataProp }) 
         </Filter>
       }
     >
-      <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} />
+      <Table
+        tableProps={table as RTTable<unknown>}
+        isPaginated
+        totalRecords={totalItems}
+      />
     </CardTable>
   );
 };

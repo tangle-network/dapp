@@ -1,8 +1,13 @@
 import { useDonutColor } from '../../hooks';
 import { ProposalStatus } from '../../provider/hooks';
-import { Card, DropdownMenu, Label, TitleWithInfo } from '@nepoche/webb-ui-components/components';
-import { Spinner } from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
+import {
+  Card,
+  DropdownMenu,
+  Label,
+  TitleWithInfo,
+} from '@webb-tools/webb-ui-components/components';
+import { Spinner } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { FC, useMemo } from 'react';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 
@@ -17,13 +22,27 @@ type ProposalsOverviewProps = {
   timeRange: TimeRange;
   setTimeRange: (timeRange: TimeRange) => void;
 };
-export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, setTimeRange, statsMap, timeRange }) => {
-  const menuOptions = useMemo<TimeRange[]>(() => ['Day', 'Week', 'Year', 'All Time'], []);
-  const selectIndex = useMemo(() => menuOptions.indexOf(timeRange), [menuOptions, timeRange]);
+export const DonutChartContainer: FC<ProposalsOverviewProps> = ({
+  isLoading,
+  setTimeRange,
+  statsMap,
+  timeRange,
+}) => {
+  const menuOptions = useMemo<TimeRange[]>(
+    () => ['Day', 'Week', 'Year', 'All Time'],
+    []
+  );
+  const selectIndex = useMemo(
+    () => menuOptions.indexOf(timeRange),
+    [menuOptions, timeRange]
+  );
 
   const donutColors = useDonutColor();
   const labels = useMemo(
-    () => Object.keys(statsMap).filter((i: any) => DonutDataType[i as DonutDataType]) as DonutDataType[],
+    () =>
+      Object.keys(statsMap).filter(
+        (i: any) => DonutDataType[i as DonutDataType]
+      ) as DonutDataType[],
     [statsMap]
   );
   const chartData = useMemo(() => {
@@ -58,30 +77,30 @@ export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, set
   }, []);
 
   return (
-    <Card className='max-w-[450px]'>
-      <div className='flex items-center justify-between'>
-        <TitleWithInfo title='Proposal Types' variant='h5' />
+    <Card className="max-w-[450px]">
+      <div className="flex items-center justify-between">
+        <TitleWithInfo title="Proposal Types" variant="h5" />
 
         <DropdownMenu
-          size='sm'
+          size="sm"
           menuOptions={menuOptions.map((opt) => ({ value: opt }))}
           value={menuOptions[selectIndex]}
           onChange={(nextVal) => setTimeRange(nextVal as TimeRange)}
         />
       </div>
       {isLoading ? (
-        <div className='flex items-center justify-center min-w-full min-h-[242px]'>
-          <Spinner size='xl' />
+        <div className="flex items-center justify-center min-w-full min-h-[242px]">
+          <Spinner size="xl" />
         </div>
       ) : (
         <>
-          <div className='flex items-center justify-center grow'>
-            <div className='w-[196px] h-[196px]'>
+          <div className="flex items-center justify-center grow">
+            <div className="w-[196px] h-[196px]">
               <Doughnut data={chartData} options={chartOpts} />
             </div>
           </div>
 
-          <div className='flex items-center justify-between'>
+          <div className="flex items-center justify-between">
             {labels.map((label, idx) => (
               <ChartLabel
                 key={`${label}-${idx}`}
@@ -101,10 +120,17 @@ export const DonutChartContainer: FC<ProposalsOverviewProps> = ({ isLoading, set
  * Internal components *
  ***********************/
 
-const ChartLabel: FC<{ label: string; value: string; color: string }> = (props) => {
+const ChartLabel: FC<{ label: string; value: string; color: string }> = (
+  props
+) => {
   return (
     <div>
-      <Typography variant='h5' fw='bold' className='inline-block mr-2' style={{ color: props.color }}>
+      <Typography
+        variant="h5"
+        fw="bold"
+        className="inline-block mr-2"
+        style={{ color: props.color }}
+      >
         {props.value}
       </Typography>
       <Label style={{ color: props.color }}>{props.label}</Label>

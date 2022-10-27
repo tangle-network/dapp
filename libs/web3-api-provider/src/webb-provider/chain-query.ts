@@ -1,8 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainQuery } from '@nepoche/abstract-api-provider';
-import { zeroAddress } from '@nepoche/dapp-types';
+import { ChainQuery } from '@webb-tools/abstract-api-provider';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { ethers } from 'ethers';
 
@@ -19,7 +19,10 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   }
 
   // Returns the balance formatted in ETH units.
-  async tokenBalanceByCurrencyId(typedChainId: number, currencyId: number): Promise<string> {
+  async tokenBalanceByCurrencyId(
+    typedChainId: number,
+    currencyId: number
+  ): Promise<string> {
     const provider = this.inner.getEthersProvider();
 
     // check if the token is the native token of this chain
@@ -33,7 +36,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     }
 
     // Return the balance of the account if native currency
-    if (this.inner.config.chains[typedChainId].nativeCurrencyId === currencyId) {
+    if (
+      this.inner.config.chains[typedChainId].nativeCurrencyId === currencyId
+    ) {
       const tokenBalanceBig = await provider.getBalance(accounts[0].address);
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
@@ -42,7 +47,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
       // Find the currency address on this chain
       const currency = this.inner.state.getCurrencies()[currencyId];
       if (!currency) {
-        console.log(`could not find currencyId ${currencyId} in supportedCurrencies`);
+        console.log(
+          `could not find currencyId ${currencyId} in supportedCurrencies`
+        );
         return '';
       }
 
@@ -53,7 +60,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
 
       // Create a token instance for this chain
       const tokenInstance = ERC20Factory.connect(currencyOnChain, provider);
-      const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
+      const tokenBalanceBig = await tokenInstance.balanceOf(
+        accounts[0].address
+      );
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
       return tokenBalance;
@@ -80,7 +89,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     } else {
       // Create a token instance for this chain
       const tokenInstance = ERC20Factory.connect(address, provider);
-      const tokenBalanceBig = await tokenInstance.balanceOf(accounts[0].address);
+      const tokenBalanceBig = await tokenInstance.balanceOf(
+        accounts[0].address
+      );
       const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
       return tokenBalance;

@@ -7,21 +7,24 @@ import {
   RelayerInfo,
   WebbRelayer,
   WebbRelayerManager,
-} from '@nepoche/abstract-api-provider/relayer';
+} from '@webb-tools/abstract-api-provider/relayer';
 import {
   RelayerCMDBase,
   RelayerConfig,
   chainNameAdapter,
-  relayerConfig
-} from '@nepoche/dapp-config/relayer-config';
-import { PolkadotRelayerManager } from '@nepoche/polkadot-api-provider';
-import { Web3RelayerManager } from '@nepoche/web3-api-provider';
+  relayerConfig,
+} from '@webb-tools/dapp-config/relayer-config';
+import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
+import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 
 export async function getRelayerManagerFactory() {
   if (!relayerManagerFactory) {
-    relayerManagerFactory = await WebbRelayerManagerFactory.init(relayerConfig, chainNameAdapter);
+    relayerManagerFactory = await WebbRelayerManagerFactory.init(
+      relayerConfig,
+      chainNameAdapter
+    );
   }
   return relayerManagerFactory;
 }
@@ -45,7 +48,10 @@ export class WebbRelayerManagerFactory {
   /**
    * Mapping the fetched relayers info to the Capabilities store
    **/
-  private static infoIntoCapabilities(info: RelayerInfo, nameAdapter: ChainNameIntoChainId): Capabilities {
+  private static infoIntoCapabilities(
+    info: RelayerInfo,
+    nameAdapter: ChainNameIntoChainId
+  ): Capabilities {
     console.log('received info: ', info);
 
     return {
@@ -53,7 +59,10 @@ export class WebbRelayerManagerFactory {
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)
-              .filter((key) => info.evm[key]?.beneficiary && nameAdapter(key, 'evm') != null)
+              .filter(
+                (key) =>
+                  info.evm[key]?.beneficiary && nameAdapter(key, 'evm') != null
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'evm'), info.evm[key]);
 
@@ -62,7 +71,11 @@ export class WebbRelayerManagerFactory {
           : new Map(),
         substrate: info.substrate
           ? Object.keys(info.substrate)
-              .filter((key) => info.substrate[key]?.beneficiary && nameAdapter(key, 'substrate') != null)
+              .filter(
+                (key) =>
+                  info.substrate[key]?.beneficiary &&
+                  nameAdapter(key, 'substrate') != null
+              )
               .reduce((m, key) => {
                 m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
 
@@ -75,7 +88,9 @@ export class WebbRelayerManagerFactory {
 
   /// fetch relayers
   private async fetchCapabilitiesAndInsert(config: RelayerConfig) {
-    this.capabilities[config.endpoint] = await this.fetchCapabilities(config.endpoint);
+    this.capabilities[config.endpoint] = await this.fetchCapabilities(
+      config.endpoint
+    );
     console.log(this.capabilities[config.endpoint]);
 
     return this.capabilities;
@@ -85,7 +100,10 @@ export class WebbRelayerManagerFactory {
     const res = await fetch(`${endpoint}/api/v1/info`);
     const info: RelayerInfo = await res.json();
 
-    return WebbRelayerManagerFactory.infoIntoCapabilities(info, this.chainNameAdapter);
+    return WebbRelayerManagerFactory.infoIntoCapabilities(
+      info,
+      this.chainNameAdapter
+    );
   }
 
   // This function will add the relayer to the factory's store of capabilities.
@@ -104,7 +122,10 @@ export class WebbRelayerManagerFactory {
     config: RelayerConfig[],
     chainNameAdapter: ChainNameIntoChainId
   ): Promise<WebbRelayerManagerFactory> {
-    const relayerManagerFactory = new WebbRelayerManagerFactory(config, chainNameAdapter);
+    const relayerManagerFactory = new WebbRelayerManagerFactory(
+      config,
+      chainNameAdapter
+    );
 
     // For all relayers in the relayerConfigs, fetch the info - but timeout after 5 seconds
     // This is done to prevent issues with relayers which are not operating properly

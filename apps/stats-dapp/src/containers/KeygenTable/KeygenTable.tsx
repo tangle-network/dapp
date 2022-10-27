@@ -27,9 +27,9 @@ import {
   Slider,
   Table,
   TitleWithInfo,
-} from '@nepoche/webb-ui-components/components';
-import { fuzzyFilter } from '@nepoche/webb-ui-components/components/Filter/utils';
-import { KeygenType } from '@nepoche/webb-ui-components/types';
+} from '@webb-tools/webb-ui-components/components';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { KeygenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -63,18 +63,30 @@ export const headerConfig = {
 
 const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('height', {
-    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['height']} />,
+    header: () => (
+      <TitleWithInfo {...headerConfig['common']} {...headerConfig['height']} />
+    ),
     enableColumnFilter: false,
   }),
 
   columnHelper.accessor('session', {
-    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['session']} />,
+    header: () => (
+      <TitleWithInfo {...headerConfig['common']} {...headerConfig['session']} />
+    ),
     enableColumnFilter: false,
   }),
 
   columnHelper.accessor('key', {
-    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['key']} />,
-    cell: (props) => <KeyValueWithButton isHiddenLabel keyValue={props.getValue<string>()} size='sm' />,
+    header: () => (
+      <TitleWithInfo {...headerConfig['common']} {...headerConfig['key']} />
+    ),
+    cell: (props) => (
+      <KeyValueWithButton
+        isHiddenLabel
+        keyValue={props.getValue<string>()}
+        size="sm"
+      />
+    ),
     enableColumnFilter: false,
   }),
 
@@ -83,11 +95,21 @@ const columns: ColumnDef<KeygenType, any>[] = [
   }),
 
   columnHelper.accessor('signatureThreshold', {
-    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['signatureThreshold']} />,
+    header: () => (
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['signatureThreshold']}
+      />
+    ),
   }),
 
   columnHelper.accessor('authorities', {
-    header: () => <TitleWithInfo {...headerConfig['common']} {...headerConfig['authorities']} />,
+    header: () => (
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['authorities']}
+      />
+    ),
     cell: (props) => {
       const auth = Array.from(props.getValue<Set<string>>());
       if (auth.length === 0) {
@@ -108,7 +130,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
     header: '',
     cell: (props) => (
       <Link to={`drawer/${props.getValue()}`}>
-        <Button variant='link' as='span' size='sm'>
+        <Button variant="link" as="span" size="sm">
           Details
         </Button>
       </Link>
@@ -146,27 +168,30 @@ export const KeygenTable: FC = () => {
     [pageSize, pagination.pageIndex, pagination.pageSize]
   );
 
-  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
+  const pageCount = useMemo(
+    () => Math.ceil(totalItems / pageSize),
+    [pageSize, totalItems]
+  );
 
   const keysStats = useKeys(pageQuery);
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items
-      .filter((v) => v.keyGenThreshold && v.signatureThreshold)
-      .map(
-        (item): KeygenType => ({
-          height: Number(item.height),
-          session: Number(item.session),
-          key: item.compressed,
-          authorities: new Set(item.keyGenAuthorities),
-          keygenThreshold: item.keyGenThreshold,
-          keyId: item.uncompressed,
-          totalAuthorities: item.keyGenAuthorities.length,
-          signatureThreshold: item.signatureThreshold,
-          previousKeyId: item.previousKeyId,
-          nextKeyId: item.nextKeyId,
-        })
-      );
+        .filter((v) => v.keyGenThreshold && v.signatureThreshold)
+        .map(
+          (item): KeygenType => ({
+            height: Number(item.height),
+            session: Number(item.session),
+            key: item.compressed,
+            authorities: new Set(item.keyGenAuthorities),
+            keygenThreshold: item.keyGenThreshold,
+            keyId: item.uncompressed,
+            totalAuthorities: item.keyGenAuthorities.length,
+            signatureThreshold: item.signatureThreshold,
+            previousKeyId: item.previousKeyId,
+            nextKeyId: item.nextKeyId,
+          })
+        );
     }
     return [] as KeygenType[];
   }, [keysStats]);
@@ -204,7 +229,10 @@ export const KeygenTable: FC = () => {
   });
 
   const headers = useMemo(
-    () => table.getHeaderGroups().map((headerGroup) => headerGroup.headers.map((header) => header)),
+    () =>
+      table
+        .getHeaderGroups()
+        .map((headerGroup) => headerGroup.headers.map((header) => header)),
     [table]
   );
 
@@ -236,10 +264,14 @@ export const KeygenTable: FC = () => {
             <CollapsibleContent>
               <Slider
                 max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol.getFacetedMinMaxValues()?.map((i) => (i ? 0 : i))}
+                defaultValue={keygenFilterCol
+                  .getFacetedMinMaxValues()
+                  ?.map((i) => (i ? 0 : i))}
                 value={keygenFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) => keygenFilterCol.setFilterValue(nextValue)}
-                className='w-full min-w-0'
+                onChange={(nextValue) =>
+                  keygenFilterCol.setFilterValue(nextValue)
+                }
+                className="w-full min-w-0"
                 hasLabel
               />
             </CollapsibleContent>
@@ -251,8 +283,10 @@ export const KeygenTable: FC = () => {
                 max={signatureFilterCol.getFacetedMinMaxValues()?.[1]}
                 defaultValue={signatureFilterCol.getFacetedMinMaxValues()}
                 value={signatureFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) => signatureFilterCol.setFilterValue(nextValue)}
-                className='w-full min-w-0'
+                onChange={(nextValue) =>
+                  signatureFilterCol.setFilterValue(nextValue)
+                }
+                className="w-full min-w-0"
                 hasLabel
               />
             </CollapsibleContent>
@@ -260,7 +294,11 @@ export const KeygenTable: FC = () => {
         </Filter>
       }
     >
-      <Table tableProps={table as RTTable<unknown>} totalRecords={totalItems} isPaginated />
+      <Table
+        tableProps={table as RTTable<unknown>}
+        totalRecords={totalItems}
+        isPaginated
+      />
     </CardTable>
   );
 };

@@ -11,7 +11,7 @@ import { KeyStatusCardProps } from './types';
  * The `KeyStatusCard` component displays the current key and next key data
  *
  * ```jsx
- *  import { useKeyStatusSeedData } from "@nepoche/webb-ui-components";
+ *  import { useKeyStatusSeedData } from "@webb-tools/webb-ui-components";
  *
  *  const statusCardData = useKeyStatusSeedData();
  *
@@ -37,11 +37,11 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   return (
     <Card {...props}>
       {/** Top */}
-      <div className='flex justify-between w-full'>
-        <div className='flex items-center space-x-2'>
-          <TitleWithInfo title={title} info={titleInfo} variant='h5' />
-          <LabelWithValue label='session: ' value={sessionNumber} />
-          <Chip color='green' className='inline-block'>
+      <div className="flex justify-between w-full">
+        <div className="flex items-center space-x-2">
+          <TitleWithInfo title={title} info={titleInfo} variant="h5" />
+          <LabelWithValue label="session: " value={sessionNumber} />
+          <Chip color="green" className="inline-block">
             {keyType}
           </Chip>
         </div>
@@ -51,14 +51,14 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       {/* * Content */}
       <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
       {/** Bottom */}
-      <div className='flex items-center justify-between'>
+      <div className="flex items-center justify-between">
         <AvatarGroup total={totalAuthorities}>
           {Array.from(authorities).map((aut, idx) => (
-            <Avatar sourceVariant='address' key={`${aut}${idx}`} value={aut} />
+            <Avatar sourceVariant="address" key={`${aut}${idx}`} value={aut} />
           ))}
         </AvatarGroup>
         <Link to={fullDetailUrl}>
-          <Button variant='link' as='span' size='sm'>
+          <Button variant="link" as="span" size="sm">
             See full details
           </Button>
         </Link>

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from '@nepoche/icons';
+import { ChevronLeft, ChevronRight } from '@webb-tools/icons';
 import { getPaginationItems } from '../../utils';
 import cx from 'classnames';
 import React, { useMemo } from 'react';
@@ -26,12 +26,19 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     ref
   ) => {
     const paginationDisplayItems = useMemo(
-      () => getPaginationItems({ page: currentPage, count: totalPages, boundaryCount, siblingCount }),
+      () =>
+        getPaginationItems({
+          page: currentPage,
+          count: totalPages,
+          boundaryCount,
+          siblingCount,
+        }),
       [boundaryCount, currentPage, siblingCount, totalPages]
     );
 
     const showingItemsCount = useMemo(
-      () => (itemsPerPage && totalItems ? Math.min(itemsPerPage, totalItems) : '-'),
+      () =>
+        itemsPerPage && totalItems ? Math.min(itemsPerPage, totalItems) : '-',
       [itemsPerPage, totalItems]
     );
 
@@ -48,12 +55,12 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
     return (
       <div {...props} className={mergedClsx} ref={ref}>
         {/** Left label */}
-        <p className='body1 text-mono-160 dark:text-mono-100'>
+        <p className="body1 text-mono-160 dark:text-mono-100">
           Showing {showingItemsCount} Keys out of {totalItems ?? '-'}
         </p>
 
         {/** Right buttons */}
-        <div className='flex items-center space-x-2'>
+        <div className="flex items-center space-x-2">
           <ChevronLeft
             className={cx('cursor-pointer')}
             onClick={() => {
@@ -61,7 +68,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 previousPage();
               }
             }}
-            size='lg'
+            size="lg"
           />
 
           {paginationDisplayItems.map((page, idx) =>
@@ -79,7 +86,10 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 {page}
               </button>
             ) : (
-              <p key={`${page}-${idx}`} className='p-2 text-center select-none body1'>
+              <p
+                key={`${page}-${idx}`}
+                className="p-2 text-center select-none body1"
+              >
                 ...
               </p>
             )
@@ -92,7 +102,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 nextPage();
               }
             }}
-            size='lg'
+            size="lg"
           />
         </div>
       </div>

@@ -1,7 +1,14 @@
-import { OptionalActiveRelayer, TransactionState, WebbRelayer } from '@nepoche/abstract-api-provider';
-import { InteractiveFeedback, WebbErrorCodes } from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
-import { misbehavingRelayer, useWebContext } from '@nepoche/api-provider-environment';
+import {
+  OptionalActiveRelayer,
+  TransactionState,
+  WebbRelayer,
+} from '@webb-tools/abstract-api-provider';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import {
+  misbehavingRelayer,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -76,7 +83,10 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         try {
           const withdrawNotes = NoteManager.getNotesFifo(
             params.notes,
-            ethers.utils.parseUnits(params.amount.toString(), params.notes[0].note.denomination)
+            ethers.utils.parseUnits(
+              params.amount.toString(),
+              params.notes[0].note.denomination
+            )
           );
 
           // If the available notes are not sufficient for requested withdraw, return.
@@ -86,12 +96,19 @@ export const useWithdraw = (params: UseWithdrawProps) => {
             console.log('no withdrawNotes detected');
             return;
           }
-          const withdrawNoteStrings = withdrawNotes.map((note) => note.serialize());
+          const withdrawNoteStrings = withdrawNotes.map((note) =>
+            note.serialize()
+          );
 
           const withdrawPayload = await withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
-            ethers.utils.parseUnits(params.amount.toString(), params.notes[0].note.denomination).toString()
+            ethers.utils
+              .parseUnits(
+                params.amount.toString(),
+                params.notes[0].note.denomination
+              )
+              .toString()
           );
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
@@ -137,13 +154,15 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           return;
         }
 
-        activeApi?.relayerManager.getRelayersByNote(note).then((r: WebbRelayer[]) => {
-          setRelayersState((p) => ({
-            ...p,
-            loading: false,
-            relayers: r,
-          }));
-        });
+        activeApi?.relayerManager
+          .getRelayersByNote(note)
+          .then((r: WebbRelayer[]) => {
+            setRelayersState((p) => ({
+              ...p,
+              loading: false,
+              relayers: r,
+            }));
+          });
       })
     );
 
@@ -158,31 +177,38 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
     // We can determine the compatible relayers by the selected target.
     if (params.notes?.length) {
-      activeApi.relayerManager.getRelayersByNote(params.notes[0]).then((r: WebbRelayer[]) => {
-        setRelayersState((p) => ({
-          ...p,
-          loading: false,
-          relayers: r,
-        }));
-      });
+      activeApi.relayerManager
+        .getRelayersByNote(params.notes[0])
+        .then((r: WebbRelayer[]) => {
+          setRelayersState((p) => ({
+            ...p,
+            loading: false,
+            relayers: r,
+          }));
+        });
     }
 
     // Subscribe to updates for the active relayer
-    const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
-      setRelayersState((p) => ({
-        ...p,
-        activeRelayer: next,
-      }));
-    });
+    const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe(
+      (next: OptionalActiveRelayer) => {
+        setRelayersState((p) => ({
+          ...p,
+          activeRelayer: next,
+        }));
+      }
+    );
 
     if (!withdrawApi) {
       return;
     }
 
     const unsubscribe: Record<string, (() => void) | void> = {};
-    unsubscribe['stateChange'] = withdrawApi.on('stateChange', (stage: TransactionState) => {
-      setStage(stage);
-    });
+    unsubscribe['stateChange'] = withdrawApi.on(
+      'stateChange',
+      (stage: TransactionState) => {
+        setStage(stage);
+      }
+    );
 
     unsubscribe['validationError'] = withdrawApi.on(
       'validationError',

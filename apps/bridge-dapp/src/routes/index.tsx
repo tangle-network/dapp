@@ -1,21 +1,21 @@
-import { Button, Typography } from '@nepoche/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { Layout } from '../containers';
-import { RouterConfigData } from '@nepoche/react-environment';
-import { Spinner } from '@nepoche/icons';
-import { BareProps } from '@nepoche/dapp-types';
+import { RouterConfigData } from '@webb-tools/react-environment';
+import { Spinner } from '@webb-tools/icons';
+import { BareProps } from '@webb-tools/dapp-types';
 import React, { FC, Suspense } from 'react';
 
 // TODO: Implement these pages for the Bridge Dapp
-// const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
-// const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
-// const PageNoteAccount = lazy(() => import('@webb-dapp/page-note-account'));
+// const PageVBridge = lazy(() => import('@webb-tools/vbridge'));
+// const PageWrapUnwrap = lazy(() => import('@webb-tools/page-wrap-unwrap'));
+// const PageNoteAccount = lazy(() => import('@webb-tools/page-note-account'));
 
 const CSuspense: FC<BareProps> = ({ children }) => {
   return (
     <Suspense
       fallback={
-        <div className='flex items-center justify-center min-w-full min-h-screen'>
-          <Spinner size='xl' />
+        <div className="flex items-center justify-center min-w-full min-h-screen">
+          <Spinner size="xl" />
         </div>
       }
     >
@@ -30,7 +30,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Bridges</Typography>
+            <Typography variant="h1">Bridges</Typography>
             <Button>Some button</Button>
           </CSuspense>
         ),
@@ -40,7 +40,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Wrap Unwrap</Typography>
+            <Typography variant="h1">Wrap Unwrap</Typography>
           </CSuspense>
         ),
         path: 'wrap-unwrap/*',
@@ -49,7 +49,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Note Account</Typography>
+            <Typography variant="h1">Note Account</Typography>
           </CSuspense>
         ),
         path: 'note-account/*',

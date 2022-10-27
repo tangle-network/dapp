@@ -8,7 +8,7 @@ import {
   Progress,
   TimeLine,
   TimeLineItem,
-} from '@nepoche/webb-ui-components/components';
+} from '@webb-tools/webb-ui-components/components';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,9 +19,9 @@ import {
   ExternalLinkLine,
   Spinner,
   TokenIcon,
-} from '@nepoche/icons';
-import { Typography } from '@nepoche/webb-ui-components/typography';
-import { shortenHex } from '@nepoche/webb-ui-components/utils';
+} from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -86,7 +86,8 @@ export const ProposalDetail = () => {
     };
   }, [proposalDetails]);
   const nextProposalId = proposalDetails.nextAndPrevStatus.val?.nextProposalId;
-  const previousProposalId = proposalDetails.nextAndPrevStatus.val?.previousProposalId;
+  const previousProposalId =
+    proposalDetails.nextAndPrevStatus.val?.previousProposalId;
   const navigate = useNavigate();
 
   const handleNextProposal = useCallback(() => {
@@ -119,33 +120,33 @@ export const ProposalDetail = () => {
       return (
         <>
           {/** Height, tx hash and chain data */}
-          <div className='flex items-center'>
+          <div className="flex items-center">
             <LabelWithValue
-              className='grow'
-              label='height:'
+              className="grow"
+              label="height:"
               value={
-                <span className='flex items-center space-x-1'>
-                  <Block size='lg' />
-                  <Typography variant='mono1'>{height}</Typography>
+                <span className="flex items-center space-x-1">
+                  <Block size="lg" />
+                  <Typography variant="mono1">{height}</Typography>
                 </span>
               }
             />
 
             <LabelWithValue
-              className='grow'
-              label='tx hash:'
+              className="grow"
+              label="tx hash:"
               value={
-                <span className='flex items-center space-x-1'>
-                  <ExchangeLine size='lg' />
-                  <div className='flex items-center space-x-1'>
+                <span className="flex items-center space-x-1">
+                  <ExchangeLine size="lg" />
+                  <div className="flex items-center space-x-1">
                     <LabelWithValue
-                      labelVariant='body3'
-                      label='tx hash:'
+                      labelVariant="body3"
+                      label="tx hash:"
                       isHiddenLabel
                       value={shortenHex(txHash)}
                       valueTooltip={txHash}
                     />
-                    <a href='#'>
+                    <a href="#">
                       <ExternalLinkLine />
                     </a>
                   </div>
@@ -154,62 +155,74 @@ export const ProposalDetail = () => {
             />
           </div>
           <LabelWithValue
-            label='chain:'
+            label="chain:"
             value={
-              <span className='flex items-center p-2 space-x-2'>
-                <TokenIcon name={chain} size='lg' />
-                <Typography variant='body1' className='block uppercase'>
+              <span className="flex items-center p-2 space-x-2">
+                <TokenIcon name={chain} size="lg" />
+                <Typography variant="body1" className="block uppercase">
                   {chain}
                 </Typography>
               </span>
             }
           />
           {/** Results */}
-          <Typography variant='h5' fw='bold'>
+          <Typography variant="h5" fw="bold">
             Results
           </Typography>
           <div>
             <Progress value={passThreshold} />
-            <div className='flex justify-center mt-1'>
-              <div className='flex flex-col items-center justify-center'>
-                <div className='border-[1px] h-2 border-[#ccc] bg-[#ccc]' />
-                <Typography variant='utility' className='block uppercase'>
+            <div className="flex justify-center mt-1">
+              <div className="flex flex-col items-center justify-center">
+                <div className="border-[1px] h-2 border-[#ccc] bg-[#ccc]" />
+                <Typography variant="utility" className="block uppercase">
                   Pass threshold
                 </Typography>
               </div>
             </div>
           </div>
           {/** Percentages */}
-          <div className='flex space-x-3'>
-            <PercentageCard type='for' percentValue={forPercentage} count={forCount} />
-            <PercentageCard type='against' percentValue={againstPercentage} count={againstCount} />
-            <PercentageCard type='abstain' percentValue={abstainPercentage} count={abstainCount} />
+          <div className="flex space-x-3">
+            <PercentageCard
+              type="for"
+              percentValue={forPercentage}
+              count={forCount}
+            />
+            <PercentageCard
+              type="against"
+              percentValue={againstPercentage}
+              count={againstCount}
+            />
+            <PercentageCard
+              type="abstain"
+              percentValue={abstainPercentage}
+              count={abstainCount}
+            />
           </div>
           {/** Timeline */}
-          <Typography variant='h5' fw='bold'>
+          <Typography variant="h5" fw="bold">
             Timeline
           </Typography>
-          <TimeLine className='translate-x-3'>
+          <TimeLine className="translate-x-3">
             {timeline.map((time, idx) => (
               <TimeLineItem
                 key={`${time.at.toString()}-${idx}`}
                 title={time.status}
                 time={time.at}
                 txHash={time.hash}
-                externalUrl='#'
+                externalUrl="#"
               />
             ))}
           </TimeLine>
           {/** Detail */}
-          <Typography variant='h5' fw='bold'>
+          <Typography variant="h5" fw="bold">
             Details
           </Typography>
-          <div className='p-4 break-all rounded-lg bg-mono-20 dark:bg-mono-160'>
-            <Typography variant='mono2' component='p'>
+          <div className="p-4 break-all rounded-lg bg-mono-20 dark:bg-mono-160">
+            <Typography variant="mono2" component="p">
               Type: {proposalData.type}
             </Typography>
             <br />
-            <Typography variant='mono2' component='p'>
+            <Typography variant="mono2" component="p">
               Data: {proposalData.data}
             </Typography>
           </div>
@@ -218,49 +231,51 @@ export const ProposalDetail = () => {
     }
 
     return (
-      <div className='flex items-center justify-center min-w-full min-h-[384px]'>
-        <Spinner size='xl' />
+      <div className="flex items-center justify-center min-w-full min-h-[384px]">
+        <Spinner size="xl" />
       </div>
     );
   }, [proposalDetails, passThreshold]);
 
   return (
-    <div className='flex flex-col p-6 space-y-6 rounded-lg bg-mono-0 dark:bg-mono-180'>
+    <div className="flex flex-col p-6 space-y-6 rounded-lg bg-mono-0 dark:bg-mono-180">
       {/** The title */}
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center space-x-2'>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
           <Link to={isPage ? '/proposals' : `/proposals/${proposalId}`}>
-            {isPage ? <ArrowLeft size='lg' /> : <Expand size='lg' />}
+            {isPage ? <ArrowLeft size="lg" /> : <Expand size="lg" />}
           </Link>
 
           {status && <Chip>{status}</Chip>}
 
-          <Typography variant='h4' fw='bold'>
+          <Typography variant="h4" fw="bold">
             Proposal Details
           </Typography>
 
-          <Button variant='utility' size='sm'>
+          <Button variant="utility" size="sm">
             Open Governance
           </Button>
         </div>
 
-        <div className='flex items-center space-x-2'>
+        <div className="flex items-center space-x-2">
           {/** Previous/Next Buttons */}
           <Button
-            size='sm'
+            size="sm"
             onClick={handlePrevProposal}
-            isDisabled={previousProposalId === null || previousProposalId === undefined}
-            leftIcon={<ArrowLeft className='!fill-current' />}
-            variant='utility'
+            isDisabled={
+              previousProposalId === null || previousProposalId === undefined
+            }
+            leftIcon={<ArrowLeft className="!fill-current" />}
+            variant="utility"
           >
             Prev
           </Button>
           <Button
-            size='sm'
+            size="sm"
             isDisabled={nextProposalId === null || nextProposalId === undefined}
             onClick={handleNextProposal}
-            rightIcon={<ArrowRight className='!fill-current' />}
-            variant='utility'
+            rightIcon={<ArrowRight className="!fill-current" />}
+            variant="utility"
           >
             Next
           </Button>
@@ -268,7 +283,7 @@ export const ProposalDetail = () => {
           {/** Close modal */}
           {!isPage && (
             <DrawerCloseButton>
-              <Close size='lg' />
+              <Close size="lg" />
             </DrawerCloseButton>
           )}
         </div>
@@ -292,15 +307,24 @@ const classNames = {
   abstain: 'bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-50',
 };
 
-const PercentageCard: FC<{ type: VoteType; percentValue: number; count: number }> = (props) => {
+const PercentageCard: FC<{
+  type: VoteType;
+  percentValue: number;
+  count: number;
+}> = (props) => {
   const { count, percentValue, type } = props;
 
   return (
-    <div className={cx('p-3 flex space-x-[6px] items-center rounded-lg grow', classNames[type])}>
-      <Typography variant='h5' fw='bold' className='!text-inherit'>
+    <div
+      className={cx(
+        'p-3 flex space-x-[6px] items-center rounded-lg grow',
+        classNames[type]
+      )}
+    >
+      <Typography variant="h5" fw="bold" className="!text-inherit">
         {percentValue}%
       </Typography>
-      <Typography variant='utility' className='!text-inherit uppercase'>
+      <Typography variant="utility" className="!text-inherit uppercase">
         {type} {count}
       </Typography>
     </div>

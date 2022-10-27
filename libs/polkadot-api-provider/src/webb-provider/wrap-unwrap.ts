@@ -4,8 +4,12 @@
 import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/api-derive';
 
-import { Amount, WrappingEvent, WrapUnwrap } from '@nepoche/abstract-api-provider/wrap-unwrap';
-import { WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
+import {
+  Amount,
+  WrappingEvent,
+  WrapUnwrap,
+} from '@webb-tools/abstract-api-provider/wrap-unwrap';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
@@ -27,22 +31,34 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     }
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const bnAmount = ethers.utils.parseUnits(
+      amountNumber.toString(),
+      wrappableToken.getDecimals()
+    );
     const chainID = this.inner.typedChainId;
     const governableTokenId = governedToken.getAddress(chainID)!;
     const wrappableTokenId = wrappableToken.getAddress(chainID)!;
-    const poolShare = await this.inner.api.query.assetRegistry.assets(governableTokenId);
-    const poolShareExistentialBalance = poolShare.unwrap().existentialDeposit.toString();
+    const poolShare = await this.inner.api.query.assetRegistry.assets(
+      governableTokenId
+    );
+    const poolShareExistentialBalance = poolShare
+      .unwrap()
+      .existentialDeposit.toString();
     const isLocked = poolShare.unwrap().locked.isTrue;
     if (isLocked) {
       return false;
     }
-    const userBalance = await this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId);
+    const userBalance =
+      await this.inner.methods.chainQuery.tokenBalanceByAddress(
+        wrappableTokenId
+      );
     const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
     if (!enoughBalance) {
       return false;
     }
-    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(governableTokenId);
+    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(
+      governableTokenId
+    );
     const validBalanceAfterDeposit = bnAmount
       .add(BigNumber.from(balance))
       .gt(BigNumber.from(poolShareExistentialBalance));
@@ -54,7 +70,10 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const { amount: amountNumber } = payload;
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const bnAmount = ethers.utils.parseUnits(
+      amountNumber.toString(),
+      wrappableToken.getDecimals()
+    );
     const chainID = this.inner.typedChainId;
     const governableATreeId = governedToken.getAddress(chainID)!;
     const wrappableTokenId = wrappableToken.getAddress(chainID)!;
@@ -85,7 +104,10 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const { amount: amountNumber } = payload;
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const bnAmount = ethers.utils.parseUnits(
+      amountNumber.toString(),
+      wrappableToken.getDecimals()
+    );
     const chainID = this.inner.typedChainId;
     const wrappedTokenId = governedToken.getAddress(chainID)!;
     const wrappableTokenId = wrappableToken.getAddress(chainID)!;
@@ -121,30 +143,48 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     }
     const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
     const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
+    const bnAmount = ethers.utils.parseUnits(
+      amountNumber.toString(),
+      wrappableToken.getDecimals()
+    );
     const chainID = this.inner.typedChainId;
     const governableTokenId = governedToken.getAddress(chainID)!;
     const wrappableTokenId = wrappableToken.getAddress(chainID)!;
 
-    const poolShare = await this.inner.api.query.assetRegistry.assets(governableTokenId);
-    const _poolShareExistentialBalance = poolShare.unwrap().existentialDeposit.toString();
+    const poolShare = await this.inner.api.query.assetRegistry.assets(
+      governableTokenId
+    );
+    const _poolShareExistentialBalance = poolShare
+      .unwrap()
+      .existentialDeposit.toString();
 
-    const asset = await this.inner.api.query.assetRegistry.assets(wrappableTokenId);
-    const assetExistentialBalance = asset.unwrap().existentialDeposit.toString();
+    const asset = await this.inner.api.query.assetRegistry.assets(
+      wrappableTokenId
+    );
+    const assetExistentialBalance = asset
+      .unwrap()
+      .existentialDeposit.toString();
 
     const isLocked = poolShare.unwrap().locked.isTrue;
     if (isLocked) {
       return false;
     }
-    const userBalance = await this.inner.methods.chainQuery.tokenBalanceByAddress(governableTokenId);
+    const userBalance =
+      await this.inner.methods.chainQuery.tokenBalanceByAddress(
+        governableTokenId
+      );
     const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
     // User have enough balance to unwrap
     if (!enoughBalance) {
       return false;
     }
     // TODO: Verify if the user balance can go to Zero for poolShare/or below the existential balance
-    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId);
-    const validBalanceAfterDeposit = bnAmount.add(BigNumber.from(balance)).gte(BigNumber.from(assetExistentialBalance));
+    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(
+      wrappableTokenId
+    );
+    const validBalanceAfterDeposit = bnAmount
+      .add(BigNumber.from(balance))
+      .gte(BigNumber.from(assetExistentialBalance));
     return validBalanceAfterDeposit;
   }
 

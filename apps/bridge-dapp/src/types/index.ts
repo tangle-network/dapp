@@ -1,4 +1,4 @@
-import { IconBase } from '@nepoche/icons/types';
+import { IconBase } from '@webb-tools/icons/types';
 
 /**
  * The internal link type
@@ -37,7 +37,8 @@ export interface ExternalLink {
   rel?: string;
 }
 
-export interface FooterNavsType extends Record<string, Array<Link | ExternalLink>> {}
+export interface FooterNavsType
+  extends Record<string, Array<Link | ExternalLink>> {}
 
 /**
  * The bottom social platforms config type

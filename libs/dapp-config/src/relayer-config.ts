@@ -1,4 +1,4 @@
-import { PresetTypedChainId } from '@nepoche/dapp-types';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 /**
@@ -35,7 +35,9 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToTypedChainId(name: string): PresetTypedChainId {
+export function relayerSubstrateNameToTypedChainId(
+  name: string
+): PresetTypedChainId {
   switch (name) {
     case 'localnode':
       return PresetTypedChainId.ProtocolSubstrateStandalone;

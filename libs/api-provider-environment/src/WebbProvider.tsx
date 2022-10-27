@@ -1,13 +1,18 @@
 import { Icon, Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Account, Currency, NotificationPayload, WebbApiProvider } from '@nepoche/abstract-api-provider';
-import { Bridge } from '@nepoche/abstract-api-provider/state';
+import {
+  Account,
+  Currency,
+  NotificationPayload,
+  WebbApiProvider,
+} from '@webb-tools/abstract-api-provider';
+import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import {
   keypairStorageFactory,
   netStorageFactory,
   NetworkStorage,
   noteStorageFactory,
-} from '@nepoche/browser-utils/storage';
+} from '@webb-tools/browser-utils/storage';
 import {
   anchorsConfig,
   ApiConfig,
@@ -18,7 +23,7 @@ import {
   currenciesConfig,
   Wallet,
   walletsConfig,
-} from '@nepoche/dapp-config';
+} from '@webb-tools/dapp-config';
 import {
   BareProps,
   CurrencyRole,
@@ -27,25 +32,34 @@ import {
   WalletId,
   WebbError,
   WebbErrorCodes,
-} from '@nepoche/dapp-types';
-import { NoteManager } from '@nepoche/note-manager';
-import { WebbPolkadot } from '@nepoche/polkadot-api-provider';
+} from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { AppEvent, TAppEvent } from './app-event';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import { DimensionsProvider } from '@nepoche/responsive-utils';
-import { StoreProvider } from '@nepoche/react-environment/store';
+import { DimensionsProvider } from '@webb-tools/responsive-utils';
+import { StoreProvider } from '@webb-tools/react-environment/store';
 import { WebbContext } from './webb-context';
-import { getRelayerManagerFactory } from '@nepoche/relayer-manager-factory';
-import { notificationApi } from '@nepoche/webb-ui-components/components/Notification';
-import { Spinner } from '@nepoche/icons';
-import { Web3Provider, Web3RelayerManager, WebbWeb3Provider } from '@nepoche/web3-api-provider';
+import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
+import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
+import { Spinner } from '@webb-tools/icons';
+import {
+  Web3Provider,
+  Web3RelayerManager,
+  WebbWeb3Provider,
+} from '@webb-tools/web3-api-provider';
 import { LoggerService } from '@webb-tools/app-util';
-import { calculateTypedChainId, ChainType, Keypair, Note } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  Keypair,
+  Note,
+} from '@webb-tools/sdk-core';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { unsupportedChain } from './error';
-import { SettingProvider } from '@nepoche/react-environment';
+import { SettingProvider } from '@webb-tools/react-environment';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -141,20 +155,30 @@ notificationHandler.remove = (key: string | number) => {
 const appEvent = new AppEvent();
 
 export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
-  const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(undefined);
+  const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
+    undefined
+  );
   const [activeChain, setActiveChain] = useState<Chain | undefined>(undefined);
-  const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(undefined);
+  const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState(true);
-  const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(null);
+  const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(
+    null
+  );
   const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
   // TODO resolve the account inner type issue
   const [accounts, setAccounts] = useState<Array<Account | any>>([]);
   // TODO resolve the account inner type issue
-  const [activeAccount, _setActiveAccount] = useState<Account | any | null>(null);
+  const [activeAccount, _setActiveAccount] = useState<Account | any | null>(
+    null
+  );
   const [isConnecting, setIsConnecting] = useState(false);
 
   /// storing all interactive feedbacks to show the modals
-  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<InteractiveFeedback[]>([]);
+  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
+    InteractiveFeedback[]
+  >([]);
   /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
     setInteractiveFeedbacks([]);
@@ -196,7 +220,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       const innerActiveApi = options.activeApi ?? activeApi;
 
       if (innerNetworkStorage && innerChain) {
-        const typedChainId = calculateTypedChainId(innerChain.chainType, innerChain.chainId);
+        const typedChainId = calculateTypedChainId(
+          innerChain.chainType,
+          innerChain.chainId
+        );
 
         const networksConfig = await innerNetworkStorage.get('networksConfig');
         innerNetworkStorage?.set('networksConfig', {
@@ -229,16 +256,24 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       let hasSetFromStorage = false;
       const accounts = await nextActiveApi.accounts.accounts();
 
-      const typedChainId = calculateTypedChainId(chain.chainType, chain.chainId);
+      const typedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.chainId
+      );
 
       // TODO resolve the account inner type issue
       setAccounts(accounts as any);
 
       if (_networkStorage) {
-        const networkDefaultConfig = await _networkStorage.get('networksConfig');
-        let defaultAccount = networkDefaultConfig?.[typedChainId]?.defaultAccount;
+        const networkDefaultConfig = await _networkStorage.get(
+          'networksConfig'
+        );
+        let defaultAccount =
+          networkDefaultConfig?.[typedChainId]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
-        const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        const defaultFromSettings = accounts.find(
+          (account) => account.address === defaultAccount
+        );
         if (defaultFromSettings) {
           // TODO resolve the account inner type issue
           _setActiveAccount(defaultFromSettings as any);
@@ -248,7 +283,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       }
 
       if (!hasSetFromStorage) {
-        await setActiveAccount(accounts[0], { networkStorage: _networkStorage, chain, activeApi: nextActiveApi });
+        await setActiveAccount(accounts[0], {
+          networkStorage: _networkStorage,
+          chain,
+          activeApi: nextActiveApi,
+        });
       }
 
       setActiveApi(nextActiveApi);
@@ -275,7 +314,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
           setActiveChain(undefined);
           const interactiveFeedback = unsupportedChain(apiConfig);
           if (interactiveFeedback) {
-            registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+            registerInteractiveFeedback(
+              setInteractiveFeedbacks,
+              interactiveFeedback
+            );
           }
         }
         break;
@@ -295,7 +337,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
         {
           setActiveChain(undefined);
           const interactiveFeedback = insufficientApiInterface(appEvent);
-          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+          registerInteractiveFeedback(
+            setInteractiveFeedbacks,
+            interactiveFeedback
+          );
         }
         break;
       case WebbErrorCodes.RelayerMisbehaving:
@@ -315,7 +360,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
 
     // create a NoteManager instance
     const noteStorage = await noteStorageFactory(accountKeypair);
-    const noteManager = await NoteManager.initAndDecryptNotes(noteStorage, accountKeypair);
+    const noteManager = await NoteManager.initAndDecryptNotes(
+      noteStorage,
+      accountKeypair
+    );
 
     // set the noteManager instance on the activeApi if it exists
     if (activeApi) {
@@ -363,7 +411,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
   };
 
   /// Network switcher
-  const switchChain = async (chain: Chain, _wallet: Wallet, _networkStorage?: NetworkStorage | undefined) => {
+  const switchChain = async (
+    chain: Chain,
+    _wallet: Wallet,
+    _networkStorage?: NetworkStorage | undefined
+  ) => {
     const relayerManagerFactory = await getRelayerManagerFactory();
 
     const wallet = _wallet || activeWallet;
@@ -381,25 +433,41 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
         case WalletId.Talisman:
         case WalletId.SubWallet:
           {
-            const relayerManager = await relayerManagerFactory.getRelayerManager('substrate');
+            const relayerManager =
+              await relayerManagerFactory.getRelayerManager('substrate');
             const url = chain.url;
-            const typedChainId = calculateTypedChainId(chain.chainType, chain.chainId);
+            const typedChainId = calculateTypedChainId(
+              chain.chainType,
+              chain.chainId
+            );
             const webbPolkadot = await WebbPolkadot.init(
               'Webb DApp',
               [url],
               {
                 onError: (feedback: InteractiveFeedback) => {
-                  registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
+                  registerInteractiveFeedback(
+                    setInteractiveFeedbacks,
+                    feedback
+                  );
                 },
               },
               relayerManager,
               apiConfig,
               notificationHandler,
-              () => new Worker(new URL('@nepoche/react-environment/arkworks-proving-manager.worker')),
+              () =>
+                new Worker(
+                  new URL(
+                    '@webb-tools/react-environment/arkworks-proving-manager.worker'
+                  )
+                ),
               typedChainId,
               wallet
             );
-            await setActiveApiWithAccounts(webbPolkadot, chain, _networkStorage ?? networkStorage);
+            await setActiveApiWithAccounts(
+              webbPolkadot,
+              chain,
+              _networkStorage ?? networkStorage
+            );
             localActiveApi = webbPolkadot;
             if (noteManager) {
               localActiveApi.noteManager = noteManager;
@@ -415,11 +483,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               const provider = new WalletConnectProvider({
                 rpc: {
                   //default on metamask
-                  [EVMChainId.EthereumMainNet]: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Ropsten]: 'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Goerli]: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Kovan]: 'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Rinkeby]: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+                  [EVMChainId.EthereumMainNet]:
+                    'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Ropsten]:
+                    'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Goerli]:
+                    'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Kovan]:
+                    'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+                  [EVMChainId.Rinkeby]:
+                    'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
                   //default on metamask
                   [EVMChainId.Beresheet]: 'http://beresheet1.edgewa.re:9933',
                   [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
@@ -427,7 +500,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                 chainId: chain.chainId,
               });
 
-              web3Provider = await Web3Provider.fromWalletConnectProvider(provider);
+              web3Provider = await Web3Provider.fromWalletConnectProvider(
+                provider
+              );
             } else {
               /// init provider from the extension
               web3Provider = await Web3Provider.fromExtension();
@@ -455,14 +530,21 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                       alignItems: 'center',
                     },
                   },
-                  [React.createElement(wallet.Logo, { key: `${wallet.id}logo` })]
+                  [
+                    React.createElement(wallet.Logo, {
+                      key: `${wallet.id}logo`,
+                    }),
+                  ]
                 ),
               });
             }
             /// get the current active chain from metamask
             const chainId = await web3Provider.network; // storage based on network id
 
-            const relayerManager = (await relayerManagerFactory.getRelayerManager('evm')) as Web3RelayerManager;
+            const relayerManager =
+              (await relayerManagerFactory.getRelayerManager(
+                'evm'
+              )) as Web3RelayerManager;
 
             const webbWeb3Provider = await WebbWeb3Provider.init(
               web3Provider,
@@ -471,16 +553,29 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               noteManager,
               apiConfig,
               notificationHandler,
-              () => new Worker(new URL('@nepoche/react-environment/circom-proving-manager.worker', import.meta.url))
+              () =>
+                new Worker(
+                  new URL(
+                    '@webb-tools/react-environment/circom-proving-manager.worker',
+                    import.meta.url
+                  )
+                )
             );
 
-            const providerUpdateHandler = async ([updatedChainId]: number[]) => {
-              const nextChain = Object.values(chains).find((chain) => chain.chainId === updatedChainId);
+            const providerUpdateHandler = async ([
+              updatedChainId,
+            ]: number[]) => {
+              const nextChain = Object.values(chains).find(
+                (chain) => chain.chainId === updatedChainId
+              );
 
               try {
                 /// this will throw if the user switched to unsupported chain
                 const name = apiConfig.getEVMChainName(updatedChainId);
-                const newTypedChainId = calculateTypedChainId(ChainType.EVM, updatedChainId);
+                const newTypedChainId = calculateTypedChainId(
+                  ChainType.EVM,
+                  updatedChainId
+                );
                 /// Alerting that the provider has changed via the extension
                 notificationApi({
                   message: 'Web3: Connected',
@@ -495,16 +590,26 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
 
                 // Set a reasonable default bridge and change available bridges based on the new chain
                 let defaultBridge: Bridge | null = null;
-                for (const bridgeConfig of Object.values(webbWeb3Provider.config.bridgeByAsset)) {
-                  if (Object.keys(bridgeConfig.anchors).includes(newTypedChainId.toString())) {
+                for (const bridgeConfig of Object.values(
+                  webbWeb3Provider.config.bridgeByAsset
+                )) {
+                  if (
+                    Object.keys(bridgeConfig.anchors).includes(
+                      newTypedChainId.toString()
+                    )
+                  ) {
                     // List the bridge as supported by the new chain
-                    const bridgeCurrencyConfig = webbWeb3Provider.config.currencies[bridgeConfig.asset];
+                    const bridgeCurrencyConfig =
+                      webbWeb3Provider.config.currencies[bridgeConfig.asset];
                     const bridgeCurrency = new Currency(bridgeCurrencyConfig);
                     if (bridgeCurrency.getRole() !== CurrencyRole.Governable) {
                       continue;
                     }
                     const bridgeTargets = bridgeConfig.anchors;
-                    const supportedBridge = new Bridge(bridgeCurrency, bridgeTargets);
+                    const supportedBridge = new Bridge(
+                      bridgeCurrency,
+                      bridgeTargets
+                    );
                     bridgeOptions[newTypedChainId] = supportedBridge;
 
                     // Set the first compatible bridge encountered.
@@ -595,7 +700,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               await addEvmChain();
             }
 
-            await setActiveApiWithAccounts(webbWeb3Provider, chain, _networkStorage ?? networkStorage);
+            await setActiveApiWithAccounts(
+              webbWeb3Provider,
+              chain,
+              _networkStorage ?? networkStorage
+            );
             /// listen to `providerUpdate` by MetaMask
             localActiveApi = webbWeb3Provider;
             setLoading(false);
@@ -631,7 +740,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       const _networkStorage = networkStorage ?? (await netStorageFactory());
       if (provider && _networkStorage) {
         await Promise.all([
-          _networkStorage.set('defaultNetwork', calculateTypedChainId(chain.chainType, chain.chainId)),
+          _networkStorage.set(
+            'defaultNetwork',
+            calculateTypedChainId(chain.chainType, chain.chainId)
+          ),
           _networkStorage.set('defaultWallet', wallet.id),
         ]);
       }
@@ -673,8 +785,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       const chainConfig = chains[net];
 
       // wallet config by chain
-      const walletConfig = chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
-      const activeApi = await switchChain(chainConfig, walletConfig, _networkStorage);
+      const walletConfig =
+        chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
+      const activeApi = await switchChain(
+        chainConfig,
+        walletConfig,
+        _networkStorage
+      );
       const networkDefaultConfig = await _networkStorage.get('networksConfig');
 
       if (activeApi) {
@@ -684,7 +801,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
         const accounts = await activeApi.accounts.accounts();
         let defaultAccount = networkDefaultConfig[net]?.defaultAccount;
         defaultAccount = defaultAccount ?? accounts[0]?.address;
-        const defaultFromSettings = accounts.find((account) => account.address === defaultAccount);
+        const defaultFromSettings = accounts.find(
+          (account) => account.address === defaultAccount
+        );
         logger.info(`Default account from settings`, defaultFromSettings);
         if (defaultFromSettings) {
           _setActiveAccount(defaultFromSettings);
@@ -748,8 +867,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
           }
         },
         activeFeedback,
-        registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
-          registerInteractiveFeedback(setInteractiveFeedbacks, interactiveFeedback);
+        registerInteractiveFeedback: (
+          interactiveFeedback: InteractiveFeedback
+        ) => {
+          registerInteractiveFeedback(
+            setInteractiveFeedbacks,
+            interactiveFeedback
+          );
         },
       }}
     >

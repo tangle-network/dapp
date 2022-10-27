@@ -4,8 +4,8 @@ import {
   NewNotesTxResult,
   TransactionState,
   VAnchorDeposit,
-} from '@nepoche/abstract-api-provider';
-import { useWebContext } from '@nepoche/api-provider-environment';
+} from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<NewNotesTxResult>;
@@ -54,11 +54,21 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   }, [depositApi]);
 
   const generateNote = useCallback(
-    async (anchorId: number | string, destChainTypeId: number, amount: number, wrappableAsset: string | undefined) => {
+    async (
+      anchorId: number | string,
+      destChainTypeId: number,
+      amount: number,
+      wrappableAsset: string | undefined
+    ) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      return depositApi.generateBridgeNote(anchorId, destChainTypeId, amount, wrappableAsset);
+      return depositApi.generateBridgeNote(
+        anchorId,
+        destChainTypeId,
+        amount,
+        wrappableAsset
+      );
     },
     [depositApi]
   );

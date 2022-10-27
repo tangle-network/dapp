@@ -1,6 +1,6 @@
-import { KeyStatusCard } from '@nepoche/webb-ui-components/components/KeyStatusCard';
-import { KeyStatusCardProps } from '@nepoche/webb-ui-components/components/KeyStatusCard/types';
-import { Spinner } from '@nepoche/icons';
+import { KeyStatusCard } from '@webb-tools/webb-ui-components/components/KeyStatusCard';
+import { KeyStatusCardProps } from '@webb-tools/webb-ui-components/components/KeyStatusCard/types';
+import { Spinner } from '@webb-tools/icons';
 import React, { FC, forwardRef, useMemo } from 'react';
 
 import { KeyStatusCardContainerProps } from './types';
@@ -8,7 +8,11 @@ import { KeyStatusCardContainerProps } from './types';
 /**
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
  */
-export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({ data, keyType, now }) => {
+export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({
+  data,
+  keyType,
+  now,
+}) => {
   const { title, titleInfo } = useMemo(
     () => ({
       title: keyType === 'current' ? 'Active Key' : 'Next Key',

@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { SupportedBrowsers } from '@nepoche/browser-utils/platform';
+import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 
 export interface WalletConfig {
   id: number;

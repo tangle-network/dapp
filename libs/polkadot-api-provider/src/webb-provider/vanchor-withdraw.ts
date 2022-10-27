@@ -11,11 +11,21 @@ import {
   RelayedChainInput,
   RelayedWithdrawResult,
   VAnchorWithdraw,
-} from '@nepoche/abstract-api-provider';
-import { typedChainIdToSubstrateRelayerName } from '@nepoche/dapp-config/relayer-config';
-import { TransactionState, WebbError, WebbErrorCodes } from '@nepoche/dapp-types';
-import { fetchSubstrateVAnchorProvingKey } from '@nepoche/fixtures-deployments';
-import { ArkworksProvingManager, Note, parseTypedChainId, ProvingManagerSetupInput, Utxo } from '@webb-tools/sdk-core';
+} from '@webb-tools/abstract-api-provider';
+import { typedChainIdToSubstrateRelayerName } from '@webb-tools/dapp-config/relayer-config';
+import {
+  TransactionState,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
+import { fetchSubstrateVAnchorProvingKey } from '@webb-tools/fixtures-deployments';
+import {
+  ArkworksProvingManager,
+  Note,
+  parseTypedChainId,
+  ProvingManagerSetupInput,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
 import { BigNumber } from 'ethers';
 
@@ -23,7 +33,12 @@ import { decodeAddress } from '@polkadot/keyring';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 
-import { getLeafCount, getLeafIndex, getLeaves, rootOfLeaves } from '../mt-utils';
+import {
+  getLeafCount,
+  getLeafIndex,
+  getLeaves,
+  rootOfLeaves,
+} from '../mt-utils';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   /**
@@ -31,7 +46,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * recipient - Recipient account
    * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
    * */
-  async withdraw(notes: string[], recipient: string, amount: string): Promise<NewNotesTxResult> {
+  async withdraw(
+    notes: string[],
+    recipient: string,
+    amount: string
+  ): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
       case TransactionState.Failed:
@@ -61,11 +80,15 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
     }
     const accountId = account.address;
-    const relayerAccountId = activeRelayer ? activeRelayerAccount! : account.address;
+    const relayerAccountId = activeRelayer
+      ? activeRelayerAccount!
+      : account.address;
     const recipientAccountDecoded = decodeAddress(recipient);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);
     // Notes deserialization
-    const inputNotes = await Promise.all(notes.map((note) => Note.deserialize(note)));
+    const inputNotes = await Promise.all(
+      notes.map((note) => Note.deserialize(note))
+    );
     if (!inputNotes.length) {
       throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
     }
@@ -81,7 +104,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     if (remainder.lt(0)) {
       this.emit('stateChange', TransactionState.Failed);
       this.emit('stateChange', TransactionState.Ideal);
-      throw WebbError.from(WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount);
+      throw WebbError.from(
+        WebbErrorCodes.AmountToWithdrawExceedsTheDepositedAmount
+      );
     }
     this.cancelToken.throwIfCancel();
 
@@ -114,7 +139,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       return index;
     }, 0);
 
-    const latestNote = inputNotes.find((note) => note.note.index === latestPredictedIndex.toString());
+    const latestNote = inputNotes.find(
+      (note) => note.note.index === latestPredictedIndex.toString()
+    );
     if (!latestNote) {
       throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
     }
@@ -129,7 +156,12 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       Number(treeId)
     );
 
-    const leaves = await getLeaves(this.inner.api, Number(treeId), 0, inputLeafIndex);
+    const leaves = await getLeaves(
+      this.inner.api,
+      Number(treeId),
+      0,
+      inputLeafIndex
+    );
     const leavesMap: any = {};
     /// Assume same chain withdraw-deposit
     leavesMap[targetChainId] = leaves;
@@ -178,7 +210,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       refund: '0',
       token: Uint8Array.from([0]),
     };
-    const destChainIdType = parseTypedChainId(Number(inputNotes[0].note.targetChainId));
+    const destChainIdType = parseTypedChainId(
+      Number(inputNotes[0].note.targetChainId)
+    );
 
     const data = await this.cancelToken.handleOrThrow<VAnchorProof>(
       () => {
@@ -197,7 +231,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       inputNullifiers: data.inputUtxos.map((utxo) => {
         return `0x${utxo.nullifier}`;
       }),
-      outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
+      outputCommitments: data.outputNotes.map((note) =>
+        u8aToHex(note.getLeaf())
+      ),
       extDataHash: data.extDataHash,
     };
 
@@ -208,8 +244,12 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     }
 
     if (activeRelayer) {
-      const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
-      const chainName = typedChainIdToSubstrateRelayerName(Number(inputNotes[0].note.targetChainId));
+      const relayedVAnchorWithdraw = await activeRelayer.initWithdraw(
+        'vAnchor'
+      );
+      const chainName = typedChainIdToSubstrateRelayerName(
+        Number(inputNotes[0].note.targetChainId)
+      );
       const substrateId = destChainIdType.chainId;
       const chainInfo: RelayedChainInput = {
         baseOn: 'substrate',
@@ -217,9 +257,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
         endpoint: '',
         name: chainName,
       };
-      const relayedDepositTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<typeof chainInfo, 'vAnchor'>(
-        chainInfo,
-        {
+      const relayedDepositTxPayload =
+        relayedVAnchorWithdraw.generateWithdrawRequest<
+          typeof chainInfo,
+          'vAnchor'
+        >(chainInfo, {
           chainId: substrateId,
           id: Number(treeId),
           extData: {
@@ -237,11 +279,14 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
             extDataHash: Array.from(vanchorProofData.extDataHash),
             publicAmount: Array.from(vanchorProofData.publicAmount),
             roots: vanchorProofData.roots.map((root) => Array.from(root)),
-            outputCommitments: vanchorProofData.outputCommitments.map((com) => Array.from(hexToU8a(com))),
-            inputNullifiers: vanchorProofData.inputNullifiers.map((com) => Array.from(hexToU8a(com))),
+            outputCommitments: vanchorProofData.outputCommitments.map((com) =>
+              Array.from(hexToU8a(com))
+            ),
+            inputNullifiers: vanchorProofData.inputNullifiers.map((com) =>
+              Array.from(hexToU8a(com))
+            ),
           },
-        }
-      );
+        });
 
       relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
         switch (results) {
@@ -307,7 +352,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
         method: 'transact',
         section: 'vAnchorBn254',
       };
-      const tx = this.inner.txBuilder.build(method, [treeId, vanchorProofData, extData]);
+      const tx = this.inner.txBuilder.build(method, [
+        treeId,
+        vanchorProofData,
+        extData,
+      ]);
       // May cancel before transaction is submitted
       this.cancelToken.throwIfCancel();
       txHash = await tx.call(account.address);
@@ -317,7 +366,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     await this.inner.noteManager?.removeNote(data.outputNotes[0]);
 
     // get the leaf index to get the right leaf index after insertion
-    const leafIndex = await this.getleafIndex(outputCommitment, predictedIndex, Number(treeId));
+    const leafIndex = await this.getleafIndex(
+      outputCommitment,
+      predictedIndex,
+      Number(treeId)
+    );
     outputNote.note.mutateIndex(leafIndex.toString());
 
     // update the UTXO of the remainder note
@@ -343,7 +396,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     };
   }
 
-  private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
+  private async getleafIndex(
+    leaf: Uint8Array,
+    indexBeforeInsertion: number,
+    treeId: number
+  ): Promise<number> {
     const api = this.inner.api;
     return getLeafIndex(api, leaf, indexBeforeInsertion, treeId);
   }
