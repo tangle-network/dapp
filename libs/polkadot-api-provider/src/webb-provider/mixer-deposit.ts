@@ -47,7 +47,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
         const amountNumber = (Number(amount?.toString().replaceAll(',', '')) * 1.0) / Math.pow(10, 12);
 
         // const chainId = await this.inner.getProvider().api.consts.linkableTreeBn254.chainIdentifier;
-        const asset = ormlAssets.find((asset) => Number(asset.id) === cId)!;
+        const asset = ormlAssets.find((asset) => Number(asset.id) === cId);
         const currency = new Currency({
           role: CurrencyRole.Wrappable,
           decimals: 18,
@@ -84,8 +84,7 @@ export class PolkadotMixerDeposit extends MixerDeposit<WebbPolkadot, DepositPayl
   // MixerId is the treeId for deposit, chainIdType is the destination (and source because this is mixer)
   async generateNote(mixerId: number, chainIdType: number): Promise<DepositPayload> {
     logger.info(`Depositing to mixer id ${mixerId}`);
-    let sizes: MixerSize[];
-    sizes = await this.getSizes();
+    const sizes = await this.getSizes();
     const mixer = sizes.find((size) => Number(size.id) === mixerId);
     const properties = await this.inner.api.rpc.system.properties();
     const denomination = properties.tokenDecimals.toHuman() || 12;

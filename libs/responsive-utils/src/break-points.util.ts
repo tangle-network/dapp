@@ -23,7 +23,7 @@ export const size = {
    * */
   xl: 1400,
 };
-type Styler = Function | string | FlattenSimpleInterpolation;
+type Styler = () => string | string | FlattenSimpleInterpolation;
 type KeysToFunc<T extends object> = {
   [key in keyof T]: (styler: Styler) => FlattenSimpleInterpolation;
 };

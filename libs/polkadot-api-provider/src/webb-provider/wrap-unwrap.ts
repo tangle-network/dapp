@@ -21,16 +21,16 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async canWrap(wrapPayload: PolkadotWrapPayload): Promise<boolean> {
     const { amount: amountNumber } = wrapPayload;
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       return false;
     }
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
-    const governableTokenId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const governableTokenId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
     const poolShare = await this.inner.api.query.assetRegistry.assets(governableTokenId);
     const poolShareExistentialBalance = poolShare.unwrap().existentialDeposit.toString();
     const isLocked = poolShare.unwrap().locked.isTrue;
@@ -52,14 +52,14 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
-    const governableATreeId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const governableATreeId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
@@ -83,14 +83,14 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
   async wrap(payload: PolkadotWrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
-    const wrappedTokenId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const wrappedTokenId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
@@ -115,19 +115,18 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async canUnwrap(unwrapPayload: PolkadotUnwrapPayload): Promise<boolean> {
     const { amount: amountNumber } = unwrapPayload;
-    const account = await this.inner.accounts.activeOrDefault!;
+    const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
       return false;
     }
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
     const bnAmount = ethers.utils.parseUnits(amountNumber.toString(), wrappableToken.getDecimals());
     const chainID = this.inner.typedChainId;
-    const governableTokenId = governedToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const governableTokenId = governedToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
 
     const poolShare = await this.inner.api.query.assetRegistry.assets(governableTokenId);
-    const _poolShareExistentialBalance = poolShare.unwrap().existentialDeposit.toString();
 
     const asset = await this.inner.api.query.assetRegistry.assets(wrappableTokenId);
     const assetExistentialBalance = asset.unwrap().existentialDeposit.toString();

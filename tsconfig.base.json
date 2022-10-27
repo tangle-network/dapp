@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
+    "typeRoots": ["node_modules/@types"],
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -75,5 +76,5 @@
       "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
     }
   },
-  "exclude": ["node_modules", "tmp", "**/node_modules/*"]
+  "exclude": ["node_modules", "tmp", "**/node_modules/*", "**/build/*"]
 }
