@@ -328,7 +328,7 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   return (
     <div
       className={cx('my-0 flex items-center p-4', {
-        'bg-yellow-70 border-t-2 border-yellow-90 dark:bg-yellow-120': hasWarning,
+        'bg-yellow-10 border-t-2 border-yellow-90 dark:bg-yellow-120': hasWarning,
       })}
     >
       <div className='flex items-center'>
