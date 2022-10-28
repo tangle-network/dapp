@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   TransactionCardItemProps,
   TransactionItemVariant,
-  TransactionProgressCardProps,
+  TransactionQueueProps,
 } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard/types';
 import { PartyFill } from '@webb-dapp/webb-ui-components/icons/PartyFill';
 import { AlertFill } from '@webb-dapp/webb-ui-components/icons/AlertFill';
@@ -71,7 +71,7 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
  * ```
  *
  * */
-export const TransactionQueue: FC<TransactionProgressCardProps> = ({
+export const TransactionQueue: FC<TransactionQueueProps> = ({
   collapsed,
   transactions,
   onCollapseChange,

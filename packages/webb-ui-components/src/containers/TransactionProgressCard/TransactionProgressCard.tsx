@@ -1,4 +1,4 @@
-import { Button, Chip, Disclaimer, ChipColors } from '../../components';
+import { Button, Chip, Disclaimer } from '../../components';
 import { ArrowRight, ExternalLinkLine } from '../../icons';
 import { Typography } from '../../typography';
 import React, { forwardRef, useMemo, useState } from 'react';
@@ -9,6 +9,7 @@ import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
 import success from './success-tx.json';
 import Lottie from 'lottie-react';
 import { TransactionCardFooter } from './TransactionCardFooter';
+import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
@@ -223,7 +224,7 @@ export const dummyTransactions: TransactionPayload[] = [
       status: 'in-progress',
       message: 'Generating ZK  proofs..',
       recipient: '0xasdfj2r3092430u',
-      THash: '0xasdfj2r3092430u',
+      txHash: '0xasdfj2r3092430u',
     },
     tokens: ['USDC', 'ETH'],
     token: 'ETH',
@@ -244,7 +245,7 @@ export const dummyTransactions: TransactionPayload[] = [
     txStatus: {
       status: 'completed',
       recipient: '0xasdfj2r3092430u',
-      THash: '0xasdfj2r3092430u',
+      txHash: '0xasdfj2r3092430u',
     },
     tokens: ['USDT', 'ETH'],
     token: 'ETH',
@@ -266,7 +267,7 @@ export const dummyTransactions: TransactionPayload[] = [
       status: 'warning',
       message: 'Generating ZK  proofs..',
       recipient: '0xasdfj2r3092430u',
-      THash: '0xasdfj2r3092430u',
+      txHash: '0xasdfj2r3092430u',
     },
     tokens: ['ETH'],
     token: 'ETH',
@@ -286,7 +287,7 @@ export const dummyTransactions: TransactionPayload[] = [
     txStatus: {
       status: 'in-progress',
       recipient: '0xasdfj2r3092430u',
-      THash: '0xasdfj2r3092430u',
+      txHash: '0xasdfj2r3092430u',
     },
     tokens: ['USDC', 'ETH'],
     token: 'ETH',
