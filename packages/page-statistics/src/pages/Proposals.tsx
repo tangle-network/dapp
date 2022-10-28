@@ -1,6 +1,4 @@
 import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
-import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
-import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { useStatsContext } from '@webb-dapp/page-statistics/provider/stats-provider';
 import {
   Button,
@@ -12,12 +10,8 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import {
-  dummyTransactions,
-  TransactionProgressCard,
-  TransactionQueue,
-} from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
-import { ExternalLinkLine, TokenIcon, WalletLine } from '@webb-dapp/webb-ui-components/icons';
+import { dummyTransactions, TransactionQueue } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
+import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';

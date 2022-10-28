@@ -42,3 +42,4 @@ export * from './TelegramFill';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './WalletLine';
+export * from './Alert';

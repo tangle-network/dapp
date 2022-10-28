@@ -1,6 +1,13 @@
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, ChevronUp, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
+import {
+  Alert,
+  ArrowRight,
+  ChevronUp,
+  ExternalLinkLine,
+  Spinner,
+  TokenIcon,
+} from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import React, { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -17,6 +24,9 @@ import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types'
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
+import cx from 'classnames';
+import { AlertFill } from '@webb-dapp/webb-ui-components/icons/AlertFill';
+import { PartyFill } from '@webb-dapp/webb-ui-components/icons/PartyFill';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
@@ -222,10 +232,12 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => 
     }
   }, [method]);
   return (
-    <>
-      <span className={'inline-block pr-2'}>🎉</span>
-      {message}
-    </>
+    <div className={'flex items-center'}>
+      <div className={'pr-2'}>
+        <PartyFill />
+      </div>
+      <div>{message}</div>
+    </div>
   );
 };
 
@@ -233,24 +245,22 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
   const message = useMemo(() => {
     switch (method) {
       case 'Transfer':
-        return 'Successfully Transferred!';
-
+        return 'Failed to  transfer!';
       case 'Deposit':
-        return 'Successfully Deposited!';
-
+        return 'Failed to deposit';
       case 'Withdraw':
-        return 'Successfully Withdrawn!';
+        return 'Failed to withdraw';
     }
   }, [method]);
   return (
     <>
       <span
-        className={'inline-block pr-2 text-inherit'}
+        className={'inline-block pr-2 text-inherit darK:text-inherit'}
         style={{
           fontSize: 18,
         }}
       >
-        ⚠️
+        <AlertFill />
       </span>
       {message} &nbsp;
       <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
@@ -306,23 +316,22 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
   onDetails,
   onDismiss,
 }) => {
-  const textClass = useMemo(
-    () => `py-0 align-middle ${hasWarning ? 'text-yellow-100 dark:text-yellow-50' : 'text-mono-100'}`,
-    [hasWarning]
+  const textClass = cx(
+    'py-0 align-middle',
+    { 'text-yellow-100 dark:text-yellow-50': hasWarning },
+    { 'text-mono-100': !hasWarning }
   );
-  const wrapperClasses = useMemo(() => {
-    const classes = hasWarning
-      ? `my-0 p-4 flex items-center bg-yellow-70 border-t-2 border-yellow-90 dark:bg-yellow-120`
-      : 'my-0 flex items-center p-4';
-    return twMerge(classes);
-  }, [hasWarning]);
 
   const showDetails = Boolean(onDetails) && isLoading;
   const buttonHandler = useCallback(() => {
     return showDetails ? onDetails?.() : onDismiss();
   }, [showDetails]);
   return (
-    <div className={wrapperClasses}>
+    <div
+      className={cx('my-0 flex items-center p-4', {
+        'bg-yellow-70 border-t-2 border-yellow-90 dark:bg-yellow-120': hasWarning,
+      })}
+    >
       <div className='flex items-center'>
         {isLoading && !hasWarning && (
           <div className='pr-2'>
@@ -331,7 +340,7 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
         )}
 
         {message && !link && (
-          <Typography variant={'body4'} fw={'bold'} className={textClass}>
+          <Typography variant={'body4'} fw={'bold'} className={twMerge(textClass, 'flex items-center')}>
             {message}
           </Typography>
         )}
@@ -415,7 +424,10 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
             ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
             : isErrored
             ? { uri: txURI, text: <FailedFooter uri={txURI} method={tx.method} /> }
+            : tx.txStatus.message
+            ? undefined
             : { uri: recipientURI, text: recipientFooter },
+          message: tx.txStatus.message,
         },
         label: {
           amount: tx.amount,
@@ -432,22 +444,61 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
     });
   }, [transactions]);
 
+  const transactionsCountSummery = useMemo(() => {
+    const processingCount = transactions.filter((tx) => tx.txStatus.status === 'in-progress').length;
+    const failedCount = transactions.filter((tx) => tx.txStatus.status === 'warning').length;
+    const completedCount = transactions.filter((tx) => tx.txStatus.status === 'completed').length;
+
+    return {
+      processingCount,
+      failedCount,
+      completedCount,
+    };
+  }, [transactions]);
+
+  const transactionsSummeryIcon = useMemo(() => {
+    const { completedCount, failedCount, processingCount } = transactionsCountSummery;
+    if (failedCount > 0) {
+      return <AlertFill size={'md'} />;
+    }
+    if (processingCount > 0) {
+      return <Spinner size={'md'} />;
+    }
+    if (completedCount > 0) {
+      return <PartyFill size={'md'} />;
+    }
+  }, [transactionsCountSummery]);
+  const transactionSummeryText = useMemo(() => {
+    const { completedCount, failedCount, processingCount } = transactionsCountSummery;
+    let message = '';
+    if (processingCount) {
+      message = message + `${processingCount} transaction${processingCount > 1 ? 's' : ''} in progress`;
+    }
+
+    if (failedCount) {
+      message = message + ` ,${failedCount} transaction${failedCount > 1 ? 's' : ''} failed`;
+    }
+
+    if (completedCount) {
+      message = message + ` ,${completedCount} transaction${completedCount > 1 ? 's' : ''} completed`;
+    }
+    return message;
+  }, [transactionsCountSummery]);
+
   return (
     <div
       className={`rounded-lg shadow-xl  overflow-hidden
             flex flex-col  max-w-[295px] dark:bg-mono-160`}
     >
       <div className='flex row items-center    p-3'>
-        <div className={'pr-4'}>
-          <Spinner width={18} height={18} />
-        </div>
+        <div className={'pr-4'}>{transactionsSummeryIcon}</div>
 
         <div className={'grow'}>
           <Typography variant={'body2'} fw={'bold'} className={' text-mono-180 dark:text-mono'}>
             Transaction Processing
           </Typography>
-          <Typography variant={'body4'} className={'text-mono-120 dark:text-mono-80'}>
-            {transactions.length} transaction in progress
+          <Typography variant={'body4'} className={'text-mono-120 dark:text-mono-80 pr-1'}>
+            {transactionSummeryText}
           </Typography>
         </div>
         <b>
@@ -509,7 +560,7 @@ export const dummyTransactions: TransactionPayload[] = [
     },
     tokens: ['USDT', 'ETH'],
     token: 'ETH',
-    amount: '0.999',
+    amount: '0.9995',
     id: '123fA',
     wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
     timestamp: new Date(),
