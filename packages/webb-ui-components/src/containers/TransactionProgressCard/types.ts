@@ -44,7 +44,7 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
   onDetails?(): void;
   onSyncNote?(): void;
 }
-interface TransactionPayload {
+export interface TransactionPayload {
   id: string;
   method: TransactionItemVariant;
   timestamp: Date;

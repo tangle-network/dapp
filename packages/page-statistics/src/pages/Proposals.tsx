@@ -13,6 +13,7 @@ import {
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
 import {
+  dummyTransactions,
   TransactionProgressCard,
   TransactionQueue,
 } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
@@ -176,82 +177,7 @@ const Proposals = () => {
 
   return (
     <div className='flex flex-col space-y-4'>
-      <TransactionQueue onCollapseChange={() => {}} collapsed={false}>
-        <TransactionProgressCard
-          method={'Transfer'}
-          firedAt={new Date()}
-          status={'in-progress'}
-          tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
-          wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-          label={{
-            tokenURI: 'https://polygon.technology/',
-            amount: '0.999',
-            token: 'ETH/WETH',
-          }}
-          onDismiss={() => {}}
-          footer={{
-            isLoading: false,
-            message: (
-              <>
-                <span className={'inline-block pr-2'}>🎉</span>Successfully Transferred!
-              </>
-            ),
-          }}
-          onDetails={() => {}}
-        />
-        <TransactionProgressCard
-          method={'Withdraw'}
-          firedAt={new Date()}
-          status={'in-progress'}
-          onSyncNote={() => {}}
-          tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
-          wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
-          label={{
-            amount: '0.999',
-            nativeValue: '1430',
-          }}
-          onDismiss={() => {}}
-          footer={{
-            isLoading: true,
-            message: 'Generating ZK  proofs..',
-          }}
-          onDetails={() => {}}
-        />
-        <TransactionProgressCard
-          method={'Deposit'}
-          firedAt={new Date()}
-          status={'in-progress'}
-          tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
-          wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-          label={{
-            tokenURI: 'https://polygon.technology/',
-            amount: '0.999',
-            token: 'ETH/WEBB',
-          }}
-          onDismiss={() => {}}
-          footer={{
-            isLoading: false,
-            hasWarning: true,
-            link: {
-              uri: '#',
-              text: (
-                <>
-                  <span
-                    className={'inline-block pr-2'}
-                    style={{
-                      fontSize: 18,
-                    }}
-                  >
-                    ⚠️
-                  </span>
-                  Deposit Failed
-                </>
-              ),
-            },
-          }}
-          onDetails={() => {}}
-        />
-      </TransactionQueue>
+      <TransactionQueue onCollapseChange={() => {}} collapsed={false} transactions={dummyTransactions} />
       {/** Proposals Status */}
       <Card>
         <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />

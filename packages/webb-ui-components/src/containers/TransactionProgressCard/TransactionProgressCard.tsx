@@ -8,11 +8,14 @@ import {
   BridgeLabel,
   NativeLabel,
   TransactionCardItemProps,
+  TransactionPayload,
   TransactionProgressCardProps,
   TXCardFooterProps,
 } from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
-import { timestamp } from 'rxjs';
+import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
+import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
+import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
@@ -25,18 +28,18 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  * @example Transfer transaction card when the transaction is done
  *  ```jsx
  *  <TransactionProgressCard
-       method={'Transfer'}
-       firedAt={new Date()}
-       status={'in-progress'}
-       tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
-       wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-       label={{
+ method={'Transfer'}
+ firedAt={new Date()}
+ status={'in-progress'}
+ tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
+ wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+ label={{
                   tokenURI: 'https://polygon.technology/',
                   amount: '0.999',
                   token: 'ETH/WETH',
                 }}
-       onDismiss={() => {}}
-       footer={{
+ onDismiss={() => {}}
+ footer={{
                   isLoading: false,
                   message: (
                     <>
@@ -44,48 +47,48 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
                     </>
                   ),
                 }}
-       onDetails={() => {}}
-      />
+ onDetails={() => {}}
+ />
  *  ```
  *  @example Withdraw transaction card when generating the zero knowledge proof
  *
  *  ```jsx
  *  <TransactionProgressCard
-       method={'Withdraw'}
-       firedAt={new Date()}
-       status={'in-progress'}
-       syncNote={() => {}}
-       tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
-       wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
-       label={{
+ method={'Withdraw'}
+ firedAt={new Date()}
+ status={'in-progress'}
+ syncNote={() => {}}
+ tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
+ wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
+ label={{
                   amount: '0.999',
                   nativeValue: '1430',
                 }}
-       onDismiss={() => {}}
-       footer={{
+ onDismiss={() => {}}
+ footer={{
                   isLoading: true,
                   message: 'Generating ZK  proofs..',
                 }}
-       onDetails={() => {}}
-       />
+ onDetails={() => {}}
+ />
  *  ```
  *
  *  @example Deposit transaction card when the transction has failed
  *
  *   ```jsx
  *   <TransactionProgressCard
-         method={'Deposit'}
-         firedAt={new Date()}
-         status={'in-progress'}
-         tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
-         wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
-         label={{
+ method={'Deposit'}
+ firedAt={new Date()}
+ status={'in-progress'}
+ tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
+ wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+ label={{
                     tokenURI: 'https://polygon.technology/',
                     amount: '0.999',
                     token: 'ETH/WEBB',
                   }}
-         onDismiss={() => {}}
-         footer={{
+ onDismiss={() => {}}
+ footer={{
                     isLoading: false,
                     hasWarning: true,
                     link: {
@@ -105,15 +108,15 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
                       ),
                     },
                   }}
-         onDetails={() => {}}
-         />
+ onDetails={() => {}}
+ />
  *   ```
  *
  *
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
   ({ className, label, tokens, onSyncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
-    const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
+    const labelVariant = useMemo<Variant>(() => ((label as NativeLabel).nativeValue ? 'native' : 'bridge'), [label]);
     const [open, setOpen] = useState(true);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
       switch (method) {
@@ -278,7 +281,7 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
           </div>
         )}
 
-        {message && (
+        {message && !link && (
           <Typography variant={'body4'} fw={'bold'} className={textClass}>
             {message}
           </Typography>
@@ -364,6 +367,38 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
           errorMessage = 'Failed to withdraw!';
           break;
       }
+
+      const completedFooter = (
+        <>
+          <span className={'inline-block pr-2'}>🎉</span>
+          {compMess}
+        </>
+      );
+
+      const failedFooter = (
+        <>
+          <span
+            className={'inline-block pr-2'}
+            style={{
+              fontSize: 18,
+            }}
+          >
+            ⚠️
+          </span>
+          {errorMessage}
+          <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+        </>
+      );
+      const recipientFooter = tx.txStatus.recipient ? (
+        <>
+          Recipient: {shortenHex(tx.txStatus.recipient)}{' '}
+          <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+        </>
+      ) : (
+        ''
+      );
+      const txURI = tx.getExplorerURI?.(tx.txStatus.THash ?? '', 'tx') ?? '#';
+      const recipientURI = tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
       return {
         id: tx.id,
         method: tx.method,
@@ -373,26 +408,11 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
         footer: {
           isLoading,
           hasWarning: isErrored,
-          message: isCompleted ? (
-            <>
-              <span className={'inline-block pr-2'}>🎉</span>
-              {compMess}
-            </>
-          ) : isErrored ? (
-            <>
-              <span
-                className={'inline-block pr-2'}
-                style={{
-                  fontSize: 18,
-                }}
-              >
-                ⚠️
-              </span>
-              {errorMessage}
-            </>
-          ) : (
-            tx.txStatus.message!
-          ),
+          link: isCompleted
+            ? { uri: txURI, text: completedFooter }
+            : isErrored
+            ? { uri: txURI, text: failedFooter }
+            : { uri: recipientURI, text: recipientFooter },
         },
         label: {
           amount: tx.amount,
@@ -453,3 +473,69 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
     </div>
   );
 };
+
+export const dummyTransactions: TransactionPayload[] = [
+  {
+    method: 'Withdraw',
+    txStatus: {
+      status: 'in-progress',
+      message: 'Generating ZK  proofs..',
+      recipient: '0xasdfj2r3092430u',
+      THash: '0xasdfj2r3092430u',
+    },
+    tokens: ['ETH', 'WEBB'],
+    token: 'ETH',
+    amount: '0.999',
+    id: '123f',
+    wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+    timestamp: new Date(),
+    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+      return '#';
+    },
+    nativeValue: '1230',
+    onDetails: () => {},
+    onDismiss: () => {},
+    onSyncNote: () => {},
+  },
+  {
+    method: 'Withdraw',
+    txStatus: {
+      status: 'warning',
+      message: 'Generating ZK  proofs..',
+      recipient: '0xasdfj2r3092430u',
+      THash: '0xasdfj2r3092430u',
+    },
+    tokens: ['ETH', 'WEBB'],
+    token: 'ETH',
+    amount: '0.999',
+    id: '123f2',
+    wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+    timestamp: new Date(),
+    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+      return '#';
+    },
+    nativeValue: '1230',
+    onDetails: () => {},
+    onDismiss: () => {},
+  },
+  {
+    method: 'Transfer',
+    txStatus: {
+      status: 'in-progress',
+      recipient: '0xasdfj2r3092430u',
+      THash: '0xasdfj2r3092430u',
+    },
+    tokens: ['ETH', 'WEBB'],
+    token: 'ETH',
+    amount: '0.999',
+    id: '123f2',
+    wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+    timestamp: new Date(),
+    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+      return '#';
+    },
+    nativeValue: '1230',
+    onDetails: () => {},
+    onDismiss: () => {},
+  },
+];
