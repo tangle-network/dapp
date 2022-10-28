@@ -40,3 +40,4 @@ export * from './TokenSelector';
 export * from './TokensRing';
 export * from './TokenWithAmount';
 export * from './Tooltip';
+export * from './Disclaimer';

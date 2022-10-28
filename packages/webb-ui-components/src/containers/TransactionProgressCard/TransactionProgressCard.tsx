@@ -1,34 +1,15 @@
-import { Button, Chip } from '@webb-dapp/webb-ui-components';
-import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import {
-  Alert,
-  ArrowRight,
-  ChevronUp,
-  ExternalLinkLine,
-  Spinner,
-  TokenIcon,
-} from '@webb-dapp/webb-ui-components/icons';
-import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import React, { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Chip, Disclaimer, ChipColors } from '../../components';
+import { ArrowRight, ExternalLinkLine } from '../../icons';
+import { Typography } from '../../typography';
+import React, { forwardRef, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  BridgeLabel,
-  NativeLabel,
-  TransactionCardItemProps,
-  TransactionItemVariant,
-  TransactionPayload,
-  TransactionProgressCardProps,
-  TXCardFooterProps,
-} from './types';
-import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
+import { BridgeLabel, NativeLabel, TransactionCardItemProps, TransactionPayload } from './types';
 import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
 import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
-import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
-import cx from 'classnames';
-import { AlertFill } from '@webb-dapp/webb-ui-components/icons/AlertFill';
-import { PartyFill } from '@webb-dapp/webb-ui-components/icons/PartyFill';
 import success from './success-tx.json';
 import Lottie from 'lottie-react';
+import { TransactionCardFooter } from './TransactionCardFooter';
+
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
 
@@ -157,11 +138,13 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         {...props}
         ref={ref}
       >
+        {/*Show the animation for the completed transactions*/}
         {status === 'completed' && (
           <div className={`dark:bg-mono-160 absolute inset-0 h-full w-full z-0`}>
             <Lottie animationData={success} />
           </div>
         )}
+        {/*Main card content*/}
         <div className='flex flex-col relative z-1'>
           {/*Card Header*/}
           <div className={twMerge('my-0 flex items-center', sectionPadding)}>
@@ -213,8 +196,9 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
               </div>
             </div>
           </div>
-          {/*Card Info or Disclaimer*/}
         </div>
+
+        {/*Card Info or Disclaimer*/}
         {hasSyncNote && (
           <div className={sectionPadding}>
             <Disclaimer
@@ -225,318 +209,12 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
         )}
         {/*Card Footer*/}
         <div className='flex flex-col relative z-1'>
-          <TXCardFooter {...props.footer} onDismiss={onDismiss} onDetails={onDetails} />
+          <TransactionCardFooter {...props.footer} onDismiss={onDismiss} onDetails={onDetails} />
         </div>
       </div>
     );
   }
 );
-const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => {
-  const message = useMemo(() => {
-    switch (method) {
-      case 'Transfer':
-        return 'Successfully Transferred!';
-      case 'Deposit':
-        return 'Successfully Deposited!';
-      case 'Withdraw':
-        return 'Successfully Withdrawn!';
-    }
-  }, [method]);
-  return (
-    <>
-      <div className={'pr-2'}>
-        <PartyFill maxWidth={18} />
-      </div>
-      <span className={'text-inherit dark:text-inherit'}>{message}</span>
-    </>
-  );
-};
-
-const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri, method }) => {
-  const message = useMemo(() => {
-    switch (method) {
-      case 'Transfer':
-        return 'Failed to  transfer!';
-      case 'Deposit':
-        return 'Failed to deposit';
-      case 'Withdraw':
-        return 'Failed to withdraw';
-    }
-  }, [method]);
-  return (
-    <>
-      <span className={'inline-block pr-2'}>
-        <AlertFill maxWidth={16} />
-      </span>
-      <span className={'text-inherit dark:text-inherit'}>{message} &nbsp;</span>
-      <ExternalLinkLine
-        width={12}
-        height={12}
-        className='text-inherit dark:text-inherit !fill-current inline whitespace-nowrap'
-      />
-    </>
-  );
-};
-
-/**
- *  Transaction card footer
- *  @description An internal component that is used for the `TransactionProcessingCard`
- *
- *  @example Footer for success Transfer Transaction
- *  ```jsx
- *  <TxCardFooter
- *   isLoading={false}
- *   message={ (
-              <>
-                <span className={'inline-block pr-2'}>🎉</span>Successfully Transfer!
-              </>
-            )}
- onDetails={() =>{
-        window.open(...)
-      }
- *  />
- *  ```
- *  @example Footer for failed transaction
- *  <TxCardFooter
- *    hasWarning
- *    link= {{
-              uri: '#',
-              text: (
-                <>
-                  <span
-                    className={'inline-block pr-2'}
-                    style={{
-                      fontSize: 18,
-                    }}
-                  >
-                    ⚠️
-                  </span>
-                  Deposit Failed
-                </>
-              ),
-            }}
- />
- *
- * */
-const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDismiss' | 'onDetails'>> = ({
-  isLoading,
-  message,
-  link,
-  hasWarning,
-  onDetails,
-  onDismiss,
-}) => {
-  const textClass = cx(
-    'py-0 align-middle',
-    { 'text-yellow-100 dark:text-yellow-50': hasWarning },
-    { 'text-mono-100': !hasWarning }
-  );
-
-  const showDetails = Boolean(onDetails) && (isLoading || hasWarning);
-  const buttonHandler = useCallback(() => {
-    return showDetails ? onDetails?.() : onDismiss();
-  }, [showDetails]);
-  return (
-    <div
-      className={cx('my-0 flex items-center p-4', {
-        'bg-yellow-10 border-t-2 border-yellow-90 dark:bg-yellow-120': hasWarning,
-      })}
-    >
-      <div className='flex items-center'>
-        {isLoading && !hasWarning && (
-          <div className='pr-2'>
-            <Spinner />
-          </div>
-        )}
-
-        {message && !link && (
-          <Typography variant={'body4'} fw={'bold'} className={twMerge(textClass, 'flex items-center')}>
-            {message}
-          </Typography>
-        )}
-        {link && (
-          <Typography variant={'body4'} fw={'bold'} className={twMerge(textClass, 'flex items-center')}>
-            {link.text}
-          </Typography>
-        )}
-      </div>
-      <div className={'flex grow justify-end'}>
-        <Button onClick={buttonHandler} variant={'link'} size={'sm'} className={hasWarning ? textClass : undefined}>
-          {showDetails ? 'DETAILS' : 'DISMISS'}
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-/**
- * Transaction Queue
- * @description The wrapper component for the transaction processing card
- *
- * @example
- *
- * ```jsx
- *  <TransactionQueue  collapsed={collapsed} onCollapseChange={c => setCollapsed(c)}
- *   transactions={transactionsList}
- *  />
- * ```
- *
- * */
-export const TransactionQueue: FC<TransactionProgressCardProps> = ({
-  collapsed,
-  transactions,
-  onCollapseChange,
-  children,
-}) => {
-  const [open, setOpen] = useState(!collapsed);
-  // Sync the state of open to the parent component
-  useEffect(() => {
-    if (collapsed !== open) {
-      return;
-    }
-    setOpen(collapsed);
-  }, [collapsed]);
-
-  // if the component is controlled change the parent state
-  const handleCollapsed = useCallback(() => {
-    if (onCollapseChange) {
-      onCollapseChange?.(!open);
-    } else {
-      setOpen(!open);
-    }
-  }, [onCollapseChange, setOpen, open]);
-
-  const txCardProps = useMemo(() => {
-    return transactions.map((tx): TransactionCardItemProps & { id: string } => {
-      const isLoading = tx.txStatus.status === 'in-progress';
-      const isErrored = tx.txStatus.status === 'warning';
-      const isCompleted = tx.txStatus.status === 'completed';
-      const recipientFooter = tx.txStatus.recipient ? (
-        <>
-          Recipient: {shortenHex(tx.txStatus.recipient)}{' '}
-          <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
-        </>
-      ) : (
-        ''
-      );
-      const txURI = tx.getExplorerURI?.(tx.txStatus.THash ?? '', 'tx') ?? '#';
-      const recipientURI = tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
-      return {
-        id: tx.id,
-        method: tx.method,
-        wallets: tx.wallets,
-        firedAt: tx.timestamp,
-        status: tx.txStatus.status,
-        footer: {
-          isLoading,
-          hasWarning: isErrored,
-          link: isCompleted
-            ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
-            : isErrored
-            ? { uri: txURI, text: <FailedFooter uri={txURI} method={tx.method} /> }
-            : tx.txStatus.message
-            ? undefined
-            : { uri: recipientURI, text: recipientFooter },
-          message: tx.txStatus.message,
-        },
-        label: {
-          amount: tx.amount,
-          token: tx.token,
-          tokenURI: '#',
-          nativeValue: tx.nativeValue,
-        },
-        tokens: tx.tokens.map((t) => <TokenIcon key={`${tx.id}-${t}-${tx.method}`} size={'lg'} name={t} />),
-
-        onDismiss: tx.onDismiss,
-        onSyncNote: tx.onSyncNote,
-        onDetails: tx.onDetails,
-      };
-    });
-  }, [transactions]);
-
-  const transactionsCountSummery = useMemo(() => {
-    const processingCount = transactions.filter((tx) => tx.txStatus.status === 'in-progress').length;
-    const failedCount = transactions.filter((tx) => tx.txStatus.status === 'warning').length;
-    const completedCount = transactions.filter((tx) => tx.txStatus.status === 'completed').length;
-
-    return {
-      processingCount,
-      failedCount,
-      completedCount,
-    };
-  }, [transactions]);
-
-  const transactionsSummeryIcon = useMemo(() => {
-    const { completedCount, failedCount, processingCount } = transactionsCountSummery;
-    if (failedCount > 0) {
-      return <AlertFill maxWidth={18} />;
-    }
-    if (processingCount > 0) {
-      return <Spinner width={18} />;
-    }
-    if (completedCount > 0) {
-      return <PartyFill maxWidth={18} />;
-    }
-  }, [transactionsCountSummery]);
-  const transactionSummeryText = useMemo(() => {
-    const { completedCount, failedCount, processingCount } = transactionsCountSummery;
-    let message = '';
-    if (processingCount) {
-      message = message + `${processingCount} transaction${processingCount > 1 ? 's' : ''} in progress`;
-    }
-
-    if (failedCount) {
-      message = message + ` ,${failedCount} transaction${failedCount > 1 ? 's' : ''} failed`;
-    }
-
-    if (completedCount) {
-      message = message + ` ,${completedCount} transaction${completedCount > 1 ? 's' : ''} completed`;
-    }
-    return message;
-  }, [transactionsCountSummery]);
-
-  return (
-    <div
-      className={`rounded-lg shadow-xl  overflow-hidden
-            flex flex-col  max-w-[295px] dark:bg-mono-160`}
-    >
-      <div className='flex row items-center    p-3'>
-        <div className={'pr-4'}>{transactionsSummeryIcon}</div>
-
-        <div className={'grow'}>
-          <Typography variant={'body2'} fw={'bold'} className={' text-mono-180 dark:text-mono'}>
-            Transaction Processing
-          </Typography>
-          <Typography variant={'body4'} className={'text-mono-120 dark:text-mono-80 pr-1'}>
-            {transactionSummeryText}
-          </Typography>
-        </div>
-        <b>
-          <div
-            style={{
-              transition: 'transform .33s ease',
-              transform: open ? 'rotate(180deg)' : 'rotate(0)',
-            }}
-            role={'button'}
-            className={'w-4 h-4'}
-            onClick={handleCollapsed}
-          >
-            <ChevronUp />
-          </div>
-        </b>
-      </div>
-      <div className={'max-h-96 overflow-auto'}>
-        {open && (
-          <>
-            {txCardProps.map(({ id, ...props }) => (
-              <TransactionProgressCard key={id} {...props} />
-            ))}
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export const dummyTransactions: TransactionPayload[] = [
   {
