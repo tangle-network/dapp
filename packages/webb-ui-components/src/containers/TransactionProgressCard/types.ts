@@ -21,13 +21,7 @@ export type NativeLabel = {
   amount: string;
   nativeValue: string;
 };
-type StepInfo =
-  | string
-  | {
-      label: string;
-      value: string;
-      uri: string;
-    };
+
 /**
  * Transaction item
  * @param method - Transaction method
@@ -38,10 +32,8 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
   method: TransactionItemVariant;
   firedAt: Date;
   note?: string;
-  stepInfo?: StepInfo;
   status: TransactionItemStatus;
   tokens: Array<JSX.Element>;
-  headerAction?: JSX.Element;
   wallets: {
     src: JSX.Element;
     dist: JSX.Element;
@@ -50,11 +42,36 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
   footer: TXCardFooterProps;
   onDismiss(): void;
   onDetails?(): void;
-  syncNote?(): void;
+  onSyncNote?(): void;
 }
+interface TransactionPayload {
+  id: string;
+  method: TransactionItemVariant;
+  timestamp: Date;
+  txStatus: {
+    THash?: string;
+    recipient?: string;
+    status: TransactionItemStatus;
+    message?: string;
+  };
+  tokens: string[];
+  wallets: {
+    src: JSX.Element;
+    dist: JSX.Element;
+  };
+  amount: string;
+  token: string;
 
+  nativeValue?: string;
+
+  getExplorerURI?(addOrTxHash: string, variant: 'tx' | 'address'): string;
+
+  onDismiss(): void;
+  onDetails?(): void;
+  onSyncNote?(): void;
+}
 export type TransactionProgressCardProps = {
-  transactions: TransactionCardItemProps[];
+  transactions: TransactionPayload[];
   collapsed?: boolean;
   onCollapseChange?(collapsed: boolean): void;
 };

@@ -193,7 +193,7 @@ const Proposals = () => {
             isLoading: false,
             message: (
               <>
-                <span className={'inline-block pr-2'}>🎉</span>Successfully Transfer!
+                <span className={'inline-block pr-2'}>🎉</span>Successfully Transferred!
               </>
             ),
           }}
@@ -203,7 +203,7 @@ const Proposals = () => {
           method={'Withdraw'}
           firedAt={new Date()}
           status={'in-progress'}
-          syncNote={() => {}}
+          onSyncNote={() => {}}
           tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
           wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
           label={{

@@ -1,8 +1,8 @@
 import { Button, Chip } from '@webb-dapp/webb-ui-components';
 import { Disclaimer } from '@webb-dapp/webb-ui-components/components/Disclaimer/Disclaimer';
-import { ArrowRight, ChevronUp, ExternalLinkLine, Spinner } from '@webb-dapp/webb-ui-components/icons';
+import { ArrowRight, ChevronUp, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import {
   BridgeLabel,
@@ -12,6 +12,7 @@ import {
   TXCardFooterProps,
 } from './types';
 import { ChipColors } from '@webb-dapp/webb-ui-components/components/Chip/types';
+import { timestamp } from 'rxjs';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
@@ -111,7 +112,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  *
  * */
 export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCardItemProps>(
-  ({ className, label, tokens, syncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
+  ({ className, label, tokens, onSyncNote, method, wallets, onDismiss, onDetails, ...props }, ref) => {
     const labelVariant = useMemo<Variant>(() => ((label as BridgeLabel).tokenURI ? 'bridge' : 'native'), [label]);
     const [open, setOpen] = useState(true);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
@@ -127,7 +128,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     }, [method]);
 
     const hasSyncNote = useMemo(() => {
-      return method === 'Withdraw' && Boolean(syncNote);
+      return method === 'Withdraw' && Boolean(onSyncNote);
     }, [method]);
 
     return (
@@ -175,7 +176,7 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
           </div>
           <div className={'h-full self-start  flex items-end grow  flex flex-col '}>
             {hasSyncNote && (
-              <Button variant={'link'} size={'sm'} onClick={syncNote}>
+              <Button variant={'link'} size={'sm'} onClick={onSyncNote}>
                 SYNC NOTE
               </Button>
             )}
@@ -310,7 +311,12 @@ const TXCardFooter: FC<TXCardFooterProps & Pick<TransactionCardItemProps, 'onDis
  * ```
  *
  * */
-export const TransactionQueue: FC<TransactionProgressCardProps> = ({ collapsed, onCollapseChange, children }) => {
+export const TransactionQueue: FC<TransactionProgressCardProps> = ({
+  collapsed,
+  transactions,
+  onCollapseChange,
+  children,
+}) => {
   const [open, setOpen] = useState(!collapsed);
   // Sync the state of open to the parent component
   useEffect(() => {
@@ -328,6 +334,81 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({ collapsed, 
       setOpen(!open);
     }
   }, [onCollapseChange, setOpen, open]);
+
+  const txCardProps = useMemo(() => {
+    return transactions.map((tx): TransactionCardItemProps & { id: string } => {
+      const isLoading = tx.txStatus.status === 'in-progress';
+      const isErrored = tx.txStatus.status === 'warning';
+      const isCompleted = tx.txStatus.status === 'completed';
+      let compMess = '';
+      let errorMessage = '';
+      switch (tx.method) {
+        case 'Transfer':
+          compMess = 'Successfully Transferred!';
+          break;
+        case 'Deposit':
+          compMess = 'Successfully Deposited!';
+          break;
+        case 'Withdraw':
+          compMess = 'Successfully Withdrawn!';
+          break;
+      }
+      switch (tx.method) {
+        case 'Transfer':
+          errorMessage = 'Failed to transfer!';
+          break;
+        case 'Deposit':
+          errorMessage = 'Failed to deposit!';
+          break;
+        case 'Withdraw':
+          errorMessage = 'Failed to withdraw!';
+          break;
+      }
+      return {
+        id: tx.id,
+        method: tx.method,
+        wallets: tx.wallets,
+        firedAt: tx.timestamp,
+        status: tx.txStatus.status,
+        footer: {
+          isLoading,
+          hasWarning: isErrored,
+          message: isCompleted ? (
+            <>
+              <span className={'inline-block pr-2'}>🎉</span>
+              {compMess}
+            </>
+          ) : isErrored ? (
+            <>
+              <span
+                className={'inline-block pr-2'}
+                style={{
+                  fontSize: 18,
+                }}
+              >
+                ⚠️
+              </span>
+              {errorMessage}
+            </>
+          ) : (
+            tx.txStatus.message!
+          ),
+        },
+        label: {
+          amount: tx.amount,
+          token: tx.token,
+          tokenURI: '#',
+          nativeValue: tx.nativeValue,
+        },
+        tokens: tx.tokens.map((t) => <TokenIcon key={`${tx.id}-${t}-${tx.method}`} size={'lg'} name={t} />),
+
+        onDismiss: tx.onDismiss,
+        onSyncNote: tx.onSyncNote,
+        onDetails: tx.onDetails,
+      };
+    });
+  }, [transactions]);
+
   return (
     <div
       className={`rounded-lg shadow-xl  overflow-hidden
@@ -360,7 +441,15 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({ collapsed, 
           </div>
         </b>
       </div>
-      <div className={'max-h-96 overflow-auto'}>{open && children}</div>
+      <div className={'max-h-96 overflow-auto'}>
+        {open && (
+          <>
+            {txCardProps.map(({ id, ...props }) => (
+              <TransactionProgressCard key={id} {...props} />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };
