@@ -1,1 +1,0 @@
-export * from './TextWrapper.styled';

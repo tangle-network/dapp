@@ -1,0 +1,9 @@
+{
+  "name": "@webb-tools/polkadot-api-provider",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@webb-tools/dapp-types": "0.0.1",
+    "@webb-tools/react-environment": "0.0.1"
+  }
+}

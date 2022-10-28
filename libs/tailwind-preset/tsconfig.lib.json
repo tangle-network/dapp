@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../../dist/libs/tailwind-preset",
+    "declarationDir": "../../dist/libs/tailwind-preset",
+    "declaration": true,
+    "sourceMap": false,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts", "index.js"]
+}
