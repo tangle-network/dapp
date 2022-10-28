@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 

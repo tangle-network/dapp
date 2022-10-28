@@ -92,6 +92,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   ) {
     // eslint-disable-next-line no-async-promise-executor
     const wsProvider = await new Promise<WsProvider>(
+      // eslint-disable-next-line no-async-promise-executor
       async (resolve, reject) => {
         let wsProvider: WsProvider;
         let tryNumber = 0;

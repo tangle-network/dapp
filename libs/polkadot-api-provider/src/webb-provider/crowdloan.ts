@@ -29,10 +29,10 @@ export class PolkadotCrowdloan extends Crowdloan<
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
     // @ts-ignore
-    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(
+    const fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(
       parachainId
     );
-    let fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
+    const fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {
       raised: BigInt(fundInfoJSON.raised?.toString() || 0),

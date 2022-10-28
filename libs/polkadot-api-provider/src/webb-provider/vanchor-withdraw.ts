@@ -81,7 +81,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     }
     const accountId = account.address;
     const relayerAccountId = activeRelayer
-      ? activeRelayerAccount!
+      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        activeRelayerAccount!
       : account.address;
     const recipientAccountDecoded = decodeAddress(recipient);
     const relayerAccountDecoded = decodeAddress(relayerAccountId);

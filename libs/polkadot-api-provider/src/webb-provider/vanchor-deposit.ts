@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
@@ -264,6 +265,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
       let tx;
       if (wrapAndDepositFlow) {
         const governedToken =
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           this.inner.methods.bridgeApi.getBridge()?.currency!;
         const chainId = this.inner.typedChainId;
         const wrappableAssets =
