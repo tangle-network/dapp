@@ -108,7 +108,7 @@ export const TransactionQueue: FC<TransactionQueueProps> = ({
       ) : (
         ''
       );
-      const txURI = tx.getExplorerURI?.(tx.txStatus.THash ?? '', 'tx') ?? '#';
+      const txURI = tx.getExplorerURI?.(tx.txStatus.txHash ?? '', 'tx') ?? '#';
       const recipientURI = tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
       return {
         id: tx.id,
