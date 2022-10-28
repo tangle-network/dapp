@@ -22,8 +22,8 @@ export const logoConfig: Link = {
 };
 
 export const webbApiConfig: ExternalLink = {
-  name: 'Webb App',
-  href: 'https://app.webb.tools',
+  name: 'Tangle Explorer',
+  href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
   ...commonExternalProps,
 };
 
@@ -46,14 +46,14 @@ export const footerNavs: FooterNavsType = {
   dapp: [
     {
       name: 'bridge',
-      href: 'https://app.webb.tools/#/bridge',
+      href: 'https://docs.webb.tools/v1/applications/asset-protocol/',
       ...commonExternalProps,
     },
-    {
-      name: 'wrap',
-      href: 'https://app.webb.tools/#/wrap-unwrap',
-      ...commonExternalProps,
-    },
+    // {
+    //   name: 'wrap',
+    //   href: 'https://app.webb.tools/#/wrap-unwrap',
+    //   ...commonExternalProps,
+    // },
   ],
   network: [
     {
@@ -63,7 +63,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'tangle',
-      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fstandalone.webb.tools#/explorer',
+      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
       ...commonExternalProps,
     },
   ],
