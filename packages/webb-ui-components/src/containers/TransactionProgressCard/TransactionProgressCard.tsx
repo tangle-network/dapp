@@ -232,12 +232,12 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => 
     }
   }, [method]);
   return (
-    <div className={'flex items-center'}>
+    <>
       <div className={'pr-2'}>
-        <PartyFill />
+        <PartyFill maxWidth={18} />
       </div>
-      <div>{message}</div>
-    </div>
+      <span className={'text-inherit dark:text-inherit'}>{message}</span>
+    </>
   );
 };
 
@@ -254,16 +254,15 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
   }, [method]);
   return (
     <>
-      <span
-        className={'inline-block pr-2 text-inherit darK:text-inherit'}
-        style={{
-          fontSize: 18,
-        }}
-      >
-        <AlertFill />
+      <span className={'inline-block pr-2'}>
+        <AlertFill maxWidth={16} />
       </span>
-      {message} &nbsp;
-      <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
+      <span className={'text-inherit dark:text-inherit'}>{message} &nbsp;</span>
+      <ExternalLinkLine
+        width={12}
+        height={12}
+        className='text-inherit dark:text-inherit !fill-current inline whitespace-nowrap'
+      />
     </>
   );
 };
@@ -459,13 +458,13 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
   const transactionsSummeryIcon = useMemo(() => {
     const { completedCount, failedCount, processingCount } = transactionsCountSummery;
     if (failedCount > 0) {
-      return <AlertFill size={'md'} />;
+      return <AlertFill maxWidth={18} />;
     }
     if (processingCount > 0) {
-      return <Spinner size={'md'} />;
+      return <Spinner width={18} />;
     }
     if (completedCount > 0) {
-      return <PartyFill size={'md'} />;
+      return <PartyFill maxWidth={18} />;
     }
   }, [transactionsCountSummery]);
   const transactionSummeryText = useMemo(() => {
