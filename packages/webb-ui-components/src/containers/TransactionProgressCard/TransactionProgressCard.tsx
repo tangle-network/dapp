@@ -174,7 +174,8 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
               </Typography>
             ) : (
               <Typography variant={'body4'} fw={'bold'} className='py-0 text-mono-200'>
-                {(label as BridgeLabel).token} <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+                {(label as BridgeLabel).token}{' '}
+                <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
               </Typography>
             )}
           </div>
@@ -213,13 +214,11 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => 
   const message = useMemo(() => {
     switch (method) {
       case 'Transfer':
-        return 'Failed to transfer!';
-
+        return 'Successfully Transferred!';
       case 'Deposit':
-        return 'Failed to deposit!';
-
+        return 'Successfully Deposited!';
       case 'Withdraw':
-        return 'Failed to withdraw!';
+        return 'Successfully Withdrawn!';
     }
   }, [method]);
   return (
@@ -254,7 +253,7 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
         ⚠️
       </span>
       {message} &nbsp;
-      <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+      <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
     </>
   );
 };
@@ -396,7 +395,7 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
       const recipientFooter = tx.txStatus.recipient ? (
         <>
           Recipient: {shortenHex(tx.txStatus.recipient)}{' '}
-          <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+          <ExternalLinkLine width={12} height={12} className='!fill-current inline whitespace-nowrap' />
         </>
       ) : (
         ''
@@ -491,6 +490,27 @@ export const dummyTransactions: TransactionPayload[] = [
     token: 'ETH',
     amount: '0.999',
     id: '123f',
+    wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+    timestamp: new Date(),
+    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+      return '#';
+    },
+    nativeValue: '1230',
+    onDetails: () => {},
+    onDismiss: () => {},
+    onSyncNote: () => {},
+  },
+  {
+    method: 'Withdraw',
+    txStatus: {
+      status: 'completed',
+      recipient: '0xasdfj2r3092430u',
+      THash: '0xasdfj2r3092430u',
+    },
+    tokens: ['USDT', 'ETH'],
+    token: 'ETH',
+    amount: '0.999',
+    id: '123fA',
     wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
     timestamp: new Date(),
     getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
