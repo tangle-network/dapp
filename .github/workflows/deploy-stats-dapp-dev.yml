@@ -62,7 +62,7 @@ jobs:
             
         with:
           msg: ${{ env.OUTPUT }}
-          check_for_duplicate_msg: true  # OPTIONAL
+          check_for_duplicate_msg: false  # OPTIONAL
       
   dev:
     runs-on: ubuntu-latest
