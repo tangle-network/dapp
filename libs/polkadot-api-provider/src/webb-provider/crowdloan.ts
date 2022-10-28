@@ -3,23 +3,36 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import '@webb-tools/protocol-substrate-types';
-import { ContributePayload, Crowdloan, CrowdloanFundInfo } from '@webb-tools/abstract-api-provider/crowdloan';
+import {
+  ContributePayload,
+  Crowdloan,
+  CrowdloanFundInfo,
+} from '@webb-tools/abstract-api-provider/crowdloan';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import '@webb-tools/protocol-substrate-types';
 
+import { LoggerService } from '@webb-tools/app-util';
 
 import { FundInfo } from '@polkadot/types/interfaces';
 
 import { WebbPolkadot } from '../webb-provider';
 
-export class PolkadotCrowdloan extends Crowdloan<WebbPolkadot, ContributePayload> {
+const logger = LoggerService.get('PolkadotTx');
+
+export class PolkadotCrowdloan extends Crowdloan<
+  WebbPolkadot,
+  ContributePayload
+> {
   constructor(protected inner: WebbPolkadot) {
     super(inner);
   }
 
   async getFundInfo(parachainId: number): Promise<CrowdloanFundInfo> {
-    const fundInfo = await this.inner.api.query.crowdloan?.funds(parachainId) as FundInfo;
-    const fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
+    // @ts-ignore
+    let fundInfo: FundInfo = await this.inner.api.query.crowdloan?.funds(
+      parachainId
+    );
+    let fundInfoJSON = fundInfo ? fundInfo.toJSON() : {};
 
     return {
       raised: BigInt(fundInfoJSON.raised?.toString() || 0),

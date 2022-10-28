@@ -28,6 +28,7 @@
     "@polkadot/util": "10.1.7",
     "@polkadot/util-crypto": "10.1.7",
     "@polkadot/wasm-crypto": "6.3.1",
+    "@radix-ui/react-tabs": "^1.0.1",
     "@ramonak/react-progress-bar": "^5.0.0",
     "@rollup/plugin-commonjs": "^23.0.0",
     "@rollup/plugin-image": "3.0.1",

@@ -10,7 +10,12 @@ import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
 
-export type AddToken = { address: string; symbol: string; decimals: number; image: string };
+export type AddToken = {
+  address: string;
+  symbol: string;
+  decimals: number;
+  image: string;
+};
 
 export interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
@@ -49,7 +54,10 @@ export class Web3Provider<T = unknown> {
     listenForChainChane: false,
   };
 
-  private constructor(private _inner: Web3, readonly clientMeta: ClientMetaData | null = null) {}
+  private constructor(
+    private _inner: Web3,
+    readonly clientMeta: ClientMetaData | null = null
+  ) {}
 
   /**
    * Getter for the web3 provider inject by MetaMask
@@ -113,7 +121,10 @@ export class Web3Provider<T = unknown> {
   static async fromWalletConnectProvider(WCProvider: WalletConnectProvider) {
     await WCProvider.enable();
     const web3 = new Web3(WCProvider as unknown as any);
-    const web3Provider = new Web3Provider<WalletConnectProvider>(web3, WCProvider.walletMeta);
+    const web3Provider = new Web3Provider<WalletConnectProvider>(
+      web3,
+      WCProvider.walletMeta
+    );
 
     web3Provider._capabilities = {
       addNetworkRpc: false,
@@ -198,7 +209,11 @@ export class Web3Provider<T = unknown> {
   }
 
   async sign(message: string, account: string): Promise<string> {
-    const sig = await this._inner.eth.personal.sign(message, account, undefined as any);
+    const sig = await this._inner.eth.personal.sign(
+      message,
+      account,
+      undefined as any
+    );
     return sig;
   }
 }

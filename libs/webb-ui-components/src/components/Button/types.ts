@@ -8,7 +8,10 @@ export type ButtonSpinnerPlacement = 'start' | 'end';
 
 export type OmittedKeys = keyof IWebbComponentBase | 'disabled';
 
-export type ButtonBase = Omit<React.ComponentPropsWithoutRef<'button'>, OmittedKeys>;
+export type ButtonBase = Omit<
+  React.ComponentPropsWithoutRef<'button'>,
+  OmittedKeys
+>;
 
 export type ButtonType = 'button' | 'reset' | 'submit';
 
@@ -44,7 +47,7 @@ export interface AriaButtonProps {
 }
 
 export interface UseButtonPropsMetadata {
-  tagName: keyof JSX.IntrinsicElements;
+  tagName: React.ElementType;
 }
 
 /************************* */
@@ -140,7 +143,12 @@ export interface ButtonSpinnerProps extends WebbComponentBase {
 type ButtonContentPickKeys = 'leftIcon' | 'rightIcon' | 'children';
 export type ButtonContentProps = Pick<ButtonProps, ButtonContentPickKeys>;
 
-type ButtonTextPickKeys = 'size' | 'variant' | 'darkMode' | 'children' | 'isLoading';
+type ButtonTextPickKeys =
+  | 'size'
+  | 'variant'
+  | 'darkMode'
+  | 'children'
+  | 'isLoading';
 export type ButtonTextProps = Pick<ButtonProps, ButtonTextPickKeys>;
 
 export type ButtonClassNames = {

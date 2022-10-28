@@ -17,7 +17,11 @@ import { CopyWithTooltipProps } from './types';
  *  <CopyWithTooltip isUseSpan textToCopy="0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7" />
  * ```
  */
-export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({ className, isUseSpan, textToCopy }) => {
+export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
+  className,
+  isUseSpan,
+  textToCopy,
+}) => {
   const { copy, isCopied } = useCopyable();
 
   const onCopy = useCallback(() => {
@@ -32,18 +36,21 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({ className, isU
     <Tooltip>
       <TooltipTrigger
         className={twMerge(
-          cx('bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30', isCopied ? 'cursor-not-allowed' : ''),
+          cx(
+            'bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30',
+            isCopied ? 'cursor-not-allowed' : ''
+          ),
           className
         )}
         onClick={onCopy}
         asChild={isUseSpan}
       >
         {isUseSpan ? (
-          <span className='!text-inherit'>
-            <FileCopyLine className='!fill-current' />
+          <span className="!text-inherit">
+            <FileCopyLine className="!fill-current" />
           </span>
         ) : (
-          <FileCopyLine className='!fill-current' />
+          <FileCopyLine className="!fill-current" />
         )}
       </TooltipTrigger>
       <TooltipBody>{isCopied ? 'Copied' : 'Copy'}</TooltipBody>

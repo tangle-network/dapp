@@ -1,7 +1,9 @@
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
 
-export function insufficientApiInterface(appEvent: TAppEvent): InteractiveFeedback {
+export function insufficientApiInterface(
+  appEvent: TAppEvent
+): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([
     {
       header: `The active API isn't providing the expected functionality`,

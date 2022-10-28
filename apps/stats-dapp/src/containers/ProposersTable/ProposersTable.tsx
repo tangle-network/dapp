@@ -13,7 +13,12 @@ import {
 } from '@tanstack/react-table';
 import { VoteStatus } from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
-import { Avatar, Chip, Table, Tabs } from '@webb-tools/webb-ui-components/components';
+import {
+  Avatar,
+  Chip,
+  Table,
+  Tabs,
+} from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils';
@@ -26,7 +31,7 @@ const columns: ColumnDef<VoteListItem, any>[] = [
   columnHelper.accessor('voterId', {
     header: 'Identity',
     cell: (props) => (
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         <Avatar value={props.getValue<string>()} />
 
         <p>{shortenString(props.getValue<string>(), 10)}</p>
@@ -40,11 +45,11 @@ const columns: ColumnDef<VoteListItem, any>[] = [
       const vote = props.getValue<VoteStatus | undefined>();
       switch (vote) {
         case VoteStatus.Abstain:
-          return <Chip color='blue'>Abstain</Chip>;
+          return <Chip color="blue">Abstain</Chip>;
         case VoteStatus.Against:
-          return <Chip color='red'>Against</Chip>;
+          return <Chip color="red">Against</Chip>;
         case VoteStatus.For:
-          return <Chip color='green'>For</Chip>;
+          return <Chip color="green">For</Chip>;
         default:
           return '-';
       }
@@ -53,7 +58,8 @@ const columns: ColumnDef<VoteListItem, any>[] = [
 
   columnHelper.accessor('timestamp', {
     header: 'Vote at',
-    cell: (props) => formatDistanceToNow(props.getValue<Date>(), { addSuffix: true }),
+    cell: (props) =>
+      formatDistanceToNow(props.getValue<Date>(), { addSuffix: true }),
   }),
 ];
 
@@ -67,12 +73,17 @@ type ProposersTableProps = {
   proposalId: string;
 };
 
-export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }) => {
+export const ProposersTable: FC<ProposersTableProps> = ({
+  counters,
+  proposalId,
+}) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [voteStatus, setVoteStatus] = useState<VoteStatus | undefined>(undefined);
+  const [voteStatus, setVoteStatus] = useState<VoteStatus | undefined>(
+    undefined
+  );
   const query = useMemo<VotesQuery>(() => {
     return {
       filter: {
@@ -96,7 +107,10 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
 
   const tabsLabels = useMemo(() => tabsValue.map((i) => i[1]), [tabsValue]);
   const totalItems = useMemo(() => votes.val?.pageInfo.count ?? 0, [votes]);
-  const pageCount = useMemo(() => Math.ceil(totalItems / pagination.pageSize), [pagination, totalItems]);
+  const pageCount = useMemo(
+    () => Math.ceil(totalItems / pagination.pageSize),
+    [pagination, totalItems]
+  );
 
   const data = useMemo(() => votes.val?.items ?? [], [votes]);
 
@@ -131,13 +145,18 @@ export const ProposersTable: FC<ProposersTableProps> = ({ counters, proposalId }
 
   return (
     <div>
-      <Typography variant='h5' fw='bold' className='mb-3'>
+      <Typography variant="h5" fw="bold" className="mb-3">
         All Proposers
       </Typography>
 
       <Tabs onChange={onChange} value={tabsLabels} />
 
-      <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} className='mt-2' />
+      <Table
+        tableProps={table as RTTable<unknown>}
+        isPaginated
+        totalRecords={totalItems}
+        className="mt-2"
+      />
     </div>
   );
 };

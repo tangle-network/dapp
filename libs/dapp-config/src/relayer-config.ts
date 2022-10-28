@@ -35,7 +35,9 @@ export const relayerConfig: RelayerConfig[] = [
   },
 ];
 
-export function relayerSubstrateNameToTypedChainId(name: string): PresetTypedChainId {
+export function relayerSubstrateNameToTypedChainId(
+  name: string
+): PresetTypedChainId {
   switch (name) {
     case 'localnode':
       return PresetTypedChainId.ProtocolSubstrateStandalone;

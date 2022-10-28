@@ -1,6 +1,9 @@
 import type { KeyGenAuthority } from '../../provider/hooks';
 
-import { PropsOf, WebbComponentBase } from '@webb-tools/webb-ui-components/types';
+import {
+  PropsOf,
+  WebbComponentBase,
+} from '@webb-tools/webb-ui-components/types';
 
 export interface KeyDetailProps extends PropsOf<'div'>, WebbComponentBase {
   /**
@@ -24,7 +27,10 @@ export interface KeyDetailProps extends PropsOf<'div'>, WebbComponentBase {
 
 export type AuthorityRowType = KeyGenAuthority & { detaillUrl: string };
 
-export type KeyDetailLocationState = Pick<KeyDetailProps, 'previousKeyId' | 'nextKeyId'> | null;
+export type KeyDetailLocationState = Pick<
+  KeyDetailProps,
+  'previousKeyId' | 'nextKeyId'
+> | null;
 
 export type KeyGenAuthoredTableProps = {
   data: KeyGenAuthority[];

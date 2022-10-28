@@ -11,7 +11,10 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils/storage';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '@webb-tools/fixtures-deployments';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import {
   calculateTypedChainId,
@@ -32,7 +35,10 @@ import { WebbWeb3Provider } from '../webb-provider';
 
 type DepositPayload = IDepositPayload<Note, [Utxo, number | string, string?]>;
 
-export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, DepositPayload> {
+export class Web3VAnchorDeposit extends VAnchorDeposit<
+  WebbWeb3Provider,
+  DepositPayload
+> {
   async generateBridgeNote(
     anchorId: string | number,
     destination: number,
@@ -47,12 +53,16 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       throw new Error('api not ready');
     }
     // Convert the amount to bn units (i.e. WEI instead of ETH)
-    const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals()).toString();
+    const bnAmount = ethers.utils
+      .parseUnits(amount.toString(), currency.getDecimals())
+      .toString();
     const tokenSymbol = currency.view.symbol;
     const sourceEvmId = await this.inner.getChainId();
     const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
-    const keypair = this.inner.noteManager ? this.inner.noteManager.getKeypair() : new Keypair();
+    const keypair = this.inner.noteManager
+      ? this.inner.noteManager.getKeypair()
+      : new Keypair();
 
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
@@ -138,7 +148,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         description: 'Depositing',
         key: 'bridge-deposit',
         level: 'loading',
-        message: `bridge:${depositPayload.params[2] ? 'wrap and deposit' : 'deposit'}`,
+        message: `bridge:${
+          depositPayload.params[2] ? 'wrap and deposit' : 'deposit'
+        }`,
         name: 'Transaction',
       });
 
@@ -158,13 +170,23 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
 
-      const srcVAnchor = await this.inner.getVariableAnchorByAddress(srcAddress);
+      const srcVAnchor = await this.inner.getVariableAnchorByAddress(
+        srcAddress
+      );
       const maxEdges = await srcVAnchor._contract.maxEdges();
       // Fetch the fixtures
       this.cancelToken.throwIfCancel();
       this.emit('stateChange', TransactionState.FetchingFixtures);
-      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, true, abortSignal);
-      const smallWasm = await fetchVAnchorWasmFromAws(maxEdges, true, abortSignal);
+      const smallKey = await fetchVAnchorKeyFromAws(
+        maxEdges,
+        true,
+        abortSignal
+      );
+      const smallWasm = await fetchVAnchorWasmFromAws(
+        maxEdges,
+        true,
+        abortSignal
+      );
       const leavesMap: Record<string, Uint8Array[]> = {};
 
       // Fetch the leaves from the source chain
@@ -172,7 +194,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       this.emit('stateChange', TransactionState.FetchingLeaves);
       let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
       let leaves = await this.cancelToken.handleOrThrow(
-        () => this.inner.getVariableAnchorLeaves(srcVAnchor, leafStorage, abortSignal),
+        () =>
+          this.inner.getVariableAnchorLeaves(
+            srcVAnchor,
+            leafStorage,
+            abortSignal
+          ),
         () => WebbError.from(WebbErrorCodes.TransactionCancelled)
       );
       // Only populate the leaves map if there are actually leaves to populate.
@@ -188,11 +215,20 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
       const destEthers = destHttpProvider.intoEthersProvider();
       const destAddress = vanchor.neighbours[destTypedChainId] as string;
-      const destVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(destAddress, destEthers);
+      const destVAnchor =
+        await this.inner.getVariableAnchorByAddressAndProvider(
+          destAddress,
+          destEthers
+        );
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
       leaves = await this.cancelToken.handleOrThrow(
-        () => this.inner.getVariableAnchorLeaves(destVAnchor, leafStorage, abortSignal),
+        () =>
+          this.inner.getVariableAnchorLeaves(
+            destVAnchor,
+            leafStorage,
+            abortSignal
+          ),
         () => WebbError.from(WebbErrorCodes.TransactionCancelled)
       );
       // Only populate the leaves map if there are actually leaves to populate.
@@ -213,7 +249,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
 
       // If a wrappableAsset was selected, perform a wrapAndDeposit
       if (depositPayload.params[2]) {
-        const requiredApproval = await srcVAnchor.isWrappableTokenApprovalRequired(depositPayload.params[2], amount);
+        const requiredApproval =
+          await srcVAnchor.isWrappableTokenApprovalRequired(
+            depositPayload.params[2],
+            amount
+          );
 
         if (requiredApproval) {
           this.inner.notificationHandler({
@@ -305,7 +345,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
           };
         }
       } else {
-        const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(amount);
+        const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(
+          amount
+        );
 
         if (requiredApproval) {
           this.inner.notificationHandler({
@@ -317,7 +359,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
             persist: true,
           });
           const tokenInstance = await srcVAnchor.getWebbToken();
-          const tx = await tokenInstance.approve(srcVAnchor.inner.address, amount);
+          const tx = await tokenInstance.approve(
+            srcVAnchor.inner.address,
+            amount
+          );
 
           await tx.wait();
           this.inner.notificationHandler.remove('waiting-approval');
@@ -392,7 +437,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<WebbWeb3Provider, Deposit
       }
     } catch (e: any) {
       this.inner.notificationHandler.remove('waiting-approval');
-      const isUserCancel = e instanceof WebbError && e.code === WebbErrorCodes.TransactionCancelled;
+      const isUserCancel =
+        e instanceof WebbError &&
+        e.code === WebbErrorCodes.TransactionCancelled;
       let description = '';
 
       if (e?.code === 4001) {

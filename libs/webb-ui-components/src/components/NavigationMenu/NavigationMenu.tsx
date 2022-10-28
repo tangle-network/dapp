@@ -1,4 +1,4 @@
-import { ComponentProps, forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Dropdown } from '../Dropdown/Dropdown';
@@ -10,7 +10,11 @@ import { NavigationMenuProps } from './types';
 export const NavigationMenu = forwardRef<HTMLDivElement, NavigationMenuProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <Dropdown {...props} className={twMerge('flex items-center justify-center', className)} ref={ref}>
+      <Dropdown
+        {...props}
+        className={twMerge('flex items-center justify-center', className)}
+        ref={ref}
+      >
         {children}
       </Dropdown>
     );

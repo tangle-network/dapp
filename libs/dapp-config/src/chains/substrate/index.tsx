@@ -1,4 +1,8 @@
-import { CurrencyId, PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
+import {
+  CurrencyId,
+  PresetTypedChainId,
+  SubstrateChainId,
+} from '@webb-tools/dapp-types';
 import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
 import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';

@@ -1,7 +1,8 @@
-import { WebbApiProvider } from '..';
+import { WebbApiProvider } from '@webb-tools/abstract-api-provider';
 
-
-export abstract class ECDSAClaims<T extends WebbApiProvider<any> = WebbApiProvider<any>> {
+export abstract class ECDSAClaims<
+  T extends WebbApiProvider<any> = WebbApiProvider<any>
+> {
   constructor(readonly inner: T) {}
   /**
    * Claim the amount of tokens to the given sig.

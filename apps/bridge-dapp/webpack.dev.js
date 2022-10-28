@@ -1,7 +1,6 @@
 // Copyright 2017-2022 @polkadot/apps authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const path = require('path');
@@ -11,9 +10,8 @@ const baseConfig = require('./webpack.base.js');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = (env, config) => {
-  console.log('config: ', config);
   env.context = __dirname;
-  console.log('environment in dev', env);
+  console.log('environment in dev');
   return merge(baseConfig(env, 'development'), {
     devtool: 'eval-source-map',
     devServer: {
@@ -21,6 +19,12 @@ module.exports = (env, config) => {
       open: false,
       port: 3000,
       static: path.resolve(__dirname, 'build'),
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false, // Hide warnings as they present on the terminal
+        },
+      },
     },
     plugins: [
       new HtmlWebpackPlugin({

@@ -30,7 +30,10 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
     },
     ref
   ) => {
-    const mergedClsx = useMemo(() => twMerge('cursor-auto select-none space-x-2', className), [className]);
+    const mergedClsx = useMemo(
+      () => twMerge('cursor-auto select-none space-x-2', className),
+      [className]
+    );
 
     // Tooltip state
     const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +50,7 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
     return (
       <InputWrapper {...props} className={mergedClsx} ref={ref}>
         <div className="flex flex-col space-y-1 grow">
-          <Label htmlFor={id} className='flex items-center space-x-2'>
+          <Label htmlFor={id} className="flex items-center space-x-2">
             <TitleWithInfo
               title={title}
               info={info}
@@ -64,7 +67,10 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
                 </TooltipTrigger>
 
                 <TooltipBody>
-                  <AmountMenu {...amountMenuProps} onChange={onAmountTypeChange} />
+                  <AmountMenu
+                    {...amountMenuProps}
+                    onChange={onAmountTypeChange}
+                  />
                 </TooltipBody>
               </Tooltip>
             )}

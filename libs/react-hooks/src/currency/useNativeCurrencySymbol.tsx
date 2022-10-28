@@ -7,6 +7,8 @@ export const useNativeCurrencySymbol = () => {
     return '';
   }
 
-  const currency = new Currency(apiConfig.currencies[activeChain.nativeCurrencyId]);
+  const currency = new Currency(
+    apiConfig.currencies[activeChain.nativeCurrencyId]
+  );
   return currency.view.symbol;
 };

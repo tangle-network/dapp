@@ -5,7 +5,12 @@ import { twMerge } from 'tailwind-merge';
 import { ButtonSpinnerProps } from './types';
 
 export const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
-  const { children = <Spinner darkMode={props.darkMode} size='lg' />, className, label, placement = 'start' } = props;
+  const {
+    children = <Spinner darkMode={props.darkMode} size="lg" />,
+    className,
+    label,
+    placement = 'start',
+  } = props;
 
   const mergedClassName = twMerge(
     'flex items-center',

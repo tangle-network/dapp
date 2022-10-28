@@ -44,7 +44,9 @@ export class ApiConfig {
   };
 
   getEVMChainName = (evmId: number): string => {
-    const chain = Object.values(this.chains).find((chainsConfig) => chainsConfig.chainId === evmId);
+    const chain = Object.values(this.chains).find(
+      (chainsConfig) => chainsConfig.chainId === evmId
+    );
 
     if (chain) {
       return chain.name;
@@ -54,12 +56,17 @@ export class ApiConfig {
   };
 
   getChainNameFromTypedChainId = (typedChainId: TypedChainId): string => {
-    const chain = this.chains[calculateTypedChainId(typedChainId.chainType, typedChainId.chainId)];
+    const chain =
+      this.chains[
+        calculateTypedChainId(typedChainId.chainType, typedChainId.chainId)
+      ];
     return chain.name;
   };
 
   getNativeCurrencySymbol = (evmId: number): string => {
-    const chain = Object.values(this.chains).find((chainsConfig) => chainsConfig.chainId === evmId);
+    const chain = Object.values(this.chains).find(
+      (chainsConfig) => chainsConfig.chainId === evmId
+    );
 
     if (chain) {
       const nativeCurrency = chain.nativeCurrencyId;

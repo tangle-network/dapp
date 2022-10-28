@@ -1,18 +1,30 @@
-import { BookOpenLineIcon, FlaskLineIcon, HelpLineIcon, InformationLine } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import { ComponentProps, forwardRef } from 'react';
+import {
+  BookOpenLineIcon,
+  FlaskLineIcon,
+  HelpLineIcon,
+  InformationLine,
+} from '@webb-tools/icons';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography/Typography';
 
-import { Collapsible, CollapsibleButton, CollapsibleContent } from '../Collapsible';
+import {
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+} from '../Collapsible';
 import { DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem/MenuItem';
-import { ThemeSwitcherMenuItem } from '../ThemeSwitcher';
+import { ThemeSwitcherMenuItem } from '../ThemeSwitcher/';
 import { NavigationMenuContentProps } from './types';
 
 /**
  * The navigation menu content, must use inside the `NavigationMenu` component
  */
-export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuContentProps>(
+export const NavigationMenuContent = forwardRef<
+  HTMLDivElement,
+  NavigationMenuContentProps
+>(
   (
     {
       className,
@@ -29,29 +41,36 @@ export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuCo
     return (
       <DropdownBody
         {...props}
-        className={twMerge('pt-2 mt-6 w-full min-w-[200px]', !version ? 'pb-2' : '', className)}
+        className={twMerge(
+          'pt-2 mt-6 w-full min-w-[200px]',
+          !version ? 'pb-2' : '',
+          className
+        )}
         ref={ref}
       >
         <ThemeSwitcherMenuItem />
 
         <Collapsible>
           <CollapsibleButton>Network Settings</CollapsibleButton>
-          <CollapsibleContent className='p-0'>
+          <CollapsibleContent className="p-0">
             <MenuItem onClick={onTestnetClick}>Testnet</MenuItem>
             <MenuItem onClick={onDevelopmentClick}>Development</MenuItem>
           </CollapsibleContent>
         </Collapsible>
 
-        <MenuItem icon={<HelpLineIcon size='lg' />} onClick={onHelpCenterClick}>
+        <MenuItem icon={<HelpLineIcon size="lg" />} onClick={onHelpCenterClick}>
           Help Center
         </MenuItem>
 
-        <MenuItem icon={<FlaskLineIcon size='lg' />} onClick={onRequestFeaturesClick}>
+        <MenuItem
+          icon={<FlaskLineIcon size="lg" />}
+          onClick={onRequestFeaturesClick}
+        >
           Request Features
         </MenuItem>
 
         <MenuItem
-          icon={<BookOpenLineIcon size='lg' />}
+          icon={<BookOpenLineIcon size="lg" />}
           onClick={() => {
             window.open('https://docs.webb.tools', '_blank');
           }}
@@ -59,14 +78,18 @@ export const NavigationMenuContent = forwardRef<HTMLDivElement, NavigationMenuCo
           Docs
         </MenuItem>
 
-        <MenuItem icon={<InformationLine size='lg' />} onClick={onAboutClick}>
+        <MenuItem icon={<InformationLine size="lg" />} onClick={onAboutClick}>
           About
         </MenuItem>
 
         {/** Bottom version */}
         {version && (
-          <div className='px-4 pt-1 pb-2'>
-            <Typography variant='body4' ta='right' className='text-mono-100 dark:text-mono-40'>
+          <div className="px-4 pt-1 pb-2">
+            <Typography
+              variant="body4"
+              ta="right"
+              className="text-mono-100 dark:text-mono-40"
+            >
               {version.toLowerCase().startsWith('v') ? version : `v${version}`}
             </Typography>
           </div>

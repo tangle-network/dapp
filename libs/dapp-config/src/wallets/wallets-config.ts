@@ -49,7 +49,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
     },
@@ -71,7 +72,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://metamask.io/',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/ether-metamask/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/ether-metamask/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
@@ -117,7 +119,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
     installLinks: {
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/',
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
     },
@@ -137,7 +140,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
     installLinks: {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
-      [SupportedBrowsers.FireFox]: 'https://addons.mozilla.org/firefox/addon/subwallet/',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/firefox/addon/subwallet/',
     },
   },
 };

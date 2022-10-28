@@ -1,5 +1,9 @@
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { EVMChainId, InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
+import {
+  EVMChainId,
+  InteractiveFeedback,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 
 export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
   const feedbackBody = InteractiveFeedback.feedbackEntries([

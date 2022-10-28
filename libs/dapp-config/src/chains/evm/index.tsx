@@ -16,7 +16,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.Rinkeby,
     name: 'Rinkeby',
     url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: ['https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    evmRpcUrls: [
+      'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    ],
     blockExplorerStub: 'https://rinkeby.etherscan.io',
     logo: () => EtherLogo,
     tag: 'test',
@@ -29,7 +31,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.Ropsten,
     name: 'Ropsten',
     url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: ['https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    evmRpcUrls: [
+      'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    ],
     blockExplorerStub: 'https://ropsten.etherscan.io',
     logo: () => EtherLogo,
     tag: 'test',
@@ -42,7 +46,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.Goerli,
     name: 'Goerli',
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: ['https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
+    evmRpcUrls: [
+      'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    ],
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: () => EtherLogo,
     tag: 'test',

@@ -12,7 +12,10 @@ import {
 import { Note } from '@webb-tools/sdk-core';
 
 export class PolkadotRelayerManager extends WebbRelayerManager {
-  async mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer> {
+  async mapRelayerIntoActive(
+    relayer: OptionalRelayer,
+    typedChainId: number
+  ): Promise<OptionalActiveRelayer> {
     if (!relayer) {
       return null;
     }
@@ -54,7 +57,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
             capabilities.supportedChains[baseOn]
               .get(chainId)
               ?.contracts?.find(
-                (contract) => contract.address === contractAddress.toLowerCase() && contract.eventsWatcher.enabled
+                (contract) =>
+                  contract.address === contractAddress.toLowerCase() &&
+                  contract.eventsWatcher.enabled
               )
           );
         }

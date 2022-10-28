@@ -54,11 +54,21 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   }, [depositApi]);
 
   const generateNote = useCallback(
-    async (anchorId: number | string, destChainTypeId: number, amount: number, wrappableAsset: string | undefined) => {
+    async (
+      anchorId: number | string,
+      destChainTypeId: number,
+      amount: number,
+      wrappableAsset: string | undefined
+    ) => {
       if (!depositApi) {
         throw new Error('Not ready');
       }
-      return depositApi.generateBridgeNote(anchorId, destChainTypeId, amount, wrappableAsset);
+      return depositApi.generateBridgeNote(
+        anchorId,
+        destChainTypeId,
+        amount,
+        wrappableAsset
+      );
     },
     [depositApi]
   );

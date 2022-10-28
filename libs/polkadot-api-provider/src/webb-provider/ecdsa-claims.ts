@@ -27,7 +27,9 @@ export class PolkadotECDSAClaims extends ECDSAClaims<WebbPolkadot> {
 
   async getClaim(address: string): Promise<string | null> {
     console.log('getClaim', address);
-    const claimRaw = await this.inner.api.query.claims.claims<Option<U128>>(address);
+    const claimRaw = await this.inner.api.query.claims.claims<Option<U128>>(
+      address
+    );
     const claim = this.inner.api.createType('Option<U128>', claimRaw);
     if (claim.isSome) {
       let amount = claim.unwrap().toBn();

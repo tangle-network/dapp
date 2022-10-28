@@ -44,7 +44,10 @@ export abstract class MixerDeposit<
    * @param mixerId - Mixer size identifier
    * @param chainId - optional chainId
    **/
-  abstract generateNote(mixerId: number | string, chainId?: number | string): Promise<K>;
+  abstract generateNote(
+    mixerId: number | string,
+    chainId?: number | string
+  ): Promise<K>;
 
   /**
    * The deposit call it should receive the payload of type `K`

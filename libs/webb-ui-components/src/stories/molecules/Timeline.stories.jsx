@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { TimeLine, TimeLineItem } from '@webb-dapp/webb-ui-components/components';
+import {
+  TimeLine,
+  TimeLineItem,
+} from '@webb-tools/webb-ui-components/components';
 import { randRecentDate, randEthereumAddress } from '@ngneat/falso';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

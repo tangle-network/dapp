@@ -1,4 +1,4 @@
-import { Divider } from '@webb-dapp/webb-ui-components/components';
+import { Divider } from '@webb-tools/webb-ui-components/components';
 import React from 'react';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

@@ -32,12 +32,17 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
 
     await Promise.all(
       allTokenAddresses.map(async (tokenAddress) => {
-        const registeredCurrency = this.inner.state.getReverseCurrencyMap().get(tokenAddress);
+        const registeredCurrency = this.inner.state
+          .getReverseCurrencyMap()
+          .get(tokenAddress);
         const knownCurrencies = this.inner.state.getCurrencies();
 
         if (!registeredCurrency) {
           // Read data about the new currencyAddress
-          const newERC20Token = ERC20Factory.connect(tokenAddress, this.inner.getEthersProvider());
+          const newERC20Token = ERC20Factory.connect(
+            tokenAddress,
+            this.inner.getEthersProvider()
+          );
           const decimals = await newERC20Token.decimals();
           const name = await newERC20Token.name();
           const symbol = await newERC20Token.symbol();
@@ -66,7 +71,11 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     // Add the chain's native currency if the wrappableToken allows native
     if (await governedToken.contract.isNativeAllowed()) {
       wrappableTokens.push(
-        new Currency(this.inner.config.currencies[this.inner.config.chains[typedChainId].nativeCurrencyId])
+        new Currency(
+          this.inner.config.currencies[
+            this.inner.config.chains[typedChainId].nativeCurrencyId
+          ]
+        )
       );
     }
 

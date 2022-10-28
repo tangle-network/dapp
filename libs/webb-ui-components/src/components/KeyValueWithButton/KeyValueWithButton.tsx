@@ -18,9 +18,21 @@ import { KeyValueWithButtonProps } from './types';
  *  <KeyValueWithButton keyValue='0x958aa9ddbd62f989dec2fd1468bf436aebeb8be6' />
  * ```
  */
-export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonProps>(
+export const KeyValueWithButton = forwardRef<
+  HTMLDivElement,
+  KeyValueWithButtonProps
+>(
   (
-    { className, hasShortenValue = true, isHiddenLabel, keyValue, labelVariant, size = 'md', valueVariant, ...props },
+    {
+      className,
+      hasShortenValue = true,
+      isHiddenLabel,
+      keyValue,
+      labelVariant,
+      size = 'md',
+      valueVariant,
+      ...props
+    },
     ref
   ) => {
     const { copy, isCopied } = useCopyable();
@@ -34,14 +46,26 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
     }, [copy, isCopied, keyValue]);
 
     const mergedClsx = useMemo(() => {
-      return twMerge('overflow-hidden rounded-lg', size === 'md' ? 'bg-mono-20 dark:bg-mono-180' : '', className);
+      return twMerge(
+        'overflow-hidden rounded-lg',
+        size === 'md' ? 'bg-mono-20 dark:bg-mono-180' : '',
+        className
+      );
     }, [className, size]);
 
-    const value = useMemo(() => (hasShortenValue ? shortenHex(keyValue, 3) : keyValue), [hasShortenValue, keyValue]);
+    const value = useMemo(
+      () => (hasShortenValue ? shortenHex(keyValue, 3) : keyValue),
+      [hasShortenValue, keyValue]
+    );
 
     return (
       <div {...props} className={mergedClsx} ref={ref}>
-        <div className={cx('flex items-center', size === 'md' ? 'space-x-2' : 'space-x-1')}>
+        <div
+          className={cx(
+            'flex items-center',
+            size === 'md' ? 'space-x-2' : 'space-x-1'
+          )}
+        >
           <div className={size === 'md' ? 'py-1 pl-3' : ''}>
             <Tooltip>
               <TooltipTrigger onClick={() => copy(keyValue)} asChild>
@@ -49,9 +73,9 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
                   labelVariant={labelVariant}
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
-                  label='Key'
+                  label="Key"
                   value={value}
-                  className='cursor-default pointer-events-auto'
+                  className="cursor-default pointer-events-auto"
                 />
               </TooltipTrigger>
               <TooltipBody>{keyValue}</TooltipBody>
@@ -60,7 +84,9 @@ export const KeyValueWithButton = forwardRef<HTMLDivElement, KeyValueWithButtonP
           <Tooltip>
             <TooltipTrigger
               className={cx(
-                size === 'md' ? 'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30' : '',
+                size === 'md'
+                  ? 'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30'
+                  : '',
                 isCopied ? 'cursor-not-allowed' : ''
               )}
               onClick={onCopy}

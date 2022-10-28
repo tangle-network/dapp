@@ -1,4 +1,10 @@
-import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import {
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  Table as RTTable,
+  useReactTable,
+} from '@tanstack/react-table';
 import { useStatsContext } from '../provider/stats-provider';
 import {
   Button,
@@ -19,14 +25,22 @@ import React, { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 import { DonutChartContainer, ProposalsTable, TimeRange } from '../containers';
-import { ProposalListItem, ProposalStatus, useProposalsOverview } from '../provider/hooks';
+import {
+  ProposalListItem,
+  ProposalStatus,
+  useProposalsOverview,
+} from '../provider/hooks';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
 const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('height', {
     header: 'Height',
-    cell: (props) => BigNumber.from(props.getValue<string>()).div(1000).toBigInt().toLocaleString(),
+    cell: (props) =>
+      BigNumber.from(props.getValue<string>())
+        .div(1000)
+        .toBigInt()
+        .toLocaleString(),
   }),
 
   columnHelper.accessor('type', {
@@ -36,15 +50,15 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('txHash', {
     header: 'Tx Hash',
     cell: (props) => (
-      <div className='flex items-center space-x-1'>
+      <div className="flex items-center space-x-1">
         <LabelWithValue
-          labelVariant='body3'
-          label='tx hash:'
+          labelVariant="body3"
+          label="tx hash:"
           isHiddenLabel
           value={shortenHex(props.getValue<string>(), 3)}
           valueTooltip={props.getValue<string>()}
         />
-        <a href='#'>
+        <a href="#">
           <ExternalLinkLine />
         </a>
       </div>
@@ -53,13 +67,13 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: () => <TokenIcon name='eth' size='lg' />,
+    cell: () => <TokenIcon name="eth" size="lg" />,
   }),
 
   columnHelper.accessor('id', {
     header: '',
     cell: (props) => (
-      <Button variant='link' size='sm'>
+      <Button variant="link" size="sm">
         <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),
@@ -95,7 +109,9 @@ const Proposals = () => {
       return { start: 0, end: Number(lastProcessBlock) };
     }
     const end = Number(lastProcessBlock);
-    const start = Math.floor(Math.max(Number(lastProcessBlock) - rangeTimeSec / blockTime, 0));
+    const start = Math.floor(
+      Math.max(Number(lastProcessBlock) - rangeTimeSec / blockTime, 0)
+    );
     return {
       end,
       start,
@@ -137,8 +153,12 @@ const Proposals = () => {
     };
   }, [overview]);
 
-  const statsItems = useMemo<React.ComponentProps<typeof Stats>['items']>(() => {
-    const proposalsThreshold = overview.val ? overview.val.thresholds.proposal : 'NaN';
+  const statsItems = useMemo<
+    React.ComponentProps<typeof Stats>['items']
+  >(() => {
+    const proposalsThreshold = overview.val
+      ? overview.val.thresholds.proposal
+      : 'NaN';
     const proposers = overview.val ? overview.val.thresholds.proposers : 'NaN';
     return [
       {
@@ -170,15 +190,19 @@ const Proposals = () => {
   const noOpenProposals = useMemo(() => data.length === 0, [data]);
 
   return (
-    <div className='flex flex-col space-y-4'>
+    <div className="flex flex-col space-y-4">
       {/** Proposals Status */}
       <Card>
-        <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />
+        <TitleWithInfo
+          title="Proposals Status"
+          variant="h5"
+          info="Proposals Status"
+        />
 
         <Stats items={statsItems} />
       </Card>
 
-      <div className='flex space-x-4'>
+      <div className="flex space-x-4">
         {/* * Proposal Types */}
         <DonutChartContainer
           timeRange={timeRange}
@@ -188,9 +212,12 @@ const Proposals = () => {
         />
 
         {/** Open Proposals */}
-        <CardTable titleProps={{ title: 'Open Proposals' }} className='flex flex-col grow'>
+        <CardTable
+          titleProps={{ title: 'Open Proposals' }}
+          className="flex flex-col grow"
+        >
           {noOpenProposals ? (
-            <div className='flex items-center justify-center min-w-full grow'>
+            <div className="flex items-center justify-center min-w-full grow">
               <Typography ta={'center'} variant={'h4'}>
                 No open proposals
               </Typography>

@@ -6,7 +6,8 @@ export function misbehavingRelayer(): InteractiveFeedback {
       header: `Bad Relayer`,
     },
     {
-      content: 'The selected relayer is not operating properly. Please select a different relayer.',
+      content:
+        'The selected relayer is not operating properly. Please select a different relayer.',
     },
   ]);
   const actions = InteractiveFeedback.actionsBuilder()

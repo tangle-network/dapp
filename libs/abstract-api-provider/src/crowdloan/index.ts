@@ -24,8 +24,12 @@ export type CrowdloanFundInfo = {
 /**
  * Webb crowdloan contributing interface
  **/
-export abstract class Crowdloan<T, CrowdloanPayload extends ContributePayload> extends EventBus<CrowdloanEvent> {
-  protected crowdloanToken: BehaviorSubject<CurrencyId | null> = new BehaviorSubject<null | CurrencyId>(null);
+export abstract class Crowdloan<
+  T,
+  CrowdloanPayload extends ContributePayload
+> extends EventBus<CrowdloanEvent> {
+  protected crowdloanToken: BehaviorSubject<CurrencyId | null> =
+    new BehaviorSubject<null | CurrencyId>(null);
 
   constructor(protected inner: T) {
     super();

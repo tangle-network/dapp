@@ -1,21 +1,19 @@
-import { WebbUIErrorBoudary } from '@webb-tools/webb-ui-components/containers/WebbUIErrorBoudary';
+import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
 import { RouterProvider } from '@webb-tools/react-environment';
-import { WebbProvider, AppEvent } from '@webb-tools/api-provider-environment';
-import { LoggerService } from '@webb-tools/app-util';
-import React, { FC } from 'react';
+import { FC } from 'react';
 
+import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { config as routerConfig } from './routes';
-const appLogger = LoggerService.new('App');
 
 const appEvent = new AppEvent();
 
 const App: FC = () => {
   return (
-    <WebbUIErrorBoudary logger={appLogger}>
+    <WebbUIProvider hasErrorBoudary>
       <WebbProvider appEvent={appEvent} applicationName={'Webb DApp'}>
         <RouterProvider config={routerConfig} />
       </WebbProvider>
-    </WebbUIErrorBoudary>
+    </WebbUIProvider>
   );
 };
 

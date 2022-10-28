@@ -30,7 +30,16 @@ import { InputWrapper } from './InputWrapper';
 
 export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   (
-    { amountMenuProps, id, info, onChange: onChangeProp, title = 'Fixed amount', value: valueProp, values, ...props },
+    {
+      amountMenuProps,
+      id,
+      info,
+      onChange: onChangeProp,
+      title = 'Fixed amount',
+      value: valueProp,
+      values,
+      ...props
+    },
     ref
   ) => {
     const [value, setValue] = useState(() => valueProp);
@@ -53,7 +62,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
         amountMenuProps?.onChange?.(nextVal);
       },
       [amountMenuProps]
-    );    
+    );
 
     useEffect(() => {
       setValue(valueProp);
@@ -62,7 +71,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
     return (
       <InputWrapper {...props} ref={ref}>
         <div className="flex flex-col w-full space-y-2">
-          <Label htmlFor={id} className='flex items-center space-x-2'>
+          <Label htmlFor={id} className="flex items-center space-x-2">
             <TitleWithInfo
               title={title}
               info={info}
@@ -78,7 +87,10 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                 </TooltipTrigger>
 
                 <TooltipBody>
-                  <AmountMenu {...amountMenuProps} onChange={onAmountTypeChange} />
+                  <AmountMenu
+                    {...amountMenuProps}
+                    onChange={onAmountTypeChange}
+                  />
                 </TooltipBody>
               </Tooltip>
             )}

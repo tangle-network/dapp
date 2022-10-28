@@ -1,12 +1,23 @@
 import { useModal } from '@webb-tools/ui-hooks';
 import { noop } from 'lodash';
-import React, { createContext, FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 export type Language = 'zh' | 'en';
 export type Theme = 'normal' | 'dark';
 export type Browser = 'firefox' | 'chrome' | 'unknown' | undefined;
 
-function useSetting<T>(key: string, defaultValue?: T): { value: T; setValue: (value: T) => void } {
+function useSetting<T>(
+  key: string,
+  defaultValue?: T
+): { value: T; setValue: (value: T) => void } {
   const [value, _setValue] = useState<T>();
 
   const setValue = useCallback(
@@ -55,9 +66,16 @@ export const SettingContext = createContext<SettingDate>({
 });
 
 export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
-  const { close: closeSetting, open: openSetting, status: settingVisible } = useModal();
+  const {
+    close: closeSetting,
+    open: openSetting,
+    status: settingVisible,
+  } = useModal();
   const [browser, setBrowser] = useState<Browser>();
-  const { setValue: setTheme, value: theme } = useSetting<Theme>('theme', 'normal');
+  const { setValue: setTheme, value: theme } = useSetting<Theme>(
+    'theme',
+    'normal'
+  );
   const [endpoint, setEndpoint] = useState<string>('');
 
   const changeEndpoint = useCallback(

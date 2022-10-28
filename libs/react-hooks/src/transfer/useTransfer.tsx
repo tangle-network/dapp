@@ -9,8 +9,16 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { misbehavingRelayer, useWebContext } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId, ChainType, Note, parseTypedChainId } from '@webb-tools/sdk-core';
+import {
+  misbehavingRelayer,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
+import {
+  calculateTypedChainId,
+  ChainType,
+  Note,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -90,7 +98,10 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
         try {
           const spendableNotes = NoteManager.getNotesFifo(
             props.notes,
-            ethers.utils.parseUnits(props.amount.toString(), props.notes[0].note.denomination)
+            ethers.utils.parseUnits(
+              props.amount.toString(),
+              props.notes[0].note.denomination
+            )
           );
 
           // If the available notes are not sufficient for requested withdraw, return.
@@ -104,7 +115,12 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
 
           const txResult = await transferApi.transfer({
             inputNotes: noteStrings,
-            amount: ethers.utils.parseUnits(props.amount.toString(), props.notes[0].note.denomination).toString(),
+            amount: ethers.utils
+              .parseUnits(
+                props.amount.toString(),
+                props.notes[0].note.denomination
+              )
+              .toString(),
             targetTypedChainId: props.destination,
             recipient: props.recipient,
           });
@@ -120,7 +136,14 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
         }
       }
     }
-  }, [props.amount, props.destination, props.notes, props.recipient, stage, transferApi]);
+  }, [
+    props.amount,
+    props.destination,
+    props.notes,
+    props.recipient,
+    stage,
+    transferApi,
+  ]);
 
   const setGovernedCurrency = useCallback(
     (currency: Currency): void => {
@@ -143,7 +166,10 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
   const setRelayer = useCallback(
     (nextRelayer: WebbRelayer | null) => {
       if (props.destination) {
-        activeApi?.relayerManager.setActiveRelayer(nextRelayer, props.destination);
+        activeApi?.relayerManager.setActiveRelayer(
+          nextRelayer,
+          props.destination
+        );
       }
     },
     [activeApi?.relayerManager, props.destination]
@@ -158,7 +184,8 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     // We can determine the compatible relayers by the selected target.
     if (props.destination) {
       const typedChainId = parseTypedChainId(props.destination);
-      const base = typedChainId.chainType === ChainType.EVM ? 'evm' : 'substrate';
+      const base =
+        typedChainId.chainType === ChainType.EVM ? 'evm' : 'substrate';
 
       const relayers = activeApi.relayerManager.getRelayers({
         baseOn: base,
@@ -175,21 +202,26 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     }
 
     // Subscribe to updates for the active relayer
-    const sub = activeApi.relayerManager.activeRelayerWatcher.subscribe((next: OptionalActiveRelayer) => {
-      setRelayersState((p) => ({
-        ...p,
-        activeRelayer: next,
-      }));
-    });
+    const sub = activeApi.relayerManager.activeRelayerWatcher.subscribe(
+      (next: OptionalActiveRelayer) => {
+        setRelayersState((p) => ({
+          ...p,
+          activeRelayer: next,
+        }));
+      }
+    );
 
     if (!transferApi) {
       return;
     }
 
     const unsubscribe: Record<string, (() => void) | void> = {};
-    unsubscribe['stateChange'] = transferApi.on('stateChange', (stage: TransactionState) => {
-      setStage(stage);
-    });
+    unsubscribe['stateChange'] = transferApi.on(
+      'stateChange',
+      (stage: TransactionState) => {
+        setStage(stage);
+      }
+    );
 
     unsubscribe['error'] = transferApi.on('error', (transferError: any) => {
       setError((p) => ({

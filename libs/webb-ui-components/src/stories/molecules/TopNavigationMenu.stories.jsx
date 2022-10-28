@@ -1,5 +1,8 @@
-import { NavigationMenu, NavigationMenuContent, NavigationMenuTrigger } from '@webb-dapp/webb-ui-components/components';
-import React from 'react';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+} from '@webb-dapp/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -12,7 +15,7 @@ export default {
 const Template = () => (
   <NavigationMenu>
     <NavigationMenuTrigger />
-    <NavigationMenuContent version='2.0.7' />
+    <NavigationMenuContent version="2.0.7" />
   </NavigationMenu>
 );
 

@@ -1,5 +1,7 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
-import { Footer, Header } from '../../components';
+import { Footer } from '@webb-tools/webb-ui-components/components';
+
+import { Header } from '../../components';
 import { defaultEndpoint } from '../../constants';
 import { StatsProvider } from '../../provider/stats-provider';
 import { FC, useMemo, useState } from 'react';
@@ -31,11 +33,14 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className='min-w-full min-h-full'>
-      <Header connectedEndpoint={connectedEndpoint} setConnectedEndpoint={setEndpoint} />
+    <div className="min-w-full min-h-full">
+      <Header
+        connectedEndpoint={connectedEndpoint}
+        setConnectedEndpoint={setEndpoint}
+      />
       <ApolloProvider client={apolloClient}>
         <StatsProvider blockTime={6} sessionHeight={600}>
-          <main className='max-w-[1160px] mx-auto'>{children}</main>
+          <main className="max-w-[1160px] mx-auto">{children}</main>
         </StatsProvider>
       </ApolloProvider>
       <Footer />

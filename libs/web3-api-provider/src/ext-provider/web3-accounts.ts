@@ -1,7 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Account, AccountsAdapter, PromiseOrT } from '@webb-tools/abstract-api-provider/account';
+import {
+  Account,
+  AccountsAdapter,
+  PromiseOrT,
+} from '@webb-tools/abstract-api-provider/account';
 import { Eth } from 'web3-eth';
 
 export class Web3Account extends Account<Eth> {

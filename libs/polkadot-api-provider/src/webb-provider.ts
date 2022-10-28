@@ -14,14 +14,23 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
-import { ActionsBuilder, CurrencyRole, InteractiveFeedback, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import {
+  ActionsBuilder,
+  CurrencyRole,
+  InteractiveFeedback,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
-import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
+import {
+  InjectedAccount,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types';
 
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
@@ -38,7 +47,10 @@ import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 
-export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbApiProvider<WebbPolkadot> {
+export class WebbPolkadot
+  extends EventBus<WebbProviderEvents>
+  implements WebbApiProvider<WebbPolkadot>
+{
   state: WebbState;
   noteManager: NoteManager | null = null;
   readonly methods: WebbMethods<WebbPolkadot>;
@@ -118,7 +130,9 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
     const initialSupportedCurrencies: Record<number, Currency> = {};
     for (const currencyConfig of Object.values(config.currencies)) {
-      initialSupportedCurrencies[currencyConfig.id] = new Currency(currencyConfig);
+      initialSupportedCurrencies[currencyConfig.id] = new Currency(
+        currencyConfig
+      );
     }
 
     // All supported bridges are supplied by the config, before passing to the state.
@@ -128,12 +142,18 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
         const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
         const bridgeTargets = bridgeConfig.anchors;
         if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
-          initialSupportedBridges[bridgeConfig.asset] = new Bridge(bridgeCurrency, bridgeTargets);
+          initialSupportedBridges[bridgeConfig.asset] = new Bridge(
+            bridgeCurrency,
+            bridgeTargets
+          );
         }
       }
     }
 
-    this.state = new WebbState(initialSupportedCurrencies, initialSupportedBridges);
+    this.state = new WebbState(
+      initialSupportedCurrencies,
+      initialSupportedBridges
+    );
 
     // set the available bridges of the new chain
     this.state.setBridgeOptions(initialSupportedBridges);
@@ -172,7 +192,11 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       /// feedback actions
       const actions = ActionsBuilder.init()
         /// update extension metadata
-        .action('Update MetaData', () => this.provider.updateMetaData(metaData), 'success')
+        .action(
+          'Update MetaData',
+          () => this.provider.updateMetaData(metaData),
+          'success'
+        )
         .actions();
       const feedback = new InteractiveFeedback(
         'info',
@@ -262,7 +286,10 @@ export class WebbPolkadot extends EventBus<WebbProviderEvents> implements WebbAp
       new PolkaTXBuilder(apiPromise, notification, injectedExtension)
     );
     const chainId = await provider.api.consts.linkableTreeBn254.chainIdentifier;
-    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId.toNumber());
+    const typedChainId = calculateTypedChainId(
+      ChainType.Substrate,
+      chainId.toNumber()
+    );
     const instance = new WebbPolkadot(
       apiPromise,
       typedChainId,

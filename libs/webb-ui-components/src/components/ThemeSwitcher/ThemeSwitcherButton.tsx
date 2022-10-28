@@ -10,16 +10,21 @@ const ThemeSwitcherButton = () => {
     const preferredTheme = isDarkMode ? 'dark' : 'light';
     switch (preferredTheme) {
       case 'light':
-        return <SunLine size='lg' />;
+        return <SunLine size="lg" />;
       case 'dark':
-        return <MoonLine size='lg' />;
+        return <MoonLine size="lg" />;
       default:
-        return <Half2Icon className='w-6 h-6 fill-mono-200 dark:fill-mono-40' />;
+        return (
+          <Half2Icon className="w-6 h-6 fill-mono-200 dark:fill-mono-40" />
+        );
     }
   }, [isDarkMode]);
 
   return (
-    <button className='relative inline-block text-left' onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')}>
+    <button
+      className="relative inline-block text-left"
+      onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')}
+    >
       {Icon}
     </button>
   );

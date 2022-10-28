@@ -1,4 +1,10 @@
-import { ColumnDef, createColumnHelper, getCoreRowModel, Table as RTTable, useReactTable } from '@tanstack/react-table';
+import {
+  ColumnDef,
+  createColumnHelper,
+  getCoreRowModel,
+  Table as RTTable,
+  useReactTable,
+} from '@tanstack/react-table';
 import { useStatsContext } from '../provider/stats-provider';
 import {
   Avatar,
@@ -22,7 +28,11 @@ import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 
 import { AuthoritiesTable } from '../containers';
-import { DiscreteList, UpcomingThreshold, useThresholds } from '../provider/hooks';
+import {
+  DiscreteList,
+  UpcomingThreshold,
+  useThresholds,
+} from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
@@ -30,7 +40,11 @@ const columnHelper = createColumnHelper<UpcomingThreshold>();
 const columns: ColumnDef<UpcomingThreshold, any>[] = [
   columnHelper.accessor('stats', {
     header: 'Status',
-    cell: (props) => <Chip color={getChipColorByKeyType(props.getValue())}>{props.getValue<string>()}</Chip>,
+    cell: (props) => (
+      <Chip color={getChipColorByKeyType(props.getValue())}>
+        {props.getValue<string>()}
+      </Chip>
+    ),
   }),
 
   columnHelper.accessor('session', {
@@ -47,7 +61,12 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 
   columnHelper.accessor('authoritySet', {
     header: () => (
-      <Typography variant='body1' fw='bold' ta='right' className='!text-inherit'>
+      <Typography
+        variant="body1"
+        fw="bold"
+        ta="right"
+        className="!text-inherit"
+      >
         Authority Set
       </Typography>
     ),
@@ -56,14 +75,14 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
       const authorities = props.getValue<DiscreteList>();
       if (!authorities.count) {
         return (
-          <Typography variant='body1' ta='right'>
+          <Typography variant="body1" ta="right">
             -
           </Typography>
         );
       }
 
       return (
-        <AvatarGroup total={authorities.count} className='justify-end'>
+        <AvatarGroup total={authorities.count} className="justify-end">
           {authorities.firstElements.map((au, idx) => (
             <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
@@ -103,7 +122,10 @@ const Authorities = () => {
     ];
   }, [thresholds]);
 
-  const data = useMemo(() => (upComingThresholds ? Object.values(upComingThresholds) : []), [upComingThresholds]);
+  const data = useMemo(
+    () => (upComingThresholds ? Object.values(upComingThresholds) : []),
+    [upComingThresholds]
+  );
 
   const table = useReactTable<UpcomingThreshold>({
     columns,
@@ -115,39 +137,51 @@ const Authorities = () => {
   });
 
   const { keyGen, publicKey, signature } = threshold ?? {};
-  const isLoading = thresholds.isLoading || keyGen === undefined || signature === undefined || publicKey === undefined;
+  const isLoading =
+    thresholds.isLoading ||
+    keyGen === undefined ||
+    signature === undefined ||
+    publicKey === undefined;
   const { time } = useStatsContext();
 
   return (
-    <div className='flex flex-col space-y-4'>
+    <div className="flex flex-col space-y-4">
       <Card>
-        <TitleWithInfo title='Network Thresholds' info='Network Thresholds' variant='h5' />
+        <TitleWithInfo
+          title="Network Thresholds"
+          info="Network Thresholds"
+          variant="h5"
+        />
 
         {isLoading ? (
-          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
-            <Spinner size='xl' />
+          <div className="flex items-center justify-center min-w-full min-h-[235px]">
+            <Spinner size="xl" />
           </div>
         ) : (
           <>
-            <Stats items={statsItems} className='pb-0' />
+            <Stats items={statsItems} className="pb-0" />
 
-            <TimeProgress startTime={publicKey.start ?? null} endTime={publicKey.end ?? null} now={time} />
+            <TimeProgress
+              startTime={publicKey.start ?? null}
+              endTime={publicKey.end ?? null}
+              now={time}
+            />
 
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-2'>
-                <Chip color='green'>{publicKey.isCurrent ? 'Current' : 'Next'}</Chip>
-                <LabelWithValue label='session:' value={publicKey.session} />
-                <Typography variant='body2' fw='semibold'>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Chip color="green">
+                  {publicKey.isCurrent ? 'Current' : 'Next'}
+                </Chip>
+                <LabelWithValue label="session:" value={publicKey.session} />
+                <Typography variant="body2" fw="semibold">
                   /
                 </Typography>
-                <KeyValueWithButton size='sm' keyValue={publicKey.compressed} />
+                <KeyValueWithButton size="sm" keyValue={publicKey.compressed} />
               </div>
 
-              <Link to='history'>
-                <Button variant='link' size='sm'>
-                  <Link to='history'>View history</Link>
-                </Button>
-              </Link>
+              <Button variant="link" size="sm">
+                <Link to="history">View history</Link>
+              </Button>
             </div>
           </>
         )}
@@ -161,8 +195,8 @@ const Authorities = () => {
         }}
       >
         {isLoading ? (
-          <div className='flex items-center justify-center min-w-full min-h-[235px]'>
-            <Spinner size='xl' />
+          <div className="flex items-center justify-center min-w-full min-h-[235px]">
+            <Spinner size="xl" />
           </div>
         ) : (
           <Table tableProps={table as RTTable<unknown>} />

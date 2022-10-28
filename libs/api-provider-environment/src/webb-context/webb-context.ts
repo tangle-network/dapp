@@ -23,7 +23,9 @@ export interface WebbContextState<T = unknown> {
   inactivateApi(): Promise<void>;
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
   activeFeedback: InteractiveFeedback | null;
-  registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => void;
+  registerInteractiveFeedback: (
+    interactiveFeedback: InteractiveFeedback
+  ) => void;
 }
 
 export const WebbContext = React.createContext<WebbContextState>({

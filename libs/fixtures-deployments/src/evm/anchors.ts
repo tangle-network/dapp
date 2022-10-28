@@ -8,7 +8,11 @@ import { getCachedFixtureURI } from '..';
 // Variable anchor deployments either have 1 edge, or 7 edges.
 // Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
 //    and a large circuit (16 input UTXOs)
-export const fetchVAnchorKeyFromIpfs = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorKeyFromIpfs = async (
+  maxEdges: number,
+  small: boolean,
+  abortSignal: AbortSignal
+) => {
   let ipfsHash: string;
   let cachedURI: string;
 
@@ -46,7 +50,9 @@ export const fetchVAnchorKeyFromIpfs = async (maxEdges: number, small: boolean, 
   }
 
   try {
-    const url = withLocalFixtures() ? cachedURI : `https://ipfs.io/ipfs/${ipfsHash}`;
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://ipfs.io/ipfs/${ipfsHash}`;
     const keyRequest = await fetch(url, { signal: abortSignal });
     const keyArrayBuffer = await keyRequest.arrayBuffer();
     const key = new Uint8Array(keyArrayBuffer);
@@ -61,7 +67,11 @@ export const fetchVAnchorKeyFromIpfs = async (maxEdges: number, small: boolean, 
 // Variable anchor deployments either have 1 edge, or 7 edges.
 // Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
 //    and a large circuit (16 input UTXOs)
-export const fetchVAnchorWasmFromIpfs = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorWasmFromIpfs = async (
+  maxEdges: number,
+  small: boolean,
+  abortSignal: AbortSignal
+) => {
   let ipfsHash: string;
   let cachedURI: string;
 
@@ -99,7 +109,9 @@ export const fetchVAnchorWasmFromIpfs = async (maxEdges: number, small: boolean,
   }
 
   try {
-    const url = withLocalFixtures() ? cachedURI : `https://ipfs.io/ipfs/${ipfsHash}`;
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://ipfs.io/ipfs/${ipfsHash}`;
     const cachedWasmRequest = await fetch(url, {
       signal: abortSignal,
     });
@@ -113,7 +125,11 @@ export const fetchVAnchorWasmFromIpfs = async (maxEdges: number, small: boolean,
   }
 };
 
-export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorKeyFromAws = async (
+  maxEdges: number,
+  small: boolean,
+  abortSignal: AbortSignal
+) => {
   let filePath: string;
   let cachedURI: string;
 
@@ -156,7 +172,9 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
   }
 
   try {
-    const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     console.log('fetching zkey from', url);
     const keyRequest = await fetch(url, { signal: abortSignal });
     const keyArrayBuffer = await keyRequest.arrayBuffer();
@@ -169,7 +187,11 @@ export const fetchVAnchorKeyFromAws = async (maxEdges: number, small: boolean, a
   }
 };
 
-export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, abortSignal: AbortSignal) => {
+export const fetchVAnchorWasmFromAws = async (
+  maxEdges: number,
+  small: boolean,
+  abortSignal: AbortSignal
+) => {
   let filePath: string;
   let cachedURI: string;
 
@@ -212,7 +234,9 @@ export const fetchVAnchorWasmFromAws = async (maxEdges: number, small: boolean, 
   }
 
   try {
-    const url = withLocalFixtures() ? cachedURI : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
+    const url = withLocalFixtures()
+      ? cachedURI
+      : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     console.log('fetching wasm from', url);
     const cachedWasmRequest = await fetch(url, {
       signal: abortSignal,

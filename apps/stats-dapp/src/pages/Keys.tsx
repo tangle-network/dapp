@@ -23,8 +23,8 @@ const Keys = () => {
 
   if (isLoading || currentKey === null || nextKey === null) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
-        <Spinner size='xl' />;
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="xl" />;
       </div>
     );
   }
@@ -32,7 +32,7 @@ const Keys = () => {
   if (isFailed) {
     return (
       <div>
-        <Typography variant='body1' className='text-red-100 dark:text-red-10'>
+        <Typography variant="body1" className="text-red-100 dark:text-red-10">
           {error ?? 'Unexpected error'}
         </Typography>
       </div>
@@ -41,12 +41,16 @@ const Keys = () => {
 
   return (
     <div>
-      <div className='flex space-x-4'>
-        <KeyStatusCardContainer now={time} keyType='current' data={currentKey} />
-        <KeyStatusCardContainer now={time} keyType='next' data={nextKey} />
+      <div className="flex space-x-4">
+        <KeyStatusCardContainer
+          now={time}
+          keyType="current"
+          data={currentKey}
+        />
+        <KeyStatusCardContainer now={time} keyType="next" data={nextKey} />
       </div>
 
-      <div className='mt-4'>
+      <div className="mt-4">
         <KeygenTable />
       </div>
 

@@ -16,7 +16,6 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
@@ -24,7 +23,9 @@
       "@webb-tools/abstract-api-provider": [
         "libs/abstract-api-provider/src/index.ts"
       ],
-      "@webb-tools/abstract-api-provider/*": ["libs/abstract-api-provider/src/*"],
+      "@webb-tools/abstract-api-provider/*": [
+        "libs/abstract-api-provider/src/*"
+      ],
       "@webb-tools/api-provider-environment": [
         "libs/api-provider-environment/src/index.ts"
       ],
@@ -69,12 +70,18 @@
       "@webb-tools/storage": ["libs/storage/src/index.ts"],
       "@webb-tools/storage/*": ["libs/storage/src/*"],
       "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
-      "@webb-tools/tailwind-preset": ["libs/tailwind-preset/index.js"],
+      "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
       "@webb-tools/ui-hooks": ["libs/ui-hooks/src/index.ts"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
-      "@webb-tools/webb-ui-components": ["libs/webb-ui-components/src/index.ts"],
+      "@webb-tools/webb-ui-components": [
+        "libs/webb-ui-components/src/index.ts"
+      ],
       "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
     }
   },
-  "exclude": ["node_modules", "tmp", "**/node_modules/*", "**/build/*"]
+  "include": [
+    "./libs/**/src/**/*.{js,jsx,ts,tsx}",
+    "./apps/**/src/**/*.{js,jsx,ts,tsx}"
+  ],
+  "exclude": ["node_modules", "tmp", "**/node_modules/*"]
 }

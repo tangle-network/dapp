@@ -42,8 +42,15 @@ type DepositPayload = IDepositPayload<Note, [number, number | undefined]>;
  * Webb Anchor API implementation for Polkadot
  **/
 
-export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, DepositPayload> {
-  private async getleafIndex(leaf: Uint8Array, indexBeforeInsertion: number, treeId: number): Promise<number> {
+export class PolkadotVAnchorDeposit extends VAnchorDeposit<
+  WebbPolkadot,
+  DepositPayload
+> {
+  private async getleafIndex(
+    leaf: Uint8Array,
+    indexBeforeInsertion: number,
+    treeId: number
+  ): Promise<number> {
     return getLeafIndex(this.inner.api, leaf, indexBeforeInsertion, treeId);
   }
 
@@ -61,13 +68,20 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       logger.error('Not currency/active bridge available');
       throw new Error('api not ready');
     }
-    const bnAmount = ethers.utils.parseUnits(amount.toString(), currency.getDecimals());
+    const bnAmount = ethers.utils.parseUnits(
+      amount.toString(),
+      currency.getDecimals()
+    );
     const tokenSymbol = currency.view.symbol;
     const destChainId = destinationChainId;
     // Chain id of the active API
-    const chainId = await this.inner.api.consts.linkableTreeBn254.chainIdentifier;
+    const chainId = await this.inner.api.consts.linkableTreeBn254
+      .chainIdentifier;
     const chainType = await this.inner.api.consts.linkableTreeBn254.chainType;
-    const sourceChainId = calculateTypedChainId(Number(chainType.toHex()), Number(chainId));
+    const sourceChainId = calculateTypedChainId(
+      Number(chainType.toHex()),
+      Number(chainId)
+    );
     const anchors = await this.bridgeApi.getAnchors();
     const anchor = anchors[0];
     // Tree id for the target chain
@@ -107,7 +121,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
 
   async deposit(depositPayload: DepositPayload): Promise<NewNotesTxResult> {
     const wrappableAssetRaw = Number(depositPayload.params[1]);
-    const wrapAndDepositFlow = typeof depositPayload.params[1] !== 'undefined' && !Number.isNaN(wrappableAssetRaw);
+    const wrapAndDepositFlow =
+      typeof depositPayload.params[1] !== 'undefined' &&
+      !Number.isNaN(wrappableAssetRaw);
 
     // Validate if the provider is ready for a new deposit
     switch (this.state) {
@@ -233,7 +249,9 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         inputNullifiers: data.inputUtxos.map((utxo) => {
           return `0x${utxo.nullifier}`;
         }),
-        outputCommitments: data.outputNotes.map((note) => u8aToHex(note.getLeaf())),
+        outputCommitments: data.outputNotes.map((note) =>
+          u8aToHex(note.getLeaf())
+        ),
         extDataHash: data.extDataHash,
       };
 
@@ -245,16 +263,20 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const predictedIndex = leafsCount;
       let tx;
       if (wrapAndDepositFlow) {
-        const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+        const governedToken =
+          this.inner.methods.bridgeApi.getBridge()?.currency!;
         const chainId = this.inner.typedChainId;
-        const wrappableAssets = await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
+        const wrappableAssets =
+          await this.inner.methods.bridgeApi.fetchWrappableAssets(chainId);
         const wrappableAssetId = this.inner.state
           .getReverseCurrencyMapWithChainId(chainId)
           .get(String(wrappableAssetRaw));
 
-        const wrappableToken = wrappableAssets.find((asset) => asset.id === wrappableAssetId);
-        const wrappedTokenId = governedToken.getAddress(chainId);
-        const wrappableTokenId = wrappableToken.getAddress(chainId);
+        const wrappableToken = wrappableAssets.find(
+          (asset) => asset.id === wrappableAssetId
+        )!;
+        const wrappedTokenId = governedToken.getAddress(chainId)!;
+        const wrappableTokenId = wrappableToken.getAddress(chainId)!;
         const address = account.address;
         const amount = note.amount;
         tx = this.inner.txBuilder.build(
@@ -287,7 +309,11 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
       const txHash = await tx.call(account.address);
 
       const insertedLeaf = depositNote.getLeaf();
-      const leafIndex = await this.getleafIndex(insertedLeaf, predictedIndex, treeId);
+      const leafIndex = await this.getleafIndex(
+        insertedLeaf,
+        predictedIndex,
+        treeId
+      );
       // Update the leaf index
       depositNote.mutateIndex(String(leafIndex));
 
@@ -297,7 +323,10 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<WebbPolkadot, Deposit
         outputNotes: [depositNote],
       };
     } catch (e) {
-      if (e instanceof WebbError && e.code !== WebbErrorCodes.TransactionCancelled) {
+      if (
+        e instanceof WebbError &&
+        e.code !== WebbErrorCodes.TransactionCancelled
+      ) {
         this.emit('stateChange', TransactionState.Failed);
         if (this.inner.noteManager) {
           this.inner.noteManager.removeNote(depositPayload.note);

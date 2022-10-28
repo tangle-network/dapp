@@ -27,7 +27,10 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
         let tokenAccountData: OrmlTokensAccountData;
 
         try {
-          tokenAccountData = await this.inner.api.query.tokens.accounts(activeAccount.address, assetId);
+          tokenAccountData = await this.inner.api.query.tokens.accounts(
+            activeAccount.address,
+            assetId
+          );
         } catch (e) {
           // It is possible that we have connected to a chain that is not setup with orml tokens.
           return '';
@@ -42,7 +45,9 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
         return denominatedTokenBalance.toString();
       } else {
-        const systemAccountData = await this.inner.api.query.system.account(activeAccount.address);
+        const systemAccountData = await this.inner.api.query.system.account(
+          activeAccount.address
+        );
 
         let tokenBalance: string = systemAccountData.data.free.toString();
 
@@ -56,8 +61,12 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return '';
   }
 
-  async tokenBalanceByCurrencyId(typedChainId: number, currency: CurrencyId): Promise<string> {
-    const assetId = this.inner.config.currencies[currency].addresses.get(typedChainId);
+  async tokenBalanceByCurrencyId(
+    typedChainId: number,
+    currency: CurrencyId
+  ): Promise<string> {
+    const assetId =
+      this.inner.config.currencies[currency].addresses.get(typedChainId);
     return assetId ? this.getTokenBalanceByAssetId(assetId) : '';
   }
 

@@ -9,7 +9,8 @@ import { getCachedFixtureURI } from '..';
 const logger = LoggerService.get('IPFS');
 
 export async function fetchSubstrateMixerProvingKey() {
-  const IPFSUrl = 'https://ipfs.io/ipfs/QmfQUgqRXCdUiogiRU8ZdLFZD2vqVb9fHpLkL6DsGHwoLH';
+  const IPFSUrl =
+    'https://ipfs.io/ipfs/QmfQUgqRXCdUiogiRU8ZdLFZD2vqVb9fHpLkL6DsGHwoLH';
   const cachedURI = getCachedFixtureURI('proving_key_substrate_mixer.bin');
   const ipfsKeyRequest = await fetch(withLocalFixtures() ? cachedURI : IPFSUrl);
   const circuitKeyArrayBuffer = await ipfsKeyRequest.arrayBuffer();

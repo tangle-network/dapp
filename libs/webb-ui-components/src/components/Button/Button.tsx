@@ -29,61 +29,69 @@ import { getButtonClassNameByVariant } from './utils';
  *  <Button variant="utility" isLoading>Button</Button>
  * ```
  */
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
-  const {
-    as: asProps,
-    children,
-    className,
-    isDisabled,
-    isFullWidth,
-    isLoading,
-    leftIcon,
-    loadingText,
-    rightIcon,
-    size = 'md',
-    spinner,
-    spinnerPlacement = 'start',
-    variant = 'primary',
-    ...restProps
-  } = props;
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, ref) => {
+    const {
+      as: asProps,
+      children,
+      className,
+      isDisabled,
+      isFullWidth,
+      isLoading,
+      leftIcon,
+      loadingText,
+      rightIcon,
+      size = 'md',
+      spinner,
+      spinnerPlacement = 'start',
+      variant = 'primary',
+      ...restProps
+    } = props;
 
-  const [buttonProps] = useButtonProps({ tagName: asProps, isDisabled, ...restProps });
+    const [buttonProps, { tagName: Component }] = useButtonProps({
+      tagName: asProps,
+      isDisabled,
+      ...restProps,
+    });
 
-  const mergedClassName = twMerge(
-    'max-w-max',
-    cx({ 'w-full max-w-none': isFullWidth }),
-    getButtonClassNameByVariant(variant, size),
-    className
-  );
+    const mergedClassName = twMerge(
+      'max-w-max',
+      cx({ 'w-full max-w-none': isFullWidth }),
+      getButtonClassNameByVariant(variant, size),
+      className
+    );
 
-  const contentProps = { children, leftIcon, rightIcon };
+    const contentProps = { children, leftIcon, rightIcon };
 
-  return (
-    <button
-      {...restProps}
-      {...buttonProps}
-      disabled={buttonProps.disabled || isLoading}
-      className={cx(mergedClassName)}
-      ref={ref}
-    >
-      {isLoading && spinnerPlacement === 'start' && <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>}
-      {isLoading ? (
-        loadingText || (
-          <span className='opacity-0'>
-            <ButtonContent {...contentProps} />
-          </span>
-        )
-      ) : (
-        <ButtonContent {...contentProps} />
-      )}
-      {isLoading && spinnerPlacement === 'end' && (
-        <ButtonSpinner label={loadingText} placement='end'>
-          {spinner}
-        </ButtonSpinner>
-      )}
-    </button>
-  );
-});
+    return (
+      <Component
+        {...restProps}
+        {...buttonProps}
+        disabled={buttonProps.disabled || isLoading}
+        className={cx(mergedClassName)}
+        ref={ref}
+      >
+        {isLoading && spinnerPlacement === 'start' && (
+          <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>
+        )}
+        {isLoading ? (
+          loadingText || (
+            <span className="opacity-0">
+              <ButtonContent {...contentProps} />
+            </span>
+          )
+        ) : (
+          <ButtonContent {...contentProps} />
+        )}
+        {isLoading && spinnerPlacement === 'end' && (
+          <ButtonSpinner label={loadingText} placement="end">
+            {spinner}
+          </ButtonSpinner>
+        )}
+      </Component>
+    );
+  }
+);
 
 /***** Internal components */
 
@@ -92,9 +100,21 @@ function ButtonContent(props: ButtonContentProps) {
 
   return (
     <>
-      {leftIcon && <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>}
-      <span className='block !text-inherit'>{children}</span>
-      {rightIcon && <span className={cx(`ml-2`, 'block !text-inherit')}>{rightIcon}</span>}
+      {leftIcon && (
+        <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>
+      )}
+      <span
+        className={cx(
+          'block !text-inherit',
+          'border-b-[1.6px]',
+          'border-b-transparent group-hover:border-inherit dark:group-hover:border-inherit'
+        )}
+      >
+        {children}
+      </span>
+      {rightIcon && (
+        <span className={cx(`ml-2`, 'block !text-inherit')}>{rightIcon}</span>
+      )}
     </>
   );
 }

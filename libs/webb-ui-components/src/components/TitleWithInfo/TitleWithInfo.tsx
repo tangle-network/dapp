@@ -16,21 +16,40 @@ import { TitleWithInfoProps } from './types';
  * ```
  */
 export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
-  ({ className, info, title, titleClassName, titleComponent = 'span', variant = 'body1', ...props }, ref) => {
+  (
+    {
+      className,
+      info,
+      title,
+      titleClassName,
+      titleComponent = 'span',
+      variant = 'body1',
+      ...props
+    },
+    ref
+  ) => {
     const mergedClsx = useMemo(() => {
-      return twMerge('flex items-center space-x-1 text-mono-180 dark:text-mono-0', className);
+      return twMerge(
+        'flex items-center space-x-1 text-mono-180 dark:text-mono-0',
+        className
+      );
     }, [className]);
 
     return (
       <div {...props} className={mergedClsx} ref={ref}>
-        <Typography component={titleComponent} variant={variant} fw='bold' className={titleClassName}>
+        <Typography
+          component={titleComponent}
+          variant={variant}
+          fw="bold"
+          className={titleClassName}
+        >
           {title}
         </Typography>
         {info && (
           <Tooltip>
-            <TooltipTrigger className='text-center' asChild>
-              <span className='cursor-pointer !text-inherit'>
-                <InformationLine className='!fill-current pointer-events-none' />
+            <TooltipTrigger className="text-center" asChild>
+              <span className="cursor-pointer !text-inherit">
+                <InformationLine className="!fill-current pointer-events-none" />
               </span>
             </TooltipTrigger>
             <TooltipBody>{info}</TooltipBody>

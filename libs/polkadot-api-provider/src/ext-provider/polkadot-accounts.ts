@@ -1,9 +1,16 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Account, AccountsAdapter, PromiseOrT } from '@webb-tools/abstract-api-provider/account';
+import {
+  Account,
+  AccountsAdapter,
+  PromiseOrT,
+} from '@webb-tools/abstract-api-provider/account';
 
-import { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types';
+import {
+  InjectedAccount,
+  InjectedExtension,
+} from '@polkadot/extension-inject/types';
 
 import { isValidAddress } from './is-valid-address';
 
@@ -17,7 +24,10 @@ export class PolkadotAccount extends Account<InjectedAccount> {
   }
 }
 
-export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, InjectedAccount> {
+export class PolkadotAccounts extends AccountsAdapter<
+  InjectedExtension,
+  InjectedAccount
+> {
   providerName = 'Polka';
   private activeAccount: null | PolkadotAccount = null;
 
@@ -38,7 +48,9 @@ export class PolkadotAccounts extends AccountsAdapter<InjectedExtension, Injecte
         }
 
         const accounts = await this._inner.accounts.get();
-        const defaultAccount = accounts[0] ? new PolkadotAccount(accounts[0], accounts[0].address) : null;
+        const defaultAccount = accounts[0]
+          ? new PolkadotAccount(accounts[0], accounts[0].address)
+          : null;
 
         resolve(defaultAccount);
       } catch (e) {

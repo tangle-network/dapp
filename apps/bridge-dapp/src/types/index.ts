@@ -37,7 +37,8 @@ export interface ExternalLink {
   rel?: string;
 }
 
-export interface FooterNavsType extends Record<string, Array<Link | ExternalLink>> {}
+export interface FooterNavsType
+  extends Record<string, Array<Link | ExternalLink>> {}
 
 /**
  * The bottom social platforms config type

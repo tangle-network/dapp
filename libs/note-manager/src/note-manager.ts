@@ -13,11 +13,17 @@ export class NoteManager {
   private notesMap: Map<string, Note[]>;
   private notesUpdatedSubject = new BehaviorSubject(false);
 
-  private constructor(private noteStorage: Storage<NoteStorage>, private keypair: Keypair) {
+  private constructor(
+    private noteStorage: Storage<NoteStorage>,
+    private keypair: Keypair
+  ) {
     this.notesMap = new Map();
   }
 
-  static async initAndDecryptNotes(noteStorage: Storage<NoteStorage>, keypair: Keypair): Promise<NoteManager> {
+  static async initAndDecryptNotes(
+    noteStorage: Storage<NoteStorage>,
+    keypair: Keypair
+  ): Promise<NoteManager> {
     const noteManager = new NoteManager(noteStorage, keypair);
 
     const encryptedNotesMap = await noteStorage.get('encryptedNotes');
@@ -76,7 +82,11 @@ export class NoteManager {
       this.notesMap.set(note.note.targetChainId, [note]);
     } else {
       // Check if this same note has already been added
-      if (targetNotes.find((storedNote) => storedNote.serialize() === note.serialize())) {
+      if (
+        targetNotes.find(
+          (storedNote) => storedNote.serialize() === note.serialize()
+        )
+      ) {
         return;
       }
 
@@ -96,7 +106,9 @@ export class NoteManager {
       return;
     }
 
-    const noteIndex = targetNotes.findIndex((managedNote) => managedNote.serialize() === note.serialize());
+    const noteIndex = targetNotes.findIndex(
+      (managedNote) => managedNote.serialize() === note.serialize()
+    );
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
       this.notesMap.set(note.note.targetChainId, targetNotes);
@@ -131,7 +143,10 @@ export class NoteManager {
 
   // Return enough notes to satisfy the amount
   // Returns null if it cannot satisfy
-  getNotesForTransact(typedChainId: number, amount: ethers.BigNumber): Note[] | null {
+  getNotesForTransact(
+    typedChainId: number,
+    amount: ethers.BigNumber
+  ): Note[] | null {
     const currentAmount = ethers.BigNumber.from(0);
     const currentNotes: Note[] = [];
 
@@ -155,7 +170,10 @@ export class NoteManager {
     return currentNotes;
   }
 
-  getWithdrawableAmount(typedChainId: number, tokenName: string): ethers.BigNumber {
+  getWithdrawableAmount(
+    typedChainId: number,
+    tokenName: string
+  ): ethers.BigNumber {
     const availableChainNotes = this.notesMap.get(typedChainId.toString());
     const amount: ethers.BigNumber = ethers.BigNumber.from(0);
 
@@ -170,7 +188,10 @@ export class NoteManager {
 
   // Trim the available notes to get the notes needed for a target amount.
   // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(notes: Note[], targetAmount: ethers.BigNumber): Note[] | null {
+  static getNotesFifo(
+    notes: Note[],
+    targetAmount: ethers.BigNumber
+  ): Note[] | null {
     let currentAmount = ethers.BigNumber.from(0);
     const currentNotes: Note[] = [];
 

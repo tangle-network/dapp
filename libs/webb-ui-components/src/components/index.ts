@@ -15,6 +15,7 @@ export * from './Drawer';
 export * from './Dropdown';
 export * from './DropdownMenu';
 export * from './Filter';
+export * from './Footer';
 export * from './Input';
 export * from './KeyCard';
 export * from './KeyValueWithButton';

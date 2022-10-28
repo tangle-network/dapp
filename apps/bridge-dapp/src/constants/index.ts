@@ -1,5 +1,16 @@
-import { ExternalLink, FooterNavsType, Link, SocialConfigsType } from '../types';
-import { CommonWealth, DiscordFill, GithubFill, TelegramFill, TwitterFill } from '@webb-tools/icons';
+import {
+  ExternalLink,
+  FooterNavsType,
+  Link,
+  SocialConfigsType,
+} from '../types';
+import {
+  CommonWealth,
+  DiscordFill,
+  GithubFill,
+  TelegramFill,
+  TwitterFill,
+} from '@webb-tools/icons';
 
 const commonExternalProps = {
   target: '_blank' as const,
@@ -147,4 +158,6 @@ export const socialConfigs: Array<SocialConfigsType> = [
 
 const isDev = process.env.NODE_ENV === 'development';
 
-export const defaultEndpoint = isDev ? 'http://localhost:4000' : 'https://subquery-dev.webb.tools/graphql';
+export const defaultEndpoint = isDev
+  ? 'http://localhost:4000'
+  : 'https://subquery-dev.webb.tools/graphql';

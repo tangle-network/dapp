@@ -1,21 +1,21 @@
-import { Button, Typography } from '@webb-tools/webb-ui-components';
-import { Layout } from '../containers';
-import { RouterConfigData } from '@webb-tools/react-environment';
-import { Spinner } from '@webb-tools/icons';
 import { BareProps } from '@webb-tools/dapp-types';
-import React, { FC, Suspense } from 'react';
+import { Spinner } from '@webb-tools/icons';
+import { RouterConfigData } from '@webb-tools/react-environment';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { FC, lazy, Suspense } from 'react';
+import { Layout } from '../containers';
 
 // TODO: Implement these pages for the Bridge Dapp
-// const PageVBridge = lazy(() => import('@webb-dapp/vbridge'));
-// const PageWrapUnwrap = lazy(() => import('@webb-dapp/page-wrap-unwrap'));
-// const PageNoteAccount = lazy(() => import('@webb-dapp/page-note-account'));
+const PageBridge = lazy(() => import('../pages/PageBridge'));
+// const PageWrapUnwrap = lazy(() => import('@webb-tools/page-wrap-unwrap'));
+// const PageNoteAccount = lazy(() => import('@webb-tools/page-note-account'));
 
 const CSuspense: FC<BareProps> = ({ children }) => {
   return (
     <Suspense
       fallback={
-        <div className='flex items-center justify-center min-w-full min-h-screen'>
-          <Spinner size='xl' />
+        <div className="flex items-center justify-center min-w-full min-h-screen">
+          <Spinner size="xl" />
         </div>
       }
     >
@@ -30,8 +30,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Bridges</Typography>
-            <Button>Some button</Button>
+            <PageBridge />
           </CSuspense>
         ),
         path: 'bridge/*',
@@ -40,7 +39,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Wrap Unwrap</Typography>
+            <Typography variant="h1">Wrap Unwrap</Typography>
           </CSuspense>
         ),
         path: 'wrap-unwrap/*',
@@ -49,7 +48,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant='h1'>Note Account</Typography>
+            <Typography variant="h1">Note Account</Typography>
           </CSuspense>
         ),
         path: 'note-account/*',

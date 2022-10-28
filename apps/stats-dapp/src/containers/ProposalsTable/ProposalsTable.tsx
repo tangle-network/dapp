@@ -9,7 +9,11 @@ import {
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
 import { ProposalStatus, ProposalType } from '../../generated/graphql';
-import { ProposalListItem, ProposalsQuery, useProposals } from '../../provider/hooks';
+import {
+  ProposalListItem,
+  ProposalsQuery,
+  useProposals,
+} from '../../provider/hooks';
 import { getChipColorByProposalType } from '../../utils';
 import {
   Avatar,
@@ -39,7 +43,11 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (props) => (
-      <Chip color={getChipColorByProposalType(props.getValue<ProposalStatus>())}>{props.getValue<string>()}</Chip>
+      <Chip
+        color={getChipColorByProposalType(props.getValue<ProposalStatus>())}
+      >
+        {props.getValue<string>()}
+      </Chip>
     ),
   }),
 
@@ -55,15 +63,15 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('txHash', {
     header: 'Tx Hash',
     cell: (props) => (
-      <div className='flex items-center space-x-1'>
+      <div className="flex items-center space-x-1">
         <LabelWithValue
-          labelVariant='body3'
-          label='tx hash:'
+          labelVariant="body3"
+          label="tx hash:"
           isHiddenLabel
           value={shortenHex(props.getValue<string>(), 3)}
           valueTooltip={props.getValue<string>()}
         />
-        <a href='#'>
+        <a href="#">
           <ExternalLinkLine />
         </a>
       </div>
@@ -77,7 +85,11 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
       return (
         <AvatarGroup total={proposers.count}>
           {proposers.firstElements.map((item, idx) => (
-            <Avatar sourceVariant={'address'} value={item} key={`${idx}-${item}`} />
+            <Avatar
+              sourceVariant={'address'}
+              value={item}
+              key={`${idx}-${item}`}
+            />
           ))}
         </AvatarGroup>
       );
@@ -86,13 +98,13 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: () => <TokenIcon name='eth' size='lg' />,
+    cell: () => <TokenIcon name="eth" size="lg" />,
   }),
 
   columnHelper.accessor('id', {
     header: '',
     cell: (props) => (
-      <Button variant='link' size='sm'>
+      <Button variant="link" size="sm">
         <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
       </Button>
     ),
@@ -159,25 +171,42 @@ export const ProposalsTable = () => {
     }),
     [pageIndex, pageSize]
   );
-  
+
   const chains = useMemo<Array<[string, ChainConfig]>>(
-    () => Object.keys(chainsConfig).map((key: any) => [String(key), chainsConfig[key]]),
+    () =>
+      Object.keys(chainsConfig).map((key: any) => [
+        String(key),
+        chainsConfig[key],
+      ]),
     []
   );
 
   const [globalFilter, setGlobalFilter] = useState('');
-  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<'all' | ProposalStatus[]>('all');
-  const [selectedProposalTypes, setSelectedProposalTypes] = useState<'all' | ProposalType[]>('all');
-  const [selectedChains, setSelectedChains] = useState<'all' | [string, ChainConfig][]>('all');
+  const [selectedProposalsStatuses, setSelectedProposalStatuses] = useState<
+    'all' | ProposalStatus[]
+  >('all');
+  const [selectedProposalTypes, setSelectedProposalTypes] = useState<
+    'all' | ProposalType[]
+  >('all');
+  const [selectedChains, setSelectedChains] = useState<
+    'all' | [string, ChainConfig][]
+  >('all');
 
   const pageQuery: ProposalsQuery = useMemo(
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
       filter: {
-        status: selectedProposalsStatuses === 'all' ? undefined : selectedProposalsStatuses,
-        type: selectedProposalTypes === 'all' ? undefined : selectedProposalTypes,
-        chains: selectedChains === 'all' ? undefined : selectedChains.map(([i]) => Number(i)),
+        status:
+          selectedProposalsStatuses === 'all'
+            ? undefined
+            : selectedProposalsStatuses,
+        type:
+          selectedProposalTypes === 'all' ? undefined : selectedProposalTypes,
+        chains:
+          selectedChains === 'all'
+            ? undefined
+            : selectedChains.map(([i]) => Number(i)),
       },
     }),
     [
@@ -189,7 +218,10 @@ export const ProposalsTable = () => {
       selectedChains,
     ]
   );
-  const pageCount = useMemo(() => Math.ceil(totalItems / pageSize), [pageSize, totalItems]);
+  const pageCount = useMemo(
+    () => Math.ceil(totalItems / pageSize),
+    [pageSize, totalItems]
+  );
 
   const proposalsStats = useProposals(pageQuery);
   const data = useMemo(() => {
@@ -254,8 +286,12 @@ export const ProposalsTable = () => {
                   onChange={(v) => {
                     setSelectedProposalTypes(v);
                   }}
-                  labelGetter={(proposalType) => <span className={'text-xs'}>{proposalType}</span>}
-                  keyGetter={(proposalType) => `Filter_proposals${proposalType}`}
+                  labelGetter={(proposalType) => (
+                    <span className={'text-xs'}>{proposalType}</span>
+                  )}
+                  keyGetter={(proposalType) =>
+                    `Filter_proposals${proposalType}`
+                  }
                 />
               </div>
             </CollapsibleContent>
@@ -278,9 +314,13 @@ export const ProposalsTable = () => {
                     setSelectedProposalStatuses(v);
                   }}
                   labelGetter={(proposalStatus) => (
-                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>{proposalStatus}</Chip>
+                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>
+                      {proposalStatus}
+                    </Chip>
                   )}
-                  keyGetter={(proposalStatus) => `Filter_proposals${proposalStatus}`}
+                  keyGetter={(proposalStatus) =>
+                    `Filter_proposals${proposalStatus}`
+                  }
                 />
               </div>
             </CollapsibleContent>
@@ -324,7 +364,11 @@ export const ProposalsTable = () => {
         </Filter>
       }
     >
-      <Table tableProps={table as RTTable<unknown>} isPaginated totalRecords={totalItems} />
+      <Table
+        tableProps={table as RTTable<unknown>}
+        isPaginated
+        totalRecords={totalItems}
+      />
     </CardTable>
   );
 };

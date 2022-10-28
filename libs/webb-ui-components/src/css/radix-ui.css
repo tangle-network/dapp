@@ -5,7 +5,6 @@ html {
 }
 
 html[class*='dark'] {
-  @apply bg-gray-900;
   scrollbar-color: #ffffffb3 transparent;
   scrollbar-width: auto;
 }

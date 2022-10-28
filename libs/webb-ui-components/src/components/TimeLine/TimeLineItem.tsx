@@ -1,4 +1,8 @@
-import { CheckboxCircleLine, ExternalLinkLine, Spinner } from '@webb-tools/icons';
+import {
+  CheckboxCircleLine,
+  ExternalLinkLine,
+  Spinner,
+} from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { shortenHex } from '../../utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -64,36 +68,65 @@ import { TimeLineItemProps } from './types';
  * ```
  */
 export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
-  ({ className, externalUrl, extraContent, isLoading, time, title, txHash, ...props }, ref) => {
+  (
+    {
+      className,
+      externalUrl,
+      extraContent,
+      isLoading,
+      time,
+      title,
+      txHash,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div {...props} className={twMerge('flex flex-col -ml-3 -mt-0.5 space-y-1', className)} ref={ref}>
-        <div className='flex items-center space-x-2'>
+      <div
+        {...props}
+        className={twMerge('flex flex-col -ml-3 -mt-0.5 space-y-1', className)}
+        ref={ref}
+      >
+        <div className="flex items-center space-x-2">
           {isLoading ? (
-            <Spinner size='lg' className='inline-block rounded-full fill-mono-0 dark:fill-mono-180' />
+            <Spinner
+              size="lg"
+              className="inline-block rounded-full fill-mono-0 dark:fill-mono-180"
+            />
           ) : (
             <CheckboxCircleLine
-              size='lg'
-              className='inline-block rounded-full fill-blue dark:fill-blue-30 bg-mono-0 dark:bg-mono-180'
+              size="lg"
+              className="inline-block rounded-full fill-blue dark:fill-blue-30 bg-mono-0 dark:bg-mono-180"
             />
           )}
-          <Typography component='span' variant='body1' fw='bold' className='inline-block text-blue dark:text-blue-30'>
+          <Typography
+            component="span"
+            variant="body1"
+            fw="bold"
+            className="inline-block text-blue dark:text-blue-30"
+          >
             {title}
           </Typography>
-          <Typography variant='utility' className='inline-block uppercase'>
+          <Typography variant="utility" className="inline-block uppercase">
             {formatDistanceToNow(time, { addSuffix: true })}
           </Typography>
         </div>
 
         {txHash && (
-          <div className='flex items-center ml-8 space-x-1'>
-            <LabelWithValue labelVariant='body3' label='tx hash:' value={shortenHex(txHash, 3)} valueTooltip={txHash} />
-            <a href={externalUrl} target='_blank' rel='noopener noreferrer'>
+          <div className="flex items-center ml-8 space-x-1">
+            <LabelWithValue
+              labelVariant="body3"
+              label="tx hash:"
+              value={shortenHex(txHash, 3)}
+              valueTooltip={txHash}
+            />
+            <a href={externalUrl} target="_blank" rel="noopener noreferrer">
               <ExternalLinkLine />
             </a>
           </div>
         )}
 
-        <div className='ml-8'>{extraContent}</div>
+        <div className="ml-8">{extraContent}</div>
       </div>
     );
   }

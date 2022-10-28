@@ -43,7 +43,9 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
           id,
           name: details.name.toHuman(),
           isPoolShare: details.assetType.isPoolShare,
-          tokens: details.assetType.isPoolShare ? details.assetType.asPoolShare.map((i) => i.toString()) : null,
+          tokens: details.assetType.isPoolShare
+            ? details.assetType.asPoolShare.map((i) => i.toString())
+            : null,
           existentialDeposit: details.existentialDeposit.toString(),
           locked: details.locked.isTrue,
         } as unknown as AssetMetadata;
@@ -54,10 +56,18 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
     console.log(assets);
     const ORMLAssetMetaData: AssetMetadata[] = [];
 
-    const wrappableAssetIds = poolshare.tokens!.map((assetId) => Number(assetId));
+    const wrappableAssetIds = poolshare.tokens!.map((assetId) =>
+      Number(assetId)
+    );
     for (const wrappableAssetId of wrappableAssetIds) {
-      if (ORMLAssetMetaData.findIndex((asset) => asset.id === wrappableAssetId) === -1) {
-        const assetMetaData = assets.find((asset) => asset.id === wrappableAssetId);
+      if (
+        ORMLAssetMetaData.findIndex(
+          (asset) => asset.id === wrappableAssetId
+        ) === -1
+      ) {
+        const assetMetaData = assets.find(
+          (asset) => asset.id === wrappableAssetId
+        );
         ORMLAssetMetaData.push(assetMetaData!);
       }
     }
@@ -69,7 +79,9 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
       if (typeof currencyRegistered === 'undefined') {
         const wrappableTokenLength = Object.keys(knownCurrencies).length;
         const newToken: Currency = new Currency({
-          addresses: new Map<number, string>([[typedChainId, currencyMetaData.id.toString()]]),
+          addresses: new Map<number, string>([
+            [typedChainId, currencyMetaData.id.toString()],
+          ]),
           decimals: 18,
           id: CurrencyId.DYNAMIC_CURRENCY_STARTING_ID + wrappableTokenLength,
           name: currencyMetaData.name,
