@@ -8,6 +8,7 @@ import {
   BridgeLabel,
   NativeLabel,
   TransactionCardItemProps,
+  TransactionItemVariant,
   TransactionPayload,
   TransactionProgressCardProps,
   TXCardFooterProps,
@@ -208,6 +209,55 @@ export const TransactionProgressCard = forwardRef<HTMLDivElement, TransactionCar
     );
   }
 );
+const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => {
+  const message = useMemo(() => {
+    switch (method) {
+      case 'Transfer':
+        return 'Failed to transfer!';
+
+      case 'Deposit':
+        return 'Failed to deposit!';
+
+      case 'Withdraw':
+        return 'Failed to withdraw!';
+    }
+  }, [method]);
+  return (
+    <>
+      <span className={'inline-block pr-2'}>🎉</span>
+      {message}
+    </>
+  );
+};
+
+const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri, method }) => {
+  const message = useMemo(() => {
+    switch (method) {
+      case 'Transfer':
+        return 'Successfully Transferred!';
+
+      case 'Deposit':
+        return 'Successfully Deposited!';
+
+      case 'Withdraw':
+        return 'Successfully Withdrawn!';
+    }
+  }, [method]);
+  return (
+    <>
+      <span
+        className={'inline-block pr-2 text-inherit'}
+        style={{
+          fontSize: 18,
+        }}
+      >
+        ⚠️
+      </span>
+      {message} &nbsp;
+      <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
+    </>
+  );
+};
 
 /**
  *  Transaction card footer
@@ -343,52 +393,6 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
       const isLoading = tx.txStatus.status === 'in-progress';
       const isErrored = tx.txStatus.status === 'warning';
       const isCompleted = tx.txStatus.status === 'completed';
-      let compMess = '';
-      let errorMessage = '';
-      switch (tx.method) {
-        case 'Transfer':
-          compMess = 'Successfully Transferred!';
-          break;
-        case 'Deposit':
-          compMess = 'Successfully Deposited!';
-          break;
-        case 'Withdraw':
-          compMess = 'Successfully Withdrawn!';
-          break;
-      }
-      switch (tx.method) {
-        case 'Transfer':
-          errorMessage = 'Failed to transfer!';
-          break;
-        case 'Deposit':
-          errorMessage = 'Failed to deposit!';
-          break;
-        case 'Withdraw':
-          errorMessage = 'Failed to withdraw!';
-          break;
-      }
-
-      const completedFooter = (
-        <>
-          <span className={'inline-block pr-2'}>🎉</span>
-          {compMess}
-        </>
-      );
-
-      const failedFooter = (
-        <>
-          <span
-            className={'inline-block pr-2'}
-            style={{
-              fontSize: 18,
-            }}
-          >
-            ⚠️
-          </span>
-          {errorMessage}
-          <ExternalLinkLine className='!fill-current inline whitespace-nowrap' />
-        </>
-      );
       const recipientFooter = tx.txStatus.recipient ? (
         <>
           Recipient: {shortenHex(tx.txStatus.recipient)}{' '}
@@ -409,9 +413,9 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
           isLoading,
           hasWarning: isErrored,
           link: isCompleted
-            ? { uri: txURI, text: completedFooter }
+            ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
             : isErrored
-            ? { uri: txURI, text: failedFooter }
+            ? { uri: txURI, text: <FailedFooter uri={txURI} method={tx.method} /> }
             : { uri: recipientURI, text: recipientFooter },
         },
         label: {
@@ -444,7 +448,7 @@ export const TransactionQueue: FC<TransactionProgressCardProps> = ({
             Transaction Processing
           </Typography>
           <Typography variant={'body4'} className={'text-mono-120 dark:text-mono-80'}>
-            1 transaction in progress
+            {transactions.length} transaction in progress
           </Typography>
         </div>
         <b>
@@ -483,7 +487,7 @@ export const dummyTransactions: TransactionPayload[] = [
       recipient: '0xasdfj2r3092430u',
       THash: '0xasdfj2r3092430u',
     },
-    tokens: ['ETH', 'WEBB'],
+    tokens: ['USDC', 'ETH'],
     token: 'ETH',
     amount: '0.999',
     id: '123f',
@@ -505,7 +509,7 @@ export const dummyTransactions: TransactionPayload[] = [
       recipient: '0xasdfj2r3092430u',
       THash: '0xasdfj2r3092430u',
     },
-    tokens: ['ETH', 'WEBB'],
+    tokens: ['ETH'],
     token: 'ETH',
     amount: '0.999',
     id: '123f2',
@@ -525,7 +529,7 @@ export const dummyTransactions: TransactionPayload[] = [
       recipient: '0xasdfj2r3092430u',
       THash: '0xasdfj2r3092430u',
     },
-    tokens: ['ETH', 'WEBB'],
+    tokens: ['USDC', 'ETH'],
     token: 'ETH',
     amount: '0.999',
     id: '123f2',
