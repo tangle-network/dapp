@@ -10,7 +10,7 @@ export type TransactionItemStatus = 'in-progress' | 'warning' | 'completed';
  * @param link - A message that has a URI that can be used to navigate for more info
  * @param hasWarning - The transaction has failed
  * */
-export type TXCardFooterProps = {
+export type TransactionCardFooterProps = {
   isLoading?: boolean;
   message?: string | JSX.Element;
   link?: {
@@ -46,7 +46,7 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
     dist: JSX.Element;
   };
   label: BridgeLabel | NativeLabel;
-  footer: TXCardFooterProps;
+  footer: TransactionCardFooterProps;
   onDismiss(): void;
   onDetails?(): void;
   onSyncNote?(): void;

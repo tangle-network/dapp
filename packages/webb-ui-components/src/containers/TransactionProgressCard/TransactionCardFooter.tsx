@@ -1,8 +1,5 @@
 import React, { FC, useCallback } from 'react';
-import {
-  TransactionCardItemProps,
-  TXCardFooterProps as TransactionCardFooterProps,
-} from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard/types';
+import { TransactionCardItemProps, TransactionCardFooterProps } from './types';
 import cx from 'classnames';
 import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';

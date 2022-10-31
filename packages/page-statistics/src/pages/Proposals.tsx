@@ -10,7 +10,6 @@ import {
   TitleWithInfo,
 } from '@webb-dapp/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-dapp/webb-ui-components/components/Filter/utils';
-import { dummyTransactions, TransactionQueue } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
 import { ExternalLinkLine, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
@@ -171,7 +170,6 @@ const Proposals = () => {
 
   return (
     <div className='flex flex-col space-y-4'>
-      <TransactionQueue onCollapseChange={() => {}} collapsed={false} transactions={dummyTransactions} />
       {/** Proposals Status */}
       <Card>
         <TitleWithInfo title='Proposals Status' variant='h5' info='Proposals Status' />

@@ -1,15 +1,11 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  TransactionCardItemProps,
-  TransactionItemVariant,
-  TransactionQueueProps,
-} from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard/types';
+import { TransactionCardItemProps, TransactionItemVariant, TransactionQueueProps } from './types';
 import { PartyFill } from '@webb-dapp/webb-ui-components/icons/PartyFill';
 import { AlertFill } from '@webb-dapp/webb-ui-components/icons/AlertFill';
 import { ChevronUp, ExternalLinkLine, Spinner, TokenIcon } from '@webb-dapp/webb-ui-components/icons';
 import { shortenHex } from '@webb-dapp/webb-ui-components/utils';
 import { Typography } from '@webb-dapp/webb-ui-components/typography';
-import { TransactionProgressCard } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard/TransactionProgressCard';
+import { TransactionProgressCard } from './TransactionProgressCard';
 
 const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => {
   const message = useMemo(() => {
@@ -71,7 +67,7 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
  * ```
  *
  * */
-export const TransactionQueue: FC<TransactionQueueProps> = ({
+export const TransactionQueueCard: FC<TransactionQueueProps> = ({
   collapsed,
   transactions,
   onCollapseChange,
