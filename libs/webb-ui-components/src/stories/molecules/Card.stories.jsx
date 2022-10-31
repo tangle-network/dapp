@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { Card, TitleWithInfo, TokenSelector } from '@webb-dapp/webb-ui-components/components';
+import {
+  Card,
+  TitleWithInfo,
+  TokenSelector,
+} from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -12,8 +16,8 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
   <Card {...args}>
-    <TitleWithInfo title='Token Selector' variant='h4' />
-    <div className='flex items-center space-x-4'>
+    <TitleWithInfo title="Token Selector" variant="h4" />
+    <div className="flex items-center space-x-4">
       <TokenSelector>ETH</TokenSelector>
       <TokenSelector>DOT</TokenSelector>
       <TokenSelector isActive>KSM</TokenSelector>

@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { Collapsible, CollapsibleButton, CollapsibleContent } from '@webb-dapp/webb-ui-components/components';
+import {
+  Collapsible,
+  CollapsibleButton,
+  CollapsibleContent,
+} from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { CheckBoxMenu } from '@webb-dapp/webb-ui-components/components';
-import { Filter } from '@webb-dapp/webb-ui-components/icons';
+import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components';
+import { FilterIcon } from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -17,5 +17,5 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
   label: 'Filter',
-  icon: <Filter />,
+  icon: <FilterIcon />,
 };

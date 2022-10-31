@@ -1,16 +1,9 @@
 {
-  "name": "@webb-dapp/webb-ui-components",
-  "version": "0.2.1-beta.1",
-  "description": "Webb UI Kit",
-  "keywords": [
-    "webb-ui-components",
-    "react-components",
-    "ui-components",
-    "UI Kit"
-  ],
-  "author": "Webb Developers <drew@webb.tools>",
-  "devDependencies": {
-    "@babel/core": "^7.19.3",
+  "name": "@webb-tools/webb-ui-components",
+  "version": "0.0.2",
+  "main": "src/index.js",
+  "dependencies": {
+    "@webb-tools/icons": "0.0.1",
     "@ngneat/falso": "^6.1.0",
     "@polkadot/react-identicon": "^2.9.9",
     "@radix-ui/react-avatar": "^1.0.0",
@@ -25,6 +18,7 @@
     "@radix-ui/react-separator": "^1.0.0",
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
+    "@radix-ui/react-tabs": "^1.0.1",
     "@radix-ui/react-tooltip": "^1.0.0",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "^6.5.12",
@@ -39,28 +33,14 @@
     "@svgr/webpack": "^5.5.0",
     "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/react-table": "^8.5.13",
-    "autoprefixer": "^10.4.12",
-    "babel-loader": "^8.2.5",
+    "@webb-tools/app-util": "0.1.4-105",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.2",
     "date-fns": "^2.29.2",
     "date-fns-tz": "^1.3.7",
     "numbro": "^2.3.6",
-    "postcss": "^8.4.17",
     "react-table": "^7.8.0",
-    "sass": "^1.55.0",
-    "storybook-addon-react-router-v6": "^0.2.1",
     "tailwind-merge": "^1.6.0",
-    "tailwind-scrollbar": "^2.0.1",
-    "tailwindcss": "^3.1.8",
-    "tsconfig-paths-webpack-plugin": "^4.0.0"
-  },
-  "scripts": {
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook -o docs-build -s ./src/stories/assets"
-  },
-  "dependencies": {
-    "@radix-ui/react-toast": "^1.1.1",
-    "lottie-react": "^2.3.1"
+    "tailwind-scrollbar": "^2.0.1"
   }
 }

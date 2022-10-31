@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Input } from '@webb-dapp/webb-ui-components/components';
-import { Graph } from '@webb-dapp/webb-ui-components/icons';
+import { Input } from '@webb-tools/webb-ui-components/components';
+import { Graph } from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -39,7 +39,7 @@ isDisabled.args = {
   id: 'disabled',
   value: 'isDisabled',
   isDisabled: true,
-  leftIcon: <Graph className='fill-current dark:fill-current' />,
+  leftIcon: <Graph className="fill-current dark:fill-current" />,
   className: 'mt-3',
 };
 
