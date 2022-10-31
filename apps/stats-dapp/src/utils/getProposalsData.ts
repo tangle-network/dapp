@@ -1,4 +1,4 @@
-import { ProposalType } from '@webb-tools/stats-dapp/generated/graphql';
+import { ProposalType } from '../generated/graphql';
 import {
   AnchorCreateProposal,
   AnchorUpdateProposal,

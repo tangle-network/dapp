@@ -245,7 +245,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     // perhaps relayer misbehaves and doesn't respond but executes transaction)
     if (Number(data.outputUtxos[0].amount) != 0) {
       //TODO construct the output note
-      let outputNote = {} as Note;
+      const outputNote = {} as Note;
       await this.inner.noteManager?.addNote(outputNote);
     }
 
