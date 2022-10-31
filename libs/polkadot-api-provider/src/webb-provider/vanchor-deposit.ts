@@ -221,8 +221,13 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         relayer: relayerAccountDecoded,
         roots: rootsSet,
         chainId: note.targetChainId,
-        indices: [0],
-        inputNotes: [inputNote],
+        inputUtxos: [new Utxo(inputNote.note.getUtxo())],
+        leafIds: [
+          {
+            index: 0,
+            typedChainId: Number(note.targetChainId),
+          },
+        ],
         publicAmount,
         output: [output1, output2],
         refund: String(refund),
@@ -250,8 +255,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         inputNullifiers: data.inputUtxos.map((utxo) => {
           return `0x${utxo.nullifier}`;
         }),
-        outputCommitments: data.outputNotes.map((note) =>
-          u8aToHex(note.getLeaf())
+        outputCommitments: data.outputUtxos.map((note) =>
+          u8aToHex(note.commitment)
         ),
         extDataHash: data.extDataHash,
       };

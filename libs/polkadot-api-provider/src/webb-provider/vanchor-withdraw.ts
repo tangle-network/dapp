@@ -204,8 +204,11 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       relayer: relayerAccountDecoded,
       roots: rootsSet,
       chainId: inputNotes[0].note.targetChainId,
-      indices: inputNotes.map(({ note }) => Number(note.index)),
-      inputNotes: inputNotes,
+      leafIds: inputNotes.map(({ note }) => ({
+        index: Number(note.index),
+        typedChainId: Number(note.targetChainId),
+      })),
+      inputUtxos: inputNotes.map(({ note }) => new Utxo(note.getUtxo())),
       publicAmount: String(publicAmount),
       output: [output1, output2],
       refund: '0',
@@ -232,16 +235,18 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       inputNullifiers: data.inputUtxos.map((utxo) => {
         return `0x${utxo.nullifier}`;
       }),
-      outputCommitments: data.outputNotes.map((note) =>
-        u8aToHex(note.getLeaf())
+      outputCommitments: data.outputUtxos.map((utxo) =>
+        u8aToHex(utxo.commitment)
       ),
       extDataHash: data.extDataHash,
     };
 
     // before the transaction takes place, save the output (change) note (in case user leaves page or
     // perhaps relayer misbehaves and doesn't respond but executes transaction)
-    if (Number(data.outputNotes[0].note.amount) != 0) {
-      await this.inner.noteManager?.addNote(data.outputNotes[0]);
+    if (Number(data.outputUtxos[0].amount) != 0) {
+      //TODO construct the output note
+      let outputNote = {} as Note;
+      await this.inner.noteManager?.addNote(outputNote);
     }
 
     if (activeRelayer) {
@@ -362,9 +367,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       this.cancelToken.throwIfCancel();
       txHash = await tx.call(account.address);
     }
-
+    // TODO construct the right note
     // remove the previous "Potential Change Note" (safeguard for user)
-    await this.inner.noteManager?.removeNote(data.outputNotes[0]);
+    await this.inner.noteManager?.removeNote(outputNote);
 
     // get the leaf index to get the right leaf index after insertion
     const leafIndex = await this.getleafIndex(
