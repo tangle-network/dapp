@@ -94,7 +94,7 @@ function createWebpack(env, mode = 'production') {
               options: {
                 sourceMap: isDevelopment,
                 postcssOptions: {
-                  plugins: [require('tailwindcss'), require('autoprefixer')],
+                  plugins: [require('tailwindcss')],
                 },
               },
             },
