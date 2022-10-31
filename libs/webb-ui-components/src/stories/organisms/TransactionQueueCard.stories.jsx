@@ -1,7 +1,9 @@
 import React from 'react';
 import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
-import EthLogo from '@webb-tools/logos/src/chains/EthLogo';
-import PolygonLogo from '@webb-tools/logos/src/chains/PolygonLogo';
+import { TokenIcon } from '@webb-tools/icons';
+
+const EthLogo = <TokenIcon name={'ETH'} />;
+const PolygonLogo = <TokenIcon name={'matic'} />;
 
 export default {
   title: 'Design System/Organisms/TransactionQueueCard',
@@ -34,7 +36,7 @@ WithInProgressTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -61,7 +63,7 @@ WithSuccessTransaction.args = {
       token: 'ETH',
       amount: '0.9995',
       id: '123fA',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -88,7 +90,7 @@ WithFailedTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -115,7 +117,7 @@ WithInAllTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -136,7 +138,7 @@ WithInAllTransaction.args = {
       token: 'ETH',
       amount: '0.9995',
       id: '123fA',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -158,7 +160,7 @@ WithInAllTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -178,7 +180,7 @@ WithInAllTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+      wallets: { src: PolygonLogo, dist: EthLogo },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';

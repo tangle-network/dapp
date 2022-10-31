@@ -1,8 +1,9 @@
 import React from 'react';
 import { TransactionProgressCard } from '../../containers/TransactionProgressCard';
-import PolygonLogo from '@webb-tools/logos/src/chains/PolygonLogo';
 import { TokenIcon } from '@webb-tools/icons';
-import EthLogo from '@webb-tools/logos/src/chains/EthLogo';
+
+const EthLogo = <TokenIcon name={'ETH'} />;
+const PolygonLogo = <TokenIcon name={'matic'} />;
 
 export default {
   title: 'Design System/Organisms/TransactionProgressCard',
@@ -23,7 +24,7 @@ Default.args = {
     <TokenIcon size={'lg'} name={'WEBB'} />,
     <TokenIcon size={'lg'} name={'ETH'} />,
   ],
-  wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
+  wallets: { src: PolygonLogo, dist: EthLogo },
   label: {
     tokenURI: 'https://polygon.technology/',
     amount: '0.999',
