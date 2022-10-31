@@ -68,28 +68,28 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({ uri
  *
  * */
 export const TransactionQueueCard: FC<TransactionQueueProps> = ({
-  collapsed,
+  collapsed: collapsedParent,
   transactions,
   onCollapseChange,
   children,
 }) => {
-  const [open, setOpen] = useState(!collapsed);
+  const controlled = useMemo(() => typeof collapsedParent === 'boolean', [collapsedParent]);
+  const [collapsed, setCollapsed] = useState(controlled ? collapsedParent : false);
   // Sync the state of open to the parent component
   useEffect(() => {
-    if (collapsed !== open) {
-      return;
+    if (controlled) {
+      setCollapsed(collapsedParent);
     }
-    setOpen(collapsed);
-  }, [collapsed]);
+  }, [controlled, collapsedParent]);
 
   // if the component is controlled change the parent state
   const handleCollapsed = useCallback(() => {
     if (onCollapseChange) {
-      onCollapseChange?.(!open);
+      onCollapseChange?.(!collapsed);
     } else {
-      setOpen(!open);
+      setCollapsed(!collapsed);
     }
-  }, [onCollapseChange, setOpen, open]);
+  }, [onCollapseChange, setCollapsed, collapsed, controlled]);
 
   const txCardProps = useMemo(() => {
     return transactions.map((tx): TransactionCardItemProps & { id: string } => {
@@ -200,7 +200,7 @@ export const TransactionQueueCard: FC<TransactionQueueProps> = ({
           <div
             style={{
               transition: 'transform .33s ease',
-              transform: open ? 'rotate(180deg)' : 'rotate(0)',
+              transform: !collapsed ? 'rotate(180deg)' : 'rotate(0)',
             }}
             role={'button'}
             className={'w-4 h-4'}
@@ -211,7 +211,7 @@ export const TransactionQueueCard: FC<TransactionQueueProps> = ({
         </b>
       </div>
       <div className={'max-h-96 overflow-auto'}>
-        {open && (
+        {!collapsed && (
           <>
             {txCardProps.map(({ id, ...props }) => (
               <TransactionProgressCard key={id} {...props} />

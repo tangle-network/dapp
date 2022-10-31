@@ -94,7 +94,7 @@ export const dummyTransactions: TransactionPayload[] = [
 ];
 
 const TransactionProgressCardShowCase = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return <TransactionQueueCard onCollapseChange={setOpen} collapsed={open} transactions={dummyTransactions} />;
 };
 
