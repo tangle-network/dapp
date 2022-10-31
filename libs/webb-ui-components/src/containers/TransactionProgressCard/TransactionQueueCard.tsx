@@ -103,9 +103,8 @@ export const TransactionQueueCard: FC<TransactionQueueProps> = ({
   const handleCollapsed = useCallback(() => {
     if (onCollapseChange) {
       onCollapseChange?.(!collapsed);
-    } else {
-      setCollapsed(!collapsed);
     }
+    setCollapsed(!collapsed);
   }, [onCollapseChange, setCollapsed, collapsed, controlled]);
 
   const txCardProps = useMemo(() => {

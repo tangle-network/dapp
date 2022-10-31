@@ -35,6 +35,8 @@ export type NativeLabel = {
  * @param note - Information note for the notification item
  * */
 export interface TransactionCardItemProps extends PropsOf<'div'> {
+  /**
+   * */
   method: TransactionItemVariant;
   firedAt: Date;
   note?: string;
@@ -82,24 +84,57 @@ interface TransactionStatus {
  *
  * */
 export interface TransactionPayload {
+  /**
+   * Transaction id
+   * */
   id: string;
+  /**
+   *  The transaction method variant
+   *  */
   method: TransactionItemVariant;
+  /**
+   *  The transaction update timestamp
+   *  */
   timestamp: Date;
+  /**
+   *  Transaction status
+   *  */
   txStatus: TransactionStatus;
+  /**
+   *  The transaction related token names
+   *  */
   tokens: string[];
-  wallets: {
-    src: JSX.Element;
-    dist: JSX.Element;
-  };
+  /**
+   *  React ui Element to demo the src/dist  wallets
+   *  */
+  wallets: { src: JSX.Element; dist: JSX.Element };
+  /**
+   *  Transaction value
+   *  */
   amount: string;
+  /**
+   *  The transaction token name
+   *  */
   token: string;
-
+  /**
+   *  Used to show the current value against USD
+   *  */
   nativeValue?: string;
-
+  /**
+   *  A provider method to get the explorer URI for an address or transaction
+   *  */
   getExplorerURI?(addOrTxHash: string, variant: 'tx' | 'address'): string;
-
+  /**
+   *  Callback that is called when the notification is dismissed
+   *  */
   onDismiss(): void;
+  /**
+   *  Callback that is called when the `Details` button is click
+   *  */
   onDetails?(): void;
+  /**
+   * - callback that is called when the `Sync Note` Button is clicked
+   * */
   onSyncNote?(): void;
 }
 /**
@@ -111,7 +146,17 @@ export interface TransactionPayload {
  *
  * */
 export type TransactionQueueProps = {
+  /**
+   *  list of the active transactions
+   * */
   transactions: TransactionPayload[];
+  /**
+   *  Optional initial/current value of the queue notification
+   * */
   collapsed?: boolean;
+  /**
+   * Handler for the change of the collapsed state if provided it's the responsibly of the user to
+   * show/hide notification (Set the value of the props `collapsed`)
+   * */
   onCollapseChange?(collapsed: boolean): void;
 };

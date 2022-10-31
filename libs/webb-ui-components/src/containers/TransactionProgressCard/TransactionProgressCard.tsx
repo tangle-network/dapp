@@ -184,7 +184,7 @@ export const TransactionProgressCard = forwardRef<
         {/*Show the animation for the completed transactions*/}
         {showAnimation && (
           <div
-            className={`dark:bg-mono-160 absolute inset-0 h-full w-full z-0`}
+            className={`dark:bg-mono-160 absolute inset-0 h-full w-full z-0 overflow-hidden`}
           >
             <Lottie animationData={success} />
           </div>

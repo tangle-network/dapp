@@ -14,7 +14,6 @@ const Template = (args) => <TransactionQueueCard {...args} />;
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  title: 'Empty Queue',
   transactions: [],
 };
 
