@@ -1,0 +1,9 @@
+{
+  "name": "@webb-tools/note-manager",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@webb-tools/browser-utils": "0.0.1",
+    "@webb-tools/storage": "0.0.1"
+  }
+}
