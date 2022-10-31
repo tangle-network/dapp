@@ -1,12 +1,21 @@
 overwrite: true
-schema: "http://localhost:4000"
-documents: "./packages/page-statistics/**/*.graphql"
+schema: "https://subquery-dev.webb.tools/graphql"
+documents: 
+  - "./packages/page-statistics/**/*.graphql"
+  - "./apps/stats-dapp/src/**/*.graphql"
 generates:
   ./packages/page-statistics/src/generated/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
+
+  ./apps/stats-dapp/src/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+
   ./graphql.schema.json:
     plugins:
       - "introspection"

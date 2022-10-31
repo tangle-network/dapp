@@ -7,7 +7,8 @@
     "build": "nx build",
     "test": "nx test",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
-    "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000"
+    "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
+    "gql:codegen": "graphql-codegen --config codegen.yml"
   },
   "private": true,
   "workspaces": [
@@ -70,6 +71,11 @@
     "yargs": "^17.4.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.12.0",
+    "@graphql-codegen/introspection": "2.2.1",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@babel/core": "7.12.13",
     "@babel/plugin-proposal-class-properties": "7.16.7",
     "@babel/plugin-proposal-private-methods": "7.16.11",
