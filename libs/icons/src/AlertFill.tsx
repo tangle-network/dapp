@@ -1,7 +1,10 @@
-import { IconSize } from '@webb-dapp/webb-ui-components/icons/types';
-import { getIconSizeInPixel } from '@webb-dapp/webb-ui-components/icons/utils';
+import { getIconSizeInPixel } from '@webb-tools/icons/utils';
+import { IconSize } from '@webb-tools/icons/types';
 
-export const AlertFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({ size = 'md', ...props }) => {
+export const AlertFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
+  size = 'md',
+  ...props
+}) => {
   const imageSize = getIconSizeInPixel(size);
   return (
     <img
