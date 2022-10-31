@@ -195,8 +195,7 @@ const Proposals = () => {
       <Card>
         <TitleWithInfo
           title="Proposals Status"
-          vbabel-virtual-resolve-base.js
-          ariant="h5"
+          variant="h5"
           info="Proposals Status"
         />
 
