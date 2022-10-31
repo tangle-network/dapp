@@ -1,9 +1,8 @@
 import React from 'react';
-
-import { TokenIcon } from '@webb-dapp/webb-ui-components/icons';
-import PolygonLogo from '@webb-dapp/apps/src/configs/logos/chains/PolygonLogo';
-import { EthLogo } from '@webb-dapp/apps/src/configs/logos/chains';
-import { TransactionProgressCard } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
+import { TransactionProgressCard } from '../../containers/TransactionProgressCard';
+import PolygonLogo from '@webb-tools/logos/src/chains/PolygonLogo';
+import { TokenIcon } from '@webb-tools/icons';
+import EthLogo from '@webb-tools/logos/src/chains/EthLogo';
 
 export default {
   title: 'Design System/Organisms/TransactionProgressCard',
@@ -20,7 +19,10 @@ Default.args = {
   method: 'Deposit',
   firedAt: new Date(),
   status: 'in-progress',
-  tokens: [<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />],
+  tokens: [
+    <TokenIcon size={'lg'} name={'WEBB'} />,
+    <TokenIcon size={'lg'} name={'ETH'} />,
+  ],
   wallets: { src: <PolygonLogo />, dist: <EthLogo /> },
   label: {
     tokenURI: 'https://polygon.technology/',

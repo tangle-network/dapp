@@ -1,9 +1,7 @@
 import React from 'react';
-
-import { KeyCard } from '@webb-dapp/webb-ui-components/components';
-import { TransactionQueueCard } from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
-import PolygonLogo from '@webb-dapp/apps/src/configs/logos/chains/PolygonLogo';
-import { EthLogo } from '@webb-dapp/apps/src/configs/logos/chains';
+import { TransactionQueueCard } from '@webb-tools/webb-ui-components/src/containers/TransactionProgressCard';
+import PolygonLogo from '@webb-tools/logos/src/chains/PolygonLogo';
+import EthLogo from '@webb-tools/logos/src/chains/EthLogo';
 
 export default {
   title: 'Design System/Organisms/TransactionQueueCard',

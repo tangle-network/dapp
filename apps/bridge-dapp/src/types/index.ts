@@ -1,5 +1,4 @@
-import { IconBase } from '@webb-dapp/webb-ui-components/icons/types';
-
+import { IconBase } from '@webb-tools/icons/types';
 /**
  * The internal link type
  */
@@ -17,7 +16,7 @@ export interface Link {
 /**
  * The external link type
  */
-export interface ExternalLink extends ExternalType {
+export interface ExternalLink {
   /**
    * The name of the link
    */
@@ -37,7 +36,8 @@ export interface ExternalLink extends ExternalType {
   rel?: string;
 }
 
-export interface FooterNavsType extends Record<string, Array<Link | ExternalLink>> {}
+export interface FooterNavsType
+  extends Record<string, Array<Link | ExternalLink>> {}
 
 /**
  * The bottom social platforms config type

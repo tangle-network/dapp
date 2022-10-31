@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@webb-tools/icons": "0.0.1",
+    "lottie-react": "^2.3.1",
     "@ngneat/falso": "^6.1.0",
     "@polkadot/react-identicon": "^2.9.9",
     "@radix-ui/react-avatar": "^1.0.0",
