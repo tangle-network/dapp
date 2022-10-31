@@ -1,0 +1,9 @@
+{
+  "name": "@webb-tools/relayer-manager-factory",
+  "version": "0.0.1",
+  "main": "./src/index.js",
+  "dependencies": {
+    "@webb-tools/dapp-types": "0.0.1",
+    "@webb-tools/dapp-config": "0.0.1"
+  }
+}
