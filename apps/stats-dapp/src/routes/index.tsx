@@ -1,36 +1,58 @@
-import { FC, lazy, Suspense } from 'react';
+import { FC, lazy, Suspense, PropsWithChildren } from 'react';
 
 import { Layout } from '../containers';
 import { Spinner } from '@webb-tools/icons';
 import { RouterConfigData } from '@webb-tools/react-environment';
 
-const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Authorities'));
-const PageAuthorityDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailDrawer'));
-const PageAuthorityDetail = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailPage'));
-
-const PageAuthoritiesHistory = lazy(() => import('@webb-dapp/page-statistics/pages/AuthoritiesHistory'));
-
-const PageKeys = lazy(() => import('@webb-dapp/page-statistics/pages/Keys'));
-const PageKeyDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailDrawer'));
-const PageKeyDetail = lazy(() => import('@webb-dapp/page-statistics/pages/KeyDetailPage'));
-
-const PageProposals = lazy(() => import('@webb-dapp/page-statistics/pages/Proposals'));
-const PageProposalDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailDrawer'));
-const PageProposalDetail = lazy(() => import('@webb-dapp/page-statistics/pages/ProposalDetailPage'));
-
-const PageComponentsShowcase = lazy(() => import('@webb-dapp/page-statistics/pages/ComponentsShowcase'));
-
-const PageBridgeControlShowcase = lazy(() => import('@webb-dapp/page-statistics/pages/BridgeControlShowcase'));
-const TransactionProgressCardShowCase = lazy(
-  () => import('@webb-dapp/page-statistics/pages/TransactionProgressCardShowCase')
+const PageAuthorities = lazy(
+  () => import('@webb-tools/stats-dapp/pages/Authorities')
+);
+const PageAuthorityDetailDrawer = lazy(
+  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailDrawer')
+);
+const PageAuthorityDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailPage')
 );
 
-const CSuspense: FC = ({ children }) => {
+const PageAuthoritiesHistory = lazy(
+  () => import('@webb-tools/stats-dapp/pages/AuthoritiesHistory')
+);
+
+const PageKeys = lazy(() => import('@webb-tools/stats-dapp/pages/Keys'));
+const PageKeyDetailDrawer = lazy(
+  () => import('@webb-tools/stats-dapp/pages/KeyDetailDrawer')
+);
+const PageKeyDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/KeyDetailPage')
+);
+
+const PageProposals = lazy(
+  () => import('@webb-tools/stats-dapp/pages/Proposals')
+);
+const PageProposalDetailDrawer = lazy(
+  () => import('@webb-tools/stats-dapp/pages/ProposalDetailDrawer')
+);
+const PageProposalDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/ProposalDetailPage')
+);
+
+const PageComponentsShowcase = lazy(
+  () => import('@webb-tools/stats-dapp/pages/ComponentsShowcase')
+);
+
+const PageBridgeControlShowcase = lazy(
+  () => import('@webb-tools/stats-dapp/pages/BridgeControlShowcase')
+);
+const TransactionProgressCardShowCase = lazy(
+  () => import('@webb-tools/stats-dapp/pages/TransactionProgressCardShowCase')
+);
+
+const CSuspense: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Suspense
       fallback={
-        <div className='flex items-center justify-center min-w-full min-h-screen'>
-          <Spinner size='xl' />
+        <div className="flex items-center justify-center min-w-full min-h-screen">
+          <Spinner size="xl" />
         </div>
       }
     >
