@@ -1,8 +1,8 @@
-import { RouterConfigData } from '@webb-dapp/react-environment';
-import { Spinner } from '@webb-dapp/webb-ui-components/icons';
 import { FC, lazy, Suspense } from 'react';
 
 import { Layout } from '../containers';
+import { Spinner } from '@webb-tools/icons';
+import { RouterConfigData } from '@webb-tools/react-environment';
 
 const PageAuthorities = lazy(() => import('@webb-dapp/page-statistics/pages/Authorities'));
 const PageAuthorityDetailDrawer = lazy(() => import('@webb-dapp/page-statistics/pages/AuthorityDetailDrawer'));

@@ -1,10 +1,10 @@
-import PolygonLogo from '@webb-dapp/apps/configs/logos/chains/PolygonLogo';
-import { EthLogo } from '@webb-dapp/apps/configs/logos/chains';
 import React, { useState } from 'react';
+import EthLogo from '@webb-tools/logos/chains/EthLogo';
 import {
   TransactionPayload,
   TransactionQueueCard,
-} from '@webb-dapp/webb-ui-components/containers/TransactionProgressCard';
+} from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
+import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
 
 export const dummyTransactions: TransactionPayload[] = [
   {
@@ -95,7 +95,13 @@ export const dummyTransactions: TransactionPayload[] = [
 
 const TransactionProgressCardShowCase = () => {
   const [open, setOpen] = useState(true);
-  return <TransactionQueueCard onCollapseChange={setOpen} collapsed={open} transactions={dummyTransactions} />;
+  return (
+    <TransactionQueueCard
+      onCollapseChange={setOpen}
+      collapsed={open}
+      transactions={dummyTransactions}
+    />
+  );
 };
 
 export default TransactionProgressCardShowCase;
