@@ -1,11 +1,11 @@
-import { WalletConnectionCard } from '@webb-dapp/webb-ui-components/components';
+import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
   SubWalletIcon,
   TalismanIcon,
   WalletConnectIcon,
-} from '@webb-dapp/webb-ui-components/icons';
+} from '@webb-tools/icons';
 import { withRouter } from 'storybook-addon-react-router-v6';
 
 export default {

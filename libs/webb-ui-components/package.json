@@ -1,7 +1,6 @@
 {
   "name": "@webb-tools/webb-ui-components",
   "version": "0.0.2",
-  "type": "commonjs",
   "main": "src/index.js",
   "dependencies": {
     "@webb-tools/icons": "0.0.1",

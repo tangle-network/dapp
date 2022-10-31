@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Avatar, AvatarGroup } from '@webb-dapp/webb-ui-components/components';
+import { Avatar, AvatarGroup } from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -12,8 +12,8 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
   <AvatarGroup {...args}>
-    <Avatar src='https://webb-assets.s3.amazonaws.com/WebbLogo.svg' />
-    <Avatar src='https://webb-assets.s3.amazonaws.com/WebbLogo.svg' />
+    <Avatar src="https://webb-assets.s3.amazonaws.com/WebbLogo.svg" />
+    <Avatar src="https://webb-assets.s3.amazonaws.com/WebbLogo.svg" />
   </AvatarGroup>
 );
 

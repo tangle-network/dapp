@@ -1,6 +1,11 @@
 import React from 'react';
 
-import { CardTable, Table, TitleWithInfo, Filter } from '@webb-dapp/webb-ui-components/components';
+import {
+  CardTable,
+  Table,
+  TitleWithInfo,
+  Filter,
+} from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -11,7 +16,10 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
-  <CardTable {...args} leftTitle={<Filter searchPlaceholder={'Search  authority account'} />}></CardTable>
+  <CardTable
+    {...args}
+    leftTitle={<Filter searchPlaceholder={'Search  authority account'} />}
+  ></CardTable>
 );
 
 export const Primary = Template.bind({});

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WithdrawCard } from '@webb-dapp/webb-ui-components/containers/WithdrawCard';
+import { WithdrawCard } from '@webb-tools/webb-ui-components/containers/WithdrawCard';
 import { withRouter } from 'storybook-addon-react-router-v6';
 export default {
   title: 'Design System/Templates/WithdrawCard',
@@ -10,7 +10,7 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => (
-  <div className='flex justify-center'>
+  <div className="flex justify-center">
     <WithdrawCard {...args} />
   </div>
 );
