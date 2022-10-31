@@ -3,7 +3,6 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { routes } from './routes';
-import { ThemeProvider } from 'styled-components';
 
 const App: FC = () => {
   return (
