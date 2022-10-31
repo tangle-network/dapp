@@ -6,6 +6,7 @@ const postcss = require('rollup-plugin-postcss');
 const copy = require('rollup-plugin-copy');
 const modify = require('rollup-plugin-modify');
 const image = require('@rollup/plugin-image');
+const { join } = require('path');
 
 module.exports = (config) => {
   return {
@@ -16,13 +17,9 @@ module.exports = (config) => {
     },
     plugins: [
       postcss({
-        plugins: [
-          require('postcss-import'),
-          require('postcss-nested'),
-          require('tailwindcss/nesting'),
-          require('tailwindcss'),
-          require('autoprefixer'),
-        ],
+        config: {
+          path: join(__dirname, 'postcss.config.js'),
+        },
         extensions: ['.css'],
         minimize: false,
         extract: true,

@@ -126,7 +126,7 @@ export const ProposalDetail = () => {
               label="height:"
               value={
                 <span className="flex items-center space-x-1">
-                  <Block size="lg" />
+                  <BlockIcon size="lg" />
                   <Typography variant="mono1">{height}</Typography>
                 </span>
               }

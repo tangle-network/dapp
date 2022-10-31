@@ -22,10 +22,6 @@
     "../src/**/*.stories.jsx",
     "../src/**/*.stories.tsx",
     "../src/**/*.stories.mdx",
-    "*.js",
-    "webbTheme.js",
-    "preview.js",
-    "manager.js",
-    "main.cjs"
+    "*.js"
   ]
 }

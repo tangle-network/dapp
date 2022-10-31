@@ -1,8 +1,4 @@
 {
   "presets": ["@nrwl/web/babel"],
-  "babelrcRoots": ["*"],
-  "assumptions": {
-		"setPublicClassFields": true,
-		"privateFieldsAsProperties": true
-	}
+  "babelrcRoots": ["*"]
 }
