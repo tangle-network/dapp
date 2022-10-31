@@ -9,7 +9,7 @@
     "lint": "nx run-many --all --target=lint\n",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
     "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
-    "start:stats": "cd apps/stats-dapp && webpack serve --hot -p 3000"
+    "start:stats": "nx serve stats-dapp"
   },
   "private": true,
   "workspaces": [
