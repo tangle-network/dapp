@@ -1,4 +1,4 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { PropsOf } from '../../types';
 
 export type DisclaimerVariant = 'info' | 'error' | 'warning' | 'success';
 /**
