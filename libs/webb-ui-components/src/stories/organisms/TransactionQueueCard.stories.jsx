@@ -2,9 +2,6 @@ import React from 'react';
 import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
 import { TokenIcon } from '@webb-tools/icons';
 
-const EthLogo = <TokenIcon name={'ETH'} />;
-const PolygonLogo = <TokenIcon name={'matic'} />;
-
 export default {
   title: 'Design System/Organisms/TransactionQueueCard',
   component: TransactionQueueCard,
@@ -36,7 +33,10 @@ WithInProgressTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -62,8 +62,11 @@ WithSuccessTransaction.args = {
       tokens: ['USDT', 'ETH'],
       token: 'ETH',
       amount: '0.9995',
-      id: '123fA',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      id: 'sdfjwo',
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -90,7 +93,10 @@ WithFailedTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f2',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -117,12 +123,15 @@ WithInAllTransaction.args = {
       token: 'ETH',
       amount: '0.999',
       id: '123f',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
       },
-      nativeValue: '1230',
+      nativeValue: '1230SZ',
       onDetails: () => {},
       onDismiss: () => {},
       onSyncNote: () => {},
@@ -137,8 +146,11 @@ WithInAllTransaction.args = {
       tokens: ['USDT', 'ETH'],
       token: 'ETH',
       amount: '0.9995',
-      id: '123fA',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      id: '123f23dA',
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -159,8 +171,11 @@ WithInAllTransaction.args = {
       tokens: ['ETH'],
       token: 'ETH',
       amount: '0.999',
-      id: '123f2',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      id: '123f2lo',
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
@@ -179,8 +194,11 @@ WithInAllTransaction.args = {
       tokens: ['USDC', 'ETH'],
       token: 'ETH',
       amount: '0.999',
-      id: '123f2',
-      wallets: { src: PolygonLogo, dist: EthLogo },
+      id: '123f2op0',
+      wallets: {
+        src: <TokenIcon name={'ETH'} />,
+        dist: <TokenIcon name={'ETH'} />,
+      },
       timestamp: new Date(),
       getExplorerURI(addOrTxHash, variant) {
         return '#';

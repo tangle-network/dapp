@@ -30,9 +30,9 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({
   }, [method]);
   return (
     <>
-      <div className={'pr-2'}>
+      <span className={'inline-block pr-2'}>
         <PartyFill maxWidth={18} />
-      </div>
+      </span>
       <span className={'text-inherit dark:text-inherit'}>{message}</span>
     </>
   );

@@ -1,6 +1,6 @@
 import { Button, Chip, ChipColors, Disclaimer } from '../../components';
 import { Typography } from '../../typography';
-import React, { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
 import success from './success-tx.json';
@@ -120,6 +120,9 @@ export const TransactionProgressCard = forwardRef<
       wallets,
       onDismiss,
       onDetails,
+      firedAt,
+      footer,
+
       ...props
     },
     ref
@@ -145,6 +148,17 @@ export const TransactionProgressCard = forwardRef<
       return method === 'Withdraw' && Boolean(onSyncNote);
     }, [method]);
 
+    // Fix lottie animation prevents the image form loading ?!
+    const [showAnimation, setShowAnimation] = useState(false);
+    useEffect(() => {
+      let t;
+      if (status === 'completed') {
+        t = setTimeout(() => setShowAnimation(true), 100);
+      } else {
+        setShowAnimation(false);
+      }
+      return () => clearTimeout(t);
+    }, [status, setShowAnimation]);
     return (
       <div
         className={twMerge(
@@ -157,7 +171,7 @@ export const TransactionProgressCard = forwardRef<
         ref={ref}
       >
         {/*Show the animation for the completed transactions*/}
-        {status === 'completed' && (
+        {showAnimation && (
           <div
             className={`dark:bg-mono-160 absolute inset-0 h-full w-full z-0`}
           >
@@ -270,7 +284,7 @@ export const TransactionProgressCard = forwardRef<
         {/*Card Footer*/}
         <div className="flex flex-col relative z-1">
           <TransactionCardFooter
-            {...props.footer}
+            {...footer}
             onDismiss={onDismiss}
             onDetails={onDetails}
           />
