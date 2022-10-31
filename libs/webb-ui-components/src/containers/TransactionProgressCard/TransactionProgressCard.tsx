@@ -131,7 +131,18 @@ export const TransactionProgressCard = forwardRef<
       () => ((label as NativeLabel).nativeValue ? 'native' : 'bridge'),
       [label]
     );
-    const [open, setOpen] = useState(true);
+    const timeLabel = useMemo(() => {
+      const timeGap = Date.now() - firedAt.getTime();
+      if (timeGap < 60 * 1000) {
+        return 'Just now';
+      }
+      if (timeGap < 60 * 60 * 1000) {
+        return `${Math.floor(timeGap / (1000 * 60))}m`;
+      }
+      if (timeGap > 60 * 60 * 1000) {
+        return `${Math.floor(timeGap / (1000 * 60 * 60))}h`;
+      }
+    }, [firedAt]);
     const chipColor = useMemo<ChipColors>((): ChipColors => {
       switch (method) {
         case 'Withdraw':
@@ -190,7 +201,7 @@ export const TransactionProgressCard = forwardRef<
               variant={'body3'}
               className={'whitespace-nowrap'}
             >
-              JUST NOW
+              {timeLabel}
             </Typography>
           </div>
           {/*Card Content*/}

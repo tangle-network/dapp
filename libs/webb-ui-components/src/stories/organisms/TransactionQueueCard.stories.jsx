@@ -151,7 +151,7 @@ WithInAllTransaction.args = {
         src: <TokenIcon name={'ETH'} />,
         dist: <TokenIcon name={'ETH'} />,
       },
-      timestamp: new Date(),
+      timestamp: new Date(Date.now() - 60 * 60 * 1000),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
       },
@@ -176,7 +176,7 @@ WithInAllTransaction.args = {
         src: <TokenIcon name={'ETH'} />,
         dist: <TokenIcon name={'ETH'} />,
       },
-      timestamp: new Date(),
+      timestamp: new Date(Date.now() - 60 * 1000),
       getExplorerURI(addOrTxHash, variant) {
         return '#';
       },
