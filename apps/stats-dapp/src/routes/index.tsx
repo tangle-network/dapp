@@ -36,17 +36,6 @@ const PageProposalDetail = lazy(
   () => import('@webb-tools/stats-dapp/pages/ProposalDetailPage')
 );
 
-const PageComponentsShowcase = lazy(
-  () => import('@webb-tools/stats-dapp/pages/ComponentsShowcase')
-);
-
-const PageBridgeControlShowcase = lazy(
-  () => import('@webb-tools/stats-dapp/pages/BridgeControlShowcase')
-);
-const TransactionProgressCardShowCase = lazy(
-  () => import('@webb-tools/stats-dapp/pages/TransactionProgressCardShowCase')
-);
-
 const CSuspense: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Suspense
@@ -64,30 +53,6 @@ const CSuspense: FC<PropsWithChildren> = ({ children }) => {
 export const routes: RouterConfigData[] = [
   {
     children: [
-      {
-        element: (
-          <CSuspense>
-            <PageBridgeControlShowcase />
-          </CSuspense>
-        ),
-        path: 'bridge-control-showcase/*',
-      },
-      {
-        element: (
-          <CSuspense>
-            <PageComponentsShowcase />
-          </CSuspense>
-        ),
-        path: 'components-showcase/*',
-      },
-      {
-        element: (
-          <CSuspense>
-            <TransactionProgressCardShowCase />
-          </CSuspense>
-        ),
-        path: 'tx-card-showcase/*',
-      },
       {
         element: (
           <CSuspense>
