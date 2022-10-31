@@ -8,7 +8,7 @@
     "test": "nx test",
     "lint": "nx run-many --all --target=lint",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
-    "gql:codegen": "graphql-codegen --config codegen.yml"
+    "gql:codegen": "graphql-codegen --config codegen.yml",
     "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
     "start:stats": "nx serve stats-dapp"
   },
