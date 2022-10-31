@@ -1,9 +1,8 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { InformationLine } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
-
-type DisclaimerVariant = 'info' | 'error' | 'warning' | 'success';
+import { DisclaimerProps, DisclaimerVariant } from './types';
 
 function getColors(variant: DisclaimerVariant) {
   switch (variant) {
@@ -29,10 +28,10 @@ function getColors(variant: DisclaimerVariant) {
       };
   }
 }
-export const Disclaimer: FC<{
-  message: string;
-  variant: DisclaimerVariant;
-}> = ({ message, variant }) => {
+export const Disclaimer: FC<DisclaimerProps> = forwardRef<
+  HTMLDivElement,
+  DisclaimerProps
+>(({ message, variant, className, ...props }, ref) => {
   const { main, text } = useMemo(() => {
     return getColors(variant);
   }, [variant]);
@@ -42,7 +41,11 @@ export const Disclaimer: FC<{
   }, [main]);
 
   return (
-    <div className={disclaimerWrapperClasses}>
+    <div
+      className={twMerge(disclaimerWrapperClasses, className)}
+      {...props}
+      ref={ref}
+    >
       <div className={text}>
         <InformationLine className="!fill-current pointer-events-none" />
       </div>
@@ -53,4 +56,4 @@ export const Disclaimer: FC<{
       </div>
     </div>
   );
-};
+});
