@@ -6,8 +6,8 @@
     "@influxdata/influxdb-client-browser": "^1.8.0",
     "@polkadot/api": "9.2.4",
     "@polkadot/extension-dapp": "0.44.1",
-    "@webb-tools/api": "0.1.4-112",
-    "@webb-tools/sdk-core": "0.1.4-112",
+    "@webb-tools/api": "0.1.4-113",
+    "@webb-tools/sdk-core": "0.1.4-113",
     "framer-motion": "^6.4.3"
   },
   "devDependencies": {

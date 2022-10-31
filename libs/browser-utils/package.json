@@ -4,6 +4,6 @@
   "main": "./src/index.js",
   "dependencies": {
     "@webb-tools/storage": "0.0.1",
-    "@webb-tools/sdk-core": "0.1.4-112"
+    "@webb-tools/sdk-core": "0.1.4-113"
   }
 }
