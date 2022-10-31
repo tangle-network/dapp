@@ -6,7 +6,7 @@
   "dependencies": {
     "@webb-tools/dapp-config": "0.0.1",
     "@webb-tools/dapp-types": "0.0.1",
-    "@webb-tools/sdk-core": "0.1.4-105",
-    "@webb-tools/app-util": "0.1.4-105"
+    "@webb-tools/sdk-core": "0.1.4-112",
+    "@webb-tools/app-util": "0.1.4-112"
   }
 }
