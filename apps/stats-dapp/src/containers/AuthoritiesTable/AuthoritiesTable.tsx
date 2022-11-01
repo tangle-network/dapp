@@ -1,4 +1,3 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,16 +14,14 @@ import {
 } from '@tanstack/react-table';
 import { useCountriesQuery } from '../../generated/graphql';
 import {
-  AuthorityListItem,
   AuthorisesQuery,
-  Range,
+  AuthorityListItem,
   useAuthorities,
 } from '../../provider/hooks';
 import {
   Avatar,
   Button,
   CardTable,
-  CheckBox,
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
@@ -35,16 +32,13 @@ import {
   Table,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components/CheckBoxMenu';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { Typography } from '@webb-tools/webb-ui-components';
 import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import { AuthoritiesTableProps } from './types';
-const countries = ['eg', 'uk'];
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
