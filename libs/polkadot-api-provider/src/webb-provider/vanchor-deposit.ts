@@ -178,6 +178,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         amount: '0',
       });
       const publicAmount = note.amount;
+      // Create a new note with an empty UTXO
       const inputNote = await depositPayload.note.getDefaultUtxoNote();
 
       this.cancelToken.throwIfCancel();
@@ -221,6 +222,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         relayer: relayerAccountDecoded,
         roots: rootsSet,
         chainId: note.targetChainId,
+        // TODO: check if the empty utxo is requried or we can pass in an empty array for `leafIds` `inputUtxos`
         inputUtxos: [new Utxo(inputNote.note.getUtxo())],
         leafIds: [
           {
@@ -334,7 +336,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
       ) {
         this.emit('stateChange', TransactionState.Failed);
         if (this.inner.noteManager) {
-          this.inner.noteManager.removeNote(depositPayload.note);
+          await this.inner.noteManager.removeNote(depositPayload.note);
         }
       }
       throw e;
