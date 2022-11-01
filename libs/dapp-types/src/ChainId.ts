@@ -24,6 +24,7 @@ export enum EVMChainId {
   Rinkeby = 4,
   Kovan = 42,
   Goerli = 5,
+  Sepolia = 11155111,
   Ganache = 1337,
 
   /* Added EVM Chains on MetaMask */
@@ -49,6 +50,7 @@ export enum PresetTypedChainId {
   Ropsten = calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten),
   Kovan = calculateTypedChainId(ChainType.EVM, EVMChainId.Kovan),
   Goerli = calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli),
+  Sepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia),
   HarmonyTestnet1 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet1),
   HarmonyTestnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet0),
   HarmonyMainnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyMainnet0),

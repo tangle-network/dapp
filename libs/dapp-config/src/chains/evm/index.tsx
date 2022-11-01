@@ -155,4 +155,16 @@ export const chainsConfig: Record<number, ChainConfig> = {
     currencies: [CurrencyId.WETH, CurrencyId.moonDEV, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.moonDEV,
   },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.Sepolia,
+    name: 'Sepolia',
+    tag: 'test',
+    url: 'https://rpc.sepolia.org',
+    evmRpcUrls: ['https://rpc.sepolia.org'],
+    logo: () => EtherLogo,
+    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
+    nativeCurrencyId: CurrencyId.ETH
+  }
 };

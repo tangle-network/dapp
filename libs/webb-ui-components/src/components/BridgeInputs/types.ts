@@ -15,7 +15,7 @@ export interface InputWrapperProps extends IWebbComponentBase, PropsOf<'div'> {
   /**
    * Used to override the default title of an input
    */
-   title?: string;
+  title?: string;
 
   /**
    * The tooltip info
