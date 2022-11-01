@@ -1,11 +1,18 @@
-import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloProvider,
+  from,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { Footer, Header } from '@webb-dapp/page-statistics/components';
-import { defaultEndpoint } from '@webb-dapp/page-statistics/constants';
-import { StatsProvider } from '@webb-dapp/page-statistics/provider/stats-provider';
-import { FC, useMemo, useState } from 'react';
+import { Header } from '@webb-tools/stats-dapp/components';
+import { defaultEndpoint } from '@webb-tools/stats-dapp/constants';
+import { StatsProvider } from '@webb-tools/stats-dapp/provider/stats-provider';
+import { FC, PropsWithChildren, useMemo, useState } from 'react';
+import { Footer } from '@webb-tools/webb-ui-components';
 
-export const Layout: FC = ({ children }) => {
+export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
     const storedEndpoint = localStorage.getItem('statsEndpoint');
     if (storedEndpoint) {
@@ -18,7 +25,9 @@ export const Layout: FC = ({ children }) => {
     const errorLink = onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors) {
         graphQLErrors.forEach(({ locations, message, path }) =>
-          setErrorMessage(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+          setErrorMessage(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+          )
         );
       }
       if (networkError) {
@@ -40,7 +49,7 @@ export const Layout: FC = ({ children }) => {
   };
 
   return (
-    <div className='min-w-full min-h-full'>
+    <div className="min-w-full min-h-full">
       <div
         onClick={() => {
           setErrorMessage(null);
@@ -48,10 +57,13 @@ export const Layout: FC = ({ children }) => {
       >
         {errorMessage}
       </div>
-      <Header connectedEndpoint={connectedEndpoint} setConnectedEndpoint={setEndpoint} />
+      <Header
+        connectedEndpoint={connectedEndpoint}
+        setConnectedEndpoint={setEndpoint}
+      />
       <ApolloProvider client={apolloClient}>
         <StatsProvider blockTime={6} sessionHeight={600}>
-          <main className='max-w-[1160px] mx-auto'>{children}</main>
+          <main className="max-w-[1160px] mx-auto">{children}</main>
         </StatsProvider>
       </ApolloProvider>
       <Footer />
