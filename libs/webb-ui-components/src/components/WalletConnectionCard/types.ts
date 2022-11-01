@@ -1,36 +1,6 @@
+import { Wallet } from '@webb-tools/dapp-config';
+import { WalletId } from '@webb-tools/dapp-types';
 import { PropsOf } from '../../types';
-
-/**
- * The wallet id, add a new id when the app supports a new wallet
- */
-export type WalletId = 'metamask' | 'walletconnect' | 'polkadot-js' | 'talisman' | 'subwallet';
-
-/**
- * The wallet type
- */
-export type WalletType = {
-  /**
-   * The wallet id
-   * @type {WalletId}
-   */
-  id: WalletId;
-
-  /**
-   * The wallet name
-   */
-  name: string;
-
-  /**
-   * The wallet title to display.
-   * If not provided, it will use the wallet name to display
-   */
-  title?: string;
-
-  /**
-   * The wallet logo
-   */
-  logo: React.ReactElement;
-};
 
 /**
  * The wallet connection card props
@@ -39,7 +9,7 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
   /**
    * Wallet array to render
    */
-  wallets: WalletType[];
+  wallets: Wallet[];
 
   /**
    * The wallet id which is being connected.

@@ -22,7 +22,7 @@ export const relayerConfig: RelayerConfig[] = [
     endpoint: 'http://localhost:9955',
   },
   {
-    endpoint: 'https://relayer.webb-tools.com',
+    endpoint: 'https://relayer.nepoche.com',
   },
   {
     endpoint: 'https://relayer.webb.tools',

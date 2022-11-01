@@ -5,7 +5,7 @@ import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 
 export interface WalletConfig {
   id: number;
-  Logo: any;
+  Logo: React.ReactElement;
   name: string;
   title: string;
   platform: string;
