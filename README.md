@@ -109,6 +109,22 @@ The following instructions outlines how to run Webb Dapp test suite.
 yarn test
 ```
 
+### To start [Storybook](https://storybook.js.org/) for component library
+
+1. Install dependencies by `yarn`
+
+   ```bash
+   yarn install
+   ```
+
+2. Start the storybook:
+
+   ```bash
+   yarn nx storybook webb-ui-components 
+   ```
+
+Visit http://localhost:4400/ to see the Webb Component Library! 🕸️ 🚀
+
 <h2 id="contribute"> Contributing </h2>
 
 Interested in contributing to the Webb Dapp interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
