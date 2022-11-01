@@ -531,9 +531,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                     },
                   },
                   [
-                    React.createElement(wallet.Logo, {
-                      key: `${wallet.id}logo`,
-                    }),
+                    wallet.Logo
                   ]
                 ),
               });
