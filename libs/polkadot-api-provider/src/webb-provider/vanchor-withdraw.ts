@@ -367,7 +367,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       this.cancelToken.throwIfCancel();
       txHash = await tx.call(account.address);
     }
-    // TODO construct the right note
     // remove the previous "Potential Change Note" (safeguard for user)
     await this.inner.noteManager?.removeNote(outputNote);
 
