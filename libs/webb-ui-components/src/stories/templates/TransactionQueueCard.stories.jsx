@@ -1,9 +1,9 @@
 import React from 'react';
-import { TransactionQueueCard } from '../../containers/TransactionProgressCard';
+import { TransactionQueueCard } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { TokenIcon } from '@webb-tools/icons';
 
 export default {
-  title: 'Design System/Organisms/TransactionQueueCard',
+  title: 'Design System/templates/TransactionQueueCard',
   component: TransactionQueueCard,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };

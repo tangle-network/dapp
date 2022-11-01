@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Disclaimer } from '../../components';
+import { Disclaimer } from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/CopyWithTooltip',
+  title: 'Design System/Molecules/Disclaimer',
   component: Disclaimer,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
