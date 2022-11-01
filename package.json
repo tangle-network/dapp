@@ -6,9 +6,11 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "lint": "nx run-many --all --target=lint",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
+    "gql:codegen": "graphql-codegen --config codegen.yml",
     "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
-    "gql:codegen": "graphql-codegen --config codegen.yml"
+    "start:stats": "nx serve stats-dapp"
   },
   "private": true,
   "workspaces": [
@@ -82,6 +84,9 @@
     "@babel/plugin-proposal-private-property-in-object": "7.16.7",
     "@babel/plugin-syntax-bigint": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.10.4",
+    "@babel/plugin-syntax-bigint": "^7.8.3",
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
+    "@babel/plugin-syntax-top-level-await": "^7.14.5",
     "@babel/plugin-transform-react-jsx": "7.17.3",
     "@babel/plugin-transform-runtime": "7.17.0",
     "@babel/polyfill": "^7.12.1",
