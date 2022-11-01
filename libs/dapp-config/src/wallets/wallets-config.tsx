@@ -7,6 +7,14 @@ import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
 import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
 import { WalletConfig } from '.';
+import {
+  MetaMaskIcon,
+  PolkadotJsIcon,
+  SubWalletIcon,
+  TalismanIcon,
+  TokenIcon,
+  WalletConnectIcon,
+} from '@webb-tools/icons';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
@@ -38,7 +46,7 @@ const ANY_SUBSTRATE = [
 export const walletsConfig: Record<number, WalletConfig> = {
   [WalletId.Polkadot]: {
     id: WalletId.Polkadot,
-    Logo: PolkaLogo,
+    Logo: <PolkadotJsIcon />,
     name: 'polkadot-js',
     title: `PolkadotJS Extension`,
     platform: 'Substrate',
@@ -57,7 +65,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
-    Logo: MetaMaskLogo,
+    Logo: <MetaMaskIcon />,
     name: 'metamask',
     title: `MetaMask`,
     platform: 'EVM',
@@ -80,7 +88,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.WalletConnectV1]: {
     id: WalletId.WalletConnectV1,
-    Logo: WalletConnectLogo,
+    Logo: <WalletConnectIcon />,
     name: 'wallet connect',
     title: `Wallet Connect`,
     platform: 'EVM',
@@ -108,7 +116,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   // },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
-    Logo: TalismanLogo,
+    Logo: <TalismanIcon />,
     name: 'talisman',
     title: 'Talisman',
     platform: 'Substrate',
@@ -127,7 +135,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.SubWallet]: {
     id: WalletId.SubWallet,
-    Logo: SubWalletLogo,
+    Logo: <SubWalletIcon />,
     name: 'subwallet-js',
     title: 'SubWallet',
     platform: 'Substrate',
