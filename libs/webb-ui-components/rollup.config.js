@@ -7,6 +7,7 @@ const copy = require('rollup-plugin-copy');
 const modify = require('rollup-plugin-modify');
 const image = require('@rollup/plugin-image');
 const { join } = require('path');
+const json = require('@rollup/plugin-json');
 
 module.exports = (config) => {
   return {
@@ -16,6 +17,7 @@ module.exports = (config) => {
       sourcemap: false,
     },
     plugins: [
+      json(),
       postcss({
         config: {
           path: join(__dirname, 'postcss.config.js'),
