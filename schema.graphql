@@ -2296,7 +2296,7 @@ type ProposalItem implements Node {
         "The method to use when ordering `Block`."
         orderBy: [BlocksOrderBy!] = [PRIMARY_KEY_ASC]
     ): ProposalItemBlocksByProposalVoteProposalIdAndBlockIdManyToManyConnection!
-    chainId: Int
+    chainId: BigFloat
     data: String!
     id: String!
     "A globally unique identifier. Can be used in various places throughout the system to identify this single value."
@@ -2368,7 +2368,7 @@ type ProposalItem implements Node {
     removed: Boolean
     signature: String
     status: String!
-    type: ProposalType!
+    type: AppEnumB6165934C8!
     "Reads and enables pagination through a set of `UnsignedProposalsQueueItem`."
     unsignedProposalsQueueItemsByProposalId(
         "Read all values in the set after (below) this cursor."
@@ -2521,7 +2521,7 @@ type ProposalItemMaxAggregates {
     "Maximum of blockNumber across the matching connection"
     blockNumber: Int
     "Maximum of chainId across the matching connection"
-    chainId: Int
+    chainId: BigFloat
     "Maximum of nonce across the matching connection"
     nonce: Int
 }
@@ -2530,7 +2530,7 @@ type ProposalItemMinAggregates {
     "Minimum of blockNumber across the matching connection"
     blockNumber: Int
     "Minimum of chainId across the matching connection"
-    chainId: Int
+    chainId: BigFloat
     "Minimum of nonce across the matching connection"
     nonce: Int
 }
@@ -2607,7 +2607,7 @@ type ProposalItemSumAggregates {
     "Sum of blockNumber across the matching connection"
     blockNumber: BigInt!
     "Sum of chainId across the matching connection"
-    chainId: BigInt!
+    chainId: BigFloat!
     "Sum of nonce across the matching connection"
     nonce: BigInt!
 }
@@ -2717,7 +2717,7 @@ type ProposalTimelineStatus implements Node {
     "Reads a single `ProposalItem` that is related to this `ProposalTimelineStatus`."
     proposalItem: ProposalItem
     proposalItemId: String!
-    status: ProposalStatus!
+    status: AppEnum155D64Ff70!
     timestamp: Datetime!
     txHash: String
 }
@@ -2839,7 +2839,7 @@ type ProposalVote implements Node {
     "Reads a single `ProposalItem` that is related to this `ProposalVote`."
     proposal: ProposalItem
     proposalId: String!
-    voteStatus: VoteStatus!
+    voteStatus: AppEnumFe385C7221!
     "Reads a single `Proposer` that is related to this `ProposalVote`."
     voter: Proposer
     voterId: String!
@@ -4870,7 +4870,7 @@ type Threshold implements Node {
     "Reads a single `Session` that is related to this `Threshold`."
     session: Session
     sessionId: String!
-    variant: ThresholdVariant!
+    variant: AppEnum790A3Fe4Ce!
 }
 
 type ThresholdAggregates {
@@ -6065,6 +6065,51 @@ enum AccountsOrderBy {
     VALIDATORS_VARIANCE_SAMPLE_ID_DESC
     WEB_ASC
     WEB_DESC
+}
+
+"@enum\\n@enumName ProposalStatus"
+enum AppEnum155D64Ff70 {
+    Accepted
+    Executed
+    FailedToExecute
+    Open
+    Rejected
+    Removed
+    Signed
+}
+
+"@enum\\n@enumName ThresholdVariant"
+enum AppEnum790A3Fe4Ce {
+    KEY_GEN
+    PROPOSER
+    SIGNATURE
+}
+
+"@enum\\n@enumName ProposalType"
+enum AppEnumB6165934C8 {
+    AnchorCreateProposal
+    AnchorUpdateProposal
+    EvmProposal
+    FeeRecipientUpdateProposal
+    MaxDepositLimitUpdateProposal
+    MinWithdrawalLimitUpdateProposal
+    ProposerSetUpdateProposal
+    RefreshVote
+    RescueTokensProposal
+    ResourceIdUpdateProposal
+    SetTreasuryHandlerProposal
+    SetVerifierProposal
+    TokenAddProposal
+    TokenRemoveProposal
+    Unknown
+    WrappingFeeUpdateProposal
+}
+
+"@enum\\n@enumName VoteType"
+enum AppEnumFe385C7221 {
+    ABSTAIN
+    AGAINST
+    FOR
 }
 
 "Grouping methods for `Authority` for usage during aggregation."
@@ -8667,16 +8712,6 @@ enum ProposalItemsOrderBy {
     UNSIGNED_PROPOSALS_QUEUE_ITEMS_BY_PROPOSAL_ID_VARIANCE_SAMPLE_QUEUE_ID_DESC
 }
 
-enum ProposalStatus {
-    Accepted
-    Executed
-    FailedToExecute
-    Open
-    Rejected
-    Removed
-    Signed
-}
-
 "Grouping methods for `ProposalTimelineStatus` for usage during aggregation."
 enum ProposalTimelineStatusesGroupBy {
     BLOCK_NUMBER
@@ -8705,25 +8740,6 @@ enum ProposalTimelineStatusesOrderBy {
     TIMESTAMP_DESC
     TX_HASH_ASC
     TX_HASH_DESC
-}
-
-enum ProposalType {
-    AnchorCreateProposal
-    AnchorUpdateProposal
-    EvmProposal
-    FeeRecipientUpdateProposal
-    MaxDepositLimitUpdateProposal
-    MinWithdrawalLimitUpdateProposal
-    ProposerSetUpdateProposal
-    RefreshVote
-    RescueTokensProposal
-    ResourceIdUpdateProposal
-    SetTreasuryHandlerProposal
-    SetVerifierProposal
-    TokenAddProposal
-    TokenRemoveProposal
-    Unknown
-    WrappingFeeUpdateProposal
 }
 
 "Grouping methods for `ProposalVote` for usage during aggregation."
@@ -9528,12 +9544,6 @@ enum SignatureThresholdsOrderBy {
     PRIMARY_KEY_DESC
 }
 
-enum ThresholdVariant {
-    KEY_GEN
-    PROPOSER
-    SIGNATURE
-}
-
 "Grouping methods for `Threshold` for usage during aggregation."
 enum ThresholdsGroupBy {
     CURRENT
@@ -9895,12 +9905,6 @@ enum ValidatorsOrderBy {
     SESSION_VALIDATORS_VARIANCE_SAMPLE_VALIDATOR_ID_DESC
 }
 
-enum VoteStatus {
-    ABSTAIN
-    AGAINST
-    FOR
-}
-
 "A floating point number that requires more precision than IEEE 754 binary 64"
 scalar BigFloat
 
@@ -9968,6 +9972,110 @@ input AccountFilter {
 input AccountsHavingInput {
     AND: [AccountsHavingInput!]
     OR: [AccountsHavingInput!]
+}
+
+"A filter to be used against AppEnum155D64Ff70 fields. All fields are combined with a logical ‘and.’"
+input AppEnum155D64Ff70Filter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: AppEnum155D64Ff70
+    "Equal to the specified value."
+    equalTo: AppEnum155D64Ff70
+    "Greater than the specified value."
+    greaterThan: AppEnum155D64Ff70
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: AppEnum155D64Ff70
+    "Included in the specified list."
+    in: [AppEnum155D64Ff70!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: AppEnum155D64Ff70
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: AppEnum155D64Ff70
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: AppEnum155D64Ff70
+    "Not equal to the specified value."
+    notEqualTo: AppEnum155D64Ff70
+    "Not included in the specified list."
+    notIn: [AppEnum155D64Ff70!]
+}
+
+"A filter to be used against AppEnum790A3Fe4Ce fields. All fields are combined with a logical ‘and.’"
+input AppEnum790A3Fe4CeFilter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: AppEnum790A3Fe4Ce
+    "Equal to the specified value."
+    equalTo: AppEnum790A3Fe4Ce
+    "Greater than the specified value."
+    greaterThan: AppEnum790A3Fe4Ce
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: AppEnum790A3Fe4Ce
+    "Included in the specified list."
+    in: [AppEnum790A3Fe4Ce!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: AppEnum790A3Fe4Ce
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: AppEnum790A3Fe4Ce
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: AppEnum790A3Fe4Ce
+    "Not equal to the specified value."
+    notEqualTo: AppEnum790A3Fe4Ce
+    "Not included in the specified list."
+    notIn: [AppEnum790A3Fe4Ce!]
+}
+
+"A filter to be used against AppEnumB6165934C8 fields. All fields are combined with a logical ‘and.’"
+input AppEnumB6165934C8Filter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: AppEnumB6165934C8
+    "Equal to the specified value."
+    equalTo: AppEnumB6165934C8
+    "Greater than the specified value."
+    greaterThan: AppEnumB6165934C8
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: AppEnumB6165934C8
+    "Included in the specified list."
+    in: [AppEnumB6165934C8!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: AppEnumB6165934C8
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: AppEnumB6165934C8
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: AppEnumB6165934C8
+    "Not equal to the specified value."
+    notEqualTo: AppEnumB6165934C8
+    "Not included in the specified list."
+    notIn: [AppEnumB6165934C8!]
+}
+
+"A filter to be used against AppEnumFe385C7221 fields. All fields are combined with a logical ‘and.’"
+input AppEnumFe385C7221Filter {
+    "Not equal to the specified value, treating null like an ordinary value."
+    distinctFrom: AppEnumFe385C7221
+    "Equal to the specified value."
+    equalTo: AppEnumFe385C7221
+    "Greater than the specified value."
+    greaterThan: AppEnumFe385C7221
+    "Greater than or equal to the specified value."
+    greaterThanOrEqualTo: AppEnumFe385C7221
+    "Included in the specified list."
+    in: [AppEnumFe385C7221!]
+    "Is null (if `true` is specified) or is not null (if `false` is specified)."
+    isNull: Boolean
+    "Less than the specified value."
+    lessThan: AppEnumFe385C7221
+    "Less than or equal to the specified value."
+    lessThanOrEqualTo: AppEnumFe385C7221
+    "Equal to the specified value, treating null like an ordinary value."
+    notDistinctFrom: AppEnumFe385C7221
+    "Not equal to the specified value."
+    notEqualTo: AppEnumFe385C7221
+    "Not included in the specified list."
+    notIn: [AppEnumFe385C7221!]
 }
 
 "Conditions for `Authority` aggregates."
@@ -10653,7 +10761,7 @@ input ProposalItemFilter {
     "Filter by the object’s `blockNumber` field."
     blockNumber: IntFilter
     "Filter by the object’s `chainId` field."
-    chainId: IntFilter
+    chainId: BigFloatFilter
     "Filter by the object’s `data` field."
     data: StringFilter
     "Filter by the object’s `id` field."
@@ -10671,18 +10779,18 @@ input ProposalItemFilter {
     "Filter by the object’s `status` field."
     status: StringFilter
     "Filter by the object’s `type` field."
-    type: ProposalTypeFilter
+    type: AppEnumB6165934C8Filter
 }
 
 input ProposalItemsHavingAverageInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingDistinctCountInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
@@ -10703,70 +10811,44 @@ input ProposalItemsHavingInput {
 
 input ProposalItemsHavingMaxInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingMinInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingStddevPopulationInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingStddevSampleInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingSumInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingVariancePopulationInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
 }
 
 input ProposalItemsHavingVarianceSampleInput {
     blockNumber: HavingIntFilter
-    chainId: HavingIntFilter
+    chainId: HavingBigfloatFilter
     nonce: HavingIntFilter
-}
-
-"A filter to be used against ProposalStatus fields. All fields are combined with a logical ‘and.’"
-input ProposalStatusFilter {
-    "Not equal to the specified value, treating null like an ordinary value."
-    distinctFrom: ProposalStatus
-    "Equal to the specified value."
-    equalTo: ProposalStatus
-    "Greater than the specified value."
-    greaterThan: ProposalStatus
-    "Greater than or equal to the specified value."
-    greaterThanOrEqualTo: ProposalStatus
-    "Included in the specified list."
-    in: [ProposalStatus!]
-    "Is null (if `true` is specified) or is not null (if `false` is specified)."
-    isNull: Boolean
-    "Less than the specified value."
-    lessThan: ProposalStatus
-    "Less than or equal to the specified value."
-    lessThanOrEqualTo: ProposalStatus
-    "Equal to the specified value, treating null like an ordinary value."
-    notDistinctFrom: ProposalStatus
-    "Not equal to the specified value."
-    notEqualTo: ProposalStatus
-    "Not included in the specified list."
-    notIn: [ProposalStatus!]
 }
 
 "A filter to be used against `ProposalTimelineStatus` object types. All fields are combined with a logical ‘and.’"
@@ -10784,7 +10866,7 @@ input ProposalTimelineStatusFilter {
     "Filter by the object’s `proposalItemId` field."
     proposalItemId: StringFilter
     "Filter by the object’s `status` field."
-    status: ProposalStatusFilter
+    status: AppEnum155D64Ff70Filter
     "Filter by the object’s `timestamp` field."
     timestamp: DatetimeFilter
     "Filter by the object’s `txHash` field."
@@ -10851,32 +10933,6 @@ input ProposalTimelineStatusesHavingVarianceSampleInput {
     timestamp: HavingDatetimeFilter
 }
 
-"A filter to be used against ProposalType fields. All fields are combined with a logical ‘and.’"
-input ProposalTypeFilter {
-    "Not equal to the specified value, treating null like an ordinary value."
-    distinctFrom: ProposalType
-    "Equal to the specified value."
-    equalTo: ProposalType
-    "Greater than the specified value."
-    greaterThan: ProposalType
-    "Greater than or equal to the specified value."
-    greaterThanOrEqualTo: ProposalType
-    "Included in the specified list."
-    in: [ProposalType!]
-    "Is null (if `true` is specified) or is not null (if `false` is specified)."
-    isNull: Boolean
-    "Less than the specified value."
-    lessThan: ProposalType
-    "Less than or equal to the specified value."
-    lessThanOrEqualTo: ProposalType
-    "Equal to the specified value, treating null like an ordinary value."
-    notDistinctFrom: ProposalType
-    "Not equal to the specified value."
-    notEqualTo: ProposalType
-    "Not included in the specified list."
-    notIn: [ProposalType!]
-}
-
 "A filter to be used against `ProposalVote` object types. All fields are combined with a logical ‘and.’"
 input ProposalVoteFilter {
     "Checks for all expressions in this list."
@@ -10894,7 +10950,7 @@ input ProposalVoteFilter {
     "Filter by the object’s `proposalId` field."
     proposalId: StringFilter
     "Filter by the object’s `voteStatus` field."
-    voteStatus: VoteStatusFilter
+    voteStatus: AppEnumFe385C7221Filter
     "Filter by the object’s `voterId` field."
     voterId: StringFilter
 }
@@ -11459,33 +11515,7 @@ input ThresholdFilter {
     "Filter by the object’s `sessionId` field."
     sessionId: StringFilter
     "Filter by the object’s `variant` field."
-    variant: ThresholdVariantFilter
-}
-
-"A filter to be used against ThresholdVariant fields. All fields are combined with a logical ‘and.’"
-input ThresholdVariantFilter {
-    "Not equal to the specified value, treating null like an ordinary value."
-    distinctFrom: ThresholdVariant
-    "Equal to the specified value."
-    equalTo: ThresholdVariant
-    "Greater than the specified value."
-    greaterThan: ThresholdVariant
-    "Greater than or equal to the specified value."
-    greaterThanOrEqualTo: ThresholdVariant
-    "Included in the specified list."
-    in: [ThresholdVariant!]
-    "Is null (if `true` is specified) or is not null (if `false` is specified)."
-    isNull: Boolean
-    "Less than the specified value."
-    lessThan: ThresholdVariant
-    "Less than or equal to the specified value."
-    lessThanOrEqualTo: ThresholdVariant
-    "Equal to the specified value, treating null like an ordinary value."
-    notDistinctFrom: ThresholdVariant
-    "Not equal to the specified value."
-    notEqualTo: ThresholdVariant
-    "Not included in the specified list."
-    notIn: [ThresholdVariant!]
+    variant: AppEnum790A3Fe4CeFilter
 }
 
 input ThresholdsHavingAverageInput {
@@ -11713,30 +11743,4 @@ input ValidatorFilter {
 input ValidatorsHavingInput {
     AND: [ValidatorsHavingInput!]
     OR: [ValidatorsHavingInput!]
-}
-
-"A filter to be used against VoteStatus fields. All fields are combined with a logical ‘and.’"
-input VoteStatusFilter {
-    "Not equal to the specified value, treating null like an ordinary value."
-    distinctFrom: VoteStatus
-    "Equal to the specified value."
-    equalTo: VoteStatus
-    "Greater than the specified value."
-    greaterThan: VoteStatus
-    "Greater than or equal to the specified value."
-    greaterThanOrEqualTo: VoteStatus
-    "Included in the specified list."
-    in: [VoteStatus!]
-    "Is null (if `true` is specified) or is not null (if `false` is specified)."
-    isNull: Boolean
-    "Less than the specified value."
-    lessThan: VoteStatus
-    "Less than or equal to the specified value."
-    lessThanOrEqualTo: VoteStatus
-    "Equal to the specified value, treating null like an ordinary value."
-    notDistinctFrom: VoteStatus
-    "Not equal to the specified value."
-    notEqualTo: VoteStatus
-    "Not included in the specified list."
-    notIn: [VoteStatus!]
 }

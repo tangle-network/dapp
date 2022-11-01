@@ -105,7 +105,7 @@ query ProposalVotes(
   $offset: Int!
   # The proposal id
   $proposalId: String!
-  $for: VoteStatusFilter
+  $for: AppEnumFe385C7221Filter
 ) {
   proposalVotes(
     filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }

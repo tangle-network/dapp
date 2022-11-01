@@ -8,7 +8,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
-import { ProposalStatus, ProposalType } from '../../generated/graphql';
+import {
+  AppEnum155D64Ff70 as ProposalStatus,
+  AppEnumB6165934C8 as ProposalType,
+} from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,
@@ -20,7 +23,6 @@ import {
   AvatarGroup,
   Button,
   CardTable,
-  CheckBoxMenu,
   CheckBoxMenuGroup,
   Chip,
   ChipColors,
