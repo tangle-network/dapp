@@ -69,3 +69,15 @@ build/
 docs-build/
 # Build files for mac
 .DS_Store
+
+# nx-repo compiled output
+dist
+tmp
+/out-tsc
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

@@ -1,0 +1,93 @@
+# This action deploys a draft deployment using Netlify to view changes prior to being
+# merged. This does NOT deploy to production site and will only be triggered 
+# on changes in the specified paths below.
+name: deploy-stats-dapp 🌐
+
+on:
+  pull_request:
+    branches: [ develop ]
+    paths:
+      - 'apps/stats-dapp/**'    
+  push:
+      branches: [ develop ]
+      paths:
+        - 'apps/stats-dapp/**'
+
+  workflow_dispatch:
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/develop'
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn nx build stats-dapp
+
+      - name: Deploy to Netlify
+        id: deploy-netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./apps/stats-dapp/build/
+
+      - name: Netlify Preview URL
+        uses: unsplash/comment-on-pr@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT: |
+            ### <span aria-hidden="true">✅</span> Deploy Preview for *stats-dapp development* is ready! Thanks for the contribution @${{ github.actor }}
+
+            |  Name | Link |
+            |---------------------------------|------------------------|
+            |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/webb-tools/webb-dapp/commit/${{ github.event.pull_request.head.sha }}) |
+            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }} |
+            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) |
+            ---
+
+            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/stats-dev/settings/deploys#deploy-notifications)._
+            
+        with:
+          msg: ${{ env.OUTPUT }}
+          check_for_duplicate_msg: false  # OPTIONAL
+      
+  dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop' # run this job only for the develop branch
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn nx build stats-dapp
+
+      - name: Deploy to Netlify
+        id: deploy-netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --prod site=$NETLIFY_SITE_ID --dir=./apps/stats-dapp/build/

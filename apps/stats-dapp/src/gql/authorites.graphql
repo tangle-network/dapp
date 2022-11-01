@@ -1,0 +1,85 @@
+query ValidatorListing(
+  $sessionId: String!
+  $perPage: Int!
+  $offset: Int!
+  $uptimeFilter: IntFilter
+  $reputationFilter: IntFilter
+  $validatorId: StringFilter
+) {
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: {
+      validatorId: $validatorId
+      reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: { equalTo: $sessionId } }
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      ...SessionAuthValidatorNode
+      validator {
+        ...ValidatorMeta
+      }
+    }
+
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+
+query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
+    offset: $offset
+    first: $perPage
+  ) {
+    nodes {
+      validator {
+        ...ValidatorMeta
+      }
+      session {
+        id
+        publicKey {
+          id
+          compressed
+          uncompressed
+          block {
+            id
+            number
+          }
+        }
+        sessionValidators(first: 3) {
+          ...SessionAuthValidator
+          totalCount
+        }
+      }
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+
+query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
+  sessionValidator(id: $sessionValidatorId) {
+    ...SessionAuthValidatorNode
+    session {
+      thresholds {
+        ...ThresholdValue
+      }
+    }
+  }
+  sessionValidators(
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }
+  ) {
+    aggregates {
+      distinctCount {
+        id
+      }
+    }
+  }
+}
