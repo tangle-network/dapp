@@ -2,6 +2,9 @@
   "name": "@webb-tools/webb-ui-components",
   "version": "0.0.2",
   "main": "src/index.js",
+  "devDependencies": {
+    "@rollup/plugin-json": "^5.0.1"
+  },
   "dependencies": {
     "@webb-tools/icons": "0.0.1",
     "lottie-react": "^2.3.1",
