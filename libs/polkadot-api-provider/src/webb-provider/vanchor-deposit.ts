@@ -261,8 +261,6 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         extDataHash: data.extDataHash,
       };
 
-      console.log(vanchorProofData);
-
       this.emit('stateChange', TransactionState.SendingTransaction);
       // Store the next leaf index before insertion
       const leafsCount = await getLeafCount(this.inner.api, treeId);

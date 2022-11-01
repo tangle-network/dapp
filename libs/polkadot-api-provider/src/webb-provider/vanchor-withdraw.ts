@@ -244,9 +244,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     // before the transaction takes place, save the output (change) note (in case user leaves page or
     // perhaps relayer misbehaves and doesn't respond but executes transaction)
     if (Number(data.outputUtxos[0].amount) != 0) {
-      //TODO construct the output note
-      const outputNote = {} as Note;
-      await this.inner.noteManager?.addNote(outputNote);
+      const changeNote = await Note.deserialize(outputNote.serialize());
+      changeNote.note.update_vanchor_utxo(data.outputUtxos[0].inner);
+      await this.inner.noteManager?.addNote(changeNote);
     }
 
     if (activeRelayer) {
