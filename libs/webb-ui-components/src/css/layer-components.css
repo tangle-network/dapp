@@ -117,3 +117,25 @@
     @apply animate-drawer-content-right-close;
   }
 }
+
+@keyframes slideRight {
+    from {
+        transform: translateX(var(--radix-toast-swipe-end-x))
+    }
+    to {
+        transform: translateX(100%)
+    }
+}
+*[data-swipe="end"] {
+    animation:  100ms ease-out
+}
+
+
+*[data-swipe="move"] {
+    transform: translateX(var(--radix-toast-swipe-move-x))
+}
+
+*[data-swipe="cancel"] {
+    transform: translateX(0);
+    transition: transform 200ms ease-out;
+}

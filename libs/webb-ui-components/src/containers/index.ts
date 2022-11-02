@@ -3,3 +3,4 @@ export * from './ConfirmationCard';
 export * from './TransferCard';
 export * from './WebbUIErrorBoudary';
 export * from './WithdrawCard';
+export * from './TransactionProgressCard';

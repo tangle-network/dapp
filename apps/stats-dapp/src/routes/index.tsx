@@ -1,35 +1,42 @@
-import { RouterConfigData } from '@webb-tools/react-environment';
-import { Spinner } from '@webb-tools/icons';
-import { BareProps } from '@webb-tools/dapp-types';
-import { FC, lazy, Suspense } from 'react';
+import { FC, lazy, Suspense, PropsWithChildren } from 'react';
 
 import { Layout } from '../containers';
+import { Spinner } from '@webb-tools/icons';
+import { RouterConfigData } from '@webb-tools/react-environment';
 
-const PageAuthorities = lazy(() => import('../pages/Authorities'));
-const PageAuthorityDetailDrawer = lazy(
-  () => import('../pages/AuthorityDetailDrawer')
+const PageAuthorities = lazy(
+  () => import('@webb-tools/stats-dapp/pages/Authorities')
 );
-const PageAuthorityDetail = lazy(() => import('../pages/AuthorityDetailPage'));
+const PageAuthorityDetailDrawer = lazy(
+  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailDrawer')
+);
+const PageAuthorityDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailPage')
+);
 
 const PageAuthoritiesHistory = lazy(
-  () => import('../pages/AuthoritiesHistory')
+  () => import('@webb-tools/stats-dapp/pages/AuthoritiesHistory')
 );
 
-const PageKeys = lazy(() => import('../pages/Keys'));
-const PageKeyDetailDrawer = lazy(() => import('../pages/KeyDetailDrawer'));
-const PageKeyDetail = lazy(() => import('../pages/KeyDetailPage'));
+const PageKeys = lazy(() => import('@webb-tools/stats-dapp/pages/Keys'));
+const PageKeyDetailDrawer = lazy(
+  () => import('@webb-tools/stats-dapp/pages/KeyDetailDrawer')
+);
+const PageKeyDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/KeyDetailPage')
+);
 
-const PageProposals = lazy(() => import('../pages/Proposals'));
+const PageProposals = lazy(
+  () => import('@webb-tools/stats-dapp/pages/Proposals')
+);
 const PageProposalDetailDrawer = lazy(
-  () => import('../pages/ProposalDetailDrawer')
+  () => import('@webb-tools/stats-dapp/pages/ProposalDetailDrawer')
 );
-const PageProposalDetail = lazy(() => import('../pages/ProposalDetailPage'));
-
-const PageComponentsShowcase = lazy(
-  () => import('../pages/ComponentsShowcase')
+const PageProposalDetail = lazy(
+  () => import('@webb-tools/stats-dapp/pages/ProposalDetailPage')
 );
 
-const CSuspense: FC<BareProps> = ({ children }) => {
+const CSuspense: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Suspense
       fallback={
@@ -46,14 +53,6 @@ const CSuspense: FC<BareProps> = ({ children }) => {
 export const routes: RouterConfigData[] = [
   {
     children: [
-      {
-        element: (
-          <CSuspense>
-            <PageComponentsShowcase />
-          </CSuspense>
-        ),
-        path: 'components-showcase/*',
-      },
       {
         element: (
           <CSuspense>
