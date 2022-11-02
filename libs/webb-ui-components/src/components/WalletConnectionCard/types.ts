@@ -25,6 +25,12 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
   failedWalletId?: WalletId;
 
   /**
+   * The callback which is invoked when the user selects a wallet
+   * @example - the bridge-dapp will pass a 'switchChain' call with the wallet selection.
+   */
+  onWalletSelect: (selectedWallet: Wallet) => Promise<void>;
+
+  /**
    * The callback which is invoked when user hits the close button
    */
   onClose?: PropsOf<'button'>['onClick'];

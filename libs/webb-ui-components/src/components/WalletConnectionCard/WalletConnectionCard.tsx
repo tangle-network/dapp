@@ -18,6 +18,7 @@ export const WalletConnectionCard = forwardRef<
       className,
       connectingWalletId,
       failedWalletId,
+      onWalletSelect,
       onClose,
       onDownloadBtnClick,
       onHelpBtnClick,
@@ -74,6 +75,7 @@ export const WalletConnectionCard = forwardRef<
                 <ListItem
                   key={wallet.id}
                   className="px-[34px] py-[10px] flex items-center space-x-2 cursor-pointer"
+                  onClick={() => onWalletSelect(wallet)}
                 >
                   {wallet.Logo}
 

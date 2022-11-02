@@ -1,9 +1,12 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Spinner } from '@webb-tools/icons';
 import {
   Button,
   Logo,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import * as constants from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
@@ -14,6 +17,8 @@ import { HeaderProps } from './types';
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
+  const { activeApi, activeWallet, activeChain, loading } = useWebContext();
+
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
       <div className="flex items-center justify-between p-4">
@@ -21,8 +26,10 @@ export const Header: FC<HeaderProps> = () => {
           <Logo />
         </NavLink>
 
-        <div className="flex items-center space-x-2">
-          <Button>Connect Wallet</Button>
+        <div className="flex items-center space-x-2">          
+          {!activeWallet && !loading && <Button>Connect Wallet</Button>}
+          {!activeWallet && loading && <Spinner/>}
+          {activeWallet && <Button>Wallet is connected</Button>}
 
           <NavigationMenu>
             <NavigationMenuTrigger />

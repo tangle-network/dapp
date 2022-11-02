@@ -22,6 +22,7 @@ const ANY_EVM = [
   PresetTypedChainId.Kovan,
   PresetTypedChainId.Ropsten,
   PresetTypedChainId.Goerli,
+  PresetTypedChainId.Sepolia,
   PresetTypedChainId.HarmonyTestnet1,
   PresetTypedChainId.HarmonyTestnet0,
   PresetTypedChainId.HarmonyMainnet0,

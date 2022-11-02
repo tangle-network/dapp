@@ -822,6 +822,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
     };
     init().finally(() => {
       setIsConnecting(false);
+      setLoading(false);
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       // Set the default network to the last selected network

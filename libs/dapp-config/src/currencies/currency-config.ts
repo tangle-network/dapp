@@ -117,14 +117,15 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
         '0xc778417E063141139Fce010982780140Aa0cD5Ab',
       ],
       [PresetTypedChainId.Goerli, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'],
+      [PresetTypedChainId.Sepolia, '0xeD43f81C17976372Fcb5786Dd214572e7dbB92c7'],
       [PresetTypedChainId.Kovan, '0xd0A1E359811322d97991E03f863a0C30C2cF029C'],
       [
         PresetTypedChainId.OptimismTestnet,
-        '0xbC6F6b680bc61e30dB47721c6D1c5cde19C1300d',
+        '0x4200000000000000000000000000000000000006',
       ],
       [
         PresetTypedChainId.ArbitrumTestnet,
-        '0xEBbc3452Cc911591e4F18f3b36727Df45d6bd1f9',
+        '0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3',
       ],
       [
         PresetTypedChainId.PolygonTestnet,

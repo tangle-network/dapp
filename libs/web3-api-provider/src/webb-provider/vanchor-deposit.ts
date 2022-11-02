@@ -49,6 +49,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
 
+    console.log('bridge: ', bridge);
+    console.log('currency: ', currency);
+
     if (!bridge || !currency) {
       throw new Error('api not ready');
     }
@@ -88,13 +91,13 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       secrets: [
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount, 16).substring(2),
-        toFixedHex(keypair.privkey!).substring(2),
+        toFixedHex(keypair.privkey).substring(2),
         toFixedHex(depositOutputUtxo.blinding).substring(2),
       ].join(':'),
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress!,
+      sourceIdentifyingData: srcAddress,
       targetChain: destination.toString(),
-      targetIdentifyingData: destAddress!,
+      targetIdentifyingData: destAddress,
       tokenSymbol: tokenSymbol,
       version: 'v1',
       width: '4',
@@ -125,6 +128,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const abortSignal = this.cancelToken.abortSignal;
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
+
+    console.log('bridge: ', bridge);
+    console.log('currency: ', currency);
 
     if (!bridge || !currency) {
       throw new Error('api not ready');
@@ -436,6 +442,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         }
       }
     } catch (e: any) {
+      console.log('yo something failed in the catch: ', e);
       this.inner.notificationHandler.remove('waiting-approval');
       const isUserCancel =
         e instanceof WebbError &&
