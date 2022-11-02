@@ -50,13 +50,14 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <div className="min-w-full min-h-full">
-      <div
+      {/*TODO Register a notification*/}
+      {/* <div
         onClick={() => {
           setErrorMessage(null);
         }}
       >
         {errorMessage}
-      </div>
+      </div>*/}
       <Header
         connectedEndpoint={connectedEndpoint}
         setConnectedEndpoint={setEndpoint}
