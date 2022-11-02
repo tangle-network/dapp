@@ -43,19 +43,19 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xdc9f140987073619d64898be00143dd312cdc71a': 7865480,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0xdc9f140987073619d64898be00143dd312cdc71a': 2196862,
+    '0xa5672fdfe6700452a828c514a9d5b3b4dc5230bf': 2196862,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0xe6b075ecc4ccbc6e66569b1a2984cc47e88ee246': 28905757,
+    '0xcc1f5ebddb858f96051ef315969edaa936ae70e3': 28905757,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07': 2374192,
+    '0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f': 2374192,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0x91a9a1e76fa609f6ba8fcd718a60b030678765ad': 908813,
+    '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07': 908813,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0xc6b43568f0c39e3a68b597a3bb54a7b9e4308bf3': 3097804,
+    '0x1349f444a5cd98c5863f786496ca53f3f651f7c7': 3097804,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0x6d5a4D246617d711595a1657c55B17B97e20bdda': 95,

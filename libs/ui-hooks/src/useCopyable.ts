@@ -8,7 +8,7 @@ type SetTimeoutReturnType = ReturnType<typeof setTimeout>;
  * @param {number} display The display time to reset time copy state in miliseconds (default 3000)
  * @returns {Object} An object contains `isCopied`, `copiedText` and `copy` function
  */
-export const useCopyable = (display = 3000) => {
+export const useCopyable = (display = 1000) => {
   const ref = useRef<string>('');
   const [isCopied, setIsCopied] = useState(false);
   const [_timeout, _setTimeout] = useState<SetTimeoutReturnType | undefined>();

@@ -178,7 +178,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         </div>
 
         <Button {...actionBtnProps} isFullWidth className="justify-center">
-          {actionBtnProps?.children ?? 'Transfer'}
+          {actionBtnProps?.children ?? 'Deposit'}
         </Button>
       </div>
     );
