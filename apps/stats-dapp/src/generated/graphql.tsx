@@ -12006,7 +12006,11 @@ export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidat
 export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
 export const MetaDataDocument = gql`
     query MetaData {
-  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC]) {
+  sessions(
+    first: 1
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: {publicKeyId: {isNull: false}}
+  ) {
     nodes {
       id
       blockNumber
