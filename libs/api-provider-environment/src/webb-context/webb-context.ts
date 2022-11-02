@@ -3,6 +3,7 @@ import { ApiConfig, Chain, Wallet } from '@webb-tools/dapp-config';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
+import { AppEvent, TAppEvent } from '../app-event';
 
 export interface WebbContextState<T = unknown> {
   loading: boolean;
@@ -26,6 +27,7 @@ export interface WebbContextState<T = unknown> {
   registerInteractiveFeedback: (
     interactiveFeedback: InteractiveFeedback
   ) => void;
+  appEvent: TAppEvent;
 }
 
 export const WebbContext = React.createContext<WebbContextState>({
@@ -59,6 +61,7 @@ export const WebbContext = React.createContext<WebbContextState>({
   registerInteractiveFeedback: (interactiveFeedback: InteractiveFeedback) => {
     return;
   },
+  appEvent: new AppEvent(),
 });
 
 export const useWebContext = <T = unknown>() => {

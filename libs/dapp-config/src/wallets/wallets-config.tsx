@@ -1,20 +1,15 @@
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
-import { WalletConnectLogo } from '@webb-tools/logos/wallets/WalletConnectLogo';
-import { SubWalletLogo, TalismanLogo } from '@webb-tools/logos/wallets';
-import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
-import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
-import { WalletConfig } from '.';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
   SubWalletIcon,
   TalismanIcon,
-  TokenIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
+import { WalletConfig } from '.';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
@@ -63,6 +58,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
     },
+    defaultChainToConnect: PresetTypedChainId.Polkadot,
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
@@ -86,6 +82,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
+    defaultChainToConnect: PresetTypedChainId.Goerli,
   },
   [WalletId.WalletConnectV1]: {
     id: WalletId.WalletConnectV1,
@@ -99,6 +96,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
+    defaultChainToConnect: PresetTypedChainId.Goerli,
   },
   // [WalletId.OneWallet]: {
   //   id: WalletId.OneWallet,
@@ -133,6 +131,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
     },
+    defaultChainToConnect: PresetTypedChainId.Polkadot,
   },
   [WalletId.SubWallet]: {
     id: WalletId.SubWallet,
@@ -152,5 +151,6 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.FireFox]:
         'https://addons.mozilla.org/firefox/addon/subwallet/',
     },
+    defaultChainToConnect: PresetTypedChainId.Polkadot,
   },
 };

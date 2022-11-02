@@ -75,12 +75,12 @@ export const WalletConnectionCard = forwardRef<
                 <ListItem
                   key={wallet.id}
                   className="px-[34px] py-[10px] flex items-center space-x-2 cursor-pointer"
-                  onClick={() => onWalletSelect(wallet)}
+                  onClick={() => onWalletSelect?.(wallet)}
                 >
                   {wallet.Logo}
 
-                  <Typography variant="body1" fw="bold">
-                    {wallet.name}
+                  <Typography variant="body1" fw="bold" className="capitalize">
+                    {wallet.title}
                   </Typography>
                 </ListItem>
               ))}

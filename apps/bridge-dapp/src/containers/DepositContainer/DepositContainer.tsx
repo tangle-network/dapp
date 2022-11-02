@@ -1,20 +1,25 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
+import {
+  useBridgeDeposit,
+  useCurrencies,
+  useCurrencyBalance,
+} from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   ChainListCard,
   DepositCard,
   DepositConfirm,
   TokenListCard,
-  Typography,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
-import { useBridgeDeposit, useCurrencies, useCurrencyBalance } from '@webb-tools/react-hooks';
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { DepositContainerProps } from './types';
-import { AssetType, ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
-import { Currency } from '@webb-tools/abstract-api-provider';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  AssetType,
+  ChainType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { DepositContainerProps } from './types';
 
 enum DetailedCardOption {
   SourceChain,
@@ -29,9 +34,16 @@ export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
 >((props, ref) => {
-  const { activeApi, chains, switchChain, activeChain, loading } = useWebContext();
-  const { setWrappableCurrency, setGovernedCurrency, generateNote } = useBridgeDeposit();
-  const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
+  const { activeApi, chains, switchChain, activeChain, loading } =
+    useWebContext();
+  const { setWrappableCurrency, setGovernedCurrency, generateNote } =
+    useBridgeDeposit();
+  const {
+    governedCurrencies,
+    governedCurrency,
+    wrappableCurrencies,
+    wrappableCurrency,
+  } = useCurrencies();
   const webbTokenBalance = useCurrencyBalance(governedCurrency);
   console.log('webb token balance is: ', webbTokenBalance);
 
@@ -110,12 +122,12 @@ export const DepositContainer = forwardRef<
     if (!sourceChain) {
       setSourceChain(activeChain);
     }
-    
+
     return {
       name: activeChain.name,
-      symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol
-    }
-  }, [activeChain, sourceChain])
+      symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
+    };
+  }, [activeChain, sourceChain]);
 
   const selectedToken: TokenType | undefined = useMemo(() => {
     if (!activeApi || !activeApi.state.activeBridge) {
@@ -123,26 +135,27 @@ export const DepositContainer = forwardRef<
     }
 
     return {
-      symbol: activeApi.state.activeBridge.currency.view.symbol
-    }
+      symbol: activeApi.state.activeBridge.currency.view.symbol,
+    };
   }, [activeApi]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies).map((currency) => {
       return {
         name: currency.view.name,
-        symbol: currency.view.symbol
-      }
-    })
-  }, [governedCurrencies])
+        symbol: currency.view.symbol,
+      };
+    });
+  }, [governedCurrencies]);
 
   const handleTokenChange = useCallback(
     async (newToken: AssetType) => {
       const selectedToken = Object.values(governedCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
-      )
+      );
       setGovernedCurrency(selectedToken);
-    }, [governedCurrencies, setGovernedCurrency]
+    },
+    [governedCurrencies, setGovernedCurrency]
   );
 
   const DetailedView = useMemo(() => {
@@ -186,7 +199,7 @@ export const DepositContainer = forwardRef<
           <WalletConnectionCard
             wallets={Object.values(sourceChain.wallets)}
             onWalletSelect={async (wallet) => {
-              await switchChain(sourceChain, wallet)
+              await switchChain(sourceChain, wallet);
               setDetailedView(null);
             }}
             onClose={() => setDetailedView(null)}
@@ -196,7 +209,9 @@ export const DepositContainer = forwardRef<
 
       case DetailedCardOption.Token: {
         if (!sourceChain) {
-          throw new Error('Token should not be selectable without a selected source chain');
+          throw new Error(
+            'Token should not be selectable without a selected source chain'
+          );
         }
 
         return (
@@ -211,21 +226,30 @@ export const DepositContainer = forwardRef<
             }}
             onClose={() => setDetailedView(null)}
           />
-        )
+        );
       }
 
       case DetailedCardOption.DepositConfirm: {
-        return (
-          <DepositConfirm
-            note={note}
-          />
-        )
+        return <DepositConfirm note={note} />;
       }
 
       default:
         return null;
     }
-  }, [chains, destChainInputValue, destChains, handleSourceChainSwitch, handleTokenChange, populatedSelectableWebbTokens, selectedDetailedView, sourceChain, sourceChainInputValue, sourceChains, switchChain]);
+  }, [
+    chains,
+    destChainInputValue,
+    destChains,
+    handleSourceChainSwitch,
+    handleTokenChange,
+    note,
+    populatedSelectableWebbTokens,
+    selectedDetailedView,
+    sourceChain,
+    sourceChainInputValue,
+    sourceChains,
+    switchChain,
+  ]);
 
   return (
     <div>
@@ -253,12 +277,12 @@ export const DepositContainer = forwardRef<
                 setDetailedView(DetailedCardOption.Token);
               }
             },
-            token: selectedToken
+            token: selectedToken,
           }}
           amountInputProps={{
             onAmountChange: (value) => {
               parseAndSetAmount(value);
-            }
+            },
           }}
           buttonProps={{
             onClick: async () => {
@@ -268,7 +292,12 @@ export const DepositContainer = forwardRef<
               console.log('amount: ', amount);
               if (sourceChain && destChain && selectedToken && amount !== 0) {
                 const note = await generateNote(
-                  activeApi.state.activeBridge.targets[calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)],
+                  activeApi.state.activeBridge.targets[
+                    calculateTypedChainId(
+                      sourceChain.chainType,
+                      sourceChain.chainId
+                    )
+                  ],
                   calculateTypedChainId(destChain.chainType, destChain.chainId),
                   amount,
                   undefined
@@ -278,7 +307,7 @@ export const DepositContainer = forwardRef<
 
                 setDetailedView(DetailedCardOption.DepositConfirm);
               }
-            }
+            },
           }}
         />
       )}

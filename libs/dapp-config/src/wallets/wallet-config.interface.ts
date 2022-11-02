@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 export interface WalletConfig {
   id: number;
@@ -23,6 +24,9 @@ export interface WalletConfig {
   detect?(): boolean | Promise<boolean>;
 
   supportedChainIds: number[];
+
+  // the default chain to connect wallet
+  defaultChainToConnect: PresetTypedChainId;
 }
 
 export type ManagedWallet = {
