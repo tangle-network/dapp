@@ -269,7 +269,7 @@ export const DepositContainer = forwardRef<
               if (sourceChain && destChain && selectedToken && amount !== 0) {
                 const note = await generateNote(
                   activeApi.state.activeBridge.targets[calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)],
-                  destChain.chainId,
+                  calculateTypedChainId(destChain.chainType, destChain.chainId),
                   amount,
                   undefined
                 );

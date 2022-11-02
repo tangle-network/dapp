@@ -49,9 +49,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
 
-    console.log('bridge: ', bridge);
-    console.log('currency: ', currency);
-
     if (!bridge || !currency) {
       throw new Error('api not ready');
     }
@@ -67,6 +64,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       ? this.inner.noteManager.getKeypair()
       : new Keypair();
 
+    console.log('got the keypair');
+
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
@@ -76,6 +75,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       chainId: destination.toString(),
       keypair,
     });
+
+    console.log('generated the utxo');
 
     const srcAddress = bridge.targets[sourceChainId];
     const destAddress = bridge.targets[destination];
@@ -100,10 +101,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       targetIdentifyingData: destAddress,
       tokenSymbol: tokenSymbol,
       version: 'v1',
-      width: '4',
+      width: '5',
     };
 
+    console.log('before generating the note: ', noteInput);
+
     const note = await Note.generateNote(noteInput);
+
+    console.log('after generating the note');
 
     return {
       note: note,
