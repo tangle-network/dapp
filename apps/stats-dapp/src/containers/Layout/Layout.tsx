@@ -11,7 +11,7 @@ import { defaultEndpoint } from '@webb-tools/stats-dapp/constants';
 import { StatsProvider } from '@webb-tools/stats-dapp/provider/stats-provider';
 import { FC, PropsWithChildren, useMemo, useState } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
-
+import { RetryLink } from '@apollo/client/link/retry';
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
     const storedEndpoint = localStorage.getItem('statsEndpoint');
@@ -21,14 +21,16 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     return defaultEndpoint;
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const retryLink = new RetryLink();
   const apolloClient = useMemo(() => {
-    const errorLink = onError(({ graphQLErrors, networkError }) => {
+    const errorLink = onError(({ graphQLErrors, networkError, forward }) => {
       if (graphQLErrors) {
         graphQLErrors.forEach(({ locations, message, path }) =>
           setErrorMessage(
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
           )
         );
+        return forward(operation);
       }
       if (networkError) {
         setErrorMessage(`[Network error]: ${networkError}`);
@@ -39,7 +41,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     });
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: from([errorLink, httpLink]),
+      link: from([errorLink, httpLink, retryLink]),
     });
   }, [connectedEndpoint, setErrorMessage]);
 
