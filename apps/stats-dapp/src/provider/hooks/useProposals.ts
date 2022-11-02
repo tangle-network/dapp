@@ -1,12 +1,12 @@
 import {
-  ProposalType,
-  ThresholdVariant,
+  AppEnumB6165934C8 as ProposalType,
+  AppEnum790A3Fe4Ce as ThresholdVariant,
   useEnsureProposalsLazyQuery,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
-  VoteStatus,
+  AppEnumFe385C7221 as VoteStatus,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
@@ -172,8 +172,13 @@ type BlockRange = { start: number; end: number };
  * Proposals overview
  * @return ProposalsOverview - Proposal overview data
  * */
-export function useProposalsOverview(sessionId: string, range?: BlockRange): Loadable<ProposalsOverview> {
-  const [proposalsOverview, setProposalsOverview] = useState<Loadable<ProposalsOverview>>({
+export function useProposalsOverview(
+  sessionId: string,
+  range?: BlockRange
+): Loadable<ProposalsOverview> {
+  const [proposalsOverview, setProposalsOverview] = useState<
+    Loadable<ProposalsOverview>
+  >({
     isLoading: true,
     val: null,
     isFailed: false,
@@ -209,7 +214,10 @@ export function useProposalsOverview(sessionId: string, range?: BlockRange): Loa
       .map((res): Loadable<ProposalsOverview> => {
         if (res.data && res.data.session && res.data.openProposals) {
           const session = res.data.session;
-          const threshold = thresholdVariant(session.thresholds, ThresholdVariant.Proposer);
+          const threshold = thresholdVariant(
+            session.thresholds,
+            ThresholdVariant.Proposer
+          );
 
           const thresholds: Thresholds = {
             proposal: String(threshold?.current ?? '-'),
@@ -275,13 +283,21 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
         offset: reqQuery.offset,
         perPage: reqQuery.perPage,
         filter:
-          reqQuery.filter.type || reqQuery.filter.status || reqQuery.filter.chains
-          ? {
-              status: reqQuery.filter.status ? { in: reqQuery.filter.status } : undefined,
-              type: reqQuery.filter.type ? { in: reqQuery.filter.type } : undefined,
-              chainId: reqQuery.filter.chains ? { in: reqQuery.filter.chains } : undefined,
-            }
-          : undefined,
+          reqQuery.filter.type ||
+          reqQuery.filter.status ||
+          reqQuery.filter.chains
+            ? {
+                status: reqQuery.filter.status
+                  ? { in: reqQuery.filter.status }
+                  : undefined,
+                type: reqQuery.filter.type
+                  ? { in: reqQuery.filter.type }
+                  : undefined,
+                chainId: reqQuery.filter.chains
+                  ? { in: reqQuery.filter.chains }
+                  : undefined,
+              }
+            : undefined,
       },
     }).catch((e) => {
       setProposalsPage({
@@ -297,7 +313,9 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
     const subscription = query.observable
       .map((res): ProposalsPage => {
         if (res.data && res.data.proposalItems) {
-          const data = res.data.proposalItems.nodes.filter((p) => p !== null).map((p) => mapProposalListItem(p!));
+          const data = res.data.proposalItems.nodes
+            .filter((p) => p !== null)
+            .map((p) => mapProposalListItem(p!));
           return {
             isFailed: false,
             isLoading: false,
@@ -358,14 +376,21 @@ type ProposalDetailsPage = {
  * ```
  *
  * */
-export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery): ProposalDetailsPage {
-  const [proposalDetails, setProposalDetails] = useState<Loadable<ProposalDetails>>({
+export function useProposal(
+  targetSessionId: string,
+  votesReqQuery: VotesQuery
+): ProposalDetailsPage {
+  const [proposalDetails, setProposalDetails] = useState<
+    Loadable<ProposalDetails>
+  >({
     isLoading: false,
     val: null,
     isFailed: false,
   });
 
-  const [nextAndPrevStatus, setNextAndPrevStatus] = useState<Loadable<NextAndPrevStatus>>({
+  const [nextAndPrevStatus, setNextAndPrevStatus] = useState<
+    Loadable<NextAndPrevStatus>
+  >({
     isLoading: false,
     val: null,
     isFailed: false,
@@ -380,7 +405,9 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
   useEffect(() => {
     ensureProposals({
       variables: {
-        ids: [Number(proposalId) - 1, Number(proposalId) + 1].map((i) => String(i)),
+        ids: [Number(proposalId) - 1, Number(proposalId) + 1].map((i) =>
+          String(i)
+        ),
       },
     }).catch((e) => {
       setNextAndPrevStatus({
@@ -411,9 +438,15 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
     const subscription = ensureProposalsQuery.observable
       .map((res): Loadable<NextAndPrevStatus> => {
         if (res.data && res.data.proposalItems) {
-          const proposals = res.data.proposalItems.nodes.filter((p) => p !== null);
-          const nextProposalId = proposals.find((p) => Number(p!.id) === Number(proposalId) + 1)?.id ?? null;
-          const previousProposalId = proposals.find((p) => Number(p!.id) === Number(proposalId) - 1)?.id ?? null;
+          const proposals = res.data.proposalItems.nodes.filter(
+            (p) => p !== null
+          );
+          const nextProposalId =
+            proposals.find((p) => Number(p!.id) === Number(proposalId) + 1)
+              ?.id ?? null;
+          const previousProposalId =
+            proposals.find((p) => Number(p!.id) === Number(proposalId) - 1)
+              ?.id ?? null;
           return {
             val: {
               nextProposalId,
@@ -440,7 +473,8 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
           const proposal = res.data.proposalItem;
           const forCount = proposal.votesFor.totalCount;
           const allVotes = proposal.totalVotes.totalCount;
-          const expectedVotesCount = res.data.session.sessionProposers.totalCount;
+          const expectedVotesCount =
+            res.data.session.sessionProposers.totalCount;
           const abstainCount = res.data.proposalItem.abstain.totalCount;
           const againstCount = res.data.proposalItem.against.totalCount;
           return {
@@ -463,12 +497,12 @@ export function useProposal(targetSessionId: string, votesReqQuery: VotesQuery):
               chain: String(res.data.proposalItem.chainId),
               height: proposal.block.number,
               timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
-                const statusItem = item;
+                const statusItem = item!;
                 return {
                   at: new Date(statusItem.timestamp),
                   blockNumber: statusItem.blockNumber,
                   hash: '0x000',
-                  status: statusItem.status,
+                  status: statusItem.status as any,
                   id: statusItem.id,
                 };
               }),

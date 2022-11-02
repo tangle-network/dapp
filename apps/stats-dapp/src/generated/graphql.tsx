@@ -11664,7 +11664,7 @@ export type ProposalDetailsQueryVariables = Exact<{
 }>;
 
 
-export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: AppEnumB6165934C8, status: string, chainId?: any | null, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, blockNumber: any, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, against: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
+export type ProposalDetailsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, sessionProposers: { __typename?: 'SessionProposersConnection', totalCount: number } } | null, proposalItem?: { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: AppEnumB6165934C8, status: string, chainId?: any | null, proposalTimelineStatuses: { __typename?: 'ProposalTimelineStatusesConnection', nodes: Array<{ __typename?: 'ProposalTimelineStatus', id: string, blockNumber: any, status: AppEnum155D64Ff70, timestamp: any } | null> }, votesFor: { __typename?: 'ProposalVotesConnection', totalCount: number }, against: { __typename?: 'ProposalVotesConnection', totalCount: number }, abstain: { __typename?: 'ProposalVotesConnection', totalCount: number }, totalVotes: { __typename?: 'ProposalVotesConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null };
 
 export type EnsureProposalsQueryVariables = Exact<{
   ids: Array<Scalars['String']> | Scalars['String'];
@@ -12408,6 +12408,7 @@ export const ProposalDetailsDocument = gql`
       nodes {
         id
         blockNumber
+        status
         timestamp
       }
     }

@@ -128,7 +128,6 @@ const Proposals = () => {
     }
     return [] as ProposalListItem[];
   }, [overview]);
-
   const statsMap: Record<ProposalStatus, number> = useMemo(() => {
     if (overview.val) {
       const { accepted, open, rejected, signed } = overview.val.stats;
