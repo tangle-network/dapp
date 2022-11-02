@@ -1,5 +1,7 @@
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { WalletConfig } from '@webb-tools/dapp-config';
+import { TokenIcon } from '@webb-tools/icons';
 import {
   Button,
   Logo,
@@ -9,11 +11,15 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
+  Typography,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
 import * as constants from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback, useMemo } from 'react';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import cx from 'classnames';
+import { FC, forwardRef, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { twMerge } from 'tailwind-merge';
 import { useConnectWallet, WalletState } from '../../hooks';
 import { HeaderProps } from './types';
 
@@ -21,7 +27,13 @@ import { HeaderProps } from './types';
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const { wallets, activeWallet, loading } = useWebContext();
+  const {
+    wallets,
+    activeWallet,
+    activeChain,
+    loading,
+    apiConfig: { currencies },
+  } = useWebContext();
 
   const {
     isModalOpen,
@@ -59,6 +71,14 @@ export const Header: FC<HeaderProps> = () => {
     [selectedWallet?.id, walletState]
   );
 
+  const nativeCurrencySymbol = useMemo(() => {
+    if (!activeChain) {
+      return '';
+    }
+
+    return currencies[activeChain.nativeCurrencyId].symbol;
+  }, [activeChain, currencies]);
+
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
       <div className="flex items-center justify-between p-4">
@@ -66,6 +86,7 @@ export const Header: FC<HeaderProps> = () => {
           <Logo />
         </NavLink>
 
+        {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
           {!activeWallet && (
             <Modal
@@ -95,13 +116,31 @@ export const Header: FC<HeaderProps> = () => {
             </Modal>
           )}
 
-          {activeWallet && !loading && (
-            <Button
-              leftIcon={activeWallet.Logo}
-              className="capitalize pointer-events-none"
-            >
-              {activeWallet.name}
-            </Button>
+          {/** Wallet is actived */}
+          {activeWallet && activeChain && !loading && (
+            <>
+              <HeaderButton
+                className={cx(
+                  'flex items-center space-x-1 py-2 pr-2 pl-4',
+                  'border !border-mono-60 rounded-lg'
+                )}
+              >
+                <TokenIcon size="lg" name={nativeCurrencySymbol} />
+
+                <Typography variant="body1" fw="bold">
+                  {activeChain.name}
+                </Typography>
+
+                <ChevronDownIcon />
+              </HeaderButton>
+              <HeaderButton className="capitalize rounded-full">
+                {activeWallet.Logo}
+
+                <Typography variant="body1" fw="bold">
+                  {activeWallet.name}
+                </Typography>
+              </HeaderButton>
+            </>
           )}
 
           <NavigationMenu>
@@ -133,3 +172,21 @@ export const Header: FC<HeaderProps> = () => {
     </header>
   );
 };
+
+/***********************
+ * Internal components *
+ ***********************/
+
+const HeaderButton = forwardRef<HTMLButtonElement, PropsOf<'button'>>(
+  ({ className, ...props }, ref) => (
+    <button
+      {...props}
+      className={twMerge(
+        'flex items-center space-x-2 py-2 px-4',
+        'border !border-mono-60 rounded-lg',
+        className
+      )}
+      ref={ref}
+    />
+  )
+);
