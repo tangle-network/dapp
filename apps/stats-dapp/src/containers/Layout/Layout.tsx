@@ -21,27 +21,38 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     return defaultEndpoint;
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const retryLink = new RetryLink();
+  const retryLink = new RetryLink({
+    delay: {
+      initial: 10,
+      max: 100,
+    },
+  });
   const apolloClient = useMemo(() => {
-    const errorLink = onError(({ graphQLErrors, networkError, forward }) => {
-      if (graphQLErrors) {
-        graphQLErrors.forEach(({ locations, message, path }) =>
-          setErrorMessage(
-            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-          )
-        );
-        return forward(operation);
+    const errorLink = onError(
+      ({ graphQLErrors, networkError, forward, operation }) => {
+        if (graphQLErrors) {
+          graphQLErrors.forEach(({ locations, message, path }) => {
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+            setErrorMessage(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+          });
+          return forward(operation);
+        }
+        if (networkError) {
+          console.log(`[Network error]: ${networkError}`);
+          setErrorMessage(`[Network error]: ${networkError}`);
+        }
       }
-      if (networkError) {
-        setErrorMessage(`[Network error]: ${networkError}`);
-      }
-    });
+    );
     const httpLink = new HttpLink({
       uri: connectedEndpoint,
     });
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: from([errorLink, httpLink, retryLink]),
+      link: from([httpLink, retryLink, errorLink]),
     });
   }, [connectedEndpoint, setErrorMessage]);
 
