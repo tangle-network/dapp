@@ -262,7 +262,12 @@ const DetailsView: FC<{
                 className={cx('mr-4 inline-block', { hidden: !isPage })}
                 hidden={!isPage}
               >
-                <ArrowLeft size="lg" />
+                <div className="flex flex-raw items-center">
+                  <ArrowLeft size="lg" />
+                  <Typography variant={'body2'} fw={'bold'}>
+                    Back to authorities
+                  </Typography>
+                </div>
               </Link>
               <div className="flex items-center space-x-2">
                 <Avatar value={id} size="lg" />
