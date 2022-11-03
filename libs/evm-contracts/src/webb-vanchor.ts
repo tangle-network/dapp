@@ -712,9 +712,12 @@ export class VAnchorContract {
     ];
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
-      inputNotes,
+      inputUtxos: inputNotes.map(({ note }) => new Utxo(note.getUtxo())),
+      leafIds: inputNotes.map(({ note }) => ({
+        index: Number(note.index),
+        typedChainId: Number(note.targetChainId),
+      })),
       leavesMap,
-      indices: inputIndices,
       roots: roots.map((root) => hexToU8a(root)),
       chainId: chainId.toString(),
       output: outputs,

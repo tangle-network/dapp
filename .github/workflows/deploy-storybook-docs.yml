@@ -14,13 +14,12 @@ jobs:
           persist-credentials: false
       - name: Install and Build 🔧
         run: | # Install npm packages and build the Storybook files
-          cd ./libs/webb-ui-components/
           yarn install
-          yarn build-storybook
+          yarn nx build-storybook webb-ui-components
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: ~/work/webb-dapp/webb-dapp/libs/webb-ui-components/docs-build # The folder that the build-storybook script generates files.
+          FOLDER: ~/work/webb-dapp/webb-dapp/dist/storybook/webb-ui-components/ # The folder that the build-storybook script generates files.
           CLEAN: true # Automatically remove deleted files from the deploy branch
