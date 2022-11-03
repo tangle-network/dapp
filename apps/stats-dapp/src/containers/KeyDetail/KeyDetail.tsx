@@ -279,9 +279,10 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                               }
                             />
                           )}
-                          <Button size="sm" variant="link">
+                          {/*TODO: Show proposers page for the participants of this key*/}
+                          {/*<Button size="sm" variant="link">
                             Details
-                          </Button>
+                          </Button>*/}
                         </div>
                       }
                     />
