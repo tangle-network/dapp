@@ -235,9 +235,17 @@ const DetailsView: FC<{
         className={cx('flex items-center justify-between', { hidden: isPage })}
         hidden={isPage}
       >
-        <Link to={`/authorities/${id}`} className="inline-block">
-          <Expand size="lg" />
-        </Link>
+        <div className="flex items-center">
+          <Link to={`/authorities/${id}`} className="inline-block">
+            <Expand size="lg" />
+          </Link>
+
+          <TitleWithInfo
+            title="Authority details"
+            variant="h4"
+            info={`Authority id ${id} details`}
+          />
+        </div>
 
         {!isPage && (
           <DrawerCloseButton>
