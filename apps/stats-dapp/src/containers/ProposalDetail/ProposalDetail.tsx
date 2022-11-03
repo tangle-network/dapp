@@ -28,6 +28,20 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ProposersTable } from '../ProposersTable';
 
+import { getProposalsData } from '../../utils';
+const ProposalData: FC<{ data: Record<string, any> }> = ({ data }) => {
+  const knowProposal = useMemo(() => {
+    const keys = Object.keys(data);
+    return keys.length === 1 && keys[0] === 'data';
+  }, [data]);
+
+  return knowProposal ? (
+    (JSON.stringify(data.data) as any)
+  ) : (
+    <div className={'whitespace-pre'}>{JSON.stringify(data, null, 2)}</div>
+  );
+};
+
 export const ProposalDetail = () => {
   const { pathname } = useLocation();
   const { proposalId = '' } = useParams<{ proposalId: string }>();
@@ -222,8 +236,10 @@ export const ProposalDetail = () => {
               Type: {proposalData.type}
             </Typography>
             <br />
-            <Typography variant='mono2' component='p'>
-              Data: {JSON.stringify(getProposalsData(proposalData.type, proposalData.data), null, 2)}
+            <Typography variant="mono2" component="p">
+              <ProposalData
+                data={getProposalsData(proposalData.type, proposalData.data)}
+              />
             </Typography>
           </div>
         </>
