@@ -1,23 +1,21 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
+
 import {
   ChainListCard,
   DepositCard,
   DepositConfirm,
-  Modal,
-  ModalTrigger,
-  ModalContent,
   TokenListCard,
-  Typography,
+  useWebbUI,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
 import { useBridgeDeposit, useCurrencies, useCurrencyBalance } from '@webb-tools/react-hooks';
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { DepositContainerProps } from './types';
 import { AssetType, ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
-import { Currency, DepositPayload } from '@webb-tools/abstract-api-provider';
+import { DepositPayload } from '@webb-tools/abstract-api-provider';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 
 enum DetailedCardOption {
@@ -33,13 +31,13 @@ export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
 >((props, ref) => {
+  const { setMainComponent } = useWebbUI();
   const { activeApi, chains, switchChain, activeChain, loading } = useWebContext();
   const { setWrappableCurrency, setGovernedCurrency, generateNote, deposit } = useBridgeDeposit();
   const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
   const webbTokenBalance = useCurrencyBalance(governedCurrency);
   console.log('webb token balance is: ', webbTokenBalance);
 
-  const [displayModal, setDisplayModal] = useState(true);
   const [depositPayload, setDepositPayload] = useState<DepositPayload | undefined>(undefined);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
@@ -110,7 +108,7 @@ export const DepositContainer = forwardRef<
       setSourceChain(selectedChain);
       return;
     },
-    [chains]
+    [chains, setDetailedView]
   );
 
   const selectedSourceChain: ChainType | undefined = useMemo(() => {
@@ -122,12 +120,12 @@ export const DepositContainer = forwardRef<
     if (!sourceChain) {
       setSourceChain(activeChain);
     }
-    
+
     return {
       name: activeChain.name,
-      symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol
-    }
-  }, [activeChain, sourceChain])
+      symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
+    };
+  }, [activeChain, sourceChain]);
 
   const selectedToken: TokenType | undefined = useMemo(() => {
     if (!activeApi || !activeApi.state.activeBridge) {
@@ -135,174 +133,144 @@ export const DepositContainer = forwardRef<
     }
 
     return {
-      symbol: activeApi.state.activeBridge.currency.view.symbol
-    }
+      symbol: activeApi.state.activeBridge.currency.view.symbol,
+    };
   }, [activeApi]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies).map((currency) => {
       return {
         name: currency.view.name,
-        symbol: currency.view.symbol
-      }
-    })
-  }, [governedCurrencies])
+        symbol: currency.view.symbol,
+      };
+    });
+  }, [governedCurrencies]);
 
   const handleTokenChange = useCallback(
     async (newToken: AssetType) => {
       const selectedToken = Object.values(governedCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
-      )
+      );
       setGovernedCurrency(selectedToken);
-    }, [governedCurrencies, setGovernedCurrency]
+    },
+    [governedCurrencies, setGovernedCurrency]
   );
-
-  const DetailedView = useMemo(() => {
-    switch (selectedDetailedView) {
-      case DetailedCardOption.SourceChain:
-        return (
-          <ChainListCard
-            chainType="source"
-            chains={sourceChains}
-            value={sourceChainInputValue}
-            onChange={async (selectedChain) => {
-              handleSourceChainSwitch(selectedChain);
-            }}
-            onClose={() => setDetailedView(null)}
-          />
-        );
-
-      case DetailedCardOption.DestChain:
-        return (
-          <ChainListCard
-            chainType="dest"
-            chains={destChains}
-            value={destChainInputValue}
-            onChange={async (selectedChain) => {
-              const destChain = Object.values(chains).find(
-                (val) => val.name === selectedChain.name
-              );
-              setDestChain(destChain);
-              setDetailedView(null);
-            }}
-            onClose={() => setDetailedView(null)}
-          />
-        );
-
-      case DetailedCardOption.Wallet: {
-        if (!sourceChain) {
-          throw new Error('Source chain is undefiend when wallet view render');
-        }
-
-        return (
-          <WalletConnectionCard
-            wallets={Object.values(sourceChain.wallets)}
-            onWalletSelect={async (wallet) => {
-              await switchChain(sourceChain, wallet)
-              setDetailedView(null);
-            }}
-            onClose={() => setDetailedView(null)}
-          />
-        );
-      }
-
-      case DetailedCardOption.Token: {
-        if (!sourceChain) {
-          throw new Error('Token should not be selectable without a selected source chain');
-        }
-
-        return (
-          <TokenListCard
-            title={'Select Asset to Deposit'}
-            popularTokens={[]}
-            selectTokens={populatedSelectableWebbTokens}
-            unavailableTokens={[]}
-            onChange={(newAsset) => {
-              handleTokenChange(newAsset);
-              setDetailedView(null);
-            }}
-            onClose={() => setDetailedView(null)}
-          />
-        )
-      }
-
-      case DetailedCardOption.DepositConfirm: {
-        return (
-          <DepositConfirm
-            note={depositPayload.note.serialize()}
-            actionBtnProps={{
-              onClick: async () => {
-                await deposit(depositPayload);
-              }              
-            }}
-            onCopy={handleCopy}
-            amount={amount}
-          />
-        )
-      }
-
-      default:
-        return null;
-    }
-  }, [amount, chains, deposit, depositPayload, destChainInputValue, destChains, handleCopy, handleSourceChainSwitch, handleTokenChange, populatedSelectableWebbTokens, selectedDetailedView, sourceChain, sourceChainInputValue, sourceChains, switchChain]);
 
   return (
     <div>
-      <div>
-        {DetailedView ? (
-          DetailedView
-        ) : (
-          <DepositCard
-            sourceChainProps={{
-              chain: selectedSourceChain,
-              onClick: () => {
-                setDetailedView(DetailedCardOption.SourceChain);
-              },
-              chainType: 'source',
-            }}
-            destChainProps={{
-              chain: destChainInputValue,
-              onClick: () => {
-                setDetailedView(DetailedCardOption.DestChain);
-              },
-              chainType: 'dest',
-            }}
-            tokenInputProps={{
-              onClick: () => {
-                if (sourceChain) {
-                  setDetailedView(DetailedCardOption.Token);
-                }
-              },
-              token: selectedToken
-            }}
-            amountInputProps={{
-              onAmountChange: (value) => {
-                parseAndSetAmount(value);
-              }
-            }}
-            buttonProps={{
-              onClick: async () => {
-                console.log('sourceCHain: ', sourceChain);
-                console.log('destChain: ', destChain);
-                console.log('selectedToken: ', selectedToken);
-                console.log('amount: ', amount);
-                if (sourceChain && destChain && selectedToken && amount !== 0) {
-                  const note = await generateNote(
-                    activeApi.state.activeBridge.targets[calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)],
-                    calculateTypedChainId(destChain.chainType, destChain.chainId),
-                    amount,
-                    undefined
-                  );
+      <DepositCard
+        // The selectedDetailedView alters the global mainComponent for display.
+        // Therfore, if the detailed view exists (input selected) then hide the base component.
+        style={selectedDetailedView ? { visibility: 'hidden' } : { visibility: 'visible' }}
+        sourceChainProps={{
+          chain: selectedSourceChain,
+          onClick: () => {
+            setMainComponent(
+              <ChainListCard
+                chainType="source"
+                chains={sourceChains}
+                value={sourceChainInputValue}
+                onChange={async (selectedChain) => {
+                  setMainComponent(
+                    <WalletConnectionCard
+                      wallets={Object.values(sourceChain.wallets)}
+                      onWalletSelect={async (wallet) => {
+                        await switchChain(sourceChain, wallet);
+                        setDetailedView(null);
+                      }}
+                      onClose={() => setDetailedView(null)}
+                    />
+                  )
+                }}
+                onClose={() => setDetailedView(null)}
+              />
+            )
+          },
+          chainType: 'source',
+        }}
+        destChainProps={{
+          chain: destChainInputValue,
+          onClick: () => {
+            setMainComponent(
+              <ChainListCard
+              chainType="dest"
+              chains={destChains}
+              value={destChainInputValue}
+              onChange={async (selectedChain) => {
+                const destChain = Object.values(chains).find(
+                  (val) => val.name === selectedChain.name
+                );
+                setDestChain(destChain);
+                setDetailedView(null);
+              }}
+              onClose={() => setDetailedView(null)}
+            />
+            )
+          },
+          chainType: 'dest',
+        }}
+        tokenInputProps={{
+          onClick: () => {
+            if (selectedSourceChain) {
+              setMainComponent(
+                <TokenListCard
+                  title={'Select Asset to Deposit'}
+                  popularTokens={[]}
+                  selectTokens={populatedSelectableWebbTokens}
+                  unavailableTokens={[]}
+                  onChange={(newAsset) => {
+                    handleTokenChange(newAsset);
+                    setDetailedView(null);
+                  }}
+                  onClose={() => setDetailedView(null)}
+                />
+              )
+            }
+          },
+          token: selectedToken
+        }}
+        amountInputProps={{
+          onAmountChange: (value) => {
+            parseAndSetAmount(value)
+          },
+        }}
+        buttonProps={{
+          onClick: async () => {
+            if (sourceChain && destChain && selectedToken && amount !== 0) {
+              const note = await generateNote(
+                activeApi.state.activeBridge.targets[
+                  calculateTypedChainId(
+                    sourceChain.chainType,
+                    sourceChain.chainId
+                  )
+                ],
+                calculateTypedChainId(destChain.chainType, destChain.chainId),
+                amount,
+                undefined
+              );
 
-                  setDepositPayload(note);
+              setDepositPayload(note);
 
-                  setDetailedView(DetailedCardOption.DepositConfirm);
-                }
-              }
-            }}
-          />
-        )}
-      </div>
+              setMainComponent(
+                <DepositConfirm
+                  note={depositPayload.note.serialize()}
+                  actionBtnProps={{
+                    onClick: async () => {
+                      await deposit(depositPayload)
+                    }              
+                  }}
+                  onCopy={handleCopy}
+                  amount={amount}
+                  fee={0}
+                  onClose={
+                    () => setDetailedView(null)
+                  }
+                />
+              );
+            }
+          },
+        }}
+      />
     </div>
   );
-});
+})

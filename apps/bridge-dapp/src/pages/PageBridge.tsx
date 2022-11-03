@@ -11,6 +11,7 @@ import {
   TabsRoot,
   TabTrigger,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 
 import { DepositContainer } from '../containers/DepositContainer';
@@ -18,12 +19,16 @@ import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
 
 const PageBridge = () => {
+
+  const { customMainComponent } = useWebbUI();
+
   return (
     <div className="w-full mt-6">
       <div className="flex items-start space-x-6">
         {/** Bridge tabs */}
         <div className="max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow">
-          <TabsRoot defaultValue="deposit">
+          {customMainComponent}
+          <TabsRoot defaultValue="deposit" style={customMainComponent ? { visibility: 'hidden' } : { visibility: 'visible' }}>
             <TabsList aria-label="bridge action" className="mb-4">
               <TabTrigger value="deposit">Deposit</TabTrigger>
               <TabTrigger value="transfer">Transfer</TabTrigger>

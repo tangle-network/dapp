@@ -1,20 +1,15 @@
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
-import { WalletConnectLogo } from '@webb-tools/logos/wallets/WalletConnectLogo';
-import { SubWalletLogo, TalismanLogo } from '@webb-tools/logos/wallets';
-import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
-import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
-import { WalletConfig } from '.';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
   SubWalletIcon,
   TalismanIcon,
-  TokenIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
+import { WalletConfig } from '.';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,

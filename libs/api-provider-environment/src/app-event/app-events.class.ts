@@ -7,6 +7,7 @@ export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;
   networkSwitched: [TypedChainId, WalletId];
   switchNetwork: [Chain, Wallet];
+  walletConnectionState: 'idle' | 'loading' | 'sucess' | 'failed';
   setActiveAccount: Account;
 };
 

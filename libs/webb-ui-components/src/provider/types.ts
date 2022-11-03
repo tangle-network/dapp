@@ -6,6 +6,8 @@ export interface IWebbUIContext {
     isDarkMode: boolean;
     toggleThemeMode: ToggleThemeModeFunc;
   };
+  customMainComponent: React.ReactElement | undefined;
+  setMainComponent: (component: React.ReactElement) => void;
 }
 
 export type WebbUIProviderProps = {
