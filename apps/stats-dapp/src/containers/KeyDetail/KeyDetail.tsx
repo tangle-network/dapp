@@ -329,7 +329,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               {keyDetail.numberOfValidators}
             </Typography>
             <Typography variant="body1" fw="bold" className="block">
-              Validator
+              {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
             </Typography>
           </div>
         </div>
