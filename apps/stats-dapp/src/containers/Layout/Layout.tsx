@@ -22,9 +22,13 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const retryLink = new RetryLink({
-    delay: {
-      initial: 10,
-      max: 100,
+    delay: () => {
+      console.log('rertyLink');
+      return 0;
+    },
+    attempts: () => {
+      console.log('Should attempt');
+      return Promise.resolve(true);
     },
   });
   const apolloClient = useMemo(() => {
@@ -52,7 +56,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     });
     return new ApolloClient({
       cache: new InMemoryCache(),
-      link: from([httpLink, retryLink, errorLink]),
+      link: from([errorLink, retryLink, httpLink]),
     });
   }, [connectedEndpoint, setErrorMessage]);
 
