@@ -243,7 +243,16 @@ export const ProposalDetail = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Link to={isPage ? '/proposals' : `/proposals/${proposalId}`}>
-            {isPage ? <ArrowLeft size="lg" /> : <Expand size="lg" />}
+            {isPage ? (
+              <div className={'flex flex-row items-center'}>
+                <ArrowLeft size="lg" />{' '}
+                <Typography variant={'body2'} fw={'bold'}>
+                  Back to proposals
+                </Typography>
+              </div>
+            ) : (
+              <Expand size="lg" />
+            )}
           </Link>
 
           {status && <Chip>{status}</Chip>}
