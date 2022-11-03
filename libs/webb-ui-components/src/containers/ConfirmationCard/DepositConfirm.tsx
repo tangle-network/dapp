@@ -36,6 +36,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     },
     ref
   ) => {
+    console.log('note passed to the depositConfirm: ', note);
+
     return (
       <div
         {...props}

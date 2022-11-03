@@ -9,36 +9,44 @@ import {
   useWebbUI,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
-import { useBridgeDeposit, useCurrencies, useCurrencyBalance } from '@webb-tools/react-hooks';
+import {
+  useBridgeDeposit,
+  useCurrencies,
+  useCurrencyBalance,
+} from '@webb-tools/react-hooks';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { DepositContainerProps } from './types';
-import { AssetType, ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  ChainType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { DepositPayload } from '@webb-tools/abstract-api-provider';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
-
-enum DetailedCardOption {
-  SourceChain,
-  DestChain,
-  Wrap,
-  Token,
-  Wallet,
-  DepositConfirm,
-}
+import cx from 'classnames';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
 >((props, ref) => {
-  const { setMainComponent } = useWebbUI();
-  const { activeApi, chains, switchChain, activeChain, loading } = useWebContext();
-  const { setWrappableCurrency, setGovernedCurrency, generateNote, deposit } = useBridgeDeposit();
-  const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
+  const { customMainComponent, setMainComponent } = useWebbUI();
+  const { activeApi, chains, switchChain, activeChain, loading } =
+    useWebContext();
+  const { setWrappableCurrency, setGovernedCurrency, generateNote, deposit } =
+    useBridgeDeposit();
+  const {
+    governedCurrencies,
+    governedCurrency,
+    wrappableCurrencies,
+    wrappableCurrency,
+  } = useCurrencies();
   const webbTokenBalance = useCurrencyBalance(governedCurrency);
   console.log('webb token balance is: ', webbTokenBalance);
 
-  const [depositPayload, setDepositPayload] = useState<DepositPayload | undefined>(undefined);
+  const [depositPayload, setDepositPayload] = useState<
+    DepositPayload | undefined
+  >(undefined);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
   const [amount, setAmount] = useState<number>(0);
@@ -55,9 +63,6 @@ export const DepositContainer = forwardRef<
   const handleCopy = useCallback((): void => {
     copy(depositPayload.note.serialize() ?? '');
   }, [depositPayload, copy]);
-
-  const [selectedDetailedView, setDetailedView] =
-    useState<DetailedCardOption | null>(null);
 
   const sourceChains: ChainType[] = useMemo(() => {
     return Object.values(chains).map((val) => {
@@ -96,19 +101,6 @@ export const DepositContainer = forwardRef<
   const destChainInputValue = useMemo(
     () => destChains.find((chain) => chain.name === destChain?.name),
     [destChain?.name, destChains]
-  );
-
-  const handleSourceChainSwitch = useCallback(
-    async (newChain: ChainType) => {
-      const selectedChain = Object.values(chains).find(
-        (chain) => chain.name === newChain.name
-      );
-
-      setDetailedView(DetailedCardOption.Wallet);
-      setSourceChain(selectedChain);
-      return;
-    },
-    [chains, setDetailedView]
   );
 
   const selectedSourceChain: ChainType | undefined = useMemo(() => {
@@ -161,7 +153,7 @@ export const DepositContainer = forwardRef<
       <DepositCard
         // The selectedDetailedView alters the global mainComponent for display.
         // Therfore, if the detailed view exists (input selected) then hide the base component.
-        style={selectedDetailedView ? { visibility: 'hidden' } : { visibility: 'visible' }}
+        className={cx(customMainComponent ? 'hidden' : 'block')}
         sourceChainProps={{
           chain: selectedSourceChain,
           onClick: () => {
@@ -171,20 +163,24 @@ export const DepositContainer = forwardRef<
                 chains={sourceChains}
                 value={sourceChainInputValue}
                 onChange={async (selectedChain) => {
+                  const chain = Object.values(chains).find(
+                    (val) => val.name === selectedChain.name
+                  );
+
                   setMainComponent(
                     <WalletConnectionCard
-                      wallets={Object.values(sourceChain.wallets)}
+                      wallets={Object.values(chain.wallets)}
                       onWalletSelect={async (wallet) => {
-                        await switchChain(sourceChain, wallet);
-                        setDetailedView(null);
+                        await switchChain(chain, wallet);
+                        setMainComponent(undefined);
                       }}
-                      onClose={() => setDetailedView(null)}
+                      onClose={() => setMainComponent(undefined)}
                     />
-                  )
+                  );
                 }}
-                onClose={() => setDetailedView(null)}
+                onClose={() => setMainComponent(undefined)}
               />
-            )
+            );
           },
           chainType: 'source',
         }}
@@ -193,19 +189,19 @@ export const DepositContainer = forwardRef<
           onClick: () => {
             setMainComponent(
               <ChainListCard
-              chainType="dest"
-              chains={destChains}
-              value={destChainInputValue}
-              onChange={async (selectedChain) => {
-                const destChain = Object.values(chains).find(
-                  (val) => val.name === selectedChain.name
-                );
-                setDestChain(destChain);
-                setDetailedView(null);
-              }}
-              onClose={() => setDetailedView(null)}
-            />
-            )
+                chainType="dest"
+                chains={destChains}
+                value={destChainInputValue}
+                onChange={async (selectedChain) => {
+                  const destChain = Object.values(chains).find(
+                    (val) => val.name === selectedChain.name
+                  );
+                  setDestChain(destChain);
+                  setMainComponent(undefined);
+                }}
+                onClose={() => setMainComponent(undefined)}
+              />
+            );
           },
           chainType: 'dest',
         }}
@@ -220,24 +216,24 @@ export const DepositContainer = forwardRef<
                   unavailableTokens={[]}
                   onChange={(newAsset) => {
                     handleTokenChange(newAsset);
-                    setDetailedView(null);
+                    setMainComponent(undefined);
                   }}
-                  onClose={() => setDetailedView(null)}
+                  onClose={() => setMainComponent(undefined)}
                 />
-              )
+              );
             }
           },
-          token: selectedToken
+          token: selectedToken,
         }}
         amountInputProps={{
           onAmountChange: (value) => {
-            parseAndSetAmount(value)
+            parseAndSetAmount(value);
           },
         }}
         buttonProps={{
           onClick: async () => {
             if (sourceChain && destChain && selectedToken && amount !== 0) {
-              const note = await generateNote(
+              const newDepositPayload = await generateNote(
                 activeApi.state.activeBridge.targets[
                   calculateTypedChainId(
                     sourceChain.chainType,
@@ -249,22 +245,22 @@ export const DepositContainer = forwardRef<
                 undefined
               );
 
-              setDepositPayload(note);
+              console.log('new deposit payload: ', newDepositPayload);
+
+              setDepositPayload(newDepositPayload);
 
               setMainComponent(
                 <DepositConfirm
-                  note={depositPayload.note.serialize()}
+                  note={newDepositPayload.note.serialize()}
                   actionBtnProps={{
                     onClick: async () => {
-                      await deposit(depositPayload)
-                    }              
+                      await deposit(newDepositPayload);
+                    },
                   }}
                   onCopy={handleCopy}
                   amount={amount}
                   fee={0}
-                  onClose={
-                    () => setDetailedView(null)
-                  }
+                  onClose={() => setMainComponent(undefined)}
                 />
               );
             }
@@ -273,4 +269,4 @@ export const DepositContainer = forwardRef<
       />
     </div>
   );
-})
+});

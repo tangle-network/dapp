@@ -13,6 +13,7 @@ import {
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
@@ -28,7 +29,11 @@ const PageBridge = () => {
         {/** Bridge tabs */}
         <div className="max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow">
           {customMainComponent}
-          <TabsRoot defaultValue="deposit" style={customMainComponent ? { visibility: 'hidden' } : { visibility: 'visible' }}>
+          <TabsRoot defaultValue="deposit" className={
+            cx(
+              customMainComponent ? 'hidden' : 'block'
+            )
+          }>
             <TabsList aria-label="bridge action" className="mb-4">
               <TabTrigger value="deposit">Deposit</TabTrigger>
               <TabTrigger value="transfer">Transfer</TabTrigger>
