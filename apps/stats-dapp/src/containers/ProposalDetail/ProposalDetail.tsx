@@ -222,8 +222,8 @@ export const ProposalDetail = () => {
               Type: {proposalData.type}
             </Typography>
             <br />
-            <Typography variant="mono2" component="p">
-              Data: {proposalData.data}
+            <Typography variant='mono2' component='p'>
+              Data: {JSON.stringify(getProposalsData(proposalData.type, proposalData.data), null, 2)}
             </Typography>
           </div>
         </>
