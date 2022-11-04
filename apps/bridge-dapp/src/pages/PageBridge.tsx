@@ -20,7 +20,6 @@ import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
 
 const PageBridge = () => {
-
   const { customMainComponent } = useWebbUI();
 
   return (
@@ -29,11 +28,13 @@ const PageBridge = () => {
         {/** Bridge tabs */}
         <div className="max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow">
           {customMainComponent}
-          <TabsRoot defaultValue="deposit" className={
-            cx(
-              customMainComponent ? 'hidden' : 'block'
-            )
-          }>
+
+          <TabsRoot
+            defaultValue="deposit"
+            // The customMainComponent alters the global mainComponent for display.
+            // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+            className={cx(customMainComponent ? 'hidden' : 'block')}
+          >
             <TabsList aria-label="bridge action" className="mb-4">
               <TabTrigger value="deposit">Deposit</TabTrigger>
               <TabTrigger value="transfer">Transfer</TabTrigger>

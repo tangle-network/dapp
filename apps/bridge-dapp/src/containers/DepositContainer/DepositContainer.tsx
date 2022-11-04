@@ -1,6 +1,14 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 
+import { DepositPayload } from '@webb-tools/abstract-api-provider';
+import {
+  useBridgeDeposit,
+  useCurrencies,
+  useCurrencyBalance,
+} from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { useCopyable } from '@webb-tools/ui-hooks';
 import {
   ChainListCard,
   DepositCard,
@@ -9,38 +17,23 @@ import {
   useWebbUI,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
-import {
-  useBridgeDeposit,
-  useCurrencies,
-  useCurrencyBalance,
-} from '@webb-tools/react-hooks';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { DepositContainerProps } from './types';
+import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { DepositPayload } from '@webb-tools/abstract-api-provider';
-import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
 import cx from 'classnames';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { DepositContainerProps } from './types';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
 >((props, ref) => {
   const { customMainComponent, setMainComponent } = useWebbUI();
-  const { activeApi, chains, switchChain, activeChain, loading } =
-    useWebContext();
-  const { setWrappableCurrency, setGovernedCurrency, generateNote, deposit } =
-    useBridgeDeposit();
-  const {
-    governedCurrencies,
-    governedCurrency,
-    wrappableCurrencies,
-    wrappableCurrency,
-  } = useCurrencies();
+  const { activeApi, chains, switchChain, activeChain } = useWebContext();
+  const { setGovernedCurrency, generateNote, deposit } = useBridgeDeposit();
+  const { governedCurrencies, governedCurrency } = useCurrencies();
   const webbTokenBalance = useCurrencyBalance(governedCurrency);
   console.log('webb token balance is: ', webbTokenBalance);
 
@@ -151,9 +144,6 @@ export const DepositContainer = forwardRef<
   return (
     <div>
       <DepositCard
-        // The selectedDetailedView alters the global mainComponent for display.
-        // Therfore, if the detailed view exists (input selected) then hide the base component.
-        className={cx(customMainComponent ? 'hidden' : 'block')}
         sourceChainProps={{
           chain: selectedSourceChain,
           onClick: () => {
