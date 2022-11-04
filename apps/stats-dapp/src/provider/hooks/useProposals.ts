@@ -7,10 +7,11 @@ import {
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
   AppEnumFe385C7221 as VoteStatus,
+  AppEnum155D64Ff70 as ProposalStatus,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
-import { Loadable, Page, PageInfoQuery, ProposalStatus } from './types';
+import { Loadable, Page, PageInfoQuery } from './types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Threshold as QueryThreshold } from './types';

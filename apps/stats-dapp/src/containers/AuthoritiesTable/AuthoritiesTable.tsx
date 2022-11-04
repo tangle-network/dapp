@@ -19,6 +19,10 @@ import {
   useAuthorities,
 } from '../../provider/hooks';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionContent,
+  AccordionItem,
   Avatar,
   Button,
   CardTable,
@@ -220,46 +224,48 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
             table.setGlobalFilter('');
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Location</CollapsibleButton>
-            <CollapsibleContent className={`space-x-1 `}>
-              <LocationFilter
-                selected={selectedCountries}
-                countries={countries}
-                onChange={(c) => {
-                  setSelectedCountries(c);
-                }}
-              />
-            </CollapsibleContent>
-          </Collapsible>
+          <Accordion type={'single'}>
+            <AccordionItem className={'p-4 py-0'} value={'location'}>
+              <AccordionButton>Location</AccordionButton>
+              <AccordionContent className={`space-x-1 `}>
+                <LocationFilter
+                  selected={selectedCountries}
+                  countries={countries}
+                  onChange={(c) => {
+                    setSelectedCountries(c);
+                  }}
+                />
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Uptime</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={100}
-                defaultValue={[0, 100]}
-                value={uptimeFilter}
-                onChange={(val) => setUptimeFilter(val as any)}
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'uptime'}>
+              <AccordionButton>Uptime</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={100}
+                  defaultValue={[0, 100]}
+                  value={uptimeFilter}
+                  onChange={(val) => setUptimeFilter(val as any)}
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Reputation</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={100}
-                defaultValue={[0, 100]}
-                value={reputationFilter}
-                onChange={(val) => setReputationFilter(val as any)}
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'reputation'}>
+              <AccordionButton>Reputation</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={100}
+                  defaultValue={[0, 100]}
+                  value={reputationFilter}
+                  onChange={(val) => setReputationFilter(val as any)}
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Filter>
       }
     >

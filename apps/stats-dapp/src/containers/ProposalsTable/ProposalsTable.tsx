@@ -19,6 +19,10 @@ import {
 } from '../../provider/hooks';
 import { getChipColorByProposalType } from '../../utils';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionContent,
+  AccordionItem,
   Avatar,
   AvatarGroup,
   Button,
@@ -26,9 +30,6 @@ import {
   CheckBoxMenuGroup,
   Chip,
   ChipColors,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Filter,
   LabelWithValue,
   Table,
@@ -269,100 +270,107 @@ export const ProposalsTable = () => {
           clearAllFilters={() => {
             table.setColumnFilters([]);
             table.setGlobalFilter('');
+            setSelectedProposalTypes('all');
+            setSelectedProposalStatuses('all');
+            setSelectedChains('all');
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Proposal Type</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedProposalTypes}
-                  options={PROPOSAL_TYPES}
-                  onChange={(v) => {
-                    setSelectedProposalTypes(v);
+          <Accordion type={'single'}>
+            <AccordionItem className={'p-4 py-0'} value={'proposal-type'}>
+              <AccordionButton>Proposal Type</AccordionButton>
+              <AccordionContent>
+                <div
+                  style={{
+                    maxWidth: '300px',
+                    maxHeight: 300,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
                   }}
-                  labelGetter={(proposalType) => (
-                    <span className={'text-xs'}>{proposalType}</span>
-                  )}
-                  keyGetter={(proposalType) =>
-                    `Filter_proposals${proposalType}`
-                  }
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-          <Collapsible>
-            <CollapsibleButton>Proposal Status</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedProposalsStatuses}
-                  options={PROPOSAL_STATUS}
-                  onChange={(v) => {
-                    setSelectedProposalStatuses(v);
+                >
+                  <CheckBoxMenuGroup
+                    value={selectedProposalTypes}
+                    options={PROPOSAL_TYPES}
+                    onChange={(v) => {
+                      setSelectedProposalTypes(v);
+                    }}
+                    labelGetter={(proposalType) => (
+                      <span className={'text-xs'}>{proposalType}</span>
+                    )}
+                    keyGetter={(proposalType) =>
+                      `Filter_proposals${proposalType}`
+                    }
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem className={'p-4 py-0'} value={'proposal-status'}>
+              <AccordionButton>Proposal Status</AccordionButton>
+              <AccordionContent>
+                <div
+                  style={{
+                    maxWidth: '300px',
+                    maxHeight: 300,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
                   }}
-                  labelGetter={(proposalStatus) => (
-                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>
-                      {proposalStatus}
-                    </Chip>
-                  )}
-                  keyGetter={(proposalStatus) =>
-                    `Filter_proposals${proposalStatus}`
-                  }
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+                >
+                  <CheckBoxMenuGroup
+                    value={selectedProposalsStatuses}
+                    options={PROPOSAL_STATUS}
+                    onChange={(v) => {
+                      setSelectedProposalStatuses(v);
+                    }}
+                    labelGetter={(proposalStatus) => (
+                      <Chip
+                        color={mapProposalStatusToChipColor(proposalStatus)}
+                      >
+                        {proposalStatus}
+                      </Chip>
+                    )}
+                    keyGetter={(proposalStatus) =>
+                      `Filter_proposals${proposalStatus}`
+                    }
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Chain</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedChains}
-                  options={chains}
-                  onChange={(v) => {
-                    setSelectedChains(v);
+            <AccordionItem className={'p-4 py-0'} value={'chain'}>
+              <AccordionButton>Chain</AccordionButton>
+              <AccordionContent>
+                <div
+                  style={{
+                    maxWidth: '300px',
+                    maxHeight: 300,
+                    overflow: 'hidden',
+                    overflowY: 'auto',
                   }}
-                  iconGetter={([_key, chainConfig]) => (
-                    <div
-                      style={{
-                        maxWidth: 20,
-                        maxHeight: 20,
-                        overflow: 'hidden',
-                        backgroundSize: '20px 20px',
-                      }}
-                    >
-                      {<chainConfig.logo />}
-                    </div>
-                  )}
-                  labelGetter={([_, chain]) => chain.name}
-                  keyGetter={([chainId]) => `Filter_proposals${chainId}`}
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+                >
+                  <CheckBoxMenuGroup
+                    value={selectedChains}
+                    options={chains}
+                    onChange={(v) => {
+                      setSelectedChains(v);
+                    }}
+                    iconGetter={([_key, chainConfig]) => (
+                      <div
+                        style={{
+                          maxWidth: 20,
+                          maxHeight: 20,
+                          overflow: 'hidden',
+                          backgroundSize: '20px 20px',
+                        }}
+                      >
+                        {<chainConfig.logo />}
+                      </div>
+                    )}
+                    labelGetter={([_, chain]) => chain.name}
+                    keyGetter={([chainId]) => `Filter_proposals${chainId}`}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Filter>
       }
     >

@@ -279,7 +279,7 @@ function rangeIntoIntFilter(range: Range): IntFilter | null {
     filter.lessThanOrEqualTo = range[1];
   }
 
-  if (!range[0]) {
+  if (Object.keys(filter).length === 0) {
     return null;
   }
   return filter;
