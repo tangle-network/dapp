@@ -1,6 +1,6 @@
 import { ArrowRight, Close, Download, FileCopyLine } from '@webb-tools/icons';
 import { Typography } from '../../typography';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -36,7 +36,25 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     },
     ref
   ) => {
-    console.log('note passed to the depositConfirm: ', note);
+    const amountValue = useMemo(() => {
+      if (!amount) {
+        return '0';
+      }
+
+      if (token1Symbol && token2Symbol) {
+        return `${amount} ${token1Symbol}/${token2Symbol}`;
+      }
+
+      if (token1Symbol) {
+        return `${amount} ${token1Symbol}`;
+      }
+
+      if (token2Symbol) {
+        return `${amount} ${token2Symbol}`;
+      }
+
+      return amount.toString();
+    }, [token1Symbol, token2Symbol, amount]);
 
     return (
       <div
@@ -68,7 +86,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             tokenPairString={
               token1Symbol && token2Symbol
                 ? `${token1Symbol}/${token2Symbol}`
-                : ''
+                : token1Symbol ?? token2Symbol ?? ''
             }
           />
         </div>
@@ -118,7 +136,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 variant: 'body1',
                 title: 'Depositing',
               }}
-              rightContent={amount?.toString()}
+              rightContent={amountValue}
             />
             <InfoItem
               leftTextProps={{
