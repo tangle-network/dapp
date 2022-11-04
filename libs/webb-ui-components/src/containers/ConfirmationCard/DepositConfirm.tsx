@@ -93,7 +93,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         </div>
 
         {/** Transaction progress */}
-        {progress && <Progress value={progress} />}
+        {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
         {/** Unwrapping info */}
         <WrapperCard>
