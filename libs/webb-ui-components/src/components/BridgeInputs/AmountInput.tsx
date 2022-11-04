@@ -83,6 +83,7 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
             onChange={onAmountChange}
             placeholder="0"
             size="sm"
+            autoComplete="off"
           />
         </div>
 

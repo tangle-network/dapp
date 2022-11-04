@@ -28,15 +28,13 @@ export const DepositContainer = forwardRef<
   DepositContainerProps
 >((props, ref) => {
   const { setMainComponent } = useWebbUI();
-  const { activeApi, chains, switchChain, activeChain } = useWebContext();
+  const { activeApi, chains, activeChain } = useWebContext();
   const { setGovernedCurrency, generateNote, deposit } = useBridgeDeposit();
   const { governedCurrencies } = useCurrencies();
 
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
   const [amount, setAmount] = useState<number>(0);
-
-  const [walletModalOpen, setWalletModalOpen] = useState(true);
 
   const parseAndSetAmount = (amount: string | number): void => {
     const parsedAmount = Number(amount);
@@ -214,6 +212,7 @@ export const DepositContainer = forwardRef<
   const sourceChainInputOnClick = useCallback(() => {
     setMainComponent(
       <ChainListCard
+        className="w-[550px] h-[720px]"
         chainType="source"
         chains={sourceChains}
         value={sourceChainInputValue}
@@ -241,6 +240,7 @@ export const DepositContainer = forwardRef<
   return (
     <div>
       <DepositCard
+        className="h-[700px]"
         sourceChainProps={{
           chain: selectedSourceChain,
           onClick: sourceChainInputOnClick,
@@ -251,6 +251,7 @@ export const DepositContainer = forwardRef<
           onClick: () => {
             setMainComponent(
               <ChainListCard
+                className="w-[550px] h-[720px]"
                 chainType="dest"
                 chains={destChains}
                 value={destChainInputValue}
@@ -272,6 +273,7 @@ export const DepositContainer = forwardRef<
             if (selectedSourceChain) {
               setMainComponent(
                 <TokenListCard
+                  className="w-[550px] h-[720px]"
                   title={'Select Asset to Deposit'}
                   popularTokens={[]}
                   selectTokens={populatedSelectableWebbTokens}

@@ -1,26 +1,23 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
+import { currenciesConfig } from '@webb-tools/dapp-config';
 import {
   Button,
   ChainListCard,
   Logo,
-  Modal,
-  ModalContent,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   Typography,
   useWebbUI,
-  WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
 import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import * as constants from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useConnectWallet } from '../../hooks';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { HeaderButton } from './HeaderButton';
 import { HeaderProps } from './types';
+import { WalletModal } from './WalletModal';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -112,9 +109,10 @@ const ComponentWrapper: FC<{
 
   return (
     <ChainListCard
+      className="w-[550px] h-[720px]"
       chainType="source"
       chains={sourceChains}
-      onChange={async (selectedChain) => {
+      onChange={(selectedChain) => {
         const chain = Object.values(chains).find(
           (val) => val.name === selectedChain.name
         );
@@ -125,47 +123,5 @@ const ComponentWrapper: FC<{
       }}
       onClose={() => setMainComponent(undefined)}
     />
-  );
-};
-
-export const WalletModal: FC<{
-  sourceChains: ChainType[];
-  chain: Chain;
-}> = ({ chain, sourceChains }) => {
-  const { setMainComponent } = useWebbUI();
-  const {
-    isModalOpen,
-    toggleModal,
-    switchWallet,
-    connectingWalletId,
-    failedWalletId,
-    selectedWallet,
-  } = useConnectWallet(true);
-
-  return (
-    <>
-      <ChainListCard chainType="source" chains={sourceChains} />
-      <Modal open={isModalOpen} onOpenChange={(open) => toggleModal(open)}>
-        <ModalContent isOpen={isModalOpen} isCenter>
-          <WalletConnectionCard
-            wallets={Object.values(chain.wallets)}
-            onWalletSelect={async (wallet) => {
-              await switchWallet(chain, wallet);
-            }}
-            onClose={() => setMainComponent(undefined)}
-            connectingWalletId={connectingWalletId}
-            failedWalletId={failedWalletId}
-            onTryAgainBtnClick={async () => {
-              if (!selectedWallet) {
-                throw new Error(
-                  'There is not selected wallet in try again function'
-                );
-              }
-              await switchWallet(chain, selectedWallet);
-            }}
-          />
-        </ModalContent>
-      </Modal>
-    </>
   );
 };
