@@ -1,16 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 
-import { DepositPayload } from '@webb-tools/abstract-api-provider';
-import { downloadString } from '@webb-tools/browser-utils';
 import { useBridgeDeposit, useCurrencies } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
 import {
   ChainListCard,
   DepositCard,
-  DepositConfirm,
-  getTokenRingValue,
   TokenListCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -21,6 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { WalletModal } from '../../components';
+import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
 
 export const DepositContainer = forwardRef<
@@ -29,9 +25,10 @@ export const DepositContainer = forwardRef<
 >((props, ref) => {
   const { setMainComponent } = useWebbUI();
   const { activeApi, chains, activeChain } = useWebContext();
-  const { setGovernedCurrency, generateNote, deposit } = useBridgeDeposit();
+  const { setGovernedCurrency, generateNote } = useBridgeDeposit();
   const { governedCurrencies } = useCurrencies();
 
+  const [isGeneratingNote, setIsGeneratingNote] = useState(false);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
   const [amount, setAmount] = useState<number>(0);
@@ -42,21 +39,6 @@ export const DepositContainer = forwardRef<
       setAmount(parsedAmount);
     }
   };
-
-  // Copy for the deposit confirm
-  const { copy } = useCopyable();
-  const handleCopy = useCallback(
-    (depositPayload: DepositPayload): void => {
-      copy(depositPayload.note.serialize() ?? '');
-    },
-    [copy]
-  );
-
-  // Download for the deposit confirm
-  const downloadNote = useCallback((depositPayload: DepositPayload) => {
-    const note = depositPayload?.note?.serialize() ?? '';
-    downloadString(note, note.slice(-note.length - 10) + '.txt');
-  }, []);
 
   const sourceChains: ChainType[] = useMemo(() => {
     return Object.values(chains).map((val) => {
@@ -158,57 +140,6 @@ export const DepositContainer = forwardRef<
     [governedCurrencies, setGovernedCurrency]
   );
 
-  const DepositConfirmWrapper = useMemo(
-    () =>
-      forwardRef<HTMLDivElement, { depositPayload: DepositPayload }>(
-        ({ depositPayload }, ref) => {
-          const [checked, setChecked] = useState(false);
-          const [isDepositing, setIsDepositing] = useState(false);
-
-          return (
-            <DepositConfirm
-              ref={ref}
-              note={depositPayload.note.serialize()}
-              actionBtnProps={{
-                isDisabled: !checked,
-                isLoading: isDepositing,
-                loadingText: 'Depositing...',
-                onClick: async () => {
-                  setIsDepositing(true);
-                  downloadNote(depositPayload);
-                  await deposit(depositPayload);
-                  setIsDepositing(false);
-                  setMainComponent(undefined);
-                },
-              }}
-              checkboxProps={{
-                isChecked: checked,
-                onChange: () => setChecked((prev) => !prev),
-              }}
-              onCopy={() => handleCopy(depositPayload)}
-              onDownload={() => downloadNote(depositPayload)}
-              amount={amount}
-              token1Symbol={selectedToken?.symbol}
-              sourceChain={getTokenRingValue(selectedSourceChain.symbol)}
-              destChain={getTokenRingValue(destChainInputValue.symbol)}
-              fee={0}
-              onClose={() => setMainComponent(undefined)}
-            />
-          );
-        }
-      ),
-    [
-      amount,
-      deposit,
-      destChainInputValue?.symbol,
-      downloadNote,
-      handleCopy,
-      selectedSourceChain?.symbol,
-      selectedToken?.symbol,
-      setMainComponent,
-    ]
-  );
-
   const sourceChainInputOnClick = useCallback(() => {
     setMainComponent(
       <ChainListCard
@@ -298,6 +229,7 @@ export const DepositContainer = forwardRef<
         buttonProps={{
           onClick: async () => {
             if (sourceChain && destChain && selectedToken && amount !== 0) {
+              setIsGeneratingNote(true);
               const newDepositPayload = await generateNote(
                 activeApi.state.activeBridge.targets[
                   calculateTypedChainId(
@@ -309,12 +241,21 @@ export const DepositContainer = forwardRef<
                 amount,
                 undefined
               );
+              setIsGeneratingNote(false);
 
               setMainComponent(
-                <DepositConfirmWrapper depositPayload={newDepositPayload} />
+                <DepositConfirmContainer
+                  amount={amount}
+                  token={selectedToken}
+                  sourceChain={selectedSourceChain}
+                  destChain={destChainInputValue}
+                  depositPayload={newDepositPayload}
+                />
               );
             }
           },
+          isLoading: isGeneratingNote,
+          loadingText: 'Generating Note',
           isDisabled: isDisabledDepositButton,
         }}
         token={selectedToken?.symbol}
