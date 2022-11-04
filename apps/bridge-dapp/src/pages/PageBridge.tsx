@@ -25,32 +25,33 @@ const PageBridge = () => {
   return (
     <div className="w-full mt-6">
       <div className="flex items-start space-x-6">
-        {/** Bridge tabs */}
-        <div className="max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow">
-          {customMainComponent}
+        {customMainComponent}
 
-          <TabsRoot
-            defaultValue="deposit"
-            // The customMainComponent alters the global mainComponent for display.
-            // Therfore, if the customMainComponent exists (input selected) then hide the base component.
-            className={cx(customMainComponent ? 'hidden' : 'block')}
-          >
-            <TabsList aria-label="bridge action" className="mb-4">
-              <TabTrigger value="deposit">Deposit</TabTrigger>
-              <TabTrigger value="transfer">Transfer</TabTrigger>
-              <TabTrigger value="withdraw">Withdraw</TabTrigger>
-            </TabsList>
-            <TabContent value="deposit">
-              <DepositContainer />
-            </TabContent>
-            <TabContent value="transfer">
-              <TransferContainer />
-            </TabContent>
-            <TabContent value="withdraw">
-              <WithdrawContainer />
-            </TabContent>
-          </TabsRoot>
-        </div>
+        {/** Bridge tabs */}
+        <TabsRoot
+          defaultValue="deposit"
+          // The customMainComponent alters the global mainComponent for display.
+          // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+          className={cx(
+            'max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+            customMainComponent ? 'hidden' : 'block'
+          )}
+        >
+          <TabsList aria-label="bridge action" className="mb-4">
+            <TabTrigger value="deposit">Deposit</TabTrigger>
+            <TabTrigger value="transfer">Transfer</TabTrigger>
+            <TabTrigger value="withdraw">Withdraw</TabTrigger>
+          </TabsList>
+          <TabContent value="deposit">
+            <DepositContainer />
+          </TabContent>
+          <TabContent value="transfer">
+            <TransferContainer />
+          </TabContent>
+          <TabContent value="withdraw">
+            <WithdrawContainer />
+          </TabContent>
+        </TabsRoot>
 
         {/** Education cards */}
         <div className="p-9 max-w-[386px] bg-blue-10 dark:bg-blue-120 rounded-lg">
