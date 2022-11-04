@@ -1,7 +1,9 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WalletConfig } from '@webb-tools/dapp-config';
+import { WalletId } from '@webb-tools/dapp-types';
+import { Chain, WalletConfig } from '@webb-tools/dapp-config';
 import { useModal } from '@webb-tools/ui-hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /**
  * Wallet connection enum state
@@ -24,7 +26,10 @@ export type UseConnectWalletReturnType = {
   /**
    * Function to switch wallet
    */
-  switchWallet: (selectedWallet: WalletConfig) => Promise<void> | void;
+  switchWallet: (
+    chain: Chain,
+    selectedWallet: WalletConfig
+  ) => Promise<void> | void;
 
   /**
    * Wallet connection state for ui display
@@ -35,6 +40,16 @@ export type UseConnectWalletReturnType = {
    * Current selected wallet for ui display
    */
   selectedWallet?: WalletConfig | undefined;
+
+  /**
+   * Connecting wallet id
+   */
+  connectingWalletId?: WalletId;
+
+  /**
+   * Failed wallet id
+   */
+  failedWalletId?: WalletId;
 
   /**
    * Function to reset the wallet connection state
@@ -55,12 +70,24 @@ export const useConnectWallet = (
 ): UseConnectWalletReturnType => {
   const { status: isModalOpen, update, toggle } = useModal(defaultModalOpen);
 
-  const { activeWallet, activeChain, switchChain, chains, appEvent } = useWebContext();
+  const { setMainComponent } = useWebbUI();
+  const { activeWallet, switchChain, appEvent } = useWebContext();
 
   const [walletState, setWalletState] = useState(WalletState.IDLE);
   const [selectedWallet, setSelectedWallet] = useState<
     WalletConfig | undefined
   >(undefined);
+
+  const connectingWalletId = useMemo<number | undefined>(
+    () =>
+      walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
+    [selectedWallet?.id, walletState]
+  );
+
+  const failedWalletId = useMemo<number | undefined>(
+    () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
+    [selectedWallet?.id, walletState]
+  );
 
   // Subscribe to app events
   useEffect(() => {
@@ -107,12 +134,13 @@ export const useConnectWallet = (
 
     if (isSubscribed && activeWallet && isModalOpen) {
       update(false); // force close modal
+      setMainComponent(undefined);
     }
 
     return () => {
       isSubscribed = false;
     };
-  }, [activeWallet, isModalOpen, update]);
+  }, [activeWallet, isModalOpen, setMainComponent, update]);
 
   /**
    * Toggle or set state of the wallet modal
@@ -140,21 +168,13 @@ export const useConnectWallet = (
    * Function to switch wallet
    */
   const switchWallet = useCallback(
-    async (selectedWallet: WalletConfig) => {
-      const selectedChain = activeChain;
+    (chain: Chain, selectedWallet: WalletConfig) => {
+      setSelectedWallet(() => selectedWallet);
+      setWalletState(() => WalletState.CONNECTING);
 
-      if (!selectedChain) {
-        throw new Error(
-          'Missing chain id in supported chain id for current wallet'
-        );
-      }
-
-      setSelectedWallet(selectedWallet);
-      setWalletState(WalletState.CONNECTING);
-
-      await switchChain(selectedChain, selectedWallet);
+      switchChain(chain, selectedWallet);
     },
-    [activeChain, switchChain]
+    [switchChain]
   );
 
   /**
@@ -171,6 +191,8 @@ export const useConnectWallet = (
     switchWallet,
     selectedWallet,
     walletState,
+    connectingWalletId,
+    failedWalletId,
     resetState,
   };
 };
