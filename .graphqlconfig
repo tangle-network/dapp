@@ -1,8 +1,8 @@
 {
   "extensions": {
     "endpoints": {
-      "url": "http://localhost:4000",
-      "subscription": "http://localhost:4000"
+      "url": "https://subquery-dev.webb.tools/graphql",
+      "subscription": "https://subquery-dev.webb.tools/graphql"
     },
     "schemaPath": "./schema.graphql"
   }

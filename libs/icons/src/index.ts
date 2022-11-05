@@ -50,3 +50,8 @@ export * from './TwitterFill';
 export * from './WalletLineIcon';
 // Wallet icons
 export * from './wallets';
+
+// imagre URIs
+export * from './AlertFill';
+export * from './Alert';
+export * from './PartyFill';
