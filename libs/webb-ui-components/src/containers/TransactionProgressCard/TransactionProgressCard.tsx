@@ -190,7 +190,7 @@ export const TransactionProgressCard = forwardRef<
           </div>
         )}
         {/*Main card content*/}
-        <div className="flex flex-col relative z-1">
+        <div className="relative flex flex-col z-1">
           {/*Card Header*/}
           <div className={twMerge('my-0 flex items-center', sectionPadding)}>
             <div className={'basis-full'}>
@@ -242,13 +242,13 @@ export const TransactionProgressCard = forwardRef<
                 <Typography
                   variant={'body4'}
                   fw={'bold'}
-                  className="py-0 text-mono-200"
+                  className="flex items-center py-0 uppercase text-mono-200"
                 >
-                  {(label as BridgeLabel).token}{' '}
+                  {(label as BridgeLabel).token}
                   <ExternalLinkLine
                     width={12}
                     height={12}
-                    className="!fill-current inline whitespace-nowrap"
+                    className="!fill-current inline whitespace-nowrap ml-1"
                   />
                 </Typography>
               )}
@@ -293,7 +293,7 @@ export const TransactionProgressCard = forwardRef<
           </div>
         )}
         {/*Card Footer*/}
-        <div className="flex flex-col relative z-1">
+        <div className="relative flex flex-col z-1">
           <TransactionCardFooter
             {...footer}
             onDismiss={onDismiss}

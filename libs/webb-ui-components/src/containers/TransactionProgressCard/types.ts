@@ -1,7 +1,9 @@
 import { PropsOf } from '../../types';
 
 export type TransactionItemVariant = 'Withdraw' | 'Deposit' | 'Transfer';
+
 export type TransactionItemStatus = 'in-progress' | 'warning' | 'completed';
+
 /**
  * Card Footer props
  * @param isLoading - The TX is `in-progress` status
@@ -18,11 +20,13 @@ export type TransactionCardFooterProps = {
   };
   hasWarning?: boolean;
 };
+
 export type BridgeLabel = {
   amount: string;
   token: string;
   tokenURI: string;
 };
+
 export type NativeLabel = {
   amount: string;
   nativeValue: string;
@@ -66,6 +70,7 @@ interface TransactionStatus {
   status: TransactionItemStatus;
   message?: string;
 }
+
 /**
  * Transaction item interface for the TransactionQueue component
  * @param id - Transaction id
@@ -137,6 +142,7 @@ export interface TransactionPayload {
    * */
   onSyncNote?(): void;
 }
+
 /**
  * Transaction queue props
  * @param transactions - list of the active transactions
@@ -145,7 +151,7 @@ export interface TransactionPayload {
  * show/hide notification (Set the value of the props `collapsed`)
  *
  * */
-export type TransactionQueueProps = {
+export interface TransactionQueueProps extends PropsOf<'div'> {
   /**
    *  list of the active transactions
    * */
@@ -159,4 +165,4 @@ export type TransactionQueueProps = {
    * show/hide notification (Set the value of the props `collapsed`)
    * */
   onCollapseChange?(collapsed: boolean): void;
-};
+}
