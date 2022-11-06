@@ -22,7 +22,7 @@ import { DepositContainerProps } from './types';
 export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
->((props, ref) => {
+>(({ setTxPayload, ...props }, ref) => {
   const { setMainComponent } = useWebbUI();
   const { activeApi, chains, activeChain } = useWebContext();
   const { setGovernedCurrency, generateNote } = useBridgeDeposit();
@@ -245,6 +245,7 @@ export const DepositContainer = forwardRef<
 
               setMainComponent(
                 <DepositConfirmContainer
+                  setTxPayload={setTxPayload}
                   amount={amount}
                   token={selectedToken}
                   sourceChain={selectedSourceChain}

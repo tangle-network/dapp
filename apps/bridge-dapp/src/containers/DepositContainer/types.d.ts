@@ -1,3 +1,4 @@
+import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import {
   ChainType,
   TokenType,
@@ -8,6 +9,13 @@ export interface DepositContainerProps extends PropsOf<'div'> {
   // Actions to take on 'deposit' button click
   // (e.g. generateNote for passing to the <DepositConfirm />)
   onDeposit?: () => void;
+
+  /**
+   * Function to update the transaction payload
+   */
+  setTxPayload: React.Dispatch<
+    React.SetStateAction<Partial<TransactionPayload>>
+  >;
 }
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
@@ -35,4 +43,11 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * The destination chain
    */
   destChain?: ChainType;
+
+  /**
+   * Function to update the transaction payload
+   */
+  setTxPayload: React.Dispatch<
+    React.SetStateAction<Partial<TransactionPayload>>
+  >;
 }
