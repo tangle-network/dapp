@@ -17,7 +17,7 @@ import {
   ProposalsQuery,
   useProposals,
 } from '../../provider/hooks';
-import { getChipColorByProposalType } from '../../utils';
+import { getChipColorByProposalType, mapChainIdToLogo } from '../../utils';
 import {
   Accordion,
   AccordionButton,
@@ -37,7 +37,7 @@ import {
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
@@ -101,7 +101,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: () => <TokenIcon name="eth" size="lg" />,
+    cell: (props) => {
+      const name = mapChainIdToLogo(Number(props.getValue()));
+      return <TokenIcon name={name} size="lg" />;
+    },
   }),
 
   columnHelper.accessor('id', {
@@ -275,7 +278,7 @@ export const ProposalsTable = () => {
             setSelectedChains('all');
           }}
         >
-          <Accordion type={'single'}>
+          <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-4 py-0'} value={'proposal-type'}>
               <AccordionButton>Proposal Type</AccordionButton>
               <AccordionContent>

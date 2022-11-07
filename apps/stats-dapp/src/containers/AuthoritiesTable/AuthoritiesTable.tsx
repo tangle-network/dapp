@@ -224,7 +224,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
             table.setGlobalFilter('');
           }}
         >
-          <Accordion type={'single'}>
+          <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-4 py-0'} value={'location'}>
               <AccordionButton>Location</AccordionButton>
               <AccordionContent className={`space-x-1 `}>

@@ -260,7 +260,7 @@ export const KeygenTable: FC = () => {
             setGlobalFilter(nextValue.toString());
           }}
         >
-          <Accordion type={'single'}>
+          <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-4 py-0'} value={'keygenThreshold'}>
               <AccordionButton>Keygen Threshold</AccordionButton>
               <AccordionContent>
