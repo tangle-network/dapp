@@ -1,7 +1,12 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 
-import { useBridgeDeposit, useCurrencies } from '@webb-tools/react-hooks';
+import {
+  useBridgeDeposit,
+  useCurrencies,
+  useCurrenciesBalances,
+  useCurrencyBalance,
+} from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   ChainListCard,
@@ -27,6 +32,14 @@ export const DepositContainer = forwardRef<
   const { activeApi, chains, activeChain } = useWebContext();
   const { setGovernedCurrency, generateNote } = useBridgeDeposit();
   const { governedCurrencies } = useCurrencies();
+
+  // The seleted token balance
+  const selectedTokenBalance = useCurrencyBalance(
+    activeApi?.state.activeBridge?.currency
+  );
+
+  // Other supported tokens balances
+  const balances = useCurrenciesBalances(governedCurrencies);
 
   const [isGeneratingNote, setIsGeneratingNote] = useState(false);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
@@ -102,17 +115,19 @@ export const DepositContainer = forwardRef<
 
     return {
       symbol: activeApi.state.activeBridge.currency.view.symbol,
+      balance: selectedTokenBalance,
     };
-  }, [activeApi]);
+  }, [activeApi, selectedTokenBalance]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies).map((currency) => {
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
+        balance: balances[currency.id],
       };
     });
-  }, [governedCurrencies]);
+  }, [governedCurrencies, balances]);
 
   const isDisabledDepositButton = useMemo(() => {
     return [
@@ -167,6 +182,10 @@ export const DepositContainer = forwardRef<
       />
     );
   }, [chains, setMainComponent, sourceChainInputValue, sourceChains]);
+
+  const onMaxBtnClick = useCallback(() => {
+    setAmount(selectedTokenBalance);
+  }, [selectedTokenBalance]);
 
   return (
     <div>
@@ -225,6 +244,7 @@ export const DepositContainer = forwardRef<
           onAmountChange: (value) => {
             parseAndSetAmount(value);
           },
+          onMaxBtnClick,
         }}
         buttonProps={{
           onClick: async () => {
