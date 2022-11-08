@@ -1,3 +1,4 @@
+export * from './AddBoxLineIcon';
 export * from './ArrowDropDownFill';
 export * from './ArrowDropUpFill';
 export * from './ArrowLeft';
@@ -39,6 +40,7 @@ export * from './Memu';
 export * from './MoonLine';
 export * from './QRCode';
 export * from './Search';
+export * from './SendPlanLineIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
 export * from './Spinner';
@@ -47,7 +49,9 @@ export * from './TelegramFill';
 export * from './ThreeDotsVerticalIcon';
 export * from './TokenIcon';
 export * from './TwitterFill';
+export * from './UploadCloudIcon';
 export * from './WalletLineIcon';
+
 // Wallet icons
 export * from './wallets';
 

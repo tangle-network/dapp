@@ -140,7 +140,7 @@ export interface ButtonSpinnerProps extends WebbComponentBase {
   placement?: ButtonSpinnerPlacement;
 }
 
-type ButtonContentPickKeys = 'leftIcon' | 'rightIcon' | 'children';
+type ButtonContentPickKeys = 'leftIcon' | 'rightIcon' | 'children' | 'variant';
 export type ButtonContentProps = Pick<ButtonProps, ButtonContentPickKeys>;
 
 type ButtonTextPickKeys =

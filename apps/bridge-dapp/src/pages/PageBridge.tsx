@@ -19,6 +19,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
+import { EmptyTable, ManageButton } from '../components/tables';
+import { ShieldedAssetsTableContainer } from '../containers';
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
@@ -177,6 +179,46 @@ const PageBridge = () => {
       </div>
 
       {/** Account stats table */}
+      <TabsRoot defaultValue="shielded-assets" className="mt-12 space-y-4">
+        <div className="flex items-center justify-between mb-4">
+          {/** Tabs buttons */}
+          <TabsList
+            aria-label="account-statistics-table"
+            className="space-x-3.5 py-4"
+          >
+            <TabTrigger
+              isDisableStyle
+              value="shielded-assets"
+              className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+            >
+              Shielded Assets
+            </TabTrigger>
+            <TabTrigger
+              isDisableStyle
+              value="available-spend-notes"
+              className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+            >
+              Available Spend Notes
+            </TabTrigger>
+          </TabsList>
+
+          {/** Right buttons (manage and filter) */}
+          <div className="space-x-1">
+            <ManageButton />
+          </div>
+        </div>
+
+        <TabContent value="shielded-assets">
+          <ShieldedAssetsTableContainer />
+        </TabContent>
+        <TabContent value="available-spend-notes">
+          <EmptyTable
+            title="No spend notes found"
+            description="Don't see your spend note?"
+            buttonText="Upload spend Notes"
+          />
+        </TabContent>
+      </TabsRoot>
 
       {/** Last login */}
     </div>
