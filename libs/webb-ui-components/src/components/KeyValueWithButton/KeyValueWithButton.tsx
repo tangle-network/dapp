@@ -31,6 +31,7 @@ export const KeyValueWithButton = forwardRef<
       labelVariant,
       size = 'md',
       valueVariant,
+      shortenFn,
       ...props
     },
     ref
@@ -54,8 +55,13 @@ export const KeyValueWithButton = forwardRef<
     }, [className, size]);
 
     const value = useMemo(
-      () => (hasShortenValue ? shortenHex(keyValue, 3) : keyValue),
-      [hasShortenValue, keyValue]
+      () =>
+        hasShortenValue
+          ? shortenFn
+            ? shortenFn(keyValue)
+            : shortenHex(keyValue, 3)
+          : keyValue,
+      [hasShortenValue, keyValue, shortenFn]
     );
 
     return (

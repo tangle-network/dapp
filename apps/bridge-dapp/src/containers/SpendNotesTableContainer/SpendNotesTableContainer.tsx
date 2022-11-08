@@ -14,6 +14,7 @@ import {
   TokenPair,
   Typography,
   Table,
+  shortenString,
 } from '@webb-tools/webb-ui-components';
 import { SpendNoteDataType } from './types';
 import { randRecentDate } from '@ngneat/falso';
@@ -71,7 +72,12 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('note', {
     header: 'Note',
     cell: (props) => (
-      <KeyValueWithButton isHiddenLabel size="sm" keyValue={props.getValue()} />
+      <KeyValueWithButton
+        shortenFn={(note: string) => shortenString(note, 4)}
+        isHiddenLabel
+        size="sm"
+        keyValue={props.getValue()}
+      />
     ),
   }),
 
