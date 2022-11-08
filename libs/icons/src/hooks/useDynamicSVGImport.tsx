@@ -1,5 +1,4 @@
-import { DefaultTokenIcon } from '../DefaultTokenIcon';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
@@ -51,8 +50,15 @@ export function useDynamicSVGImport(
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          setImportedIcon(DefaultTokenIcon);
-          onCompleted?.(_name, DefaultTokenIcon);
+          const Icon = (
+            await import(
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              '!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/default.svg'
+            )
+          ).default;
+          setImportedIcon(Icon);
+          onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
           onError?.(err as any);

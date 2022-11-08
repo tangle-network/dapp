@@ -19,7 +19,7 @@ import {
   TokenPair,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { ShieldAssetType, ShieldedAssetDataType } from './types';
+import { ShieldedAssetDataType } from './types';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
@@ -29,23 +29,21 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
     cell: (props) => <TokenIcon size="lg" name={props.getValue<string>()} />,
   }),
 
-  columnHelper.accessor('assets', {
+  columnHelper.accessor('token1Symbol', {
     header: 'Shielded Asset',
     cell: (props) => {
-      const tokensPair = props.getValue<[ShieldAssetType, ShieldAssetType]>();
+      const token1Symbol = props.getValue<string>();
+      const token2Symbol = props.row.original.token2Symbol;
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
-        <p className="flex items-center space-x-1.5">
-          <TokenPair
-            token1Symbol={tokensPair[0].symbol}
-            token2Symbol={tokensPair[1].symbol}
-          />
+        <div className="flex items-center space-x-1.5">
+          <TokenPair token1Symbol={token1Symbol} token2Symbol={token2Symbol} />
 
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLinkLine />
           </a>
-        </p>
+        </div>
       );
     },
   }),
@@ -98,80 +96,40 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
 const data: ShieldedAssetDataType[] = [
   {
     chain: 'matic',
-    assets: [
-      {
-        symbol: 'eth',
-        name: 'WebbETH',
-      },
-      {
-        symbol: 'weth',
-        name: 'WETH',
-      },
-    ],
+    token1Symbol: 'WebbETH',
+    token2Symbol: 'WETH',
     assetsUrl: 'https://webb.tools',
     availableBalance: 1.645,
     numberOfNotesFound: 6,
   },
   {
     chain: 'matic',
-    assets: [
-      {
-        symbol: 'usdc',
-        name: 'WebbUSDC',
-      },
-      {
-        symbol: 'usdt',
-        name: 'USDT',
-      },
-    ],
+    token1Symbol: 'WebbUSDC',
+    token2Symbol: 'USDT',
     assetsUrl: 'https://webb.tools',
     availableBalance: 1500.0,
     numberOfNotesFound: 3,
   },
   {
     chain: 'matic',
-    assets: [
-      {
-        symbol: 'usdc',
-        name: 'WebbUSDC',
-      },
-      {
-        symbol: 'dai',
-        name: 'DAI',
-      },
-    ],
+    token1Symbol: 'WebbUSDC',
+    token2Symbol: 'DAI',
     assetsUrl: 'https://webb.tools',
     availableBalance: 1433.12,
     numberOfNotesFound: 3,
   },
   {
     chain: 'op',
-    assets: [
-      {
-        symbol: 'eth',
-        name: 'WebbETH',
-      },
-      {
-        symbol: 'weth',
-        name: 'WETH',
-      },
-    ],
+    token1Symbol: 'WebbETH',
+    token2Symbol: 'WETH',
     assetsUrl: 'https://webb.tools',
     availableBalance: 12.12,
     numberOfNotesFound: 2,
   },
   {
     chain: 'op',
-    assets: [
-      {
-        symbol: 'usdc',
-        name: 'WebbUSDC',
-      },
-      {
-        symbol: 'usdt',
-        name: 'USDT',
-      },
-    ],
+    token1Symbol: 'WebbUSDC',
+    token2Symbol: 'USDT',
     assetsUrl: 'https://webb.tools',
     availableBalance: 1234.12,
     numberOfNotesFound: 2,
