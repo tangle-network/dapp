@@ -20,7 +20,10 @@ import {
 import cx from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { EmptyTable, ManageButton } from '../components/tables';
-import { ShieldedAssetsTableContainer } from '../containers';
+import {
+  ShieldedAssetsTableContainer,
+  SpendNotesTableContainer,
+} from '../containers';
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
@@ -212,11 +215,7 @@ const PageBridge = () => {
           <ShieldedAssetsTableContainer />
         </TabContent>
         <TabContent value="available-spend-notes">
-          <EmptyTable
-            title="No spend notes found"
-            description="Don't see your spend note?"
-            buttonText="Upload spend Notes"
-          />
+          <SpendNotesTableContainer />
         </TabContent>
       </TabsRoot>
 
