@@ -1,3 +1,4 @@
+export * from './Accordion';
 export * from './AmountMenu';
 export * from './Avatar';
 export * from './AvatarGroup';

@@ -81,7 +81,7 @@ export const KeyValueWithButton = forwardRef<
               <TooltipBody>{keyValue}</TooltipBody>
             </Tooltip>
           </div>
-          <Tooltip>
+          <Tooltip isOpen={isCopied}>
             <TooltipTrigger
               className={cx(
                 size === 'md'

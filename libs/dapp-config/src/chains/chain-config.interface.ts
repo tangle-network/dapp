@@ -13,7 +13,7 @@ export interface ChainConfig {
   url: string;
   evmRpcUrls?: string[];
   blockExplorerStub?: string;
-  logo: any;
+  logo: React.ComponentType | React.ElementType;
   nativeCurrencyId: CurrencyId;
   currencies: Array<CurrencyId>;
 }

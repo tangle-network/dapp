@@ -11,7 +11,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { VoteStatus } from '../../generated/graphql';
+import { AppEnumFe385C7221 as VoteStatus } from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
 import {
   Avatar,

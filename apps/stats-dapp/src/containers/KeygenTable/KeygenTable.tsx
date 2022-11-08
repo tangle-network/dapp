@@ -15,13 +15,14 @@ import {
 } from '@tanstack/react-table';
 import { PageInfoQuery, useKeys } from '../../provider/hooks';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionContent,
+  AccordionItem,
   Avatar,
   AvatarGroup,
   Button,
   CardTable,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Filter,
   KeyValueWithButton,
   Slider,
@@ -259,38 +260,42 @@ export const KeygenTable: FC = () => {
             setGlobalFilter(nextValue.toString());
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Keygen Threshold</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={keygenFilterCol
-                  .getFacetedMinMaxValues()
-                  ?.map((i) => (i ? 0 : i))}
-                value={keygenFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) =>
-                  keygenFilterCol.setFilterValue(nextValue)
-                }
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
-          <Collapsible>
-            <CollapsibleButton>Signature Threshold</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={signatureFilterCol.getFacetedMinMaxValues()?.[1]}
-                defaultValue={signatureFilterCol.getFacetedMinMaxValues()}
-                value={signatureFilterCol.getFilterValue() as [number, number]}
-                onChange={(nextValue) =>
-                  signatureFilterCol.setFilterValue(nextValue)
-                }
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
+          <Accordion type={'single'} collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'keygenThreshold'}>
+              <AccordionButton>Keygen Threshold</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
+                  defaultValue={keygenFilterCol
+                    .getFacetedMinMaxValues()
+                    ?.map((i) => (i ? 0 : i))}
+                  value={keygenFilterCol.getFilterValue() as [number, number]}
+                  onChange={(nextValue) =>
+                    keygenFilterCol.setFilterValue(nextValue)
+                  }
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem className={'p-4 py-0'} value={'signatureThreholds'}>
+              <AccordionButton>Signature Threshold</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={signatureFilterCol.getFacetedMinMaxValues()?.[1]}
+                  defaultValue={signatureFilterCol.getFacetedMinMaxValues()}
+                  value={
+                    signatureFilterCol.getFilterValue() as [number, number]
+                  }
+                  onChange={(nextValue) =>
+                    signatureFilterCol.setFilterValue(nextValue)
+                  }
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Filter>
       }
     >

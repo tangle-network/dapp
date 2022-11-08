@@ -30,6 +30,7 @@ import {
   ProposalStatus,
   useProposalsOverview,
 } from '../provider/hooks';
+import { mapChainIdToLogo } from '../utils';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -67,7 +68,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: () => <TokenIcon name="eth" size="lg" />,
+    cell: (props) => {
+      const name = mapChainIdToLogo(Number(props.getValue()));
+      return <TokenIcon name={name} size="lg" />;
+    },
   }),
 
   columnHelper.accessor('id', {
@@ -128,7 +132,6 @@ const Proposals = () => {
     }
     return [] as ProposalListItem[];
   }, [overview]);
-
   const statsMap: Record<ProposalStatus, number> = useMemo(() => {
     if (overview.val) {
       const { accepted, open, rejected, signed } = overview.val.stats;

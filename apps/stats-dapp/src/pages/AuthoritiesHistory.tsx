@@ -17,6 +17,8 @@ import {
   LinearScale,
   Title,
   Tooltip,
+  PointElement,
+  LineElement,
 } from 'chart.js';
 import cx from 'classnames';
 import React, {
@@ -26,7 +28,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
@@ -44,7 +46,9 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  CLegend
+  CLegend,
+  PointElement,
+  LineElement
 );
 
 const AuthoritiesHistory = () => {
@@ -73,7 +77,7 @@ const AuthoritiesHistory = () => {
   const isLatest = useMemo(() => selectedIdx === 0, [selectedIdx]);
   const thresholdHistory = useSessionThreshold(isLatest);
 
-  const data = useMemo<ChartData<'bar'>>(() => {
+  const data = useMemo<ChartData<'line'>>(() => {
     const labels = thresholdHistory.val?.map((i) => i.sessionId) ?? [];
     const sig = thresholdHistory.val?.map((i) => i.signatureThreshold) ?? [];
     const keygen = thresholdHistory.val?.map((i) => i.keygenThreshold) ?? [];
@@ -84,18 +88,20 @@ const AuthoritiesHistory = () => {
         {
           label: 'Keygen Threshold',
           data: keygen,
-          backgroundColor: webbColors.purple['100'],
+          borderColor: webbColors.purple['100'],
+          tension: 0.1,
         },
         {
           label: 'Signature Threshold',
           data: sig,
-          backgroundColor: webbColors.purple['60'],
+          borderColor: webbColors.purple['60'],
+          tension: 0.1,
         },
       ],
     };
   }, [thresholdHistory]);
 
-  const options = useMemo<ChartOptions<'bar'>>(
+  const options = useMemo<ChartOptions<'line'>>(
     () => ({
       scales: {
         x: {
@@ -166,7 +172,7 @@ const AuthoritiesHistory = () => {
         </div>
 
         <div className="px-4 pt-4">
-          <Bar options={options} data={data} />
+          <Line options={options} data={data} />
         </div>
 
         <TitleWithInfo
@@ -177,10 +183,10 @@ const AuthoritiesHistory = () => {
 
         <div className="flex items-center justify-center space-x-2">
           <Legend bgColorClsx="bg-purple-100">
-            {selectedIdx ? 'Avarage ' : ''}Keygen Threshold
+            {selectedIdx ? 'Average ' : ''}Keygen Threshold
           </Legend>
           <Legend bgColorClsx="bg-purple">
-            {selectedIdx ? 'Avarage ' : ''}Signature Threshold
+            {selectedIdx ? 'Average ' : ''}Signature Threshold
           </Legend>
         </div>
       </div>

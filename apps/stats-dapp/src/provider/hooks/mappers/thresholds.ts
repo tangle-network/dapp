@@ -1,11 +1,13 @@
 import {
   ThresholdValueElementFragment,
   ThresholdValueFragment,
-  ThresholdVariant,
+  AppEnum790A3Fe4Ce as ThresholdVariant,
 } from '../../../generated/graphql';
 type Threshold = Omit<ThresholdValueElementFragment, 'variant' | '__typename'>;
 
-export function thresholdMap(thresholds: ThresholdValueFragment): Partial<Record<ThresholdVariant, Threshold>> {
+export function thresholdMap(
+  thresholds: ThresholdValueFragment
+): Partial<Record<ThresholdVariant, Threshold>> {
   const map: Partial<Record<ThresholdVariant, Threshold>> = {};
   thresholds.nodes
     .filter((i) => Boolean(i))
@@ -20,7 +22,10 @@ export function thresholdMap(thresholds: ThresholdValueFragment): Partial<Record
   return map;
 }
 
-export function thresholdVariant(thresholds: ThresholdValueFragment, variant: ThresholdVariant) {
+export function thresholdVariant(
+  thresholds: ThresholdValueFragment,
+  variant: ThresholdVariant
+) {
   const valid = thresholds.nodes.filter((t) => t && t.variant === variant);
   if (variant.length === 0) {
     return null;

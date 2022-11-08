@@ -109,7 +109,16 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
             {/** Title with info and expand button */}
             <div className="flex items-center space-x-3">
               <Link to={isPage ? `/keys` : `/keys/${keyDetail.id}`}>
-                {isPage ? <ArrowLeft size="lg" /> : <Expand size="lg" />}
+                {isPage ? (
+                  <div className="flex items-center">
+                    <ArrowLeft size="lg" />
+                    <Typography variant={'body2'} fw="bold">
+                      Back to keys
+                    </Typography>
+                  </div>
+                ) : (
+                  <Expand size="lg" />
+                )}
               </Link>
               <TitleWithInfo
                 title="Key Details"
@@ -233,9 +242,9 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                             keyValue={keyDetail.uncompressed}
                             size="sm"
                           />
-                          <Button variant="link" size="sm">
+                          {/*<Button variant="link" size="sm">
                             Detail
-                          </Button>
+                          </Button>*/}
                         </div>
                       }
                     />
@@ -279,9 +288,10 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                               }
                             />
                           )}
-                          <Button size="sm" variant="link">
+                          {/*TODO: Show proposers page for the participants of this key*/}
+                          {/*<Button size="sm" variant="link">
                             Details
-                          </Button>
+                          </Button>*/}
                         </div>
                       }
                     />
@@ -328,7 +338,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               {keyDetail.numberOfValidators}
             </Typography>
             <Typography variant="body1" fw="bold" className="block">
-              Validator
+              {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
             </Typography>
           </div>
         </div>

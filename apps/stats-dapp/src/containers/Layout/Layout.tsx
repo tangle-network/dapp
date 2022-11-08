@@ -1,12 +1,18 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
-import { Footer } from '@webb-tools/webb-ui-components/components';
-
-import { Header } from '../../components';
-import { defaultEndpoint } from '../../constants';
-import { StatsProvider } from '../../provider/stats-provider';
-import { FC, useMemo, useState } from 'react';
-
-export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
+import {
+  ApolloClient,
+  ApolloProvider,
+  from,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { Header } from '@webb-tools/stats-dapp/components';
+import { defaultEndpoint } from '@webb-tools/stats-dapp/constants';
+import { StatsProvider } from '@webb-tools/stats-dapp/provider/stats-provider';
+import { FC, PropsWithChildren, useMemo, useState } from 'react';
+import { Footer } from '@webb-tools/webb-ui-components';
+import { RetryLink } from '@apollo/client/link/retry';
+export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
     const storedEndpoint = localStorage.getItem('statsEndpoint');
     if (storedEndpoint) {
@@ -14,18 +20,45 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
     }
     return defaultEndpoint;
   });
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const retryLink = new RetryLink({
+    delay: () => {
+      console.log('rertyLink');
+      return 0;
+    },
+    attempts: () => {
+      console.log('Should attempt');
+      return Promise.resolve(true);
+    },
+  });
   const apolloClient = useMemo(() => {
+    const errorLink = onError(
+      ({ graphQLErrors, networkError, forward, operation }) => {
+        if (graphQLErrors) {
+          graphQLErrors.forEach(({ locations, message, path }) => {
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+            setErrorMessage(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            );
+          });
+          return forward(operation);
+        }
+        if (networkError) {
+          console.log(`[Network error]: ${networkError}`);
+          setErrorMessage(`[Network error]: ${networkError}`);
+        }
+      }
+    );
+    const httpLink = new HttpLink({
+      uri: connectedEndpoint,
+    });
     return new ApolloClient({
       cache: new InMemoryCache(),
-      uri: connectedEndpoint,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      fetchOptions: {
-        mode: 'cors',
-      },
+      link: from([errorLink, retryLink, httpLink]),
     });
-  }, [connectedEndpoint]);
+  }, [connectedEndpoint, setErrorMessage]);
 
   const setEndpoint = async (endpoint: string) => {
     localStorage.setItem('statsEndpoint', endpoint);
@@ -34,6 +67,14 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="min-w-full min-h-full">
+      {/*TODO Register a notification*/}
+      {/* <div
+        onClick={() => {
+          setErrorMessage(null);
+        }}
+      >
+        {errorMessage}
+      </div>*/}
       <Header
         connectedEndpoint={connectedEndpoint}
         setConnectedEndpoint={setEndpoint}

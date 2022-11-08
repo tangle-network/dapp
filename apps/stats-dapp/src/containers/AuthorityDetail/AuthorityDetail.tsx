@@ -235,9 +235,17 @@ const DetailsView: FC<{
         className={cx('flex items-center justify-between', { hidden: isPage })}
         hidden={isPage}
       >
-        <Link to={`/authorities/${id}`} className="inline-block">
-          <Expand size="lg" />
-        </Link>
+        <div className="flex items-center">
+          <Link to={`/authorities/${id}`} className="inline-block">
+            <Expand size="lg" />
+          </Link>
+
+          <TitleWithInfo
+            title="Authority details"
+            variant="h4"
+            info={`Authority id ${id} details`}
+          />
+        </div>
 
         {!isPage && (
           <DrawerCloseButton>
@@ -262,7 +270,12 @@ const DetailsView: FC<{
                 className={cx('mr-4 inline-block', { hidden: !isPage })}
                 hidden={!isPage}
               >
-                <ArrowLeft size="lg" />
+                <div className="flex flex-row items-center">
+                  <ArrowLeft size="lg" />
+                  <Typography variant={'body2'} fw={'bold'}>
+                    Back to authorities
+                  </Typography>
+                </div>
               </Link>
               <div className="flex items-center space-x-2">
                 <Avatar value={id} size="lg" />

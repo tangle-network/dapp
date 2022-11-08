@@ -119,7 +119,7 @@ export const Header: FC<HeaderProps> = ({
                 </MenuItem>
 
                 <Collapsible>
-                  <CollapsibleButton>Keygen Threshold</CollapsibleButton>
+                  <CollapsibleButton>Data sources</CollapsibleButton>
                   <CollapsibleContent className="p-0">
                     <div className="flex items-center justify-between px-4 py-2">
                       <Typography variant="body1">
