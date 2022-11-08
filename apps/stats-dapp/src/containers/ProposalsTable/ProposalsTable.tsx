@@ -283,12 +283,9 @@ export const ProposalsTable = () => {
               <AccordionButton>Proposal Type</AccordionButton>
               <AccordionContent>
                 <div
-                  style={{
-                    maxWidth: '300px',
-                    maxHeight: 300,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
+                  className={
+                    'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
+                  }
                 >
                   <CheckBoxMenuGroup
                     value={selectedProposalTypes}
@@ -310,12 +307,9 @@ export const ProposalsTable = () => {
               <AccordionButton>Proposal Status</AccordionButton>
               <AccordionContent>
                 <div
-                  style={{
-                    maxWidth: '300px',
-                    maxHeight: 300,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
+                  className={
+                    'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
+                  }
                 >
                   <CheckBoxMenuGroup
                     value={selectedProposalsStatuses}
@@ -341,14 +335,7 @@ export const ProposalsTable = () => {
             <AccordionItem className={'p-4 py-0'} value={'chain'}>
               <AccordionButton>Chain</AccordionButton>
               <AccordionContent>
-                <div
-                  style={{
-                    maxWidth: '300px',
-                    maxHeight: 300,
-                    overflow: 'hidden',
-                    overflowY: 'auto',
-                  }}
-                >
+                <div className="max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto">
                   <CheckBoxMenuGroup
                     value={selectedChains}
                     options={chains}
@@ -356,14 +343,7 @@ export const ProposalsTable = () => {
                       setSelectedChains(v);
                     }}
                     iconGetter={([_key, chainConfig]) => (
-                      <div
-                        style={{
-                          maxWidth: 20,
-                          maxHeight: 20,
-                          overflow: 'hidden',
-                          backgroundSize: '20px 20px',
-                        }}
-                      >
+                      <div className="max-w-[20px] max-h-[20px] overflow-hidden ">
                         {<chainConfig.logo />}
                       </div>
                     )}

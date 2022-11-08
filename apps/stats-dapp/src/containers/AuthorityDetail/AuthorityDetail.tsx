@@ -270,7 +270,7 @@ const DetailsView: FC<{
                 className={cx('mr-4 inline-block', { hidden: !isPage })}
                 hidden={!isPage}
               >
-                <div className="flex flex-raw items-center">
+                <div className="flex flex-row items-center">
                   <ArrowLeft size="lg" />
                   <Typography variant={'body2'} fw={'bold'}>
                     Back to authorities

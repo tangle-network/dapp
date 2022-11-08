@@ -285,12 +285,9 @@ const LocationFilter: FC<{
 }> = ({ countries, onChange, selected }) => {
   return (
     <div
-      style={{
-        maxWidth: '300px',
-        maxHeight: 300,
-        overflow: 'hidden',
-        overflowY: 'auto',
-      }}
+      className={
+        'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
+      }
     >
       <CheckBoxMenuGroup
         value={selected}
