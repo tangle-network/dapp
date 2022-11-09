@@ -19,7 +19,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
-import { EmptyTable, ManageButton } from '../components/tables';
+import { ManageButton } from '../components/tables';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
