@@ -18,6 +18,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { SpendNoteDataType } from './types';
 import { randRecentDate } from '@ngneat/falso';
+import { useSpendNotes } from '../../hooks';
+import { EmptyTable } from '../../components/tables';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
@@ -129,6 +131,8 @@ const data: SpendNoteDataType[] = [
 ];
 
 export const SpendNotesTableContainer = () => {
+  const data = useSpendNotes();
+
   const table = useReactTable({
     data,
     columns,
@@ -137,6 +141,16 @@ export const SpendNotesTableContainer = () => {
       fuzzy: fuzzyFilter,
     },
   });
+
+  if (!data.length) {
+    return (
+      <EmptyTable
+        title="No spend notes found"
+        description="Don't see your spend note?"
+        buttonText="Upload spend Notes"
+      />
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">

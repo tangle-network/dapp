@@ -19,6 +19,8 @@ import {
   TokenPair,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EmptyTable } from '../../components/tables';
+import { useShieldedAssets } from '../../hooks';
 import { ShieldedAssetDataType } from './types';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
@@ -137,6 +139,8 @@ const data: ShieldedAssetDataType[] = [
 ];
 
 export const ShieldedAssetsTableContainer = () => {
+  const data = useShieldedAssets();
+
   const table = useReactTable({
     data,
     columns,
@@ -145,6 +149,16 @@ export const ShieldedAssetsTableContainer = () => {
       fuzzy: fuzzyFilter,
     },
   });
+
+  if (!data.length) {
+    return (
+      <EmptyTable
+        title="No assets found"
+        description="Don't see your assets?"
+        buttonText="Upload spend Notes"
+      />
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
