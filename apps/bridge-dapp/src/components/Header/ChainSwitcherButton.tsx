@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { currenciesConfig } from '@webb-tools/dapp-config';
-import { TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   ChainListCard,
   Typography,
@@ -57,14 +57,7 @@ export const ChainSwitcherButton: FC = () => {
         )
       }
     >
-      <TokenIcon
-        size="lg"
-        name={
-          activeChain
-            ? currenciesConfig[activeChain.nativeCurrencyId].symbol
-            : ''
-        }
-      />
+      <ChainIcon size="lg" name={activeChain?.name ?? ''} />
 
       <Typography variant="body1" fw="bold">
         {activeChain.name}

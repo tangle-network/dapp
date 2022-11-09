@@ -15,6 +15,12 @@ export interface DynamicSVGImportOptions {
    * An optional function for handle error when loading SVG icon
    */
   onError?: React.ReactEventHandler<SVGSVGElement>;
+
+  /**
+   * The type of icon
+   * @default "token"
+   */
+  type?: 'token' | 'chain';
 }
 
 /**
@@ -36,6 +42,7 @@ export function useDynamicSVGImport(
   const { onCompleted, onError } = options;
 
   const _name = useMemo(() => name.trim().toLowerCase(), [name]);
+  const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {
     setLoading(true);
@@ -43,7 +50,7 @@ export function useDynamicSVGImport(
       try {
         const Icon = (
           await import(
-            `!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/${_name}.svg`
+            `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/${_name}.svg`
           )
         ).default;
         setImportedIcon(Icon);
@@ -54,7 +61,7 @@ export function useDynamicSVGImport(
             await import(
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              '!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/default.svg'
+              `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/default.svg`
             )
           ).default;
           setImportedIcon(Icon);
