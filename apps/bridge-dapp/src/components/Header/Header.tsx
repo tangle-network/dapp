@@ -35,7 +35,7 @@ export const Header: FC<HeaderProps> = () => {
       };
     });
 
-    setMainComponent(<ComponentWrapper sourceChains={sourceChains} />);
+    setMainComponent(<ChainSelectionWrapper sourceChains={sourceChains} />);
   }, [chains, setMainComponent]);
 
   return (
@@ -101,7 +101,7 @@ export const Header: FC<HeaderProps> = () => {
   );
 };
 
-const ComponentWrapper: FC<{
+export const ChainSelectionWrapper: FC<{
   sourceChains: ChainType[];
 }> = ({ sourceChains }) => {
   const { chains } = useWebContext();
