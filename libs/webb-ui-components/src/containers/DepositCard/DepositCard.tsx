@@ -31,15 +31,15 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     ref
   ) => {
     const { amount, fee } = useMemo(() => {
-      if (!amountInputProps.amount || !feePercentage) {
-        return { amount: '--', fee: '--' };
-      }
-
       return {
-        amount: `${amountInputProps.amount} ${token}`,
-        fee: `${
-          parseFloat(amountInputProps.amount) * feePercentage * 0.01
-        } ${feeToken}`,
+        amount: !amountInputProps.amount
+          ? '--'
+          : `${amountInputProps.amount} ${token ?? ''}`,
+        fee: !feePercentage
+          ? '--'
+          : `${parseFloat(amountInputProps.amount) * feePercentage * 0.01} ${
+              feeToken ?? ''
+            }`,
       };
     }, [amountInputProps.amount, feePercentage, feeToken, token]);
 

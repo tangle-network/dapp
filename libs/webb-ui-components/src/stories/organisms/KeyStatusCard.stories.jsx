@@ -17,7 +17,7 @@ const Template = (args) => <KeyStatusCard {...args} />;
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-  title: 'Active Key',
+  title: 'Active Key 2',
   titleInfo: 'The public key of the DKG protocol that is currently active.',
   sessionNumber: 3456,
   keyType: 'current',

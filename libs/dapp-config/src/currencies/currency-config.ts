@@ -158,30 +158,23 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     role: CurrencyRole.Governable,
     icon: () => WebbWrappedLogo(EtherLogo()),
     addresses: new Map([
-      [
-        PresetTypedChainId.Ropsten,
-        '0x81dd8320d6dd5e98f5db83c9b1c1041be8bbb15d',
-      ],
-      [
-        PresetTypedChainId.Rinkeby,
-        '0x3ed5390eb606064fdd1610eab6904751bf4753a8',
-      ],
-      [PresetTypedChainId.Goerli, '0x81bf7a0e45077277369180316a829c26ce151f48'],
+      [PresetTypedChainId.Goerli, '0x35295fbb71273b84f66e70b8e341d408150dcaf9'],
+      [PresetTypedChainId.Sepolia, '0xeda366e62551d4b1aad35018e0150203897f0bd6'],
       [
         PresetTypedChainId.PolygonTestnet,
-        '0x2cb04c23d6a7bb60be8df423529dbcedc1d870b4',
+        '0x8b35babc6b37a2f98c85a6734c040bc996595d1c',
       ],
       [
         PresetTypedChainId.OptimismTestnet,
-        '0x1078abf568ddb63fb3c03cec849415a6ff8833f2',
+        '0x6188f18359250f241e2171bafd57447f8931176e',
       ],
       [
         PresetTypedChainId.ArbitrumTestnet,
-        '0xb8fd6af1c3b380a1c19b808f046c7b0834134782',
+        '0x1078abf568ddb63fb3c03cec849415a6ff8833f2',
       ],
       [
         PresetTypedChainId.MoonbaseAlpha,
-        '0x587ab6d953cb8af1e7da3218c660011d7af9bb05',
+        '0x0a1980666b39751fa01f6ae99f3bd90f0868f79d',
       ],
     ]),
   },
@@ -221,15 +214,15 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     addresses: new Map([
       [
         PresetTypedChainId.HermesLocalnet,
-        '0x7758F98C1c487E5653795470eEab6C4698bE541b',
+        '0xcbD945E77ADB65651F503723aC322591f3435cC5',
       ],
       [
         PresetTypedChainId.AthenaLocalnet,
-        '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C',
       ],
       [
         PresetTypedChainId.DemeterLocalnet,
-        '0xD24260C102B5D128cbEFA0F655E5be3c2370677C',
+        '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
       ],
     ]),
   },

@@ -1,71 +1,42 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WalletConfig } from '@webb-tools/dapp-config';
+import { currenciesConfig } from '@webb-tools/dapp-config';
 import {
   Button,
+  ChainListCard,
   Logo,
-  Modal,
-  ModalContent,
-  ModalTrigger,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   Typography,
-  WalletConnectionCard,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import * as constants from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useConnectWallet, WalletState } from '../../hooks';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { HeaderButton } from './HeaderButton';
 import { HeaderProps } from './types';
+import { WalletModal } from './WalletModal';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const {
-    wallets,
-    activeWallet,
-    activeChain,
-    loading,
-  } = useWebContext();
+  const { activeWallet, activeChain, loading, chains } = useWebContext();
 
-  const {
-    isModalOpen,
-    toggleModal,
-    switchWallet,
-    walletState,
-    selectedWallet,
-    resetState,
-  } = useConnectWallet(false);
+  const { setMainComponent } = useWebbUI();
 
-  const onWalletSelect = useCallback(
-    async (wallet: WalletConfig) => {
-      try {
-        await switchWallet(wallet);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    [switchWallet]
-  );
+  const onConnectWalletClick = useCallback(() => {
+    const sourceChains: ChainType[] = Object.values(chains).map((val) => {
+      return {
+        name: val.name,
+        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
+      };
+    });
 
-  const onTryAgainBtnClick = useCallback(async () => {
-    resetState();
-    await switchWallet(selectedWallet);
-  }, [resetState, selectedWallet, switchWallet]);
-
-  const connectingWalletId = useMemo<number | undefined>(
-    () =>
-      walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
-    [selectedWallet?.id, walletState]
-  );
-
-  const failedWalletId = useMemo<number | undefined>(
-    () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
-    [selectedWallet?.id, walletState]
-  );
+    setMainComponent(<ComponentWrapper sourceChains={sourceChains} />);
+  }, [chains, setMainComponent]);
 
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
@@ -77,31 +48,13 @@ export const Header: FC<HeaderProps> = () => {
         {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
           {!activeWallet && (
-            <Modal
-              open={isModalOpen}
-              onOpenChange={(open) => toggleModal(open)}
+            <Button
+              isLoading={loading}
+              loadingText="Connecting..."
+              onClick={onConnectWalletClick}
             >
-              <ModalTrigger asChild>
-                <Button
-                  isLoading={loading}
-                  loadingText="Connecting..."
-                  onClick={() => toggleModal(true)}
-                >
-                  Connect wallet
-                </Button>
-              </ModalTrigger>
-
-              <ModalContent isOpen={isModalOpen} isCenter>
-                <WalletConnectionCard
-                  onWalletSelect={onWalletSelect}
-                  wallets={Object.values(wallets)}
-                  connectingWalletId={connectingWalletId}
-                  failedWalletId={failedWalletId}
-                  onTryAgainBtnClick={onTryAgainBtnClick}
-                  onClose={() => toggleModal(false)}
-                />
-              </ModalContent>
-            </Modal>
+              Connect Wallet
+            </Button>
           )}
 
           {/** Wallet is actived */}
@@ -145,5 +98,30 @@ export const Header: FC<HeaderProps> = () => {
         </div>
       </div>
     </header>
+  );
+};
+
+const ComponentWrapper: FC<{
+  sourceChains: ChainType[];
+}> = ({ sourceChains }) => {
+  const { chains } = useWebContext();
+  const { setMainComponent } = useWebbUI();
+
+  return (
+    <ChainListCard
+      className="w-[550px] h-[720px]"
+      chainType="source"
+      chains={sourceChains}
+      onChange={(selectedChain) => {
+        const chain = Object.values(chains).find(
+          (val) => val.name === selectedChain.name
+        );
+
+        setMainComponent(
+          <WalletModal chain={chain} sourceChains={sourceChains} />
+        );
+      }}
+      onClose={() => setMainComponent(undefined)}
+    />
   );
 };

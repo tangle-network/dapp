@@ -5,20 +5,17 @@ name: deploy-bridge-dapp 🌐
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: [ develop ]
     paths:
       - 'apps/bridge-dapp/**'
-  push:
-      branches: [ develop ]
-      paths:
-        - 'apps/bridge-dapp/**'
 
   workflow_dispatch:
 
 jobs:
   preview:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/develop'
+    if: github.ref != 'refs/heads/develop' && github.event.pull_request.draft == false
     strategy:
       matrix:
         node-version: [16.x]
@@ -49,7 +46,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |
-            ### <span aria-hidden="true">✅</span> Deploy Preview for *bridge-dapp development* is ready! Thanks for the contribution @${{ github.actor }}
+            <span aria-hidden="true">✅</span> Deploy Preview for *bridge-dapp development* is ready! Thanks for the contribution @${{ github.actor }}
 
             |  Name | Link |
             |---------------------------------|------------------------|
@@ -63,31 +60,3 @@ jobs:
         with:
           msg: ${{ env.OUTPUT }}
           check_for_duplicate_msg: false  # OPTIONAL
-      
-  dev:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' # run this job only for the develop branch
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build project
-        run: yarn nx build bridge-dapp
-
-      - name: Deploy to Netlify
-        id: deploy-netlify
-        uses: netlify/actions/cli@master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_BRIDGE_SITE_ID }}
-        with:
-          args: deploy --prod site=$NETLIFY_BRIDGE_SITE_ID --dir=./apps/bridge-dapp/build/
