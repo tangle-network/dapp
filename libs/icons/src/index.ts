@@ -7,6 +7,7 @@ export * from './AuctionLine';
 export * from './BankLine';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
+export * from './ChainIcon';
 export * from './CheckboxBlankCircleLine';
 export * from './CheckboxCircleLine';
 export * from './CheckboxFill';
