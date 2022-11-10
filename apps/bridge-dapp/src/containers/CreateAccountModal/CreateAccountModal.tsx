@@ -1,4 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import cx from 'classnames';
 import { ExchangeLine, TimeLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import {
@@ -10,9 +11,12 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import Lottie from 'lottie-react';
 import { FC, useCallback, useState } from 'react';
-import privacyImg from '../../assets/privacy.gif';
 import { CreateAccountModalProps } from './types';
+
+import privacySecurityJson from './privacy-security.json';
+import congratJson from './congrat.json';
 
 const loginMessage = 'Logging into Webb';
 
@@ -93,18 +97,16 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         </ModalHeader>
 
         {/** Modal Body */}
-        <div className="py-4 px-9 space-y-9">
+        <div className="relative py-4 px-9 space-y-9">
           <Typography variant="body1" fw="bold">
             {isSuccess
               ? 'You can now start transacting privately!'
               : 'The note account requires a wallet signature to help you manage cross-chain assets privately and with ease.'}
           </Typography>
 
-          {/* TODO: Update the component here, use the lottie animation instead of gif */}
-          <img
-            src={privacyImg}
-            className="rounded-full mx-auto w-[80px] h-[80px]"
-            alt="privacy"
+          <Lottie
+            animationData={privacySecurityJson}
+            className="rounded-full mx-auto w-[80px] h-[80px] overflow-hidden"
           />
 
           {isSuccess ? (
@@ -122,6 +124,12 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
               </CheckBox>
             </div>
           )}
+          <Lottie
+            className={cx('absolute inset-0 !mt-0', {
+              hidden: !isSuccess,
+            })}
+            animationData={congratJson}
+          />
         </div>
 
         <ModalFooter>

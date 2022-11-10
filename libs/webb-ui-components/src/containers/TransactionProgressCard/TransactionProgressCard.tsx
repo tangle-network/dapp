@@ -173,9 +173,7 @@ export const TransactionProgressCard = forwardRef<
     return (
       <div
         className={twMerge(
-          `border-t border-mono-80 dark:border-mono-120
-          relative
-            `,
+          `border-t border-mono-80 dark:border-mono-120 relative`,
           className
         )}
         {...props}
@@ -183,9 +181,7 @@ export const TransactionProgressCard = forwardRef<
       >
         {/*Show the animation for the completed transactions*/}
         {showAnimation && (
-          <div
-            className={`dark:bg-mono-160 absolute inset-0 h-full w-full z-0 overflow-hidden`}
-          >
+          <div className={`absolute inset-0 overflow-hidden`}>
             <Lottie animationData={success} />
           </div>
         )}
