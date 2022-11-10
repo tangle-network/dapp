@@ -36,6 +36,7 @@ export * from './HelpLineIcon';
 export * from './InformationLine';
 export * from './Key';
 export * from './Link';
+export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
