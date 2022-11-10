@@ -257,8 +257,8 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         inputNullifiers: data.inputUtxos.map((utxo) => {
           return `0x${utxo.nullifier}`;
         }),
-        outputCommitments: data.outputUtxos.map((note) =>
-          u8aToHex(note.commitment)
+        outputCommitments: data.outputUtxos.map((utxo) =>
+          u8aToHex(utxo.commitment)
         ),
         extDataHash: data.extDataHash,
       };

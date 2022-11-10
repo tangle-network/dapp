@@ -20,6 +20,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     {
       actionBtnProps,
       amount,
+      wrappingAmount,
       checkboxProps,
       className,
       destChain,
@@ -31,31 +32,23 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       progress = null,
       sourceChain,
       title = 'Confirm Deposit',
-      token1Symbol,
-      token2Symbol,
+      governedTokenSymbol,
+      wrappableTokenSymbol,
       ...props
     },
     ref
   ) => {
-    const amountValue = useMemo(() => {
+    const governedTokenValue = useMemo(() => {
       if (!amount) {
         return '0';
       }
 
-      if (token1Symbol && token2Symbol) {
-        return `${amount} ${token1Symbol.toUpperCase()}/${token2Symbol.toUpperCase()}`;
-      }
-
-      if (token1Symbol) {
-        return `${amount} ${token1Symbol.toUpperCase()}`;
-      }
-
-      if (token2Symbol) {
-        return `${amount} ${token2Symbol.toUpperCase()}`;
+      if (governedTokenSymbol) {
+        return `${amount} ${governedTokenSymbol.toUpperCase()}`;
       }
 
       return amount.toString();
-    }, [token1Symbol, token2Symbol, amount]);
+    }, [governedTokenSymbol, amount]);
 
     return (
       <div
@@ -83,11 +76,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             destLabel="depositing to"
             sourceChain={sourceChain}
             destChain={destChain}
-            amount={amount}
+            amount={governedTokenValue}
             tokenPairString={
-              token1Symbol && token2Symbol
-                ? `${token1Symbol}/${token2Symbol}`
-                : token1Symbol ?? token2Symbol ?? ''
+              governedTokenSymbol
             }
           />
         </div>
@@ -95,34 +86,30 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {/** Transaction progress */}
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
-        {/** Unwrapping info */}
-        <WrapperCard>
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title="Unwrapping"
-              variant="utility"
-              info="Unwrapping"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
-            {token1Symbol && (
+        {/** Wrapping info */}
+        {wrappableTokenSymbol && governedTokenSymbol &&
+          <WrapperCard>
+            <div className="space-y-4">
+              <TitleWithInfo
+                titleComponent="h6"
+                title="Unwrapping"
+                variant="utility"
+                info="Unwrapping"
+                titleClassName="text-mono-100 dark:text-mono-80"
+                className="text-mono-100 dark:text-mono-80"
+              />
               <div className="flex items-center space-x-4">
-                <TokenWithAmount token1Symbol={token1Symbol} amount={amount} />
-                {token2Symbol && (
-                  <>
-                    <ArrowRight />
-                    <TokenWithAmount
-                      token1Symbol={token1Symbol}
-                      token2Symbol={token2Symbol}
-                      amount={amount}
-                    />
-                  </>
-                )}
+                <TokenWithAmount token1Symbol={wrappableTokenSymbol} amount={wrappingAmount} />
+                  <ArrowRight />
+                  <TokenWithAmount
+                    token1Symbol={wrappableTokenSymbol}
+                    token2Symbol={governedTokenSymbol}
+                    amount={amount}
+                  />
               </div>
-            )}
-          </div>
-        </WrapperCard>
+            </div>
+          </WrapperCard>
+        }
 
         {/** New spend note */}
         <WrapperCard>
@@ -186,7 +173,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 variant: 'utility',
                 title: 'Depositing',
               }}
-              rightContent={amountValue}
+              rightContent={governedTokenValue}
             />
             <InfoItem
               leftTextProps={{

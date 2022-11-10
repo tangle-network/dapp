@@ -28,7 +28,11 @@ export const useCopyable = (display = 1000) => {
 
   // Clear the timeout if the component unmount
   useEffect(() => {
-    return () => clearTimeout(_timeout);
+    return () => { 
+      if (_timeout) {
+        clearTimeout(_timeout);
+      }
+    }
   }, [_timeout]);
 
   return {

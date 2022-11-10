@@ -7,7 +7,7 @@ export interface IWebbUIContext {
     toggleThemeMode: ToggleThemeModeFunc;
   };
   customMainComponent: React.ReactElement | undefined;
-  setMainComponent: (component: React.ReactElement) => void;
+  setMainComponent: (component: React.ReactElement | undefined) => void;
 }
 
 export type WebbUIProviderProps = {

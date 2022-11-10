@@ -22,9 +22,9 @@ export const DepositConfirmContainer = forwardRef<
   ) => {
     const [checked, setChecked] = useState(false);
     const [isDepositing, setIsDepositing] = useState(false);
-    const [progress, setProgress] = useState<null | number>(null);
+    const [progress, setProgress] = useState<number | null>(null);
 
-    const { deposit, stage } = useBridgeDeposit();
+    const { deposit, stage, setStage } = useBridgeDeposit();
     const { setMainComponent } = useWebbUI();
 
     // Download for the deposit confirm
@@ -46,7 +46,7 @@ export const DepositConfirmContainer = forwardRef<
       // Set transaction payload for transaction processing card
       setTxPayload((prev) => ({
         ...prev,
-        id: prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
+        id: prev.id ? '1' : (parseInt(prev.id!) + 1).toString(),
         amount: amount.toString(),
         timestamp: new Date(),
         method: 'Deposit',
@@ -54,10 +54,10 @@ export const DepositConfirmContainer = forwardRef<
           status: 'in-progress',
         },
         token: token?.symbol,
-        tokens: [sourceChain.symbol, destChain.symbol],
+        tokens: [sourceChain?.symbol ?? 'default', destChain?.symbol ?? 'default'],
         wallets: {
-          src: <TokenIcon name={sourceChain.symbol} />,
-          dist: <TokenIcon name={destChain.symbol} />,
+          src: <TokenIcon name={sourceChain?.symbol || 'default'} />,
+          dist: <TokenIcon name={destChain?.symbol || 'default'} />,
         },
       }));
 
@@ -67,21 +67,11 @@ export const DepositConfirmContainer = forwardRef<
         setIsDepositing(true);
         downloadNote(depositPayload);
         await deposit(depositPayload);
+        setStage(TransactionState.Done);
         setIsDepositing(false);
         setMainComponent(undefined);
       }
-    }, [
-      amount,
-      deposit,
-      depositPayload,
-      destChain.symbol,
-      downloadNote,
-      isDepositing,
-      setMainComponent,
-      setTxPayload,
-      sourceChain.symbol,
-      token?.symbol,
-    ]);
+    }, [amount, deposit, depositPayload, destChain?.symbol, downloadNote, isDepositing, setMainComponent, setStage, setTxPayload, sourceChain?.symbol, token?.symbol]);
 
     // Effect to update the progress bar
     useEffect(() => {
@@ -144,9 +134,9 @@ export const DepositConfirmContainer = forwardRef<
         onCopy={() => handleCopy(depositPayload)}
         onDownload={() => downloadNote(depositPayload)}
         amount={amount}
-        token1Symbol={token?.symbol}
-        sourceChain={getTokenRingValue(sourceChain.symbol)}
-        destChain={getTokenRingValue(destChain.symbol)}
+        governedTokenSymbol={token?.symbol}
+        sourceChain={getTokenRingValue(sourceChain?.symbol || 'default')}
+        destChain={getTokenRingValue(destChain?.symbol || 'default')}
         fee={0}
         onClose={() => setMainComponent(undefined)}
       />

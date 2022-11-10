@@ -23,6 +23,8 @@ export const useCurrencyBalance = (
         return;
       }
 
+      console.log('useCurrencyBalance: ', currency);
+
       activeApi.methods.chainQuery
         .tokenBalanceByCurrencyId(
           calculateTypedChainId(activeChain.chainType, activeChain.chainId),

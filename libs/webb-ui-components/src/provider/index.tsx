@@ -5,7 +5,18 @@ import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
 
-export const WebbUIContext = createContext<null | IWebbUIContext>(null);
+export const WebbUIContext = createContext<IWebbUIContext>({
+  customMainComponent: undefined,
+  setMainComponent(component) {
+    console.log('default setMainComponent');
+  },
+  theme: {
+    isDarkMode: true,
+    toggleThemeMode: () => {
+      console.log('default toggleThemeMode');
+    }
+  }
+});
 
 const appLogger = LoggerService.new('Stats App');
 
@@ -19,7 +30,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   // But the contents of the component are defined outside of the Page.
   // This state exists to pass as props into the page.
   const [customMainComponent, setCustomMainComponent] = useState<React.ReactElement | undefined>(undefined);
-  const setMainComponent = (component: React.ReactElement) => {
+  const setMainComponent = (component: React.ReactElement | undefined) => {
     setCustomMainComponent(component)
   };
 

@@ -11,6 +11,7 @@ import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import cx from 'classnames';
 import { FC, useMemo } from 'react';
 import { WalletModal } from './WalletModal';
+import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components/WalletConnectionCard';
 import { HeaderButton } from './HeaderButton';
 
 /**
@@ -42,16 +43,17 @@ export const ChainSwitcherButton: FC = () => {
             className="w-[550px] h-[720px]"
             chainType="source"
             chains={sourceChains}
-            value={{ name: activeChain.name, symbol: activeChain.name }}
+            value={{ name: activeChain?.name ?? 'Select Chain', symbol: activeChain?.name ?? ''}}
             onClose={() => setMainComponent(undefined)}
             onChange={async (selectedChain) => {
               const chain = Object.values(chains).find(
                 (val) => val.name === selectedChain.name
               );
-
-              setMainComponent(
-                <WalletModal chain={chain} sourceChains={sourceChains} />
-              );
+              if (chain) {
+                setMainComponent(
+                  <WalletModal chain={chain} sourceChains={sourceChains} />
+                );
+              }
             }}
           />
         )
@@ -67,7 +69,7 @@ export const ChainSwitcherButton: FC = () => {
       />
 
       <Typography variant="body1" fw="bold">
-        {activeChain.name}
+        {activeChain?.name}
       </Typography>
 
       <ChevronDownIcon />

@@ -36,7 +36,15 @@ export function useDynamicSVGImport(
 
   const { onCompleted, onError } = options;
 
-  const _name = useMemo(() => name.trim().toLowerCase(), [name]);
+  const _name = useMemo(() => {
+    let trimName = name.trim().toLowerCase()
+    if (trimName !== ('arbitrum' || 'avax' || 'btc' || 'dai' || 'dev' || 'dot' || 'etc' || 'eth' || 'ksm' ||
+                     'link' || 'matic' || 'moondev' || 'near' || 'one' || 'op' || 'usdc' || 'usdt' || 'webb' ||
+                     'webb^2' || 'webbdev' || 'webbeth' || 'webbweth' || 'weth')) {
+      trimName = 'default'
+    }
+    return trimName;
+  }, [name]);
 
   useEffect(() => {
     setLoading(true);
@@ -50,6 +58,7 @@ export function useDynamicSVGImport(
         setImportedIcon(Icon);
         onCompleted?.(_name, Icon);
       } catch (err) {
+        console.log('err', err);
         if ((err as any).message.includes('Cannot find module')) {
           setImportedIcon(DefaultTokenIcon);
           onCompleted?.(_name, DefaultTokenIcon);

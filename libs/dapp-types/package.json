@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "commonjs",
   "dependencies": {
-    "@webb-tools/sdk-core": "0.1.4-105",
-    "@webb-tools/app-util": "0.1.4-105"
+    "@webb-tools/sdk-core": "0.1.4-111",
+    "@webb-tools/app-util": "0.1.4-111"
   }
 }

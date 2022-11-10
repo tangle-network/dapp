@@ -23,10 +23,12 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   });
 
   if (error) {
+    console.log('error detected!!!, ', error);
     return <span>{error.message}</span>;
   }
 
   if (loading) {
+    console.log('loading detected!!!, ', loading);
     return <span>Loading...</span>;
   }
 

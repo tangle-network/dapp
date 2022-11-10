@@ -111,7 +111,7 @@ const PageBridge = () => {
             <TransferContainer />
           </TabContent>
           <TabContent value="withdraw">
-            <WithdrawContainer />
+            <WithdrawContainer setTxPayload={setTxPayload} />
           </TabContent>
         </TabsRoot>
 

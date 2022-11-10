@@ -179,13 +179,13 @@ export class WebbRelayer {
     let url = '';
     switch (chainType) {
       case ChainType.EVM:
-        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
         break;
       case ChainType.Substrate:
-        url = `${this.endpoint}/api/v1/leaves/substrate/${chainId.toString(16)}/${contractAddress}`;
+        url = `${this.endpoint}/api/v1/leaves/substrate/${chainId.toString()}/${contractAddress}`;
         break;
       default:
-        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString(16)}/${contractAddress}`;
+        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
         break;
     }
     const req = await fetch(url, { signal: abortSignal });

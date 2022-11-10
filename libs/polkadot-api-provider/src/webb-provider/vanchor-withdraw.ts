@@ -24,6 +24,7 @@ import {
   Note,
   parseTypedChainId,
   ProvingManagerSetupInput,
+  toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
 import { VAnchorProof } from '@webb-tools/sdk-core/proving/types';
@@ -172,8 +173,6 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       .getNeighborRoots(treeId)
       .then((roots) => roots.toHuman());
     const rootsSet = [root, hexToU8a(neighborRoots[0])];
-    const outputNote = await Note.deserialize(inputNotes[0].serialize());
-    const outputCommitment = output1.commitment;
     const { encrypted: comEnc1 } = naclEncrypt(output1.commitment, secret);
     const { encrypted: comEnc2 } = naclEncrypt(output2.commitment, secret);
     this.emit('stateChange', TransactionState.GeneratingZk);
@@ -241,12 +240,36 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       extDataHash: data.extDataHash,
     };
 
+    // Convert the output Utxos to Notes as we have additional metadata for notes here.
+    // Change notes have the same source and target.
+    const outputNotes = await Promise.all(data.outputUtxos.map((utxo) => {
+      return Note.generateNote({
+        protocol: 'vanchor',
+        sourceChain: utxo.chainId,
+        sourceIdentifyingData: treeId,
+        targetChain: utxo.chainId,
+        targetIdentifyingData: treeId,
+        backend: 'Arkworks',
+        hashFunction: 'Poseidon',
+        curve: 'Bn254',
+        tokenSymbol: inputNotes[0].note.tokenSymbol,
+        amount: utxo.amount,
+        denomination: inputNotes[0].note.denomination,
+        width: inputNotes[0].note.width,
+        exponentiation: inputNotes[0].note.exponentiation,
+        secrets: [
+          toFixedHex(utxo.chainId, 8).substring(2),
+          toFixedHex(utxo.amount).substring(2),
+          toFixedHex(utxo.getKeypair().privkey).substring(2),
+          toFixedHex(utxo.blinding).substring(2),
+        ].join(':'),
+      })
+    }));
+
     // before the transaction takes place, save the output (change) note (in case user leaves page or
     // perhaps relayer misbehaves and doesn't respond but executes transaction)
     if (Number(data.outputUtxos[0].amount) != 0) {
-      const changeNote = await Note.deserialize(outputNote.serialize());
-      changeNote.note.update_vanchor_utxo(data.outputUtxos[0].inner);
-      await this.inner.noteManager?.addNote(changeNote);
+      await this.inner.noteManager?.addNote(outputNotes[0]);
     }
 
     if (activeRelayer) {
@@ -368,23 +391,23 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
       txHash = await tx.call(account.address);
     }
     // remove the previous "Potential Change Note" (safeguard for user)
-    await this.inner.noteManager?.removeNote(outputNote);
+    await this.inner.noteManager?.removeNote(outputNotes[0]);
 
     // get the leaf index to get the right leaf index after insertion
     const leafIndex = await this.getleafIndex(
-      outputCommitment,
+      output1.commitment,
       predictedIndex,
       Number(treeId)
     );
-    outputNote.note.mutateIndex(leafIndex.toString());
+    outputNotes[0].note.mutateIndex(leafIndex.toString());
 
     // update the UTXO of the remainder note
-    outputNote.note.update_vanchor_utxo(output1.inner);
+    outputNotes[0].note.update_vanchor_utxo(output1.inner);
 
     // Update the index of the change note and remove the input notes
     if (this.inner.noteManager) {
-      if (Number(outputNote.note.amount) != 0) {
-        await this.inner.noteManager.addNote(outputNote);
+      if (Number(outputNotes[0].note.amount) != 0) {
+        await this.inner.noteManager.addNote(outputNotes[0]);
       }
       await Promise.all(
         inputNotes.map(async (note) => {
@@ -396,7 +419,7 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
     this.emit('stateChange', TransactionState.Done);
     this.emit('stateChange', TransactionState.Ideal);
     return {
-      outputNotes: [outputNote],
+      outputNotes: [outputNotes[0]],
       txHash: txHash,
     };
   }

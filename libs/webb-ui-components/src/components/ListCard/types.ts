@@ -51,28 +51,6 @@ export type AssetType = {
   balance?: number;
 };
 
-export type AssetPairType = {
-  /**
-   * The asset name
-   */
-  name: string;
-
-  /**
-   * The symbol of the first asset
-   */
-  asset1Symbol: string;
-
-  /**
-   * The symbol of the second asset
-   */
-  asset2Symbol: string;
-
-  /**
-   * The user's balance
-   */
-  balance?: number;
-};
-
 export interface ListCardWrapperProps extends IWebbComponentBase, PropsOf<'div'> {
   /**
    * The list card title
@@ -222,17 +200,17 @@ export interface WithDrawListCardProps extends Omit<ListCardWrapperProps, 'onCha
   /**
    * The asset pair list
    */
-  assetPairs?: AssetPairType[];
+  assetPairs?: AssetType[];
 
   /**
    * The current selected asset, use to control the component
    */
-  value?: AssetPairType;
+  value?: AssetType;
 
   /**
    * The callback to control the value of the component
    */
-  onChange?: (nextAsset: AssetPairType) => void;
+  onChange?: (nextAsset: AssetType) => void;
 
   /**
    * If `true`, the component will display in connected view
