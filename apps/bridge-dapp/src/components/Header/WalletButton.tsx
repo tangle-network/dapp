@@ -11,7 +11,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { HeaderButton } from './HeaderButton';
 import {
   ExternalLinkLine,
@@ -19,11 +19,17 @@ import {
   ThreeDotsVerticalIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 
 export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
   wallet,
 }) => {
+  const [isSyncingNote, setIsSyncingNote] = useState(false);
+
+  const { activeApi, activeChain, noteManager } = useWebContext();
+
   const displayText = useMemo(() => {
     if (account.name) {
       return account.name;
@@ -36,6 +42,36 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
     return shortenString(account.address, 4);
   }, [account]);
+
+  const syncNotes = useCallback(async () => {
+    setIsSyncingNote(true);
+    if (
+      activeApi &&
+      activeApi.state.activeBridge &&
+      activeChain &&
+      noteManager
+    ) {
+      const chainNotes =
+        await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+          activeApi.state.activeBridge.targets[
+            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          ],
+          noteManager.getKeypair()
+        );
+
+      await Promise.all(
+        chainNotes
+          // Do not display notes that have zero value.
+          .filter((note) => note.note.amount !== '0')
+          .map(async (note) => {
+            console.log(note.serialize());
+            await noteManager.addNote(note);
+            return note;
+          })
+      );
+    }
+    setIsSyncingNote(false);
+  }, [activeApi, activeChain, noteManager]);
 
   return (
     <Dropdown>
@@ -75,7 +111,13 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
           {/** Right content */}
           <div className="flex items-center space-x-1">
-            <Button variant="utility">Sync Notes</Button>
+            <Button
+              isLoading={isSyncingNote}
+              onClick={syncNotes}
+              variant="utility"
+            >
+              Sync Notes
+            </Button>
 
             <Dropdown>
               <DropdownBasicButton>
