@@ -71,6 +71,8 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 export interface DepositConfirmProps extends ConfirmationCardProps {
   governedTokenSymbol?: string;
   wrappableTokenSymbol?: string;
+  // Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+  wrappingAmount?: string;
 }
 
 export interface WithdrawConfirmationProps extends ConfirmationCardProps {

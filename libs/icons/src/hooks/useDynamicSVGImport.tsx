@@ -37,13 +37,7 @@ export function useDynamicSVGImport(
   const { onCompleted, onError } = options;
 
   const _name = useMemo(() => {
-    let trimName = name.trim().toLowerCase()
-    if (trimName !== ('arbitrum' || 'avax' || 'btc' || 'dai' || 'dev' || 'dot' || 'etc' || 'eth' || 'ksm' ||
-                     'link' || 'matic' || 'moondev' || 'near' || 'one' || 'op' || 'usdc' || 'usdt' || 'webb' ||
-                     'webb^2' || 'webbdev' || 'webbeth' || 'webbweth' || 'weth')) {
-      trimName = 'default'
-    }
-    return trimName;
+    return name.trim().toLowerCase()
   }, [name]);
 
   useEffect(() => {

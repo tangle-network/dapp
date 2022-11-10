@@ -70,6 +70,7 @@ export const DepositConfirmContainer = forwardRef<
         setStage(TransactionState.Done);
         setIsDepositing(false);
         setMainComponent(undefined);
+        setStage(TransactionState.Ideal);
       }
     }, [amount, deposit, depositPayload, destChain?.symbol, downloadNote, isDepositing, setMainComponent, setStage, setTxPayload, sourceChain?.symbol, token?.symbol]);
 

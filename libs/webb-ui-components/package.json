@@ -38,7 +38,7 @@
     "@svgr/webpack": "^5.5.0",
     "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/react-table": "^8.5.13",
-    "@webb-tools/app-util": "0.1.4-111",
+    "@webb-tools/app-util": "0.1.4-113",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.2",
     "date-fns": "^2.29.2",
