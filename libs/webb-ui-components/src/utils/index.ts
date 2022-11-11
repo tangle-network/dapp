@@ -6,3 +6,4 @@ export * from './getRoundedAmountString';
 export * from './range';
 export * from './shortenHex';
 export * from './shortenString';
+export * from './getHumanFileSize';

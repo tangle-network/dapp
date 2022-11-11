@@ -1,9 +1,11 @@
 import { Key } from '@webb-tools/icons';
+import { Note } from '@webb-tools/sdk-core';
 import {
   Button,
   FileUploadArea,
   FileUploadItem,
   FileUploadList,
+  getHumanFileSize,
   Modal,
   ModalContent,
   ModalFooter,
@@ -16,13 +18,22 @@ import {
   TokenPairIcons,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { UploadSpendNoteModalProps } from './types';
 
 export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   isOpen,
   setIsOpen,
 }) => {
+  // State for uploaded file
+  const [file, setFile] = useState<File | undefined>();
+
+  // State for processed notes
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  // State for note processing value
+  const [progress, setProgress] = useState(0);
+
   // Handle save uploaded notes funciton
   const handleSave = useCallback(() => {
     console.log('Handle save notes');
@@ -53,52 +64,64 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
           <TabContent className="space-y-8" value="upload">
             <FileUploadArea onDrop={handleUpload} />
 
-            <FileUploadList>
-              <FileUploadItem
-                Icon={
-                  <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
-                    <Key className="!fill-mono-0" />
-                  </div>
-                }
-                fileName="note.json"
-                extraInfo={
-                  <>
-                    <Typography
-                      className="text-mono-120 dark:text-mono-80"
-                      variant="body1"
-                    >
-                      12.64 KB
-                    </Typography>
-                    <Progress className="mt-1" value={50} />
-                  </>
-                }
-              />
-            </FileUploadList>
-
-            <FileUploadList title="available notes: 1">
-              {Array.from(Array(5)).map((_, idx) => (
+            {file && (
+              <FileUploadList>
                 <FileUploadItem
-                  key={idx}
                   Icon={
-                    <TokenPairIcons
-                      token1Symbol="WebbETH"
-                      token2Symbol="weth"
-                      chainName="Mumbai"
-                    />
+                    <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
+                      <Key className="!fill-mono-0" />
+                    </div>
                   }
-                  fileName="WebbETH/WETH"
+                  fileName={file.name}
                   extraInfo={
-                    <Typography
-                      className="text-mono-120 dark:text-mono-80"
-                      variant="body1"
-                    >
-                      Note balance: 2.450
-                    </Typography>
+                    <>
+                      <Typography
+                        className="text-mono-120 dark:text-mono-80"
+                        variant="body1"
+                      >
+                        {getHumanFileSize(file.size, true, 0)}
+                      </Typography>
+                      <Progress className="mt-1" value={progress} />
+                    </>
                   }
                 />
-              ))}
-            </FileUploadList>
+              </FileUploadList>
+            )}
+
+            {notes && (
+              <FileUploadList title={`Available notes: ${notes.length}`}>
+                {notes.map((note, idx) => {
+                  console.warn(
+                    'Needed to serialize note here to get the data',
+                    note
+                  );
+
+                  return (
+                    <FileUploadItem
+                      key={idx}
+                      Icon={
+                        <TokenPairIcons
+                          token1Symbol="WebbETH"
+                          token2Symbol="weth"
+                          chainName="Mumbai"
+                        />
+                      }
+                      fileName="WebbETH/WETH"
+                      extraInfo={
+                        <Typography
+                          className="text-mono-120 dark:text-mono-80"
+                          variant="body1"
+                        >
+                          Note balance: 2.450
+                        </Typography>
+                      }
+                    />
+                  );
+                })}
+              </FileUploadList>
+            )}
           </TabContent>
+
           <TabContent value="patse">Patse</TabContent>
         </TabsRoot>
 
