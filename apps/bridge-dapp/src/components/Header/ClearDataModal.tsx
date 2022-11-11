@@ -9,10 +9,15 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
 
+// TODO: Correct the learn more link here.
+const LEARN_MORE_LINK = 'https://docs.webb.tools';
+
 export const ClearDataModal: FC<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-}> = ({ isOpen, setIsOpen }) => {
+  onClearData: () => void;
+  onSaveBackups: () => void;
+}> = ({ isOpen, setIsOpen, onClearData, onSaveBackups }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   return (
@@ -28,8 +33,16 @@ export const ClearDataModal: FC<{
           <div className="space-y-4">
             <Typography variant="body1" fw="semibold">
               All (10) spend note(s) that you have will be permenently deleted
-              from local storage. You may want to save backups of these secret
-              notes before deleting.
+              from local storage. You may want to{' '}
+              <Button
+                onClick={onSaveBackups}
+                as="span"
+                variant="link"
+                className="inline-block"
+              >
+                save backups
+              </Button>{' '}
+              of these secret notes before deleting.
             </Typography>
 
             <Typography variant="body1" fw="semibold">
@@ -48,10 +61,16 @@ export const ClearDataModal: FC<{
         </div>
 
         <ModalFooter>
-          <Button isDisabled={!isChecked} isFullWidth>
+          <Button onClick={onClearData} isDisabled={!isChecked} isFullWidth>
             Confirm
           </Button>
-          <Button isFullWidth variant="secondary">
+          <Button
+            href={LEARN_MORE_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            isFullWidth
+            variant="secondary"
+          >
             Learn more
           </Button>
         </ModalFooter>

@@ -1,37 +1,56 @@
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WalletConfig } from '@webb-tools/dapp-config';
+import {
+  currenciesConfig,
+  ManagedWallet,
+  WalletConfig,
+} from '@webb-tools/dapp-config';
 import {
   ExternalLinkLine,
   LoginBoxLineIcon,
   ThreeDotsVerticalIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import { useWallets } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Avatar,
   Button,
+  ChainListCard,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   MenuItem,
   shortenString,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ClearDataModal } from './ClearDataModal';
 import { HeaderButton } from './HeaderButton';
+import { WalletModal } from './WalletModal';
 
 export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
   wallet,
 }) => {
+  // State for loading spinner when syncing notes
   const [isSyncingNote, setIsSyncingNote] = useState(false);
 
+  // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const { activeApi, activeChain, noteManager } = useWebContext();
+  const { activeApi, activeChain, noteManager, chains } = useWebContext();
+
+  const { setMainComponent } = useWebbUI();
+
+  // Get all managed wallets
+  const { wallets } = useWallets();
+
+  const currentManagedWallet = useMemo<ManagedWallet | undefined>(() => {
+    return wallets.find((w) => w.connected);
+  }, [wallets]);
 
   const displayText = useMemo(() => {
     if (account.name) {
@@ -46,7 +65,18 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     return shortenString(account.address, 4);
   }, [account]);
 
-  const syncNotes = useCallback(async () => {
+  // TODO: Implement clear data function here
+  const handleClearData = useCallback(async () => {
+    console.warn('Clear data fuction is not implemented yet');
+    setIsOpen(false);
+  }, []);
+
+  // TODO: Implement save backups function here
+  const handleSaveBackups = useCallback(async () => {
+    console.warn('Save backups function is not implemented yet');
+  }, []);
+
+  const handleSyncNotes = useCallback(async () => {
     setIsSyncingNote(true);
     if (
       activeApi &&
@@ -75,6 +105,43 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     }
     setIsSyncingNote(false);
   }, [activeApi, activeChain, noteManager]);
+
+  // Funciton to switch chain
+  const handleSwitchChain = useCallback(async () => {
+    const sourceChains = Object.values(chains).map((val) => {
+      return {
+        name: val.name,
+        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
+      };
+    });
+
+    setMainComponent(
+      <ChainListCard
+        className="w-[550px] h-[720px]"
+        chainType="source"
+        chains={sourceChains}
+        value={{ name: activeChain.name, symbol: activeChain.name }}
+        onClose={() => setMainComponent(undefined)}
+        onChange={async (selectedChain) => {
+          const chain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+
+          setMainComponent(
+            <WalletModal chain={chain} sourceChains={sourceChains} />
+          );
+        }}
+      />
+    );
+  }, [activeChain, chains, setMainComponent]);
+
+  // Disconnect function
+  // TODO: The disconnect function does not work properly
+  const handleDisconnect = useCallback(async () => {
+    if (currentManagedWallet && currentManagedWallet.canEndSession) {
+      currentManagedWallet.endSession();
+    }
+  }, [currentManagedWallet]);
 
   return (
     <>
@@ -117,7 +184,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             <div className="flex items-center space-x-1">
               <Button
                 isLoading={isSyncingNote}
-                onClick={syncNotes}
+                onClick={handleSyncNotes}
                 variant="utility"
               >
                 Sync Notes
@@ -138,6 +205,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
           <div className="flex items-center justify-end space-x-2">
             <Button
+              onClick={handleSwitchChain}
               leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
               variant="link"
             >
@@ -145,6 +213,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             </Button>
 
             <Button
+              onClick={handleDisconnect}
               leftIcon={
                 <LoginBoxLineIcon className="!fill-current" size="lg" />
               }
@@ -155,7 +224,12 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
           </div>
         </DropdownBody>
       </Dropdown>
-      <ClearDataModal isOpen={isOpen} setIsOpen={(open) => setIsOpen(open)} />
+      <ClearDataModal
+        onSaveBackups={handleSaveBackups}
+        onClearData={handleClearData}
+        isOpen={isOpen}
+        setIsOpen={(open) => setIsOpen(open)}
+      />
     </>
   );
 };
