@@ -13,7 +13,7 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useWallets } from '@webb-tools/react-hooks';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import {
   Avatar,
   Button,
@@ -43,7 +43,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
   const { activeApi, activeChain, noteManager, chains } = useWebContext();
 
-  const { setMainComponent } = useWebbUI();
+  const { setMainComponent, notificationApi } = useWebbUI();
 
   // Get all managed wallets
   const { wallets } = useWallets();
@@ -76,14 +76,21 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     console.warn('Save backups function is not implemented yet');
   }, []);
 
+  // TODO: Implement a function when user click on the new notes link
+  // on the notification
+  const handleNewNotes = useCallback(async (notes: Note[]) => {
+    console.warn('New notes function is not implemented yet');
+  }, []);
+
+  // Function to sync notes
   const handleSyncNotes = useCallback(async () => {
-    setIsSyncingNote(true);
     if (
       activeApi &&
       activeApi.state.activeBridge &&
       activeChain &&
       noteManager
     ) {
+      setIsSyncingNote(true);
       const chainNotes =
         await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
           activeApi.state.activeBridge.targets[
@@ -92,7 +99,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
           noteManager.getKeypair()
         );
 
-      await Promise.all(
+      const notes = await Promise.all(
         chainNotes
           // Do not display notes that have zero value.
           .filter((note) => note.note.amount !== '0')
@@ -102,9 +109,47 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             return note;
           })
       );
+
+      notificationApi.addToQueue({
+        variant: 'success',
+        message: 'Note(s) successfully added to account',
+        secondaryMessage: (
+          <Typography variant="body1">
+            <Button
+              variant="link"
+              as="span"
+              className="inline-block"
+              onClick={() => handleNewNotes(notes)}
+            >
+              {notes.length} new note(s){' '}
+            </Button>{' '}
+            added to your account
+          </Typography>
+        ),
+      });
+
+      setIsSyncingNote(false);
+    } else {
+      notificationApi.addToQueue({
+        variant: 'error',
+        message: 'Account sync failed',
+        secondaryMessage: (
+          <Typography variant="body1">
+            Please make sure you have connected to a bridge and create an
+            account note.{' '}
+            <Button
+              variant="link"
+              className="inline-block"
+              as="span"
+              onClick={handleSyncNotes}
+            >
+              Try again.
+            </Button>
+          </Typography>
+        ),
+      });
     }
-    setIsSyncingNote(false);
-  }, [activeApi, activeChain, noteManager]);
+  }, [activeApi, activeChain, handleNewNotes, noteManager, notificationApi]);
 
   // Funciton to switch chain
   const handleSwitchChain = useCallback(async () => {
