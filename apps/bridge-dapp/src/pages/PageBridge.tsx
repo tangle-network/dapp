@@ -51,7 +51,7 @@ const PageBridge = () => {
   const { noteManager } = useWebContext();
 
   // Upload modal state
-  const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
+  const [isUploadModalOpen, setUploadModalIsOpen] = useState(true);
 
   // Transatcion payload for queue card
   const [txPayload, setTxPayload] = useState(defaultTx);

@@ -1,13 +1,20 @@
+import { Key } from '@webb-tools/icons';
 import {
   Button,
+  FileUploadArea,
+  FileUploadItem,
+  FileUploadList,
   Modal,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Progress,
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
+  TokenPairIcons,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
 import { UploadSpendNoteModalProps } from './types';
@@ -19,6 +26,11 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   // Handle save uploaded notes funciton
   const handleSave = useCallback(() => {
     console.log('Handle save notes');
+  }, []);
+
+  // Event handler for uploading files
+  const handleUpload = useCallback((files: File[]) => {
+    console.log('Handle upload', files);
   }, []);
 
   return (
@@ -38,7 +50,55 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
             <TabTrigger value="patse">Patse</TabTrigger>
           </TabsList>
 
-          <TabContent value="upload">Upload</TabContent>
+          <TabContent className="space-y-8" value="upload">
+            <FileUploadArea onDrop={handleUpload} />
+
+            <FileUploadList>
+              <FileUploadItem
+                Icon={
+                  <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
+                    <Key className="!fill-mono-0" />
+                  </div>
+                }
+                fileName="note.json"
+                extraInfo={
+                  <>
+                    <Typography
+                      className="text-mono-120 dark:text-mono-80"
+                      variant="body1"
+                    >
+                      12.64 KB
+                    </Typography>
+                    <Progress className="mt-1" value={50} />
+                  </>
+                }
+              />
+            </FileUploadList>
+
+            <FileUploadList title="available notes: 1">
+              {Array.from(Array(5)).map((_, idx) => (
+                <FileUploadItem
+                  key={idx}
+                  Icon={
+                    <TokenPairIcons
+                      token1Symbol="WebbETH"
+                      token2Symbol="weth"
+                      chainName="Mumbai"
+                    />
+                  }
+                  fileName="WebbETH/WETH"
+                  extraInfo={
+                    <Typography
+                      className="text-mono-120 dark:text-mono-80"
+                      variant="body1"
+                    >
+                      Note balance: 2.450
+                    </Typography>
+                  }
+                />
+              ))}
+            </FileUploadList>
+          </TabContent>
           <TabContent value="patse">Patse</TabContent>
         </TabsRoot>
 
