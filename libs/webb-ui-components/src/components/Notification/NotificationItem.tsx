@@ -1,4 +1,5 @@
 import { Alert, CheckboxCircleLine, Close } from '@webb-tools/icons';
+import cx from 'classnames';
 import { FC, useEffect, useMemo } from 'react';
 import { Typography } from '../../typography/Typography';
 import { NotificationItemProps } from './types';
@@ -34,7 +35,14 @@ export const NotificationItem: FC<NotificationItemProps> = ({
   }, [opts.variant]);
 
   return (
-    <div className="p-4  w-[420px] rounded-lg bg-mono-0 dark:bg-mono-140 flex items-start justify-between">
+    <div
+      className={cx(
+        'p-4 w-[420px] rounded-lg',
+        'bg-mono-0 dark:bg-mono-140',
+        'flex items-start justify-between',
+        'shadow-md'
+      )}
+    >
       <div className="flex space-x-3">
         <div>{Icon}</div>
 
