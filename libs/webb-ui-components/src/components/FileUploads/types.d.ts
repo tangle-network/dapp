@@ -60,3 +60,25 @@ export interface FileUploadItemProps extends PropsOf<'li'> {
    */
   onRemove?: () => void;
 }
+
+export interface FileUploadFieldProps {
+  /**
+   * The note value
+   */
+  value?: string;
+
+  /**
+   * The callback for when the note value changes.
+   */
+  onChange?: (value: string) => void;
+
+  /**
+   * The callback for when the upload button is clicked.
+   */
+  onUpload?: (note: string) => void | Promise<void>;
+
+  /**
+   * The error message to display.
+   */
+  error?: string;
+}
