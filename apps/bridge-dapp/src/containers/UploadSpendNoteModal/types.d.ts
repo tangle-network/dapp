@@ -17,5 +17,12 @@ export interface UploadModalContentProps {
   /**
    * The callback to set the new notes
    */
-  onNotesChange?: (notes: Note[]) => void;
+  onNotesChange?: (id: string, note: Note) => void;
+}
+
+export interface PasteModalContentProps {
+  /**
+   * The callback to set the new notes
+   */
+  onNotesChange?: (id: string, note: Note) => void;
 }
