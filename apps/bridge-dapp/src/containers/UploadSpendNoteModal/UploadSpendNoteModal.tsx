@@ -64,6 +64,14 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
     }
   }, [noteManager, notes, setIsOpen]);
 
+  // Handle set new note
+  const handleNotesChange = useCallback(
+    (id: string, note: Note) => {
+      setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
+    },
+    [setNotes]
+  );
+
   // useMemo to memoize the note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
@@ -78,22 +86,22 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
           Upload Spend Note
         </ModalHeader>
 
-        <TabsRoot defaultValue="upload" className="p-8 space-y-8">
+        <TabsRoot
+          onValueChange={() => setNotes({})}
+          defaultValue="upload"
+          className="p-8 space-y-8"
+        >
           <TabsList aria-label="upload-spend-note-tabs">
             <TabTrigger value="upload">Upload</TabTrigger>
             <TabTrigger value="patse">Paste</TabTrigger>
           </TabsList>
 
           <TabContent className="space-y-8" value="upload">
-            <UploadModalContent />
+            <UploadModalContent onNotesChange={handleNotesChange} />
           </TabContent>
 
           <TabContent className="space-y-8" value="patse">
-            <PasteModalContent
-              onNotesChange={(id, note) =>
-                setNotes((prev) => ({ ...prev, [id]: note }))
-              }
-            />
+            <PasteModalContent onNotesChange={handleNotesChange} />
           </TabContent>
         </TabsRoot>
 

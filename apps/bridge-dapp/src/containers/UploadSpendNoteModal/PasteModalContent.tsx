@@ -41,7 +41,7 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
       const rawNote = rawNotes[id];
       const note = await Note.deserialize(rawNote);
       setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
-      onNotesChange(id, note);
+      onNotesChange?.(id, note);
     },
     [rawNotes, onNotesChange]
   );
