@@ -10,7 +10,7 @@ export interface IWebbUIContext {
 
   customMainComponent: React.ReactElement | undefined;
 
-  setMainComponent: (component: React.ReactElement) => void;
+  setMainComponent: (component: React.ReactElement | undefined) => void;
 
   notificationApi: typeof notificationApi;
 }

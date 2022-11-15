@@ -1,3 +1,4 @@
+import { noop } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { createContext, useMemo, useState } from 'react';
 import {
@@ -9,7 +10,17 @@ import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
 
-export const WebbUIContext = createContext<null | IWebbUIContext>(null);
+const initialContext: IWebbUIContext = {
+  customMainComponent: undefined,
+  notificationApi,
+  setMainComponent: noop,
+  theme: {
+    isDarkMode: true,
+    toggleThemeMode: noop,
+  },
+};
+
+export const WebbUIContext = createContext<IWebbUIContext>(initialContext);
 
 const appLogger = LoggerService.new('Stats App');
 
