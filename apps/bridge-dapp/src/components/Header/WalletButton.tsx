@@ -114,8 +114,6 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
       return acc;
     }, [] as string[]);
 
-    console.log('notes', notes);
-
     // Download the notes as a file
     downloadString(JSON.stringify(notes), 'notes.json', '.json');
   }, [allNotes, notificationApi]);
@@ -148,7 +146,6 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
           // Do not display notes that have zero value.
           .filter((note) => note.note.amount !== '0')
           .map(async (note) => {
-            console.log(note.serialize());
             await noteManager.addNote(note);
             return note;
           })
