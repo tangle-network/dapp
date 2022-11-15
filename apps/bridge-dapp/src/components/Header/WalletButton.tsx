@@ -81,11 +81,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
     // Clear all notes
     try {
-      await Promise.all(
-        Array.from(allNotes.values()).map((notes) =>
-          Promise.all(notes.map(async (note) => noteManager.removeNote(note)))
-        )
-      );
+      await noteManager.removeAllNotes();
 
       notificationApi({
         variant: 'success',
@@ -98,7 +94,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         message: 'Failed to clear notes',
       });
     }
-  }, [allNotes, noteManager, notificationApi]);
+  }, [noteManager, notificationApi]);
 
   // Save backups function
   const handleSaveBackups = useCallback(async () => {
@@ -117,6 +113,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
       });
       return acc;
     }, [] as string[]);
+
+    console.log('notes', notes);
 
     // Download the notes as a file
     downloadString(JSON.stringify(notes), 'notes.json', '.json');
@@ -199,6 +197,14 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
   // Funciton to switch chain
   const handleSwitchChain = useCallback(async () => {
+    if (!activeChain) {
+      notificationApi({
+        variant: 'error',
+        message: 'No active chain',
+      });
+      return;
+    }
+
     const sourceChains = Object.values(chains).map((val) => {
       return {
         name: val.name,
@@ -218,13 +224,15 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             (val) => val.name === selectedChain.name
           );
 
-          setMainComponent(
-            <WalletModal chain={chain} sourceChains={sourceChains} />
-          );
+          if (chain) {
+            setMainComponent(
+              <WalletModal chain={chain} sourceChains={sourceChains} />
+            );
+          }
         }}
       />
     );
-  }, [activeChain, chains, setMainComponent]);
+  }, [activeChain, chains, notificationApi, setMainComponent]);
 
   // Disconnect function
   // TODO: The disconnect function does not work properly
