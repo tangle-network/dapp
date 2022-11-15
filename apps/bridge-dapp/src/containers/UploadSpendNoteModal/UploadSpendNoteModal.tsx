@@ -72,6 +72,22 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
     [setNotes]
   );
 
+  // Handle remove all notes
+  const handleRemoveAll = useCallback(() => {
+    setNotes({});
+  }, [setNotes]);
+
+  // Handle remove note by id
+  const handleRemoveNote = useCallback(
+    (id: string) => {
+      setNotes((prevNotes) => {
+        const { [id]: _, ...rest } = prevNotes;
+        return rest;
+      });
+    },
+    [setNotes]
+  );
+
   // useMemo to memoize the note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
@@ -97,7 +113,11 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
           </TabsList>
 
           <TabContent className="space-y-8" value="upload">
-            <UploadModalContent onNotesChange={handleNotesChange} />
+            <UploadModalContent
+              onRemoveAllNotes={handleRemoveAll}
+              onRemoveNote={handleRemoveNote}
+              onNotesChange={handleNotesChange}
+            />
           </TabContent>
 
           <TabContent className="space-y-8" value="patse">

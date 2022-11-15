@@ -19,6 +19,8 @@ import { ethers } from 'ethers';
 
 export const UploadModalContent: FC<UploadModalContentProps> = ({
   onNotesChange,
+  onRemoveAllNotes,
+  onRemoveNote,
 }) => {
   const {
     apiConfig: { currencies },
@@ -34,11 +36,16 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
   const [progress, setProgress] = useState(0);
 
   // Event handler for uploading files
-  const handleUpload = useCallback((files: File[]) => {
-    if (files.length) {
-      setFile(files[0]);
-    }
-  }, []);
+  const handleUpload = useCallback(
+    (files: File[]) => {
+      if (files.length) {
+        onRemoveAllNotes?.();
+        setNotes({});
+        setFile(files[0]);
+      }
+    },
+    [onRemoveAllNotes]
+  );
 
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
@@ -78,7 +85,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
             notes.map(async (note, index) => {
               const parsedNote = await Note.deserialize(note);
               const id = uniqueId();
-              setProgress((index / notes.length) * 100);
+              setProgress(((index + 1) / notes.length) * 100);
               setNotes((prev) => ({ ...prev, [id]: parsedNote }));
               onNotesChange?.(id, parsedNote);
             })
@@ -102,7 +109,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     <>
       <FileUploadArea onDrop={handleUpload} />
 
-      {file && (
+      {!!file && (
         <FileUploadList>
           <FileUploadItem
             Icon={
@@ -122,6 +129,11 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
                 <Progress className="mt-1" value={progress} />
               </>
             }
+            onRemove={() => {
+              setFile(undefined);
+              setNotes({});
+              onRemoveAllNotes?.();
+            }}
           />
         </FileUploadList>
       )}
@@ -170,6 +182,13 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
                     Note balance: {balance}
                   </Typography>
                 }
+                onRemove={() => {
+                  setNotes((prev) => {
+                    const { [id]: _, ...rest } = prev;
+                    return rest;
+                  });
+                  onRemoveNote?.(id);
+                }}
               />
             );
           })}

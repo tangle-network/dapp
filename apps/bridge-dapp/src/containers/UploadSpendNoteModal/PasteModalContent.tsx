@@ -20,6 +20,8 @@ const initialNotes = {
 
 export const PasteModalContent: FC<PasteModalContentProps> = ({
   onNotesChange,
+  onRemoveAllNotes,
+  onRemoveNote,
 }) => {
   const {
     apiConfig: { currencies },
@@ -114,6 +116,13 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
                     Note balance: {balance}
                   </Typography>
                 }
+                onRemove={() => {
+                  onRemoveNote?.(id);
+                  setNotes((prevNotes) => {
+                    const { [id]: _, ...rest } = prevNotes;
+                    return rest;
+                  });
+                }}
               />
             );
           })}

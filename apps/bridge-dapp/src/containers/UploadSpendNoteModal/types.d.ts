@@ -13,16 +13,25 @@ export interface UploadSpendNoteModalProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export interface UploadModalContentProps {
+// The base upload modal content props
+export interface BaseUploadModalContentProps {
   /**
    * The callback to set the new notes
    */
   onNotesChange?: (id: string, note: Note) => void;
+
+  /**
+   * The callback to remove all notes
+   */
+  onRemoveAllNotes?: () => void;
+
+  /**
+   * The callback to remove a note
+   * @param id the id of the note to remove
+   */
+  onRemoveNote?: (id: string) => void;
 }
 
-export interface PasteModalContentProps {
-  /**
-   * The callback to set the new notes
-   */
-  onNotesChange?: (id: string, note: Note) => void;
-}
+export interface UploadModalContentProps extends BaseUploadModalContentProps {}
+
+export interface PasteModalContentProps extends BaseUploadModalContentProps {}
