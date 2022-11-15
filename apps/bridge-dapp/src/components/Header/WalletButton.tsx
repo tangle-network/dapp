@@ -1,6 +1,7 @@
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { downloadString } from '@webb-tools/browser-utils';
 import {
   currenciesConfig,
   ManagedWallet,
@@ -12,7 +13,7 @@ import {
   ThreeDotsVerticalIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { useWallets } from '@webb-tools/react-hooks';
+import { useWallets, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import {
   Avatar,
@@ -43,6 +44,9 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
   const { activeApi, activeChain, noteManager, chains } = useWebContext();
 
+  // Get all note
+  const { allNotes } = useNoteAccount();
+
   const { setMainComponent, notificationApi } = useWebbUI();
 
   // Get all managed wallets
@@ -65,16 +69,58 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     return shortenString(account.address, 4);
   }, [account]);
 
-  // TODO: Implement clear data function here
+  // Clear data function
   const handleClearData = useCallback(async () => {
-    console.warn('Clear data fuction is not implemented yet');
-    setIsOpen(false);
-  }, []);
+    if (!noteManager) {
+      notificationApi({
+        variant: 'error',
+        message: 'Note manager is not initialized',
+      });
+      return;
+    }
 
-  // TODO: Implement save backups function here
+    // Clear all notes
+    try {
+      await Promise.all(
+        Array.from(allNotes.values()).map((notes) =>
+          Promise.all(notes.map(async (note) => noteManager.removeNote(note)))
+        )
+      );
+
+      notificationApi({
+        variant: 'success',
+        message: 'All notes are cleared',
+      });
+    } catch (error) {
+      console.log('Error inside clear data', error);
+      notificationApi({
+        variant: 'error',
+        message: 'Failed to clear notes',
+      });
+    }
+  }, [allNotes, noteManager, notificationApi]);
+
+  // Save backups function
   const handleSaveBackups = useCallback(async () => {
-    console.warn('Save backups function is not implemented yet');
-  }, []);
+    if (!allNotes.size) {
+      notificationApi({
+        variant: 'error',
+        message: 'No notes to backup',
+      });
+      return;
+    }
+
+    // Serialize all notes to array of string
+    const notes = Array.from(allNotes.values()).reduce((acc, curr) => {
+      curr.forEach((note) => {
+        acc.push(note.serialize());
+      });
+      return acc;
+    }, [] as string[]);
+
+    // Download the notes as a file
+    downloadString(JSON.stringify(notes), 'notes.json', '.json');
+  }, [allNotes, notificationApi]);
 
   // TODO: Implement a function when user click on the new notes link
   // on the notification

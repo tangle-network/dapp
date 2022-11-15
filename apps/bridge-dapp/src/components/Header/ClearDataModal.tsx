@@ -7,7 +7,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 // TODO: Correct the learn more link here.
 const LEARN_MORE_LINK = 'https://docs.webb.tools';
@@ -19,6 +19,12 @@ export const ClearDataModal: FC<{
   onSaveBackups: () => void;
 }> = ({ isOpen, setIsOpen, onClearData, onSaveBackups }) => {
   const [isChecked, setIsChecked] = useState(false);
+
+  const handleClearData = useCallback(() => {
+    onClearData();
+    setIsOpen(false);
+    setIsChecked(false);
+  }, [onClearData, setIsOpen]);
 
   return (
     <Modal open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
@@ -61,7 +67,7 @@ export const ClearDataModal: FC<{
         </div>
 
         <ModalFooter>
-          <Button onClick={onClearData} isDisabled={!isChecked} isFullWidth>
+          <Button onClick={handleClearData} isDisabled={!isChecked} isFullWidth>
             Confirm
           </Button>
           <Button
