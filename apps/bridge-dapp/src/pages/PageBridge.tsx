@@ -88,7 +88,11 @@ const PageBridge = () => {
   }, [stage]);
 
   const isDepositing = useMemo(() => stage !== TransactionState.Ideal, [stage]);
-
+  const [activeTabView, setActiveTabView] = useState('shielded-assets');
+  const showMangeButton = useMemo(
+    () => activeTabView === 'available-spend-notes',
+    [activeTabView]
+  );
   return (
     <div className="w-full mt-6">
       <div className="flex items-start space-x-4">
@@ -182,7 +186,11 @@ const PageBridge = () => {
       </div>
 
       {/** Account stats table */}
-      <TabsRoot defaultValue="shielded-assets" className="mt-12 space-y-4">
+      <TabsRoot
+        onValueChange={setActiveTabView}
+        value={activeTabView}
+        className="mt-12 space-y-4"
+      >
         <div className="flex items-center justify-between mb-4">
           {/** Tabs buttons */}
           <TabsList
@@ -206,9 +214,7 @@ const PageBridge = () => {
           </TabsList>
 
           {/** Right buttons (manage and filter) */}
-          <div className="space-x-1">
-            <ManageButton />
-          </div>
+          <div className="space-x-1">{showMangeButton && <ManageButton />}</div>
         </div>
 
         <TabContent value="shielded-assets">
