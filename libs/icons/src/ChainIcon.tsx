@@ -1,26 +1,32 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 import { Spinner } from '@webb-tools/icons/Spinner';
 
-export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
+export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   props
 ) => {
   const {
     className,
     isActive,
-    name,
+    name: nameProp,
     onCompleted,
     onError,
     size = 'md',
     ...restProps
   } = props;
 
+  const name = useMemo(
+    () => nameProp.toLowerCase().replaceAll(' ', '-'),
+    [nameProp]
+  );
+
   const { SvgIcon, error, loading } = useDynamicSVGImport(name, {
     onCompleted,
     onError,
+    type: 'chain',
   });
 
   if (error) {

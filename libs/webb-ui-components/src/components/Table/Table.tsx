@@ -7,18 +7,31 @@ import { THeader } from './THeader';
 import { TableProps } from './types';
 
 const TableComp = <T extends RowData>(
-  { isDisplayFooter, isPaginated, tableProps: table, totalRecords = 0, ...props }: TableProps<T>,
+  {
+    isDisplayFooter,
+    isPaginated,
+    tableProps: table,
+    totalRecords = 0,
+    thClassName,
+    tdClassName,
+    ...props
+  }: TableProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) => {
   return (
     <div {...props} ref={ref}>
-      <table className='w-full border-collapse table-auto'>
+      <table className="w-full border-collapse table-auto">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <THeader key={header.id}>
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                <THeader className={thClassName} key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </THeader>
               ))}
             </tr>
@@ -26,9 +39,11 @@ const TableComp = <T extends RowData>(
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className='group'>
+            <tr key={row.id} className="group">
               {row.getVisibleCells().map((cell) => (
-                <TData key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TData>
+                <TData className={tdClassName} key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TData>
               ))}
             </tr>
           ))}
@@ -39,7 +54,12 @@ const TableComp = <T extends RowData>(
               <tr key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
                   <THeader key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext()
+                        )}
                   </THeader>
                 ))}
               </tr>
@@ -52,7 +72,10 @@ const TableComp = <T extends RowData>(
       {isPaginated && (
         <Pagination
           itemsPerPage={table.getState().pagination.pageSize}
-          totalItems={Math.max(table.getPrePaginationRowModel().rows.length, totalRecords)}
+          totalItems={Math.max(
+            table.getPrePaginationRowModel().rows.length,
+            totalRecords
+          )}
           page={table.getState().pagination.pageIndex + 1}
           totalPages={table.getPageCount()}
           canPreviousPage={table.getCanPreviousPage()}

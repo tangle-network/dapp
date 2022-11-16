@@ -12,7 +12,7 @@ export interface IconBase extends SVGBase {
    * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
    * @default "md"
    */
-  
+
   size?: IconSize;
 
   darkMode?: boolean;
@@ -21,7 +21,9 @@ export interface IconBase extends SVGBase {
 /**
  * Base interface for Web Token Icon
  */
-export interface TokenIconBase extends Omit<IconBase, 'darkMode'>, DynamicSVGImportOptions {
+export interface TokenIconBase
+  extends Omit<IconBase, 'darkMode' | 'type'>,
+    DynamicSVGImportOptions {
   /**
    * The symbol for the cryptocurrency to get the icon
    */

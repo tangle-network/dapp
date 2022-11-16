@@ -19,6 +19,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
+import { ManageButton } from '../components/tables';
+import {
+  ShieldedAssetsTableContainer,
+  SpendNotesTableContainer,
+} from '../containers';
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
@@ -83,7 +88,11 @@ const PageBridge = () => {
   }, [stage]);
 
   const isDepositing = useMemo(() => stage !== TransactionState.Ideal, [stage]);
-
+  const [activeTabView, setActiveTabView] = useState('shielded-assets');
+  const showMangeButton = useMemo(
+    () => activeTabView === 'available-spend-notes',
+    [activeTabView]
+  );
   return (
     <div className="w-full mt-6">
       <div className="flex items-start space-x-4">
@@ -177,6 +186,44 @@ const PageBridge = () => {
       </div>
 
       {/** Account stats table */}
+      <TabsRoot
+        onValueChange={setActiveTabView}
+        value={activeTabView}
+        className="mt-12 space-y-4"
+      >
+        <div className="flex items-center justify-between mb-4">
+          {/** Tabs buttons */}
+          <TabsList
+            aria-label="account-statistics-table"
+            className="space-x-3.5 py-4"
+          >
+            <TabTrigger
+              isDisableStyle
+              value="shielded-assets"
+              className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+            >
+              Shielded Assets
+            </TabTrigger>
+            <TabTrigger
+              isDisableStyle
+              value="available-spend-notes"
+              className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+            >
+              Available Spend Notes
+            </TabTrigger>
+          </TabsList>
+
+          {/** Right buttons (manage and filter) */}
+          <div className="space-x-1">{showMangeButton && <ManageButton />}</div>
+        </div>
+
+        <TabContent value="shielded-assets">
+          <ShieldedAssetsTableContainer />
+        </TabContent>
+        <TabContent value="available-spend-notes">
+          <SpendNotesTableContainer />
+        </TabContent>
+      </TabsRoot>
 
       {/** Last login */}
     </div>

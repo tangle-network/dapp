@@ -1,5 +1,12 @@
 import { PropsOf, IWebbComponentBase } from '../../types';
 
+export interface TabBaseProps {
+  /**
+   * If `true`, it will disable the styling of the tab component
+   */
+  isDisableStyle?: boolean;
+}
+
 /**
  * The `Tabs` props
  */
