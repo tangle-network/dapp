@@ -280,7 +280,7 @@ export const DepositContainer = forwardRef<
 
   return (
     <>
-      <div  {...props} ref={ref}>
+      <div {...props} ref={ref}>
         <DepositCard
           className="h-[700px]"
           sourceChainProps={{
