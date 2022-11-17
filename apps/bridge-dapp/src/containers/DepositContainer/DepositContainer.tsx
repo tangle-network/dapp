@@ -34,8 +34,8 @@ export const DepositContainer = forwardRef<
   const { activeApi, chains, activeChain, activeWallet, loading, noteManager } =
     useWebContext();
 
-  const {  generateNote } = useBridgeDeposit();
-  const {setGovernedCurrency} = useBridge();
+  const { generateNote } = useBridgeDeposit();
+  const { setGovernedCurrency } = useBridge();
   const { governedCurrencies , wrappableCurrencies  } = useCurrencies();
 
   // The seleted token balance
