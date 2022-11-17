@@ -6,13 +6,14 @@
     "@ngneat/falso": "^5.7.0",
     "@ramonak/react-progress-bar": "^5.0.0",
     "@tanstack/react-table": "^8.5.13",
+    "apollo-link-error": "^1.1.13",
     "chart.js": "^3.8.0",
     "country-flag-icons": "^1.5.5",
+    "date-fns": "^2.29.2",
     "gridjs": "^5.0.2",
     "gridjs-react": "^5.0.2",
     "react-chartjs-2": "^4.2.0",
-    "tailwind-merge": "^1.6.0",
-    "date-fns": "^2.29.2"
+    "tailwind-merge": "^1.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.10",

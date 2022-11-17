@@ -8,25 +8,28 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
-import { ProposalStatus, ProposalType } from '../../generated/graphql';
+import {
+  AppEnum155D64Ff70 as ProposalStatus,
+  AppEnumB6165934C8 as ProposalType,
+} from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,
   useProposals,
 } from '../../provider/hooks';
-import { getChipColorByProposalType } from '../../utils';
+import { getChipColorByProposalType, mapChainIdToLogo } from '../../utils';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionContent,
+  AccordionItem,
   Avatar,
   AvatarGroup,
   Button,
   CardTable,
-  CheckBoxMenu,
   CheckBoxMenuGroup,
   Chip,
   ChipColors,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Filter,
   LabelWithValue,
   Table,
@@ -34,7 +37,7 @@ import {
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
@@ -98,7 +101,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
 
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: () => <TokenIcon name="eth" size="lg" />,
+    cell: (props) => {
+      const name = mapChainIdToLogo(Number(props.getValue()));
+      return <TokenIcon name={name} size="lg" />;
+    },
   }),
 
   columnHelper.accessor('id', {
@@ -267,100 +273,87 @@ export const ProposalsTable = () => {
           clearAllFilters={() => {
             table.setColumnFilters([]);
             table.setGlobalFilter('');
+            setSelectedProposalTypes('all');
+            setSelectedProposalStatuses('all');
+            setSelectedChains('all');
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Proposal Type</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedProposalTypes}
-                  options={PROPOSAL_TYPES}
-                  onChange={(v) => {
-                    setSelectedProposalTypes(v);
-                  }}
-                  labelGetter={(proposalType) => (
-                    <span className={'text-xs'}>{proposalType}</span>
-                  )}
-                  keyGetter={(proposalType) =>
-                    `Filter_proposals${proposalType}`
+          <Accordion type={'single'} collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'proposal-type'}>
+              <AccordionButton>Proposal Type</AccordionButton>
+              <AccordionContent>
+                <div
+                  className={
+                    'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
                   }
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-          <Collapsible>
-            <CollapsibleButton>Proposal Status</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedProposalsStatuses}
-                  options={PROPOSAL_STATUS}
-                  onChange={(v) => {
-                    setSelectedProposalStatuses(v);
-                  }}
-                  labelGetter={(proposalStatus) => (
-                    <Chip color={mapProposalStatusToChipColor(proposalStatus)}>
-                      {proposalStatus}
-                    </Chip>
-                  )}
-                  keyGetter={(proposalStatus) =>
-                    `Filter_proposals${proposalStatus}`
+                >
+                  <CheckBoxMenuGroup
+                    value={selectedProposalTypes}
+                    options={PROPOSAL_TYPES}
+                    onChange={(v) => {
+                      setSelectedProposalTypes(v);
+                    }}
+                    labelGetter={(proposalType) => (
+                      <span className={'text-xs'}>{proposalType}</span>
+                    )}
+                    keyGetter={(proposalType) =>
+                      `Filter_proposals${proposalType}`
+                    }
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem className={'p-4 py-0'} value={'proposal-status'}>
+              <AccordionButton>Proposal Status</AccordionButton>
+              <AccordionContent>
+                <div
+                  className={
+                    'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
                   }
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+                >
+                  <CheckBoxMenuGroup
+                    value={selectedProposalsStatuses}
+                    options={PROPOSAL_STATUS}
+                    onChange={(v) => {
+                      setSelectedProposalStatuses(v);
+                    }}
+                    labelGetter={(proposalStatus) => (
+                      <Chip
+                        color={mapProposalStatusToChipColor(proposalStatus)}
+                      >
+                        {proposalStatus}
+                      </Chip>
+                    )}
+                    keyGetter={(proposalStatus) =>
+                      `Filter_proposals${proposalStatus}`
+                    }
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Chain</CollapsibleButton>
-            <CollapsibleContent>
-              <div
-                style={{
-                  maxWidth: '300px',
-                  maxHeight: 300,
-                  overflow: 'hidden',
-                  overflowY: 'auto',
-                }}
-              >
-                <CheckBoxMenuGroup
-                  value={selectedChains}
-                  options={chains}
-                  onChange={(v) => {
-                    setSelectedChains(v);
-                  }}
-                  iconGetter={([_key, chainConfig]) => (
-                    <div
-                      style={{
-                        maxWidth: 20,
-                        maxHeight: 20,
-                        overflow: 'hidden',
-                        backgroundSize: '20px 20px',
-                      }}
-                    >
-                      {<chainConfig.logo />}
-                    </div>
-                  )}
-                  labelGetter={([_, chain]) => chain.name}
-                  keyGetter={([chainId]) => `Filter_proposals${chainId}`}
-                />
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'chain'}>
+              <AccordionButton>Chain</AccordionButton>
+              <AccordionContent>
+                <div className="max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto">
+                  <CheckBoxMenuGroup
+                    value={selectedChains}
+                    options={chains}
+                    onChange={(v) => {
+                      setSelectedChains(v);
+                    }}
+                    iconGetter={([_key, chainConfig]) => (
+                      <div className="max-w-[20px] max-h-[20px] overflow-hidden ">
+                        {<chainConfig.logo />}
+                      </div>
+                    )}
+                    labelGetter={([_, chain]) => chain.name}
+                    keyGetter={([chainId]) => `Filter_proposals${chainId}`}
+                  />
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Filter>
       }
     >

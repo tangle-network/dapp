@@ -54,19 +54,30 @@ export const Progress: React.FC<ProgressProps> = ({
     }
 
     // If the valueProp has value or the progress size not equal to 'lg' => Displays the `prefixLabel` if it has value
-    const prefix = typeof valueProp === 'number' || size !== 'lg' ? prefixLabel : '';
+    const prefix =
+      typeof valueProp === 'number' || size !== 'lg' ? prefixLabel : '';
 
     // Display the value if it is not null, otherwise if the size is equal to "sm" display '0', otherwise displays "Unavailable"
-    const value = typeof valueProp === 'number' ? valueProp : size === 'sm' ? '0' : 'Unavailable';
+    const value =
+      typeof valueProp === 'number'
+        ? valueProp
+        : size === 'sm'
+        ? '0'
+        : 'Unavailable';
 
     // If the valueProp has value or the progress size not equal to 'lg' => Display the `suffixLabel` if it has value
-    const suffix = typeof valueProp === 'number' || size !== 'lg' ? suffixLabel : '';
+    const suffix =
+      typeof valueProp === 'number' || size !== 'lg' ? suffixLabel : '';
 
     return `${prefix}${value}${suffix}`;
   }, [prefixLabel, size, suffixLabel, valueProp]);
 
   return (
-    <ProgressPrimitive.Root value={valueProp} className={twMerge(classNames[size]['root'], className)} max={max}>
+    <ProgressPrimitive.Root
+      value={valueProp}
+      className={twMerge(classNames[size]['root'], className, 'relative')}
+      max={max}
+    >
       {hasValue && (
         <ProgressPrimitive.Indicator
           style={{ width: `${valueProp}%` }}
@@ -75,12 +86,25 @@ export const Progress: React.FC<ProgressProps> = ({
             'radix-state-indeterminate:bg-transparent dark:radix-state-indeterminate:bg-transparent'
           )}
         >
-          <span className={classNames[size]['label']}>{displayValue}</span>
+          <span
+            className={cx(
+              classNames[size]['label'],
+              'absolute inset-x-0 inset-y-0',
+              'w-full h-full flex justify-center items-center'
+            )}
+          >
+            {displayValue}
+          </span>
         </ProgressPrimitive.Indicator>
       )}
 
       {!hasValue && (
-        <span className={cx(classNames[size]['label'], 'w-full h-full flex justify-center items-center')}>
+        <span
+          className={cx(
+            classNames[size]['label'],
+            'w-full h-full flex justify-center items-center'
+          )}
+        >
           {displayValue}
         </span>
       )}

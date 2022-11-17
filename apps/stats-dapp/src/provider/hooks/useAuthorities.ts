@@ -52,7 +52,10 @@ export type UpcomingThreshold = {
   authoritySet: DiscreteList;
 };
 
-export type UpcomingThresholds = Record<Lowercase<UpcomingThresholdStats>, UpcomingThreshold>;
+export type UpcomingThresholds = Record<
+  Lowercase<UpcomingThresholdStats>,
+  UpcomingThreshold
+>;
 
 /**
  * Authority list item
@@ -141,14 +144,16 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 
   useEffect(() => {
     if (session.val) {
-      call({ variables: { sessionId: session.val.activeSession } }).catch((e) => {
-        setData({
-          val: null,
-          isFailed: true,
-          error: 'failed to query the session',
-          isLoading: false,
-        });
-      });
+      call({ variables: { sessionId: session.val.activeSession } }).catch(
+        (e) => {
+          setData({
+            val: null,
+            isFailed: true,
+            error: 'failed to query the session',
+            isLoading: false,
+          });
+        }
+      );
     }
   }, [session, call]);
 
@@ -166,7 +171,9 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
-          const nextAuthSet = allAuth.filter((auth) => auth.isNext).map((auth) => auth.id);
+          const nextAuthSet = allAuth
+            .filter((auth) => auth.isNext)
+            .map((auth) => auth.id);
 
           const keyGenThreshold = keyGen;
           const signatureThreshold = signature;
@@ -178,7 +185,11 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
             publicKey: {
               id: publicKey.id,
               session: session.id,
-              end: sessionTimeStamp ? new Date(new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000) : undefined,
+              end: sessionTimeStamp
+                ? new Date(
+                    new Date(sessionTimeStamp).getTime() + 60 * 60 * 1000
+                  )
+                : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
               compressed: publicKey.compressed,
               uncompressed: publicKey.uncompressed,
@@ -187,7 +198,9 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               isDone: Number(activeSession) > Number(session.id),
             },
             proposer: '',
-            signature: signatureThreshold ? String(signatureThreshold.current) : '-',
+            signature: signatureThreshold
+              ? String(signatureThreshold.current)
+              : '-',
           };
 
           const current: UpcomingThreshold = {
@@ -266,7 +279,7 @@ function rangeIntoIntFilter(range: Range): IntFilter | null {
     filter.lessThanOrEqualTo = range[1];
   }
 
-  if (!range[0]) {
+  if (Object.keys(filter).length === 0) {
     return null;
   }
   return filter;
@@ -279,8 +292,12 @@ type AuthorizesFilter = {
   search?: string;
 };
 export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
-export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loadable<Page<AuthorityListItem>> {
-  const [authorities, setAuthorities] = useState<Loadable<Page<AuthorityListItem>>>({
+export function useAuthorities(
+  reqQuery: PageInfoQuery<AuthorizesFilter>
+): Loadable<Page<AuthorityListItem>> {
+  const [authorities, setAuthorities] = useState<
+    Loadable<Page<AuthorityListItem>>
+  >({
     val: null,
     isLoading: true,
     isFailed: false,
@@ -291,7 +308,9 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
   useEffect(() => {
     const filter = reqQuery.filter;
     const reputation = rangeIntoIntFilter(
-      filter.reputation ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range) : []
+      filter.reputation
+        ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
+        : []
     );
     const uptime = rangeIntoIntFilter(filter.uptime ?? []);
     if (metaData.val) {
@@ -329,7 +348,7 @@ export function useAuthorities(reqQuery: PageInfoQuery<AuthorizesFilter>): Loada
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator!);
               return {
-                id: sessionValidator?.id,
+                id: sessionValidator?.validator.id,
                 location: 'any',
                 uptime: auth?.uptime ?? 0,
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
@@ -378,7 +397,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   const metaData = useCurrentMetaData();
   const { authorityId } = pageQuery.filter;
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
-  const [callValidatorOfSession, queryValidatorOfSession] = useValidatorOfSessionLazyQuery();
+  const [callValidatorOfSession, queryValidatorOfSession] =
+    useValidatorOfSessionLazyQuery();
   useEffect(() => {
     callKeyGen({
       variables: {
@@ -418,22 +438,25 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
       .map((res): AuthorityDetails['keyGens'] => {
         if (res.data && res.data.sessionValidators) {
           const sessionValidators = res.data.sessionValidators;
-          const items = sessionValidators.nodes.map((node): KeyGenKeyListItem => {
-            const session = node?.session;
-            const publicKey = session.publicKey;
-            return {
-              id: publicKey.id,
-              session: session.id,
-              publicKey: publicKey.uncompressed,
-              height: `${publicKey.block?.number ?? '-'}`,
-              authority: {
-                count: session.sessionValidators.totalCount,
-                firstElements: session.sessionValidators.edges
-                  .map((i) => i.node?.validator?.id)
-                  .filter((i) => i !== undefined) as string[],
-              },
-            };
-          });
+          const items = sessionValidators.nodes
+            // Ensure only session with public keys
+            .filter((n) => Boolean(n.session.publicKey))
+            .map((node): KeyGenKeyListItem => {
+              const session = node?.session;
+              const publicKey = session.publicKey;
+              return {
+                id: publicKey.id,
+                session: session.id,
+                publicKey: publicKey.uncompressed,
+                height: `${publicKey.block?.number ?? '-'}`,
+                authority: {
+                  count: session.sessionValidators.totalCount,
+                  firstElements: session.sessionValidators.edges
+                    .map((i) => i.node?.validator?.id)
+                    .filter((i) => i !== undefined) as string[],
+                },
+              };
+            });
           return {
             isLoading: false,
             isFailed: false,
@@ -463,7 +486,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
         if (res.data && res.data.sessionValidator) {
           const sessionValidator = res.data.sessionValidator;
           const sessionValidators = res.data.sessionValidators;
-          const counter = sessionValidators?.aggregates?.distinctCount?.id as number;
+          const counter = sessionValidators?.aggregates?.distinctCount
+            ?.id as number;
           const session = sessionValidator.session;
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
@@ -506,8 +530,12 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   return useMemo(() => ({ stats, keyGens }), [stats, keyGens]);
 }
 
-export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<SessionThresholdEntry>> {
-  const [sessionHistory, setSessionHistory] = useState<Loadable<Page<SessionThresholdEntry>>>({
+export function useSessionHistory(
+  pageQuery: PageInfoQuery
+): Loadable<Page<SessionThresholdEntry>> {
+  const [sessionHistory, setSessionHistory] = useState<
+    Loadable<Page<SessionThresholdEntry>>
+  >({
     isFailed: false,
     isLoading: false,
     val: null,
@@ -535,17 +563,19 @@ export function useSessionHistory(pageQuery: PageInfoQuery): Loadable<Page<Sessi
     const subscription = query.observable
       .map((res): Loadable<Page<SessionThresholdEntry>> => {
         if (res.data.sessions) {
-          const items: SessionThresholdEntry[] = res.data.sessions.nodes.map((node) => {
-            const thresholds = thresholdMap(node!.thresholds);
-            const keyGen = thresholds.KEY_GEN;
-            const signature = thresholds.SIGNATURE;
+          const items: SessionThresholdEntry[] = res.data.sessions.nodes.map(
+            (node) => {
+              const thresholds = thresholdMap(node!.thresholds);
+              const keyGen = thresholds.KEY_GEN;
+              const signature = thresholds.SIGNATURE;
 
-            return {
-              sessionId: node?.id,
-              keyGenThreshold: String(keyGen?.current ?? '-'),
-              signatureThreshold: String(signature?.current ?? '-'),
-            };
-          });
+              return {
+                sessionId: node?.id,
+                keyGenThreshold: String(keyGen?.current ?? '-'),
+                signatureThreshold: String(signature?.current ?? '-'),
+              };
+            }
+          );
           return {
             error: '',
             isFailed: false,
