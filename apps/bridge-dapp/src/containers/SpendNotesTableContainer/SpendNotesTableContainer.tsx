@@ -16,10 +16,11 @@ import {
   Table,
   shortenString,
 } from '@webb-tools/webb-ui-components';
-import { SpendNoteDataType } from './types';
+import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 import { randRecentDate } from '@ngneat/falso';
 import { useSpendNotes } from '../../hooks';
 import { EmptyTable } from '../../components/tables';
+import { FC } from 'react';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
@@ -130,7 +131,9 @@ const data: SpendNoteDataType[] = [
   },
 ];
 
-export const SpendNotesTableContainer = () => {
+export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
+  onUploadSpendNote,
+}) => {
   const data = useSpendNotes();
 
   const table = useReactTable({
@@ -148,6 +151,7 @@ export const SpendNotesTableContainer = () => {
         title="No spend notes found"
         description="Don't see your spend note?"
         buttonText="Upload spend Notes"
+        onClick={onUploadSpendNote}
       />
     );
   }

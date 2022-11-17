@@ -1,4 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import cx from 'classnames';
 import { ExchangeLine, TimeLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import {
@@ -13,6 +14,10 @@ import {
 import { FC, useCallback, useState } from 'react';
 import privacyImg from '../../assets/privacy.gif';
 import { CreateAccountModalProps } from './types';
+
+import Lottie from 'lottie-react';
+import privacySecurityJson from './privacy-security.json';
+import congratJson from './congrat.json';
 
 const loginMessage = 'Logging into Webb';
 
@@ -67,7 +72,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         const signedString = await metamask.eth.personal.sign(
           loginMessage,
           accounts[0],
-          undefined
+          undefined as any
         );
         await loginNoteAccount(signedString.slice(0, 66));
 
@@ -93,7 +98,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         </ModalHeader>
 
         {/** Modal Body */}
-        <div className="py-4 px-9 space-y-9">
+        <div className="relative py-4 px-9 space-y-9">
           <Typography variant="body1" fw="bold">
             {isSuccess
               ? 'You can now start transacting privately!'
@@ -104,7 +109,10 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           <img
             src={privacyImg}
             className="rounded-full mx-auto w-[80px] h-[80px]"
-            alt="privacy"
+            alt="privacy" />
+          <Lottie
+            animationData={privacySecurityJson}
+            className="rounded-full mx-auto w-[80px] h-[80px] overflow-hidden"
           />
 
           {isSuccess ? (
@@ -122,6 +130,12 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
               </CheckBox>
             </div>
           )}
+          <Lottie
+            className={cx('absolute inset-0 !mt-0', {
+              hidden: !isSuccess,
+            })}
+            animationData={congratJson}
+          />
         </div>
 
         <ModalFooter>

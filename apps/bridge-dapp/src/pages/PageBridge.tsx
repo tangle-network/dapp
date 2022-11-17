@@ -19,11 +19,12 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ManageButton } from '../components/tables';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
+  UploadSpendNoteModal,
 } from '../containers';
 
 import { DepositContainer } from '../containers/DepositContainer';
@@ -45,12 +46,20 @@ const defaultTx: Partial<TransactionPayload> = {
 };
 
 const PageBridge = () => {
-
   const { customMainComponent } = useWebbUI();
   const { stage } = useBridgeDeposit();
   const { noteManager } = useWebContext();
 
+  // Upload modal state
+  const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
+
+  // Transatcion payload for queue card
   const [txPayload, setTxPayload] = useState(defaultTx);
+
+  // Callback to open upload modal
+  const handleOpenUploadModal = useCallback(() => {
+    setUploadModalIsOpen(true);
+  }, []);
 
   useEffect(() => {
     const message = getMessageFromTransactionState(stage);
@@ -211,18 +220,27 @@ const PageBridge = () => {
 
             {/** Right buttons (manage and filter) */}
             <div className="space-x-1">
-              <ManageButton />
+              <ManageButton onUpload={handleOpenUploadModal} />
             </div>
           </div>
 
           <TabContent value="shielded-assets">
-            <ShieldedAssetsTableContainer />
+            <ShieldedAssetsTableContainer
+              onUploadSpendNote={handleOpenUploadModal}
+            />
           </TabContent>
           <TabContent value="available-spend-notes">
-            <SpendNotesTableContainer />
+            <SpendNotesTableContainer
+              onUploadSpendNote={handleOpenUploadModal}
+            />
           </TabContent>
         </TabsRoot>
       )}
+
+      <UploadSpendNoteModal
+        isOpen={isUploadModalOpen}
+        setIsOpen={(isOpen) => setUploadModalIsOpen(isOpen)}
+      />
 
       {/** Last login */}
     </div>

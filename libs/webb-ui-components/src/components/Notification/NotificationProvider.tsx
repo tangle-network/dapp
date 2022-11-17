@@ -1,57 +1,59 @@
-import { SnackbarKey, useSnackbar } from 'notistack';
-import React, { useCallback, useEffect } from 'react';
+import { SnackbarContent, SnackbarKey, SnackbarProvider } from 'notistack';
+import React, { useCallback, useState } from 'react';
 
-import { NotificationContext, NotificationCTXDefaultValue, SnackBarOpts } from './NotificationContext';
+import { SnackBarOpts } from './NotificationContext';
+import { NotificationItem } from './NotificationItem';
+import { NotificationStacked } from './NotificationStacked';
 
-let _notificationApi = {
-  ...NotificationCTXDefaultValue,
-};
 export const NotificationProvider: React.FC<{
-  setOptions(key: SnackbarKey, opt: SnackBarOpts): void;
   children?: React.ReactNode;
-}> = ({ children, setOptions }) => {
-  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
+}> = ({ children }) => {
+  const [notificationOptions] = useState<Record<SnackbarKey, SnackBarOpts>>({});
 
-  const addToQueue = useCallback(
-    (opts: SnackBarOpts) => {
-      const snackKey: SnackbarKey = opts.key || new Date().getTime() + Math.random();
-      setOptions(snackKey, { ...opts, close: closeSnackbar });
-
-      enqueueSnackbar(opts.message, {
-        key: snackKey,
-        variant: opts.variant,
-        ...(opts.extras ?? {}),
-      });
-      return snackKey;
+  const cleanOpt = useCallback(
+    (key: SnackbarKey) => {
+      delete notificationOptions[key];
     },
-    [enqueueSnackbar]
+    [notificationOptions]
   );
 
-  const remove = useCallback((key: SnackbarKey) => closeSnackbar(key), []);
+  const appendOpt = useCallback(
+    (key: SnackbarKey, opt: SnackBarOpts) => {
+      notificationOptions[key] = opt;
+    },
+    [notificationOptions]
+  );
 
-  useEffect(() => {
-    _notificationApi = {
-      addToQueue,
-      remove,
-    };
-  }, []);
   return (
-    <NotificationContext.Provider
-      value={{
-        addToQueue,
-        remove,
+    <SnackbarProvider
+      anchorOrigin={{
+        horizontal: 'right',
+        vertical: 'top',
       }}
-      children={children}
-    />
-  );
-};
+      autoHideDuration={5000}
+      preventDuplicate
+      maxSnack={10}
+      domRoot={document.getElementById('notification-root') ?? undefined}
+      content={(key) => {
+        const opts = notificationOptions[key];
 
-export const notificationApi = (opts: Omit<SnackBarOpts, 'close'>) => {
-  return _notificationApi.addToQueue(opts);
-};
-notificationApi.addToQueue = (opts: Omit<SnackBarOpts, 'close'>): SnackbarKey => {
-  return _notificationApi.addToQueue(opts);
-};
-notificationApi.remove = (key: SnackbarKey): void => {
-  return _notificationApi.remove(key);
+        if (!opts) {
+          return null;
+        }
+
+        return (
+          <SnackbarContent>
+            <NotificationItem
+              onUnmount={cleanOpt}
+              $key={key}
+              opts={opts}
+              onClose={() => opts.close(key)}
+            />
+          </SnackbarContent>
+        );
+      }}
+    >
+      <NotificationStacked children={children} setOptions={appendOpt} />
+    </SnackbarProvider>
+  );
 };

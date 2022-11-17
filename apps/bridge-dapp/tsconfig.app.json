@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "types": ["node"],
-    "target": "ES6"
+    "target": "ES6",
+    "strict": true
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

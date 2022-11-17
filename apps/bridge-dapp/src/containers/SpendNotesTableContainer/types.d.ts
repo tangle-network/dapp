@@ -41,3 +41,10 @@ export interface SpendNoteDataType {
    */
   note: string;
 }
+
+export interface SpendNotesTableContainerProps {
+  /**
+   * The upload spend note callback
+   */
+  onUploadSpendNote?: () => void;
+}

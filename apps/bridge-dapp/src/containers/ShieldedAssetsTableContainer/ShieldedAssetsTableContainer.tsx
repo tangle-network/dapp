@@ -19,9 +19,13 @@ import {
   TokenPair,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 import { EmptyTable } from '../../components/tables';
 import { useShieldedAssets } from '../../hooks';
-import { ShieldedAssetDataType } from './types';
+import {
+  ShieldedAssetDataType,
+  ShieldedAssetsTableContainerProps,
+} from './types';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
@@ -138,7 +142,9 @@ const data: ShieldedAssetDataType[] = [
   },
 ];
 
-export const ShieldedAssetsTableContainer = () => {
+export const ShieldedAssetsTableContainer: FC<
+  ShieldedAssetsTableContainerProps
+> = ({ onUploadSpendNote }) => {
   const data = useShieldedAssets();
 
   const table = useReactTable({
@@ -156,6 +162,7 @@ export const ShieldedAssetsTableContainer = () => {
         title="No assets found"
         description="Don't see your assets?"
         buttonText="Upload spend Notes"
+        onClick={onUploadSpendNote}
       />
     );
   }

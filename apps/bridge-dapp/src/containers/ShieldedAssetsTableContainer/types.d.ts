@@ -41,3 +41,10 @@ export interface ShieldedAssetDataType {
    */
   numberOfNotesFound: number;
 }
+
+export interface ShieldedAssetsTableContainerProps {
+  /**
+   * The upload spend note callback
+   */
+  onUploadSpendNote?: () => void;
+}

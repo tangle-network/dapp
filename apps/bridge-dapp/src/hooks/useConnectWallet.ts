@@ -168,13 +168,16 @@ export const useConnectWallet = (
    * Function to switch wallet
    */
   const switchWallet = useCallback(
-    (chain: Chain, selectedWallet: WalletConfig) => {
+    async (chain: Chain, selectedWallet: WalletConfig) => {
       setSelectedWallet(() => selectedWallet);
       setWalletState(() => WalletState.CONNECTING);
 
-      switchChain(chain, selectedWallet);
+      await switchChain(chain, selectedWallet);
+
+      update(false);
+      setMainComponent(undefined);
     },
-    [switchChain]
+    [switchChain, update, setMainComponent]
   );
 
   /**
