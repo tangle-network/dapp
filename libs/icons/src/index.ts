@@ -48,6 +48,7 @@ export * from './Spinner';
 export * from './SunLine';
 export * from './TelegramFill';
 export * from './ThreeDotsVerticalIcon';
+export * from './TimeLineIcon';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';

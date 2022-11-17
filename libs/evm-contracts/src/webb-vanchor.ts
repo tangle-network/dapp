@@ -675,8 +675,8 @@ export class VAnchorContract {
       const secrets =
         `${toFixedHex(inputUtxo.chainId, 8).slice(2)}:` +
         `${toFixedHex(inputUtxo.amount).slice(2)}:` +
-        `${toFixedHex(inputUtxo.secret_key).slice(2)}:` +
-        `${toFixedHex(inputUtxo.blinding).slice(2)}`;
+        `${toFixedHex('0x' + inputUtxo.secret_key).slice(2)}:` + // Added '0x' to fix the deposit flow
+        `${toFixedHex('0x' + inputUtxo.blinding).slice(2)}`; // Added '0x' to fix the deposit flow
 
       const token = await this.getWebbToken();
       const tokenSymbol = await token.symbol();
@@ -784,7 +784,7 @@ export class VAnchorContract {
     const args: IVariableAnchorPublicInputs = {
       proof: `0x${proof}`,
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
-      inputNullifiers: inputs.map((x) => toFixedHex(x.nullifier)),
+      inputNullifiers: inputs.map((x) => toFixedHex('0x' + x.nullifier)), // Added '0x' to fix the deposit flow
       outputCommitments: [
         toFixedHex(u8aToHex(outputs[0].commitment)),
         toFixedHex(u8aToHex(outputs[1].commitment)),

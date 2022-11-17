@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { currenciesConfig } from '@webb-tools/dapp-config';
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   ChainListCard,
   Typography,
@@ -10,8 +10,8 @@ import {
 import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import cx from 'classnames';
 import { FC, useMemo } from 'react';
-import { HeaderButton } from './HeaderButton';
 import { WalletModal } from './WalletModal';
+import { HeaderButton } from './HeaderButton';
 
 /**
  * The ChainSwitcherButton defines the clickable button in the Header,

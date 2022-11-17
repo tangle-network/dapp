@@ -1,3 +1,4 @@
+export * from './CreateAccountModal';
 export * from './DepositContainer';
 export * from './Layout';
 export * from './ShieldedAssetsTableContainer';

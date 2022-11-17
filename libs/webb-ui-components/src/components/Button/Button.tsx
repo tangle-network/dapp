@@ -56,7 +56,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const mergedClassName = twMerge(
       'max-w-max',
-      cx({ 'w-full max-w-none': isFullWidth }),
+      cx({ 'w-full max-w-none justify-center': isFullWidth }),
       getButtonClassNameByVariant(variant, size),
       className
     );

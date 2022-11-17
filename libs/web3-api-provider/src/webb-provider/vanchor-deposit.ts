@@ -93,7 +93,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount, 16).substring(2),
         toFixedHex(keypair.privkey).substring(2),
-        toFixedHex(depositOutputUtxo.blinding).substring(2),
+        toFixedHex('0x' + depositOutputUtxo.blinding).substring(2), // Added '0x' to fix the deposit flow
       ].join(':'),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress,

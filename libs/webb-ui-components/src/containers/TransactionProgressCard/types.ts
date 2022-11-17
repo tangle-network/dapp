@@ -20,11 +20,13 @@ export type TransactionCardFooterProps = {
   };
   hasWarning?: boolean;
 };
+
 export type BridgeLabel = {
   amount: string;
   token: string;
   tokenURI: string;
 };
+
 export type NativeLabel = {
   amount: string;
   nativeValue: string;
@@ -68,6 +70,7 @@ interface TransactionStatus {
   status: TransactionItemStatus;
   message?: string;
 }
+
 /**
  * Transaction item interface for the TransactionQueue component
  * @param id - Transaction id
@@ -139,6 +142,7 @@ export interface TransactionPayload {
    * */
   onSyncNote?(): void;
 }
+
 /**
  * Transaction queue props
  * @param transactions - list of the active transactions
