@@ -45,6 +45,7 @@ const defaultTx: Partial<TransactionPayload> = {
 };
 
 const PageBridge = () => {
+
   const { customMainComponent } = useWebbUI();
   const { stage } = useBridgeDeposit();
   const { noteManager } = useWebContext();
