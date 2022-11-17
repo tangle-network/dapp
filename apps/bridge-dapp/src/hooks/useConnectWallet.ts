@@ -172,12 +172,14 @@ export const useConnectWallet = (
       setSelectedWallet(() => selectedWallet);
       setWalletState(() => WalletState.CONNECTING);
 
-      await switchChain(chain, selectedWallet);
+      const retVal = await switchChain(chain, selectedWallet);
 
-      update(false);
-      setMainComponent(undefined);
+      // If the promise resolved without null, switchWallet was successful.
+      if (retVal) {
+        setMainComponent(undefined);
+      }
     },
-    [switchChain, update, setMainComponent]
+    [setMainComponent, switchChain]
   );
 
   /**

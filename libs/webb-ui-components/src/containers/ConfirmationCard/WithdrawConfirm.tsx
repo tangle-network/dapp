@@ -43,8 +43,8 @@ export const WithdrawConfirm = forwardRef<
       relayerExternalUrl,
       sourceChain,
       title = 'Confirm Withdrawal',
-      token1Symbol,
-      token2Symbol,
+      governedTokenSymbol: token1Symbol,
+      wrappableTokenSymbol: token2Symbol,
       unshieldedAddress,
       ...props
     },

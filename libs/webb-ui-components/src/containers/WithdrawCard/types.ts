@@ -16,7 +16,7 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   /**
    * The bridge asset input props
    */
-  bridgeAssetInputProps?: ComponentProps<typeof ShieldedAssetInput>;
+  tokenInputProps?: ComponentProps<typeof TokenInput>;
 
   /**
    * The unwrapping asset input props

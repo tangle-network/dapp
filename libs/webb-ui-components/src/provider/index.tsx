@@ -36,7 +36,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   const [customMainComponent, setCustomMainComponent] = useState<
     React.ReactElement | undefined
   >(undefined);
-  const setMainComponent = (component: React.ReactElement) => {
+  const setMainComponent = (component: React.ReactElement | undefined) => {
     setCustomMainComponent(component);
   };
 

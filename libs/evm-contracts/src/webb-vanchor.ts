@@ -29,6 +29,7 @@ import {
   randomBN,
   toFixedHex,
   Utxo,
+  VAnchorProof,
 } from '@webb-tools/sdk-core';
 import {
   BigNumber,
@@ -577,7 +578,7 @@ export class VAnchorContract {
             index: index.toString(),
           });
           const alreadySpent = await this._contract.isSpent(
-            toFixedHex(regeneratedUtxo.nullifier, 32)
+            toFixedHex(`0x${regeneratedUtxo.nullifier}`, 32)
           );
           if (!alreadySpent) {
             return regeneratedUtxo;
@@ -652,59 +653,16 @@ export class VAnchorContract {
     provingKey: Uint8Array,
     wasmBuffer: Buffer,
     worker: Worker
-  ) {
+  ): Promise<{
+    extData: ExtData,
+    publicInputs: IVariableAnchorPublicInputs,
+    outputUtxos: Utxo[],
+  }> {
     const chainId = calculateTypedChainId(
       ChainType.EVM,
       await this.signer.getChainId()
     );
     const roots = await this.getRootsForProof();
-
-    // Start creating notes to satisfy vanchor input
-    // Only the sourceChainId and secrets (amount, nullifier, secret, blinding)
-    // is required
-    const inputNotes: Note[] = [];
-    const inputIndices: number[] = [];
-
-    // calculate the sum of input notes (for calculating the public amount)
-    let sumInputNotes: BigNumberish = 0;
-
-    for (const inputUtxo of inputs) {
-      sumInputNotes = BigNumber.from(sumInputNotes).add(inputUtxo.amount);
-
-      // secrets should be formatted as expected in the wasm-utils for note generation
-      const secrets =
-        `${toFixedHex(inputUtxo.chainId, 8).slice(2)}:` +
-        `${toFixedHex(inputUtxo.amount).slice(2)}:` +
-        `${toFixedHex('0x' + inputUtxo.secret_key).slice(2)}:` + // Added '0x' to fix the deposit flow
-        `${toFixedHex('0x' + inputUtxo.blinding).slice(2)}`; // Added '0x' to fix the deposit flow
-
-      const token = await this.getWebbToken();
-      const tokenSymbol = await token.symbol();
-
-      const noteInput: NoteGenInput = {
-        amount: inputUtxo.amount.toString(),
-        backend: 'Circom',
-        curve: 'Bn254',
-        denomination: '18', // assumed erc20
-        exponentiation: '5',
-        hashFunction: 'Poseidon',
-        index: inputUtxo.index,
-        protocol: 'vanchor',
-        secrets,
-        sourceChain: inputUtxo.originChainId
-          ? inputUtxo.originChainId.toString()
-          : chainId.toString(),
-        sourceIdentifyingData: '0',
-        targetChain: chainId.toString(),
-        targetIdentifyingData: this.inner.address,
-        tokenSymbol,
-        width: '5',
-      };
-
-      const inputNote = await Note.generateNote(noteInput);
-      inputNotes.push(inputNote);
-      inputIndices.push(inputUtxo.index!);
-    }
 
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
       hexToU8a(outputs[0].encrypt()),
@@ -712,11 +670,11 @@ export class VAnchorContract {
     ];
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
-      inputUtxos: inputNotes.map(({ note }) => new Utxo(note.getUtxo())),
-      leafIds: inputNotes.map(({ note }) => ({
-        index: Number(note.index),
-        typedChainId: Number(note.targetChainId),
-      })),
+      inputUtxos: inputs,
+      leafIds: inputs.map((input) => { return {
+        typedChainId: Number(input.originChainId),
+        index: input.index
+      }}),
       leavesMap,
       roots: roots.map((root) => hexToU8a(root)),
       chainId: chainId.toString(),
@@ -740,7 +698,7 @@ export class VAnchorContract {
 
     const levels = await this.inner.levels();
     const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
-    const proof = await provingManager.prove('vanchor', proofInput);
+    const proof = await provingManager.prove('vanchor', proofInput) as VAnchorProof;
 
     const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(
       proof.proof,
@@ -768,7 +726,7 @@ export class VAnchorContract {
     return {
       extData,
       publicInputs,
-      outputNotes: proof.outputNotes,
+      outputUtxos: proof.outputUtxos,
     };
   }
 
@@ -784,7 +742,7 @@ export class VAnchorContract {
     const args: IVariableAnchorPublicInputs = {
       proof: `0x${proof}`,
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
-      inputNullifiers: inputs.map((x) => toFixedHex('0x' + x.nullifier)), // Added '0x' to fix the deposit flow
+      inputNullifiers: inputs.map((x) => toFixedHex(`0x${x.nullifier}`)),
       outputCommitments: [
         toFixedHex(u8aToHex(outputs[0].commitment)),
         toFixedHex(u8aToHex(outputs[1].commitment)),

@@ -32,23 +32,24 @@ import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
 import { getMessageFromTransactionState } from '../utils';
 
-const defaultTx: Partial<TransactionPayload> = {
-  id: '1',
-  getExplorerURI(addOrTxHash, variant) {
-    return '#';
-  },
-  onDetails: () => {
-    console.log('On detail');
-  },
-  onDismiss: () => {
-    console.log('On dismiss');
-  },
-};
-
 const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
-  const { stage } = useBridgeDeposit();
+  const { stage, setStage } = useBridgeDeposit();
   const { noteManager } = useWebContext();
+  const defaultTx: Partial<TransactionPayload> = useMemo(() => {
+    return {
+      id: '1',
+      getExplorerURI(addOrTxHash, variant) {
+        return '#';
+      },
+      onDetails: () => {
+        console.log('On detail');
+      },
+      onDismiss: () => {
+        setStage(TransactionState.Ideal);
+      },
+    }
+  }, [setStage]);
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -97,7 +98,7 @@ const PageBridge = () => {
     if (stage === TransactionState.Ideal) {
       setTxPayload(defaultTx);
     }
-  }, [stage]);
+  }, [defaultTx, stage]);
 
   const isDepositing = useMemo(() => stage !== TransactionState.Ideal, [stage]);
 
@@ -128,7 +129,7 @@ const PageBridge = () => {
             <TransferContainer />
           </TabContent>
           <TabContent value="withdraw">
-            <WithdrawContainer />
+            <WithdrawContainer setTxPayload={setTxPayload} />
           </TabContent>
         </TabsRoot>
 

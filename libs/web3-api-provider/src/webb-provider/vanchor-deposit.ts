@@ -76,7 +76,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       keypair,
     });
 
-    console.log('generated the utxo');
+    console.log('generated the utxo: ', depositOutputUtxo.serialize());
 
     const srcAddress = bridge.targets[sourceChainId];
     const destAddress = bridge.targets[destination];
@@ -93,7 +93,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount, 16).substring(2),
         toFixedHex(keypair.privkey).substring(2),
-        toFixedHex('0x' + depositOutputUtxo.blinding).substring(2), // Added '0x' to fix the deposit flow
+        toFixedHex(`0x${depositOutputUtxo.blinding}`).substring(2),
       ].join(':'),
       sourceChain: sourceChainId.toString(),
       sourceIdentifyingData: srcAddress,
@@ -303,7 +303,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
                 leavesMap,
                 smallKey,
                 Buffer.from(smallWasm),
-                worker!
+                worker
               ),
             () => {
               worker?.terminate();
@@ -392,10 +392,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
                 leavesMap,
                 smallKey,
                 Buffer.from(smallWasm),
-                worker!
+                worker
               ),
             () => {
-              worker?.terminate();
+              worker.terminate();
               return WebbError.from(WebbErrorCodes.TransactionCancelled);
             }
           );
@@ -404,6 +404,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
           // emit event for waiting for transaction to confirm
           const receipt = await tx.wait();
+
+
+          // TODO: Make this parse the receipt for the index data
+          const noteIndex = (await srcVAnchor.getNextIndex() - 1);
+          const indexedNote = await Note.deserialize(depositPayload.note.serialize());
+          indexedNote.mutateIndex(noteIndex.toString());
+          await this.inner.noteManager.addNote(indexedNote);
+          await this.inner.noteManager.removeNote(depositPayload.note);
 
           this.inner.notificationHandler({
             data: {
@@ -421,7 +429,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           this.emit('stateChange', TransactionState.Done);
           return {
             txHash: receipt.transactionHash,
-            outputNotes: [depositPayload.note],
+            outputNotes: [indexedNote],
           };
         } else {
           this.inner.notificationHandler({

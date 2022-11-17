@@ -13,9 +13,9 @@ import {
   TooltipBody,
   TooltipTrigger,
 } from '..';
-import { AmountInputProps } from './types';
+import { AmountInputComponentProps } from './types';
 
-export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
+export const AmountInput = forwardRef<HTMLDivElement, AmountInputComponentProps>(
   (
     {
       amount,

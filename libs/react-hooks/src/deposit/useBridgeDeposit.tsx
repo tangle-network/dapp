@@ -18,8 +18,6 @@ export interface VBridgeDepositApi {
   ): Promise<DepositPayload>;
   stage: TransactionState;
   setStage(stage: TransactionState): void;
-  setWrappableCurrency(currency: Currency): void;
-  setGovernedCurrency(currency: Currency): void;
   error: string;
   depositApi: VAnchorDeposit<any> | null;
 }
@@ -83,26 +81,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     [depositApi]
   );
 
-  const setWrappableCurrency = useCallback(
-    async (currency: Currency | null) => {
-      if (activeApi) {
-        activeApi.state.wrappableCurrency = currency;
-      }
-    },
-    [activeApi]
-  );
-
-  const setGovernedCurrency = useCallback(
-    (currency: Currency): void => {
-      if (!activeApi) {
-        return;
-      }
-
-      activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
-    },
-    [activeApi]
-  );
-
   const cancel = useCallback(() => {
     if (!depositApi) {
       throw new Error('Api not ready');
@@ -113,8 +91,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     stage,
     setStage,
     depositApi,
-    setWrappableCurrency,
-    setGovernedCurrency,
     deposit,
     generateNote,
     error,

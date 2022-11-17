@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
-import { ChainInputProps } from './types';
+import { ChainInputComponentProps } from './types';
 
 /**
  * The `ChainInput` component
@@ -23,7 +23,7 @@ import { ChainInputProps } from './types';
  * ```
  */
 
-export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(
+export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
   ({ chain, chainType, id, info, ...props }, ref) => {
     return (
       <InputWrapper {...props} ref={ref}>

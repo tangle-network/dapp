@@ -106,6 +106,12 @@ export class WebbRelayerManagerFactory {
     );
   }
 
+  // Examine the data for saved (already fetched) capabilities. For easier
+  // fetching of information (i.e. fees, beneficiary) and passing as props.
+  public readCapabilities(endpoint: string): Capabilities | null {
+    return this.capabilities[endpoint];
+  }
+
   // This function will add the relayer to the factory's store of capabilities.
   // When new RelayerManagers are created, any added entries will be passed.
   public async addRelayer(endpoint: string) {

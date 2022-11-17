@@ -35,7 +35,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     }, [setAddress]);
 
     const onChange = useCallback(
-      (nextVal: string | number) => {
+      (nextVal: string) => {
         setAddress(nextVal.toString());
         onChangeProp?.(nextVal);
       },
@@ -59,7 +59,6 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
               titleClassName='uppercase !text-inherit'
             />
           </Label>
-
           <Input placeholder='Enter recipient wallet address' id={id} size='sm' value={address} onChange={onChange} />
         </div>
 

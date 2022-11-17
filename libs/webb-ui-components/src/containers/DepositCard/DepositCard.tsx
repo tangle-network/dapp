@@ -37,7 +37,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           : `${amountInputProps.amount} ${token ?? ''}`,
         fee: !feePercentage
           ? '--'
-          : `${parseFloat(amountInputProps.amount) * feePercentage * 0.01} ${
+          : `${parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01} ${
               feeToken ?? ''
             }`,
       };

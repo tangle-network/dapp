@@ -43,10 +43,10 @@ export const WithDrawListCard = forwardRef<HTMLDivElement, WithDrawListCardProps
               <ul className='py-2'>
                 {assetPairs.map((current, idx) => {
                   return (
-                    <ListItem key={`${current.asset1Symbol}-${current.asset2Symbol}-${idx}`}>
+                    <ListItem key={`${current.symbol}-${idx}`}>
                       <TokenPair
-                        token1Symbol={current.asset1Symbol}
-                        token2Symbol={current.asset2Symbol}
+                        token1Symbol={current.symbol}
+                        token2Symbol={current.symbol}
                         balance={current.balance}
                         name={current.name}
                       />

@@ -15,9 +15,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     { chainType, chains, onChange, onClose, value: selectedChain, ...props },
     ref
   ) => {
-    const [chain, setChain] = useState<ChainType | undefined>(
-      () => selectedChain
-    );
+    const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
 
     // Search text
     const [searchText, setSearchText] = useState('');

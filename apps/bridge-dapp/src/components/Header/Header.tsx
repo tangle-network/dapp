@@ -116,10 +116,11 @@ export const ChainSelectionWrapper: FC<{
         const chain = Object.values(chains).find(
           (val) => val.name === selectedChain.name
         );
-
-        setMainComponent(
-          <WalletModal chain={chain} sourceChains={sourceChains} />
-        );
+        if (chain) {
+          setMainComponent(
+            <WalletModal chain={chain} sourceChains={sourceChains} />
+          );
+        }
       }}
       onClose={() => setMainComponent(undefined)}
     />
