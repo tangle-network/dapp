@@ -34,7 +34,7 @@ import { getMessageFromTransactionState } from '../utils';
 
 const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
-  const { stage ,setStage} = useBridgeDeposit();
+  const { stage, setStage } = useBridgeDeposit();
   const { noteManager } = useWebContext();
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
     return {
