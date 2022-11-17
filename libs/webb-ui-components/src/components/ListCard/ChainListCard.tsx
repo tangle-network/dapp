@@ -34,7 +34,6 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
     const onChainChange = useCallback(
       (nextChain: ChainType) => {
-        console.log('chainListCard onChainChange fired!!!');
         setChain(nextChain);
         onChange?.(nextChain);
       },
