@@ -1,4 +1,4 @@
-import { ProposalType } from '../generated/graphql';
+import { AppEnumB6165934C8 as ProposalType } from '../generated/graphql';
 import {
   AnchorCreateProposal,
   AnchorUpdateProposal,

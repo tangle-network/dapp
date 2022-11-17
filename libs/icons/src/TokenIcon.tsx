@@ -3,6 +3,7 @@ import React from 'react';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
+import { Spinner } from '@webb-tools/icons/Spinner';
 
 export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   props
@@ -23,13 +24,11 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   });
 
   if (error) {
-    console.log('error detected!!!, ', error);
     return <span>{error.message}</span>;
   }
 
   if (loading) {
-    console.log('loading detected!!!, ', loading);
-    return <span>Loading...</span>;
+    return <Spinner {...props} />;
   }
 
   if (SvgIcon) {

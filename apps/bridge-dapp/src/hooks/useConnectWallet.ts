@@ -68,7 +68,6 @@ export type UseConnectWalletReturnType = {
 export const useConnectWallet = (
   defaultModalOpen = false
 ): UseConnectWalletReturnType => {
-  console.log('first line in useConnectWallet');
   const { status: isModalOpen, update, toggle } = useModal(defaultModalOpen);
 
   const { setMainComponent } = useWebbUI();
@@ -129,6 +128,20 @@ export const useConnectWallet = (
     };
   }, [appEvent, setWalletState]);
 
+  // Force close the modal when active wallet is not defiend
+  useEffect(() => {
+    let isSubscribed = true;
+
+    if (isSubscribed && activeWallet && isModalOpen) {
+      update(false); // force close modal
+      setMainComponent(undefined);
+    }
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [activeWallet, isModalOpen, setMainComponent, update]);
+
   /**
    * Toggle or set state of the wallet modal
    */
@@ -160,7 +173,7 @@ export const useConnectWallet = (
       setWalletState(() => WalletState.CONNECTING);
 
       const retVal = await switchChain(chain, selectedWallet);
-      
+
       // If the promise resolved without null, switchWallet was successful.
       if (retVal) {
         setMainComponent(undefined);

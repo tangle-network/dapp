@@ -1,5 +1,4 @@
-import { DefaultTokenIcon } from '../DefaultTokenIcon';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
@@ -16,6 +15,12 @@ export interface DynamicSVGImportOptions {
    * An optional function for handle error when loading SVG icon
    */
   onError?: React.ReactEventHandler<SVGSVGElement>;
+
+  /**
+   * The type of icon
+   * @default "token"
+   */
+  type?: 'token' | 'chain';
 }
 
 /**
@@ -36,9 +41,8 @@ export function useDynamicSVGImport(
 
   const { onCompleted, onError } = options;
 
-  const _name = useMemo(() => {
-    return name.trim().toLowerCase()
-  }, [name]);
+  const _name = useMemo(() => name.trim().toLowerCase(), [name]);
+  const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {
     setLoading(true);
@@ -46,16 +50,22 @@ export function useDynamicSVGImport(
       try {
         const Icon = (
           await import(
-            `!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/${_name}.svg`
+            `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/${_name}.svg`
           )
         ).default;
         setImportedIcon(Icon);
         onCompleted?.(_name, Icon);
       } catch (err) {
-        console.log('err', err);
         if ((err as any).message.includes('Cannot find module')) {
-          setImportedIcon(DefaultTokenIcon);
-          onCompleted?.(_name, DefaultTokenIcon);
+          const Icon = (
+            await import(
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/default.svg`
+            )
+          ).default;
+          setImportedIcon(Icon);
+          onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
           onError?.(err as any);

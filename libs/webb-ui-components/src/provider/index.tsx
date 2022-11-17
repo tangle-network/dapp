@@ -1,22 +1,26 @@
+import { noop } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/app-util';
 import React, { createContext, useMemo, useState } from 'react';
+import {
+  NotificationProvider,
+  notificationApi,
+} from '../components/Notification';
 
 import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
 
-export const WebbUIContext = createContext<IWebbUIContext>({
+const initialContext: IWebbUIContext = {
   customMainComponent: undefined,
-  setMainComponent(component) {
-    console.log('default setMainComponent');
-  },
+  notificationApi,
+  setMainComponent: noop,
   theme: {
     isDarkMode: true,
-    toggleThemeMode: () => {
-      console.log('default toggleThemeMode');
-    }
-  }
-});
+    toggleThemeMode: noop,
+  },
+};
+
+export const WebbUIContext = createContext<IWebbUIContext>(initialContext);
 
 const appLogger = LoggerService.new('Stats App');
 
@@ -26,12 +30,14 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
 }) => {
   const [isDarkMode, toggleMode] = useDarkMode();
 
-  // The CustomMainComponent is a component that should be renderable inside of Pages - 
+  // The CustomMainComponent is a component that should be renderable inside of Pages -
   // But the contents of the component are defined outside of the Page.
   // This state exists to pass as props into the page.
-  const [customMainComponent, setCustomMainComponent] = useState<React.ReactElement | undefined>(undefined);
+  const [customMainComponent, setCustomMainComponent] = useState<
+    React.ReactElement | undefined
+  >(undefined);
   const setMainComponent = (component: React.ReactElement | undefined) => {
-    setCustomMainComponent(component)
+    setCustomMainComponent(component);
   };
 
   const theme = useMemo<IWebbUIContext['theme']>(
@@ -50,8 +56,12 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   }, [children]);
 
   return (
-    <WebbUIContext.Provider value={{ theme, customMainComponent, setMainComponent }}>
-      {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
+    <WebbUIContext.Provider
+      value={{ theme, customMainComponent, setMainComponent, notificationApi }}
+    >
+      <NotificationProvider>
+        {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
+      </NotificationProvider>
     </WebbUIContext.Provider>
   );
 };

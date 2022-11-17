@@ -56,12 +56,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const mergedClassName = twMerge(
       'max-w-max',
-      cx({ 'w-full max-w-none': isFullWidth }),
+      cx({ 'w-full max-w-none justify-center': isFullWidth }),
       getButtonClassNameByVariant(variant, size),
       className
     );
 
-    const contentProps = { children, leftIcon, rightIcon };
+    const contentProps = { children, leftIcon, rightIcon, variant };
 
     return (
       <Component
@@ -96,7 +96,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 /***** Internal components */
 
 function ButtonContent(props: ButtonContentProps) {
-  const { children, leftIcon, rightIcon } = props;
+  const { children, leftIcon, rightIcon, variant } = props;
 
   return (
     <>
@@ -106,8 +106,11 @@ function ButtonContent(props: ButtonContentProps) {
       <span
         className={cx(
           'block !text-inherit',
-          'border-b-[1.6px]',
-          'border-b-transparent group-hover:border-inherit dark:group-hover:border-inherit'
+          { 'border-b-[1.6px]': variant === 'link' },
+          {
+            'border-b-transparent group-hover:border-inherit dark:group-hover:border-inherit':
+              variant === 'link',
+          }
         )}
       >
         {children}

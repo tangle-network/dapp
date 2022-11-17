@@ -52,7 +52,9 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
                 <InformationLine className="!fill-current pointer-events-none" />
               </span>
             </TooltipTrigger>
-            <TooltipBody>{info}</TooltipBody>
+            <TooltipBody>
+              <Typography variant={'body3'}>{info}</Typography>
+            </TooltipBody>
           </Tooltip>
         )}
       </div>

@@ -1,3 +1,4 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { TransactionState } from '@webb-tools/dapp-types';
 import {
   BlockIcon,
@@ -18,7 +19,13 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ManageButton } from '../components/tables';
+import {
+  ShieldedAssetsTableContainer,
+  SpendNotesTableContainer,
+  UploadSpendNoteModal,
+} from '../containers';
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
@@ -27,8 +34,8 @@ import { getMessageFromTransactionState } from '../utils';
 
 const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
-  const { stage, setStage } = useBridgeDeposit();
-
+  const { stage ,setStage} = useBridgeDeposit();
+  const { noteManager } = useWebContext();
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
     return {
       id: '1',
@@ -44,7 +51,16 @@ const PageBridge = () => {
     }
   }, [setStage]);
 
+  // Upload modal state
+  const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
+
+  // Transatcion payload for queue card
   const [txPayload, setTxPayload] = useState(defaultTx);
+
+  // Callback to open upload modal
+  const handleOpenUploadModal = useCallback(() => {
+    setUploadModalIsOpen(true);
+  }, []);
 
   useEffect(() => {
     const message = getMessageFromTransactionState(stage);
@@ -179,6 +195,53 @@ const PageBridge = () => {
       </div>
 
       {/** Account stats table */}
+      {noteManager && (
+        <TabsRoot defaultValue="shielded-assets" className="mt-12 space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            {/** Tabs buttons */}
+            <TabsList
+              aria-label="account-statistics-table"
+              className="space-x-3.5 py-4"
+            >
+              <TabTrigger
+                isDisableStyle
+                value="shielded-assets"
+                className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+              >
+                Shielded Assets
+              </TabTrigger>
+              <TabTrigger
+                isDisableStyle
+                value="available-spend-notes"
+                className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
+              >
+                Available Spend Notes
+              </TabTrigger>
+            </TabsList>
+
+            {/** Right buttons (manage and filter) */}
+            <div className="space-x-1">
+              <ManageButton onUpload={handleOpenUploadModal} />
+            </div>
+          </div>
+
+          <TabContent value="shielded-assets">
+            <ShieldedAssetsTableContainer
+              onUploadSpendNote={handleOpenUploadModal}
+            />
+          </TabContent>
+          <TabContent value="available-spend-notes">
+            <SpendNotesTableContainer
+              onUploadSpendNote={handleOpenUploadModal}
+            />
+          </TabContent>
+        </TabsRoot>
+      )}
+
+      <UploadSpendNoteModal
+        isOpen={isUploadModalOpen}
+        setIsOpen={(isOpen) => setUploadModalIsOpen(isOpen)}
+      />
 
       {/** Last login */}
     </div>

@@ -1,4 +1,3 @@
-import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,16 +14,18 @@ import {
 } from '@tanstack/react-table';
 import { useCountriesQuery } from '../../generated/graphql';
 import {
-  AuthorityListItem,
   AuthorisesQuery,
-  Range,
+  AuthorityListItem,
   useAuthorities,
 } from '../../provider/hooks';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionContent,
+  AccordionItem,
   Avatar,
   Button,
   CardTable,
-  CheckBox,
   Collapsible,
   CollapsibleButton,
   CollapsibleContent,
@@ -35,16 +36,13 @@ import {
   Table,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { CheckBoxMenu } from '@webb-tools/webb-ui-components/components/CheckBoxMenu';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { Typography } from '@webb-tools/webb-ui-components';
 import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import { AuthoritiesTableProps } from './types';
-const countries = ['eg', 'uk'];
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
@@ -226,46 +224,48 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
             table.setGlobalFilter('');
           }}
         >
-          <Collapsible>
-            <CollapsibleButton>Location</CollapsibleButton>
-            <CollapsibleContent className={`space-x-1 `}>
-              <LocationFilter
-                selected={selectedCountries}
-                countries={countries}
-                onChange={(c) => {
-                  setSelectedCountries(c);
-                }}
-              />
-            </CollapsibleContent>
-          </Collapsible>
+          <Accordion type={'single'} collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'location'}>
+              <AccordionButton>Location</AccordionButton>
+              <AccordionContent className={`space-x-1 `}>
+                <LocationFilter
+                  selected={selectedCountries}
+                  countries={countries}
+                  onChange={(c) => {
+                    setSelectedCountries(c);
+                  }}
+                />
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Uptime</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={100}
-                defaultValue={[0, 100]}
-                value={uptimeFilter}
-                onChange={(val) => setUptimeFilter(val as any)}
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'uptime'}>
+              <AccordionButton>Uptime</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={100}
+                  defaultValue={[0, 100]}
+                  value={uptimeFilter}
+                  onChange={(val) => setUptimeFilter(val as any)}
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
 
-          <Collapsible>
-            <CollapsibleButton>Reputation</CollapsibleButton>
-            <CollapsibleContent>
-              <Slider
-                max={100}
-                defaultValue={[0, 100]}
-                value={reputationFilter}
-                onChange={(val) => setReputationFilter(val as any)}
-                className="w-full min-w-0"
-                hasLabel
-              />
-            </CollapsibleContent>
-          </Collapsible>
+            <AccordionItem className={'p-4 py-0'} value={'reputation'}>
+              <AccordionButton>Reputation</AccordionButton>
+              <AccordionContent>
+                <Slider
+                  max={100}
+                  defaultValue={[0, 100]}
+                  value={reputationFilter}
+                  onChange={(val) => setReputationFilter(val as any)}
+                  className="w-full min-w-0"
+                  hasLabel
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Filter>
       }
     >
@@ -285,12 +285,9 @@ const LocationFilter: FC<{
 }> = ({ countries, onChange, selected }) => {
   return (
     <div
-      style={{
-        maxWidth: '300px',
-        maxHeight: 300,
-        overflow: 'hidden',
-        overflowY: 'auto',
-      }}
+      className={
+        'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
+      }
     >
       <CheckBoxMenuGroup
         value={selected}

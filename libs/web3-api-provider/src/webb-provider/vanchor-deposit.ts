@@ -395,7 +395,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
                 worker
               ),
             () => {
-              worker?.terminate();
+              worker.terminate();
               return WebbError.from(WebbErrorCodes.TransactionCancelled);
             }
           );

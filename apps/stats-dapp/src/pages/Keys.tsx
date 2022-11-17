@@ -24,7 +24,7 @@ const Keys = () => {
   if (isLoading || currentKey === null || nextKey === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="xl" />;
+        <Spinner size="xl" />
       </div>
     );
   }
