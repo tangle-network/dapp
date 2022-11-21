@@ -35,10 +35,10 @@ const ProposalData: FC<{ data: Record<string, any> }> = ({ data }) => {
     return keys.length === 1 && keys[0] === 'data';
   }, [data]);
 
-  return knowProposal ? (
-    (JSON.stringify(data.data) as any)
-  ) : (
-    <div className={'whitespace-pre'}>{JSON.stringify(data, null, 2)}</div>
+  return (
+    <div className={'whitespace-pre-wrap'}>
+      {JSON.stringify(knowProposal ? data.data : data, null, 2)}
+    </div>
   );
 };
 
