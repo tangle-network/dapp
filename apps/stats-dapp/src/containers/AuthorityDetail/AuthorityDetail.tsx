@@ -49,6 +49,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 import { headerConfig } from '../KeygenTable';
+import { CountryIcon } from '@webb-tools/stats-dapp/components/CountryIcon/CountryIcon';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -218,7 +219,7 @@ const DetailsView: FC<{
   isPage: boolean;
   id: string;
 }> = ({ id, isLoading, isPage, stats }) => {
-  const location = 'EG';
+  const location = stats.location;
   const account = id;
 
   return (
@@ -281,7 +282,15 @@ const DetailsView: FC<{
                 <Avatar value={id} size="lg" />
                 <div className="flex flex-col space-y-1">
                   <Typography variant="h5" fw="bold">
-                    {`${shortenString(id, 4)} ${getUnicodeFlagIcon(location)}`}
+                    {`${shortenString(id, 4)} `}{' '}
+                    <span className={'inline-block'}>
+                      {location && (
+                        <CountryIcon
+                          className={'inline-block'}
+                          name={location}
+                        />
+                      )}
+                    </span>
                   </Typography>
                   <KeyValueWithButton
                     hasShortenValue={false}

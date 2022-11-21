@@ -26,9 +26,6 @@ import {
   Avatar,
   Button,
   CardTable,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Filter,
   KeyValueWithButton,
   Progress,
@@ -38,11 +35,11 @@ import {
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { Typography } from '@webb-tools/webb-ui-components';
-import * as flags from 'country-flag-icons/react/3x2';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
+import { CountryIcon } from '@webb-tools/stats-dapp/components/CountryIcon/CountryIcon';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
@@ -66,7 +63,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     header: 'Location',
     enableColumnFilter: false,
     cell: (props) => {
-      const uniCode = props.getValue();
+      const countryCode = props.getValue();
       return (
         <Typography
           variant="body1"
@@ -74,7 +71,11 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
           component="span"
           className="!text-inherit"
         >
-          {uniCode ? getUnicodeFlagIcon(uniCode) : 'Anonymous'}
+          {countryCode ? (
+            <CountryIcon size={'lg'} name={countryCode} />
+          ) : (
+            'Anonymous'
+          )}
         </Typography>
       );
     },
@@ -299,7 +300,7 @@ const LocationFilter: FC<{
           onChange(v);
         }}
         iconGetter={(c) => {
-          return flags[c.toUpperCase() as unknown as any];
+          return <CountryIcon name={c} />;
         }}
         labelGetter={(c) => c}
         keyGetter={(c) => c}

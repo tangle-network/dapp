@@ -93,6 +93,7 @@ export type AuthorityStats = {
   numberOfKeys: string;
   uptime: number;
   reputation: number;
+  location: string | null;
   keyGenThreshold: AuthorityThresholdStatus;
   nextKeyGenThreshold: AuthorityThresholdStatus;
   pendingKeyGenThreshold: AuthorityThresholdStatus;
@@ -498,6 +499,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const auth = mapSessionAuthValidatorNode(sessionValidator);
           const stats: AuthorityStats = {
             numberOfKeys: String(counter),
+            location: auth.location,
             keyGenThreshold: {
               val: String(keyGen?.current ?? '-'),
               inTheSet: auth.isBest,
