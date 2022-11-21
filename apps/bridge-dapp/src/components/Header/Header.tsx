@@ -7,7 +7,6 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -15,15 +14,16 @@ import * as constants from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
-import { HeaderButton } from './HeaderButton';
 import { HeaderProps } from './types';
+import { WalletButton } from './WalletButton';
 import { WalletModal } from './WalletModal';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const { activeWallet, activeChain, loading, chains } = useWebContext();
+  const { activeAccount, activeWallet, activeChain, loading, chains } =
+    useWebContext();
 
   const { setMainComponent } = useWebbUI();
 
@@ -58,16 +58,10 @@ export const Header: FC<HeaderProps> = () => {
           )}
 
           {/** Wallet is actived */}
-          {activeWallet && activeChain && !loading && (
+          {activeAccount && activeWallet && activeChain && !loading && (
             <>
               <ChainSwitcherButton />
-              <HeaderButton className="capitalize rounded-full">
-                {activeWallet.Logo}
-
-                <Typography variant="body1" fw="bold">
-                  {activeWallet.name}
-                </Typography>
-              </HeaderButton>
+              <WalletButton account={activeAccount} wallet={activeWallet} />
             </>
           )}
 

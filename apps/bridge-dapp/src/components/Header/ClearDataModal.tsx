@@ -17,7 +17,8 @@ export const ClearDataModal: FC<{
   setIsOpen: (isOpen: boolean) => void;
   onClearData: () => void;
   onSaveBackups: () => void;
-}> = ({ isOpen, setIsOpen, onClearData, onSaveBackups }) => {
+  noteSize: number;
+}> = ({ isOpen, setIsOpen, onClearData, noteSize, onSaveBackups }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleClearData = useCallback(() => {
@@ -38,8 +39,8 @@ export const ClearDataModal: FC<{
         <div className="p-9 space-y-9">
           <div className="space-y-4">
             <Typography variant="body1" fw="semibold">
-              All (10) spend note(s) that you have will be permenently deleted
-              from local storage. You may want to{' '}
+              All ({noteSize}) spend note(s) that you have will be permenently
+              deleted from local storage. You may want to{' '}
               <Button
                 onClick={onSaveBackups}
                 as="span"

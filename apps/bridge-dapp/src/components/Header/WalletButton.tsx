@@ -321,6 +321,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         </DropdownBody>
       </Dropdown>
       <ClearDataModal
+        noteSize={allNotes.size}
         onSaveBackups={handleSaveBackups}
         onClearData={handleClearData}
         isOpen={isOpen}
