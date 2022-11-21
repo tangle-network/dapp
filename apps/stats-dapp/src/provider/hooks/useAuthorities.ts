@@ -312,7 +312,11 @@ export function useAuthorities(
         ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
         : []
     );
-    const uptime = rangeIntoIntFilter(filter.uptime ?? []);
+    const uptime = rangeIntoIntFilter(
+      filter.uptime
+        ? (filter.uptime.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
+        : []
+    );
     if (metaData.val) {
       call({
         variables: {
@@ -350,7 +354,7 @@ export function useAuthorities(
               return {
                 id: sessionValidator?.validator.id,
                 location: 'any',
-                uptime: auth?.uptime ?? 0,
+                uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
             });
@@ -508,7 +512,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               inTheSet: auth.isBest,
             },
             reputation: Number(auth.reputation) * Math.pow(10, -7),
-            uptime: auth.uptime,
+            uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
           };
           return {
             error: '',
