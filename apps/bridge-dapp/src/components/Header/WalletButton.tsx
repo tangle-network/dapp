@@ -56,6 +56,12 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     return wallets.find((w) => w.connected);
   }, [wallets]);
 
+  const noteSize = useMemo(
+    () =>
+      Array.from(allNotes.values()).reduce((acc, curr) => acc + curr.length, 0),
+    [allNotes]
+  );
+
   const displayText = useMemo(() => {
     if (account.name) {
       return account.name;
@@ -321,6 +327,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         </DropdownBody>
       </Dropdown>
       <ClearDataModal
+        noteSize={noteSize}
         onSaveBackups={handleSaveBackups}
         onClearData={handleClearData}
         isOpen={isOpen}

@@ -25,7 +25,7 @@ export const DepositConfirmContainer = forwardRef<
     const [progress, setProgress] = useState<number | null>(null);
 
     const { deposit, stage, setStage } = useBridgeDeposit();
-    const { setMainComponent } = useWebbUI();
+    const { setMainComponent, notificationApi } = useWebbUI();
 
     // Download for the deposit confirm
     const downloadNote = useCallback((depositPayload: DepositPayload) => {
@@ -49,7 +49,7 @@ export const DepositConfirmContainer = forwardRef<
       // Set transaction payload for transaction processing card
       setTxPayload((prev) => ({
         ...prev,
-        id: prev.id ? '1' : (parseInt(prev.id!) + 1).toString(),
+        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
         amount: amount.toString(),
         timestamp: new Date(),
         method: 'Deposit',
@@ -57,7 +57,10 @@ export const DepositConfirmContainer = forwardRef<
           status: 'in-progress',
         },
         token: token?.symbol,
-        tokens: [sourceChain?.symbol ?? 'default', destChain?.symbol ?? 'default'],
+        tokens: [
+          sourceChain?.symbol ?? 'default',
+          destChain?.symbol ?? 'default',
+        ],
         wallets: {
           src: <TokenIcon name={sourceChain?.symbol || 'default'} />,
           dist: <TokenIcon name={destChain?.symbol || 'default'} />,
@@ -66,16 +69,41 @@ export const DepositConfirmContainer = forwardRef<
 
       if (isDepositing) {
         setMainComponent(undefined);
-      } else {
+        return;
+      }
+
+      try {
         setIsDepositing(true);
         downloadNote(depositPayload);
         await deposit(depositPayload);
         setStage(TransactionState.Done);
+        setStage(TransactionState.Ideal);
+      } catch (error) {
+        setStage(TransactionState.Failed);
+        console.log('Deposit error', error);
+        notificationApi({
+          variant: 'error',
+          message: 'Deposit failed',
+          secondaryMessage: 'Something went wrong when depositing',
+        });
+      } finally {
         setIsDepositing(false);
         setMainComponent(undefined);
-        setStage(TransactionState.Ideal);
       }
-    }, [amount, deposit, depositPayload, destChain?.symbol, downloadNote, isDepositing, setMainComponent, setStage, setTxPayload, sourceChain?.symbol, token?.symbol]);
+    }, [
+      amount,
+      deposit,
+      depositPayload,
+      destChain?.symbol,
+      downloadNote,
+      isDepositing,
+      notificationApi,
+      setMainComponent,
+      setStage,
+      setTxPayload,
+      sourceChain?.symbol,
+      token?.symbol,
+    ]);
 
     // Effect to update the progress bar
     useEffect(() => {

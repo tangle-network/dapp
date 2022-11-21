@@ -30,12 +30,14 @@ import {
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
+import { useShieldedAssets, useSpendNotes } from '../hooks';
 import { getMessageFromTransactionState } from '../utils';
 
 const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
   const { stage, setStage } = useBridgeDeposit();
   const { noteManager } = useWebContext();
+
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
     return {
       id: '1',
@@ -48,7 +50,7 @@ const PageBridge = () => {
       onDismiss: () => {
         setStage(TransactionState.Ideal);
       },
-    }
+    };
   }, [setStage]);
 
   // Upload modal state
@@ -62,6 +64,12 @@ const PageBridge = () => {
     setUploadModalIsOpen(true);
   }, []);
 
+  // Shielded assets table data
+  const shieldedAssetsTableData = useShieldedAssets();
+
+  // Spend notes table data
+  const spendNotesTableData = useSpendNotes();
+
   useEffect(() => {
     const message = getMessageFromTransactionState(stage);
 
@@ -70,6 +78,7 @@ const PageBridge = () => {
         ...prev,
         txStatus: {
           ...prev.txStatus,
+          status: 'in-progress',
           message: `${message}...`,
         },
       }));
@@ -227,11 +236,13 @@ const PageBridge = () => {
 
           <TabContent value="shielded-assets">
             <ShieldedAssetsTableContainer
+              data={shieldedAssetsTableData}
               onUploadSpendNote={handleOpenUploadModal}
             />
           </TabContent>
           <TabContent value="available-spend-notes">
             <SpendNotesTableContainer
+              data={spendNotesTableData}
               onUploadSpendNote={handleOpenUploadModal}
             />
           </TabContent>

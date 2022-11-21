@@ -31,12 +31,19 @@ export const DepositContainer = forwardRef<
   DepositContainerProps
 >(({ setTxPayload, ...props }, ref) => {
   const { setMainComponent } = useWebbUI();
-  const { activeApi, chains, activeChain, activeWallet, loading, noteManager } =
-    useWebContext();
+  const {
+    activeApi,
+    chains,
+    activeChain,
+    activeWallet,
+    loading,
+    noteManager,
+    apiConfig: { currencies },
+  } = useWebContext();
 
   const { generateNote } = useBridgeDeposit();
-  const { setGovernedCurrency } = useBridge();
-  const { governedCurrencies , wrappableCurrencies  } = useCurrencies();
+  const { setGovernedCurrency, setWrappableCurrency } = useBridge();
+  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
 
   // The seleted token balance
   const selectedTokenBalance = useCurrencyBalance(
@@ -47,19 +54,21 @@ export const DepositContainer = forwardRef<
     useModal(false);
 
   // Other supported tokens balances
-  const balances = useCurrenciesBalances(governedCurrencies.concat(wrappableCurrencies));
+  const balances = useCurrenciesBalances(
+    governedCurrencies.concat(wrappableCurrencies)
+  );
 
   const [isGeneratingNote, setIsGeneratingNote] = useState(false);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
   const [amount, setAmount] = useState<number>(0);
 
-  const parseAndSetAmount = (amount: string | number): void => {
+  const onAmountChange = useCallback((amount: string): void => {
     const parsedAmount = Number(amount);
     if (!isNaN(parsedAmount)) {
       setAmount(parsedAmount);
     }
-  };
+  }, []);
 
   const sourceChains: ChainType[] = useMemo(() => {
     return Object.values(chains).map((val) => {
@@ -123,14 +132,35 @@ export const DepositContainer = forwardRef<
   }, [activeApi, balances]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
-    return Object.values(governedCurrencies).map((currency) => {
+    return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
+      (currency) => {
+        return {
+          name: currency.view.name,
+          symbol: currency.view.symbol,
+          balance: balances[currency.id],
+        };
+      }
+    );
+  }, [governedCurrencies, wrappableCurrencies, balances]);
+
+  const populatedAllTokens = useMemo((): AssetType[] => {
+    // Filter currencies that are not in the populated selectable tokens
+    const filteredCurrencies = Object.values(currencies).filter(
+      (currency) =>
+        !populatedSelectableWebbTokens.find(
+          (token) =>
+            token.symbol === currency.symbol && token.name === currency.name
+        )
+    );
+
+    return Object.values(filteredCurrencies).map((currency) => {
       return {
-        name: currency.view.name,
-        symbol: currency.view.symbol,
+        name: currency.name,
+        symbol: currency.symbol,
         balance: balances[currency.id],
       };
     });
-  }, [governedCurrencies, balances]);
+  }, [currencies, populatedSelectableWebbTokens, balances]);
 
   const isWalletConnected = useMemo(
     () => activeChain && activeWallet && !loading,
@@ -145,12 +175,16 @@ export const DepositContainer = forwardRef<
       selectedToken,
       destChainInputValue,
       amount,
+      typeof selectedTokenBalance === 'number'
+        ? amount <= selectedTokenBalance
+        : true,
     ].some((val) => Boolean(val) === false);
   }, [
     amount,
     destChainInputValue,
     selectedSourceChain,
     selectedToken,
+    selectedTokenBalance,
   ]);
 
   const handleTokenChange = useCallback(
@@ -158,11 +192,28 @@ export const DepositContainer = forwardRef<
       const selectedToken = Object.values(governedCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
+
       if (selectedToken) {
         setGovernedCurrency(selectedToken);
       }
+
+      const selectedWrappableToken = Object.values(wrappableCurrencies).find(
+        (token) => token.view.symbol === newToken.symbol
+      );
+
+      if (selectedWrappableToken) {
+        setWrappableCurrency(selectedWrappableToken);
+      }
+
+      setMainComponent(undefined);
     },
-    [governedCurrencies, setGovernedCurrency]
+    [
+      governedCurrencies,
+      setGovernedCurrency,
+      setMainComponent,
+      setWrappableCurrency,
+      wrappableCurrencies,
+    ]
   );
 
   const sourceChainInputOnClick = useCallback(() => {
@@ -220,7 +271,13 @@ export const DepositContainer = forwardRef<
       return;
     }
 
-    if (sourceChain && destChain && selectedToken && amount !== 0  && activeApi?.state.activeBridge) {
+    if (
+      sourceChain &&
+      destChain &&
+      selectedToken &&
+      amount !== 0 &&
+      activeApi?.state?.activeBridge
+    ) {
       setIsGeneratingNote(true);
       const newDepositPayload = await generateNote(
         activeApi.state.activeBridge.targets[
@@ -250,11 +307,11 @@ export const DepositContainer = forwardRef<
     destChain,
     selectedToken,
     amount,
+    activeApi?.state?.activeBridge,
     chains,
     setMainComponent,
     setNoteAccountModalOpen,
     generateNote,
-    activeApi?.state.activeBridge?.targets,
     setTxPayload,
     selectedSourceChain,
     destChainInputValue,
@@ -319,11 +376,8 @@ export const DepositContainer = forwardRef<
                     title={'Select Asset to Deposit'}
                     popularTokens={[]}
                     selectTokens={populatedSelectableWebbTokens}
-                    unavailableTokens={[]}
-                    onChange={(newAsset) => {
-                      handleTokenChange(newAsset);
-                      setMainComponent(undefined);
-                    }}
+                    unavailableTokens={populatedAllTokens}
+                    onChange={handleTokenChange}
                     onClose={() => setMainComponent(undefined)}
                   />
                 );
@@ -333,9 +387,7 @@ export const DepositContainer = forwardRef<
           }}
           amountInputProps={{
             amount: amount ? amount.toString() : undefined,
-            onAmountChange: (value) => {
-              parseAndSetAmount(value);
-            },
+            onAmountChange,
             onMaxBtnClick,
           }}
           buttonProps={{

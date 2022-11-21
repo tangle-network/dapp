@@ -2,44 +2,41 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
-  useReactTable,
   Table as RTTable,
+  useReactTable,
 } from '@tanstack/react-table';
-import { formatDistanceToNow } from 'date-fns';
-import { ChevronDown, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, ChevronDown, ExternalLinkLine } from '@webb-tools/icons';
 import {
   Button,
   fuzzyFilter,
   KeyValueWithButton,
-  TokenPair,
-  Typography,
-  Table,
   shortenString,
+  Table,
+  TokenWithAmount,
+  Typography,
 } from '@webb-tools/webb-ui-components';
-import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
-import { randRecentDate } from '@ngneat/falso';
-import { useSpendNotes } from '../../hooks';
-import { EmptyTable } from '../../components/tables';
+import { formatDistanceToNow } from 'date-fns';
 import { FC } from 'react';
+import { EmptyTable } from '../../components/tables';
+import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
 const columns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <TokenIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
   }),
 
-  columnHelper.accessor('token1Symbol', {
+  columnHelper.accessor('governedTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
       const token1Symbol = props.getValue<string>();
-      const token2Symbol = props.row.original.token2Symbol;
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
         <div className="flex items-center space-x-1.5">
-          <TokenPair token1Symbol={token1Symbol} token2Symbol={token2Symbol} />
+          <TokenWithAmount token1Symbol={token1Symbol} />
 
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLinkLine />
@@ -96,46 +93,10 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 ];
 
-const assetsUrl = 'https://webb.tools';
-
-const data: SpendNoteDataType[] = [
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbETH',
-    token2Symbol: 'WETH',
-    assetsUrl,
-    createdTime: randRecentDate(),
-    subsequentDeposits: 0,
-    note: 'webb://v1:vanchor/1099511628196:1099511628196/0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f:0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f/00000100000001a4:00000000000000000de0b6b3a7640000:215beaaaf3c9789e7fceda50314e2c2448c0faa12d0a0f15bf1ba20bea484cda:002b9d68d5bdddf2f16fdaa209a1947ff9430a644381576a70ffe39309f736d7/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Circom&token=webbETH&denom=18&amount=1000000000000000000',
-    balance: 0.654,
-  },
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbETH',
-    token2Symbol: 'WETH',
-    assetsUrl,
-    createdTime: randRecentDate(),
-    subsequentDeposits: 8,
-    note: 'webb://v1:vanchor/1099511628196:1099511628196/0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f:0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f/00000100000001a4:00000000000000000de0b6b3a7640000:215beaaaf3c9789e7fceda50314e2c2448c0faa12d0a0f15bf1ba20bea484cda:002b9d68d5bdddf2f16fdaa209a1947ff9430a644381576a70ffe39309f736d7/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Circom&token=webbETH&denom=18&amount=1000000000000000000',
-    balance: 0.22,
-  },
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbUSDC',
-    token2Symbol: 'USDT',
-    assetsUrl,
-    createdTime: randRecentDate(),
-    subsequentDeposits: 88,
-    note: 'webb://v1:vanchor/1099511628196:1099511628196/0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f:0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f/00000100000001a4:00000000000000000de0b6b3a7640000:215beaaaf3c9789e7fceda50314e2c2448c0faa12d0a0f15bf1ba20bea484cda:002b9d68d5bdddf2f16fdaa209a1947ff9430a644381576a70ffe39309f736d7/?curve=Bn254&width=5&exp=5&hf=Poseidon&backend=Circom&token=webbETH&denom=18&amount=1000000000000000000',
-    balance: 500,
-  },
-];
-
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
+  data = [],
   onUploadSpendNote,
 }) => {
-  const data = useSpendNotes();
-
   const table = useReactTable({
     data,
     columns,
