@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 export interface WalletConfig {
   id: number;
-  Logo: any;
+  Logo: React.ReactElement;
   name: string;
   title: string;
   platform: string;

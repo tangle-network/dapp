@@ -64,6 +64,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       ? this.inner.noteManager.getKeypair()
       : new Keypair();
 
+    console.log('got the keypair');
+
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
       curve: 'Bn254',
@@ -73,6 +75,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       chainId: destination.toString(),
       keypair,
     });
+
+    console.log('generated the utxo: ', depositOutputUtxo.serialize());
 
     const srcAddress = bridge.targets[sourceChainId];
     const destAddress = bridge.targets[destination];
@@ -88,19 +92,23 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       secrets: [
         toFixedHex(destination, 8).substring(2),
         toFixedHex(depositOutputUtxo.amount, 16).substring(2),
-        toFixedHex(keypair.privkey!).substring(2),
-        toFixedHex(depositOutputUtxo.blinding).substring(2),
+        toFixedHex(keypair.privkey).substring(2),
+        toFixedHex(`0x${depositOutputUtxo.blinding}`).substring(2),
       ].join(':'),
       sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress!,
+      sourceIdentifyingData: srcAddress,
       targetChain: destination.toString(),
-      targetIdentifyingData: destAddress!,
+      targetIdentifyingData: destAddress,
       tokenSymbol: tokenSymbol,
       version: 'v1',
-      width: '4',
+      width: '5',
     };
 
+    console.log('before generating the note: ', noteInput);
+
     const note = await Note.generateNote(noteInput);
+
+    console.log('after generating the note');
 
     return {
       note: note,
@@ -125,6 +133,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const abortSignal = this.cancelToken.abortSignal;
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
+
+    console.log('bridge: ', bridge);
+    console.log('currency: ', currency);
 
     if (!bridge || !currency) {
       throw new Error('api not ready');
@@ -292,7 +303,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
                 leavesMap,
                 smallKey,
                 Buffer.from(smallWasm),
-                worker!
+                worker
               ),
             () => {
               worker?.terminate();
@@ -381,10 +392,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
                 leavesMap,
                 smallKey,
                 Buffer.from(smallWasm),
-                worker!
+                worker
               ),
             () => {
-              worker?.terminate();
+              worker.terminate();
               return WebbError.from(WebbErrorCodes.TransactionCancelled);
             }
           );
@@ -393,6 +404,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
           // emit event for waiting for transaction to confirm
           const receipt = await tx.wait();
+
+
+          // TODO: Make this parse the receipt for the index data
+          const noteIndex = (await srcVAnchor.getNextIndex() - 1);
+          const indexedNote = await Note.deserialize(depositPayload.note.serialize());
+          indexedNote.mutateIndex(noteIndex.toString());
+          await this.inner.noteManager.addNote(indexedNote);
+          await this.inner.noteManager.removeNote(depositPayload.note);
 
           this.inner.notificationHandler({
             data: {
@@ -410,7 +429,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           this.emit('stateChange', TransactionState.Done);
           return {
             txHash: receipt.transactionHash,
-            outputNotes: [depositPayload.note],
+            outputNotes: [indexedNote],
           };
         } else {
           this.inner.notificationHandler({
@@ -436,6 +455,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         }
       }
     } catch (e: any) {
+      console.log('yo something failed in the catch: ', e);
       this.inner.notificationHandler.remove('waiting-approval');
       const isUserCancel =
         e instanceof WebbError &&

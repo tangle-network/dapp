@@ -7,6 +7,7 @@ import {
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
+import { LoggerService } from '@webb-tools/app-util';
 import {
   keypairStorageFactory,
   netStorageFactory,
@@ -33,33 +34,31 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
+import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { AppEvent, TAppEvent } from './app-event';
-import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import { StoreProvider } from '@webb-tools/react-environment/store';
-import { WebbContext } from './webb-context';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
-import { Spinner } from '@webb-tools/icons';
+import { DimensionsProvider } from '@webb-tools/responsive-utils';
+import {
+  calculateTypedChainId,
+  ChainType,
+  Keypair,
+} from '@webb-tools/sdk-core';
 import {
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
 } from '@webb-tools/web3-api-provider';
-import { LoggerService } from '@webb-tools/app-util';
-import {
-  calculateTypedChainId,
-  ChainType,
-  Keypair,
-  Note,
-} from '@webb-tools/sdk-core';
+import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { TAppEvent } from './app-event';
+import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
+import { WebbContext } from './webb-context';
 
-import { unsupportedChain } from './error';
 import { SettingProvider } from '@webb-tools/react-environment';
+import { unsupportedChain } from './error';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -152,9 +151,7 @@ notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
 
-const appEvent = new AppEvent();
-
-export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
+export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
     undefined
   );
@@ -419,13 +416,17 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
     const relayerManagerFactory = await getRelayerManagerFactory();
 
     const wallet = _wallet || activeWallet;
+
     // wallet cleanup
     /// if new wallet id isn't the same of the current then the dApp is dealing with api change
     if (activeApi) {
       await activeApi.destroy();
     }
+
     try {
       setLoading(true);
+      appEvent.send('walletConnectionState', 'loading');
+
       /// init the active api value
       let localActiveApi: WebbApiProvider<any> | null = null;
       switch (wallet.id) {
@@ -449,6 +450,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                     setInteractiveFeedbacks,
                     feedback
                   );
+                  appEvent.send('walletConnectionState', 'failed');
                 },
               },
               relayerManager,
@@ -463,18 +465,24 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
               typedChainId,
               wallet
             );
+
             await setActiveApiWithAccounts(
               webbPolkadot,
               chain,
               _networkStorage ?? networkStorage
             );
+
             localActiveApi = webbPolkadot;
+
             if (noteManager) {
               localActiveApi.noteManager = noteManager;
             }
+
+            appEvent.send('walletConnectionState', 'sucess');
             setLoading(false);
           }
           break;
+
         case WalletId.MetaMask:
         case WalletId.WalletConnectV1:
           {
@@ -530,11 +538,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                       alignItems: 'center',
                     },
                   },
-                  [
-                    React.createElement(wallet.Logo, {
-                      key: `${wallet.id}logo`,
-                    }),
-                  ]
+                  [wallet.Logo]
                 ),
               });
             }
@@ -689,9 +693,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
                     const newChainId = await web3Provider.network;
 
                     if (newChainId != chain.chainId) {
+                      appEvent.send('walletConnectionState', 'failed');
                       throw switchError;
                     }
                   } else {
+                    appEvent.send('walletConnectionState', 'failed');
                     throw switchError;
                   }
                 });
@@ -715,8 +721,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
       setActiveChain(chain);
       setActiveWallet(wallet);
       setLoading(false);
+      appEvent.send('walletConnectionState', 'sucess');
+
       return localActiveApi;
     } catch (e) {
+      setLoading(false);
+      appEvent.send('walletConnectionState', 'failed');
       if (e instanceof WebbError) {
         /// Catch the errors for the switcher while switching
         catchWebbError(e);
@@ -824,6 +834,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
     };
     init().finally(() => {
       setIsConnecting(false);
+      setLoading(false);
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
       // Set the default network to the last selected network
@@ -875,6 +886,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children }) => {
             interactiveFeedback
           );
         },
+        appEvent,
       }}
     >
       <StoreProvider>

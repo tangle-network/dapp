@@ -1,5 +1,4 @@
-import { DefaultTokenIcon } from '../DefaultTokenIcon';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 /**
  * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
@@ -8,11 +7,20 @@ export interface DynamicSVGImportOptions {
   /**
    * A optional function which is called when finish loading SVG icon
    */
-  onCompleted?: (name: string, SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined) => void;
+  onCompleted?: (
+    name: string,
+    SvgIcon: React.FC<React.SVGProps<SVGSVGElement>> | undefined
+  ) => void;
   /**
    * An optional function for handle error when loading SVG icon
    */
   onError?: React.ReactEventHandler<SVGSVGElement>;
+
+  /**
+   * The type of icon
+   * @default "token"
+   */
+  type?: 'token' | 'chain';
 }
 
 /**
@@ -21,27 +29,43 @@ export interface DynamicSVGImportOptions {
  * @param options Represent the option when using the hooks
  * @returns `error`, `loading` and `SvgIcon` in an object
  */
-export function useDynamicSVGImport(name: string, options: DynamicSVGImportOptions = {}) {
-  const ImportedIconRef = useRef<React.FC<React.SVGProps<SVGSVGElement>>>();
+export function useDynamicSVGImport(
+  name: string,
+  options: DynamicSVGImportOptions = {}
+) {
+  const [importedIcon, setImportedIcon] = useState<
+    React.FC<React.SVGProps<SVGSVGElement>> | undefined
+  >();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
 
   const { onCompleted, onError } = options;
 
   const _name = useMemo(() => name.trim().toLowerCase(), [name]);
+  const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        ImportedIconRef.current = (
-          await import(`!!@svgr/webpack?+svgo,+titleProp,+ref!../tokens/${_name}.svg`)
+        const Icon = (
+          await import(
+            `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/${_name}.svg`
+          )
         ).default;
-        onCompleted?.(_name, ImportedIconRef.current);
+        setImportedIcon(Icon);
+        onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          ImportedIconRef.current = DefaultTokenIcon;
-          onCompleted?.(_name, ImportedIconRef.current);
+          const Icon = (
+            await import(
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/default.svg`
+            )
+          ).default;
+          setImportedIcon(Icon);
+          onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
           onError?.(err as any);
@@ -54,5 +78,5 @@ export function useDynamicSVGImport(name: string, options: DynamicSVGImportOptio
     importIcon();
   }, [_name, onCompleted, onError]);
 
-  return { error, loading, SvgIcon: ImportedIconRef.current };
+  return { error, loading, SvgIcon: importedIcon };
 }

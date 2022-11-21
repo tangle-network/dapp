@@ -39,11 +39,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const [receipt, setReceipt] = useState<string>('');
 
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
-  const [relayersState, setRelayersState] = useState<RelayersState>({
-    relayers: [],
-    activeRelayer: null,
-    loading: true,
-  });
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -52,7 +47,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
   });
 
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi } = useWebContext();
   const { registerInteractiveFeedback } = useWebContext();
 
   const withdrawApi = useMemo(() => {
@@ -112,13 +107,17 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           );
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
+          return true;
         } catch (e) {
           console.log('error from withdraw api', e);
 
           if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
-            let interactiveFeedback: InteractiveFeedback = misbehavingRelayer();
+            const interactiveFeedback: InteractiveFeedback =
+              misbehavingRelayer();
             registerInteractiveFeedback(interactiveFeedback);
           }
+
+          return false;
         }
       }
     }
@@ -135,69 +134,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     }
   }, [canCancel, withdrawApi, stage, setStage]);
 
-  const setRelayer = useCallback(
-    (nextRelayer: WebbRelayer | null) => {
-      if (activeChain) {
-        activeApi?.relayerManager.setActiveRelayer(
-          nextRelayer,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-        );
-      }
-    },
-    [activeApi?.relayerManager, activeChain]
-  );
-
-  useEffect(() => {
-    const subscriptions = params.notes?.map((note) =>
-      activeApi?.relayerManager.listUpdated.subscribe(() => {
-        if (!note) {
-          return;
-        }
-
-        activeApi?.relayerManager
-          .getRelayersByNote(note)
-          .then((r: WebbRelayer[]) => {
-            setRelayersState((p) => ({
-              ...p,
-              loading: false,
-              relayers: r,
-            }));
-          });
-      })
-    );
-
-    return () => subscriptions?.forEach((sub) => sub?.unsubscribe());
-  }, [activeApi, params.notes, withdrawApi]);
-
   // hook events
   useEffect(() => {
-    if (!activeApi) {
-      return;
-    }
-
-    // We can determine the compatible relayers by the selected target.
-    if (params.notes?.length) {
-      activeApi.relayerManager
-        .getRelayersByNote(params.notes[0])
-        .then((r: WebbRelayer[]) => {
-          setRelayersState((p) => ({
-            ...p,
-            loading: false,
-            relayers: r,
-          }));
-        });
-    }
-
-    // Subscribe to updates for the active relayer
-    const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe(
-      (next: OptionalActiveRelayer) => {
-        setRelayersState((p) => ({
-          ...p,
-          activeRelayer: next,
-        }));
-      }
-    );
-
     if (!withdrawApi) {
       return;
     }
@@ -236,7 +174,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     });
 
     return () => {
-      sub?.unsubscribe();
       Object.values(unsubscribe).forEach((v) => v && v());
     };
   }, [withdrawApi, params.notes, activeApi, activeApi?.relayerManager]);
@@ -251,8 +188,5 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     cancelWithdraw,
     error: error.error,
     validationError: error.validationError,
-    relayersState,
-    setRelayer,
-    relayerMethods: activeApi?.relayerManager,
   };
 };

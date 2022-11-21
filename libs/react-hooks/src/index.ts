@@ -1,5 +1,7 @@
 export * from './currency';
+export * from './bridge/useBridge';
 export * from './deposit/useBridgeDeposit';
+export * from './relayer/useRelayers';
 export * from './note';
 export * from './transfer/useTransfer';
 export * from './withdraw/useWithdraw';

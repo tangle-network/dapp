@@ -5,7 +5,8 @@ import { FC } from 'react';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { config as routerConfig } from './routes';
 
-const appEvent = new AppEvent();
+// Singleton app event instance
+export const appEvent = new AppEvent();
 
 const App: FC = () => {
   return (

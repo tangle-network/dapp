@@ -8,7 +8,7 @@ import { getRoundedAmountString } from '../../utils';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
-import { TokenInputProps } from './types';
+import { TokenInputComponentProps } from './types';
 
 /**
  * Token Input component, for selecting token on the bridge
@@ -20,7 +20,7 @@ import { TokenInputProps } from './types';
  *  <TokenInput token={{ symbol: 'eth', balance: 1.2, balanceInUsd: 1000 }} />
  * ```
  */
-export const TokenInput = forwardRef<HTMLDivElement, TokenInputProps>(
+export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
   ({ className, id, info, title = 'Token', token, ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;

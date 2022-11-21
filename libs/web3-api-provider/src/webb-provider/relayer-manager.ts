@@ -178,11 +178,16 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      const relayerLeaves = await relayers[i].getLeaves(
-        typedChainId,
-        contract.inner.address,
-        abortSignal
-      );
+      let relayerLeaves;
+      try {
+        relayerLeaves = await relayers[i].getLeaves(
+          typedChainId,
+          contract.inner.address,
+          abortSignal
+        );
+      } catch (e) {
+        continue;
+      }
 
       const validLatestLeaf = await contract.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],

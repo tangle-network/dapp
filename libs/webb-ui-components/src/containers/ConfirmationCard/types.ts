@@ -38,7 +38,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The transaction progress
    */
-  progress?: number;
+  progress: number | null;
 
   /**
    * Fee amount
@@ -69,15 +69,10 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
-  /**
-   * The first token symbol
-   */
-  token1Symbol?: string;
-
-  /**
-   * The second token symbol
-   */
-  token2Symbol?: string;
+  governedTokenSymbol?: string;
+  wrappableTokenSymbol?: string;
+  // Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+  wrappingAmount?: string;
 }
 
 export interface WithdrawConfirmationProps extends ConfirmationCardProps {
@@ -89,13 +84,13 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  token1Symbol?: string;
+  governedTokenSymbol?: string;
 
   /**
    * The second token symbol
    */
 
-  token2Symbol?: string;
+  wrappableTokenSymbol?: string;
 
   /**
    * The relayer address
@@ -122,13 +117,7 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  token1Symbol?: string;
-
-  /**
-   * The second token symbol
-   */
-
-  token2Symbol?: string;
+  governedTokenSymbol?: string;
 
   /**
    * The relayer address

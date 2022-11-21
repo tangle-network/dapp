@@ -154,6 +154,7 @@ export class WebbWeb3Provider
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
+
   }
 
   getProvider(): Web3Provider {
@@ -277,7 +278,7 @@ export class WebbWeb3Provider
   ): Promise<Note[]> {
     const evmId = await contract.getEvmId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const tokenSymbol = await this.methods.bridgeApi.getCurrency()!;
+    const tokenSymbol = await this.methods.bridgeApi.getCurrency();
     const utxos = await contract.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 1,
@@ -402,7 +403,7 @@ export class WebbWeb3Provider
               name: currency.name,
               symbol: currency.symbol,
             },
-            rpcUrls: chain.evmRpcUrls!,
+            rpcUrls: chain.evmRpcUrls,
           });
           // add network will prompt the switch, check evmId again and throw if user rejected
           const newChainId = await this.web3Provider.network;

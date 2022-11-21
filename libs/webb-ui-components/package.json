@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@webb-tools/icons": "0.0.1",
+    "@webb-tools/dapp-config": "0.0.1",
     "lottie-react": "^2.3.1",
     "@ngneat/falso": "^6.1.0",
     "@polkadot/react-identicon": "^2.9.9",
@@ -38,7 +39,7 @@
     "@svgr/webpack": "^5.5.0",
     "@tanstack/match-sorter-utils": "^8.1.1",
     "@tanstack/react-table": "^8.5.13",
-    "@webb-tools/app-util": "0.1.4-105",
+    "@webb-tools/app-util": "0.1.4-114",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.2",
     "date-fns": "^2.29.2",

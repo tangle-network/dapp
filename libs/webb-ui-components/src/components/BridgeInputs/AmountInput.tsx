@@ -13,9 +13,9 @@ import {
   TooltipBody,
   TooltipTrigger,
 } from '..';
-import { AmountInputProps } from './types';
+import { AmountInputComponentProps } from './types';
 
-export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
+export const AmountInput = forwardRef<HTMLDivElement, AmountInputComponentProps>(
   (
     {
       amount,
@@ -83,6 +83,7 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputProps>(
             onChange={onAmountChange}
             placeholder="0"
             size="sm"
+            autoComplete="off"
           />
         </div>
 

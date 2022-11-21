@@ -66,7 +66,7 @@ export function getButtonClassNameByVariant(
   size: ButtonSize
 ) {
   const commonClsx =
-    'box-border flex items-center disabled:pointer-events-none text-center disabled:pointer-events-none';
+    'box-border flex justify-center items-center disabled:pointer-events-none text-center disabled:pointer-events-none';
   const { active, common, disabled, hover } = classNames[variant]['base'];
   return twMerge(
     classNames[variant][size],

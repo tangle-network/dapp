@@ -41,7 +41,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       relayerExternalUrl,
       sourceChain,
       title = 'Confirm Transfer',
-      token1Symbol,
+      governedTokenSymbol: token1Symbol,
       token2Symbol,
       ...props
     },

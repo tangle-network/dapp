@@ -1,6 +1,6 @@
-import { Search, TokenIcon } from '@webb-tools/icons';
-import { Typography } from '../../typography';
+import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { Typography } from '../../typography';
 
 import { Button } from '../Button';
 import { Chip } from '../Chip';
@@ -15,9 +15,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     { chainType, chains, onChange, onClose, value: selectedChain, ...props },
     ref
   ) => {
-    const [chain, setChain] = useState<ChainType | undefined>(
-      () => selectedChain
-    );
+    const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
 
     // Search text
     const [searchText, setSearchText] = useState('');
@@ -87,10 +85,10 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                   onClick={() => onChainChange(currentChain)}
                 >
                   <div className="flex items-center space-x-2">
-                    <TokenIcon
+                    <ChainIcon
                       isActive={isSelected}
                       size="lg"
-                      name={currentChain.symbol.toLowerCase()}
+                      name={currentChain.name}
                     />
 
                     <Typography

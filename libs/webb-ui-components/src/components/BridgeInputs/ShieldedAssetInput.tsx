@@ -9,7 +9,7 @@ import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { TokenPair } from '../TokenPair';
-import { ShieldedAssetInputProps } from './types';
+import { ShieldedAssetInputComponentProps } from './types';
 
 /**
  * The `ShieldedAssetInput` component
@@ -28,7 +28,7 @@ import { ShieldedAssetInputProps } from './types';
 
 export const ShieldedAssetInput = forwardRef<
   HTMLDivElement,
-  ShieldedAssetInputProps
+  ShieldedAssetInputComponentProps
 >(({ asset, className, id, info, title = 'Shielded Asset', ...props }, ref) => {
   const [balance, balanceInUsd] = useMemo(() => {
     let balance: string | undefined;
@@ -67,8 +67,8 @@ export const ShieldedAssetInput = forwardRef<
 
         {asset ? (
           <TokenPair
-            token1Symbol={asset.token1Symbol}
-            token2Symbol={asset.token2Symbol}
+            token1Symbol={asset.symbol}
+            token2Symbol={asset.symbol}
           />
         ) : (
           <Typography variant="body1" fw="bold">
