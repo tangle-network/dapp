@@ -10,36 +10,6 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ChainConfig } from '../chain-config.interface';
 
 export const chainsConfig: Record<number, ChainConfig> = {
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Rinkeby)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.Rinkeby,
-    name: 'Rinkeby',
-    url: 'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: [
-      'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    ],
-    blockExplorerStub: 'https://rinkeby.etherscan.io',
-    logo: EtherLogo,
-    tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.Ropsten,
-    name: 'Ropsten',
-    url: 'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: [
-      'https://ropsten.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    ],
-    blockExplorerStub: 'https://ropsten.etherscan.io',
-    logo: EtherLogo,
-    tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
-  },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
     chainType: ChainType.EVM,
     group: 'eth',
@@ -50,19 +20,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
       'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     ],
     blockExplorerStub: 'https://goerli.etherscan.io',
-    logo: EtherLogo,
-    tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Kovan)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.Kovan,
-    name: 'Kovan',
-    url: 'https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
-    evmRpcUrls: ['https://kovan.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4'],
-    blockExplorerStub: 'https://kovan.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
