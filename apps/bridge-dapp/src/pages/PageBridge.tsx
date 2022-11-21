@@ -48,7 +48,7 @@ const PageBridge = () => {
       onDismiss: () => {
         setStage(TransactionState.Ideal);
       },
-    }
+    };
   }, [setStage]);
 
   // Upload modal state
@@ -70,6 +70,7 @@ const PageBridge = () => {
         ...prev,
         txStatus: {
           ...prev.txStatus,
+          status: 'in-progress',
           message: `${message}...`,
         },
       }));
