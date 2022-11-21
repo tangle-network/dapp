@@ -175,7 +175,9 @@ export const DepositContainer = forwardRef<
       selectedToken,
       destChainInputValue,
       amount,
-      selectedTokenBalance ? amount <= selectedTokenBalance : true,
+      typeof selectedTokenBalance === 'number'
+        ? amount <= selectedTokenBalance
+        : true,
     ].some((val) => Boolean(val) === false);
   }, [
     amount,
