@@ -15,7 +15,6 @@ import { DiscreteList } from './useProposals';
 import { useActiveSession } from '../stats-provider';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Threshold as QueryThreshold } from './types';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold
@@ -65,7 +64,7 @@ export type UpcomingThresholds = Record<
  * */
 export type AuthorityListItem = {
   id: string;
-  location: string;
+  location?: string;
   uptime: number;
   reputation: number;
 };
@@ -145,7 +144,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   useEffect(() => {
     if (session.val) {
       call({ variables: { sessionId: session.val.activeSession } }).catch(
-        (e) => {
+        () => {
           setData({
             val: null,
             isFailed: true,
@@ -353,7 +352,7 @@ export function useAuthorities(
               const auth = mapSessionAuthValidatorNode(sessionValidator!);
               return {
                 id: sessionValidator?.validator.id,
-                location: 'any',
+                location: auth.location,
                 uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };

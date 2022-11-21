@@ -65,16 +65,19 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('location', {
     header: 'Location',
     enableColumnFilter: false,
-    cell: (props) => (
-      <Typography
-        variant="h5"
-        fw="bold"
-        component="span"
-        className="!text-inherit"
-      >
-        {getUnicodeFlagIcon(props.getValue())}
-      </Typography>
-    ),
+    cell: (props) => {
+      const uniCode = props.getValue();
+      return (
+        <Typography
+          variant="body1"
+          fw="bold"
+          component="span"
+          className="!text-inherit"
+        >
+          {uniCode ? getUnicodeFlagIcon(uniCode) : 'Anonymous'}
+        </Typography>
+      );
+    },
   }),
 
   columnHelper.accessor('uptime', {
