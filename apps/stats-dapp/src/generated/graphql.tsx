@@ -45,6 +45,8 @@ export type Account = Node & {
   email?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
   extrinsics: ExtrinsicsConnection;
+  /** Reads and enables pagination through a set of `HeartBeat`. */
+  heartBeats: HeartBeatsConnection;
   id: Scalars['String'];
   image?: Maybe<Scalars['String']>;
   legal?: Maybe<Scalars['String']>;
@@ -54,6 +56,8 @@ export type Account = Node & {
   /** Reads and enables pagination through a set of `Proposer`. */
   proposers: ProposersConnection;
   riot?: Maybe<Scalars['String']>;
+  /** Reads and enables pagination through a set of `Session`. */
+  sessionsByHeartBeatAccountIdAndSessionId: AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyConnection;
   twitter?: Maybe<Scalars['String']>;
   /** Reads and enables pagination through a set of `Validator`. */
   validators: ValidatorsConnection;
@@ -116,6 +120,17 @@ export type AccountExtrinsicsArgs = {
 };
 
 
+export type AccountHeartBeatsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<HeartBeatFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<HeartBeatsOrderBy>>;
+};
+
+
 export type AccountProposersArgs = {
   after?: InputMaybe<Scalars['Cursor']>;
   before?: InputMaybe<Scalars['Cursor']>;
@@ -124,6 +139,17 @@ export type AccountProposersArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ProposersOrderBy>>;
+};
+
+
+export type AccountSessionsByHeartBeatAccountIdAndSessionIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SessionFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SessionsOrderBy>>;
 };
 
 
@@ -349,6 +375,53 @@ export type AccountFilter = {
   twitter?: InputMaybe<StringFilter>;
   /** Filter by the object’s `web` field. */
   web?: InputMaybe<StringFilter>;
+};
+
+/** A connection to a list of `Session` values, with data from `HeartBeat`. */
+export type AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyConnection = {
+  __typename?: 'AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SessionAggregates>;
+  /** A list of edges which contains the `Session`, info from the `HeartBeat`, and the cursor to aid in pagination. */
+  edges: Array<AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SessionAggregates>>;
+  /** A list of `Session` objects. */
+  nodes: Array<Maybe<Session>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Session` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `Session` values, with data from `HeartBeat`. */
+export type AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SessionsGroupBy>;
+  having?: InputMaybe<SessionsHavingInput>;
+};
+
+/** A `Session` edge in the connection, with data from `HeartBeat`. */
+export type AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyEdge = {
+  __typename?: 'AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** Reads and enables pagination through a set of `HeartBeat`. */
+  heartBeats: HeartBeatsConnection;
+  /** The `Session` at the end of the edge. */
+  node?: Maybe<Session>;
+};
+
+
+/** A `Session` edge in the connection, with data from `HeartBeat`. */
+export type AccountSessionsByHeartBeatAccountIdAndSessionIdManyToManyEdgeHeartBeatsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<HeartBeatFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<HeartBeatsOrderBy>>;
 };
 
 /** A connection to a list of `Account` values. */
@@ -856,6 +929,80 @@ export enum AccountsOrderBy {
   ExtrinsicsVarianceSampleModuleDesc = 'EXTRINSICS_VARIANCE_SAMPLE_MODULE_DESC',
   ExtrinsicsVarianceSampleSignerIdAsc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_ASC',
   ExtrinsicsVarianceSampleSignerIdDesc = 'EXTRINSICS_VARIANCE_SAMPLE_SIGNER_ID_DESC',
+  HeartBeatsAverageAccountIdAsc = 'HEART_BEATS_AVERAGE_ACCOUNT_ID_ASC',
+  HeartBeatsAverageAccountIdDesc = 'HEART_BEATS_AVERAGE_ACCOUNT_ID_DESC',
+  HeartBeatsAverageBlockNumberAsc = 'HEART_BEATS_AVERAGE_BLOCK_NUMBER_ASC',
+  HeartBeatsAverageBlockNumberDesc = 'HEART_BEATS_AVERAGE_BLOCK_NUMBER_DESC',
+  HeartBeatsAverageIdAsc = 'HEART_BEATS_AVERAGE_ID_ASC',
+  HeartBeatsAverageIdDesc = 'HEART_BEATS_AVERAGE_ID_DESC',
+  HeartBeatsAverageSessionIdAsc = 'HEART_BEATS_AVERAGE_SESSION_ID_ASC',
+  HeartBeatsAverageSessionIdDesc = 'HEART_BEATS_AVERAGE_SESSION_ID_DESC',
+  HeartBeatsCountAsc = 'HEART_BEATS_COUNT_ASC',
+  HeartBeatsCountDesc = 'HEART_BEATS_COUNT_DESC',
+  HeartBeatsDistinctCountAccountIdAsc = 'HEART_BEATS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
+  HeartBeatsDistinctCountAccountIdDesc = 'HEART_BEATS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
+  HeartBeatsDistinctCountBlockNumberAsc = 'HEART_BEATS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  HeartBeatsDistinctCountBlockNumberDesc = 'HEART_BEATS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  HeartBeatsDistinctCountIdAsc = 'HEART_BEATS_DISTINCT_COUNT_ID_ASC',
+  HeartBeatsDistinctCountIdDesc = 'HEART_BEATS_DISTINCT_COUNT_ID_DESC',
+  HeartBeatsDistinctCountSessionIdAsc = 'HEART_BEATS_DISTINCT_COUNT_SESSION_ID_ASC',
+  HeartBeatsDistinctCountSessionIdDesc = 'HEART_BEATS_DISTINCT_COUNT_SESSION_ID_DESC',
+  HeartBeatsMaxAccountIdAsc = 'HEART_BEATS_MAX_ACCOUNT_ID_ASC',
+  HeartBeatsMaxAccountIdDesc = 'HEART_BEATS_MAX_ACCOUNT_ID_DESC',
+  HeartBeatsMaxBlockNumberAsc = 'HEART_BEATS_MAX_BLOCK_NUMBER_ASC',
+  HeartBeatsMaxBlockNumberDesc = 'HEART_BEATS_MAX_BLOCK_NUMBER_DESC',
+  HeartBeatsMaxIdAsc = 'HEART_BEATS_MAX_ID_ASC',
+  HeartBeatsMaxIdDesc = 'HEART_BEATS_MAX_ID_DESC',
+  HeartBeatsMaxSessionIdAsc = 'HEART_BEATS_MAX_SESSION_ID_ASC',
+  HeartBeatsMaxSessionIdDesc = 'HEART_BEATS_MAX_SESSION_ID_DESC',
+  HeartBeatsMinAccountIdAsc = 'HEART_BEATS_MIN_ACCOUNT_ID_ASC',
+  HeartBeatsMinAccountIdDesc = 'HEART_BEATS_MIN_ACCOUNT_ID_DESC',
+  HeartBeatsMinBlockNumberAsc = 'HEART_BEATS_MIN_BLOCK_NUMBER_ASC',
+  HeartBeatsMinBlockNumberDesc = 'HEART_BEATS_MIN_BLOCK_NUMBER_DESC',
+  HeartBeatsMinIdAsc = 'HEART_BEATS_MIN_ID_ASC',
+  HeartBeatsMinIdDesc = 'HEART_BEATS_MIN_ID_DESC',
+  HeartBeatsMinSessionIdAsc = 'HEART_BEATS_MIN_SESSION_ID_ASC',
+  HeartBeatsMinSessionIdDesc = 'HEART_BEATS_MIN_SESSION_ID_DESC',
+  HeartBeatsStddevPopulationAccountIdAsc = 'HEART_BEATS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
+  HeartBeatsStddevPopulationAccountIdDesc = 'HEART_BEATS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
+  HeartBeatsStddevPopulationBlockNumberAsc = 'HEART_BEATS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  HeartBeatsStddevPopulationBlockNumberDesc = 'HEART_BEATS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  HeartBeatsStddevPopulationIdAsc = 'HEART_BEATS_STDDEV_POPULATION_ID_ASC',
+  HeartBeatsStddevPopulationIdDesc = 'HEART_BEATS_STDDEV_POPULATION_ID_DESC',
+  HeartBeatsStddevPopulationSessionIdAsc = 'HEART_BEATS_STDDEV_POPULATION_SESSION_ID_ASC',
+  HeartBeatsStddevPopulationSessionIdDesc = 'HEART_BEATS_STDDEV_POPULATION_SESSION_ID_DESC',
+  HeartBeatsStddevSampleAccountIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
+  HeartBeatsStddevSampleAccountIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
+  HeartBeatsStddevSampleBlockNumberAsc = 'HEART_BEATS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  HeartBeatsStddevSampleBlockNumberDesc = 'HEART_BEATS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  HeartBeatsStddevSampleIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_ID_ASC',
+  HeartBeatsStddevSampleIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_ID_DESC',
+  HeartBeatsStddevSampleSessionIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  HeartBeatsStddevSampleSessionIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  HeartBeatsSumAccountIdAsc = 'HEART_BEATS_SUM_ACCOUNT_ID_ASC',
+  HeartBeatsSumAccountIdDesc = 'HEART_BEATS_SUM_ACCOUNT_ID_DESC',
+  HeartBeatsSumBlockNumberAsc = 'HEART_BEATS_SUM_BLOCK_NUMBER_ASC',
+  HeartBeatsSumBlockNumberDesc = 'HEART_BEATS_SUM_BLOCK_NUMBER_DESC',
+  HeartBeatsSumIdAsc = 'HEART_BEATS_SUM_ID_ASC',
+  HeartBeatsSumIdDesc = 'HEART_BEATS_SUM_ID_DESC',
+  HeartBeatsSumSessionIdAsc = 'HEART_BEATS_SUM_SESSION_ID_ASC',
+  HeartBeatsSumSessionIdDesc = 'HEART_BEATS_SUM_SESSION_ID_DESC',
+  HeartBeatsVariancePopulationAccountIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
+  HeartBeatsVariancePopulationAccountIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
+  HeartBeatsVariancePopulationBlockNumberAsc = 'HEART_BEATS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  HeartBeatsVariancePopulationBlockNumberDesc = 'HEART_BEATS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  HeartBeatsVariancePopulationIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_ID_ASC',
+  HeartBeatsVariancePopulationIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_ID_DESC',
+  HeartBeatsVariancePopulationSessionIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  HeartBeatsVariancePopulationSessionIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  HeartBeatsVarianceSampleAccountIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
+  HeartBeatsVarianceSampleAccountIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
+  HeartBeatsVarianceSampleBlockNumberAsc = 'HEART_BEATS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  HeartBeatsVarianceSampleBlockNumberDesc = 'HEART_BEATS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  HeartBeatsVarianceSampleIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_ID_ASC',
+  HeartBeatsVarianceSampleIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_ID_DESC',
+  HeartBeatsVarianceSampleSessionIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  HeartBeatsVarianceSampleSessionIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   ImageAsc = 'IMAGE_ASC',
@@ -5140,6 +5287,227 @@ export type HavingIntFilter = {
   notEqualTo?: InputMaybe<Scalars['Int']>;
 };
 
+export type HeartBeat = Node & {
+  __typename?: 'HeartBeat';
+  /** Reads a single `Account` that is related to this `HeartBeat`. */
+  account?: Maybe<Account>;
+  accountId: Scalars['String'];
+  blockNumber: Scalars['BigFloat'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  /** Reads a single `Session` that is related to this `HeartBeat`. */
+  session?: Maybe<Session>;
+  sessionId: Scalars['String'];
+};
+
+export type HeartBeatAggregates = {
+  __typename?: 'HeartBeatAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<HeartBeatAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<HeartBeatDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<HeartBeatMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<HeartBeatMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<HeartBeatStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<HeartBeatStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<HeartBeatSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<HeartBeatVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<HeartBeatVarianceSampleAggregates>;
+};
+
+export type HeartBeatAverageAggregates = {
+  __typename?: 'HeartBeatAverageAggregates';
+  /** Mean average of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatDistinctCountAggregates = {
+  __typename?: 'HeartBeatDistinctCountAggregates';
+  /** Distinct count of accountId across the matching connection */
+  accountId?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of sessionId across the matching connection */
+  sessionId?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `HeartBeat` object types. All fields are combined with a logical ‘and.’ */
+export type HeartBeatFilter = {
+  /** Filter by the object’s `accountId` field. */
+  accountId?: InputMaybe<StringFilter>;
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<HeartBeatFilter>>;
+  /** Filter by the object’s `blockNumber` field. */
+  blockNumber?: InputMaybe<BigFloatFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<HeartBeatFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<HeartBeatFilter>>;
+  /** Filter by the object’s `sessionId` field. */
+  sessionId?: InputMaybe<StringFilter>;
+};
+
+export type HeartBeatMaxAggregates = {
+  __typename?: 'HeartBeatMaxAggregates';
+  /** Maximum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatMinAggregates = {
+  __typename?: 'HeartBeatMinAggregates';
+  /** Minimum of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatStddevPopulationAggregates = {
+  __typename?: 'HeartBeatStddevPopulationAggregates';
+  /** Population standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatStddevSampleAggregates = {
+  __typename?: 'HeartBeatStddevSampleAggregates';
+  /** Sample standard deviation of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatSumAggregates = {
+  __typename?: 'HeartBeatSumAggregates';
+  /** Sum of blockNumber across the matching connection */
+  blockNumber: Scalars['BigFloat'];
+};
+
+export type HeartBeatVariancePopulationAggregates = {
+  __typename?: 'HeartBeatVariancePopulationAggregates';
+  /** Population variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+export type HeartBeatVarianceSampleAggregates = {
+  __typename?: 'HeartBeatVarianceSampleAggregates';
+  /** Sample variance of blockNumber across the matching connection */
+  blockNumber?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `HeartBeat` values. */
+export type HeartBeatsConnection = {
+  __typename?: 'HeartBeatsConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<HeartBeatAggregates>;
+  /** A list of edges which contains the `HeartBeat` and cursor to aid in pagination. */
+  edges: Array<HeartBeatsEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<HeartBeatAggregates>>;
+  /** A list of `HeartBeat` objects. */
+  nodes: Array<Maybe<HeartBeat>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `HeartBeat` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `HeartBeat` values. */
+export type HeartBeatsConnectionGroupedAggregatesArgs = {
+  groupBy: Array<HeartBeatsGroupBy>;
+  having?: InputMaybe<HeartBeatsHavingInput>;
+};
+
+/** A `HeartBeat` edge in the connection. */
+export type HeartBeatsEdge = {
+  __typename?: 'HeartBeatsEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `HeartBeat` at the end of the edge. */
+  node?: Maybe<HeartBeat>;
+};
+
+/** Grouping methods for `HeartBeat` for usage during aggregation. */
+export enum HeartBeatsGroupBy {
+  AccountId = 'ACCOUNT_ID',
+  BlockNumber = 'BLOCK_NUMBER',
+  SessionId = 'SESSION_ID'
+}
+
+export type HeartBeatsHavingAverageInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingDistinctCountInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+/** Conditions for `HeartBeat` aggregates. */
+export type HeartBeatsHavingInput = {
+  AND?: InputMaybe<Array<HeartBeatsHavingInput>>;
+  OR?: InputMaybe<Array<HeartBeatsHavingInput>>;
+  average?: InputMaybe<HeartBeatsHavingAverageInput>;
+  distinctCount?: InputMaybe<HeartBeatsHavingDistinctCountInput>;
+  max?: InputMaybe<HeartBeatsHavingMaxInput>;
+  min?: InputMaybe<HeartBeatsHavingMinInput>;
+  stddevPopulation?: InputMaybe<HeartBeatsHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<HeartBeatsHavingStddevSampleInput>;
+  sum?: InputMaybe<HeartBeatsHavingSumInput>;
+  variancePopulation?: InputMaybe<HeartBeatsHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<HeartBeatsHavingVarianceSampleInput>;
+};
+
+export type HeartBeatsHavingMaxInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingMinInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingStddevPopulationInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingStddevSampleInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingSumInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingVariancePopulationInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+export type HeartBeatsHavingVarianceSampleInput = {
+  blockNumber?: InputMaybe<HavingBigfloatFilter>;
+};
+
+/** Methods to use when ordering `HeartBeat`. */
+export enum HeartBeatsOrderBy {
+  AccountIdAsc = 'ACCOUNT_ID_ASC',
+  AccountIdDesc = 'ACCOUNT_ID_DESC',
+  BlockNumberAsc = 'BLOCK_NUMBER_ASC',
+  BlockNumberDesc = 'BLOCK_NUMBER_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
+  SessionIdAsc = 'SESSION_ID_ASC',
+  SessionIdDesc = 'SESSION_ID_DESC'
+}
+
 /** A filter to be used against Int fields. All fields are combined with a logical ‘and.’ */
 export type IntFilter = {
   /** Not equal to the specified value, treating null like an ordinary value. */
@@ -8089,6 +8457,11 @@ export type Query = Node & {
   extrinsicByNodeId?: Maybe<Extrinsic>;
   /** Reads and enables pagination through a set of `Extrinsic`. */
   extrinsics?: Maybe<ExtrinsicsConnection>;
+  heartBeat?: Maybe<HeartBeat>;
+  /** Reads a single `HeartBeat` using its globally unique `ID`. */
+  heartBeatByNodeId?: Maybe<HeartBeat>;
+  /** Reads and enables pagination through a set of `HeartBeat`. */
+  heartBeats?: Maybe<HeartBeatsConnection>;
   keygenThreshold?: Maybe<KeygenThreshold>;
   /** Reads a single `KeygenThreshold` using its globally unique `ID`. */
   keygenThresholdByNodeId?: Maybe<KeygenThreshold>;
@@ -8322,6 +8695,30 @@ export type QueryExtrinsicsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ExtrinsicsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryHeartBeatArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryHeartBeatByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryHeartBeatsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<HeartBeatFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<HeartBeatsOrderBy>>;
 };
 
 
@@ -8716,10 +9113,14 @@ export type QueryValidatorsArgs = {
 
 export type Session = Node & {
   __typename?: 'Session';
+  /** Reads and enables pagination through a set of `Account`. */
+  accountsByHeartBeatSessionIdAndAccountId: SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyConnection;
   /** Reads a single `Block` that is related to this `Session`. */
   block?: Maybe<Block>;
   blockId: Scalars['String'];
   blockNumber: Scalars['Int'];
+  /** Reads and enables pagination through a set of `HeartBeat`. */
+  heartBeats: HeartBeatsConnection;
   id: Scalars['String'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
@@ -8736,6 +9137,28 @@ export type Session = Node & {
   thresholds: ThresholdsConnection;
   /** Reads and enables pagination through a set of `Validator`. */
   validatorsBySessionValidatorSessionIdAndValidatorId: SessionValidatorsBySessionValidatorSessionIdAndValidatorIdManyToManyConnection;
+};
+
+
+export type SessionAccountsByHeartBeatSessionIdAndAccountIdArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<AccountFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<AccountsOrderBy>>;
+};
+
+
+export type SessionHeartBeatsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<HeartBeatFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<HeartBeatsOrderBy>>;
 };
 
 
@@ -8791,6 +9214,53 @@ export type SessionValidatorsBySessionValidatorSessionIdAndValidatorIdArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<ValidatorsOrderBy>>;
+};
+
+/** A connection to a list of `Account` values, with data from `HeartBeat`. */
+export type SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyConnection = {
+  __typename?: 'SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<AccountAggregates>;
+  /** A list of edges which contains the `Account`, info from the `HeartBeat`, and the cursor to aid in pagination. */
+  edges: Array<SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<AccountAggregates>>;
+  /** A list of `Account` objects. */
+  nodes: Array<Maybe<Account>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `Account` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `Account` values, with data from `HeartBeat`. */
+export type SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyConnectionGroupedAggregatesArgs = {
+  groupBy: Array<AccountsGroupBy>;
+  having?: InputMaybe<AccountsHavingInput>;
+};
+
+/** A `Account` edge in the connection, with data from `HeartBeat`. */
+export type SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyEdge = {
+  __typename?: 'SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** Reads and enables pagination through a set of `HeartBeat`. */
+  heartBeats: HeartBeatsConnection;
+  /** The `Account` at the end of the edge. */
+  node?: Maybe<Account>;
+};
+
+
+/** A `Account` edge in the connection, with data from `HeartBeat`. */
+export type SessionAccountsByHeartBeatSessionIdAndAccountIdManyToManyEdgeHeartBeatsArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<HeartBeatFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<HeartBeatsOrderBy>>;
 };
 
 export type SessionAggregates = {
@@ -9566,6 +10036,80 @@ export enum SessionsOrderBy {
   BlockIdDesc = 'BLOCK_ID_DESC',
   BlockNumberAsc = 'BLOCK_NUMBER_ASC',
   BlockNumberDesc = 'BLOCK_NUMBER_DESC',
+  HeartBeatsAverageAccountIdAsc = 'HEART_BEATS_AVERAGE_ACCOUNT_ID_ASC',
+  HeartBeatsAverageAccountIdDesc = 'HEART_BEATS_AVERAGE_ACCOUNT_ID_DESC',
+  HeartBeatsAverageBlockNumberAsc = 'HEART_BEATS_AVERAGE_BLOCK_NUMBER_ASC',
+  HeartBeatsAverageBlockNumberDesc = 'HEART_BEATS_AVERAGE_BLOCK_NUMBER_DESC',
+  HeartBeatsAverageIdAsc = 'HEART_BEATS_AVERAGE_ID_ASC',
+  HeartBeatsAverageIdDesc = 'HEART_BEATS_AVERAGE_ID_DESC',
+  HeartBeatsAverageSessionIdAsc = 'HEART_BEATS_AVERAGE_SESSION_ID_ASC',
+  HeartBeatsAverageSessionIdDesc = 'HEART_BEATS_AVERAGE_SESSION_ID_DESC',
+  HeartBeatsCountAsc = 'HEART_BEATS_COUNT_ASC',
+  HeartBeatsCountDesc = 'HEART_BEATS_COUNT_DESC',
+  HeartBeatsDistinctCountAccountIdAsc = 'HEART_BEATS_DISTINCT_COUNT_ACCOUNT_ID_ASC',
+  HeartBeatsDistinctCountAccountIdDesc = 'HEART_BEATS_DISTINCT_COUNT_ACCOUNT_ID_DESC',
+  HeartBeatsDistinctCountBlockNumberAsc = 'HEART_BEATS_DISTINCT_COUNT_BLOCK_NUMBER_ASC',
+  HeartBeatsDistinctCountBlockNumberDesc = 'HEART_BEATS_DISTINCT_COUNT_BLOCK_NUMBER_DESC',
+  HeartBeatsDistinctCountIdAsc = 'HEART_BEATS_DISTINCT_COUNT_ID_ASC',
+  HeartBeatsDistinctCountIdDesc = 'HEART_BEATS_DISTINCT_COUNT_ID_DESC',
+  HeartBeatsDistinctCountSessionIdAsc = 'HEART_BEATS_DISTINCT_COUNT_SESSION_ID_ASC',
+  HeartBeatsDistinctCountSessionIdDesc = 'HEART_BEATS_DISTINCT_COUNT_SESSION_ID_DESC',
+  HeartBeatsMaxAccountIdAsc = 'HEART_BEATS_MAX_ACCOUNT_ID_ASC',
+  HeartBeatsMaxAccountIdDesc = 'HEART_BEATS_MAX_ACCOUNT_ID_DESC',
+  HeartBeatsMaxBlockNumberAsc = 'HEART_BEATS_MAX_BLOCK_NUMBER_ASC',
+  HeartBeatsMaxBlockNumberDesc = 'HEART_BEATS_MAX_BLOCK_NUMBER_DESC',
+  HeartBeatsMaxIdAsc = 'HEART_BEATS_MAX_ID_ASC',
+  HeartBeatsMaxIdDesc = 'HEART_BEATS_MAX_ID_DESC',
+  HeartBeatsMaxSessionIdAsc = 'HEART_BEATS_MAX_SESSION_ID_ASC',
+  HeartBeatsMaxSessionIdDesc = 'HEART_BEATS_MAX_SESSION_ID_DESC',
+  HeartBeatsMinAccountIdAsc = 'HEART_BEATS_MIN_ACCOUNT_ID_ASC',
+  HeartBeatsMinAccountIdDesc = 'HEART_BEATS_MIN_ACCOUNT_ID_DESC',
+  HeartBeatsMinBlockNumberAsc = 'HEART_BEATS_MIN_BLOCK_NUMBER_ASC',
+  HeartBeatsMinBlockNumberDesc = 'HEART_BEATS_MIN_BLOCK_NUMBER_DESC',
+  HeartBeatsMinIdAsc = 'HEART_BEATS_MIN_ID_ASC',
+  HeartBeatsMinIdDesc = 'HEART_BEATS_MIN_ID_DESC',
+  HeartBeatsMinSessionIdAsc = 'HEART_BEATS_MIN_SESSION_ID_ASC',
+  HeartBeatsMinSessionIdDesc = 'HEART_BEATS_MIN_SESSION_ID_DESC',
+  HeartBeatsStddevPopulationAccountIdAsc = 'HEART_BEATS_STDDEV_POPULATION_ACCOUNT_ID_ASC',
+  HeartBeatsStddevPopulationAccountIdDesc = 'HEART_BEATS_STDDEV_POPULATION_ACCOUNT_ID_DESC',
+  HeartBeatsStddevPopulationBlockNumberAsc = 'HEART_BEATS_STDDEV_POPULATION_BLOCK_NUMBER_ASC',
+  HeartBeatsStddevPopulationBlockNumberDesc = 'HEART_BEATS_STDDEV_POPULATION_BLOCK_NUMBER_DESC',
+  HeartBeatsStddevPopulationIdAsc = 'HEART_BEATS_STDDEV_POPULATION_ID_ASC',
+  HeartBeatsStddevPopulationIdDesc = 'HEART_BEATS_STDDEV_POPULATION_ID_DESC',
+  HeartBeatsStddevPopulationSessionIdAsc = 'HEART_BEATS_STDDEV_POPULATION_SESSION_ID_ASC',
+  HeartBeatsStddevPopulationSessionIdDesc = 'HEART_BEATS_STDDEV_POPULATION_SESSION_ID_DESC',
+  HeartBeatsStddevSampleAccountIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_ACCOUNT_ID_ASC',
+  HeartBeatsStddevSampleAccountIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_ACCOUNT_ID_DESC',
+  HeartBeatsStddevSampleBlockNumberAsc = 'HEART_BEATS_STDDEV_SAMPLE_BLOCK_NUMBER_ASC',
+  HeartBeatsStddevSampleBlockNumberDesc = 'HEART_BEATS_STDDEV_SAMPLE_BLOCK_NUMBER_DESC',
+  HeartBeatsStddevSampleIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_ID_ASC',
+  HeartBeatsStddevSampleIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_ID_DESC',
+  HeartBeatsStddevSampleSessionIdAsc = 'HEART_BEATS_STDDEV_SAMPLE_SESSION_ID_ASC',
+  HeartBeatsStddevSampleSessionIdDesc = 'HEART_BEATS_STDDEV_SAMPLE_SESSION_ID_DESC',
+  HeartBeatsSumAccountIdAsc = 'HEART_BEATS_SUM_ACCOUNT_ID_ASC',
+  HeartBeatsSumAccountIdDesc = 'HEART_BEATS_SUM_ACCOUNT_ID_DESC',
+  HeartBeatsSumBlockNumberAsc = 'HEART_BEATS_SUM_BLOCK_NUMBER_ASC',
+  HeartBeatsSumBlockNumberDesc = 'HEART_BEATS_SUM_BLOCK_NUMBER_DESC',
+  HeartBeatsSumIdAsc = 'HEART_BEATS_SUM_ID_ASC',
+  HeartBeatsSumIdDesc = 'HEART_BEATS_SUM_ID_DESC',
+  HeartBeatsSumSessionIdAsc = 'HEART_BEATS_SUM_SESSION_ID_ASC',
+  HeartBeatsSumSessionIdDesc = 'HEART_BEATS_SUM_SESSION_ID_DESC',
+  HeartBeatsVariancePopulationAccountIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_ACCOUNT_ID_ASC',
+  HeartBeatsVariancePopulationAccountIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_ACCOUNT_ID_DESC',
+  HeartBeatsVariancePopulationBlockNumberAsc = 'HEART_BEATS_VARIANCE_POPULATION_BLOCK_NUMBER_ASC',
+  HeartBeatsVariancePopulationBlockNumberDesc = 'HEART_BEATS_VARIANCE_POPULATION_BLOCK_NUMBER_DESC',
+  HeartBeatsVariancePopulationIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_ID_ASC',
+  HeartBeatsVariancePopulationIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_ID_DESC',
+  HeartBeatsVariancePopulationSessionIdAsc = 'HEART_BEATS_VARIANCE_POPULATION_SESSION_ID_ASC',
+  HeartBeatsVariancePopulationSessionIdDesc = 'HEART_BEATS_VARIANCE_POPULATION_SESSION_ID_DESC',
+  HeartBeatsVarianceSampleAccountIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_ACCOUNT_ID_ASC',
+  HeartBeatsVarianceSampleAccountIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_ACCOUNT_ID_DESC',
+  HeartBeatsVarianceSampleBlockNumberAsc = 'HEART_BEATS_VARIANCE_SAMPLE_BLOCK_NUMBER_ASC',
+  HeartBeatsVarianceSampleBlockNumberDesc = 'HEART_BEATS_VARIANCE_SAMPLE_BLOCK_NUMBER_DESC',
+  HeartBeatsVarianceSampleIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_ID_ASC',
+  HeartBeatsVarianceSampleIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_ID_DESC',
+  HeartBeatsVarianceSampleSessionIdAsc = 'HEART_BEATS_VARIANCE_SAMPLE_SESSION_ID_ASC',
+  HeartBeatsVarianceSampleSessionIdDesc = 'HEART_BEATS_VARIANCE_SAMPLE_SESSION_ID_DESC',
   IdAsc = 'ID_ASC',
   IdDesc = 'ID_DESC',
   Natural = 'NATURAL',

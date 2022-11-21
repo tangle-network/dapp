@@ -11,7 +11,14 @@ import { useCurrentMetaData } from './useCurrentMetaData';
 import { useActiveSession, useStaticConfig } from '../stats-provider';
 import { useEffect, useState } from 'react';
 
-import { Loadable, Page, PageInfoQuery, SessionKeyHistory, SessionKeyStatus, Threshold } from './types';
+import {
+  Loadable,
+  Page,
+  PageInfoQuery,
+  SessionKeyHistory,
+  SessionKeyStatus,
+  Threshold,
+} from './types';
 
 /**
  *  Public key shared content
@@ -164,7 +171,9 @@ export function sessionFrame(
  *  }
  * ```
  * */
-export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListView>> {
+export function useKeys(
+  reqQuery: PageInfoQuery
+): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
   const { blockTime, sessionHeight } = useStaticConfig();
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
@@ -220,16 +229,27 @@ export function useKeys(reqQuery: PageInfoQuery): Loadable<Page<PublicKeyListVie
             val: {
               items: filteredData.map((node, idx) => {
                 const session = node.sessions?.nodes[0];
-                const thresholds = thresholdMap(session ? session.thresholds : { nodes: [] });
+                const thresholds = thresholdMap(
+                  session ? session.thresholds : { nodes: [] }
+                );
                 const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
                 const authorities = mapAuthorities(session.sessionValidators)
                   .filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
 
-                const previousKeyId = idx ? filteredData[idx - 1]?.id : undefined;
-                const nextKeyId = idx < filteredData.length - 1 ? filteredData[idx + 1]?.id : undefined;
-                const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
+                const previousKeyId = idx
+                  ? filteredData[idx - 1]?.id
+                  : undefined;
+                const nextKeyId =
+                  idx < filteredData.length - 1
+                    ? filteredData[idx + 1]?.id
+                    : undefined;
+                const [start, end] = sessionFrame(
+                  session.block?.timestamp,
+                  sessionHeight,
+                  blockTime
+                );
                 return {
                   height: String(node.block?.number),
                   session: session.id,
@@ -285,7 +305,10 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
     if (metaData.val) {
       call({
         variables: {
-          SessionId: [metaData.val.activeSession, String(Number(metaData.val.activeSession) + 1)],
+          SessionId: [
+            metaData.val.activeSession,
+            String(Number(metaData.val.activeSession) + 1),
+          ],
         },
       }).catch((e) => {
         setKeys({
@@ -312,7 +335,11 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 const publicKey = i.publicKey;
                 const session = i;
                 const sessionTimeStamp = session.block?.timestamp;
-                const [start, end] = sessionFrame(sessionTimeStamp, sessionHeight, blockTime);
+                const [start, end] = sessionFrame(
+                  sessionTimeStamp,
+                  sessionHeight,
+                  blockTime
+                );
 
                 return {
                   id: publicKey.id,
@@ -326,7 +353,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                   isDone: Number(activeSession) > Number(session.id),
                 };
               }) || [];
-          
+
           const activeKey = val[0];
           const nextKey = val[1];
           return {
@@ -335,7 +362,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
               {
                 ...nextKey,
                 start: activeKey.end,
-              }
+              },
             ],
             isFailed: false,
             isLoading: false,
@@ -380,7 +407,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
   });
   const { blockTime, sessionHeight } = useStaticConfig();
   const activeSession = useActiveSession();
-  const [prevAndNextKey, setPrevAndNextKey] = useState<Loadable<NextAndPrevKeyStatus>>({
+  const [prevAndNextKey, setPrevAndNextKey] = useState<
+    Loadable<NextAndPrevKeyStatus>
+  >({
     val: null,
     isFailed: false,
     isLoading: true,
@@ -407,7 +436,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
         if (res.data) {
           const publicKey = res.data.publicKey;
           const session = publicKey.sessions?.nodes[0];
-          const history: PublicKeyHistoryEntry[] = (publicKey.history as SessionKeyHistory[]).map((val) => {
+          const history: PublicKeyHistoryEntry[] = (
+            publicKey.history as SessionKeyHistory[]
+          ).map((val) => {
             return {
               at: new Date(val.timestamp),
               status: val.stage,
@@ -423,11 +454,15 @@ export function useKey(id: string): PublicKeyDetailsPage {
                 id: auth.id,
                 location: 'any',
                 reputation: Number(auth.reputation) * Math.pow(10, -7),
-                uptime: auth.uptime,
+                uptime: Number(auth.uptime) * Math.pow(10, -7),
               };
             });
           const validators = sessionAuthorities.length;
-          const [start, end] = sessionFrame(session.block?.timestamp, sessionHeight, blockTime);
+          const [start, end] = sessionFrame(
+            session.block?.timestamp,
+            sessionHeight,
+            blockTime
+          );
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
@@ -462,7 +497,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
       .subscribe((val) => {
         if (val.val) {
           const sessionId = Number(val.val.session);
-          const sessionIds = [Math.max(sessionId - 1, 0), sessionId + 1].map((v) => String(v));
+          const sessionIds = [Math.max(sessionId - 1, 0), sessionId + 1].map(
+            (v) => String(v)
+          );
           callSessionKeys({
             variables: {
               keys: sessionIds,
@@ -481,7 +518,9 @@ export function useKey(id: string): PublicKeyDetailsPage {
       .map((res): Loadable<NextAndPrevKeyStatus> => {
         if (res.data && res.data.sessions) {
           const sessions = res.data.sessions.nodes;
-          const map = sessions.filter((s) => s && s.publicKey).map((s) => [s.id, s.publicKey.id]);
+          const map = sessions
+            .filter((s) => s && s.publicKey)
+            .map((s) => [s.id, s.publicKey.id]);
           const [prev, next] = sessionKeysQuery.variables.keys as string[];
           return {
             isLoading: false,
