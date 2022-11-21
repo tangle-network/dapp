@@ -8,7 +8,7 @@ import { Layout } from '../containers';
 // TODO: Implement these pages for the Bridge Dapp
 const PageBridge = lazy(() => import('../pages/PageBridge'));
 // const PageWrapUnwrap = lazy(() => import('@webb-tools/page-wrap-unwrap'));
-// const PageNoteAccount = lazy(() => import('@webb-tools/page-note-account'));
+const PageNoteAccount = lazy(() => import('../pages/PageNoteAccount'));
 
 const CSuspense: FC<BareProps> = ({ children }) => {
   return (
@@ -48,7 +48,7 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <Typography variant="h1">Note Account</Typography>
+            <PageNoteAccount />
           </CSuspense>
         ),
         path: 'note-account/*',

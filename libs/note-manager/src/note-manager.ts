@@ -121,6 +121,11 @@ export class NoteManager {
     await this.updateStorage();
   }
 
+  async removeAllNotes() {
+    this.notesMap = new Map<string, Note[]>();
+    await this.updateStorage();
+  }
+
   async updateStorage() {
     const encryptedNotes: Record<string, string[]> = {};
 

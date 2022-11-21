@@ -1,11 +1,11 @@
-import { ChevronRight, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, ChevronRight, TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
-import { ChainInputProps } from './types';
+import { ChainInputComponentProps } from './types';
 
 /**
  * The `ChainInput` component
@@ -23,7 +23,7 @@ import { ChainInputProps } from './types';
  * ```
  */
 
-export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(
+export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
   ({ chain, chainType, id, info, ...props }, ref) => {
     return (
       <InputWrapper {...props} ref={ref}>
@@ -42,7 +42,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputProps>(
 
           {chain ? (
             <p className="flex items-center space-x-1">
-              <TokenIcon name={chain.symbol.trim().toLowerCase()} size="lg" />
+              <ChainIcon name={chain.name} size="lg" />
 
               <Typography component="span" variant="body1" fw="bold">
                 {chain.name}

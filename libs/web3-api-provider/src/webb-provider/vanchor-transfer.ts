@@ -75,7 +75,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
       const activeBridge = this.inner.methods.bridgeApi.getBridge();
       const activeRelayer = this.inner.relayerManager.activeRelayer;
       const relayerAccount = activeRelayer
-        ? activeRelayer.beneficiary!
+        ? activeRelayer.beneficiary
         : zeroAddress;
       if (!activeBridge) {
         throw new Error('No activeBridge set on the web3 anchor api');
@@ -88,7 +88,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
         ChainType.EVM,
         activeChain
       );
-      const srcAddress = activeBridge.targets[sourceChainIdType]!;
+      const srcAddress = activeBridge.targets[sourceChainIdType];
       const anchor = this.inner.getVariableAnchorByAddress(srcAddress);
       const treeHeight = await anchor._contract.levels();
 
@@ -203,7 +203,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
       this.emit('stateChange', TransactionState.GeneratingZk);
       const worker = this.inner.wasmFactory();
-      const { extData, outputNotes, publicInputs } =
+      const { extData, publicInputs } =
         await this.cancelToken.handleOrThrow(
           () =>
             anchor.setupTransaction(
@@ -212,13 +212,13 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
               0, // the extAmount for a transfer should be zero
               0,
               0,
-              activeBridge.currency.getAddress(sourceChainIdType)!,
+              activeBridge.currency.getAddress(sourceChainIdType),
               relayerAccount,
               relayerAccount,
               leavesMap,
               provingKey,
               Buffer.from(wasmBuffer),
-              worker!
+              worker
             ),
           () => {
             worker?.terminate();
@@ -252,13 +252,13 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
           secrets: [
             toFixedHex(sourceChainIdType, 8).substring(2),
             toFixedHex(changeUtxo.amount).substring(2),
-            toFixedHex(changeKeypair.privkey!).substring(2),
+            toFixedHex(changeKeypair.privkey).substring(2),
             toFixedHex(changeUtxo.blinding).substring(2),
           ].join(':'),
           sourceChain: sourceChainIdType.toString(),
-          sourceIdentifyingData: srcAddress!,
+          sourceIdentifyingData: srcAddress,
           targetChain: sourceChainIdType.toString(),
-          targetIdentifyingData: srcAddress!,
+          targetIdentifyingData: srcAddress,
           tokenSymbol: (await Note.deserialize(transferData.inputNotes[0])).note
             .tokenSymbol,
           version: 'v1',
@@ -362,7 +362,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
         const results = await relayedVAnchorWithdraw.await();
         if (results) {
           const [, message] = results;
-          txHash = message!;
+          txHash = message;
         }
         // Cleanup NoteAccount state
         for (const note of transferData.inputNotes) {

@@ -30,18 +30,33 @@ import { InfoItemProps } from './types';
 export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
   ({ className, leftTextProps, rightContent, ...props }, ref) => {
     return (
-      <div {...props} className={twMerge('flex items-center justify-between', className)} ref={ref}>
+      <div
+        {...props}
+        className={twMerge('flex items-center justify-between', className)}
+        ref={ref}
+      >
         <TitleWithInfo
           {...leftTextProps}
-          className={twMerge('text-mono-140 dark:text-mono-60', leftTextProps.className)}
+          className={twMerge(
+            'text-mono-100 dark:text-mono-80',
+            leftTextProps.className
+          )}
         />
 
         {!rightContent ? (
-          <Typography variant='body3' fw='bold' className='text-mono-140 dark:text-mono-60'>
+          <Typography
+            variant="body3"
+            fw="bold"
+            className="text-mono-180 dark:text-mono-80"
+          >
             --
           </Typography>
         ) : typeof rightContent === 'string' ? (
-          <Typography variant='body3' fw='bold' className='text-mono-140 dark:text-mono-60'>
+          <Typography
+            variant="body3"
+            fw="bold"
+            className="text-mono-180 dark:text-mono-80"
+          >
             {rightContent}
           </Typography>
         ) : null}

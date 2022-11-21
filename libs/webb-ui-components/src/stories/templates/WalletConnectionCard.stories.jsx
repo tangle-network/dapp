@@ -14,7 +14,7 @@ export default {
   decorators: [withRouter],
 };
 
-const wallets = [
+export const wallets = [
   {
     id: 'metamask',
     name: 'MetaMask',

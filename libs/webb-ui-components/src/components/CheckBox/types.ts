@@ -1,4 +1,5 @@
 import { WebbComponentBase } from '../../types';
+import { WebbTypographyVariant } from '../../typography/types';
 
 /**
  * CheckBox Props
@@ -10,10 +11,10 @@ export interface CheckBoxProps extends WebbComponentBase {
   isDisabled?: boolean;
   /**
    * The spacing between the checkbox and its label text
-   * @default 4
+   * @default "ml-4"
    * @type tailwind spacing
    */
-  spacing?: number;
+  spacingClassName?: string;
   /**
    * If `true`, the checkbox will be checked.
    * You'll need to pass `onChange` to update its value (since it is now controlled)
@@ -35,4 +36,9 @@ export interface CheckBoxProps extends WebbComponentBase {
    * Class name in case of overriding the tailwind class of the checkbox container
    */
   wrapperClassName?: string;
+  /**
+   * The label typography variant
+   * @default "body1"
+   */
+  labelVariant?: WebbTypographyVariant;
 }

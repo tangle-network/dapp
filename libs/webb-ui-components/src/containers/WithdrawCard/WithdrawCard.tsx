@@ -20,7 +20,7 @@ import { WithdrawCardProps } from './types';
 export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
   (
     {
-      bridgeAssetInputProps,
+      tokenInputProps,
       className,
       customAmountInputProps,
       feeAmount,
@@ -56,15 +56,6 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       };
     }, [unwrapSwitcherProps]);
 
-    const bridgeAssetProps = useMemo(
-      () => ({
-        ...bridgeAssetInputProps,
-        title: bridgeAssetInputProps?.title ?? 'Bridging Asset',
-        info: bridgeAssetInputProps?.info ?? 'Bridging Asset',
-      }),
-      [bridgeAssetInputProps]
-    );
-
     const unwrappingAssetProps = useMemo(
       () => ({
         ...unwrappingAssetInputProps,
@@ -90,7 +81,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
         <BridgeInputGroup className='flex flex-col space-y-2'>
           <div className='flex space-x-2'>
-            <ShieldedAssetInput {...bridgeAssetProps} className='grow shrink-0 basis-1' />
+            <TokenInput {...tokenInputProps} className='grow shrink-0 basis-1' />
 
             <TokenInput
               {...unwrappingAssetProps}

@@ -38,7 +38,7 @@ export interface InputProps extends IWebbComponentBase, Omit<PropsOf<'input'>, O
   /**
    * The `onChange` function to control the value of the input
    */
-  onChange?: (nextValue: string | number) => void;
+  onChange?: (nextValue: string) => void;
   /**
    * The error message to be displayed if the input is invalid
    */

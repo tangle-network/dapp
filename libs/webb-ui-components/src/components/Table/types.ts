@@ -23,6 +23,16 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    * @default 0
    */
   totalRecords?: number;
+
+  /**
+   * The optional class name for overriding style THeader component
+   */
+  thClassName?: string;
+
+  /**
+   * The optional class name for overriding style TData component
+   */
+  tdClassName?: string;
 }
 
 /**

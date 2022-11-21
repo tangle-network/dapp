@@ -1,11 +1,14 @@
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
-import { WalletConnectLogo } from '@webb-tools/logos/wallets/WalletConnectLogo';
-import { SubWalletLogo, TalismanLogo } from '@webb-tools/logos/wallets';
-import { MetaMaskLogo } from '@webb-tools/logos/wallets/MetaMaskLogo';
-import { PolkaLogo } from '@webb-tools/logos/wallets/PolkaLogo';
 
+import {
+  MetaMaskIcon,
+  PolkadotJsIcon,
+  SubWalletIcon,
+  TalismanIcon,
+  WalletConnectIcon,
+} from '@webb-tools/icons';
 import { WalletConfig } from '.';
 
 const ANY_EVM = [
@@ -14,6 +17,7 @@ const ANY_EVM = [
   PresetTypedChainId.Kovan,
   PresetTypedChainId.Ropsten,
   PresetTypedChainId.Goerli,
+  PresetTypedChainId.Sepolia,
   PresetTypedChainId.HarmonyTestnet1,
   PresetTypedChainId.HarmonyTestnet0,
   PresetTypedChainId.HarmonyMainnet0,
@@ -38,7 +42,7 @@ const ANY_SUBSTRATE = [
 export const walletsConfig: Record<number, WalletConfig> = {
   [WalletId.Polkadot]: {
     id: WalletId.Polkadot,
-    Logo: PolkaLogo,
+    Logo: <PolkadotJsIcon />,
     name: 'polkadot-js',
     title: `PolkadotJS Extension`,
     platform: 'Substrate',
@@ -57,7 +61,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.MetaMask]: {
     id: WalletId.MetaMask,
-    Logo: MetaMaskLogo,
+    Logo: <MetaMaskIcon />,
     name: 'metamask',
     title: `MetaMask`,
     platform: 'EVM',
@@ -80,7 +84,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.WalletConnectV1]: {
     id: WalletId.WalletConnectV1,
-    Logo: WalletConnectLogo,
+    Logo: <WalletConnectIcon />,
     name: 'wallet connect',
     title: `Wallet Connect`,
     platform: 'EVM',
@@ -108,7 +112,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   // },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
-    Logo: TalismanLogo,
+    Logo: <TalismanIcon />,
     name: 'talisman',
     title: 'Talisman',
     platform: 'Substrate',
@@ -127,7 +131,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
   },
   [WalletId.SubWallet]: {
     id: WalletId.SubWallet,
-    Logo: SubWalletLogo,
+    Logo: <SubWalletIcon />,
     name: 'subwallet-js',
     title: 'SubWallet',
     platform: 'Substrate',
