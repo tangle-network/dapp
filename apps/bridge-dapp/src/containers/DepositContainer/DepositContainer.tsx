@@ -36,7 +36,7 @@ export const DepositContainer = forwardRef<
 
   const { generateNote } = useBridgeDeposit();
   const { setGovernedCurrency } = useBridge();
-  const { governedCurrencies , wrappableCurrencies  } = useCurrencies();
+  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
 
   // The seleted token balance
   const selectedTokenBalance = useCurrencyBalance(
@@ -47,19 +47,21 @@ export const DepositContainer = forwardRef<
     useModal(false);
 
   // Other supported tokens balances
-  const balances = useCurrenciesBalances(governedCurrencies.concat(wrappableCurrencies));
+  const balances = useCurrenciesBalances(
+    governedCurrencies.concat(wrappableCurrencies)
+  );
 
   const [isGeneratingNote, setIsGeneratingNote] = useState(false);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
   const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
   const [amount, setAmount] = useState<number>(0);
 
-  const parseAndSetAmount = (amount: string | number): void => {
+  const onAmountChange = useCallback((amount: string): void => {
     const parsedAmount = Number(amount);
     if (!isNaN(parsedAmount)) {
       setAmount(parsedAmount);
     }
-  };
+  }, []);
 
   const sourceChains: ChainType[] = useMemo(() => {
     return Object.values(chains).map((val) => {
@@ -145,12 +147,14 @@ export const DepositContainer = forwardRef<
       selectedToken,
       destChainInputValue,
       amount,
+      selectedTokenBalance ? amount <= selectedTokenBalance : true,
     ].some((val) => Boolean(val) === false);
   }, [
     amount,
     destChainInputValue,
     selectedSourceChain,
     selectedToken,
+    selectedTokenBalance,
   ]);
 
   const handleTokenChange = useCallback(
@@ -220,7 +224,13 @@ export const DepositContainer = forwardRef<
       return;
     }
 
-    if (sourceChain && destChain && selectedToken && amount !== 0  && activeApi?.state.activeBridge) {
+    if (
+      sourceChain &&
+      destChain &&
+      selectedToken &&
+      amount !== 0 &&
+      activeApi?.state?.activeBridge
+    ) {
       setIsGeneratingNote(true);
       const newDepositPayload = await generateNote(
         activeApi.state.activeBridge.targets[
@@ -250,11 +260,11 @@ export const DepositContainer = forwardRef<
     destChain,
     selectedToken,
     amount,
+    activeApi?.state?.activeBridge,
     chains,
     setMainComponent,
     setNoteAccountModalOpen,
     generateNote,
-    activeApi?.state.activeBridge?.targets,
     setTxPayload,
     selectedSourceChain,
     destChainInputValue,
@@ -333,9 +343,7 @@ export const DepositContainer = forwardRef<
           }}
           amountInputProps={{
             amount: amount ? amount.toString() : undefined,
-            onAmountChange: (value) => {
-              parseAndSetAmount(value);
-            },
+            onAmountChange,
             onMaxBtnClick,
           }}
           buttonProps={{

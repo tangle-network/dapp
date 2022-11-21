@@ -1,5 +1,4 @@
 import {
-  Currency,
   DepositPayload,
   NewNotesTxResult,
   TransactionState,
@@ -87,6 +86,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.cancel().catch(console.error);
   }, [depositApi]);
+
   return {
     stage,
     setStage,
