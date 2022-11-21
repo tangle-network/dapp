@@ -7,9 +7,9 @@ import {
 } from '@tanstack/react-table';
 import {
   AddBoxLineIcon,
+  ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
-  TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
@@ -21,7 +21,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { EmptyTable } from '../../components/tables';
-import { useShieldedAssets } from '../../hooks';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
@@ -32,7 +31,7 @@ const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <TokenIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
   }),
 
   columnHelper.accessor('token1Symbol', {
@@ -144,9 +143,7 @@ const data: ShieldedAssetDataType[] = [
 
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
-> = ({ onUploadSpendNote }) => {
-  const data = useShieldedAssets();
-
+> = ({ data = [], onUploadSpendNote }) => {
   const table = useReactTable({
     data,
     columns,

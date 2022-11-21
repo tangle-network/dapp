@@ -47,4 +47,10 @@ export interface ShieldedAssetsTableContainerProps {
    * The upload spend note callback
    */
   onUploadSpendNote?: () => void;
+
+  /**
+   * The shielded assets data
+   * @default []
+   */
+  data?: ShieldedAssetDataType[];
 }
