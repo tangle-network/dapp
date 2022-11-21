@@ -128,20 +128,6 @@ export const useConnectWallet = (
     };
   }, [appEvent, setWalletState]);
 
-  // Force close the modal when active wallet is not defiend
-  useEffect(() => {
-    let isSubscribed = true;
-
-    if (isSubscribed && activeWallet && isModalOpen) {
-      update(false); // force close modal
-      setMainComponent(undefined);
-    }
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [activeWallet, isModalOpen, setMainComponent, update]);
-
   /**
    * Toggle or set state of the wallet modal
    */
@@ -176,10 +162,11 @@ export const useConnectWallet = (
 
       // If the promise resolved without null, switchWallet was successful.
       if (retVal) {
+        update(false);
         setMainComponent(undefined);
       }
     },
-    [setMainComponent, switchChain]
+    [switchChain, update, setMainComponent]
   );
 
   /**
