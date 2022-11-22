@@ -15,7 +15,6 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
     },
     {
       list: [
-        apiConfig.getEVMChainName(EVMChainId.Rinkeby),
         apiConfig.getEVMChainName(EVMChainId.Beresheet),
         apiConfig.getEVMChainName(EVMChainId.HarmonyTestnet1),
       ],
