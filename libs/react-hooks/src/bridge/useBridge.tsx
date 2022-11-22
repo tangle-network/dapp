@@ -13,7 +13,7 @@ export interface BridgeApi {
 export const useBridge = (): BridgeApi => {
   const { activeApi } = useWebContext();
   const [governedCurrency, setGovernedCurrencyState] =
-    useState<Currency | null>(activeApi?.state.activeBridge.currency ?? null);
+    useState<Currency | null>(activeApi?.state.activeBridge?.currency ?? null);
   const [wrappableCurrency, setWrapableCurrencyState] =
     useState<Currency | null>(activeApi?.state.wrappableCurrency ?? null);
 
@@ -37,13 +37,17 @@ export const useBridge = (): BridgeApi => {
     [activeApi]
   );
   useEffect(() => {
+
     if (activeApi) {
-      activeApi.state.$activeBridge.subscribe((bridge) =>
-        setWrapableCurrencyState(bridge?.currency)
+      activeApi.methods.bridgeApi.bridges.filter(b => b.targets)
+      const sub: { unsubscribe(): void }[] = [];
+      sub[0] = activeApi.state.$activeBridge.subscribe((bridge) =>
+        setGovernedCurrencyState(bridge?.currency)
       );
-      activeApi.state.$wrappableCurrency.subscribe((currency) => {
+      sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
         setWrapableCurrencyState(currency);
       });
+      return () => sub.forEach((s) => s.unsubscribe());
     }
   }, [activeApi, setWrapableCurrencyState, setGovernedCurrencyState]);
 

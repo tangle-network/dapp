@@ -44,7 +44,13 @@ export const DepositContainer = forwardRef<
   } = useWebContext();
 
   const { generateNote } = useBridgeDeposit();
-  const { setGovernedCurrency, setWrappableCurrency } = useBridge();
+  const {
+    setGovernedCurrency,
+    setWrappableCurrency,
+    wrappableCurrency,
+    governedCurrency,
+  } = useBridge();
+
   const { governedCurrencies, wrappableCurrencies } = useCurrencies();
 
   // The seleted token balance
@@ -122,52 +128,43 @@ export const DepositContainer = forwardRef<
     };
   }, [activeChain, sourceChain]);
 
-  const bridgeCurrency = useMemo(() => {
-    if (!activeApi || !activeApi.state.activeBridge) {
+  const brideGovernedCurrency = useMemo(() => {
+    if (!governedCurrency) {
       return undefined;
     }
     return {
-      currency: activeApi.state.activeBridge.currency,
-      balance: balances[activeApi.state.activeBridge.currency.id] ?? 0,
+      currency: governedCurrency,
+      balance: balances[governedCurrency.id] ?? 0,
     };
-  }, [activeApi, balances]);
-  const [wrappableCurrency, setWrapableCurrencyState] =
-    useState<Currency | null>(null);
-
-  useEffect(() => {
-    if (activeApi && activeApi.state) {
-      const sub = activeApi.state.$wrappableCurrency.subscribe((currency) => {
-        setWrapableCurrencyState(currency);
-      });
-      return () => sub.unsubscribe();
-    }
-  }, [wrappableCurrency, setWrapableCurrencyState, activeApi]);
+  }, [governedCurrency, balances]);
 
   const bridgeWrappableCurrency = useMemo(() => {
-    if (!activeApi || !activeApi.state.wrappableCurrency) {
+    if (!wrappableCurrency) {
       return undefined;
     }
     return {
-      currency: activeApi.state.wrappableCurrency,
-      balance: balances[activeApi.state.wrappableCurrency.id] ?? 0,
+      currency: wrappableCurrency,
+      balance: balances[wrappableCurrency.id] ?? 0,
     };
   }, [wrappableCurrency, balances]);
 
   const selectedToken: TokenType | undefined = useMemo(() => {
+    // Wrap and deposit flow
     if (bridgeWrappableCurrency) {
       return {
         symbol: bridgeWrappableCurrency.currency.view.symbol,
         balance: bridgeWrappableCurrency.balance,
       };
     }
-    if (!bridgeCurrency) {
+    if (!brideGovernedCurrency) {
       return undefined;
     }
+    // Deposit flow
     return {
-      symbol: bridgeCurrency.currency.view.symbol,
-      balance: bridgeCurrency.balance,
+      symbol: brideGovernedCurrency.currency.view.symbol,
+      balance: brideGovernedCurrency.balance,
     };
-  }, [bridgeCurrency && bridgeWrappableCurrency]);
+  }, [brideGovernedCurrency && bridgeWrappableCurrency]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -241,6 +238,7 @@ export const DepositContainer = forwardRef<
         (token) => token.view.symbol === newToken.symbol
       );
       if (selectedWrappableToken) {
+        await setGovernedCurrency(null);
         await setWrappableCurrency(selectedWrappableToken);
       }
 
@@ -379,11 +377,39 @@ export const DepositContainer = forwardRef<
     if (!bridgeWrappableCurrency) {
       return undefined;
     }
+    const targetSymbol = bridgeWrappableCurrency.currency.view.symbol;
+    const selectedWrappableToken = Object.values(wrappableCurrencies)
+      .filter((token) => token.view.symbol === targetSymbol)
+      .map(
+        (currency): AssetType => ({
+          name: currency.view.name,
+          symbol: currency.view.symbol,
+          balance: balances[currency.id] ?? 0,
+        })
+      );
+
     return {
-      symbol: bridgeWrappableCurrency.currency.view.symbol,
-      balance: bridgeWrappableCurrency.balance,
+      asset: {
+        symbol: targetSymbol,
+        balance: bridgeWrappableCurrency.balance,
+      },
+      onClick: () => {
+        if (selectedSourceChain) {
+          setMainComponent(
+            <TokenListCard
+              className="w-[550px] h-[720px]"
+              title={'Select Asset to Wrap and Deposit'}
+              popularTokens={[]}
+              selectTokens={selectedWrappableToken}
+              unavailableTokens={populatedAllTokens}
+              onChange={handleTokenChange}
+              onClose={() => setMainComponent(undefined)}
+            />
+          );
+        }
+      },
     };
-  }, [bridgeWrappableCurrency]);
+  }, [bridgeWrappableCurrency, balances]);
 
   return (
     <>
