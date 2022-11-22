@@ -39,6 +39,7 @@ export const useCurrencies = () => {
               calculateTypedChainId(activeChain.chainType, activeChain.chainId)
             )
             .then((assets) => {
+              console.log('fetched assets dynamically', assets);
               setWrappableCurrencies(assets);
             })
             .catch((error) => {

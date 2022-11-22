@@ -37,13 +37,11 @@ export const useBridge = (): BridgeApi => {
     [activeApi]
   );
   useEffect(() => {
-
     if (activeApi) {
-      activeApi.methods.bridgeApi.bridges.filter(b => b.targets)
       const sub: { unsubscribe(): void }[] = [];
-      sub[0] = activeApi.state.$activeBridge.subscribe((bridge) =>
-        setGovernedCurrencyState(bridge?.currency)
-      );
+      sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
+        setGovernedCurrencyState(bridge?.currency);
+      });
       sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
         setWrapableCurrencyState(currency);
       });

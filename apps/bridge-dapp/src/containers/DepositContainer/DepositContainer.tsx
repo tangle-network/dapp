@@ -20,13 +20,12 @@ import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ChainSelectionWrapper, WalletModal } from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
 import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
-import { Currency } from '@webb-tools/abstract-api-provider';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -164,7 +163,7 @@ export const DepositContainer = forwardRef<
       symbol: brideGovernedCurrency.currency.view.symbol,
       balance: brideGovernedCurrency.balance,
     };
-  }, [brideGovernedCurrency && bridgeWrappableCurrency]);
+  }, [brideGovernedCurrency, bridgeWrappableCurrency]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -238,7 +237,7 @@ export const DepositContainer = forwardRef<
         (token) => token.view.symbol === newToken.symbol
       );
       if (selectedWrappableToken) {
-        await setGovernedCurrency(null);
+        // await setGovernedCurrency(null);
         await setWrappableCurrency(selectedWrappableToken);
       }
 
@@ -410,7 +409,8 @@ export const DepositContainer = forwardRef<
       },
     };
   }, [bridgeWrappableCurrency, balances]);
-
+  console.log(wrappableCurrencies, 'wrappableCurrencies');
+  console.log(activeApi?.state.activeBridge, 'active bridge');
   return (
     <>
       <div {...props} ref={ref}>
