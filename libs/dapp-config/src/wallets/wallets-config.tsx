@@ -17,7 +17,6 @@ const ANY_EVM = [
   PresetTypedChainId.Sepolia,
   PresetTypedChainId.HarmonyTestnet1,
   PresetTypedChainId.HarmonyTestnet0,
-  PresetTypedChainId.HarmonyMainnet0,
   PresetTypedChainId.Shiden,
   PresetTypedChainId.OptimismTestnet,
   PresetTypedChainId.ArbitrumTestnet,

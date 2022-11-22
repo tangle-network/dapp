@@ -29,7 +29,6 @@ export enum EVMChainId {
   Beresheet = 2022,
   HarmonyTestnet0 = 1666700000,
   HarmonyTestnet1 = 1666700001,
-  HarmonyMainnet0 = 1666600000,
   Shiden = 336,
   OptimismTestnet = 420,
   ArbitrumTestnet = 421613,
@@ -59,11 +58,6 @@ export enum PresetTypedChainId {
   HarmonyTestnet0 = calculateTypedChainId(
     ChainType.EVM,
     EVMChainId.HarmonyTestnet0
-  ),
-
-  HarmonyMainnet0 = calculateTypedChainId(
-    ChainType.EVM,
-    EVMChainId.HarmonyMainnet0
   ),
 
   Ganache = calculateTypedChainId(ChainType.EVM, EVMChainId.Ganache),

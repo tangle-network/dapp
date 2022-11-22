@@ -45,7 +45,6 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     role: CurrencyRole.Wrappable,
     icon: HarmonyLogo,
     addresses: new Map<number, string>([
-      [PresetTypedChainId.HarmonyMainnet0, zeroAddress],
       [PresetTypedChainId.HarmonyTestnet0, zeroAddress],
       [PresetTypedChainId.HarmonyTestnet1, zeroAddress],
     ]),
