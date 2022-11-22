@@ -503,11 +503,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   //default on metamask
                   [EVMChainId.EthereumMainNet]:
                     'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-
-                  //default on metamask
-                  [EVMChainId.Beresheet]: 'http://beresheet1.edgewa.re:9933',
-
-                  [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
                 chainId: chain.chainId,
               });
