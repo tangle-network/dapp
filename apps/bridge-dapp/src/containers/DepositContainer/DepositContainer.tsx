@@ -25,6 +25,7 @@ import { ChainSelectionWrapper, WalletModal } from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
+import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -120,16 +121,25 @@ export const DepositContainer = forwardRef<
     };
   }, [activeChain, sourceChain]);
 
-  const selectedToken: TokenType | undefined = useMemo(() => {
+  const bridgeCurrency = useMemo(() => {
     if (!activeApi || !activeApi.state.activeBridge) {
       return undefined;
     }
-
     return {
-      symbol: activeApi.state.activeBridge.currency.view.symbol,
+      currency: activeApi.state.activeBridge.currency,
       balance: balances[activeApi.state.activeBridge.currency.id] ?? 0,
     };
   }, [activeApi, balances]);
+
+  const selectedToken: TokenType | undefined = useMemo(() => {
+    if (!bridgeCurrency) {
+      return undefined;
+    }
+    return {
+      symbol: bridgeCurrency.currency.view.symbol,
+      balance: bridgeCurrency.balance,
+    };
+  }, [bridgeCurrency]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -335,6 +345,26 @@ export const DepositContainer = forwardRef<
     return 'Connect wallet';
   }, [hasNoteAccount, isWalletConnected]);
 
+  const bridgingTokenProps = useMemo<
+    DepositCardProps['bridgingTokenProps']
+  >(() => {
+    if (!bridgeCurrency) {
+      return undefined;
+    }
+    const currencyRole = bridgeCurrency.currency.getRole();
+    switch (currencyRole) {
+      case CurrencyRole.Wrappable: {
+        return {
+          symbol: 'WebbEth/WETH',
+          balance: '100',
+          balanceInUsd: '21093240',
+        };
+      }
+      case CurrencyRole.Governable:
+        return undefined;
+    }
+  }, [bridgeCurrency]);
+
   return (
     <>
       <div {...props} ref={ref}>
@@ -345,6 +375,7 @@ export const DepositContainer = forwardRef<
             onClick: sourceChainInputOnClick,
             chainType: 'source',
           }}
+          bridgingTokenProps={bridgingTokenProps}
           destChainProps={{
             chain: destChainInputValue,
             onClick: () => {
