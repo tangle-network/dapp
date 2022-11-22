@@ -237,7 +237,7 @@ export const DepositContainer = forwardRef<
         (token) => token.view.symbol === newToken.symbol
       );
       if (selectedWrappableToken) {
-        // await setGovernedCurrency(null);
+        await setGovernedCurrency(Object.values(governedCurrencies)[0]);
         await setWrappableCurrency(selectedWrappableToken);
       }
 
@@ -373,10 +373,10 @@ export const DepositContainer = forwardRef<
   const bridgingTokenProps = useMemo<
     DepositCardProps['bridgingTokenProps']
   >(() => {
-    if (!bridgeWrappableCurrency) {
+    if (!bridgeWrappableCurrency || !brideGovernedCurrency) {
       return undefined;
     }
-    const targetSymbol = bridgeWrappableCurrency.currency.view.symbol;
+    const targetSymbol = brideGovernedCurrency.currency.view.symbol;
     const selectedWrappableToken = Object.values(wrappableCurrencies)
       .filter((token) => token.view.symbol === targetSymbol)
       .map(
@@ -390,7 +390,7 @@ export const DepositContainer = forwardRef<
     return {
       asset: {
         symbol: targetSymbol,
-        balance: bridgeWrappableCurrency.balance,
+        balance: brideGovernedCurrency.balance,
       },
       onClick: () => {
         if (selectedSourceChain) {
@@ -408,9 +408,7 @@ export const DepositContainer = forwardRef<
         }
       },
     };
-  }, [bridgeWrappableCurrency, balances]);
-  console.log(wrappableCurrencies, 'wrappableCurrencies');
-  console.log(activeApi?.state.activeBridge, 'active bridge');
+  }, [brideGovernedCurrency, governedCurrency, balances]);
   return (
     <>
       <div {...props} ref={ref}>
