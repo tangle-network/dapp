@@ -33,7 +33,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     await Promise.all(
       allTokenAddresses.map(async (tokenAddress) => {
         const registeredCurrency = this.inner.state
-          .getReverseCurrencyMap()
+          .getReverseCurrencyMapWithChainId(typedChainId)
           .get(tokenAddress);
         const knownCurrencies = this.inner.state.getCurrencies();
 
@@ -49,6 +49,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
           const wrappableTokenLength = Object.keys(knownCurrencies).length;
 
           const newToken: Currency = new Currency({
+            //TODO: Ensure the webbState has the right address map (EX: the token is in another chain)
             addresses: new Map<number, string>([[typedChainId, tokenAddress]]),
             decimals: decimals,
             id: CurrencyId.DYNAMIC_CURRENCY_STARTING_ID + wrappableTokenLength,

@@ -408,7 +408,7 @@ export const DepositContainer = forwardRef<
         }
       },
     };
-  }, [brideGovernedCurrency, governedCurrency, balances]);
+  }, [brideGovernedCurrency, bridgeWrappableCurrency, balances]);
   return (
     <>
       <div {...props} ref={ref}>
