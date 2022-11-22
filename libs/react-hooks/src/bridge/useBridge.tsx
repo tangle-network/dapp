@@ -1,10 +1,10 @@
-import { Currency } from "@webb-tools/abstract-api-provider";
-import { useWebContext } from "@webb-tools/api-provider-environment";
-import { useCallback } from "react";
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useCallback } from 'react';
 
 export interface BridgeApi {
   setGovernedCurrency(currency: Currency): Promise<void>;
-  setWrappableCurrency(currency: Currency): Promise<void>;
+  setWrappableCurrency(currency: Currency | null): Promise<void>;
 }
 
 export const useBridge = (): BridgeApi => {
@@ -32,6 +32,6 @@ export const useBridge = (): BridgeApi => {
 
   return {
     setWrappableCurrency,
-    setGovernedCurrency
+    setGovernedCurrency,
   };
-}
+};

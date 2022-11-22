@@ -20,12 +20,13 @@ import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainSelectionWrapper, WalletModal } from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
 import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
+import { Currency } from '@webb-tools/abstract-api-provider';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -130,8 +131,35 @@ export const DepositContainer = forwardRef<
       balance: balances[activeApi.state.activeBridge.currency.id] ?? 0,
     };
   }, [activeApi, balances]);
+  const [wrappableCurrency, setWrapableCurrencyState] =
+    useState<Currency | null>(null);
+
+  useEffect(() => {
+    if (activeApi && activeApi.state) {
+      const sub = activeApi.state.$wrappableCurrency.subscribe((currency) => {
+        setWrapableCurrencyState(currency);
+      });
+      return () => sub.unsubscribe();
+    }
+  }, [wrappableCurrency, setWrapableCurrencyState, activeApi]);
+
+  const bridgeWrappableCurrency = useMemo(() => {
+    if (!activeApi || !activeApi.state.wrappableCurrency) {
+      return undefined;
+    }
+    return {
+      currency: activeApi.state.wrappableCurrency,
+      balance: balances[activeApi.state.wrappableCurrency.id] ?? 0,
+    };
+  }, [wrappableCurrency, balances]);
 
   const selectedToken: TokenType | undefined = useMemo(() => {
+    if (bridgeWrappableCurrency) {
+      return {
+        symbol: bridgeWrappableCurrency.currency.view.symbol,
+        balance: bridgeWrappableCurrency.balance,
+      };
+    }
     if (!bridgeCurrency) {
       return undefined;
     }
@@ -139,7 +167,7 @@ export const DepositContainer = forwardRef<
       symbol: bridgeCurrency.currency.view.symbol,
       balance: bridgeCurrency.balance,
     };
-  }, [bridgeCurrency]);
+  }, [bridgeCurrency && bridgeWrappableCurrency]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -202,17 +230,18 @@ export const DepositContainer = forwardRef<
       const selectedToken = Object.values(governedCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
-
       if (selectedToken) {
-        setGovernedCurrency(selectedToken);
+        // unset the wrappable currency
+        await setWrappableCurrency(null);
+        // Set the Governable currency
+        await setGovernedCurrency(selectedToken);
       }
 
       const selectedWrappableToken = Object.values(wrappableCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
-
       if (selectedWrappableToken) {
-        setWrappableCurrency(selectedWrappableToken);
+        await setWrappableCurrency(selectedWrappableToken);
       }
 
       setMainComponent(undefined);
@@ -225,7 +254,6 @@ export const DepositContainer = forwardRef<
       wrappableCurrencies,
     ]
   );
-
   const sourceChainInputOnClick = useCallback(() => {
     setMainComponent(
       <ChainListCard
@@ -348,22 +376,14 @@ export const DepositContainer = forwardRef<
   const bridgingTokenProps = useMemo<
     DepositCardProps['bridgingTokenProps']
   >(() => {
-    if (!bridgeCurrency) {
+    if (!bridgeWrappableCurrency) {
       return undefined;
     }
-    const currencyRole = bridgeCurrency.currency.getRole();
-    switch (currencyRole) {
-      case CurrencyRole.Wrappable: {
-        return {
-          symbol: 'WebbEth/WETH',
-          balance: '100',
-          balanceInUsd: '21093240',
-        };
-      }
-      case CurrencyRole.Governable:
-        return undefined;
-    }
-  }, [bridgeCurrency]);
+    return {
+      symbol: bridgeWrappableCurrency.currency.view.symbol,
+      balance: bridgeWrappableCurrency.balance,
+    };
+  }, [bridgeWrappableCurrency]);
 
   return (
     <>
