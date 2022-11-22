@@ -13,9 +13,6 @@ import { WalletConfig } from '.';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
-  PresetTypedChainId.Rinkeby,
-  PresetTypedChainId.Kovan,
-  PresetTypedChainId.Ropsten,
   PresetTypedChainId.Goerli,
   PresetTypedChainId.Sepolia,
   PresetTypedChainId.HarmonyTestnet1,

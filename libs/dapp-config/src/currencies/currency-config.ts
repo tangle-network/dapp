@@ -13,7 +13,6 @@ import ShidenLogo from '@webb-tools/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
 import EtherLogo from '@webb-tools/logos/Eth';
 import WebbWrappedLogo from '@webb-tools/logos/WebbWrappedLogo';
-import React from 'react';
 
 import { CurrencyConfig } from './currency-config.interface';
 
@@ -27,11 +26,8 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: EtherLogo,
-    addresses: new Map([
-      [PresetTypedChainId.Ropsten, zeroAddress],
-      [PresetTypedChainId.Rinkeby, zeroAddress],
+    addresses: new Map<number, string>([
       [PresetTypedChainId.Goerli, zeroAddress],
-      [PresetTypedChainId.Kovan, zeroAddress],
       [PresetTypedChainId.OptimismTestnet, zeroAddress],
       [PresetTypedChainId.ArbitrumTestnet, zeroAddress],
       [PresetTypedChainId.HermesLocalnet, zeroAddress],
@@ -48,7 +44,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: HarmonyLogo,
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [PresetTypedChainId.HarmonyMainnet0, zeroAddress],
       [PresetTypedChainId.HarmonyTestnet0, zeroAddress],
       [PresetTypedChainId.HarmonyTestnet1, zeroAddress],
@@ -65,7 +61,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: WEBBLogo,
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [PresetTypedChainId.LocalTangleStandalone, '0'],
       [PresetTypedChainId.DkgSubstrateStandalone, '0'],
       [PresetTypedChainId.ProtocolSubstrateStandalone, '0'],
@@ -80,7 +76,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Governable,
     icon: WEBBLogo,
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [PresetTypedChainId.LocalTangleStandalone, '2'],
       [PresetTypedChainId.DkgSubstrateStandalone, '2'],
       [PresetTypedChainId.ProtocolSubstrateStandalone, '2'],
@@ -107,18 +103,12 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     role: CurrencyRole.Wrappable,
     imageUrl: 'https://www.polysa.finance/images/farms/weth.png',
     icon: EtherLogo,
-    addresses: new Map([
-      [
-        PresetTypedChainId.Ropsten,
-        '0xc778417E063141139Fce010982780140Aa0cD5Ab',
-      ],
-      [
-        PresetTypedChainId.Rinkeby,
-        '0xc778417E063141139Fce010982780140Aa0cD5Ab',
-      ],
+    addresses: new Map<number, string>([
       [PresetTypedChainId.Goerli, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'],
-      [PresetTypedChainId.Sepolia, '0xeD43f81C17976372Fcb5786Dd214572e7dbB92c7'],
-      [PresetTypedChainId.Kovan, '0xd0A1E359811322d97991E03f863a0C30C2cF029C'],
+      [
+        PresetTypedChainId.Sepolia,
+        '0xeD43f81C17976372Fcb5786Dd214572e7dbB92c7',
+      ],
       [
         PresetTypedChainId.OptimismTestnet,
         '0x4200000000000000000000000000000000000006',
@@ -157,9 +147,12 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
     icon: () => WebbWrappedLogo(EtherLogo()),
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [PresetTypedChainId.Goerli, '0x35295fbb71273b84f66e70b8e341d408150dcaf9'],
-      [PresetTypedChainId.Sepolia, '0xeda366e62551d4b1aad35018e0150203897f0bd6'],
+      [
+        PresetTypedChainId.Sepolia,
+        '0xeda366e62551d4b1aad35018e0150203897f0bd6',
+      ],
       [
         PresetTypedChainId.PolygonTestnet,
         '0x8b35babc6b37a2f98c85a6734c040bc996595d1c',
@@ -187,7 +180,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Wrappable,
     icon: GanacheLogo,
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [
         PresetTypedChainId.HermesLocalnet,
         '0x2946259E0334f33A064106302415aD3391BeD384',
@@ -211,7 +204,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.ERC20,
     role: CurrencyRole.Governable,
     icon: () => WebbWrappedLogo(GanacheLogo()),
-    addresses: new Map([
+    addresses: new Map<number, string>([
       [
         PresetTypedChainId.HermesLocalnet,
         '0xcbD945E77ADB65651F503723aC322591f3435cC5',

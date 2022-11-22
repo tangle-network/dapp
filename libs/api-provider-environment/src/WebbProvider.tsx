@@ -488,21 +488,25 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           {
             let web3Provider: Web3Provider;
             if (wallet?.id === WalletId.WalletConnectV1) {
+              // Get rpcs from evm chains
+              const rpc = Object.values(chains).reduce((acc, chain) => {
+                if (chain.chainType === ChainType.EVM) {
+                  acc[chain.chainId] = chain.url;
+                }
+                return acc;
+              }, {} as Record<number, string>);
+
               const provider = new WalletConnectProvider({
                 rpc: {
+                  ...rpc,
+
                   //default on metamask
                   [EVMChainId.EthereumMainNet]:
                     'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Ropsten]:
-                    'https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Goerli]:
-                    'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Kovan]:
-                    'https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  [EVMChainId.Rinkeby]:
-                    'https://rinkeby.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+
                   //default on metamask
                   [EVMChainId.Beresheet]: 'http://beresheet1.edgewa.re:9933',
+
                   [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
                 },
                 chainId: chain.chainId,
@@ -523,23 +527,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 secondaryMessage: `Connected to ${clientInfo.name}`,
                 variant: 'success',
                 key: 'network-connect',
-                Icon: React.createElement(
-                  'div',
-                  {
-                    style: {
-                      background: 'white',
-                      minWidth: 30,
-                      minHeight: 30,
-                      padding: 4,
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    },
-                  },
-                  [wallet.Logo]
-                ),
+                Icon: React.cloneElement(wallet.Logo, { size: 'xl' }),
               });
             }
             /// get the current active chain from metamask
@@ -584,7 +572,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 notificationApi({
                   message: 'Web3: Connected',
                   variant: 'info',
-                  Icon: React.createElement(Icon, null, ['leak_add']),
                   secondaryMessage: `Connection is switched to ${name} chain`,
                 });
                 setActiveWallet(wallet);

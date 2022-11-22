@@ -20,9 +20,6 @@ export enum SubstrateChainId {
 export enum EVMChainId {
   /* Default EVM Chains on MetaMask */
   EthereumMainNet = 1,
-  Ropsten = 3,
-  Rinkeby = 4,
-  Kovan = 42,
   Goerli = 5,
   Sepolia = 11155111,
   Ganache = 1337,
@@ -45,30 +42,91 @@ export enum EVMChainId {
 
 // Pre-calculated TypedChainId values that are supported in the dapp
 export enum PresetTypedChainId {
-  EthereumMainNet = calculateTypedChainId(ChainType.EVM, EVMChainId.EthereumMainNet),
-  Rinkeby = calculateTypedChainId(ChainType.EVM, EVMChainId.Rinkeby),
-  Ropsten = calculateTypedChainId(ChainType.EVM, EVMChainId.Ropsten),
-  Kovan = calculateTypedChainId(ChainType.EVM, EVMChainId.Kovan),
+  EthereumMainNet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.EthereumMainNet
+  ),
+
   Goerli = calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli),
+
   Sepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia),
-  HarmonyTestnet1 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet1),
-  HarmonyTestnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyTestnet0),
-  HarmonyMainnet0 = calculateTypedChainId(ChainType.EVM, EVMChainId.HarmonyMainnet0),
+
+  HarmonyTestnet1 = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.HarmonyTestnet1
+  ),
+
+  HarmonyTestnet0 = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.HarmonyTestnet0
+  ),
+
+  HarmonyMainnet0 = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.HarmonyMainnet0
+  ),
+
   Ganache = calculateTypedChainId(ChainType.EVM, EVMChainId.Ganache),
+
   Shiden = calculateTypedChainId(ChainType.EVM, EVMChainId.Shiden),
-  OptimismTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet),
-  ArbitrumTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet),
-  PolygonTestnet = calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet),
+
+  OptimismTestnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.OptimismTestnet
+  ),
+
+  ArbitrumTestnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.ArbitrumTestnet
+  ),
+
+  PolygonTestnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.PolygonTestnet
+  ),
+
   ProtocolSubstrateStandalone = calculateTypedChainId(
     ChainType.Substrate,
     SubstrateChainId.ProtocolSubstrateStandalone
   ),
-  LocalTangleStandalone = calculateTypedChainId(ChainType.Substrate, SubstrateChainId.LocalTangleStandalone),
-  DkgSubstrateStandalone = calculateTypedChainId(ChainType.Substrate, SubstrateChainId.ProtocolSubstrateStandalone),
-  Kusama = calculateTypedChainId(ChainType.KusamaRelayChain, SubstrateChainId.Kusama),
-  Polkadot = calculateTypedChainId(ChainType.PolkadotRelayChain, SubstrateChainId.Polkadot),
-  MoonbaseAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha),
-  HermesLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet),
-  AthenaLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet),
-  DemeterLocalnet = calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet),
+
+  LocalTangleStandalone = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.LocalTangleStandalone
+  ),
+
+  DkgSubstrateStandalone = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.ProtocolSubstrateStandalone
+  ),
+
+  Kusama = calculateTypedChainId(
+    ChainType.KusamaRelayChain,
+    SubstrateChainId.Kusama
+  ),
+
+  Polkadot = calculateTypedChainId(
+    ChainType.PolkadotRelayChain,
+    SubstrateChainId.Polkadot
+  ),
+
+  MoonbaseAlpha = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.MoonbaseAlpha
+  ),
+
+  HermesLocalnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.HermesLocalnet
+  ),
+
+  AthenaLocalnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.AthenaLocalnet
+  ),
+
+  DemeterLocalnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.DemeterLocalnet
+  ),
 }
