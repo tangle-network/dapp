@@ -76,4 +76,10 @@ export abstract class BridgeApi<
   }
 
   abstract fetchWrappableAssets(typedChainId: number): Promise<Currency[]>;
+  fetchWrappableAssetsByBridge(
+    typedChainId: number,
+    bridge: Bridge
+  ): Promise<Currency[]> {
+    return Promise.resolve([]);
+  }
 }

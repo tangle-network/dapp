@@ -1,6 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import { BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
+import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { CurrencyId } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
@@ -9,16 +9,13 @@ import { GovernedTokenWrapper } from '@webb-tools/tokens';
 import { WebbWeb3Provider } from '../webb-provider';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
-  async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
-    const bridge = this.getBridge();
+  async fetchWrappableAssetsByBridge(
+    typedChainId: number,
+    bridge: Bridge
+  ): Promise<Currency[]> {
     const wrappableTokens: Currency[] = [];
-
-    if (!bridge) {
-      return wrappableTokens;
-    }
-
-    const governedTokenAddress = this.getTokenTarget(typedChainId);
-
+    const bridgeAsset = bridge.currency;
+    const governedTokenAddress = bridgeAsset.getAddress(typedChainId);
     if (!governedTokenAddress) {
       return wrappableTokens;
     }
@@ -81,5 +78,9 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     }
 
     return wrappableTokens;
+  }
+  async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
+    const bridge = this.getBridge();
+    return this.fetchWrappableAssetsByBridge(typedChainId, bridge);
   }
 }

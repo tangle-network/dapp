@@ -15,6 +15,40 @@ export const useCurrencies = () => {
   );
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
+  // GovernableCurrency -> wrappableCurrency[]
+  const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
+    Record<Currency['id'], Currency[]>
+  >({});
+  useEffect(() => {
+    if (activeApi && activeChain) {
+      const typedChainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+      const handler = async () => {
+        const tokens = await Promise.all(
+          Object.values(activeApi.state.getBridgeOptions()).map(
+            (potentialBridge) => {
+              return activeApi.methods.bridgeApi
+                .fetchWrappableAssetsByBridge(typedChainId, potentialBridge)
+                .then((currencies) => ({
+                  currencies,
+                  bridgeCurrency: potentialBridge.currency,
+                }));
+            }
+          )
+        );
+        const nextWrappableCurrenciesMap = tokens.reduce(
+          (map, entry) => ({ ...map, [entry.bridgeCurrency.id]: currencies }),
+          {}
+        );
+        setWrappableCurrenciesMap(nextWrappableCurrenciesMap);
+      };
+      handler().catch((e) => {
+        console.error(e);
+      });
+    }
+  }, [activeChain, activeApi, setWrappableCurrenciesMap]);
 
   useEffect(() => {
     if (!activeApi || !activeChain) {
