@@ -95,11 +95,6 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
     ),
   }),
 
-  columnHelper.accessor('createdTime', {
-    header: 'Created',
-    cell: (props) => formatDistanceToNow(props.getValue<Date>()),
-  }),
-
   columnHelper.accessor('subsequentDeposits', {
     header: 'Subsequent deposits',
     cell: (props) => (
