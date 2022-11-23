@@ -490,8 +490,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             if (wallet?.id === WalletId.WalletConnectV1) {
               // Get rpcs from evm chains
               const rpc = Object.values(chains).reduce((acc, chain) => {
-                if (chain.chainType === ChainType.EVM) {
-                  acc[chain.chainId] = chain.url;
+                if (
+                  chain.chainType === ChainType.EVM &&
+                  chain.evmRpcUrls?.length
+                ) {
+                  acc[chain.chainId] = chain.evmRpcUrls[0];
                 }
                 return acc;
               }, {} as Record<number, string>);
@@ -501,6 +504,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   ...rpc,
 
                   //default on metamask
+                  [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
+
                   [EVMChainId.EthereumMainNet]:
                     'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
                 },
