@@ -50,7 +50,11 @@ export const DepositContainer = forwardRef<
     governedCurrency,
   } = useBridge();
 
-  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
+  const {
+    governedCurrencies,
+    wrappableCurrencies,
+    getPossibleGovernedCurrencies,
+  } = useCurrencies();
 
   // The seleted token balance
   const selectedTokenBalance = useCurrencyBalance(
@@ -237,7 +241,8 @@ export const DepositContainer = forwardRef<
         (token) => token.view.symbol === newToken.symbol
       );
       if (selectedWrappableToken) {
-        await setGovernedCurrency(Object.values(governedCurrencies)[0]);
+        const tokens = getPossibleGovernedCurrencies(selectedWrappableToken.id);
+        await setGovernedCurrency(tokens[0]);
         await setWrappableCurrency(selectedWrappableToken);
       }
 
@@ -249,6 +254,7 @@ export const DepositContainer = forwardRef<
       setMainComponent,
       setWrappableCurrency,
       wrappableCurrencies,
+      getPossibleGovernedCurrencies,
     ]
   );
   const sourceChainInputOnClick = useCallback(() => {
@@ -373,19 +379,19 @@ export const DepositContainer = forwardRef<
   const bridgingTokenProps = useMemo<
     DepositCardProps['bridgingTokenProps']
   >(() => {
-    if (!bridgeWrappableCurrency || !brideGovernedCurrency) {
+    if (!wrappableCurrency || !brideGovernedCurrency) {
       return undefined;
     }
     const targetSymbol = brideGovernedCurrency.currency.view.symbol;
-    const selectedWrappableToken = Object.values(wrappableCurrencies)
-      .filter((token) => token.view.symbol === targetSymbol)
-      .map(
-        (currency): AssetType => ({
-          name: currency.view.name,
-          symbol: currency.view.symbol,
-          balance: balances[currency.id] ?? 0,
-        })
-      );
+
+    const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
+      (currency): AssetType => ({
+        name: currency.view.name,
+        balance: balances[currency.id] ?? 0,
+
+        symbol: currency.view.symbol,
+      })
+    );
 
     return {
       asset: {
@@ -399,7 +405,7 @@ export const DepositContainer = forwardRef<
               className="w-[550px] h-[720px]"
               title={'Select Asset to Wrap and Deposit'}
               popularTokens={[]}
-              selectTokens={selectedWrappableToken}
+              selectTokens={tokens}
               unavailableTokens={populatedAllTokens}
               onChange={handleTokenChange}
               onClose={() => setMainComponent(undefined)}
@@ -408,7 +414,7 @@ export const DepositContainer = forwardRef<
         }
       },
     };
-  }, [brideGovernedCurrency, bridgeWrappableCurrency, balances]);
+  }, [brideGovernedCurrency, wrappableCurrency, balances]);
   return (
     <>
       <div {...props} ref={ref}>

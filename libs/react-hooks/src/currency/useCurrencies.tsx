@@ -1,7 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
@@ -19,6 +19,7 @@ export const useCurrencies = () => {
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
   >({});
+
   useEffect(() => {
     if (activeApi && activeChain) {
       const typedChainId = calculateTypedChainId(
@@ -39,7 +40,10 @@ export const useCurrencies = () => {
           )
         );
         const nextWrappableCurrenciesMap = tokens.reduce(
-          (map, entry) => ({ ...map, [entry.bridgeCurrency.id]: currencies }),
+          (map, entry) => ({
+            ...map,
+            [entry.bridgeCurrency.id]: entry.currencies,
+          }),
           {}
         );
         setWrappableCurrenciesMap(nextWrappableCurrenciesMap);
@@ -49,7 +53,15 @@ export const useCurrencies = () => {
       });
     }
   }, [activeChain, activeApi, setWrappableCurrenciesMap]);
-
+  const getPossibleGovernedCurrencies = useCallback(
+    (currencyId) => {
+      const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
+        wrappableCurrenciesMap[key].find((c) => c.id === currencyId)
+      );
+      return governedCurrencies.filter((c) => ids.includes(String(c.id)));
+    },
+    [wrappableCurrenciesMap, governedCurrencies]
+  );
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -73,7 +85,6 @@ export const useCurrencies = () => {
               calculateTypedChainId(activeChain.chainType, activeChain.chainId)
             )
             .then((assets) => {
-              console.log('fetched assets dynamically', assets);
               setWrappableCurrencies(assets);
             })
             .catch((error) => {
@@ -100,5 +111,6 @@ export const useCurrencies = () => {
     governedCurrency,
     wrappableCurrencies,
     wrappableCurrency,
+    getPossibleGovernedCurrencies,
   };
 };
