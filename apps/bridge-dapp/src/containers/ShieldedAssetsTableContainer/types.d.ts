@@ -15,15 +15,20 @@ export interface ShieldedAssetDataType {
   chain: string;
 
   /**
-   * The shielded asset symbol
+   * The shielded asset symbol (governed token)
    * @example "ETH"
    */
-  assetSymbol: string;
+  governedTokenSymbol: string;
 
   /**
    * The external url of assets pair
    */
   assetsUrl: string;
+
+  /**
+   * The wrappable asset symbols for the shielded asset
+   */
+  composition: string[];
 
   /**
    * The total available balance of all notes

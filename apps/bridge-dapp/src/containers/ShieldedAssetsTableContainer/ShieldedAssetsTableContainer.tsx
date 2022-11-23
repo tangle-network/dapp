@@ -10,13 +10,14 @@ import {
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
+  TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
   Button,
   fuzzyFilter,
   Table,
-  TokenPair,
+  TokenPairIcons,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -34,7 +35,7 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
     cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
   }),
 
-  columnHelper.accessor('assetSymbol', {
+  columnHelper.accessor('governedTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
       const assetSymbol = props.getValue<string>();
@@ -49,6 +50,38 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLinkLine />
           </a>
+        </div>
+      );
+    },
+  }),
+
+  columnHelper.accessor('composition', {
+    header: 'Composition',
+    cell: (props) => {
+      const composition = props.getValue<string[]>();
+      if (!composition.length) {
+        return null;
+      }
+
+      const firstTwoTokens = composition.slice(0, 2);
+      const numOfHiddenTokens = composition.length - 2;
+
+      return (
+        <div className="flex items-center space-x-1">
+          {firstTwoTokens.length === 1 ? (
+            <TokenIcon name={firstTwoTokens[0]} />
+          ) : (
+            <TokenPairIcons
+              token1Symbol={firstTwoTokens[0]}
+              token2Symbol={firstTwoTokens[1]}
+            />
+          )}
+
+          {numOfHiddenTokens > 0 && (
+            <Typography className="inline-block" variant="body3">
+              +3 others
+            </Typography>
+          )}
         </div>
       );
     },
