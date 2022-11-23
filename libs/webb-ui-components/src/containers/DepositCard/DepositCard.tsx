@@ -37,9 +37,9 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           : `${amountInputProps.amount} ${token ?? ''}`,
         fee: !feePercentage
           ? '--'
-          : `${parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01} ${
-              feeToken ?? ''
-            }`,
+          : `${
+              parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
+            } ${feeToken ?? ''}`,
       };
     }, [amountInputProps.amount, feePercentage, feeToken, token]);
 
@@ -59,8 +59,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
             />
 
             {bridgingTokenProps && (
-              <ShieldedAssetInput
-                asset={bridgingTokenProps}
+              <TokenInput
+                {...bridgingTokenProps}
                 title="Bridging Token"
                 className="grow shrink-0 basis-1"
               />

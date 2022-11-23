@@ -1,7 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
@@ -15,7 +15,53 @@ export const useCurrencies = () => {
   );
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
+  // GovernableCurrency -> wrappableCurrency[]
+  const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
+    Record<Currency['id'], Currency[]>
+  >({});
 
+  useEffect(() => {
+    if (activeApi && activeChain) {
+      const typedChainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+      const handler = async () => {
+        const tokens = await Promise.all(
+          Object.values(activeApi.state.getBridgeOptions()).map(
+            (potentialBridge) => {
+              return activeApi.methods.bridgeApi
+                .fetchWrappableAssetsByBridge(typedChainId, potentialBridge)
+                .then((currencies) => ({
+                  currencies,
+                  bridgeCurrency: potentialBridge.currency,
+                }));
+            }
+          )
+        );
+        const nextWrappableCurrenciesMap = tokens.reduce(
+          (map, entry) => ({
+            ...map,
+            [entry.bridgeCurrency.id]: entry.currencies,
+          }),
+          {}
+        );
+        setWrappableCurrenciesMap(nextWrappableCurrenciesMap);
+      };
+      handler().catch((e) => {
+        console.error(e);
+      });
+    }
+  }, [activeChain, activeApi, setWrappableCurrenciesMap]);
+  const getPossibleGovernedCurrencies = useCallback(
+    (currencyId) => {
+      const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
+        wrappableCurrenciesMap[key].find((c) => c.id === currencyId)
+      );
+      return governedCurrencies.filter((c) => ids.includes(String(c.id)));
+    },
+    [wrappableCurrenciesMap, governedCurrencies]
+  );
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -65,5 +111,6 @@ export const useCurrencies = () => {
     governedCurrency,
     wrappableCurrencies,
     wrappableCurrency,
+    getPossibleGovernedCurrencies,
   };
 };

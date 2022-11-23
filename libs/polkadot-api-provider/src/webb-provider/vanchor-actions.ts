@@ -1,4 +1,4 @@
-import { VAnchorActions } from '@webb-tools/abstract-api-provider/anchor/vanchor-actions';
+import { VAnchorActions } from '@webb-tools/abstract-api-provider/vanchor/vanchor-actions';
 import { Keypair, Note } from '@webb-tools/sdk-core';
 
 import { WebbPolkadot } from '../webb-provider';
