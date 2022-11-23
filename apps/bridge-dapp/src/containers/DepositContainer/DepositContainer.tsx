@@ -206,7 +206,10 @@ export const DepositContainer = forwardRef<
   );
 
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
-
+  const isWrapFlow = useMemo(
+    () => Boolean(brideGovernedCurrency) && Boolean(bridgeWrappableCurrency),
+    [brideGovernedCurrency, bridgeWrappableCurrency]
+  );
   const isDisabledDepositButton = useMemo(() => {
     return [
       selectedSourceChain,
@@ -214,7 +217,9 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       amount,
       typeof selectedTokenBalance === 'number'
-        ? amount <= selectedTokenBalance
+        ? isWrapFlow
+          ? true
+          : amount <= selectedTokenBalance
         : true,
     ].some((val) => Boolean(val) === false);
   }, [
@@ -223,6 +228,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     selectedToken,
     selectedTokenBalance,
+    isWrapFlow,
   ]);
 
   const handleTokenChange = useCallback(
@@ -366,6 +372,9 @@ export const DepositContainer = forwardRef<
 
   const buttonText = useMemo(() => {
     if (isWalletConnected && hasNoteAccount) {
+      if (isWrapFlow) {
+        return 'Wrap and Deposit';
+      }
       return 'Deposit';
     }
 
@@ -374,7 +383,7 @@ export const DepositContainer = forwardRef<
     }
 
     return 'Connect wallet';
-  }, [hasNoteAccount, isWalletConnected]);
+  }, [hasNoteAccount, isWalletConnected, isWrapFlow]);
 
   const bridgingTokenProps = useMemo<
     DepositCardProps['bridgingTokenProps']
