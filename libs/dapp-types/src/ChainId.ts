@@ -26,7 +26,6 @@ export enum EVMChainId {
 
   /* Added EVM Chains on MetaMask */
   Edgeware = 2021,
-  Beresheet = 2022,
   HarmonyTestnet0 = 1666700000,
   HarmonyTestnet1 = 1666700001,
   Shiden = 336,
