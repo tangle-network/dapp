@@ -7,10 +7,10 @@ import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { VAnchorActionEvent, VAnchorActions } from './anchor/vanchor-actions';
-import { VAnchorTransfer } from './anchor/vanchor-transfer';
+import { VAnchorActionEvent, VAnchorActions } from './vanchor/vanchor-actions';
+import { VAnchorTransfer } from './vanchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './anchor';
+import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './vanchor';
 import { ChainQuery } from './chain-query';
 import { ApiConfig } from '@webb-tools/dapp-config';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';

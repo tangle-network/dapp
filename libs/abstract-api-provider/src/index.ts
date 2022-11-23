@@ -3,7 +3,7 @@
 
 export * from './account';
 export * from './mixer';
-export * from './anchor';
+export * from './vanchor';
 export * from './chain-query';
 export * from './currency';
 export * from './mixer';
