@@ -46,4 +46,8 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   setTxPayload: React.Dispatch<
     React.SetStateAction<Partial<TransactionPayload>>
   >;
+  /**
+   * The signal to wrap and deposit flow
+   * */
+  wrappingFlow: boolean;
 }

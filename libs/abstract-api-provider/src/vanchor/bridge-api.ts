@@ -15,7 +15,9 @@ export type AnchorBase = {
  * The BridgeApi is meant for interactions on the WebbState's activeBridge.
  * Most of the state in the dApp is derived from the selected activeBridge.
  **/
-export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider<any>> {
+export abstract class BridgeApi<
+  T extends WebbApiProvider<any> = WebbApiProvider<any>
+> {
   public constructor(protected inner: T) {}
 
   getCurrency(): Currency | null {
@@ -27,9 +29,11 @@ export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider
   }
 
   getCurrencyById(currencyId: number) {
-    const bridgeCurrency = Object.values(this.inner.state.getCurrencies()).find((currency) => {
-      return currency.id === currencyId;
-    });
+    const bridgeCurrency = Object.values(this.inner.state.getCurrencies()).find(
+      (currency) => {
+        return currency.id === currencyId;
+      }
+    );
     return bridgeCurrency ?? null;
   }
 
@@ -41,7 +45,11 @@ export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider
     this.inner.state.activeBridge = entry;
   }
 
-  setBridgeByCurrency(currency: Currency) {
+  setBridgeByCurrency(currency: Currency | null) {
+    if (!currency) {
+      this.inner.state.activeBridge = null;
+      return;
+    }
     this.inner.state.activeBridge =
       this.bridges.find((bridge) => {
         console.log('bridge inspected: ', bridge);
@@ -52,7 +60,9 @@ export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider
 
   getTokenTarget(typedChainId: number): string | null {
     const activeBridgeAsset = this.getCurrency();
-    return activeBridgeAsset ? activeBridgeAsset.getAddress(typedChainId) ?? null : null;
+    return activeBridgeAsset
+      ? activeBridgeAsset.getAddress(typedChainId) ?? null
+      : null;
   }
 
   async getAnchors(): Promise<AnchorBase[]> {
@@ -66,4 +76,10 @@ export abstract class BridgeApi<T extends WebbApiProvider<any> = WebbApiProvider
   }
 
   abstract fetchWrappableAssets(typedChainId: number): Promise<Currency[]>;
+  fetchWrappableAssetsByBridge(
+    typedChainId: number,
+    bridge: Bridge
+  ): Promise<Currency[]> {
+    return Promise.resolve([]);
+  }
 }
