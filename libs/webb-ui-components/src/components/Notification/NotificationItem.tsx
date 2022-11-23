@@ -1,4 +1,9 @@
-import { Alert, CheckboxCircleLine, Close } from '@webb-tools/icons';
+import {
+  Alert,
+  CheckboxCircleLine,
+  Close,
+  InformationLine,
+} from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, useEffect, useMemo } from 'react';
 import { Typography } from '../../typography/Typography';
@@ -28,8 +33,18 @@ export const NotificationItem: FC<NotificationItemProps> = ({
         );
       }
 
-      default: {
+      case 'error':
+      case 'warning': {
         return <Alert size="lg" className="!fill-yellow-70" />;
+      }
+
+      default: {
+        return (
+          <InformationLine
+            size="lg"
+            className="fill-blue-70 dark:fill-blue-50"
+          />
+        );
       }
     }
   }, [opts.variant]);
@@ -44,7 +59,7 @@ export const NotificationItem: FC<NotificationItemProps> = ({
       )}
     >
       <div className="flex space-x-3">
-        <div>{Icon}</div>
+        <div>{opts.Icon ?? Icon}</div>
 
         <div className="space-y-1 max-w-[313px]">
           {typeof opts.message === 'string' ? (

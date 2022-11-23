@@ -32,8 +32,8 @@ export const useCurrencyBalance = (
           setBalance(Number(currencyBalance));
         })
         .catch((error) => {
-          console.log('error in useCurrencyBalance: ');
-          throw error;
+          console.log('error in useCurrencyBalance');
+          console.log(error);
         });
     };
 

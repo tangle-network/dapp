@@ -12,7 +12,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
-import privacyImg from '../../assets/privacy.gif';
 import { CreateAccountModalProps } from './types';
 
 import Lottie from 'lottie-react';
@@ -105,11 +104,6 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
               : 'The note account requires a wallet signature to help you manage cross-chain assets privately and with ease.'}
           </Typography>
 
-          {/* TODO: Update the component here, use the lottie animation instead of gif */}
-          <img
-            src={privacyImg}
-            className="rounded-full mx-auto w-[80px] h-[80px]"
-            alt="privacy" />
           <Lottie
             animationData={privacySecurityJson}
             className="rounded-full mx-auto w-[80px] h-[80px] overflow-hidden"
