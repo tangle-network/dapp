@@ -1,7 +1,13 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { AmountInput, Button, ChainInput, ShieldedAssetInput, TokenInput } from '../../components';
+import {
+  AmountInput,
+  Button,
+  ChainInput,
+  ShieldedAssetInput,
+  TokenInput,
+} from '../../components';
 
 export interface DepositCardProps extends PropsOf<'div'> {
   /**
@@ -27,7 +33,10 @@ export interface DepositCardProps extends PropsOf<'div'> {
   /**
    *
    */
-  bridgingTokenProps?: ComponentProps<typeof ShieldedAssetInput>['asset'];
+  bridgingTokenProps?: Pick<
+    ComponentProps<typeof TokenInput>,
+    'onClick' | 'token'
+  >;
 
   /**
    * The deposit token/pair value (e.g. WebbETH/WETH)

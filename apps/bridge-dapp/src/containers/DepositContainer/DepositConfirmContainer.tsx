@@ -17,7 +17,15 @@ export const DepositConfirmContainer = forwardRef<
   DepositConfirmContainerProps
 >(
   (
-    { depositPayload, amount, token, sourceChain, destChain, setTxPayload },
+    {
+      depositPayload,
+      amount,
+      wrappingFlow,
+      token,
+      sourceChain,
+      destChain,
+      setTxPayload,
+    },
     ref
   ) => {
     const [checked, setChecked] = useState(false);
@@ -150,13 +158,23 @@ export const DepositConfirmContainer = forwardRef<
 
     return (
       <DepositConfirm
-        title={isDepositing ? 'Deposit in Progress' : undefined}
+        title={
+          isDepositing
+            ? wrappingFlow
+              ? 'Wrap and deposit in progress'
+              : 'Deposit in Progress'
+            : undefined
+        }
         ref={ref}
         note={depositPayload.note.serialize()}
         progress={progress}
         actionBtnProps={{
           isDisabled: !checked,
-          children: isDepositing ? 'New Transaction' : 'Deposit',
+          children: isDepositing
+            ? 'New Transaction'
+            : wrappingFlow
+            ? 'Wrap And Deposit'
+            : 'Deposit',
           onClick,
         }}
         checkboxProps={{
