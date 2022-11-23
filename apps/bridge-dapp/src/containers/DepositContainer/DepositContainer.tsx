@@ -345,6 +345,7 @@ export const DepositContainer = forwardRef<
 
       setMainComponent(
         <DepositConfirmContainer
+          wrappingFlow={Boolean(wrappbleTokenAddress)}
           setTxPayload={setTxPayload}
           amount={amount}
           token={selectedToken}
