@@ -5,13 +5,19 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChainIcon, ChevronDown, ExternalLinkLine } from '@webb-tools/icons';
+import {
+  ChainIcon,
+  ChevronDown,
+  ExternalLinkLine,
+  TokenIcon,
+} from '@webb-tools/icons';
 import {
   Button,
   fuzzyFilter,
   KeyValueWithButton,
   shortenString,
   Table,
+  TokenPairIcons,
   TokenWithAmount,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -31,16 +37,50 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('governedTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
-      const token1Symbol = props.getValue<string>();
+      const governedTokenSymbol = props.getValue<string>();
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
         <div className="flex items-center space-x-1.5">
-          <TokenWithAmount token1Symbol={token1Symbol} />
+          <Typography className="uppercase" variant="body1" fw="bold">
+            {governedTokenSymbol}
+          </Typography>
 
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLinkLine />
           </a>
+        </div>
+      );
+    },
+  }),
+
+  columnHelper.accessor('composition', {
+    header: 'Composition',
+    cell: (props) => {
+      const composition = props.getValue<string[]>();
+      if (!composition.length) {
+        return null;
+      }
+
+      const firstTwoTokens = composition.slice(0, 2);
+      const numOfHiddenTokens = composition.length - 2;
+
+      return (
+        <div className="flex items-center space-x-1">
+          {firstTwoTokens.length === 1 ? (
+            <TokenIcon name={firstTwoTokens[0]} />
+          ) : (
+            <TokenPairIcons
+              token1Symbol={firstTwoTokens[0]}
+              token2Symbol={firstTwoTokens[1]}
+            />
+          )}
+
+          {numOfHiddenTokens > 0 && (
+            <Typography className="inline-block" variant="body3">
+              +3 others
+            </Typography>
+          )}
         </div>
       );
     },
