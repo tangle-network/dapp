@@ -323,16 +323,23 @@ export const DepositContainer = forwardRef<
       destChain &&
       selectedToken &&
       amount !== 0 &&
-      activeApi?.state?.activeBridge
+      activeApi?.state?.activeBridge &&
+      activeChain
     ) {
       setIsGeneratingNote(true);
+      const chainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+      const wrappbleTokenAddress =
+        wrappableCurrency?.getAddress(chainId) ?? undefined;
       const newDepositPayload = await generateNote(
         activeApi.state.activeBridge.targets[
           calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
         ],
         calculateTypedChainId(destChain.chainType, destChain.chainId),
         amount,
-        undefined
+        wrappbleTokenAddress
       );
       setIsGeneratingNote(false);
 
@@ -362,6 +369,7 @@ export const DepositContainer = forwardRef<
     setTxPayload,
     selectedSourceChain,
     destChainInputValue,
+    wrappableCurrency,
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
