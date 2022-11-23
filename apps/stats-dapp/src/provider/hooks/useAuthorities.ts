@@ -160,14 +160,14 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[Thresholds, UpcomingThresholds]> => {
-        if (res.data) {
+        if (res.data && res.data.session) {
           const session = res.data.session;
 
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
 
-          const publicKey = session.publicKey;
+          const publicKey = session.publicKey!;
 
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
@@ -191,8 +191,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
                   )
                 : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
-              compressed: publicKey.compressed,
-              uncompressed: publicKey.uncompressed,
+              compressed: publicKey.compressed!,
+              uncompressed: publicKey.uncompressed!,
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -352,8 +352,8 @@ export function useAuthorities(
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator!);
               return {
-                id: sessionValidator?.validator.id,
-                location: auth.location,
+                id: auth.id,
+                location: auth.location ?? undefined,
                 uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
@@ -444,14 +444,14 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidators = res.data.sessionValidators;
           const items = sessionValidators.nodes
             // Ensure only session with public keys
-            .filter((n) => Boolean(n.session.publicKey))
+            .filter((n) => Boolean(n?.session?.publicKey))
             .map((node): KeyGenKeyListItem => {
-              const session = node?.session;
-              const publicKey = session.publicKey;
+              const session = node!.session!;
+              const publicKey = session.publicKey!;
               return {
                 id: publicKey.id,
                 session: session.id,
-                publicKey: publicKey.uncompressed,
+                publicKey: publicKey.uncompressed!,
                 height: `${publicKey.block?.number ?? '-'}`,
                 authority: {
                   count: session.sessionValidators.totalCount,
@@ -492,7 +492,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidators = res.data.sessionValidators;
           const counter = sessionValidators?.aggregates?.distinctCount
             ?.id as number;
-          const session = sessionValidator.session;
+          const session = sessionValidator.session!;
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
 
@@ -575,7 +575,7 @@ export function useSessionHistory(
               const signature = thresholds.SIGNATURE;
 
               return {
-                sessionId: node?.id,
+                sessionId: node?.id ?? '',
                 keyGenThreshold: String(keyGen?.current ?? '-'),
                 signatureThreshold: String(signature?.current ?? '-'),
               };

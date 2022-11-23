@@ -35,11 +35,10 @@ import {
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { Typography } from '@webb-tools/webb-ui-components';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
-import { CountryIcon } from '@webb-tools/stats-dapp/components/CountryIcon/CountryIcon';
+import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
@@ -74,7 +73,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
           {countryCode ? (
             <CountryIcon size={'lg'} name={countryCode} />
           ) : (
-            'Anonymous'
+            'Unknown'
           )}
         </Typography>
       );
@@ -140,10 +139,10 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     'all'
   );
   const countriesQuery = useCountriesQuery();
-  const countries = useMemo(() => {
+  const countries = useMemo<string[]>(() => {
     return (
       countriesQuery.data?.countryCodes?.nodes?.map((country) => {
-        return country?.code;
+        return country?.code ?? '';
       }) ?? []
     );
   }, [countriesQuery]);

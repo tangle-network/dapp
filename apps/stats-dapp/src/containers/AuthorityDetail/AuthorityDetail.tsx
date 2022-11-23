@@ -43,13 +43,12 @@ import {
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
+import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 import { headerConfig } from '../KeygenTable';
-import { CountryIcon } from '@webb-tools/stats-dapp/components/CountryIcon/CountryIcon';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -219,7 +218,7 @@ const DetailsView: FC<{
   isPage: boolean;
   id: string;
 }> = ({ id, isLoading, isPage, stats }) => {
-  const location = stats.location;
+  const location = stats?.location;
   const account = id;
 
   return (

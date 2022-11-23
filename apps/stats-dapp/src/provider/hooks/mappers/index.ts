@@ -24,7 +24,7 @@ export function mapSessionAuthValidatorNode(
   node: SessionAuthValidatorNodeFragment
 ): Authority {
   return {
-    id: node!.validator?.id,
+    id: node?.validator?.id ?? '',
     sessionId: node.sessionId,
     reputation: node.reputation,
     uptime: node.uptime,
@@ -33,15 +33,15 @@ export function mapSessionAuthValidatorNode(
     isNextBest: node.isNextBest,
     bestOrder: node.bestOrder,
     nextBestOrder: node.nextBestOrder,
-    authorityId: node.validator?.authorityId,
-    location: node.validator?.account?.countryCodeId,
+    authorityId: node?.validator?.authorityId ?? '',
+    location: node?.validator?.account?.countryCodeId ?? '',
   };
 }
 
 export function mapAuthorities(
   data: SessionAuthValidatorFragment
 ): Authority[] {
-  return data.edges.map((item) => mapSessionAuthValidatorNode(item.node));
+  return data.edges.map((item) => mapSessionAuthValidatorNode(item.node!));
 }
 
 export function mapProposalListItem(
@@ -53,7 +53,7 @@ export function mapProposalListItem(
     proposers: {
       count: data.proposalVotesByProposalId.totalCount,
       firstElements: data.proposalVotesByProposalId.nodes.map(
-        (node) => node.voterId
+        (node) => node?.voterId ?? ''
       ),
     },
     status: data.status as ProposalStatus,
