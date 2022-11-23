@@ -59,7 +59,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
             />
 
             {bridgingTokenProps && (
-              <ShieldedAssetInput
+              <TokenInput
                 {...bridgingTokenProps}
                 title="Bridging Token"
                 className="grow shrink-0 basis-1"

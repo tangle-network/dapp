@@ -342,7 +342,6 @@ export const DepositContainer = forwardRef<
         wrappbleTokenAddress
       );
       setIsGeneratingNote(false);
-
       setMainComponent(
         <DepositConfirmContainer
           wrappingFlow={Boolean(wrappbleTokenAddress)}
@@ -412,7 +411,7 @@ export const DepositContainer = forwardRef<
     );
 
     return {
-      asset: {
+      token: {
         symbol: targetSymbol,
         balance: brideGovernedCurrency.balance,
       },

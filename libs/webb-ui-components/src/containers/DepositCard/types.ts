@@ -34,8 +34,8 @@ export interface DepositCardProps extends PropsOf<'div'> {
    *
    */
   bridgingTokenProps?: Pick<
-    ComponentProps<typeof ShieldedAssetInput>,
-    'onClick' | 'asset'
+    ComponentProps<typeof TokenInput>,
+    'onClick' | 'token'
   >;
 
   /**
