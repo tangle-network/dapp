@@ -14,11 +14,7 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       content: 'Please consider switching back to a supported chain',
     },
     {
-      list: [
-        apiConfig.getEVMChainName(EVMChainId.Rinkeby),
-        apiConfig.getEVMChainName(EVMChainId.Beresheet),
-        apiConfig.getEVMChainName(EVMChainId.HarmonyTestnet1),
-      ],
+      list: [apiConfig.getEVMChainName(EVMChainId.HarmonyTestnet1)],
     },
     {
       content: 'Switch back via MetaMask',
