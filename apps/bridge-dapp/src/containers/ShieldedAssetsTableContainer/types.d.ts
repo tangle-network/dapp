@@ -1,5 +1,3 @@
-export interface ShieldedAssetsTableContainerProps {}
-
 /**
  * The shielded asset data type for table
  *
@@ -17,14 +15,10 @@ export interface ShieldedAssetDataType {
   chain: string;
 
   /**
-   * The first token symbol for displaying
+   * The shielded asset symbol
+   * @example "ETH"
    */
-  token1Symbol: string;
-
-  /**
-   * The second token symbol for displaying
-   */
-  token2Symbol: string;
+  assetSymbol: string;
 
   /**
    * The external url of assets pair
