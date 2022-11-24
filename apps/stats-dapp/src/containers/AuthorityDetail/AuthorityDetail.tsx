@@ -226,8 +226,9 @@ const DetailsView: FC<{
 
   const validatorMetaData = useMemo(() => {
     const loading = accountDetails.isLoading;
-    const activeColor = 'text-blue-500';
-    const disabledColor = 'text-mono-10';
+    const activeColor =
+      'text-blue-50 hover:text-blue-10 dark:text-blue-50 dark:hover:text-blue-10';
+    const disabledColor = 'dark:text-blue-100 text-blue-10';
     const twitter = accountDetails.val?.twitter;
     const web = accountDetails.val?.web;
     const email = accountDetails.val?.email;
