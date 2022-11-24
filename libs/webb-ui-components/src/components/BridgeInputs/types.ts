@@ -131,6 +131,11 @@ export interface AmountInputComponentProps extends InputWrapperComponentProps {
   amount?: InputProps['value'];
 
   /**
+   * The error message to display
+   */
+  errorMessage?: string;
+
+  /**
    * Callback function to control the amount value
    */
   onAmountChange?: InputProps['onChange'];

@@ -33,7 +33,11 @@ export const WithdrawContainer = forwardRef<
   const [isUnwrap, setIsUnwrap] = useState(false);
 
   const [recipient, setRecipient] = useState<string>('');
+
   const [amount, setAmount] = useState<number>(0);
+
+  // State for error message when user input amount is invalid
+  const [amountError, setAmountError] = useState<string>('');
 
   const { setMainComponent } = useWebbUI();
 
@@ -147,12 +151,24 @@ export const WithdrawContainer = forwardRef<
     });
   }, [wrappableCurrencies]);
 
-  const parseUserAmount = useCallback((amount: string | number): void => {
-    const parsedAmount = Number(amount);
-    if (!isNaN(parsedAmount)) {
+  const parseUserAmount = useCallback(
+    (amount: string | number): void => {
+      const parsedAmount = Number(amount);
+      if (isNaN(parsedAmount) || parsedAmount < 0) {
+        setAmountError('Invalid amount');
+        return;
+      }
+
+      if (parsedAmount > availableAmount) {
+        setAmountError('Insufficient balance');
+        return;
+      }
+
       setAmount(parsedAmount);
-    }
-  }, []);
+      setAmountError('');
+    },
+    [availableAmount]
+  );
 
   const handleGovernedTokenChange = useCallback(
     async (newToken: AssetType) => {
@@ -179,7 +195,7 @@ export const WithdrawContainer = forwardRef<
   );
 
   const isValidAmount = useMemo(() => {
-    return amount <= availableAmount;
+    return amount > 0 && amount <= availableAmount;
   }, [amount, availableAmount]);
 
   const isDisabledWithdraw = useMemo(() => {
@@ -272,6 +288,9 @@ export const WithdrawContainer = forwardRef<
         }}
         customAmountInputProps={{
           onAmountChange: parseUserAmount,
+          amount: isNaN(amount) ? '' : amount.toString(),
+          onMaxBtnClick: () => parseUserAmount(availableAmount),
+          errorMessage: amountError,
         }}
         unwrapSwitcherProps={{
           checked: isUnwrap,
