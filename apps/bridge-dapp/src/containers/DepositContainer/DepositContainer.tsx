@@ -206,6 +206,7 @@ export const DepositContainer = forwardRef<
   );
 
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
+
   const isWrapFlow = useMemo(
     () => Boolean(brideGovernedCurrency) && Boolean(bridgeWrappableCurrency),
     [brideGovernedCurrency, bridgeWrappableCurrency]
@@ -263,6 +264,7 @@ export const DepositContainer = forwardRef<
       getPossibleGovernedCurrencies,
     ]
   );
+
   const sourceChainInputOnClick = useCallback(() => {
     setMainComponent(
       <ChainListCard
@@ -362,6 +364,7 @@ export const DepositContainer = forwardRef<
     selectedToken,
     amount,
     activeApi?.state?.activeBridge,
+    activeChain,
     chains,
     setMainComponent,
     setNoteAccountModalOpen,
@@ -431,7 +434,17 @@ export const DepositContainer = forwardRef<
         }
       },
     };
-  }, [brideGovernedCurrency, wrappableCurrency, balances]);
+  }, [
+    wrappableCurrency,
+    brideGovernedCurrency,
+    getPossibleGovernedCurrencies,
+    balances,
+    selectedSourceChain,
+    setMainComponent,
+    populatedAllTokens,
+    handleTokenChange,
+  ]);
+
   return (
     <>
       <div {...props} ref={ref}>
