@@ -50,6 +50,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 import { headerConfig } from '../KeygenTable';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -225,23 +226,41 @@ const DetailsView: FC<{
 
   const validatorMetaData = useMemo(() => {
     const loading = accountDetails.isLoading;
+    const activeColor = 'text-blue-500';
+    const disabledColor = 'text-mono-10';
+    const twitter = accountDetails.val?.twitter;
+    const web = accountDetails.val?.web;
+    const email = accountDetails.val?.email;
+    const id = accountDetails.val?.id ?? '';
+    function getProps(value?: string | null): PropsOf<'a'> {
+      const disabled = loading || !value;
+      return {
+        style: {
+          pointerEvents: disabled ? 'none' : undefined,
+        },
+        className: disabled ? disabledColor : activeColor,
+      };
+    }
     return (
       <>
-        <Spinner size={'lg'}>
+        <a href={'#'} {...getProps(id)}>
           <Key className="!fill-current" />
-        </Spinner>
-        <Spinner size={'lg'}>
+        </a>
+        <a
+          {...getProps(twitter)}
+          href={twitter ? `https://twitter.com/${twitter}` : '#'}
+        >
           <TwitterFill className="!fill-current" />
-        </Spinner>
-        <Spinner size={'lg'}>
+        </a>
+        <a {...getProps(web)} href={web ?? '#'}>
           <LinkIcon className="!fill-current" />
-        </Spinner>
-        <Spinner size={'lg'}>
+        </a>
+        <a {...getProps(email)} href={email ? `mailto://${email}` : '#'}>
           <Mail className="!fill-current" />
-        </Spinner>
-        <Spinner size={'lg'}>
+        </a>
+        <a {...getProps(undefined)} href={'#'}>
           <QRCode className="!fill-current" />
-        </Spinner>
+        </a>
       </>
     );
   }, [accountDetails]);

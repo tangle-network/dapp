@@ -634,7 +634,7 @@ export function useAuthorityAccount(
   useEffect(() => {
     const sub = query.observable
       .map((account): AuthorityAccountDetailsQuery => {
-        if (account.data.account) {
+        if (account.data?.account) {
           const { __typename, ...data } = account.data.account;
           return {
             isLoading: false,
