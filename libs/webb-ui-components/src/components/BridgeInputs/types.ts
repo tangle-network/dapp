@@ -4,28 +4,29 @@ import { ComponentProps, ReactElement } from 'react';
 import { AmountMenu } from '../AmountMenu';
 import { InputProps } from '../Input/types';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AvatarProps } from '../Avatar';
 
 export interface InputWrapperProps extends IWebbComponentBase {
   /**
    * The `id` prop for label and input
    * @default "amount"
    */
-   id?: string;
+  id?: string;
 
-   /**
-    * Used to override the default title of an input
-    */
-   title?: string;
- 
-   /**
-    * The tooltip info
-    */
-   info?: ComponentProps<typeof TitleWithInfo>['info'];
+  /**
+   * Used to override the default title of an input
+   */
+  title?: string;
+
+  /**
+   * The tooltip info
+   */
+  info?: ComponentProps<typeof TitleWithInfo>['info'];
 }
 
-export interface InputWrapperComponentProps extends InputWrapperProps, PropsOf<'div'> {
-
-}
+export interface InputWrapperComponentProps
+  extends InputWrapperProps,
+    PropsOf<'div'> {}
 
 /**
  * The chain type for chain input
@@ -96,7 +97,9 @@ export interface ChainInputProps extends InputWrapperProps {
   chainType: 'source' | 'dest';
 }
 
-export interface ChainInputComponentProps extends ChainInputProps, PropsOf<'div'> {}
+export interface ChainInputComponentProps
+  extends ChainInputProps,
+    PropsOf<'div'> {}
 
 export interface TokenInputProps extends InputWrapperProps {
   /**
@@ -106,7 +109,9 @@ export interface TokenInputProps extends InputWrapperProps {
   token?: TokenType;
 }
 
-export interface TokenInputComponentProps extends TokenInputProps, PropsOf<'div'> {}
+export interface TokenInputComponentProps
+  extends TokenInputProps,
+    PropsOf<'div'> {}
 
 export interface AmountInputComponentProps extends InputWrapperComponentProps {
   /**
@@ -141,7 +146,8 @@ export interface AmountInputComponentProps extends InputWrapperComponentProps {
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
-export interface FixedAmountProps extends Omit<InputWrapperComponentProps, 'onChange'> {
+export interface FixedAmountProps
+  extends Omit<InputWrapperComponentProps, 'onChange'> {
   /**
    * The `id` prop for label and input
    * @default "amount"
@@ -169,7 +175,8 @@ export interface FixedAmountProps extends Omit<InputWrapperComponentProps, 'onCh
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
 }
 
-export interface RecipientInputProps extends Omit<InputWrapperComponentProps, 'onChange'> {
+export interface RecipientInputProps
+  extends Omit<InputWrapperComponentProps, 'onChange'> {
   /**
    * The input value
    */
@@ -189,17 +196,26 @@ export interface ShieldedAssetInputProps extends InputWrapperProps {
   asset?: PoolAssetType;
 }
 
-export interface ShieldedAssetInputComponentProps extends ShieldedAssetInputProps, PropsOf<'div'> {}
+export interface ShieldedAssetInputComponentProps
+  extends ShieldedAssetInputProps,
+    PropsOf<'div'> {}
 
 export interface RelayerInputProps extends InputWrapperComponentProps {
   /**
    * The relayer address to display
    */
   relayerAddress?: string;
+
   /**
    * The external url of a relayer
    */
   externalLink?: string;
+
+  /**
+   * Relayer icon theme (use for Identicon theme)
+   * @default 'polkadot'
+   */
+  iconTheme?: AvatarProps['theme'];
 }
 
 export interface InfoItemProps extends PropsOf<'div'> {
