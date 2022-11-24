@@ -1,11 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useNoteAccount, useCurrencies } from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React from 'react';
 import { ShieldedAssetDataType } from '../containers/ShieldedAssetsTableContainer/types';
-
-const ASSETS_URL = 'https://webb.tools';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
@@ -45,10 +44,22 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           wrappableCurrencies = foundCurrencies;
         }
 
+        let assetsUrl = '#';
+        const explorerUrl = chain.blockExplorerStub;
+        const address = governedCurrency?.getAddressOfChain(
+          calculateTypedChainId(chain.chainType, chain.chainId)
+        );
+
+        if (explorerUrl && address) {
+          assetsUrl = explorerUrl.endsWith('/')
+            ? `${explorerUrl}address/${address}`
+            : `${explorerUrl}/address/${address}`;
+        }
+
         acc.push({
           chain: chain.name,
           governedTokenSymbol: tokenSymbol,
-          assetsUrl: ASSETS_URL, // TODO: get the actual url
+          assetsUrl,
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
