@@ -8531,6 +8531,11 @@ export type Query = Node & {
   signatureThresholdByNodeId?: Maybe<SignatureThreshold>;
   /** Reads and enables pagination through a set of `SignatureThreshold`. */
   signatureThresholds?: Maybe<SignatureThresholdsConnection>;
+  sourceState?: Maybe<SourceState>;
+  /** Reads a single `SourceState` using its globally unique `ID`. */
+  sourceStateByNodeId?: Maybe<SourceState>;
+  /** Reads and enables pagination through a set of `SourceState`. */
+  sourceStates?: Maybe<SourceStatesConnection>;
   threshold?: Maybe<Threshold>;
   /** Reads a single `Threshold` using its globally unique `ID`. */
   thresholdByNodeId?: Maybe<Threshold>;
@@ -9013,6 +9018,30 @@ export type QuerySignatureThresholdsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<SignatureThresholdsOrderBy>>;
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySourceStateArgs = {
+  id: Scalars['String'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySourceStateByNodeIdArgs = {
+  nodeId: Scalars['ID'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QuerySourceStatesArgs = {
+  after?: InputMaybe<Scalars['Cursor']>;
+  before?: InputMaybe<Scalars['Cursor']>;
+  filter?: InputMaybe<SourceStateFilter>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<SourceStatesOrderBy>>;
 };
 
 
@@ -10762,6 +10791,215 @@ export enum SignatureThresholdsOrderBy {
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
 }
 
+export type SourceState = Node & {
+  __typename?: 'SourceState';
+  heartBeatCounters: Scalars['JSON'];
+  id: Scalars['String'];
+  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
+  nodeId: Scalars['ID'];
+  numberOfSessions: Scalars['Int'];
+};
+
+export type SourceStateAggregates = {
+  __typename?: 'SourceStateAggregates';
+  /** Mean average aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  average?: Maybe<SourceStateAverageAggregates>;
+  /** Distinct count aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  distinctCount?: Maybe<SourceStateDistinctCountAggregates>;
+  keys?: Maybe<Array<Scalars['String']>>;
+  /** Maximum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  max?: Maybe<SourceStateMaxAggregates>;
+  /** Minimum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  min?: Maybe<SourceStateMinAggregates>;
+  /** Population standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevPopulation?: Maybe<SourceStateStddevPopulationAggregates>;
+  /** Sample standard deviation aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  stddevSample?: Maybe<SourceStateStddevSampleAggregates>;
+  /** Sum aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  sum?: Maybe<SourceStateSumAggregates>;
+  /** Population variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  variancePopulation?: Maybe<SourceStateVariancePopulationAggregates>;
+  /** Sample variance aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  varianceSample?: Maybe<SourceStateVarianceSampleAggregates>;
+};
+
+export type SourceStateAverageAggregates = {
+  __typename?: 'SourceStateAverageAggregates';
+  /** Mean average of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SourceStateDistinctCountAggregates = {
+  __typename?: 'SourceStateDistinctCountAggregates';
+  /** Distinct count of heartBeatCounters across the matching connection */
+  heartBeatCounters?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of id across the matching connection */
+  id?: Maybe<Scalars['BigInt']>;
+  /** Distinct count of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigInt']>;
+};
+
+/** A filter to be used against `SourceState` object types. All fields are combined with a logical ‘and.’ */
+export type SourceStateFilter = {
+  /** Checks for all expressions in this list. */
+  and?: InputMaybe<Array<SourceStateFilter>>;
+  /** Filter by the object’s `heartBeatCounters` field. */
+  heartBeatCounters?: InputMaybe<JsonFilter>;
+  /** Filter by the object’s `id` field. */
+  id?: InputMaybe<StringFilter>;
+  /** Negates the expression. */
+  not?: InputMaybe<SourceStateFilter>;
+  /** Filter by the object’s `numberOfSessions` field. */
+  numberOfSessions?: InputMaybe<IntFilter>;
+  /** Checks for any expressions in this list. */
+  or?: InputMaybe<Array<SourceStateFilter>>;
+};
+
+export type SourceStateMaxAggregates = {
+  __typename?: 'SourceStateMaxAggregates';
+  /** Maximum of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['Int']>;
+};
+
+export type SourceStateMinAggregates = {
+  __typename?: 'SourceStateMinAggregates';
+  /** Minimum of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['Int']>;
+};
+
+export type SourceStateStddevPopulationAggregates = {
+  __typename?: 'SourceStateStddevPopulationAggregates';
+  /** Population standard deviation of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SourceStateStddevSampleAggregates = {
+  __typename?: 'SourceStateStddevSampleAggregates';
+  /** Sample standard deviation of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SourceStateSumAggregates = {
+  __typename?: 'SourceStateSumAggregates';
+  /** Sum of numberOfSessions across the matching connection */
+  numberOfSessions: Scalars['BigInt'];
+};
+
+export type SourceStateVariancePopulationAggregates = {
+  __typename?: 'SourceStateVariancePopulationAggregates';
+  /** Population variance of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigFloat']>;
+};
+
+export type SourceStateVarianceSampleAggregates = {
+  __typename?: 'SourceStateVarianceSampleAggregates';
+  /** Sample variance of numberOfSessions across the matching connection */
+  numberOfSessions?: Maybe<Scalars['BigFloat']>;
+};
+
+/** A connection to a list of `SourceState` values. */
+export type SourceStatesConnection = {
+  __typename?: 'SourceStatesConnection';
+  /** Aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  aggregates?: Maybe<SourceStateAggregates>;
+  /** A list of edges which contains the `SourceState` and cursor to aid in pagination. */
+  edges: Array<SourceStatesEdge>;
+  /** Grouped aggregates across the matching connection (ignoring before/after/first/last/offset) */
+  groupedAggregates?: Maybe<Array<SourceStateAggregates>>;
+  /** A list of `SourceState` objects. */
+  nodes: Array<Maybe<SourceState>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** The count of *all* `SourceState` you could get from the connection. */
+  totalCount: Scalars['Int'];
+};
+
+
+/** A connection to a list of `SourceState` values. */
+export type SourceStatesConnectionGroupedAggregatesArgs = {
+  groupBy: Array<SourceStatesGroupBy>;
+  having?: InputMaybe<SourceStatesHavingInput>;
+};
+
+/** A `SourceState` edge in the connection. */
+export type SourceStatesEdge = {
+  __typename?: 'SourceStatesEdge';
+  /** A cursor for use in pagination. */
+  cursor?: Maybe<Scalars['Cursor']>;
+  /** The `SourceState` at the end of the edge. */
+  node?: Maybe<SourceState>;
+};
+
+/** Grouping methods for `SourceState` for usage during aggregation. */
+export enum SourceStatesGroupBy {
+  HeartBeatCounters = 'HEART_BEAT_COUNTERS',
+  NumberOfSessions = 'NUMBER_OF_SESSIONS'
+}
+
+export type SourceStatesHavingAverageInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingDistinctCountInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+/** Conditions for `SourceState` aggregates. */
+export type SourceStatesHavingInput = {
+  AND?: InputMaybe<Array<SourceStatesHavingInput>>;
+  OR?: InputMaybe<Array<SourceStatesHavingInput>>;
+  average?: InputMaybe<SourceStatesHavingAverageInput>;
+  distinctCount?: InputMaybe<SourceStatesHavingDistinctCountInput>;
+  max?: InputMaybe<SourceStatesHavingMaxInput>;
+  min?: InputMaybe<SourceStatesHavingMinInput>;
+  stddevPopulation?: InputMaybe<SourceStatesHavingStddevPopulationInput>;
+  stddevSample?: InputMaybe<SourceStatesHavingStddevSampleInput>;
+  sum?: InputMaybe<SourceStatesHavingSumInput>;
+  variancePopulation?: InputMaybe<SourceStatesHavingVariancePopulationInput>;
+  varianceSample?: InputMaybe<SourceStatesHavingVarianceSampleInput>;
+};
+
+export type SourceStatesHavingMaxInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingMinInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingStddevPopulationInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingStddevSampleInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingSumInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingVariancePopulationInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+export type SourceStatesHavingVarianceSampleInput = {
+  numberOfSessions?: InputMaybe<HavingIntFilter>;
+};
+
+/** Methods to use when ordering `SourceState`. */
+export enum SourceStatesOrderBy {
+  HeartBeatCountersAsc = 'HEART_BEAT_COUNTERS_ASC',
+  HeartBeatCountersDesc = 'HEART_BEAT_COUNTERS_DESC',
+  IdAsc = 'ID_ASC',
+  IdDesc = 'ID_DESC',
+  Natural = 'NATURAL',
+  NumberOfSessionsAsc = 'NUMBER_OF_SESSIONS_ASC',
+  NumberOfSessionsDesc = 'NUMBER_OF_SESSIONS_DESC',
+  PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
+  PrimaryKeyDesc = 'PRIMARY_KEY_DESC'
+}
+
 /** A filter to be used against String fields. All fields are combined with a logical ‘and.’ */
 export type StringFilter = {
   /** Not equal to the specified value, treating null like an ordinary value. */
@@ -12109,7 +12347,7 @@ export type ValidatorListingQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorListingQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorListingQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -12119,7 +12357,7 @@ export type ValidatorSessionsQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
   validatorId: Scalars['String'];
@@ -12127,21 +12365,30 @@ export type ValidatorOfSessionQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
+export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
 
-export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string };
+export type AccountMetaDataFragment = { __typename?: 'Account', id: string, twitter?: string | null, email?: string | null, web?: string | null, legal?: string | null, pgpFingerprint?: string | null, riot?: string | null, countryCode?: { __typename?: 'CountryCode', id: string, code: string } | null };
+
+export type AccountMetaDataQueryVariables = Exact<{
+  accountId: Scalars['String'];
+}>;
+
+
+export type AccountMetaDataQuery = { __typename?: 'Query', account?: { __typename?: 'Account', id: string, twitter?: string | null, email?: string | null, web?: string | null, legal?: string | null, pgpFingerprint?: string | null, riot?: string | null, countryCode?: { __typename?: 'CountryCode', id: string, code: string } | null } | null };
+
+export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null };
 
 export type PageInfoMetaFragment = { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null };
 
-export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null };
+export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null };
 
-export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> };
+export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> };
 
 export type ThresholdValueElementFragment = { __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce };
 
 export type ThresholdValueFragment = { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> };
 
-export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } };
+export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } };
 
 export type ProposalListViewFragment = { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: AppEnumB6165934C8, status: string, chainId?: any | null, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
@@ -12223,14 +12470,14 @@ export type PublicKeysQueryVariables = Exact<{
 }>;
 
 
-export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
+export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
 export type PublicKeyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } } | null };
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null };
 
 export type SessionKeyIdsQueryVariables = Exact<{
   keys: Array<Scalars['String']> | Scalars['String'];
@@ -12242,14 +12489,14 @@ export type SessionKeyIdsQuery = { __typename?: 'Query', sessions?: { __typename
 export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
 
 export type SessionKeysQueryVariables = Exact<{
   SessionId: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null> } | null };
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
 
 export type SessionThresholdHistoryQueryVariables = Exact<{
   offset: Scalars['Int'];
@@ -12264,7 +12511,7 @@ export type SessionThresholdsQueryVariables = Exact<{
 }>;
 
 
-export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string } | null } | null }> } } | null };
+export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null };
 
 export type LatestThresholdsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -12274,6 +12521,21 @@ export type LatestThresholdsQueryVariables = Exact<{
 
 export type LatestThresholdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null> } | null };
 
+export const AccountMetaDataFragmentDoc = gql`
+    fragment AccountMetaData on Account {
+  id
+  twitter
+  email
+  web
+  legal
+  countryCode {
+    id
+    code
+  }
+  pgpFingerprint
+  riot
+}
+    `;
 export const PageInfoMetaFragmentDoc = gql`
     fragment PageInfoMeta on PageInfo {
   endCursor
@@ -12301,6 +12563,10 @@ export const ValidatorMetaFragmentDoc = gql`
     fragment ValidatorMeta on Validator {
   authorityId
   id
+  account {
+    id
+    countryCodeId
+  }
 }
     `;
 export const SessionAuthValidatorNodeFragmentDoc = gql`
@@ -12548,6 +12814,41 @@ export function useValidatorOfSessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
 export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
 export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
+export const AccountMetaDataDocument = gql`
+    query AccountMetaData($accountId: String!) {
+  account(id: $accountId) {
+    ...AccountMetaData
+  }
+}
+    ${AccountMetaDataFragmentDoc}`;
+
+/**
+ * __useAccountMetaDataQuery__
+ *
+ * To run a query within a React component, call `useAccountMetaDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAccountMetaDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAccountMetaDataQuery({
+ *   variables: {
+ *      accountId: // value for 'accountId'
+ *   },
+ * });
+ */
+export function useAccountMetaDataQuery(baseOptions: Apollo.QueryHookOptions<AccountMetaDataQuery, AccountMetaDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AccountMetaDataQuery, AccountMetaDataQueryVariables>(AccountMetaDataDocument, options);
+      }
+export function useAccountMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AccountMetaDataQuery, AccountMetaDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AccountMetaDataQuery, AccountMetaDataQueryVariables>(AccountMetaDataDocument, options);
+        }
+export type AccountMetaDataQueryHookResult = ReturnType<typeof useAccountMetaDataQuery>;
+export type AccountMetaDataLazyQueryHookResult = ReturnType<typeof useAccountMetaDataLazyQuery>;
+export type AccountMetaDataQueryResult = Apollo.QueryResult<AccountMetaDataQuery, AccountMetaDataQueryVariables>;
 export const MetaDataDocument = gql`
     query MetaData {
   sessions(

@@ -26,9 +26,6 @@ import {
   Avatar,
   Button,
   CardTable,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Filter,
   KeyValueWithButton,
   Progress,
@@ -38,11 +35,10 @@ import {
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
 import { Typography } from '@webb-tools/webb-ui-components';
-import * as flags from 'country-flag-icons/react/3x2';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
+import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
@@ -65,16 +61,23 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
   columnHelper.accessor('location', {
     header: 'Location',
     enableColumnFilter: false,
-    cell: (props) => (
-      <Typography
-        variant="h5"
-        fw="bold"
-        component="span"
-        className="!text-inherit"
-      >
-        {getUnicodeFlagIcon(props.getValue())}
-      </Typography>
-    ),
+    cell: (props) => {
+      const countryCode = props.getValue();
+      return (
+        <Typography
+          variant="body1"
+          fw="bold"
+          component="span"
+          className="!text-inherit"
+        >
+          {countryCode ? (
+            <CountryIcon size={'lg'} name={countryCode} />
+          ) : (
+            'Unknown'
+          )}
+        </Typography>
+      );
+    },
   }),
 
   columnHelper.accessor('uptime', {
@@ -136,10 +139,10 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     'all'
   );
   const countriesQuery = useCountriesQuery();
-  const countries = useMemo(() => {
+  const countries = useMemo<string[]>(() => {
     return (
       countriesQuery.data?.countryCodes?.nodes?.map((country) => {
-        return country?.code;
+        return country?.code ?? '';
       }) ?? []
     );
   }, [countriesQuery]);
@@ -296,7 +299,7 @@ const LocationFilter: FC<{
           onChange(v);
         }}
         iconGetter={(c) => {
-          return flags[c.toUpperCase() as unknown as any];
+          return <CountryIcon name={c} />;
         }}
         labelGetter={(c) => c}
         keyGetter={(c) => c}
