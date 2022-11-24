@@ -10,13 +10,14 @@ import {
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
+  TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
   Button,
   fuzzyFilter,
   Table,
-  TokenPair,
+  TokenPairIcons,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -34,20 +35,53 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
     cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
   }),
 
-  columnHelper.accessor('token1Symbol', {
+  columnHelper.accessor('governedTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
-      const token1Symbol = props.getValue<string>();
-      const token2Symbol = props.row.original.token2Symbol;
+      const assetSymbol = props.getValue<string>();
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
         <div className="flex items-center space-x-1.5">
-          <TokenPair token1Symbol={token1Symbol} token2Symbol={token2Symbol} />
+          <Typography className="uppercase" variant="body1" fw="bold">
+            {assetSymbol}
+          </Typography>
 
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLinkLine />
           </a>
+        </div>
+      );
+    },
+  }),
+
+  columnHelper.accessor('composition', {
+    header: 'Composition',
+    cell: (props) => {
+      const composition = props.getValue<string[]>();
+      if (!composition.length) {
+        return null;
+      }
+
+      const firstTwoTokens = composition.slice(0, 2);
+      const numOfHiddenTokens = composition.length - 2;
+
+      return (
+        <div className="flex items-center space-x-1">
+          {firstTwoTokens.length === 1 ? (
+            <TokenIcon name={firstTwoTokens[0]} />
+          ) : (
+            <TokenPairIcons
+              token1Symbol={firstTwoTokens[0]}
+              token2Symbol={firstTwoTokens[1]}
+            />
+          )}
+
+          {numOfHiddenTokens > 0 && (
+            <Typography className="inline-block" variant="body3">
+              +3 others
+            </Typography>
+          )}
         </div>
       );
     },
@@ -95,50 +129,6 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
       );
     },
   }),
-];
-
-// Temporary hardcoded data for table displaying
-const data: ShieldedAssetDataType[] = [
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbETH',
-    token2Symbol: 'WETH',
-    assetsUrl: 'https://webb.tools',
-    availableBalance: 1.645,
-    numberOfNotesFound: 6,
-  },
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbUSDC',
-    token2Symbol: 'USDT',
-    assetsUrl: 'https://webb.tools',
-    availableBalance: 1500.0,
-    numberOfNotesFound: 3,
-  },
-  {
-    chain: 'matic',
-    token1Symbol: 'WebbUSDC',
-    token2Symbol: 'DAI',
-    assetsUrl: 'https://webb.tools',
-    availableBalance: 1433.12,
-    numberOfNotesFound: 3,
-  },
-  {
-    chain: 'op',
-    token1Symbol: 'WebbETH',
-    token2Symbol: 'WETH',
-    assetsUrl: 'https://webb.tools',
-    availableBalance: 12.12,
-    numberOfNotesFound: 2,
-  },
-  {
-    chain: 'op',
-    token1Symbol: 'WebbUSDC',
-    token2Symbol: 'USDT',
-    assetsUrl: 'https://webb.tools',
-    availableBalance: 1234.12,
-    numberOfNotesFound: 2,
-  },
 ];
 
 export const ShieldedAssetsTableContainer: FC<
