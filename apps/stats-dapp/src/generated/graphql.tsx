@@ -12347,7 +12347,7 @@ export type ValidatorListingQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorListingQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorListingQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorSessionsQueryVariables = Exact<{
   keyGen?: InputMaybe<Scalars['Boolean']>;
@@ -12357,7 +12357,7 @@ export type ValidatorSessionsQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
+export type ValidatorSessionsQuery = { __typename?: 'Query', sessionValidators?: { __typename?: 'SessionValidatorsConnection', totalCount: number, nodes: Array<{ __typename?: 'SessionValidator', validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null, session?: { __typename?: 'Session', id: string, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', id: string, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', totalCount: number, edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null } } | null };
 
 export type ValidatorOfSessionQueryVariables = Exact<{
   validatorId: Scalars['String'];
@@ -12365,21 +12365,30 @@ export type ValidatorOfSessionQueryVariables = Exact<{
 }>;
 
 
-export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
+export type ValidatorOfSessionQuery = { __typename?: 'Query', sessionValidator?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, session?: { __typename?: 'Session', thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null, sessionValidators?: { __typename?: 'SessionValidatorsConnection', aggregates?: { __typename?: 'SessionValidatorAggregates', distinctCount?: { __typename?: 'SessionValidatorDistinctCountAggregates', id?: any | null } | null } | null } | null };
 
-export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null };
+export type AccountMetaDataFragment = { __typename?: 'Account', id: string, twitter?: string | null, email?: string | null, web?: string | null, legal?: string | null, pgpFingerprint?: string | null, riot?: string | null, countryCode?: { __typename?: 'CountryCode', id: string, code: string } | null };
+
+export type AccountMetaDataQueryVariables = Exact<{
+  accountId: Scalars['String'];
+}>;
+
+
+export type AccountMetaDataQuery = { __typename?: 'Query', account?: { __typename?: 'Account', id: string, twitter?: string | null, email?: string | null, web?: string | null, legal?: string | null, pgpFingerprint?: string | null, riot?: string | null, countryCode?: { __typename?: 'CountryCode', id: string, code: string } | null } | null };
+
+export type ValidatorMetaFragment = { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null };
 
 export type PageInfoMetaFragment = { __typename?: 'PageInfo', endCursor?: any | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null };
 
-export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null };
+export type SessionAuthValidatorNodeFragment = { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null };
 
-export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> };
+export type SessionAuthValidatorFragment = { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> };
 
 export type ThresholdValueElementFragment = { __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce };
 
 export type ThresholdValueFragment = { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> };
 
-export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } };
+export type SessionAuthFragment = { __typename?: 'Session', sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } };
 
 export type ProposalListViewFragment = { __typename?: 'ProposalItem', id: string, data: string, signature?: string | null, type: AppEnumB6165934C8, status: string, chainId?: any | null, proposalVotesByProposalId: { __typename?: 'ProposalVotesConnection', totalCount: number, nodes: Array<{ __typename?: 'ProposalVote', id: string, voterId: string, voter?: { __typename?: 'Proposer', id: string } | null } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null };
 
@@ -12461,14 +12470,14 @@ export type PublicKeysQueryVariables = Exact<{
 }>;
 
 
-export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
+export type PublicKeysQuery = { __typename?: 'Query', publicKeys?: { __typename?: 'PublicKeysConnection', totalCount: number, nodes: Array<{ __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null } } | null };
 
 export type PublicKeyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null };
+export type PublicKeyQuery = { __typename?: 'Query', publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, history: any, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessions: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } } | null };
 
 export type SessionKeyIdsQueryVariables = Exact<{
   keys: Array<Scalars['String']> | Scalars['String'];
@@ -12480,14 +12489,14 @@ export type SessionKeyIdsQuery = { __typename?: 'Query', sessions?: { __typename
 export type CurrentSessionAuthoritiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
+export type CurrentSessionAuthoritiesQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, blockId: string, publicKey?: { __typename?: 'PublicKey', compressed?: string | null } | null, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, block?: { __typename?: 'Block', id: string, timestamp?: any | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
 
 export type SessionKeysQueryVariables = Exact<{
   SessionId: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
+export type SessionKeysQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null> } | null };
 
 export type SessionThresholdHistoryQueryVariables = Exact<{
   offset: Scalars['Int'];
@@ -12502,7 +12511,7 @@ export type SessionThresholdsQueryVariables = Exact<{
 }>;
 
 
-export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', countryCodeId?: string | null } | null } | null } | null }> } } | null };
+export type SessionThresholdsQuery = { __typename?: 'Query', session?: { __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> }, proposersCount: { __typename?: 'SessionProposersConnection', totalCount: number }, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null, publicKey?: { __typename?: 'PublicKey', id: string, compressed?: string | null, uncompressed?: string | null, block?: { __typename?: 'Block', timestamp?: any | null, number: any } | null } | null, sessionValidators: { __typename?: 'SessionValidatorsConnection', edges: Array<{ __typename?: 'SessionValidatorsEdge', node?: { __typename?: 'SessionValidator', id: string, sessionId: string, reputation: number, uptime: number, isBest: boolean, isNext: boolean, isNextBest: boolean, bestOrder: number, nextBestOrder: number, validator?: { __typename?: 'Validator', authorityId: string, id: string, account?: { __typename?: 'Account', id: string, countryCodeId?: string | null } | null } | null } | null }> } } | null };
 
 export type LatestThresholdsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -12512,6 +12521,21 @@ export type LatestThresholdsQueryVariables = Exact<{
 
 export type LatestThresholdsQuery = { __typename?: 'Query', sessions?: { __typename?: 'SessionsConnection', nodes: Array<{ __typename?: 'Session', id: string, thresholds: { __typename?: 'ThresholdsConnection', nodes: Array<{ __typename?: 'Threshold', next: number, current: number, pending: number, variant: AppEnum790A3Fe4Ce } | null> } } | null> } | null };
 
+export const AccountMetaDataFragmentDoc = gql`
+    fragment AccountMetaData on Account {
+  id
+  twitter
+  email
+  web
+  legal
+  countryCode {
+    id
+    code
+  }
+  pgpFingerprint
+  riot
+}
+    `;
 export const PageInfoMetaFragmentDoc = gql`
     fragment PageInfoMeta on PageInfo {
   endCursor
@@ -12540,6 +12564,7 @@ export const ValidatorMetaFragmentDoc = gql`
   authorityId
   id
   account {
+    id
     countryCodeId
   }
 }
@@ -12789,6 +12814,41 @@ export function useValidatorOfSessionLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type ValidatorOfSessionQueryHookResult = ReturnType<typeof useValidatorOfSessionQuery>;
 export type ValidatorOfSessionLazyQueryHookResult = ReturnType<typeof useValidatorOfSessionLazyQuery>;
 export type ValidatorOfSessionQueryResult = Apollo.QueryResult<ValidatorOfSessionQuery, ValidatorOfSessionQueryVariables>;
+export const AccountMetaDataDocument = gql`
+    query AccountMetaData($accountId: String!) {
+  account(id: $accountId) {
+    ...AccountMetaData
+  }
+}
+    ${AccountMetaDataFragmentDoc}`;
+
+/**
+ * __useAccountMetaDataQuery__
+ *
+ * To run a query within a React component, call `useAccountMetaDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAccountMetaDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAccountMetaDataQuery({
+ *   variables: {
+ *      accountId: // value for 'accountId'
+ *   },
+ * });
+ */
+export function useAccountMetaDataQuery(baseOptions: Apollo.QueryHookOptions<AccountMetaDataQuery, AccountMetaDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AccountMetaDataQuery, AccountMetaDataQueryVariables>(AccountMetaDataDocument, options);
+      }
+export function useAccountMetaDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AccountMetaDataQuery, AccountMetaDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AccountMetaDataQuery, AccountMetaDataQueryVariables>(AccountMetaDataDocument, options);
+        }
+export type AccountMetaDataQueryHookResult = ReturnType<typeof useAccountMetaDataQuery>;
+export type AccountMetaDataLazyQueryHookResult = ReturnType<typeof useAccountMetaDataLazyQuery>;
+export type AccountMetaDataQueryResult = Apollo.QueryResult<AccountMetaDataQuery, AccountMetaDataQueryVariables>;
 export const MetaDataDocument = gql`
     query MetaData {
   sessions(

@@ -2,6 +2,7 @@ fragment ValidatorMeta on Validator {
   authorityId
   id
   account {
+    id
     countryCodeId
   }
 }

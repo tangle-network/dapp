@@ -1,5 +1,7 @@
 import {
+  AccountMetaDataFragment,
   IntFilter,
+  useAccountMetaDataLazyQuery,
   useSessionThresholdHistoryLazyQuery,
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
@@ -269,6 +271,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 }
 
 export type Range = [number | undefined, number | undefined] | [];
+
 function rangeIntoIntFilter(range: Range): IntFilter | null {
   const filter = {} as IntFilter;
 
@@ -292,6 +295,7 @@ type AuthorizesFilter = {
   search?: string;
 };
 export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
+
 export function useAuthorities(
   reqQuery: PageInfoQuery<AuthorizesFilter>
 ): Loadable<Page<AuthorityListItem>> {
@@ -384,9 +388,11 @@ export function useAuthorities(
 
   return authorities;
 }
+
 export type AuthorityQuery = PageInfoQuery<{
   authorityId: string;
 }>;
+
 export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   const [stats, setStats] = useState<AuthorityDetails['stats']>({
     isFailed: false,
@@ -608,4 +614,68 @@ export function useSessionHistory(
   }, [query]);
 
   return sessionHistory;
+}
+
+type AuthorityAccountDetailsQuery = Loadable<
+  Omit<AccountMetaDataFragment, '__typename'>
+>;
+
+export function useAuthorityAccount(
+  accountId?: string
+): AuthorityAccountDetailsQuery {
+  const [account, setAccount] = useState<AuthorityAccountDetailsQuery>({
+    val: null,
+    isFailed: false,
+    isLoading: false,
+    error: undefined,
+  });
+  const [call, query] = useAccountMetaDataLazyQuery();
+
+  useEffect(() => {
+    const sub = query.observable
+      .map((account): AuthorityAccountDetailsQuery => {
+        if (account.data.account) {
+          const { __typename, ...data } = account.data.account;
+          return {
+            isLoading: false,
+            val: data,
+            error: undefined,
+            isFailed: false,
+          };
+        }
+        return {
+          val: null,
+          isLoading: account.loading,
+          isFailed: Boolean(account.error),
+          error: account.error?.message,
+        };
+      })
+      .subscribe(setAccount);
+    return () => sub.unsubscribe();
+  }, [query, setAccount]);
+
+  useEffect(() => {
+    if (accountId) {
+      call({
+        variables: {
+          accountId,
+        },
+      }).catch((e) => {
+        setAccount({
+          val: null,
+          isFailed: true,
+          isLoading: false,
+          error: e.message,
+        });
+      });
+    } else {
+      setAccount({
+        isLoading: false,
+        val: null,
+        error: undefined,
+        isFailed: false,
+      });
+    }
+  }, [accountId]);
+  return account;
 }

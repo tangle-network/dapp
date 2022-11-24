@@ -13,6 +13,7 @@ import {
   DiscreteList,
   KeyGenKeyListItem,
   useAuthority,
+  useAuthorityAccount,
 } from '../../provider/hooks';
 import { useStatsContext } from '../../provider/stats-provider';
 import {
@@ -220,6 +221,30 @@ const DetailsView: FC<{
 }> = ({ id, isLoading, isPage, stats }) => {
   const location = stats?.location;
   const account = id;
+  const accountDetails = useAuthorityAccount(account);
+
+  const validatorMetaData = useMemo(() => {
+    const loading = accountDetails.isLoading;
+    return (
+      <>
+        <Spinner size={'lg'}>
+          <Key className="!fill-current" />
+        </Spinner>
+        <Spinner size={'lg'}>
+          <TwitterFill className="!fill-current" />
+        </Spinner>
+        <Spinner size={'lg'}>
+          <LinkIcon className="!fill-current" />
+        </Spinner>
+        <Spinner size={'lg'}>
+          <Mail className="!fill-current" />
+        </Spinner>
+        <Spinner size={'lg'}>
+          <QRCode className="!fill-current" />
+        </Spinner>
+      </>
+    );
+  }, [accountDetails]);
 
   return (
     <div
@@ -305,11 +330,7 @@ const DetailsView: FC<{
                   'flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow justify-end'
                 )}
               >
-                <Key className="!fill-current" />
-                <TwitterFill className="!fill-current" />
-                <LinkIcon className="!fill-current" />
-                <Mail className="!fill-current" />
-                <QRCode className="!fill-current" />
+                {validatorMetaData}
               </div>
             </div>
           </div>
