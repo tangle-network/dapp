@@ -50,4 +50,5 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * The signal to wrap and deposit flow
    * */
   wrappingFlow: boolean;
+  wrappableTokenSymbol?: string;
 }

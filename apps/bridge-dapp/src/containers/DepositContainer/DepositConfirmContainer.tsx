@@ -25,6 +25,7 @@ export const DepositConfirmContainer = forwardRef<
       sourceChain,
       destChain,
       setTxPayload,
+      wrappableTokenSymbol,
     },
     ref
   ) => {
@@ -184,11 +185,13 @@ export const DepositConfirmContainer = forwardRef<
         onCopy={() => handleCopy(depositPayload)}
         onDownload={() => downloadNote(depositPayload)}
         amount={amount}
+        wrappingAmount={String(amount)}
         governedTokenSymbol={token?.symbol}
         sourceChain={getTokenRingValue(sourceChain?.symbol || 'default')}
         destChain={getTokenRingValue(destChain?.symbol || 'default')}
         fee={0}
         onClose={() => setMainComponent(undefined)}
+        wrappableTokenSymbol={wrappableTokenSymbol}
       />
     );
   }

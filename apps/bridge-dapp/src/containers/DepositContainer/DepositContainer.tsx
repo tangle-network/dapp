@@ -345,6 +345,7 @@ export const DepositContainer = forwardRef<
       setMainComponent(
         <DepositConfirmContainer
           wrappingFlow={Boolean(wrappbleTokenAddress)}
+          wrappableTokenSymbol={governedCurrency?.view.symbol}
           setTxPayload={setTxPayload}
           amount={amount}
           token={selectedToken}
