@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
   const [governedCurrencies, setGovernedCurrencies] = useState<Currency[]>([]);
+
   const [governedCurrency, setGovernedCurrency] = useState<Currency | null>(
     null
   );
@@ -15,6 +16,7 @@ export const useCurrencies = () => {
   );
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
+
   // GovernableCurrency -> wrappableCurrency[]
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
@@ -26,16 +28,20 @@ export const useCurrencies = () => {
         activeChain.chainType,
         activeChain.chainId
       );
+
       const handler = async () => {
         const tokens = await Promise.all(
           Object.values(activeApi.state.getBridgeOptions()).map(
-            (potentialBridge) => {
-              return activeApi.methods.bridgeApi
-                .fetchWrappableAssetsByBridge(typedChainId, potentialBridge)
-                .then((currencies) => ({
-                  currencies,
-                  bridgeCurrency: potentialBridge.currency,
-                }));
+            async (potentialBridge) => {
+              const currencies =
+                await activeApi.methods.bridgeApi.fetchWrappableAssetsByBridge(
+                  typedChainId,
+                  potentialBridge
+                );
+              return {
+                currencies,
+                bridgeCurrency: potentialBridge.currency,
+              };
             }
           )
         );
@@ -44,24 +50,38 @@ export const useCurrencies = () => {
             ...map,
             [entry.bridgeCurrency.id]: entry.currencies,
           }),
-          {}
+          {} as Record<Currency['id'], Currency[]>
         );
         setWrappableCurrenciesMap(nextWrappableCurrenciesMap);
       };
+
       handler().catch((e) => {
+        console.log('Error fetching wrappable currencies');
         console.error(e);
       });
     }
   }, [activeChain, activeApi, setWrappableCurrenciesMap]);
+
   const getPossibleGovernedCurrencies = useCallback(
-    (currencyId) => {
+    (currencyId: number) => {
       const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
-        wrappableCurrenciesMap[key].find((c) => c.id === currencyId)
+        wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId)
       );
       return governedCurrencies.filter((c) => ids.includes(String(c.id)));
     },
     [wrappableCurrenciesMap, governedCurrencies]
   );
+
+  /**
+   * Function to get the wrappable currencies for a given gorvened currency
+   */
+  const getWrappableCurrencies = useCallback(
+    (currencyId: number) => {
+      return wrappableCurrenciesMap[currencyId] || [];
+    },
+    [wrappableCurrenciesMap]
+  );
+
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -111,6 +131,7 @@ export const useCurrencies = () => {
     governedCurrency,
     wrappableCurrencies,
     wrappableCurrency,
+    getWrappableCurrencies,
     getPossibleGovernedCurrencies,
   };
 };
