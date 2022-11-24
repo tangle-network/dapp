@@ -25,6 +25,7 @@ import { ChainSelectionWrapper, WalletModal } from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
+import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -42,8 +43,18 @@ export const DepositContainer = forwardRef<
   } = useWebContext();
 
   const { generateNote } = useBridgeDeposit();
-  const { setGovernedCurrency, setWrappableCurrency } = useBridge();
-  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
+  const {
+    setGovernedCurrency,
+    setWrappableCurrency,
+    wrappableCurrency,
+    governedCurrency,
+  } = useBridge();
+
+  const {
+    governedCurrencies,
+    wrappableCurrencies,
+    getPossibleGovernedCurrencies,
+  } = useCurrencies();
 
   // The seleted token balance
   const selectedTokenBalance = useCurrencyBalance(
@@ -120,16 +131,43 @@ export const DepositContainer = forwardRef<
     };
   }, [activeChain, sourceChain]);
 
-  const selectedToken: TokenType | undefined = useMemo(() => {
-    if (!activeApi || !activeApi.state.activeBridge) {
+  const brideGovernedCurrency = useMemo(() => {
+    if (!governedCurrency) {
       return undefined;
     }
-
     return {
-      symbol: activeApi.state.activeBridge.currency.view.symbol,
-      balance: balances[activeApi.state.activeBridge.currency.id] ?? 0,
+      currency: governedCurrency,
+      balance: balances[governedCurrency.id] ?? 0,
     };
-  }, [activeApi, balances]);
+  }, [governedCurrency, balances]);
+
+  const bridgeWrappableCurrency = useMemo(() => {
+    if (!wrappableCurrency) {
+      return undefined;
+    }
+    return {
+      currency: wrappableCurrency,
+      balance: balances[wrappableCurrency.id] ?? 0,
+    };
+  }, [wrappableCurrency, balances]);
+
+  const selectedToken: TokenType | undefined = useMemo(() => {
+    // Wrap and deposit flow
+    if (bridgeWrappableCurrency) {
+      return {
+        symbol: bridgeWrappableCurrency.currency.view.symbol,
+        balance: bridgeWrappableCurrency.balance,
+      };
+    }
+    if (!brideGovernedCurrency) {
+      return undefined;
+    }
+    // Deposit flow
+    return {
+      symbol: brideGovernedCurrency.currency.view.symbol,
+      balance: brideGovernedCurrency.balance,
+    };
+  }, [brideGovernedCurrency, bridgeWrappableCurrency]);
 
   const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -168,7 +206,10 @@ export const DepositContainer = forwardRef<
   );
 
   const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
-
+  const isWrapFlow = useMemo(
+    () => Boolean(brideGovernedCurrency) && Boolean(bridgeWrappableCurrency),
+    [brideGovernedCurrency, bridgeWrappableCurrency]
+  );
   const isDisabledDepositButton = useMemo(() => {
     return [
       selectedSourceChain,
@@ -176,7 +217,9 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       amount,
       typeof selectedTokenBalance === 'number'
-        ? amount <= selectedTokenBalance
+        ? isWrapFlow
+          ? true
+          : amount <= selectedTokenBalance
         : true,
     ].some((val) => Boolean(val) === false);
   }, [
@@ -185,6 +228,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     selectedToken,
     selectedTokenBalance,
+    isWrapFlow,
   ]);
 
   const handleTokenChange = useCallback(
@@ -192,17 +236,20 @@ export const DepositContainer = forwardRef<
       const selectedToken = Object.values(governedCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
-
       if (selectedToken) {
-        setGovernedCurrency(selectedToken);
+        // unset the wrappable currency
+        await setWrappableCurrency(null);
+        // Set the Governable currency
+        await setGovernedCurrency(selectedToken);
       }
 
       const selectedWrappableToken = Object.values(wrappableCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
-
       if (selectedWrappableToken) {
-        setWrappableCurrency(selectedWrappableToken);
+        const tokens = getPossibleGovernedCurrencies(selectedWrappableToken.id);
+        await setGovernedCurrency(tokens[0]);
+        await setWrappableCurrency(selectedWrappableToken);
       }
 
       setMainComponent(undefined);
@@ -213,9 +260,9 @@ export const DepositContainer = forwardRef<
       setMainComponent,
       setWrappableCurrency,
       wrappableCurrencies,
+      getPossibleGovernedCurrencies,
     ]
   );
-
   const sourceChainInputOnClick = useCallback(() => {
     setMainComponent(
       <ChainListCard
@@ -276,21 +323,28 @@ export const DepositContainer = forwardRef<
       destChain &&
       selectedToken &&
       amount !== 0 &&
-      activeApi?.state?.activeBridge
+      activeApi?.state?.activeBridge &&
+      activeChain
     ) {
       setIsGeneratingNote(true);
+      const chainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+      const wrappbleTokenAddress =
+        wrappableCurrency?.getAddress(chainId) ?? undefined;
       const newDepositPayload = await generateNote(
         activeApi.state.activeBridge.targets[
           calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
         ],
         calculateTypedChainId(destChain.chainType, destChain.chainId),
         amount,
-        undefined
+        wrappbleTokenAddress
       );
       setIsGeneratingNote(false);
-
       setMainComponent(
         <DepositConfirmContainer
+          wrappingFlow={Boolean(wrappbleTokenAddress)}
           setTxPayload={setTxPayload}
           amount={amount}
           token={selectedToken}
@@ -315,6 +369,7 @@ export const DepositContainer = forwardRef<
     setTxPayload,
     selectedSourceChain,
     destChainInputValue,
+    wrappableCurrency,
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
@@ -325,6 +380,9 @@ export const DepositContainer = forwardRef<
 
   const buttonText = useMemo(() => {
     if (isWalletConnected && hasNoteAccount) {
+      if (isWrapFlow) {
+        return 'Wrap and Deposit';
+      }
       return 'Deposit';
     }
 
@@ -333,8 +391,47 @@ export const DepositContainer = forwardRef<
     }
 
     return 'Connect wallet';
-  }, [hasNoteAccount, isWalletConnected]);
+  }, [hasNoteAccount, isWalletConnected, isWrapFlow]);
 
+  const bridgingTokenProps = useMemo<
+    DepositCardProps['bridgingTokenProps']
+  >(() => {
+    if (!wrappableCurrency || !brideGovernedCurrency) {
+      return undefined;
+    }
+    const targetSymbol = brideGovernedCurrency.currency.view.symbol;
+
+    const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
+      (currency): AssetType => ({
+        name: currency.view.name,
+        balance: balances[currency.id] ?? 0,
+
+        symbol: currency.view.symbol,
+      })
+    );
+
+    return {
+      token: {
+        symbol: targetSymbol,
+        balance: brideGovernedCurrency.balance,
+      },
+      onClick: () => {
+        if (selectedSourceChain) {
+          setMainComponent(
+            <TokenListCard
+              className="w-[550px] h-[720px]"
+              title={'Select Asset to Wrap and Deposit'}
+              popularTokens={[]}
+              selectTokens={tokens}
+              unavailableTokens={populatedAllTokens}
+              onChange={handleTokenChange}
+              onClose={() => setMainComponent(undefined)}
+            />
+          );
+        }
+      },
+    };
+  }, [brideGovernedCurrency, wrappableCurrency, balances]);
   return (
     <>
       <div {...props} ref={ref}>
@@ -345,6 +442,7 @@ export const DepositContainer = forwardRef<
             onClick: sourceChainInputOnClick,
             chainType: 'source',
           }}
+          bridgingTokenProps={bridgingTokenProps}
           destChainProps={{
             chain: destChainInputValue,
             onClick: () => {

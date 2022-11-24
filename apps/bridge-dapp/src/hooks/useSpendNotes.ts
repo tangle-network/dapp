@@ -1,8 +1,9 @@
 import { randRecentDate } from '@ngneat/falso';
+import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { VAnchorContract } from '@webb-tools/evm-contracts';
-import { useNoteAccount } from '@webb-tools/react-hooks';
+import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
@@ -14,6 +15,8 @@ const createdTime = randRecentDate();
 
 export const useSpendNotes = (): SpendNoteDataType[] => {
   const { allNotes } = useNoteAccount();
+
+  const { getWrappableCurrencies, governedCurrencies } = useCurrencies();
 
   const [nextIndices, setNextIndices] = useState<
     { address: string; typedChainId: number; nextIndex: number }[]
@@ -60,11 +63,24 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             ? nextIndex - Number(note.note.index)
             : '?';
 
+          // Calculate the wrappable currencies
+          let wrappableCurrencies: Currency[] = [];
+          const governedCurrency = governedCurrencies.find(
+            (currency) => currency.view.symbol === note.note.tokenSymbol
+          );
+          if (governedCurrency) {
+            const foundCurrencies = getWrappableCurrencies(governedCurrency.id);
+            wrappableCurrencies = foundCurrencies;
+          }
+
           acc.push({
             governedTokenSymbol: note.note.tokenSymbol,
             chain: chain.name.toLowerCase(),
             note: note.serialize(),
             assetsUrl,
+            composition: wrappableCurrencies.map(
+              (currency) => currency.view.symbol
+            ),
             createdTime, // TODO: get the actual created time
             balance: Number(
               ethers.utils.formatUnits(note.note.amount, note.note.denomination)
@@ -79,7 +95,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
       },
       [] as Array<SpendNoteDataType>
     );
-  }, [allNotes, nextIndices]);
+  }, [allNotes, getWrappableCurrencies, governedCurrencies, nextIndices]);
 
   // Effect to get next indices asynchorously
   useEffect(() => {

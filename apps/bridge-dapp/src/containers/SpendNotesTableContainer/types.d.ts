@@ -17,6 +17,11 @@ export interface SpendNoteDataType {
   assetsUrl: string;
 
   /**
+   * The wrappable asset symbols for the shielded asset
+   */
+  composition: string[];
+
+  /**
    * The note balance
    */
   balance: number;
