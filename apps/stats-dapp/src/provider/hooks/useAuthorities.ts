@@ -1,5 +1,7 @@
 import {
+  AccountMetaDataFragment,
   IntFilter,
+  useAccountMetaDataLazyQuery,
   useSessionThresholdHistoryLazyQuery,
   useSessionThresholdsLazyQuery,
   useValidatorListingLazyQuery,
@@ -15,7 +17,6 @@ import { DiscreteList } from './useProposals';
 import { useActiveSession } from '../stats-provider';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Threshold as QueryThreshold } from './types';
 /**
  * Threshold values
  * @param keyGen - KeyGen threshold
@@ -65,7 +66,7 @@ export type UpcomingThresholds = Record<
  * */
 export type AuthorityListItem = {
   id: string;
-  location: string;
+  location?: string;
   uptime: number;
   reputation: number;
 };
@@ -94,6 +95,7 @@ export type AuthorityStats = {
   numberOfKeys: string;
   uptime: number;
   reputation: number;
+  location: string | null;
   keyGenThreshold: AuthorityThresholdStatus;
   nextKeyGenThreshold: AuthorityThresholdStatus;
   pendingKeyGenThreshold: AuthorityThresholdStatus;
@@ -145,7 +147,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   useEffect(() => {
     if (session.val) {
       call({ variables: { sessionId: session.val.activeSession } }).catch(
-        (e) => {
+        () => {
           setData({
             val: null,
             isFailed: true,
@@ -160,14 +162,14 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<[Thresholds, UpcomingThresholds]> => {
-        if (res.data) {
+        if (res.data && res.data.session) {
           const session = res.data.session;
 
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
 
-          const publicKey = session.publicKey;
+          const publicKey = session.publicKey!;
 
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
@@ -191,8 +193,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
                   )
                 : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
-              compressed: publicKey.compressed,
-              uncompressed: publicKey.uncompressed,
+              compressed: publicKey.compressed!,
+              uncompressed: publicKey.uncompressed!,
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -269,6 +271,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
 }
 
 export type Range = [number | undefined, number | undefined] | [];
+
 function rangeIntoIntFilter(range: Range): IntFilter | null {
   const filter = {} as IntFilter;
 
@@ -292,6 +295,7 @@ type AuthorizesFilter = {
   search?: string;
 };
 export type AuthorisesQuery = PageInfoQuery<AuthorizesFilter>;
+
 export function useAuthorities(
   reqQuery: PageInfoQuery<AuthorizesFilter>
 ): Loadable<Page<AuthorityListItem>> {
@@ -352,8 +356,8 @@ export function useAuthorities(
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator!);
               return {
-                id: sessionValidator?.validator.id,
-                location: 'any',
+                id: auth.id,
+                location: auth.location ?? undefined,
                 uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
@@ -384,9 +388,11 @@ export function useAuthorities(
 
   return authorities;
 }
+
 export type AuthorityQuery = PageInfoQuery<{
   authorityId: string;
 }>;
+
 export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   const [stats, setStats] = useState<AuthorityDetails['stats']>({
     isFailed: false,
@@ -444,14 +450,14 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidators = res.data.sessionValidators;
           const items = sessionValidators.nodes
             // Ensure only session with public keys
-            .filter((n) => Boolean(n.session.publicKey))
+            .filter((n) => Boolean(n?.session?.publicKey))
             .map((node): KeyGenKeyListItem => {
-              const session = node?.session;
-              const publicKey = session.publicKey;
+              const session = node!.session!;
+              const publicKey = session.publicKey!;
               return {
                 id: publicKey.id,
                 session: session.id,
-                publicKey: publicKey.uncompressed,
+                publicKey: publicKey.uncompressed!,
                 height: `${publicKey.block?.number ?? '-'}`,
                 authority: {
                   count: session.sessionValidators.totalCount,
@@ -492,13 +498,14 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const sessionValidators = res.data.sessionValidators;
           const counter = sessionValidators?.aggregates?.distinctCount
             ?.id as number;
-          const session = sessionValidator.session;
+          const session = sessionValidator.session!;
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
 
           const auth = mapSessionAuthValidatorNode(sessionValidator);
           const stats: AuthorityStats = {
             numberOfKeys: String(counter),
+            location: auth.location,
             keyGenThreshold: {
               val: String(keyGen?.current ?? '-'),
               inTheSet: auth.isBest,
@@ -574,7 +581,7 @@ export function useSessionHistory(
               const signature = thresholds.SIGNATURE;
 
               return {
-                sessionId: node?.id,
+                sessionId: node?.id ?? '',
                 keyGenThreshold: String(keyGen?.current ?? '-'),
                 signatureThreshold: String(signature?.current ?? '-'),
               };
@@ -607,4 +614,68 @@ export function useSessionHistory(
   }, [query]);
 
   return sessionHistory;
+}
+
+type AuthorityAccountDetailsQuery = Loadable<
+  Omit<AccountMetaDataFragment, '__typename'>
+>;
+
+export function useAuthorityAccount(
+  accountId?: string
+): AuthorityAccountDetailsQuery {
+  const [account, setAccount] = useState<AuthorityAccountDetailsQuery>({
+    val: null,
+    isFailed: false,
+    isLoading: false,
+    error: undefined,
+  });
+  const [call, query] = useAccountMetaDataLazyQuery();
+
+  useEffect(() => {
+    const sub = query.observable
+      .map((account): AuthorityAccountDetailsQuery => {
+        if (account.data?.account) {
+          const { __typename, ...data } = account.data.account;
+          return {
+            isLoading: false,
+            val: data,
+            error: undefined,
+            isFailed: false,
+          };
+        }
+        return {
+          val: null,
+          isLoading: account.loading,
+          isFailed: Boolean(account.error),
+          error: account.error?.message,
+        };
+      })
+      .subscribe(setAccount);
+    return () => sub.unsubscribe();
+  }, [query, setAccount]);
+
+  useEffect(() => {
+    if (accountId) {
+      call({
+        variables: {
+          accountId,
+        },
+      }).catch((e) => {
+        setAccount({
+          val: null,
+          isFailed: true,
+          isLoading: false,
+          error: e.message,
+        });
+      });
+    } else {
+      setAccount({
+        isLoading: false,
+        val: null,
+        error: undefined,
+        isFailed: false,
+      });
+    }
+  }, [accountId]);
+  return account;
 }

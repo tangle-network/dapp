@@ -13,6 +13,7 @@ import {
   DiscreteList,
   KeyGenKeyListItem,
   useAuthority,
+  useAuthorityAccount,
 } from '../../provider/hooks';
 import { useStatsContext } from '../../provider/stats-provider';
 import {
@@ -43,12 +44,13 @@ import {
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { FC, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
+import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
 import { headerConfig } from '../KeygenTable';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 const columnHelper = createColumnHelper<KeyGenKeyListItem>();
 
@@ -218,8 +220,51 @@ const DetailsView: FC<{
   isPage: boolean;
   id: string;
 }> = ({ id, isLoading, isPage, stats }) => {
-  const location = 'EG';
+  const location = stats?.location;
   const account = id;
+  const accountDetails = useAuthorityAccount(account);
+
+  const validatorMetaData = useMemo(() => {
+    const loading = accountDetails.isLoading;
+    const activeColor =
+      'text-blue-50 hover:text-blue-10 dark:text-blue-50 dark:hover:text-blue-10';
+    const disabledColor = 'dark:text-blue-100 text-blue-10';
+    const twitter = accountDetails.val?.twitter;
+    const web = accountDetails.val?.web;
+    const email = accountDetails.val?.email;
+    const id = accountDetails.val?.id ?? '';
+    function getProps(value?: string | null): PropsOf<'a'> {
+      const disabled = loading || !value;
+      return {
+        style: {
+          pointerEvents: disabled ? 'none' : undefined,
+        },
+        className: disabled ? disabledColor : activeColor,
+      };
+    }
+    return (
+      <>
+        <a href={'#'} {...getProps(id)}>
+          <Key className="!fill-current" />
+        </a>
+        <a
+          {...getProps(twitter)}
+          href={twitter ? `https://twitter.com/${twitter}` : '#'}
+        >
+          <TwitterFill className="!fill-current" />
+        </a>
+        <a {...getProps(web)} href={web ?? '#'}>
+          <LinkIcon className="!fill-current" />
+        </a>
+        <a {...getProps(email)} href={email ? `mailto://${email}` : '#'}>
+          <Mail className="!fill-current" />
+        </a>
+        <a {...getProps(undefined)} href={'#'}>
+          <QRCode className="!fill-current" />
+        </a>
+      </>
+    );
+  }, [accountDetails]);
 
   return (
     <div
@@ -281,7 +326,15 @@ const DetailsView: FC<{
                 <Avatar value={id} size="lg" />
                 <div className="flex flex-col space-y-1">
                   <Typography variant="h5" fw="bold">
-                    {`${shortenString(id, 4)} ${getUnicodeFlagIcon(location)}`}
+                    {`${shortenString(id, 4)} `}{' '}
+                    <span className={'inline-block'}>
+                      {location && (
+                        <CountryIcon
+                          className={'inline-block'}
+                          name={location}
+                        />
+                      )}
+                    </span>
                   </Typography>
                   <KeyValueWithButton
                     hasShortenValue={false}
@@ -297,11 +350,7 @@ const DetailsView: FC<{
                   'flex items-center p-1 space-x-2 text-mono-120 dark:text-mono-80 grow justify-end'
                 )}
               >
-                <Key className="!fill-current" />
-                <TwitterFill className="!fill-current" />
-                <LinkIcon className="!fill-current" />
-                <Mail className="!fill-current" />
-                <QRCode className="!fill-current" />
+                {validatorMetaData}
               </div>
             </div>
           </div>

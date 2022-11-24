@@ -1,6 +1,10 @@
 fragment ValidatorMeta on Validator {
   authorityId
   id
+  account {
+    id
+    countryCodeId
+  }
 }
 fragment PageInfoMeta on PageInfo {
   endCursor

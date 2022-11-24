@@ -10,7 +10,10 @@ query ValidatorListing(
     orderBy: [BLOCK_NUMBER_DESC]
     filter: {
       validatorId: $validatorId
-      reputation: $reputationFilter, uptime: $uptimeFilter, sessionId: { equalTo: $sessionId } }
+      reputation: $reputationFilter
+      uptime: $uptimeFilter
+      sessionId: { equalTo: $sessionId }
+    }
     offset: $offset
     first: $perPage
   ) {
@@ -28,10 +31,18 @@ query ValidatorListing(
   }
 }
 
-query ValidatorSessions($keyGen: Boolean, $validatorId: String!, $perPage: Int!, $offset: Int!) {
+query ValidatorSessions(
+  $keyGen: Boolean
+  $validatorId: String!
+  $perPage: Int!
+  $offset: Int!
+) {
   sessionValidators(
     orderBy: [BLOCK_NUMBER_DESC]
-    filter: { isBest: { equalTo: $keyGen }, validatorId: { equalTo: $validatorId } }
+    filter: {
+      isBest: { equalTo: $keyGen }
+      validatorId: { equalTo: $validatorId }
+    }
     offset: $offset
     first: $perPage
   ) {
@@ -74,12 +85,33 @@ query ValidatorOfSession($validatorId: String!, $sessionValidatorId: String!) {
   }
   sessionValidators(
     orderBy: [BLOCK_NUMBER_DESC]
-    filter: { validatorId: { equalTo: $validatorId }, isBest: { equalTo: true } }
+    filter: {
+      validatorId: { equalTo: $validatorId }
+      isBest: { equalTo: true }
+    }
   ) {
     aggregates {
       distinctCount {
         id
       }
     }
+  }
+}
+fragment AccountMetaData on Account {
+  id
+  twitter
+  email
+  web
+  legal
+  countryCode {
+    id
+    code
+  }
+  pgpFingerprint
+  riot
+}
+query AccountMetaData($accountId: String!) {
+  account(id: $accountId) {
+    ...AccountMetaData
   }
 }
