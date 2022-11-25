@@ -14,6 +14,7 @@ import {
 } from '../../components';
 import { DepositConfirmProps } from './types';
 import { PropsOf } from '../../types';
+import { Section, WrapperSection } from './WrapperSection';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -77,9 +78,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             sourceChain={sourceChain}
             destChain={destChain}
             amount={governedTokenValue}
-            tokenPairString={
-              governedTokenSymbol
-            }
+            tokenPairString={governedTokenSymbol}
           />
         </div>
 
@@ -87,83 +86,90 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
         {/** Wrapping info */}
-        {wrappableTokenSymbol && governedTokenSymbol &&
-          <WrapperCard>
-            <div className="space-y-4">
-              <TitleWithInfo
-                titleComponent="h6"
-                title="Unwrapping"
-                variant="utility"
-                info="Unwrapping"
-                titleClassName="text-mono-100 dark:text-mono-80"
-                className="text-mono-100 dark:text-mono-80"
-              />
-              <div className="flex items-center space-x-4">
-                <TokenWithAmount token1Symbol={wrappableTokenSymbol} amount={wrappingAmount} />
+        {wrappableTokenSymbol && governedTokenSymbol && (
+          <WrapperSection>
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Unwrapping"
+                  variant="utility"
+                  info="Unwrapping"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+                <div className="flex items-center space-x-4">
+                  <TokenWithAmount
+                    token1Symbol={wrappableTokenSymbol}
+                    amount={wrappingAmount}
+                  />
                   <ArrowRight />
                   <TokenWithAmount
                     token1Symbol={wrappableTokenSymbol}
                     token2Symbol={governedTokenSymbol}
                     amount={amount}
                   />
+                </div>
               </div>
-            </div>
-          </WrapperCard>
-        }
+            </Section>
+          </WrapperSection>
+        )}
 
         {/** New spend note */}
-        <WrapperCard>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <TitleWithInfo
-                titleComponent="h6"
-                title="New Spend Note"
-                info="New Spend Note"
-                variant="utility"
-                titleClassName="text-mono-100 dark:text-mono-80"
-                className="text-mono-100 dark:text-mono-80"
-              />
-              <div className="flex space-x-2">
-                <Button
+        <WrapperSection>
+          <Section>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="New Spend Note"
+                  info="New Spend Note"
                   variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={onCopy}
-                >
-                  <FileCopyLine className="!fill-current" />
-                </Button>
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={onDownload}
-                >
-                  <Download className="!fill-current" />
-                </Button>
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+                <div className="flex space-x-2">
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="p-2"
+                    onClick={onCopy}
+                  >
+                    <FileCopyLine className="!fill-current" />
+                  </Button>
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="p-2"
+                    onClick={onDownload}
+                  >
+                    <Download className="!fill-current" />
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between max-w-[470px]">
-              <Typography
-                variant="mono1"
-                fw="bold"
-                className="block truncate text-mono-140 dark:text-mono-0"
+              <div className="flex items-center justify-between max-w-[470px]">
+                <Typography
+                  variant="mono1"
+                  fw="bold"
+                  className="block truncate text-mono-140 dark:text-mono-0"
+                >
+                  {note}
+                </Typography>
+              </div>
+
+              <CheckBox
+                {...checkboxProps}
+                wrapperClassName={twMerge(
+                  'flex items-center',
+                  checkboxProps?.wrapperClassName
+                )}
               >
-                {note}
-              </Typography>
+                {checkboxProps?.children ?? 'I have copied the spend note'}
+              </CheckBox>
             </div>
-
-            <CheckBox
-              {...checkboxProps}
-              wrapperClassName={twMerge(
-                'flex items-center',
-                checkboxProps?.wrapperClassName
-              )}
-            >
-              {checkboxProps?.children ?? 'I have copied the spend note'}
-            </CheckBox>
-          </div>
-        </WrapperCard>
+          </Section>
+        </WrapperSection>
 
         {/** Transaction Details */}
         <div className="px-4 space-y-2">
@@ -189,29 +195,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         <Button {...actionBtnProps} isFullWidth className="justify-center">
           {actionBtnProps?.children ?? 'Deposit'}
         </Button>
-      </div>
-    );
-  }
-);
-
-/***********************
- * Internal components *
- ***********************/
-
-const WrapperCard = forwardRef<HTMLDivElement, PropsOf<'div'>>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div
-        {...props}
-        className={twMerge(
-          'p-2 bg-mono-20 dark:bg-mono-160 rounded-lg',
-          className
-        )}
-        ref={ref}
-      >
-        <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-140">
-          {children}
-        </div>
       </div>
     );
   }

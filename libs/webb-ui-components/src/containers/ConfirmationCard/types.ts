@@ -84,7 +84,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  governedTokenSymbol?: string;
+  governedTokenSymbol: string;
 
   /**
    * The second token symbol
@@ -103,9 +103,9 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   relayerExternalUrl?: string;
 
   /**
-   * Unshielded address
+   * The recipient address
    */
-  unshieldedAddress?: string;
+  recipientAddress: string;
 }
 
 export interface TransferConfirmProps extends ConfirmationCardProps {
