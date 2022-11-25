@@ -123,6 +123,9 @@ export class NoteManager {
 
   async removeAllNotes() {
     this.notesMap = new Map<string, Note[]>();
+
+    this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
+
     await this.updateStorage();
   }
 
