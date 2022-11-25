@@ -178,41 +178,45 @@ export const WithdrawConfirm = forwardRef<
           <WrapperSection>
             <Section>
               <div className="space-y-2">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="The change note"
-                  info="The change note"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
                 <div className="flex items-center justify-between">
-                  <div className="px-4 py-1.5 bg-mono-20 dark:bg-mono-160 rounded-lg grow max-w-[438px] truncate">
-                    <Typography
-                      variant="mono1"
-                      fw="bold"
-                      className="text-mono-140 dark:text-mono-0"
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Change note"
+                    info="Change note"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onCopy}
                     >
-                      {note}
-                    </Typography>
+                      <FileCopyLine className="!fill-current" />
+                    </Button>
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onDownload}
+                    >
+                      <Download className="!fill-current" />
+                    </Button>
                   </div>
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onCopy}
-                  >
-                    <FileCopyLine className="!fill-current" />
-                  </Button>
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onDownload}
-                  >
-                    <Download className="!fill-current" />
-                  </Button>
                 </div>
+
+                <div className="flex items-center justify-between max-w-[470px]">
+                  <Typography
+                    variant="mono1"
+                    fw="bold"
+                    className="block truncate text-mono-140 dark:text-mono-0"
+                  >
+                    {note}
+                  </Typography>
+                </div>
+
                 <CheckBox
                   {...checkboxProps}
                   wrapperClassName={twMerge(
