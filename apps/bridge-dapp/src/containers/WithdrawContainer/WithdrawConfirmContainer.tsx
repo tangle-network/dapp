@@ -1,24 +1,32 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import { TransactionState } from '@webb-tools/dapp-types';
-import { TokenIcon } from '@webb-tools/icons';
+import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useWithdraw } from '@webb-tools/react-hooks';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import {
-  WithdrawConfirm,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { useWebbUI, WithdrawConfirm } from '@webb-tools/webb-ui-components';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { WithdrawConfirmContainerProps } from './types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
   WithdrawConfirmContainerProps
 >(
-  ({ changeNote, availableNotes, amount, changeAmount, fees, setTxPayload, webbToken, relayer, recipient },
+  (
+    {
+      changeNote,
+      availableNotes,
+      amount,
+      changeAmount,
+      fees,
+      targetChainId,
+      setTxPayload,
+      webbToken,
+      unwrapToken,
+      relayer,
+      recipient,
+    },
     ref
   ) => {
-    const { activeApi } = useWebContext();
     const { withdraw } = useWithdraw({
       amount: amount,
       notes: availableNotes,
@@ -74,10 +82,9 @@ export const WithdrawConfirmContainer = forwardRef<
         unshieldedAddress={recipient}
         relayerAddress={relayer?.account}
         relayerExternalUrl={relayer?.endpoint}
-        governedTokenSymbol={activeApi?.methods.bridgeApi.getCurrency()?.view.symbol}
+        governedTokenSymbol={webbToken.symbol}
+        wrappableTokenSymbol={unwrapToken?.symbol}
       />
     );
   }
 );
-
-

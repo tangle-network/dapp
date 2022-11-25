@@ -118,7 +118,7 @@ const PageBridge = () => {
 
         {/** Bridge tabs */}
         <TabsRoot
-          defaultValue="deposit"
+          defaultValue="withdraw"
           // The customMainComponent alters the global mainComponent for display.
           // Therfore, if the customMainComponent exists (input selected) then hide the base component.
           className={cx(

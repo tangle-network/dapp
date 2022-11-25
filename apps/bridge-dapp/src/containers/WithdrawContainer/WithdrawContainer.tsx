@@ -428,10 +428,19 @@ export const WithdrawContainer = forwardRef<
               <WithdrawConfirmContainer
                 changeNote={changeNote}
                 changeAmount={spentAmount - amount}
+                targetChainId={currentTypedChainId}
                 availableNotes={availableNotesFromManager ?? []}
                 amount={amount}
                 fees={0}
-                webbToken={{ symbol: governedCurrency.view.symbol }}
+                webbToken={{
+                  symbol: governedCurrency.view.symbol,
+                  balance: availableAmount,
+                }}
+                unwrapToken={
+                  isUnwrap && wrappableCurrency
+                    ? { symbol: wrappableCurrency.view.symbol }
+                    : undefined
+                }
                 recipient={recipient}
                 setTxPayload={setTxPayload}
               />
