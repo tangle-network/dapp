@@ -268,7 +268,7 @@ export const WithdrawConfirm = forwardRef<
         </div>
 
         <Button {...actionBtnProps} isFullWidth className="justify-center">
-          {actionBtnProps?.children ?? 'Transfer'}
+          {actionBtnProps?.children ?? 'Withdraw'}
         </Button>
       </div>
     );

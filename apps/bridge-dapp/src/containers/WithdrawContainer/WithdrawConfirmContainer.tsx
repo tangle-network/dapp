@@ -72,7 +72,7 @@ export const WithdrawConfirmContainer = forwardRef<
       <WithdrawConfirm
         ref={ref}
         actionBtnProps={{
-          isDisabled: !checked,
+          isDisabled: changeAmount ? !checked : false,
           isLoading: isWithdrawing,
           loadingText: 'Withdrawing...',
           onClick: async () => {
@@ -86,6 +86,7 @@ export const WithdrawConfirmContainer = forwardRef<
         }}
         checkboxProps={{
           isChecked: checked,
+          children: 'I have copy the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
         onCopy={() => handleCopy(changeNote)}
