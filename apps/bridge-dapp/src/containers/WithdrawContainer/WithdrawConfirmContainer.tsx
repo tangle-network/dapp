@@ -1,7 +1,8 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useWithdraw } from '@webb-tools/react-hooks';
+import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
+import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { useWebbUI, WithdrawConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
@@ -22,7 +23,6 @@ export const WithdrawConfirmContainer = forwardRef<
       setTxPayload,
       webbToken,
       unwrapToken,
-      relayer,
       recipient,
     },
     ref
@@ -33,6 +33,17 @@ export const WithdrawConfirmContainer = forwardRef<
       recipient: recipient,
     });
     const { setMainComponent } = useWebbUI();
+
+    const { activeApi } = useWebContext();
+
+    const {
+      relayersState: { activeRelayer },
+    } = useRelayers({
+      typedChainId: targetChainId,
+      target: activeApi?.state.activeBridge
+        ? activeApi.state.activeBridge.targets[targetChainId]
+        : undefined,
+    });
 
     const [checked, setChecked] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -50,6 +61,12 @@ export const WithdrawConfirmContainer = forwardRef<
     const downloadNote = useCallback((note: string) => {
       downloadString(note, note.slice(-note.length - 10) + '.txt');
     }, []);
+
+    const avatarTheme = useMemo(() => {
+      return chainsPopulated[targetChainId].chainType === ChainType.EVM
+        ? 'ethereum'
+        : 'substrate';
+    }, [targetChainId]);
 
     return (
       <WithdrawConfirm
@@ -80,8 +97,9 @@ export const WithdrawConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         progress={null}
         recipientAddress={recipient}
-        relayerAddress={relayer?.account}
-        relayerExternalUrl={relayer?.endpoint}
+        relayerAddress={activeRelayer?.beneficiary}
+        relayerExternalUrl={activeRelayer?.endpoint}
+        relayerAvatarTheme={avatarTheme}
         governedTokenSymbol={webbToken.symbol}
         wrappableTokenSymbol={unwrapToken?.symbol}
       />

@@ -1,7 +1,7 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { Button, CheckBox, TokensRing } from '../../components';
+import { Avatar, Button, CheckBox, TokensRing } from '../../components';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -91,6 +91,12 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    */
 
   wrappableTokenSymbol?: string;
+
+  /**
+   * The relayer avatar theme
+   * @default 'polkadot'
+   */
+  relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
 
   /**
    * The relayer address

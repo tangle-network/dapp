@@ -42,6 +42,7 @@ export const WithdrawConfirm = forwardRef<
       progress,
       relayerAddress,
       relayerExternalUrl,
+      relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Withdrawal',
       governedTokenSymbol: token1Symbol,
@@ -79,7 +80,7 @@ export const WithdrawConfirm = forwardRef<
             tokenPairString={
               token1Symbol && token2Symbol
                 ? `${token1Symbol}/${token2Symbol}`
-                : ''
+                : token1Symbol
             }
           />
         </div>
@@ -107,12 +108,11 @@ export const WithdrawConfirm = forwardRef<
                 <div className="flex items-center space-x-4">
                   <TokenWithAmount
                     token1Symbol={token1Symbol}
-                    token2Symbol={token2Symbol}
                     amount={amount}
                   />
                   <ArrowRight />
                   <TokenWithAmount
-                    token1Symbol={token1Symbol}
+                    token1Symbol={token2Symbol}
                     amount={amount}
                   />
                 </div>
@@ -136,7 +136,7 @@ export const WithdrawConfirm = forwardRef<
                 />
 
                 <div className="flex items-center space-x-1">
-                  <Avatar value={relayerAddress} />
+                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
 
                   <Typography variant="body1" fw="bold">
                     {relayerAddress}

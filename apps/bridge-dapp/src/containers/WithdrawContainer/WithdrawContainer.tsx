@@ -4,7 +4,6 @@ import {
   useBridge,
   useBridgeDeposit,
   useCurrencies,
-  useCurrencyBalance,
   useNoteAccount,
   useRelayers,
 } from '@webb-tools/react-hooks';
@@ -16,10 +15,7 @@ import {
   useWebbUI,
   WithdrawCard,
 } from '@webb-tools/webb-ui-components';
-import {
-  AssetType,
-  RelayerType,
-} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { WithdrawContainerProps } from './types';

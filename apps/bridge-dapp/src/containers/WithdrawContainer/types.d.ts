@@ -61,11 +61,6 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   unwrapToken?: TokenType;
 
   /**
-   * The relayer to use
-   */
-  relayer?: ActiveWebbRelayer;
-
-  /**
    * Function to update the transaction payload
    */
   setTxPayload: React.Dispatch<
