@@ -375,6 +375,8 @@ export const WithdrawContainer = forwardRef<
               return;
             }
 
+            const governedCurrencyDecimals = governedCurrency.getDecimals();
+
             // Find the mixerId (target) of the selected inputs
             const mixerId =
               activeApi.state.activeBridge.targets[currentTypedChainId];
@@ -384,7 +386,7 @@ export const WithdrawContainer = forwardRef<
               availableNotesFromManager ?? [],
               ethers.utils.parseUnits(
                 amount.toString(),
-                governedCurrency.getDecimals()
+                governedCurrencyDecimals
               )
             );
 
@@ -402,28 +404,34 @@ export const WithdrawContainer = forwardRef<
               BigNumber.from(0)
             );
 
-            const spentAmount = Number(
+            const changeAmountBigNumber = spentValue.sub(
+              ethers.utils.parseUnits(
+                amount.toString(),
+                governedCurrencyDecimals
+              )
+            );
+
+            const parsedChangeAmount = Number(
               ethers.utils.formatUnits(
-                spentValue,
-                governedCurrency.getDecimals()
+                changeAmountBigNumber,
+                governedCurrencyDecimals
               )
             );
 
             // Generate a change note if applicable
-            const changeNote =
-              spentAmount - amount > 0
-                ? await generateNote(
-                    mixerId,
-                    currentTypedChainId,
-                    spentAmount - amount,
-                    undefined
-                  ).then((note) => note.note.serialize())
-                : undefined;
+            const changeNote = changeAmountBigNumber.gt(0)
+              ? await generateNote(
+                  mixerId,
+                  currentTypedChainId,
+                  parsedChangeAmount,
+                  undefined
+                ).then((note) => note.note.serialize())
+              : undefined;
 
             setMainComponent(
               <WithdrawConfirmContainer
                 changeNote={changeNote}
-                changeAmount={spentAmount - amount}
+                changeAmount={parsedChangeAmount}
                 targetChainId={currentTypedChainId}
                 availableNotes={availableNotesFromManager ?? []}
                 amount={amount}
