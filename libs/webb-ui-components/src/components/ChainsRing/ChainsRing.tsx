@@ -62,7 +62,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
 
       chains = [...chains, ...filteredChains.slice(0, 3)];
 
-      if (destChain) {
+      if (destChain && destChain !== sourceChain) {
         chains.push(destChain);
       }
 
