@@ -21,16 +21,20 @@ export const WithdrawConfirmContainer = forwardRef<
       fees,
       targetChainId,
       setTxPayload,
-      webbToken,
-      unwrapToken,
+      governedCurrency: governedCurrencyProp,
+      unwrapCurrency,
       recipient,
     },
     ref
   ) => {
+    const { value: governedCurrency } = governedCurrencyProp;
+
     const { withdraw } = useWithdraw({
       amount: amount,
       notes: availableNotes,
       recipient: recipient,
+      unwrapTokenAddress:
+        unwrapCurrency?.value.getAddressOfChain(targetChainId),
     });
     const { setMainComponent } = useWebbUI();
 
@@ -101,8 +105,8 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}
-        governedTokenSymbol={webbToken.symbol}
-        wrappableTokenSymbol={unwrapToken?.symbol}
+        governedTokenSymbol={governedCurrency.view.symbol}
+        wrappableTokenSymbol={unwrapCurrency?.value.view.symbol}
       />
     );
   }

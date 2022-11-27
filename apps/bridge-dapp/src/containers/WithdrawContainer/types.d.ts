@@ -2,6 +2,7 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   ActiveWebbRelayer,
+  Currency,
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
 
@@ -13,6 +14,11 @@ export interface WithdrawContainerProps extends PropsOf<'div'> {
     React.SetStateAction<Partial<TransactionPayload>>
   >;
 }
+
+export type CurrencyWithBalance = { value: Currency } & Omit<
+  TokenType,
+  'symbol'
+>;
 
 export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
@@ -53,12 +59,12 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The token to withdraw
    */
-  webbToken: TokenType;
+  governedCurrency: CurrencyWithBalance;
 
   /**
    * The unwrap token
    */
-  unwrapToken?: TokenType;
+  unwrapCurrency?: CurrencyWithBalance;
 
   /**
    * Function to update the transaction payload

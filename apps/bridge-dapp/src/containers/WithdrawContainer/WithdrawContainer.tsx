@@ -436,13 +436,13 @@ export const WithdrawContainer = forwardRef<
                 availableNotes={availableNotesFromManager ?? []}
                 amount={amount}
                 fees={0}
-                webbToken={{
-                  symbol: governedCurrency.view.symbol,
+                governedCurrency={{
+                  value: governedCurrency,
                   balance: availableAmount,
                 }}
-                unwrapToken={
+                unwrapCurrency={
                   isUnwrap && wrappableCurrency
-                    ? { symbol: wrappableCurrency.view.symbol }
+                    ? { value: wrappableCurrency }
                     : undefined
                 }
                 recipient={recipient}
