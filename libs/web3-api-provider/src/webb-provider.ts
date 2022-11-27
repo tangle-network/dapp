@@ -154,7 +154,6 @@ export class WebbWeb3Provider
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
-
   }
 
   getProvider(): Web3Provider {
@@ -266,6 +265,12 @@ export class WebbWeb3Provider
       );
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+
+      // Cached the new leaves
+      await storage.set(contract.inner.address.toLowerCase(), {
+        lastQueriedBlock: leavesFromChain.lastQueriedBlock,
+        leaves,
+      });
     }
 
     return leaves;

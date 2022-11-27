@@ -330,7 +330,10 @@ export class VAnchorContract {
           publicInputs.outputCommitments[1],
         ],
       },
-      extData
+      extData,
+      {
+        gasLimit: 1000000, // Manually set gas limit to fix `UNPREDICTABLE_GAS_LIMIT` error
+      }
     );
 
     return tx;
@@ -654,9 +657,9 @@ export class VAnchorContract {
     wasmBuffer: Buffer,
     worker: Worker
   ): Promise<{
-    extData: ExtData,
-    publicInputs: IVariableAnchorPublicInputs,
-    outputUtxos: Utxo[],
+    extData: ExtData;
+    publicInputs: IVariableAnchorPublicInputs;
+    outputUtxos: Utxo[];
   }> {
     const chainId = calculateTypedChainId(
       ChainType.EVM,
@@ -671,10 +674,12 @@ export class VAnchorContract {
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputUtxos: inputs,
-      leafIds: inputs.map((input) => { return {
-        typedChainId: Number(input.originChainId),
-        index: input.index
-      }}),
+      leafIds: inputs.map((input) => {
+        return {
+          typedChainId: Number(input.originChainId),
+          index: input.index,
+        };
+      }),
       leavesMap,
       roots: roots.map((root) => hexToU8a(root)),
       chainId: chainId.toString(),
@@ -698,7 +703,10 @@ export class VAnchorContract {
 
     const levels = await this.inner.levels();
     const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
-    const proof = await provingManager.prove('vanchor', proofInput) as VAnchorProof;
+    const proof = (await provingManager.prove(
+      'vanchor',
+      proofInput
+    )) as VAnchorProof;
 
     const publicInputs: IVariableAnchorPublicInputs = this.generatePublicInputs(
       proof.proof,
