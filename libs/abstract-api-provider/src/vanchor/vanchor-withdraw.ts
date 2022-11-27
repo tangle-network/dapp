@@ -6,9 +6,15 @@ import type { WebbApiProvider } from '../webb-provider.interface';
 import { EventBus } from '@webb-tools/app-util';
 
 import { CancellationToken } from '../cancelation-token';
-import { NewNotesTxResult, TransactionState, WebbWithdrawEvents } from '../transaction';
+import {
+  NewNotesTxResult,
+  TransactionState,
+  WebbWithdrawEvents,
+} from '../transaction';
 
-export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
+export abstract class VAnchorWithdraw<
+  T extends WebbApiProvider<any>
+> extends EventBus<WebbWithdrawEvents> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
 
@@ -23,5 +29,10 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> extends Ev
     return Promise.resolve(undefined);
   }
 
-  abstract withdraw(notes: string[], recipient: string, amount: string): Promise<NewNotesTxResult>;
+  abstract withdraw(
+    notes: string[],
+    recipient: string,
+    amount: string,
+    unwrapTokenAddress?: string
+  ): Promise<NewNotesTxResult>;
 }

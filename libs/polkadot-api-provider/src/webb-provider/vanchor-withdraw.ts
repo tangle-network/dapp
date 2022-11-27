@@ -50,7 +50,8 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   async withdraw(
     notes: string[],
     recipient: string,
-    amount: string
+    amount: string,
+    unwrapTokenAddress?: string // Make use of this to unwrap the token
   ): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
@@ -242,29 +243,31 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
 
     // Convert the output Utxos to Notes as we have additional metadata for notes here.
     // Change notes have the same source and target.
-    const outputNotes = await Promise.all(data.outputUtxos.map((utxo) => {
-      return Note.generateNote({
-        protocol: 'vanchor',
-        sourceChain: utxo.chainId,
-        sourceIdentifyingData: treeId,
-        targetChain: utxo.chainId,
-        targetIdentifyingData: treeId,
-        backend: 'Arkworks',
-        hashFunction: 'Poseidon',
-        curve: 'Bn254',
-        tokenSymbol: inputNotes[0].note.tokenSymbol,
-        amount: utxo.amount,
-        denomination: inputNotes[0].note.denomination,
-        width: inputNotes[0].note.width,
-        exponentiation: inputNotes[0].note.exponentiation,
-        secrets: [
-          toFixedHex(utxo.chainId, 8).substring(2),
-          toFixedHex(utxo.amount).substring(2),
-          toFixedHex(utxo.getKeypair().privkey).substring(2),
-          toFixedHex(utxo.blinding).substring(2),
-        ].join(':'),
+    const outputNotes = await Promise.all(
+      data.outputUtxos.map((utxo) => {
+        return Note.generateNote({
+          protocol: 'vanchor',
+          sourceChain: utxo.chainId,
+          sourceIdentifyingData: treeId,
+          targetChain: utxo.chainId,
+          targetIdentifyingData: treeId,
+          backend: 'Arkworks',
+          hashFunction: 'Poseidon',
+          curve: 'Bn254',
+          tokenSymbol: inputNotes[0].note.tokenSymbol,
+          amount: utxo.amount,
+          denomination: inputNotes[0].note.denomination,
+          width: inputNotes[0].note.width,
+          exponentiation: inputNotes[0].note.exponentiation,
+          secrets: [
+            toFixedHex(utxo.chainId, 8).substring(2),
+            toFixedHex(utxo.amount).substring(2),
+            toFixedHex(utxo.getKeypair().privkey).substring(2),
+            toFixedHex(utxo.blinding).substring(2),
+          ].join(':'),
+        });
       })
-    }));
+    );
 
     // before the transaction takes place, save the output (change) note (in case user leaves page or
     // perhaps relayer misbehaves and doesn't respond but executes transaction)

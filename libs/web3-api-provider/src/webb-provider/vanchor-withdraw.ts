@@ -40,7 +40,7 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { BigNumber } from 'ethers';
+import { BigNumber, ContractTransaction } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
@@ -58,7 +58,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   async withdraw(
     notes: string[],
     recipient: string,
-    amount: string
+    amount: string,
+    unwrapTokenAddress?: string
   ): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
@@ -247,28 +248,27 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
       this.emit('stateChange', TransactionState.GeneratingZk);
       const worker = this.inner.wasmFactory();
-      const { extData, publicInputs } =
-        await this.cancelToken.handleOrThrow(
-          () =>
-            destVAnchor.setupTransaction(
-              inputUtxos,
-              [changeUtxo, dummyUtxo],
-              extAmount,
-              0,
-              0,
-              activeBridge.currency.getAddress(destChainIdType),
-              recipient,
-              relayerAccount,
-              leavesMap,
-              provingKey,
-              Buffer.from(wasmBuffer),
-              worker
-            ),
-          () => {
-            worker?.terminate();
-            return WebbError.from(WebbErrorCodes.TransactionCancelled);
-          }
-        );
+      const { extData, publicInputs } = await this.cancelToken.handleOrThrow(
+        () =>
+          destVAnchor.setupTransaction(
+            inputUtxos,
+            [changeUtxo, dummyUtxo],
+            extAmount,
+            0,
+            0,
+            activeBridge.currency.getAddress(destChainIdType),
+            recipient,
+            relayerAccount,
+            leavesMap,
+            provingKey,
+            Buffer.from(wasmBuffer),
+            worker
+          ),
+        () => {
+          worker?.terminate();
+          return WebbError.from(WebbErrorCodes.TransactionCancelled);
+        }
+      );
 
       // Check for cancelled here, abort if it was set.
       if (this.cancelToken.isCancelled()) {
@@ -420,16 +420,39 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           this.inner.noteManager?.removeNote(parsedNote);
         }
       } else {
-        const tx = await destVAnchor.inner.transact(
-          {
-            ...publicInputs,
-            outputCommitments: [
-              publicInputs.outputCommitments[0],
-              publicInputs.outputCommitments[1],
-            ],
-          },
-          extData
-        );
+        let tx: ContractTransaction;
+
+        if (unwrapTokenAddress) {
+          tx = await destVAnchor.inner.transactWrap(
+            {
+              ...publicInputs,
+              outputCommitments: [
+                publicInputs.outputCommitments[0],
+                publicInputs.outputCommitments[1],
+              ],
+            },
+            extData,
+            unwrapTokenAddress,
+            {
+              gasLimit: 100000,
+            }
+          );
+        } else {
+          tx = await destVAnchor.inner.transact(
+            {
+              ...publicInputs,
+              outputCommitments: [
+                publicInputs.outputCommitments[0],
+                publicInputs.outputCommitments[1],
+              ],
+            },
+            extData,
+            {
+              gasLimit: 100000,
+            }
+          );
+        }
+
         const receipt = await tx.wait();
         txHash = receipt.transactionHash;
 
