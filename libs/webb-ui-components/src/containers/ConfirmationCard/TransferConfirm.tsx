@@ -1,29 +1,28 @@
 import {
-  ArrowRight,
   Close,
   Download,
   ExternalLinkLine,
   FileCopyLine,
 } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import {
   Avatar,
   Button,
+  ChainsRing,
   CheckBox,
   InfoItem,
   Progress,
   TitleWithInfo,
-  TokensRing,
-  TokenWithAmount,
 } from '../../components';
 import { TransferConfirmProps } from './types';
 
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
     {
+      activeChains,
       actionBtnProps,
       amount,
       changeAmount,
@@ -42,7 +41,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       sourceChain,
       title = 'Confirm Transfer',
       governedTokenSymbol: token1Symbol,
-      token2Symbol,
       ...props
     },
     ref
@@ -68,17 +66,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
         {/** Token ring */}
         <div>
-          <TokensRing
+          <ChainsRing
+            activeChains={activeChains}
             sourceLabel="Sender"
             destLabel="Recipient"
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
-            tokenPairString={
-              token1Symbol && token2Symbol
-                ? `${token1Symbol}/${token2Symbol}`
-                : ''
-            }
+            tokenPairString={token1Symbol}
           />
         </div>
 

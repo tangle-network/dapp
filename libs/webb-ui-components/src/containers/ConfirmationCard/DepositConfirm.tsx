@@ -1,24 +1,25 @@
 import { ArrowRight, Close, Download, FileCopyLine } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import React, { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import {
   Button,
+  ChainsRing,
   CheckBox,
   InfoItem,
   Progress,
   TitleWithInfo,
-  TokensRing,
   TokenWithAmount,
 } from '../../components';
-import { DepositConfirmProps } from './types';
 import { PropsOf } from '../../types';
+import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
     {
       actionBtnProps,
+      activeChains,
       amount,
       wrappingAmount,
       checkboxProps,
@@ -69,17 +70,26 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </button>
         </div>
 
-        {/** Token ring */}
+        {/** Chains ring */}
         <div>
-          <TokensRing
-            sourceLabel="depositing from"
-            destLabel="depositing to"
+          <ChainsRing
+            activeChains={activeChains}
+            sourceLabel={
+              sourceChain && sourceChain === destChain
+                ? 'Depositing from & to'
+                : 'Depositing from'
+            }
+            destLabel={
+              destChain && sourceChain !== destChain
+                ? 'Depositing to'
+                : undefined
+            }
             sourceChain={sourceChain}
             destChain={destChain}
-            amount={governedTokenValue}
-            tokenPairString={
-              governedTokenSymbol
-            }
+            amount={amount}
+            tokenPairString={`${governedTokenSymbol}${
+              wrappableTokenSymbol ? `-${wrappableTokenSymbol}` : ''
+            }`}
           />
         </div>
 
@@ -87,7 +97,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
         {/** Wrapping info */}
-        {wrappableTokenSymbol && governedTokenSymbol &&
+        {wrappableTokenSymbol && governedTokenSymbol && (
           <WrapperCard>
             <div className="space-y-4">
               <TitleWithInfo
@@ -99,17 +109,20 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 className="text-mono-100 dark:text-mono-80"
               />
               <div className="flex items-center space-x-4">
-                <TokenWithAmount token1Symbol={wrappableTokenSymbol} amount={wrappingAmount} />
-                  <ArrowRight />
-                  <TokenWithAmount
-                    token1Symbol={wrappableTokenSymbol}
-                    token2Symbol={governedTokenSymbol}
-                    amount={amount}
-                  />
+                <TokenWithAmount
+                  token1Symbol={wrappableTokenSymbol}
+                  amount={wrappingAmount}
+                />
+                <ArrowRight />
+                <TokenWithAmount
+                  token1Symbol={wrappableTokenSymbol}
+                  token2Symbol={governedTokenSymbol}
+                  amount={amount}
+                />
               </div>
             </div>
           </WrapperCard>
-        }
+        )}
 
         {/** New spend note */}
         <WrapperCard>
