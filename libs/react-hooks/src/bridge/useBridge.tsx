@@ -40,7 +40,7 @@ export const useBridge = (): BridgeApi => {
     if (activeApi) {
       const sub: { unsubscribe(): void }[] = [];
       sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
-        setGovernedCurrencyState(bridge?.currency);
+        setGovernedCurrencyState(bridge?.currency ?? null);
       });
       sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
         setWrapableCurrencyState(currency);

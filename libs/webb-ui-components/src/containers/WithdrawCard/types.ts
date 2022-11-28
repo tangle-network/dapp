@@ -51,7 +51,7 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   /**
    * The received amount
    */
-  receivedAmount?: number;
+  receivedAmount?: number | string;
 
   /**
    * The received token symbol
@@ -61,7 +61,7 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   /**
    * The fee amount
    */
-  feeAmount?: number;
+  feeAmount?: number | string;
 
   /**
    * The fee percentage to display
@@ -71,7 +71,12 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   /**
    * The remainder amount
    */
-  remainderAmount?: number;
+  remainderAmount?: number | string;
+
+  /**
+   * The remainder token symbol
+   */
+  remainderToken?: string;
 
   /**
    * The withdraw button props

@@ -32,6 +32,7 @@ export type UseWithdrawProps = {
   notes: Note[] | null;
   recipient: string;
   amount: number;
+  unwrapTokenAddress?: string;
 };
 
 export const useWithdraw = (params: UseWithdrawProps) => {
@@ -103,7 +104,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
                 params.amount.toString(),
                 params.notes[0].note.denomination
               )
-              .toString()
+              .toString(),
+            params.unwrapTokenAddress
           );
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
@@ -180,6 +182,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   return {
     stage,
+    setStage,
     receipt,
     setOutputNotes,
     outputNotes,

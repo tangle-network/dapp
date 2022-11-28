@@ -1,4 +1,5 @@
 import { IWebbComponentBase, PropsOf } from '../../types';
+import { AvatarProps } from '../Avatar';
 
 export type ChainType = {
   /**
@@ -32,6 +33,12 @@ export type RelayerType = {
    * Relayer percentage
    */
   percentage?: number;
+
+  /**
+   * Relayer theme (use for Identicon theme)
+   * @default 'polkadot'
+   */
+  theme?: AvatarProps['theme'];
 };
 
 export type AssetType = {
@@ -51,7 +58,9 @@ export type AssetType = {
   balance?: number;
 };
 
-export interface ListCardWrapperProps extends IWebbComponentBase, PropsOf<'div'> {
+export interface ListCardWrapperProps
+  extends IWebbComponentBase,
+    PropsOf<'div'> {
   /**
    * The list card title
    */
@@ -122,7 +131,8 @@ export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   onConnectWallet?: PropsOf<'button'>['onClick'];
 }
 
-export interface WrapAssetListCardProps extends Omit<ListCardWrapperProps, 'onChange'> {
+export interface WrapAssetListCardProps
+  extends Omit<ListCardWrapperProps, 'onChange'> {
   /**
    * Optional card title to change the title of the card
    */
@@ -154,7 +164,8 @@ export interface WrapAssetListCardProps extends Omit<ListCardWrapperProps, 'onCh
   onConnect?: PropsOf<'button'>['onClick'];
 }
 
-export interface TokenListCardProps extends Omit<ListCardWrapperProps, 'onChange'> {
+export interface TokenListCardProps
+  extends Omit<ListCardWrapperProps, 'onChange'> {
   /**
    * Optional card title to change the title of the card
    */
@@ -191,7 +202,8 @@ export interface TokenListCardProps extends Omit<ListCardWrapperProps, 'onChange
   onConnect?: PropsOf<'button'>['onClick'];
 }
 
-export interface WithDrawListCardProps extends Omit<ListCardWrapperProps, 'onChange'> {
+export interface WithDrawListCardProps
+  extends Omit<ListCardWrapperProps, 'onChange'> {
   /**
    * Optional card title to change the title of the card
    */

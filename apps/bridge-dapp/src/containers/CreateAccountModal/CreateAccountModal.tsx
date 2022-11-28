@@ -124,12 +124,14 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
               </CheckBox>
             </div>
           )}
-          <Lottie
-            className={cx('absolute inset-0 !mt-0', {
-              hidden: !isSuccess,
-            })}
-            animationData={congratJson}
-          />
+
+          {/** Confetti animation */}
+          {isSuccess && (
+            <Lottie
+              className={cx('absolute inset-0 !mt-0')}
+              animationData={congratJson}
+            />
+          )}
         </div>
 
         <ModalFooter>

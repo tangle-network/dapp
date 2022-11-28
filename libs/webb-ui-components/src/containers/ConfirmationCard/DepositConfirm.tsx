@@ -12,8 +12,9 @@ import {
   TitleWithInfo,
   TokenWithAmount,
 } from '../../components';
-import { PropsOf } from '../../types';
 import { DepositConfirmProps } from './types';
+import { Section, WrapperSection } from './WrapperSection';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -125,58 +126,60 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         )}
 
         {/** New spend note */}
-        <WrapperCard>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <TitleWithInfo
-                titleComponent="h6"
-                title="New Spend Note"
-                info="New Spend Note"
-                variant="utility"
-                titleClassName="text-mono-100 dark:text-mono-80"
-                className="text-mono-100 dark:text-mono-80"
-              />
-              <div className="flex space-x-2">
-                <Button
+        <WrapperSection>
+          <Section>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="New Spend Note"
+                  info="New Spend Note"
                   variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={onCopy}
-                >
-                  <FileCopyLine className="!fill-current" />
-                </Button>
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={onDownload}
-                >
-                  <Download className="!fill-current" />
-                </Button>
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+                <div className="flex space-x-2">
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="p-2"
+                    onClick={onCopy}
+                  >
+                    <FileCopyLine className="!fill-current" />
+                  </Button>
+                  <Button
+                    variant="utility"
+                    size="sm"
+                    className="p-2"
+                    onClick={onDownload}
+                  >
+                    <Download className="!fill-current" />
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between max-w-[470px]">
-              <Typography
-                variant="mono1"
-                fw="bold"
-                className="block truncate text-mono-140 dark:text-mono-0"
+              <div className="flex items-center justify-between max-w-[470px]">
+                <Typography
+                  variant="mono1"
+                  fw="bold"
+                  className="block truncate text-mono-140 dark:text-mono-0"
+                >
+                  {note}
+                </Typography>
+              </div>
+
+              <CheckBox
+                {...checkboxProps}
+                wrapperClassName={twMerge(
+                  'flex items-center',
+                  checkboxProps?.wrapperClassName
+                )}
               >
-                {note}
-              </Typography>
+                {checkboxProps?.children ?? 'I have copied the spend note'}
+              </CheckBox>
             </div>
-
-            <CheckBox
-              {...checkboxProps}
-              wrapperClassName={twMerge(
-                'flex items-center',
-                checkboxProps?.wrapperClassName
-              )}
-            >
-              {checkboxProps?.children ?? 'I have copied the spend note'}
-            </CheckBox>
-          </div>
-        </WrapperCard>
+          </Section>
+        </WrapperSection>
 
         {/** Transaction Details */}
         <div className="px-4 space-y-2">

@@ -1,6 +1,7 @@
-import { ChevronDown } from '@webb-tools/icons';
+import { ChevronDown, InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography/Typography';
 
 import {
   AmountMenu,
@@ -15,7 +16,10 @@ import {
 } from '..';
 import { AmountInputComponentProps } from './types';
 
-export const AmountInput = forwardRef<HTMLDivElement, AmountInputComponentProps>(
+export const AmountInput = forwardRef<
+  HTMLDivElement,
+  AmountInputComponentProps
+>(
   (
     {
       amount,
@@ -23,6 +27,7 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputComponentProps>
       className,
       id = 'amount',
       info,
+      errorMessage,
       onAmountChange,
       onMaxBtnClick,
       title = 'Amount',
@@ -48,49 +53,60 @@ export const AmountInput = forwardRef<HTMLDivElement, AmountInputComponentProps>
     );
 
     return (
-      <InputWrapper {...props} className={mergedClsx} ref={ref}>
-        <div className="flex flex-col space-y-1 grow">
-          <Label htmlFor={id} className="flex items-center space-x-2">
-            <TitleWithInfo
-              title={title}
-              info={info}
-              variant="body4"
-              titleComponent="span"
-              className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+      <>
+        <InputWrapper {...props} className={mergedClsx} ref={ref}>
+          <div className="flex flex-col space-y-1 grow">
+            <Label htmlFor={id} className="flex items-center space-x-2">
+              <TitleWithInfo
+                title={title}
+                info={info}
+                variant="body4"
+                titleComponent="span"
+                className="text-mono-100 dark:text-mono-80"
+                titleClassName="uppercase !text-inherit"
+              />
+
+              {amountMenuProps && (
+                <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
+                  <TooltipTrigger>
+                    <ChevronDown />
+                  </TooltipTrigger>
+
+                  <TooltipBody>
+                    <AmountMenu
+                      {...amountMenuProps}
+                      onChange={onAmountTypeChange}
+                    />
+                  </TooltipBody>
+                </Tooltip>
+              )}
+            </Label>
+
+            <Input
+              id={id}
+              name={id}
+              value={amount}
+              onChange={onAmountChange}
+              placeholder="0"
+              size="sm"
+              autoComplete="off"
             />
+          </div>
 
-            {amountMenuProps && (
-              <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
-                <TooltipTrigger>
-                  <ChevronDown />
-                </TooltipTrigger>
+          <Button onClick={onMaxBtnClick} variant="utility" size="sm">
+            Max
+          </Button>
+        </InputWrapper>
 
-                <TooltipBody>
-                  <AmountMenu
-                    {...amountMenuProps}
-                    onChange={onAmountTypeChange}
-                  />
-                </TooltipBody>
-              </Tooltip>
-            )}
-          </Label>
-
-          <Input
-            id={id}
-            name={id}
-            value={amount}
-            onChange={onAmountChange}
-            placeholder="0"
-            size="sm"
-            autoComplete="off"
-          />
-        </div>
-
-        <Button onClick={onMaxBtnClick} variant="utility" size="sm">
-          Max
-        </Button>
-      </InputWrapper>
+        {errorMessage && (
+          <span className="flex text-red-70 dark:text-red-50">
+            <InformationLine className="!fill-current mr-1" />
+            <Typography variant="body3" fw="bold" className="!text-current">
+              {errorMessage}
+            </Typography>
+          </span>
+        )}
+      </>
     );
   }
 );

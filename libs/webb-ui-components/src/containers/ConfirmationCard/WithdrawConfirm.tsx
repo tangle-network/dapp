@@ -20,6 +20,7 @@ import {
   TokenWithAmount,
 } from '../../components';
 import { WithdrawConfirmationProps } from './types';
+import { Section, WrapperSection } from './WrapperSection';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -42,11 +43,12 @@ export const WithdrawConfirm = forwardRef<
       progress,
       relayerAddress,
       relayerExternalUrl,
+      relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Withdrawal',
       governedTokenSymbol: token1Symbol,
       wrappableTokenSymbol: token2Symbol,
-      unshieldedAddress,
+      recipientAddress,
       ...props
     },
     ref
@@ -80,82 +82,155 @@ export const WithdrawConfirm = forwardRef<
             tokenPairString={
               token1Symbol && token2Symbol
                 ? `${token1Symbol}/${token2Symbol}`
-                : ''
+                : token1Symbol
             }
           />
         </div>
 
         {/** Transaction progress */}
-        {progress && <Progress value={progress} />}
+        {typeof progress === 'number' && <Progress value={progress} />}
 
-        {/** Unwrapping info */}
-        <div className="space-y-4">
-          <TitleWithInfo
-            titleComponent="h6"
-            title="Unwrapping"
-            variant="utility"
-            info="Unwrapping"
-            titleClassName="text-mono-100 dark:text-mono-80"
-            className="text-mono-100 dark:text-mono-80"
-          />
-          {token1Symbol && token2Symbol && (
-            <div className="flex items-center space-x-4">
-              <TokenWithAmount
-                token1Symbol={token1Symbol}
-                token2Symbol={token2Symbol}
-                amount={amount}
+        <WrapperSection>
+          {/** Unwrapping\Withdrawing info */}
+          <Section>
+            <div className="space-y-1">
+              <TitleWithInfo
+                titleComponent="h6"
+                title={
+                  token1Symbol && token2Symbol ? 'Unwrapping' : 'Withdrawing'
+                }
+                variant="utility"
+                info={
+                  token1Symbol && token2Symbol ? 'Unwrapping' : 'Withdrawing'
+                }
+                titleClassName="text-mono-100 dark:text-mono-80"
+                className="text-mono-100 dark:text-mono-80"
               />
-              <ArrowRight />
-              <TokenWithAmount token1Symbol={token1Symbol} amount={amount} />
+              {token1Symbol && token2Symbol ? (
+                <div className="flex items-center space-x-4">
+                  <TokenWithAmount
+                    token1Symbol={token1Symbol}
+                    amount={amount}
+                  />
+                  <ArrowRight />
+                  <TokenWithAmount
+                    token1Symbol={token2Symbol}
+                    amount={amount}
+                  />
+                </div>
+              ) : (
+                <TokenWithAmount token1Symbol={token1Symbol} amount={amount} />
+              )}
             </div>
+          </Section>
+
+          {/** Relayer */}
+          {relayerAddress && (
+            <Section>
+              <div className="space-y-1">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Relayer"
+                  info="Relayer"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+
+                <div className="flex items-center space-x-1">
+                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
+
+                  <Typography variant="body1" fw="bold">
+                    {relayerAddress}
+                  </Typography>
+
+                  <a
+                    target="_blank"
+                    href={relayerExternalUrl}
+                    rel="noreferrer noopener"
+                  >
+                    <ExternalLinkLine />
+                  </a>
+                </div>
+              </div>
+            </Section>
           )}
-        </div>
 
-        {/** Relayer */}
-        {relayerAddress && (
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title="Relayer"
-              info="Relayer"
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
+          {/** Unshielded address */}
+          {recipientAddress && (
+            <Section>
+              <div className="space-y-1">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Recipient address"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+                <Typography variant="body1" fw="bold">
+                  {recipientAddress}
+                </Typography>
+              </div>
+            </Section>
+          )}
+        </WrapperSection>
 
-            <div className="flex items-center space-x-1">
-              <Avatar value={relayerAddress} />
+        {/** The change note */}
+        {note && (
+          <WrapperSection>
+            <Section>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Change note"
+                    info="Change note"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onCopy}
+                    >
+                      <FileCopyLine className="!fill-current" />
+                    </Button>
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onDownload}
+                    >
+                      <Download className="!fill-current" />
+                    </Button>
+                  </div>
+                </div>
 
-              <Typography variant="body1" fw="bold">
-                {relayerAddress}
-              </Typography>
+                <div className="flex items-center justify-between max-w-[470px]">
+                  <Typography
+                    variant="mono1"
+                    fw="bold"
+                    className="block truncate text-mono-140 dark:text-mono-0"
+                  >
+                    {note}
+                  </Typography>
+                </div>
 
-              <a
-                target="_blank"
-                href={relayerExternalUrl}
-                rel="noreferrer noopener"
-              >
-                <ExternalLinkLine />
-              </a>
-            </div>
-          </div>
-        )}
-
-        {/** Unshielded address */}
-        {unshieldedAddress && (
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title="Unshielded address"
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
-
-            <Typography variant="body1" fw="bold">
-              {unshieldedAddress}
-            </Typography>
-          </div>
+                <CheckBox
+                  {...checkboxProps}
+                  wrapperClassName={twMerge(
+                    'flex items-center',
+                    checkboxProps?.wrapperClassName
+                  )}
+                >
+                  {checkboxProps?.children ?? 'I have copied the spend note'}
+                </CheckBox>
+              </div>
+            </Section>
+          </WrapperSection>
         )}
 
         {/** Transaction Details */}
@@ -194,56 +269,8 @@ export const WithdrawConfirm = forwardRef<
           </div>
         </div>
 
-        {/** New spend note */}
-        <div className="space-y-2">
-          <TitleWithInfo
-            titleComponent="h6"
-            title="New Spend Note"
-            info="New Spend Note"
-            variant="utility"
-            titleClassName="text-mono-100 dark:text-mono-80"
-            className="text-mono-100 dark:text-mono-80"
-          />
-          <div className="flex items-center justify-between">
-            <div className="px-4 py-1.5 bg-mono-20 dark:bg-mono-160 rounded-lg grow max-w-[438px] truncate">
-              <Typography
-                variant="mono1"
-                fw="bold"
-                className="text-mono-140 dark:text-mono-0"
-              >
-                {note}
-              </Typography>
-            </div>
-            <Button
-              variant="utility"
-              size="sm"
-              className="p-2"
-              onClick={onCopy}
-            >
-              <FileCopyLine className="!fill-current" />
-            </Button>
-            <Button
-              variant="utility"
-              size="sm"
-              className="p-2"
-              onClick={onDownload}
-            >
-              <Download className="!fill-current" />
-            </Button>
-          </div>
-          <CheckBox
-            {...checkboxProps}
-            wrapperClassName={twMerge(
-              'flex items-center',
-              checkboxProps?.wrapperClassName
-            )}
-          >
-            {checkboxProps?.children ?? 'I have copied the spend note'}
-          </CheckBox>
-        </div>
-
         <Button {...actionBtnProps} isFullWidth className="justify-center">
-          {actionBtnProps?.children ?? 'Transfer'}
+          {actionBtnProps?.children ?? 'Withdraw'}
         </Button>
       </div>
     );

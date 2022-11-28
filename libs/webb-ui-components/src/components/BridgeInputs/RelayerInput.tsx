@@ -29,7 +29,7 @@ import { RelayerInputProps } from './types';
  */
 
 export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
-  ({ externalLink, id, info, relayerAddress, ...props }, ref) => {
+  ({ externalLink, id, info, relayerAddress, iconTheme, ...props }, ref) => {
     return (
       <InputWrapper {...props} ref={ref}>
         <div className="flex flex-col space-y-1">
@@ -46,13 +46,21 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
 
           {relayerAddress ? (
             <div className="flex items-center space-x-1">
-              <Avatar value={relayerAddress} />
+              <Avatar theme={iconTheme} value={relayerAddress} />
 
               <Typography component="span" variant="body1" fw="bold">
                 {shortenString(relayerAddress)}
               </Typography>
 
-              {externalLink && <ExternalLinkLine />}
+              {externalLink && (
+                <a
+                  target="_blank"
+                  href={externalLink}
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLinkLine />
+                </a>
+              )}
             </div>
           ) : (
             <Typography variant="body1" fw="bold">

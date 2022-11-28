@@ -1,7 +1,7 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { Button, CheckBox, TokensRing } from '../../components';
+import { Avatar, Button, CheckBox, TokensRing } from '../../components';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -91,13 +91,19 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  governedTokenSymbol?: string;
+  governedTokenSymbol: string;
 
   /**
    * The second token symbol
    */
 
   wrappableTokenSymbol?: string;
+
+  /**
+   * The relayer avatar theme
+   * @default 'polkadot'
+   */
+  relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
 
   /**
    * The relayer address
@@ -110,9 +116,9 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   relayerExternalUrl?: string;
 
   /**
-   * Unshielded address
+   * The recipient address
    */
-  unshieldedAddress?: string;
+  recipientAddress: string;
 }
 
 export interface TransferConfirmProps extends ConfirmationCardProps {

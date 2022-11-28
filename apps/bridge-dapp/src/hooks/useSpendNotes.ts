@@ -4,13 +4,13 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { SpendNoteDataType } from '../containers/SpendNotesTableContainer/types';
 
-const assetsUrl = 'https://webb.tools';
 const createdTime = randRecentDate();
 
 export const useSpendNotes = (): SpendNoteDataType[] => {
@@ -71,6 +71,19 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
           if (governedCurrency) {
             const foundCurrencies = getWrappableCurrencies(governedCurrency.id);
             wrappableCurrencies = foundCurrencies;
+          }
+
+          // Calculate the assets url
+          let assetsUrl = '#';
+          const explorerUrl = chain.blockExplorerStub;
+          const address = governedCurrency?.getAddressOfChain(
+            calculateTypedChainId(chain.chainType, chain.chainId)
+          );
+
+          if (explorerUrl && address) {
+            assetsUrl = explorerUrl.endsWith('/')
+              ? `${explorerUrl}address/${address}`
+              : `${explorerUrl}/address/${address}`;
           }
 
           acc.push({
