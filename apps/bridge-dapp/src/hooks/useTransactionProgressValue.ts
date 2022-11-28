@@ -39,16 +39,8 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
         break;
       }
 
-      case TransactionState.Cancelling:
-      case TransactionState.Ideal: {
-        setProgress(null);
-        break;
-      }
-
       default: {
-        throw new Error(
-          'Unknown transaction state in DepositConfirmContainer component'
-        );
+        setProgress(null);
       }
     }
   }, [stage, setProgress]);
