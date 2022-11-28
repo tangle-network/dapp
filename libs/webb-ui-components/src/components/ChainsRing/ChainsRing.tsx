@@ -185,7 +185,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             >
               <span className="relative">
                 <Chip color="purple" className="min-w-max">
-                  {sourceLabel}
+                  {destLabel}
                 </Chip>
                 <span
                   className={cx(

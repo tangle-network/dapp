@@ -70,7 +70,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </button>
         </div>
 
-        {/** Token ring */}
+        {/** Chains ring */}
         <div>
           <ChainsRing
             activeChains={activeChains}
