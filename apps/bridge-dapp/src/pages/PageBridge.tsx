@@ -14,6 +14,7 @@ import {
   TabTrigger,
   TransactionPayload,
   TransactionQueueCard,
+  TransactionItemStatus,
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -47,10 +48,27 @@ const PageBridge = () => {
   const { noteManager } = useWebContext();
 
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
+    let status: TransactionItemStatus = 'in-progress';
+
+    switch (stage) {
+      case TransactionState.Done: {
+        status = 'completed';
+        break;
+      }
+
+      case TransactionState.Failed: {
+        status = 'warning';
+        break;
+      }
+    }
+
     return {
       id: '1',
       getExplorerURI(addOrTxHash, variant) {
         return '#';
+      },
+      txStatus: {
+        status,
       },
       onDetails: () => {
         console.log('On detail');
@@ -59,7 +77,7 @@ const PageBridge = () => {
         setStage(TransactionState.Ideal);
       },
     };
-  }, [setStage]);
+  }, [stage, setStage]);
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
