@@ -332,7 +332,7 @@ export class VAnchorContract {
       },
       extData,
       {
-        gasLimit: 1000000, // Manually set gas limit to fix `UNPREDICTABLE_GAS_LIMIT` error
+        gasLimit: 10000000 * 9, // Manually set gas limit to fix `UNPREDICTABLE_GAS_LIMIT` error
       }
     );
 

@@ -400,7 +400,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             extData,
             unwrapTokenAddress,
             {
-              gasLimit: 100000,
+              gasLimit: 10000000 * 9,
             }
           );
         } else {
@@ -414,7 +414,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             },
             extData,
             {
-              gasLimit: 100000,
+              gasLimit: 10000000 + 9,
             }
           );
         }
