@@ -1,11 +1,14 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { TransactionState } from '@webb-tools/dapp-types';
+import { ChainIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
 import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { useWebbUI, WithdrawConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { useTransactionProgressValue } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
 
 export const WithdrawConfirmContainer = forwardRef<
@@ -22,20 +25,22 @@ export const WithdrawConfirmContainer = forwardRef<
       targetChainId,
       setTxPayload,
       governedCurrency: governedCurrencyProp,
-      unwrapCurrency,
+      unwrapCurrency: { value: unwrapCurrency } = {},
       recipient,
     },
     ref
   ) => {
     const { value: governedCurrency } = governedCurrencyProp;
 
-    const { withdraw } = useWithdraw({
+    const { withdraw, stage, setStage } = useWithdraw({
       amount: amount,
       notes: availableNotes,
       recipient: recipient,
-      unwrapTokenAddress:
-        unwrapCurrency?.value.getAddressOfChain(targetChainId),
+      unwrapTokenAddress: unwrapCurrency?.getAddressOfChain(targetChainId),
     });
+
+    const progressValue = useTransactionProgressValue(stage);
+
     const { setMainComponent } = useWebbUI();
 
     const { activeApi } = useWebContext();
@@ -72,21 +77,71 @@ export const WithdrawConfirmContainer = forwardRef<
         : 'substrate';
     }, [targetChainId]);
 
+    // The main action onClick handler
+    const onClick = useCallback(async () => {
+      // Set transaction payload for transaction processing card
+      setTxPayload((prev) => ({
+        ...prev,
+        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
+        amount: amount.toString(),
+        timestamp: new Date(),
+        method: 'Withdraw',
+        txStatus: {
+          status: 'in-progress',
+        },
+        token: unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
+        tokens: [
+          governedCurrency.view.symbol,
+          unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
+        ],
+        wallets: {
+          src: <ChainIcon name={chainsPopulated[targetChainId]?.name} />,
+          dist: <WalletLineIcon />,
+        },
+      }));
+
+      if (isWithdrawing) {
+        setMainComponent(undefined);
+        return;
+      }
+
+      setIsWithdrawing(true);
+
+      if (changeNote) {
+        downloadNote(changeNote);
+      }
+
+      const successfulWithdraw = await withdraw();
+
+      if (successfulWithdraw) {
+        setStage(TransactionState.Done);
+        setMainComponent(undefined);
+      } else {
+        setStage(TransactionState.Failed);
+      }
+
+      setIsWithdrawing(false);
+    }, [
+      amount,
+      changeNote,
+      downloadNote,
+      governedCurrency.view.symbol,
+      isWithdrawing,
+      setMainComponent,
+      setStage,
+      setTxPayload,
+      targetChainId,
+      unwrapCurrency?.view.symbol,
+      withdraw,
+    ]);
+
     return (
       <WithdrawConfirm
         ref={ref}
         actionBtnProps={{
           isDisabled: changeAmount ? !checked : false,
-          isLoading: isWithdrawing,
-          loadingText: 'Withdrawing...',
-          onClick: async () => {
-            setIsWithdrawing(true);
-            const successfulWithdraw = await withdraw();
-            if (successfulWithdraw) {
-              setIsWithdrawing(false);
-              setMainComponent(undefined);
-            }
-          },
+          children: isWithdrawing ? 'New Transaction' : 'Withdraw',
+          onClick,
         }}
         checkboxProps={{
           isChecked: checked,
@@ -100,13 +155,13 @@ export const WithdrawConfirmContainer = forwardRef<
         onClose={() => setMainComponent(undefined)}
         note={changeNote}
         changeAmount={changeAmount}
-        progress={null}
+        progress={progressValue}
         recipientAddress={recipient}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}
         governedTokenSymbol={governedCurrency.view.symbol}
-        wrappableTokenSymbol={unwrapCurrency?.value.view.symbol}
+        wrappableTokenSymbol={unwrapCurrency?.view.symbol}
       />
     );
   }

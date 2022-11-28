@@ -468,7 +468,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         this.inner.noteManager?.removeNote(note);
       }
 
-      this.emit('stateChange', TransactionState.Ideal);
+      this.emit('stateChange', TransactionState.Failed);
       console.log(e);
 
       this.inner.notificationHandler({
@@ -486,7 +486,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       };
     }
 
-    this.emit('stateChange', TransactionState.Ideal);
+    this.emit('stateChange', TransactionState.Done);
     this.inner.notificationHandler({
       description: recipient,
       key,

@@ -5,6 +5,7 @@ import {
   Currency,
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
+import { TransactionPayload } from '@webb-tools/webb-ui-components';
 
 export interface WithdrawContainerProps extends PropsOf<'div'> {
   /**

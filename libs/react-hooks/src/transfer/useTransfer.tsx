@@ -41,7 +41,7 @@ export interface VAnchorTransferApi {
 
 export type UseTransferProps = {
   notes: Note[];
-  destination: number | undefined;
+  destination?: number | undefined;
   recipient: string;
   amount: number;
 };
@@ -130,7 +130,8 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
           console.log('error from transfer api', e);
 
           if ((e as any)?.code === WebbErrorCodes.RelayerMisbehaving) {
-            let interactiveFeedback: InteractiveFeedback = misbehavingRelayer();
+            const interactiveFeedback: InteractiveFeedback =
+              misbehavingRelayer();
             registerInteractiveFeedback(interactiveFeedback);
           }
         }

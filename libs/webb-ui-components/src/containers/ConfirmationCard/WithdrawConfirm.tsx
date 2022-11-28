@@ -86,7 +86,7 @@ export const WithdrawConfirm = forwardRef<
         </div>
 
         {/** Transaction progress */}
-        {progress && <Progress value={progress} />}
+        {typeof progress === 'number' && <Progress value={progress} />}
 
         <WrapperSection>
           {/** Unwrapping\Withdrawing info */}
@@ -160,7 +160,7 @@ export const WithdrawConfirm = forwardRef<
               <div className="space-y-1">
                 <TitleWithInfo
                   titleComponent="h6"
-                  title="Unshielded address"
+                  title="Recipient address"
                   variant="utility"
                   titleClassName="text-mono-100 dark:text-mono-80"
                   className="text-mono-100 dark:text-mono-80"

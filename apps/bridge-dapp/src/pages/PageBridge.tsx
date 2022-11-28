@@ -6,7 +6,6 @@ import {
   HelpLineIcon,
   SosLineIcon,
 } from '@webb-tools/icons';
-import { useBridgeDeposit } from '@webb-tools/react-hooks';
 import {
   Button,
   TabContent,
@@ -30,12 +29,21 @@ import {
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
-import { useShieldedAssets, useSpendNotes } from '../hooks';
+import {
+  useShieldedAssets,
+  useSpendNotes,
+  useTransactionStage,
+} from '../hooks';
 import { getMessageFromTransactionState } from '../utils';
 
 const PageBridge = () => {
+  // State for the tabs
+  const [activeTab, setActiveTab] = useState<
+    'Deposit' | 'Withdraw' | 'Transfer'
+  >('Deposit');
+
   const { customMainComponent } = useWebbUI();
-  const { stage, setStage } = useBridgeDeposit();
+  const { stage, setStage } = useTransactionStage(activeTab);
   const { noteManager } = useWebContext();
 
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
@@ -109,7 +117,10 @@ const PageBridge = () => {
     }
   }, [defaultTx, stage]);
 
-  const isDepositing = useMemo(() => stage !== TransactionState.Ideal, [stage]);
+  const isDisplayTxQueueCard = useMemo(
+    () => stage !== TransactionState.Ideal,
+    [stage]
+  );
 
   return (
     <div className="w-full mt-6">
@@ -118,7 +129,8 @@ const PageBridge = () => {
 
         {/** Bridge tabs */}
         <TabsRoot
-          defaultValue="deposit"
+          value={activeTab}
+          onValueChange={(nextTab) => setActiveTab(nextTab as typeof activeTab)}
           // The customMainComponent alters the global mainComponent for display.
           // Therfore, if the customMainComponent exists (input selected) then hide the base component.
           className={cx(
@@ -127,24 +139,24 @@ const PageBridge = () => {
           )}
         >
           <TabsList aria-label="bridge action" className="mb-4">
-            <TabTrigger value="deposit">Deposit</TabTrigger>
-            <TabTrigger value="transfer">Transfer</TabTrigger>
-            <TabTrigger value="withdraw">Withdraw</TabTrigger>
+            <TabTrigger value="Deposit">Deposit</TabTrigger>
+            <TabTrigger value="Transfer">Transfer</TabTrigger>
+            <TabTrigger value="Withdraw">Withdraw</TabTrigger>
           </TabsList>
-          <TabContent value="deposit">
+          <TabContent value="Deposit">
             <DepositContainer setTxPayload={setTxPayload} />
           </TabContent>
-          <TabContent value="transfer">
+          <TabContent value="Transfer">
             <TransferContainer />
           </TabContent>
-          <TabContent value="withdraw">
+          <TabContent value="Withdraw">
             <WithdrawContainer setTxPayload={setTxPayload} />
           </TabContent>
         </TabsRoot>
 
         <div>
           {/** Transaction Queue Card */}
-          {isDepositing && (
+          {isDisplayTxQueueCard && (
             <TransactionQueueCard
               className="w-full mb-4 max-w-none"
               transactions={[txPayload as TransactionPayload]}

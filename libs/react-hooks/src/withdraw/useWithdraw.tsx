@@ -182,6 +182,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
 
   return {
     stage,
+    setStage,
     receipt,
     setOutputNotes,
     outputNotes,
