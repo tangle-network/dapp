@@ -94,13 +94,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           this.config.getEVMChainName(parseTypedChainId(Number(id)).chainId)
         )
         .join('-')}`;
-      this.inner.notificationHandler({
-        description: 'Withdraw in progress',
-        key,
-        level: 'loading',
-        message: `${section}:withdraw`,
-        name: 'Transaction',
-      });
 
       // set the destination contract
       const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
@@ -374,40 +367,13 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
               break;
             case RelayedWithdrawResult.CleanExit:
               this.emit('stateChange', TransactionState.Done);
-              this.emit('stateChange', TransactionState.Ideal);
-
-              this.inner.notificationHandler({
-                description: `TX hash:`,
-                key: 'vanchor-withdraw-sub',
-                level: 'success',
-                message: 'vanchor254:withdraw',
-                name: 'Transaction',
-              });
-
               break;
             case RelayedWithdrawResult.Errored:
               this.emit('stateChange', TransactionState.Failed);
-              this.emit('stateChange', TransactionState.Ideal);
-
-              this.inner.notificationHandler({
-                description: message || 'Withdraw failed',
-                key: 'vanchor-withdraw-sub',
-                level: 'success',
-                message: 'vanchor254:withdraw',
-                name: 'Transaction',
-              });
               break;
           }
         });
 
-        this.inner.notificationHandler({
-          description: 'Sending TX to relayer',
-          key: 'vanchor-withdraw-sub',
-          level: 'loading',
-          message: 'vanchor254:withdraw',
-
-          name: 'Transaction',
-        });
         relayedVAnchorWithdraw.send(relayedDepositTxPayload);
         const results = await relayedVAnchorWithdraw.await();
         if (results) {
@@ -471,15 +437,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       this.emit('stateChange', TransactionState.Failed);
       console.log(e);
 
-      this.inner.notificationHandler({
-        description:
-          (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key,
-        level: 'error',
-        message: `web3-vanchor:withdraw`,
-        name: 'Transaction',
-      });
-
       return {
         txHash: '',
         outputNotes: [],
@@ -487,13 +444,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     }
 
     this.emit('stateChange', TransactionState.Done);
-    this.inner.notificationHandler({
-      description: recipient,
-      key,
-      level: 'success',
-      message: 'vanchor254:withdraw',
-      name: 'Transaction',
-    });
 
     return {
       txHash: txHash,
