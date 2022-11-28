@@ -5,18 +5,18 @@ import {
   ExternalLinkLine,
   FileCopyLine,
 } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import {
   Avatar,
   Button,
+  ChainsRing,
   CheckBox,
   InfoItem,
   Progress,
   TitleWithInfo,
-  TokensRing,
   TokenWithAmount,
 } from '../../components';
 import { WithdrawConfirmationProps } from './types';
@@ -28,6 +28,7 @@ export const WithdrawConfirm = forwardRef<
 >(
   (
     {
+      activeChains,
       actionBtnProps,
       amount,
       changeAmount,
@@ -73,7 +74,8 @@ export const WithdrawConfirm = forwardRef<
 
         {/** Token ring */}
         <div>
-          <TokensRing
+          <ChainsRing
+            activeChains={activeChains}
             destLabel="Withdrawing to"
             destChain={destChain}
             amount={amount}

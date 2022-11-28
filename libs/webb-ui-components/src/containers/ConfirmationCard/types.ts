@@ -10,6 +10,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   amount?: number | string;
 
   /**
+   * The active chain
+   */
+  activeChains: string[];
+
+  /**
    * The card title
    */
   title?: string;
@@ -28,12 +33,12 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The source chain symbol
    */
-  sourceChain?: ComponentProps<typeof TokensRing>['sourceChain'];
+  sourceChain?: string;
 
   /**
    * The destination chain symbol
    */
-  destChain?: ComponentProps<typeof TokensRing>['destChain'];
+  destChain?: string;
 
   /**
    * The transaction progress
@@ -70,7 +75,9 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
   governedTokenSymbol?: string;
+
   wrappableTokenSymbol?: string;
+
   // Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
   wrappingAmount?: string;
 }

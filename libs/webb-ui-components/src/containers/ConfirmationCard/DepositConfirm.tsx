@@ -1,25 +1,26 @@
 import { ArrowRight, Close, Download, FileCopyLine } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import React, { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import {
   Button,
+  ChainsRing,
   CheckBox,
   InfoItem,
   Progress,
   TitleWithInfo,
-  TokensRing,
   TokenWithAmount,
 } from '../../components';
 import { DepositConfirmProps } from './types';
-import { PropsOf } from '../../types';
 import { Section, WrapperSection } from './WrapperSection';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
     {
       actionBtnProps,
+      activeChains,
       amount,
       wrappingAmount,
       checkboxProps,
@@ -70,15 +71,26 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </button>
         </div>
 
-        {/** Token ring */}
+        {/** Chains ring */}
         <div>
-          <TokensRing
-            sourceLabel="depositing from"
-            destLabel="depositing to"
+          <ChainsRing
+            activeChains={activeChains}
+            sourceLabel={
+              sourceChain && sourceChain === destChain
+                ? 'Depositing from & to'
+                : 'Depositing from'
+            }
+            destLabel={
+              destChain && sourceChain !== destChain
+                ? 'Depositing to'
+                : undefined
+            }
             sourceChain={sourceChain}
             destChain={destChain}
-            amount={governedTokenValue}
-            tokenPairString={governedTokenSymbol}
+            amount={amount}
+            tokenPairString={`${governedTokenSymbol}${
+              wrappableTokenSymbol ? `-${wrappableTokenSymbol}` : ''
+            }`}
           />
         </div>
 
@@ -87,32 +99,30 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
         {/** Wrapping info */}
         {wrappableTokenSymbol && governedTokenSymbol && (
-          <WrapperSection>
-            <Section>
-              <div className="space-y-4">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Unwrapping"
-                  variant="utility"
-                  info="Unwrapping"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
+          <WrapperCard>
+            <div className="space-y-4">
+              <TitleWithInfo
+                titleComponent="h6"
+                title="Unwrapping"
+                variant="utility"
+                info="Unwrapping"
+                titleClassName="text-mono-100 dark:text-mono-80"
+                className="text-mono-100 dark:text-mono-80"
+              />
+              <div className="flex items-center space-x-4">
+                <TokenWithAmount
+                  token1Symbol={wrappableTokenSymbol}
+                  amount={wrappingAmount}
                 />
-                <div className="flex items-center space-x-4">
-                  <TokenWithAmount
-                    token1Symbol={wrappableTokenSymbol}
-                    amount={wrappingAmount}
-                  />
-                  <ArrowRight />
-                  <TokenWithAmount
-                    token1Symbol={wrappableTokenSymbol}
-                    token2Symbol={governedTokenSymbol}
-                    amount={amount}
-                  />
-                </div>
+                <ArrowRight />
+                <TokenWithAmount
+                  token1Symbol={wrappableTokenSymbol}
+                  token2Symbol={governedTokenSymbol}
+                  amount={amount}
+                />
               </div>
-            </Section>
-          </WrapperSection>
+            </div>
+          </WrapperCard>
         )}
 
         {/** New spend note */}
@@ -195,6 +205,29 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         <Button {...actionBtnProps} isFullWidth className="justify-center">
           {actionBtnProps?.children ?? 'Deposit'}
         </Button>
+      </div>
+    );
+  }
+);
+
+/***********************
+ * Internal components *
+ ***********************/
+
+const WrapperCard = forwardRef<HTMLDivElement, PropsOf<'div'>>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <div
+        {...props}
+        className={twMerge(
+          'p-2 bg-mono-20 dark:bg-mono-160 rounded-lg',
+          className
+        )}
+        ref={ref}
+      >
+        <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-140">
+          {children}
+        </div>
       </div>
     );
   }

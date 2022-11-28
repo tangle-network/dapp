@@ -57,6 +57,29 @@ export const WithdrawConfirmContainer = forwardRef<
     const [checked, setChecked] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
 
+    const activeChains = useMemo<string[]>(() => {
+      if (!activeApi) {
+        return [];
+      }
+
+      return Array.from(
+        Object.values(activeApi.state.getBridgeOptions())
+          .reduce((acc, bridge) => {
+            const chains = Object.keys(bridge.targets).map(
+              (presetTypeChainId) => {
+                const chain = chainsPopulated[Number(presetTypeChainId)];
+                return chain;
+              }
+            );
+
+            chains.forEach((chain) => acc.add(chain.name));
+
+            return acc;
+          }, new Set<string>())
+          .values()
+      );
+    }, [activeApi]);
+
     // Copy for the deposit confirm
     const { copy } = useCopyable();
     const handleCopy = useCallback(
@@ -138,6 +161,7 @@ export const WithdrawConfirmContainer = forwardRef<
     return (
       <WithdrawConfirm
         ref={ref}
+        activeChains={activeChains}
         actionBtnProps={{
           isDisabled: changeAmount ? !checked : false,
           children: isWithdrawing ? 'New Transaction' : 'Withdraw',
