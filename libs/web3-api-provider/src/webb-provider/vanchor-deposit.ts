@@ -149,22 +149,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
       const sourceEvmId = await this.inner.getChainId();
       const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-
-      this.inner.notificationHandler({
-        data: {
-          amount: ethers.utils.formatUnits(note.amount, note.denomination),
-          chain: this.inner.config.getEVMChainName(sourceEvmId),
-          currency: currency.view.name,
-        },
-        description: 'Depositing',
-        key: 'bridge-deposit',
-        level: 'loading',
-        message: `bridge:${
-          depositPayload.params[2] ? 'wrap and deposit' : 'deposit'
-        }`,
-        name: 'Transaction',
-      });
-
+      // Notification tx start
       const anchors = await this.bridgeApi.getAnchors();
 
       // Find the only configurable VAnchor
@@ -264,14 +249,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           );
 
         if (requiredApproval) {
-          this.inner.notificationHandler({
-            description: 'Waiting for token approval',
-            key: 'waiting-approval',
-            level: 'info',
-            message: 'Waiting for token approval',
-            name: 'Transaction',
-            persist: true,
-          });
+          // Notification Waiting for approval notification
           const tokenInstance = await ERC20Factory.connect(
             depositPayload.params[2],
             this.inner.getEthersProvider().getSigner()
@@ -312,38 +290,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
           // emit event for waiting for transaction to confirm
           const receipt = await tx.wait();
-
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Depositing',
-            key: 'bridge-deposit',
-            level: 'success',
-            message: `${currency.view.name}:wrap and deposit`,
-            name: 'Transaction',
-          });
-
+          // Notification Success Transaction
           this.emit('stateChange', TransactionState.Done);
           return {
             txHash: receipt.transactionHash,
             outputNotes: [depositPayload.note],
           };
         } else {
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Not enough token balance',
-            key: 'bridge-deposit',
-            level: 'error',
-            message: `${currency.view.name}:wrap and deposit`,
-            name: 'Transaction',
-          });
+          // Notification Field transaction
           this.emit('stateChange', TransactionState.Failed);
           this.inner.noteManager?.removeNote(depositPayload.note);
 
@@ -358,14 +312,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         );
 
         if (requiredApproval) {
-          this.inner.notificationHandler({
-            description: 'Waiting for token approval',
-            key: 'waiting-approval',
-            level: 'info',
-            message: 'Waiting for token approval',
-            name: 'Transaction',
-            persist: true,
-          });
+          /// Notification approval required
           const tokenInstance = await srcVAnchor.getWebbToken();
           const tx = await tokenInstance.approve(
             srcVAnchor.inner.address,
@@ -410,38 +357,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           indexedNote.mutateIndex(noteIndex.toString());
           await this.inner.noteManager.addNote(indexedNote);
           await this.inner.noteManager.removeNote(depositPayload.note);
-
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Depositing',
-            key: 'bridge-deposit',
-            level: 'success',
-            message: `${currency.view.name} deposit`,
-            name: 'Transaction',
-          });
-
+          // Notification Success Transaction
           this.emit('stateChange', TransactionState.Done);
           return {
             txHash: receipt.transactionHash,
             outputNotes: [indexedNote],
           };
         } else {
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Not enough token balance',
-            key: 'bridge-deposit',
-            level: 'error',
-            message: 'Not enough token balance',
-            name: 'Transaction',
-          });
+          // Notification Field transaction
 
           this.inner.noteManager?.removeNote(depositPayload.note);
           this.emit('stateChange', TransactionState.Failed);
@@ -468,13 +391,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         description = 'Deposit Transaction Failed';
       }
 
-      this.inner.notificationHandler({
-        description,
-        key: 'bridge-deposit',
-        level: 'error',
-        message: `${currency.view.name}:deposit`,
-        name: 'Transaction',
-      });
+      // Notification Failed transaction
 
       this.inner.noteManager?.removeNote(depositPayload.note);
 
