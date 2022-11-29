@@ -1,3 +1,6 @@
+import cx from 'classnames';
+import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import {
   AmountInput,
   BridgeInputGroup,
@@ -6,14 +9,10 @@ import {
   InfoItem,
   RecipientInput,
   RelayerInput,
-  ShieldedAssetInput,
   Switcher,
   TokenInput,
 } from '../../components';
 import { Typography } from '../../typography';
-import cx from 'classnames';
-import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { WithdrawCardProps } from './types';
 
@@ -31,6 +30,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       recipientInputProps,
       relayerInputProps,
       remainderAmount,
+      remainderToken,
       unwrapSwitcherProps,
       unwrappingAssetInputProps,
       withdrawBtnProps,
@@ -48,7 +48,9 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       let isSub = true;
 
       if (isSub) {
-        setSwitcherChecked(unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked);
+        setSwitcherChecked(
+          unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked
+        );
       }
 
       return () => {
@@ -78,20 +80,37 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     );
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
-        <BridgeInputGroup className='flex flex-col space-y-2'>
-          <div className='flex space-x-2'>
-            <TokenInput {...tokenInputProps} className='grow shrink-0 basis-1' />
+      <div
+        {...props}
+        className={twMerge(
+          'flex flex-col space-y-4 max-w-[518px] w-full',
+          className
+        )}
+        ref={ref}
+      >
+        <BridgeInputGroup className="flex flex-col space-y-2">
+          <div className="flex space-x-2">
+            <TokenInput
+              {...tokenInputProps}
+              className="grow shrink-0 basis-1"
+            />
 
             <TokenInput
               {...unwrappingAssetProps}
-              className={cx('grow shrink-0 basis-1', { hidden: !switcherChecked })}
+              className={cx('grow shrink-0 basis-1', {
+                hidden: !switcherChecked,
+              })}
               hidden={!switcherChecked}
             />
           </div>
 
-          <div className='self-end py-1 space-x-2'>
-            <Typography component='span' variant='body3' fw='bold' className='text-mono-100 dark:text-mono-80'>
+          <div className="self-end py-1 space-x-2">
+            <Typography
+              component="span"
+              variant="body3"
+              fw="bold"
+              className="text-mono-100 dark:text-mono-80"
+            >
               Unwrap
             </Typography>
 
@@ -104,21 +123,23 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           />
         </BridgeInputGroup>
 
-        <BridgeInputGroup className='flex flex-col space-y-2'>
+        <BridgeInputGroup className="flex flex-col space-y-2">
           <RelayerInput {...relayerInputProps} />
 
           <RecipientInput {...recipientInputProps} />
         </BridgeInputGroup>
 
         {/** Info */}
-        <div className='flex flex-col space-y-1'>
+        <div className="flex flex-col space-y-1">
           <InfoItem
             leftTextProps={{
               title: 'Receiving',
               variant: 'utility',
               info: 'Receiving',
             }}
-            rightContent={receivedAmount ? `${receivedAmount} ${receivedToken}` : undefined}
+            rightContent={
+              receivedAmount ? `${receivedAmount} ${receivedToken}` : undefined
+            }
           />
 
           <InfoItem
@@ -127,7 +148,11 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               variant: 'utility',
               info: 'Remainder',
             }}
-            rightContent={remainderAmount ? `${remainderAmount} ${receivedToken}` : undefined}
+            rightContent={
+              remainderAmount
+                ? `${remainderAmount} ${remainderToken}`
+                : undefined
+            }
           />
 
           <InfoItem
@@ -136,11 +161,17 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               variant: 'utility',
               info: 'Fees',
             }}
-            rightContent={feeAmount ? `${feeAmount} ${receivedToken}` : undefined}
+            rightContent={
+              feeAmount ? `${feeAmount} ${remainderToken}` : undefined
+            }
           />
         </div>
 
-        <Button {...withdrawBtnProps} isFullWidth className={twMerge('justify-center')}>
+        <Button
+          {...withdrawBtnProps}
+          isFullWidth
+          className={twMerge('justify-center')}
+        >
           {withdrawBtnProps?.children ?? 'Withdraw'}
         </Button>
       </div>
@@ -152,10 +183,9 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
  * Internal components *
  ***********************/
 
-export const WithdrawAmountInput: FC<Pick<WithdrawCardProps, 'fixedAmountInputProps' | 'customAmountInputProps'>> = ({
-  customAmountInputProps,
-  fixedAmountInputProps,
-}) => {
+export const WithdrawAmountInput: FC<
+  Pick<WithdrawCardProps, 'fixedAmountInputProps' | 'customAmountInputProps'>
+> = ({ customAmountInputProps, fixedAmountInputProps }) => {
   const [amountType, setAmountType] = useState<'fixed' | 'custom'>('fixed');
 
   const fixedAmountProps = useMemo<NonNullable<typeof fixedAmountInputProps>>(

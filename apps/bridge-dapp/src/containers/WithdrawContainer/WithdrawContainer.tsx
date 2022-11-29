@@ -1,9 +1,21 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
-import { useBridge, useBridgeDeposit, useCurrencies, useCurrencyBalance, useRelayers } from '@webb-tools/react-hooks';
+import {
+  useBridge,
+  useBridgeDeposit,
+  useCurrencies,
+  useNoteAccount,
+  useRelayers,
+} from '@webb-tools/react-hooks';
 import { calculateTypedChainId, ChainType, Note } from '@webb-tools/sdk-core';
-import { RelayerListCard, TokenListCard, useWebbUI, WithdrawCard } from '@webb-tools/webb-ui-components';
-import { AssetType, RelayerType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  getRoundedAmountString,
+  RelayerListCard,
+  TokenListCard,
+  useWebbUI,
+  WithdrawCard,
+} from '@webb-tools/webb-ui-components';
+import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { WithdrawContainerProps } from './types';
@@ -13,57 +25,68 @@ export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
 >(({ setTxPayload }, ref) => {
-  const [noteStrings, setNoteStrings] = useState<string[]>(['']);
+  // State for unwrap checkbox
+  const [isUnwrap, setIsUnwrap] = useState(false);
+
   const [recipient, setRecipient] = useState<string>('');
-  const [formError, setFormError] = useState<string | null>(null);
-  const [customUserAmount, setCustomUserAmount] = useState<string>('0');
+
   const [amount, setAmount] = useState<number>(0);
 
+  // State for error message when user input amount is invalid
+  const [amountError, setAmountError] = useState<string>('');
+
   const { setMainComponent } = useWebbUI();
-  const parseAndSetAmount = (amount: string | number): void => {
-    const parsedAmount = Number(amount);
-    if (!isNaN(parsedAmount)) {
-      setAmount(parsedAmount);
-    }
-  };
-  const { activeApi, activeChain, noteManager } =
-    useWebContext();
-  const { setGovernedCurrency, setWrappableCurrency } = useBridge();
+
+  const { activeApi, activeChain } = useWebContext();
+
+  const {
+    governedCurrency,
+    wrappableCurrency,
+    setGovernedCurrency,
+    setWrappableCurrency,
+  } = useBridge();
+
   const { generateNote } = useBridgeDeposit();
 
-  const { governedCurrencies, governedCurrency, wrappableCurrencies, wrappableCurrency } = useCurrencies();
-  const governedCurrencyBalance = useCurrencyBalance(governedCurrency);
-  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
+  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
       return null;
     }
     return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
-  }, [activeChain])
+  }, [activeChain]);
+
+  // Given the user inputs above, fetch relayers state
+  const {
+    relayersState: { activeRelayer, relayers },
+    setRelayer,
+  } = useRelayers({
+    typedChainId: currentTypedChainId ?? undefined,
+    target:
+      activeApi?.state.activeBridge && currentTypedChainId
+        ? activeApi.state.activeBridge.targets[currentTypedChainId]
+        : undefined,
+  });
+
+  const { allNotes } = useNoteAccount();
 
   // Retrieve the notes from the note manager for the currently selected chain.
+  // and filter out the notes that are not for the currently selected governed currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
-    if (!noteManager || !activeChain || !activeApi) {
+    if (!currentTypedChainId) {
       return null;
     }
-    const notes =
-      noteManager
-        .getAllNotes()
-        .get(
-          calculateTypedChainId(
-            activeChain.chainType,
-            activeChain.chainId
-          ).toString()
-        )
-        ?.filter(
-          (note) =>
-            note.note.tokenSymbol ===
-            activeApi.state.activeBridge?.currency.view.symbol
-        ) ?? null;
 
-    return notes;
-  }, [noteManager, activeChain, activeApi]);
+    // Get the notes of the currently selected chain.
+    const notes = allNotes
+      .get(currentTypedChainId.toString())
+      ?.filter(
+        (note) => note.note.tokenSymbol === governedCurrency?.view?.symbol
+      );
+
+    return notes ?? null;
+  }, [allNotes, currentTypedChainId, governedCurrency]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -85,39 +108,16 @@ export const WithdrawContainer = forwardRef<
     );
   }, [availableNotesFromManager]);
 
-  // Given the user inputs above, fetch relayers state
-  const {
-    relayersState,
-    setRelayer
-  } = useRelayers({
-    typedChainId: currentTypedChainId ?? undefined,
-    target: (activeApi?.state.activeBridge && currentTypedChainId) ? activeApi.state.activeBridge.targets[currentTypedChainId] : undefined
-  });
-
-  // Functions for UI state management
-  function isButtonDisabled() {
-    if (amount > availableAmount || !amount || !!formError) {
-      return true;
+  const selectedGovernedToken = useMemo<AssetType | undefined>(() => {
+    if (!governedCurrency) {
+      return undefined;
     }
-
-    if (availableNotesFromManager?.length) {
-      return false;
-    }
-
-    if (availableNotesFromManager?.length && recipient) {
-      return false;
-    }
-
-    return true;
-  }
-
-  const parseUserAmount = (amount: string): void => {
-    setCustomUserAmount(amount);
-    const parsedAmount = Number(amount);
-    if (!isNaN(parsedAmount)) {
-      setAmount(parsedAmount);
-    }
-  };
+    return {
+      symbol: governedCurrency.view.symbol,
+      name: governedCurrency.view.name,
+      balance: availableAmount,
+    };
+  }, [availableAmount, governedCurrency]);
 
   const governedTokens = useMemo((): AssetType[] => {
     return Object.values(governedCurrencies).map((currency) => {
@@ -128,14 +128,43 @@ export const WithdrawContainer = forwardRef<
     });
   }, [governedCurrencies]);
 
+  const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
+    if (!wrappableCurrency) {
+      return undefined;
+    }
+    return {
+      symbol: wrappableCurrency.view.symbol,
+      name: wrappableCurrency.view.name,
+    };
+  }, [wrappableCurrency]);
+
   const wrappableTokens = useMemo((): AssetType[] => {
-    return Object.values(wrappableCurrencies).map((currency) => {
+    return wrappableCurrencies.map((currency) => {
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
       };
     });
-  }, [wrappableCurrencies])
+  }, [wrappableCurrencies]);
+
+  const parseUserAmount = useCallback(
+    (amount: string | number): void => {
+      const parsedAmount = Number(amount);
+      if (isNaN(parsedAmount) || parsedAmount < 0) {
+        setAmountError('Invalid amount');
+        return;
+      }
+
+      if (parsedAmount > availableAmount) {
+        setAmountError('Insufficient balance');
+        return;
+      }
+
+      setAmount(parsedAmount);
+      setAmountError('');
+    },
+    [availableAmount]
+  );
 
   const handleGovernedTokenChange = useCallback(
     async (newToken: AssetType) => {
@@ -148,7 +177,7 @@ export const WithdrawContainer = forwardRef<
     },
     [governedCurrencies, setGovernedCurrency]
   );
-  
+
   const handleWrappableTokenChange = useCallback(
     async (newToken: AssetType) => {
       const selectedToken = Object.values(wrappableCurrencies).find(
@@ -160,6 +189,50 @@ export const WithdrawContainer = forwardRef<
     },
     [wrappableCurrencies, setWrappableCurrency]
   );
+
+  const isValidAmount = useMemo(() => {
+    return amount > 0 && amount <= availableAmount;
+  }, [amount, availableAmount]);
+
+  const isDisabledWithdraw = useMemo(() => {
+    return [
+      Boolean(governedCurrency), // No governed currency selected
+      isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
+      Boolean(isValidAmount), // Amount is greater than available amount
+      Boolean(recipient), // No recipient address
+    ].some((value) => value === false);
+  }, [governedCurrency, isUnwrap, isValidAmount, recipient, wrappableCurrency]);
+
+  // Calculate the info for UI display
+  const infoCalculated = useMemo(() => {
+    const receivingAmount = isValidAmount
+      ? getRoundedAmountString(amount)
+      : undefined;
+    const remainderAmount = isValidAmount
+      ? getRoundedAmountString(availableAmount - amount)
+      : undefined;
+
+    const receivingTokenSymbol = isUnwrap
+      ? wrappableCurrency?.view.symbol ?? ''
+      : governedCurrency?.view.symbol ?? '';
+
+    const remainderTokenSymbol = governedCurrency?.view.symbol;
+
+    return {
+      receivingAmount,
+      remainderAmount,
+      receivingTokenSymbol,
+      remainderTokenSymbol,
+    };
+  }, [
+    amount,
+    availableAmount,
+    governedCurrency?.view.symbol,
+    isUnwrap,
+    isValidAmount,
+    wrappableCurrency?.view.symbol,
+  ]);
+
   return (
     <div>
       <WithdrawCard
@@ -168,6 +241,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
+                  className="w-[550px] h-[720px]"
                   title={'Select Asset to Withdraw'}
                   popularTokens={[]}
                   selectTokens={governedTokens}
@@ -181,16 +255,14 @@ export const WithdrawContainer = forwardRef<
               );
             }
           },
-          token: {
-            symbol: governedCurrency?.view.symbol ?? 'default',
-            balance: governedCurrencyBalance ?? '-'
-          }
+          token: selectedGovernedToken,
         }}
         unwrappingAssetInputProps={{
           onClick: () => {
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
+                  className="w-[550px] h-[720px]"
                   title={'Select Asset to Unwrap into'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
@@ -201,111 +273,188 @@ export const WithdrawContainer = forwardRef<
                   }}
                   onClose={() => setMainComponent(undefined)}
                 />
-              )
+              );
             }
           },
-          token: {
-            symbol: wrappableCurrency?.view.symbol ?? 'Select Token',
-            balance: wrappableCurrencyBalance ?? '-'
-          }
+          token: selectedUnwrapToken,
         }}
         fixedAmountInputProps={{
-          onChange: (amount) => {
-            setAmount(amount);
-          },
-          values: [0.10, 0.25, 0.50, 1.00]
+          onChange: parseUserAmount,
+          values: [0.1, 0.25, 0.5, 1.0],
         }}
-        recipientInputProps={{
-          onChange: (recipient) => {
-            setRecipient(recipient)
-          }
+        customAmountInputProps={{
+          onAmountChange: parseUserAmount,
+          amount: isNaN(amount) ? '' : amount.toString(),
+          onMaxBtnClick: () => parseUserAmount(availableAmount),
+          errorMessage: amountError,
+        }}
+        unwrapSwitcherProps={{
+          checked: isUnwrap,
+          onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
         }}
         relayerInputProps={{
-          relayerAddress: relayersState.activeRelayer?.beneficiary,
-          externalLink: relayersState?.activeRelayer?.endpoint,
+          relayerAddress: activeRelayer?.beneficiary,
+          iconTheme: activeChain
+            ? activeChain.chainType === ChainType.EVM
+              ? 'ethereum'
+              : 'substrate'
+            : undefined,
           onClick: () => {
-            let x: RelayerType;
-            if (activeApi && activeChain) {
-              setMainComponent(
-                <RelayerListCard
-                  relayers={relayersState.relayers.map((relayer) => {
+            if (!activeApi || !activeChain) {
+              return;
+            }
+
+            setMainComponent(
+              <RelayerListCard
+                className="w-[550px] h-[720px]"
+                relayers={relayers
+                  .map((relayer) => {
                     const relayerData = relayer.capabilities.supportedChains[
-                      activeChain.chainType === ChainType.EVM ? 'evm' : 'substrate'
-                    ].get(calculateTypedChainId(activeChain.chainType, activeChain.chainId));
+                      activeChain.chainType === ChainType.EVM
+                        ? 'evm'
+                        : 'substrate'
+                    ].get(
+                      calculateTypedChainId(
+                        activeChain.chainType,
+                        activeChain.chainId
+                      )
+                    );
+
+                    const theme =
+                      activeChain.chainType === ChainType.EVM
+                        ? ('ethereum' as const)
+                        : ('substrate' as const);
 
                     return {
                       address: relayerData?.beneficiary ?? '',
                       externalUrl: relayer.endpoint,
-                    }
-                  }).filter((x) => x !== undefined)}
-                  value={relayersState.activeRelayer ? {
-                    address: relayersState.activeRelayer.beneficiary ?? '',
-                    externalUrl: relayersState.activeRelayer.endpoint,
-                  } : undefined}
-                  onClose={() => setMainComponent(undefined)}
-                  onChange={(nextRelayer) => {
-                    setRelayer(relayersState.relayers.find((relayer) => {
-                      return relayer.endpoint === nextRelayer.externalUrl
-                    }) ?? null);
-                    setMainComponent(undefined);
-                  }}
-                />
-              )
-            }
-          }
+                      theme,
+                    };
+                  })
+                  .filter((x) => x !== undefined)}
+                value={
+                  activeRelayer
+                    ? {
+                        address: activeRelayer.beneficiary ?? '',
+                        externalUrl: activeRelayer.endpoint,
+                        theme:
+                          activeChain.chainType === ChainType.EVM
+                            ? 'ethereum'
+                            : 'substrate',
+                      }
+                    : undefined
+                }
+                onClose={() => setMainComponent(undefined)}
+                onChange={(nextRelayer) => {
+                  setRelayer(
+                    relayers.find((relayer) => {
+                      return relayer.endpoint === nextRelayer.externalUrl;
+                    }) ?? null
+                  );
+                  setMainComponent(undefined);
+                }}
+              />
+            );
+          },
+        }}
+        recipientInputProps={{
+          onChange: (recipient) => {
+            setRecipient(recipient);
+          },
         }}
         withdrawBtnProps={{
+          isDisabled: isDisabledWithdraw,
           onClick: async () => {
-            if (activeChain && activeApi && activeApi.state.activeBridge && noteManager && recipient && amount !== 0) {
-              const withdrawChainId = calculateTypedChainId(activeChain?.chainType, activeChain?.chainId)
-
-              // Find the mixerId (target) of the selected inputs
-              const mixerId = activeApi.state.activeBridge.targets[withdrawChainId];
-
-              // Get the notes that will be spent for this withdraw
-              const inputNotes = NoteManager.getNotesFifo(
-                availableNotesFromManager ?? [],
-                ethers.utils.parseUnits(amount.toString(), activeApi.state.activeBridge.currency.getDecimals())
-              );
-
-              if (inputNotes) {
-
-                // Get the cumulative value of the notes to be spent
-                const spentValue = inputNotes.reduce<ethers.BigNumber>((currentValue, note) => {
-                  return currentValue.add(ethers.BigNumber.from(note.note.amount));
-                }, BigNumber.from(0));
-
-                const spentAmount = Number(ethers.utils.formatUnits(spentValue, activeApi.state.activeBridge.currency.getDecimals()));
-
-                // Generate a change note if applicable
-                const changeNote = spentAmount - amount > 0
-                  ? await generateNote(
-                    mixerId,
-                    withdrawChainId,
-                    spentAmount - amount,
-                    undefined
-                  ).then((note) => note.note.serialize()) 
-                  : undefined;
-
-                setMainComponent(
-                  <WithdrawConfirmContainer
-                    changeNote={changeNote}
-                    changeAmount={spentAmount - amount}
-                    availableNotes={availableNotesFromManager ?? []}
-                    amount={amount}
-                    fees={0}
-                    webbToken={{
-                      symbol: activeApi.state.activeBridge.currency.view.symbol,
-                      balance: governedCurrencyBalance ?? 0
-                    }}
-                    recipient={recipient}
-                    setTxPayload={setTxPayload}
-                  />
-                )
-              }
+            if (
+              !currentTypedChainId ||
+              !governedCurrency ||
+              !activeApi ||
+              !activeApi?.state.activeBridge ||
+              !recipient
+            ) {
+              return;
             }
-          }
+
+            const governedCurrencyDecimals = governedCurrency.getDecimals();
+
+            // Find the mixerId (target) of the selected inputs
+            const mixerId =
+              activeApi.state.activeBridge.targets[currentTypedChainId];
+
+            // Get the notes that will be spent for this withdraw
+            const inputNotes = NoteManager.getNotesFifo(
+              availableNotesFromManager ?? [],
+              ethers.utils.parseUnits(
+                amount.toString(),
+                governedCurrencyDecimals
+              )
+            );
+
+            if (!inputNotes) {
+              return;
+            }
+
+            // Get the cumulative value of the notes to be spent
+            const spentValue = inputNotes.reduce<ethers.BigNumber>(
+              (currentValue, note) => {
+                return currentValue.add(
+                  ethers.BigNumber.from(note.note.amount)
+                );
+              },
+              BigNumber.from(0)
+            );
+
+            const changeAmountBigNumber = spentValue.sub(
+              ethers.utils.parseUnits(
+                amount.toString(),
+                governedCurrencyDecimals
+              )
+            );
+
+            const parsedChangeAmount = Number(
+              ethers.utils.formatUnits(
+                changeAmountBigNumber,
+                governedCurrencyDecimals
+              )
+            );
+
+            // Generate a change note if applicable
+            const changeNote = changeAmountBigNumber.gt(0)
+              ? await generateNote(
+                  mixerId,
+                  currentTypedChainId,
+                  parsedChangeAmount,
+                  undefined
+                ).then((note) => note.note.serialize())
+              : undefined;
+
+            setMainComponent(
+              <WithdrawConfirmContainer
+                changeNote={changeNote}
+                changeAmount={parsedChangeAmount}
+                targetChainId={currentTypedChainId}
+                availableNotes={availableNotesFromManager ?? []}
+                amount={amount}
+                fees={0}
+                governedCurrency={{
+                  value: governedCurrency,
+                  balance: availableAmount,
+                }}
+                unwrapCurrency={
+                  isUnwrap && wrappableCurrency
+                    ? { value: wrappableCurrency }
+                    : undefined
+                }
+                recipient={recipient}
+                setTxPayload={setTxPayload}
+              />
+            );
+          },
         }}
+        receivedAmount={infoCalculated.receivingAmount}
+        receivedToken={infoCalculated.receivingTokenSymbol}
+        remainderAmount={infoCalculated.remainderAmount}
+        remainderToken={infoCalculated.remainderTokenSymbol}
       />
     </div>
   );

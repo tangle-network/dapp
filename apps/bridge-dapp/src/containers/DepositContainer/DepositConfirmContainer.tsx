@@ -1,5 +1,7 @@
 import { DepositPayload } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
+import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import { TokenIcon } from '@webb-tools/icons';
 import { useBridgeDeposit } from '@webb-tools/react-hooks';
@@ -9,7 +11,7 @@ import {
   getTokenRingValue,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { DepositConfirmContainerProps } from './types';
 
 export const DepositConfirmContainer = forwardRef<
@@ -36,6 +38,7 @@ export const DepositConfirmContainer = forwardRef<
     const { deposit, stage, setStage } = useBridgeDeposit();
     const { setMainComponent, notificationApi } = useWebbUI();
 
+    const { activeApi } = useWebContext();
     // Download for the deposit confirm
     const downloadNote = useCallback((depositPayload: DepositPayload) => {
       const note = depositPayload?.note?.serialize() ?? '';
@@ -56,6 +59,7 @@ export const DepositConfirmContainer = forwardRef<
 
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
+
       setTxPayload((prev) => ({
         ...prev,
         id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
@@ -114,6 +118,29 @@ export const DepositConfirmContainer = forwardRef<
       token?.symbol,
     ]);
 
+    const activeChains = useMemo<string[]>(() => {
+      if (!activeApi) {
+        return [];
+      }
+
+      return Array.from(
+        Object.values(activeApi.state.getBridgeOptions())
+          .reduce((acc, bridge) => {
+            const chains = Object.keys(bridge.targets).map(
+              (presetTypeChainId) => {
+                const chain = chainsPopulated[Number(presetTypeChainId)];
+                return chain;
+              }
+            );
+
+            chains.forEach((chain) => acc.add(chain.name));
+
+            return acc;
+          }, new Set<string>())
+          .values()
+      );
+    }, [activeApi]);
+
     // Effect to update the progress bar
     useEffect(() => {
       switch (stage) {
@@ -166,6 +193,7 @@ export const DepositConfirmContainer = forwardRef<
               : 'Deposit in Progress'
             : undefined
         }
+        activeChains={activeChains}
         ref={ref}
         note={depositPayload.note.serialize()}
         progress={progress}
@@ -187,8 +215,8 @@ export const DepositConfirmContainer = forwardRef<
         amount={amount}
         wrappingAmount={String(amount)}
         governedTokenSymbol={token?.symbol}
-        sourceChain={getTokenRingValue(sourceChain?.symbol || 'default')}
-        destChain={getTokenRingValue(destChain?.symbol || 'default')}
+        sourceChain={sourceChain?.name}
+        destChain={destChain?.name}
         fee={0}
         onClose={() => setMainComponent(undefined)}
         wrappableTokenSymbol={wrappableTokenSymbol}

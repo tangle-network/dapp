@@ -1,4 +1,5 @@
 import { ChevronDown } from '@webb-tools/icons';
+import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { AmountMenu } from '../AmountMenu';
@@ -6,8 +7,8 @@ import { Button } from '../Button';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { FixedAmountProps } from './types';
 import { InputWrapper } from './InputWrapper';
+import { FixedAmountProps } from './types';
 
 /**
  * The `FixedAmount` component
@@ -106,7 +107,12 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                   isFullWidth
                   size="sm"
                   variant="utility"
-                  className="justify-center"
+                  className={cx(
+                    'justify-center',
+                    'disabled:border disabled:border-solid disabled:border-blue-90 dark:disabled:border-blue-30',
+                    'disabled:bg-blue-10 dark:disabled:bg-blue-120',
+                    'disabled:text-blue-90 dark:disabled:text-blue-30'
+                  )}
                   isDisabled={value === val}
                   onClick={() => onClick(val)}
                 >

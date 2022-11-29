@@ -98,7 +98,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
                   onClick={() => onItemChange(current)}
                 >
                   <div className="flex items-center space-x-2">
-                    <Avatar value={current.address} />
+                    <Avatar theme={current.theme} value={current.address} />
 
                     <Typography variant="body1" fw="bold">
                       {shortenString(current.address)}

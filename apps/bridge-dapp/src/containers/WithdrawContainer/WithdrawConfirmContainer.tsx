@@ -1,33 +1,84 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
+import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { TokenIcon } from '@webb-tools/icons';
-import { useWithdraw } from '@webb-tools/react-hooks';
+import { ChainIcon, WalletLineIcon } from '@webb-tools/icons';
+import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
+import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import {
-  WithdrawConfirm,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { useWebbUI, WithdrawConfirm } from '@webb-tools/webb-ui-components';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { useTransactionProgressValue } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
   WithdrawConfirmContainerProps
 >(
-  ({ changeNote, availableNotes, amount, changeAmount, fees, setTxPayload, webbToken, relayer, recipient },
+  (
+    {
+      changeNote,
+      availableNotes,
+      amount,
+      changeAmount,
+      fees,
+      targetChainId,
+      setTxPayload,
+      governedCurrency: governedCurrencyProp,
+      unwrapCurrency: { value: unwrapCurrency } = {},
+      recipient,
+    },
     ref
   ) => {
-    const { activeApi } = useWebContext();
-    const { withdraw } = useWithdraw({
+    const { value: governedCurrency } = governedCurrencyProp;
+
+    const { withdraw, stage, setStage } = useWithdraw({
       amount: amount,
       notes: availableNotes,
       recipient: recipient,
+      unwrapTokenAddress: unwrapCurrency?.getAddressOfChain(targetChainId),
     });
+
+    const progressValue = useTransactionProgressValue(stage);
+
     const { setMainComponent } = useWebbUI();
+
+    const { activeApi } = useWebContext();
+
+    const {
+      relayersState: { activeRelayer },
+    } = useRelayers({
+      typedChainId: targetChainId,
+      target: activeApi?.state.activeBridge
+        ? activeApi.state.activeBridge.targets[targetChainId]
+        : undefined,
+    });
 
     const [checked, setChecked] = useState(false);
     const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+    const activeChains = useMemo<string[]>(() => {
+      if (!activeApi) {
+        return [];
+      }
+
+      return Array.from(
+        Object.values(activeApi.state.getBridgeOptions())
+          .reduce((acc, bridge) => {
+            const chains = Object.keys(bridge.targets).map(
+              (presetTypeChainId) => {
+                const chain = chainsPopulated[Number(presetTypeChainId)];
+                return chain;
+              }
+            );
+
+            chains.forEach((chain) => acc.add(chain.name));
+
+            return acc;
+          }, new Set<string>())
+          .values()
+      );
+    }, [activeApi]);
 
     // Copy for the deposit confirm
     const { copy } = useCopyable();
@@ -43,24 +94,82 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadString(note, note.slice(-note.length - 10) + '.txt');
     }, []);
 
+    const avatarTheme = useMemo(() => {
+      return chainsPopulated[targetChainId].chainType === ChainType.EVM
+        ? 'ethereum'
+        : 'substrate';
+    }, [targetChainId]);
+
+    // The main action onClick handler
+    const onClick = useCallback(async () => {
+      // Set transaction payload for transaction processing card
+      setTxPayload((prev) => ({
+        ...prev,
+        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
+        amount: amount.toString(),
+        timestamp: new Date(),
+        method: 'Withdraw',
+        txStatus: {
+          status: 'in-progress',
+        },
+        token: unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
+        tokens: [
+          governedCurrency.view.symbol,
+          unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
+        ],
+        wallets: {
+          src: <ChainIcon name={chainsPopulated[targetChainId]?.name} />,
+          dist: <WalletLineIcon />,
+        },
+      }));
+
+      if (isWithdrawing) {
+        setMainComponent(undefined);
+        return;
+      }
+
+      setIsWithdrawing(true);
+
+      if (changeNote) {
+        downloadNote(changeNote);
+      }
+
+      const successfulWithdraw = await withdraw();
+
+      if (successfulWithdraw) {
+        setStage(TransactionState.Done);
+        setMainComponent(undefined);
+      } else {
+        setStage(TransactionState.Failed);
+      }
+
+      setIsWithdrawing(false);
+    }, [
+      amount,
+      changeNote,
+      downloadNote,
+      governedCurrency.view.symbol,
+      isWithdrawing,
+      setMainComponent,
+      setStage,
+      setTxPayload,
+      targetChainId,
+      unwrapCurrency?.view.symbol,
+      withdraw,
+    ]);
+
     return (
       <WithdrawConfirm
         ref={ref}
+        activeChains={activeChains}
         actionBtnProps={{
-          isDisabled: !checked,
-          isLoading: isWithdrawing,
-          loadingText: 'Withdrawing...',
-          onClick: async () => {
-            setIsWithdrawing(true);
-            const successfulWithdraw = await withdraw();
-            if (successfulWithdraw) {
-              setIsWithdrawing(false);
-              setMainComponent(undefined);
-            }
-          },
+          isDisabled: changeAmount ? !checked : false,
+          children: isWithdrawing ? 'New Transaction' : 'Withdraw',
+          onClick,
         }}
         checkboxProps={{
           isChecked: checked,
+          children: 'I have copy the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
         onCopy={() => handleCopy(changeNote)}
@@ -70,14 +179,14 @@ export const WithdrawConfirmContainer = forwardRef<
         onClose={() => setMainComponent(undefined)}
         note={changeNote}
         changeAmount={changeAmount}
-        progress={null}
-        unshieldedAddress={recipient}
-        relayerAddress={relayer?.account}
-        relayerExternalUrl={relayer?.endpoint}
-        governedTokenSymbol={activeApi?.methods.bridgeApi.getCurrency()?.view.symbol}
+        progress={progressValue}
+        recipientAddress={recipient}
+        relayerAddress={activeRelayer?.beneficiary}
+        relayerExternalUrl={activeRelayer?.endpoint}
+        relayerAvatarTheme={avatarTheme}
+        governedTokenSymbol={governedCurrency.view.symbol}
+        wrappableTokenSymbol={unwrapCurrency?.view.symbol}
       />
     );
   }
 );
-
-

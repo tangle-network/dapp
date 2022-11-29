@@ -28,6 +28,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     icon: EtherLogo,
     addresses: new Map<number, string>([
       [PresetTypedChainId.Goerli, zeroAddress],
+      [PresetTypedChainId.Sepolia, zeroAddress],
       [PresetTypedChainId.OptimismTestnet, zeroAddress],
       [PresetTypedChainId.ArbitrumTestnet, zeroAddress],
       [PresetTypedChainId.HermesLocalnet, zeroAddress],

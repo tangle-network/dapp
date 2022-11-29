@@ -1,13 +1,18 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { Button, CheckBox, TokensRing } from '../../components';
+import { Avatar, Button, CheckBox, TokensRing } from '../../components';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The transaction amount
    */
   amount?: number | string;
+
+  /**
+   * The active chain
+   */
+  activeChains: string[];
 
   /**
    * The card title
@@ -28,12 +33,12 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The source chain symbol
    */
-  sourceChain?: ComponentProps<typeof TokensRing>['sourceChain'];
+  sourceChain?: string;
 
   /**
    * The destination chain symbol
    */
-  destChain?: ComponentProps<typeof TokensRing>['destChain'];
+  destChain?: string;
 
   /**
    * The transaction progress
@@ -70,7 +75,9 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
   governedTokenSymbol?: string;
+
   wrappableTokenSymbol?: string;
+
   // Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
   wrappingAmount?: string;
 }
@@ -84,13 +91,19 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  governedTokenSymbol?: string;
+  governedTokenSymbol: string;
 
   /**
    * The second token symbol
    */
 
   wrappableTokenSymbol?: string;
+
+  /**
+   * The relayer avatar theme
+   * @default 'polkadot'
+   */
+  relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
 
   /**
    * The relayer address
@@ -103,9 +116,9 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   relayerExternalUrl?: string;
 
   /**
-   * Unshielded address
+   * The recipient address
    */
-  unshieldedAddress?: string;
+  recipientAddress: string;
 }
 
 export interface TransferConfirmProps extends ConfirmationCardProps {

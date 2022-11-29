@@ -181,9 +181,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         throw new Error(`No Anchor for the chain ${note.targetChainId}`);
       }
 
-      const srcVAnchor = await this.inner.getVariableAnchorByAddress(
-        srcAddress
-      );
+      const srcVAnchor = this.inner.getVariableAnchorByAddress(srcAddress);
       const maxEdges = await srcVAnchor._contract.maxEdges();
       // Fetch the fixtures
       this.cancelToken.throwIfCancel();
@@ -226,11 +224,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
       const destEthers = destHttpProvider.intoEthersProvider();
       const destAddress = vanchor.neighbours[destTypedChainId] as string;
-      const destVAnchor =
-        await this.inner.getVariableAnchorByAddressAndProvider(
-          destAddress,
-          destEthers
-        );
+      const destVAnchor = this.inner.getVariableAnchorByAddressAndProvider(
+        destAddress,
+        destEthers
+      );
       leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
       leaves = await this.cancelToken.handleOrThrow(
@@ -405,10 +402,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           // emit event for waiting for transaction to confirm
           const receipt = await tx.wait();
 
-
           // TODO: Make this parse the receipt for the index data
-          const noteIndex = (await srcVAnchor.getNextIndex() - 1);
-          const indexedNote = await Note.deserialize(depositPayload.note.serialize());
+          const noteIndex = (await srcVAnchor.getNextIndex()) - 1;
+          const indexedNote = await Note.deserialize(
+            depositPayload.note.serialize()
+          );
           indexedNote.mutateIndex(noteIndex.toString());
           await this.inner.noteManager.addNote(indexedNote);
           await this.inner.noteManager.removeNote(depositPayload.note);
