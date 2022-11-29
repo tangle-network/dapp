@@ -1,6 +1,7 @@
 import { ChainIcon, TokenIcon } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { IconWithTooltip } from '../IconWithTooltip';
 import { TokenPairIconsProps } from './types';
 
 export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
@@ -9,14 +10,21 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
       <div
         {...props}
         className={twMerge(
-          'flex items-center -space-x-2 relative',
+          'flex items-center relative group',
           chainName ? 'mr-1' : '',
           className
         )}
         ref={ref}
       >
-        <TokenIcon size="lg" name={token1Symbol.toLowerCase()} />
-        <TokenIcon size="lg" name={token2Symbol.toLowerCase()} />
+        <IconWithTooltip
+          icon={<TokenIcon size="lg" name={token1Symbol.toLowerCase()} />}
+          content={token1Symbol.toUpperCase()}
+        />
+        <IconWithTooltip
+          btnClassName="-ml-2 transition-all group-hover:ml-1"
+          icon={<TokenIcon size="lg" name={token2Symbol.toLowerCase()} />}
+          content={token2Symbol.toUpperCase()}
+        />
 
         {chainName && (
           <ChainIcon

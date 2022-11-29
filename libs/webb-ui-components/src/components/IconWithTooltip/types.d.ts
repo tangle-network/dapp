@@ -8,4 +8,9 @@ export interface IconWithTooltipProp {
    * The tooltip content
    */
   content: React.ReactNode;
+
+  /**
+   * The tooltip trigger className for tailwind styling
+   */
+  btnClassName?: string;
 }
