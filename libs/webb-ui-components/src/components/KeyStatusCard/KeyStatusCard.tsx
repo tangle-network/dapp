@@ -1,4 +1,6 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '..';
+import { Typography } from '../../typography/Typography';
+
 import { Link } from 'react-router-dom';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
@@ -40,16 +42,22 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       <div className="flex justify-between w-full">
         <div className="flex items-center space-x-2">
           <TitleWithInfo title={title} info={titleInfo} variant="h5" />
-          <LabelWithValue label="session: " value={sessionNumber} />
           <Chip color="green" className="inline-block">
             {keyType}
           </Chip>
+          <LabelWithValue label="session: " value={`#${sessionNumber}`} />
         </div>
-        <KeyValueWithButton keyValue={keyVal} />
+        <div className="flex items-center">
+          <Typography variant="para1" fw="bold" className="mr-2 text-xs">
+            KEY
+          </Typography>
+          <KeyValueWithButton keyValue={keyVal} />
+        </div>
       </div>
 
       {/* * Content */}
       <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
+
       {/** Bottom */}
       <div className="flex items-center justify-between">
         <AvatarGroup total={totalAuthorities}>

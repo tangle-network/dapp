@@ -30,7 +30,6 @@ export const CountryIcon: FC<TokenIconBase & { isActive?: boolean }> = (
         height={parseInt(sizeInPx)}
         {...restProps}
       />
-      <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
     </div>
   );
 };
