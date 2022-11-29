@@ -30,19 +30,28 @@ export const LabelWithValue = forwardRef<HTMLSpanElement, LabelWithValueProps>(
     },
     ref
   ) => {
-    const mergedClsx = useMemo(() => twMerge('flex items-center space-x-1', className), [className]);
+    const mergedClsx = useMemo(
+      () => twMerge('flex items-center space-x-1', className),
+      [className]
+    );
     return (
       <span {...props} className={mergedClsx} ref={ref}>
-        <Label
-          hidden={isHiddenLabel}
-          className={cx('font-bold uppercase', labelVariant, isHiddenLabel && 'hidden')}
-          htmlFor={label}
-        >
-          {label}
-        </Label>
+        {label ? (
+          <Label
+            hidden={isHiddenLabel}
+            className={cx(
+              'font-bold uppercase',
+              labelVariant,
+              isHiddenLabel && 'hidden'
+            )}
+            htmlFor={label}
+          >
+            {label}
+          </Label>
+        ) : null}
         {!valueTooltip &&
           (typeof value === 'string' || typeof value === 'number' ? (
-            <Typography component='span' variant={valueVariant}>
+            <Typography component="span" variant={valueVariant}>
               {value.toString()}
             </Typography>
           ) : (

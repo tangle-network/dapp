@@ -79,7 +79,7 @@ export const KeyValueWithButton = forwardRef<
                   labelVariant={labelVariant}
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
-                  label="Key"
+                  label=""
                   value={value}
                   className="cursor-default pointer-events-auto"
                 />
