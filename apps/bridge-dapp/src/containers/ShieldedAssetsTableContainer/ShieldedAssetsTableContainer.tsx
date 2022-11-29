@@ -16,11 +16,15 @@ import {
 import {
   Button,
   fuzzyFilter,
+  IconWithTooltip,
   Table,
   TokenPairIcons,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { EmptyTable } from '../../components/tables';
 import {
   ShieldedAssetDataType,
@@ -29,10 +33,17 @@ import {
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
-const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
+const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => (
+      <div className="flex items-center">
+        <IconWithTooltip
+          icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
+          content={props.getValue<string>()}
+        />
+      </div>
+    ),
   }),
 
   columnHelper.accessor('governedTokenSymbol', {
@@ -63,17 +74,20 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
         return null;
       }
 
-      const firstTwoTokens = composition.slice(0, 2);
+      const [firstToken, secondToken] = composition.slice(0, 2);
       const numOfHiddenTokens = composition.length - 2;
 
       return (
         <div className="flex items-center space-x-1">
-          {firstTwoTokens.length === 1 ? (
-            <TokenIcon name={firstTwoTokens[0]} />
+          {!secondToken ? (
+            <IconWithTooltip
+              icon={<TokenIcon name={firstToken} />}
+              content={firstToken}
+            />
           ) : (
             <TokenPairIcons
-              token1Symbol={firstTwoTokens[0]}
-              token2Symbol={firstTwoTokens[1]}
+              token1Symbol={firstToken}
+              token2Symbol={secondToken}
             />
           )}
 
@@ -108,32 +122,72 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
       </Typography>
     ),
   }),
-
-  columnHelper.accessor('assetsUrl', {
-    header: 'Action',
-    cell: () => {
-      return (
-        <div className="flex items-center space-x-1">
-          <Button variant="utility" size="sm" className="p-2">
-            <AddBoxLineIcon className="!fill-current" />
-          </Button>
-
-          <Button variant="utility" size="sm" className="p-2">
-            <SendPlanLineIcon className="!fill-current" />
-          </Button>
-
-          <Button variant="utility" size="sm" className="p-2">
-            <WalletLineIcon className="!fill-current" />
-          </Button>
-        </div>
-      );
-    },
-  }),
 ];
 
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({ data = [], onUploadSpendNote }) => {
+  const onTransfer = useCallback(() => {
+    console.warn('Transfer is not implemented yet');
+  }, []);
+
+  const onDeposit = useCallback(() => {
+    console.warn('Deposit is not implemented yet');
+  }, []);
+
+  const onWithdraw = useCallback(() => {
+    console.warn('Withdraw is not implemented yet');
+  }, []);
+
+  const columns = useMemo<Array<ColumnDef<ShieldedAssetDataType, any>>>(
+    () => [
+      ...staticColumns,
+
+      columnHelper.accessor('assetsUrl', {
+        header: 'Action',
+        cell: () => {
+          return (
+            <div className="flex items-center space-x-1">
+              <ActionWithTooltip content="Deposit">
+                <Button
+                  variant="utility"
+                  size="sm"
+                  className="p-2"
+                  onClick={onDeposit}
+                >
+                  <AddBoxLineIcon className="!fill-current" />
+                </Button>
+              </ActionWithTooltip>
+
+              <ActionWithTooltip content="Transfer">
+                <Button
+                  variant="utility"
+                  size="sm"
+                  className="p-2"
+                  onClick={onTransfer}
+                >
+                  <SendPlanLineIcon className="!fill-current" />
+                </Button>
+              </ActionWithTooltip>
+
+              <ActionWithTooltip content="Withdraw">
+                <Button
+                  variant="utility"
+                  size="sm"
+                  className="p-2"
+                  onClick={onWithdraw}
+                >
+                  <WalletLineIcon className="!fill-current" />
+                </Button>
+              </ActionWithTooltip>
+            </div>
+          );
+        },
+      }),
+    ],
+    [onDeposit, onTransfer, onWithdraw]
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -163,5 +217,23 @@ export const ShieldedAssetsTableContainer: FC<
         totalRecords={data.length}
       />
     </div>
+  );
+};
+
+/***********************
+ * Internal components *
+ ***********************/
+
+const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
+  content,
+  children,
+}) => {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipBody>
+        <Typography variant="body3">{content}</Typography>
+      </TooltipBody>
+    </Tooltip>
   );
 };
