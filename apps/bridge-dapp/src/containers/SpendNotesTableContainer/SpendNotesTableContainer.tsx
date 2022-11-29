@@ -13,25 +13,35 @@ import {
 } from '@webb-tools/icons';
 import {
   Button,
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
   fuzzyFilter,
+  IconWithTooltip,
   KeyValueWithButton,
+  MenuItem,
   shortenString,
   Table,
   TokenPairIcons,
-  TokenWithAmount,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { formatDistanceToNow } from 'date-fns';
-import { FC } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { EmptyTable } from '../../components/tables';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
 
-const columns: ColumnDef<SpendNoteDataType, any>[] = [
+const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => (
+      <div className="flex items-center">
+        <IconWithTooltip
+          icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
+          content={props.getValue<string>()}
+        />
+      </div>
+    ),
   }),
 
   columnHelper.accessor('governedTokenSymbol', {
@@ -78,7 +88,7 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
 
           {numOfHiddenTokens > 0 && (
             <Typography className="inline-block" variant="body3">
-              +3 others
+              +{numOfHiddenTokens} others
             </Typography>
           )}
         </div>
@@ -115,23 +125,27 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
       />
     ),
   }),
-
-  columnHelper.accessor('assetsUrl', {
-    header: '',
-    cell: () => {
-      return (
-        <Button variant="utility" size="sm" className="p-2">
-          <ChevronDown className="!fill-current" />
-        </Button>
-      );
-    },
-  }),
 ];
 
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
   onUploadSpendNote,
 }) => {
+  const columns = useMemo<Array<ColumnDef<SpendNoteDataType, any>>>(() => {
+    return [
+      ...staticColumns,
+
+      columnHelper.accessor('assetsUrl', {
+        header: '',
+        cell: (props) => {
+          const note = props.row.original.note;
+
+          return <ActionDropdownButton note={note} />;
+        },
+      }),
+    ];
+  }, []);
+
   const table = useReactTable({
     data,
     columns,
@@ -162,5 +176,32 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
         totalRecords={data.length}
       />
     </div>
+  );
+};
+
+const ActionDropdownButton: FC<{ note: string }> = ({ note }) => {
+  const onQuickTransfer = useCallback(() => {
+    console.log('Trying to quick transfer with note: ', note);
+    console.warn('Quick transfer haven"t implemented yet ');
+  }, [note]);
+
+  const onQuickWithdraw = useCallback(() => {
+    console.log('Trying to quick withdraw with note: ', note);
+    console.warn('Quick withdraw haven"t implemented yet ');
+  }, [note]);
+
+  return (
+    <Dropdown>
+      <DropdownBasicButton>
+        <Button as="span" variant="utility" size="sm" className="p-2">
+          <ChevronDown className="!fill-current" />
+        </Button>
+      </DropdownBasicButton>
+
+      <DropdownBody className="min-w-[200px]" size="sm">
+        <MenuItem onClick={onQuickTransfer}>Quick Transfer</MenuItem>
+        <MenuItem onClick={onQuickWithdraw}>Quick Withdraw</MenuItem>
+      </DropdownBody>
+    </Dropdown>
   );
 };
