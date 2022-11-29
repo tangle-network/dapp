@@ -18,10 +18,11 @@ import {
   shortenString,
   Table,
   TokenPairIcons,
-  TokenWithAmount,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { formatDistanceToNow } from 'date-fns';
 import { FC } from 'react';
 import { EmptyTable } from '../../components/tables';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
@@ -31,7 +32,18 @@ const columnHelper = createColumnHelper<SpendNoteDataType>();
 const columns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => (
+      <Tooltip>
+        <TooltipTrigger className="cursor-auto">
+          <ChainIcon size="lg" name={props.getValue<string>()} />
+        </TooltipTrigger>
+        <TooltipBody>
+          <Typography className="capitalize" variant="body1">
+            {props.getValue<string>()}
+          </Typography>
+        </TooltipBody>
+      </Tooltip>
+    ),
   }),
 
   columnHelper.accessor('governedTokenSymbol', {
@@ -78,7 +90,7 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
 
           {numOfHiddenTokens > 0 && (
             <Typography className="inline-block" variant="body3">
-              +3 others
+              +{numOfHiddenTokens} others
             </Typography>
           )}
         </div>

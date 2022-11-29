@@ -18,6 +18,9 @@ import {
   fuzzyFilter,
   Table,
   TokenPairIcons,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
@@ -32,7 +35,20 @@ const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
-    cell: (props) => <ChainIcon size="lg" name={props.getValue<string>()} />,
+    cell: (props) => (
+      <div className="flex items-center">
+        <Tooltip>
+          <TooltipTrigger className="cursor-auto">
+            <ChainIcon size="lg" name={props.getValue<string>()} />
+          </TooltipTrigger>
+          <TooltipBody>
+            <Typography className="capitalize" variant="body1">
+              {props.getValue<string>()}
+            </Typography>
+          </TooltipBody>
+        </Tooltip>
+      </div>
+    ),
   }),
 
   columnHelper.accessor('governedTokenSymbol', {
