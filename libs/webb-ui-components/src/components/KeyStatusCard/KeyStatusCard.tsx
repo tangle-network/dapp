@@ -57,6 +57,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
 
       {/* * Content */}
       <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
+
       {/** Bottom */}
       <div className="flex items-center justify-between">
         <AvatarGroup total={totalAuthorities}>
