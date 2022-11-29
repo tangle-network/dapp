@@ -39,7 +39,7 @@ const TableComp = <T extends RowData>(
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="group">
+            <tr key={row.id} className="group/tr">
               {row.getVisibleCells().map((cell) => (
                 <TData className={tdClassName} key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
