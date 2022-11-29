@@ -14,7 +14,7 @@ import {
 } from '../../components';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { PropsOf } from '../../types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -103,21 +103,20 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             <div className="space-y-4">
               <TitleWithInfo
                 titleComponent="h6"
-                title="Unwrapping"
+                title="Wrapping"
                 variant="utility"
-                info="Unwrapping"
+                info="Wrapping"
                 titleClassName="text-mono-100 dark:text-mono-80"
                 className="text-mono-100 dark:text-mono-80"
               />
               <div className="flex items-center space-x-4">
                 <TokenWithAmount
-                  token1Symbol={wrappableTokenSymbol}
+                  token1Symbol={governedTokenSymbol}
                   amount={wrappingAmount}
                 />
                 <ArrowRight />
                 <TokenWithAmount
                   token1Symbol={wrappableTokenSymbol}
-                  token2Symbol={governedTokenSymbol}
                   amount={amount}
                 />
               </div>
