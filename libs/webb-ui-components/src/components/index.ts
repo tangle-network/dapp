@@ -20,6 +20,7 @@ export * from './DropdownMenu';
 export * from './FileUploads';
 export * from './Filter';
 export * from './Footer';
+export * from './IconWithTooltip';
 export * from './Input';
 export * from './KeyCard';
 export * from './KeyValueWithButton';
