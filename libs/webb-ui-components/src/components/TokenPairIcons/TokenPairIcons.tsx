@@ -10,7 +10,7 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
       <div
         {...props}
         className={twMerge(
-          'flex items-center relative group',
+          'flex items-center group/token relative',
           chainName ? 'mr-1' : '',
           className
         )}
@@ -21,7 +21,7 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
           content={token1Symbol.toUpperCase()}
         />
         <IconWithTooltip
-          btnClassName="-ml-2 transition-all group-hover:ml-1"
+          btnClassName="-ml-2 transition-all group-hover/token:ml-1"
           icon={<TokenIcon size="lg" name={token2Symbol.toLowerCase()} />}
           content={token2Symbol.toUpperCase()}
         />
