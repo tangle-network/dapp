@@ -45,7 +45,7 @@ const Keys = () => {
         <KeyStatusCardContainer
           now={time}
           keyType="current"
-          data={currentKey}
+          data={nextKey}
         />
       </div>
 
