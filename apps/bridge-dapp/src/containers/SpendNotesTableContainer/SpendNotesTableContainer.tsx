@@ -14,6 +14,7 @@ import {
 import {
   Button,
   fuzzyFilter,
+  IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
@@ -33,16 +34,12 @@ const columns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
-      <Tooltip>
-        <TooltipTrigger className="cursor-auto">
-          <ChainIcon size="lg" name={props.getValue<string>()} />
-        </TooltipTrigger>
-        <TooltipBody>
-          <Typography className="capitalize" variant="body1">
-            {props.getValue<string>()}
-          </Typography>
-        </TooltipBody>
-      </Tooltip>
+      <div className="flex items-center">
+        <IconWithTooltip
+          icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
+          content={props.getValue<string>()}
+        />
+      </div>
     ),
   }),
 

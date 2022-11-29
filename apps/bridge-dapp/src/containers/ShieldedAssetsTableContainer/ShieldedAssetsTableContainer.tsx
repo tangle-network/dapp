@@ -16,6 +16,7 @@ import {
 import {
   Button,
   fuzzyFilter,
+  IconWithTooltip,
   Table,
   TokenPairIcons,
   Tooltip,
@@ -37,16 +38,10 @@ const columns: ColumnDef<ShieldedAssetDataType, any>[] = [
     header: 'Chain',
     cell: (props) => (
       <div className="flex items-center">
-        <Tooltip>
-          <TooltipTrigger className="cursor-auto">
-            <ChainIcon size="lg" name={props.getValue<string>()} />
-          </TooltipTrigger>
-          <TooltipBody>
-            <Typography className="capitalize" variant="body1">
-              {props.getValue<string>()}
-            </Typography>
-          </TooltipBody>
-        </Tooltip>
+        <IconWithTooltip
+          icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
+          content={props.getValue<string>()}
+        />
       </div>
     ),
   }),
