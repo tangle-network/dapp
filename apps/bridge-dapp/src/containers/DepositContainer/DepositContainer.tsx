@@ -6,6 +6,7 @@ import {
   useCurrencies,
   useCurrenciesBalances,
   useCurrencyBalance,
+  useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useModal } from '@webb-tools/ui-hooks';
@@ -32,6 +33,9 @@ export const DepositContainer = forwardRef<
   DepositContainerProps
 >(({ setTxPayload, ...props }, ref) => {
   const { setMainComponent } = useWebbUI();
+
+  const { syncNotes } = useNoteAccount();
+
   const {
     activeApi,
     chains,
@@ -43,6 +47,7 @@ export const DepositContainer = forwardRef<
   } = useWebContext();
 
   const { generateNote } = useBridgeDeposit();
+
   const {
     setGovernedCurrency,
     setWrappableCurrency,
@@ -514,7 +519,15 @@ export const DepositContainer = forwardRef<
 
       <CreateAccountModal
         isOpen={isNoteAccountModalOpen}
-        onOpenChange={(open) => setNoteAccountModalOpen(open)}
+        onOpenChange={async (open) => {
+          setNoteAccountModalOpen(open);
+
+          try {
+            await syncNotes();
+          } catch (error) {
+            console.log('Error while syncing notes', error);
+          }
+        }}
       />
     </>
   );
