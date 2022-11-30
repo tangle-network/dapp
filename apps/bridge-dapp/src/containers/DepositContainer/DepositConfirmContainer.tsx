@@ -75,8 +75,10 @@ export const DepositConfirmContainer = forwardRef<
           destChain?.symbol ?? 'default',
         ],
         wallets: {
-          src: <TokenIcon name={sourceChain?.symbol || 'default'} />,
-          dist: <TokenIcon name={destChain?.symbol || 'default'} />,
+          src: (
+            <TokenIcon size={'lg'} name={sourceChain?.symbol || 'default'} />
+          ),
+          dist: <TokenIcon size={'lg'} name={destChain?.symbol || 'default'} />,
         },
       }));
 
