@@ -1,5 +1,6 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
+import { CancellationToken } from './cancelation-token';
 
 export interface TXresultBase {
   // method: MethodPath;
@@ -42,7 +43,7 @@ export type WebbWithdrawEvents = {
   loading: boolean;
 };
 
-type FixturesStatus = 'Done' | 'Waiting' | 'failed' | number;
+export type FixturesStatus = 'Done' | 'Waiting' | 'failed' | number;
 type FixturesProgress = {
   // Fixture name -> status
   fixturesList: Map<string, FixturesStatus>;
@@ -54,14 +55,14 @@ type LeavesProgress = {
 };
 
 type IntermediateProgress = {
-  name: 'string';
+  name: string;
   data?: any;
 };
 type FailedTransaction = {
   error: string;
   txHash: string;
 };
-type TransactionStatusMap = {
+type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
 
@@ -71,20 +72,39 @@ type TransactionStatusMap = {
   [TransactionState.Intermediate]: IntermediateProgress;
   [TransactionState.SendingTransaction]: string;
 
-  [TransactionState.Done]: string;
+  [TransactionState.Done]: DonePayload;
   [TransactionState.Failed]: FailedTransaction;
 };
 type StatusKey = TransactionState;
 
-type ExecutorClosure = (next: Transaction['next']) => void | Promise<void>;
+type ExecutorClosure<DonePayload> = (
+  next: Transaction<DonePayload>['next']
+) => void | Promise<DonePayload>;
 
-export class Transaction {
+export class Transaction<DonePayload> extends Promise<DonePayload> {
+  cancelToken: CancellationToken = new CancellationToken();
+
   private _status = new BehaviorSubject<
-    [StatusKey, TransactionStatusMap[keyof TransactionStatusMap]]
+    [
+      StatusKey,
+      TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
+    ]
   >([TransactionState.Ideal, undefined]);
-  constructor(public readonly name: string) {}
+  constructor(public readonly name: string) {
+    super((resolve, reject) => {
+      this._status
+        .forEach(([state, data]) => {
+          if (state === TransactionState.Done) {
+            resolve(data as DonePayload);
+          } else if (state === TransactionState.Failed) {
+            reject(data as FailedTransaction);
+          }
+        })
+        .catch(reject);
+    });
+  }
 
-  static new(name: string): Transaction {
+  static new<T>(name: string): Transaction<T> {
     return new Transaction(name);
   }
   private isValidProgress<T extends TransactionState>(next: T): boolean {
@@ -110,9 +130,9 @@ export class Transaction {
     }
     return true;
   }
-  next<T extends keyof TransactionStatusMap>(
-    status: T,
-    data: TransactionStatusMap[T]
+  next<Status extends keyof TransactionStatusMap<DonePayload>>(
+    status: Status,
+    data: TransactionStatusMap<DonePayload>[Status]
   ) {
     if (!this.isValidProgress(status)) {
       throw new Error(
@@ -121,10 +141,23 @@ export class Transaction {
     }
     this._status.next([status, data]);
   }
+  fail(error: string, txHash = '') {
+    this.next(TransactionState.Failed, { error, txHash });
+    throw new Error(error);
+  }
+
+  cancel() {
+    if (!this.isValidProgress(TransactionState.Cancelling)) {
+      throw new Error(
+        `Invalid progress for ${this.name}: from ${this._status.value[0]} to ${TransactionState.Cancelling}`
+      );
+    }
+    this.cancelToken.cancel();
+  }
 
   get currentStatus(): [
     TransactionState,
-    TransactionStatusMap[keyof TransactionStatusMap]
+    TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
   ] {
     return this._status.value;
   }
@@ -132,7 +165,7 @@ export class Transaction {
     return this._status.asObservable();
   }
 
-  executor(handler: ExecutorClosure) {
+  executor(handler: ExecutorClosure<DonePayload>) {
     return handler(this.next.bind(this));
   }
 }
