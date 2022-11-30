@@ -11,7 +11,7 @@ export const LoadingTable = () => {
         </div>
 
         <Typography variant="h5" ta="center" fw="bold">
-          The notes are syncing
+          Syncing notes
         </Typography>
 
         <LoadingText />
