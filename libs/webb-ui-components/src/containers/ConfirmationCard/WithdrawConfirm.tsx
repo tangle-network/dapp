@@ -14,6 +14,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
+  IconWithTooltip,
   InfoItem,
   Progress,
   TitleWithInfo,
@@ -38,6 +39,7 @@ export const WithdrawConfirm = forwardRef<
       fee,
       note,
       onClose,
+      isCopied,
       onCopy,
       onDownload,
       progress,
@@ -190,14 +192,20 @@ export const WithdrawConfirm = forwardRef<
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <div className="flex space-x-2">
-                    <Button
-                      variant="utility"
-                      size="sm"
-                      className="p-2"
-                      onClick={onCopy}
-                    >
-                      <FileCopyLine className="!fill-current" />
-                    </Button>
+                    <IconWithTooltip
+                      icon={
+                        <Button
+                          as="span"
+                          variant="utility"
+                          size="sm"
+                          className="p-2"
+                          onClick={onCopy}
+                        >
+                          <FileCopyLine className="!fill-current" />
+                        </Button>
+                      }
+                      content={isCopied ? 'Copied!' : 'Copy'}
+                    />
                     <Button
                       variant="utility"
                       size="sm"

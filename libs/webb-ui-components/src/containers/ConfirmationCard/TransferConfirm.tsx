@@ -13,6 +13,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
+  IconWithTooltip,
   InfoItem,
   Progress,
   TitleWithInfo,
@@ -32,6 +33,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       fee,
       note,
       onClose,
+      isCopied,
       onCopy,
       onDownload,
       progress,
@@ -183,14 +185,20 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 {note}
               </Typography>
             </div>
-            <Button
-              variant="utility"
-              size="sm"
-              className="p-2"
-              onClick={onCopy}
-            >
-              <FileCopyLine className="!fill-current" />
-            </Button>
+            <IconWithTooltip
+              icon={
+                <Button
+                  as="span"
+                  variant="utility"
+                  size="sm"
+                  className="p-2"
+                  onClick={onCopy}
+                >
+                  <FileCopyLine className="!fill-current" />
+                </Button>
+              }
+              content={isCopied ? 'Copied!' : 'Copy'}
+            />
             <Button
               variant="utility"
               size="sm"
