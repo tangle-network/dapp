@@ -1,7 +1,7 @@
 import { WebbComponentBase } from '../../types';
 
 import { LabelWithValueProps } from '../LabelWithValue/types';
-import { UseCopyableReturnType } from '@webb-tools/webb-ui-components';
+import { UseCopyableReturnType } from '../../hooks';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 

@@ -36,7 +36,55 @@ import {
   useTransactionStage,
 } from '../hooks';
 import { getMessageFromTransactionState } from '../utils';
+function useTxQueue() {
+  const [txQueue, setTxQueue] = useState<TransactionPayload[]>([]);
 
+  const updateTx = useCallback(
+    (txId: string, txUpdate: Partial<TransactionPayload>) => {
+      setTxQueue((prev) => {
+        return prev.map((tx) => {
+          if (tx.id === txId) {
+            return {
+              ...tx,
+              ...txUpdate,
+            };
+          }
+
+          return tx;
+        });
+      });
+    },
+    [setTxQueue]
+  );
+
+  const removeTxFromQueue = useCallback(
+    (id: string) => {
+      setTxQueue((prev) => {
+        return prev.filter((tx) => tx.id !== id);
+      });
+    },
+    [setTxQueue]
+  );
+
+  const addTxToQueue = useCallback(
+    (txPayload: TransactionPayload) => {
+      setTxQueue((prev) => {
+        return [...prev, txPayload];
+      });
+    },
+    [setTxQueue]
+  );
+  const api = useMemo(
+    () => ({
+      updateTx,
+      removeTxFromQueue,
+      addTxToQueue,
+    }),
+    [updateTx, removeTxFromQueue, addTxToQueue]
+  );
+
+  return [txQueue, api];
+}
 const PageBridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<
