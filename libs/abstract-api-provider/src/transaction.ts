@@ -84,15 +84,17 @@ type ExecutorClosure<DonePayload> = (
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
 
-  private _status = new BehaviorSubject<
-    [
-      StatusKey,
-      TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
-    ]
-  >([TransactionState.Ideal, undefined]);
-  constructor(public readonly name: string) {
+  private constructor(
+    public readonly name: string,
+    private readonly _status = new BehaviorSubject<
+      [
+        StatusKey,
+        TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
+      ]
+    >([TransactionState.Ideal, undefined])
+  ) {
     super((resolve, reject) => {
-      this._status
+      _status
         .forEach(([state, data]) => {
           if (state === TransactionState.Done) {
             resolve(data as DonePayload);
@@ -165,7 +167,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     return this._status.asObservable();
   }
 
-  executor(handler: ExecutorClosure<DonePayload>) {
-    return handler(this.next.bind(this));
-  }
+  executor = (handler: ExecutorClosure<DonePayload>) => {
+    return handler(this.next);
+  };
 }
