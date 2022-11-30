@@ -31,7 +31,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { name, ...webbAppConfig } = constants.webbApiConfig;
+  const { webbApiConfig, webbAppConfig } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -86,7 +86,7 @@ export const Header: FC<HeaderProps> = ({
               className="!text-inherit"
               component="span"
             >
-              {name}
+              {webbAppConfig.name}
             </Typography>
           </Button>
 

@@ -28,6 +28,12 @@ export const webbApiConfig: ExternalLink = {
   ...commonExternalProps,
 };
 
+export const webbAppConfig: ExternalLink = {
+  name: 'Webb App',
+  href: 'https://app.webb.tools/#/tornado',
+  ...commonExternalProps,
+};
+
 export const headerNavs: Link[] = [
   {
     name: 'Proposals',
