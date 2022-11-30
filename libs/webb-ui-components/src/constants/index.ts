@@ -23,7 +23,7 @@ export const logoConfig: Link = {
 };
 
 export const webbApiConfig: ExternalLink = {
-  name: 'Tangle Explorer',
+  name: 'Arana Alpha',
   href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
   ...commonExternalProps,
 };
