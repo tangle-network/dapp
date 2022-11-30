@@ -60,7 +60,7 @@ type IntermediateProgress = {
 };
 type FailedTransaction = {
   error: string;
-  txHash: string;
+  txHash?: string;
 };
 type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
@@ -76,7 +76,10 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.Failed]: FailedTransaction;
 };
 type StatusKey = TransactionState;
-
+export type TransactionStatusValue<
+  Key extends StatusKey,
+  DonePayload = any
+> = TransactionStatusMap<DonePayload>[Key];
 type ExecutorClosure<DonePayload> = (
   next: Transaction<DonePayload>['next']
 ) => void | Promise<DonePayload>;
@@ -85,8 +88,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
   readonly id = String(Date.now() + Math.random());
   readonly timestamp = new Date();
+  private _txHash?: string;
   private constructor(
     public readonly name: string,
+    public readonly amount: number,
     private readonly _status = new BehaviorSubject<
       [
         StatusKey,
@@ -107,8 +112,8 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     });
   }
 
-  static new<T>(name: string): Transaction<T> {
-    return new Transaction(name);
+  static new<T>(name: string, amount: number): Transaction<T> {
+    return new Transaction(name, amount);
   }
   private isValidProgress<T extends TransactionState>(next: T): boolean {
     /// TODO implement this and standardise all transactions progress
@@ -144,8 +149,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     }
     this._status.next([status, data]);
   }
-  fail(error: string, txHash = '') {
-    this.next(TransactionState.Failed, { error, txHash });
+  fail(error: string) {
+    this.next(TransactionState.Failed, {
+      error,
+      txHash: this._txHash,
+    });
     throw new Error(error);
   }
 
@@ -164,6 +172,13 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   ] {
     return this._status.value;
   }
+
+  get txHash() {
+    return this._txHash;
+  }
+  set txHash(hash: string) {
+    this._txHash = hash;
+  }
   get $currentStatus() {
     return this._status.asObservable();
   }
@@ -174,7 +189,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     } catch (e) {
       this.next(TransactionState.Failed, {
         error: JSON.stringify(e),
-        txHash: '',
+        txHash: this._txHash,
       });
     }
   };
