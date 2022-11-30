@@ -7,6 +7,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
+  IconWithTooltip,
   InfoItem,
   Progress,
   TitleWithInfo,
@@ -14,7 +15,7 @@ import {
 } from '../../components';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { PropsOf } from '../../types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -29,6 +30,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       fee,
       note,
       onClose,
+      isCopied,
       onCopy,
       onDownload,
       progress = null,
@@ -139,14 +141,20 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   className="text-mono-100 dark:text-mono-80"
                 />
                 <div className="flex space-x-2">
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onCopy}
-                  >
-                    <FileCopyLine className="!fill-current" />
-                  </Button>
+                  <IconWithTooltip
+                    icon={
+                      <Button
+                        as="span"
+                        variant="utility"
+                        size="sm"
+                        className="p-2"
+                        onClick={onCopy}
+                      >
+                        <FileCopyLine className="!fill-current" />
+                      </Button>
+                    }
+                    content={isCopied ? 'Copied!' : 'Copy'}
+                  />
                   <Button
                     variant="utility"
                     size="sm"
