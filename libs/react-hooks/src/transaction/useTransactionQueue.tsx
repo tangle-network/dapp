@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   TransactionItemStatus,
   TransactionPayload,
@@ -9,7 +9,6 @@ import {
   TransactionStatusValue,
 } from '@webb-tools/abstract-api-provider';
 import { TokenIcon } from '@webb-tools/icons';
-import { zip } from 'rxjs';
 
 function transactionItemStatusFromTxStatus<Key extends TransactionState>(
   txStatus: TransactionState
@@ -24,7 +23,34 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
+function mapTxToPayload(tx: Transaction<any>): TransactionPayload {
+  const [txStatus, data] = tx.currentStatus;
+  const { amount, wallets, token, tokens } = tx.metaData;
+  return {
+    id: tx.id,
+    txStatus: {
+      status: transactionItemStatusFromTxStatus(txStatus),
+      message: getTxMessageFromStatus(txStatus, data),
+      txHash: tx.txHash,
+    },
+    amount: String(amount),
+    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+      return `https://explorer.moonbeam.network/${variant}/${addOrTxHash}`;
+    },
+    timestamp: tx.timestamp,
+    token,
+    tokens: tokens,
+    wallets: {
+      src: <TokenIcon size={'lg'} name={wallets.src || 'default'} />,
+      dist: <TokenIcon size={'lg'} name={wallets.dist || 'default'} />,
+    },
+    onDismiss(): void {
+      return;
+    },
 
+    method: tx.name as any,
+  };
+}
 function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
@@ -64,7 +90,10 @@ export function useTxQueue(): [
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
     []
   );
-
+  const subscriptions = useRef<Map<string, { unsubscribe: () => void }>>();
+  useEffect(() => {
+    subscriptions.current = new Map();
+  }, []);
   /**
    * Action by the user to remove the transaction or Dismiss it
    *
@@ -74,60 +103,30 @@ export function useTxQueue(): [
       setTxQueue((txQueue) => {
         return txQueue.filter((tx) => tx.id !== id);
       });
+      if (subscriptions.current?.has(id)) {
+        subscriptions.current.get(id)?.unsubscribe();
+      }
     },
-    [setTxQueue]
+    [setTxQueue, subscriptions]
   );
 
   const registerTransaction = useCallback(
     (tx: Transaction<any>) => {
-      console.log('Register tx', tx);
-      setTxQueue((queue) => [...queue, tx]);
-    },
-    [setTxQueue]
-  );
-  const cancelTransaction = useCallback(
-    (id: string) => {
-      const tx = txQueue.find((tx) => tx.id === id);
-      tx?.cancel();
-    },
-    [txQueue]
-  );
-  useEffect(() => {
-    const txPayloads = txQueue.map((tx): TransactionPayload => {
-      const [txStatus, data] = tx.currentStatus;
-      const { amount, wallets, token, tokens } = tx.metaData;
-      return {
-        id: tx.id,
-        txStatus: {
-          status: transactionItemStatusFromTxStatus(txStatus),
-          message: getTxMessageFromStatus(txStatus, data),
-          txHash: tx.txHash,
-        },
-        amount: String(amount),
-        getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
-          return `https://explorer.moonbeam.network/${variant}/${addOrTxHash}`;
-        },
-        timestamp: tx.timestamp,
-        token,
-        tokens: tokens,
-        wallets: {
-          src: <TokenIcon size={'lg'} name={wallets.src || 'default'} />,
-          dist: <TokenIcon size={'lg'} name={wallets.dist || 'default'} />,
-        },
-        onDismiss(): void {
-          return;
-        },
+      setTxQueue((queue) => {
+        const next = [...queue, tx];
+        setTxPayloads(next.map(mapTxToPayload));
+        return [...queue, tx];
+      });
+      const sub = tx.$currentStatus.subscribe((updatedStatus) => {
+        console.log('updatedStatus', updatedStatus);
 
-        method: tx.name as any,
-      };
-    });
-    console.log('txPayloads', txPayloads);
-    setTxPayloads(txPayloads);
-    const subscribe = zip(txQueue.map((i) => i.$currentStatus)).subscribe(
-      (updatedStatus) => {
         setTxPayloads((txPayloads) => {
-          return txPayloads.map((txPayload, index) => {
-            const [txStatus, data] = updatedStatus[index] ?? [];
+          console.log('txPayloads', txPayloads);
+          return txPayloads.map((txPayload) => {
+            if (txPayload.id !== tx.id) {
+              return txPayload;
+            }
+            const [txStatus, data] = updatedStatus;
             return {
               ...txPayload,
               txStatus: {
@@ -138,10 +137,21 @@ export function useTxQueue(): [
             };
           });
         });
-      }
-    );
-    return () => subscribe.unsubscribe();
-  }, [txQueue, setTxPayloads]);
+      });
+      subscriptions.current?.set(tx.id, sub);
+    },
+    [setTxQueue, setTxPayloads, subscriptions, txQueue, transactionPayloads]
+  );
+  const cancelTransaction = useCallback(
+    (id: string) => {
+      const tx = txQueue.find((tx) => tx.id === id);
+      tx?.cancel();
+    },
+    [txQueue]
+  );
+  useEffect(() => {
+    setTxPayloads(txQueue.map(mapTxToPayload));
+  }, [txQueue]);
 
   const api = useMemo(
     () => ({
@@ -151,6 +161,8 @@ export function useTxQueue(): [
     }),
     [registerTransaction, dismissTransaction, cancelTransaction]
   );
-  console.log(transactionPayloads, 'transactionPayloads');
+  useEffect(() => {
+    console.log('transactionPayloads updated', transactionPayloads);
+  }, [transactionPayloads]);
   return [transactionPayloads, api];
 }

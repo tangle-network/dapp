@@ -155,6 +155,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
         `Invalid progress for ${this.name}: from ${this._status.value[0]} to ${status}`
       );
     }
+    console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
   }
   fail(error: string) {
