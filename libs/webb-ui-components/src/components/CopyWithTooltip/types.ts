@@ -10,6 +10,9 @@ export interface CopyWithTooltipProps extends WebbComponentBase {
   textToCopy: string;
 }
 
+/**
+ * The internal UI component
+ */
 export interface CopyWithTooltipUIProps {
   onClick: () => void;
 

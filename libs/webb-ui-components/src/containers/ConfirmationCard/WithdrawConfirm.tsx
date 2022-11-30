@@ -3,7 +3,6 @@ import {
   Close,
   Download,
   ExternalLinkLine,
-  FileCopyLine,
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -14,7 +13,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
-  IconWithTooltip,
+  CopyWithTooltip,
   InfoItem,
   Progress,
   TitleWithInfo,
@@ -192,20 +191,7 @@ export const WithdrawConfirm = forwardRef<
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <div className="flex space-x-2">
-                    <IconWithTooltip
-                      icon={
-                        <Button
-                          as="span"
-                          variant="utility"
-                          size="sm"
-                          className="p-2"
-                          onClick={onCopy}
-                        >
-                          <FileCopyLine className="!fill-current" />
-                        </Button>
-                      }
-                      content={isCopied ? 'Copied!' : 'Copy'}
-                    />
+                    <CopyWithTooltip textToCopy={note ?? ''} />
                     <Button
                       variant="utility"
                       size="sm"

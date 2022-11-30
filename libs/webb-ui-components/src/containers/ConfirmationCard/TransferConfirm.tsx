@@ -1,9 +1,4 @@
-import {
-  Close,
-  Download,
-  ExternalLinkLine,
-  FileCopyLine,
-} from '@webb-tools/icons';
+import { Close, Download, ExternalLinkLine } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
@@ -13,7 +8,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
-  IconWithTooltip,
+  CopyWithTooltip,
   InfoItem,
   Progress,
   TitleWithInfo,
@@ -185,20 +180,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 {note}
               </Typography>
             </div>
-            <IconWithTooltip
-              icon={
-                <Button
-                  as="span"
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={onCopy}
-                >
-                  <FileCopyLine className="!fill-current" />
-                </Button>
-              }
-              content={isCopied ? 'Copied!' : 'Copy'}
-            />
+            <CopyWithTooltip textToCopy={note ?? ''} />
             <Button
               variant="utility"
               size="sm"
