@@ -8,6 +8,7 @@ import {
   ChainsRing,
   CheckBox,
   InfoItem,
+  KeyValueWithButton,
   Progress,
   TitleWithInfo,
   TokenWithAmount,
@@ -36,6 +37,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       title = 'Confirm Deposit',
       governedTokenSymbol,
       wrappableTokenSymbol,
+      copyProps,
       ...props
     },
     ref
@@ -138,14 +140,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   className="text-mono-100 dark:text-mono-80"
                 />
                 <div className="flex space-x-2">
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onCopy}
-                  >
-                    <FileCopyLine className="!fill-current" />
-                  </Button>
+                  <KeyValueWithButton
+                    keyValue={note ?? ''}
+                    copyProps={copyProps}
+                    isHiddenLabel
+                    isHiddenValue
+                  />
+
                   <Button
                     variant="utility"
                     size="sm"

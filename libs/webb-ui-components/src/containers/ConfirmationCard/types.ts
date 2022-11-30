@@ -1,7 +1,8 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { Avatar, Button, CheckBox, TokensRing } from '../../components';
+import { Avatar, Button, CheckBox } from '../../components';
+import { UseCopyableReturnType } from '../../hooks';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -54,6 +55,8 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The note string
    */
   note?: string;
+
+  copyProps?: UseCopyableReturnType;
 
   /**
    * Callback when user hits copy button

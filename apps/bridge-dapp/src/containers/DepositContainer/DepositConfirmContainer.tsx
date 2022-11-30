@@ -49,7 +49,7 @@ export const DepositConfirmContainer = forwardRef<
     }, []);
 
     // Copy for the deposit confirm
-    const { copy } = useCopyable();
+    const { copy, isCopied } = useCopyable();
     const handleCopy = useCallback(
       (depositPayload: DepositPayload): void => {
         copy(depositPayload.note.serialize() ?? '');

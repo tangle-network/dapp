@@ -8,6 +8,7 @@ import { twMerge } from 'tailwind-merge';
 import { LabelWithValue } from '../LabelWithValue';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { KeyValueWithButtonProps } from './types';
+import { Button } from '@webb-tools/webb-ui-components/components';
 
 /**
  * The `KeyValueWithButton` component contains the key label and the shortened key hash along with a copy button
@@ -29,14 +30,20 @@ export const KeyValueWithButton = forwardRef<
       isHiddenLabel,
       keyValue,
       labelVariant,
+      isHiddenValue,
       size = 'md',
       valueVariant,
       shortenFn,
+      copyProps,
       ...props
     },
     ref
   ) => {
-    const { copy, isCopied } = useCopyable();
+    const localCopyProps = useCopyable();
+    const { copy, isCopied } = useMemo(
+      () => copyProps || localCopyProps,
+      [copyProps, localCopyProps]
+    );
 
     const onCopy = useCallback(() => {
       if (isCopied) {
@@ -72,32 +79,38 @@ export const KeyValueWithButton = forwardRef<
             size === 'md' ? 'space-x-2' : 'space-x-1'
           )}
         >
-          <div className={size === 'md' ? 'py-1 pl-3' : ''}>
-            <Tooltip>
-              <TooltipTrigger onClick={() => copy(keyValue)} asChild>
-                <LabelWithValue
-                  labelVariant={labelVariant}
-                  valueVariant={valueVariant}
-                  isHiddenLabel={isHiddenLabel}
-                  label="Key"
-                  value={value}
-                  className="cursor-default pointer-events-auto"
-                />
-              </TooltipTrigger>
-              <TooltipBody>{keyValue}</TooltipBody>
-            </Tooltip>
-          </div>
+          {isHiddenValue ? null : (
+            <div className={size === 'md' ? 'py-1 pl-3' : ''}>
+              <Tooltip>
+                <TooltipTrigger onClick={() => copy(keyValue)} asChild>
+                  <LabelWithValue
+                    labelVariant={labelVariant}
+                    valueVariant={valueVariant}
+                    isHiddenLabel={isHiddenLabel}
+                    label="Key"
+                    value={value}
+                    className="cursor-default pointer-events-auto"
+                  />
+                </TooltipTrigger>
+                <TooltipBody>{keyValue}</TooltipBody>
+              </Tooltip>
+            </div>
+          )}
           <Tooltip isOpen={isCopied}>
             <TooltipTrigger
               className={cx(
                 size === 'md'
-                  ? 'p-2 bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30'
+                  ? 'bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30'
                   : '',
                 isCopied ? 'cursor-not-allowed' : ''
               )}
               onClick={onCopy}
             >
-              <FileCopyLine className={size === 'md' ? '!fill-current' : ''} />
+              <Button variant="utility" size="sm" className="p-2">
+                <FileCopyLine
+                  className={size === 'md' ? '!fill-current' : ''}
+                />
+              </Button>
             </TooltipTrigger>
             <TooltipBody>{isCopied ? 'Copied' : 'Copy'}</TooltipBody>
           </Tooltip>

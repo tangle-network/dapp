@@ -116,7 +116,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     };
   }
 
-  // TODO: implement the return result
   async deposit(depositPayload: DepositPayload): Promise<NewNotesTxResult> {
     switch (this.state) {
       case TransactionState.Cancelling:
