@@ -11,6 +11,7 @@ import {
   Logo,
   MenuItem,
   ThemeSwitcherMenuItem,
+  ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
 import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
@@ -88,6 +89,8 @@ export const Header: FC<HeaderProps> = ({
               {name}
             </Typography>
           </Button>
+
+          <ThemeSwitcherButton />
 
           <div>
             <Dropdown className="flex items-center justify-center">
