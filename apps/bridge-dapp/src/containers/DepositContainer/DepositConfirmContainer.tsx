@@ -6,11 +6,7 @@ import { TransactionState } from '@webb-tools/dapp-types';
 import { TokenIcon } from '@webb-tools/icons';
 import { useBridgeDeposit } from '@webb-tools/react-hooks';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import {
-  DepositConfirm,
-  getTokenRingValue,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
+import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { DepositConfirmContainerProps } from './types';
 

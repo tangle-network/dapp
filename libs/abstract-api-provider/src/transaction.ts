@@ -83,7 +83,8 @@ type ExecutorClosure<DonePayload> = (
 
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
-
+  readonly id = String(Date.now() + Math.random());
+  readonly timestamp = new Date();
   private constructor(
     public readonly name: string,
     private readonly _status = new BehaviorSubject<
@@ -168,6 +169,13 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   }
 
   executor = (handler: ExecutorClosure<DonePayload>) => {
-    return handler(this.next);
+    try {
+      return handler(this.next);
+    } catch (e) {
+      this.next(TransactionState.Failed, {
+        error: JSON.stringify(e),
+        txHash: '',
+      });
+    }
   };
 }
