@@ -11,6 +11,7 @@ import {
   ExternalLinkLine,
   TokenIcon,
 } from '@webb-tools/icons';
+import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
   Button,
   Dropdown,
@@ -26,7 +27,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { EmptyTable } from '../../components/tables';
+import { EmptyTable, LoadingTable } from '../../components/tables';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
@@ -131,6 +132,8 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
   onUploadSpendNote,
 }) => {
+  const { isSyncingNote } = useNoteAccount();
+
   const columns = useMemo<Array<ColumnDef<SpendNoteDataType, any>>>(() => {
     return [
       ...staticColumns,
@@ -154,6 +157,10 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
       fuzzy: fuzzyFilter,
     },
   });
+
+  if (isSyncingNote) {
+    return <LoadingTable />;
+  }
 
   if (!data.length) {
     return (

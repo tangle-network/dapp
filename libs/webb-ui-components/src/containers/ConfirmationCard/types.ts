@@ -56,6 +56,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   note?: string;
 
   /**
+   * The boolean value indicating if the copy button is click
+   */
+  isCopied?: boolean;
+
+  /**
    * Callback when user hits copy button
    * @returns void
    */

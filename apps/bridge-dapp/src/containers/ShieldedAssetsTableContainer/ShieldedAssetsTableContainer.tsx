@@ -13,6 +13,7 @@ import {
   TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
   Button,
   fuzzyFilter,
@@ -25,7 +26,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
-import { EmptyTable } from '../../components/tables';
+import { EmptyTable, LoadingTable } from '../../components/tables';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
@@ -127,6 +128,8 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({ data = [], onUploadSpendNote }) => {
+  const { isSyncingNote } = useNoteAccount();
+
   const onTransfer = useCallback(() => {
     console.warn('Transfer is not implemented yet');
   }, []);
@@ -196,6 +199,10 @@ export const ShieldedAssetsTableContainer: FC<
       fuzzy: fuzzyFilter,
     },
   });
+
+  if (isSyncingNote) {
+    return <LoadingTable />;
+  }
 
   if (!data.length) {
     return (

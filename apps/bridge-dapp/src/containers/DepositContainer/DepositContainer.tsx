@@ -6,6 +6,7 @@ import {
   useCurrencies,
   useCurrenciesBalances,
   useCurrencyBalance,
+  useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useModal } from '@webb-tools/ui-hooks';
@@ -20,18 +21,19 @@ import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ChainSelectionWrapper, WalletModal } from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositContainerProps } from './types';
-import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
 >(({ setTxPayload, ...props }, ref) => {
   const { setMainComponent } = useWebbUI();
+
   const {
     activeApi,
     chains,
@@ -43,6 +45,7 @@ export const DepositContainer = forwardRef<
   } = useWebContext();
 
   const { generateNote } = useBridgeDeposit();
+
   const {
     setGovernedCurrency,
     setWrappableCurrency,
@@ -68,6 +71,11 @@ export const DepositContainer = forwardRef<
   const balances = useCurrenciesBalances(
     governedCurrencies.concat(wrappableCurrencies)
   );
+
+  const { syncNotes } = useNoteAccount();
+
+  // State for note account creation success
+  const [isNoteAccountCreated, setIsNoteAccountCreated] = useState(false);
 
   const [isGeneratingNote, setIsGeneratingNote] = useState(false);
   const [sourceChain, setSourceChain] = useState<Chain | undefined>(undefined);
@@ -445,6 +453,23 @@ export const DepositContainer = forwardRef<
     handleTokenChange,
   ]);
 
+  const handleOpenChange = useCallback(
+    async (nextOpen: boolean) => {
+      setNoteAccountModalOpen(nextOpen);
+
+      // If the modal close and the user has a note account
+      // then we will sync the notes
+      if (!nextOpen && isNoteAccountCreated) {
+        try {
+          await syncNotes();
+        } catch (error) {
+          console.log('Error while syncing notes', error);
+        }
+      }
+    },
+    [isNoteAccountCreated, setNoteAccountModalOpen, syncNotes]
+  );
+
   return (
     <>
       <div {...props} ref={ref}>
@@ -514,7 +539,9 @@ export const DepositContainer = forwardRef<
 
       <CreateAccountModal
         isOpen={isNoteAccountModalOpen}
-        onOpenChange={(open) => setNoteAccountModalOpen(open)}
+        onOpenChange={handleOpenChange}
+        isSuccess={isNoteAccountCreated}
+        onIsSuccessChange={(success) => setIsNoteAccountCreated(success)}
       />
     </>
   );
