@@ -9,9 +9,9 @@ const ThemeSwitcherButton = () => {
   const Icon = useMemo(() => {
     const preferredTheme = isDarkMode ? 'dark' : 'light';
     switch (preferredTheme) {
-      case 'light':
-        return <SunLine size="lg" />;
       case 'dark':
+        return <SunLine size="lg" />;
+      case 'light':
         return <MoonLine size="lg" />;
       default:
         return (
