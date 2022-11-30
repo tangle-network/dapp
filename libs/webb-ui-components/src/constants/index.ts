@@ -29,8 +29,8 @@ export const webbApiConfig: ExternalLink = {
 };
 
 export const webbAppConfig: ExternalLink = {
-  name: 'Webb App',
-  href: 'https://app.webb.tools/#/tornado',
+  name: 'Minerva Bridge',
+  href: 'https://webb-bridge-dapp.netlify.app/',
   ...commonExternalProps,
 };
 
