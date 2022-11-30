@@ -118,8 +118,15 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     };
   }
 
-  async deposit(depositPayload: DepositPayload): Transaction<NewNotesTxResult> {
-    const depositTx = new Transaction<NewNotesTxResult>();
+  deposit(depositPayload: DepositPayload): Transaction<NewNotesTxResult> {
+    const amount = depositPayload.params[0].amount;
+
+    const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
+      wallets: { src: 'ETH', dist: 'ETH' },
+      tokens: ['wETH', 'WebbETH'],
+      token: 'WebbETH',
+      amount: Number(amount),
+    });
     const ex = async () => {
       const abortSignal = depositTx.cancelToken.abortSignal;
       const bridge = this.inner.methods.bridgeApi.getBridge();
@@ -135,8 +142,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       try {
         const note = depositPayload.note.note;
         const utxo = depositPayload.params[0];
-
-        const amount = depositPayload.params[0].amount;
 
         const sourceEvmId = await this.inner.getChainId();
         const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);

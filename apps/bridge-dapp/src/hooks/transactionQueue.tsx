@@ -8,6 +8,8 @@ import {
   TransactionState,
   TransactionStatusValue,
 } from '@webb-tools/abstract-api-provider';
+import { TokenIcon } from '@webb-tools/icons';
+import { zip } from 'rxjs';
 
 function transactionItemStatusFromTxStatus<Key extends TransactionState>(
   txStatus: TransactionState
@@ -22,6 +24,7 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
+
 function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
@@ -84,6 +87,7 @@ export function useTxQueue() {
   useEffect(() => {
     const txPayloads = txQueue.map((tx): TransactionPayload => {
       const [txStatus, data] = tx.currentStatus;
+      const { amount, wallets, token, tokens } = tx.metaData;
       return {
         id: tx.id,
         txStatus: {
@@ -91,10 +95,43 @@ export function useTxQueue() {
           message: getTxMessageFromStatus(txStatus, data),
           txHash: tx.txHash,
         },
-        amount: tx.amount,
-        method: tx.name,
+        amount: String(amount),
+        getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
+          return `https://explorer.moonbeam.network/${variant}/${addOrTxHash}`;
+        },
+        timestamp: tx.timestamp,
+        token,
+        tokens: tokens,
+        wallets: {
+          src: <TokenIcon size={'lg'} name={wallets.src || 'default'} />,
+          dist: <TokenIcon size={'lg'} name={wallets.dist || 'default'} />,
+        },
+        onDismiss(): void {
+          return;
+        },
+
+        method: tx.name as any,
       };
     });
+    setTxPayloads(txPayloads);
+    const subscribe = zip(txQueue.map((i) => i.$currentStatus)).subscribe(
+      (updatedStatus) => {
+        setTxPayloads((txPayloads) => {
+          return txPayloads.map((txPayload, index) => {
+            const [txStatus, data] = updatedStatus[index];
+            return {
+              ...txPayload,
+              txStatus: {
+                ...txPayload.txStatus,
+                status: transactionItemStatusFromTxStatus(txStatus),
+                message: getTxMessageFromStatus(txStatus, data),
+              },
+            };
+          });
+        });
+      }
+    );
+    return () => subscribe.unsubscribe();
   }, [txQueue, setTxPayloads]);
 
   const api = useMemo(
@@ -105,6 +142,6 @@ export function useTxQueue() {
     }),
     [registerTransaction, dismissTransaction, cancelTransaction]
   );
-
+  console.log(transactionPayloads, 'transactionPayloads');
   return [transactionPayloads, api];
 }

@@ -83,7 +83,15 @@ export type TransactionStatusValue<
 type ExecutorClosure<DonePayload> = (
   next: Transaction<DonePayload>['next']
 ) => void | Promise<DonePayload>;
-
+type TransactionMetaData = {
+  amount: number;
+  tokens: [string, string];
+  wallets: {
+    src: string;
+    dist: string;
+  };
+  token: string;
+};
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
   readonly id = String(Date.now() + Math.random());
@@ -91,7 +99,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   private _txHash?: string;
   private constructor(
     public readonly name: string,
-    public readonly amount: number,
+    public readonly metaData: TransactionMetaData,
     private readonly _status = new BehaviorSubject<
       [
         StatusKey,
@@ -112,8 +120,8 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     });
   }
 
-  static new<T>(name: string, amount: number): Transaction<T> {
-    return new Transaction(name, amount);
+  static new<T>(name: string, metadata: TransactionMetaData): Transaction<T> {
+    return new Transaction(name, metadata);
   }
   private isValidProgress<T extends TransactionState>(next: T): boolean {
     /// TODO implement this and standardise all transactions progress
@@ -173,10 +181,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     return this._status.value;
   }
 
-  get txHash() {
+  get txHash(): string | undefined {
     return this._txHash;
   }
-  set txHash(hash: string) {
+  set txHash(hash: string | undefined) {
     this._txHash = hash;
   }
   get $currentStatus() {
