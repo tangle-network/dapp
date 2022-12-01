@@ -31,7 +31,7 @@ export const DepositConfirmContainer = forwardRef<
     const [isDepositing, setIsDepositing] = useState(false);
     const [progress, setProgress] = useState<number | null>(null);
 
-    const { deposit, stage, setStage } = useBridgeDeposit();
+    const { deposit, stage } = useBridgeDeposit();
     const { setMainComponent, notificationApi } = useWebbUI();
 
     const { activeApi } = useWebContext();
@@ -87,10 +87,7 @@ export const DepositConfirmContainer = forwardRef<
         setIsDepositing(true);
         downloadNote(depositPayload);
         await deposit(depositPayload);
-        setStage(TransactionState.Done);
-        setStage(TransactionState.Ideal);
       } catch (error) {
-        setStage(TransactionState.Failed);
         console.log('Deposit error', error);
         notificationApi({
           variant: 'error',
@@ -110,7 +107,6 @@ export const DepositConfirmContainer = forwardRef<
       isDepositing,
       notificationApi,
       setMainComponent,
-      setStage,
       setTxPayload,
       sourceChain?.symbol,
       token?.symbol,

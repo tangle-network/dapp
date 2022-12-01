@@ -24,10 +24,15 @@ export interface VBridgeDepositApi {
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
-  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
   const [error] = useState('');
-  const [txPayloads, txQueueApi] = useTxQueue();
+  const { txQueue, api: txQueueApi } = useTxQueue();
+
+  const stage = useMemo(() => {
+    return (
+      txQueue[txQueue.length - 1]?.currentStatus[0] ?? TransactionState.Ideal
+    );
+  }, [txQueue]);
 
   /// api
   const depositApi = useMemo(() => {
@@ -82,7 +87,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   return {
     stage,
-    setStage,
+    setStage: () => {},
     depositApi,
     deposit,
     generateNote,

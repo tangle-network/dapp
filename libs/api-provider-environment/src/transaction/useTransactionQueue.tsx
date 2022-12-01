@@ -77,14 +77,15 @@ function getTxMessageFromStatus<Key extends TransactionState>(
   }
   return '';
 }
-export type TransactionQueueApi = [
-  TransactionPayload[],
-  {
+export type TransactionQueueApi = {
+  txPayloads: TransactionPayload[];
+  txQueue: Transaction<any>[];
+  api: {
     cancelTransaction(id: string): void;
     dismissTransaction(id: string): void;
     registerTransaction(tx: Transaction<any>): void;
-  }
-];
+  };
+};
 export function useTxApiQueue(): TransactionQueueApi {
   const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
@@ -153,16 +154,22 @@ export function useTxApiQueue(): TransactionQueueApi {
     setTxPayloads(txQueue.map(mapTxToPayload));
   }, [txQueue]);
 
-  const api = useMemo(
+  return useMemo(
     () => ({
-      cancelTransaction,
-      dismissTransaction,
-      registerTransaction,
+      txQueue,
+      txPayloads: transactionPayloads,
+      api: {
+        cancelTransaction,
+        dismissTransaction,
+        registerTransaction,
+      },
     }),
-    [registerTransaction, dismissTransaction, cancelTransaction]
+    [
+      transactionPayloads,
+      txQueue,
+      registerTransaction,
+      dismissTransaction,
+      cancelTransaction,
+    ]
   );
-  useEffect(() => {
-    console.log('transactionPayloads updated', transactionPayloads);
-  }, [transactionPayloads]);
-  return [transactionPayloads, api];
 }
