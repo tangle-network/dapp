@@ -22,7 +22,6 @@ export const DepositConfirmContainer = forwardRef<
       token,
       sourceChain,
       destChain,
-      setTxPayload,
       wrappableTokenSymbol,
     },
     ref
@@ -56,28 +55,6 @@ export const DepositConfirmContainer = forwardRef<
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
 
-      setTxPayload((prev) => ({
-        ...prev,
-        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
-        amount: amount.toString(),
-        timestamp: new Date(),
-        method: 'Deposit',
-        txStatus: {
-          status: 'in-progress',
-        },
-        token: token?.symbol,
-        tokens: [
-          sourceChain?.symbol ?? 'default',
-          destChain?.symbol ?? 'default',
-        ],
-        wallets: {
-          src: (
-            <TokenIcon size={'lg'} name={sourceChain?.symbol || 'default'} />
-          ),
-          dist: <TokenIcon size={'lg'} name={destChain?.symbol || 'default'} />,
-        },
-      }));
-
       if (isDepositing) {
         setMainComponent(undefined);
         return;
@@ -107,7 +84,6 @@ export const DepositConfirmContainer = forwardRef<
       isDepositing,
       notificationApi,
       setMainComponent,
-      setTxPayload,
       sourceChain?.symbol,
       token?.symbol,
     ]);
