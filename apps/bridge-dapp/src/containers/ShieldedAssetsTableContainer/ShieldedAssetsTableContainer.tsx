@@ -136,9 +136,24 @@ export const ShieldedAssetsTableContainer: FC<
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const onTransfer = useCallback((shieldedAsset: ShieldedAssetDataType) => {
-    console.warn('Transfer is not implemented yet');
-  }, []);
+  const onTransfer = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Transfer');
+
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
 
   const onDeposit = useCallback(
     (shieldedAsset: ShieldedAssetDataType) => {
@@ -159,9 +174,24 @@ export const ShieldedAssetsTableContainer: FC<
     ]
   );
 
-  const onWithdraw = useCallback((shieldedAsset: ShieldedAssetDataType) => {
-    console.warn('Withdraw is not implemented yet');
-  }, []);
+  const onWithdraw = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Withdraw');
+
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
 
   const columns = useMemo<Array<ColumnDef<ShieldedAssetDataType, any>>>(
     () => [
