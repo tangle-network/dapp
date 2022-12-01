@@ -32,7 +32,7 @@ export type Thresholds = {
   publicKey: PublicKey;
 };
 
-export type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
+export type UpcomingThresholdStats = 'Next';
 
 /**
  * Upcoming threshold stats
@@ -45,7 +45,7 @@ export type UpcomingThresholdStats = 'Pending' | 'Next' | 'Current';
  *
  * */
 export type UpcomingThreshold = {
-  stats: 'Pending' | 'Next' | 'Current';
+  stats: 'Next';
   session: string;
   keyGen: string;
   signature: string;
@@ -205,30 +205,6 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               : '-',
           };
 
-          const current: UpcomingThreshold = {
-            authoritySet: {
-              count: authSet.length,
-              firstElements: authSet.slice(0, 3),
-            },
-            keyGen: String(keyGenThreshold?.current ?? '-'),
-            signature: String(signatureThreshold?.current ?? '-'),
-            proposer: String(proposersCount),
-            session: session.id,
-            stats: 'Current',
-          };
-
-          const pending: UpcomingThreshold = {
-            authoritySet: {
-              count: nextAuthSet.length,
-              firstElements: nextAuthSet.slice(0, 3),
-            },
-            keyGen: String(keyGenThreshold?.pending ?? '-'),
-            signature: String(signatureThreshold?.pending ?? '-'),
-            proposer: String(proposersCount),
-            session: session.id,
-            stats: 'Pending',
-          };
-
           const next: UpcomingThreshold = {
             authoritySet: {
               count: nextAuthSet.length,
@@ -248,8 +224,6 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
               threshold,
               {
                 next,
-                pending,
-                current,
               },
             ],
           };
