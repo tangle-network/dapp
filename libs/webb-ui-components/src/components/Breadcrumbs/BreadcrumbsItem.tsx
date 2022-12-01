@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { NavLink } from 'react-router-dom';
+import { Chip } from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { WebbComponentBase } from '../../types';
 
 interface BreadcrumbsItemPropsType extends WebbComponentBase {
@@ -24,10 +26,18 @@ export const BreadcrumbsItem = React.forwardRef<
   if (path) {
     return (
       <NavLink to={path} className="cursor-pointer">
-        <span className={className} ref={ref}>
+        <Chip color="grey" isDisabled={true}>
+          <div className="flex items-center justify-between gap-x-2">
+            {icon}
+            <Typography variant="label" fw="normal" className="capitalize">
+              {children}
+            </Typography>
+          </div>
+        </Chip>
+        {/* <span className={className} ref={ref}>
           {icon}
           {children}
-        </span>
+        </span> */}
       </NavLink>
     );
   }

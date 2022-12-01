@@ -1,3 +1,12 @@
+import {
+  GridFill,
+  Key,
+  ShieldKeyhole,
+  TeamFill,
+  UserStarFill,
+  FoldersFill,
+  FileCodeLine,
+} from '@webb-tools/icons';
 import { Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
 import { ArrowRight } from '@webb-tools/icons';
 
@@ -12,9 +21,7 @@ export const NavBoxInfoContainer = () => {
         <BreadcrumbsItem icon={<ArrowRight />} path="/keys">
           World
         </BreadcrumbsItem>
-        <BreadcrumbsItem icon={<ArrowRight />}>
-          Web3
-        </BreadcrumbsItem>
+        <BreadcrumbsItem icon={<ArrowRight />}>Web3</BreadcrumbsItem>
       </Breadcrumbs>
 
       {/* Blocks Info */}
