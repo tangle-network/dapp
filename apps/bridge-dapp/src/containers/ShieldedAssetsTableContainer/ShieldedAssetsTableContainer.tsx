@@ -127,20 +127,71 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
 
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
-> = ({ data = [], onUploadSpendNote }) => {
+> = ({
+  data = [],
+  onUploadSpendNote,
+  onActiveTabChange,
+  onDefaultDestinationChainChange,
+  onDefaultGovernedCurrencyChange,
+}) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const onTransfer = useCallback(() => {
-    console.warn('Transfer is not implemented yet');
-  }, []);
+  const onTransfer = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Transfer');
 
-  const onDeposit = useCallback(() => {
-    console.warn('Deposit is not implemented yet');
-  }, []);
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
 
-  const onWithdraw = useCallback(() => {
-    console.warn('Withdraw is not implemented yet');
-  }, []);
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
+
+  const onDeposit = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Deposit');
+
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
+
+  const onWithdraw = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Withdraw');
+
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
 
   const columns = useMemo<Array<ColumnDef<ShieldedAssetDataType, any>>>(
     () => [
@@ -148,7 +199,9 @@ export const ShieldedAssetsTableContainer: FC<
 
       columnHelper.accessor('assetsUrl', {
         header: 'Action',
-        cell: () => {
+        cell: (props) => {
+          const shieldedAsset = props.row.original;
+
           return (
             <div className="flex items-center space-x-1">
               <ActionWithTooltip content="Deposit">
@@ -156,7 +209,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onDeposit}
+                  onClick={() => onDeposit(shieldedAsset)}
                 >
                   <AddBoxLineIcon className="!fill-current" />
                 </Button>
@@ -167,7 +220,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onTransfer}
+                  onClick={() => onTransfer(shieldedAsset)}
                 >
                   <SendPlanLineIcon className="!fill-current" />
                 </Button>
@@ -178,7 +231,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onWithdraw}
+                  onClick={() => onWithdraw(shieldedAsset)}
                 >
                   <WalletLineIcon className="!fill-current" />
                 </Button>
@@ -236,7 +289,7 @@ const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
   children,
 }) => {
   return (
-    <Tooltip>
+    <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipBody>
         <Typography variant="body3">{content}</Typography>

@@ -149,6 +149,11 @@ export interface AmountInputComponentProps extends InputWrapperComponentProps {
    * The amount menu props to pass into the AmountMenu component
    */
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
+
+  /**
+   * Override props of input element
+   */
+  overrideInputProps?: Omit<InputProps, 'id'>;
 }
 
 export interface FixedAmountProps

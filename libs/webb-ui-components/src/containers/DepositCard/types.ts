@@ -1,13 +1,7 @@
-import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
+import { PropsOf } from '../../types';
 
-import {
-  AmountInput,
-  Button,
-  ChainInput,
-  ShieldedAssetInput,
-  TokenInput,
-} from '../../components';
+import { AmountInput, Button, ChainInput, TokenInput } from '../../components';
 
 export interface DepositCardProps extends PropsOf<'div'> {
   /**

@@ -31,6 +31,7 @@ export const AmountInput = forwardRef<
       onAmountChange,
       onMaxBtnClick,
       title = 'Amount',
+      overrideInputProps,
       ...props
     },
     ref
@@ -90,6 +91,7 @@ export const AmountInput = forwardRef<
               placeholder="0"
               size="sm"
               autoComplete="off"
+              {...overrideInputProps}
             />
           </div>
 
