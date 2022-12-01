@@ -7,7 +7,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTxApiQueue } from '../transaction';
+import { useTxQueue } from '../transaction';
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<NewNotesTxResult>;
   cancel(): Promise<void>;
@@ -27,7 +27,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
   const [error] = useState('');
-  const [txPayloads, txQueueApi] = useTxApiQueue();
+  const [txPayloads, txQueueApi] = useTxQueue();
 
   /// api
   const depositApi = useMemo(() => {
@@ -37,21 +37,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.inner;
   }, [activeApi]);
-
-  // hook events
-  useEffect(() => {
-    if (!depositApi) {
-      return;
-    }
-
-    depositApi.on('stateChange', (state) => {
-      setStage(state);
-    });
-
-    return () => {
-      depositApi.unsubscribeAll();
-    };
-  }, [depositApi]);
 
   const generateNote = useCallback(
     async (

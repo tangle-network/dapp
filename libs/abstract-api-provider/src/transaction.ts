@@ -92,36 +92,46 @@ type TransactionMetaData = {
   };
   token: string;
 };
+
+type PromiseExec<T> = (
+  resolve: (value: T | PromiseLike<T>) => void,
+  reject: (reason?: any) => void
+) => void;
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
   readonly id = String(Date.now() + Math.random());
   readonly timestamp = new Date();
   private _txHash?: string;
   private constructor(
+    executor: PromiseExec<DonePayload>,
     public readonly name: string,
     public readonly metaData: TransactionMetaData,
-    private readonly _status = new BehaviorSubject<
+    private readonly _status: BehaviorSubject<
       [
         StatusKey,
         TransactionStatusMap<DonePayload>[keyof TransactionStatusMap<DonePayload>]
       ]
-    >([TransactionState.Ideal, undefined])
+    >
   ) {
-    super((resolve, reject) => {
-      _status
+    super(executor);
+  }
+
+  static new<T>(name: string, metadata: TransactionMetaData): Transaction<T> {
+    const status = new BehaviorSubject<
+      [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
+    >([TransactionState.Ideal, undefined]);
+    const exec: PromiseExec<T> = (resolve, reject) => {
+      status
         .forEach(([state, data]) => {
           if (state === TransactionState.Done) {
-            resolve(data as DonePayload);
+            resolve(data as T);
           } else if (state === TransactionState.Failed) {
             reject(data as FailedTransaction);
           }
         })
         .catch(reject);
-    });
-  }
-
-  static new<T>(name: string, metadata: TransactionMetaData): Transaction<T> {
-    return new Transaction(name, metadata);
+    };
+    return new Transaction(exec, name, metadata, status);
   }
   private isValidProgress<T extends TransactionState>(next: T): boolean {
     /// TODO implement this and standardise all transactions progress
