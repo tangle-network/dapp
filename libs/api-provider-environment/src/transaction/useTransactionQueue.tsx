@@ -175,6 +175,7 @@ export function useTxApiQueue(): TransactionQueueApi {
       },
     }),
     [
+      mainTxId,
       transactionPayloads,
       txQueue,
       registerTransaction,

@@ -26,10 +26,10 @@ export const DepositConfirmContainer = forwardRef<
     ref
   ) => {
     const [checked, setChecked] = useState(false);
-    const [isDepositing, setIsDepositing] = useState(false);
 
-    const { deposit, stage } = useBridgeDeposit();
+    const { deposit, stage, startNewTransaction } = useBridgeDeposit();
     const { setMainComponent, notificationApi } = useWebbUI();
+    const [progress, setProgress] = useState<null | number>(null);
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
@@ -52,11 +52,13 @@ export const DepositConfirmContainer = forwardRef<
       },
       [copy]
     );
-
+    console.log(depositTxInProgress, 'in progress');
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
-
+      // Start a new transaction
       if (depositTxInProgress) {
+        console.log('Start a new transaction');
+        startNewTransaction();
         setMainComponent(undefined);
         return;
       }
@@ -85,6 +87,7 @@ export const DepositConfirmContainer = forwardRef<
       setMainComponent,
       sourceChain?.symbol,
       token?.symbol,
+      startNewTransaction,
     ]);
 
     const activeChains = useMemo<string[]>(() => {
@@ -160,7 +163,7 @@ export const DepositConfirmContainer = forwardRef<
     return (
       <DepositConfirm
         title={
-          isDepositing
+          depositTxInProgress
             ? wrappingFlow
               ? 'Wrap and deposit in progress'
               : 'Deposit in Progress'
@@ -172,7 +175,7 @@ export const DepositConfirmContainer = forwardRef<
         progress={progress}
         actionBtnProps={{
           isDisabled: !checked,
-          children: isDepositing
+          children: depositTxInProgress
             ? 'New Transaction'
             : wrappingFlow
             ? 'Wrap And Deposit'

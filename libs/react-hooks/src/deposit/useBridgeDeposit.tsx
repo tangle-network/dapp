@@ -19,9 +19,9 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
   stage: TransactionState;
-  setStage(stage: TransactionState): void;
   error: string;
   depositApi: VAnchorDeposit<any> | null;
+  startNewTransaction(): void;
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
@@ -36,7 +36,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     const lastTx = txQueue[txQueue.length - 1];
     return lastTx.currentStatus[0];
   }, [txQueue, txPayloads, currentTxId]);
-
+  console.log(currentTxId, 'current tx id');
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.variableAnchor.deposit;
@@ -88,10 +88,10 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     return depositApi.cancel().catch(console.error);
   }, [depositApi]);
   const setStage = useCallback(() => {}, []);
-  console.log(stage, 'stage  ');
+
   return {
     stage,
-    setStage,
+    startNewTransaction: txQueueApi.startNewTransaction,
     depositApi,
     deposit,
     generateNote,
