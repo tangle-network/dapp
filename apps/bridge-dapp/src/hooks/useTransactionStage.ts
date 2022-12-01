@@ -26,7 +26,6 @@ export const useTransactionStage = (
     recipient: '',
     destination: undefined,
   });
-
   switch (method) {
     case 'Deposit':
       return { stage: depositStage, setStage: setDepositStage };

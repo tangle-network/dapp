@@ -153,7 +153,6 @@ export function useTxApiQueue(): TransactionQueueApi {
   useEffect(() => {
     setTxPayloads(txQueue.map(mapTxToPayload));
   }, [txQueue]);
-
   return useMemo(
     () => ({
       txQueue,

@@ -6,8 +6,9 @@ import {
   VAnchorDeposit,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTxQueue } from '../transaction';
+
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<NewNotesTxResult>;
   cancel(): Promise<void>;
@@ -29,6 +30,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { txQueue, api: txQueueApi } = useTxQueue();
 
   const stage = useMemo(() => {
+    console.log('use memo update`');
     return (
       txQueue[txQueue.length - 1]?.currentStatus[0] ?? TransactionState.Ideal
     );
@@ -84,7 +86,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.cancel().catch(console.error);
   }, [depositApi]);
-
+  console.log(stage, 'stage');
   return {
     stage,
     setStage: () => {},

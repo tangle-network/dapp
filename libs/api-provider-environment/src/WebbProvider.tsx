@@ -841,7 +841,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   }, []);
 
   const txQueue = useTxApiQueue();
-
   return (
     <WebbContext.Provider
       value={{
