@@ -147,6 +147,10 @@ export const DepositConfirmContainer = forwardRef<
           setProgress(25);
           break;
         }
+        case TransactionState.Intermediate: {
+          setProgress(40);
+          break;
+        }
 
         case TransactionState.GeneratingZk: {
           setProgress(50);
