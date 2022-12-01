@@ -289,7 +289,7 @@ const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
   children,
 }) => {
   return (
-    <Tooltip>
+    <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipBody>
         <Typography variant="body3">{content}</Typography>
