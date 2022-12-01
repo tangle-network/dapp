@@ -80,10 +80,12 @@ function getTxMessageFromStatus<Key extends TransactionState>(
 export type TransactionQueueApi = {
   txPayloads: TransactionPayload[];
   txQueue: Transaction<any>[];
+  currentTxId: string | null;
   api: {
     cancelTransaction(id: string): void;
     dismissTransaction(id: string): void;
     registerTransaction(tx: Transaction<any>): void;
+    startNewTransaction(): void;
   };
 };
 export function useTxApiQueue(): TransactionQueueApi {
@@ -92,6 +94,7 @@ export function useTxApiQueue(): TransactionQueueApi {
     []
   );
   const subscriptions = useRef<Map<string, { unsubscribe: () => void }>>();
+  const [mainTxId, setMainTxId] = useState<null | string>(null);
   useEffect(() => {
     subscriptions.current = new Map();
   }, []);
@@ -113,6 +116,7 @@ export function useTxApiQueue(): TransactionQueueApi {
 
   const registerTransaction = useCallback(
     (tx: Transaction<any>) => {
+      setMainTxId(tx.id);
       setTxQueue((queue) => {
         const next = [...queue, tx];
         setTxPayloads(next.map(mapTxToPayload));
@@ -150,17 +154,24 @@ export function useTxApiQueue(): TransactionQueueApi {
     },
     [txQueue]
   );
+
   useEffect(() => {
     setTxPayloads(txQueue.map(mapTxToPayload));
   }, [txQueue]);
+  const startNewTransaction = useCallback(() => {
+    setMainTxId(null);
+  }, [setMainTxId]);
+
   return useMemo(
     () => ({
       txQueue,
       txPayloads: transactionPayloads,
+      currentTxId: mainTxId,
       api: {
         cancelTransaction,
         dismissTransaction,
         registerTransaction,
+        startNewTransaction,
       },
     }),
     [

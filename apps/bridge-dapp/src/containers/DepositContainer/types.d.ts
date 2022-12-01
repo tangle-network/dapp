@@ -5,14 +5,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 
-export interface DepositContainerProps extends PropsOf<'div'> {
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
-}
+export interface DepositContainerProps extends PropsOf<'div'> {}
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
@@ -40,12 +33,6 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    */
   destChain?: ChainType;
 
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
   /**
    * The signal to wrap and deposit flow
    * */

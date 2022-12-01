@@ -79,8 +79,12 @@ export const WebbContext = React.createContext<WebbContextState>({
   appEvent: new AppEvent(),
   txQueue: {
     txQueue: [],
+    currentTxId: null,
     txPayloads: [],
     api: {
+      startNewTransaction() {
+        return;
+      },
       cancelTransaction(_id: string) {
         return;
       },

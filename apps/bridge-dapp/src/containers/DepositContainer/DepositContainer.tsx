@@ -30,7 +30,7 @@ import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/Depo
 export const DepositContainer = forwardRef<
   HTMLDivElement,
   DepositContainerProps
->(({ setTxPayload, ...props }, ref) => {
+>(({ ...props }, ref) => {
   const { setMainComponent } = useWebbUI();
   const {
     activeApi,
@@ -348,7 +348,6 @@ export const DepositContainer = forwardRef<
         <DepositConfirmContainer
           wrappingFlow={Boolean(wrappbleTokenAddress)}
           wrappableTokenSymbol={governedCurrency?.view.symbol}
-          setTxPayload={setTxPayload}
           amount={amount}
           token={selectedToken}
           sourceChain={selectedSourceChain}
@@ -370,7 +369,6 @@ export const DepositContainer = forwardRef<
     setMainComponent,
     setNoteAccountModalOpen,
     generateNote,
-    setTxPayload,
     selectedSourceChain,
     destChainInputValue,
     wrappableCurrency,

@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { TransactionState } from '@webb-tools/dapp-types';
 import {
   BlockIcon,
   CoinIcon,
@@ -12,14 +11,12 @@ import {
   TabsList,
   TabsRoot,
   TabTrigger,
-  TransactionPayload,
   TransactionQueueCard,
-  TransactionItemStatus,
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ManageButton } from '../components/tables';
 import {
   ShieldedAssetsTableContainer,
@@ -30,13 +27,9 @@ import {
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
-import {
-  useShieldedAssets,
-  useSpendNotes,
-  useTransactionStage,
-} from '../hooks';
-import { getMessageFromTransactionState } from '../utils';
+import { useShieldedAssets, useSpendNotes } from '../hooks';
 import { useTxQueue } from '@webb-tools/react-hooks';
+
 const PageBridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<
@@ -44,47 +37,11 @@ const PageBridge = () => {
   >('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { stage, setStage } = useTransactionStage(activeTab);
   const { noteManager } = useWebContext();
   const { txPayloads } = useTxQueue();
 
-  const defaultTx: Partial<TransactionPayload> = useMemo(() => {
-    let status: TransactionItemStatus = 'in-progress';
-
-    switch (stage) {
-      case TransactionState.Done: {
-        status = 'completed';
-        break;
-      }
-
-      case TransactionState.Failed: {
-        status = 'warning';
-        break;
-      }
-    }
-
-    return {
-      id: '1',
-      getExplorerURI(addOrTxHash, variant) {
-        return '#';
-      },
-      txStatus: {
-        status,
-      },
-      onDetails: () => {
-        console.log('On detail');
-      },
-      onDismiss: () => {
-        setStage(TransactionState.Ideal);
-      },
-    };
-  }, [stage, setStage]);
-
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
-
-  // Transatcion payload for queue card
-  const [txPayload, setTxPayload] = useState(defaultTx);
 
   // Callback to open upload modal
   const handleOpenUploadModal = useCallback(() => {
@@ -96,45 +53,6 @@ const PageBridge = () => {
 
   // Spend notes table data
   const spendNotesTableData = useSpendNotes();
-
-  useEffect(() => {
-    const message = getMessageFromTransactionState(stage);
-
-    if (message.length) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'in-progress',
-          message: `${message}...`,
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Done) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'completed',
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Failed) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'warning',
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Ideal) {
-      setTxPayload(defaultTx);
-    }
-  }, [defaultTx, stage]);
 
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
@@ -163,13 +81,13 @@ const PageBridge = () => {
             <TabTrigger value="Withdraw">Withdraw</TabTrigger>
           </TabsList>
           <TabContent value="Deposit">
-            <DepositContainer setTxPayload={setTxPayload} />
+            <DepositContainer />
           </TabContent>
           <TabContent value="Transfer">
             <TransferContainer />
           </TabContent>
           <TabContent value="Withdraw">
-            <WithdrawContainer setTxPayload={setTxPayload} />
+            <WithdrawContainer />
           </TabContent>
         </TabsRoot>
 
