@@ -73,7 +73,7 @@ export const Header: FC<HeaderProps> = ({
         </NavLink>
 
         {/** Center the nav */}
-        <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+        <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 rounded-full bg-mono-20 dark:bg-mono-140 py-1.5">
           <ul className="flex items-center space-x-9">
             {constants.headerNavs.map(({ name, path }) => (
               <NavButton key={`${name}-${path}`} path={path}>
@@ -187,16 +187,10 @@ const NavButton: FC<PropsWithChildren<{ path: string }>> = ({
       {({ isActive }) => (
         <span
           className={cx(
-            'px-3 py-1 font-bold rounded-full body1',
-            'bg-mono-0 dark:bg-mono-180',
+            'px-3 py-1.5 font-bold rounded-full body1',
             isActive
-              ? 'text-blue dark:text-blue-40'
-              : 'text-mono-160 dark:text-mono-40',
-            isActive && 'pointer-events-none',
-            !isActive &&
-              ' hover:bg-blue-0 dark:hover:bg-blue-120 dark:hover:text-blue-10 ',
-            !isActive &&
-              'active:bg-blue-0 active:text-blue dark:active:bg-blue-120 dark:active:text-blue-30'
+              ? 'bg-mono-180 text-mono-20 dark:bg-mono-20 dark:text-mono-160 pointer-events-none'
+              : 'bg-mono-20 text-mono-100 dark:bg-mono-140 dark:text-mono-40'
           )}
         >
           {children}

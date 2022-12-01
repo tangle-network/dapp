@@ -36,16 +36,16 @@ export const webbAppConfig: ExternalLink = {
 
 export const headerNavs: Link[] = [
   {
-    name: 'Proposals',
-    path: 'proposals',
+    name: 'Keys',
+    path: 'keys',
   },
   {
     name: 'Authorities',
     path: 'authorities',
   },
   {
-    name: 'Keys',
-    path: 'keys',
+    name: 'Proposals',
+    path: 'proposals',
   },
 ];
 
