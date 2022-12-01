@@ -3,7 +3,6 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { TokenIcon } from '@webb-tools/icons';
 import { useBridgeDeposit } from '@webb-tools/react-hooks';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
@@ -28,11 +27,13 @@ export const DepositConfirmContainer = forwardRef<
   ) => {
     const [checked, setChecked] = useState(false);
     const [isDepositing, setIsDepositing] = useState(false);
-    const [progress, setProgress] = useState<number | null>(null);
 
     const { deposit, stage } = useBridgeDeposit();
     const { setMainComponent, notificationApi } = useWebbUI();
-
+    const depositTxInProgress = useMemo(
+      () => stage !== TransactionState.Ideal,
+      [stage]
+    );
     const { activeApi } = useWebContext();
     // Download for the deposit confirm
     const downloadNote = useCallback((depositPayload: DepositPayload) => {
@@ -44,7 +45,7 @@ export const DepositConfirmContainer = forwardRef<
     }, []);
 
     // Copy for the deposit confirm
-    const { copy, isCopied } = useCopyable();
+    const { copy } = useCopyable();
     const handleCopy = useCallback(
       (depositPayload: DepositPayload): void => {
         copy(depositPayload.note.serialize() ?? '');
@@ -55,13 +56,12 @@ export const DepositConfirmContainer = forwardRef<
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
 
-      if (isDepositing) {
+      if (depositTxInProgress) {
         setMainComponent(undefined);
         return;
       }
 
       try {
-        setIsDepositing(true);
         downloadNote(depositPayload);
         await deposit(depositPayload);
       } catch (error) {
@@ -72,7 +72,6 @@ export const DepositConfirmContainer = forwardRef<
           secondaryMessage: 'Something went wrong when depositing',
         });
       } finally {
-        setIsDepositing(false);
         setMainComponent(undefined);
       }
     }, [
@@ -81,7 +80,7 @@ export const DepositConfirmContainer = forwardRef<
       depositPayload,
       destChain?.symbol,
       downloadNote,
-      isDepositing,
+      depositTxInProgress,
       notificationApi,
       setMainComponent,
       sourceChain?.symbol,
