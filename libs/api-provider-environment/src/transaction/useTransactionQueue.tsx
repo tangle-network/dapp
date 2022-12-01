@@ -123,10 +123,7 @@ export function useTxApiQueue(): TransactionQueueApi {
         return [...queue, tx];
       });
       const sub = tx.$currentStatus.subscribe((updatedStatus) => {
-        console.log('updatedStatus', updatedStatus);
-
         setTxPayloads((txPayloads) => {
-          console.log('txPayloads', txPayloads);
           return txPayloads.map((txPayload) => {
             if (txPayload.id !== tx.id) {
               return txPayload;

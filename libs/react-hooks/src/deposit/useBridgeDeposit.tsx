@@ -36,7 +36,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     const lastTx = txQueue[txQueue.length - 1];
     return lastTx.currentStatus[0];
   }, [txQueue, txPayloads, currentTxId]);
-  console.log(currentTxId, 'current tx id');
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.variableAnchor.deposit;
@@ -87,7 +86,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.cancel().catch(console.error);
   }, [depositApi]);
-  const setStage = useCallback(() => {}, []);
 
   return {
     stage,
