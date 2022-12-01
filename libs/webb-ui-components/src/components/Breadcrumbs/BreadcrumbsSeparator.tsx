@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { WebbComponentBase } from '../../types';
-
-interface BreadcrumbsSeparatorPropsType extends WebbComponentBase {}
+import { BreadcrumbsSeparatorPropsType } from './types';
 
 export const BreadcrumbsSeparator = React.forwardRef<
   HTMLSpanElement,

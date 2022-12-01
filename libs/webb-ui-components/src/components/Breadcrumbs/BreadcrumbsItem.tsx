@@ -3,12 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { NavLink } from 'react-router-dom';
 import { Chip } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
-import { WebbComponentBase } from '../../types';
-
-interface BreadcrumbsItemPropsType extends WebbComponentBase {
-  path?: string;
-  icon?: React.ReactNode;
-}
+import { BreadcrumbsItemPropsType } from './types';
 
 export const BreadcrumbsItem = React.forwardRef<
   HTMLDivElement,
@@ -16,7 +11,10 @@ export const BreadcrumbsItem = React.forwardRef<
 >((props, ref) => {
   const { path, icon, children, className: classNameProp } = props;
 
-  const baseClsx = useMemo(() => 'flex items-center gap-2', []);
+  const baseClsx = useMemo(
+    () => 'flex items-center justify-between gap-x-2',
+    []
+  );
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
@@ -26,26 +24,27 @@ export const BreadcrumbsItem = React.forwardRef<
   if (path) {
     return (
       <NavLink to={path} className="cursor-pointer">
-        <Chip color="grey" isDisabled={true}>
-          <div className="flex items-center justify-between gap-x-2">
-            {icon}
-            <Typography variant="label" fw="normal" className="capitalize">
-              {children}
-            </Typography>
-          </div>
-        </Chip>
-        {/* <span className={className} ref={ref}>
+        <Chip color="grey" isDisabled={false} className={className} ref={ref}>
           {icon}
-          {children}
-        </span> */}
+          <Typography variant="label" fw="normal" className="capitalize">
+            {children}
+          </Typography>
+        </Chip>
       </NavLink>
     );
   }
 
   return (
-    <div className={className} ref={ref}>
+    <Chip
+      color="grey"
+      isDisabled={true}
+      className={twMerge(className, 'ml-3 mb-[0.4px]')}
+      ref={ref}
+    >
       {icon}
-      {children}
-    </div>
+      <Typography variant="label" fw="normal" className="capitalize">
+        {children}
+      </Typography>
+    </Chip>
   );
 });

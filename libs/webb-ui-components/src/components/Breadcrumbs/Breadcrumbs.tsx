@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { WebbComponentBase } from '../../types';
+import { BreadcrumbsPropsType } from './types';
 import { BreadcrumbsSeparator } from './BreadcrumbsSeparator';
-
-interface BreadcrumbsPropsType extends WebbComponentBase {
-  separator?: string | React.ReactNode;
-}
 
 export const Breadcrumbs = React.forwardRef<
   HTMLDivElement,
@@ -26,7 +22,7 @@ export const Breadcrumbs = React.forwardRef<
     );
   });
 
-  const baseClsx = useMemo(() => 'flex items-center gap-4', []);
+  const baseClsx = useMemo(() => 'flex items-center', []);
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),
