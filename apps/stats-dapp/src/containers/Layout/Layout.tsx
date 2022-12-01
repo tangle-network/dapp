@@ -12,6 +12,7 @@ import { StatsProvider } from '@webb-tools/stats-dapp/provider/stats-provider';
 import { FC, PropsWithChildren, useMemo, useState } from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 import { RetryLink } from '@apollo/client/link/retry';
+import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
     const storedEndpoint = localStorage.getItem('statsEndpoint');
@@ -79,6 +80,9 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         connectedEndpoint={connectedEndpoint}
         setConnectedEndpoint={setEndpoint}
       />
+
+      <NavBoxInfoContainer />
+
       <ApolloProvider client={apolloClient}>
         <StatsProvider blockTime={6} sessionHeight={600}>
           <main className="max-w-[1160px] mx-auto">{children}</main>
