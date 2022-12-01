@@ -1,3 +1,7 @@
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { Chain } from '@webb-tools/dapp-config';
+import { NoteAccountTableContainerProps } from '../types';
+
 export interface SpendNotesTableContainerProps {}
 
 export interface SpendNoteDataType {
@@ -40,14 +44,20 @@ export interface SpendNoteDataType {
    * The actual note
    */
   note: string;
+
+  /**
+   * The raw destination chain object
+   */
+  rawChain: Chain;
+
+  /**
+   * The raw governed currency object
+   */
+  rawGovernedCurrency: Currency | undefined;
 }
 
-export interface SpendNotesTableContainerProps {
-  /**
-   * The upload spend note callback
-   */
-  onUploadSpendNote?: () => void;
-
+export interface SpendNotesTableContainerProps
+  extends NoteAccountTableContainerProps {
   /**
    * The spend notes data
    * @default []

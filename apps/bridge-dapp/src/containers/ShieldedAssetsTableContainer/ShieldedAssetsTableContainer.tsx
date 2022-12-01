@@ -127,18 +127,39 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
 
 export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
-> = ({ data = [], onUploadSpendNote }) => {
+> = ({
+  data = [],
+  onUploadSpendNote,
+  onActiveTabChange,
+  onDefaultDestinationChainChange,
+  onDefaultGovernedCurrencyChange,
+}) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const onTransfer = useCallback(() => {
+  const onTransfer = useCallback((shieldedAsset: ShieldedAssetDataType) => {
     console.warn('Transfer is not implemented yet');
   }, []);
 
-  const onDeposit = useCallback(() => {
-    console.warn('Deposit is not implemented yet');
-  }, []);
+  const onDeposit = useCallback(
+    (shieldedAsset: ShieldedAssetDataType) => {
+      onActiveTabChange?.('Deposit');
 
-  const onWithdraw = useCallback(() => {
+      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawGovernedCurrency) {
+        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultGovernedCurrencyChange,
+    ]
+  );
+
+  const onWithdraw = useCallback((shieldedAsset: ShieldedAssetDataType) => {
     console.warn('Withdraw is not implemented yet');
   }, []);
 
@@ -148,7 +169,9 @@ export const ShieldedAssetsTableContainer: FC<
 
       columnHelper.accessor('assetsUrl', {
         header: 'Action',
-        cell: () => {
+        cell: (props) => {
+          const shieldedAsset = props.row.original;
+
           return (
             <div className="flex items-center space-x-1">
               <ActionWithTooltip content="Deposit">
@@ -156,7 +179,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onDeposit}
+                  onClick={() => onDeposit(shieldedAsset)}
                 >
                   <AddBoxLineIcon className="!fill-current" />
                 </Button>
@@ -167,7 +190,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onTransfer}
+                  onClick={() => onTransfer(shieldedAsset)}
                 >
                   <SendPlanLineIcon className="!fill-current" />
                 </Button>
@@ -178,7 +201,7 @@ export const ShieldedAssetsTableContainer: FC<
                   variant="utility"
                   size="sm"
                   className="p-2"
-                  onClick={onWithdraw}
+                  onClick={() => onWithdraw(shieldedAsset)}
                 >
                   <WalletLineIcon className="!fill-current" />
                 </Button>

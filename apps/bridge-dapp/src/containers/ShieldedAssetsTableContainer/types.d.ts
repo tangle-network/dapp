@@ -1,3 +1,7 @@
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { Chain } from '@webb-tools/dapp-config';
+import { NoteAccountTableContainerProps } from '../types';
+
 /**
  * The shielded asset data type for table
  *
@@ -39,14 +43,20 @@ export interface ShieldedAssetDataType {
    * The total number of notes
    */
   numberOfNotesFound: number;
+
+  /**
+   * The raw destination chain object
+   */
+  rawChain: Chain;
+
+  /**
+   * The raw governed currency object
+   */
+  rawGovernedCurrency: Currency | undefined;
 }
 
-export interface ShieldedAssetsTableContainerProps {
-  /**
-   * The upload spend note callback
-   */
-  onUploadSpendNote?: () => void;
-
+export interface ShieldedAssetsTableContainerProps
+  extends NoteAccountTableContainerProps {
   /**
    * The shielded assets data
    * @default []

@@ -131,6 +131,9 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
   onUploadSpendNote,
+  onActiveTabChange,
+  onDefaultDestinationChainChange,
+  onDefaultGovernedCurrencyChange,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
