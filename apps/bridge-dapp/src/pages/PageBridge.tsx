@@ -36,6 +36,7 @@ import {
   useTransactionStage,
 } from '../hooks';
 import { getMessageFromTransactionState } from '../utils';
+import { useTxQueue } from '@webb-tools/react-hooks';
 const PageBridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<
@@ -45,6 +46,7 @@ const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
   const { stage, setStage } = useTransactionStage(activeTab);
   const { noteManager } = useWebContext();
+  const { txPayloads } = useTxQueue();
 
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
     let status: TransactionItemStatus = 'in-progress';
@@ -135,8 +137,8 @@ const PageBridge = () => {
   }, [defaultTx, stage]);
 
   const isDisplayTxQueueCard = useMemo(
-    () => stage !== TransactionState.Ideal,
-    [stage]
+    () => txPayloads.length > 0,
+    [txPayloads]
   );
 
   return (
@@ -176,7 +178,7 @@ const PageBridge = () => {
           {isDisplayTxQueueCard && (
             <TransactionQueueCard
               className="w-full mb-4 max-w-none"
-              transactions={[txPayload as TransactionPayload]}
+              transactions={txPayloads}
             />
           )}
 

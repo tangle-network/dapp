@@ -30,10 +30,12 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { txQueue, api: txQueueApi } = useTxQueue();
 
   const stage = useMemo(() => {
-    console.log('use memo update`');
-    return (
-      txQueue[txQueue.length - 1]?.currentStatus[0] ?? TransactionState.Ideal
-    );
+    console.log(txQueue.length, 'tx queue length');
+    if (txQueue.length === 0) {
+      return TransactionState.Ideal;
+    }
+    const lastTx = txQueue[txQueue.length - 1];
+    return lastTx.currentStatus[0];
   }, [txQueue]);
 
   /// api
@@ -86,10 +88,11 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.cancel().catch(console.error);
   }, [depositApi]);
-  console.log(stage, 'stage');
+  const setStage = useCallback(() => {}, []);
+  console.log(stage, 'stage  ');
   return {
     stage,
-    setStage: () => {},
+    setStage,
     depositApi,
     deposit,
     generateNote,
