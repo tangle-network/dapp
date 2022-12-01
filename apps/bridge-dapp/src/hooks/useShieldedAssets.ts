@@ -1,6 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useNoteAccount, useCurrencies } from '@webb-tools/react-hooks';
+import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React from 'react';
@@ -58,7 +58,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         acc.push({
           chain: chain.name,
+          rawChain: chain,
           governedTokenSymbol: tokenSymbol,
+          rawGovernedCurrency: governedCurrency,
           assetsUrl,
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol

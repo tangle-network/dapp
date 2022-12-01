@@ -1,4 +1,6 @@
+import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import {
   BlockIcon,
@@ -6,6 +8,7 @@ import {
   HelpLineIcon,
   SosLineIcon,
 } from '@webb-tools/icons';
+import { useScrollActions } from '@webb-tools/responsive-utils';
 import {
   Button,
   TabContent,
@@ -29,6 +32,7 @@ import {
 
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
+import { NoteAccountTableContainerProps } from '../containers/types';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   useShieldedAssets,
@@ -46,6 +50,8 @@ const PageBridge = () => {
   const { customMainComponent } = useWebbUI();
   const { stage, setStage } = useTransactionStage(activeTab);
   const { noteManager } = useWebContext();
+
+  const { smoothScrollToTop } = useScrollActions();
 
   const defaultTx: Partial<TransactionPayload> = useMemo(() => {
     let status: TransactionItemStatus = 'in-progress';
@@ -85,10 +91,56 @@ const PageBridge = () => {
   // Transatcion payload for queue card
   const [txPayload, setTxPayload] = useState(defaultTx);
 
+  // Default state for destination chain and governed currency
+  // when action buttons are clicked in the note account table
+  const [defaultDestinationChain, setDefaultDestinationChain] = useState<
+    Chain | undefined
+  >(undefined);
+  const [defaultGovernedCurrency, setDefaultGovernedCurrency] = useState<
+    Currency | undefined
+  >(undefined);
+
+  // Callback to update the default destination chain and governed currency
+  const updateDefaultDestinationChain = useCallback(
+    (chain: Chain) => {
+      smoothScrollToTop();
+      setDefaultDestinationChain(chain);
+    },
+    [smoothScrollToTop]
+  );
+
+  const updateDefaultGovernedCurrency = useCallback((currency: Currency) => {
+    setDefaultGovernedCurrency(currency);
+  }, []);
+
   // Callback to open upload modal
   const handleOpenUploadModal = useCallback(() => {
     setUploadModalIsOpen(true);
   }, []);
+
+  // Callback to change the active tab
+  const handleChangeTab = useCallback(
+    (tab: 'Deposit' | 'Withdraw' | 'Transfer') => {
+      setActiveTab(tab);
+    },
+    []
+  );
+
+  const sharedNoteAccountTableContainerProps =
+    useMemo<NoteAccountTableContainerProps>(
+      () => ({
+        onActiveTabChange: handleChangeTab,
+        onOpenUploadModal: handleOpenUploadModal,
+        onDefaultDestinationChainChange: updateDefaultDestinationChain,
+        onDefaultGovernedCurrencyChange: updateDefaultGovernedCurrency,
+      }),
+      [
+        handleChangeTab,
+        handleOpenUploadModal,
+        updateDefaultDestinationChain,
+        updateDefaultGovernedCurrency,
+      ]
+    );
 
   // Shielded assets table data
   const shieldedAssetsTableData = useShieldedAssets();
@@ -162,7 +214,11 @@ const PageBridge = () => {
             <TabTrigger value="Withdraw">Withdraw</TabTrigger>
           </TabsList>
           <TabContent value="Deposit">
-            <DepositContainer setTxPayload={setTxPayload} />
+            <DepositContainer
+              defaultDestinationChain={defaultDestinationChain}
+              defaultGovernedCurrency={defaultGovernedCurrency}
+              setTxPayload={setTxPayload}
+            />
           </TabContent>
           <TabContent value="Transfer">
             <TransferContainer />
@@ -267,13 +323,13 @@ const PageBridge = () => {
           <TabContent value="shielded-assets">
             <ShieldedAssetsTableContainer
               data={shieldedAssetsTableData}
-              onUploadSpendNote={handleOpenUploadModal}
+              {...sharedNoteAccountTableContainerProps}
             />
           </TabContent>
           <TabContent value="available-spend-notes">
             <SpendNotesTableContainer
               data={spendNotesTableData}
-              onUploadSpendNote={handleOpenUploadModal}
+              {...sharedNoteAccountTableContainerProps}
             />
           </TabContent>
         </TabsRoot>

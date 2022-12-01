@@ -131,6 +131,9 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
   onUploadSpendNote,
+  onActiveTabChange,
+  onDefaultDestinationChainChange,
+  onDefaultGovernedCurrencyChange,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -141,13 +144,24 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
       columnHelper.accessor('assetsUrl', {
         header: '',
         cell: (props) => {
-          const note = props.row.original.note;
+          const data = props.row.original;
 
-          return <ActionDropdownButton note={note} />;
+          return (
+            <ActionDropdownButton
+              onActiveTabChange={onActiveTabChange}
+              onDefaultDestinationChainChange={onDefaultDestinationChainChange}
+              onDefaultGovernedCurrencyChange={onDefaultGovernedCurrencyChange}
+              data={data}
+            />
+          );
         },
       }),
     ];
-  }, []);
+  }, [
+    onActiveTabChange,
+    onDefaultDestinationChainChange,
+    onDefaultGovernedCurrencyChange,
+  ]);
 
   const table = useReactTable({
     data,
@@ -186,16 +200,52 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   );
 };
 
-const ActionDropdownButton: FC<{ note: string }> = ({ note }) => {
+const ActionDropdownButton: FC<
+  { data: SpendNoteDataType } & Pick<
+    SpendNotesTableContainerProps,
+    | 'onActiveTabChange'
+    | 'onDefaultDestinationChainChange'
+    | 'onDefaultGovernedCurrencyChange'
+  >
+> = ({
+  data,
+  onActiveTabChange,
+  onDefaultDestinationChainChange,
+  onDefaultGovernedCurrencyChange,
+}) => {
   const onQuickTransfer = useCallback(() => {
-    console.log('Trying to quick transfer with note: ', note);
-    console.warn('Quick transfer haven"t implemented yet ');
-  }, [note]);
+    const { rawChain, rawGovernedCurrency } = data;
+
+    onActiveTabChange?.('Transfer');
+
+    onDefaultDestinationChainChange?.(rawChain);
+
+    if (rawGovernedCurrency) {
+      onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+    }
+  }, [
+    data,
+    onActiveTabChange,
+    onDefaultDestinationChainChange,
+    onDefaultGovernedCurrencyChange,
+  ]);
 
   const onQuickWithdraw = useCallback(() => {
-    console.log('Trying to quick withdraw with note: ', note);
-    console.warn('Quick withdraw haven"t implemented yet ');
-  }, [note]);
+    const { rawChain, rawGovernedCurrency } = data;
+
+    onActiveTabChange?.('Withdraw');
+
+    onDefaultDestinationChainChange?.(rawChain);
+
+    if (rawGovernedCurrency) {
+      onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+    }
+  }, [
+    data,
+    onActiveTabChange,
+    onDefaultDestinationChainChange,
+    onDefaultGovernedCurrencyChange,
+  ]);
 
   return (
     <Dropdown>

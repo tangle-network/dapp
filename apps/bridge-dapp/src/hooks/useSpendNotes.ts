@@ -1,6 +1,5 @@
 import { randRecentDate } from '@ngneat/falso';
 import { Currency } from '@webb-tools/abstract-api-provider';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
@@ -88,7 +87,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           acc.push({
             governedTokenSymbol: note.note.tokenSymbol,
+            rawGovernedCurrency: governedCurrency,
             chain: chain.name.toLowerCase(),
+            rawChain: chain,
             note: note.serialize(),
             assetsUrl,
             composition: wrappableCurrencies.map(

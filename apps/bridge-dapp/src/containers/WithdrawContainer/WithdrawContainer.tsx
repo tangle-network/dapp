@@ -17,14 +17,14 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ setTxPayload }, ref) => {
+>(({ setTxPayload, defaultGovernedCurrency }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -232,6 +232,13 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     wrappableCurrency?.view.symbol,
   ]);
+
+  // Effect to update the governed currency when the default governed currency changes.
+  useEffect(() => {
+    if (defaultGovernedCurrency) {
+      setGovernedCurrency(defaultGovernedCurrency);
+    }
+  }, [defaultGovernedCurrency, setGovernedCurrency]);
 
   return (
     <div>

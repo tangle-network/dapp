@@ -1,6 +1,6 @@
 import { dimensionContext } from './DimensionsProvider';
 import { size } from '..';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
 export const useDimensions = () => {
   const {
@@ -14,4 +14,17 @@ export const useScroll = () => {
     state: { scroll },
   } = useContext(dimensionContext);
   return scroll;
+};
+
+export const useScrollActions = () => {
+  const smoothScrollToTop = useCallback(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, []);
+
+  return {
+    smoothScrollToTop,
+  };
 };
