@@ -171,8 +171,8 @@ export function useTxApiQueue(): TransactionQueueApi {
   );
 
   useEffect(() => {
-    setTxPayloads(txQueue.map(mapTxToPayload));
-  }, [txQueue]);
+    setTxPayloads(txQueue.map((tx) => mapTxToPayload(tx, dismissTransaction)));
+  }, [txQueue, dismissTransaction]);
   const startNewTransaction = useCallback(() => {
     setMainTxId(null);
   }, [setMainTxId]);
