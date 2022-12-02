@@ -5,8 +5,10 @@ import {
   chainsPopulated,
   currenciesConfig,
 } from '@webb-tools/dapp-config';
+import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
+  useBridgeDeposit,
   useNoteAccount,
   useRelayers,
 } from '@webb-tools/react-hooks';
@@ -29,6 +31,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
   CurrencyBalanceRecordType,
@@ -47,6 +50,8 @@ export const TransferContainer = forwardRef<
   const { setMainComponent } = useWebbUI();
 
   const { allNotes } = useNoteAccount();
+
+  const { generateNote } = useBridgeDeposit();
 
   // Get the current preset type chain id from the active chain
   const currentTypedChainId = useMemo(() => {
@@ -433,38 +438,74 @@ export const TransferContainer = forwardRef<
 
   // Boolean state for whether the transfer button is disabled
   const isTransferButtonDisabled = useMemo<boolean>(() => {
-    const availableAmount = selectedBridgingAsset?.balance ?? 0;
-
     return [
       Boolean(governedCurrency), // No governed currency selected
       Boolean(destChain),
       isValidAmount, // Is valid amount
       Boolean(recipient), // No recipient address
     ].some((value) => value === false);
-  }, [
-    destChain,
-    governedCurrency,
-    isValidAmount,
-    recipient,
-    selectedBridgingAsset?.balance,
-  ]);
+  }, [destChain, governedCurrency, isValidAmount, recipient]);
 
-  // Callback for transfer button clicked
-  const handleTransferClick = useCallback(async () => {
-    console.log('Transfer clicked');
-  }, []);
+  // Input notes for current amount
+  const inputNotes = useMemo(() => {
+    if (!destChain || !governedCurrency) {
+      return [];
+    }
+
+    const destTypedChainId = calculateTypedChainId(
+      destChain.chainType,
+      destChain.chainId
+    );
+
+    const avaiNotes =
+      allNotes
+        .get(destTypedChainId.toString())
+        ?.filter(
+          (note) => note.note.tokenSymbol === governedCurrency.view.symbol
+        ) ?? [];
+
+    return (
+      NoteManager.getNotesFifo(
+        avaiNotes,
+        ethers.utils.parseUnits(
+          amount.toString(),
+          governedCurrency.view.decimals
+        )
+      ) ?? []
+    );
+  }, [allNotes, amount, destChain, governedCurrency]);
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
-    const availableAmount = selectedBridgingAsset?.balance ?? 0;
+    const spentValue = inputNotes.reduce<ethers.BigNumber>(
+      (acc, note) => acc.add(ethers.BigNumber.from(note.note.amount)),
+      ethers.BigNumber.from(0)
+    );
+
+    const changeAmountBigNumber = governedCurrency
+      ? spentValue.sub(
+          ethers.utils.parseUnits(
+            amount.toString(),
+            governedCurrency.view.decimals
+          )
+        )
+      : ethers.BigNumber.from(0);
 
     const transferAmount = isValidAmount
       ? getRoundedAmountString(amount)
       : undefined;
 
-    const changeAmount = isValidAmount
-      ? getRoundedAmountString(availableAmount - amount)
-      : undefined;
+    const changeAmount =
+      isValidAmount && governedCurrency
+        ? getRoundedAmountString(
+            Number(
+              ethers.utils.formatUnits(
+                changeAmountBigNumber,
+                governedCurrency.view.decimals
+              )
+            )
+          )
+        : undefined;
 
     return {
       transferAmount,
@@ -473,9 +514,64 @@ export const TransferContainer = forwardRef<
     };
   }, [
     amount,
+    governedCurrency,
+    inputNotes,
     isValidAmount,
-    selectedBridgingAsset?.balance,
     selectedBridgingAsset?.symbol,
+  ]);
+
+  // Callback for transfer button clicked
+  const handleTransferClick = useCallback(async () => {
+    const availableAmount = selectedBridgingAsset?.balance ?? 0;
+
+    if (!governedCurrency || !destChain || !activeApi?.state?.activeBridge) {
+      throw new Error(
+        "Can't transfer without a governed currency or dest chain"
+      );
+    }
+
+    const destTypedChainId = calculateTypedChainId(
+      destChain.chainType,
+      destChain.chainId
+    );
+
+    // Find the mixerId (target) of the selected inputs
+    const mixerId = activeApi.state.activeBridge.targets[destTypedChainId];
+
+    // Calculate the chain note if the change amount is greater than 0
+    const changeAmountBigNumber =
+      Number(infoCalculated.changeAmount ?? '0') > 0
+        ? await generateNote(
+            mixerId,
+            destTypedChainId,
+            Number(infoCalculated.changeAmount),
+            undefined
+          ).then((note) => note.note.serialize())
+        : undefined;
+
+    setMainComponent(
+      <TransferConfirmContainer
+        className="w-[550px] h-[720px]"
+        amount={amount}
+        changeAmount={availableAmount - amount}
+        currency={governedCurrency}
+        destChain={destChain}
+        recipient={recipient}
+        relayer={activeRelayer}
+        note={changeAmountBigNumber}
+      />
+    );
+  }, [
+    activeApi?.state.activeBridge,
+    activeRelayer,
+    amount,
+    destChain,
+    generateNote,
+    governedCurrency,
+    infoCalculated.changeAmount,
+    recipient,
+    selectedBridgingAsset?.balance,
+    setMainComponent,
   ]);
 
   useEffect(() => {

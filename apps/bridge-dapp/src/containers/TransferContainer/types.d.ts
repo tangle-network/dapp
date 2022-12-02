@@ -1,6 +1,6 @@
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { BridgeTabContainerProps } from '../types';
-import { Currency } from '@webb-tools/abstract-api-provider';
+import { ActiveWebbRelayer, Currency } from '@webb-tools/abstract-api-provider';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Chain } from '@webb-tools/dapp-config';
 
@@ -31,3 +31,41 @@ export type CurrencyBalanceRecordType = Record<
 export interface TransferContainerProps
   extends BridgeTabContainerProps,
     PropsOf<'div'> {}
+
+export interface TransferConfirmContainerProps
+  extends Omit<PropsOf<'div'>, 'onCopy'> {
+  /**
+   * The transfer bridging asset
+   */
+  currency: Currency;
+
+  /**
+   * The destination chain
+   */
+  destChain: Chain;
+
+  /**
+   * The amount to transfer
+   */
+  amount: number;
+
+  /**
+   * The change amount
+   */
+  changeAmount: number;
+
+  /**
+   * The active relayer
+   */
+  relayer: ActiveWebbRelayer | null;
+
+  /**
+   * The recipient address
+   */
+  recipient: string;
+
+  /**
+   * The change note
+   */
+  note?: string | null;
+}

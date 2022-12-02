@@ -43,7 +43,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The transaction progress
    */
-  progress: number | null;
+  progress?: number | null;
 
   /**
    * Fee amount
@@ -53,7 +53,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The note string
    */
-  note?: string;
+  note?: string | null;
 
   /**
    * The boolean value indicating if the copy button is click
