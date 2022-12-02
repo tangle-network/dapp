@@ -38,10 +38,7 @@ export const DepositConfirmContainer = forwardRef<
     // Download for the deposit confirm
     const downloadNote = useCallback((depositPayload: DepositPayload) => {
       const note = depositPayload?.note?.serialize() ?? '';
-      downloadString(
-        JSON.stringify(note),
-        note.slice(-note.length - 10) + '.json'
-      );
+      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
     }, []);
 
     // Copy for the deposit confirm
