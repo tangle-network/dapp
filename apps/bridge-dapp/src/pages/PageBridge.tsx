@@ -43,15 +43,12 @@ const PageBridge = () => {
 
   const { customMainComponent } = useWebbUI();
   const { noteManager } = useWebContext();
-const { smoothScrollToTop } = useScrollActions();
+  const { smoothScrollToTop } = useScrollActions();
 
   const { txPayloads } = useTxQueue();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
-
-  // Transatcion payload for queue card
-  const [txPayload, setTxPayload] = useState(defaultTx);
 
   // Default state for destination chain and governed currency
   // when action buttons are clicked in the note account table
