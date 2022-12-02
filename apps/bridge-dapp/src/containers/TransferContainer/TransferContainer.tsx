@@ -28,7 +28,7 @@ import {
   RelayerType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { ethers } from 'ethers';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ChainRecord,
   CurrencyBalanceRecordType,
@@ -39,7 +39,7 @@ import {
 export const TransferContainer = forwardRef<
   HTMLDivElement,
   TransferContainerProps
->((props, ref) => {
+>(({ defaultDestinationChain, defaultGovernedCurrency }, ref) => {
   const { governedCurrency, setGovernedCurrency } = useBridge();
 
   const { activeChain, activeApi } = useWebContext();
@@ -69,7 +69,9 @@ export const TransferContainer = forwardRef<
   });
 
   // The destination chains
-  const [destChain, setDestChain] = useState<Chain | undefined>(undefined);
+  const [destChain, setDestChain] = useState<Chain | undefined>(
+    defaultDestinationChain
+  );
 
   // State for amount input value
   const [amount, setAmount] = useState<number>(0);
@@ -475,6 +477,21 @@ export const TransferContainer = forwardRef<
     selectedBridgingAsset?.balance,
     selectedBridgingAsset?.symbol,
   ]);
+
+  useEffect(() => {
+    console.log('default dest chain', defaultDestinationChain);
+    const updateDefaultValues = () => {
+      if (defaultDestinationChain) {
+        setDestChain(defaultDestinationChain);
+      }
+
+      if (defaultGovernedCurrency) {
+        setGovernedCurrency(defaultGovernedCurrency);
+      }
+    };
+
+    updateDefaultValues();
+  }, [defaultDestinationChain, defaultGovernedCurrency, setGovernedCurrency]);
 
   return (
     <div>
