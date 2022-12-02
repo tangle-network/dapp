@@ -1,7 +1,7 @@
 import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
-export const FoldersFill = (props: IconBase) => {
+export const FoldersFillIcon = (props: IconBase) => {
   return createIcon({
     ...props,
     path: (

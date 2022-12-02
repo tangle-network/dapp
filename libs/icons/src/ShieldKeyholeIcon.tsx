@@ -1,7 +1,7 @@
 import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
-export const ShieldKeyhole = (props: IconBase) => {
+export const ShieldKeyholeIcon = (props: IconBase) => {
   return createIcon({
     ...props,
     path: (

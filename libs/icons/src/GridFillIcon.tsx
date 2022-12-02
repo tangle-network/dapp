@@ -1,7 +1,7 @@
 import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
-export const GridFill = (props: IconBase) => {
+export const GridFillIcon = (props: IconBase) => {
   return createIcon({
     ...props,
     path: (
