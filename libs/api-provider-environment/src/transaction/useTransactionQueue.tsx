@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   TransactionItemStatus,
   TransactionPayload,
@@ -23,7 +31,10 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
-function mapTxToPayload(tx: Transaction<any>): TransactionPayload {
+function mapTxToPayload(
+  tx: Transaction<any>,
+  dismissTransaction: (id: string) => void
+): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
   const { amount, wallets, token, tokens } = tx.metaData;
   return {
@@ -45,7 +56,7 @@ function mapTxToPayload(tx: Transaction<any>): TransactionPayload {
       dist: <TokenIcon size={'lg'} name={wallets.dist || 'default'} />,
     },
     onDismiss(): void {
-      return;
+      return dismissTransaction(tx.id);
     },
 
     method: tx.name as any,
@@ -119,7 +130,7 @@ export function useTxApiQueue(): TransactionQueueApi {
       setMainTxId(tx.id);
       setTxQueue((queue) => {
         const next = [...queue, tx];
-        setTxPayloads(next.map(mapTxToPayload));
+        setTxPayloads(next.map((tx) => mapTxToPayload(tx, dismissTransaction)));
         return [...queue, tx];
       });
       const sub = tx.$currentStatus.subscribe((updatedStatus) => {
@@ -142,7 +153,14 @@ export function useTxApiQueue(): TransactionQueueApi {
       });
       subscriptions.current?.set(tx.id, sub);
     },
-    [setTxQueue, setTxPayloads, subscriptions, txQueue, transactionPayloads]
+    [
+      setTxQueue,
+      setTxPayloads,
+      subscriptions,
+      txQueue,
+      transactionPayloads,
+      dismissTransaction,
+    ]
   );
   const cancelTransaction = useCallback(
     (id: string) => {
