@@ -1,4 +1,4 @@
-import { ArrowRight, Close, Download, FileCopyLine } from '@webb-tools/icons';
+import { ArrowRight, Close, Download } from '@webb-tools/icons';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
@@ -7,15 +7,15 @@ import {
   Button,
   ChainsRing,
   CheckBox,
+  CopyWithTooltip,
   InfoItem,
-  KeyValueWithButton,
   Progress,
   TitleWithInfo,
   TokenWithAmount,
 } from '../../components';
+import { PropsOf } from '../../types';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
-import { PropsOf } from '../../types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -30,6 +30,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       fee,
       note,
       onClose,
+      isCopied,
       onCopy,
       onDownload,
       progress = null,
@@ -37,7 +38,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       title = 'Confirm Deposit',
       governedTokenSymbol,
       wrappableTokenSymbol,
-      copyProps,
       ...props
     },
     ref
@@ -140,13 +140,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   className="text-mono-100 dark:text-mono-80"
                 />
                 <div className="flex space-x-2">
-                  <KeyValueWithButton
-                    keyValue={note ?? ''}
-                    copyProps={copyProps}
-                    isHiddenLabel
-                    isHiddenValue
-                  />
-
+                  <CopyWithTooltip textToCopy={note ?? ''} />
                   <Button
                     variant="utility"
                     size="sm"

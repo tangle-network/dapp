@@ -4,8 +4,13 @@ import {
   TokenType,
 } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { BridgeTabContainerProps } from '../types';
 
-export interface DepositContainerProps extends PropsOf<'div'> {}
+export interface DepositContainerProps
+  extends BridgeTabContainerProps,
+    PropsOf<'div'> {
+
+}
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**

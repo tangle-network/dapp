@@ -50,15 +50,14 @@ const successBridgeInfo = [
 export const CreateAccountModal: FC<CreateAccountModalProps> = ({
   isOpen,
   onOpenChange,
+  isSuccess,
+  onIsSuccessChange: setIsSuccess,
 }) => {
   // The checkbox state
   const [isChecked, setIsChecked] = useState(false);
 
   // Loading button when user hits create account
   const [isCreating, setIsCreating] = useState(false);
-
-  // The create account success state
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const { loginNoteAccount } = useWebContext();
 
@@ -75,7 +74,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         );
         await loginNoteAccount(signedString.slice(0, 66));
 
-        setIsSuccess(true);
+        setIsSuccess?.(true);
       }
     } catch (error) {
       console.log('Error occurs when creating note account');
@@ -83,16 +82,28 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
     } finally {
       setIsCreating(false);
     }
-  }, [loginNoteAccount]);
+  }, [loginNoteAccount, setIsSuccess]);
+
+  const handleOpenChange = useCallback(
+    async (nextOpen: boolean) => {
+      onOpenChange(nextOpen);
+
+      if (!nextOpen) {
+        setIsChecked(false);
+        setIsSuccess?.(false);
+      }
+    },
+    [onOpenChange, setIsSuccess]
+  );
 
   return (
-    <Modal open={isOpen} onOpenChange={onOpenChange}>
+    <Modal open={isOpen} onOpenChange={handleOpenChange}>
       <ModalContent
         isCenter
         isOpen={isOpen}
         className="overflow-hidden bg-mono-0 dark:bg-mono-160 rounded-xl w-[420px]"
       >
-        <ModalHeader onClose={() => onOpenChange(false)}>
+        <ModalHeader onClose={() => handleOpenChange(false)}>
           {isSuccess ? 'Congrats!' : 'Create Note Account'}
         </ModalHeader>
 
@@ -139,7 +150,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
             isLoading={isCreating}
             loadingText="Waiting for user to sign..."
             onClick={() =>
-              isSuccess ? onOpenChange(false) : loginWithMetamask()
+              isSuccess ? handleOpenChange(false) : loginWithMetamask()
             }
             isDisabled={isSuccess ? undefined : !isChecked}
             isFullWidth

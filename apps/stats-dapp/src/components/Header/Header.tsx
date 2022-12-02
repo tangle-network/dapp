@@ -11,8 +11,14 @@ import {
   Logo,
   MenuItem,
   ThemeSwitcherMenuItem,
+  Divider,
+  ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
-import { BookOpenLineIcon, ThreeDotsVerticalIcon } from '@webb-tools/icons';
+import {
+  BookOpenLineIcon,
+  ThreeDotsVerticalIcon,
+  ExternalLinkLine,
+} from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState, PropsWithChildren } from 'react';
@@ -30,7 +36,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { name, ...webbAppConfig } = constants.webbApiConfig;
+  const { webbApiConfig, webbAppConfig } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -67,7 +73,7 @@ export const Header: FC<HeaderProps> = ({
         </NavLink>
 
         {/** Center the nav */}
-        <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+        <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 rounded-full bg-mono-20 dark:bg-mono-140 py-1.5">
           <ul className="flex items-center space-x-9">
             {constants.headerNavs.map(({ name, path }) => (
               <NavButton key={`${name}-${path}`} path={path}>
@@ -85,9 +91,11 @@ export const Header: FC<HeaderProps> = ({
               className="!text-inherit"
               component="span"
             >
-              {name}
+              {webbAppConfig.name}
             </Typography>
           </Button>
+
+          <ThemeSwitcherButton />
 
           <div>
             <Dropdown className="flex items-center justify-center">
@@ -96,55 +104,61 @@ export const Header: FC<HeaderProps> = ({
               </DropdownBasicButton>
 
               <DropdownBody
-                className="pt-2 pb-4 mt-6"
+                className="mt-6 w-[260px]"
                 onInteractOutside={async () =>
                   await setEndpoint(endpointUserInput)
                 }
               >
-                <SettingItem>
-                  <Typography variant="h5" fw="bold">
-                    Settings
+                <MenuItem
+                  className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
+                  icon={<ExternalLinkLine size="lg" />}
+                  onClick={() => {
+                    window.open(webbApiConfig.href, '_blank');
+                  }}
+                >
+                  <Typography variant="label" fw="bold">
+                    {webbApiConfig.name}
                   </Typography>
-                </SettingItem>
-
-                <ThemeSwitcherMenuItem />
+                </MenuItem>
 
                 <MenuItem
+                  className="px-4 py-3.5 border-b border-mono-40 dark:border-mono-140"
                   icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
                     window.open('https://docs.webb.tools', '_blank');
                   }}
                 >
-                  Docs
+                  <Typography variant="label" fw="bold">
+                    Documentation
+                  </Typography>
                 </MenuItem>
 
-                <Collapsible>
-                  <CollapsibleButton>Data sources</CollapsibleButton>
-                  <CollapsibleContent className="p-0">
-                    <div className="flex items-center justify-between px-4 py-2">
-                      <Typography variant="body1">
-                        Custom Data Source
-                      </Typography>
+                <MenuItem className="px-4 py-2">
+                  <Typography variant="label" fw="bold">
+                    ADVANCED
+                  </Typography>
 
-                      <Button
-                        size="sm"
-                        variant="link"
-                        onClick={() => {
-                          setEndpointUserInput(connectedEndpoint);
-                        }}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                  <div className="flex items-center justify-between pt-4">
+                    <Typography variant="body1">Custom Data Source</Typography>
 
-                    <Input
-                      id="endpoint"
-                      className="px-4 py-2"
-                      onChange={(val) => setEndpointUserInput(val.toString())}
-                      value={endpointUserInput}
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
+                    <Button
+                      size="sm"
+                      variant="link"
+                      onClick={() => {
+                        setEndpointUserInput(connectedEndpoint);
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  </div>
+
+                  <Input
+                    id="endpoint"
+                    className="pt-2 pb-4"
+                    onChange={(val) => setEndpointUserInput(val.toString())}
+                    value={endpointUserInput}
+                  />
+                </MenuItem>
               </DropdownBody>
             </Dropdown>
           </div>
@@ -173,16 +187,10 @@ const NavButton: FC<PropsWithChildren<{ path: string }>> = ({
       {({ isActive }) => (
         <span
           className={cx(
-            'px-3 py-1 font-bold rounded-full body1',
-            'bg-mono-0 dark:bg-mono-180',
+            'px-3 py-1.5 font-bold rounded-full body1',
             isActive
-              ? 'text-blue dark:text-blue-40'
-              : 'text-mono-160 dark:text-mono-40',
-            isActive && 'pointer-events-none',
-            !isActive &&
-              ' hover:bg-blue-0 dark:hover:bg-blue-120 dark:hover:text-blue-10 ',
-            !isActive &&
-              'active:bg-blue-0 active:text-blue dark:active:bg-blue-120 dark:active:text-blue-30'
+              ? 'bg-mono-180 text-mono-20 dark:bg-mono-20 dark:text-mono-160 pointer-events-none'
+              : 'bg-mono-20 text-mono-100 dark:bg-mono-140 dark:text-mono-40'
           )}
         >
           {children}

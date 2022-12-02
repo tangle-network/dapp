@@ -1,11 +1,13 @@
-import { useCopyable } from '../../hooks';
 import { FileCopyLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useCopyable } from '../../hooks';
 
+import { Typography } from '../../typography/Typography';
+import { Button } from '../Button';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
-import { CopyWithTooltipProps } from './types';
+import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
 
 /**
  * The `CopyWithTooltip` component
@@ -14,46 +16,57 @@ import { CopyWithTooltipProps } from './types';
  *
  * ```jsx
  *  <CopyWithTooltip textToCopy="0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7" />
- *  <CopyWithTooltip isUseSpan textToCopy="0x026d513cf4e5f0e605a6584322382bd5896d4f0dfdd1e9a7" />
  * ```
  */
 export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
   className,
-  isUseSpan,
   textToCopy,
 }) => {
   const { copy, isCopied } = useCopyable();
 
-  const onCopy = useCallback(() => {
-    if (isCopied) {
-      return;
-    }
+  return (
+    <CopyWithTooltipUI
+      className={className}
+      onClick={() => {
+        copy(textToCopy);
+      }}
+      isCopied={isCopied}
+    />
+  );
+};
 
-    copy(textToCopy);
-  }, [copy, isCopied, textToCopy]);
+/**********************
+ * Internal component *
+ **********************/
+
+/**
+ * The internal UI component to prevent re-render when the isCopied state changes
+ */
+const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
+  isCopied,
+  onClick,
+  className,
+}) => {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   return (
-    <Tooltip>
+    <Tooltip isOpen={isTooltipOpen}>
       <TooltipTrigger
-        className={twMerge(
-          cx(
-            'bg-blue-10 dark:bg-blue-120 text-blue-70 dark:text-blue-30',
-            isCopied ? 'cursor-not-allowed' : ''
-          ),
-          className
-        )}
-        onClick={onCopy}
-        asChild={isUseSpan}
+        onMouseEnter={() => setIsTooltipOpen(true)}
+        onMouseLeave={() => setIsTooltipOpen(false)}
+        className={twMerge(isCopied ? 'cursor-not-allowed' : '', className)}
+        onClick={onClick}
+        asChild
       >
-        {isUseSpan ? (
-          <span className="!text-inherit">
-            <FileCopyLine className="!fill-current" />
-          </span>
-        ) : (
+        <Button className="p-2" variant="utility" size="sm">
           <FileCopyLine className="!fill-current" />
-        )}
+        </Button>
       </TooltipTrigger>
-      <TooltipBody>{isCopied ? 'Copied' : 'Copy'}</TooltipBody>
+      <TooltipBody>
+        <Typography className="capitalize" variant="body3">
+          {isCopied ? 'Copied!' : 'Copy'}
+        </Typography>
+      </TooltipBody>
     </Tooltip>
   );
 };

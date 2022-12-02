@@ -6,8 +6,11 @@ import {
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
+import { BridgeTabContainerProps } from '../types';
 
-export interface WithdrawContainerProps extends PropsOf<'div'> {}
+export interface WithdrawContainerProps
+  extends BridgeTabContainerProps,
+    PropsOf<'div'> {}
 
 export type CurrencyWithBalance = { value: Currency } & Omit<
   TokenType,

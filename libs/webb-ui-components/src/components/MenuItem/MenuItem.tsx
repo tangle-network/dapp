@@ -35,7 +35,9 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
 
     return (
       <div className={className} {...props} ref={ref}>
-        <span className='flex-grow text-inherit dark:text-inherit'>{children}</span>
+        <span className="flex-grow text-inherit dark:text-inherit">
+          {children}
+        </span>
         {icon}
       </div>
     );

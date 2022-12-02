@@ -11,7 +11,10 @@ import { BehaviorSubject } from 'rxjs';
 export class NoteManager {
   // A notesMap will organize notes by typedChainId
   private notesMap: Map<string, Note[]>;
+
   private notesUpdatedSubject = new BehaviorSubject(false);
+
+  private isSyncingNoteSubject = new BehaviorSubject(false);
 
   private constructor(
     private noteStorage: Storage<NoteStorage>,
@@ -64,6 +67,18 @@ export class NoteManager {
 
   get notesUpdated() {
     return this.notesUpdatedSubject.getValue();
+  }
+
+  get $isSyncingNote() {
+    return this.isSyncingNoteSubject.asObservable();
+  }
+
+  get isSyncingNote() {
+    return this.isSyncingNoteSubject.getValue();
+  }
+
+  set isSyncingNote(value: boolean) {
+    this.isSyncingNoteSubject.next(value);
   }
 
   getKeypair() {

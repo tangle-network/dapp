@@ -59,6 +59,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   copyProps?: UseCopyableReturnType;
 
   /**
+   * The boolean value indicating if the copy button is click
+   */
+  isCopied?: boolean;
+
+  /**
    * Callback when user hits copy button
    * @returns void
    */

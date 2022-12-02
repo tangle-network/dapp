@@ -8,8 +8,15 @@ export interface CopyWithTooltipProps extends WebbComponentBase {
    * Represents the text to copy to clipboard
    */
   textToCopy: string;
-  /**
-   * Whether use the `span` for trigger instead of `button`
-   */
-  isUseSpan?: boolean;
+}
+
+/**
+ * The internal UI component
+ */
+export interface CopyWithTooltipUIProps {
+  onClick: () => void;
+
+  className?: string;
+
+  isCopied: boolean;
 }

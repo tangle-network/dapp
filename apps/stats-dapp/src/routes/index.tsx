@@ -141,7 +141,7 @@ export const routes: RouterConfigData[] = [
       },
       {
         path: '*',
-        redirectTo: 'proposals',
+        redirectTo: 'keys',
       },
     ],
     element: <Layout />,

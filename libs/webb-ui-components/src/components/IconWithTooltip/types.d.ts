@@ -1,3 +1,9 @@
+import {
+  TooltipBodyProps,
+  TooltipProps,
+  TooltipTriggerProps,
+} from '../Tooltip/types';
+
 export interface IconWithTooltipProp {
   /**
    * The icon to display
@@ -10,7 +16,17 @@ export interface IconWithTooltipProp {
   content: React.ReactNode;
 
   /**
-   * The tooltip trigger className for tailwind styling
+   * Override tooltip props
    */
-  btnClassName?: string;
+  overrideTooltipProps?: Partial<TooltipProps>;
+
+  /**
+   * Override tooltip trigger props
+   */
+  overrideTooltipTriggerProps?: Partial<TooltipTriggerProps>;
+
+  /**
+   * Override tooltip body props
+   */
+  overrideTooltipBodyProps?: Partial<TooltipBodyProps>;
 }

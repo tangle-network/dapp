@@ -80,7 +80,7 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [activeApi]);
 
     // Copy for the deposit confirm
-    const { copy } = useCopyable();
+    const { copy, isCopied } = useCopyable();
     const handleCopy = useCallback(
       (note: string | undefined): void => {
         copy(note ?? '');
@@ -149,6 +149,7 @@ export const WithdrawConfirmContainer = forwardRef<
           children: 'I have copy the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
+        isCopied={isCopied}
         onCopy={() => handleCopy(changeNote)}
         onDownload={() => downloadNote(changeNote ?? '')}
         amount={amount}

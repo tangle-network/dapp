@@ -13,8 +13,8 @@ import {
   ThreeDotsVerticalIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { useWallets, useNoteAccount } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { useNoteAccount, useWallets } from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
 import {
   Avatar,
   Button,
@@ -36,16 +36,18 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
   wallet,
 }) => {
-  // State for loading spinner when syncing notes
-  const [isSyncingNote, setIsSyncingNote] = useState(false);
-
   // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const { activeApi, activeChain, noteManager, chains } = useWebContext();
+  const { activeChain, noteManager, chains, purgeNoteAccount } =
+    useWebContext();
 
-  // Get all note
-  const { allNotes } = useNoteAccount();
+  // Get all note, syncNotes and isSyncingNote function
+  const {
+    allNotes,
+    isSyncingNote,
+    syncNotes: handleSyncNotes,
+  } = useNoteAccount();
 
   const { setMainComponent, notificationApi } = useWebbUI();
 
@@ -127,76 +129,9 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // TODO: Implement a function when user click on the new notes link
   // on the notification
   const handleNewNotes = useCallback(async (notes: Note[]) => {
+    console.log('Handle new notes: ', notes);
     console.warn('New notes function is not implemented yet');
   }, []);
-
-  // Function to sync notes
-  const handleSyncNotes = useCallback(async () => {
-    if (
-      activeApi &&
-      activeApi.state.activeBridge &&
-      activeChain &&
-      noteManager
-    ) {
-      setIsSyncingNote(true);
-      const chainNotes =
-        await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
-          activeApi.state.activeBridge.targets[
-            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-          ],
-          noteManager.getKeypair()
-        );
-
-      const notes = await Promise.all(
-        chainNotes
-          // Do not display notes that have zero value.
-          .filter((note) => note.note.amount !== '0')
-          .map(async (note) => {
-            await noteManager.addNote(note);
-            return note;
-          })
-      );
-
-      notificationApi.addToQueue({
-        variant: 'success',
-        message: 'Note(s) successfully added to account',
-        secondaryMessage: (
-          <Typography variant="body1">
-            <Button
-              variant="link"
-              as="span"
-              className="inline-block"
-              onClick={() => handleNewNotes(notes)}
-            >
-              {notes.length} new note(s){' '}
-            </Button>{' '}
-            added to your account
-          </Typography>
-        ),
-      });
-
-      setIsSyncingNote(false);
-    } else {
-      notificationApi.addToQueue({
-        variant: 'error',
-        message: 'Account sync failed',
-        secondaryMessage: (
-          <Typography variant="body1">
-            Please make sure you have connected to a bridge and create an
-            account note.{' '}
-            <Button
-              variant="link"
-              className="inline-block"
-              as="span"
-              onClick={handleSyncNotes}
-            >
-              Try again.
-            </Button>
-          </Typography>
-        ),
-      });
-    }
-  }, [activeApi, activeChain, handleNewNotes, noteManager, notificationApi]);
 
   // Funciton to switch chain
   const handleSwitchChain = useCallback(async () => {
@@ -243,7 +178,9 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     if (currentManagedWallet && currentManagedWallet.canEndSession) {
       currentManagedWallet.endSession();
     }
-  }, [currentManagedWallet]);
+
+    await purgeNoteAccount();
+  }, [currentManagedWallet, purgeNoteAccount]);
 
   return (
     <>
@@ -286,7 +223,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             <div className="flex items-center space-x-1">
               <Button
                 isLoading={isSyncingNote}
-                onClick={handleSyncNotes}
+                onClick={() => handleSyncNotes(handleNewNotes, handleSyncNotes)}
                 variant="utility"
               >
                 Sync Notes
