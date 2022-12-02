@@ -9,7 +9,7 @@ import {
   InfoItem,
   RecipientInput,
   RelayerInput,
-  ShieldedAssetInput,
+  TokenInput,
 } from '../../components';
 import { TransferCardProps } from './types';
 
@@ -42,32 +42,41 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
     );
 
     return (
-      <div {...props} className={twMerge('flex flex-col space-y-4 max-w-[518px] w-full', className)} ref={ref}>
-        <BridgeInputGroup className='flex flex-col space-y-2'>
-          <ShieldedAssetInput {...bridgeAssetProps} />
+      <div
+        {...props}
+        className={twMerge(
+          'flex flex-col space-y-4 max-w-[518px] w-full',
+          className
+        )}
+        ref={ref}
+      >
+        <BridgeInputGroup className="flex flex-col space-y-2">
+          <TokenInput {...bridgeAssetProps} />
         </BridgeInputGroup>
 
-        <BridgeInputGroup className='flex flex-col space-y-2'>
-          <ChainInput {...destChainInputProps} chainType='dest' />
+        <BridgeInputGroup className="flex flex-col space-y-2">
+          <ChainInput {...destChainInputProps} chainType="dest" />
 
           <AmountInput {...amountInputProps} />
         </BridgeInputGroup>
 
-        <BridgeInputGroup className='flex flex-col space-y-2'>
+        <BridgeInputGroup className="flex flex-col space-y-2">
           <RelayerInput {...relayerInputProps} />
 
           <RecipientInput {...recipientInputProps} />
         </BridgeInputGroup>
 
         {/** Info */}
-        <div className='flex flex-col space-y-1'>
+        <div className="flex flex-col space-y-1">
           <InfoItem
             leftTextProps={{
               title: 'Transfering',
               variant: 'utility',
               info: 'Transfering',
             }}
-            rightContent={transferAmount ? `${transferAmount} ${transferToken}` : undefined}
+            rightContent={
+              transferAmount ? `${transferAmount} ${transferToken}` : undefined
+            }
           />
 
           <InfoItem
@@ -76,7 +85,9 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
               variant: 'utility',
               info: 'Change Amount',
             }}
-            rightContent={changeAmount ? `${changeAmount} ${transferToken}` : undefined}
+            rightContent={
+              changeAmount ? `${changeAmount} ${transferToken}` : undefined
+            }
           />
 
           <InfoItem
@@ -85,11 +96,17 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
               variant: 'utility',
               info: 'Fees',
             }}
-            rightContent={feeAmount ? `${feeAmount} ${transferToken}` : undefined}
+            rightContent={
+              feeAmount ? `${feeAmount} ${transferToken}` : undefined
+            }
           />
         </div>
 
-        <Button {...transferBtnProps} isFullWidth className={twMerge('justify-center')}>
+        <Button
+          {...transferBtnProps}
+          isFullWidth
+          className={twMerge('justify-center')}
+        >
           {transferBtnProps?.children ?? 'Transfer'}
         </Button>
       </div>
