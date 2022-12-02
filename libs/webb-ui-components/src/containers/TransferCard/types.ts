@@ -39,7 +39,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The transfer amount
    */
-  transferAmount?: number;
+  transferAmount?: number | string;
 
   /**
    * The transfer token symbol
@@ -49,7 +49,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The fee amount
    */
-  feeAmount?: number;
+  feeAmount?: number | string;
 
   /**
    * The fee percentage to display
@@ -59,7 +59,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The remainder amount
    */
-  changeAmount?: number;
+  changeAmount?: number | string;
 
   /**
    * The withdraw button props

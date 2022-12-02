@@ -92,7 +92,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
 
           <InfoItem
             leftTextProps={{
-              title: `Fees ${feePercentage ? `(${feePercentage})` : undefined}`,
+              title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
               variant: 'utility',
               info: 'Fees',
             }}
