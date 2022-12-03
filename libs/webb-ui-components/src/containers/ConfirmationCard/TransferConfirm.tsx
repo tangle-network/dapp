@@ -66,8 +66,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         <div>
           <ChainsRing
             activeChains={activeChains}
-            sourceLabel="Sender"
-            destLabel="Recipient"
+            sourceLabel={
+              sourceChain && sourceChain === destChain
+                ? 'Sender & Recipient'
+                : 'Sender'
+            }
+            destLabel={
+              destChain && sourceChain === destChain ? undefined : 'Recipient'
+            }
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
