@@ -3,6 +3,20 @@ import { twMerge } from 'tailwind-merge';
 import { BreadcrumbsPropsType } from './types';
 import { BreadcrumbsSeparator } from './BreadcrumbsSeparator';
 
+/**
+ * The `Breadcrumbs` component
+ *
+ * - `separator`: `Optional`. The separator between the breadcrumbs. Default is `/`
+ *
+ * ```jsx
+ *  // Example
+ *  <Breadcrumbs>
+ *    <BreadcrumbsItem icon={<GridFillIcon />}>Tangle Explorer</BreadcrumbsItem>
+ *    <BreadcrumbsItem icon={<KeyIcon />}>Keys Overview</BreadcrumbsItem>
+ *    <BreadcrumbsItem icon={<ShieldKeyholeIcon />} isLast>Keygen details</BreadcrumbsItem>
+ *  <Breadcrumbs />
+ * ```
+ */
 export const Breadcrumbs = React.forwardRef<
   HTMLDivElement,
   BreadcrumbsPropsType

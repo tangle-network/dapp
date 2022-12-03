@@ -4,16 +4,27 @@ import { Chip } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { BreadcrumbsItemPropsType } from './types';
 
+/**
+ * The `BreadcrumbsItem` component
+ *
+ * - `icon`: `Optional`. The icon to appear before the component's children
+ * - `isLast`: `Optional`. If `true` the breadcrumb item will be highlighted indicating it's the last item
+ *
+ * ```jsx
+ *  // Example (not a last item)
+ *  <BreadcrumbsItem icon={<GridFillIcon />}>Tangle Explorer</BreadcrumbsItem>
+ *
+ *  // Example (is a last item)
+ *  <BreadcrumbsItem icon={<GridFillIcon />} isLast>Tangle Explorer</BreadcrumbsItem>
+ * ```
+ */
 export const BreadcrumbsItem = React.forwardRef<
   HTMLSpanElement,
   BreadcrumbsItemPropsType
 >((props, ref) => {
   const { isLast, icon, children, className: classNameProp } = props;
 
-  const baseClsx = useMemo(
-    () => 'flex items-center gap-x-2 w-fit',
-    []
-  );
+  const baseClsx = useMemo(() => 'flex items-center gap-x-2 w-fit', []);
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),

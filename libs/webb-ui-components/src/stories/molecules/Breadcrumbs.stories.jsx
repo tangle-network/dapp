@@ -9,7 +9,7 @@ export default {
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-export const Default = (args) => (
+const Template = (args) => (
   <Breadcrumbs {...args}>
     <BreadcrumbsItem {...args.itemOneProps}>
       {args.itemOneChildren}
@@ -22,6 +22,8 @@ export const Default = (args) => (
     </BreadcrumbsItem>
   </Breadcrumbs>
 );
+
+export const Default = Template.bind({});
 Default.args = {
   itemOneProps: {
     icon: <GridFillIcon />,
@@ -36,5 +38,22 @@ Default.args = {
     isLast: true,
   },
   itemThreeChildren: 'Keygen details',
-  separator: '/',
+};
+
+export const CustomSeparator = Template.bind({});
+CustomSeparator.args = {
+  itemOneProps: {
+    icon: <GridFillIcon />,
+  },
+  itemOneChildren: 'Tangle Explorer',
+  itemTwoProps: {
+    icon: <KeyIcon />,
+  },
+  itemTwoChildren: 'Keys Overview',
+  itemThreeProps: {
+    icon: <ShieldKeyholeIcon />,
+    isLast: true,
+  },
+  itemThreeChildren: 'Keygen details',
+  separator: '>',
 };
