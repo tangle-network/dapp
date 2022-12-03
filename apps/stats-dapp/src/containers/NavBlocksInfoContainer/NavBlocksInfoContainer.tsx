@@ -10,7 +10,7 @@ import {
   GraphIcon,
 } from '@webb-tools/icons';
 import { Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 export const NavBoxInfoContainer = () => {
   const location = useLocation();
@@ -22,29 +22,33 @@ export const NavBoxInfoContainer = () => {
     <div className="flex items-center justify-between py-2 mb-4 max-w-[1160px] mx-auto">
       {/* Breadcrumbs */}
       <Breadcrumbs>
-        <BreadcrumbsItem icon={<GridFillIcon />} path="/">
-          Tangle Explorer
-        </BreadcrumbsItem>
-        <BreadcrumbsItem
-          icon={
-            currentPage === 'keys' ? (
-              <KeyIcon />
-            ) : currentPage === 'authorities' ? (
-              <TeamFillIcon />
-            ) : currentPage === 'proposals' ? (
-              <FoldersFillIcon />
-            ) : null
-          }
-          path={pathnames.length > 1 ? `/${currentPage}` : ''}
-        >
-          {currentPage === 'keys'
-            ? 'Keys Overview'
-            : currentPage === 'authorities'
-            ? 'Authorities Overview'
-            : currentPage === 'proposals'
-            ? 'Proposals Overview'
-            : ''}
-        </BreadcrumbsItem>
+        <NavLink to="/">
+          <BreadcrumbsItem icon={<GridFillIcon />}>
+            Tangle Explorer
+          </BreadcrumbsItem>
+        </NavLink>
+        <NavLink to={pathnames.length > 1 ? `/${currentPage}` : ''}>
+          <BreadcrumbsItem
+            icon={
+              currentPage === 'keys' ? (
+                <KeyIcon />
+              ) : currentPage === 'authorities' ? (
+                <TeamFillIcon />
+              ) : currentPage === 'proposals' ? (
+                <FoldersFillIcon />
+              ) : null
+            }
+            isLast={pathnames.length === 1 ? true : false}
+          >
+            {currentPage === 'keys'
+              ? 'Keys Overview'
+              : currentPage === 'authorities'
+              ? 'Authorities Overview'
+              : currentPage === 'proposals'
+              ? 'Proposals Overview'
+              : ''}
+          </BreadcrumbsItem>
+        </NavLink>
         {pathnames.length > 1 && (
           <BreadcrumbsItem
             icon={
@@ -58,6 +62,7 @@ export const NavBoxInfoContainer = () => {
                 <FileCodeLineIcon />
               ) : null
             }
+            isLast
           >
             {currentPage === 'keys'
               ? 'Keygen details'

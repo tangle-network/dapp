@@ -1,18 +1,17 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { NavLink } from 'react-router-dom';
 import { Chip } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { BreadcrumbsItemPropsType } from './types';
 
 export const BreadcrumbsItem = React.forwardRef<
-  HTMLDivElement,
+  HTMLSpanElement,
   BreadcrumbsItemPropsType
 >((props, ref) => {
-  const { path, icon, children, className: classNameProp } = props;
+  const { isLast, icon, children, className: classNameProp } = props;
 
   const baseClsx = useMemo(
-    () => 'flex items-center justify-between gap-x-2',
+    () => 'flex items-center gap-x-2 w-fit',
     []
   );
 
@@ -21,16 +20,19 @@ export const BreadcrumbsItem = React.forwardRef<
     [baseClsx, classNameProp]
   );
 
-  if (path) {
+  if (!isLast) {
     return (
-      <NavLink to={path} className="cursor-pointer">
-        <Chip color="grey" isDisabled={false} className={className} ref={ref}>
-          {icon}
-          <Typography variant="label" fw="normal" className="capitalize">
-            {children}
-          </Typography>
-        </Chip>
-      </NavLink>
+      <Chip
+        color="grey"
+        isDisabled={false}
+        className={twMerge(className, 'cursor-pointer')}
+        ref={ref}
+      >
+        {icon}
+        <Typography variant="label" fw="normal" className="capitalize">
+          {children}
+        </Typography>
+      </Chip>
     );
   }
 
@@ -48,3 +50,9 @@ export const BreadcrumbsItem = React.forwardRef<
     </Chip>
   );
 });
+
+const BreadcrumbsItemsDefaultProps = {
+  isLast: false,
+};
+
+BreadcrumbsItem.defaultProps = BreadcrumbsItemsDefaultProps;

@@ -34,7 +34,7 @@ import {
   CheckboxBlankCircleLine,
   Close,
   Expand,
-  Key,
+  KeyIcon,
   Link as LinkIcon,
   Mail,
   QRCode,
@@ -245,7 +245,7 @@ const DetailsView: FC<{
     return (
       <>
         <a href={'#'} {...getProps(id)}>
-          <Key className="!fill-current" />
+          <KeyIcon className="!fill-current" />
         </a>
         <a
           {...getProps(twitter)}
