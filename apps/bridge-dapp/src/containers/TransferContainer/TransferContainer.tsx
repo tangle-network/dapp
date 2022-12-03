@@ -178,6 +178,7 @@ export const TransferContainer = forwardRef<
             acc[currency.id][destChainTypeId] = Number(
               ethers.utils.formatUnits(amount, denomination)
             );
+            return;
           }
 
           const existedBalance = acc[currency.id][destChainTypeId];
@@ -522,8 +523,6 @@ export const TransferContainer = forwardRef<
 
   // Callback for transfer button clicked
   const handleTransferClick = useCallback(async () => {
-    const availableAmount = selectedBridgingAsset?.balance ?? 0;
-
     if (!governedCurrency || !destChain || !activeApi?.state?.activeBridge) {
       throw new Error(
         "Can't transfer without a governed currency or dest chain"
@@ -538,9 +537,11 @@ export const TransferContainer = forwardRef<
     // Find the mixerId (target) of the selected inputs
     const mixerId = activeApi.state.activeBridge.targets[destTypedChainId];
 
+    const changeAmount = Number(infoCalculated.changeAmount ?? '0');
+
     // Calculate the chain note if the change amount is greater than 0
-    const changeAmountBigNumber =
-      Number(infoCalculated.changeAmount ?? '0') > 0
+    const changeNote =
+      changeAmount > 0
         ? await generateNote(
             mixerId,
             destTypedChainId,
@@ -553,12 +554,12 @@ export const TransferContainer = forwardRef<
       <TransferConfirmContainer
         className="w-[550px]"
         amount={amount}
-        changeAmount={availableAmount - amount}
+        changeAmount={changeAmount}
         currency={governedCurrency}
         destChain={destChain}
         recipient={recipient}
         relayer={activeRelayer}
-        note={changeAmountBigNumber}
+        note={changeNote}
       />
     );
   }, [
@@ -570,7 +571,6 @@ export const TransferContainer = forwardRef<
     governedCurrency,
     infoCalculated.changeAmount,
     recipient,
-    selectedBridgingAsset?.balance,
     setMainComponent,
   ]);
 
