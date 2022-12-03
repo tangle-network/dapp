@@ -148,6 +148,12 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   relayerExternalUrl?: string;
 
   /**
+   * The relayer avatar theme
+   * @default 'polkadot'
+   */
+  relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
+
+  /**
    * Recipient address
    */
   recipientAddress?: string;

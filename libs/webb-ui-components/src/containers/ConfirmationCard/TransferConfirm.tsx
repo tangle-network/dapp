@@ -36,6 +36,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       recipientAddress,
       relayerAddress,
       relayerExternalUrl,
+      relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Transfer',
       governedTokenSymbol: token1Symbol,
@@ -99,7 +100,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 />
 
                 <div className="flex items-center space-x-1">
-                  <Avatar value={relayerAddress} />
+                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
 
                   <Typography variant="body1" fw="bold">
                     {relayerAddress}

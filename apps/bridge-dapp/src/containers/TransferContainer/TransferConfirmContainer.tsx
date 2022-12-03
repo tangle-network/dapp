@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { TransferConfirm } from '@webb-tools/webb-ui-components';
+import { ChainType } from '@webb-tools/sdk-core';
+import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useMemo } from 'react';
 import { TransferConfirmContainerProps } from './types';
 
@@ -19,6 +20,8 @@ export const TransferConfirmContainer = forwardRef<
     ...props
   }) => {
     const { activeApi, activeChain } = useWebContext();
+
+    const { setMainComponent } = useWebbUI();
 
     const activeChains = useMemo<string[]>(() => {
       if (!activeApi) {
@@ -45,10 +48,20 @@ export const TransferConfirmContainer = forwardRef<
 
     return (
       <TransferConfirm
+        activeChains={activeChains}
+        amount={amount}
+        changeAmount={changeAmount}
         sourceChain={activeChain?.name}
         destChain={destChain.name}
-        activeChains={activeChains}
         note={note}
+        recipientAddress={recipient}
+        relayerAddress={relayer?.beneficiary}
+        relayerExternalUrl={relayer?.endpoint}
+        governedTokenSymbol={currency.view.symbol}
+        relayerAvatarTheme={
+          activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
+        }
+        onClose={() => setMainComponent(undefined)}
         {...props}
       />
     );

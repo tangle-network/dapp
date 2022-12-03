@@ -551,7 +551,7 @@ export const TransferContainer = forwardRef<
 
     setMainComponent(
       <TransferConfirmContainer
-        className="w-[550px] h-[720px]"
+        className="w-[550px]"
         amount={amount}
         changeAmount={availableAmount - amount}
         currency={governedCurrency}
@@ -575,7 +575,6 @@ export const TransferContainer = forwardRef<
   ]);
 
   useEffect(() => {
-    console.log('default dest chain', defaultDestinationChain);
     const updateDefaultValues = () => {
       if (defaultDestinationChain) {
         setDestChain(defaultDestinationChain);
