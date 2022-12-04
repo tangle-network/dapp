@@ -203,28 +203,27 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
       this.emit('stateChange', TransactionState.GeneratingZk);
       const worker = this.inner.wasmFactory();
-      const { extData, publicInputs } =
-        await this.cancelToken.handleOrThrow(
-          () =>
-            anchor.setupTransaction(
-              inputUtxos,
-              [changeUtxo, transferUtxo],
-              0, // the extAmount for a transfer should be zero
-              0,
-              0,
-              activeBridge.currency.getAddress(sourceChainIdType),
-              relayerAccount,
-              relayerAccount,
-              leavesMap,
-              provingKey,
-              Buffer.from(wasmBuffer),
-              worker
-            ),
-          () => {
-            worker?.terminate();
-            return WebbError.from(WebbErrorCodes.TransactionCancelled);
-          }
-        );
+      const { extData, publicInputs } = await this.cancelToken.handleOrThrow(
+        () =>
+          anchor.setupTransaction(
+            inputUtxos,
+            [changeUtxo, transferUtxo],
+            0, // the extAmount for a transfer should be zero
+            0,
+            0,
+            activeBridge.currency.getAddress(sourceChainIdType),
+            relayerAccount,
+            relayerAccount,
+            leavesMap,
+            provingKey,
+            Buffer.from(wasmBuffer),
+            worker
+          ),
+        () => {
+          worker?.terminate();
+          return WebbError.from(WebbErrorCodes.TransactionCancelled);
+        }
+      );
 
       // Check for cancelled here, abort if it was set.
       if (this.cancelToken.isCancelled()) {
@@ -324,7 +323,6 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
               break;
             case RelayedWithdrawResult.CleanExit:
               this.emit('stateChange', TransactionState.Done);
-              this.emit('stateChange', TransactionState.Ideal);
 
               this.inner.notificationHandler({
                 description: `TX hash:`,
@@ -337,7 +335,6 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
               break;
             case RelayedWithdrawResult.Errored:
               this.emit('stateChange', TransactionState.Failed);
-              this.emit('stateChange', TransactionState.Ideal);
 
               this.inner.notificationHandler({
                 description: message || 'Withdraw failed',
@@ -389,13 +386,15 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
           this.inner.noteManager?.removeNote(parsedNote);
         }
       }
+
+      this.emit('stateChange', TransactionState.Done);
     } catch (e) {
       // Cleanup NoteAccount state for added changeNotes
       for (const note of changeNotes) {
         this.inner.noteManager?.removeNote(note);
       }
 
-      this.emit('stateChange', TransactionState.Ideal);
+      this.emit('stateChange', TransactionState.Failed);
       console.log(e);
 
       this.inner.notificationHandler({
@@ -413,7 +412,6 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
       };
     }
 
-    this.emit('stateChange', TransactionState.Ideal);
     return {
       txHash: txHash,
       outputNotes: changeNotes,

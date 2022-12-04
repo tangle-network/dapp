@@ -5,7 +5,7 @@ import { ChainIcon } from '@webb-tools/icons';
 import { useTransfer } from '@webb-tools/react-hooks';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { TransferConfirmContainerProps } from './types';
 
 export const TransferConfirmContainer = forwardRef<
@@ -104,6 +104,16 @@ export const TransferConfirmContainer = forwardRef<
       setTxPayload,
       transfer,
     ]);
+
+    // Close the confirm modal if the transfer is successful or failed
+    useEffect(() => {
+      if (
+        stage === TransactionState.Done ||
+        stage === TransactionState.Failed
+      ) {
+        setMainComponent(undefined);
+      }
+    }, [setMainComponent, stage]);
 
     return (
       <TransferConfirm

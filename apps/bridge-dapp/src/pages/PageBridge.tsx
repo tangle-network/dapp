@@ -45,7 +45,7 @@ const PageBridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<
     'Deposit' | 'Withdraw' | 'Transfer'
-  >('Transfer');
+  >('Deposit');
 
   const { customMainComponent } = useWebbUI();
   const { stage, setStage } = useTransactionStage(activeTab);
