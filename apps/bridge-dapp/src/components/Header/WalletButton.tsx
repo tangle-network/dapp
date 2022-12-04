@@ -22,6 +22,7 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  KeyValueWithButton,
   MenuItem,
   shortenString,
   Typography,
@@ -76,6 +77,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
     return shortenString(account.address, 4);
   }, [account]);
+
+  const keyPair = useMemo(() => noteManager?.getKeypair(), [noteManager]);
 
   // Clear data function
   const handleClearData = useCallback(async () => {
@@ -216,6 +219,16 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                     <ExternalLinkLine />
                   </a>
                 </div>
+
+                {keyPair && (
+                  <KeyValueWithButton
+                    className="mt-0.5"
+                    label="Pub Key"
+                    keyValue={keyPair.getPubKey()}
+                    size="sm"
+                    valueVariant="body1"
+                  />
+                )}
               </div>
             </div>
 
