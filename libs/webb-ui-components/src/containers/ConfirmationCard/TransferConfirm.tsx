@@ -87,8 +87,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
         <WrapperSection>
           {/** Relayer */}
-          <Section>
-            {relayerAddress && (
+          {relayerAddress && (
+            <Section>
               <div className="space-y-4">
                 <TitleWithInfo
                   titleComponent="h6"
@@ -115,8 +115,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   </a>
                 </div>
               </div>
-            )}
-          </Section>
+            </Section>
+          )}
 
           {/** Recipient address */}
           <Section>

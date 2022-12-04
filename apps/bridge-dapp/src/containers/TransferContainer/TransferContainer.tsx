@@ -42,7 +42,7 @@ import {
 export const TransferContainer = forwardRef<
   HTMLDivElement,
   TransferContainerProps
->(({ defaultDestinationChain, defaultGovernedCurrency }, ref) => {
+>(({ defaultDestinationChain, defaultGovernedCurrency, setTxPayload }, ref) => {
   const { governedCurrency, setGovernedCurrency } = useBridge();
 
   const { activeChain, activeApi } = useWebContext();
@@ -447,7 +447,7 @@ export const TransferContainer = forwardRef<
     ].some((value) => value === false);
   }, [destChain, governedCurrency, isValidAmount, recipient]);
 
-  // Input notes for current amount
+  // Calculate input notes for current amount
   const inputNotes = useMemo(() => {
     if (!destChain || !governedCurrency) {
       return [];
@@ -553,6 +553,8 @@ export const TransferContainer = forwardRef<
     setMainComponent(
       <TransferConfirmContainer
         className="w-[550px]"
+        setTxPayload={setTxPayload}
+        inputNotes={inputNotes}
         amount={amount}
         changeAmount={changeAmount}
         currency={governedCurrency}
@@ -570,8 +572,10 @@ export const TransferContainer = forwardRef<
     generateNote,
     governedCurrency,
     infoCalculated.changeAmount,
+    inputNotes,
     recipient,
     setMainComponent,
+    setTxPayload,
   ]);
 
   useEffect(() => {

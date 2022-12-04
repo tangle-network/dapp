@@ -3,6 +3,8 @@ import { BridgeTabContainerProps } from '../types';
 import { ActiveWebbRelayer, Currency } from '@webb-tools/abstract-api-provider';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Chain } from '@webb-tools/dapp-config';
+import { Note } from '@webb-tools/sdk-core';
+import { TransactionPayload } from '@webb-tools/webb-ui-components';
 
 export type CurrencyRecord = Record<Currency['id'], Currency>;
 
@@ -30,7 +32,14 @@ export type CurrencyBalanceRecordType = Record<
 
 export interface TransferContainerProps
   extends BridgeTabContainerProps,
-    PropsOf<'div'> {}
+    PropsOf<'div'> {
+  /**
+   * Function to update the transaction payload
+   */
+  setTxPayload: React.Dispatch<
+    React.SetStateAction<Partial<TransactionPayload>>
+  >;
+}
 
 export interface TransferConfirmContainerProps
   extends Omit<PropsOf<'div'>, 'onCopy'> {
@@ -68,4 +77,16 @@ export interface TransferConfirmContainerProps
    * The change note
    */
   note?: string | null;
+
+  /**
+   * The input notes to transfer
+   */
+  inputNotes: Note[];
+
+  /**
+   * Function to update the transaction payload
+   */
+  setTxPayload: React.Dispatch<
+    React.SetStateAction<Partial<TransactionPayload>>
+  >;
 }
