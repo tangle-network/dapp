@@ -69,7 +69,7 @@ export interface TransferConfirmContainerProps
   relayer: ActiveWebbRelayer | null;
 
   /**
-   * The recipient address
+   * The recipient public key
    */
   recipient: string;
 

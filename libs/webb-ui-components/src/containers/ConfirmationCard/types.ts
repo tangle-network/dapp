@@ -157,4 +157,9 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
    * Recipient address
    */
   recipientAddress?: string;
+
+  /**
+   * Recipient public key
+   */
+  recipientPublicKey?: string;
 }

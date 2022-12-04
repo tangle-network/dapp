@@ -34,6 +34,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       onDownload,
       progress,
       recipientAddress,
+      recipientPublicKey,
       relayerAddress,
       relayerExternalUrl,
       relayerAvatarTheme,
@@ -119,8 +120,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           )}
 
           {/** Recipient address */}
-          <Section>
-            {recipientAddress && (
+          {recipientAddress && (
+            <Section>
               <div className="space-y-4">
                 <TitleWithInfo
                   titleComponent="h6"
@@ -134,8 +135,27 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   {recipientAddress}
                 </Typography>
               </div>
-            )}
-          </Section>
+            </Section>
+          )}
+
+          {/** Recipient public key */}
+          {recipientPublicKey && (
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Recipient address"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+
+                <Typography className="truncate" variant="body1" fw="bold">
+                  {recipientPublicKey}
+                </Typography>
+              </div>
+            </Section>
+          )}
         </WrapperSection>
 
         {/** New spend note */}

@@ -593,49 +593,48 @@ export const TransferContainer = forwardRef<
   }, [defaultDestinationChain, defaultGovernedCurrency, setGovernedCurrency]);
 
   return (
-    <div>
-      <TransferCard
-        bridgeAssetInputProps={{
-          token: selectedBridgingAsset,
-          onClick: handleBridgingAssetInputClick,
-        }}
-        destChainInputProps={{
-          chain: selectedDestChain,
-          chainType: 'dest',
-          onClick: handleDestChainClick,
-        }}
-        amountInputProps={{
-          amount: amount.toString(),
-          onAmountChange,
-          errorMessage: amountError,
-          onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
-        }}
-        relayerInputProps={{
-          relayerAddress: activeRelayer?.beneficiary,
-          iconTheme: activeChain
-            ? activeChain.chainType === ChainTypeEnum.EVM
-              ? 'ethereum'
-              : 'substrate'
-            : undefined,
-          onClick: handleRelayerClick,
-        }}
-        recipientInputProps={{
-          id: 'Recipient Public Key',
-          onChange: (recipient) => {
-            setRecipient(recipient);
-          },
-          overrideInputProps: {
-            placeholder: 'Enter recipient public key',
-          },
-        }}
-        transferBtnProps={{
-          isDisabled: isTransferButtonDisabled,
-          onClick: handleTransferClick,
-        }}
-        transferAmount={infoCalculated.transferAmount}
-        transferToken={infoCalculated.transferTokenSymbol}
-        changeAmount={infoCalculated.changeAmount}
-      />
-    </div>
+    <TransferCard
+      ref={ref}
+      bridgeAssetInputProps={{
+        token: selectedBridgingAsset,
+        onClick: handleBridgingAssetInputClick,
+      }}
+      destChainInputProps={{
+        chain: selectedDestChain,
+        chainType: 'dest',
+        onClick: handleDestChainClick,
+      }}
+      amountInputProps={{
+        amount: amount.toString(),
+        onAmountChange,
+        errorMessage: amountError,
+        onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
+      }}
+      relayerInputProps={{
+        relayerAddress: activeRelayer?.beneficiary,
+        iconTheme: activeChain
+          ? activeChain.chainType === ChainTypeEnum.EVM
+            ? 'ethereum'
+            : 'substrate'
+          : undefined,
+        onClick: handleRelayerClick,
+      }}
+      recipientInputProps={{
+        id: 'Recipient Public Key',
+        onChange: (recipient) => {
+          setRecipient(recipient);
+        },
+        overrideInputProps: {
+          placeholder: 'Enter recipient public key',
+        },
+      }}
+      transferBtnProps={{
+        isDisabled: isTransferButtonDisabled,
+        onClick: handleTransferClick,
+      }}
+      transferAmount={infoCalculated.transferAmount}
+      transferToken={infoCalculated.transferTokenSymbol}
+      changeAmount={infoCalculated.changeAmount}
+    />
   );
 });
