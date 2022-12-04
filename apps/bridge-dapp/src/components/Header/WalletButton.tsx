@@ -78,7 +78,19 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     return shortenString(account.address, 4);
   }, [account]);
 
+  // Get the note account keypair to display public + encryption key
   const keyPair = useMemo(() => noteManager?.getKeypair(), [noteManager]);
+
+  // Calculate the account explorer url
+  const accountExplorerUrl = useMemo(() => {
+    if (!activeChain?.blockExplorerStub) return '#';
+
+    const uri = activeChain.blockExplorerStub.endsWith('/')
+      ? `address/${account.address}`
+      : `/address/${account.address}`;
+
+    return `${activeChain.blockExplorerStub}${uri}`;
+  }, [activeChain, account]);
 
   // Clear data function
   const handleClearData = useCallback(async () => {
@@ -215,7 +227,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                     {shortenString(account.address, 6)}
                   </Typography>
 
-                  <a href="https://webb.tools" target="_blank" rel="noreferrer">
+                  <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
                     <ExternalLinkLine />
                   </a>
                 </div>
@@ -224,7 +236,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                   <KeyValueWithButton
                     className="mt-0.5"
                     label="Pub Key"
-                    keyValue={keyPair.getPubKey()}
+                    keyValue={keyPair.toString()}
                     size="sm"
                     valueVariant="body1"
                   />
