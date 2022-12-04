@@ -252,7 +252,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
             toFixedHex(sourceChainIdType, 8).substring(2),
             toFixedHex(changeUtxo.amount).substring(2),
             toFixedHex(changeKeypair.privkey).substring(2),
-            toFixedHex(changeUtxo.blinding).substring(2),
+            toFixedHex('0x' + changeUtxo.blinding).substring(2),
           ].join(':'),
           sourceChain: sourceChainIdType.toString(),
           sourceIdentifyingData: srcAddress,
