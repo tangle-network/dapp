@@ -87,6 +87,17 @@ export const TransferContainer = forwardRef<
   // State for the recipient address
   const [recipient, setRecipient] = useState<string>('');
 
+  // Calculate recipient error message
+  const recipientError = useMemo(() => {
+    if (!recipient) {
+      return '';
+    }
+
+    return recipient.length === 130 && recipient.startsWith('0x')
+      ? ''
+      : 'The public key must be 130 characters long and start with 0x';
+  }, [recipient]);
+
   // Get the available currencies from notes
   const currenciyRecordFromNotes = useMemo<CurrencyRecordWithChainsType>(() => {
     if (!allNotes) {
@@ -441,11 +452,12 @@ export const TransferContainer = forwardRef<
   const isTransferButtonDisabled = useMemo<boolean>(() => {
     return [
       Boolean(governedCurrency), // No governed currency selected
-      Boolean(destChain),
+      Boolean(destChain), // No destination chain selected
+      recipientError === '', // Invalid recipient public key
       isValidAmount, // Is valid amount
       Boolean(recipient), // No recipient address
     ].some((value) => value === false);
-  }, [destChain, governedCurrency, isValidAmount, recipient]);
+  }, [destChain, governedCurrency, isValidAmount, recipient, recipientError]);
 
   // Calculate input notes for current amount
   const inputNotes = useMemo(() => {
@@ -620,7 +632,8 @@ export const TransferContainer = forwardRef<
         onClick: handleRelayerClick,
       }}
       recipientInputProps={{
-        id: 'Recipient Public Key',
+        title: 'Recipient Public Key',
+        errorMessage: recipientError,
         onChange: (recipient) => {
           setRecipient(recipient);
         },

@@ -203,6 +203,11 @@ export interface RecipientInputProps
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
 
   /**
+   * The error message to display
+   */
+  errorMessage?: string;
+
+  /**
    * Override props of input element
    */
   overrideInputProps?: Omit<InputProps, 'id'>;
