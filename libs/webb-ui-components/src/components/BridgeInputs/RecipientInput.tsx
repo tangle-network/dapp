@@ -25,7 +25,19 @@ import { RecipientInputProps } from './types';
  */
 
 export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
-  ({ className, id = 'recipient', info, onChange: onChangeProp, value, ...props }, ref) => {
+  (
+    {
+      className,
+      id = 'recipient',
+      title,
+      info,
+      onChange: onChangeProp,
+      value,
+      overrideInputProps,
+      ...props
+    },
+    ref
+  ) => {
     const [address, setAddress] = useState<string | undefined>(() => value);
 
     const onClick = useCallback(async () => {
@@ -47,23 +59,34 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     }, [value, setAddress]);
 
     return (
-      <InputWrapper {...props} className={twMerge('cursor-auto space-x-2', className)} ref={ref}>
-        <div className='flex flex-col w-full space-y-1'>
+      <InputWrapper
+        {...props}
+        className={twMerge('cursor-auto space-x-2', className)}
+        ref={ref}
+      >
+        <div className="flex flex-col w-full space-y-1">
           <Label htmlFor={id}>
             <TitleWithInfo
-              title='Recipient'
+              title={(title ?? id).toLocaleUpperCase()}
               info={info}
-              variant='body4'
-              titleComponent='span'
-              className='text-mono-100 dark:text-mono-80'
-              titleClassName='uppercase !text-inherit'
+              variant="body4"
+              titleComponent="span"
+              className="text-mono-100 dark:text-mono-80"
+              titleClassName="uppercase !text-inherit"
             />
           </Label>
-          <Input placeholder='Enter recipient wallet address' id={id} size='sm' value={address} onChange={onChange} />
+          <Input
+            placeholder="Enter recipient wallet address"
+            id={id}
+            size="sm"
+            value={address}
+            onChange={onChange}
+            {...overrideInputProps}
+          />
         </div>
 
         {!address && (
-          <Button variant='utility' size='sm' onClick={onClick}>
+          <Button variant="utility" size="sm" onClick={onClick}>
             Paste
           </Button>
         )}

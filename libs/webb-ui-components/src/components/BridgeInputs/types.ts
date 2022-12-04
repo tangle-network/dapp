@@ -191,6 +191,7 @@ export interface RecipientInputProps
    * The input value
    */
   value?: InputProps['value'];
+
   /**
    * Callback function to control the input value
    */
@@ -200,6 +201,11 @@ export interface RecipientInputProps
    * The amount menu props to pass into the AmountMenu component
    */
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
+
+  /**
+   * Override props of input element
+   */
+  overrideInputProps?: Omit<InputProps, 'id'>;
 }
 
 export interface ShieldedAssetInputProps extends InputWrapperProps {

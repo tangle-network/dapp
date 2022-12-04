@@ -620,8 +620,12 @@ export const TransferContainer = forwardRef<
           onClick: handleRelayerClick,
         }}
         recipientInputProps={{
+          id: 'Recipient Public Key',
           onChange: (recipient) => {
             setRecipient(recipient);
+          },
+          overrideInputProps: {
+            placeholder: 'Enter recipient public key',
           },
         }}
         transferBtnProps={{
