@@ -47,7 +47,6 @@ import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { Web3Provider } from '../ext-provider';
-import { JsNote } from '@webb-tools/wasm-utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {
@@ -58,6 +57,34 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return this.inner.config;
   }
 
+  private async fetchLeaves(): Record<string, Uint8Array[]> {}
+  private async fetchFixtures(
+    maxEdges: number,
+    small: boolean,
+    abortSignal: AbortSignal,
+    fixturesList: Map<string, FixturesStatus>
+  ) {
+    fixturesList.set('VAnchorKey', 'Waiting');
+    fixturesList.set('VAnchorWasm', 'Waiting');
+    fixturesList.set('VAnchorKey', 0);
+    const provingKey = await fetchVAnchorKeyFromAws(
+      maxEdges,
+      small,
+      abortSignal
+    );
+    fixturesList.set('VAnchorKey', 'Done');
+    fixturesList.set('VAnchorWasm', 0);
+    const wasmBuffer = await fetchVAnchorWasmFromAws(
+      maxEdges,
+      small,
+      abortSignal
+    );
+    fixturesList.set('VAnchorWasm', 'Done');
+    return {
+      provingKey,
+      wasmBuffer,
+    };
+  }
   withdraw(
     notes: string[],
     recipient: string,
@@ -100,8 +127,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         // Create the proving manager - zk fixtures are fetched depending on the contract
         // max edges as well as the number of input notes.
-        let wasmBuffer: Uint8Array;
-        let provingKey: Uint8Array;
+
         withdrawTx.cancelToken.throwIfCancel();
 
         const fixturesList = new Map<string, FixturesStatus>();
@@ -109,42 +135,14 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         withdrawTx.next(TransactionState.FetchingFixtures, {
           fixturesList,
         });
-        fixturesList.set('VAnchorKey', 'Waiting');
-        fixturesList.set('VAnchorWasm', 'Waiting');
         const maxEdges = await destVAnchor.inner.maxEdges();
-
-        if (notes.length > 2) {
-          fixturesList.set('VAnchorKey', 0);
-          provingKey = await fetchVAnchorKeyFromAws(
-            maxEdges,
-            false,
-            abortSignal
-          );
-          fixturesList.set('VAnchorKey', 'Done');
-          fixturesList.set('VAnchorWasm', 0);
-          wasmBuffer = await fetchVAnchorWasmFromAws(
-            maxEdges,
-            false,
-            abortSignal
-          );
-          fixturesList.set('VAnchorWasm', 'Done');
-        } else {
-          fixturesList.set('VAnchorKey', 0);
-
-          provingKey = await fetchVAnchorKeyFromAws(
-            maxEdges,
-            true,
-            abortSignal
-          );
-          fixturesList.set('VAnchorKey', 'Done');
-          fixturesList.set('VAnchorWasm', 0);
-          wasmBuffer = await fetchVAnchorWasmFromAws(
-            maxEdges,
-            true,
-            abortSignal
-          );
-          fixturesList.set('VAnchorWasm', 'Done');
-        }
+        const small = notes.length <= 2;
+        const { provingKey, wasmBuffer } = await this.fetchFixtures(
+          maxEdges,
+          small,
+          abortSignal,
+          fixturesList
+        );
 
         // Loop through the notes and populate the leaves map
         const leavesMap: Record<string, Uint8Array[]> = {};
@@ -311,7 +309,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           };
 
           const savedChangeNote = await Note.generateNote(changeNoteInput);
-          this.inner.noteManager?.addNote(savedChangeNote);
+          await this.inner.noteManager?.addNote(savedChangeNote);
           changeNotes.push(savedChangeNote);
         }
 
