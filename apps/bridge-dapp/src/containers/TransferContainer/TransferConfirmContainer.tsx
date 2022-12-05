@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { ChainIcon } from '@webb-tools/icons';
 import { useTransfer } from '@webb-tools/react-hooks';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
@@ -76,9 +76,15 @@ export const TransferConfirmContainer = forwardRef<
 
     // The callback for the transfer button
     const onTransfer = useCallback(async () => {
-      // Set transaction payload for transaction processing card
+      if (note) {
+        downloadString(
+          JSON.stringify(note),
+          note.slice(-note.length) + '.json'
+        );
+      }
+
       await transfer();
-    }, [transfer]);
+    }, [note, transfer]);
 
     // Close the confirm modal if the transfer is successful or failed
     useEffect(() => {
