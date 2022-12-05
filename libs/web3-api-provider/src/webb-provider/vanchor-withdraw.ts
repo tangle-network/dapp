@@ -42,11 +42,12 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { BigNumber, ContractTransaction, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { Web3Provider } from '../ext-provider';
+import { JsNote } from '@webb-tools/wasm-utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {
@@ -63,7 +64,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     amount: string,
     unwrapTokenAddress?: string
   ): Transaction<NewNotesTxResult> {
-    const formattedAmount = amount;
+    // TODO: Use the right denomination
+    const formattedAmount = ethers.utils.formatUnits(amount, 12);
     const withdrawTx = Transaction.new<NewNotesTxResult>('Withdraw', {
       wallets: { src: 'ETH', dist: 'ETH' },
       tokens: ['wETH', 'WebbETH'],
@@ -73,19 +75,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const executor = async () => {
       const abortSignal = withdrawTx.cancelToken.abortSignal;
 
-      switch (this.state) {
-        case TransactionState.Cancelling:
-        case TransactionState.Failed:
-        case TransactionState.Done:
-          this.cancelToken.reset();
-          this.state = TransactionState.Ideal;
-          break;
-        case TransactionState.Ideal:
-          break;
-        default:
-          throw WebbError.from(WebbErrorCodes.TransactionInProgress);
-      }
-      const key = 'web3-vbridge-withdraw';
       let txHash = '';
       const changeNotes: Note[] = [];
       try {
@@ -100,12 +89,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         const activeChain = await this.inner.getChainId();
 
-        const section = `Bridge ${Object.keys(activeBridge.targets)
-          .map((id) =>
-            this.config.getEVMChainName(parseTypedChainId(Number(id)).chainId)
-          )
-          .join('-')}`;
-
         // set the destination contract
         const destChainIdType = calculateTypedChainId(
           ChainType.EVM,
@@ -119,8 +102,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         // max edges as well as the number of input notes.
         let wasmBuffer: Uint8Array;
         let provingKey: Uint8Array;
-        this.cancelToken.throwIfCancel();
-        this.emit('stateChange', TransactionState.FetchingFixtures);
+        withdrawTx.cancelToken.throwIfCancel();
 
         const fixturesList = new Map<string, FixturesStatus>();
 
@@ -178,8 +160,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         withdrawTx.cancelToken.throwIfCancel();
 
         // For all notes, get any leaves in parallel
-        this.emit('stateChange', TransactionState.FetchingLeaves);
-
         withdrawTx.next(TransactionState.FetchingLeaves, {
           end: undefined,
           currentRange: [0, 1],
@@ -188,7 +168,13 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         const notesLeaves = await Promise.all(
           notes.map((note) =>
-            this.fetchNoteLeaves(note, leavesMap, destVAnchor, treeHeight)
+            this.fetchNoteLeaves(
+              note,
+              leavesMap,
+              destVAnchor,
+              treeHeight,
+              abortSignal
+            )
           )
         );
 
@@ -227,11 +213,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
             return hexToU8a(leaf);
           });
-        }
-
-        // Check for cancelled here, abort if it was set.
-        if (withdrawTx.cancelToken.isCancelled()) {
-          this.emit('stateChange', TransactionState.Ideal);
         }
 
         withdrawTx.cancelToken.throwIfCancel();
@@ -277,7 +258,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             )
           );
 
-        this.emit('stateChange', TransactionState.GeneratingZk);
         withdrawTx.next(TransactionState.GeneratingZk, undefined);
         const worker = this.inner.wasmFactory();
         const { extData, publicInputs } =
@@ -303,13 +283,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             }
           );
 
-        // Check for cancelled here, abort if it was set.
-        if (withdrawTx.cancelToken.isCancelled()) {
-          this.emit('stateChange', TransactionState.Ideal);
-        }
-
-        this.emit('stateChange', TransactionState.SendingTransaction);
-        this.cancelToken.throwIfCancel();
+        withdrawTx.cancelToken.throwIfCancel();
 
         // set the changeNote to storage so it is not lost by user error
         if (changeAmount.gt(0)) {
@@ -391,17 +365,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
             switch (results) {
               case RelayedWithdrawResult.PreFlight:
-                this.emit('stateChange', TransactionState.SendingTransaction);
+                /// Sending throw relayer
                 break;
               case RelayedWithdrawResult.OnFlight:
                 break;
               case RelayedWithdrawResult.Continue:
                 break;
               case RelayedWithdrawResult.CleanExit:
-                this.emit('stateChange', TransactionState.Done);
+                // Done state
                 break;
               case RelayedWithdrawResult.Errored:
-                this.emit('stateChange', TransactionState.Failed);
+                // Tx failed
                 withdrawTx.fail(message);
                 break;
             }
@@ -458,16 +432,15 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           // Cleanup NoteAccount state
           for (const note of notes) {
             const parsedNote = await Note.deserialize(note);
-            this.inner.noteManager?.removeNote(parsedNote);
+            await this.inner.noteManager?.removeNote(parsedNote);
           }
         }
       } catch (e) {
         // Cleanup NoteAccount state for added changeNotes
         for (const note of changeNotes) {
-          this.inner.noteManager?.removeNote(note);
+          await this.inner.noteManager?.removeNote(note);
         }
 
-        this.emit('stateChange', TransactionState.Failed);
         withdrawTx.fail(e);
 
         return {
@@ -476,7 +449,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         };
       }
 
-      this.emit('stateChange', TransactionState.Done);
       withdrawTx.next(TransactionState.Done, {
         txHash: txHash,
         outputNotes: changeNotes,
@@ -494,9 +466,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     note: string,
     leavesMap: Record<string, Uint8Array[]>,
     destVAnchor: VAnchorContract,
-    treeHeight: number
+    treeHeight: number,
+    abortSignal: AbortSignal
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> {
-    const abortSignal = this.cancelToken.abortSignal;
     const parsedNote = (await Note.deserialize(note)).note;
     const amount = BigNumber.from(parsedNote.amount);
 
