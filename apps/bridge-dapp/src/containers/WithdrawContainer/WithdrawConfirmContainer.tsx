@@ -31,7 +31,7 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: governedCurrency } = governedCurrencyProp;
 
-    const { withdraw, stage, setStage } = useWithdraw({
+    const { withdraw, stage } = useWithdraw({
       amount: amount,
       notes: availableNotes,
       recipient: recipient,
@@ -112,14 +112,7 @@ export const WithdrawConfirmContainer = forwardRef<
         downloadNote(changeNote);
       }
 
-      const successfulWithdraw = await withdraw();
-
-      if (successfulWithdraw) {
-        setStage(TransactionState.Done);
-        setMainComponent(undefined);
-      } else {
-        setStage(TransactionState.Failed);
-      }
+      await withdraw();
 
       setIsWithdrawing(false);
     }, [
@@ -129,7 +122,6 @@ export const WithdrawConfirmContainer = forwardRef<
       governedCurrency.view.symbol,
       isWithdrawing,
       setMainComponent,
-      setStage,
       targetChainId,
       unwrapCurrency?.view.symbol,
       withdraw,

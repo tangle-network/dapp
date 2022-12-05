@@ -60,6 +60,11 @@ export type WebbMethod<
   enabled: boolean;
 };
 
+export type WebbTransactionMethod<T> = {
+  inner: T;
+  enabled: boolean;
+};
+
 export interface WebbMixer<T extends WebbApiProvider<any>> {
   // deposit
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
@@ -69,7 +74,7 @@ export interface WebbMixer<T extends WebbApiProvider<any>> {
 
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
-  withdraw: WebbMethod<VAnchorWithdraw<T>, WebbWithdrawEvents>;
+  withdraw: WebbTransactionMethod<VAnchorWithdraw<T>>;
   transfer: WebbMethod<VAnchorTransfer<T>, WebbWithdrawEvents>;
   actions: WebbMethod<VAnchorActions<T>, VAnchorActionEvent>;
 }
