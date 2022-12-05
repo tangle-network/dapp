@@ -74,7 +74,7 @@ function getTxMessageFromStatus<Key extends TransactionState>(
     case TransactionState.FetchingFixtures:
       return "Fetching the transaction's fixtures";
     case TransactionState.FetchingLeaves:
-      return "Fetching the transaction's eaves";
+      return "Fetching transaction leaves...";
     case TransactionState.GeneratingZk:
       return 'Generating the zero knowledge proof';
     case TransactionState.SendingTransaction:

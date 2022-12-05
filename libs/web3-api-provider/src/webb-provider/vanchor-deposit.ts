@@ -156,7 +156,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         const vanchor = anchors.find((anchor) => !anchor.amount);
 
         if (!vanchor) {
-          depositTx.fail('No variable anchor configured for token');
+          depositTx.fail('No variable anchor configured for selected token');
         }
 
         // Get the contract address for the destination chain
