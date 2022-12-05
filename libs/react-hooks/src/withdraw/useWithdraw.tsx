@@ -12,8 +12,8 @@ import {
 } from '@webb-tools/api-provider-environment';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTxQueue } from '@webb-tools/react-hooks/transaction';
+import { useCallback, useMemo, useState } from 'react';
+import { useTxQueue } from '../transaction';
 
 export type WithdrawErrors = {
   error: string;
