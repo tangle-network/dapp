@@ -23,7 +23,6 @@ export const WithdrawConfirmContainer = forwardRef<
       changeAmount,
       fees,
       targetChainId,
-      setTxPayload,
       governedCurrency: governedCurrencyProp,
       unwrapCurrency: { value: unwrapCurrency } = {},
       recipient,
@@ -102,27 +101,6 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // The main action onClick handler
     const onClick = useCallback(async () => {
-      // Set transaction payload for transaction processing card
-      setTxPayload((prev) => ({
-        ...prev,
-        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
-        amount: amount.toString(),
-        timestamp: new Date(),
-        method: 'Withdraw',
-        txStatus: {
-          status: 'in-progress',
-        },
-        token: unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
-        tokens: [
-          governedCurrency.view.symbol,
-          unwrapCurrency?.view.symbol ?? governedCurrency.view.symbol,
-        ],
-        wallets: {
-          src: <ChainIcon name={chainsPopulated[targetChainId]?.name} />,
-          dist: <WalletLineIcon />,
-        },
-      }));
-
       if (isWithdrawing) {
         setMainComponent(undefined);
         return;
@@ -152,7 +130,6 @@ export const WithdrawConfirmContainer = forwardRef<
       isWithdrawing,
       setMainComponent,
       setStage,
-      setTxPayload,
       targetChainId,
       unwrapCurrency?.view.symbol,
       withdraw,

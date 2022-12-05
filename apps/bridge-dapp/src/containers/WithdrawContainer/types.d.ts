@@ -10,14 +10,7 @@ import { BridgeTabContainerProps } from '../types';
 
 export interface WithdrawContainerProps
   extends BridgeTabContainerProps,
-    PropsOf<'div'> {
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
-}
+    PropsOf<'div'> {}
 
 export type CurrencyWithBalance = { value: Currency } & Omit<
   TokenType,
@@ -69,11 +62,4 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
    * The unwrap token
    */
   unwrapCurrency?: CurrencyWithBalance;
-
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
 }

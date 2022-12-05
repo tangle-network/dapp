@@ -81,21 +81,22 @@ class SubQlTime {
   }
 }
 
-const statsContext: React.Context<StatsProvidervalue> = React.createContext<StatsProvidervalue>({
-  blockTime: 6,
-  sessionHeight: 10,
-  time: new SubQlTime(new Date()),
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  updateTime(_time: SubQlTime): void {},
-  metaData: {
-    activeSession: '0',
-    currentBlock: '0',
-    lastSession: '0',
-    lastProcessBlock: '0',
-    activeSessionBlock: 0,
-  },
-  isReady: false,
-});
+const statsContext: React.Context<StatsProvidervalue> =
+  React.createContext<StatsProvidervalue>({
+    blockTime: 6,
+    sessionHeight: 10,
+    time: new SubQlTime(new Date()),
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    updateTime(_time: SubQlTime): void {},
+    metaData: {
+      activeSession: '0',
+      currentBlock: '0',
+      lastSession: '0',
+      lastProcessBlock: '0',
+      activeSessionBlock: 0,
+    },
+    isReady: false,
+  });
 export function useStatsContext() {
   return useContext(statsContext);
 }
@@ -120,9 +121,9 @@ export const useActiveSession = () => {
   } = useStatsContext();
   return activeSession;
 };
-export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
-  props
-) => {
+export const StatsProvider: React.FC<
+  Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>
+> = (props) => {
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
   const [metaData, setMetaData] = useState<Metadata>({
     activeSession: '0',
@@ -211,5 +212,9 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
     };
   }, [query, metaDataQuery, staticConfig]);
 
-  return <statsContext.Provider value={value}>{props.children}</statsContext.Provider>;
+  return (
+    <statsContext.Provider value={value}>
+      {props.children}
+    </statsContext.Provider>
+  );
 };

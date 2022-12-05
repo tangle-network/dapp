@@ -1,11 +1,14 @@
 import {
   DepositPayload,
   NewNotesTxResult,
+  Transaction,
   TransactionState,
   VAnchorDeposit,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useTxQueue } from '../transaction';
+
 export interface VBridgeDepositApi {
   deposit(payload: DepositPayload): Promise<NewNotesTxResult>;
   cancel(): Promise<void>;
@@ -16,16 +19,23 @@ export interface VBridgeDepositApi {
     wrappableAsset: string | undefined
   ): Promise<DepositPayload>;
   stage: TransactionState;
-  setStage(stage: TransactionState): void;
   error: string;
   depositApi: VAnchorDeposit<any> | null;
+  startNewTransaction(): void;
 }
 
 export const useBridgeDeposit = (): VBridgeDepositApi => {
-  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const { activeApi } = useWebContext();
   const [error] = useState('');
+  const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
 
+  const stage = useMemo(() => {
+    if (txQueue.length === 0 || currentTxId === null) {
+      return TransactionState.Ideal;
+    }
+    const lastTx = txQueue[txQueue.length - 1];
+    return lastTx.currentStatus[0];
+  }, [txQueue, txPayloads, currentTxId]);
   /// api
   const depositApi = useMemo(() => {
     const depositApi = activeApi?.methods.variableAnchor.deposit;
@@ -34,21 +44,6 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
     }
     return depositApi.inner;
   }, [activeApi]);
-
-  // hook events
-  useEffect(() => {
-    if (!depositApi) {
-      return;
-    }
-
-    depositApi.on('stateChange', (state) => {
-      setStage(state);
-    });
-
-    return () => {
-      depositApi.unsubscribeAll();
-    };
-  }, [depositApi]);
 
   const generateNote = useCallback(
     async (
@@ -75,9 +70,14 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
       if (!depositApi) {
         throw new Error('Api not ready');
       }
-      return depositApi.deposit(depositPayload);
+      const payload = depositApi.deposit(depositPayload);
+      console.log(payload, 'deposit payload');
+      if (payload instanceof Transaction) {
+        txQueueApi.registerTransaction(payload);
+      }
+      return payload;
     },
-    [depositApi]
+    [depositApi, txQueueApi]
   );
 
   const cancel = useCallback(() => {
@@ -89,7 +89,7 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
 
   return {
     stage,
-    setStage,
+    startNewTransaction: txQueueApi.startNewTransaction,
     depositApi,
     deposit,
     generateNote,

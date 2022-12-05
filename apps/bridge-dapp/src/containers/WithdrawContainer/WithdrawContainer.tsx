@@ -24,7 +24,7 @@ import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ setTxPayload, defaultGovernedCurrency }, ref) => {
+>(({ defaultGovernedCurrency }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -241,7 +241,7 @@ export const WithdrawContainer = forwardRef<
   }, [defaultGovernedCurrency, setGovernedCurrency]);
 
   return (
-    <div>
+    <div ref={ref}>
       <WithdrawCard
         tokenInputProps={{
           onClick: () => {
@@ -453,7 +453,6 @@ export const WithdrawContainer = forwardRef<
                     : undefined
                 }
                 recipient={recipient}
-                setTxPayload={setTxPayload}
               />
             );
           },

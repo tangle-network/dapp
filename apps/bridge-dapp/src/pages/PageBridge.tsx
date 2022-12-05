@@ -15,14 +15,12 @@ import {
   TabsList,
   TabsRoot,
   TabTrigger,
-  TransactionPayload,
   TransactionQueueCard,
-  TransactionItemStatus,
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ManageButton } from '../components/tables';
 import {
   ShieldedAssetsTableContainer,
@@ -34,12 +32,8 @@ import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { NoteAccountTableContainerProps } from '../containers/types';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
-import {
-  useShieldedAssets,
-  useSpendNotes,
-  useTransactionStage,
-} from '../hooks';
-import { getMessageFromTransactionState } from '../utils';
+import { useShieldedAssets, useSpendNotes } from '../hooks';
+import { useTxQueue } from '@webb-tools/react-hooks';
 
 const PageBridge = () => {
   // State for the tabs
@@ -48,48 +42,13 @@ const PageBridge = () => {
   >('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { stage, setStage } = useTransactionStage(activeTab);
   const { noteManager } = useWebContext();
-
   const { smoothScrollToTop } = useScrollActions();
 
-  const defaultTx: Partial<TransactionPayload> = useMemo(() => {
-    let status: TransactionItemStatus = 'in-progress';
-
-    switch (stage) {
-      case TransactionState.Done: {
-        status = 'completed';
-        break;
-      }
-
-      case TransactionState.Failed: {
-        status = 'warning';
-        break;
-      }
-    }
-
-    return {
-      id: '1',
-      getExplorerURI(addOrTxHash, variant) {
-        return '#';
-      },
-      txStatus: {
-        status,
-      },
-      onDetails: () => {
-        console.log('On detail');
-      },
-      onDismiss: () => {
-        setStage(TransactionState.Ideal);
-      },
-    };
-  }, [stage, setStage]);
+  const { txPayloads } = useTxQueue();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
-
-  // Transatcion payload for queue card
-  const [txPayload, setTxPayload] = useState(defaultTx);
 
   // Default state for destination chain and governed currency
   // when action buttons are clicked in the note account table
@@ -148,48 +107,9 @@ const PageBridge = () => {
   // Spend notes table data
   const spendNotesTableData = useSpendNotes();
 
-  useEffect(() => {
-    const message = getMessageFromTransactionState(stage);
-
-    if (message.length) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'in-progress',
-          message: `${message}...`,
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Done) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'completed',
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Failed) {
-      setTxPayload((prev) => ({
-        ...prev,
-        txStatus: {
-          ...prev.txStatus,
-          status: 'warning',
-        },
-      }));
-    }
-
-    if (stage === TransactionState.Ideal) {
-      setTxPayload(defaultTx);
-    }
-  }, [defaultTx, stage]);
-
   const isDisplayTxQueueCard = useMemo(
-    () => stage !== TransactionState.Ideal,
-    [stage]
+    () => txPayloads.length > 0,
+    [txPayloads]
   );
 
   return (
@@ -217,7 +137,6 @@ const PageBridge = () => {
             <DepositContainer
               defaultDestinationChain={defaultDestinationChain}
               defaultGovernedCurrency={defaultGovernedCurrency}
-              setTxPayload={setTxPayload}
             />
           </TabContent>
           <TabContent value="Transfer">
@@ -228,7 +147,7 @@ const PageBridge = () => {
             />
           </TabContent>
           <TabContent value="Withdraw">
-            <WithdrawContainer setTxPayload={setTxPayload} />
+            <WithdrawContainer />
           </TabContent>
         </TabsRoot>
 
@@ -237,7 +156,7 @@ const PageBridge = () => {
           {isDisplayTxQueueCard && (
             <TransactionQueueCard
               className="w-full mb-4 max-w-none"
-              transactions={[txPayload as TransactionPayload]}
+              transactions={txPayloads}
             />
           )}
 

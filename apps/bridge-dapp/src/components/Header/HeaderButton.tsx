@@ -1,5 +1,5 @@
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { forwardRef } from "react";
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export const HeaderButton = forwardRef<HTMLButtonElement, PropsOf<'button'>>(

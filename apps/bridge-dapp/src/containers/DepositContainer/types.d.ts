@@ -8,14 +8,7 @@ import { BridgeTabContainerProps } from '../types';
 
 export interface DepositContainerProps
   extends BridgeTabContainerProps,
-    PropsOf<'div'> {
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
-}
+    PropsOf<'div'> {}
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
@@ -44,13 +37,8 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   destChain?: ChainType;
 
   /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
-  /**
    * The signal to wrap and deposit flow
    * */
   wrappingFlow: boolean;
+  wrappableTokenSymbol?: string;
 }

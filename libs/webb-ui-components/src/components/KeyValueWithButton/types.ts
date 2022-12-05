@@ -1,6 +1,7 @@
 import { WebbComponentBase } from '../../types';
 
 import { LabelWithValueProps } from '../LabelWithValue/types';
+import { UseCopyableReturnType } from '../../hooks';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
 
@@ -50,4 +51,6 @@ export interface KeyValueWithButtonProps
    * @returns the shortened string
    */
   shortenFn?: (value: string, chars?: number) => string;
+  copyProps?: UseCopyableReturnType;
+  isHiddenValue?: boolean;
 }

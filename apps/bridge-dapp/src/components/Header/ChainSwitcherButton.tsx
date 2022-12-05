@@ -43,7 +43,10 @@ export const ChainSwitcherButton: FC = () => {
             className="w-[550px] h-[720px]"
             chainType="source"
             chains={sourceChains}
-            value={{ name: activeChain?.name ?? 'Select Chain', symbol: activeChain?.name ?? ''}}
+            value={{
+              name: activeChain?.name ?? 'Select Chain',
+              symbol: activeChain?.name ?? '',
+            }}
             onClose={() => setMainComponent(undefined)}
             onChange={async (selectedChain) => {
               const chain = Object.values(chains).find(
