@@ -69,7 +69,7 @@ function getTxMessageFromStatus<Key extends TransactionState>(
 ): string {
   switch (txStatus) {
     case TransactionState.Cancelling:
-      return 'Canceling the Transaction';
+      return 'Canceling transaction';
     case TransactionState.Ideal:
       return 'Transaction completed';
     case TransactionState.FetchingFixtures:
