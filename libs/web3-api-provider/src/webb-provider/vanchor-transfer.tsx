@@ -450,7 +450,10 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
         }
 
         this.emit('stateChange', TransactionState.Failed);
-        transferTx.fail(description);
+        transferTx.next(TransactionState.Failed, {
+          error: description,
+          txHash,
+        });
         console.log(e);
 
         return {

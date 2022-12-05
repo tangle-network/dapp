@@ -91,7 +91,11 @@ export const TransferConfirmContainer = forwardRef<
         );
       }
 
-      await transfer();
+      try {
+        await transfer();
+      } catch (error) {
+        console.error('Error occured while transfering', error);
+      }
     }, [isTransfering, note, setMainComponent, transfer]);
 
     // Effect to update the progress bar
