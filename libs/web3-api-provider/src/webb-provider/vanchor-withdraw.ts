@@ -245,10 +245,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     notes: string[],
     recipient: string,
     amount: string,
+    denomination: number,
     unwrapTokenAddress?: string
   ): Transaction<NewNotesTxResult> {
-    // TODO: Use the right denomination
-    const formattedAmount = ethers.utils.formatUnits(amount, 12);
+    const formattedAmount = ethers.utils.formatUnits(amount, denomination);
     const withdrawTx = Transaction.new<NewNotesTxResult>('Withdraw', {
       wallets: { src: 'ETH', dist: 'ETH' },
       tokens: ['wETH', 'WebbETH'],

@@ -108,7 +108,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           const withdrawNoteStrings = withdrawNotes.map((note) =>
             note.serialize()
           );
-
+          const denomination = Number(withdrawNotes[0].note.denomination);
           const payload = withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
@@ -118,6 +118,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
                 params.notes[0].note.denomination
               )
               .toString(),
+            denomination,
             params.unwrapTokenAddress
           );
           if (payload instanceof Transaction) {

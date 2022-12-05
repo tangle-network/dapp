@@ -11,6 +11,7 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> {
     notes: string[],
     recipient: string,
     amount: string,
+    denomination: number,
     unwrapTokenAddress?: string
   ): Transaction<NewNotesTxResult>;
 }
