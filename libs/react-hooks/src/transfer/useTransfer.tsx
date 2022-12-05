@@ -2,26 +2,22 @@ import {
   Currency,
   NewNotesTxResult,
   OptionalActiveRelayer,
+  Transaction,
   TransactionState,
   VAnchorTransfer,
-  VanchorTransferPayload,
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
 import {
   misbehavingRelayer,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import {
-  calculateTypedChainId,
-  ChainType,
-  Note,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import { ChainType, Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useTxQueue } from '../transaction';
 import { RelayersState, WithdrawErrors } from '../withdraw/useWithdraw';
 
 export interface VAnchorTransferApi {
@@ -31,12 +27,12 @@ export interface VAnchorTransferApi {
   transfer(): Promise<void>;
   cancel(): Promise<void>;
   stage: TransactionState;
-  setStage(stage: TransactionState): void;
   setGovernedCurrency(currency: Currency): void;
   error: string;
   transferApi: VAnchorTransfer<any> | null;
   relayersState: RelayersState;
   setRelayer(relayer: WebbRelayer | null): void;
+  startNewTransaction(): void;
 }
 
 export type UseTransferProps = {
@@ -47,15 +43,28 @@ export type UseTransferProps = {
 };
 
 export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
-  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const [receipt, setReceipt] = useState<string>('');
+
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
   const [relayersState, setRelayersState] = useState<RelayersState>({
     relayers: [],
     activeRelayer: null,
     loading: true,
   });
+
   const { activeApi } = useWebContext();
+
+  const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
+
+  // Calculate the transaction stage
+  const stage = useMemo(() => {
+    if (txQueue.length === 0 || currentTxId === null) {
+      return TransactionState.Ideal;
+    }
+    const lastTx = txQueue[txQueue.length - 1];
+    return lastTx.currentStatus[0];
+  }, [txQueue, txPayloads, currentTxId]);
+
   const [error, setError] = useState<WithdrawErrors>({
     error: '',
     validationError: {
@@ -72,21 +81,6 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     }
     return transferApi.inner;
   }, [activeApi]);
-
-  // hook events
-  useEffect(() => {
-    if (!transferApi) {
-      return;
-    }
-
-    transferApi.on('stateChange', (state) => {
-      setStage(state);
-    });
-
-    return () => {
-      transferApi.unsubscribeAll();
-    };
-  }, [transferApi]);
 
   const transfer = useCallback(async () => {
     if (!transferApi) {
@@ -111,10 +105,8 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
             console.log('no spendableNotes detected');
             return;
           }
-          const noteStrings = spendableNotes.map((note) => note.serialize());
-
-          const txResult = await transferApi.transfer({
-            inputNotes: noteStrings,
+          const payload = transferApi.transfer({
+            inputNotes: spendableNotes,
             amount: ethers.utils
               .parseUnits(
                 props.amount.toString(),
@@ -124,6 +116,13 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
             targetTypedChainId: props.destination,
             recipient: props.recipient,
           });
+
+          if (payload instanceof Transaction) {
+            txQueueApi.registerTransaction(payload);
+          }
+
+          const txResult: NewNotesTxResult = await payload;
+
           setReceipt(txResult.txHash);
           setOutputNotes(txResult.outputNotes);
         } catch (e) {
@@ -142,6 +141,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     props.destination,
     props.notes,
     props.recipient,
+    txQueueApi,
     stage,
     transferApi,
   ]);
@@ -217,12 +217,6 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     }
 
     const unsubscribe: Record<string, (() => void) | void> = {};
-    unsubscribe['stateChange'] = transferApi.on(
-      'stateChange',
-      (stage: TransactionState) => {
-        setStage(stage);
-      }
-    );
 
     unsubscribe['error'] = transferApi.on('error', (transferError: any) => {
       setError((p) => ({
@@ -239,12 +233,12 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
 
   return {
     receipt,
+    startNewTransaction: txQueueApi.startNewTransaction,
     setOutputNotes,
     outputNotes,
     relayersState,
     setRelayer,
     stage,
-    setStage,
     setGovernedCurrency,
     transferApi,
     transfer,
@@ -252,6 +246,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     cancel,
   };
 };
+
 function registerInteractiveFeedback(interactiveFeedback: InteractiveFeedback) {
   throw new Error('Function not implemented.');
 }
