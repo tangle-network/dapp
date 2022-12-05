@@ -433,7 +433,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           }
         } else {
           let tx: ContractTransaction;
-
+          withdrawTx.next(TransactionState.SendingTransaction, undefined);
           if (unwrapTokenAddress) {
             tx = await destVAnchor.inner.transactWrap(
               {
