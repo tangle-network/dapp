@@ -34,5 +34,5 @@ export abstract class VAnchorWithdraw<
     recipient: string,
     amount: string,
     unwrapTokenAddress?: string
-  ): Promise<NewNotesTxResult>;
+  ): PromiseLike<NewNotesTxResult>;
 }
