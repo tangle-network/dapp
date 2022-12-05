@@ -15,7 +15,6 @@ import {
   Transaction,
   TransactionState,
   VAnchorWithdraw,
-  WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
 import {
   bridgeStorageFactory,
@@ -133,14 +132,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       leavesMap,
     };
   }
-
+  /**
+   * Submit the withdraw transaction throw relayer
+   * */
   private async relayerWithdraw(
     extData: ExtData,
     publicInputs: IVariableAnchorPublicInputs,
     destChainIdType: number,
     destAddress: string,
     activeChain: number,
-    activeRelayer: ActiveWebbRelayer
+    activeRelayer: ActiveWebbRelayer,
+    withdrawTx: Transaction<any>
   ): Promise<string> {
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -208,6 +210,9 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     }
     throw new Error('Failed to use the relayer');
   }
+  /**
+   * Fetch the vAnchor fixtures
+   * */
   private static async fetchFixtures(
     maxEdges: number,
     small: boolean,
@@ -252,7 +257,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const executor = async () => {
       const abortSignal = withdrawTx.cancelToken.abortSignal;
 
-      let txHash = '';
+      const txHash = '';
       const changeNotes: Note[] = [];
       try {
         const activeBridge = this.inner.methods.bridgeApi.getBridge();
@@ -416,7 +421,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             destChainIdType,
             destAddress,
             activeChain,
-            activeRelayer
+            activeRelayer,
+            withdrawTx
           );
           withdrawTx.txHash = txHash;
           // Cleanup NoteAccount state
@@ -459,8 +465,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           }
 
           const receipt = await tx.wait();
-          txHash = receipt.transactionHash;
-
+          withdrawTx.txHash = receipt.transactionHash;
           // Cleanup NoteAccount state
           for (const note of notes) {
             const parsedNote = await Note.deserialize(note);
@@ -472,13 +477,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         for (const note of changeNotes) {
           await this.inner.noteManager?.removeNote(note);
         }
-
+        // TODO: check the value for the error for better message
         withdrawTx.fail(e);
-
-        return {
-          txHash: '',
-          outputNotes: [],
-        };
       }
 
       withdrawTx.next(TransactionState.Done, {
@@ -562,7 +562,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
     const commitment = generateCircomCommitment(parsedNote);
     const leafIndex = provingTree.getIndexByElement(commitment);
-    console.log('Create Utxo', leafIndex);
     const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
 
     return {
