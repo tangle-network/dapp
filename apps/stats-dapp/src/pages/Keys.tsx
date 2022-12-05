@@ -42,11 +42,7 @@ const Keys = () => {
   return (
     <div>
       <div className="flex space-x-4">
-        <KeyStatusCardContainer
-          now={time}
-          keyType="current"
-          data={nextKey}
-        />
+        <KeyStatusCardContainer now={time} keyType="current" data={nextKey} />
       </div>
 
       <div className="mt-4">
