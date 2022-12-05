@@ -3,14 +3,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { TokenIcon } from '@webb-tools/icons';
 import { useBridgeDeposit } from '@webb-tools/react-hooks';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import {
-  DepositConfirm,
-  getTokenRingValue,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
+import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { DepositConfirmContainerProps } from './types';
 
@@ -26,25 +21,24 @@ export const DepositConfirmContainer = forwardRef<
       token,
       sourceChain,
       destChain,
-      setTxPayload,
+      wrappableTokenSymbol,
     },
     ref
   ) => {
     const [checked, setChecked] = useState(false);
-    const [isDepositing, setIsDepositing] = useState(false);
-    const [progress, setProgress] = useState<number | null>(null);
 
-    const { deposit, stage, setStage } = useBridgeDeposit();
+    const { deposit, stage, startNewTransaction } = useBridgeDeposit();
     const { setMainComponent, notificationApi } = useWebbUI();
-
+    const [progress, setProgress] = useState<null | number>(null);
+    const depositTxInProgress = useMemo(
+      () => stage !== TransactionState.Ideal,
+      [stage]
+    );
     const { activeApi } = useWebContext();
     // Download for the deposit confirm
     const downloadNote = useCallback((depositPayload: DepositPayload) => {
       const note = depositPayload?.note?.serialize() ?? '';
-      downloadString(
-        JSON.stringify(note),
-        note.slice(-note.length - 10) + '.json'
-      );
+      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
     }, []);
 
     // Copy for the deposit confirm
@@ -55,43 +49,20 @@ export const DepositConfirmContainer = forwardRef<
       },
       [copy]
     );
-
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
-
-      setTxPayload((prev) => ({
-        ...prev,
-        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
-        amount: amount.toString(),
-        timestamp: new Date(),
-        method: 'Deposit',
-        txStatus: {
-          status: 'in-progress',
-        },
-        token: token?.symbol,
-        tokens: [
-          sourceChain?.symbol ?? 'default',
-          destChain?.symbol ?? 'default',
-        ],
-        wallets: {
-          src: <TokenIcon name={sourceChain?.symbol || 'default'} />,
-          dist: <TokenIcon name={destChain?.symbol || 'default'} />,
-        },
-      }));
-
-      if (isDepositing) {
+      // Start a new transaction
+      if (depositTxInProgress) {
+        console.log('Start a new transaction');
+        startNewTransaction();
         setMainComponent(undefined);
         return;
       }
 
       try {
-        setIsDepositing(true);
         downloadNote(depositPayload);
         await deposit(depositPayload);
-        setStage(TransactionState.Done);
-        setStage(TransactionState.Ideal);
       } catch (error) {
-        setStage(TransactionState.Failed);
         console.log('Deposit error', error);
         notificationApi({
           variant: 'error',
@@ -99,7 +70,6 @@ export const DepositConfirmContainer = forwardRef<
           secondaryMessage: 'Something went wrong when depositing',
         });
       } finally {
-        setIsDepositing(false);
         setMainComponent(undefined);
       }
     }, [
@@ -108,13 +78,12 @@ export const DepositConfirmContainer = forwardRef<
       depositPayload,
       destChain?.symbol,
       downloadNote,
-      isDepositing,
+      depositTxInProgress,
       notificationApi,
       setMainComponent,
-      setStage,
-      setTxPayload,
       sourceChain?.symbol,
       token?.symbol,
+      startNewTransaction,
     ]);
 
     const activeChains = useMemo<string[]>(() => {
@@ -152,6 +121,10 @@ export const DepositConfirmContainer = forwardRef<
           setProgress(25);
           break;
         }
+        case TransactionState.Intermediate: {
+          setProgress(40);
+          break;
+        }
 
         case TransactionState.GeneratingZk: {
           setProgress(50);
@@ -186,7 +159,7 @@ export const DepositConfirmContainer = forwardRef<
     return (
       <DepositConfirm
         title={
-          isDepositing
+          depositTxInProgress
             ? wrappingFlow
               ? 'Wrap and deposit in progress'
               : 'Deposit in Progress'
@@ -198,7 +171,7 @@ export const DepositConfirmContainer = forwardRef<
         progress={progress}
         actionBtnProps={{
           isDisabled: !checked,
-          children: isDepositing
+          children: depositTxInProgress
             ? 'New Transaction'
             : wrappingFlow
             ? 'Wrap And Deposit'
@@ -213,11 +186,13 @@ export const DepositConfirmContainer = forwardRef<
         onCopy={() => handleCopy(depositPayload)}
         onDownload={() => downloadNote(depositPayload)}
         amount={amount}
+        wrappingAmount={String(amount)}
         governedTokenSymbol={token?.symbol}
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
         onClose={() => setMainComponent(undefined)}
+        wrappableTokenSymbol={wrappableTokenSymbol}
       />
     );
   }

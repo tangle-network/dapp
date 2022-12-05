@@ -5,7 +5,9 @@
 
 import {
   DepositPayload as IDepositPayload,
+  FixturesStatus,
   NewNotesTxResult,
+  Transaction,
   TransactionState,
   VAnchorDeposit,
 } from '@webb-tools/abstract-api-provider';
@@ -116,376 +118,337 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     };
   }
 
-  // TODO: implement the return result
-  async deposit(depositPayload: DepositPayload): Promise<NewNotesTxResult> {
-    switch (this.state) {
-      case TransactionState.Cancelling:
-      case TransactionState.Failed:
-      case TransactionState.Done:
-        this.cancelToken.reset();
-        this.state = TransactionState.Ideal;
-        break;
-      case TransactionState.Ideal:
-        break;
-      default:
-        throw WebbError.from(WebbErrorCodes.TransactionInProgress);
-    }
-    const abortSignal = this.cancelToken.abortSignal;
-    const bridge = this.inner.methods.bridgeApi.getBridge();
-    const currency = bridge?.currency;
+  deposit(depositPayload: DepositPayload): Transaction<NewNotesTxResult> {
+    const note = depositPayload.note;
+    const amount = depositPayload.params[0].amount;
+    const formattedAmount = ethers.utils.formatUnits(
+      amount,
+      note.note.denomination
+    );
+    const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
+      wallets: { src: 'ETH', dist: 'ETH' },
+      tokens: ['wETH', 'WebbETH'],
+      token: 'WebbETH',
+      amount: Number(formattedAmount),
+    });
+    const ex = async () => {
+      const abortSignal = depositTx.cancelToken.abortSignal;
+      const bridge = this.inner.methods.bridgeApi.getBridge();
+      const currency = bridge?.currency;
 
-    console.log('bridge: ', bridge);
-    console.log('currency: ', currency);
+      console.log('bridge: ', bridge);
+      console.log('currency: ', currency);
 
-    if (!bridge || !currency) {
-      throw new Error('api not ready');
-    }
-
-    try {
-      const note = depositPayload.note.note;
-      const utxo = depositPayload.params[0];
-
-      const amount = depositPayload.params[0].amount;
-
-      const sourceEvmId = await this.inner.getChainId();
-      const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-
-      this.inner.notificationHandler({
-        data: {
-          amount: ethers.utils.formatUnits(note.amount, note.denomination),
-          chain: this.inner.config.getEVMChainName(sourceEvmId),
-          currency: currency.view.name,
-        },
-        description: 'Depositing',
-        key: 'bridge-deposit',
-        level: 'loading',
-        message: `bridge:${
-          depositPayload.params[2] ? 'wrap and deposit' : 'deposit'
-        }`,
-        name: 'Transaction',
-      });
-
-      const anchors = await this.bridgeApi.getAnchors();
-
-      // Find the only configurable VAnchor
-      const vanchor = anchors.find((anchor) => !anchor.amount);
-
-      if (!vanchor) {
-        throw new Error('No variable anchor configured for token');
+      if (!bridge || !currency) {
+        depositTx.fail('Api not ready');
       }
 
-      // Get the contract address for the destination chain
-      const srcAddress = vanchor.neighbours[sourceChainId] as string;
+      try {
+        const note = depositPayload.note.note;
+        const utxo = depositPayload.params[0];
 
-      if (!srcAddress) {
-        throw new Error(`No Anchor for the chain ${note.targetChainId}`);
-      }
+        const sourceEvmId = await this.inner.getChainId();
+        const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
+        // Notification tx start
+        const anchors = await this.bridgeApi.getAnchors();
 
-      const srcVAnchor = this.inner.getVariableAnchorByAddress(srcAddress);
-      const maxEdges = await srcVAnchor._contract.maxEdges();
-      // Fetch the fixtures
-      this.cancelToken.throwIfCancel();
-      this.emit('stateChange', TransactionState.FetchingFixtures);
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        true,
-        abortSignal
-      );
-      const smallWasm = await fetchVAnchorWasmFromAws(
-        maxEdges,
-        true,
-        abortSignal
-      );
-      const leavesMap: Record<string, Uint8Array[]> = {};
+        // Find the only configurable VAnchor
+        const vanchor = anchors.find((anchor) => !anchor.amount);
 
-      // Fetch the leaves from the source chain
-      this.cancelToken.throwIfCancel();
-      this.emit('stateChange', TransactionState.FetchingLeaves);
-      let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-      let leaves = await this.cancelToken.handleOrThrow(
-        () =>
-          this.inner.getVariableAnchorLeaves(
-            srcVAnchor,
-            leafStorage,
-            abortSignal
-          ),
-        () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-      );
-      // Only populate the leaves map if there are actually leaves to populate.
-      if (leaves.length) {
-        leavesMap[utxo.chainId] = leaves.map((leaf) => {
-          return hexToU8a(leaf);
+        if (!vanchor) {
+          depositTx.fail('No variable anchor configured for selected token');
+        }
+
+        // Get the contract address for the destination chain
+        const srcAddress = vanchor.neighbours[sourceChainId] as string;
+
+        if (!srcAddress) {
+          depositTx.fail(`No Anchor for the chain ${note.targetChainId}`);
+        }
+
+        const srcVAnchor = this.inner.getVariableAnchorByAddress(srcAddress);
+        const maxEdges = await srcVAnchor._contract.maxEdges();
+        // Fetch the fixtures
+        this.cancelToken.throwIfCancel();
+        this.emit('stateChange', TransactionState.FetchingFixtures);
+        const fixturesList = new Map<string, FixturesStatus>();
+        fixturesList.set('VAnchorKey', 'Waiting');
+        fixturesList.set('VAnchorWasm', 'Waiting');
+        depositTx.next(TransactionState.FetchingFixtures, {
+          fixturesList,
         });
-      }
+        fixturesList.set('VAnchorKey', 0);
+        const smallKey = await fetchVAnchorKeyFromAws(
+          maxEdges,
+          true,
+          abortSignal
+        );
+        fixturesList.set('VAnchorKey', 'Done');
+        fixturesList.set('VAnchorWasm', 0);
+        const smallWasm = await fetchVAnchorWasmFromAws(
+          maxEdges,
+          true,
+          abortSignal
+        );
+        fixturesList.set('VAnchorWasm', 'Done');
+        const leavesMap: Record<string, Uint8Array[]> = {};
 
-      // Set up a provider for the dest chain
-      const destTypedChainId = Number(utxo.chainId);
-      const destChainConfig = this.config.chains[destTypedChainId];
-      const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
-      const destEthers = destHttpProvider.intoEthersProvider();
-      const destAddress = vanchor.neighbours[destTypedChainId] as string;
-      const destVAnchor = this.inner.getVariableAnchorByAddressAndProvider(
-        destAddress,
-        destEthers
-      );
-      leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
-
-      leaves = await this.cancelToken.handleOrThrow(
-        () =>
-          this.inner.getVariableAnchorLeaves(
-            destVAnchor,
-            leafStorage,
-            abortSignal
-          ),
-        () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-      );
-      // Only populate the leaves map if there are actually leaves to populate.
-      if (leaves.length) {
-        leavesMap[utxo.chainId] = leaves.map((leaf) => {
-          return hexToU8a(leaf);
+        // Fetch the leaves from the source chain
+        depositTx.cancelToken.throwIfCancel();
+        depositTx.next(TransactionState.FetchingLeaves, {
+          end: undefined,
+          currentRange: [0, 1],
+          start: 0,
         });
-      }
-      this.cancelToken.throwIfCancel();
+        this.emit('stateChange', TransactionState.FetchingLeaves);
+        let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
+        let leaves = await this.cancelToken.handleOrThrow(
+          () =>
+            this.inner.getVariableAnchorLeaves(
+              srcVAnchor,
+              leafStorage,
+              abortSignal
+            ),
+          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+        );
+        // Only populate the leaves map if there are actually leaves to populate.
+        if (leaves.length) {
+          leavesMap[utxo.chainId] = leaves.map((leaf) => {
+            return hexToU8a(leaf);
+          });
+        }
 
-      // Add the note to the noteManager before transaction is sent.
-      // This helps to safeguard the user.
-      if (this.inner.noteManager) {
-        await this.inner.noteManager.addNote(depositPayload.note);
-      }
+        // Set up a provider for the dest chain
+        const destTypedChainId = Number(utxo.chainId);
+        const destChainConfig = this.config.chains[destTypedChainId];
+        const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
+        const destEthers = destHttpProvider.intoEthersProvider();
+        const destAddress = vanchor.neighbours[destTypedChainId] as string;
+        const destVAnchor = this.inner.getVariableAnchorByAddressAndProvider(
+          destAddress,
+          destEthers
+        );
+        leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
-      this.emit('stateChange', TransactionState.GeneratingZk);
+        leaves = await this.cancelToken.handleOrThrow(
+          () =>
+            this.inner.getVariableAnchorLeaves(
+              destVAnchor,
+              leafStorage,
+              abortSignal
+            ),
+          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+        );
+        // Only populate the leaves map if there are actually leaves to populate.
+        if (leaves.length) {
+          leavesMap[utxo.chainId] = leaves.map((leaf) => {
+            return hexToU8a(leaf);
+          });
+        }
+        this.cancelToken.throwIfCancel();
 
-      // If a wrappableAsset was selected, perform a wrapAndDeposit
-      if (depositPayload.params[2]) {
-        const requiredApproval =
-          await srcVAnchor.isWrappableTokenApprovalRequired(
-            depositPayload.params[2],
+        // Add the note to the noteManager before transaction is sent.
+        // This helps to safeguard the user.
+        if (this.inner.noteManager) {
+          await this.inner.noteManager.addNote(depositPayload.note);
+        }
+
+        // If a wrappableAsset was selected, perform a wrapAndDeposit
+        if (depositPayload.params[2]) {
+          const requiredApproval =
+            await srcVAnchor.isWrappableTokenApprovalRequired(
+              depositPayload.params[2],
+              amount
+            );
+
+          if (requiredApproval) {
+            depositTx.next(TransactionState.Intermediate, {
+              name: 'Approval is required for warping',
+              data: {
+                tokenAddress: depositPayload.params[2],
+              },
+            });
+
+            // Notification Waiting for approval notification
+            const tokenInstance = await ERC20Factory.connect(
+              depositPayload.params[2],
+              this.inner.getEthersProvider().getSigner()
+            );
+            const webbToken = await srcVAnchor.getWebbToken();
+            const tx = await tokenInstance.approve(webbToken.address, amount);
+
+            await tx.wait();
+            depositTx.next(TransactionState.Intermediate, {
+              name: 'Approved',
+              data: {
+                txHash: tx.hash,
+              },
+            });
+          }
+
+          const enoughBalance = await srcVAnchor.hasEnoughBalance(
+            depositPayload.params[0].amount,
+            depositPayload.params[2]
+          );
+
+          if (enoughBalance) {
+            this.cancelToken.throwIfCancel();
+            const worker = this.inner.wasmFactory();
+            this.emit('stateChange', TransactionState.GeneratingZk);
+            depositTx.next(TransactionState.GeneratingZk, undefined);
+            const tx = await this.cancelToken.handleOrThrow(
+              () =>
+                srcVAnchor.wrapAndDeposit(
+                  depositPayload.params[2] as string,
+                  depositPayload.params[0] as CircomUtxo,
+                  leavesMap,
+                  smallKey,
+                  Buffer.from(smallWasm),
+                  worker
+                ),
+              () => {
+                worker?.terminate();
+                return WebbError.from(WebbErrorCodes.TransactionCancelled);
+              }
+            );
+
+            this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.next(TransactionState.SendingTransaction, tx.hash);
+            // emit event for waiting for transaction to confirm
+            const receipt = await tx.wait();
+            // Notification Success Transaction
+            this.emit('stateChange', TransactionState.Done);
+            depositTx.next(TransactionState.Done, {
+              txHash: receipt.transactionHash,
+              outputNotes: [depositPayload.note],
+            });
+            return {
+              txHash: receipt.transactionHash,
+              outputNotes: [depositPayload.note],
+            };
+          } else {
+            // Notification Field transaction
+            this.emit('stateChange', TransactionState.Failed);
+            await this.inner.noteManager?.removeNote(depositPayload.note);
+            depositTx.fail('Not enough balance');
+          }
+        } else {
+          const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(
             amount
           );
 
-        if (requiredApproval) {
-          this.inner.notificationHandler({
-            description: 'Waiting for token approval',
-            key: 'waiting-approval',
-            level: 'info',
-            message: 'Waiting for token approval',
-            name: 'Transaction',
-            persist: true,
-          });
-          const tokenInstance = await ERC20Factory.connect(
-            depositPayload.params[2],
-            this.inner.getEthersProvider().getSigner()
-          );
-          const webbToken = await srcVAnchor.getWebbToken();
-          const tx = await tokenInstance.approve(webbToken.address, amount);
+          if (requiredApproval) {
+            depositTx.next(TransactionState.Intermediate, {
+              name: 'Require is required approval',
+              data: {
+                tokenAddress: depositPayload.params[2],
+              },
+            });
+            /// Notification approval required
+            const tokenInstance = await srcVAnchor.getWebbToken();
+            const tx = await tokenInstance.approve(
+              srcVAnchor.inner.address,
+              amount
+            );
 
-          await tx.wait();
-          this.inner.notificationHandler.remove('waiting-approval');
+            await tx.wait();
+            depositTx.next(TransactionState.Intermediate, {
+              name: 'Approved',
+              data: {
+                txHash: tx.hash,
+              },
+            });
+          }
+
+          const enoughBalance = await srcVAnchor.hasEnoughBalance(amount);
+
+          if (enoughBalance) {
+            this.emit('stateChange', TransactionState.GeneratingZk);
+            depositTx.next(TransactionState.GeneratingZk, undefined);
+
+            this.cancelToken.throwIfCancel();
+            const worker = this.inner.wasmFactory();
+
+            const tx = await this.cancelToken.handleOrThrow(
+              () =>
+                srcVAnchor.deposit(
+                  depositPayload.params[0] as CircomUtxo,
+                  leavesMap,
+                  smallKey,
+                  Buffer.from(smallWasm),
+                  worker
+                ),
+              () => {
+                worker.terminate();
+                return WebbError.from(WebbErrorCodes.TransactionCancelled);
+              }
+            );
+
+            this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.next(TransactionState.SendingTransaction, tx.hash);
+
+            // emit event for waiting for transaction to confirm
+            const receipt = await tx.wait();
+
+            // TODO: Make this parse the receipt for the index data
+            const noteIndex = (await srcVAnchor.getNextIndex()) - 1;
+            const indexedNote = await Note.deserialize(
+              depositPayload.note.serialize()
+            );
+            indexedNote.mutateIndex(noteIndex.toString());
+            await this.inner.noteManager.addNote(indexedNote);
+            await this.inner.noteManager.removeNote(depositPayload.note);
+            // Notification Success Transaction
+            this.emit('stateChange', TransactionState.Done);
+            depositTx.next(TransactionState.Done, {
+              txHash: receipt.transactionHash,
+              outputNotes: [indexedNote],
+            });
+
+            return {
+              txHash: receipt.transactionHash,
+              outputNotes: [indexedNote],
+            };
+          } else {
+            // Notification Field transaction
+
+            await this.inner.noteManager?.removeNote(depositPayload.note);
+            this.emit('stateChange', TransactionState.Failed);
+            depositTx.fail('Not enough balance');
+          }
         }
+      } catch (e: any) {
+        console.log('yo something failed in the catch: ', e);
+        this.inner.notificationHandler.remove('waiting-approval');
+        const isUserCancel =
+          e instanceof WebbError &&
+          e.code === WebbErrorCodes.TransactionCancelled;
+        let description = '';
 
-        const enoughBalance = await srcVAnchor.hasEnoughBalance(
-          depositPayload.params[0].amount,
-          depositPayload.params[2]
-        );
-
-        if (enoughBalance) {
-          this.cancelToken.throwIfCancel();
-          const worker = this.inner.wasmFactory();
-
-          const tx = await this.cancelToken.handleOrThrow(
-            () =>
-              srcVAnchor.wrapAndDeposit(
-                depositPayload.params[2] as string,
-                depositPayload.params[0] as CircomUtxo,
-                leavesMap,
-                smallKey,
-                Buffer.from(smallWasm),
-                worker
-              ),
-            () => {
-              worker?.terminate();
-              return WebbError.from(WebbErrorCodes.TransactionCancelled);
-            }
-          );
-
-          this.emit('stateChange', TransactionState.SendingTransaction);
-
-          // emit event for waiting for transaction to confirm
-          const receipt = await tx.wait();
-
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Depositing',
-            key: 'bridge-deposit',
-            level: 'success',
-            message: `${currency.view.name}:wrap and deposit`,
-            name: 'Transaction',
-          });
-
-          this.emit('stateChange', TransactionState.Done);
-          return {
-            txHash: receipt.transactionHash,
-            outputNotes: [depositPayload.note],
-          };
+        if (e?.code === 4001) {
+          description = 'User Rejected Deposit';
+        } else if (isUserCancel) {
+          description = 'User Cancelled Transaction';
         } else {
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Not enough token balance',
-            key: 'bridge-deposit',
-            level: 'error',
-            message: `${currency.view.name}:wrap and deposit`,
-            name: 'Transaction',
-          });
+          description = 'Deposit Transaction Failed';
+        }
+
+        // Notification Failed transaction
+
+        this.inner.noteManager?.removeNote(depositPayload.note);
+
+        if (!isUserCancel) {
           this.emit('stateChange', TransactionState.Failed);
-          this.inner.noteManager?.removeNote(depositPayload.note);
-
-          return {
-            txHash: '',
-            outputNotes: [],
-          };
-        }
-      } else {
-        const requiredApproval = await srcVAnchor.isWebbTokenApprovalRequired(
-          amount
-        );
-
-        if (requiredApproval) {
-          this.inner.notificationHandler({
-            description: 'Waiting for token approval',
-            key: 'waiting-approval',
-            level: 'info',
-            message: 'Waiting for token approval',
-            name: 'Transaction',
-            persist: true,
-          });
-          const tokenInstance = await srcVAnchor.getWebbToken();
-          const tx = await tokenInstance.approve(
-            srcVAnchor.inner.address,
-            amount
-          );
-
-          await tx.wait();
-          this.inner.notificationHandler.remove('waiting-approval');
+          depositTx.fail(description);
         }
 
-        const enoughBalance = await srcVAnchor.hasEnoughBalance(amount);
-
-        if (enoughBalance) {
-          this.cancelToken.throwIfCancel();
-          const worker = this.inner.wasmFactory();
-
-          const tx = await this.cancelToken.handleOrThrow(
-            () =>
-              srcVAnchor.deposit(
-                depositPayload.params[0] as CircomUtxo,
-                leavesMap,
-                smallKey,
-                Buffer.from(smallWasm),
-                worker
-              ),
-            () => {
-              worker.terminate();
-              return WebbError.from(WebbErrorCodes.TransactionCancelled);
-            }
-          );
-
-          this.emit('stateChange', TransactionState.SendingTransaction);
-
-          // emit event for waiting for transaction to confirm
-          const receipt = await tx.wait();
-
-          // TODO: Make this parse the receipt for the index data
-          const noteIndex = (await srcVAnchor.getNextIndex()) - 1;
-          const indexedNote = await Note.deserialize(
-            depositPayload.note.serialize()
-          );
-          indexedNote.mutateIndex(noteIndex.toString());
-          await this.inner.noteManager.addNote(indexedNote);
-          await this.inner.noteManager.removeNote(depositPayload.note);
-
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Depositing',
-            key: 'bridge-deposit',
-            level: 'success',
-            message: `${currency.view.name} deposit`,
-            name: 'Transaction',
-          });
-
-          this.emit('stateChange', TransactionState.Done);
-          return {
-            txHash: receipt.transactionHash,
-            outputNotes: [indexedNote],
-          };
-        } else {
-          this.inner.notificationHandler({
-            data: {
-              amount: ethers.utils.formatUnits(note.amount, note.denomination),
-              chain: this.inner.config.getEVMChainName(sourceEvmId),
-              currency: currency.view.name,
-            },
-            description: 'Not enough token balance',
-            key: 'bridge-deposit',
-            level: 'error',
-            message: 'Not enough token balance',
-            name: 'Transaction',
-          });
-
-          this.inner.noteManager?.removeNote(depositPayload.note);
-          this.emit('stateChange', TransactionState.Failed);
-
-          return {
-            txHash: '',
-            outputNotes: [],
-          };
-        }
+        return {
+          txHash: '',
+          outputNotes: [],
+        };
       }
-    } catch (e: any) {
-      console.log('yo something failed in the catch: ', e);
-      this.inner.notificationHandler.remove('waiting-approval');
-      const isUserCancel =
-        e instanceof WebbError &&
-        e.code === WebbErrorCodes.TransactionCancelled;
-      let description = '';
-
-      if (e?.code === 4001) {
-        description = 'User Rejected Deposit';
-      } else if (isUserCancel) {
-        description = 'User Cancelled Transaction';
-      } else {
-        description = 'Deposit Transaction Failed';
-      }
-
-      this.inner.notificationHandler({
-        description,
-        key: 'bridge-deposit',
-        level: 'error',
-        message: `${currency.view.name}:deposit`,
-        name: 'Transaction',
-      });
-
-      this.inner.noteManager?.removeNote(depositPayload.note);
-
-      if (!isUserCancel) {
-        this.emit('stateChange', TransactionState.Failed);
-      }
-
-      return {
-        txHash: '',
-        outputNotes: [],
-      };
-    }
+    };
+    depositTx.executor(ex);
+    return depositTx;
   }
 }

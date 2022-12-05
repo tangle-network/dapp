@@ -2,8 +2,17 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useCurrencies, useDepositNote, useNoteAccount } from '@webb-tools/react-hooks';
-import { getRoundedAmountString, Input, TokenInput, Typography } from '@webb-tools/webb-ui-components';
+import {
+  useCurrencies,
+  useDepositNote,
+  useNoteAccount,
+} from '@webb-tools/react-hooks';
+import {
+  getRoundedAmountString,
+  Input,
+  TokenInput,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -34,7 +43,8 @@ const TokenAmountChip = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) => (theme.type === 'dark' ? 'transparent' : '#242424')};
+  background: ${({ theme }) =>
+    theme.type === 'dark' ? 'transparent' : '#242424'};
   border: ${({ theme }) => `1px solid ${theme.accentColor}`};
 `;
 
@@ -65,13 +75,16 @@ const DisconnectedNoteAccountView: React.FC = () => {
       {view === DisconnectView.Prompt && (
         <>
           <div>
-            <button className='login-prompt-button' onClick={() => setView(DisconnectView.Login)}>
+            <button
+              className="login-prompt-button"
+              onClick={() => setView(DisconnectView.Login)}
+            >
               Login
             </button>
           </div>
           <div>
             <button
-              className='create-random-account-button'
+              className="create-random-account-button"
               onClick={() => {
                 const newKey = new Keypair();
                 setAccountInputString(newKey.privkey!);
@@ -81,12 +94,16 @@ const DisconnectedNoteAccountView: React.FC = () => {
               Create Random
             </button>
             <button
-              className='login-metamask-account-button'
+              className="login-metamask-account-button"
               onClick={async () => {
                 const metamask = await Web3Provider.fromExtension();
                 const accounts = await metamask.eth.getAccounts();
                 if (accounts.length && accounts[0] != null) {
-                  const signedString = await metamask.eth.personal.sign('Logging into Webb', accounts[0], undefined);
+                  const signedString = await metamask.eth.personal.sign(
+                    'Logging into Webb',
+                    accounts[0],
+                    undefined
+                  );
                   loginNoteAccount(signedString.slice(0, 66));
                 }
               }}
@@ -99,19 +116,19 @@ const DisconnectedNoteAccountView: React.FC = () => {
       {view === DisconnectView.Login && (
         <>
           <div>
-            <div className='account-input'>
+            <div className="account-input">
               <Input
                 value={accountInputString}
                 onChange={(event) => {
                   setAccountInputString(String(event));
-                } }
+                }}
                 placeholder={`Paste your NoteAccountString here`}
                 id={''}
               />
             </div>
           </div>
           <button
-            className='login-button'
+            className="login-button"
             onClick={() => {
               // Simplistic validation
               if (accountInputString.length === 66) {
@@ -137,7 +154,7 @@ const DisconnectedNoteAccountView: React.FC = () => {
             </div>
           </div>
           <button
-            className='create-button'
+            className="create-button"
             onClick={() => {
               // Simplistic validation
               if (accountInputString.length === 66) {
@@ -154,18 +171,32 @@ const DisconnectedNoteAccountView: React.FC = () => {
 };
 
 const ConnectedNoteAccountView: React.FC = () => {
-  const { activeApi, activeChain, logoutNoteAccount, noteManager, purgeNoteAccount } = useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    logoutNoteAccount,
+    noteManager,
+    purgeNoteAccount,
+  } = useWebContext();
   const { allNotes } = useNoteAccount();
   const { governedCurrencies, governedCurrency } = useCurrencies();
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
 
   const syncNotes = useCallback(async () => {
-    if (activeApi && activeApi.state.activeBridge && activeChain && noteManager) {
-      const chainNotes = await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
-        activeApi.state.activeBridge.targets[calculateTypedChainId(activeChain.chainType, activeChain.chainId)],
-        noteManager.getKeypair()
-      );
+    if (
+      activeApi &&
+      activeApi.state.activeBridge &&
+      activeChain &&
+      noteManager
+    ) {
+      const chainNotes =
+        await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+          activeApi.state.activeBridge.targets[
+            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          ],
+          noteManager.getKeypair()
+        );
 
       await Promise.all(
         chainNotes
@@ -207,12 +238,20 @@ const ConnectedNoteAccountView: React.FC = () => {
         if (!assetBalance) {
           chainBalances.set(
             note.note.tokenSymbol,
-            Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+            Number(
+              ethers.utils.formatUnits(note.note.amount, note.note.denomination)
+            )
           );
         } else {
           chainBalances.set(
             note.note.tokenSymbol,
-            assetBalance + Number(ethers.utils.formatUnits(note.note.amount, note.note.denomination))
+            assetBalance +
+              Number(
+                ethers.utils.formatUnits(
+                  note.note.amount,
+                  note.note.denomination
+                )
+              )
           );
         }
       });
@@ -239,7 +278,10 @@ const ConnectedNoteAccountView: React.FC = () => {
         if (!previousAssetBalance) {
           tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1]);
         } else {
-          tokenBalanceMap.set(assetBalanceEntry[0], assetBalanceEntry[1] + previousAssetBalance);
+          tokenBalanceMap.set(
+            assetBalanceEntry[0],
+            assetBalanceEntry[1] + previousAssetBalance
+          );
         }
       }
     }
@@ -250,66 +292,84 @@ const ConnectedNoteAccountView: React.FC = () => {
   if (noteManager) {
     return (
       <div>
-        <div className='account-details'>
-          <Typography variant='h4'>Public Key: {noteManager.getKeypair().toString()}</Typography>
+        <div className="account-details">
+          <Typography variant="h4">
+            Public Key: {noteManager.getKeypair().toString()}
+          </Typography>
         </div>
-        <Typography variant='h3'>Total Asset Balances:</Typography>
-        <div className='cumulative-asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Typography variant="h3">Total Asset Balances:</Typography>
+        <div
+          className="cumulative-asset-balances"
+          style={{ display: 'flex', justifyContent: 'space-around' }}
+        >
           {[...cumulativeBalances.entries()].map((entry) => {
             return (
               <div key={`${entry[0]}`}>
                 {/* Amount chip */}
                 <TokenAmountChip>
-                  <Typography variant='h3'>{getRoundedAmountString(entry[1])}</Typography>
-                  <Typography variant='h3'>{entry[0]}</Typography>
+                  <Typography variant="h3">
+                    {getRoundedAmountString(entry[1])}
+                  </Typography>
+                  <Typography variant="h3">{entry[0]}</Typography>
                 </TokenAmountChip>
               </div>
             );
           })}
         </div>
-        <Typography variant='h3'>Total Asset Balances:</Typography>
-        <div className='cumulative-asset-balances' style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Typography variant="h3">Total Asset Balances:</Typography>
+        <div
+          className="cumulative-asset-balances"
+          style={{ display: 'flex', justifyContent: 'space-around' }}
+        >
           {[...cumulativeBalances.entries()].map((entry) => {
             return (
               <div key={`${entry[0]}`}>
                 {/* Amount chip */}
                 <TokenAmountChip>
-                  <Typography variant='h4'>{getRoundedAmountString(entry[1])}</Typography>
-                  <Typography variant='h4'>{entry[0]}</Typography>
+                  <Typography variant="h4">
+                    {getRoundedAmountString(entry[1])}
+                  </Typography>
+                  <Typography variant="h4">{entry[0]}</Typography>
                 </TokenAmountChip>
               </div>
             );
           })}
         </div>
-        <div className='notes-list'>
+        <div className="notes-list">
           {[...allNotes.entries()].map((entry) => {
             // return <ChainNotesList key={`${entry[0]}`} chain={entry[0]} notes={entry[1]} />;
             const assetBalancesMap = getBalancesForChain(entry[0]);
             return (
               <>
-                <Typography variant='h4'>{chainsConfig[Number(entry[0])].name}</Typography>
-                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                <Typography variant="h4">
+                  {chainsConfig[Number(entry[0])].name}
+                </Typography>
+                <Typography variant="h5" style={{ paddingLeft: '40px' }}>
                   Balances:
                 </Typography>
-                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-around' }}
+                >
                   {[...assetBalancesMap.entries()].map((entry) => {
                     return (
                       <TokenAmountChip>
-                        <Typography variant='h4'>{getRoundedAmountString(entry[1])}</Typography>
-                        <Typography variant='h4'>{entry[0]}</Typography>
+                        <Typography variant="h4">
+                          {getRoundedAmountString(entry[1])}
+                        </Typography>
+                        <Typography variant="h4">{entry[0]}</Typography>
                       </TokenAmountChip>
                     );
                   })}
                 </div>
-                <Typography variant='h5' style={{ paddingLeft: '40px' }}>
+                <Typography variant="h5" style={{ paddingLeft: '40px' }}>
                   Notes:
                 </Typography>
               </>
             );
           })}
         </div>
-        <div className='account-actions'>
-          <div className='logout-button'>
+        <div className="account-actions">
+          <div className="logout-button">
             <button
               onClick={() => {
                 logoutNoteAccount();
@@ -318,7 +378,7 @@ const ConnectedNoteAccountView: React.FC = () => {
               Logout
             </button>
           </div>
-          <div className='purge-account-button'>
+          <div className="purge-account-button">
             <button
               onClick={() => {
                 purgeNoteAccount();
