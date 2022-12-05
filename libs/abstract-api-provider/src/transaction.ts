@@ -43,11 +43,13 @@ export type WebbWithdrawEvents = {
   loading: boolean;
 };
 
-export type FixturesStatus = 'Done' | 'Waiting' | 'failed' | number;
+export type FixturesStatus = 'Done' | 'Waiting' | 'Failed' | number;
+
 type FixturesProgress = {
   // Fixture name -> status
   fixturesList: Map<string, FixturesStatus>;
 };
+
 type LeavesProgress = {
   start: number;
   currentRange: [number, number];
@@ -58,10 +60,12 @@ type IntermediateProgress = {
   name: string;
   data?: any;
 };
+
 type FailedTransaction = {
   error: string;
   txHash?: string;
 };
+
 type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
@@ -75,14 +79,18 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.Done]: DonePayload;
   [TransactionState.Failed]: FailedTransaction;
 };
+
 type StatusKey = TransactionState;
+
 export type TransactionStatusValue<
   Key extends StatusKey,
   DonePayload = any
 > = TransactionStatusMap<DonePayload>[Key];
+
 type ExecutorClosure<DonePayload> = (
   next: Transaction<DonePayload>['next']
 ) => void | Promise<DonePayload>;
+
 type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
@@ -97,6 +105,7 @@ type PromiseExec<T> = (
   resolve: (value: T | PromiseLike<T>) => void,
   reject: (reason?: any) => void
 ) => void;
+
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
   readonly id = String(Date.now() + Math.random());
@@ -133,6 +142,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     };
     return new Transaction(exec, name, metadata, status);
   }
+
   private isValidProgress<T extends TransactionState>(next: T): boolean {
     /// TODO implement this and standardise all transactions progress
     switch (this._status.value[0]) {
@@ -156,6 +166,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     }
     return true;
   }
+
   next<Status extends keyof TransactionStatusMap<DonePayload>>(
     status: Status,
     data: TransactionStatusMap<DonePayload>[Status]
@@ -168,7 +179,8 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
   }
-  fail(error: string) {
+
+  fail(error: string): never {
     this.next(TransactionState.Failed, {
       error,
       txHash: this._txHash,
@@ -195,9 +207,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   get txHash(): string | undefined {
     return this._txHash;
   }
+
   set txHash(hash: string | undefined) {
     this._txHash = hash;
   }
+
   get $currentStatus() {
     return this._status.asObservable();
   }

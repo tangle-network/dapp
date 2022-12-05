@@ -5,9 +5,10 @@ import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { EventBus } from '@webb-tools/app-util';
 
+import { Note } from '@webb-tools/sdk-core';
+import { NewNotesTxResult } from '..';
 import { CancellationToken } from '../cancelation-token';
 import { TransactionState, WebbWithdrawEvents } from '../transaction';
-import { NewNotesTxResult } from '..';
 
 /**
  * The VAnchorInputPayload describes the information required when a transaction is made
@@ -20,13 +21,15 @@ import { NewNotesTxResult } from '..';
  * @param amount - the amount that will actually be transferred to the recipient. Denoted in BigNumber units.
  */
 export interface VanchorTransferPayload {
-  inputNotes: string[];
+  inputNotes: Note[];
   targetTypedChainId: number;
   recipient: string;
   amount: string;
 }
 
-export abstract class VAnchorTransfer<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
+export abstract class VAnchorTransfer<
+  T extends WebbApiProvider<any>
+> extends EventBus<WebbWithdrawEvents> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
 
@@ -48,5 +51,7 @@ export abstract class VAnchorTransfer<T extends WebbApiProvider<any>> extends Ev
    * @param amount - the amount to transfer.
    * @param destination - the destination typedChainId.
    */
-  abstract transfer(transferData: VanchorTransferPayload): Promise<NewNotesTxResult>;
+  abstract transfer(
+    transferData: VanchorTransferPayload
+  ): PromiseLike<NewNotesTxResult>;
 }

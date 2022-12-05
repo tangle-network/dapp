@@ -1,9 +1,10 @@
 import {
-  Account,
   BridgeApi,
+  FixturesStatus,
   NewNotesTxResult,
   RelayedChainInput,
   RelayedWithdrawResult,
+  Transaction,
   TransactionState,
   VAnchorTransfer,
   VanchorTransferPayload,
@@ -35,7 +36,7 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
@@ -51,381 +52,424 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     return this.inner.config;
   }
 
-  async transfer(
+  transfer(
     transferData: VanchorTransferPayload
-  ): Promise<NewNotesTxResult> {
-    switch (this.state) {
-      case TransactionState.Cancelling:
-      case TransactionState.Failed:
-      case TransactionState.Done:
-        this.cancelToken.reset();
-        this.state = TransactionState.Ideal;
-        break;
-      case TransactionState.Ideal:
-        break;
-      default:
-        throw WebbError.from(WebbErrorCodes.TransactionInProgress);
+  ): Transaction<NewNotesTxResult> {
+    const { amount } = transferData;
+    const note = transferData.inputNotes[0];
+    if (!note) {
+      throw new Error('No input note provided');
     }
-    const key = 'web3-vbridge-withdraw';
-    let txHash = '';
-    const changeNotes: Note[] = [];
-    const abortSignal = this.cancelToken.abortSignal;
 
-    try {
-      const activeBridge = this.inner.methods.bridgeApi.getBridge();
-      const activeRelayer = this.inner.relayerManager.activeRelayer;
-      const relayerAccount = activeRelayer
-        ? activeRelayer.beneficiary
-        : zeroAddress;
-      if (!activeBridge) {
-        throw new Error('No activeBridge set on the web3 anchor api');
-      }
+    const { denomination } = note.note;
+    const formattedAmount = ethers.utils.formatUnits(amount, denomination);
 
-      const activeChain = await this.inner.getChainId();
+    const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
+      wallets: { src: 'ETH', dist: 'ETH' },
+      tokens: ['wETH', 'WebbETH'],
+      token: 'WebbETH',
+      amount: Number(formattedAmount),
+    });
 
-      // set the anchor to make the transfer on (where the notes are being spent for the transfer)
-      const sourceChainIdType = calculateTypedChainId(
-        ChainType.EVM,
-        activeChain
-      );
-      const srcAddress = activeBridge.targets[sourceChainIdType];
-      const anchor = this.inner.getVariableAnchorByAddress(srcAddress);
-      const treeHeight = await anchor._contract.levels();
+    const executeTransfer = async () => {
+      let txHash = '';
+      const changeNotes: Note[] = [];
+      const abortSignal = transferTx.cancelToken.abortSignal;
 
-      // Create the proving manager - zk fixtures are fetched depending on the contract
-      // max edges as well as the number of input notes.
-      let wasmBuffer: Uint8Array;
-      let provingKey: Uint8Array;
-      this.cancelToken.throwIfCancel();
-      this.emit('stateChange', TransactionState.FetchingFixtures);
-
-      const maxEdges = await anchor.inner.maxEdges();
-      if (transferData.inputNotes.length > 2) {
-        provingKey = await fetchVAnchorKeyFromAws(maxEdges, false, abortSignal);
-        wasmBuffer = await fetchVAnchorWasmFromAws(
-          maxEdges,
-          false,
-          abortSignal
-        );
-      } else {
-        provingKey = await fetchVAnchorKeyFromAws(maxEdges, true, abortSignal);
-        wasmBuffer = await fetchVAnchorWasmFromAws(maxEdges, true, abortSignal);
-      }
-
-      this.cancelToken.throwIfCancel();
-
-      // Loop through the notes and populate the leaves map
-      const leavesMap: Record<string, Uint8Array[]> = {};
-
-      // Keep track of the leafindices for each note
-      const leafIndices: number[] = [];
-
-      // calculate the sum of input notes (for calculating the change utxo)
-      let sumInputNotes: BigNumber = BigNumber.from(0);
-
-      // Create input UTXOs for convenience calculations
-      const inputUtxos: Utxo[] = [];
-      this.cancelToken.throwIfCancel();
-
-      // For all notes, get any leaves in parallel
-      this.emit('stateChange', TransactionState.FetchingLeaves);
-      const notesLeaves = await Promise.all(
-        transferData.inputNotes.map((note) =>
-          this.fetchNoteLeaves(note, leavesMap, anchor, treeHeight)
-        )
-      );
-
-      notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
-        sumInputNotes = sumInputNotes.add(amount);
-        leafIndices.push(leafIndex);
-        inputUtxos.push(utxo);
-      });
-
-      const randomKeypair = new Keypair();
-
-      // Add default input notes if required
-      while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
-        inputUtxos.push(
-          await CircomUtxo.generateUtxo({
-            curve: 'Bn254',
-            backend: 'Circom',
-            chainId: sourceChainIdType.toString(),
-            originChainId: sourceChainIdType.toString(),
-            amount: '0',
-            blinding: hexToU8a(randomBN(31).toHexString()),
-            keypair: randomKeypair,
-          })
-        );
-      }
-
-      // Check for cancelled here, abort if it was set.
-      if (this.cancelToken.isCancelled()) {
-        this.emit('stateChange', TransactionState.Ideal);
-
-        return {
-          txHash: '',
-          outputNotes: [],
-        };
-      }
-
-      this.cancelToken.throwIfCancel();
-
-      // Retrieve the user's keypair
-      const keypairStorage = await keypairStorageFactory();
-      const storedPrivateKey = await keypairStorage.get('keypair');
-      const changeKeypair = storedPrivateKey.keypair
-        ? new Keypair(storedPrivateKey.keypair)
-        : new Keypair();
-
-      // Setup the recipient's keypair.
-      const recipientKeypair = Keypair.fromString(transferData.recipient);
-
-      // Create the output UTXOs
-      const changeAmount = sumInputNotes.sub(transferData.amount);
-      const changeUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: changeAmount.toString(),
-        chainId: sourceChainIdType.toString(),
-        keypair: changeKeypair,
-        originChainId: sourceChainIdType.toString(),
-      });
-      const transferUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: transferData.amount,
-        chainId: transferData.targetTypedChainId.toString(),
-        keypair: recipientKeypair,
-        originChainId: sourceChainIdType.toString(),
-      });
-
-      const outputUtxos = [changeUtxo, transferUtxo];
-
-      this.emit('stateChange', TransactionState.GeneratingZk);
-      const worker = this.inner.wasmFactory();
-      const { extData, publicInputs } = await this.cancelToken.handleOrThrow(
-        () =>
-          anchor.setupTransaction(
-            inputUtxos,
-            [changeUtxo, transferUtxo],
-            0, // the extAmount for a transfer should be zero
-            0,
-            0,
-            activeBridge.currency.getAddress(sourceChainIdType),
-            relayerAccount,
-            relayerAccount,
-            leavesMap,
-            provingKey,
-            Buffer.from(wasmBuffer),
-            worker
-          ),
-        () => {
-          worker?.terminate();
-          return WebbError.from(WebbErrorCodes.TransactionCancelled);
+      try {
+        const activeBridge = this.inner.methods.bridgeApi.getBridge();
+        const activeRelayer = this.inner.relayerManager.activeRelayer;
+        const relayerAccount = activeRelayer
+          ? activeRelayer.beneficiary
+          : zeroAddress;
+        if (!activeBridge) {
+          transferTx.fail('No activeBridge set on the web3 anchor api');
         }
-      );
 
-      // Check for cancelled here, abort if it was set.
-      if (this.cancelToken.isCancelled()) {
-        this.emit('stateChange', TransactionState.Ideal);
+        const activeChain = await this.inner.getChainId();
 
-        return {
-          txHash: '',
-          outputNotes: [],
-        };
-      }
+        // set the anchor to make the transfer on (where the notes are being spent for the transfer)
+        const sourceChainIdType = calculateTypedChainId(
+          ChainType.EVM,
+          activeChain
+        );
+        const srcAddress = activeBridge.targets[sourceChainIdType];
+        const anchor = this.inner.getVariableAnchorByAddress(srcAddress);
+        const treeHeight = await anchor._contract.levels();
 
-      this.emit('stateChange', TransactionState.SendingTransaction);
-      this.cancelToken.throwIfCancel();
+        // Create the proving manager - zk fixtures are fetched depending on the contract
+        // max edges as well as the number of input notes.
+        let wasmBuffer: Uint8Array;
+        let provingKey: Uint8Array;
 
-      // set the changeNote to storage so it is not lost by user error
-      if (changeAmount.gt(0)) {
-        const changeNoteInput: NoteGenInput = {
-          amount: changeUtxo.amount,
-          backend: 'Circom',
-          curve: 'Bn254',
-          denomination: '18',
-          exponentiation: '5',
-          hashFunction: 'Poseidon',
-          protocol: 'vanchor',
-          secrets: [
-            toFixedHex(sourceChainIdType, 8).substring(2),
-            toFixedHex(changeUtxo.amount).substring(2),
-            toFixedHex(changeKeypair.privkey).substring(2),
-            toFixedHex('0x' + changeUtxo.blinding).substring(2),
-          ].join(':'),
-          sourceChain: sourceChainIdType.toString(),
-          sourceIdentifyingData: srcAddress,
-          targetChain: sourceChainIdType.toString(),
-          targetIdentifyingData: srcAddress,
-          tokenSymbol: (await Note.deserialize(transferData.inputNotes[0])).note
-            .tokenSymbol,
-          version: 'v1',
-          width: '4',
-        };
+        // The fixtures map to track the fixtures status
+        const fixturesList = new Map<string, FixturesStatus>();
 
-        const savedChangeNote = await Note.generateNote(changeNoteInput);
-        this.inner.noteManager?.addNote(savedChangeNote);
-        changeNotes.push(savedChangeNote);
-      }
+        transferTx.cancelToken.throwIfCancel();
+        this.emit('stateChange', TransactionState.FetchingFixtures);
 
-      // Take the proof and send the transaction
-      if (activeRelayer) {
-        const relayedVAnchorWithdraw = await activeRelayer.initWithdraw(
-          'vAnchor'
+        const maxEdges = await anchor.inner.maxEdges();
+        fixturesList.set('VAnchorKey', 'Waiting');
+        fixturesList.set('VAnchorWasm', 'Waiting');
+        transferTx.next(TransactionState.FetchingFixtures, {
+          fixturesList,
+        });
+
+        if (transferData.inputNotes.length > 2) {
+          fixturesList.set('VAnchorKey', 0);
+          provingKey = await fetchVAnchorKeyFromAws(
+            maxEdges,
+            false,
+            abortSignal
+          );
+          fixturesList.set('VAnchorKey', 'Done');
+
+          fixturesList.set('VAnchorWasm', 0);
+          wasmBuffer = await fetchVAnchorWasmFromAws(
+            maxEdges,
+            false,
+            abortSignal
+          );
+          fixturesList.set('VAnchorWasm', 'Done');
+        } else {
+          fixturesList.set('VAnchorKey', 0);
+          provingKey = await fetchVAnchorKeyFromAws(
+            maxEdges,
+            true,
+            abortSignal
+          );
+          fixturesList.set('VAnchorKey', 'Done');
+
+          fixturesList.set('VAnchorWasm', 0);
+          wasmBuffer = await fetchVAnchorWasmFromAws(
+            maxEdges,
+            true,
+            abortSignal
+          );
+          fixturesList.set('VAnchorWasm', 'Done');
+        }
+
+        transferTx.cancelToken.throwIfCancel();
+
+        // Loop through the notes and populate the leaves map
+        const leavesMap: Record<string, Uint8Array[]> = {};
+
+        // Keep track of the leafindices for each note
+        const leafIndices: number[] = [];
+
+        // calculate the sum of input notes (for calculating the change utxo)
+        let sumInputNotes: BigNumber = BigNumber.from(0);
+
+        // Create input UTXOs for convenience calculations
+        const inputUtxos: Utxo[] = [];
+        transferTx.cancelToken.throwIfCancel();
+
+        this.emit('stateChange', TransactionState.FetchingLeaves);
+        transferTx.next(TransactionState.FetchingLeaves, {
+          end: undefined,
+          currentRange: [0, 1],
+          start: 0,
+        });
+
+        // For all notes, get any leaves in parallel
+        const notesLeaves = await Promise.all(
+          transferData.inputNotes.map((note) =>
+            this.fetchNoteLeaves(note, leavesMap, anchor, treeHeight)
+          )
         );
 
-        const parsedDestChainIdType = parseTypedChainId(sourceChainIdType);
+        notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
+          sumInputNotes = sumInputNotes.add(amount);
+          leafIndices.push(leafIndex);
+          inputUtxos.push(utxo);
+        });
 
-        const chainInfo: RelayedChainInput = {
-          baseOn: 'evm',
-          contractAddress: srcAddress,
-          endpoint: '',
-          name: parsedDestChainIdType.chainId.toString(),
-        };
+        const randomKeypair = new Keypair();
 
-        const extAmount = extData.extAmount.toString().replace('0x', '');
-        const relayedDepositTxPayload =
-          relayedVAnchorWithdraw.generateWithdrawRequest<
-            typeof chainInfo,
+        // Add default input notes if required
+        while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
+          inputUtxos.push(
+            await CircomUtxo.generateUtxo({
+              curve: 'Bn254',
+              backend: 'Circom',
+              chainId: sourceChainIdType.toString(),
+              originChainId: sourceChainIdType.toString(),
+              amount: '0',
+              blinding: hexToU8a(randomBN(31).toHexString()),
+              keypair: randomKeypair,
+            })
+          );
+        }
+
+        // Check for cancelled here, abort if it was set.
+        if (transferTx.cancelToken.isCancelled()) {
+          this.emit('stateChange', TransactionState.Ideal);
+          transferTx.fail('Transaction cancelled');
+
+          return {
+            txHash: '',
+            outputNotes: [],
+          };
+        }
+
+        transferTx.cancelToken.throwIfCancel();
+
+        // Retrieve the user's keypair
+        const keypairStorage = await keypairStorageFactory();
+        const storedPrivateKey = await keypairStorage.get('keypair');
+        const changeKeypair = storedPrivateKey.keypair
+          ? new Keypair(storedPrivateKey.keypair)
+          : new Keypair();
+
+        // Setup the recipient's keypair.
+        const recipientKeypair = Keypair.fromString(transferData.recipient);
+
+        // Create the output UTXOs
+        const changeAmount = sumInputNotes.sub(transferData.amount);
+        const changeUtxo = await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          amount: changeAmount.toString(),
+          chainId: sourceChainIdType.toString(),
+          keypair: changeKeypair,
+          originChainId: sourceChainIdType.toString(),
+        });
+        const transferUtxo = await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          amount: transferData.amount,
+          chainId: transferData.targetTypedChainId.toString(),
+          keypair: recipientKeypair,
+          originChainId: sourceChainIdType.toString(),
+        });
+
+        this.emit('stateChange', TransactionState.GeneratingZk);
+        transferTx.next(TransactionState.GeneratingZk, undefined);
+        const worker = this.inner.wasmFactory();
+        const { extData, publicInputs } =
+          await transferTx.cancelToken.handleOrThrow(
+            () =>
+              anchor.setupTransaction(
+                inputUtxos,
+                [changeUtxo, transferUtxo],
+                0, // the extAmount for a transfer should be zero
+                0,
+                0,
+                activeBridge.currency.getAddress(sourceChainIdType),
+                relayerAccount,
+                relayerAccount,
+                leavesMap,
+                provingKey,
+                Buffer.from(wasmBuffer),
+                worker
+              ),
+            () => {
+              worker?.terminate();
+              return WebbError.from(WebbErrorCodes.TransactionCancelled);
+            }
+          );
+
+        // Check for cancelled here, abort if it was set.
+        if (transferTx.cancelToken.isCancelled()) {
+          this.emit('stateChange', TransactionState.Ideal);
+          transferTx.fail('Transaction cancelled');
+
+          return {
+            txHash: '',
+            outputNotes: [],
+          };
+        }
+
+        this.emit('stateChange', TransactionState.SendingTransaction);
+        transferTx.next(TransactionState.SendingTransaction, undefined);
+        transferTx.cancelToken.throwIfCancel();
+
+        // set the changeNote to storage so it is not lost by user error
+        if (changeAmount.gt(0)) {
+          const changeNoteInput: NoteGenInput = {
+            amount: changeUtxo.amount,
+            backend: 'Circom',
+            curve: 'Bn254',
+            denomination: '18',
+            exponentiation: '5',
+            hashFunction: 'Poseidon',
+            protocol: 'vanchor',
+            secrets: [
+              toFixedHex(sourceChainIdType, 8).substring(2),
+              toFixedHex(changeUtxo.amount).substring(2),
+              toFixedHex(changeKeypair.privkey).substring(2),
+              toFixedHex('0x' + changeUtxo.blinding).substring(2),
+            ].join(':'),
+            sourceChain: sourceChainIdType.toString(),
+            sourceIdentifyingData: srcAddress,
+            targetChain: sourceChainIdType.toString(),
+            targetIdentifyingData: srcAddress,
+            tokenSymbol: note.note.tokenSymbol,
+            version: 'v1',
+            width: '4',
+          };
+
+          const savedChangeNote = await Note.generateNote(changeNoteInput);
+          this.inner.noteManager?.addNote(savedChangeNote);
+          changeNotes.push(savedChangeNote);
+        }
+
+        // Take the proof and send the transaction
+        if (activeRelayer) {
+          const relayedVAnchorWithdraw = await activeRelayer.initWithdraw(
             'vAnchor'
-          >(chainInfo, {
-            chainId: activeChain,
-            id: srcAddress,
-            extData: {
-              recipient: extData.recipient,
-              relayer: extData.relayer,
-              extAmount: extAmount as any,
-              fee: extData.fee.toString() as any,
-              encryptedOutput1: extData.encryptedOutput1,
-              encryptedOutput2: extData.encryptedOutput2,
-              refund: extData.refund.toString(),
-              token: extData.token,
-            },
-            proofData: {
-              proof: publicInputs.proof,
-              extDataHash: publicInputs.extDataHash,
-              publicAmount: publicInputs.publicAmount,
-              roots: publicInputs.roots,
-              outputCommitments: publicInputs.outputCommitments,
-              inputNullifiers: publicInputs.inputNullifiers,
-            },
+          );
+
+          const parsedDestChainIdType = parseTypedChainId(sourceChainIdType);
+
+          const chainInfo: RelayedChainInput = {
+            baseOn: 'evm',
+            contractAddress: srcAddress,
+            endpoint: '',
+            name: parsedDestChainIdType.chainId.toString(),
+          };
+
+          const extAmount = extData.extAmount.toString().replace('0x', '');
+          const relayedDepositTxPayload =
+            relayedVAnchorWithdraw.generateWithdrawRequest<
+              typeof chainInfo,
+              'vAnchor'
+            >(chainInfo, {
+              chainId: activeChain,
+              id: srcAddress,
+              extData: {
+                recipient: extData.recipient,
+                relayer: extData.relayer,
+                extAmount: extAmount as any,
+                fee: extData.fee.toString() as any,
+                encryptedOutput1: extData.encryptedOutput1,
+                encryptedOutput2: extData.encryptedOutput2,
+                refund: extData.refund.toString(),
+                token: extData.token,
+              },
+              proofData: {
+                proof: publicInputs.proof,
+                extDataHash: publicInputs.extDataHash,
+                publicAmount: publicInputs.publicAmount,
+                roots: publicInputs.roots,
+                outputCommitments: publicInputs.outputCommitments,
+                inputNullifiers: publicInputs.inputNullifiers,
+              },
+            });
+
+          relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+            switch (results) {
+              case RelayedWithdrawResult.PreFlight:
+                this.emit('stateChange', TransactionState.SendingTransaction);
+                transferTx.next(TransactionState.SendingTransaction, undefined);
+                break;
+              case RelayedWithdrawResult.OnFlight:
+                break;
+              case RelayedWithdrawResult.Continue:
+                break;
+              case RelayedWithdrawResult.CleanExit:
+                this.emit('stateChange', TransactionState.Done);
+                transferTx.next(TransactionState.Done, {
+                  txHash,
+                  outputNotes: changeNotes,
+                });
+                break;
+              case RelayedWithdrawResult.Errored:
+                this.emit('stateChange', TransactionState.Failed);
+                transferTx.fail('Transaction with relayer failed');
+                break;
+            }
           });
 
-        relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
-          switch (results) {
-            case RelayedWithdrawResult.PreFlight:
-              this.emit('stateChange', TransactionState.SendingTransaction);
-              break;
-            case RelayedWithdrawResult.OnFlight:
-              break;
-            case RelayedWithdrawResult.Continue:
-              break;
-            case RelayedWithdrawResult.CleanExit:
-              this.emit('stateChange', TransactionState.Done);
+          transferTx.next(TransactionState.Intermediate, {
+            name: 'Sending TX to relayer',
+          });
 
-              this.inner.notificationHandler({
-                description: `TX hash:`,
-                key: 'vanchor-withdraw-sub',
-                level: 'success',
-                message: 'vanchor254:withdraw',
-                name: 'Transaction',
-              });
-
-              break;
-            case RelayedWithdrawResult.Errored:
-              this.emit('stateChange', TransactionState.Failed);
-
-              this.inner.notificationHandler({
-                description: message || 'Withdraw failed',
-                key: 'vanchor-withdraw-sub',
-                level: 'success',
-                message: 'vanchor254:withdraw',
-                name: 'Transaction',
-              });
-              break;
+          relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+          const results = await relayedVAnchorWithdraw.await();
+          if (results) {
+            const [, message] = results;
+            txHash = message;
           }
+          // Cleanup NoteAccount state
+          for (const note of transferData.inputNotes) {
+            this.inner.noteManager?.removeNote(note);
+          }
+        } else {
+          const tx = await anchor.inner.transact(
+            {
+              ...publicInputs,
+              outputCommitments: [
+                publicInputs.outputCommitments[0],
+                publicInputs.outputCommitments[1],
+              ],
+            },
+            extData
+          );
+
+          transferTx.next(TransactionState.SendingTransaction, tx.hash);
+
+          const receipt = await tx.wait();
+          txHash = receipt.transactionHash;
+
+          // Cleanup NoteAccount state
+          for (const note of transferData.inputNotes) {
+            this.inner.noteManager?.removeNote(note);
+          }
+        }
+
+        this.emit('stateChange', TransactionState.Done);
+        transferTx.next(TransactionState.Done, {
+          txHash,
+          outputNotes: changeNotes,
         });
-
-        this.inner.notificationHandler({
-          description: 'Sending TX to relayer',
-          key: 'vanchor-withdraw-sub',
-          level: 'loading',
-          message: 'vanchor254:withdraw',
-
-          name: 'Transaction',
-        });
-        relayedVAnchorWithdraw.send(relayedDepositTxPayload);
-        const results = await relayedVAnchorWithdraw.await();
-        if (results) {
-          const [, message] = results;
-          txHash = message;
+      } catch (e) {
+        // Cleanup NoteAccount state for added changeNotes
+        for (const note of changeNotes) {
+          this.inner.noteManager?.removeNote(note);
         }
-        // Cleanup NoteAccount state
-        for (const note of transferData.inputNotes) {
-          const parsedNote = await Note.deserialize(note);
-          this.inner.noteManager?.removeNote(parsedNote);
-        }
-      } else {
-        const tx = await anchor.inner.transact(
-          {
-            ...publicInputs,
-            outputCommitments: [
-              publicInputs.outputCommitments[0],
-              publicInputs.outputCommitments[1],
-            ],
-          },
-          extData
-        );
-        const receipt = await tx.wait();
-        txHash = receipt.transactionHash;
 
-        // Cleanup NoteAccount state
-        for (const note of transferData.inputNotes) {
-          const parsedNote = await Note.deserialize(note);
-          this.inner.noteManager?.removeNote(parsedNote);
+        let description = '';
+        const isUserCancel =
+          e instanceof WebbError &&
+          e.code === WebbErrorCodes.TransactionCancelled;
+
+        if (e?.code === 4001) {
+          description = 'User Rejected Deposit';
+        } else if (isUserCancel) {
+          description = 'User Cancelled Transaction';
+        } else {
+          description = 'Deposit Transaction Failed';
         }
+
+        this.emit('stateChange', TransactionState.Failed);
+        transferTx.fail(description);
+        console.log(e);
+
+        return {
+          txHash: '',
+          outputNotes: [],
+        };
       }
-
-      this.emit('stateChange', TransactionState.Done);
-    } catch (e) {
-      // Cleanup NoteAccount state for added changeNotes
-      for (const note of changeNotes) {
-        this.inner.noteManager?.removeNote(note);
-      }
-
-      this.emit('stateChange', TransactionState.Failed);
-      console.log(e);
-
-      this.inner.notificationHandler({
-        description:
-          (e as any)?.code === 4001 ? 'Withdraw rejected' : 'Withdraw failed',
-        key,
-        level: 'error',
-        message: `web3-vanchor:withdraw`,
-        name: 'Transaction',
-      });
 
       return {
-        txHash: '',
-        outputNotes: [],
+        txHash: txHash,
+        outputNotes: changeNotes,
       };
-    }
-
-    return {
-      txHash: txHash,
-      outputNotes: changeNotes,
     };
+
+    transferTx.executor(executeTransfer);
+    return transferTx;
   }
 
   private async fetchNoteLeaves(
-    note: string,
+    note: Note,
     leavesMap: Record<string, Uint8Array[]>,
     destVAnchor: VAnchorContract,
     treeHeight: number
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> {
     const abortSignal = this.cancelToken.abortSignal;
-    const parsedNote = (await Note.deserialize(note)).note;
+    const parsedNote = note.note;
     const amount = BigNumber.from(parsedNote.amount);
 
     // fetch leaves if we don't have them
