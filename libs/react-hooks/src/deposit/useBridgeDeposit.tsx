@@ -30,10 +30,11 @@ export const useBridgeDeposit = (): VBridgeDepositApi => {
   const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
 
   const stage = useMemo(() => {
-    if (txQueue.length === 0 || currentTxId === null) {
+    const depositTxs = txQueue.filter((tx) => tx.name === 'Deposit');
+    if (depositTxs.length === 0 || currentTxId === null) {
       return TransactionState.Ideal;
     }
-    const lastTx = txQueue[txQueue.length - 1];
+    const lastTx = depositTxs[depositTxs.length - 1];
     return lastTx.currentStatus[0];
   }, [txQueue, txPayloads, currentTxId]);
   /// api

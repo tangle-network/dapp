@@ -105,7 +105,8 @@ export function useTxApiQueue(): TransactionQueueApi {
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
     []
   );
-  const subscriptions = useRef<Map<string, { unsubscribe: () => void }>>();
+  const subscriptions =
+    useRef<Map<string, Array<{ unsubscribe: () => void }>>>();
   const [mainTxId, setMainTxId] = useState<null | string>(null);
   useEffect(() => {
     subscriptions.current = new Map();
@@ -120,7 +121,9 @@ export function useTxApiQueue(): TransactionQueueApi {
         return txQueue.filter((tx) => tx.id !== id);
       });
       if (subscriptions.current?.has(id)) {
-        subscriptions.current.get(id)?.unsubscribe();
+        subscriptions.current.get(id)?.forEach((sub) => {
+          sub.unsubscribe();
+        });
       }
     },
     [setTxQueue, subscriptions]
@@ -152,7 +155,23 @@ export function useTxApiQueue(): TransactionQueueApi {
           });
         });
       });
-      subscriptions.current?.set(tx.id, sub);
+      const txHashSub = tx.$txHash.subscribe((txHash) => {
+        setTxPayloads((txPayloads) => {
+          return txPayloads.map((txPayload) => {
+            if (txPayload.id !== tx.id) {
+              return txPayload;
+            }
+            return {
+              ...txPayload,
+              txStatus: {
+                ...txPayload.txStatus,
+                txHash,
+              },
+            };
+          });
+        });
+      });
+      subscriptions.current?.set(tx.id, [sub, txHashSub]);
     },
     [
       setTxQueue,
