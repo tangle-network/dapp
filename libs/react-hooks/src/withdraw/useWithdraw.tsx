@@ -1,5 +1,6 @@
 import {
   OptionalActiveRelayer,
+  Transaction,
   TransactionState,
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
@@ -11,7 +12,8 @@ import {
 } from '@webb-tools/api-provider-environment';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useTxQueue } from '../transaction';
 
 export type WithdrawErrors = {
   error: string;
@@ -38,8 +40,17 @@ export type UseWithdrawProps = {
  * User withdraw
  * */
 export const useWithdraw = (params: UseWithdrawProps) => {
-  const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const [receipt, setReceipt] = useState<string>('');
+  const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
+
+  const stage = useMemo(() => {
+    const withdrawTxQueue = txQueue.filter((tx) => tx.name === 'Withdraw');
+    if (withdrawTxQueue.length === 0 || currentTxId === null) {
+      return TransactionState.Ideal;
+    }
+    const lastTx = withdrawTxQueue[withdrawTxQueue.length - 1];
+    return lastTx.currentStatus[0];
+  }, [txQueue, txPayloads, currentTxId]);
 
   const [outputNotes, setOutputNotes] = useState<Note[]>([]);
   const [error, setError] = useState<WithdrawErrors>({
@@ -97,8 +108,8 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           const withdrawNoteStrings = withdrawNotes.map((note) =>
             note.serialize()
           );
-
-          const withdrawPayload = await withdrawApi.withdraw(
+          const denomination = Number(withdrawNotes[0].note.denomination);
+          const payload = withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
             ethers.utils
@@ -107,8 +118,13 @@ export const useWithdraw = (params: UseWithdrawProps) => {
                 params.notes[0].note.denomination
               )
               .toString(),
+            denomination,
             params.unwrapTokenAddress
           );
+          if (payload instanceof Transaction) {
+            txQueueApi.registerTransaction(payload);
+          }
+          const withdrawPayload = await payload;
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
           return true;
@@ -125,63 +141,15 @@ export const useWithdraw = (params: UseWithdrawProps) => {
         }
       }
     }
-  }, [withdrawApi, stage, params, registerInteractiveFeedback]);
+  }, [withdrawApi, txQueueApi, stage, params, registerInteractiveFeedback]);
 
-  const cancelWithdraw = useCallback(async () => {
-    if (canCancel) {
-      if (stage !== TransactionState.Ideal) {
-        await withdrawApi?.cancelWithdraw();
-        setStage(TransactionState.Ideal);
-      } else {
-        setStage(TransactionState.Ideal);
-      }
-    }
-  }, [canCancel, withdrawApi, stage, setStage]);
-
-  // hook events
-  useEffect(() => {
-    if (!withdrawApi) {
-      return;
-    }
-
-    const unsubscribe: Record<string, (() => void) | void> = {};
-    unsubscribe['stateChange'] = withdrawApi.on(
-      'stateChange',
-      (stage: TransactionState) => {
-        setStage(stage);
-      }
-    );
-
-    unsubscribe['validationError'] = withdrawApi.on(
-      'validationError',
-      (validationError: { note: string; recipient: string }) => {
-        setError((p) => {
-          const noteErrors = p.validationError.notes.slice();
-          noteErrors.push(validationError.note);
-
-          return {
-            ...p,
-            validationError: {
-              notes: noteErrors,
-              recipient: validationError.recipient,
-            },
-          };
-        });
-      }
-    );
-
-    unsubscribe['error'] = withdrawApi.on('error', (withdrawError: any) => {
-      setError((p) => ({
-        ...p,
-        error: withdrawError,
-      }));
-    });
-
-    return () => {
-      Object.values(unsubscribe).forEach((v) => v && v());
-    };
-  }, [withdrawApi, params.notes, activeApi, activeApi?.relayerManager]);
-
+  const cancelWithdraw = useCallback(
+    async (id: string) => {
+      return txQueueApi.cancelTransaction(id);
+    },
+    [txQueueApi]
+  );
+  const setStage = useCallback(() => {}, []);
   return {
     stage,
     setStage,
