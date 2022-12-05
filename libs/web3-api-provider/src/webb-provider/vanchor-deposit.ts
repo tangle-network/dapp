@@ -119,13 +119,17 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
   }
 
   deposit(depositPayload: DepositPayload): Transaction<NewNotesTxResult> {
+    const note = depositPayload.note;
     const amount = depositPayload.params[0].amount;
-
+    const formattedAmount = ethers.utils.formatUnits(
+      amount,
+      note.note.denomination
+    );
     const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
       wallets: { src: 'ETH', dist: 'ETH' },
       tokens: ['wETH', 'WebbETH'],
       token: 'WebbETH',
-      amount: Number(amount),
+      amount: Number(formattedAmount),
     });
     const ex = async () => {
       const abortSignal = depositTx.cancelToken.abortSignal;
