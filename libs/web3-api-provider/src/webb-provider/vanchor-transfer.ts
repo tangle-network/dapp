@@ -64,10 +64,14 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     const { denomination } = note.note;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
 
+    const sourceChain = transferData.activeChain;
+    const targetChainId = transferData.targetTypedChainId;
+    const targetChain = this.config.chains[targetChainId];
+
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
-      wallets: { src: 'ETH', dist: 'ETH' },
-      tokens: ['wETH', 'WebbETH'],
-      token: 'WebbETH',
+      wallets: { src: sourceChain?.name, dist: targetChain?.name },
+      tokens: [note.note.tokenSymbol, note.note.tokenSymbol],
+      token: note.note.tokenSymbol,
       amount: Number(formattedAmount),
     });
 

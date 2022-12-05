@@ -52,16 +52,18 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     loading: true,
   });
 
-  const { activeApi } = useWebContext();
+  const { activeApi, activeChain } = useWebContext();
 
   const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
 
   // Calculate the transaction stage
   const stage = useMemo(() => {
-    if (txQueue.length === 0 || currentTxId === null) {
+    const depositTxs = txQueue.filter((tx) => tx.name === 'Transfer');
+
+    if (depositTxs.length === 0 || currentTxId === null) {
       return TransactionState.Ideal;
     }
-    const lastTx = txQueue[txQueue.length - 1];
+    const lastTx = depositTxs[depositTxs.length - 1];
     return lastTx.currentStatus[0];
   }, [txQueue, txPayloads, currentTxId]);
 
@@ -83,7 +85,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
   }, [activeApi]);
 
   const transfer = useCallback(async () => {
-    if (!transferApi) {
+    if (!transferApi || !activeChain) {
       throw new Error('Api not ready');
     }
 
@@ -106,6 +108,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
             return;
           }
           const payload = transferApi.transfer({
+            activeChain,
             inputNotes: spendableNotes,
             amount: ethers.utils
               .parseUnits(
