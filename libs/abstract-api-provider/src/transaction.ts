@@ -1,5 +1,5 @@
 import { Note } from '@webb-tools/sdk-core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CancellationToken } from './cancelation-token';
 
 export interface TXresultBase {
@@ -101,7 +101,9 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
   readonly id = String(Date.now() + Math.random());
   readonly timestamp = new Date();
-  private _txHash?: string;
+  private _txHash: BehaviorSubject<string | undefined> = new BehaviorSubject<
+    string | undefined
+  >(undefined);
   private constructor(
     executor: PromiseExec<DonePayload>,
     public readonly name: string,
@@ -171,7 +173,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   fail(error: string) {
     this.next(TransactionState.Failed, {
       error,
-      txHash: this._txHash,
+      txHash: this.txHash,
     });
     throw new Error(error);
   }
@@ -193,11 +195,17 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   }
 
   get txHash(): string | undefined {
-    return this._txHash;
+    return this._txHash.value;
   }
+
   set txHash(hash: string | undefined) {
-    this._txHash = hash;
+    this._txHash.next(hash);
   }
+
+  get $txHash(): Observable<string | undefined> {
+    return this._txHash.asObservable();
+  }
+
   get $currentStatus() {
     return this._status.asObservable();
   }
@@ -208,7 +216,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     } catch (e) {
       this.next(TransactionState.Failed, {
         error: JSON.stringify(e),
-        txHash: this._txHash,
+        txHash: this.txHash,
       });
     }
   };
