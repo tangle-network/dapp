@@ -95,8 +95,8 @@ type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
   wallets: {
-    src: string;
-    dist: string;
+    src: string | JSX.Element;
+    dist: string | JSX.Element;
   };
   token: string;
 };

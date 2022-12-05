@@ -37,8 +37,8 @@ import {
   Utxo,
 } from '@webb-tools/sdk-core';
 import { BigNumber, ethers } from 'ethers';
-
 import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { ChainIcon } from '@webb-tools/icons';
 
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
@@ -69,7 +69,10 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     const targetChain = this.config.chains[targetChainId];
 
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
-      wallets: { src: sourceChain?.name, dist: targetChain?.name },
+      wallets: {
+        src: <ChainIcon name={sourceChain?.name} />,
+        dist: <ChainIcon name={targetChain?.name} />,
+      },
       tokens: [note.note.tokenSymbol, note.note.tokenSymbol],
       token: note.note.tokenSymbol,
       amount: Number(formattedAmount),

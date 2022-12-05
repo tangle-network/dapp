@@ -53,8 +53,18 @@ function mapTxToPayload(
     token,
     tokens: tokens,
     wallets: {
-      src: <TokenIcon size={'lg'} name={wallets.src || 'default'} />,
-      dist: <TokenIcon size={'lg'} name={wallets.dist || 'default'} />,
+      src:
+        typeof wallets.src === 'string' ? (
+          <TokenIcon size={'lg'} name={wallets.src || 'default'} />
+        ) : (
+          wallets.src
+        ),
+      dist:
+        typeof wallets.dist === 'string' ? (
+          <TokenIcon size={'lg'} name={wallets.dist || 'default'} />
+        ) : (
+          wallets.dist
+        ),
     },
     onDismiss(): void {
       return dismissTransaction(tx.id);
