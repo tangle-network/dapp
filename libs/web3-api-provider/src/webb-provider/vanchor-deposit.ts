@@ -253,9 +253,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           await this.inner.noteManager.addNote(depositPayload.note);
         }
 
-        this.emit('stateChange', TransactionState.GeneratingZk);
-        depositTx.next(TransactionState.GeneratingZk, undefined);
-
         // If a wrappableAsset was selected, perform a wrapAndDeposit
         if (depositPayload.params[2]) {
           const requiredApproval =
@@ -266,7 +263,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
           if (requiredApproval) {
             depositTx.next(TransactionState.Intermediate, {
-              name: 'Require is required approval for warping',
+              name: 'Approval is required for warping',
               data: {
                 tokenAddress: depositPayload.params[2],
               },
@@ -297,7 +294,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           if (enoughBalance) {
             this.cancelToken.throwIfCancel();
             const worker = this.inner.wasmFactory();
-
+            this.emit('stateChange', TransactionState.GeneratingZk);
+            depositTx.next(TransactionState.GeneratingZk, undefined);
             const tx = await this.cancelToken.handleOrThrow(
               () =>
                 srcVAnchor.wrapAndDeposit(
@@ -365,6 +363,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           const enoughBalance = await srcVAnchor.hasEnoughBalance(amount);
 
           if (enoughBalance) {
+            this.emit('stateChange', TransactionState.GeneratingZk);
+            depositTx.next(TransactionState.GeneratingZk, undefined);
+
             this.cancelToken.throwIfCancel();
             const worker = this.inner.wasmFactory();
 

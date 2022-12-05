@@ -23,8 +23,9 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
 ): TransactionItemStatus {
   switch (txStatus) {
     case TransactionState.Done:
-    case TransactionState.Ideal:
       return 'completed';
+    case TransactionState.Ideal:
+      return 'in-progress';
     case TransactionState.Failed:
       return 'warning';
     default:
@@ -72,19 +73,19 @@ function getTxMessageFromStatus<Key extends TransactionState>(
     case TransactionState.Ideal:
       return 'Transaction completed';
     case TransactionState.FetchingFixtures:
-      return "Fetching the transaction's fixtures";
+      return 'Fetching transaction fixtures';
     case TransactionState.FetchingLeaves:
-      return "Fetching transaction leaves...";
+      return 'Fetching transaction leaves...';
     case TransactionState.GeneratingZk:
-      return 'Generating the zero knowledge proof';
+      return 'Generating zero knowledge proof...';
     case TransactionState.SendingTransaction:
-      return 'Sending the transaction';
+      return 'Sending transaction...';
     case TransactionState.Intermediate:
       return `${transactionStatusValue.name}`;
     case TransactionState.Done:
       return 'Transaction completed';
     case TransactionState.Failed:
-      return 'Transaction Failed';
+      return 'Transaction failed';
   }
   return '';
 }
