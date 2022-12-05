@@ -49,7 +49,6 @@ export const DepositConfirmContainer = forwardRef<
       },
       [copy]
     );
-    console.log(depositTxInProgress, 'in progress');
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
       // Start a new transaction
