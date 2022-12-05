@@ -383,6 +383,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     destChainInputValue,
     wrappableCurrency,
+    governedCurrency
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
