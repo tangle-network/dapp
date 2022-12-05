@@ -26,6 +26,9 @@ export const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
+    // State for progress bar value
+    const [progress, setProgress] = useState<null | number>(null);
+
     const { activeApi, activeChain } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
@@ -76,6 +79,11 @@ export const TransferConfirmContainer = forwardRef<
 
     // The callback for the transfer button
     const onTransfer = useCallback(async () => {
+      if (isTransfering) {
+        setMainComponent(undefined);
+        return;
+      }
+
       if (note) {
         downloadString(
           JSON.stringify(note),
@@ -84,27 +92,66 @@ export const TransferConfirmContainer = forwardRef<
       }
 
       await transfer();
-    }, [note, transfer]);
+    }, [isTransfering, note, setMainComponent, transfer]);
 
-    // Close the confirm modal if the transfer is successful or failed
+    // Effect to update the progress bar
     useEffect(() => {
-      if (
-        stage === TransactionState.Done ||
-        stage === TransactionState.Failed
-      ) {
-        setMainComponent(undefined);
+      switch (stage) {
+        case TransactionState.FetchingFixtures: {
+          setProgress(0);
+          break;
+        }
+
+        case TransactionState.FetchingLeaves: {
+          setProgress(25);
+          break;
+        }
+        case TransactionState.Intermediate: {
+          setProgress(40);
+          break;
+        }
+
+        case TransactionState.GeneratingZk: {
+          setProgress(50);
+          break;
+        }
+
+        case TransactionState.SendingTransaction: {
+          setProgress(75);
+          break;
+        }
+
+        case TransactionState.Done:
+        case TransactionState.Failed: {
+          setProgress(100);
+          break;
+        }
+
+        case TransactionState.Cancelling:
+        case TransactionState.Ideal: {
+          setProgress(null);
+          break;
+        }
+
+        default: {
+          throw new Error(
+            'Unknown transaction state in DepositConfirmContainer component'
+          );
+        }
       }
-    }, [setMainComponent, stage]);
+    }, [stage, setProgress]);
 
     return (
       <TransferConfirm
         {...props}
+        title={isTransfering ? 'Transfer in Progress' : undefined}
         activeChains={activeChains}
         amount={amount}
         changeAmount={changeAmount}
         sourceChain={activeChain?.name}
         destChain={destChain.name}
         note={note}
+        progress={progress}
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}
         relayerExternalUrl={relayer?.endpoint}
@@ -119,10 +166,9 @@ export const TransferConfirmContainer = forwardRef<
           onChange: () => setIsChecked((prev) => !prev),
         }}
         actionBtnProps={{
-          isLoading: isTransfering,
-          loadingText: 'Transfering...',
           isDisabled: note ? !isChecked : false,
           onClick: onTransfer,
+          children: isTransfering ? 'New Transfer' : 'Transfer',
         }}
       />
     );

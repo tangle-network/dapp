@@ -73,16 +73,12 @@ export const DepositConfirmContainer = forwardRef<
         setMainComponent(undefined);
       }
     }, [
-      amount,
       deposit,
       depositPayload,
-      destChain?.symbol,
       downloadNote,
       depositTxInProgress,
       notificationApi,
       setMainComponent,
-      sourceChain?.symbol,
-      token?.symbol,
       startNewTransaction,
     ]);
 
