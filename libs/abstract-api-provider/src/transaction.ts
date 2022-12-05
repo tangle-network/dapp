@@ -104,6 +104,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   private _txHash: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
+
   private constructor(
     executor: PromiseExec<DonePayload>,
     public readonly name: string,

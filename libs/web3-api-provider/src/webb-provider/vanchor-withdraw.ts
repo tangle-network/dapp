@@ -57,8 +57,79 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return this.inner.config;
   }
 
-  private async fetchLeaves(): Record<string, Uint8Array[]> {}
-  private async fetchFixtures(
+  private async commitmentsSetup(
+    treeHeight: number,
+    destVAnchor: VAnchorContract,
+    notes: string[],
+    destChainIdType: number,
+    abortSignal: AbortSignal
+  ) {
+    const randomKeypair = new Keypair();
+
+    // Loop through the notes and populate the leaves map
+    const leavesMap: Record<string, Uint8Array[]> = {};
+
+    // Keep track of the leafindices for each note
+    const leafIndices: number[] = [];
+
+    // calculate the sum of input notes (for calculating the change utxo)
+    let sumInputNotes: BigNumber = BigNumber.from(0);
+
+    // Create input UTXOs for convenience calculations
+    const inputUtxos: Utxo[] = [];
+
+    const notesLeaves = await Promise.all(
+      notes.map((note) =>
+        this.fetchNoteLeaves(
+          note,
+          leavesMap,
+          destVAnchor,
+          treeHeight,
+          abortSignal
+        )
+      )
+    );
+
+    notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
+      sumInputNotes = sumInputNotes.add(amount);
+      leafIndices.push(leafIndex);
+      inputUtxos.push(utxo);
+    });
+    // Add default input notes if required
+    while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
+      inputUtxos.push(
+        await CircomUtxo.generateUtxo({
+          curve: 'Bn254',
+          backend: 'Circom',
+          chainId: destChainIdType.toString(),
+          originChainId: destChainIdType.toString(),
+          amount: '0',
+          blinding: hexToU8a(randomBN(31).toHexString()),
+          keypair: randomKeypair,
+        })
+      );
+    }
+
+    // Populate the leaves for the destination if not already populated
+    if (!leavesMap[destChainIdType.toString()]) {
+      const leafStorage = await bridgeStorageFactory(destChainIdType);
+      const leaves = await this.inner.getVariableAnchorLeaves(
+        destVAnchor,
+        leafStorage,
+        abortSignal
+      );
+
+      leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+    }
+
+    return {
+      inputUtxos,
+      leavesMap,
+    };
+  }
+  private static async fetchFixtures(
     maxEdges: number,
     small: boolean,
     abortSignal: AbortSignal,
@@ -137,84 +208,25 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         });
         const maxEdges = await destVAnchor.inner.maxEdges();
         const small = notes.length <= 2;
-        const { provingKey, wasmBuffer } = await this.fetchFixtures(
-          maxEdges,
-          small,
-          abortSignal,
-          fixturesList
-        );
-
-        // Loop through the notes and populate the leaves map
-        const leavesMap: Record<string, Uint8Array[]> = {};
-
-        // Keep track of the leafindices for each note
-        const leafIndices: number[] = [];
+        const { provingKey, wasmBuffer } =
+          await Web3VAnchorWithdraw.fetchFixtures(
+            maxEdges,
+            small,
+            abortSignal,
+            fixturesList
+          );
 
         // calculate the sum of input notes (for calculating the change utxo)
-        let sumInputNotes: BigNumber = BigNumber.from(0);
+        const sumInputNotes: BigNumber = BigNumber.from(0);
 
-        // Create input UTXOs for convenience calculations
-        const inputUtxos: Utxo[] = [];
         withdrawTx.cancelToken.throwIfCancel();
-
-        // For all notes, get any leaves in parallel
-        withdrawTx.next(TransactionState.FetchingLeaves, {
-          end: undefined,
-          currentRange: [0, 1],
-          start: 0,
-        });
-
-        const notesLeaves = await Promise.all(
-          notes.map((note) =>
-            this.fetchNoteLeaves(
-              note,
-              leavesMap,
-              destVAnchor,
-              treeHeight,
-              abortSignal
-            )
-          )
+        const { inputUtxos, leavesMap } = await this.commitmentsSetup(
+          treeHeight,
+          destVAnchor,
+          notes,
+          destChainIdType,
+          abortSignal
         );
-
-        notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
-          sumInputNotes = sumInputNotes.add(amount);
-          leafIndices.push(leafIndex);
-          inputUtxos.push(utxo);
-        });
-
-        const randomKeypair = new Keypair();
-
-        // Add default input notes if required
-        while (inputUtxos.length !== 2 && inputUtxos.length < 16) {
-          inputUtxos.push(
-            await CircomUtxo.generateUtxo({
-              curve: 'Bn254',
-              backend: 'Circom',
-              chainId: destChainIdType.toString(),
-              originChainId: destChainIdType.toString(),
-              amount: '0',
-              blinding: hexToU8a(randomBN(31).toHexString()),
-              keypair: randomKeypair,
-            })
-          );
-        }
-
-        // Populate the leaves for the destination if not already populated
-        if (!leavesMap[destChainIdType.toString()]) {
-          const leafStorage = await bridgeStorageFactory(destChainIdType);
-          const leaves = await this.inner.getVariableAnchorLeaves(
-            destVAnchor,
-            leafStorage,
-            abortSignal
-          );
-
-          leavesMap[destChainIdType.toString()] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
-
-        withdrawTx.cancelToken.throwIfCancel();
-
         // Retrieve the user's keypair
         const keypairStorage = await keypairStorageFactory();
         const storedPrivateKey = await keypairStorage.get('keypair');
