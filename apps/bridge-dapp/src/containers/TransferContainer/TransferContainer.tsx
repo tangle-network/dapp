@@ -42,7 +42,7 @@ import {
 export const TransferContainer = forwardRef<
   HTMLDivElement,
   TransferContainerProps
->(({ defaultDestinationChain, defaultGovernedCurrency, setTxPayload }, ref) => {
+>(({ defaultDestinationChain, defaultGovernedCurrency }, ref) => {
   const { governedCurrency, setGovernedCurrency } = useBridge();
 
   const { activeChain, activeApi } = useWebContext();
@@ -565,7 +565,6 @@ export const TransferContainer = forwardRef<
     setMainComponent(
       <TransferConfirmContainer
         className="w-[550px]"
-        setTxPayload={setTxPayload}
         inputNotes={inputNotes}
         amount={amount}
         changeAmount={changeAmount}
@@ -587,7 +586,6 @@ export const TransferContainer = forwardRef<
     inputNotes,
     recipient,
     setMainComponent,
-    setTxPayload,
   ]);
 
   useEffect(() => {

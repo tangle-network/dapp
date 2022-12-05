@@ -20,7 +20,6 @@ export const TransferConfirmContainer = forwardRef<
     recipient,
     relayer,
     note,
-    setTxPayload,
     inputNotes,
     ...props
   }) => {
@@ -78,32 +77,8 @@ export const TransferConfirmContainer = forwardRef<
     // The callback for the transfer button
     const onTransfer = useCallback(async () => {
       // Set transaction payload for transaction processing card
-      setTxPayload((prev) => ({
-        ...prev,
-        id: !prev.id ? '1' : (parseInt(prev.id) + 1).toString(),
-        amount: amount.toString(),
-        timestamp: new Date(),
-        method: 'Transfer',
-        txStatus: {
-          status: 'in-progress',
-        },
-        token: currency.view.symbol,
-        tokens: [currency.view.symbol, currency.view.symbol],
-        wallets: {
-          src: <ChainIcon name={activeChain?.name ?? 'Unknown'} />,
-          dist: <ChainIcon name={destChain.name} />,
-        },
-      }));
-
       await transfer();
-    }, [
-      activeChain?.name,
-      amount,
-      currency.view.symbol,
-      destChain.name,
-      setTxPayload,
-      transfer,
-    ]);
+    }, [transfer]);
 
     // Close the confirm modal if the transfer is successful or failed
     useEffect(() => {

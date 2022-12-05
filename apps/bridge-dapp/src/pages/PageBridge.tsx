@@ -143,7 +143,6 @@ const PageBridge = () => {
             <TransferContainer
               defaultDestinationChain={defaultDestinationChain}
               defaultGovernedCurrency={defaultGovernedCurrency}
-              setTxPayload={setTxPayload}
             />
           </TabContent>
           <TabContent value="Withdraw">

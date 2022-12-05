@@ -32,14 +32,7 @@ export type CurrencyBalanceRecordType = Record<
 
 export interface TransferContainerProps
   extends BridgeTabContainerProps,
-    PropsOf<'div'> {
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
-}
+    PropsOf<'div'> {}
 
 export interface TransferConfirmContainerProps
   extends Omit<PropsOf<'div'>, 'onCopy'> {
@@ -82,11 +75,4 @@ export interface TransferConfirmContainerProps
    * The input notes to transfer
    */
   inputNotes: Note[];
-
-  /**
-   * Function to update the transaction payload
-   */
-  setTxPayload: React.Dispatch<
-    React.SetStateAction<Partial<TransactionPayload>>
-  >;
 }

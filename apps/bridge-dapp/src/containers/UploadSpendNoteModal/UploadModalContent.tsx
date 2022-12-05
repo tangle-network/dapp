@@ -1,6 +1,7 @@
-import { Key } from '@webb-tools/icons';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { chainsPopulated } from '@webb-tools/dapp-config';
+import { KeyIcon } from '@webb-tools/icons';
 import { Note } from '@webb-tools/sdk-core';
-import { uniqueId } from 'lodash';
 import {
   FileUploadArea,
   FileUploadItem,
@@ -11,11 +12,10 @@ import {
   TokenPairIcons,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { ethers } from 'ethers';
+import { uniqueId } from 'lodash';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { UploadModalContentProps } from './types';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsPopulated } from '@webb-tools/dapp-config';
-import { ethers } from 'ethers';
 
 export const UploadModalContent: FC<UploadModalContentProps> = ({
   onNotesChange,
@@ -114,7 +114,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
           <FileUploadItem
             Icon={
               <div className="flex items-center justify-center w-6 h-6 rounded bg-mono-180">
-                <Key className="!fill-mono-0" />
+                <KeyIcon className="!fill-mono-0" />
               </div>
             }
             fileName={file.name}
