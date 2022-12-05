@@ -164,14 +164,14 @@ export const StatsProvider: React.FC<
   const query = useLastBlockQuery();
 
   useEffect(() => {
-    getPromiseApi();
-  }, [polkadotProviderEndpoint]);
+    const getPromiseApi = async (): Promise<void> => {
+      const wsProvider = new WsProvider(polkadotProviderEndpoint);
+      const apiPromise = await ApiPromise.create({ provider: wsProvider });
+      setApi(apiPromise);
+    };
 
-  const getPromiseApi = async () => {
-    const wsProvider = new WsProvider(polkadotProviderEndpoint);
-    const apiPromise = await ApiPromise.create({ provider: wsProvider });
-    setApi(apiPromise);
-  };
+    getPromiseApi();
+  }, []);
 
   useEffect(() => {
     const subscription = query.observable

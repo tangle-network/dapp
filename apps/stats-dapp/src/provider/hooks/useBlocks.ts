@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useStatsContext } from '../../provider/stats-provider';
 import { Loadable } from '../../provider/hooks/types';
+import type { BlockNumber, Header } from '@polkadot/types/interfaces/runtime';
 
 /**
  *
@@ -22,8 +23,8 @@ type LatestBlocksValue = Loadable<BlocksValue>;
 export function useBlocks(): LatestBlocksValue {
   const { api } = useStatsContext();
 
-  const [bestBlock, setBestBlock] = useState<any>();
-  const [finalizedBlock, setFinalizedBlock] = useState<any>();
+  const [bestBlock, setBestBlock] = useState<number>();
+  const [finalizedBlock, setFinalizedBlock] = useState<number>();
 
   const value = useMemo(() => {
     if (!bestBlock || !finalizedBlock) {
@@ -40,32 +41,40 @@ export function useBlocks(): LatestBlocksValue {
         best: bestBlock,
         finalized: finalizedBlock,
       },
-      isLoading: true,
-      isFailed: true,
+      isLoading: false,
+      isFailed: false,
       error: undefined,
     };
   }, [bestBlock, finalizedBlock]);
 
   useEffect(() => {
-    subscribeToNewHeads();
-    subscribeToFinalizedHeads();
-  });
-
-  const subscribeToNewHeads = async () => {
     if (api) {
-      await api.rpc.chain.subscribeNewHeads((lastHeader) => {
-        setBestBlock(lastHeader.number);
-      });
-    }
-  };
+      // Array of subscriptions
+      const subscriptions: Array<() => void> = [];
 
-  const subscribeToFinalizedHeads = async () => {
-    if (api) {
-      await api.rpc.chain.subscribeFinalizedHeads((lastHeader) => {
-        setFinalizedBlock(lastHeader.number);
+      // Handler for listenting to new/best headers
+      const handler = async (): Promise<Array<() => void>> => {
+        const unsubscribeNewHeads = await api.rpc.chain.subscribeNewHeads(
+          (lastHeader) => setBestBlock(Number(lastHeader.number))
+        );
+
+        const unsubscribeFinalizedHeads =
+          await api.rpc.chain.subscribeFinalizedHeads((finalizedHeader) =>
+            setFinalizedBlock(Number(finalizedHeader.number))
+          );
+
+        return [unsubscribeNewHeads, unsubscribeFinalizedHeads];
+      };
+
+      handler().then((cleanup) => {
+        subscriptions.push(...cleanup);
       });
+
+      return () => {
+        subscriptions.forEach((unsubscribe) => unsubscribe());
+      };
     }
-  };
+  }, [api, setBestBlock, setFinalizedBlock]);
 
   return value;
 }
