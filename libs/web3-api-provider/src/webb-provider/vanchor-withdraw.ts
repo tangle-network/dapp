@@ -6,6 +6,7 @@
 import type { WebbWeb3Provider } from '../webb-provider';
 
 import {
+  ActiveWebbRelayer,
   BridgeApi,
   FixturesStatus,
   NewNotesTxResult,
@@ -14,6 +15,7 @@ import {
   Transaction,
   TransactionState,
   VAnchorWithdraw,
+  WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
 import {
   bridgeStorageFactory,
@@ -21,7 +23,9 @@ import {
 } from '@webb-tools/browser-utils/storage';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
+  ExtData,
   generateCircomCommitment,
+  IVariableAnchorPublicInputs,
   utxoFromVAnchorNote,
   VAnchorContract,
 } from '@webb-tools/evm-contracts';
@@ -128,6 +132,81 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       inputUtxos,
       leavesMap,
     };
+  }
+
+  private async relayerWithdraw(
+    extData: ExtData,
+    publicInputs: IVariableAnchorPublicInputs,
+    destChainIdType: number,
+    destAddress: string,
+    activeChain: number,
+    activeRelayer: ActiveWebbRelayer
+  ): Promise<string> {
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+    const parsedDestChainIdType = parseTypedChainId(destChainIdType);
+
+    const chainInfo: RelayedChainInput = {
+      baseOn: 'evm',
+      contractAddress: destAddress,
+      endpoint: '',
+      name: parsedDestChainIdType.chainId.toString(),
+    };
+
+    const extAmount = extData.extAmount.toString().replace('0x', '');
+    const relayedDepositTxPayload =
+      relayedVAnchorWithdraw.generateWithdrawRequest<
+        typeof chainInfo,
+        'vAnchor'
+      >(chainInfo, {
+        chainId: activeChain,
+        id: destAddress,
+        extData: {
+          recipient: extData.recipient,
+          relayer: extData.relayer,
+          extAmount: extAmount as any,
+          fee: extData.fee.toString() as any,
+          encryptedOutput1: extData.encryptedOutput1,
+          encryptedOutput2: extData.encryptedOutput2,
+          refund: extData.refund.toString(),
+          token: extData.token,
+        },
+        proofData: {
+          proof: publicInputs.proof,
+          extDataHash: publicInputs.extDataHash,
+          publicAmount: publicInputs.publicAmount,
+          roots: publicInputs.roots,
+          outputCommitments: publicInputs.outputCommitments,
+          inputNullifiers: publicInputs.inputNullifiers,
+        },
+      });
+
+    relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+      switch (results) {
+        case RelayedWithdrawResult.PreFlight:
+          /// Sending throw relayer
+          break;
+        case RelayedWithdrawResult.OnFlight:
+          break;
+        case RelayedWithdrawResult.Continue:
+          break;
+        case RelayedWithdrawResult.CleanExit:
+          // Done state
+          break;
+        case RelayedWithdrawResult.Errored:
+          // Tx failed
+          withdrawTx.fail(message);
+          break;
+      }
+    });
+
+    relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+    const results = await relayedVAnchorWithdraw.await();
+    if (results) {
+      const [, message] = results;
+      return message;
+    }
+    throw new Error('Failed to use the relayer');
   }
   private static async fetchFixtures(
     maxEdges: number,
@@ -331,72 +410,15 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             TransactionState.SendingTransaction,
             `Relayer:${activeRelayer.beneficiary}`
           );
-          const relayedVAnchorWithdraw = await activeRelayer.initWithdraw(
-            'vAnchor'
+          const txHash = await this.relayerWithdraw(
+            extData,
+            publicInputs,
+            destChainIdType,
+            destAddress,
+            activeChain,
+            activeRelayer
           );
-
-          const parsedDestChainIdType = parseTypedChainId(destChainIdType);
-
-          const chainInfo: RelayedChainInput = {
-            baseOn: 'evm',
-            contractAddress: destAddress,
-            endpoint: '',
-            name: parsedDestChainIdType.chainId.toString(),
-          };
-
-          const extAmount = extData.extAmount.toString().replace('0x', '');
-          const relayedDepositTxPayload =
-            relayedVAnchorWithdraw.generateWithdrawRequest<
-              typeof chainInfo,
-              'vAnchor'
-            >(chainInfo, {
-              chainId: activeChain,
-              id: destAddress,
-              extData: {
-                recipient: extData.recipient,
-                relayer: extData.relayer,
-                extAmount: extAmount as any,
-                fee: extData.fee.toString() as any,
-                encryptedOutput1: extData.encryptedOutput1,
-                encryptedOutput2: extData.encryptedOutput2,
-                refund: extData.refund.toString(),
-                token: extData.token,
-              },
-              proofData: {
-                proof: publicInputs.proof,
-                extDataHash: publicInputs.extDataHash,
-                publicAmount: publicInputs.publicAmount,
-                roots: publicInputs.roots,
-                outputCommitments: publicInputs.outputCommitments,
-                inputNullifiers: publicInputs.inputNullifiers,
-              },
-            });
-
-          relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
-            switch (results) {
-              case RelayedWithdrawResult.PreFlight:
-                /// Sending throw relayer
-                break;
-              case RelayedWithdrawResult.OnFlight:
-                break;
-              case RelayedWithdrawResult.Continue:
-                break;
-              case RelayedWithdrawResult.CleanExit:
-                // Done state
-                break;
-              case RelayedWithdrawResult.Errored:
-                // Tx failed
-                withdrawTx.fail(message);
-                break;
-            }
-          });
-
-          relayedVAnchorWithdraw.send(relayedDepositTxPayload);
-          const results = await relayedVAnchorWithdraw.await();
-          if (results) {
-            const [, message] = results;
-            txHash = message;
-          }
+          withdrawTx.txHash = txHash;
           // Cleanup NoteAccount state
           for (const note of notes) {
             const parsedNote = await Note.deserialize(note);
