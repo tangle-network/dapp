@@ -343,6 +343,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
         // Take the proof and send the transaction
         if (activeRelayer) {
+          withdrawTx.next(
+            TransactionState.SendingTransaction,
+            `Relayer:${activeRelayer.beneficiary}`
+          );
           const relayedVAnchorWithdraw = await activeRelayer.initWithdraw(
             'vAnchor'
           );
@@ -398,6 +402,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
                 break;
               case RelayedWithdrawResult.Errored:
                 this.emit('stateChange', TransactionState.Failed);
+                withdrawTx.fail(message);
                 break;
             }
           });
@@ -411,7 +416,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           // Cleanup NoteAccount state
           for (const note of notes) {
             const parsedNote = await Note.deserialize(note);
-            this.inner.noteManager?.removeNote(parsedNote);
+            await this.inner.noteManager?.removeNote(parsedNote);
           }
         } else {
           let tx: ContractTransaction;
@@ -463,7 +468,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         }
 
         this.emit('stateChange', TransactionState.Failed);
-        console.log(e);
+        withdrawTx.fail(e);
 
         return {
           txHash: '',
@@ -472,7 +477,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       }
 
       this.emit('stateChange', TransactionState.Done);
-
+      withdrawTx.next(TransactionState.Done, {
+        txHash: txHash,
+        outputNotes: changeNotes,
+      });
       return {
         txHash: txHash,
         outputNotes: changeNotes,
