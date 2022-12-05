@@ -1,9 +1,14 @@
-import { Account, WebbApiProvider } from '@webb-tools/abstract-api-provider';
+import {
+  Account,
+  Transaction,
+  WebbApiProvider,
+} from '@webb-tools/abstract-api-provider';
 import { ApiConfig, Chain, Wallet } from '@webb-tools/dapp-config';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 import { AppEvent, TAppEvent } from '../app-event';
+import { TransactionQueueApi } from '../transaction';
 
 export interface WebbContextState<T = unknown> {
   loading: boolean;
@@ -13,21 +18,31 @@ export interface WebbContextState<T = unknown> {
   activeWallet?: Wallet;
   activeChain?: Chain;
   noteManager: NoteManager | null;
+
   loginNoteAccount(key: string): Promise<NoteManager | null>;
+
   logoutNoteAccount(): Promise<void>;
+
   purgeNoteAccount(): Promise<void>;
+
   apiConfig: ApiConfig;
   accounts: Account[];
   activeAccount: Account | null;
   isConnecting: boolean;
+
   setActiveAccount<T extends Account>(account: T): Promise<void>;
+
   inactivateApi(): Promise<void>;
+
   switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
+
   activeFeedback: InteractiveFeedback | null;
   registerInteractiveFeedback: (
     interactiveFeedback: InteractiveFeedback
   ) => void;
   appEvent: TAppEvent;
+
+  txQueue: TransactionQueueApi;
 }
 
 export const WebbContext = React.createContext<WebbContextState>({
@@ -62,6 +77,25 @@ export const WebbContext = React.createContext<WebbContextState>({
     return;
   },
   appEvent: new AppEvent(),
+  txQueue: {
+    txQueue: [],
+    currentTxId: null,
+    txPayloads: [],
+    api: {
+      startNewTransaction() {
+        return;
+      },
+      cancelTransaction(_id: string) {
+        return;
+      },
+      dismissTransaction(_id: string) {
+        return;
+      },
+      registerTransaction(_tx: Transaction<any>) {
+        return;
+      },
+    },
+  },
 });
 
 export const useWebContext = <T = unknown>() => {

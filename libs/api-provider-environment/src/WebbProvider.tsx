@@ -1,4 +1,4 @@
-import { Icon, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
@@ -59,6 +59,7 @@ import { WebbContext } from './webb-context';
 
 import { SettingProvider } from '@webb-tools/react-environment';
 import { unsupportedChain } from './error';
+import { useTxApiQueue } from './transaction';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -839,6 +840,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     });
   }, []);
 
+  const txQueue = useTxApiQueue();
   return (
     <WebbContext.Provider
       value={{
@@ -874,6 +876,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           );
         },
         appEvent,
+        txQueue,
       }}
     >
       <StoreProvider>

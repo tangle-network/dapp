@@ -9,7 +9,7 @@ import {
   misbehavingRelayer,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -34,7 +34,9 @@ export type UseWithdrawProps = {
   amount: number;
   unwrapTokenAddress?: string;
 };
-
+/**
+ * User withdraw
+ * */
 export const useWithdraw = (params: UseWithdrawProps) => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
   const [receipt, setReceipt] = useState<string>('');

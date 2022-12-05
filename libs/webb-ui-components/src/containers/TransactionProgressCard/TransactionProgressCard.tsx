@@ -262,14 +262,14 @@ export const TransactionProgressCard = forwardRef<
 
               <div className="flex items-center mt-1">
                 <div
-                  className={`w-5  h-5 rounded-full flex items-center justify-center`}
+                  className={` rounded-full flex items-center justify-center`}
                   children={wallets.src}
                 />
                 <div className="px-2">
                   <ArrowRight />
                 </div>
                 <div
-                  className={`w-5  h-5 rounded-full flex items-center justify-center`}
+                  className={` rounded-full flex items-center justify-center`}
                   children={wallets.dist}
                 />
               </div>

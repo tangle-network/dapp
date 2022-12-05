@@ -50,7 +50,7 @@ export abstract class VAnchorDeposit<
    * - Mutate the `loading` status of the instance
    * - Use the event bus to emit the status of the transaction
    **/
-  abstract deposit(depositPayload: K): Promise<NewNotesTxResult>;
+  abstract deposit(depositPayload: K): PromiseLike<NewNotesTxResult>;
 
   /** For the VAnchor, a bridge note represents a UTXO.
    ** @param anchorId - an address or tree id.
