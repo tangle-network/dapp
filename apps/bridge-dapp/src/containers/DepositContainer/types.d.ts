@@ -8,9 +8,7 @@ import { BridgeTabContainerProps } from '../types';
 
 export interface DepositContainerProps
   extends BridgeTabContainerProps,
-    PropsOf<'div'> {
-
-}
+    PropsOf<'div'> {}
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**

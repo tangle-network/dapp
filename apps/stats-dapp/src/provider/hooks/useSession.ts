@@ -64,7 +64,9 @@ export function useSessionThreshold(isLatest: boolean): LatestThresholdsValue {
                 signatureThreshold: map.SIGNATURE?.current,
               };
             })
-            .filter((s) => s.keygenThreshold && s.signatureThreshold) as SessionThresholdValue[];
+            .filter(
+              (s) => s.keygenThreshold && s.signatureThreshold
+            ) as SessionThresholdValue[];
 
           return {
             val: sessions,
