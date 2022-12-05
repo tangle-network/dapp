@@ -10,16 +10,25 @@ const classNames: ChipClassNames = {
     disabled: 'bg-green-10 text-green-40 dark:bg-green-120 dark:text-green-90',
   },
   purple: {
-    active: 'bg-purple-10 text-purple-90 dark:bg-purple-120 dark:text-purple-50',
-    disabled: 'bg-purple-10 text-purple-40 dark:bg-purple-120 dark:text-purple-90',
+    active:
+      'bg-purple-10 text-purple-90 dark:bg-purple-120 dark:text-purple-50',
+    disabled:
+      'bg-purple-10 text-purple-40 dark:bg-purple-120 dark:text-purple-90',
   },
   red: {
     active: 'bg-red-10 text-red-90 dark:bg-red-120 dark:text-red-50',
     disabled: 'bg-red-10 text-red-40 dark:bg-red-120 dark:text-red-90',
   },
   yellow: {
-    active: 'bg-yellow-10 text-yellow-90 dark:bg-yellow-120 dark:text-yellow-50',
-    disabled: 'bg-yellow-10 text-yellow-40 dark:bg-yellow-120 dark:text-yellow-90',
+    active:
+      'bg-yellow-10 text-yellow-90 dark:bg-yellow-120 dark:text-yellow-50',
+    disabled:
+      'bg-yellow-10 text-yellow-40 dark:bg-yellow-120 dark:text-yellow-90',
+  },
+  grey: {
+    active: 'bg-inherit text-mono-120 dark:inherit dark:text-mono-80',
+    disabled:
+      'bg-mono-200/[5%] text-mono-160 dark:bg-mono-0/[5%] dark:text-mono-0',
   },
 };
 

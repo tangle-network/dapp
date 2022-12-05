@@ -2,6 +2,7 @@ export * from './Accordion';
 export * from './AmountMenu';
 export * from './Avatar';
 export * from './AvatarGroup';
+export * from './Breadcrumbs';
 export * from './BridgeInputs';
 export * from './Button';
 export * from './Card';
