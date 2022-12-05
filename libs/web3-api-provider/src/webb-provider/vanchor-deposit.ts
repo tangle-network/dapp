@@ -439,7 +439,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
         if (!isUserCancel) {
           this.emit('stateChange', TransactionState.Failed);
-          depositTx.fail('Not enough balance');
+          depositTx.fail(description);
         }
 
         return {
