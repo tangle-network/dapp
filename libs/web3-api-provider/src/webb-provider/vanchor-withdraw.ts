@@ -130,6 +130,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     return {
       inputUtxos,
       leavesMap,
+      sumInputNotes,
     };
   }
   /**
@@ -301,16 +302,16 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           );
 
         // calculate the sum of input notes (for calculating the change utxo)
-        const sumInputNotes: BigNumber = BigNumber.from(0);
 
         withdrawTx.cancelToken.throwIfCancel();
-        const { inputUtxos, leavesMap } = await this.commitmentsSetup(
-          treeHeight,
-          destVAnchor,
-          notes,
-          destChainIdType,
-          abortSignal
-        );
+        const { inputUtxos, leavesMap, sumInputNotes } =
+          await this.commitmentsSetup(
+            treeHeight,
+            destVAnchor,
+            notes,
+            destChainIdType,
+            abortSignal
+          );
         // Retrieve the user's keypair
         const keypairStorage = await keypairStorageFactory();
         const storedPrivateKey = await keypairStorage.get('keypair');
