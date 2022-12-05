@@ -5,3 +5,4 @@ export * from './useCurrentMetaData';
 export * from './types';
 export * from './mappers';
 export * from './useSession';
+export * from './useBlocks';

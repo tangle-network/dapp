@@ -1,5 +1,7 @@
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { polkadotProviderEndpoint } from '../constants';
 
 /**
  * Chain metadata
@@ -49,6 +51,8 @@ type StatsProvidervalue = {
   updateTime(time: SubQlTime): void;
   metaData: Metadata;
   isReady: boolean;
+  // polkadot api
+  api?: ApiPromise;
 };
 
 /**
@@ -81,21 +85,22 @@ class SubQlTime {
   }
 }
 
-const statsContext: React.Context<StatsProvidervalue> = React.createContext<StatsProvidervalue>({
-  blockTime: 6,
-  sessionHeight: 10,
-  time: new SubQlTime(new Date()),
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  updateTime(_time: SubQlTime): void {},
-  metaData: {
-    activeSession: '0',
-    currentBlock: '0',
-    lastSession: '0',
-    lastProcessBlock: '0',
-    activeSessionBlock: 0,
-  },
-  isReady: false,
-});
+const statsContext: React.Context<StatsProvidervalue> =
+  React.createContext<StatsProvidervalue>({
+    blockTime: 6,
+    sessionHeight: 10,
+    time: new SubQlTime(new Date()),
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    updateTime(_time: SubQlTime): void {},
+    metaData: {
+      activeSession: '0',
+      currentBlock: '0',
+      lastSession: '0',
+      lastProcessBlock: '0',
+      activeSessionBlock: 0,
+    },
+    isReady: false,
+  });
 export function useStatsContext() {
   return useContext(statsContext);
 }
@@ -120,9 +125,12 @@ export const useActiveSession = () => {
   } = useStatsContext();
   return activeSession;
 };
-export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>> = (
-  props
-) => {
+export const StatsProvider: React.FC<
+  Omit<
+    StatsProvidervalue,
+    'isReady' | 'metaData' | 'updateTime' | 'time' | 'api'
+  >
+> = (props) => {
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
   const [metaData, setMetaData] = useState<Metadata>({
     activeSession: '0',
@@ -139,6 +147,8 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
     blockTime: props.blockTime,
   });
   const [isReady, setIsReady] = useState(false);
+  const [api, setApi] = useState<ApiPromise | undefined>();
+
   const value = useMemo<StatsProvidervalue>(() => {
     return {
       time,
@@ -148,9 +158,20 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
       },
       isReady,
       metaData,
+      api,
     };
-  }, [staticConfig, metaData, isReady, time]);
+  }, [staticConfig, metaData, isReady, time, api]);
   const query = useLastBlockQuery();
+
+  useEffect(() => {
+    getPromiseApi();
+  }, [polkadotProviderEndpoint]);
+
+  const getPromiseApi = async () => {
+    const wsProvider = new WsProvider(polkadotProviderEndpoint);
+    const apiPromise = await ApiPromise.create({ provider: wsProvider });
+    setApi(apiPromise);
+  };
 
   useEffect(() => {
     const subscription = query.observable
@@ -211,5 +232,9 @@ export const StatsProvider: React.FC<Omit<StatsProvidervalue, 'isReady' | 'metaD
     };
   }, [query, metaDataQuery, staticConfig]);
 
-  return <statsContext.Provider value={value}>{props.children}</statsContext.Provider>;
+  return (
+    <statsContext.Provider value={value}>
+      {props.children}
+    </statsContext.Provider>
+  );
 };
