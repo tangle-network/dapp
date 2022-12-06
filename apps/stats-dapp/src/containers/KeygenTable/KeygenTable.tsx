@@ -52,6 +52,10 @@ export const headerConfig = {
     title: 'Key',
     info: 'The public key of the DKG protocol that is currently active.',
   },
+  keygenThreshold: {
+    title: 'Keygen Threshold',
+    info: 'Minimum number of signers needed in order to produce a valid signature.',
+  },
   signatureThreshold: {
     title: 'Signature Threshold',
     info: "The 't' in (t-out-of-n) threshold signatures used in the DKG signing system. Required of DKG authorities to generate signatures.",
@@ -65,34 +69,53 @@ export const headerConfig = {
 const columns: ColumnDef<KeygenType, any>[] = [
   columnHelper.accessor('height', {
     header: () => (
-      <TitleWithInfo {...headerConfig['common']} {...headerConfig['height']} />
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['height']}
+        className="justify-center"
+      />
     ),
     enableColumnFilter: false,
   }),
 
   columnHelper.accessor('session', {
     header: () => (
-      <TitleWithInfo {...headerConfig['common']} {...headerConfig['session']} />
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['session']}
+        className="justify-center"
+      />
     ),
     enableColumnFilter: false,
   }),
 
   columnHelper.accessor('key', {
     header: () => (
-      <TitleWithInfo {...headerConfig['common']} {...headerConfig['key']} />
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['key']}
+        className="justify-center"
+      />
     ),
     cell: (props) => (
       <KeyValueWithButton
         isHiddenLabel
         keyValue={props.getValue<string>()}
         size="sm"
+        className="flex justify-center"
       />
     ),
     enableColumnFilter: false,
   }),
 
   columnHelper.accessor('keygenThreshold', {
-    header: 'Keygen Threshold',
+    header: () => (
+      <TitleWithInfo
+        {...headerConfig['common']}
+        {...headerConfig['keygenThreshold']}
+        className="justify-center"
+      />
+    ),
   }),
 
   columnHelper.accessor('signatureThreshold', {
@@ -100,6 +123,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
       <TitleWithInfo
         {...headerConfig['common']}
         {...headerConfig['signatureThreshold']}
+        className="justify-center"
       />
     ),
   }),
@@ -109,6 +133,7 @@ const columns: ColumnDef<KeygenType, any>[] = [
       <TitleWithInfo
         {...headerConfig['common']}
         {...headerConfig['authorities']}
+        className="justify-center"
       />
     ),
     cell: (props) => {
@@ -117,7 +142,10 @@ const columns: ColumnDef<KeygenType, any>[] = [
         return '-';
       }
       return (
-        <AvatarGroup total={props.row.original.totalAuthorities}>
+        <AvatarGroup
+          total={props.row.original.totalAuthorities}
+          className="flex justify-center"
+        >
           {auth.map((au, idx) => (
             <Avatar sourceVariant={'address'} key={`${au}${idx}`} value={au} />
           ))}
@@ -303,6 +331,7 @@ export const KeygenTable: FC = () => {
         tableProps={table as RTTable<unknown>}
         totalRecords={totalItems}
         isPaginated
+        tdClassName="text-center"
       />
     </CardTable>
   );
