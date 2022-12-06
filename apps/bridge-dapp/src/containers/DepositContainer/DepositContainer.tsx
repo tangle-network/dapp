@@ -307,8 +307,9 @@ export const DepositContainer = forwardRef<
   }, [chains, selectedSourceChain, setMainComponent, sourceChains]);
 
   const onMaxBtnClick = useCallback(() => {
-    setAmount(selectedTokenBalance ?? 0);
-  }, [selectedTokenBalance]);
+    const balance = selectedToken?.balance ?? '0';
+    setAmount(Number(balance));
+  }, [selectedToken]);
 
   // Main action on click
   const actionOnClick = useCallback(async () => {
@@ -383,7 +384,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     destChainInputValue,
     wrappableCurrency,
-    governedCurrency
+    governedCurrency,
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
