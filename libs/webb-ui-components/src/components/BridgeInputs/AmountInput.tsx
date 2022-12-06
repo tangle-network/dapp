@@ -87,6 +87,7 @@ export const AmountInput = forwardRef<
               id={id}
               name={id}
               value={amount}
+              type="number"
               onChange={onAmountChange}
               placeholder="0"
               size="sm"
