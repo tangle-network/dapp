@@ -44,6 +44,7 @@ export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
+export * from './RefreshIcon';
 export * from './QRCode';
 export * from './Search';
 export * from './SendPlanLineIcon';

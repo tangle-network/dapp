@@ -19,19 +19,31 @@ import { getChipClassName } from './utils';
  *  <Chip color="red" isDisabled>Disabled</Chip>
  * ```
  */
-export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>((props, ref) => {
-  const { children, className: classNameProp, color = 'green', isDisabled } = props;
+export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
+  (props, ref) => {
+    const {
+      children,
+      className: classNameProp,
+      color = 'green',
+      isDisabled,
+    } = props;
 
-  const baseClsx = useMemo(() => 'box-border inline-block px-3 py-1 rounded-full utility uppercase', []);
+    const baseClsx = useMemo(
+      () =>
+        'box-border inline-flex items-center gap-2 px-3 py-1.5 rounded-full utility uppercase',
+      []
+    );
 
-  const className = useMemo(
-    () => twMerge(baseClsx, getChipClassName(color, isDisabled), classNameProp),
-    [baseClsx, color, isDisabled, classNameProp]
-  );
+    const className = useMemo(
+      () =>
+        twMerge(baseClsx, getChipClassName(color, isDisabled), classNameProp),
+      [baseClsx, color, isDisabled, classNameProp]
+    );
 
-  return (
-    <span className={className} ref={ref}>
-      {children}
-    </span>
-  );
-});
+    return (
+      <span className={className} ref={ref}>
+        {children}
+      </span>
+    );
+  }
+);

@@ -2,7 +2,7 @@ import { ChipClassNames, ChipColors } from './types';
 
 const classNames: ChipClassNames = {
   blue: {
-    active: 'bg-blue-10 text-blue-90 dark:bg-blue-120 dark:text-blue-50',
+    active: 'text-blue-90 bg-blue-10 dark:text-blue-30 dark:bg-blue-120',
     disabled: 'bg-blue-10 text-blue-40 dark:bg-blue-120 dark:text-blue-90',
   },
   green: {
