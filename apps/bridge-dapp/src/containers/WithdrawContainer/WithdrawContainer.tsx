@@ -24,7 +24,7 @@ import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ defaultGovernedCurrency }, ref) => {
+>(({ defaultGovernedCurrency, onTryAnotherWallet }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -258,6 +258,7 @@ export const WithdrawContainer = forwardRef<
                     setMainComponent(undefined);
                   }}
                   onClose={() => setMainComponent(undefined)}
+                  onConnect={onTryAnotherWallet}
                 />
               );
             }
@@ -279,6 +280,7 @@ export const WithdrawContainer = forwardRef<
                     setMainComponent(undefined);
                   }}
                   onClose={() => setMainComponent(undefined)}
+                  onConnect={onTryAnotherWallet}
                 />
               );
             }
