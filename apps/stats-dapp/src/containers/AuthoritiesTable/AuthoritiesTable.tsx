@@ -64,12 +64,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
     cell: (props) => {
       const countryCode = props.getValue();
       return (
-        <Typography
-          variant="body1"
-          fw="bold"
-          component="span"
-          className="!text-inherit"
-        >
+        <Typography variant="body1" fw="bold" component="span">
           {countryCode ? (
             <CountryIcon size={'lg'} name={countryCode} />
           ) : (
