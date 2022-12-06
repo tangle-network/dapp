@@ -140,7 +140,10 @@ const PageBridge = () => {
             />
           </TabContent>
           <TabContent value="Transfer">
-            <TransferContainer />
+            <TransferContainer
+              defaultDestinationChain={defaultDestinationChain}
+              defaultGovernedCurrency={defaultGovernedCurrency}
+            />
           </TabContent>
           <TabContent value="Withdraw">
             <WithdrawContainer />

@@ -31,6 +31,7 @@ export const KeyValueWithButton = forwardRef<
       labelVariant,
       size = 'md',
       valueVariant,
+      label = '',
       shortenFn,
       ...props
     },
@@ -79,7 +80,7 @@ export const KeyValueWithButton = forwardRef<
                   labelVariant={labelVariant}
                   valueVariant={valueVariant}
                   isHiddenLabel={isHiddenLabel}
-                  label=""
+                  label={label}
                   value={value}
                   className="cursor-default pointer-events-auto"
                 />

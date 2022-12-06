@@ -44,7 +44,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The transaction progress
    */
-  progress: number | null;
+  progress?: number | null;
 
   /**
    * Fee amount
@@ -54,7 +54,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The note string
    */
-  note?: string;
+  note?: string | null;
 
   copyProps?: UseCopyableReturnType;
 
@@ -151,7 +151,18 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   relayerExternalUrl?: string;
 
   /**
+   * The relayer avatar theme
+   * @default 'polkadot'
+   */
+  relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
+
+  /**
    * Recipient address
    */
   recipientAddress?: string;
+
+  /**
+   * Recipient public key
+   */
+  recipientPublicKey?: string;
 }

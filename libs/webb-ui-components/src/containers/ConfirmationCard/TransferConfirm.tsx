@@ -14,6 +14,7 @@ import {
   TitleWithInfo,
 } from '../../components';
 import { TransferConfirmProps } from './types';
+import { Section, WrapperSection } from './WrapperSection';
 
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
@@ -33,8 +34,10 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       onDownload,
       progress,
       recipientAddress,
+      recipientPublicKey,
       relayerAddress,
       relayerExternalUrl,
+      relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Transfer',
       governedTokenSymbol: token1Symbol,
@@ -65,8 +68,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         <div>
           <ChainsRing
             activeChains={activeChains}
-            sourceLabel="Sender"
-            destLabel="Recipient"
+            sourceLabel={
+              sourceChain && sourceChain === destChain
+                ? 'Sender & Recipient'
+                : 'Sender'
+            }
+            destLabel={
+              destChain && sourceChain === destChain ? undefined : 'Recipient'
+            }
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
@@ -75,53 +84,129 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         </div>
 
         {/** Transaction progress */}
-        {progress && <Progress value={progress} />}
+        {typeof progress === 'number' && <Progress value={progress} />}
 
-        {/** Relayer */}
-        {relayerAddress && (
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title="Relayer"
-              info="Relayer"
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
+        <WrapperSection>
+          {/** Relayer */}
+          {relayerAddress && (
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Relayer"
+                  info="Relayer"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
 
-            <div className="flex items-center space-x-1">
-              <Avatar value={relayerAddress} />
+                <div className="flex items-center space-x-1">
+                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
 
-              <Typography variant="body1" fw="bold">
-                {relayerAddress}
-              </Typography>
+                  <Typography variant="body1" fw="bold">
+                    {relayerAddress}
+                  </Typography>
 
-              <a
-                target="_blank"
-                href={relayerExternalUrl}
-                rel="noreferrer noopener"
-              >
-                <ExternalLinkLine />
-              </a>
-            </div>
-          </div>
-        )}
+                  <a
+                    target="_blank"
+                    href={relayerExternalUrl}
+                    rel="noreferrer noopener"
+                  >
+                    <ExternalLinkLine />
+                  </a>
+                </div>
+              </div>
+            </Section>
+          )}
 
-        {/** Recipient address */}
-        {recipientAddress && (
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title="Recipient address"
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
+          {/** Recipient address */}
+          {recipientAddress && (
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Recipient address"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
 
-            <Typography variant="body1" fw="bold">
-              {recipientAddress}
-            </Typography>
-          </div>
+                <Typography variant="body1" fw="bold">
+                  {recipientAddress}
+                </Typography>
+              </div>
+            </Section>
+          )}
+
+          {/** Recipient public key */}
+          {recipientPublicKey && (
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  titleComponent="h6"
+                  title="Recipient address"
+                  variant="utility"
+                  titleClassName="text-mono-100 dark:text-mono-80"
+                  className="text-mono-100 dark:text-mono-80"
+                />
+
+                <Typography className="truncate" variant="body1" fw="bold">
+                  {recipientPublicKey}
+                </Typography>
+              </div>
+            </Section>
+          )}
+        </WrapperSection>
+
+        {/** New spend note */}
+        {note && (
+          <WrapperSection>
+            <Section>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Change note"
+                    info="Change note"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <div className="flex space-x-2">
+                    <CopyWithTooltip textToCopy={note ?? ''} />
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onDownload}
+                    >
+                      <Download className="!fill-current" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between max-w-[470px]">
+                  <Typography
+                    variant="mono1"
+                    fw="bold"
+                    className="block truncate text-mono-140 dark:text-mono-0"
+                  >
+                    {note}
+                  </Typography>
+                </div>
+
+                <CheckBox
+                  {...checkboxProps}
+                  wrapperClassName={twMerge(
+                    'flex items-center',
+                    checkboxProps?.wrapperClassName
+                  )}
+                >
+                  {checkboxProps?.children ?? 'I have copied the spend note'}
+                </CheckBox>
+              </div>
+            </Section>
+          </WrapperSection>
         )}
 
         {/** Transaction Details */}
@@ -157,48 +242,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               rightContent={fee?.toString()}
             />
           </div>
-        </div>
-
-        {/** New spend note */}
-        <div className="space-y-2">
-          <TitleWithInfo
-            titleComponent="h6"
-            title="New Spend Note"
-            info="New Spend Note"
-            variant="utility"
-            titleClassName="text-mono-100 dark:text-mono-80"
-            className="text-mono-100 dark:text-mono-80"
-          />
-
-          <div className="flex items-center justify-between">
-            <div className="px-4 py-1.5 bg-mono-20 dark:bg-mono-160 rounded-lg grow max-w-[438px] truncate">
-              <Typography
-                variant="mono1"
-                fw="bold"
-                className="text-mono-140 dark:text-mono-0"
-              >
-                {note}
-              </Typography>
-            </div>
-            <CopyWithTooltip textToCopy={note ?? ''} />
-            <Button
-              variant="utility"
-              size="sm"
-              className="p-2"
-              onClick={onDownload}
-            >
-              <Download className="!fill-current" />
-            </Button>
-          </div>
-          <CheckBox
-            {...checkboxProps}
-            wrapperClassName={twMerge(
-              'flex items-center',
-              checkboxProps?.wrapperClassName
-            )}
-          >
-            {checkboxProps?.children ?? 'I have copied the spend note'}
-          </CheckBox>
         </div>
 
         <Button {...actionBtnProps} isFullWidth className="justify-center">
