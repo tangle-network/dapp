@@ -253,8 +253,11 @@ export const DepositContainer = forwardRef<
         await setWrappableCurrency(null);
         // Set the Governable currency
         await setGovernedCurrency(selectedToken);
+        setMainComponent(undefined);
+        return;
       }
 
+      // Case when wrappable token is being selected
       const selectedWrappableToken = Object.values(wrappableCurrencies).find(
         (token) => token.view.symbol === newToken.symbol
       );
@@ -262,9 +265,8 @@ export const DepositContainer = forwardRef<
         const tokens = getPossibleGovernedCurrencies(selectedWrappableToken.id);
         await setGovernedCurrency(tokens[0]);
         await setWrappableCurrency(selectedWrappableToken);
+        setMainComponent(undefined);
       }
-
-      setMainComponent(undefined);
     },
     [
       governedCurrencies,
@@ -280,6 +282,7 @@ export const DepositContainer = forwardRef<
     setMainComponent(
       <ChainListCard
         className="w-[550px] h-[720px]"
+        overrideScrollAreaProps={{ className: 'h-[550px]' }}
         chainType="source"
         chains={sourceChains}
         value={selectedSourceChain}
@@ -383,7 +386,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     destChainInputValue,
     wrappableCurrency,
-    governedCurrency
+    governedCurrency,
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
@@ -511,6 +514,7 @@ export const DepositContainer = forwardRef<
               setMainComponent(
                 <ChainListCard
                   className="w-[550px] h-[720px]"
+                  overrideScrollAreaProps={{ className: 'h-[550px]' }}
                   chainType="dest"
                   chains={destChains}
                   value={destChainInputValue}
