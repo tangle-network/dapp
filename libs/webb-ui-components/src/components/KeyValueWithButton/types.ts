@@ -22,6 +22,12 @@ export interface KeyValueWithButtonProps
   extends Omit<WebbComponentBase, keyof KeyValueWithButtonBaseProps>,
     KeyValueWithButtonBaseProps {
   /**
+   * The label value
+   * @default ''
+   */
+  label?: string;
+
+  /**
    * The `key` hash value
    */
   keyValue: string;

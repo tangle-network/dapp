@@ -1,13 +1,20 @@
-import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
+import { PropsOf } from '../../types';
 
-import { AmountInput, Button, RelayerInput, RecipientInput, ChainInput, ShieldedAssetInput } from '../../components';
+import {
+  AmountInput,
+  Button,
+  ChainInput,
+  RecipientInput,
+  RelayerInput,
+  TokenInput,
+} from '../../components';
 
 export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The bridge asset input props
    */
-  bridgeAssetInputProps?: ComponentProps<typeof ShieldedAssetInput>;
+  bridgeAssetInputProps?: ComponentProps<typeof TokenInput>;
 
   /**
    * Destination chain input props
@@ -32,7 +39,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The transfer amount
    */
-  transferAmount?: number;
+  transferAmount?: number | string;
 
   /**
    * The transfer token symbol
@@ -42,7 +49,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The fee amount
    */
-  feeAmount?: number;
+  feeAmount?: number | string;
 
   /**
    * The fee percentage to display
@@ -52,7 +59,7 @@ export interface TransferCardProps extends PropsOf<'div'> {
   /**
    * The remainder amount
    */
-  changeAmount?: number;
+  changeAmount?: number | string;
 
   /**
    * The withdraw button props
