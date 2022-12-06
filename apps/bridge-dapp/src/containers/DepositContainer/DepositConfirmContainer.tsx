@@ -157,8 +157,8 @@ export const DepositConfirmContainer = forwardRef<
         title={
           depositTxInProgress
             ? wrappingFlow
-              ? 'Wrap and deposit in progress'
-              : 'Deposit in Progress'
+              ? 'Wrap and Deposit In-Progress'
+              : 'Deposit In-Progress'
             : undefined
         }
         activeChains={activeChains}
