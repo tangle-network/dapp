@@ -1,5 +1,7 @@
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { polkadotProviderEndpoint } from '../constants';
 
 /**
  * Chain metadata
@@ -49,6 +51,8 @@ type StatsProvidervalue = {
   updateTime(time: SubQlTime): void;
   metaData: Metadata;
   isReady: boolean;
+  // polkadot api
+  api?: ApiPromise;
 };
 
 /**
@@ -122,7 +126,10 @@ export const useActiveSession = () => {
   return activeSession;
 };
 export const StatsProvider: React.FC<
-  Omit<StatsProvidervalue, 'isReady' | 'metaData' | 'updateTime' | 'time'>
+  Omit<
+    StatsProvidervalue,
+    'isReady' | 'metaData' | 'updateTime' | 'time' | 'api'
+  >
 > = (props) => {
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
   const [metaData, setMetaData] = useState<Metadata>({
@@ -140,6 +147,8 @@ export const StatsProvider: React.FC<
     blockTime: props.blockTime,
   });
   const [isReady, setIsReady] = useState(false);
+  const [api, setApi] = useState<ApiPromise | undefined>();
+
   const value = useMemo<StatsProvidervalue>(() => {
     return {
       time,
@@ -149,9 +158,20 @@ export const StatsProvider: React.FC<
       },
       isReady,
       metaData,
+      api,
     };
-  }, [staticConfig, metaData, isReady, time]);
+  }, [staticConfig, metaData, isReady, time, api]);
   const query = useLastBlockQuery();
+
+  useEffect(() => {
+    const getPromiseApi = async (): Promise<void> => {
+      const wsProvider = new WsProvider(polkadotProviderEndpoint);
+      const apiPromise = await ApiPromise.create({ provider: wsProvider });
+      setApi(apiPromise);
+    };
+
+    getPromiseApi();
+  }, []);
 
   useEffect(() => {
     const subscription = query.observable

@@ -16,7 +16,7 @@ export interface ChipProps extends WebbComponentBase {
   /**
    * The visual style of the badge
    *
-   * @type {("green"|"blue"|"blue"|"purple"|"yellow"|"red" | "grey")}
+   * @type {("green"|"blue"|"purple"|"yellow"|"red" | "grey")}
    *
    * @default "green"
    */
