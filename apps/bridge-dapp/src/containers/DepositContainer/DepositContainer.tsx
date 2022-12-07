@@ -69,11 +69,6 @@ export const DepositContainer = forwardRef<
       getPossibleGovernedCurrencies,
     } = useCurrencies();
 
-    // The seleted token balance
-    const selectedTokenBalance = useCurrencyBalance(
-      activeApi?.state.activeBridge?.currency
-    );
-
     const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
       useModal(false);
 
@@ -234,26 +229,20 @@ export const DepositContainer = forwardRef<
       () => Boolean(bridgeGovernedCurrency) && Boolean(bridgeWrappableCurrency),
       [bridgeGovernedCurrency, bridgeWrappableCurrency]
     );
+
     const isDisabledDepositButton = useMemo(() => {
+      const selectedTokenBalance = selectedToken?.balance
+        ? Number(selectedToken.balance)
+        : 0;
+
       return [
         selectedSourceChain,
         selectedToken,
         destChainInputValue,
         amount,
-        typeof selectedTokenBalance === 'number'
-          ? isWrapFlow
-            ? true
-            : amount <= selectedTokenBalance
-          : true,
+        selectedTokenBalance >= amount,
       ].some((val) => Boolean(val) === false);
-    }, [
-      amount,
-      destChainInputValue,
-      selectedSourceChain,
-      selectedToken,
-      selectedTokenBalance,
-      isWrapFlow,
-    ]);
+    }, [amount, destChainInputValue, selectedSourceChain, selectedToken]);
 
     const handleTokenChange = useCallback(
       async (newToken: AssetType) => {
@@ -347,10 +336,6 @@ export const DepositContainer = forwardRef<
       sourceChains,
       switchChain,
     ]);
-
-    const onMaxBtnClick = useCallback(() => {
-      setAmount(selectedTokenBalance ?? 0);
-    }, [selectedTokenBalance]);
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
@@ -449,6 +434,15 @@ export const DepositContainer = forwardRef<
       return 'Connect wallet';
     }, [hasNoteAccount, isWalletConnected, isWrapFlow]);
 
+    const amountErrorMessage = useMemo(() => {
+      if (!selectedToken?.balance) {
+        return undefined;
+      }
+      return Number(selectedToken.balance) >= amount
+        ? undefined
+        : 'Insufficient balance';
+    }, [amount, selectedToken]);
+
     const bridgingTokenProps = useMemo<
       DepositCardProps['bridgingTokenProps']
     >(() => {
@@ -516,6 +510,11 @@ export const DepositContainer = forwardRef<
       },
       [isNoteAccountCreated, setNoteAccountModalOpen, syncNotes]
     );
+
+    const onMaxBtnClick = useCallback(() => {
+      const balance = selectedToken?.balance ?? '0';
+      setAmount(Number(balance));
+    }, [selectedToken]);
 
     // Effect to update the default governed currency
     useEffect(() => {
@@ -596,6 +595,7 @@ export const DepositContainer = forwardRef<
               onAmountChange,
               onMaxBtnClick,
               isDisabled: !selectedToken,
+              errorMessage: amountErrorMessage,
             }}
             buttonProps={{
               onClick: actionOnClick,
