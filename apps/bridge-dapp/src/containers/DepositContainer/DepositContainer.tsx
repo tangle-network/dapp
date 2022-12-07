@@ -46,6 +46,7 @@ export const DepositContainer = forwardRef<
     const {
       activeApi,
       chains,
+      switchChain,
       activeChain,
       activeWallet,
       loading,
@@ -304,6 +305,24 @@ export const DepositContainer = forwardRef<
               (val) => val.name === selectedChain.name
             );
 
+            if (!chain) {
+              throw new Error('Detect unsupported chain is being selected');
+            }
+
+            const isSupported =
+              activeWallet &&
+              activeWallet.supportedChainIds.includes(
+                calculateTypedChainId(chain.chainType, chain.chainId)
+              );
+
+            // If the selected chain is supported by the active wallet
+            if (isSupported) {
+              await switchChain(chain, activeWallet);
+              setMainComponent(undefined);
+              return;
+            }
+
+            // Otherwise pop up the wallet modal to choose another wallet to connect
             const sourceChains: ChainType[] = Object.values(chains).map(
               (val) => {
                 return {
@@ -313,16 +332,21 @@ export const DepositContainer = forwardRef<
               }
             );
 
-            if (chain) {
-              setMainComponent(
-                <WalletModal chain={chain} sourceChains={sourceChains} />
-              );
-            }
+            setMainComponent(
+              <WalletModal chain={chain} sourceChains={sourceChains} />
+            );
           }}
           onClose={() => setMainComponent(undefined)}
         />
       );
-    }, [chains, selectedSourceChain, setMainComponent, sourceChains]);
+    }, [
+      activeWallet,
+      chains,
+      selectedSourceChain,
+      setMainComponent,
+      sourceChains,
+      switchChain,
+    ]);
 
     const onMaxBtnClick = useCallback(() => {
       setAmount(selectedTokenBalance ?? 0);

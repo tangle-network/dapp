@@ -14,7 +14,7 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount, useWallets } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import {
   Avatar,
   Button,
@@ -40,8 +40,14 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const { activeChain, noteManager, chains, purgeNoteAccount } =
-    useWebContext();
+  const {
+    activeChain,
+    noteManager,
+    chains,
+    purgeNoteAccount,
+    activeWallet,
+    switchChain,
+  } = useWebContext();
 
   // Get all note, syncNotes and isSyncingNote function
   const {
@@ -168,6 +174,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     setMainComponent(
       <ChainListCard
         className="w-[550px] h-[720px]"
+        overrideScrollAreaProps={{ className: 'h-[550px]' }}
         chainType="source"
         chains={sourceChains}
         value={{ name: activeChain.name, symbol: activeChain.name }}
@@ -176,16 +183,37 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
           );
-
-          if (chain) {
-            setMainComponent(
-              <WalletModal chain={chain} sourceChains={sourceChains} />
-            );
+          if (!chain) {
+            throw new Error('Detect unsupported chain is being selected');
           }
+
+          const isSupported =
+            activeWallet &&
+            activeWallet.supportedChainIds.includes(
+              calculateTypedChainId(chain.chainType, chain.chainId)
+            );
+
+          // If the selected chain is supported by the active wallet
+          if (isSupported) {
+            await switchChain(chain, activeWallet);
+            setMainComponent(undefined);
+            return;
+          }
+
+          setMainComponent(
+            <WalletModal chain={chain} sourceChains={sourceChains} />
+          );
         }}
       />
     );
-  }, [activeChain, chains, notificationApi, setMainComponent]);
+  }, [
+    activeChain,
+    activeWallet,
+    chains,
+    notificationApi,
+    setMainComponent,
+    switchChain,
+  ]);
 
   // Disconnect function
   // TODO: The disconnect function does not work properly
