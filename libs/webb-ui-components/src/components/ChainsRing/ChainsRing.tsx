@@ -81,8 +81,6 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
       return chains;
     }, [activeChains, destChain, sourceChain]);
 
-    console.log('displayedChains', displayedChains);
-
     const isDisplaySourceLabel = useMemo(() => {
       return sourceChain && sourceLabel;
     }, [sourceChain, sourceLabel]);

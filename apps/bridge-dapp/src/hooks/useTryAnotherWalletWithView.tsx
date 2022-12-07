@@ -33,7 +33,7 @@ export const useTryAnotherWalletWithView = () => {
             onTryAgainBtnClick={async () => {
               if (!selectedWallet) {
                 throw new Error(
-                  'There is not selected wallet in try again function'
+                  'There is no wallet selected. Please select a wallet and try again.'
                 );
               }
               await switchWallet(chain, selectedWallet);
