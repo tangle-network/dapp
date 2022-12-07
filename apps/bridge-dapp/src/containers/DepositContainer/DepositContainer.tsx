@@ -541,7 +541,7 @@ export const DepositContainer = forwardRef<
       <>
         <div {...props} ref={ref}>
           <DepositCard
-            className="h-[700px]"
+            className="h-[615px]"
             sourceChainProps={{
               chain: selectedSourceChain,
               onClick: sourceChainInputOnClick,

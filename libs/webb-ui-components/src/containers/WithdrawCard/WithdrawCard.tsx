@@ -83,88 +83,83 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col space-y-4 max-w-[518px] w-full',
+          'flex flex-col justify-between max-w-[518px] w-full',
           className
         )}
         ref={ref}
       >
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <div className="flex space-x-2">
-            <TokenInput
-              {...tokenInputProps}
-              className="grow shrink-0 basis-1"
+        <div className="space-y-4">
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <div className="flex space-x-2">
+              <TokenInput
+                {...tokenInputProps}
+                className="grow shrink-0 basis-1"
+              />
+              <TokenInput
+                {...unwrappingAssetProps}
+                className={cx('grow shrink-0 basis-1', {
+                  hidden: !switcherChecked,
+                })}
+                hidden={!switcherChecked}
+              />
+            </div>
+            <div className="self-end py-1 space-x-2">
+              <Typography
+                component="span"
+                variant="body3"
+                fw="bold"
+                className="text-mono-100 dark:text-mono-80"
+              >
+                Unwrap
+              </Typography>
+              <Switcher {...switcherProps} />
+            </div>
+            <WithdrawAmountInput
+              fixedAmountInputProps={fixedAmountInputProps}
+              customAmountInputProps={customAmountInputProps}
             />
-
-            <TokenInput
-              {...unwrappingAssetProps}
-              className={cx('grow shrink-0 basis-1', {
-                hidden: !switcherChecked,
-              })}
-              hidden={!switcherChecked}
+          </BridgeInputGroup>
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <RelayerInput {...relayerInputProps} />
+            <RecipientInput {...recipientInputProps} />
+          </BridgeInputGroup>
+          {/** Info */}
+          <div className="flex flex-col space-y-1">
+            <InfoItem
+              leftTextProps={{
+                title: 'Receiving',
+                variant: 'utility',
+                info: 'Receiving',
+              }}
+              rightContent={
+                receivedAmount
+                  ? `${receivedAmount} ${receivedToken}`
+                  : undefined
+              }
+            />
+            <InfoItem
+              leftTextProps={{
+                title: 'Remainder',
+                variant: 'utility',
+                info: 'Remainder',
+              }}
+              rightContent={
+                remainderAmount
+                  ? `${remainderAmount} ${remainderToken}`
+                  : undefined
+              }
+            />
+            <InfoItem
+              leftTextProps={{
+                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
+                variant: 'utility',
+                info: 'Fees',
+              }}
+              rightContent={
+                feeAmount ? `${feeAmount} ${remainderToken}` : undefined
+              }
             />
           </div>
-
-          <div className="self-end py-1 space-x-2">
-            <Typography
-              component="span"
-              variant="body3"
-              fw="bold"
-              className="text-mono-100 dark:text-mono-80"
-            >
-              Unwrap
-            </Typography>
-
-            <Switcher {...switcherProps} />
-          </div>
-
-          <WithdrawAmountInput
-            fixedAmountInputProps={fixedAmountInputProps}
-            customAmountInputProps={customAmountInputProps}
-          />
-        </BridgeInputGroup>
-
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <RelayerInput {...relayerInputProps} />
-
-          <RecipientInput {...recipientInputProps} />
-        </BridgeInputGroup>
-
-        {/** Info */}
-        <div className="flex flex-col space-y-1">
-          <InfoItem
-            leftTextProps={{
-              title: 'Receiving',
-              variant: 'utility',
-              info: 'Receiving',
-            }}
-            rightContent={
-              receivedAmount ? `${receivedAmount} ${receivedToken}` : undefined
-            }
-          />
-
-          <InfoItem
-            leftTextProps={{
-              title: 'Remainder',
-              variant: 'utility',
-              info: 'Remainder',
-            }}
-            rightContent={
-              remainderAmount
-                ? `${remainderAmount} ${remainderToken}`
-                : undefined
-            }
-          />
-
-          <InfoItem
-            leftTextProps={{
-              title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
-              variant: 'utility',
-              info: 'Fees',
-            }}
-            rightContent={
-              feeAmount ? `${feeAmount} ${remainderToken}` : undefined
-            }
-          />
         </div>
 
         <Button

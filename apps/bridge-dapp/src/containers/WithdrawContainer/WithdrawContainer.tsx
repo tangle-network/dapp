@@ -243,6 +243,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
+        className="h-[615px]"
         tokenInputProps={{
           onClick: () => {
             if (activeApi) {
