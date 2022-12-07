@@ -1,5 +1,7 @@
+import { ComponentProps } from 'react';
 import { IWebbComponentBase, PropsOf } from '../../types';
 import { AvatarProps } from '../Avatar';
+import { ScrollArea } from '../ScrollArea';
 
 export type ChainType = {
   /**
@@ -97,6 +99,11 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The callback to control the state of the component
    */
   onChange?: (nextChain: ChainType) => void;
+
+  /**
+   * The override ScrollArea component props
+   */
+  overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {

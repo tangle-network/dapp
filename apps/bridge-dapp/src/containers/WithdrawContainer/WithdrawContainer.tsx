@@ -24,7 +24,7 @@ import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ defaultGovernedCurrency }, ref) => {
+>(({ defaultGovernedCurrency, onTryAnotherWallet }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -243,12 +243,13 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
+        className="h-[615px]"
         tokenInputProps={{
           onClick: () => {
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[720px]"
+                  className="w-[550px] h-[700px]"
                   title={'Select Asset to Withdraw'}
                   popularTokens={[]}
                   selectTokens={governedTokens}
@@ -258,6 +259,7 @@ export const WithdrawContainer = forwardRef<
                     setMainComponent(undefined);
                   }}
                   onClose={() => setMainComponent(undefined)}
+                  onConnect={onTryAnotherWallet}
                 />
               );
             }
@@ -269,7 +271,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[720px]"
+                  className="w-[550px] h-[700px]"
                   title={'Select Asset to Unwrap into'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
@@ -279,6 +281,7 @@ export const WithdrawContainer = forwardRef<
                     setMainComponent(undefined);
                   }}
                   onClose={() => setMainComponent(undefined)}
+                  onConnect={onTryAnotherWallet}
                 />
               );
             }
@@ -288,12 +291,14 @@ export const WithdrawContainer = forwardRef<
         fixedAmountInputProps={{
           onChange: parseUserAmount,
           values: [0.1, 0.25, 0.5, 1.0],
+          isDisabled: !selectedGovernedToken,
         }}
         customAmountInputProps={{
           onAmountChange: parseUserAmount,
-          amount: isNaN(amount) ? '' : amount.toString(),
+          amount: amount ? amount.toString() : undefined,
           onMaxBtnClick: () => parseUserAmount(availableAmount),
           errorMessage: amountError,
+          isDisabled: !selectedGovernedToken,
         }}
         unwrapSwitcherProps={{
           checked: isUnwrap,
@@ -313,7 +318,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <RelayerListCard
-                className="w-[550px] h-[720px]"
+                className="w-[550px] h-[700px]"
                 relayers={relayers
                   .map((relayer) => {
                     const relayerData = relayer.capabilities.supportedChains[

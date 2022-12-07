@@ -1,8 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/dapp-types';
-import { ChainIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
 import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
@@ -115,22 +113,13 @@ export const WithdrawConfirmContainer = forwardRef<
       await withdraw();
 
       setIsWithdrawing(false);
-    }, [
-      amount,
-      changeNote,
-      downloadNote,
-      governedCurrency.view.symbol,
-      isWithdrawing,
-      setMainComponent,
-      targetChainId,
-      unwrapCurrency?.view.symbol,
-      withdraw,
-    ]);
+    }, [changeNote, downloadNote, isWithdrawing, setMainComponent, withdraw]);
 
     return (
       <WithdrawConfirm
         ref={ref}
         activeChains={activeChains}
+        destChain={chainsPopulated[targetChainId]?.name}
         actionBtnProps={{
           isDisabled: changeAmount ? !checked : false,
           children: isWithdrawing ? 'New Transaction' : 'Withdraw',

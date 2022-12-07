@@ -55,18 +55,22 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
 
       // Shuffle the filtered chains
       filteredChains = arrayShuffle(filteredChains);
+      let sliceIndex = 0;
 
       if (sourceChain) {
-        chains.push(sourceChain);
+        chains.unshift(sourceChain);
+        sliceIndex = 3;
+      } else {
+        sliceIndex = 4;
       }
 
-      chains = [...chains, ...filteredChains.slice(0, 3)];
+      chains = [...chains, ...filteredChains.slice(0, sliceIndex)];
 
       if (destChain && destChain !== sourceChain) {
         chains.push(destChain);
       }
 
-      chains = [...chains, ...filteredChains.slice(3)];
+      chains = [...chains, ...filteredChains.slice(sliceIndex)];
 
       // Adding empty string to make sure the length is 8
       chains = [
@@ -76,6 +80,14 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
 
       return chains;
     }, [activeChains, destChain, sourceChain]);
+
+    const isDisplaySourceLabel = useMemo(() => {
+      return sourceChain && sourceLabel;
+    }, [sourceChain, sourceLabel]);
+
+    const isDisplayDestLabel = useMemo(() => {
+      return destChain && destLabel;
+    }, [destChain, destLabel]);
 
     return (
       <div
@@ -108,13 +120,13 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
               'absolute -translate-y-1/2 -translate-x-1/2 top-[15%] left-[15%] z-[1]',
               {
                 'border-2 border-purple-40 dark:border-purple-90 rounded-full':
-                  !!sourceLabel,
+                  !!isDisplaySourceLabel,
               }
             )}
             size="lg"
             name={displayedChains[0]}
           />
-          {sourceLabel && (
+          {isDisplaySourceLabel && (
             <span
               className={cx(
                 'absolute top-0 translate-x-1 translate-y-3.5 right-full'
@@ -122,7 +134,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             >
               <span className="relative">
                 <Chip color="purple" className="min-w-max">
-                  {sourceLabel}
+                  {isDisplaySourceLabel}
                 </Chip>
                 <span
                   className={cx(
@@ -171,13 +183,13 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
               'absolute bottom-[15%] right-[15%] translate-x-1/2 translate-y-1/2 z-[1]',
               {
                 'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-full':
-                  !!destLabel,
+                  !!isDisplayDestLabel,
               }
             )}
             size="lg"
             name={displayedChains[4]}
           />
-          {destLabel && (
+          {isDisplayDestLabel && (
             <span
               className={cx(
                 'absolute -translate-x-0.5 -translate-y-3.5 bottom-0 left-full'

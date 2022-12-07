@@ -73,7 +73,7 @@ export const WithdrawConfirm = forwardRef<
           </button>
         </div>
 
-        {/** Token ring */}
+        {/** Chains ring */}
         <div>
           <ChainsRing
             activeChains={activeChains}
