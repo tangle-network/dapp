@@ -73,7 +73,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
               <TitleWithInfo
                 title={(title ?? id).toLocaleUpperCase()}
                 info={info}
-                variant="body4"
+                variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"
                 titleClassName="uppercase !text-inherit"
