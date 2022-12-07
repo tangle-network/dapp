@@ -104,7 +104,7 @@ export const ChainSelectionWrapper: FC<{
 
   return (
     <ChainListCard
-      className="w-[550px] h-[720px]"
+      className="w-[550px] h-[700px]"
       overrideScrollAreaProps={{ className: 'h-[550px]' }}
       chainType="source"
       chains={sourceChains}

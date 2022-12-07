@@ -41,7 +41,7 @@ export const ChainSwitcherButton: FC = () => {
       onClick={() =>
         setMainComponent(
           <ChainListCard
-            className="w-[550px] h-[720px]"
+            className="w-[550px] h-[700px]"
             overrideScrollAreaProps={{ className: 'h-[550px]' }}
             chainType="source"
             chains={sourceChains}

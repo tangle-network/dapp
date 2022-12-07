@@ -285,7 +285,7 @@ export const TransferContainer = forwardRef<
     const handleBridgingAssetInputClick = useCallback(() => {
       setMainComponent(
         <TokenListCard
-          className="w-[550px] h-[720px]"
+          className="w-[550px] h-[700px]"
           title="Select Asset to Transfer"
           popularTokens={[]}
           selectTokens={bridgingAssets}
@@ -347,7 +347,7 @@ export const TransferContainer = forwardRef<
     const handleDestChainClick = useCallback(() => {
       setMainComponent(
         <ChainListCard
-          className="w-[550px] h-[720px]"
+          className="w-[550px] h-[700px]"
           chainType={'dest'}
           chains={availableDestChains.map(
             (chain) =>
@@ -435,7 +435,7 @@ export const TransferContainer = forwardRef<
         <RelayerListCard
           relayers={relayerList}
           value={relayerValue}
-          className="w-[550px] h-[720px]"
+          className="w-[550px] h-[700px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
             setRelayer(

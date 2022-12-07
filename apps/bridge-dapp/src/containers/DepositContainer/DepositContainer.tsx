@@ -284,7 +284,7 @@ export const DepositContainer = forwardRef<
     const sourceChainInputOnClick = useCallback(() => {
       setMainComponent(
         <ChainListCard
-          className="w-[550px] h-[720px]"
+          className="w-[550px] h-[700px]"
           overrideScrollAreaProps={{ className: 'h-[550px]' }}
           chainType="source"
           chains={sourceChains}
@@ -469,7 +469,7 @@ export const DepositContainer = forwardRef<
           if (selectedSourceChain) {
             setMainComponent(
               <TokenListCard
-                className="w-[550px] h-[720px]"
+                className="w-[550px] h-[700px]"
                 title={'Select Asset to Wrap and Deposit'}
                 popularTokens={[]}
                 selectTokens={tokens}
@@ -553,7 +553,7 @@ export const DepositContainer = forwardRef<
               onClick: () => {
                 setMainComponent(
                   <ChainListCard
-                    className="w-[550px] h-[720px]"
+                    className="w-[550px] h-[700px]"
                     overrideScrollAreaProps={{ className: 'h-[550px]' }}
                     chainType="dest"
                     chains={destChains}
@@ -576,7 +576,7 @@ export const DepositContainer = forwardRef<
                 if (selectedSourceChain) {
                   setMainComponent(
                     <TokenListCard
-                      className="w-[550px] h-[720px]"
+                      className="w-[550px] h-[700px]"
                       title={'Select Asset to Deposit'}
                       popularTokens={[]}
                       selectTokens={populatedSelectableWebbTokens}

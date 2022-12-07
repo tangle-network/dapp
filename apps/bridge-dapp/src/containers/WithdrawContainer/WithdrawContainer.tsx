@@ -249,7 +249,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[720px]"
+                  className="w-[550px] h-[700px]"
                   title={'Select Asset to Withdraw'}
                   popularTokens={[]}
                   selectTokens={governedTokens}
@@ -271,7 +271,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[720px]"
+                  className="w-[550px] h-[700px]"
                   title={'Select Asset to Unwrap into'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
@@ -318,7 +318,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <RelayerListCard
-                className="w-[550px] h-[720px]"
+                className="w-[550px] h-[700px]"
                 relayers={relayers
                   .map((relayer) => {
                     const relayerData = relayer.capabilities.supportedChains[
