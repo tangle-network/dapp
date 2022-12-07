@@ -162,7 +162,7 @@ export const TransactionProgressCard = forwardRef<
     // Fix lottie animation prevents the image form loading ?!
     const [showAnimation, setShowAnimation] = useState(false);
     useEffect(() => {
-      let t;
+      let t: NodeJS.Timer;
       if (status === 'completed') {
         t = setTimeout(() => setShowAnimation(true), 100);
       } else {
@@ -249,11 +249,7 @@ export const TransactionProgressCard = forwardRef<
                 </Typography>
               )}
             </div>
-            <div
-              className={
-                'h-full self-start  flex items-end grow  flex flex-col '
-              }
-            >
+            <div className={'h-full self-start items-end grow flex flex-col'}>
               {hasSyncNote && (
                 <Button variant={'link'} size={'sm'} onClick={onSyncNote}>
                   SYNC NOTE
