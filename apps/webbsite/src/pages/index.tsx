@@ -1,5 +1,7 @@
+import { Typography } from '@webb-tools/webb-ui-components';
+
 export function Index() {
-  return <h1 className="h1 text-mono-120">Hello world</h1>;
+  return <Typography variant="h1">Hello world!</Typography>;
 }
 
 export default Index;
