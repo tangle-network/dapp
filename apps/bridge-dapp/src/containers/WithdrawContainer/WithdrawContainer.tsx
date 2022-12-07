@@ -290,6 +290,7 @@ export const WithdrawContainer = forwardRef<
         fixedAmountInputProps={{
           onChange: parseUserAmount,
           values: [0.1, 0.25, 0.5, 1.0],
+          isDisabled: !selectedGovernedToken,
         }}
         customAmountInputProps={{
           onAmountChange: parseUserAmount,

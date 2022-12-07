@@ -188,6 +188,11 @@ export interface FixedAmountProps
    * The amount menu props to pass into the AmountMenu component
    */
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
+
+  /**
+   * Disable the input
+   */
+  isDisabled?: boolean;
 }
 
 export interface RecipientInputProps

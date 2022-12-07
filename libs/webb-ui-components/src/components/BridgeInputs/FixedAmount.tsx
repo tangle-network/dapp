@@ -35,6 +35,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       amountMenuProps,
       id,
       info,
+      isDisabled,
       onChange: onChangeProp,
       title = 'Fixed amount',
       value: valueProp,
@@ -109,11 +110,20 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                   variant="utility"
                   className={cx(
                     'justify-center',
-                    'disabled:border disabled:border-solid disabled:border-blue-90 dark:disabled:border-blue-30',
-                    'disabled:bg-blue-10 dark:disabled:bg-blue-120',
-                    'disabled:text-blue-90 dark:disabled:text-blue-30'
+                    {
+                      'disabled:border disabled:border-solid disabled:border-blue-90 dark:disabled:border-blue-30':
+                        !isDisabled,
+                    },
+                    {
+                      'disabled:bg-blue-10 dark:disabled:bg-blue-120':
+                        !isDisabled,
+                    },
+                    {
+                      'disabled:text-blue-90 dark:disabled:text-blue-30':
+                        !isDisabled,
+                    }
                   )}
-                  isDisabled={value === val}
+                  isDisabled={isDisabled || value === val}
                   onClick={() => onClick(val)}
                 >
                   {val.toFixed(2)}
