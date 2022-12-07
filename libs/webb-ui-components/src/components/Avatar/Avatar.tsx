@@ -4,7 +4,7 @@ import cx from 'classnames';
 import React, { useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import Identicon from '@polkadot/react-identicon';
+import { Identicon } from './Identicon';
 
 import { AvatarProps } from './types';
 import { getAvatarSizeInPx } from './utils';
@@ -38,7 +38,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     value: valueProp,
   } = props;
 
-  const sizeClassName = useMemo(() => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'), [size]);
+  const sizeClassName = useMemo(
+    () => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'),
+    [size]
+  );
 
   const classNames = useMemo(() => {
     const borderColor =
@@ -69,9 +72,15 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     };
   }, [darkMode]);
 
-  const typoVariant = useMemo(() => (size === 'md' ? 'body4' : 'body1'), [size]);
+  const typoVariant = useMemo(
+    () => (size === 'md' ? 'body4' : 'body1'),
+    [size]
+  );
 
-  const valueAddress = useMemo(() => (sourceVariant === 'address' ? valueProp : undefined), [valueProp, sourceVariant]);
+  const valueAddress = useMemo(
+    () => (sourceVariant === 'address' ? valueProp : undefined),
+    [valueProp, sourceVariant]
+  );
 
   useEffect(() => {
     if (!valueProp && !src) {
@@ -89,14 +98,34 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         outerClassName
       )}
     >
-      {valueAddress && <Identicon size={getAvatarSizeInPx(size)} value={valueAddress} theme={theme} />}
+      {valueAddress && (
+        <Identicon
+          size={getAvatarSizeInPx(size)}
+          value={valueAddress}
+          theme={theme}
+        />
+      )}
 
       {!valueAddress && (
         <>
-          <AvatarPrimitive.Image src={src} alt={alt} className='object-cover w-full h-full' />
+          <AvatarPrimitive.Image
+            src={src}
+            alt={alt}
+            className="object-cover w-full h-full"
+          />
           {fallback && (
-            <AvatarPrimitive.Fallback className={cx('w-full h-full flex justify-center items-center', classNames.text)}>
-              <Typography variant={typoVariant} fw='semibold' component='span' className={classNames.text}>
+            <AvatarPrimitive.Fallback
+              className={cx(
+                'w-full h-full flex justify-center items-center',
+                classNames.text
+              )}
+            >
+              <Typography
+                variant={typoVariant}
+                fw="semibold"
+                component="span"
+                className={classNames.text}
+              >
                 {fallback.substring(0, 2)}
               </Typography>
             </AvatarPrimitive.Fallback>
