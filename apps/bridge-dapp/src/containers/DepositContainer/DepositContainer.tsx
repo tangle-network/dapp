@@ -223,23 +223,21 @@ export const DepositContainer = forwardRef<
     [brideGovernedCurrency, bridgeWrappableCurrency]
   );
   const isDisabledDepositButton = useMemo(() => {
+    const selectedTokenBalance = selectedToken?.balance
+      ? Number(selectedToken.balance)
+      : 0;
     return [
       selectedSourceChain,
       selectedToken,
       destChainInputValue,
       amount,
-      typeof selectedTokenBalance === 'number'
-        ? isWrapFlow
-          ? true
-          : amount <= selectedTokenBalance
-        : true,
+      selectedTokenBalance >= amount,
     ].some((val) => Boolean(val) === false);
   }, [
     amount,
     destChainInputValue,
     selectedSourceChain,
     selectedToken,
-    selectedTokenBalance,
     isWrapFlow,
   ]);
 
@@ -307,8 +305,9 @@ export const DepositContainer = forwardRef<
   }, [chains, selectedSourceChain, setMainComponent, sourceChains]);
 
   const onMaxBtnClick = useCallback(() => {
-    setAmount(selectedTokenBalance ?? 0);
-  }, [selectedTokenBalance]);
+    const balance = selectedToken?.balance ?? '0';
+    setAmount(Number(balance));
+  }, [selectedToken]);
 
   // Main action on click
   const actionOnClick = useCallback(async () => {
@@ -383,7 +382,7 @@ export const DepositContainer = forwardRef<
     selectedSourceChain,
     destChainInputValue,
     wrappableCurrency,
-    governedCurrency
+    governedCurrency,
   ]);
 
   // Only disable button when the wallet is connected and exists a note account
@@ -493,7 +492,14 @@ export const DepositContainer = forwardRef<
   useEffect(() => {
     setDestChain(defaultDestinationChain);
   }, [defaultDestinationChain]);
-
+  const amountErrorMessage = useMemo(() => {
+    if (!selectedToken?.balance) {
+      return undefined;
+    }
+    return Number(selectedToken.balance) >= amount
+      ? undefined
+      : 'Insufficient balance';
+  }, [amount, selectedToken]);
   return (
     <>
       <div {...props} ref={ref}>
@@ -549,6 +555,7 @@ export const DepositContainer = forwardRef<
             amount: amount ? amount.toString() : undefined,
             onAmountChange,
             onMaxBtnClick,
+            errorMessage: amountErrorMessage,
           }}
           buttonProps={{
             onClick: actionOnClick,
