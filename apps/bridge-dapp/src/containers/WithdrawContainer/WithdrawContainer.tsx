@@ -293,9 +293,10 @@ export const WithdrawContainer = forwardRef<
         }}
         customAmountInputProps={{
           onAmountChange: parseUserAmount,
-          amount: isNaN(amount) ? '' : amount.toString(),
+          amount: amount ? amount.toString() : undefined,
           onMaxBtnClick: () => parseUserAmount(availableAmount),
           errorMessage: amountError,
+          isDisabled: !selectedGovernedToken,
         }}
         unwrapSwitcherProps={{
           checked: isUnwrap,

@@ -153,7 +153,7 @@ export const DepositContainer = forwardRef<
       };
     }, [activeChain, sourceChain]);
 
-    const brideGovernedCurrency = useMemo(() => {
+    const bridgeGovernedCurrency = useMemo(() => {
       if (!governedCurrency) {
         return undefined;
       }
@@ -181,15 +181,15 @@ export const DepositContainer = forwardRef<
           balance: bridgeWrappableCurrency.balance,
         };
       }
-      if (!brideGovernedCurrency) {
+      if (!bridgeGovernedCurrency) {
         return undefined;
       }
       // Deposit flow
       return {
-        symbol: brideGovernedCurrency.currency.view.symbol,
-        balance: brideGovernedCurrency.balance,
+        symbol: bridgeGovernedCurrency.currency.view.symbol,
+        balance: bridgeGovernedCurrency.balance,
       };
-    }, [brideGovernedCurrency, bridgeWrappableCurrency]);
+    }, [bridgeGovernedCurrency, bridgeWrappableCurrency]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
       return Object.values(governedCurrencies.concat(wrappableCurrencies)).map(
@@ -230,8 +230,8 @@ export const DepositContainer = forwardRef<
     const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
     const isWrapFlow = useMemo(
-      () => Boolean(brideGovernedCurrency) && Boolean(bridgeWrappableCurrency),
-      [brideGovernedCurrency, bridgeWrappableCurrency]
+      () => Boolean(bridgeGovernedCurrency) && Boolean(bridgeWrappableCurrency),
+      [bridgeGovernedCurrency, bridgeWrappableCurrency]
     );
     const isDisabledDepositButton = useMemo(() => {
       return [
@@ -428,10 +428,10 @@ export const DepositContainer = forwardRef<
     const bridgingTokenProps = useMemo<
       DepositCardProps['bridgingTokenProps']
     >(() => {
-      if (!wrappableCurrency || !brideGovernedCurrency) {
+      if (!wrappableCurrency || !bridgeGovernedCurrency) {
         return undefined;
       }
-      const targetSymbol = brideGovernedCurrency.currency.view.symbol;
+      const targetSymbol = bridgeGovernedCurrency.currency.view.symbol;
 
       const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
         (currency): AssetType => ({
@@ -445,7 +445,7 @@ export const DepositContainer = forwardRef<
       return {
         token: {
           symbol: targetSymbol,
-          balance: brideGovernedCurrency.balance,
+          balance: bridgeGovernedCurrency.balance,
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -466,7 +466,7 @@ export const DepositContainer = forwardRef<
       };
     }, [
       wrappableCurrency,
-      brideGovernedCurrency,
+      bridgeGovernedCurrency,
       getPossibleGovernedCurrencies,
       balances,
       selectedSourceChain,
@@ -571,6 +571,7 @@ export const DepositContainer = forwardRef<
               amount: amount ? amount.toString() : undefined,
               onAmountChange,
               onMaxBtnClick,
+              isDisabled: !selectedToken,
             }}
             buttonProps={{
               onClick: actionOnClick,

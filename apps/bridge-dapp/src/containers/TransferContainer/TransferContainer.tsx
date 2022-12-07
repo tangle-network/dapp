@@ -83,7 +83,7 @@ export const TransferContainer = forwardRef<
     );
 
     // State for amount input value
-    const [amount, setAmount] = useState<number>(0);
+    const [amount, setAmount] = useState<number | undefined>(undefined);
 
     // State for error message when user input amount is invalid
     const [amountError, setAmountError] = useState<string>('');
@@ -298,7 +298,12 @@ export const TransferContainer = forwardRef<
           onConnect={onTryAnotherWallet}
         />
       );
-    }, [bridgingAssets, handlebridgingAssetChange, setMainComponent]);
+    }, [
+      bridgingAssets,
+      handlebridgingAssetChange,
+      onTryAnotherWallet,
+      setMainComponent,
+    ]);
 
     // Get all destination chains
     const allDestChains = useMemo<ChainRecord>(() => {
@@ -453,7 +458,11 @@ export const TransferContainer = forwardRef<
 
     // Boolean indicating whether the amount value is valid or not
     const isValidAmount = useMemo(() => {
-      return amount > 0 && amount <= (selectedBridgingAsset?.balance ?? 0);
+      return (
+        typeof amount === 'number' &&
+        amount > 0 &&
+        amount <= (selectedBridgingAsset?.balance ?? 0)
+      );
     }, [amount, selectedBridgingAsset?.balance]);
 
     // Boolean state for whether the transfer button is disabled
@@ -469,7 +478,7 @@ export const TransferContainer = forwardRef<
 
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
-      if (!destChain || !governedCurrency) {
+      if (!destChain || !governedCurrency || !amount) {
         return [];
       }
 
@@ -506,7 +515,7 @@ export const TransferContainer = forwardRef<
       const changeAmountBigNumber = governedCurrency
         ? spentValue.sub(
             ethers.utils.parseUnits(
-              amount.toString(),
+              amount?.toString() ?? '0',
               governedCurrency.view.decimals
             )
           )
@@ -543,7 +552,12 @@ export const TransferContainer = forwardRef<
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
-      if (!governedCurrency || !destChain || !activeApi?.state?.activeBridge) {
+      if (
+        !governedCurrency ||
+        !destChain ||
+        !activeApi?.state?.activeBridge ||
+        !amount
+      ) {
         throw new Error(
           "Can't transfer without a governed currency or dest chain"
         );
@@ -623,9 +637,10 @@ export const TransferContainer = forwardRef<
           onClick: handleDestChainClick,
         }}
         amountInputProps={{
-          amount: amount.toString(),
+          amount: amount ? amount.toString() : undefined,
           onAmountChange,
           errorMessage: amountError,
+          isDisabled: !selectedBridgingAsset || !destChain,
           onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
         }}
         relayerInputProps={{
