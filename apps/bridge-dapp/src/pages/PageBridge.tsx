@@ -32,7 +32,11 @@ import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { NoteAccountTableContainerProps } from '../containers/types';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
-import { useShieldedAssets, useSpendNotes } from '../hooks';
+import {
+  useShieldedAssets,
+  useSpendNotes,
+  useTryAnotherWalletWithView,
+} from '../hooks';
 import { useTxQueue } from '@webb-tools/react-hooks';
 
 const PageBridge = () => {
@@ -107,6 +111,11 @@ const PageBridge = () => {
   // Spend notes table data
   const spendNotesTableData = useSpendNotes();
 
+  // Try again for try another wallet link
+  // in the token list
+  const { TryAnotherWalletModal, onTryAnotherWallet } =
+    useTryAnotherWalletWithView();
+
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
     [txPayloads]
@@ -137,16 +146,22 @@ const PageBridge = () => {
             <DepositContainer
               defaultDestinationChain={defaultDestinationChain}
               defaultGovernedCurrency={defaultGovernedCurrency}
+              onTryAnotherWallet={onTryAnotherWallet}
             />
           </TabContent>
           <TabContent value="Transfer">
             <TransferContainer
               defaultDestinationChain={defaultDestinationChain}
               defaultGovernedCurrency={defaultGovernedCurrency}
+              onTryAnotherWallet={onTryAnotherWallet}
             />
           </TabContent>
           <TabContent value="Withdraw">
-            <WithdrawContainer />
+            <WithdrawContainer
+              defaultDestinationChain={defaultDestinationChain}
+              defaultGovernedCurrency={defaultGovernedCurrency}
+              onTryAnotherWallet={onTryAnotherWallet}
+            />
           </TabContent>
         </TabsRoot>
 
@@ -261,6 +276,8 @@ const PageBridge = () => {
         isOpen={isUploadModalOpen}
         setIsOpen={(isOpen) => setUploadModalIsOpen(isOpen)}
       />
+
+      <TryAnotherWalletModal />
 
       {/** Last login */}
     </div>

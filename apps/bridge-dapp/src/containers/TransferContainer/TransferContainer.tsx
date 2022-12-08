@@ -42,610 +42,635 @@ import {
 export const TransferContainer = forwardRef<
   HTMLDivElement,
   TransferContainerProps
->(({ defaultDestinationChain, defaultGovernedCurrency }, ref) => {
-  const { governedCurrency, setGovernedCurrency } = useBridge();
+>(
+  (
+    { defaultDestinationChain, defaultGovernedCurrency, onTryAnotherWallet },
+    ref
+  ) => {
+    const { governedCurrency, setGovernedCurrency } = useBridge();
 
-  const { activeChain, activeApi } = useWebContext();
+    const { activeChain, activeApi } = useWebContext();
 
-  const { setMainComponent } = useWebbUI();
+    const { setMainComponent } = useWebbUI();
 
-  const { allNotes } = useNoteAccount();
+    const { allNotes } = useNoteAccount();
 
-  const { generateNote } = useBridgeDeposit();
+    const { generateNote } = useBridgeDeposit();
 
-  // Get the current preset type chain id from the active chain
-  const currentTypedChainId = useMemo(() => {
-    if (!activeChain) {
-      return undefined;
-    }
-    return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
-  }, [activeChain]);
+    // Get the current preset type chain id from the active chain
+    const currentTypedChainId = useMemo(() => {
+      if (!activeChain) {
+        return undefined;
+      }
+      return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
+    }, [activeChain]);
 
-  // Given the user inputs above, fetch relayers state
-  const {
-    relayersState: { activeRelayer, relayers },
-    setRelayer,
-  } = useRelayers({
-    typedChainId: currentTypedChainId,
-    target:
-      activeApi?.state.activeBridge && currentTypedChainId
-        ? activeApi.state.activeBridge.targets[currentTypedChainId]
-        : undefined,
-  });
+    // Given the user inputs above, fetch relayers state
+    const {
+      relayersState: { activeRelayer, relayers },
+      setRelayer,
+    } = useRelayers({
+      typedChainId: currentTypedChainId,
+      target:
+        activeApi?.state.activeBridge && currentTypedChainId
+          ? activeApi.state.activeBridge.targets[currentTypedChainId]
+          : undefined,
+    });
 
-  // The destination chains
-  const [destChain, setDestChain] = useState<Chain | undefined>(
-    defaultDestinationChain
-  );
+    // The destination chains
+    const [destChain, setDestChain] = useState<Chain | undefined>(
+      defaultDestinationChain
+    );
 
-  // State for amount input value
-  const [amount, setAmount] = useState<number>(0);
+    // State for amount input value
+    const [amount, setAmount] = useState<number | undefined>(undefined);
 
-  // State for error message when user input amount is invalid
-  const [amountError, setAmountError] = useState<string>('');
+    // State for error message when user input amount is invalid
+    const [amountError, setAmountError] = useState<string>('');
 
-  // State for the recipient address
-  const [recipient, setRecipient] = useState<string>('');
+    // State for the recipient address
+    const [recipient, setRecipient] = useState<string>('');
 
-  // Calculate recipient error message
-  const recipientError = useMemo(() => {
-    if (!recipient) {
-      return '';
-    }
+    // Calculate recipient error message
+    const recipientError = useMemo(() => {
+      if (!recipient) {
+        return '';
+      }
 
-    return recipient.length === 130 && recipient.startsWith('0x')
-      ? ''
-      : 'The public key must be 130 characters long and start with 0x';
-  }, [recipient]);
+      return recipient.length === 130 && recipient.startsWith('0x')
+        ? ''
+        : 'The public key must be 130 characters long and start with 0x';
+    }, [recipient]);
 
-  // Get the available currencies from notes
-  const currenciyRecordFromNotes = useMemo<CurrencyRecordWithChainsType>(() => {
-    if (!allNotes) {
-      return {};
-    }
-
-    return Array.from(allNotes.values()).reduce((acc, notes) => {
-      notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
-        const tkSymbol = tokenSymbol;
-        const currency = Object.values(currenciesConfig).find(
-          (currency) => currency.symbol === tkSymbol
-        );
-
-        if (!currency) {
-          return;
+    // Get the available currencies from notes
+    const currenciyRecordFromNotes =
+      useMemo<CurrencyRecordWithChainsType>(() => {
+        if (!allNotes) {
+          return {};
         }
 
-        // Calculate destination chain
-        const destChainTypeId = Number(targetChainId);
-        const detsChain = Object.values(chainsPopulated).find(
-          (chain) =>
-            calculateTypedChainId(chain.chainType, chain.chainId) ===
-            destChainTypeId
-        );
-
-        if (!detsChain) {
-          throw new Error('Detect unsupoorted chain parsed from note');
-        }
-
-        const existedCurrency = acc[currency.id];
-
-        if (!existedCurrency) {
-          const destChainRecord: ChainRecord = {};
-
-          if (detsChain) {
-            destChainRecord[destChainTypeId] = detsChain;
-          }
-
-          acc[currency.id] = {
-            currency: new Currency(currency),
-            destChainRecord,
-          };
-
-          return;
-        }
-
-        const existedDestChain =
-          existedCurrency.destChainRecord[destChainTypeId];
-        if (!existedDestChain) {
-          acc[existedCurrency.currency.id].destChainRecord[destChainTypeId] =
-            detsChain;
-        }
-      });
-
-      return acc;
-    }, {} as CurrencyRecordWithChainsType);
-  }, [allNotes]);
-
-  // Get balance record from notes
-  const balanceRecordFromNotes = useMemo<CurrencyBalanceRecordType>(() => {
-    if (!allNotes) {
-      return {};
-    }
-
-    return Array.from(allNotes.values()).reduce((acc, notes) => {
-      notes.forEach(
-        ({ note: { tokenSymbol, targetChainId, amount, denomination } }) => {
-          const tkSymbol = tokenSymbol;
-          const currency = Object.values(currenciesConfig).find(
-            (currency) => currency.symbol === tkSymbol
-          );
-
-          const destChainTypeId = Number(targetChainId);
-          const chain = Object.values(chainsPopulated).find(
-            (chain) =>
-              calculateTypedChainId(chain.chainType, chain.chainId) ===
-              destChainTypeId
-          );
-
-          if (!currency || !chain) {
-            throw new Error(
-              'Detect unsupoorted chain or currency parsed from note'
+        return Array.from(allNotes.values()).reduce((acc, notes) => {
+          notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
+            const tkSymbol = tokenSymbol;
+            const currency = Object.values(currenciesConfig).find(
+              (currency) => currency.symbol === tkSymbol
             );
-          }
 
-          if (!acc[currency.id]) {
-            acc[currency.id] = {};
+            if (!currency) {
+              return;
+            }
 
-            acc[currency.id][destChainTypeId] = Number(
-              ethers.utils.formatUnits(amount, denomination)
+            // Calculate destination chain
+            const destChainTypeId = Number(targetChainId);
+            const detsChain = Object.values(chainsPopulated).find(
+              (chain) =>
+                calculateTypedChainId(chain.chainType, chain.chainId) ===
+                destChainTypeId
             );
-            return;
-          }
 
-          const existedBalance = acc[currency.id][destChainTypeId];
-          if (existedBalance) {
-            acc[currency.id][destChainTypeId] =
-              existedBalance +
-              Number(ethers.utils.formatUnits(amount, denomination));
-          } else {
-            acc[currency.id][destChainTypeId] = Number(
-              ethers.utils.formatUnits(amount, denomination)
-            );
-          }
-        }
-      );
+            if (!detsChain) {
+              throw new Error('Detect unsupoorted chain parsed from note');
+            }
 
-      return acc;
-    }, {} as CurrencyBalanceRecordType);
-  }, [allNotes]);
+            const existedCurrency = acc[currency.id];
 
-  // Parse the available assets from currency record
-  const bridgingAssets = useMemo((): AssetType[] => {
-    return Object.values(currenciyRecordFromNotes).reduce(
-      (acc, { currency }) => {
-        if (!currency) {
+            if (!existedCurrency) {
+              const destChainRecord: ChainRecord = {};
+
+              if (detsChain) {
+                destChainRecord[destChainTypeId] = detsChain;
+              }
+
+              acc[currency.id] = {
+                currency: new Currency(currency),
+                destChainRecord,
+              };
+
+              return;
+            }
+
+            const existedDestChain =
+              existedCurrency.destChainRecord[destChainTypeId];
+            if (!existedDestChain) {
+              acc[existedCurrency.currency.id].destChainRecord[
+                destChainTypeId
+              ] = detsChain;
+            }
+          });
+
           return acc;
-        }
+        }, {} as CurrencyRecordWithChainsType);
+      }, [allNotes]);
 
-        let balance = undefined;
+    // Get balance record from notes
+    const balanceRecordFromNotes = useMemo<CurrencyBalanceRecordType>(() => {
+      if (!allNotes) {
+        return {};
+      }
 
-        if (destChain) {
-          const destChainTypeId = calculateTypedChainId(
-            destChain.chainType,
-            destChain.chainId
-          );
-          balance = balanceRecordFromNotes[currency.id]?.[destChainTypeId];
-        }
+      return Array.from(allNotes.values()).reduce((acc, notes) => {
+        notes.forEach(
+          ({ note: { tokenSymbol, targetChainId, amount, denomination } }) => {
+            const tkSymbol = tokenSymbol;
+            const currency = Object.values(currenciesConfig).find(
+              (currency) => currency.symbol === tkSymbol
+            );
 
-        acc.push({
-          name: currency.view.name,
-          symbol: currency.view.symbol,
-          balance,
-        });
+            const destChainTypeId = Number(targetChainId);
+            const chain = Object.values(chainsPopulated).find(
+              (chain) =>
+                calculateTypedChainId(chain.chainType, chain.chainId) ===
+                destChainTypeId
+            );
+
+            if (!currency || !chain) {
+              throw new Error(
+                'Detect unsupoorted chain or currency parsed from note'
+              );
+            }
+
+            if (!acc[currency.id]) {
+              acc[currency.id] = {};
+
+              acc[currency.id][destChainTypeId] = Number(
+                ethers.utils.formatUnits(amount, denomination)
+              );
+              return;
+            }
+
+            const existedBalance = acc[currency.id][destChainTypeId];
+            if (existedBalance) {
+              acc[currency.id][destChainTypeId] =
+                existedBalance +
+                Number(ethers.utils.formatUnits(amount, denomination));
+            } else {
+              acc[currency.id][destChainTypeId] = Number(
+                ethers.utils.formatUnits(amount, denomination)
+              );
+            }
+          }
+        );
 
         return acc;
-      },
-      [] as AssetType[]
-    );
-  }, [balanceRecordFromNotes, currenciyRecordFromNotes, destChain]);
+      }, {} as CurrencyBalanceRecordType);
+    }, [allNotes]);
 
-  // Callback when a chain item is selected
-  const handlebridgingAssetChange = useCallback(
-    async (newToken: AssetType) => {
-      const selecteCurrency = Object.values(currenciyRecordFromNotes).find(
-        ({ currency }) => currency.view.symbol === newToken.symbol
+    // Parse the available assets from currency record
+    const bridgingAssets = useMemo((): AssetType[] => {
+      return Object.values(currenciyRecordFromNotes).reduce(
+        (acc, { currency }) => {
+          if (!currency) {
+            return acc;
+          }
+
+          let balance = undefined;
+
+          if (destChain) {
+            const destChainTypeId = calculateTypedChainId(
+              destChain.chainType,
+              destChain.chainId
+            );
+            balance = balanceRecordFromNotes[currency.id]?.[destChainTypeId];
+          }
+
+          acc.push({
+            name: currency.view.name,
+            symbol: currency.view.symbol,
+            balance,
+          });
+
+          return acc;
+        },
+        [] as AssetType[]
       );
-      if (selecteCurrency) {
-        setGovernedCurrency(selecteCurrency.currency);
+    }, [balanceRecordFromNotes, currenciyRecordFromNotes, destChain]);
+
+    // Callback when a chain item is selected
+    const handlebridgingAssetChange = useCallback(
+      async (newToken: AssetType) => {
+        const selecteCurrency = Object.values(currenciyRecordFromNotes).find(
+          ({ currency }) => currency.view.symbol === newToken.symbol
+        );
+        if (selecteCurrency) {
+          setGovernedCurrency(selecteCurrency.currency);
+        }
+      },
+      [currenciyRecordFromNotes, setGovernedCurrency]
+    );
+
+    // The selected asset to display in the transfer card
+    const selectedBridgingAsset = useMemo<AssetType | undefined>(() => {
+      if (!governedCurrency) {
+        return undefined;
       }
-    },
-    [currenciyRecordFromNotes, setGovernedCurrency]
-  );
 
-  // The selected asset to display in the transfer card
-  const selectedBridgingAsset = useMemo<AssetType | undefined>(() => {
-    if (!governedCurrency) {
-      return undefined;
-    }
+      let balance = undefined;
+      if (destChain) {
+        const destChainTypeId = calculateTypedChainId(
+          destChain.chainType,
+          destChain.chainId
+        );
+        balance =
+          balanceRecordFromNotes[governedCurrency.id]?.[destChainTypeId];
+      }
 
-    let balance = undefined;
-    if (destChain) {
-      const destChainTypeId = calculateTypedChainId(
+      return {
+        symbol: governedCurrency.view.symbol,
+        name: governedCurrency.view.name,
+        balance,
+      };
+    }, [balanceRecordFromNotes, destChain, governedCurrency]);
+
+    // Callback for bridging asset input click
+    const handleBridgingAssetInputClick = useCallback(() => {
+      setMainComponent(
+        <TokenListCard
+          className="w-[550px] h-[700px]"
+          title="Select Asset to Transfer"
+          popularTokens={[]}
+          selectTokens={bridgingAssets}
+          unavailableTokens={[]}
+          onChange={(newAsset) => {
+            handlebridgingAssetChange(newAsset);
+            setMainComponent(undefined);
+          }}
+          onClose={() => setMainComponent(undefined)}
+          onConnect={onTryAnotherWallet}
+        />
+      );
+    }, [
+      bridgingAssets,
+      handlebridgingAssetChange,
+      onTryAnotherWallet,
+      setMainComponent,
+    ]);
+
+    // Get all destination chains
+    const allDestChains = useMemo<ChainRecord>(() => {
+      return Object.values(currenciyRecordFromNotes).reduce((acc, currency) => {
+        return {
+          ...acc,
+          ...currency.destChainRecord,
+        };
+      }, {} as ChainRecord);
+    }, [currenciyRecordFromNotes]);
+
+    // Get available destination chains from selected bridge asset
+    const availableDestChains = useMemo<Chain[]>(() => {
+      if (!selectedBridgingAsset) {
+        return Object.values(allDestChains);
+      }
+
+      const currency = Object.values(currenciyRecordFromNotes).find(
+        ({ currency }) =>
+          currency.view.symbol === selectedBridgingAsset.symbol &&
+          currency.view.name === selectedBridgingAsset.name
+      );
+
+      return currency
+        ? Object.values(currency.destChainRecord)
+        : Object.values(allDestChains);
+    }, [selectedBridgingAsset, currenciyRecordFromNotes, allDestChains]);
+
+    // Selected destination chain
+    const selectedDestChain = useMemo<ChainType | undefined>(() => {
+      if (!destChain) {
+        return undefined;
+      }
+
+      return {
+        name: destChain.name,
+      } as ChainType;
+    }, [destChain]);
+
+    // Callback for destination chain input clicked
+    const handleDestChainClick = useCallback(() => {
+      setMainComponent(
+        <ChainListCard
+          className="w-[550px] h-[700px]"
+          chainType={'dest'}
+          chains={availableDestChains.map(
+            (chain) =>
+              ({
+                name: chain.name,
+              } as ChainType)
+          )}
+          value={selectedDestChain}
+          onClose={() => setMainComponent(undefined)}
+          onChange={(newChain) => {
+            const chain = availableDestChains.find(
+              (chain) => chain.name === newChain.name
+            );
+
+            if (chain) {
+              setDestChain(chain);
+            }
+            setMainComponent(undefined);
+          }}
+        />
+      );
+    }, [availableDestChains, selectedDestChain, setMainComponent]);
+
+    // Callback for amount input changed
+    const onAmountChange = useCallback(
+      (amount: string): void => {
+        const parsedAmount = Number(amount);
+        const availableAmount = selectedBridgingAsset?.balance ?? 0;
+
+        if (isNaN(parsedAmount) || parsedAmount < 0) {
+          setAmountError('Invalid amount');
+          return;
+        }
+
+        if (parsedAmount > availableAmount) {
+          setAmountError('Insufficient balance');
+          return;
+        }
+
+        setAmount(parsedAmount);
+        setAmountError('');
+      },
+      [selectedBridgingAsset?.balance]
+    );
+
+    // Callback for relayer input clicked
+    const handleRelayerClick = useCallback(() => {
+      if (!activeApi || !activeChain) {
+        return;
+      }
+
+      const relayerList = relayers
+        .map((relayer) => {
+          const relayerData = relayer.capabilities.supportedChains[
+            activeChain.chainType === ChainTypeEnum.EVM ? 'evm' : 'substrate'
+          ].get(
+            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          );
+
+          const theme =
+            activeChain.chainType === ChainTypeEnum.EVM
+              ? ('ethereum' as const)
+              : ('substrate' as const);
+
+          return {
+            address: relayerData?.beneficiary ?? '',
+            externalUrl: relayer.endpoint,
+            theme,
+          };
+        })
+        .filter((x) => !!x);
+
+      const relayerValue = activeRelayer
+        ? ({
+            address: activeRelayer.beneficiary ?? '',
+            externalUrl: activeRelayer.endpoint,
+            theme:
+              activeChain.chainType === ChainTypeEnum.EVM
+                ? 'ethereum'
+                : 'substrate',
+          } as RelayerType)
+        : undefined;
+
+      setMainComponent(
+        <RelayerListCard
+          relayers={relayerList}
+          value={relayerValue}
+          className="w-[550px] h-[700px]"
+          onClose={() => setMainComponent(undefined)}
+          onChange={(nextRelayer) => {
+            setRelayer(
+              relayers.find((relayer) => {
+                return relayer.endpoint === nextRelayer.externalUrl;
+              }) ?? null
+            );
+            setMainComponent(undefined);
+          }}
+        />
+      );
+    }, [
+      activeApi,
+      activeChain,
+      activeRelayer,
+      relayers,
+      setMainComponent,
+      setRelayer,
+    ]);
+
+    // Boolean indicating whether the amount value is valid or not
+    const isValidAmount = useMemo(() => {
+      return (
+        typeof amount === 'number' &&
+        amount > 0 &&
+        amount <= (selectedBridgingAsset?.balance ?? 0)
+      );
+    }, [amount, selectedBridgingAsset?.balance]);
+
+    // Boolean state for whether the transfer button is disabled
+    const isTransferButtonDisabled = useMemo<boolean>(() => {
+      return [
+        Boolean(governedCurrency), // No governed currency selected
+        Boolean(destChain), // No destination chain selected
+        recipientError === '', // Invalid recipient public key
+        isValidAmount, // Is valid amount
+        Boolean(recipient), // No recipient address
+      ].some((value) => value === false);
+    }, [destChain, governedCurrency, isValidAmount, recipient, recipientError]);
+
+    // Calculate input notes for current amount
+    const inputNotes = useMemo(() => {
+      if (!destChain || !governedCurrency || !amount) {
+        return [];
+      }
+
+      const destTypedChainId = calculateTypedChainId(
         destChain.chainType,
         destChain.chainId
       );
-      balance = balanceRecordFromNotes[governedCurrency.id]?.[destChainTypeId];
-    }
 
-    return {
-      symbol: governedCurrency.view.symbol,
-      name: governedCurrency.view.name,
-      balance,
-    };
-  }, [balanceRecordFromNotes, destChain, governedCurrency]);
+      const avaiNotes =
+        allNotes
+          .get(destTypedChainId.toString())
+          ?.filter(
+            (note) => note.note.tokenSymbol === governedCurrency.view.symbol
+          ) ?? [];
 
-  // Callback for bridging asset input click
-  const handleBridgingAssetInputClick = useCallback(() => {
-    setMainComponent(
-      <TokenListCard
-        className="w-[550px] h-[720px]"
-        title="Select Asset to Transfer"
-        popularTokens={[]}
-        selectTokens={bridgingAssets}
-        unavailableTokens={[]}
-        onChange={(newAsset) => {
-          handlebridgingAssetChange(newAsset);
-          setMainComponent(undefined);
-        }}
-        onClose={() => setMainComponent(undefined)}
-      />
-    );
-  }, [bridgingAssets, handlebridgingAssetChange, setMainComponent]);
-
-  // Get all destination chains
-  const allDestChains = useMemo<ChainRecord>(() => {
-    return Object.values(currenciyRecordFromNotes).reduce((acc, currency) => {
-      return {
-        ...acc,
-        ...currency.destChainRecord,
-      };
-    }, {} as ChainRecord);
-  }, [currenciyRecordFromNotes]);
-
-  // Get available destination chains from selected bridge asset
-  const availableDestChains = useMemo<Chain[]>(() => {
-    if (!selectedBridgingAsset) {
-      return Object.values(allDestChains);
-    }
-
-    const currency = Object.values(currenciyRecordFromNotes).find(
-      ({ currency }) =>
-        currency.view.symbol === selectedBridgingAsset.symbol &&
-        currency.view.name === selectedBridgingAsset.name
-    );
-
-    return currency
-      ? Object.values(currency.destChainRecord)
-      : Object.values(allDestChains);
-  }, [selectedBridgingAsset, currenciyRecordFromNotes, allDestChains]);
-
-  // Selected destination chain
-  const selectedDestChain = useMemo<ChainType | undefined>(() => {
-    if (!destChain) {
-      return undefined;
-    }
-
-    return {
-      name: destChain.name,
-    } as ChainType;
-  }, [destChain]);
-
-  // Callback for destination chain input clicked
-  const handleDestChainClick = useCallback(() => {
-    setMainComponent(
-      <ChainListCard
-        className="w-[550px] h-[720px]"
-        chainType={'dest'}
-        chains={availableDestChains.map(
-          (chain) =>
-            ({
-              name: chain.name,
-            } as ChainType)
-        )}
-        value={selectedDestChain}
-        onClose={() => setMainComponent(undefined)}
-        onChange={(newChain) => {
-          const chain = availableDestChains.find(
-            (chain) => chain.name === newChain.name
-          );
-
-          if (chain) {
-            setDestChain(chain);
-          }
-          setMainComponent(undefined);
-        }}
-      />
-    );
-  }, [availableDestChains, selectedDestChain, setMainComponent]);
-
-  // Callback for amount input changed
-  const onAmountChange = useCallback(
-    (amount: string): void => {
-      const parsedAmount = Number(amount);
-      const availableAmount = selectedBridgingAsset?.balance ?? 0;
-
-      if (isNaN(parsedAmount) || parsedAmount < 0) {
-        setAmountError('Invalid amount');
-        return;
-      }
-
-      if (parsedAmount > availableAmount) {
-        setAmountError('Insufficient balance');
-        return;
-      }
-
-      setAmount(parsedAmount);
-      setAmountError('');
-    },
-    [selectedBridgingAsset?.balance]
-  );
-
-  // Callback for relayer input clicked
-  const handleRelayerClick = useCallback(() => {
-    if (!activeApi || !activeChain) {
-      return;
-    }
-
-    const relayerList = relayers
-      .map((relayer) => {
-        const relayerData = relayer.capabilities.supportedChains[
-          activeChain.chainType === ChainTypeEnum.EVM ? 'evm' : 'substrate'
-        ].get(
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-        );
-
-        const theme =
-          activeChain.chainType === ChainTypeEnum.EVM
-            ? ('ethereum' as const)
-            : ('substrate' as const);
-
-        return {
-          address: relayerData?.beneficiary ?? '',
-          externalUrl: relayer.endpoint,
-          theme,
-        };
-      })
-      .filter((x) => !!x);
-
-    const relayerValue = activeRelayer
-      ? ({
-          address: activeRelayer.beneficiary ?? '',
-          externalUrl: activeRelayer.endpoint,
-          theme:
-            activeChain.chainType === ChainTypeEnum.EVM
-              ? 'ethereum'
-              : 'substrate',
-        } as RelayerType)
-      : undefined;
-
-    setMainComponent(
-      <RelayerListCard
-        relayers={relayerList}
-        value={relayerValue}
-        className="w-[550px] h-[720px]"
-        onClose={() => setMainComponent(undefined)}
-        onChange={(nextRelayer) => {
-          setRelayer(
-            relayers.find((relayer) => {
-              return relayer.endpoint === nextRelayer.externalUrl;
-            }) ?? null
-          );
-          setMainComponent(undefined);
-        }}
-      />
-    );
-  }, [
-    activeApi,
-    activeChain,
-    activeRelayer,
-    relayers,
-    setMainComponent,
-    setRelayer,
-  ]);
-
-  // Boolean indicating whether the amount value is valid or not
-  const isValidAmount = useMemo(() => {
-    return amount > 0 && amount <= (selectedBridgingAsset?.balance ?? 0);
-  }, [amount, selectedBridgingAsset?.balance]);
-
-  // Boolean state for whether the transfer button is disabled
-  const isTransferButtonDisabled = useMemo<boolean>(() => {
-    return [
-      Boolean(governedCurrency), // No governed currency selected
-      Boolean(destChain), // No destination chain selected
-      recipientError === '', // Invalid recipient public key
-      isValidAmount, // Is valid amount
-      Boolean(recipient), // No recipient address
-    ].some((value) => value === false);
-  }, [destChain, governedCurrency, isValidAmount, recipient, recipientError]);
-
-  // Calculate input notes for current amount
-  const inputNotes = useMemo(() => {
-    if (!destChain || !governedCurrency) {
-      return [];
-    }
-
-    const destTypedChainId = calculateTypedChainId(
-      destChain.chainType,
-      destChain.chainId
-    );
-
-    const avaiNotes =
-      allNotes
-        .get(destTypedChainId.toString())
-        ?.filter(
-          (note) => note.note.tokenSymbol === governedCurrency.view.symbol
-        ) ?? [];
-
-    return (
-      NoteManager.getNotesFifo(
-        avaiNotes,
-        ethers.utils.parseUnits(
-          amount.toString(),
-          governedCurrency.view.decimals
-        )
-      ) ?? []
-    );
-  }, [allNotes, amount, destChain, governedCurrency]);
-
-  // Calculate the info for UI display
-  const infoCalculated = useMemo(() => {
-    const spentValue = inputNotes.reduce<ethers.BigNumber>(
-      (acc, note) => acc.add(ethers.BigNumber.from(note.note.amount)),
-      ethers.BigNumber.from(0)
-    );
-
-    const changeAmountBigNumber = governedCurrency
-      ? spentValue.sub(
+      return (
+        NoteManager.getNotesFifo(
+          avaiNotes,
           ethers.utils.parseUnits(
             amount.toString(),
             governedCurrency.view.decimals
           )
-        )
-      : ethers.BigNumber.from(0);
+        ) ?? []
+      );
+    }, [allNotes, amount, destChain, governedCurrency]);
 
-    const transferAmount = isValidAmount
-      ? getRoundedAmountString(amount)
-      : undefined;
+    // Calculate the info for UI display
+    const infoCalculated = useMemo(() => {
+      const spentValue = inputNotes.reduce<ethers.BigNumber>(
+        (acc, note) => acc.add(ethers.BigNumber.from(note.note.amount)),
+        ethers.BigNumber.from(0)
+      );
 
-    const changeAmount =
-      isValidAmount && governedCurrency
-        ? getRoundedAmountString(
-            Number(
-              ethers.utils.formatUnits(
-                changeAmountBigNumber,
-                governedCurrency.view.decimals
-              )
+      const changeAmountBigNumber = governedCurrency
+        ? spentValue.sub(
+            ethers.utils.parseUnits(
+              amount?.toString() ?? '0',
+              governedCurrency.view.decimals
             )
           )
+        : ethers.BigNumber.from(0);
+
+      const transferAmount = isValidAmount
+        ? getRoundedAmountString(amount)
         : undefined;
 
-    return {
-      transferAmount,
-      changeAmount,
-      transferTokenSymbol: selectedBridgingAsset?.symbol,
-    };
-  }, [
-    amount,
-    governedCurrency,
-    inputNotes,
-    isValidAmount,
-    selectedBridgingAsset?.symbol,
-  ]);
+      const changeAmount =
+        isValidAmount && governedCurrency
+          ? getRoundedAmountString(
+              Number(
+                ethers.utils.formatUnits(
+                  changeAmountBigNumber,
+                  governedCurrency.view.decimals
+                )
+              )
+            )
+          : undefined;
 
-  // Callback for transfer button clicked
-  const handleTransferClick = useCallback(async () => {
-    if (!governedCurrency || !destChain || !activeApi?.state?.activeBridge) {
-      throw new Error(
-        "Can't transfer without a governed currency or dest chain"
+      return {
+        transferAmount,
+        changeAmount,
+        transferTokenSymbol: selectedBridgingAsset?.symbol,
+      };
+    }, [
+      amount,
+      governedCurrency,
+      inputNotes,
+      isValidAmount,
+      selectedBridgingAsset?.symbol,
+    ]);
+
+    // Callback for transfer button clicked
+    const handleTransferClick = useCallback(async () => {
+      if (
+        !governedCurrency ||
+        !destChain ||
+        !activeApi?.state?.activeBridge ||
+        !amount
+      ) {
+        throw new Error(
+          "Can't transfer without a governed currency or dest chain"
+        );
+      }
+
+      const destTypedChainId = calculateTypedChainId(
+        destChain.chainType,
+        destChain.chainId
       );
-    }
 
-    const destTypedChainId = calculateTypedChainId(
-      destChain.chainType,
-      destChain.chainId
-    );
+      // Find the mixerId (target) of the selected inputs
+      const mixerId = activeApi.state.activeBridge.targets[destTypedChainId];
 
-    // Find the mixerId (target) of the selected inputs
-    const mixerId = activeApi.state.activeBridge.targets[destTypedChainId];
+      const changeAmount = Number(infoCalculated.changeAmount ?? '0');
 
-    const changeAmount = Number(infoCalculated.changeAmount ?? '0');
+      // Calculate the chain note if the change amount is greater than 0
+      const changeNote =
+        changeAmount > 0
+          ? await generateNote(
+              mixerId,
+              destTypedChainId,
+              Number(infoCalculated.changeAmount),
+              undefined
+            ).then((note) => note.note.serialize())
+          : undefined;
 
-    // Calculate the chain note if the change amount is greater than 0
-    const changeNote =
-      changeAmount > 0
-        ? await generateNote(
-            mixerId,
-            destTypedChainId,
-            Number(infoCalculated.changeAmount),
-            undefined
-          ).then((note) => note.note.serialize())
-        : undefined;
+      setMainComponent(
+        <TransferConfirmContainer
+          className="w-[550px]"
+          inputNotes={inputNotes}
+          amount={amount}
+          changeAmount={changeAmount}
+          currency={governedCurrency}
+          destChain={destChain}
+          recipient={recipient}
+          relayer={activeRelayer}
+          note={changeNote}
+        />
+      );
+    }, [
+      activeApi?.state.activeBridge,
+      activeRelayer,
+      amount,
+      destChain,
+      generateNote,
+      governedCurrency,
+      infoCalculated.changeAmount,
+      inputNotes,
+      recipient,
+      setMainComponent,
+    ]);
 
-    setMainComponent(
-      <TransferConfirmContainer
-        className="w-[550px]"
-        inputNotes={inputNotes}
-        amount={amount}
-        changeAmount={changeAmount}
-        currency={governedCurrency}
-        destChain={destChain}
-        recipient={recipient}
-        relayer={activeRelayer}
-        note={changeNote}
+    useEffect(() => {
+      const updateDefaultValues = () => {
+        if (defaultDestinationChain) {
+          setDestChain(defaultDestinationChain);
+        }
+
+        if (defaultGovernedCurrency) {
+          setGovernedCurrency(defaultGovernedCurrency);
+        }
+      };
+
+      updateDefaultValues();
+    }, [defaultDestinationChain, defaultGovernedCurrency, setGovernedCurrency]);
+
+    return (
+      <TransferCard
+        ref={ref}
+        className="h-[615px]"
+        bridgeAssetInputProps={{
+          token: selectedBridgingAsset,
+          onClick: handleBridgingAssetInputClick,
+        }}
+        destChainInputProps={{
+          chain: selectedDestChain,
+          chainType: 'dest',
+          onClick: handleDestChainClick,
+        }}
+        amountInputProps={{
+          amount: amount ? amount.toString() : undefined,
+          onAmountChange,
+          errorMessage: amountError,
+          isDisabled: !selectedBridgingAsset || !destChain,
+          onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
+        }}
+        relayerInputProps={{
+          relayerAddress: activeRelayer?.beneficiary,
+          iconTheme: activeChain
+            ? activeChain.chainType === ChainTypeEnum.EVM
+              ? 'ethereum'
+              : 'substrate'
+            : undefined,
+          onClick: handleRelayerClick,
+        }}
+        recipientInputProps={{
+          title: 'Recipient Public Key',
+          errorMessage: recipientError,
+          onChange: (recipient) => {
+            setRecipient(recipient);
+          },
+          overrideInputProps: {
+            placeholder: 'Enter recipient public key',
+          },
+        }}
+        transferBtnProps={{
+          isDisabled: isTransferButtonDisabled,
+          onClick: handleTransferClick,
+        }}
+        transferAmount={infoCalculated.transferAmount}
+        transferToken={infoCalculated.transferTokenSymbol}
+        changeAmount={infoCalculated.changeAmount}
       />
     );
-  }, [
-    activeApi?.state.activeBridge,
-    activeRelayer,
-    amount,
-    destChain,
-    generateNote,
-    governedCurrency,
-    infoCalculated.changeAmount,
-    inputNotes,
-    recipient,
-    setMainComponent,
-  ]);
-
-  useEffect(() => {
-    const updateDefaultValues = () => {
-      if (defaultDestinationChain) {
-        setDestChain(defaultDestinationChain);
-      }
-
-      if (defaultGovernedCurrency) {
-        setGovernedCurrency(defaultGovernedCurrency);
-      }
-    };
-
-    updateDefaultValues();
-  }, [defaultDestinationChain, defaultGovernedCurrency, setGovernedCurrency]);
-
-  return (
-    <TransferCard
-      ref={ref}
-      bridgeAssetInputProps={{
-        token: selectedBridgingAsset,
-        onClick: handleBridgingAssetInputClick,
-      }}
-      destChainInputProps={{
-        chain: selectedDestChain,
-        chainType: 'dest',
-        onClick: handleDestChainClick,
-      }}
-      amountInputProps={{
-        amount: amount.toString(),
-        onAmountChange,
-        errorMessage: amountError,
-        onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
-      }}
-      relayerInputProps={{
-        relayerAddress: activeRelayer?.beneficiary,
-        iconTheme: activeChain
-          ? activeChain.chainType === ChainTypeEnum.EVM
-            ? 'ethereum'
-            : 'substrate'
-          : undefined,
-        onClick: handleRelayerClick,
-      }}
-      recipientInputProps={{
-        title: 'Recipient Public Key',
-        errorMessage: recipientError,
-        onChange: (recipient) => {
-          setRecipient(recipient);
-        },
-        overrideInputProps: {
-          placeholder: 'Enter recipient public key',
-        },
-      }}
-      transferBtnProps={{
-        isDisabled: isTransferButtonDisabled,
-        onClick: handleTransferClick,
-      }}
-      transferAmount={infoCalculated.transferAmount}
-      transferToken={infoCalculated.transferTokenSymbol}
-      changeAmount={infoCalculated.changeAmount}
-    />
-  );
-});
+  }
+);
