@@ -1,4 +1,10 @@
-import { ArrowRight, Close, Download } from '@webb-tools/icons';
+import {
+  ArrowRight,
+  Close,
+  Download,
+  ShieldKeyholeIcon,
+  WalletLineIcon,
+} from '@webb-tools/icons';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';

@@ -50,7 +50,7 @@ function mapTxToPayload(
   const onDetails = tx.txHash
     ? () => {
         const url = getExplorerURI(tx.txHash!, 'tx');
-        open(url, '_blank');
+        open(url, '_blank', 'noopener noreferrer');
       }
     : undefined;
   return {
@@ -68,12 +68,12 @@ function mapTxToPayload(
     tokens: tokens,
     wallets: {
       src: (
-        <div className={'w-6 h-6'}>
+        <div className={'w-3 h-3'}>
           <SrcWallet />
         </div>
       ),
       dist: (
-        <div className={'w-6 h-6'}>
+        <div className={'w-3 h-3'}>
           <DistWallet />
         </div>
       ),

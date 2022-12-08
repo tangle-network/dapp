@@ -6,7 +6,12 @@ import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
 import success from './success-tx.json';
 import Lottie from 'lottie-react';
 import { TransactionCardFooter } from './TransactionCardFooter';
-import { ArrowRight, ExternalLinkLine } from '@webb-tools/icons';
+import {
+  ArrowRight,
+  ExternalLinkLine,
+  ShieldKeyholeIcon,
+  WalletLineIcon,
+} from '@webb-tools/icons';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';
@@ -154,7 +159,25 @@ export const TransactionProgressCard = forwardRef<
       }
       return 'red';
     }, [method]);
-
+    const [SourceIcon, DistIcon] = useMemo(() => {
+      switch (method) {
+        case 'Withdraw':
+          return [
+            <ShieldKeyholeIcon size={'lg'} />,
+            <WalletLineIcon size={'lg'} />,
+          ];
+        case 'Deposit':
+          return [
+            <WalletLineIcon size={'lg'} />,
+            <ShieldKeyholeIcon size={'lg'} />,
+          ];
+        case 'Transfer':
+          return [
+            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeIcon size={'lg'} />,
+          ];
+      }
+    }, [method]);
     const hasSyncNote = useMemo(() => {
       return method === 'Withdraw' && Boolean(onSyncNote);
     }, [method]);
@@ -262,16 +285,24 @@ export const TransactionProgressCard = forwardRef<
 
               <div className="flex items-center mt-1">
                 <div
-                  className={` rounded-full flex items-center justify-center`}
-                  children={wallets.src}
-                />
+                  className={` rounded-full flex items-center justify-center h-6 w-6 relative`}
+                >
+                  {SourceIcon}
+                  <div className={'h-3 w-3 absolute  top-0 right-0'}>
+                    {wallets.src}
+                  </div>
+                </div>
                 <div className="px-2">
                   <ArrowRight />
                 </div>
                 <div
-                  className={` rounded-full flex items-center justify-center`}
-                  children={wallets.dist}
-                />
+                  className={` rounded-full flex items-center justify-center h-6 w-6 relative`}
+                >
+                  {DistIcon}
+                  <div className={'h-3 w-3 absolute  top-0 right-0'}>
+                    {wallets.dist}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

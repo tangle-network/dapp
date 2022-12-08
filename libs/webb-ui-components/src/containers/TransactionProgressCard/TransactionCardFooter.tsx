@@ -84,7 +84,7 @@ export const TransactionCardFooter: FC<
           </Typography>
         )}
         {link && (
-          <a href={link.uri} target={'_blank'}>
+          <a rel="noopener noreferrer" href={link.uri} target="_blank">
             <Typography
               variant={'body4'}
               fw={'bold'}
