@@ -45,6 +45,7 @@ function mapTxToPayload(
       status: transactionItemStatusFromTxStatus(txStatus),
       message: getTxMessageFromStatus(txStatus, data),
       txHash: tx.txHash,
+      recipient: tx.metaData.recipient,
     },
     amount: String(amount),
     getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {

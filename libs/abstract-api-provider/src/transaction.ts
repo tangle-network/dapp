@@ -99,6 +99,7 @@ type TransactionMetaData = {
     dist: number;
   };
   token: string;
+  recipient?: string;
 };
 
 type PromiseExec<T> = (
