@@ -39,6 +39,20 @@ function mapTxToPayload(
   const srcExplorerURI = chainConfig[wallets.src]?.blockExplorerStub ?? '';
   const SrcWallet = chainConfig[wallets.src]?.logo;
   const DistWallet = chainConfig[wallets.dist]?.logo;
+  const getExplorerURI = (
+    addOrTxHash: string,
+    variant: 'tx' | 'address'
+  ): string => {
+    return `${
+      srcExplorerURI.endsWith('/') ? srcExplorerURI : srcExplorerURI + '/'
+    }${variant}/${addOrTxHash}`;
+  };
+  const onDetails = tx.txHash
+    ? () => {
+        const url = getExplorerURI(tx.txHash!, 'tx');
+        open(url, '_blank');
+      }
+    : undefined;
   return {
     id: tx.id,
     txStatus: {
@@ -48,11 +62,7 @@ function mapTxToPayload(
       recipient: tx.metaData.recipient,
     },
     amount: String(amount),
-    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
-      return `${
-        srcExplorerURI.endsWith('/') ? srcExplorerURI : srcExplorerURI + '/'
-      }${variant}/${addOrTxHash}`;
-    },
+    getExplorerURI,
     timestamp: tx.timestamp,
     token,
     tokens: tokens,
@@ -71,7 +81,7 @@ function mapTxToPayload(
     onDismiss(): void {
       return dismissTransaction(tx.id);
     },
-
+    onDetails,
     method: tx.name as any,
   };
 }
@@ -179,8 +189,15 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
             if (txPayload.id !== tx.id) {
               return txPayload;
             }
+            const onDetails = txHash
+              ? () => {
+                  const uri = txPayload.getExplorerURI?.(txHash, 'tx');
+                  open(uri, '_blank');
+                }
+              : undefined;
             return {
               ...txPayload,
+              onDetails,
               txStatus: {
                 ...txPayload.txStatus,
                 txHash,
