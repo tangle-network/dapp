@@ -1,5 +1,5 @@
 import { InformationLine } from '@webb-tools/icons';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';
@@ -9,6 +9,37 @@ import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { u8aToHex } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
+function isValidAddress(address: string) {
+  const maybeEvm = address.replace('0x', '').length === 40;
+  const maybeSS58 = !address.startsWith('0x');
+  const maybeDecodedAddress = address.replace('0x', '').length === 64;
+  // is valid evm address
+  if (maybeEvm) {
+    return isEthereumAddress(address);
+  }
+  if (maybeSS58) {
+    try {
+      encodeAddress(decodeAddress(address));
+      console.log(u8aToHex(decodeAddress(address)));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  if (maybeDecodedAddress) {
+    try {
+      encodeAddress(address);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
+}
 
 /**
  * The `RecipientInput` component
@@ -48,19 +79,31 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
 
       setAddress(addr);
     }, [setAddress]);
-
+    const [recipientError, setRecipientError] = useState<string | undefined>(
+      undefined
+    );
     const onChange = useCallback(
       (nextVal: string) => {
-        setAddress(nextVal.toString());
-        onChangeProp?.(nextVal);
+        const address = nextVal.trim();
+        setAddress(address.toString());
+        onChangeProp?.(address);
+        if (isValidAddress(address) || address === '') {
+          setRecipientError(undefined);
+        } else {
+          setRecipientError('Invalid address');
+        }
       },
-      [onChangeProp, setAddress]
+      [onChangeProp, setAddress, setRecipientError]
     );
 
     useEffect(() => {
       setAddress(value);
     }, [value, setAddress]);
 
+    const error = useMemo(
+      () => errorMessage || recipientError,
+      [recipientError, errorMessage]
+    );
     return (
       <>
         <InputWrapper
@@ -96,11 +139,11 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
           )}
         </InputWrapper>
 
-        {errorMessage && (
+        {error && (
           <span className="flex text-red-70 dark:text-red-50">
             <InformationLine className="!fill-current mr-1" />
             <Typography variant="body3" fw="bold" className="!text-current">
-              {errorMessage}
+              {error}
             </Typography>
           </span>
         )}
