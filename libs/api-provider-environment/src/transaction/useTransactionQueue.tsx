@@ -68,12 +68,12 @@ function mapTxToPayload(
     tokens: tokens,
     wallets: {
       src: (
-        <div className={'w-3 h-3'}>
+        <div className={'w-4 h-4'}>
           <SrcWallet />
         </div>
       ),
       dist: (
-        <div className={'w-3 h-3'}>
+        <div className={'w-4 h-4'}>
           <DistWallet />
         </div>
       ),
