@@ -464,7 +464,7 @@ export const TransferContainer = forwardRef<
         amount <= (selectedBridgingAsset?.balance ?? 0)
       );
     }, [amount, selectedBridgingAsset?.balance]);
-
+    const [isValidRecipient, setIsValidRecipient] = useState(false);
     // Boolean state for whether the transfer button is disabled
     const isTransferButtonDisabled = useMemo<boolean>(() => {
       return [
@@ -473,8 +473,16 @@ export const TransferContainer = forwardRef<
         recipientError === '', // Invalid recipient public key
         isValidAmount, // Is valid amount
         Boolean(recipient), // No recipient address
+        isValidRecipient, // Valid recipient address
       ].some((value) => value === false);
-    }, [destChain, governedCurrency, isValidAmount, recipient, recipientError]);
+    }, [
+      destChain,
+      governedCurrency,
+      isValidAmount,
+      recipient,
+      recipientError,
+      isValidRecipient,
+    ]);
 
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
@@ -654,6 +662,9 @@ export const TransferContainer = forwardRef<
           onClick: handleRelayerClick,
         }}
         recipientInputProps={{
+          isValidSet(valid: boolean) {
+            setIsValidRecipient(valid);
+          },
           title: 'Recipient Public Key',
           errorMessage: recipientError,
           onChange: (recipient) => {
