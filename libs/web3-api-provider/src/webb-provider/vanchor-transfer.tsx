@@ -66,12 +66,12 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
     const sourceChain = transferData.activeChain;
     const targetChainId = transferData.targetTypedChainId;
-    const targetChain = this.config.chains[targetChainId];
+    const sourceChainId = sourceChain.chainId;
 
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
       wallets: {
-        src: <ChainIcon name={sourceChain?.name} />,
-        dist: <ChainIcon name={targetChain?.name} />,
+        src: sourceChainId,
+        dist: targetChainId,
       },
       tokens: [note.note.tokenSymbol, note.note.tokenSymbol],
       token: note.note.tokenSymbol,
@@ -397,6 +397,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
           if (results) {
             const [, message] = results;
             txHash = message;
+            transferTx.txHash = txHash;
           }
           // Cleanup NoteAccount state
           for (const note of transferData.inputNotes) {
@@ -418,6 +419,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
           const receipt = await tx.wait();
           txHash = receipt.transactionHash;
+          transferTx.txHash = txHash;
 
           // Cleanup NoteAccount state
           for (const note of transferData.inputNotes) {

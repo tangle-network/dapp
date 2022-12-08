@@ -245,14 +245,24 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     notes: string[],
     recipient: string,
     amount: string,
-    denomination: number,
+    metadataNote: Note,
     unwrapTokenAddress?: string
   ): Transaction<NewNotesTxResult> {
+    const { note } = metadataNote;
+    const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
+    const srcChainId = note.sourceChainId;
+    const distChainId = note.targetChainId;
+    const currencySymbol = note.tokenSymbol;
+    const wrappabledAssetAddress: string | undefined = unwrapTokenAddress;
+    const srcSymbol = wrappabledAssetAddress
+      ? this.inner.config.getCurrencyByAddress(wrappabledAssetAddress).symbol
+      : currencySymbol;
+
     const withdrawTx = Transaction.new<NewNotesTxResult>('Withdraw', {
-      wallets: { src: 'ETH', dist: 'ETH' },
-      tokens: ['wETH', 'WebbETH'],
-      token: 'WebbETH',
+      wallets: { src: Number(srcChainId), dist: Number(distChainId) },
+      tokens: [srcSymbol, currencySymbol],
+      token: currencySymbol,
       amount: Number(formattedAmount),
     });
     const executor = async () => {
