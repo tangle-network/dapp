@@ -1,12 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   TransactionItemStatus,
   TransactionPayload,
@@ -16,7 +8,11 @@ import {
   TransactionState,
   TransactionStatusValue,
 } from '@webb-tools/abstract-api-provider';
-import { TokenIcon } from '@webb-tools/icons';
+import {
+  ApiConfig,
+  ChainConfig,
+  CurrencyConfig,
+} from '@webb-tools/dapp-config';
 
 function transactionItemStatusFromTxStatus<Key extends TransactionState>(
   txStatus: TransactionState
@@ -34,10 +30,16 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
 }
 function mapTxToPayload(
   tx: Transaction<any>,
+  currencyConfig: Record<number, CurrencyConfig>,
+  chainConfig: Record<number, ChainConfig>,
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
   const { amount, wallets, token, tokens } = tx.metaData;
+  const srcExplorerURI = chainConfig[wallets.src]?.blockExplorerStub ?? '';
+  const SrcWallet = chainConfig[wallets.src]?.logo;
+  const DistWallet = chainConfig[wallets.dist]?.logo;
+  const SrcCurrency = currencyConfig[token.src]?.logo;
   return {
     id: tx.id,
     txStatus: {
@@ -47,24 +49,24 @@ function mapTxToPayload(
     },
     amount: String(amount),
     getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
-      return `https://explorer.moonbeam.network/${variant}/${addOrTxHash}`;
+      return `${
+        srcExplorerURI.endsWith('/') ? srcExplorerURI : srcExplorerURI + '/'
+      }${variant}/${addOrTxHash}`;
     },
     timestamp: tx.timestamp,
     token,
     tokens: tokens,
     wallets: {
-      src:
-        typeof wallets.src === 'string' ? (
-          <TokenIcon size={'lg'} name={wallets.src || 'default'} />
-        ) : (
-          wallets.src
-        ),
-      dist:
-        typeof wallets.dist === 'string' ? (
-          <TokenIcon size={'lg'} name={wallets.dist || 'default'} />
-        ) : (
-          wallets.dist
-        ),
+      src: (
+        <div className={'w-6 h-6'}>
+          <SrcWallet />
+        </div>
+      ),
+      dist: (
+        <div className={'w-6 h-6'}>
+          <DistWallet />
+        </div>
+      ),
     },
     onDismiss(): void {
       return dismissTransaction(tx.id);
@@ -110,11 +112,13 @@ export type TransactionQueueApi = {
     startNewTransaction(): void;
   };
 };
-export function useTxApiQueue(): TransactionQueueApi {
+export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
     []
   );
+  const { chains, currencies } = apiConfig;
+  console.log({ currencies, chains });
   const subscriptions =
     useRef<Map<string, Array<{ unsubscribe: () => void }>>>();
   const [mainTxId, setMainTxId] = useState<null | string>(null);
@@ -144,7 +148,11 @@ export function useTxApiQueue(): TransactionQueueApi {
       setMainTxId(tx.id);
       setTxQueue((queue) => {
         const next = [...queue, tx];
-        setTxPayloads(next.map((tx) => mapTxToPayload(tx, dismissTransaction)));
+        setTxPayloads(
+          next.map((tx) =>
+            mapTxToPayload(tx, currencies, chains, dismissTransaction)
+          )
+        );
         return [...queue, tx];
       });
       const sub = tx.$currentStatus.subscribe((updatedStatus) => {
@@ -190,6 +198,8 @@ export function useTxApiQueue(): TransactionQueueApi {
       txQueue,
       transactionPayloads,
       dismissTransaction,
+      currencies,
+      chains,
     ]
   );
   const cancelTransaction = useCallback(
@@ -201,8 +211,13 @@ export function useTxApiQueue(): TransactionQueueApi {
   );
 
   useEffect(() => {
-    setTxPayloads(txQueue.map((tx) => mapTxToPayload(tx, dismissTransaction)));
-  }, [txQueue, dismissTransaction]);
+    setTxPayloads(
+      txQueue.map((tx) =>
+        mapTxToPayload(tx, currencies, chains, dismissTransaction)
+      )
+    );
+  }, [currencies, chains, txQueue, dismissTransaction]);
+
   const startNewTransaction = useCallback(() => {
     setMainTxId(null);
   }, [setMainTxId]);
