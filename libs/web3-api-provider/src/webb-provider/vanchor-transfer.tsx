@@ -542,7 +542,6 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
     const commitment = generateCircomCommitment(parsedNote);
     const leafIndex = provingTree.getIndexByElement(commitment);
-    console.log('Create Utxo', leafIndex);
     const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
 
     return {
