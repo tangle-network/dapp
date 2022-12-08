@@ -42,7 +42,7 @@ const successBridgeInfo = [
   {
     title: 'Storage',
     description:
-      "Your notes are stored locally as you transact through this application and encrypted on-chain for persistent storage.",
+      'Your notes are stored locally as you transact through this application and encrypted on-chain for persistent storage.',
     icon: <Download />,
   },
   {
@@ -136,22 +136,23 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
             <SuccessModalBody />
           ) : (
             <>
-            <Typography variant="body2">
-                Your note account will be used to derive secrets that will be used to transact on the bridge. 
-                You should never share these secrets or your note account with anyone, 
-                including sharing the signature that was used to generate your account.
-            </Typography>
-            <div>
-              <CheckBox
-                isChecked={isChecked}
-                onChange={() => setIsChecked((prev) => !prev)}
-                spacingClassName="ml-2"
-                labelVariant="body2"
-              >
-                By selecting “Create Note Account”, you agree to Webb's Terms of
-                Use and Privacy Policy.
-              </CheckBox>
-            </div>
+              <Typography variant="body2">
+                Your note account will be used to derive secrets that will be
+                used to transact on the bridge. You should never share these
+                secrets or your note account with anyone, including sharing the
+                signature that was used to generate your account.
+              </Typography>
+              <div>
+                <CheckBox
+                  isChecked={isChecked}
+                  onChange={() => setIsChecked((prev) => !prev)}
+                  spacingClassName="ml-2"
+                  labelVariant="body2"
+                >
+                  By selecting “Create Note Account”, you agree to Webb's Terms
+                  of Use and Privacy Policy.
+                </CheckBox>
+              </div>
             </>
           )}
 
