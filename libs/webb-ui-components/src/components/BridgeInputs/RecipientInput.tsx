@@ -66,6 +66,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
       overrideInputProps,
       title,
       value,
+      isValidSet,
       ...props
     },
     ref
@@ -102,6 +103,12 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
       () => errorMessage || recipientError,
       [recipientError, errorMessage]
     );
+
+    useEffect(() => {
+      const isValid = (error?.trim() ?? '') === '';
+      isValidSet?.(isValid);
+    }, [error, isValidSet]);
+
     return (
       <>
         <InputWrapper
