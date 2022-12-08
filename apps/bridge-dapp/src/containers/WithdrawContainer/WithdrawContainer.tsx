@@ -193,15 +193,23 @@ export const WithdrawContainer = forwardRef<
   const isValidAmount = useMemo(() => {
     return amount > 0 && amount <= availableAmount;
   }, [amount, availableAmount]);
-
+  const [isValidRecipient, setIsValidRecipient] = useState(false);
   const isDisabledWithdraw = useMemo(() => {
     return [
       Boolean(governedCurrency), // No governed currency selected
       isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
+      isValidRecipient, // Invalid recipient address
     ].some((value) => value === false);
-  }, [governedCurrency, isUnwrap, isValidAmount, recipient, wrappableCurrency]);
+  }, [
+    governedCurrency,
+    isValidRecipient,
+    isUnwrap,
+    isValidAmount,
+    recipient,
+    wrappableCurrency,
+  ]);
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
@@ -370,6 +378,9 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         recipientInputProps={{
+          isValidSet(valid: boolean) {
+            setIsValidRecipient(valid);
+          },
           onChange: (recipient) => {
             setRecipient(recipient);
           },

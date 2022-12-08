@@ -221,6 +221,11 @@ export interface RecipientInputProps
    * Override props of input element
    */
   overrideInputProps?: Omit<InputProps, 'id'>;
+  /**
+   *
+   * set valid state of the input
+   * */
+  isValidSet?(valid: boolean): void;
 }
 
 export interface ShieldedAssetInputProps extends InputWrapperProps {
