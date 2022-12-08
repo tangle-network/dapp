@@ -76,4 +76,19 @@ export class ApiConfig {
 
     return 'Unknown';
   };
+  getCurrencyBySymbol(symbol): CurrencyConfig | undefined {
+    const currency = Object.keys(this.currencies).find(
+      (key) => this.currencies[key as any].symbol === symbol
+    );
+    return this.currencies[currency as any] ?? undefined;
+  }
+  getCurrencyByAddress(address: string): CurrencyConfig | undefined {
+    const currency = Object.keys(this.currencies).find((key) => {
+      const addresses = Array.from(
+        this.currencies[key as any].addresses.values()
+      ) as string[];
+      return addresses.includes(address);
+    });
+    return this.currencies[currency as any] ?? undefined;
+  }
 }
