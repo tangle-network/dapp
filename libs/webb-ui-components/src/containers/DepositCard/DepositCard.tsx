@@ -46,52 +46,57 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     return (
       <div
         {...props}
-        className={twMerge('flex flex-col space-y-4 max-w-[518px]', className)}
+        className={twMerge(
+          'flex flex-col justify-between max-w-[518px]',
+          className
+        )}
         ref={ref}
       >
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <ChainInput {...sourceChainProps} chainType="source" />
+        <div className="space-y-4">
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <ChainInput {...sourceChainProps} chainType="source" />
 
-          <div className="flex space-x-2">
-            <TokenInput
-              {...tokenInputProps}
-              className="grow shrink-0 basis-1"
-            />
-
-            {bridgingTokenProps && (
+            <div className="flex space-x-2">
               <TokenInput
-                {...bridgingTokenProps}
-                title="Bridging Token"
+                {...tokenInputProps}
                 className="grow shrink-0 basis-1"
               />
-            )}
+
+              {bridgingTokenProps && (
+                <TokenInput
+                  {...bridgingTokenProps}
+                  title="Bridging Token"
+                  className="grow shrink-0 basis-1"
+                />
+              )}
+            </div>
+          </BridgeInputGroup>
+
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <ChainInput {...destChainProps} chainType="dest" />
+            <AmountInput {...amountInputProps} />
+          </BridgeInputGroup>
+
+          {/** Info */}
+          <div className="flex flex-col space-y-1">
+            <InfoItem
+              leftTextProps={{
+                title: 'Depositing',
+                variant: 'utility',
+                info: 'Depositing',
+              }}
+              rightContent={amount}
+            />
+
+            <InfoItem
+              leftTextProps={{
+                title: `Fees ${feePercentage ? `(${feePercentage}%)` : ''}`,
+                variant: 'utility',
+                info: 'Fees',
+              }}
+              rightContent={fee}
+            />
           </div>
-        </BridgeInputGroup>
-
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <ChainInput {...destChainProps} chainType="dest" />
-          <AmountInput {...amountInputProps} />
-        </BridgeInputGroup>
-
-        {/** Info */}
-        <div className="flex flex-col space-y-1">
-          <InfoItem
-            leftTextProps={{
-              title: 'Depositing',
-              variant: 'utility',
-              info: 'Depositing',
-            }}
-            rightContent={amount}
-          />
-
-          <InfoItem
-            leftTextProps={{
-              title: `Fees ${feePercentage ? `(${feePercentage}%)` : ''}`,
-              variant: 'utility',
-              info: 'Fees',
-            }}
-            rightContent={fee}
-          />
         </div>
 
         <Button
