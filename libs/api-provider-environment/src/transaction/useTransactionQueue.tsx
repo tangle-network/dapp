@@ -128,7 +128,6 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
     []
   );
   const { chains, currencies } = apiConfig;
-  console.log({ currencies, chains });
   const subscriptions =
     useRef<Map<string, Array<{ unsubscribe: () => void }>>>();
   const [mainTxId, setMainTxId] = useState<null | string>(null);
