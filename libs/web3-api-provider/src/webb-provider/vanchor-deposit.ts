@@ -125,10 +125,14 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const srcChainId = note.sourceChainId;
     const distChainId = note.targetChainId;
     const currencySymbol = note.tokenSymbol;
+    const wrappabledAssetAddress: string | undefined = depositPayload.params[2];
+    const srcSymbol = wrappabledAssetAddress
+      ? this.inner.config.getCurrencyByAddress(wrappabledAssetAddress).symbol
+      : currencySymbol;
     const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
       wallets: { src: Number(srcChainId), dist: Number(distChainId) },
-      tokens: ['wETH', currencySymbol],
-      token: 'WebbETH',
+      tokens: [srcSymbol, currencySymbol],
+      token: currencySymbol,
       amount: Number(formattedAmount),
     });
     const ex = async () => {

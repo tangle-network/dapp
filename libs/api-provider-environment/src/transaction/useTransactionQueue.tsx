@@ -39,7 +39,6 @@ function mapTxToPayload(
   const srcExplorerURI = chainConfig[wallets.src]?.blockExplorerStub ?? '';
   const SrcWallet = chainConfig[wallets.src]?.logo;
   const DistWallet = chainConfig[wallets.dist]?.logo;
-  const SrcCurrency = currencyConfig[token.src]?.logo;
   return {
     id: tx.id,
     txStatus: {
