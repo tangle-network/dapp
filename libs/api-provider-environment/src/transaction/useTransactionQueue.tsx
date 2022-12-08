@@ -1,12 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   TransactionItemStatus,
   TransactionPayload,
@@ -16,7 +8,11 @@ import {
   TransactionState,
   TransactionStatusValue,
 } from '@webb-tools/abstract-api-provider';
-import { TokenIcon } from '@webb-tools/icons';
+import {
+  ApiConfig,
+  ChainConfig,
+  CurrencyConfig,
+} from '@webb-tools/dapp-config';
 
 function transactionItemStatusFromTxStatus<Key extends TransactionState>(
   txStatus: TransactionState
@@ -34,42 +30,58 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
 }
 function mapTxToPayload(
   tx: Transaction<any>,
+  currencyConfig: Record<number, CurrencyConfig>,
+  chainConfig: Record<number, ChainConfig>,
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
   const { amount, wallets, token, tokens } = tx.metaData;
+  const srcExplorerURI = chainConfig[wallets.src]?.blockExplorerStub ?? '';
+  const SrcWallet = chainConfig[wallets.src]?.logo;
+  const DistWallet = chainConfig[wallets.dist]?.logo;
+  const getExplorerURI = (
+    addOrTxHash: string,
+    variant: 'tx' | 'address'
+  ): string => {
+    return `${
+      srcExplorerURI.endsWith('/') ? srcExplorerURI : srcExplorerURI + '/'
+    }${variant}/${addOrTxHash}`;
+  };
+  const onDetails = tx.txHash
+    ? () => {
+        const url = getExplorerURI(tx.txHash!, 'tx');
+        open(url, '_blank', 'noopener noreferrer');
+      }
+    : undefined;
   return {
     id: tx.id,
     txStatus: {
       status: transactionItemStatusFromTxStatus(txStatus),
       message: getTxMessageFromStatus(txStatus, data),
       txHash: tx.txHash,
+      recipient: tx.metaData.recipient,
     },
     amount: String(amount),
-    getExplorerURI(addOrTxHash: string, variant: 'tx' | 'address'): string {
-      return `https://explorer.moonbeam.network/${variant}/${addOrTxHash}`;
-    },
+    getExplorerURI,
     timestamp: tx.timestamp,
     token,
     tokens: tokens,
     wallets: {
-      src:
-        typeof wallets.src === 'string' ? (
-          <TokenIcon size={'lg'} name={wallets.src || 'default'} />
-        ) : (
-          wallets.src
-        ),
-      dist:
-        typeof wallets.dist === 'string' ? (
-          <TokenIcon size={'lg'} name={wallets.dist || 'default'} />
-        ) : (
-          wallets.dist
-        ),
+      src: (
+        <div className={'w-4 h-4'}>
+          <SrcWallet />
+        </div>
+      ),
+      dist: (
+        <div className={'w-4 h-4'}>
+          <DistWallet />
+        </div>
+      ),
     },
     onDismiss(): void {
       return dismissTransaction(tx.id);
     },
-
+    onDetails,
     method: tx.name as any,
   };
 }
@@ -110,11 +122,12 @@ export type TransactionQueueApi = {
     startNewTransaction(): void;
   };
 };
-export function useTxApiQueue(): TransactionQueueApi {
+export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
     []
   );
+  const { chains, currencies } = apiConfig;
   const subscriptions =
     useRef<Map<string, Array<{ unsubscribe: () => void }>>>();
   const [mainTxId, setMainTxId] = useState<null | string>(null);
@@ -144,7 +157,11 @@ export function useTxApiQueue(): TransactionQueueApi {
       setMainTxId(tx.id);
       setTxQueue((queue) => {
         const next = [...queue, tx];
-        setTxPayloads(next.map((tx) => mapTxToPayload(tx, dismissTransaction)));
+        setTxPayloads(
+          next.map((tx) =>
+            mapTxToPayload(tx, currencies, chains, dismissTransaction)
+          )
+        );
         return [...queue, tx];
       });
       const sub = tx.$currentStatus.subscribe((updatedStatus) => {
@@ -171,8 +188,15 @@ export function useTxApiQueue(): TransactionQueueApi {
             if (txPayload.id !== tx.id) {
               return txPayload;
             }
+            const onDetails = txHash
+              ? () => {
+                  const uri = txPayload.getExplorerURI?.(txHash, 'tx');
+                  open(uri, '_blank');
+                }
+              : undefined;
             return {
               ...txPayload,
+              onDetails,
               txStatus: {
                 ...txPayload.txStatus,
                 txHash,
@@ -190,6 +214,8 @@ export function useTxApiQueue(): TransactionQueueApi {
       txQueue,
       transactionPayloads,
       dismissTransaction,
+      currencies,
+      chains,
     ]
   );
   const cancelTransaction = useCallback(
@@ -201,8 +227,13 @@ export function useTxApiQueue(): TransactionQueueApi {
   );
 
   useEffect(() => {
-    setTxPayloads(txQueue.map((tx) => mapTxToPayload(tx, dismissTransaction)));
-  }, [txQueue, dismissTransaction]);
+    setTxPayloads(
+      txQueue.map((tx) =>
+        mapTxToPayload(tx, currencies, chains, dismissTransaction)
+      )
+    );
+  }, [currencies, chains, txQueue, dismissTransaction]);
+
   const startNewTransaction = useCallback(() => {
     setMainTxId(null);
   }, [setMainTxId]);
