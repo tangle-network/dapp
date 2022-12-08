@@ -12,6 +12,10 @@ import { RecipientInputProps } from './types';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
+function isValidPublicKey(maybePublicKey: string): boolean {
+  return maybePublicKey.startsWith('0x') && maybePublicKey.length === 130;
+}
+
 function isValidAddress(address: string) {
   const maybeEvm = address.replace('0x', '').length === 40;
   const maybeSS58 = !address.startsWith('0x');
@@ -86,10 +90,14 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         const address = nextVal.trim();
         setAddress(address.toString());
         onChangeProp?.(address);
-        if (isValidAddress(address) || address === '') {
+        if (
+          isValidAddress(address) ||
+          address === '' ||
+          isValidPublicKey(address)
+        ) {
           setRecipientError(undefined);
         } else {
-          setRecipientError('Invalid address');
+          setRecipientError('Invalid address ');
         }
       },
       [onChangeProp, setAddress, setRecipientError]
