@@ -83,13 +83,15 @@ export const TransactionCardFooter: FC<
           </Typography>
         )}
         {link && (
-          <Typography
-            variant={'body4'}
-            fw={'bold'}
-            className={twMerge(textClass, 'flex items-center')}
-          >
-            {link.text}
-          </Typography>
+          <a href={link.uri} target={'_blank'}>
+            <Typography
+              variant={'body4'}
+              fw={'bold'}
+              className={twMerge(textClass, 'flex items-center')}
+            >
+              {link.text}
+            </Typography>
+          </a>
         )}
       </div>
       <div className={'flex grow justify-end'}>

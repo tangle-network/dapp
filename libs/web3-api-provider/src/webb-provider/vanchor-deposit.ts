@@ -317,6 +317,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             );
 
             this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.txHash = tx.hash;
             depositTx.next(TransactionState.SendingTransaction, tx.hash);
             // emit event for waiting for transaction to confirm
             const receipt = await tx.wait();
@@ -389,6 +390,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             );
 
             this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.txHash = tx.hash;
             depositTx.next(TransactionState.SendingTransaction, tx.hash);
 
             // emit event for waiting for transaction to confirm

@@ -162,7 +162,7 @@ export const TransactionProgressCard = forwardRef<
     // Fix lottie animation prevents the image form loading ?!
     const [showAnimation, setShowAnimation] = useState(false);
     useEffect(() => {
-      let t;
+      let t: ReturnType<typeof setTimeout>;
       if (status === 'completed') {
         t = setTimeout(() => setShowAnimation(true), 100);
       } else {
