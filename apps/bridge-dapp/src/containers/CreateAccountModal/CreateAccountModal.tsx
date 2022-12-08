@@ -1,6 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import cx from 'classnames';
-import { ExchangeLine, TimeLineIcon, WalletLineIcon } from '@webb-tools/icons';
+import {
+  ExchangeLine,
+  InformationLine,
+  WalletLineIcon,
+  Download,
+} from '@webb-tools/icons';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import {
   Button,
@@ -18,6 +23,7 @@ import Lottie from 'lottie-react';
 import privacySecurityJson from './privacy-security.json';
 import congratJson from './congrat.json';
 
+// TODO: Update message
 const loginMessage = 'Logging into Webb';
 
 // TODO: Correct the url here
@@ -30,20 +36,26 @@ const successBridgeInfo = [
   {
     title: 'Deposit',
     description:
-      'By making a deposit, you will generate a random key (spend note) and deposit funds, along with submitting a hash of the note to the Webb smart contract.',
+      "Making a deposit will utilize your note account's public key to create a unique UTXO record that can only be spent by you.",
     icon: <WalletLineIcon />,
   },
   {
-    title: 'Wait',
+    title: 'Storage',
     description:
-      'After depositing, you should wait some amount of time before withdrawing to improve privacy.',
-    icon: <TimeLineIcon />,
+      'Your notes are stored locally as you transact through this application and encrypted on-chain for persistent storage.',
+    icon: <Download />,
   },
   {
     title: 'Withdraw/Transfer',
     description:
-      'By making a withdrawal or transfer, Webb will submit a proof of having the valid key of one of the notes deposited and the contract transfers funds to a specified recipient.',
+      "Using your note account's private key, you can generate the zero-knowledge proofs necessary for spending your stored UTXOs.",
     icon: <ExchangeLine />,
+  },
+  {
+    title: 'Privacy',
+    description:
+      'To maximize your privacy and protect yourself while transacting, read through our recommended user behaviors.',
+    icon: <InformationLine />,
   },
 ];
 
@@ -123,17 +135,25 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           {isSuccess ? (
             <SuccessModalBody />
           ) : (
-            <div>
-              <CheckBox
-                isChecked={isChecked}
-                onChange={() => setIsChecked((prev) => !prev)}
-                spacingClassName="ml-2"
-                labelVariant="body3"
-              >
-                By selecting “Create Note Account”, you agree to Webb's Terms of
-                Use and Privacy Policy.
-              </CheckBox>
-            </div>
+            <>
+              <Typography variant="body2">
+                Your note account will be used to derive secrets that will be
+                used to transact on the bridge. You should never share these
+                secrets or your note account with anyone, including sharing the
+                signature that was used to generate your account.
+              </Typography>
+              <div>
+                <CheckBox
+                  isChecked={isChecked}
+                  onChange={() => setIsChecked((prev) => !prev)}
+                  spacingClassName="ml-2"
+                  labelVariant="body2"
+                >
+                  By selecting “Create Note Account”, you agree to Webb's Terms
+                  of Use and Privacy Policy.
+                </CheckBox>
+              </div>
+            </>
           )}
 
           {/** Confetti animation */}
