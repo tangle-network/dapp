@@ -154,6 +154,11 @@ export interface AmountInputComponentProps extends InputWrapperComponentProps {
    * Override props of input element
    */
   overrideInputProps?: Omit<InputProps, 'id'>;
+
+  /**
+   * Disable the input
+   */
+  isDisabled?: boolean;
 }
 
 export interface FixedAmountProps
@@ -183,6 +188,11 @@ export interface FixedAmountProps
    * The amount menu props to pass into the AmountMenu component
    */
   amountMenuProps?: ComponentProps<typeof AmountMenu>;
+
+  /**
+   * Disable the input
+   */
+  isDisabled?: boolean;
 }
 
 export interface RecipientInputProps

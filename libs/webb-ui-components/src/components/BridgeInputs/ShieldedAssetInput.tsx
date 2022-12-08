@@ -57,7 +57,7 @@ export const ShieldedAssetInput = forwardRef<
         <Label htmlFor={id}>
           <TitleWithInfo
             title={title}
-            variant="body4"
+            variant="utility"
             info={info}
             titleComponent="span"
             className="text-mono-100 dark:text-mono-80"
@@ -66,10 +66,7 @@ export const ShieldedAssetInput = forwardRef<
         </Label>
 
         {asset ? (
-          <TokenPair
-            token1Symbol={asset.symbol}
-            token2Symbol={asset.symbol}
-          />
+          <TokenPair token1Symbol={asset.symbol} token2Symbol={asset.symbol} />
         ) : (
           <Typography variant="body1" fw="bold">
             Select {title}

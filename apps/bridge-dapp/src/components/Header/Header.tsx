@@ -1,5 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { currenciesConfig } from '@webb-tools/dapp-config';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Button,
   ChainListCard,
@@ -98,23 +99,40 @@ export const Header: FC<HeaderProps> = () => {
 export const ChainSelectionWrapper: FC<{
   sourceChains: ChainType[];
 }> = ({ sourceChains }) => {
-  const { chains } = useWebContext();
+  const { chains, activeWallet, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
 
   return (
     <ChainListCard
-      className="w-[550px] h-[720px]"
+      className="w-[550px] h-[700px]"
+      overrideScrollAreaProps={{ className: 'h-[550px]' }}
       chainType="source"
       chains={sourceChains}
-      onChange={(selectedChain) => {
+      onChange={async (selectedChain) => {
         const chain = Object.values(chains).find(
           (val) => val.name === selectedChain.name
         );
-        if (chain) {
-          setMainComponent(
-            <WalletModal chain={chain} sourceChains={sourceChains} />
-          );
+
+        if (!chain) {
+          throw new Error('Detect unsupported chain is being selected');
         }
+
+        const isSupported =
+          activeWallet &&
+          activeWallet.supportedChainIds.includes(
+            calculateTypedChainId(chain.chainType, chain.chainId)
+          );
+
+        // If the selected chain is supported by the active wallet
+        if (isSupported) {
+          await switchChain(chain, activeWallet);
+          setMainComponent(undefined);
+          return;
+        }
+
+        setMainComponent(
+          <WalletModal chain={chain} sourceChains={sourceChains} />
+        );
       }}
       onClose={() => setMainComponent(undefined)}
     />

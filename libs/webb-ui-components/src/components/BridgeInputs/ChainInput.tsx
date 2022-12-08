@@ -34,7 +34,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
                 (chainType === 'source' ? 'Source' : 'Destination') + ' chain'
               }
               info={info}
-              variant="body4"
+              variant="utility"
               className="text-mono-100 dark:text-mono-80"
               titleClassName="uppercase !text-inherit"
             />

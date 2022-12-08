@@ -27,7 +27,7 @@ export const WalletModal: FC<{
   return (
     <>
       <ChainListCard
-        className="w-[550px] h-[720px]"
+        className="w-[550px] h-[700px]"
         chainType="source"
         chains={sourceChains}
       />

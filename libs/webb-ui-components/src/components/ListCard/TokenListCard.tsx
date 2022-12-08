@@ -117,6 +117,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 <AssetListItem
                   key={`${current.name}-${idx}`}
                   {...current}
+                  isDisabled
                   onClick={() => onItemChange(current)}
                 />
               ))}

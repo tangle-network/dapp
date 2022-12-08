@@ -14,6 +14,11 @@ export interface BridgeTabContainerProps {
    * The default governed currency
    */
   defaultGovernedCurrency?: Currency;
+
+  /**
+   * The on try another wallet callback
+   */
+  onTryAnotherWallet?: () => void;
 }
 
 export interface NoteAccountTableContainerProps {
