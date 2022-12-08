@@ -10,7 +10,6 @@ import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { u8aToHex } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 function isValidAddress(address: string) {
@@ -24,7 +23,6 @@ function isValidAddress(address: string) {
   if (maybeSS58) {
     try {
       encodeAddress(decodeAddress(address));
-      console.log(u8aToHex(decodeAddress(address)));
       return true;
     } catch {
       return false;
