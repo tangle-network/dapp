@@ -29,6 +29,7 @@ import {
   ProposalListItem,
   ProposalStatus,
   useProposalsOverview,
+  useProposalsOvertimeCount,
 } from '../provider/hooks';
 import { mapChainIdToLogo } from '../utils';
 
@@ -116,6 +117,7 @@ const Proposals = () => {
     const start = Math.floor(
       Math.max(Number(lastProcessBlock) - rangeTimeSec / blockTime, 0)
     );
+
     return {
       end,
       start,
@@ -123,6 +125,8 @@ const Proposals = () => {
   }, [timeRange, lastProcessBlock, blockTime]);
 
   const overview = useProposalsOverview(activeSession, range);
+
+  const overtimeData = useProposalsOvertimeCount('six-months');
 
   const data = useMemo(() => {
     if (overview.val) {
