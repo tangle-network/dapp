@@ -35,6 +35,8 @@ import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
 interface MainComponentProposVariants {
+  ['source-chain-list-card']: ChainListCardProps;
+  ['dest-chain-list-card']: ChainListCardProps;
   ['chain-list-card']: ChainListCardProps;
   ['token-deposit-list-card']: TokenListCardProps;
   ['token-wrap-and-deposit-list-card']: TokenListCardProps;
@@ -302,7 +304,7 @@ export const DepositContainer = forwardRef<
     );
 
     const sourceChainInputOnClick = useCallback(() => {
-      setMainComponentName('chain-list-card');
+      setMainComponentName('source-chain-list-card');
     }, [setMainComponentName]);
 
     // Main action on click
@@ -552,7 +554,24 @@ export const DepositContainer = forwardRef<
       setMainComponentName,
       populatedAllTokens,
     ]);
-    const chainListCardProps = useMemo<ChainListCardProps>(() => {
+    const destChainListCardProps = useMemo<ChainListCardProps>(() => {
+      return {
+        className: 'w-[550px] h-[700px]',
+        overrideScrollAreaProps: { className: 'h-[550px]' },
+        chainType: 'dest',
+        chains: destChains,
+        value: destChainInputValue,
+        onChange: async (selectedChain) => {
+          const destChain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+          setDestChain(destChain);
+          setMainComponentName(undefined);
+        },
+        onClose: () => setMainComponentName(undefined),
+      };
+    }, [destChains, destChainInputValue, setDestChain, setMainComponentName]);
+    const sourceChainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
         overrideScrollAreaProps: { className: 'h-[550px]' },
@@ -634,11 +653,18 @@ export const DepositContainer = forwardRef<
               'token-wrap-and-deposit-list-card': tokenListDepositProps,
             },
           ];
-        case 'chain-list-card':
+        case 'source-chain-list-card':
           return [
             ChainListCard,
             {
-              'chain-list-card': chainListCardProps,
+              'source-chain-list-card': sourceChainListCardProps,
+            },
+          ];
+        case 'dest-chain-list-card':
+          return [
+            ChainListCard,
+            {
+              'dest-chain-list-card': destChainListCardProps,
             },
           ];
         case 'wallet-modal':
@@ -672,7 +698,8 @@ export const DepositContainer = forwardRef<
       mainComponentName,
       depositConfirmContainerProps,
       chainSelectionWrapperProps,
-      chainListCardProps,
+      sourceChainListCardProps,
+      destChainListCardProps,
       walletModalProps,
       tokenListWrapAndDepositProps,
       tokenListDepositProps,
@@ -690,7 +717,6 @@ export const DepositContainer = forwardRef<
         setMainComponent(undefined);
       }
     }, [setMainComponentArgs, setMainComponent]);
-
     return (
       <>
         <div {...props} ref={ref}>
@@ -705,7 +731,7 @@ export const DepositContainer = forwardRef<
             destChainProps={{
               chain: destChainInputValue,
               onClick: () => {
-                setMainComponentName('chain-list-card');
+                setMainComponentName('dest-chain-list-card');
               },
               chainType: 'dest',
             }}
