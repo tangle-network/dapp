@@ -46,6 +46,7 @@ import { PolkadotVAnchorWithdraw } from './webb-provider/vanchor-withdraw';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -57,7 +58,7 @@ export class WebbPolkadot
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
-
+  readonly _newBlock = new BehaviorSubject<null | number>(null);
   private constructor(
     apiPromise: ApiPromise,
     readonly typedChainId: number,
@@ -265,6 +266,11 @@ export class WebbPolkadot
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
     // await instance.ensureApiInterface();
+    const unsub = await instance.listenerBlocks();
+    instance.destroy = async () => {
+      await instance.destroy();
+      unsub();
+    };
     return instance;
   }
 
@@ -306,11 +312,28 @@ export class WebbPolkadot
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
-
+    const unsub = await instance.listenerBlocks();
+    instance.destroy = async () => {
+      await instance.destroy();
+      unsub();
+    };
     return instance;
   }
 
   async destroy(): Promise<void> {
     await this.provider.destroy();
+  }
+  private async listenerBlocks() {
+    const block = await this.provider.api.query.system.number();
+    this._newBlock.next(block.toNumber());
+    const sub = await this.provider.api.rpc.chain.subscribeFinalizedHeads(
+      (header) => {
+        this._newBlock.next(header.number.toNumber());
+      }
+    );
+    return sub;
+  }
+  get newBlock(): Observable<number | null> {
+    return this._newBlock.asObservable();
   }
 }
