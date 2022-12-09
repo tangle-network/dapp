@@ -9,16 +9,14 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: ApiConfig['anchors'] = {
   [CurrencyId.webbETH]: {
-    [PresetTypedChainId.Goerli]: '0xdc9f140987073619d64898be00143dd312cdc71a',
-    [PresetTypedChainId.Sepolia]: '0xa5672fdfe6700452a828c514a9d5b3b4dc5230bf',
+    [PresetTypedChainId.Goerli]: '0xbd7e08ef54dfb43e9a86eb12a3ecab7564dee931',
+    [PresetTypedChainId.Sepolia]: '0x965c94a6e1b713e751164d2ba09aa0306f48ee74',
     [PresetTypedChainId.PolygonTestnet]:
-      '0xcc1f5ebddb858f96051ef315969edaa936ae70e3',
+      '0x965c94a6e1b713e751164d2ba09aa0306f48ee74',
     [PresetTypedChainId.OptimismTestnet]:
-      '0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f',
-    [PresetTypedChainId.ArbitrumTestnet]:
-      '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07',
+      '0x26a37ce74e5214dd661070601db14a6a8a2fadd9',
     [PresetTypedChainId.MoonbaseAlpha]:
-      '0x1349f444a5cd98c5863f786496ca53f3f651f7c7',
+      '0x75e452a3ce366575f75737438c0fdfe618853946',
   },
   [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
