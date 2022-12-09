@@ -49,7 +49,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
           <Label htmlFor={id}>
             <TitleWithInfo
               title={title}
-              variant="body4"
+              variant="utility"
               info={info}
               titleComponent="span"
               className="text-mono-100 dark:text-mono-80"

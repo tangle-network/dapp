@@ -13,13 +13,14 @@ import { FC, useMemo } from 'react';
 import { WalletModal } from './WalletModal';
 import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components/WalletConnectionCard';
 import { HeaderButton } from './HeaderButton';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 
 /**
  * The ChainSwitcherButton defines the clickable button in the Header,
  * as well as the displayable component passed to the WebbUI's special "customMainComponent"
  */
 export const ChainSwitcherButton: FC = () => {
-  const { chains, activeChain } = useWebContext();
+  const { chains, activeChain, activeWallet, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
 
   const sourceChains: ChainType[] = useMemo(() => {
@@ -40,7 +41,8 @@ export const ChainSwitcherButton: FC = () => {
       onClick={() =>
         setMainComponent(
           <ChainListCard
-            className="w-[550px] h-[720px]"
+            className="w-[550px] h-[700px]"
+            overrideScrollAreaProps={{ className: 'h-[550px]' }}
             chainType="source"
             chains={sourceChains}
             value={{
@@ -52,11 +54,27 @@ export const ChainSwitcherButton: FC = () => {
               const chain = Object.values(chains).find(
                 (val) => val.name === selectedChain.name
               );
-              if (chain) {
-                setMainComponent(
-                  <WalletModal chain={chain} sourceChains={sourceChains} />
-                );
+
+              if (!chain) {
+                throw new Error('Detect unsupported chain is being selected');
               }
+
+              const isSupported =
+                activeWallet &&
+                activeWallet.supportedChainIds.includes(
+                  calculateTypedChainId(chain.chainType, chain.chainId)
+                );
+
+              // If the selected chain is supported by the active wallet
+              if (isSupported) {
+                await switchChain(chain, activeWallet);
+                setMainComponent(undefined);
+                return;
+              }
+
+              setMainComponent(
+                <WalletModal chain={chain} sourceChains={sourceChains} />
+              );
             }}
           />
         )

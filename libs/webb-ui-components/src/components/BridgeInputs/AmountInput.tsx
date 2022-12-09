@@ -25,13 +25,14 @@ export const AmountInput = forwardRef<
       amount,
       amountMenuProps,
       className,
+      errorMessage,
       id = 'amount',
       info,
-      errorMessage,
+      isDisabled,
       onAmountChange,
       onMaxBtnClick,
-      title = 'Amount',
       overrideInputProps,
+      title = 'Amount',
       ...props
     },
     ref
@@ -61,7 +62,7 @@ export const AmountInput = forwardRef<
               <TitleWithInfo
                 title={title}
                 info={info}
-                variant="body4"
+                variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"
                 titleClassName="uppercase !text-inherit"
@@ -87,15 +88,22 @@ export const AmountInput = forwardRef<
               id={id}
               name={id}
               value={amount}
+              type="number"
               onChange={onAmountChange}
               placeholder="0"
               size="sm"
               autoComplete="off"
+              isDisabled={isDisabled}
               {...overrideInputProps}
             />
           </div>
 
-          <Button onClick={onMaxBtnClick} variant="utility" size="sm">
+          <Button
+            isDisabled={isDisabled}
+            onClick={onMaxBtnClick}
+            variant="utility"
+            size="sm"
+          >
             Max
           </Button>
         </InputWrapper>

@@ -2,8 +2,9 @@ import React, { FC, useCallback } from 'react';
 import { TransactionCardItemProps, TransactionCardFooterProps } from './types';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
-import { Spinner } from '@webb-tools/icons';
+import { ExternalLinkLine, Spinner } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
 /**
  *  Transaction card footer
@@ -83,13 +84,20 @@ export const TransactionCardFooter: FC<
           </Typography>
         )}
         {link && (
-          <Typography
-            variant={'body4'}
-            fw={'bold'}
-            className={twMerge(textClass, 'flex items-center')}
-          >
-            {link.text}
-          </Typography>
+          <a rel="noopener noreferrer" href={link.uri} target="_blank">
+            <Typography
+              variant={'body4'}
+              fw={'bold'}
+              className={twMerge(textClass, 'flex items-center')}
+            >
+              {link.text}
+              <ExternalLinkIcon
+                width={12}
+                height={12}
+                className="!fill-current inline whitespace-nowrap ml-1"
+              />
+            </Typography>
+          </a>
         )}
       </div>
       <div className={'flex grow justify-end'}>

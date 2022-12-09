@@ -3,6 +3,7 @@
 
 import type { WebbApiProvider } from '../webb-provider.interface';
 import { NewNotesTxResult, Transaction } from '../transaction';
+import type { Note } from '@webb-tools/sdk-core';
 
 export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> {
   constructor(protected inner: T) {}
@@ -11,7 +12,7 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> {
     notes: string[],
     recipient: string,
     amount: string,
-    denomination: number,
+    metaDataNote: Note,
     unwrapTokenAddress?: string
   ): Transaction<NewNotesTxResult>;
 }

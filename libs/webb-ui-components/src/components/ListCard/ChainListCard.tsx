@@ -1,5 +1,6 @@
 import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 
 import { Button } from '../Button';
@@ -12,7 +13,15 @@ import { ChainListCardProps, ChainType } from './types';
 
 export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
-    { chainType, chains, onChange, onClose, value: selectedChain, ...props },
+    {
+      chainType,
+      chains,
+      onChange,
+      onClose,
+      value: selectedChain,
+      overrideScrollAreaProps,
+      ...props
+    },
     ref
   ) => {
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
@@ -71,7 +80,13 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         </div>
 
         {/** Token list */}
-        <ScrollArea className="min-w-[350px] h-[376px]">
+        <ScrollArea
+          {...overrideScrollAreaProps}
+          className={twMerge(
+            'min-w-[350px] h-[376px]',
+            overrideScrollAreaProps?.className
+          )}
+        >
           <ul className="p-2">
             {filteredChains.map((currentChain, idx) => {
               const isSelected =

@@ -101,14 +101,13 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           // If the available notes are not sufficient for requested withdraw, return.
           // This case shouldn't be hit because the frontend should not make a withdraw
           // call if the form inputs are not sufficient.
-          if (!withdrawNotes) {
+          if (!withdrawNotes || withdrawNotes.length === 0) {
             console.log('no withdrawNotes detected');
             return;
           }
           const withdrawNoteStrings = withdrawNotes.map((note) =>
             note.serialize()
           );
-          const denomination = Number(withdrawNotes[0].note.denomination);
           const payload = withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
@@ -118,7 +117,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
                 params.notes[0].note.denomination
               )
               .toString(),
-            denomination,
+            withdrawNotes[0],
             params.unwrapTokenAddress
           );
           if (payload instanceof Transaction) {

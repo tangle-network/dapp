@@ -36,7 +36,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
           <Label htmlFor={id}>
             <TitleWithInfo
               title="Relayer"
-              variant="body4"
+              variant="utility"
               info={info}
               titleComponent="span"
               className="text-mono-100 dark:text-mono-80"

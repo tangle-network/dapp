@@ -45,61 +45,65 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col space-y-4 max-w-[518px] w-full',
+          'flex flex-col max-w-[518px] w-full justify-between',
           className
         )}
         ref={ref}
       >
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <TokenInput {...bridgeAssetProps} />
-        </BridgeInputGroup>
+        <div className="space-y-4">
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <TokenInput {...bridgeAssetProps} />
+          </BridgeInputGroup>
 
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <ChainInput {...destChainInputProps} chainType="dest" />
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <ChainInput {...destChainInputProps} chainType="dest" />
 
-          <AmountInput {...amountInputProps} />
-        </BridgeInputGroup>
+            <AmountInput {...amountInputProps} />
+          </BridgeInputGroup>
 
-        <BridgeInputGroup className="flex flex-col space-y-2">
-          <RelayerInput {...relayerInputProps} />
+          <BridgeInputGroup className="flex flex-col space-y-2">
+            <RelayerInput {...relayerInputProps} />
 
-          <RecipientInput {...recipientInputProps} />
-        </BridgeInputGroup>
+            <RecipientInput {...recipientInputProps} />
+          </BridgeInputGroup>
 
-        {/** Info */}
-        <div className="flex flex-col space-y-1">
-          <InfoItem
-            leftTextProps={{
-              title: 'Transfering',
-              variant: 'utility',
-              info: 'Transfering',
-            }}
-            rightContent={
-              transferAmount ? `${transferAmount} ${transferToken}` : undefined
-            }
-          />
+          {/** Info */}
+          <div className="flex flex-col space-y-1">
+            <InfoItem
+              leftTextProps={{
+                title: 'Transfering',
+                variant: 'utility',
+                info: 'Transfering',
+              }}
+              rightContent={
+                transferAmount
+                  ? `${transferAmount} ${transferToken}`
+                  : undefined
+              }
+            />
 
-          <InfoItem
-            leftTextProps={{
-              title: 'Change Amount',
-              variant: 'utility',
-              info: 'Change Amount',
-            }}
-            rightContent={
-              changeAmount ? `${changeAmount} ${transferToken}` : undefined
-            }
-          />
+            <InfoItem
+              leftTextProps={{
+                title: 'Change Amount',
+                variant: 'utility',
+                info: 'Change Amount',
+              }}
+              rightContent={
+                changeAmount ? `${changeAmount} ${transferToken}` : undefined
+              }
+            />
 
-          <InfoItem
-            leftTextProps={{
-              title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
-              variant: 'utility',
-              info: 'Fees',
-            }}
-            rightContent={
-              feeAmount ? `${feeAmount} ${transferToken}` : undefined
-            }
-          />
+            <InfoItem
+              leftTextProps={{
+                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
+                variant: 'utility',
+                info: 'Fees',
+              }}
+              rightContent={
+                feeAmount ? `${feeAmount} ${transferToken}` : undefined
+              }
+            />
+          </div>
         </div>
 
         <Button

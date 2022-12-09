@@ -119,16 +119,20 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
   }
 
   deposit(depositPayload: DepositPayload): Transaction<NewNotesTxResult> {
-    const note = depositPayload.note;
+    const { note } = depositPayload.note;
     const amount = depositPayload.params[0].amount;
-    const formattedAmount = ethers.utils.formatUnits(
-      amount,
-      note.note.denomination
-    );
+    const formattedAmount = ethers.utils.formatUnits(amount, note.denomination);
+    const srcChainId = note.sourceChainId;
+    const distChainId = note.targetChainId;
+    const currencySymbol = note.tokenSymbol;
+    const wrappabledAssetAddress: string | undefined = depositPayload.params[2];
+    const srcSymbol = wrappabledAssetAddress
+      ? this.inner.config.getCurrencyByAddress(wrappabledAssetAddress).symbol
+      : currencySymbol;
     const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
-      wallets: { src: 'ETH', dist: 'ETH' },
-      tokens: ['wETH', 'WebbETH'],
-      token: 'WebbETH',
+      wallets: { src: Number(srcChainId), dist: Number(distChainId) },
+      tokens: [srcSymbol, currencySymbol],
+      token: currencySymbol,
       amount: Number(formattedAmount),
     });
     const ex = async () => {
@@ -313,6 +317,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             );
 
             this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.txHash = tx.hash;
             depositTx.next(TransactionState.SendingTransaction, tx.hash);
             // emit event for waiting for transaction to confirm
             const receipt = await tx.wait();
@@ -385,6 +390,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             );
 
             this.emit('stateChange', TransactionState.SendingTransaction);
+            depositTx.txHash = tx.hash;
             depositTx.next(TransactionState.SendingTransaction, tx.hash);
 
             // emit event for waiting for transaction to confirm

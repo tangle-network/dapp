@@ -95,10 +95,11 @@ type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
   wallets: {
-    src: string | JSX.Element;
-    dist: string | JSX.Element;
+    src: number;
+    dist: number;
   };
   token: string;
+  recipient?: string;
 };
 
 type PromiseExec<T> = (
