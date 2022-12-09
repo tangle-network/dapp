@@ -37,7 +37,6 @@ import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardProps;
   ['dest-chain-list-card']: ChainListCardProps;
-  ['chain-list-card']: ChainListCardProps;
   ['token-deposit-list-card']: TokenListCardProps;
   ['token-wrap-and-deposit-list-card']: TokenListCardProps;
   ['wallet-modal']: WalletModalProps;
@@ -447,9 +446,6 @@ export const DepositContainer = forwardRef<
       balances,
       selectedSourceChain,
       setMainComponentName,
-      populatedAllTokens,
-      handleTokenChange,
-      onTryAnotherWallet,
     ]);
 
     const handleOpenChange = useCallback(
@@ -570,7 +566,14 @@ export const DepositContainer = forwardRef<
         },
         onClose: () => setMainComponentName(undefined),
       };
-    }, [destChains, destChainInputValue, setDestChain, setMainComponentName]);
+    }, [
+      chains,
+      destChains,
+      destChainInputValue,
+      setDestChain,
+      setMainComponentName,
+    ]);
+
     const sourceChainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
@@ -606,6 +609,7 @@ export const DepositContainer = forwardRef<
         onClose: () => setMainComponentName(undefined),
       };
     }, [
+      switchChain,
       selectedSourceChain,
       sourceChains,
       chains,
@@ -686,7 +690,7 @@ export const DepositContainer = forwardRef<
         case 'deposit-confirm-container':
           return depositConfirmContainerProps
             ? [
-                DepositContainer,
+                DepositConfirmContainer,
                 {
                   'deposit-confirm-container': depositConfirmContainerProps,
                 },
