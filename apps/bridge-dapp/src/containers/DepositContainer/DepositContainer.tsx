@@ -552,7 +552,7 @@ export const DepositContainer = forwardRef<
       setMainComponentName,
       populatedAllTokens,
     ]);
-    const chainListPropose = useMemo<ChainListCardProps>(() => {
+    const chainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
         overrideScrollAreaProps: { className: 'h-[550px]' },
@@ -624,24 +624,21 @@ export const DepositContainer = forwardRef<
           return [
             TokenListCard,
             {
-              'token-wrap-and-deposit-list-card': tokenListDepositProps,
+              'token-wrap-and-deposit-list-card': tokenListWrapAndDepositProps,
             },
           ];
         case 'token-deposit-list-card':
-          return tokenListWrapAndDepositProps
-            ? [
-                TokenListCard,
-                {
-                  'token-wrap-and-deposit-list-card':
-                    tokenListWrapAndDepositProps,
-                },
-              ]
-            : undefined;
+          return [
+            TokenListCard,
+            {
+              'token-wrap-and-deposit-list-card': tokenListDepositProps,
+            },
+          ];
         case 'chain-list-card':
           return [
             ChainListCard,
             {
-              'chain-list-card': chainListPropose,
+              'chain-list-card': chainListCardProps,
             },
           ];
         case 'wallet-modal':
@@ -675,7 +672,7 @@ export const DepositContainer = forwardRef<
       mainComponentName,
       depositConfirmContainerProps,
       chainSelectionWrapperProps,
-      chainListPropose,
+      chainListCardProps,
       walletModalProps,
       tokenListWrapAndDepositProps,
       tokenListDepositProps,
@@ -687,13 +684,12 @@ export const DepositContainer = forwardRef<
 
       if (isExistAndFullArgs) {
         const Component = setMainComponentArgs[0];
-        const props = setMainComponentArgs[1];
+        const props = Object.values(setMainComponentArgs[1])[0] as any;
         setMainComponent(<Component {...props} />);
       } else {
         setMainComponent(undefined);
       }
     }, [setMainComponentArgs, setMainComponent]);
-    console.log(setMainComponentArgs, 'setMainComponentArgs');
 
     return (
       <>
