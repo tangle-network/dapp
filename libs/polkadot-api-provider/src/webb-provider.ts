@@ -58,7 +58,7 @@ export class WebbPolkadot
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
-  readonly _newBlock = new BehaviorSubject<null | number>(null);
+  private _newBlock = new BehaviorSubject<null | number>(null);
   private constructor(
     apiPromise: ApiPromise,
     readonly typedChainId: number,
