@@ -67,9 +67,9 @@ export const WithDrawListCard = forwardRef<HTMLDivElement, WithDrawListCardProps
             </Typography>
 
             <div className='w-full mt-4 overflow-hidden'>
-              <img className='block ml-9 dark:hidden' src={startImg} alt='star' />
+              <img className='block ml-9 dark:hidden' src={startImg.src} alt='star' />
 
-              <img className='hidden ml-9 dark:block' src={startDarkImg} alt='star-dark' />
+              <img className='hidden ml-9 dark:block' src={startDarkImg.src} alt='star-dark' />
             </div>
           </div>
         )}
