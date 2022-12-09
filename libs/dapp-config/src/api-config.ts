@@ -76,7 +76,7 @@ export class ApiConfig {
 
     return 'Unknown';
   };
-  getCurrencyBySymbol(symbol): CurrencyConfig | undefined {
+  getCurrencyBySymbol(symbol: string): CurrencyConfig | undefined {
     const currency = Object.keys(this.currencies).find(
       (key) => this.currencies[key as any].symbol === symbol
     );
