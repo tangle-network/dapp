@@ -11,6 +11,11 @@ module.exports = {
       __dirname,
       'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
+    join(
+      __dirname,
+      '../../libs/webb-ui-components',
+      'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+    ),
     join(__dirname, 'public/static/assets/hero-background.svg'),
     ...createGlobPatternsForDependencies(__dirname),
   ],

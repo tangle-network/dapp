@@ -1,16 +1,17 @@
+import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import {
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
-} from '@webb-tools/webb-ui-components';
+} from '@webb-tools/webb-ui-components/components/Tabs';
+
 import cx from 'classnames';
 import Image from 'next/image';
-import Button from './Button';
-import Heading2 from './Heading2';
-import Heading4 from './Heading4';
-import SubHeading from './SubHeading';
-import SubHeading2 from './SubHeading2';
+import Heading2 from '../Heading2';
+import Heading4 from '../Heading4';
+import SubHeading from '../SubHeading';
+import SubHeading2 from '../SubHeading2';
 
 const InActionSection = () => {
   return (

@@ -1,5 +1,5 @@
 import { ChevronDown } from '@webb-tools/icons';
-
+import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -8,7 +8,6 @@ import {
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Button from './Button';
 
 interface NavItem {
   label: string;

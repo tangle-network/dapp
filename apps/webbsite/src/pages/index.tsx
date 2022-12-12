@@ -5,13 +5,14 @@ import {
   TabsRoot,
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
+import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import cx from 'classnames';
 import Image from 'next/image';
 
-import Button from '../components/Button';
 import Heading2 from '../components/Heading2';
 import Heading3 from '../components/Heading3';
-import InActionSection from '../components/InActionSection';
+import InActionSection from '../components/sections/InActionSection';
+import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
 import SubHeading from '../components/SubHeading';
 import SubHeading2 from '../components/SubHeading2';
 
@@ -151,6 +152,8 @@ export function Index() {
       </section>
 
       <InActionSection />
+
+      <ResearchAndDevelopmentSection />
     </>
   );
 }
