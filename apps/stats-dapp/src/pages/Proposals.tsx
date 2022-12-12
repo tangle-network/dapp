@@ -29,7 +29,7 @@ import {
   ProposalListItem,
   ProposalStatus,
   useProposalsOverview,
-  useProposalsOvertimeCount,
+  useProposalsOvertimeTotalCount,
 } from '../provider/hooks';
 import { mapChainIdToLogo } from '../utils';
 
@@ -126,7 +126,14 @@ const Proposals = () => {
 
   const overview = useProposalsOverview(activeSession, range);
 
-  const overtimeData = useProposalsOvertimeCount('six-months');
+  const { val: proposalOvertimeData, isLoading } =
+  useProposalsOvertimeTotalCount('one-month');
+
+  if (isLoading) {
+    console.log('Loading....');
+  } else {
+    console.log(proposalOvertimeData);
+  }
 
   const data = useMemo(() => {
     if (overview.val) {

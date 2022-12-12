@@ -205,11 +205,11 @@ query ensureProposals($ids: [String!]!) {
     }
   }
 }
-query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
+query ProposalsOvertimeCount($start: Int!, $end: Int!) {
   refreshVote: proposalItems(
     filter: {
       type: { equalTo: RefreshVote }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -217,7 +217,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   proposerSetUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: ProposerSetUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -225,7 +225,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   anchorCreateProposal: proposalItems(
     filter: {
       type: { equalTo: AnchorCreateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -233,7 +233,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   anchorUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: AnchorUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -241,7 +241,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   tokenAddProposal: proposalItems(
     filter: {
       type: { equalTo: TokenAddProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -249,7 +249,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   tokenRemoveProposal: proposalItems(
     filter: {
       type: { equalTo: TokenRemoveProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -257,7 +257,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   wrappingFeeUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: WrappingFeeUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -265,7 +265,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   resourceIdUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: ResourceIdUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -273,7 +273,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   rescueTokensProposal: proposalItems(
     filter: {
       type: { equalTo: RescueTokensProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -281,7 +281,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   maxDepositLimitUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: MaxDepositLimitUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -289,7 +289,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   minWithdrawalLimitUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: MinWithdrawalLimitUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -297,7 +297,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   setVerifierProposal: proposalItems(
     filter: {
       type: { equalTo: SetVerifierProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -305,7 +305,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   setTreasuryHandlerProposal: proposalItems(
     filter: {
       type: { equalTo: SetTreasuryHandlerProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount
@@ -313,7 +313,7 @@ query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
   feeRecipientUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: FeeRecipientUpdateProposal }
-      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
     }
   ) {
     totalCount

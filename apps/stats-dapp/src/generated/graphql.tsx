@@ -12815,14 +12815,12 @@ export type EnsureProposalsQueryVariables = Exact<{
 export type EnsureProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string } | null> } | null };
 
 export type ProposalsOvertimeCountQueryVariables = Exact<{
-  startRange?: InputMaybe<IntFilter>;
-  endRange?: InputMaybe<IntFilter>;
+  start: Scalars['Int'];
+  end: Scalars['Int'];
 }>;
 
 
-export type ProposalsOvertimeCountQuery = {
-  key: any; __typename?: 'Query', refreshVote?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, proposerSetUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorCreateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenAddProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenRemoveProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, wrappingFeeUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, resourceIdUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, rescueTokensProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, maxDepositLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, minWithdrawalLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setVerifierProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setTreasuryHandlerProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, feeRecipientUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null
-};
+export type ProposalsOvertimeCountQuery = { __typename?: 'Query', refreshVote?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, proposerSetUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorCreateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenAddProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenRemoveProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, wrappingFeeUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, resourceIdUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, rescueTokensProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, maxDepositLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, minWithdrawalLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setVerifierProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setTreasuryHandlerProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, feeRecipientUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -13703,74 +13701,74 @@ export type EnsureProposalsQueryHookResult = ReturnType<typeof useEnsureProposal
 export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProposalsLazyQuery>;
 export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
 export const ProposalsOvertimeCountDocument = gql`
-    query ProposalsOvertimeCount($startRange: IntFilter, $endRange: IntFilter) {
+    query ProposalsOvertimeCount($start: Int!, $end: Int!) {
   refreshVote: proposalItems(
-    filter: {type: {equalTo: RefreshVote}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: RefreshVote}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   proposerSetUpdateProposal: proposalItems(
-    filter: {type: {equalTo: ProposerSetUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: ProposerSetUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   anchorCreateProposal: proposalItems(
-    filter: {type: {equalTo: AnchorCreateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: AnchorCreateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   anchorUpdateProposal: proposalItems(
-    filter: {type: {equalTo: AnchorUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: AnchorUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   tokenAddProposal: proposalItems(
-    filter: {type: {equalTo: TokenAddProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: TokenAddProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   tokenRemoveProposal: proposalItems(
-    filter: {type: {equalTo: TokenRemoveProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: TokenRemoveProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   wrappingFeeUpdateProposal: proposalItems(
-    filter: {type: {equalTo: WrappingFeeUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: WrappingFeeUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   resourceIdUpdateProposal: proposalItems(
-    filter: {type: {equalTo: ResourceIdUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: ResourceIdUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   rescueTokensProposal: proposalItems(
-    filter: {type: {equalTo: RescueTokensProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: RescueTokensProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   maxDepositLimitUpdateProposal: proposalItems(
-    filter: {type: {equalTo: MaxDepositLimitUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: MaxDepositLimitUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   minWithdrawalLimitUpdateProposal: proposalItems(
-    filter: {type: {equalTo: MinWithdrawalLimitUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: MinWithdrawalLimitUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   setVerifierProposal: proposalItems(
-    filter: {type: {equalTo: SetVerifierProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: SetVerifierProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   setTreasuryHandlerProposal: proposalItems(
-    filter: {type: {equalTo: SetTreasuryHandlerProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: SetTreasuryHandlerProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
   feeRecipientUpdateProposal: proposalItems(
-    filter: {type: {equalTo: FeeRecipientUpdateProposal}, and: [{blockNumber: $startRange}, {blockNumber: $endRange}]}
+    filter: {type: {equalTo: FeeRecipientUpdateProposal}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
     totalCount
   }
@@ -13789,12 +13787,12 @@ export const ProposalsOvertimeCountDocument = gql`
  * @example
  * const { data, loading, error } = useProposalsOvertimeCountQuery({
  *   variables: {
- *      startRange: // value for 'startRange'
- *      endRange: // value for 'endRange'
+ *      start: // value for 'start'
+ *      end: // value for 'end'
  *   },
  * });
  */
-export function useProposalsOvertimeCountQuery(baseOptions?: Apollo.QueryHookOptions<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>) {
+export function useProposalsOvertimeCountQuery(baseOptions: Apollo.QueryHookOptions<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>(ProposalsOvertimeCountDocument, options);
       }

@@ -15,6 +15,7 @@ import { thresholdVariant } from './mappers/thresholds';
 import { Loadable, Page, PageInfoQuery } from './types';
 import { useEffect, useMemo, useState } from 'react';
 import { useStatsContext } from '../stats-provider';
+import { BlockRanges, getBlockRanges } from '../../utils/getBlockRanges';
 
 /**
  * Threshold values
@@ -608,165 +609,104 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
 
 // ****************************
 // GET PROPOSALS OVERTIME COUNT
-type ProposalsOvertimeCountByTimeRangeFilter = {
-  month: number;
-  proposalType: ProposalType;
-  totalCount: number;
-};
-
-type TimeRangeFilter =
+type TimeRange =
   | 'all'
   | 'one-year'
   | 'six-months'
   | 'one-month'
   | 'year-to-date';
 
-type ProposalsOvertimeCount = ProposalsOvertimeCountByTimeRangeFilter[];
-
-type TimeRangeParameter = {
-  endRange: {
-    lessThanOrEqualTo: number;
-  };
-  startRange: {
-    greaterThanOrEqualTo: number;
-  };
+type ProposalsOvertimeTotalCount = {
+  month: number;
+  proposalType: ProposalType;
+  totalCount: number;
 }[];
-
-const getRanges = (
-  totalNumberOfMonths: number,
-  lastProcessBlock: string,
-  blockTime: number
-): TimeRangeParameter => {
-  const timeRanges: TimeRangeParameter = [];
-
-  const now = new Date();
-
-  for (let i = totalNumberOfMonths; i >= 1; i--) {
-    const firstDayOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() - (i - 1),
-      1
-    );
-    const lastDayOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() - (i - 1),
-      new Date(now.getFullYear(), now.getMonth() - (i - 2), 0).getDate()
-    );
-    const secondsFromFirstDayOfMonthToNow = Math.floor(
-      Math.abs(firstDayOfMonth.getTime() - now.getTime()) / 1000
-    );
-    let secondsFromLastDayOfMonthToNow;
-    if (i === 1) {
-      secondsFromLastDayOfMonthToNow =
-        lastDayOfMonth.getDate() <= now.getDate()
-          ? Math.floor(
-              Math.abs(lastDayOfMonth.getTime() - now.getTime()) / 1000
-            )
-          : Math.floor(Math.abs(now.getSeconds() / 1000));
-    } else {
-      secondsFromLastDayOfMonthToNow = Math.floor(
-        Math.abs(lastDayOfMonth.getTime() - now.getTime()) / 1000
-      );
-    }
-
-    const start = Math.max(
-      Number(lastProcessBlock) - secondsFromFirstDayOfMonthToNow / blockTime,
-      0
-    );
-    const end = Math.max(
-      Number(lastProcessBlock) - secondsFromLastDayOfMonthToNow / blockTime,
-      0
-    );
-
-    timeRanges.push({
-      endRange: {
-        lessThanOrEqualTo: end,
-      },
-      startRange: {
-        greaterThanOrEqualTo: start,
-      },
-    });
-  }
-
-  return timeRanges;
-};
 
 /**
  * Proposals Overtime Count
- * @return ProposalsOvertimeCount - Proposal overtime count data
+ * @return ProposalsOvertimeTotalCount - Proposal overtime count data
  * */
-export function useProposalsOvertimeCount(
-  timeRangeFilter: TimeRangeFilter
-): Loadable<ProposalsOvertimeCount> {
+export function useProposalsOvertimeTotalCount(
+  timeRange: TimeRange
+): Loadable<ProposalsOvertimeTotalCount> {
   const [proposalsOvertimeCount, setProposalsOvertimeCount] = useState<
-    Loadable<ProposalsOvertimeCount>
+    Loadable<ProposalsOvertimeTotalCount>
   >({
     isLoading: true,
     val: null,
     isFailed: false,
   });
 
+  const [call, query] = useProposalsOvertimeCountLazyQuery();
+
   const {
     blockTime,
     metaData: { lastProcessBlock },
   } = useStatsContext();
 
-  const [call, query] = useProposalsOvertimeCountLazyQuery();
+  const blockRanges: BlockRanges = useMemo(() => {
+    let _blockRanges: BlockRanges = [];
 
-  const timeRangeParameter: TimeRangeParameter = useMemo(() => {
-    let timeRanges: TimeRangeParameter = [];
-
-    switch (timeRangeFilter) {
+    switch (timeRange) {
       case 'all':
-        timeRanges = getRanges(12, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
         break;
       case 'one-month':
-        timeRanges = getRanges(1, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(1, lastProcessBlock, blockTime);
         break;
       case 'six-months':
-        timeRanges = getRanges(6, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(6, lastProcessBlock, blockTime);
         break;
       case 'one-year':
-        timeRanges = getRanges(12, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
         break;
+      default:
+        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
     }
 
-    return timeRanges;
-  }, [timeRangeFilter, lastProcessBlock, blockTime]);
+    return _blockRanges;
+  }, [timeRange, lastProcessBlock, blockTime]);
 
   useEffect(() => {
-    async function fetchData() {
-      let finalArray = [];
-
-      const fetchedData = Promise.all(
-        timeRangeParameter.map((parameter) => {
-          return call({
-            variables: parameter,
-          });
-        })
-      );
-
-      const data = await fetchedData;
-
-      data.map((data, index) => {
+    Promise.all(
+      blockRanges.map((parameter) => {
+        return call({
+          variables: parameter,
+        });
+      })
+    )
+      .then((data) => {
         if (data) {
-          for (const key in data.data) {
-            const finalData = {
-              month: index + 1,
-              proposalType: key,
-              totalCount: data.data[key].totalCount,
-            };
+          let arr = [];
 
-            finalArray = [...finalArray, finalData];
-          }
+          data.map((data, index) => {
+            for (const key in data.data) {
+              const finalData = {
+                month: index + 1,
+                proposalType: key,
+                totalCount: data.data[key].totalCount,
+              };
+
+              arr = [...arr, finalData];
+            }
+          });
+
+          setProposalsOvertimeCount({
+            isLoading: false,
+            isFailed: false,
+            val: arr,
+          });
         }
+      })
+      .catch((e) => {
+        setProposalsOvertimeCount({
+          isLoading: true,
+          isFailed: true,
+          error: e.message,
+          val: null,
+        });
       });
-
-      console.log(finalArray);
-    }
-
-    fetchData();
-  }, [timeRangeFilter, call]);
+  }, [timeRange]);
 
   return proposalsOvertimeCount;
 }
