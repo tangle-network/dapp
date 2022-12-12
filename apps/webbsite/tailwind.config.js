@@ -20,6 +20,7 @@ module.exports = {
         hero_bg_image: "url('/static/assets/hero-background.png')",
         dyed: "url('/static/assets/bg-dyed.png')",
         tangle_network: "url('/static/assets/tangle-network.png')",
+        in_action: "url('/static/assets/in-action.png')",
       },
     },
   },

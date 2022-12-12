@@ -1,22 +1,24 @@
 import { ChainIcon } from '@webb-tools/icons';
-import cx from 'classnames';
 import {
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
+import Image from 'next/image';
+
 import Button from '../components/Button';
 import Heading2 from '../components/Heading2';
-import SubHeading from '../components/SubHeading';
 import Heading3 from '../components/Heading3';
+import InActionSection from '../components/InActionSection';
+import SubHeading from '../components/SubHeading';
 import SubHeading2 from '../components/SubHeading2';
-import Image from 'next/image';
 
 export function Index() {
   return (
     <>
-      <div className="object-cover bg-no-repeat bg-cover bg-hero_bg_image h-[2250px] bg-left-top">
+      <div className="relative object-cover bg-no-repeat bg-cover bg-hero_bg_image h-[2250px] bg-top">
         <section className="flex justify-center w-full">
           <div className="w-[934px] space-y-6 mt-[154px] lg:mt-[308px]">
             <h1 className="text-[84px] text-center font-bold leading-[96px] text-mono-200">
@@ -30,7 +32,8 @@ export function Index() {
             <Button className="block mx-auto">Read the Manifesto</Button>
           </div>
         </section>
-        <section className="mx-auto max-w-[932px] flex flex-col justify-center mt-[750px]">
+
+        <section className="max-w-[932px] flex flex-col justify-center absolute bottom-28 left-1/2 -translate-x-1/2 w-full">
           <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
           <Heading2 className="text-[48px] leading-[72px] text-mono-200 font-bold text-center mt-6">
             The Future of privacy is Connected
@@ -107,7 +110,12 @@ export function Index() {
 
           <div className="flex space-x-6 max-w-[900px] mx-auto">
             <div className="h-[401px] w-1/2 relative">
-              <Image src="/static/assets/good-pink.png" alt="good-pink" fill />
+              <Image
+                src="/static/assets/good-pink.png"
+                alt="good-pink"
+                fill
+                sizes="(max-width: 438px)"
+              />
             </div>
 
             <div className="max-w-[369px] my-auto">
@@ -131,11 +139,18 @@ export function Index() {
             </div>
 
             <div className="h-[401px] w-1/2 relative">
-              <Image src="/static/assets/cool.png" alt="cool" fill />
+              <Image
+                src="/static/assets/cool.png"
+                sizes="(max-width: 438px)"
+                alt="cool"
+                fill
+              />
             </div>
           </div>
         </div>
       </section>
+
+      <InActionSection />
     </>
   );
 }
