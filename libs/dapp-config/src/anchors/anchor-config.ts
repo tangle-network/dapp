@@ -41,7 +41,7 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xbd7e08ef54dfb43e9a86eb12a3ecab7564dee931': 8048194,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0x965c94a6e1b713e751164d2ba09aa0306f48ee74': 2386639,
+    '0x965c94a6e1b713e751164d2ba09aa0306f48ee74': 8048141,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     '0x965c94a6e1b713e751164d2ba09aa0306f48ee74': 29416496,
