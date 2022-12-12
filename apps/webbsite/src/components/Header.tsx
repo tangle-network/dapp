@@ -28,7 +28,7 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
 
 const Header = () => {
   return (
-    <header className="fixed w-full bg-mono-0">
+    <header className="fixed z-50 w-full bg-mono-0">
       <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
         <Logo />
 
