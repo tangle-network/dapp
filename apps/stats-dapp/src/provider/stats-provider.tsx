@@ -87,7 +87,7 @@ class SubQlTime {
 
 const statsContext: React.Context<StatsProvidervalue> =
   React.createContext<StatsProvidervalue>({
-    blockTime: 6,
+    blockTime: 0,
     sessionHeight: 10,
     time: new SubQlTime(new Date()),
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -111,13 +111,12 @@ export const useSubQLtime = (): SubQlTime => {
 };
 
 export const useStaticConfig = () => {
-  const { blockTime, sessionHeight } = useStatsContext();
+  const { sessionHeight } = useStatsContext();
   return useMemo(() => {
     return {
-      blockTime,
       sessionHeight,
     };
-  }, [blockTime, sessionHeight]);
+  }, [sessionHeight]);
 };
 export const useActiveSession = () => {
   const {
@@ -128,9 +127,10 @@ export const useActiveSession = () => {
 export const StatsProvider: React.FC<
   Omit<
     StatsProvidervalue,
-    'isReady' | 'metaData' | 'updateTime' | 'time' | 'api'
+    'blockTime' | 'isReady' | 'metaData' | 'updateTime' | 'time' | 'api'
   >
 > = (props) => {
+  const [blockTime, setBlockTime] = useState(0);
   const [time, setTime] = useState<SubQlTime>(new SubQlTime(new Date()));
   const [metaData, setMetaData] = useState<Metadata>({
     activeSession: '0',
@@ -140,17 +140,16 @@ export const StatsProvider: React.FC<
     activeSessionBlock: 0,
   });
   const [staticConfig] = useState<{
-    blockTime: number;
     sessionHeight: number;
   }>({
     sessionHeight: props.sessionHeight,
-    blockTime: props.blockTime,
   });
   const [isReady, setIsReady] = useState(false);
   const [api, setApi] = useState<ApiPromise | undefined>();
 
   const value = useMemo<StatsProvidervalue>(() => {
     return {
+      blockTime,
       time,
       ...staticConfig,
       updateTime: (time: SubQlTime) => {
@@ -168,6 +167,9 @@ export const StatsProvider: React.FC<
       const wsProvider = new WsProvider(polkadotProviderEndpoint);
       const apiPromise = await ApiPromise.create({ provider: wsProvider });
       setApi(apiPromise);
+      const blockTime =
+        (Number(await apiPromise.consts.timestamp.minimumPeriod) * 2) / 1000;
+      setBlockTime(blockTime);
     };
 
     getPromiseApi();
@@ -223,14 +225,14 @@ export const StatsProvider: React.FC<
   }, [query, metaDataQuery, isReady, staticConfig]);
 
   useEffect(() => {
-    query.startPolling(staticConfig.blockTime * 1000 * 10);
-    metaDataQuery.startPolling(staticConfig.blockTime * 1000 * 10);
+    query.startPolling(blockTime * 1000 * 10);
+    metaDataQuery.startPolling(blockTime * 1000 * 10);
 
     return () => {
       query.stopPolling();
       metaDataQuery.stopPolling();
     };
-  }, [query, metaDataQuery, staticConfig]);
+  }, [query, metaDataQuery, staticConfig, blockTime]);
 
   return (
     <statsContext.Provider value={value}>

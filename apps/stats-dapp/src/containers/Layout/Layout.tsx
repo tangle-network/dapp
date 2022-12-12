@@ -82,7 +82,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       />
 
       <ApolloProvider client={apolloClient}>
-        <StatsProvider blockTime={6} sessionHeight={600}>
+        <StatsProvider sessionHeight={600}>
           <NavBoxInfoContainer />
           <main className="max-w-[1160px] mx-auto">{children}</main>
         </StatsProvider>
