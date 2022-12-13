@@ -26,7 +26,6 @@ export interface ChipProps extends WebbComponentBase {
    */
   isDisabled?: boolean;
   isSelected?: boolean;
-  onClick?: React.EventHandler<React.MouseEvent | React.KeyboardEvent>;
   children?: React.ReactNode;
 }
 
