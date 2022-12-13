@@ -3,10 +3,11 @@ export type BlockRanges = {
   end: number;
 }[];
 
+// Default blockTime is 12 secs but should be passed as an arg
 export const getBlockRanges = (
   totalNumberOfMonths: number,
   lastProcessBlock: string,
-  blockTime: number
+  blockTime = 12
 ): BlockRanges => {
   const timeRanges: BlockRanges = [];
 
@@ -25,7 +26,9 @@ export const getBlockRanges = (
         const firstBlockTimestamp = new Date(
           new Date().setDate(
             now.getDate() -
-              Math.floor((Number(lastProcessBlock) * 12) / (24 * 60 * 60))
+              Math.floor(
+                (Number(lastProcessBlock) * blockTime) / (24 * 60 * 60)
+              )
           )
         );
 
@@ -50,7 +53,8 @@ export const getBlockRanges = (
 
           startBlockNumber = Math.abs(
             Math.floor(
-              Number(lastProcessBlock) - secondsFromFirstDayOfMonthToNow / 12
+              Number(lastProcessBlock) -
+                secondsFromFirstDayOfMonthToNow / blockTime
             )
           );
         }
@@ -77,7 +81,8 @@ export const getBlockRanges = (
 
           endBlockNumber = Math.abs(
             Math.floor(
-              Number(lastProcessBlock) - secondsFromLastDayOfMonthToNow / 12
+              Number(lastProcessBlock) -
+                secondsFromLastDayOfMonthToNow / blockTime
             )
           );
         }

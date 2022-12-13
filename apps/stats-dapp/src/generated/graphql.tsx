@@ -12814,13 +12814,13 @@ export type EnsureProposalsQueryVariables = Exact<{
 
 export type EnsureProposalsQuery = { __typename?: 'Query', proposalItems?: { __typename?: 'ProposalItemsConnection', nodes: Array<{ __typename?: 'ProposalItem', id: string } | null> } | null };
 
-export type ProposalsOvertimeCountQueryVariables = Exact<{
+export type ProposalsOvertimeTotalCountQueryVariables = Exact<{
   start: Scalars['Int'];
   end: Scalars['Int'];
 }>;
 
 
-export type ProposalsOvertimeCountQuery = { __typename?: 'Query', refreshVote?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, proposerSetUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorCreateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenAddProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenRemoveProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, wrappingFeeUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, resourceIdUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, rescueTokensProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, maxDepositLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, minWithdrawalLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setVerifierProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setTreasuryHandlerProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, feeRecipientUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null };
+export type ProposalsOvertimeTotalCountQuery = { __typename?: 'Query', refreshVote?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, proposerSetUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorCreateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, anchorUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenAddProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, tokenRemoveProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, wrappingFeeUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, resourceIdUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, rescueTokensProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, maxDepositLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, minWithdrawalLimitUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setVerifierProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, setTreasuryHandlerProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null, feeRecipientUpdateProposal?: { __typename?: 'ProposalItemsConnection', totalCount: number } | null };
 
 export type PublicKeysQueryVariables = Exact<{
   PerPage?: InputMaybe<Scalars['Int']>;
@@ -13700,8 +13700,8 @@ export function useEnsureProposalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type EnsureProposalsQueryHookResult = ReturnType<typeof useEnsureProposalsQuery>;
 export type EnsureProposalsLazyQueryHookResult = ReturnType<typeof useEnsureProposalsLazyQuery>;
 export type EnsureProposalsQueryResult = Apollo.QueryResult<EnsureProposalsQuery, EnsureProposalsQueryVariables>;
-export const ProposalsOvertimeCountDocument = gql`
-    query ProposalsOvertimeCount($start: Int!, $end: Int!) {
+export const ProposalsOvertimeTotalCountDocument = gql`
+    query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   refreshVote: proposalItems(
     filter: {type: {equalTo: RefreshVote}, blockNumber: {greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end}}
   ) {
@@ -13776,33 +13776,33 @@ export const ProposalsOvertimeCountDocument = gql`
     `;
 
 /**
- * __useProposalsOvertimeCountQuery__
+ * __useProposalsOvertimeTotalCountQuery__
  *
- * To run a query within a React component, call `useProposalsOvertimeCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useProposalsOvertimeCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useProposalsOvertimeTotalCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProposalsOvertimeTotalCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useProposalsOvertimeCountQuery({
+ * const { data, loading, error } = useProposalsOvertimeTotalCountQuery({
  *   variables: {
  *      start: // value for 'start'
  *      end: // value for 'end'
  *   },
  * });
  */
-export function useProposalsOvertimeCountQuery(baseOptions: Apollo.QueryHookOptions<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>) {
+export function useProposalsOvertimeTotalCountQuery(baseOptions: Apollo.QueryHookOptions<ProposalsOvertimeTotalCountQuery, ProposalsOvertimeTotalCountQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>(ProposalsOvertimeCountDocument, options);
+        return Apollo.useQuery<ProposalsOvertimeTotalCountQuery, ProposalsOvertimeTotalCountQueryVariables>(ProposalsOvertimeTotalCountDocument, options);
       }
-export function useProposalsOvertimeCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>) {
+export function useProposalsOvertimeTotalCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProposalsOvertimeTotalCountQuery, ProposalsOvertimeTotalCountQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>(ProposalsOvertimeCountDocument, options);
+          return Apollo.useLazyQuery<ProposalsOvertimeTotalCountQuery, ProposalsOvertimeTotalCountQueryVariables>(ProposalsOvertimeTotalCountDocument, options);
         }
-export type ProposalsOvertimeCountQueryHookResult = ReturnType<typeof useProposalsOvertimeCountQuery>;
-export type ProposalsOvertimeCountLazyQueryHookResult = ReturnType<typeof useProposalsOvertimeCountLazyQuery>;
-export type ProposalsOvertimeCountQueryResult = Apollo.QueryResult<ProposalsOvertimeCountQuery, ProposalsOvertimeCountQueryVariables>;
+export type ProposalsOvertimeTotalCountQueryHookResult = ReturnType<typeof useProposalsOvertimeTotalCountQuery>;
+export type ProposalsOvertimeTotalCountLazyQueryHookResult = ReturnType<typeof useProposalsOvertimeTotalCountLazyQuery>;
+export type ProposalsOvertimeTotalCountQueryResult = Apollo.QueryResult<ProposalsOvertimeTotalCountQuery, ProposalsOvertimeTotalCountQueryVariables>;
 export const PublicKeysDocument = gql`
     query PublicKeys($PerPage: Int, $offset: Int) {
   publicKeys(

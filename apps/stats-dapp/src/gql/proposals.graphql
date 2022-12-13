@@ -205,7 +205,7 @@ query ensureProposals($ids: [String!]!) {
     }
   }
 }
-query ProposalsOvertimeCount($start: Int!, $end: Int!) {
+query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   refreshVote: proposalItems(
     filter: {
       type: { equalTo: RefreshVote }

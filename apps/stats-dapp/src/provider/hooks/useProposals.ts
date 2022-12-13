@@ -6,9 +6,10 @@ import {
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
-  useProposalsOvertimeCountLazyQuery,
+  useProposalsOvertimeTotalCountLazyQuery,
   AppEnumFe385C7221 as VoteStatus,
   AppEnum155D64Ff70 as ProposalStatus,
+  ProposalsOvertimeTotalCountDocument,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
@@ -16,6 +17,7 @@ import { Loadable, Page, PageInfoQuery } from './types';
 import { useEffect, useMemo, useState } from 'react';
 import { useStatsContext } from '../stats-provider';
 import { BlockRanges, getBlockRanges } from '../../utils/getBlockRanges';
+import { useApolloClient } from '@apollo/client';
 
 /**
  * Threshold values
@@ -637,7 +639,7 @@ export function useProposalsOvertimeTotalCount(
     isFailed: false,
   });
 
-  const [call, query] = useProposalsOvertimeCountLazyQuery();
+  const client = useApolloClient();
 
   const {
     blockTime,
@@ -649,19 +651,19 @@ export function useProposalsOvertimeTotalCount(
 
     switch (timeRange) {
       case 'all':
-        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(12, lastProcessBlock);
         break;
       case 'one-month':
-        _blockRanges = getBlockRanges(1, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(1, lastProcessBlock);
         break;
       case 'six-months':
-        _blockRanges = getBlockRanges(6, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(6, lastProcessBlock);
         break;
       case 'one-year':
-        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(12, lastProcessBlock);
         break;
       default:
-        _blockRanges = getBlockRanges(12, lastProcessBlock, blockTime);
+        _blockRanges = getBlockRanges(12, lastProcessBlock);
     }
 
     return _blockRanges;
@@ -670,7 +672,8 @@ export function useProposalsOvertimeTotalCount(
   useEffect(() => {
     Promise.all(
       blockRanges.map((parameter) => {
-        return call({
+        return client.query({
+          query: ProposalsOvertimeTotalCountDocument,
           variables: parameter,
         });
       })

@@ -32,6 +32,7 @@ import {
   useProposalsOvertimeTotalCount,
 } from '../provider/hooks';
 import { mapChainIdToLogo } from '../utils';
+import { StackedAreaChartContainer } from '../containers/StackedAreaChartContainer';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -127,7 +128,7 @@ const Proposals = () => {
   const overview = useProposalsOverview(activeSession, range);
 
   const { val: proposalOvertimeData, isLoading } =
-  useProposalsOvertimeTotalCount('one-month');
+    useProposalsOvertimeTotalCount('six-months');
 
   if (isLoading) {
     console.log('Loading....');
@@ -216,17 +217,16 @@ const Proposals = () => {
         <Stats items={statsItems} />
       </Card>
 
-      <div className="flex space-x-4">
-        {/* * Proposal Types */}
-        <DonutChartContainer
+      {/* <div className="bg-mono-0 text-mono-40 dark:bg-mono-180 rounded-lg"> */}
+      {/* * Proposal Types */}
+      {/* <DonutChartContainer
           timeRange={timeRange}
           setTimeRange={setTimeRange}
           isLoading={overview.isLoading}
           statsMap={statsMap}
-        />
-
-        {/** Open Proposals */}
-        <CardTable
+        /> */}
+      {/** Open Proposals */}
+      {/* <CardTable
           titleProps={{ title: 'Open Proposals' }}
           className="flex flex-col grow"
         >
@@ -239,8 +239,10 @@ const Proposals = () => {
           ) : (
             <Table tableProps={table as RTTable<unknown>} />
           )}
-        </CardTable>
-      </div>
+        </CardTable> */}
+      {/* Hello */}
+      {/* </div> */}
+      <StackedAreaChartContainer isLoading={false} />
 
       {/** All Proposals */}
       <ProposalsTable />

@@ -25,6 +25,8 @@ export interface ChipProps extends WebbComponentBase {
    * If `true`, the chip will display as disabled state
    */
   isDisabled?: boolean;
+  isSelected?: boolean;
+  onClick?: React.EventHandler<React.MouseEvent | React.KeyboardEvent>;
   children?: React.ReactNode;
 }
 
@@ -32,5 +34,6 @@ export type ChipClassNames = {
   [key in ChipColors]: {
     active: string;
     disabled: string;
+    selected: string;
   };
 };
