@@ -13,7 +13,7 @@ import {
 } from '@webb-tools/abstract-api-provider/wrap-unwrap';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { BigNumber, ethers } from 'ethers';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, Observable, Subject } from 'rxjs';
 
 import { WebbPolkadot } from '../webb-provider';
 
@@ -50,16 +50,15 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (isLocked) {
       return false;
     }
-    const userBalance =
-      await this.inner.methods.chainQuery.tokenBalanceByAddress(
-        wrappableTokenId
-      );
+    const userBalance = await lastValueFrom(
+      this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId)
+    );
     const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
     if (!enoughBalance) {
       return false;
     }
-    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(
-      governableTokenId
+    const balance = await lastValueFrom(
+      this.inner.methods.chainQuery.tokenBalanceByAddress(governableTokenId)
     );
     const validBalanceAfterDeposit = bnAmount
       .add(BigNumber.from(balance))
@@ -171,18 +170,17 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (isLocked) {
       return false;
     }
-    const userBalance =
-      await this.inner.methods.chainQuery.tokenBalanceByAddress(
-        governableTokenId
-      );
+    const userBalance = await lastValueFrom(
+      this.inner.methods.chainQuery.tokenBalanceByAddress(governableTokenId)
+    );
     const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
     // User have enough balance to unwrap
     if (!enoughBalance) {
       return false;
     }
     // TODO: Verify if the user balance can go to Zero for poolShare/or below the existential balance
-    const balance = await this.inner.methods.chainQuery.tokenBalanceByAddress(
-      wrappableTokenId
+    const balance = await lastValueFrom(
+      this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId)
     );
     const validBalanceAfterDeposit = bnAmount
       .add(BigNumber.from(balance))
