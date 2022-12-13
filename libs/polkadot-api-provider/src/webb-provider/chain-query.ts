@@ -73,7 +73,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     const assetId =
       this.inner.config.currencies[currency].addresses.get(typedChainId);
     if (!assetId) {
-      return throwError(`can't find asset`);
+      return throwError(`unable to find asset`);
     }
     return this.getTokenBalanceByAssetId(assetId);
   }

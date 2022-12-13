@@ -272,11 +272,7 @@ export const TransactionProgressCard = forwardRef<
                 </Typography>
               )}
             </div>
-            <div
-              className={
-                'h-full self-start  flex items-end grow  flex flex-col '
-              }
-            >
+            <div className={'h-full self-start items-end grow flex flex-col'}>
               {hasSyncNote && (
                 <Button variant={'link'} size={'sm'} onClick={onSyncNote}>
                   SYNC NOTE
