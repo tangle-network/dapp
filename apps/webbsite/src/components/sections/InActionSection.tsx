@@ -8,6 +8,7 @@ import {
 
 import cx from 'classnames';
 import Image from 'next/image';
+import { BRIDGE_URL, STATS_URL } from '../../constants';
 import Heading2 from '../Heading2';
 import Heading4 from '../Heading4';
 import SubHeading from '../SubHeading';
@@ -52,7 +53,9 @@ const InActionSection = () => {
               transfer, and withdraw funds.
             </SubHeading2>
 
-            <Button>Make a Deposit</Button>
+            <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+              Make a Deposit
+            </Button>
           </div>
         </TabContent>
 
@@ -68,7 +71,9 @@ const InActionSection = () => {
                 more on the stats page.
               </SubHeading2>
 
-              <Button>Explore Tangle</Button>
+              <Button href={STATS_URL} target="_blank" rel="noreferrer">
+                Explore Tangle
+              </Button>
             </div>
 
             <div className="relative grow mt-14">
