@@ -50,18 +50,22 @@ import { Web3VAnchorTransfer } from './webb-provider/vanchor-transfer';
 import { Web3VAnchorWithdraw } from './webb-provider/vanchor-withdraw';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 import { Web3Accounts, Web3Provider } from './ext-provider';
+import { BehaviorSubject } from 'rxjs';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
   state: WebbState;
+  private readonly _newBlock = new BehaviorSubject<null | number>(null);
   readonly methods: WebbMethods<WebbWeb3Provider>;
   readonly relayChainMethods: RelayChainMethods<
     WebbApiProvider<WebbWeb3Provider>
   > | null;
   private ethersProvider: providers.Web3Provider;
-
+  get newBlock() {
+    return this._newBlock.asObservable();
+  }
   private constructor(
     private web3Provider: Web3Provider,
     protected chainId: number,
@@ -74,6 +78,11 @@ export class WebbWeb3Provider
   ) {
     super();
     this.ethersProvider = web3Provider.intoEthersProvider();
+    this.ethersProvider.on('block', () => {
+      this.ethersProvider.getBlockNumber().then((b) => {
+        this._newBlock.next(b);
+      });
+    });
     // There are no relay chain methods for Web3 chains
     this.relayChainMethods = null;
     this.methods = {

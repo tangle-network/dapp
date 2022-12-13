@@ -11,33 +11,26 @@ export const useCurrencyBalance = (
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {
-    const handler = async () => {
-      if (
-        !activeApi ||
-        !activeAccount ||
-        !activeChain ||
-        !currency ||
-        isConnecting ||
-        loading
-      ) {
-        return;
-      }
+    if (
+      !activeApi ||
+      !activeAccount ||
+      !activeChain ||
+      !currency ||
+      isConnecting ||
+      loading
+    ) {
+      return;
+    }
 
-      activeApi.methods.chainQuery
-        .tokenBalanceByCurrencyId(
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId),
-          currency.id
-        )
-        .then((currencyBalance) => {
-          setBalance(Number(currencyBalance));
-        })
-        .catch((error) => {
-          console.log('error in useCurrencyBalance');
-          console.log(error);
-        });
-    };
-
-    handler();
+    const subscription = activeApi.methods.chainQuery
+      .tokenBalanceByCurrencyId(
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+        currency.id
+      )
+      .subscribe((currencyBalance) => {
+        setBalance(Number(currencyBalance));
+      });
+    return () => subscription.unsubscribe();
   }, [activeAccount, activeApi, activeChain, currency, isConnecting, loading]);
 
   return balance;
