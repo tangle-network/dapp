@@ -6,7 +6,6 @@ import {
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
   useProposalVotesLazyQuery,
-  useProposalsOvertimeTotalCountLazyQuery,
   AppEnumFe385C7221 as VoteStatus,
   AppEnum155D64Ff70 as ProposalStatus,
   ProposalsOvertimeTotalCountDocument,
@@ -609,24 +608,22 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
   return votes;
 }
 
-// ****************************
-// GET PROPOSALS OVERTIME COUNT
-type TimeRange =
+export type TimeRange =
   | 'all'
   | 'one-year'
   | 'six-months'
-  | 'one-month'
+  | 'three-months'
   | 'year-to-date';
 
-type ProposalsOvertimeTotalCount = {
+export type ProposalsOvertimeTotalCount = {
   month: number;
-  proposalType: ProposalType;
+  proposalType: ProposalType | string;
   totalCount: number;
 }[];
 
 /**
  * Proposals Overtime Count
- * @return ProposalsOvertimeTotalCount - Proposal overtime count data
+ * @return ProposalsOvertimeTotalCount - Proposal overtime total count data
  * */
 export function useProposalsOvertimeTotalCount(
   timeRange: TimeRange
@@ -653,8 +650,8 @@ export function useProposalsOvertimeTotalCount(
       case 'all':
         _blockRanges = getBlockRanges(12, lastProcessBlock);
         break;
-      case 'one-month':
-        _blockRanges = getBlockRanges(1, lastProcessBlock);
+      case 'three-months':
+        _blockRanges = getBlockRanges(3, lastProcessBlock);
         break;
       case 'six-months':
         _blockRanges = getBlockRanges(6, lastProcessBlock);
@@ -680,7 +677,7 @@ export function useProposalsOvertimeTotalCount(
     )
       .then((data) => {
         if (data) {
-          let arr = [];
+          let arr: ProposalsOvertimeTotalCount = [];
 
           data.map((data, index) => {
             for (const key in data.data) {

@@ -127,15 +127,6 @@ const Proposals = () => {
 
   const overview = useProposalsOverview(activeSession, range);
 
-  const { val: proposalOvertimeData, isLoading } =
-    useProposalsOvertimeTotalCount('six-months');
-
-  if (isLoading) {
-    console.log('Loading....');
-  } else {
-    console.log(proposalOvertimeData);
-  }
-
   const data = useMemo(() => {
     if (overview.val) {
       return overview.val.openProposals.length > 5
@@ -217,32 +208,7 @@ const Proposals = () => {
         <Stats items={statsItems} />
       </Card>
 
-      {/* <div className="bg-mono-0 text-mono-40 dark:bg-mono-180 rounded-lg"> */}
-      {/* * Proposal Types */}
-      {/* <DonutChartContainer
-          timeRange={timeRange}
-          setTimeRange={setTimeRange}
-          isLoading={overview.isLoading}
-          statsMap={statsMap}
-        /> */}
-      {/** Open Proposals */}
-      {/* <CardTable
-          titleProps={{ title: 'Open Proposals' }}
-          className="flex flex-col grow"
-        >
-          {noOpenProposals ? (
-            <div className="flex items-center justify-center min-w-full grow">
-              <Typography ta={'center'} variant={'h4'}>
-                No open proposals
-              </Typography>
-            </div>
-          ) : (
-            <Table tableProps={table as RTTable<unknown>} />
-          )}
-        </CardTable> */}
-      {/* Hello */}
-      {/* </div> */}
-      <StackedAreaChartContainer isLoading={false} />
+      <StackedAreaChartContainer />
 
       {/** All Proposals */}
       <ProposalsTable />
