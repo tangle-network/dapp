@@ -66,7 +66,10 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
     const sourceChain = transferData.activeChain;
     const targetChainId = transferData.targetTypedChainId;
-    const sourceChainId = sourceChain.chainId;
+    const sourceChainId = calculateTypedChainId(
+      sourceChain.chainType,
+      sourceChain.chainId
+    );
 
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
       wallets: {
