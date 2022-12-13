@@ -1,5 +1,6 @@
 import { arrayShuffle } from '@polkadot/util';
-import { ChainIcon, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@webb-tools/icons';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks';
 import cx from 'classnames';
 import { ComponentProps, FC, forwardRef, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -22,22 +23,23 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
     },
     ref
   ) => {
+    const { logger } = useWebbUI();
     // Effect for validate the props
     useEffect(() => {
       if (activeChains.length > 8) {
-        console.error('The active chain length should be less than 8');
+        logger.error('The active chain length should be less than 8');
       }
 
       if (sourceChain && !activeChains.includes(sourceChain)) {
-        console.error('The source chain should be included in active chains');
+        logger.error('The source chain should be included in active chains');
       }
 
       if (destChain && !activeChains.includes(destChain)) {
-        console.error(
+        logger.error(
           'The destination chain should be included in active chains'
         );
       }
-    }, [activeChains, sourceChain, destChain]);
+    }, [activeChains, sourceChain, destChain, logger]);
 
     const displayedChains = useMemo(() => {
       let chains: string[] = [];

@@ -146,8 +146,6 @@ export const TransactionQueueCard = forwardRef<
             tx.getExplorerURI?.(tx.txStatus.txHash ?? '', 'tx') ?? '#';
           const recipientURI =
             tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
-          console.log(txURI, recipientURI);
-          console.log(tx.txStatus);
           return {
             id: tx.id,
             method: tx.method,

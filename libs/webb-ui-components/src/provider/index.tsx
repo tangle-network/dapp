@@ -14,6 +14,7 @@ const initialContext: IWebbUIContext = {
   customMainComponent: undefined,
   notificationApi,
   setMainComponent: noop,
+  logger: LoggerService.get('app'),
   theme: {
     isDarkMode: true,
     toggleThemeMode: noop,
@@ -57,7 +58,13 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
 
   return (
     <WebbUIContext.Provider
-      value={{ theme, customMainComponent, setMainComponent, notificationApi }}
+      value={{
+        logger: appLogger,
+        theme,
+        customMainComponent,
+        setMainComponent,
+        notificationApi,
+      }}
     >
       <NotificationProvider>
         {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
