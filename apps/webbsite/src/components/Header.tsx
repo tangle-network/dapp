@@ -8,10 +8,23 @@ import {
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Link from 'next/link';
 
 interface NavItem {
+  /**
+   * The label of the link
+   */
   label: string;
+
+  /**
+   * The url of the link
+   */
   url: string;
+
+  /**
+   * If true, the link will use the Next.js link component
+   */
+  isInternal?: boolean;
 }
 
 const isNavItem = (item: any): item is NavItem => {
@@ -20,10 +33,12 @@ const isNavItem = (item: any): item is NavItem => {
 
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   { protocols: [] },
-  { label: 'research', url: '#' },
+  { label: 'research', url: '#', isInternal: true },
   { label: 'community', url: '#' },
   { label: 'developer', url: '#' },
 ];
+
+const bridgeUrl = 'https://webb-bridge-dapp.netlify.app/';
 
 const Header = () => {
   return (
@@ -36,15 +51,28 @@ const Header = () => {
             {navItems.map((item, idx) => (
               <li key={idx}>
                 {isNavItem(item) ? (
-                  <a href={item.url} target="_blank" rel="noreferrer">
-                    <Typography
-                      className="capitalize"
-                      variant="body1"
-                      fw="bold"
-                    >
-                      {item.label}
-                    </Typography>
-                  </a>
+                  item.isInternal ? (
+                    <Link href={item.url}>
+                      <Typography
+                        className="capitalize"
+                        variant="body1"
+                        fw="bold"
+                        component="span"
+                      >
+                        {item.label}
+                      </Typography>
+                    </Link>
+                  ) : (
+                    <a href={item.url} target="_blank" rel="noreferrer">
+                      <Typography
+                        className="capitalize"
+                        variant="body1"
+                        fw="bold"
+                      >
+                        {item.label}
+                      </Typography>
+                    </a>
+                  )
                 ) : (
                   <Dropdown>
                     <DropdownBasicButton className="flex items-center space-x-2 group">
@@ -62,14 +90,20 @@ const Header = () => {
                     <DropdownBody size="sm">
                       {Object.values(item)[0].map((subItem, idx) => (
                         <MenuItem key={idx}>
-                          <a
-                            href={subItem.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="!text-inherit"
-                          >
-                            {subItem.label}
-                          </a>
+                          {subItem.isInternal ? (
+                            <Link className="!text-inherit" href={subItem.url}>
+                              {subItem.label}
+                            </Link>
+                          ) : (
+                            <a
+                              href={subItem.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="!text-inherit"
+                            >
+                              {subItem.label}
+                            </a>
+                          )}
                         </MenuItem>
                       ))}
                     </DropdownBody>
@@ -78,7 +112,9 @@ const Header = () => {
               </li>
             ))}
             <li>
-              <Button>Bridge</Button>
+              <Button href={bridgeUrl} target="_blank" rel="noreferrer">
+                Bridge
+              </Button>
             </li>
           </ul>
         </nav>
