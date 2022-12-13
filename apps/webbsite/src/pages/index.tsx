@@ -11,6 +11,7 @@ import Image from 'next/image';
 
 import Heading2 from '../components/Heading2';
 import Heading3 from '../components/Heading3';
+import HeroSection from '../components/sections/HeroSection';
 import InActionSection from '../components/sections/InActionSection';
 import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
 import SubHeading from '../components/SubHeading';
@@ -20,19 +21,7 @@ export function Index() {
   return (
     <>
       <div className="relative object-cover bg-no-repeat bg-cover bg-hero_bg_image h-[2250px] bg-top">
-        <section className="flex justify-center w-full">
-          <div className="w-[934px] space-y-6 mt-[154px] lg:mt-[308px]">
-            <h1 className="text-[84px] text-center font-bold leading-[96px] text-mono-200">
-              Privacy that Brings Blockchains Together{' '}
-            </h1>
-            <SubHeading className="text-center">
-              Webb builds infrastructure for connecting zero-knowledge
-              applications empowering developers to unlock user privacy in the
-              Web3 ecosystem.
-            </SubHeading>
-            <Button className="block mx-auto">Read the Manifesto</Button>
-          </div>
-        </section>
+        <HeroSection />
 
         <section className="max-w-[932px] flex flex-col justify-center absolute bottom-28 left-1/2 -translate-x-1/2 w-full">
           <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
