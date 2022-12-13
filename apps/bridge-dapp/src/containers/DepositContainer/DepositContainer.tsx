@@ -23,7 +23,14 @@ import {
   TokenListCardProps,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ElementType,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   ChainSelectionWrapper,
   ChainSelectionWrapperProps,
@@ -262,7 +269,7 @@ export const DepositContainer = forwardRef<
         destChainInputValue,
         amount,
         selectedTokenBalance >= amount,
-      ].some((val) => Boolean(val) === false);
+      ].some((val) => !val);
     }, [amount, destChainInputValue, selectedSourceChain, selectedToken]);
 
     const handleTokenChange = useCallback(
@@ -310,13 +317,6 @@ export const DepositContainer = forwardRef<
     const actionOnClick = useCallback(async () => {
       // No wallet connected
       if (!isWalletConnected) {
-        const sourceChains: ChainType[] = Object.values(chains).map((val) => {
-          return {
-            name: val.name,
-            symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-          };
-        });
-
         setMainComponentName('chain-selection-wrapper');
         return;
       }
@@ -371,7 +371,6 @@ export const DepositContainer = forwardRef<
       amount,
       activeApi?.state?.activeBridge,
       activeChain,
-      chains,
       setMainComponentName,
       setNoteAccountModalOpen,
       generateNote,
@@ -419,15 +418,6 @@ export const DepositContainer = forwardRef<
       }
       const targetSymbol = bridgeGovernedCurrency.currency.view.symbol;
 
-      const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
-        (currency): AssetType => ({
-          name: currency.view.name,
-          balance: balances[currency.id] ?? 0,
-
-          symbol: currency.view.symbol,
-        })
-      );
-
       return {
         token: {
           symbol: targetSymbol,
@@ -442,8 +432,6 @@ export const DepositContainer = forwardRef<
     }, [
       wrappableCurrency,
       bridgeGovernedCurrency,
-      getPossibleGovernedCurrencies,
-      balances,
       selectedSourceChain,
       setMainComponentName,
     ]);
@@ -483,7 +471,9 @@ export const DepositContainer = forwardRef<
         await setGovernedCurrency(defaultGovernedCurrency);
       }
 
-      updateDefaultGovernedCurrency();
+      updateDefaultGovernedCurrency().catch((e) => {
+        console.log(e);
+      });
     }, [defaultGovernedCurrency, setGovernedCurrency, setWrappableCurrency]);
 
     // Effect to update the default destination chain
@@ -544,11 +534,13 @@ export const DepositContainer = forwardRef<
         },
       };
     }, [
+      wrappableCurrency,
+      bridgeGovernedCurrency,
+      getPossibleGovernedCurrencies,
       destChainInputValue,
-      destChains,
-      setDestChain,
-      setMainComponentName,
       populatedAllTokens,
+      balances,
+      chains,
     ]);
     const destChainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
@@ -640,7 +632,7 @@ export const DepositContainer = forwardRef<
     >(undefined);
 
     const setMainComponentArgs = useMemo<
-      [React.ElementType, Partial<MainComponentProposVariants>] | undefined
+      [ElementType, Partial<MainComponentProposVariants>] | undefined
     >(() => {
       switch (mainComponentName) {
         case 'token-wrap-and-deposit-list-card':
