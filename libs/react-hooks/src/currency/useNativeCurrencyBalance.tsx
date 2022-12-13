@@ -9,31 +9,27 @@ export const useNativeCurrencyBalance = () => {
   const [balance, setBalance] = useState('');
 
   useEffect(() => {
-    let isSubscribed = true;
+    if (!activeChain || !activeApi || isConnecting || loading) {
+      return;
+    }
 
-    const handler = async () => {
-      if (!activeChain || !activeApi || isConnecting || loading) {
-        return;
-      }
-
-      activeApi.methods.chainQuery
-        .tokenBalanceByCurrencyId(
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId),
-          activeChain.nativeCurrencyId
-        )
-        .then((balance) => {
-          if (isSubscribed) {
-            setBalance(balance);
-          }
-        });
-    };
-
-    handler();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [activeChain, activeApi, activeAccount, isConnecting, loading]);
+    const subscription = activeApi.methods.chainQuery
+      .tokenBalanceByCurrencyId(
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+        activeChain.nativeCurrencyId
+      )
+      .subscribe((balance) => {
+        setBalance(balance);
+      });
+    return () => subscription.unsubscribe();
+  }, [
+    activeChain,
+    activeApi,
+    activeAccount,
+    isConnecting,
+    loading,
+    setBalance,
+  ]);
 
   return balance;
 };
