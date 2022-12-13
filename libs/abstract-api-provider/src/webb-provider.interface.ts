@@ -23,6 +23,7 @@ import {
 import { WebbState } from './state';
 import { WebbWithdrawEvents } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
+import { Observable } from 'rxjs';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -245,4 +246,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   notificationHandler: NotificationHandler;
   // wasm-utils workers factory
   wasmFactory: WasmFactory;
+  // new block observable
+  newBlock: Observable<unknown>;
 }
