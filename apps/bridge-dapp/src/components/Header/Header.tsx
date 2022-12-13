@@ -95,10 +95,12 @@ export const Header: FC<HeaderProps> = () => {
     </header>
   );
 };
-
-export const ChainSelectionWrapper: FC<{
+export type ChainSelectionWrapperProps = {
   sourceChains: ChainType[];
-}> = ({ sourceChains }) => {
+};
+export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
+  sourceChains,
+}) => {
   const { chains, activeWallet, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
 

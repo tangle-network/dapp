@@ -10,10 +10,11 @@ import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInput
 import { FC } from 'react';
 import { useConnectWallet } from '../../hooks';
 
-export const WalletModal: FC<{
+export type WalletModalProps = {
   sourceChains: ChainType[];
   chain: Chain;
-}> = ({ chain, sourceChains }) => {
+};
+export const WalletModal: FC<WalletModalProps> = ({ chain, sourceChains }) => {
   const { setMainComponent } = useWebbUI();
   const {
     isModalOpen,

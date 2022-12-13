@@ -1,6 +1,6 @@
 import { noop } from '@tanstack/react-table';
 import { LoggerService } from '@webb-tools/app-util';
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
 import {
   NotificationProvider,
   notificationApi,
@@ -37,9 +37,12 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   const [customMainComponent, setCustomMainComponent] = useState<
     React.ReactElement | undefined
   >(undefined);
-  const setMainComponent = (component: React.ReactElement | undefined) => {
-    setCustomMainComponent(component);
-  };
+  const setMainComponent = useCallback(
+    (component: React.ReactElement | undefined) => {
+      setCustomMainComponent(component);
+    },
+    [setCustomMainComponent]
+  );
 
   const theme = useMemo<IWebbUIContext['theme']>(
     () => ({
