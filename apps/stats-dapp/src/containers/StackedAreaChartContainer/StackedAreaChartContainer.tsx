@@ -104,7 +104,7 @@ const allProposals = [
 export const StackedAreaChartContainer = () => {
   const [isDarkMode, _] = useDarkMode();
 
-  const [timeRange, setTimeRange] = useState<TimeRange>('one-year');
+  const [timeRange, setTimeRange] = useState<TimeRange>('three-months');
 
   const { val: proposalOvertimeData, isLoading } =
     useProposalsOvertimeTotalCount(timeRange);
@@ -151,7 +151,12 @@ export const StackedAreaChartContainer = () => {
           align: 'start',
         },
         tooltip: {
-          enabled: false,
+          callbacks: {
+            title: (tooltipItems) => {
+              return `Month ${tooltipItems[0]?.label} # of Proposals`;
+            },
+          },
+          mode: 'index',
         },
       },
       scales: {
@@ -173,6 +178,10 @@ export const StackedAreaChartContainer = () => {
         },
       },
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'nearest',
+        intersect: false,
+      },
     };
   }, []);
 
