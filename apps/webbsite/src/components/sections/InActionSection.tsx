@@ -21,7 +21,7 @@ const InActionSection = () => {
         'p-[156px] space-y-9'
       )}
     >
-      <Heading2 className="text-center">In Action</Heading2>
+      <Heading2 className="text-center">Shielded Protocols in Action</Heading2>
 
       <SubHeading className="text-center">
         Try out the applications we’re building.
