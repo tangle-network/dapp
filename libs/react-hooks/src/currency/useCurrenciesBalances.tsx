@@ -18,47 +18,36 @@ export const useCurrenciesBalances = (
   const [balances, setBalances] = useState<Record<number, number>>({});
 
   useEffect(() => {
-    let isSubscribe = true;
+    const isSubscribe = true;
 
-    const handler = async () => {
-      if (
-        !activeApi ||
-        !activeAccount ||
-        !activeChain ||
-        isConnecting ||
-        loading
-      ) {
-        return;
-      }
+    if (
+      !activeApi ||
+      !activeAccount ||
+      !activeChain ||
+      isConnecting ||
+      loading
+    ) {
+      return;
+    }
 
-      currencies.forEach((currency) => {
-        if (!balances[currency.id]) {
-          activeApi.methods.chainQuery
-            .tokenBalanceByCurrencyId(
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId),
-              currency.id
-            )
-            .then((currencyBalance) => {
-              if (isSubscribe) {
-                setBalances((prev) => ({
-                  ...prev,
-                  [currency.id]: Number(currencyBalance),
-                }));
-              }
-            })
-            .catch((error) => {
-              console.log('error in useCurrencyBalance: ');
-              console.log(error);
-            });
-        }
-      });
-    };
+    const subscriptions = currencies.map((currency) => {
+      return activeApi.methods.chainQuery
+        .tokenBalanceByCurrencyId(
+          calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+          currency.id
+        )
+        .subscribe((currencyBalance) => {
+          if (isSubscribe) {
+            setBalances((prev) => ({
+              ...prev,
+              [currency.id]: Number(currencyBalance),
+            }));
+          }
+        });
+    });
 
-    handler();
-
-    return () => {
-      isSubscribe = false;
-    };
+    return () =>
+      subscriptions.forEach((subscription) => subscription.unsubscribe());
   }, [
     activeAccount,
     activeApi,

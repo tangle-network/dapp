@@ -5,7 +5,6 @@ import {
   useBridgeDeposit,
   useCurrencies,
   useCurrenciesBalances,
-  useCurrencyBalance,
   useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -19,14 +18,40 @@ import {
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   AssetType,
+  ChainListCardProps,
   ChainType,
+  TokenListCardProps,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { DepositCardProps } from '@webb-tools/webb-ui-components/containers/DepositCard/types';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { ChainSelectionWrapper, WalletModal } from '../../components';
+import {
+  ElementType,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  ChainSelectionWrapper,
+  ChainSelectionWrapperProps,
+  WalletModal,
+  WalletModalProps,
+} from '../../components';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
-import { DepositContainerProps } from './types';
+import { DepositConfirmContainerProps, DepositContainerProps } from './types';
+
+interface MainComponentProposVariants {
+  ['source-chain-list-card']: ChainListCardProps;
+  ['dest-chain-list-card']: ChainListCardProps;
+  ['token-deposit-list-card']: TokenListCardProps;
+  ['token-wrap-and-deposit-list-card']: TokenListCardProps;
+  ['wallet-modal']: WalletModalProps;
+  ['chain-selection-wrapper']: ChainSelectionWrapperProps;
+  ['deposit-confirm-container']: DepositConfirmContainerProps;
+}
+
+type MainComponentVariants = keyof MainComponentProposVariants;
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -42,7 +67,9 @@ export const DepositContainer = forwardRef<
     ref
   ) => {
     const { setMainComponent } = useWebbUI();
-
+    const [mainComponentName, setMainComponentName] = useState<
+      MainComponentVariants | undefined
+    >(undefined);
     const {
       activeApi,
       chains,
@@ -55,7 +82,9 @@ export const DepositContainer = forwardRef<
     } = useWebContext();
 
     const { generateNote } = useBridgeDeposit();
-
+    const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
+      undefined
+    );
     const {
       setGovernedCurrency,
       setWrappableCurrency,
@@ -148,7 +177,6 @@ export const DepositContainer = forwardRef<
         symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
       };
     }, [activeChain, sourceChain]);
-
     const bridgeGovernedCurrency = useMemo(() => {
       if (!governedCurrency) {
         return undefined;
@@ -241,7 +269,7 @@ export const DepositContainer = forwardRef<
         destChainInputValue,
         amount,
         selectedTokenBalance >= amount,
-      ].some((val) => Boolean(val) === false);
+      ].some((val) => !val);
     }, [amount, destChainInputValue, selectedSourceChain, selectedToken]);
 
     const handleTokenChange = useCallback(
@@ -254,7 +282,7 @@ export const DepositContainer = forwardRef<
           await setWrappableCurrency(null);
           // Set the Governable currency
           await setGovernedCurrency(selectedToken);
-          setMainComponent(undefined);
+          setMainComponentName(undefined);
           return;
         }
 
@@ -268,13 +296,13 @@ export const DepositContainer = forwardRef<
           );
           await setGovernedCurrency(tokens[0]);
           await setWrappableCurrency(selectedWrappableToken);
-          setMainComponent(undefined);
+          setMainComponentName(undefined);
         }
       },
       [
         governedCurrencies,
         setGovernedCurrency,
-        setMainComponent,
+        setMainComponentName,
         setWrappableCurrency,
         wrappableCurrencies,
         getPossibleGovernedCurrencies,
@@ -282,73 +310,14 @@ export const DepositContainer = forwardRef<
     );
 
     const sourceChainInputOnClick = useCallback(() => {
-      setMainComponent(
-        <ChainListCard
-          className="w-[550px] h-[700px]"
-          overrideScrollAreaProps={{ className: 'h-[550px]' }}
-          chainType="source"
-          chains={sourceChains}
-          value={selectedSourceChain}
-          onChange={async (selectedChain) => {
-            const chain = Object.values(chains).find(
-              (val) => val.name === selectedChain.name
-            );
-
-            if (!chain) {
-              throw new Error('Detect unsupported chain is being selected');
-            }
-
-            const isSupported =
-              activeWallet &&
-              activeWallet.supportedChainIds.includes(
-                calculateTypedChainId(chain.chainType, chain.chainId)
-              );
-
-            // If the selected chain is supported by the active wallet
-            if (isSupported) {
-              await switchChain(chain, activeWallet);
-              setMainComponent(undefined);
-              return;
-            }
-
-            // Otherwise pop up the wallet modal to choose another wallet to connect
-            const sourceChains: ChainType[] = Object.values(chains).map(
-              (val) => {
-                return {
-                  name: val.name,
-                  symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-                };
-              }
-            );
-
-            setMainComponent(
-              <WalletModal chain={chain} sourceChains={sourceChains} />
-            );
-          }}
-          onClose={() => setMainComponent(undefined)}
-        />
-      );
-    }, [
-      activeWallet,
-      chains,
-      selectedSourceChain,
-      setMainComponent,
-      sourceChains,
-      switchChain,
-    ]);
+      setMainComponentName('source-chain-list-card');
+    }, [setMainComponentName]);
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
       // No wallet connected
       if (!isWalletConnected) {
-        const sourceChains: ChainType[] = Object.values(chains).map((val) => {
-          return {
-            name: val.name,
-            symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-          };
-        });
-
-        setMainComponent(<ChainSelectionWrapper sourceChains={sourceChains} />);
+        setMainComponentName('chain-selection-wrapper');
         return;
       }
 
@@ -382,17 +351,16 @@ export const DepositContainer = forwardRef<
           wrappbleTokenAddress
         );
         setIsGeneratingNote(false);
-        setMainComponent(
-          <DepositConfirmContainer
-            wrappingFlow={Boolean(wrappbleTokenAddress)}
-            wrappableTokenSymbol={governedCurrency?.view.symbol}
-            amount={amount}
-            token={selectedToken}
-            sourceChain={selectedSourceChain}
-            destChain={destChainInputValue}
-            depositPayload={newDepositPayload}
-          />
-        );
+        setDepositContainerProps({
+          wrappingFlow: Boolean(wrappbleTokenAddress),
+          wrappableTokenSymbol: governedCurrency?.view.symbol,
+          amount,
+          token: selectedToken,
+          sourceChain: selectedSourceChain,
+          destChain: destChainInputValue,
+          depositPayload: newDepositPayload,
+        });
+        setMainComponentName('deposit-confirm-container');
       }
     }, [
       isWalletConnected,
@@ -403,8 +371,7 @@ export const DepositContainer = forwardRef<
       amount,
       activeApi?.state?.activeBridge,
       activeChain,
-      chains,
-      setMainComponent,
+      setMainComponentName,
       setNoteAccountModalOpen,
       generateNote,
       selectedSourceChain,
@@ -451,15 +418,6 @@ export const DepositContainer = forwardRef<
       }
       const targetSymbol = bridgeGovernedCurrency.currency.view.symbol;
 
-      const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
-        (currency): AssetType => ({
-          name: currency.view.name,
-          balance: balances[currency.id] ?? 0,
-
-          symbol: currency.view.symbol,
-        })
-      );
-
       return {
         token: {
           symbol: targetSymbol,
@@ -467,31 +425,15 @@ export const DepositContainer = forwardRef<
         },
         onClick: () => {
           if (selectedSourceChain) {
-            setMainComponent(
-              <TokenListCard
-                className="w-[550px] h-[700px]"
-                title={'Select Asset to Wrap and Deposit'}
-                popularTokens={[]}
-                selectTokens={tokens}
-                unavailableTokens={populatedAllTokens}
-                onChange={handleTokenChange}
-                onClose={() => setMainComponent(undefined)}
-                onConnect={onTryAnotherWallet}
-              />
-            );
+            setMainComponentName('token-wrap-and-deposit-list-card');
           }
         },
       };
     }, [
       wrappableCurrency,
       bridgeGovernedCurrency,
-      getPossibleGovernedCurrencies,
-      balances,
       selectedSourceChain,
-      setMainComponent,
-      populatedAllTokens,
-      handleTokenChange,
-      onTryAnotherWallet,
+      setMainComponentName,
     ]);
 
     const handleOpenChange = useCallback(
@@ -529,7 +471,9 @@ export const DepositContainer = forwardRef<
         await setGovernedCurrency(defaultGovernedCurrency);
       }
 
-      updateDefaultGovernedCurrency();
+      updateDefaultGovernedCurrency().catch((e) => {
+        console.log(e);
+      });
     }, [defaultGovernedCurrency, setGovernedCurrency, setWrappableCurrency]);
 
     // Effect to update the default destination chain
@@ -537,6 +481,238 @@ export const DepositContainer = forwardRef<
       setDestChain(defaultDestinationChain);
     }, [defaultDestinationChain]);
 
+    const tokenListDepositProps = useMemo<TokenListCardProps>(() => {
+      return {
+        className: 'w-[550px] h-[700px]',
+        title: 'Select Asset to Deposit',
+        popularTokens: [],
+        selectTokens: populatedSelectableWebbTokens,
+        unavailableTokens: populatedAllTokens,
+        onChange: handleTokenChange,
+        onClose: () => setMainComponentName(undefined),
+        onConnect: onTryAnotherWallet,
+      };
+    }, [
+      populatedSelectableWebbTokens,
+      populatedAllTokens,
+      handleTokenChange,
+      setMainComponentName,
+      onTryAnotherWallet,
+    ]);
+
+    const tokenListWrapAndDepositProps = useMemo<
+      TokenListCardProps | undefined
+    >(() => {
+      if (!wrappableCurrency || !bridgeGovernedCurrency) {
+        return undefined;
+      }
+
+      const tokens = getPossibleGovernedCurrencies(wrappableCurrency.id).map(
+        (currency): AssetType => ({
+          name: currency.view.name,
+          balance: balances[currency.id] ?? 0,
+
+          symbol: currency.view.symbol,
+        })
+      );
+
+      return {
+        className: 'w-[550px] h-[700px]',
+        overrideScrollAreaProps: { className: 'h-[550px]' },
+        chainType: 'dest',
+        selectTokens: tokens,
+        value: destChainInputValue,
+        title: 'Select Asset to Deposit',
+        popularTokens: [],
+        unavailableTokens: populatedAllTokens,
+        onChange: (selectedChain) => {
+          const destChain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+          setDestChain(destChain);
+          setMainComponentName(undefined);
+        },
+      };
+    }, [
+      wrappableCurrency,
+      bridgeGovernedCurrency,
+      getPossibleGovernedCurrencies,
+      destChainInputValue,
+      populatedAllTokens,
+      balances,
+      chains,
+    ]);
+    const destChainListCardProps = useMemo<ChainListCardProps>(() => {
+      return {
+        className: 'w-[550px] h-[700px]',
+        overrideScrollAreaProps: { className: 'h-[550px]' },
+        chainType: 'dest',
+        chains: destChains,
+        value: destChainInputValue,
+        onChange: async (selectedChain) => {
+          const destChain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+          setDestChain(destChain);
+          setMainComponentName(undefined);
+        },
+        onClose: () => setMainComponentName(undefined),
+      };
+    }, [
+      chains,
+      destChains,
+      destChainInputValue,
+      setDestChain,
+      setMainComponentName,
+    ]);
+
+    const sourceChainListCardProps = useMemo<ChainListCardProps>(() => {
+      return {
+        className: 'w-[550px] h-[700px]',
+        overrideScrollAreaProps: { className: 'h-[550px]' },
+        chainType: 'source',
+        chains: sourceChains,
+        value: selectedSourceChain,
+        onChange: async (selectedChain) => {
+          const chain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+
+          if (!chain) {
+            throw new Error('Detect unsupported chain is being selected');
+          }
+
+          const isSupported =
+            activeWallet &&
+            activeWallet.supportedChainIds.includes(
+              calculateTypedChainId(chain.chainType, chain.chainId)
+            );
+
+          // If the selected chain is supported by the active wallet
+          if (isSupported) {
+            await switchChain(chain, activeWallet);
+            setMainComponentName(undefined);
+            return;
+          }
+
+          setSelectedChain(chain);
+          setMainComponentName('wallet-modal');
+        },
+        onClose: () => setMainComponentName(undefined),
+      };
+    }, [
+      switchChain,
+      selectedSourceChain,
+      sourceChains,
+      chains,
+      activeWallet,
+      setMainComponentName,
+      setSelectedChain,
+    ]);
+
+    const walletModalProps = useMemo<WalletModalProps | undefined>(() => {
+      if (!selectedChain) {
+        return undefined;
+      }
+      return {
+        chain: selectedChain,
+        sourceChains,
+      };
+    }, [selectedChain, sourceChains]);
+
+    const chainSelectionWrapperProps =
+      useMemo<ChainSelectionWrapperProps>(() => {
+        return {
+          sourceChains,
+        };
+      }, [sourceChains]);
+
+    const [depositConfirmContainerProps, setDepositContainerProps] = useState<
+      DepositConfirmContainerProps | undefined
+    >(undefined);
+
+    const setMainComponentArgs = useMemo<
+      [ElementType, Partial<MainComponentProposVariants>] | undefined
+    >(() => {
+      switch (mainComponentName) {
+        case 'token-wrap-and-deposit-list-card':
+          return [
+            TokenListCard,
+            {
+              'token-wrap-and-deposit-list-card': tokenListWrapAndDepositProps,
+            },
+          ];
+        case 'token-deposit-list-card':
+          return [
+            TokenListCard,
+            {
+              'token-wrap-and-deposit-list-card': tokenListDepositProps,
+            },
+          ];
+        case 'source-chain-list-card':
+          return [
+            ChainListCard,
+            {
+              'source-chain-list-card': sourceChainListCardProps,
+            },
+          ];
+        case 'dest-chain-list-card':
+          return [
+            ChainListCard,
+            {
+              'dest-chain-list-card': destChainListCardProps,
+            },
+          ];
+        case 'wallet-modal':
+          return walletModalProps
+            ? [
+                WalletModal,
+                {
+                  'wallet-modal': walletModalProps,
+                },
+              ]
+            : undefined;
+        case 'chain-selection-wrapper':
+          return [
+            ChainSelectionWrapper,
+            {
+              'chain-selection-wrapper': chainSelectionWrapperProps,
+            },
+          ];
+        case 'deposit-confirm-container':
+          return depositConfirmContainerProps
+            ? [
+                DepositConfirmContainer,
+                {
+                  'deposit-confirm-container': depositConfirmContainerProps,
+                },
+              ]
+            : undefined;
+      }
+      return undefined;
+    }, [
+      mainComponentName,
+      depositConfirmContainerProps,
+      chainSelectionWrapperProps,
+      sourceChainListCardProps,
+      destChainListCardProps,
+      walletModalProps,
+      tokenListWrapAndDepositProps,
+      tokenListDepositProps,
+    ]);
+    useEffect(() => {
+      const isExistAndFullArgs =
+        setMainComponentArgs !== undefined &&
+        Object.values(setMainComponentArgs[1]).length > 0;
+
+      if (isExistAndFullArgs) {
+        const Component = setMainComponentArgs[0];
+        const props = Object.values(setMainComponentArgs[1])[0] as any;
+        setMainComponent(<Component {...props} />);
+      } else {
+        setMainComponent(undefined);
+      }
+    }, [setMainComponentArgs, setMainComponent]);
     return (
       <>
         <div {...props} ref={ref}>
@@ -551,41 +727,14 @@ export const DepositContainer = forwardRef<
             destChainProps={{
               chain: destChainInputValue,
               onClick: () => {
-                setMainComponent(
-                  <ChainListCard
-                    className="w-[550px] h-[700px]"
-                    overrideScrollAreaProps={{ className: 'h-[550px]' }}
-                    chainType="dest"
-                    chains={destChains}
-                    value={destChainInputValue}
-                    onChange={async (selectedChain) => {
-                      const destChain = Object.values(chains).find(
-                        (val) => val.name === selectedChain.name
-                      );
-                      setDestChain(destChain);
-                      setMainComponent(undefined);
-                    }}
-                    onClose={() => setMainComponent(undefined)}
-                  />
-                );
+                setMainComponentName('dest-chain-list-card');
               },
               chainType: 'dest',
             }}
             tokenInputProps={{
               onClick: () => {
                 if (selectedSourceChain) {
-                  setMainComponent(
-                    <TokenListCard
-                      className="w-[550px] h-[700px]"
-                      title={'Select Asset to Deposit'}
-                      popularTokens={[]}
-                      selectTokens={populatedSelectableWebbTokens}
-                      unavailableTokens={populatedAllTokens}
-                      onChange={handleTokenChange}
-                      onClose={() => setMainComponent(undefined)}
-                      onConnect={onTryAnotherWallet}
-                    />
-                  );
+                  setMainComponentName('token-deposit-list-card');
                 }
               },
               token: selectedToken,
