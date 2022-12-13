@@ -10,6 +10,8 @@ import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
 
+import { BRIDGE_URL } from '../constants';
+
 interface NavItem {
   /**
    * The label of the link
@@ -37,8 +39,6 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   { label: 'community', url: '#' },
   { label: 'developer', url: '#' },
 ];
-
-const bridgeUrl = 'https://webb-bridge-dapp.netlify.app/';
 
 const Header = () => {
   return (
@@ -112,7 +112,7 @@ const Header = () => {
               </li>
             ))}
             <li>
-              <Button href={bridgeUrl} target="_blank" rel="noreferrer">
+              <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
                 Bridge
               </Button>
             </li>
