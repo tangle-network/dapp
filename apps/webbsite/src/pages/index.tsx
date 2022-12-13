@@ -1,18 +1,12 @@
-import { ChainIcon } from '@webb-tools/icons';
-import {
-  TabContent,
-  TabsList,
-  TabsRoot,
-  TabTrigger,
-} from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
-import cx from 'classnames';
 import Image from 'next/image';
 
 import Heading2 from '../components/Heading2';
 import Heading3 from '../components/Heading3';
 import HeroSection from '../components/sections/HeroSection';
 import InActionSection from '../components/sections/InActionSection';
+import PrivacyConnectedSection from '../components/sections/PrivacyConnectedSection';
+import PrivacyScaleSection from '../components/sections/PrivacyScaleSection';
 import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
 import SubHeading from '../components/SubHeading';
 import SubHeading2 from '../components/SubHeading2';
@@ -23,55 +17,10 @@ export function Index() {
       <div className="relative object-cover bg-no-repeat bg-cover bg-hero_bg_image h-[2250px] bg-top">
         <HeroSection />
 
-        <section className="max-w-[932px] flex flex-col justify-center absolute bottom-28 left-1/2 -translate-x-1/2 w-full">
-          <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
-          <Heading2 className="text-[48px] leading-[72px] text-mono-200 font-bold text-center mt-6">
-            The Future of privacy is Connected
-          </Heading2>
-          <SubHeading className="text-center mt-9">
-            Connecting private applications across chains allows us to scale the
-            size of privacy sets to encompass all the users and data possible in
-            our Web3 ecosystem.
-          </SubHeading>
-          <TabsRoot
-            defaultValue="ownership"
-            className="p-4 space-y-4 rounded-lg mt-9 bg-mono-0"
-          >
-            <TabsList aria-label="tabs" className="mb-4">
-              <TabTrigger value="ownership">Proof of Ownership</TabTrigger>
-              <TabTrigger value="identity">Proof of Identity</TabTrigger>
-              <TabTrigger value="privacy">Privacy Ecosystems</TabTrigger>
-            </TabsList>
-            <TabContent className="w-[900px] h-[340px]" value="ownership">
-              <p>Ownershipt</p>
-            </TabContent>
-            <TabContent className="w-[900px] h-[340px]" value="identity">
-              <p>Identity</p>
-            </TabContent>
-            <TabContent className="w-[900px] h-[340px]" value="privacy">
-              <p>Privacy</p>
-            </TabContent>
-          </TabsRoot>
-        </section>
+        <PrivacyConnectedSection />
       </div>
 
-      <section
-        className={cx(
-          'object-cover bg-center bg-no-repeat bg-cover bg-dyed',
-          'px-[72px] py-[156px] space-y-9'
-        )}
-      >
-        <Heading2 className="text-center">
-          How the Future of Privacy Scales
-        </Heading2>
-        <SubHeading className="text-center max-w-[900px] mx-auto">
-          Webb connects cryptographic accumulators used in zero-knowledge
-          applications so users can leverage the power of cross-chain
-          zero-knowledge proofs.
-        </SubHeading>
-
-        <div className="w-[1000px] h-[483px] bg-mono-0 rounded-lg mx-auto"></div>
-      </section>
+      <PrivacyScaleSection />
 
       <section className="p-[156px] space-y-6">
         <div className="pb-9 space-y-9 max-w-[900px] mx-auto">
