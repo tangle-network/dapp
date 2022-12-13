@@ -49,7 +49,7 @@ const InActionSection = () => {
             <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
 
             <SubHeading2>
-              A truly zero-knowledge cross-chain envornment to deposit,
+              A truly zero-knowledge cross-chain environment to deposit,
               transfer, and withdraw funds.
             </SubHeading2>
 
@@ -67,7 +67,7 @@ const InActionSection = () => {
               </Heading4>
 
               <SubHeading2>
-                Monitor the health of the tangle network, watch proposals and
+                Monitor the health of the Tangle Network, watch proposals and
                 more on the stats page.
               </SubHeading2>
 

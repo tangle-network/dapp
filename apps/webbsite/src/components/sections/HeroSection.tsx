@@ -2,7 +2,8 @@ import { Button } from '@webb-tools/webb-ui-components/components/Button/Button'
 
 import SubHeading from '../SubHeading';
 
-const manifestoUrl = 'https://webb.tools/';
+const manifestoUrl =
+  'https://docs.webb.tools/v1/getting-started/privacy-manifesto/';
 
 const HeroSection = () => {
   return (
