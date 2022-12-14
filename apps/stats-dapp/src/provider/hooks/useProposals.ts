@@ -644,29 +644,35 @@ export function useProposalsOvertimeTotalCount(
   } = useStatsContext();
 
   const blockRanges: BlockRanges = useMemo(() => {
-    let _blockRanges: BlockRanges = [];
+    let ranges: BlockRanges = [];
 
     switch (timeRange) {
       case 'all':
-        _blockRanges = getBlockRanges(12, lastProcessBlock);
+        ranges = getBlockRanges(12, lastProcessBlock);
         break;
       case 'three-months':
-        _blockRanges = getBlockRanges(3, lastProcessBlock);
+        ranges = getBlockRanges(3, lastProcessBlock);
         break;
       case 'six-months':
-        _blockRanges = getBlockRanges(6, lastProcessBlock);
+        ranges = getBlockRanges(6, lastProcessBlock);
         break;
       case 'one-year':
-        _blockRanges = getBlockRanges(12, lastProcessBlock);
+        ranges = getBlockRanges(12, lastProcessBlock);
         break;
       default:
-        _blockRanges = getBlockRanges(12, lastProcessBlock);
+        ranges = getBlockRanges(12, lastProcessBlock);
     }
 
-    return _blockRanges;
+    return ranges;
   }, [timeRange, lastProcessBlock, blockTime]);
 
   useEffect(() => {
+    setProposalsOvertimeCount({
+      isLoading: true,
+      isFailed: false,
+      val: null,
+    });
+
     Promise.all(
       blockRanges.map((parameter) => {
         return client.query({
@@ -700,7 +706,7 @@ export function useProposalsOvertimeTotalCount(
       })
       .catch((e) => {
         setProposalsOvertimeCount({
-          isLoading: true,
+          isLoading: false,
           isFailed: true,
           error: e.message,
           val: null,
