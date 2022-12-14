@@ -205,7 +205,15 @@ query ensureProposals($ids: [String!]!) {
     }
   }
 }
-query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
+
+# Total number of proposals of each proposal type for a range of block numbers
+query ProposalsOvertimeTotalCount(
+  # Starting block number of the block range
+  $start: Int!
+  # Ending block number of the block range
+  $end: Int!
+) {
+  # Total number of proposals of refreshVote proposal type for a range for block numbers
   refreshVote: proposalItems(
     filter: {
       type: { equalTo: RefreshVote }
@@ -214,6 +222,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of proposerSetUpdateProposal proposal type for a range for block numbers
   proposerSetUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: ProposerSetUpdateProposal }
@@ -222,6 +231,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of anchorCreateProposal proposal type for a range for block numbers
   anchorCreateProposal: proposalItems(
     filter: {
       type: { equalTo: AnchorCreateProposal }
@@ -230,6 +240,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of anchorUpdateProposal proposal type for a range for block numbers
   anchorUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: AnchorUpdateProposal }
@@ -238,6 +249,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of tokenAddProposal proposal type for a range for block numbers
   tokenAddProposal: proposalItems(
     filter: {
       type: { equalTo: TokenAddProposal }
@@ -246,6 +258,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of tokenRemoveProposal proposal type for a range for block numbers
   tokenRemoveProposal: proposalItems(
     filter: {
       type: { equalTo: TokenRemoveProposal }
@@ -254,6 +267,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of wrappingFeeUpdateProposal proposal type for a range for block numbers
   wrappingFeeUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: WrappingFeeUpdateProposal }
@@ -262,6 +276,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of resourceIdUpdateProposal proposal type for a range for block numbers
   resourceIdUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: ResourceIdUpdateProposal }
@@ -270,6 +285,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of rescueTokensProposal proposal type for a range for block numbers
   rescueTokensProposal: proposalItems(
     filter: {
       type: { equalTo: RescueTokensProposal }
@@ -278,6 +294,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of maxDepositLimitUpdateProposal proposal type for a range for block numbers
   maxDepositLimitUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: MaxDepositLimitUpdateProposal }
@@ -286,6 +303,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of minWithdrawalLimitUpdateProposal proposal type for a range for block numbers
   minWithdrawalLimitUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: MinWithdrawalLimitUpdateProposal }
@@ -294,6 +312,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of setVerifierProposal proposal type for a range for block numbers
   setVerifierProposal: proposalItems(
     filter: {
       type: { equalTo: SetVerifierProposal }
@@ -302,6 +321,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of setTreasuryHandlerProposal proposal type for a range for block numbers
   setTreasuryHandlerProposal: proposalItems(
     filter: {
       type: { equalTo: SetTreasuryHandlerProposal }
@@ -310,6 +330,7 @@ query ProposalsOvertimeTotalCount($start: Int!, $end: Int!) {
   ) {
     totalCount
   }
+  # Total number of proposals of feeRecipientUpdateProposal proposal type for a range for block numbers
   feeRecipientUpdateProposal: proposalItems(
     filter: {
       type: { equalTo: FeeRecipientUpdateProposal }
