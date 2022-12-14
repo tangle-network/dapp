@@ -147,13 +147,53 @@ export const StackedAreaChartContainer = () => {
             usePointStyle: true,
             pointStyle: 'rectRounded',
             pointStyleWidth: 16,
+            color: webbColors.mono['100'],
           },
           align: 'start',
+          onHover: (_, legendItem, legend) => {
+            const datasetMeta = legend.chart.getDatasetMeta(
+              legendItem.datasetIndex ? legendItem.datasetIndex : 0
+            )._parsed;
+            const totalNumberOfProposals = datasetMeta
+              .map((data) => data.y)
+              .reduce((accumulator, value) => {
+                return accumulator + value;
+              }, 0);
+
+            const chart = legend.chart;
+            const tooltip = chart.tooltip;
+
+            const length =
+              chart.data.datasets[
+                legendItem.datasetIndex ? legendItem.datasetIndex : 0
+              ].data.length;
+
+            chart.data.datasets[
+              legendItem.datasetIndex ? legendItem.datasetIndex : 0
+            ].data[length - 1] = totalNumberOfProposals;
+
+            tooltip?.setActiveElements(
+              [
+                {
+                  datasetIndex: legendItem.datasetIndex
+                    ? legendItem.datasetIndex
+                    : 0,
+                  index: length - 1,
+                },
+              ],
+              {
+                x: 0,
+                y: 0,
+              }
+            );
+
+            chart.update();
+          },
         },
         tooltip: {
           callbacks: {
-            title: (tooltipItems) => {
-              return `Month ${tooltipItems[0]?.label} # of Proposals`;
+            title: () => {
+              return `Total # of Proposals`;
             },
           },
           mode: 'index',
@@ -167,6 +207,10 @@ export const StackedAreaChartContainer = () => {
           title: {
             display: true,
             text: 'Months',
+            color: webbColors.mono['100'],
+          },
+          ticks: {
+            color: webbColors.mono['100'],
           },
         },
         y: {
@@ -174,6 +218,9 @@ export const StackedAreaChartContainer = () => {
           grid: {
             color: webbColors.mono['80'],
             borderDash: [4, 4],
+          },
+          ticks: {
+            color: webbColors.mono['100'],
           },
         },
       },
