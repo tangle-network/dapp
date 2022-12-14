@@ -2,7 +2,10 @@ import React, { ErrorInfo } from 'react';
 
 import { WebbUIErrorBoudaryProps, WebbUIErrorBoudaryState } from './types';
 
-export class WebbUIErrorBoudary extends React.Component<WebbUIErrorBoudaryProps, WebbUIErrorBoudaryState> {
+export class WebbUIErrorBoudary extends React.Component<
+  WebbUIErrorBoudaryProps,
+  WebbUIErrorBoudaryState
+> {
   state: WebbUIErrorBoudaryState = {
     hasError: false,
     error: null,
@@ -10,8 +13,6 @@ export class WebbUIErrorBoudary extends React.Component<WebbUIErrorBoudaryProps,
   };
 
   static getDerivedStateFromError(error: unknown) {
-    console.log(error);
-
     // Update state so the next render will show the fallback UI.
     return { hasError: true, error: error as any };
   }

@@ -7,6 +7,9 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { TransferConfirmContainerProps } from './types';
+import { LoggerService } from '@webb-tools/app-util';
+
+const logger = LoggerService.get('ui');
 
 export const TransferConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -94,7 +97,7 @@ export const TransferConfirmContainer = forwardRef<
       try {
         await transfer();
       } catch (error) {
-        console.error('Error occured while transfering', error);
+        logger.error('Error occured while transfering', error);
       }
     }, [isTransfering, note, setMainComponent, transfer]);
 

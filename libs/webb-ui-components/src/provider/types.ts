@@ -1,6 +1,7 @@
 import React from 'react';
 import { notificationApi } from '../components';
 import { ToggleThemeModeFunc } from '../hooks/useDarkMode';
+import type { LoggerService } from '@webb-tools/app-util';
 
 export interface IWebbUIContext {
   theme: {
@@ -13,6 +14,7 @@ export interface IWebbUIContext {
   setMainComponent: (component: React.ReactElement | undefined) => void;
 
   notificationApi: typeof notificationApi;
+  logger: LoggerService;
 }
 
 export type WebbUIProviderProps = {
