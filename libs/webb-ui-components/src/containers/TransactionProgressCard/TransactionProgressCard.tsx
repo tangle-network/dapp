@@ -69,7 +69,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  />
  *  ```
  *
- *  @example Deposit transaction card when the transction has failed
+ *  @example Deposit transaction card when the transaction has failed
  *
  *   ```jsx
  *   <TransactionProgressCard
