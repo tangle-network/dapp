@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { webbApiConfig, webbAppConfig } = constants;
+  const { webbApiConfig, webbAppConfig, webbNodes } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -113,11 +113,24 @@ export const Header: FC<HeaderProps> = ({
                   className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
-                    window.open(webbApiConfig.href, '_blank');
+                    window.open(
+                      endpointUserInput === webbNodes.parachain.subqueryEndpoint
+                        ? webbApiConfig.parachain.href
+                        : endpointUserInput ===
+                          webbNodes.standalone.subqueryEndpoint
+                        ? webbApiConfig.standalone.href
+                        : '',
+                      '_blank'
+                    );
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {webbApiConfig.name}
+                    {endpointUserInput === webbNodes.parachain.subqueryEndpoint
+                      ? webbApiConfig.parachain.name
+                      : endpointUserInput ===
+                        webbNodes.standalone.subqueryEndpoint
+                      ? webbApiConfig.standalone.name
+                      : ''}
                   </Typography>
                 </MenuItem>
 
@@ -145,7 +158,9 @@ export const Header: FC<HeaderProps> = ({
                       size="sm"
                       variant="link"
                       onClick={() => {
-                        setEndpointUserInput(connectedEndpoint);
+                        setEndpointUserInput(
+                          webbNodes.parachain.subqueryEndpoint
+                        );
                       }}
                     >
                       Reset
