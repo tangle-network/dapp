@@ -22,10 +22,32 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-export const webbApiConfig: ExternalLink = {
-  name: 'Arana Alpha',
-  href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
-  ...commonExternalProps,
+type SubqueryNodeInfo = {
+  parachain: string;
+  standalone: string;
+};
+
+export const SubqueryNodes: SubqueryNodeInfo = {
+  parachain: 'https://tangle-subquery.webb.tools/graphql',
+  standalone: 'https://subquery-dev.webb.tools/graphql',
+};
+
+type webbApiConfigType = {
+  parachain: ExternalLink;
+  standalone: ExternalLink;
+};
+
+export const webbApiConfig: webbApiConfigType = {
+  parachain: {
+    name: 'Tangle Network',
+    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
+    ...commonExternalProps,
+  },
+  standalone: {
+    name: 'Arana Alpha',
+    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
+    ...commonExternalProps,
+  },
 };
 
 export const webbAppConfig: ExternalLink = {

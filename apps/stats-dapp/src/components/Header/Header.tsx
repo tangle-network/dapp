@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { webbApiConfig, webbAppConfig } = constants;
+  const { webbApiConfig, webbAppConfig, SubqueryNodes } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -113,11 +113,22 @@ export const Header: FC<HeaderProps> = ({
                   className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
-                    window.open(webbApiConfig.href, '_blank');
+                    window.open(
+                      endpointUserInput === SubqueryNodes.parachain
+                        ? webbApiConfig.parachain.href
+                        : endpointUserInput === SubqueryNodes.standalone
+                        ? webbApiConfig.standalone.href
+                        : '',
+                      '_blank'
+                    );
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {webbApiConfig.name}
+                    {endpointUserInput === SubqueryNodes.parachain
+                      ? webbApiConfig.parachain.name
+                      : endpointUserInput === SubqueryNodes.standalone
+                      ? webbApiConfig.standalone.name
+                      : ''}
                   </Typography>
                 </MenuItem>
 
