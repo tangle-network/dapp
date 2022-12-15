@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { webbApiConfig, webbAppConfig, subqueryNodes } = constants;
+  const { webbApiConfig, webbAppConfig, webbNodes } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -114,9 +114,10 @@ export const Header: FC<HeaderProps> = ({
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
                     window.open(
-                      endpointUserInput === subqueryNodes.parachain
+                      endpointUserInput === webbNodes.parachain.subqueryEndpoint
                         ? webbApiConfig.parachain.href
-                        : endpointUserInput === subqueryNodes.standalone
+                        : endpointUserInput ===
+                          webbNodes.standalone.subqueryEndpoint
                         ? webbApiConfig.standalone.href
                         : '',
                       '_blank'
@@ -124,9 +125,10 @@ export const Header: FC<HeaderProps> = ({
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {endpointUserInput === subqueryNodes.parachain
+                    {endpointUserInput === webbNodes.parachain.subqueryEndpoint
                       ? webbApiConfig.parachain.name
-                      : endpointUserInput === subqueryNodes.standalone
+                      : endpointUserInput ===
+                        webbNodes.standalone.subqueryEndpoint
                       ? webbApiConfig.standalone.name
                       : ''}
                   </Typography>
@@ -156,7 +158,9 @@ export const Header: FC<HeaderProps> = ({
                       size="sm"
                       variant="link"
                       onClick={() => {
-                        setEndpointUserInput(subqueryNodes.parachain);
+                        setEndpointUserInput(
+                          webbNodes.parachain.subqueryEndpoint
+                        );
                       }}
                     >
                       Reset

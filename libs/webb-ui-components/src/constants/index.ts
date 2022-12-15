@@ -22,14 +22,26 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-type SubqueryNodeInfo = {
-  parachain: string;
-  standalone: string;
+type WebbNodeInfo = {
+  parachain: {
+    subqueryEndpoint: string;
+    providerEndpoint: string;
+  };
+  standalone: {
+    subqueryEndpoint: string;
+    providerEndpoint: string;
+  };
 };
 
-export const subqueryNodes: SubqueryNodeInfo = {
-  parachain: 'https://tangle-subquery.webb.tools/graphql',
-  standalone: 'https://subquery-dev.webb.tools/graphql',
+export const webbNodes: WebbNodeInfo = {
+  parachain: {
+    subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
+    providerEndpoint: 'wss://tangle-archive.webb.tools/',
+  },
+  standalone: {
+    subqueryEndpoint: 'https://subquery-dev.webb.tools/graphql',
+    providerEndpoint: 'wss://arana-alpha-1.webb.tools/',
+  },
 };
 
 type webbApiConfigType = {
