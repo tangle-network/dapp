@@ -2,7 +2,6 @@ import * as constants from '@webb-tools/webb-ui-components/constants';
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { polkadotProviderEndpoint } from '../constants';
 
 /**
  * Chain metadata
@@ -56,6 +55,9 @@ type StatsProvidervalue = {
   api?: ApiPromise;
   // connected subquery endpoint
   connectedEndpoint?: string;
+  // is dark mode
+  isDarkMode: boolean;
+  // toggle dark mode
 };
 
 /**
@@ -104,6 +106,7 @@ const statsContext: React.Context<StatsProvidervalue> =
     },
     isReady: false,
     connectedEndpoint: '',
+    isDarkMode: false,
   });
 export function useStatsContext() {
   return useContext(statsContext);
@@ -155,6 +158,22 @@ export const StatsProvider: React.FC<
 
   const { webbNodes } = constants;
 
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    function getCurrentTheme() {
+      if (localStorage.getItem('theme') === 'dark') {
+        setIsDarkMode(true);
+      } else if (localStorage.getItem('theme') === 'light') {
+        setIsDarkMode(false);
+      }
+    }
+
+    window.addEventListener('storage', getCurrentTheme);
+
+    return () => window.removeEventListener('storage', getCurrentTheme);
+  }, []);
+
   const value = useMemo<StatsProvidervalue>(() => {
     return {
       time,
@@ -165,8 +184,9 @@ export const StatsProvider: React.FC<
       isReady,
       metaData,
       api,
+      isDarkMode,
     };
-  }, [staticConfig, metaData, isReady, time, api]);
+  }, [staticConfig, metaData, isReady, time, api, isDarkMode]);
   const query = useLastBlockQuery();
 
   useEffect(() => {

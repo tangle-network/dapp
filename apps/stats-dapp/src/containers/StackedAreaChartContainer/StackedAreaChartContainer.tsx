@@ -22,8 +22,7 @@ import {
   useProposalsOvertimeTotalCount,
   TimeRange,
 } from '../../provider/hooks';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
-
+import { useStatsContext } from '../../provider/stats-provider';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
@@ -102,7 +101,7 @@ const allProposals = [
 ];
 
 export const StackedAreaChartContainer = () => {
-  const [isDarkMode, _] = useDarkMode();
+  const { isDarkMode } = useStatsContext();
 
   const [timeRange, setTimeRange] = useState<TimeRange>('three-months');
 

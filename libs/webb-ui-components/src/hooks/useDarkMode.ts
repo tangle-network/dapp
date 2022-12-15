@@ -3,19 +3,24 @@ import { useCallback, useEffect, useState } from 'react';
 /**
  * Function to toggle or change the theme mode (possible value: `light`, `dark`, `undefined`)
  */
-export type ToggleThemeModeFunc = (nextThemeMode?: 'light' | 'dark' | undefined) => void;
+export type ToggleThemeModeFunc = (
+  nextThemeMode?: 'light' | 'dark' | undefined
+) => void;
 
 /**
  * Hook to get the current theme mode and a function to toggle the theme mode
  * @returns `[isDarkMode, toggleThemeMode]`
  */
 export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
-  const [preferredTheme, setPreferredTheme] = useState<null | 'dark' | 'light'>(null);
+  const [preferredTheme, setPreferredTheme] = useState<null | 'dark' | 'light'>(
+    null
+  );
 
   useEffect(() => {
     if (
       localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      (!('theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
       document.documentElement.classList.add('dark');
       setPreferredTheme('dark');
@@ -39,6 +44,7 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
           if (localStorage.getItem('theme') !== _nextThemeMode) {
             document.documentElement.classList.add(_nextThemeMode);
             localStorage.setItem('theme', _nextThemeMode);
+            window.dispatchEvent(new Event('storage'));
           }
           break;
         }
@@ -47,6 +53,7 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
           if (localStorage.getItem('theme') !== _nextThemeMode) {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', _nextThemeMode);
+            window.dispatchEvent(new Event('storage'));
           }
           break;
         }
