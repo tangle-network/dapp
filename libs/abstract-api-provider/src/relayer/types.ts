@@ -185,32 +185,6 @@ export type MixerRelayTx = {
 };
 
 /**
- * Anchor relayer transaction payload it's similar to mixer/tornado, but don't have the value `root`
- * @param chain - Chain name
- * @param id - The target contract.
- * @param proof - Proof bytes
- * @param fee - Fee value
- * @param refund - Refund value
- * @param relayer - Relayer address
- * @param refreshCommitment - Refresh commitment is used to link the value of the commitment to anchor (to the refreshCommitment),
- * if it passed as zero nothing will happen unless a real value is passed thus a new note isn't generated
- * @param roots - roots bytes array
- **/
-type AnchorRelayTransaction = {
-  chain: string;
-  id: string;
-  extDataHash: string;
-  proof: string;
-  fee: string;
-  nullifierHash: string;
-  recipient: string;
-  refund: string;
-  relayer: string;
-  refreshCommitment: string;
-  roots: string;
-};
-
-/**
  * Proof data object for VAnchor proofs on any chain
  *
  * @param proof - Encoded proof data
@@ -268,6 +242,8 @@ type SubstrateExtData = {
  * @param relayer - Relayer identifier of the transaction
  * @param extAmount - External amount being deposited or withdrawn withdrawn
  * @param fee - Fee to pay the relayer
+ * @param refund - Refund amount
+ * @param token - Token address
  * @param encryptedOutput1 - First encrypted output commitment
  * @param encryptedOutput2 - Second encrypted output commitment
  * */
@@ -276,10 +252,10 @@ type EVMExtData = {
   relayer: string;
   extAmount: string;
   fee: number;
-  encryptedOutput1: string;
-  encryptedOutput2: string;
   refund: string;
   token: string;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
 };
 
 type ExtData = EVMExtData | SubstrateExtData;
@@ -308,7 +284,6 @@ export type RelayerSubstrateCommands = {
  * Relayed transaction for EVM
  **/
 export type RelayerEVMCommands = {
-  anchor: AnchorRelayTransaction;
   vAnchor: VAnchorRelayTransaction;
 };
 export type EVMCMDKeys = keyof RelayerEVMCommands;

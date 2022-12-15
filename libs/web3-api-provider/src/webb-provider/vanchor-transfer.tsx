@@ -102,7 +102,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
         );
         const srcAddress = activeBridge.targets[sourceChainIdType];
         const anchor = this.inner.getVariableAnchorByAddress(srcAddress);
-        const treeHeight = await anchor._contract.levels();
+        const treeHeight = await anchor._contract.outerLevels();
 
         // Create the proving manager - zk fixtures are fetched depending on the contract
         // max edges as well as the number of input notes.
@@ -356,11 +356,11 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
               },
               proofData: {
                 proof: publicInputs.proof,
-                extDataHash: publicInputs.extDataHash,
+                extDataHash: publicInputs.extDataHash.toString(),
                 publicAmount: publicInputs.publicAmount,
                 roots: publicInputs.roots,
-                outputCommitments: publicInputs.outputCommitments,
-                inputNullifiers: publicInputs.inputNullifiers,
+                outputCommitments: publicInputs.outputCommitments.map((c) => c.toString()),
+                inputNullifiers: publicInputs.inputNullifiers.map((c) => c.toString()),
               },
             });
 

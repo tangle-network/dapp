@@ -20,11 +20,9 @@ import {
   bridgeStorageFactory,
   keypairStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { checkNativeAddress, WebbError, WebbErrorCodes, zeroAddress } from '@webb-tools/dapp-types';
 import {
-  ExtData,
   generateCircomCommitment,
-  IVariableAnchorPublicInputs,
   utxoFromVAnchorNote,
   VAnchorContract,
 } from '@webb-tools/evm-contracts';
@@ -50,6 +48,9 @@ import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { Web3Provider } from '../ext-provider';
+import { IVariableAnchorExtData, IVariableAnchorPublicInputs } from '@webb-tools/interfaces';
+import { TokenWrapper__factory } from '@webb-tools/contracts';
+import { ZERO_BYTES32 } from '@webb-tools/utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
   protected get bridgeApi() {
@@ -137,7 +138,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
    * Submit the withdraw transaction throw relayer
    * */
   private async relayerWithdraw(
-    extData: ExtData,
+    extData: IVariableAnchorExtData,
     publicInputs: IVariableAnchorPublicInputs,
     destChainIdType: number,
     destAddress: string,
@@ -176,11 +177,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         },
         proofData: {
           proof: publicInputs.proof,
-          extDataHash: publicInputs.extDataHash,
+          extDataHash: publicInputs.extDataHash.toString(),
           publicAmount: publicInputs.publicAmount,
           roots: publicInputs.roots,
-          outputCommitments: publicInputs.outputCommitments,
-          inputNullifiers: publicInputs.inputNullifiers,
+          outputCommitments: publicInputs.outputCommitments.map((c) => c.toString()),
+          inputNullifiers: publicInputs.inputNullifiers.map((n) => n.toString()),
         },
       });
 
@@ -241,6 +242,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       wasmBuffer,
     };
   }
+
   withdraw(
     notes: string[],
     recipient: string,
@@ -252,15 +254,34 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
     const srcChainId = note.sourceChainId;
-    const distChainId = note.targetChainId;
+    // TODO: Change `dist` to `dest` (for destination)
+    const destChainId = note.targetChainId;
     const currencySymbol = note.tokenSymbol;
-    const wrappabledAssetAddress: string | undefined = unwrapTokenAddress;
-    const srcSymbol = wrappabledAssetAddress
-      ? this.inner.config.getCurrencyByAddress(wrappabledAssetAddress).symbol
+
+    const activeBridge = this.inner.methods.bridgeApi.getBridge();
+    const activeRelayer = this.inner.relayerManager.activeRelayer;
+    const relayerAccount = activeRelayer
+      ? activeRelayer.beneficiary
+      : recipient;
+
+    const destAddress = activeBridge.targets[destChainId];
+    const destVAnchor = this.inner.getVariableAnchorByAddress(destAddress);
+
+    // If the token / wrapUnwrapToken
+    // - is undefined -> no wrapping
+    // - is 0x0000000000000000000000000000000000000000 -> native token
+    // - is equal to the FungibleTokenWrapper token -> no wrapping
+    // - is equal to some random address / random ERC20 token -> wrap that token
+    const wrapUnwrapToken: string = unwrapTokenAddress
+      || await destVAnchor._contract.token();
+
+    const srcSymbol = wrapUnwrapToken
+      ? this.inner.config.getCurrencyByAddress(wrapUnwrapToken).symbol
       : currencySymbol;
 
+    // TODO: Change `dist` to `dest` (for destination)
     const withdrawTx = Transaction.new<NewNotesTxResult>('Withdraw', {
-      wallets: { src: Number(srcChainId), dist: Number(distChainId) },
+      wallets: { src: Number(srcChainId), dist: Number(destChainId) },
       tokens: [srcSymbol, currencySymbol],
       token: currencySymbol,
       amount: Number(formattedAmount),
@@ -268,28 +289,22 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const executor = async () => {
       const abortSignal = withdrawTx.cancelToken.abortSignal;
 
+      const activeChain = await this.inner.getChainId();
+
+      // set the destination contract
+      const destChainIdType = calculateTypedChainId(
+        ChainType.EVM,
+        activeChain
+      );
+
       const txHash = '';
       const changeNotes: Note[] = [];
       try {
-        const activeBridge = this.inner.methods.bridgeApi.getBridge();
-        const activeRelayer = this.inner.relayerManager.activeRelayer;
-        const relayerAccount = activeRelayer
-          ? activeRelayer.beneficiary
-          : recipient;
         if (!activeBridge) {
           withdrawTx.fail('No activeBridge set on the web3 anchor api');
         }
 
-        const activeChain = await this.inner.getChainId();
-
-        // set the destination contract
-        const destChainIdType = calculateTypedChainId(
-          ChainType.EVM,
-          activeChain
-        );
-        const destAddress = activeBridge.targets[destChainIdType];
-        const destVAnchor = this.inner.getVariableAnchorByAddress(destAddress);
-        const treeHeight = await destVAnchor._contract.levels();
+        const treeHeight = await destVAnchor._contract.outerLevels();
 
         // Create the proving manager - zk fixtures are fetched depending on the contract
         // max edges as well as the number of input notes.
@@ -442,38 +457,45 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             await this.inner.noteManager?.removeNote(parsedNote);
           }
         } else {
-          let tx: ContractTransaction;
           withdrawTx.next(TransactionState.SendingTransaction, undefined);
-          if (unwrapTokenAddress) {
-            tx = await destVAnchor.inner.transactWrap(
-              {
-                ...publicInputs,
-                outputCommitments: [
-                  publicInputs.outputCommitments[0],
-                  publicInputs.outputCommitments[1],
-                ],
-              },
-              extData,
-              unwrapTokenAddress,
-              {
-                gasLimit: 10000000 * 9,
-              }
-            );
+
+          let options = {};
+          if (extAmount.gt(0) && checkNativeAddress(wrapUnwrapToken)) {
+            let tokenWrapper = TokenWrapper__factory.connect(await destVAnchor._contract.token(), destVAnchor.signer);
+            let valueToSend = await tokenWrapper.getAmountToWrap(extAmount);
+
+            options = {
+              value: valueToSend.toHexString(),
+            };
           } else {
-            tx = await destVAnchor.inner.transact(
-              {
-                ...publicInputs,
-                outputCommitments: [
-                  publicInputs.outputCommitments[0],
-                  publicInputs.outputCommitments[1],
-                ],
-              },
-              extData,
-              {
-                gasLimit: 10000000 + 9,
-              }
-            );
+            options = {};
           }
+
+          const tx = await destVAnchor.inner.transact(
+            publicInputs.proof,
+            ZERO_BYTES32,
+            {
+              recipient: extData.recipient,
+              extAmount: extData.extAmount,
+              relayer: extData.relayer,
+              fee: extData.fee,
+              refund: extData.refund,
+              token: extData.token,
+            },
+            {
+              roots: publicInputs.roots,
+              extensionRoots: '0x',
+              inputNullifiers: publicInputs.inputNullifiers,
+              outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+              publicAmount: publicInputs.publicAmount,
+              extDataHash: publicInputs.extDataHash,
+            },
+            {
+              encryptedOutput1: extData.encryptedOutput1,
+              encryptedOutput2: extData.encryptedOutput2,
+            },
+            options
+          );
 
           const receipt = await tx.wait();
           withdrawTx.txHash = receipt.transactionHash;
@@ -546,13 +568,13 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (parsedNote.sourceChainId === parsedNote.targetChainId) {
       const destRoot = await destVAnchor.inner.getLastRoot();
-      destHistorySourceRoot = destRoot;
+      destHistorySourceRoot = destRoot.toHexString();
     } else {
       const edgeIndex = await destVAnchor.inner.edgeIndex(
         parsedNote.sourceChainId
       );
       const edge = await destVAnchor.inner.edgeList(edgeIndex);
-      destHistorySourceRoot = edge[1];
+      destHistorySourceRoot = edge[1].toHexString();
     }
 
     // Remove leaves from the leaves map which have not yet been relayed
