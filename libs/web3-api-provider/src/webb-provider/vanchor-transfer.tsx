@@ -262,9 +262,9 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
                 0, // the extAmount for a transfer should be zero
                 0,
                 0,
+                relayerAccount,
+                relayerAccount,
                 activeBridge.currency.getAddress(sourceChainIdType),
-                relayerAccount,
-                relayerAccount,
                 leavesMap,
                 provingKey,
                 Buffer.from(wasmBuffer),

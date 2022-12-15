@@ -11,7 +11,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BYTES32 } from '@webb-tools/utils';
 import {
   IVariableAnchorPublicInputs,
-  IVariableAnchorExtData
+  IVariableAnchorExtData,
 } from '@webb-tools/interfaces';
 import {
   ERC20,
@@ -310,8 +310,11 @@ export class VAnchorContract {
     // A deposit is meant for the same recipient as signer
     let options = {};
     if (extAmount.gt(0) && checkNativeAddress(wrapUnwrapToken)) {
-      let tokenWrapper = TokenWrapper__factory.connect(await this.inner.token(), this.signer);
-      let valueToSend = await tokenWrapper.getAmountToWrap(extAmount);
+      const tokenWrapper = TokenWrapper__factory.connect(
+        await this.inner.token(),
+        this.signer
+      );
+      const valueToSend = await tokenWrapper.getAmountToWrap(extAmount);
 
       options = {
         value: valueToSend.toHexString(),
@@ -335,7 +338,10 @@ export class VAnchorContract {
         roots: publicInputs.roots,
         extensionRoots: '0x',
         inputNullifiers: publicInputs.inputNullifiers,
-        outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+        outputCommitments: [
+          publicInputs.outputCommitments[0],
+          publicInputs.outputCommitments[1],
+        ],
         publicAmount: publicInputs.publicAmount,
         extDataHash: publicInputs.extDataHash,
       },
@@ -624,7 +630,9 @@ export class VAnchorContract {
       proof: `0x${proof}`,
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
       extensionRoots: '0x00',
-      inputNullifiers: inputs.map((x) => BigNumber.from(toFixedHex('0x' + x.nullifier))),
+      inputNullifiers: inputs.map((x) =>
+        BigNumber.from(toFixedHex('0x' + x.nullifier))
+      ),
       outputCommitments: [
         BigNumber.from(toFixedHex(u8aToHex(outputs[0].commitment))),
         BigNumber.from(toFixedHex(u8aToHex(outputs[1].commitment))),
