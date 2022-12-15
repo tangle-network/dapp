@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = ({
   connectedEndpoint,
   setConnectedEndpoint,
 }) => {
-  const { webbApiConfig, webbAppConfig, SubqueryNodes } = constants;
+  const { webbApiConfig, webbAppConfig, subqueryNodes } = constants;
 
   // This state variable tracks the user input of the 'Custom Data Source'
   const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
@@ -114,9 +114,9 @@ export const Header: FC<HeaderProps> = ({
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
                     window.open(
-                      endpointUserInput === SubqueryNodes.parachain
+                      endpointUserInput === subqueryNodes.parachain
                         ? webbApiConfig.parachain.href
-                        : endpointUserInput === SubqueryNodes.standalone
+                        : endpointUserInput === subqueryNodes.standalone
                         ? webbApiConfig.standalone.href
                         : '',
                       '_blank'
@@ -124,9 +124,9 @@ export const Header: FC<HeaderProps> = ({
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {endpointUserInput === SubqueryNodes.parachain
+                    {endpointUserInput === subqueryNodes.parachain
                       ? webbApiConfig.parachain.name
-                      : endpointUserInput === SubqueryNodes.standalone
+                      : endpointUserInput === subqueryNodes.standalone
                       ? webbApiConfig.standalone.name
                       : ''}
                   </Typography>
@@ -156,7 +156,7 @@ export const Header: FC<HeaderProps> = ({
                       size="sm"
                       variant="link"
                       onClick={() => {
-                        setEndpointUserInput(connectedEndpoint);
+                        setEndpointUserInput(subqueryNodes.parachain);
                       }}
                     >
                       Reset

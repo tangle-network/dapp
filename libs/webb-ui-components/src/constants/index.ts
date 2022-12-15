@@ -27,7 +27,7 @@ type SubqueryNodeInfo = {
   standalone: string;
 };
 
-export const SubqueryNodes: SubqueryNodeInfo = {
+export const subqueryNodes: SubqueryNodeInfo = {
   parachain: 'https://tangle-subquery.webb.tools/graphql',
   standalone: 'https://subquery-dev.webb.tools/graphql',
 };
