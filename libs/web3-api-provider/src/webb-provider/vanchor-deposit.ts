@@ -123,18 +123,22 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     const amount = depositPayload.params[0].amount;
     const formattedAmount = ethers.utils.formatUnits(amount, note.denomination);
     const srcChainId = note.sourceChainId;
-    const distChainId = note.targetChainId;
+
+    const destChainId = note.targetChainId;
     const currencySymbol = note.tokenSymbol;
     const wrappabledAssetAddress: string | undefined = depositPayload.params[2];
+
     const srcSymbol = wrappabledAssetAddress
       ? this.inner.config.getCurrencyByAddress(wrappabledAssetAddress).symbol
       : currencySymbol;
+
     const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
-      wallets: { src: Number(srcChainId), dist: Number(distChainId) },
+      wallets: { src: Number(srcChainId), dist: Number(destChainId) },
       tokens: [srcSymbol, currencySymbol],
       token: currencySymbol,
       amount: Number(formattedAmount),
     });
+
     const ex = async () => {
       const abortSignal = depositTx.cancelToken.abortSignal;
       const bridge = this.inner.methods.bridgeApi.getBridge();
@@ -375,6 +379,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         };
       }
     };
+
     depositTx.executor(ex);
     return depositTx;
   }
