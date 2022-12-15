@@ -7,7 +7,12 @@ query Proposals(
   $filter: ProposalItemFilter
 ) {
   # Listing proposals items
-  proposalItems(filter: $filter, orderBy: [BLOCK_NUMBER_DESC], first: $perPage, offset: $offset) {
+  proposalItems(
+    filter: $filter
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ) {
     nodes {
       ...ProposalListView
     }
@@ -19,24 +24,24 @@ query Proposals(
 }
 
 query ProposalsCounter(
-    #  Proposal counter id
-    $id: String!
+  #  Proposal counter id
+  $id: String!
 ) {
-    proposalCounter(id: $id) {
-        id
-        signedProposalsMap
-        unSignedProposalsMap
+  proposalCounter(id: $id) {
+    id
+    signedProposalsMap
+    unSignedProposalsMap
 
-        signedProposalsCount
-        unSignedProposalsCount
+    signedProposalsCount
+    unSignedProposalsCount
 
-        statusMap
+    statusMap
 
-        block {
-            number
-            timestamp
-        }
+    block {
+      number
+      timestamp
     }
+  }
 }
 
 # Proposals over view query
@@ -62,7 +67,11 @@ query ProposalsOverview(
     }
   }
   # Opn Proposals fetching only the recent 10 elements
-  openProposals: proposalItems(filter: { status: { equalTo: "Open" } }, orderBy: [BLOCK_NUMBER_DESC], first: 10) {
+  openProposals: proposalItems(
+    filter: { status: { equalTo: "Open" } }
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: 10
+  ) {
     nodes {
       ...ProposalListView
     }
@@ -73,25 +82,37 @@ query ProposalsOverview(
   }
   # Open proposals count for a range for block numbers
   open: proposalTimelineStatuses(
-    filter: { status: { equalTo: Open }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
+    filter: {
+      status: { equalTo: Open }
+      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+    }
   ) {
     totalCount
   }
   # Signed proposals count for a range for block numbers
   signed: proposalTimelineStatuses(
-    filter: { status: { equalTo: Signed }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
+    filter: {
+      status: { equalTo: Signed }
+      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+    }
   ) {
     totalCount
   }
   # Rejected proposals count for a range for block numbers
   reject: proposalTimelineStatuses(
-    filter: { status: { equalTo: Rejected }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
+    filter: {
+      status: { equalTo: Rejected }
+      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+    }
   ) {
     totalCount
   }
   # Accepted proposals count for a range for block numbers
   accepted: proposalTimelineStatuses(
-    filter: { status: { equalTo: Accepted }, and: [{ blockNumber: $startRange }, { blockNumber: $endRange }] }
+    filter: {
+      status: { equalTo: Accepted }
+      and: [{ blockNumber: $startRange }, { blockNumber: $endRange }]
+    }
   ) {
     totalCount
   }
@@ -152,13 +173,19 @@ query ProposalDetails(
       }
     }
 
-    votesFor: proposalVotesByProposalId(filter: { voteStatus: { equalTo: FOR } }) {
+    votesFor: proposalVotesByProposalId(
+      filter: { voteStatus: { equalTo: FOR } }
+    ) {
       totalCount
     }
-    against: proposalVotesByProposalId(filter: { voteStatus: { equalTo: AGAINST } }) {
+    against: proposalVotesByProposalId(
+      filter: { voteStatus: { equalTo: AGAINST } }
+    ) {
       totalCount
     }
-    abstain: proposalVotesByProposalId(filter: { voteStatus: { equalTo: ABSTAIN } }) {
+    abstain: proposalVotesByProposalId(
+      filter: { voteStatus: { equalTo: ABSTAIN } }
+    ) {
       totalCount
     }
     totalVotes: proposalVotesByProposalId {
@@ -176,5 +203,140 @@ query ensureProposals($ids: [String!]!) {
     nodes {
       id
     }
+  }
+}
+
+# Total number of proposals of each proposal type for a range of block numbers
+query ProposalsOvertimeTotalCount(
+  # Starting block number of the block range
+  $start: Int!
+  # Ending block number of the block range
+  $end: Int!
+) {
+  # Total number of proposals of refreshVote proposal type for a range for block numbers
+  refreshVote: proposalItems(
+    filter: {
+      type: { equalTo: RefreshVote }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of proposerSetUpdateProposal proposal type for a range for block numbers
+  proposerSetUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: ProposerSetUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of anchorCreateProposal proposal type for a range for block numbers
+  anchorCreateProposal: proposalItems(
+    filter: {
+      type: { equalTo: AnchorCreateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of anchorUpdateProposal proposal type for a range for block numbers
+  anchorUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: AnchorUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of tokenAddProposal proposal type for a range for block numbers
+  tokenAddProposal: proposalItems(
+    filter: {
+      type: { equalTo: TokenAddProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of tokenRemoveProposal proposal type for a range for block numbers
+  tokenRemoveProposal: proposalItems(
+    filter: {
+      type: { equalTo: TokenRemoveProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of wrappingFeeUpdateProposal proposal type for a range for block numbers
+  wrappingFeeUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: WrappingFeeUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of resourceIdUpdateProposal proposal type for a range for block numbers
+  resourceIdUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: ResourceIdUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of rescueTokensProposal proposal type for a range for block numbers
+  rescueTokensProposal: proposalItems(
+    filter: {
+      type: { equalTo: RescueTokensProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of maxDepositLimitUpdateProposal proposal type for a range for block numbers
+  maxDepositLimitUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: MaxDepositLimitUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of minWithdrawalLimitUpdateProposal proposal type for a range for block numbers
+  minWithdrawalLimitUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: MinWithdrawalLimitUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of setVerifierProposal proposal type for a range for block numbers
+  setVerifierProposal: proposalItems(
+    filter: {
+      type: { equalTo: SetVerifierProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of setTreasuryHandlerProposal proposal type for a range for block numbers
+  setTreasuryHandlerProposal: proposalItems(
+    filter: {
+      type: { equalTo: SetTreasuryHandlerProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
+  }
+  # Total number of proposals of feeRecipientUpdateProposal proposal type for a range for block numbers
+  feeRecipientUpdateProposal: proposalItems(
+    filter: {
+      type: { equalTo: FeeRecipientUpdateProposal }
+      blockNumber: { greaterThanOrEqualTo: $start, lessThanOrEqualTo: $end }
+    }
+  ) {
+    totalCount
   }
 }
