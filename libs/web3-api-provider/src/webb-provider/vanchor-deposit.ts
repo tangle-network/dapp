@@ -47,11 +47,12 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<DepositPayload> {
-    console.log('generateBridgeNote: ', anchorId, destination, amount);
+    this.logger.trace('generateBridgeNote: ', anchorId, destination, amount);
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
 
     if (!bridge || !currency) {
+      this.logger.error('Api not ready');
       throw new Error('api not ready');
     }
     // Convert the amount to bn units (i.e. WEI instead of ETH)
@@ -66,7 +67,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       ? this.inner.noteManager.getKeypair()
       : new Keypair();
 
-    console.log('got the keypair');
+    this.logger.info('got the keypair', keypair);
 
     // Convert the amount to units of wei
     const depositOutputUtxo = await CircomUtxo.generateUtxo({
@@ -78,7 +79,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       keypair,
     });
 
-    console.log('generated the utxo: ', depositOutputUtxo.serialize());
+    this.logger.info('generated the utxo: ', depositOutputUtxo.serialize());
 
     const srcAddress = bridge.targets[sourceChainId];
     const destAddress = bridge.targets[destination];
@@ -106,11 +107,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       width: '5',
     };
 
-    console.log('before generating the note: ', noteInput);
+    this.logger.log('before generating the note: ', noteInput);
 
     const note = await Note.generateNote(noteInput);
 
-    console.log('after generating the note');
+    this.logger.log('after generating the note');
 
     return {
       note: note,
@@ -140,8 +141,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       const bridge = this.inner.methods.bridgeApi.getBridge();
       const currency = bridge?.currency;
 
-      console.log('bridge: ', bridge);
-      console.log('currency: ', currency);
+      this.logger.log('bridge: ', bridge);
+      this.logger.log('currency: ', currency);
 
       if (!bridge || !currency) {
         depositTx.fail('Api not ready');
@@ -424,7 +425,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           }
         }
       } catch (e: any) {
-        console.log('yo something failed in the catch: ', e);
+        this.logger.error('yo something failed in the catch: ', e);
         this.inner.notificationHandler.remove('waiting-approval');
         const isUserCancel =
           e instanceof WebbError &&
