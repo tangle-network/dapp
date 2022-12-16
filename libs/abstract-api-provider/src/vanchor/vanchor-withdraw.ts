@@ -14,5 +14,5 @@ export abstract class VAnchorWithdraw<T extends WebbApiProvider<any>> {
     amount: string,
     metaDataNote: Note,
     unwrapTokenAddress?: string
-  ): Transaction<NewNotesTxResult>;
+  ): Promise<Transaction<NewNotesTxResult>>;
 }

@@ -108,7 +108,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           const withdrawNoteStrings = withdrawNotes.map((note) =>
             note.serialize()
           );
-          const payload = withdrawApi.withdraw(
+          const payload = await withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
             ethers.utils

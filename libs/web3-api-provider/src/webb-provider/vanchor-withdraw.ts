@@ -20,12 +20,20 @@ import {
   bridgeStorageFactory,
   keypairStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { checkNativeAddress, WebbError, WebbErrorCodes, zeroAddress } from '@webb-tools/dapp-types';
+import {
+  checkNativeAddress,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import {
   generateCircomCommitment,
   utxoFromVAnchorNote,
   VAnchorContract,
 } from '@webb-tools/evm-contracts';
+import {
+  IVariableAnchorExtData,
+  IVariableAnchorPublicInputs,
+} from '@webb-tools/interfaces';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
@@ -48,7 +56,6 @@ import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { Web3Provider } from '../ext-provider';
-import { IVariableAnchorExtData, IVariableAnchorPublicInputs } from '@webb-tools/interfaces';
 import { TokenWrapper__factory } from '@webb-tools/contracts';
 import { ZERO_BYTES32 } from '@webb-tools/utils';
 
@@ -134,6 +141,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       sumInputNotes,
     };
   }
+
   /**
    * Submit the withdraw transaction throw relayer
    * */
@@ -175,14 +183,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           refund: extData.refund.toString(),
           token: extData.token,
         },
-        proofData: {
-          proof: publicInputs.proof,
-          extDataHash: publicInputs.extDataHash.toString(),
-          publicAmount: publicInputs.publicAmount,
-          roots: publicInputs.roots,
-          outputCommitments: publicInputs.outputCommitments.map((c) => c.toString()),
-          inputNullifiers: publicInputs.inputNullifiers.map((n) => n.toString()),
-        },
+        proofData: publicInputs,
       });
 
     relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
@@ -212,6 +213,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     }
     throw new Error('Failed to use the relayer');
   }
+
   /**
    * Fetch the vAnchor fixtures
    * */
@@ -243,18 +245,17 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     };
   }
 
-  withdraw(
+  async withdraw(
     notes: string[],
     recipient: string,
     amount: string,
     metadataNote: Note,
     unwrapTokenAddress?: string
-  ): Transaction<NewNotesTxResult> {
+  ): Promise<Transaction<NewNotesTxResult>> {
     const { note } = metadataNote;
     const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
     const srcChainId = note.sourceChainId;
-    // TODO: Change `dist` to `dest` (for destination)
     const destChainId = note.targetChainId;
     const currencySymbol = note.tokenSymbol;
 
@@ -272,8 +273,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // - is 0x0000000000000000000000000000000000000000 -> native token
     // - is equal to the FungibleTokenWrapper token -> no wrapping
     // - is equal to some random address / random ERC20 token -> wrap that token
-    const wrapUnwrapToken: string = unwrapTokenAddress
-      || await destVAnchor._contract.token();
+    const wrapUnwrapToken: string =
+      unwrapTokenAddress || (await destVAnchor._contract.token());
 
     const srcSymbol = wrapUnwrapToken
       ? this.inner.config.getCurrencyByAddress(wrapUnwrapToken).symbol
@@ -286,25 +287,24 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       token: currencySymbol,
       amount: Number(formattedAmount),
     });
+
     const executor = async () => {
       const abortSignal = withdrawTx.cancelToken.abortSignal;
 
       const activeChain = await this.inner.getChainId();
 
       // set the destination contract
-      const destChainIdType = calculateTypedChainId(
-        ChainType.EVM,
-        activeChain
-      );
+      const destChainIdType = calculateTypedChainId(ChainType.EVM, activeChain);
 
       const txHash = '';
       const changeNotes: Note[] = [];
+
       try {
         if (!activeBridge) {
           withdrawTx.fail('No activeBridge set on the web3 anchor api');
         }
 
-        const treeHeight = await destVAnchor._contract.outerLevels();
+        const treeHeight = await destVAnchor._contract.getLevels();
 
         // Create the proving manager - zk fixtures are fetched depending on the contract
         // max edges as well as the number of input notes.
@@ -461,8 +461,11 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
           let options = {};
           if (extAmount.gt(0) && checkNativeAddress(wrapUnwrapToken)) {
-            let tokenWrapper = TokenWrapper__factory.connect(await destVAnchor._contract.token(), destVAnchor.signer);
-            let valueToSend = await tokenWrapper.getAmountToWrap(extAmount);
+            const tokenWrapper = TokenWrapper__factory.connect(
+              await destVAnchor._contract.token(),
+              this.inner.getEthersProvider().getSigner()
+            );
+            const valueToSend = await tokenWrapper.getAmountToWrap(extAmount);
 
             options = {
               value: valueToSend.toHexString(),
@@ -486,7 +489,10 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
               roots: publicInputs.roots,
               extensionRoots: '0x',
               inputNullifiers: publicInputs.inputNullifiers,
-              outputCommitments: [publicInputs.outputCommitments[0], publicInputs.outputCommitments[1]],
+              outputCommitments: [
+                publicInputs.outputCommitments[0],
+                publicInputs.outputCommitments[1],
+              ],
               publicAmount: publicInputs.publicAmount,
               extDataHash: publicInputs.extDataHash,
             },
