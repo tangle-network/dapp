@@ -4,7 +4,7 @@ import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { CurrencyId } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { GovernedTokenWrapper } from '@webb-tools/tokens';
+import { FungibleTokenWrapper } from '@webb-tools/tokens';
 
 import { WebbWeb3Provider } from '../webb-provider';
 
@@ -21,7 +21,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     }
 
     // Get the available token addresses which can wrap into the wrappedToken
-    const governedToken = GovernedTokenWrapper.connect(
+    const governedToken = FungibleTokenWrapper.connect(
       governedTokenAddress,
       this.inner.getEthersProvider().getSigner()
     );

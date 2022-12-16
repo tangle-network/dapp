@@ -49,13 +49,13 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
    * recipient - Recipient account
    * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
    * */
-  withdraw(
+  async withdraw(
     notes: string[],
     recipient: string,
     amount: string,
     metadataNote: Note,
     unwrapTokenAddress?: string // Make use of this to unwrap the token
-  ): Transaction<NewNotesTxResult> {
+  ): Promise<Transaction<NewNotesTxResult>> {
     const { note } = metadataNote;
     const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);

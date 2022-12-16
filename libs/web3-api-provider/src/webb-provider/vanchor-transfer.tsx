@@ -42,6 +42,7 @@ import { ChainIcon } from '@webb-tools/icons';
 
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
+import { ZERO_BYTES32 } from '@webb-tools/utils';
 
 export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
   protected get bridgeApi() {
@@ -71,6 +72,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
       sourceChain.chainId
     );
 
+    // TODO: Change `dist` to `dest` (for destination)
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
       wallets: {
         src: sourceChainId,
@@ -105,7 +107,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
         );
         const srcAddress = activeBridge.targets[sourceChainIdType];
         const anchor = this.inner.getVariableAnchorByAddress(srcAddress);
-        const treeHeight = await anchor._contract.levels();
+        const treeHeight = await anchor._contract.getLevels();
 
         // Create the proving manager - zk fixtures are fetched depending on the contract
         // max edges as well as the number of input notes.
@@ -236,6 +238,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
 
         // Create the output UTXOs
         const changeAmount = sumInputNotes.sub(transferData.amount);
+
         const changeUtxo = await CircomUtxo.generateUtxo({
           curve: 'Bn254',
           backend: 'Circom',
@@ -244,6 +247,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
           keypair: changeKeypair,
           originChainId: sourceChainIdType.toString(),
         });
+
         const transferUtxo = await CircomUtxo.generateUtxo({
           curve: 'Bn254',
           backend: 'Circom',
@@ -265,9 +269,9 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
                 0, // the extAmount for a transfer should be zero
                 0,
                 0,
+                relayerAccount,
+                relayerAccount,
                 activeBridge.currency.getAddress(sourceChainIdType),
-                relayerAccount,
-                relayerAccount,
                 leavesMap,
                 provingKey,
                 Buffer.from(wasmBuffer),
@@ -357,14 +361,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
                 refund: extData.refund.toString(),
                 token: extData.token,
               },
-              proofData: {
-                proof: publicInputs.proof,
-                extDataHash: publicInputs.extDataHash,
-                publicAmount: publicInputs.publicAmount,
-                roots: publicInputs.roots,
-                outputCommitments: publicInputs.outputCommitments,
-                inputNullifiers: publicInputs.inputNullifiers,
-              },
+              proofData: publicInputs,
             });
 
           relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
@@ -408,14 +405,32 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
           }
         } else {
           const tx = await anchor.inner.transact(
+            publicInputs.proof,
+            ZERO_BYTES32,
             {
-              ...publicInputs,
+              recipient: extData.recipient,
+              extAmount: extData.extAmount,
+              relayer: extData.relayer,
+              fee: extData.fee,
+              refund: extData.refund,
+              token: extData.token,
+            },
+            {
+              roots: publicInputs.roots,
+              extensionRoots: '0x',
+              inputNullifiers: publicInputs.inputNullifiers,
               outputCommitments: [
                 publicInputs.outputCommitments[0],
                 publicInputs.outputCommitments[1],
               ],
+              publicAmount: publicInputs.publicAmount,
+              extDataHash: publicInputs.extDataHash,
             },
-            extData
+            {
+              encryptedOutput1: extData.encryptedOutput1,
+              encryptedOutput2: extData.encryptedOutput2,
+            },
+            {}
           );
 
           transferTx.next(TransactionState.SendingTransaction, tx.hash);
@@ -513,7 +528,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
       });
     }
 
-    let destHistorySourceRoot: string;
+    let destHistorySourceRoot: BigNumber;
 
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (parsedNote.sourceChainId === parsedNote.targetChainId) {
@@ -531,7 +546,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     const provingTree = MerkleTree.createTreeWithRoot(
       treeHeight,
       leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
-      destHistorySourceRoot
+      destHistorySourceRoot.toString()
     );
 
     if (!provingTree) {

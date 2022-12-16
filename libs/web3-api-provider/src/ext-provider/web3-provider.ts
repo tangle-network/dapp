@@ -176,7 +176,7 @@ export class Web3Provider<T = unknown> {
   }
 
   addChain(chainInput: AddEthereumChainParameter) {
-    const provider = this._inner.currentProvider as AbstractProvider;
+    const provider = this._inner.currentProvider as unknown as AbstractProvider;
 
     return provider.request?.({
       method: 'wallet_addEthereumChain',
@@ -185,7 +185,7 @@ export class Web3Provider<T = unknown> {
   }
 
   switchChain(chainInput: SwitchEthereumChainParameter) {
-    const provider = this._inner.currentProvider as AbstractProvider;
+    const provider = this._inner.currentProvider as unknown as AbstractProvider;
 
     return provider.request?.({
       method: 'wallet_switchEthereumChain',
@@ -194,7 +194,9 @@ export class Web3Provider<T = unknown> {
   }
 
   addToken(addTokenInput: AddToken) {
-    return (this._inner.currentProvider as AbstractProvider).request?.({
+    return (
+      this._inner.currentProvider as unknown as AbstractProvider
+    ).request?.({
       method: 'wallet_watchAsset',
       params: {
         options: {

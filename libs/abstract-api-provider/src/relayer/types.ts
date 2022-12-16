@@ -1,8 +1,12 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ActiveWebbRelayer, WebbRelayer } from '.';
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+import {
+  IVariableAnchorExtData,
+  IVariableAnchorPublicInputs,
+} from '@webb-tools/interfaces';
+import { ActiveWebbRelayer, WebbRelayer } from '.';
 
 /**
  * Relayer configuration for a chain
@@ -15,6 +19,7 @@ export type RelayedChainConfig = {
   beneficiary?: string;
   contracts: Contract[];
 };
+
 /**
  * Relayer capabilities, it's fetched from the relayer over http
  *  @param hasIpService - indicates if the relayer has support for IP address
@@ -39,6 +44,7 @@ export type Capabilities = {
  * @param linkedAnchor - Linked anchors that a relayer is supporting
  **/
 export type ContractName = 'VAnchor';
+
 export interface Contract {
   contract: ContractName;
   address: string;
@@ -53,6 +59,7 @@ export interface LinkedAnchor {
   chain: string;
   address: string;
 }
+
 /**
  * Contract events watcher configuration
  * @param enabled - If the event watcher is enabled at all
@@ -185,32 +192,6 @@ export type MixerRelayTx = {
 };
 
 /**
- * Anchor relayer transaction payload it's similar to mixer/tornado, but don't have the value `root`
- * @param chain - Chain name
- * @param id - The target contract.
- * @param proof - Proof bytes
- * @param fee - Fee value
- * @param refund - Refund value
- * @param relayer - Relayer address
- * @param refreshCommitment - Refresh commitment is used to link the value of the commitment to anchor (to the refreshCommitment),
- * if it passed as zero nothing will happen unless a real value is passed thus a new note isn't generated
- * @param roots - roots bytes array
- **/
-type AnchorRelayTransaction = {
-  chain: string;
-  id: string;
-  extDataHash: string;
-  proof: string;
-  fee: string;
-  nullifierHash: string;
-  recipient: string;
-  refund: string;
-  relayer: string;
-  refreshCommitment: string;
-  roots: string;
-};
-
-/**
  * Proof data object for VAnchor proofs on any chain
  *
  * @param proof - Encoded proof data
@@ -220,16 +201,6 @@ type AnchorRelayTransaction = {
  * @param outputCommitments - Output commitments for the proof
  * @param extDataHash - External data hash for the proof external data
  * */
-
-type EVMProofData = {
-  proof: string;
-  publicAmount: string;
-  roots: string;
-  inputNullifiers: string[];
-  outputCommitments: string[];
-  extDataHash: string;
-};
-
 type SubstrateProofData = {
   proof: Array<number>;
   publicAmount: Array<number>;
@@ -238,7 +209,6 @@ type SubstrateProofData = {
   outputCommitments: Array<number>[];
   extDataHash: Array<number>;
 };
-type ProofData = SubstrateProofData | EVMProofData;
 
 /**
  * External data for the VAnchor on any chain
@@ -262,27 +232,19 @@ type SubstrateExtData = {
 };
 
 /**
- * External data for the VAnchor on any chain
- *
- * @param recipient -  Recipient identifier of the withdrawn funds
- * @param relayer - Relayer identifier of the transaction
- * @param extAmount - External amount being deposited or withdrawn withdrawn
- * @param fee - Fee to pay the relayer
- * @param encryptedOutput1 - First encrypted output commitment
- * @param encryptedOutput2 - Second encrypted output commitment
+ * Contains data that is relayed to the VAnchors
+ * @param chain_id - The chain_id of a supported chain of this relayer
+ * @param id - The tree id of the mixer's underlying tree
+ * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
+ * @param extData - The external data structure for arbitrary inputs
  * */
-type EVMExtData = {
-  recipient: string;
-  relayer: string;
-  extAmount: string;
-  fee: number;
-  encryptedOutput1: string;
-  encryptedOutput2: string;
-  refund: string;
-  token: string;
+type VAnchorSubstrateRelayTransaction = {
+  chainId: number;
+  id: number | string;
+  proofData: SubstrateProofData;
+  extData: SubstrateExtData;
 };
 
-type ExtData = EVMExtData | SubstrateExtData;
 /**
  * Contains data that is relayed to the VAnchors
  * @param chain_id - The chain_id of a supported chain of this relayer
@@ -290,11 +252,11 @@ type ExtData = EVMExtData | SubstrateExtData;
  * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
  * @param extData - The external data structure for arbitrary inputs
  * */
-type VAnchorRelayTransaction = {
+type VAnchorEVMRelayTransaction = {
   chainId: number;
   id: number | string;
-  proofData: ProofData;
-  extData: ExtData;
+  proofData: IVariableAnchorPublicInputs;
+  extData: IVariableAnchorExtData;
 };
 
 /**
@@ -302,15 +264,16 @@ type VAnchorRelayTransaction = {
  **/
 export type RelayerSubstrateCommands = {
   mixer: MixerRelayTx;
-  vAnchor: VAnchorRelayTransaction;
+  vAnchor: VAnchorSubstrateRelayTransaction;
 };
+
 /**
  * Relayed transaction for EVM
  **/
 export type RelayerEVMCommands = {
-  anchor: AnchorRelayTransaction;
-  vAnchor: VAnchorRelayTransaction;
+  vAnchor: VAnchorEVMRelayTransaction;
 };
+
 export type EVMCMDKeys = keyof RelayerEVMCommands;
 export type SubstrateCMDKeys = keyof RelayerSubstrateCommands;
 export type RelayerCMDKey = EVMCMDKeys | SubstrateCMDKeys;
