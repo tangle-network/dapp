@@ -17,6 +17,12 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
   );
 
   useEffect(() => {
+    if (localStorage.getItem('theme') === null) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      window.dispatchEvent(new Event('storage'));
+    }
+
     if (
       localStorage.getItem('theme') === 'dark' ||
       (!('theme' in localStorage) &&
