@@ -56,7 +56,7 @@ import { BigNumber, ContractTransaction, ethers } from 'ethers';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
 import { Web3Provider } from '../ext-provider';
-import { TokenWrapper__factory } from '@webb-tools/contracts';
+import { TokenWrapper__factory } from '@webb-tools/contracts/lib';
 import { ZERO_BYTES32 } from '@webb-tools/utils';
 
 export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {

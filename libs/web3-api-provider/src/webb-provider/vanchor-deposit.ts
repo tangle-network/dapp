@@ -17,7 +17,8 @@ import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
+import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts/lib/factories/ERC20__factory';
+
 import {
   calculateTypedChainId,
   ChainType,

@@ -5,10 +5,7 @@
 
 import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
-import {
-  FungibleTokenWrapper,
-  FungibleTokenWrapper__factory,
-} from '@webb-tools/contracts';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts/lib/factories/FungibleTokenWrapper__factory';
 import {
   BigNumberish,
   Contract,
@@ -16,6 +13,7 @@ import {
   providers,
   Signer,
 } from 'ethers';
+import { FungibleTokenWrapper } from '@webb-tools/contracts/typechain/FungibleTokenWrapper';
 
 const logger = LoggerService.get('WebbGovernedToken');
 

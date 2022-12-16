@@ -8,12 +8,10 @@ import { Log } from '@ethersproject/abstract-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
 import {
-  ERC20,
   ERC20__factory as ERC20Factory,
   TokenWrapper__factory,
-  VAnchor,
   VAnchor__factory,
-} from '@webb-tools/contracts';
+} from '@webb-tools/contracts/lib';
 import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
