@@ -22,16 +22,19 @@ export const relayerConfig: RelayerConfig[] = [
     endpoint: 'http://localhost:9955',
   },
   {
-    endpoint: 'https://relayer.nepoche.com',
+    endpoint: 'https://relayer1.webb.tools',
   },
   {
-    endpoint: 'https://relayer.webb.tools',
+    endpoint: 'https://relayer2.webb.tools',
   },
   {
-    endpoint: 'https://webb.pops.one',
+    endpoint: 'https://relayer3.webb.tools',
   },
   {
-    endpoint: 'https://relayer.bldnodes.org',
+    endpoint: 'https://relayer4.webb.tools',
+  },
+  {
+    endpoint: 'https://relayer5.webb.tools',
   },
 ];
 
@@ -41,7 +44,7 @@ export function relayerSubstrateNameToTypedChainId(
   switch (name) {
     case 'localnode':
       return PresetTypedChainId.ProtocolSubstrateStandalone;
-    case 'webbeggnet':
+    case 'tangle':
       return PresetTypedChainId.LocalTangleStandalone;
   }
 
@@ -53,7 +56,7 @@ export function typedChainIdToSubstrateRelayerName(id: number): string {
     case PresetTypedChainId.ProtocolSubstrateStandalone:
       return 'localnode';
     case PresetTypedChainId.LocalTangleStandalone:
-      return 'webbeggnet';
+      return 'tangle';
   }
 
   throw new Error('unhandled chain id for substrate');

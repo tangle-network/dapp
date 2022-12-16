@@ -1,3 +1,4 @@
+import * as constants from '@webb-tools/webb-ui-components/constants';
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -53,6 +54,8 @@ type StatsProvidervalue = {
   isReady: boolean;
   // polkadot api
   api?: ApiPromise;
+  // connected subquery endpoint
+  connectedEndpoint?: string;
 };
 
 /**
@@ -100,6 +103,7 @@ const statsContext: React.Context<StatsProvidervalue> =
       activeSessionBlock: 0,
     },
     isReady: false,
+    connectedEndpoint: '',
   });
 export function useStatsContext() {
   return useContext(statsContext);
@@ -149,6 +153,8 @@ export const StatsProvider: React.FC<
   const [isReady, setIsReady] = useState(false);
   const [api, setApi] = useState<ApiPromise | undefined>();
 
+  const { webbNodes } = constants;
+
   const value = useMemo<StatsProvidervalue>(() => {
     return {
       time,
@@ -165,13 +171,19 @@ export const StatsProvider: React.FC<
 
   useEffect(() => {
     const getPromiseApi = async (): Promise<void> => {
-      const wsProvider = new WsProvider(polkadotProviderEndpoint);
+      const providerEndpoint =
+        props.connectedEndpoint === webbNodes.parachain.subqueryEndpoint
+          ? webbNodes.parachain.providerEndpoint
+          : props.connectedEndpoint === webbNodes.standalone.subqueryEndpoint
+          ? webbNodes.standalone.providerEndpoint
+          : '';
+      const wsProvider = new WsProvider(providerEndpoint);
       const apiPromise = await ApiPromise.create({ provider: wsProvider });
       setApi(apiPromise);
     };
 
     getPromiseApi();
-  }, []);
+  }, [props.connectedEndpoint]);
 
   useEffect(() => {
     const subscription = query.observable

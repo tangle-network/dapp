@@ -9,16 +9,14 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: ApiConfig['anchors'] = {
   [CurrencyId.webbETH]: {
-    [PresetTypedChainId.Goerli]: '0xdc9f140987073619d64898be00143dd312cdc71a',
-    [PresetTypedChainId.Sepolia]: '0xa5672fdfe6700452a828c514a9d5b3b4dc5230bf',
+    [PresetTypedChainId.Goerli]: '0x98c1024dfd61a8f7439108acedcb51a27754f2af',
+    [PresetTypedChainId.Sepolia]: '0x1f88e3903a36f1c2f997822579a651cb8022c64b',
     [PresetTypedChainId.PolygonTestnet]:
-      '0xcc1f5ebddb858f96051ef315969edaa936ae70e3',
+      '0xdb3365f086e9e3536d0f12abb822d048c7a60ebd',
     [PresetTypedChainId.OptimismTestnet]:
-      '0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f',
-    [PresetTypedChainId.ArbitrumTestnet]:
-      '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07',
+      '0xd2fbe0fd50315c13ac9a9331dadb1784c1ef6bb8',
     [PresetTypedChainId.MoonbaseAlpha]:
-      '0x1349f444a5cd98c5863f786496ca53f3f651f7c7',
+      '0xdb3365f086e9e3536d0f12abb822d048c7a60ebd',
   },
   [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
@@ -40,22 +38,19 @@ export const anchorsConfig: ApiConfig['anchors'] = {
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0xdc9f140987073619d64898be00143dd312cdc71a': 7865480,
+    '0x98c1024dfd61a8f7439108acedcb51a27754f2af': 8134383,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0xa5672fdfe6700452a828c514a9d5b3b4dc5230bf': 2196862,
+    '0x1f88e3903a36f1c2f997822579a651cb8022c64b': 2478565,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0xcc1f5ebddb858f96051ef315969edaa936ae70e3': 28905757,
+    '0xdb3365f086e9e3536d0f12abb822d048c7a60ebd': 29689383,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0xc3393b00a5c6a7250a5ee7ef99f0a06ff29bc18f': 2374192,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0x12f2c4a1469b035e4459539e38ae68bc4dd5ba07': 908813,
+    '0xd2fbe0fd50315c13ac9a9331dadb1784c1ef6bb8': 3447785,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0x1349f444a5cd98c5863f786496ca53f3f651f7c7': 3097804,
+    '0xdb3365f086e9e3536d0f12abb822d048c7a60ebd': 3355037,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0x6d5a4D246617d711595a1657c55B17B97e20bdda': 95,
