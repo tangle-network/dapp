@@ -5,14 +5,8 @@
 import type { JsNote } from '@webb-tools/wasm-utils';
 
 import { Log } from '@ethersproject/abstract-provider';
-import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
-import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
-import { ZERO_BYTES32 } from '@webb-tools/utils';
-import {
-  IVariableAnchorPublicInputs,
-  IVariableAnchorExtData,
-} from '@webb-tools/interfaces';
+import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
 import {
   ERC20,
   ERC20__factory as ERC20Factory,
@@ -20,6 +14,7 @@ import {
   VAnchor,
   VAnchor__factory,
 } from '@webb-tools/contracts';
+import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
   ChainType,
@@ -27,28 +22,30 @@ import {
   CircomUtxo,
   FIELD_SIZE,
   Keypair,
-  MerkleTree,
-  Note,
-  NoteGenInput,
   ProvingManagerSetupInput,
   randomBN,
   toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
+import { ZERO_BYTES32 } from '@webb-tools/utils';
 import {
   BigNumber,
   BigNumberish,
   Contract,
   ContractTransaction,
-  ethers,
   providers,
   Signer,
 } from 'ethers';
 
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 
+import {
+  IVariableAnchorExtData,
+  IVariableAnchorPublicInputs,
+} from '@webb-tools/interfaces';
 import { poseidon } from 'circomlibjs';
+
 const logger = LoggerService.get('AnchorContract');
 
 export async function utxoFromVAnchorNote(
@@ -117,7 +114,7 @@ export class VAnchorContract {
   }
 
   async getNextIndex() {
-    return this._contract.nextIndex();
+    return this._contract.getNextIndex();
   }
 
   async getEvmId() {
@@ -323,16 +320,12 @@ export class VAnchorContract {
       options = {};
     }
 
+    // A deposit is meant for the same recipient as signer
     const tx = await this.inner.transact(
       publicInputs.proof,
       ZERO_BYTES32,
       {
-        recipient: extData.recipient,
-        extAmount: extData.extAmount,
-        relayer: extData.relayer,
-        fee: extData.fee,
-        refund: extData.refund,
-        token: extData.token,
+        ...extData,
       },
       {
         roots: publicInputs.roots,
@@ -351,7 +344,6 @@ export class VAnchorContract {
       },
       options
     );
-    const receipt = await tx.wait();
 
     return tx;
   }
@@ -580,7 +572,7 @@ export class VAnchorContract {
 
     console.log('proofInput: ', proofInput);
 
-    const levels = await this.inner.outerLevels();
+    const levels = await this.inner.getLevels();
     const provingManager = new CircomProvingManager(wasmBuffer, levels, worker);
     const proof = (await provingManager.prove(
       'vanchor',
@@ -631,7 +623,7 @@ export class VAnchorContract {
       roots: `0x${roots.map((x) => toFixedHex(x).slice(2)).join('')}`,
       extensionRoots: '0x00',
       inputNullifiers: inputs.map((x) =>
-        BigNumber.from(toFixedHex('0x' + x.nullifier))
+        BigNumber.from(toFixedHex(`0x${x.nullifier}`))
       ),
       outputCommitments: [
         BigNumber.from(toFixedHex(u8aToHex(outputs[0].commitment))),
