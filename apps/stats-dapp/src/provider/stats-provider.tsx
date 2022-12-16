@@ -56,8 +56,7 @@ type StatsProvidervalue = {
   // connected subquery endpoint
   connectedEndpoint?: string;
   // is dark mode
-  isDarkMode: boolean;
-  // toggle dark mode
+  isDarkMode?: boolean;
 };
 
 /**
@@ -106,7 +105,6 @@ const statsContext: React.Context<StatsProvidervalue> =
     },
     isReady: false,
     connectedEndpoint: '',
-    isDarkMode: false,
   });
 export function useStatsContext() {
   return useContext(statsContext);
@@ -168,6 +166,8 @@ export const StatsProvider: React.FC<
         setIsDarkMode(false);
       }
     }
+
+    getCurrentTheme();
 
     window.addEventListener('storage', getCurrentTheme);
 
