@@ -22,8 +22,7 @@ import {
   useProposalsOvertimeTotalCount,
   TimeRange,
 } from '../../provider/hooks';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
-
+import { useStatsContext } from '../../provider/stats-provider';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
@@ -102,7 +101,7 @@ const allProposals = [
 ];
 
 export const StackedAreaChartContainer = () => {
-  const [isDarkMode, _] = useDarkMode();
+  const { isDarkMode } = useStatsContext();
 
   const [timeRange, setTimeRange] = useState<TimeRange>('three-months');
 
@@ -143,11 +142,11 @@ export const StackedAreaChartContainer = () => {
         legend: {
           position: 'right',
           labels: {
-            padding: 12,
+            padding: 13,
             usePointStyle: true,
             pointStyle: 'rectRounded',
             pointStyleWidth: 16,
-            color: webbColors.mono['100'],
+            color: isDarkMode ? webbColors.mono['40'] : webbColors.mono['160'],
           },
           align: 'start',
           onHover: (_, legendItem, legend) => {
@@ -204,11 +203,6 @@ export const StackedAreaChartContainer = () => {
           grid: {
             display: false,
           },
-          title: {
-            display: true,
-            text: 'Months',
-            color: webbColors.mono['100'],
-          },
           ticks: {
             color: webbColors.mono['100'],
           },
@@ -216,7 +210,7 @@ export const StackedAreaChartContainer = () => {
         y: {
           stacked: true,
           grid: {
-            color: webbColors.mono['80'],
+            color: webbColors.mono['100'],
             borderDash: [4, 4],
           },
           ticks: {
@@ -230,7 +224,7 @@ export const StackedAreaChartContainer = () => {
         intersect: false,
       },
     };
-  }, []);
+  }, [isDarkMode]);
 
   return (
     <Card className="flex flex-col space-y-4 max-w-full">
@@ -284,14 +278,32 @@ export const StackedAreaChartContainer = () => {
         </div>
       </div>
 
+      <div className="flex items-center justify-between px-12 pt-4 pb-2">
+        <TitleWithInfo
+          title="Proposal #"
+          variant="body2"
+          titleClassName="text-mono-200 dark:text-mono-0"
+        />
+      </div>
+
       <div className="px-12 max-w-full">
         <div>
           {isLoading ? (
             <Spinner className="block mx-auto" size="xl" />
           ) : (
-            <Line options={chartOptions} data={chartData} className="h-96" />
+            <div>
+              <Line options={chartOptions} data={chartData} className="h-96" />
+            </div>
           )}
         </div>
+      </div>
+
+      <div className="flex items-center pl-[438px]">
+        <TitleWithInfo
+          title="Month"
+          variant="body2"
+          titleClassName="text-mono-200 dark:text-mono-0"
+        />
       </div>
     </Card>
   );
