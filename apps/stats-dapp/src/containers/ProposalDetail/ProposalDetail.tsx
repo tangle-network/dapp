@@ -18,7 +18,7 @@ import {
   Expand,
   ExternalLinkLine,
   Spinner,
-  TokenIcon,
+  ChainIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
@@ -174,10 +174,19 @@ export const ProposalDetail = () => {
             label="chain:"
             value={
               <span className="flex items-center p-2 space-x-2">
-                <TokenIcon name={mapChainIdToLogo(Number(chain))} size="lg" />
+                <ChainIcon
+                  name={
+                    mapChainIdToLogo(Number(chain)) === 'webb'
+                      ? 'tangle'
+                      : mapChainIdToLogo(Number(chain))
+                  }
+                  size="lg"
+                />
                 <Typography variant="body1" className="block">
-                  {mapChainIdToLogo(Number(chain)).charAt(0).toUpperCase() +
-                    mapChainIdToLogo(Number(chain)).slice(1)}
+                  {mapChainIdToLogo(Number(chain)) === 'webb'
+                    ? 'Tangle Network'
+                    : mapChainIdToLogo(Number(chain)).charAt(0).toLowerCase() +
+                      mapChainIdToLogo(Number(chain)).slice(1)}
                 </Typography>
               </span>
             }
