@@ -42,7 +42,12 @@
     "@polkadot/wasm-crypto": "^6.4.1",
     "babel-core": "^7.0.0-bridge.0",
     "styled-components": "^5.3.1",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "@webb-tools/anchors": "file:../protocol-solidity/packages/anchors/lib",
+    "@webb-tools/tokens": "file:../protocol-solidity/packages/tokens/lib",
+    "@webb-tools/contracts": "file:../protocol-solidity/packages/contracts/lib",
+    "@webb-tools/interfaces": "file:../protocol-solidity/packages/interfaces/lib",
+    "@webb-tools/utils": "file:../protocol-solidity/packages/utils/lib"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

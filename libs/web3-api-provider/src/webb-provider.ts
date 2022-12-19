@@ -23,7 +23,6 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { VAnchor } from '@webb-tools/anchors';
 import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Storage } from '@webb-tools/storage';

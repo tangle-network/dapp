@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
 import { WebbGovernedToken } from '@webb-tools/evm-contracts';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts/lib/factories/ERC20__factory';
+import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';

@@ -3,7 +3,7 @@
 
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { zeroAddress } from '@webb-tools/dapp-types';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts/lib/factories/ERC20__factory';
+import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 
 import { ethers } from 'ethers';
 

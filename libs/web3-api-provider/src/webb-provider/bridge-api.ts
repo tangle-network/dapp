@@ -3,11 +3,12 @@
 import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { CurrencyId } from '@webb-tools/dapp-types';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts/lib/factories/ERC20__factory';
+import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 
 import { WebbWeb3Provider } from '../webb-provider';
-import { FungibleTokenWrapper } from '@webb-tools/contracts/typechain/FungibleTokenWrapper';
-
+import { FungibleTokenWrapper } from '@webb-tools/tokens';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
+console.log({ FungibleTokenWrapper__factory });
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssetsByBridge(
     typedChainId: number,

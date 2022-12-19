@@ -11,7 +11,7 @@ import {
   ERC20__factory as ERC20Factory,
   TokenWrapper__factory,
   VAnchor__factory,
-} from '@webb-tools/contracts/lib';
+} from '@webb-tools/contracts';
 import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
