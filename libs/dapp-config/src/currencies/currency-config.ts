@@ -148,7 +148,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     role: CurrencyRole.Governable,
     icon: () => WebbWrappedLogo(EtherLogo()),
     addresses: new Map<number, string>([
-      [PresetTypedChainId.Goerli, '0x35295fbb71273b84f66e70b8e341d408150dcaf9'],
+      [PresetTypedChainId.Goerli, '0x1098757815a2b2ba524534e3c60c966d7a5c3f0e'],
       [
         PresetTypedChainId.Sepolia,
         '0xeda366e62551d4b1aad35018e0150203897f0bd6',

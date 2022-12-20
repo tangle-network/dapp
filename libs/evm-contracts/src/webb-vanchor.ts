@@ -8,8 +8,10 @@ import { Log } from '@ethersproject/abstract-provider';
 import { LoggerService } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils/retry-promise';
 import {
+  ERC20,
   ERC20__factory as ERC20Factory,
   TokenWrapper__factory,
+  VAnchor,
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
@@ -159,11 +161,6 @@ export class VAnchorContract {
     tokenAddress: string,
     depositAmount: BigNumberish
   ) {
-    // Native token never requires approval
-    if (tokenAddress === zeroAddress) {
-      return false;
-    }
-
     const userAddress = await this.signer.getAddress();
     const webbToken = await this.getWebbToken();
     const tokenAllowance = await webbToken.allowance(
@@ -340,7 +337,10 @@ export class VAnchorContract {
         encryptedOutput1: extData.encryptedOutput1,
         encryptedOutput2: extData.encryptedOutput2,
       },
-      options
+      {
+        gasLimit: 9_000_000,
+        ...options,
+      }
     );
 
     return tx;

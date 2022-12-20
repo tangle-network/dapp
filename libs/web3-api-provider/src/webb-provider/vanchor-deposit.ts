@@ -12,12 +12,19 @@ import {
   VAnchorDeposit,
 } from '@webb-tools/abstract-api-provider';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import {
+  checkNativeAddress,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
+import {
+  ERC20__factory as ERC20Factory,
+  TokenWrapper__factory,
+} from '@webb-tools/contracts';
 
 import {
   calculateTypedChainId,
@@ -29,7 +36,7 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
+import { ContractTransaction, ethers } from 'ethers';
 
 import { hexToU8a } from '@polkadot/util';
 
@@ -177,6 +184,9 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         }
 
         const srcVAnchor = this.inner.getVariableAnchorByAddress(srcAddress);
+        const currentWebbToken = await srcVAnchor.getWebbToken();
+        const wrapUnwrapToken =
+          depositPayload.params[2] || currentWebbToken.address;
         const maxEdges = await srcVAnchor._contract.maxEdges();
         // Fetch the fixtures
         this.cancelToken.throwIfCancel();
@@ -263,63 +273,70 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           await this.inner.noteManager.addNote(depositPayload.note);
         }
 
-        const currentWebbToken = await srcVAnchor.getWebbToken();
-
         // If the token / wrapUnwrapToken:
         // - is 0x0000000000000000000000000000000000000000 -> native token
         // - is equal to the FungibleTokenWrapper token -> no wrapping
         // - is equal to some random address / random ERC20 token -> wrap that token
-        const tokenAddress =
-          depositPayload.params[2] || currentWebbToken.address;
 
         // Check the approval status
-        const isRequiredApproval = depositPayload.params[2]
-          ? await srcVAnchor.isWrappableTokenApprovalRequired(
-              depositPayload.params[2],
-              amount
-            )
-          : await srcVAnchor.isWebbTokenApprovalRequired(amount);
+        //  Wrappable asset address is included in the params (Wrap and deposit)
 
-        if (isRequiredApproval) {
+        const tokenWrapper = TokenWrapper__factory.connect(
+          currentWebbToken.address,
+          this.inner.getEthersProvider().getSigner()
+        );
+
+        const approvalValue = await tokenWrapper.getAmountToWrap(amount);
+        let approvalTransaction: ContractTransaction | undefined = undefined;
+        if (checkNativeAddress(wrapUnwrapToken)) {
+          /// native token no approval needed
+        } else if (
+          wrapUnwrapToken === currentWebbToken.address &&
+          (await srcVAnchor.isWebbTokenApprovalRequired(amount))
+        ) {
+          // approve the token
+          approvalTransaction = await currentWebbToken.approve(
+            srcAddress,
+            amount
+          );
+        } else if (
+          await srcVAnchor.isWrappableTokenApprovalRequired(
+            wrapUnwrapToken,
+            approvalValue
+          )
+        ) {
+          // approve the wrappable asset
+          const token = ERC20Factory.connect(
+            wrapUnwrapToken,
+            this.inner.getEthersProvider().getSigner()
+          );
+          approvalTransaction = await token.approve(
+            currentWebbToken.address,
+            approvalValue
+          );
+        }
+
+        if (approvalTransaction) {
           // Notification Waiting for approval notification
           depositTx.next(TransactionState.Intermediate, {
             name: 'Approval is required for depositing',
             data: {
-              tokenAddress: depositPayload.params[2],
+              tokenAddress: wrapUnwrapToken,
             },
           });
 
-          // Get the token instance
-          const tokenInstance = depositPayload.params[2]
-            ? ERC20Factory.connect(
-                depositPayload.params[2],
-                this.inner.getEthersProvider().getSigner()
-              )
-            : currentWebbToken;
-
-          const tx = await tokenInstance.approve(
-            depositPayload.params[2]
-              ? currentWebbToken.address
-              : srcVAnchor.inner.address,
-            amount
-          );
-
-          await tx.wait();
+          await approvalTransaction.wait();
           depositTx.next(TransactionState.Intermediate, {
             name: 'Approved',
             data: {
-              txHash: tx.hash,
+              txHash: approvalTransaction.hash,
             },
           });
         }
 
         // Checking for balance
-        const enoughBalance = depositPayload.params[2]
-          ? await srcVAnchor.hasEnoughBalance(
-              depositPayload.params[0].amount,
-              depositPayload.params[2]
-            )
-          : await srcVAnchor.hasEnoughBalance(amount);
+        // TODO: Check for the balance
+        const enoughBalance = true;
 
         // Notification failed transaction if not enough balance
         if (!enoughBalance) {
@@ -338,7 +355,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           () =>
             srcVAnchor.deposit(
               depositPayload.params[0] as CircomUtxo,
-              tokenAddress,
+              wrapUnwrapToken,
               leavesMap,
               smallKey,
               Buffer.from(smallWasm),
