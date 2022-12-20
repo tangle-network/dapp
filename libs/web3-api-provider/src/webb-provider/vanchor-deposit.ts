@@ -350,7 +350,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
 
         this.cancelToken.throwIfCancel();
         const worker = this.inner.wasmFactory();
-
+        this.logger.info(`wrapUnwrapToken: ${wrapUnwrapToken}`);
         const tx = await this.cancelToken.handleOrThrow(
           () =>
             srcVAnchor.deposit(

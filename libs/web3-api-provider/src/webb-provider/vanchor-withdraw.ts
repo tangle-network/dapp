@@ -275,7 +275,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     // - is equal to some random address / random ERC20 token -> wrap that token
     const wrapUnwrapToken: string =
       unwrapTokenAddress || (await destVAnchor._contract.token());
-
+    console.log(`wrapUnwrapToken`);
     const srcSymbol = wrapUnwrapToken
       ? this.inner.config.getCurrencyByAddress(wrapUnwrapToken).symbol
       : currencySymbol;
@@ -516,6 +516,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         for (const note of changeNotes) {
           await this.inner.noteManager?.removeNote(note);
         }
+        console.log(e);
         // TODO: check the value for the error for better message
         withdrawTx.fail(e);
       }
@@ -563,7 +564,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         leafStorage,
         abortSignal
       );
-
+      console.log('leaves', leaves);
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
       });

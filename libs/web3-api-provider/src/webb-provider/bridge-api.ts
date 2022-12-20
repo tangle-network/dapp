@@ -1,7 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
-import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
+import {
+  checkNativeAddress,
+  CurrencyRole,
+  CurrencyType,
+} from '@webb-tools/dapp-types';
 import { CurrencyId } from '@webb-tools/dapp-types';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 
@@ -62,7 +66,10 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
 
           wrappableTokens.push(newToken);
         } else {
-          wrappableTokens.push(knownCurrencies[registeredCurrency]);
+          // don't add if this currency is the native currency
+          if (!checkNativeAddress(tokenAddress)) {
+            wrappableTokens.push(knownCurrencies[registeredCurrency]);
+          }
         }
       })
     );

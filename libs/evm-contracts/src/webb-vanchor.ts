@@ -292,7 +292,7 @@ export class VAnchorContract {
       0,
       sender,
       sender,
-      await this.inner.token(),
+      wrapUnwrapToken,
       leavesMap,
       provingKey,
       circuitWasm,
@@ -412,7 +412,7 @@ export class VAnchorContract {
 
     const newCommitments = events
       .sort((a, b) => a.args.index - b.args.index) // Sort events in chronological order
-      .map((e) => e.args.commitment);
+      .map((e) => BigNumber.from(e.args.commitment).toHexString());
     return {
       lastQueriedBlock: finalBlock,
       newLeaves: newCommitments,
