@@ -18,13 +18,14 @@ import {
   Expand,
   ExternalLinkLine,
   Spinner,
-  TokenIcon,
+  ChainIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { mapChainIdToLogo } from '../../utils';
 
 import { ProposersTable } from '../ProposersTable';
 
@@ -131,6 +132,7 @@ export const ProposalDetail = () => {
         timeline,
         txHash,
       } = proposalDetails.proposal.val;
+
       return (
         <>
           {/** Height, tx hash and chain data */}
@@ -172,9 +174,19 @@ export const ProposalDetail = () => {
             label="chain:"
             value={
               <span className="flex items-center p-2 space-x-2">
-                <TokenIcon name={chain} size="lg" />
-                <Typography variant="body1" className="block uppercase">
-                  {chain}
+                <ChainIcon
+                  name={
+                    mapChainIdToLogo(Number(chain)) === 'webb'
+                      ? 'tangle'
+                      : mapChainIdToLogo(Number(chain))
+                  }
+                  size="lg"
+                />
+                <Typography variant="body1" className="block">
+                  {mapChainIdToLogo(Number(chain)) === 'webb'
+                    ? 'Tangle Network'
+                    : mapChainIdToLogo(Number(chain)).charAt(0).toLowerCase() +
+                      mapChainIdToLogo(Number(chain)).slice(1)}
                 </Typography>
               </span>
             }
