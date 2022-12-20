@@ -97,9 +97,11 @@ export const Header: FC<HeaderProps> = () => {
 };
 export type ChainSelectionWrapperProps = {
   sourceChains: ChainType[];
+  handleOnClose?: () => void;
 };
 export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
   sourceChains,
+  handleOnClose,
 }) => {
   const { chains, activeWallet, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
@@ -136,7 +138,10 @@ export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
           <WalletModal chain={chain} sourceChains={sourceChains} />
         );
       }}
-      onClose={() => setMainComponent(undefined)}
+      onClose={() => {
+        setMainComponent(undefined);
+        if (handleOnClose) handleOnClose();
+      }}
     />
   );
 };

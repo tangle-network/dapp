@@ -624,6 +624,7 @@ export const DepositContainer = forwardRef<
       useMemo<ChainSelectionWrapperProps>(() => {
         return {
           sourceChains,
+          handleOnClose: () => setMainComponentName(undefined),
         };
       }, [sourceChains]);
 
