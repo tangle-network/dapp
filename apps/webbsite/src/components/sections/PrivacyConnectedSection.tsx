@@ -14,7 +14,7 @@ const PrivacyConnectedSection = () => {
   useDynamicLottiePlayer();
 
   return (
-    <section className="max-w-[932px] flex flex-col justify-center absolute bottom-28 left-1/2 -translate-x-1/2 w-full">
+    <section className="max-w-[932px] mx-auto py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
       <Heading2 className="text-[48px] leading-[72px] text-mono-200 font-bold text-center mt-6">
         The Future of privacy is Connected

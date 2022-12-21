@@ -8,17 +8,18 @@ import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDev
 export function Index() {
   return (
     <>
-      <div className="relative min-h-[1400px] h-[2250px]">
-        <div className="absolute top-0 left-0">
-          <dotlottie-player
-            src="/animations/spiral.lottie"
-            autoplay
-            loop
-            style={{ height: '100%', width: '100%' }}
-          />
+      <div className=" bg-[#f9faf9]">
+        <div className="relative min-h-[1290px] max-h-screen w-full">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <dotlottie-player
+              src="/animations/spiral.lottie"
+              autoplay
+              loop
+              style={{ height: '100%', width: '100%' }}
+            />
+          </div>
+          <HeroSection />
         </div>
-        <HeroSection />
-
         <PrivacyConnectedSection />
       </div>
 
