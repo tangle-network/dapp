@@ -8,8 +8,11 @@ import {
 
 import Heading2 from '../Heading2';
 import SubHeading from '../SubHeading';
+import useDynamicLottiePlayer from '../../hooks/useDynamicLottiePlayer';
 
 const PrivacyConnectedSection = () => {
+  useDynamicLottiePlayer();
+
   return (
     <section className="max-w-[932px] flex flex-col justify-center absolute bottom-28 left-1/2 -translate-x-1/2 w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
@@ -31,13 +34,28 @@ const PrivacyConnectedSection = () => {
           <TabTrigger value="privacy">Privacy Ecosystems</TabTrigger>
         </TabsList>
         <TabContent className="w-[900px] h-[340px]" value="ownership">
-          <p>Ownershipt</p>
+          <dotlottie-player
+            src="/animations/deposit.lottie"
+            autoplay
+            loop
+            style={{ height: '100%', width: '100%' }}
+          />
         </TabContent>
         <TabContent className="w-[900px] h-[340px]" value="identity">
-          <p>Identity</p>
+          <dotlottie-player
+            src="/animations/kyc.lottie"
+            autoplay
+            loop
+            style={{ height: '100%', width: '100%' }}
+          />
         </TabContent>
         <TabContent className="w-[900px] h-[340px]" value="privacy">
-          <p>Privacy</p>
+          <dotlottie-player
+            src="/animations/ecosystem.lottie"
+            autoplay
+            loop
+            style={{ height: '100%', width: '100%' }}
+          />
         </TabContent>
       </TabsRoot>
     </section>
