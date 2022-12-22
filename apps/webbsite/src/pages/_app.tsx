@@ -11,7 +11,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to webbsite!</title>
+        <title>Welcome to Webb!</title>
         <link rel="icon" href="/static/assets/favicon.png" />
       </Head>
 
