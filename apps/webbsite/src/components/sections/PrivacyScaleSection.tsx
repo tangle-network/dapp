@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import Heading2 from '../Heading2';
+import PrivacyScaleSwiper from '../PrivacyScaleSwiper';
 import SubHeading from '../SubHeading';
 
 const PrivacyScaleSection = () => {
@@ -19,7 +20,7 @@ const PrivacyScaleSection = () => {
         zero-knowledge proofs.
       </SubHeading>
 
-      <div className="w-[1000px] h-[483px] bg-mono-0 rounded-lg mx-auto"></div>
+      <PrivacyScaleSwiper />
     </section>
   );
 };

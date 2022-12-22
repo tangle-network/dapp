@@ -39,3 +39,20 @@
   font-weight: 500;
   font-style: normal;
 }
+
+/* Override the swiper styles */
+
+.swiper-pagination {
+  bottom: 24px !important;
+  left: 24px !important;
+  right: auto !important;
+  width: auto !important;
+}
+
+.swiper-pagination-bullet {
+  @apply !bg-mono-120;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-mono-200;
+}
