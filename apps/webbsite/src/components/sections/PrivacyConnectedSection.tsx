@@ -47,11 +47,12 @@ const PrivacyConnectedSection = () => {
         size of privacy sets to encompass all the users and data possible in our
         Web3 ecosystem.
       </SubHeading>
+
       <TabsRoot
         defaultValue={activeTab}
         value={activeTab}
         onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
-        className="p-4 space-y-4 rounded-lg mt-9 bg-mono-0"
+        className="p-4 space-y-4 rounded-lg shadow-md mt-9 bg-mono-0"
       >
         <TabsList aria-label="tabs" className="mb-4">
           {Object.entries(tabsContent).map(([key, value]) => (
