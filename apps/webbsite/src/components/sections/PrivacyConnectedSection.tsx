@@ -31,7 +31,7 @@ const PrivacyConnectedSection = () => {
           <TabTrigger value="privacy">Privacy Ecosystems</TabTrigger>
         </TabsList>
         <TabContent className="w-[900px] h-[340px]" value="ownership">
-          <p>Ownershipt</p>
+          <p>Ownership</p>
         </TabContent>
         <TabContent className="w-[900px] h-[340px]" value="identity">
           <p>Identity</p>
