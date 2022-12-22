@@ -8,7 +8,7 @@ const Heading4 = forwardRef<HTMLHeadingElement, PropsOf<'h1'>>(
       <h1
         {...props}
         className={twMerge(
-          'text-[24px] leading-[36px] text-mono-200 font-black',
+          'text-[24px] leading-[36px] text-mono-200 font-black font-satoshi',
           className
         )}
         ref={ref}

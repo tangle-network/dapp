@@ -27,6 +27,9 @@ module.exports = {
         tangle_network: "url('/static/assets/tangle-network.png')",
         in_action: "url('/static/assets/in-action.png')",
       },
+      fontFamily: {
+        satoshi: ['Satoshi', 'sans-serif'],
+      },
     },
   },
 };
