@@ -163,8 +163,9 @@ export const useConnectWallet = (
       // If the promise resolved without null, switchWallet was successful.
       if (retVal) {
         update(false);
-        setMainComponent(undefined);
       }
+
+      setMainComponent(undefined);
     },
     [switchChain, update, setMainComponent]
   );

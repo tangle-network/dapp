@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { currenciesConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Button,
@@ -18,7 +17,7 @@ import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { HeaderProps } from './types';
 import { WalletButton } from './WalletButton';
 import { WalletModal } from './WalletModal';
-
+import { getDefaultConnection } from '../../utils';
 /**
  * The statistic `Header` for `Layout` container
  */
@@ -28,15 +27,13 @@ export const Header: FC<HeaderProps> = () => {
 
   const { setMainComponent } = useWebbUI();
 
+  // On connect wallet button click - connect to the default chain(ETH Goerli)
   const onConnectWalletClick = useCallback(() => {
-    const sourceChains: ChainType[] = Object.values(chains).map((val) => {
-      return {
-        name: val.name,
-        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-      };
-    });
+    const { defaultChain, sourceChains } = getDefaultConnection(chains);
 
-    setMainComponent(<ChainSelectionWrapper sourceChains={sourceChains} />);
+    setMainComponent(
+      <WalletModal chain={defaultChain} sourceChains={sourceChains} />
+    );
   }, [chains, setMainComponent]);
 
   return (

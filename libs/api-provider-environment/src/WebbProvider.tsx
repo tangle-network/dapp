@@ -60,7 +60,6 @@ import { WebbContext } from './webb-context';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { unsupportedChain } from './error';
 import { useTxApiQueue } from './transaction';
-
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;

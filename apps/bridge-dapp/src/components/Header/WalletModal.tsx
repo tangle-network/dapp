@@ -31,6 +31,9 @@ export const WalletModal: FC<WalletModalProps> = ({ chain, sourceChains }) => {
         className="w-[550px] h-[700px]"
         chainType="source"
         chains={sourceChains}
+        onClose={() => {
+          setMainComponent(undefined);
+        }}
       />
       <Modal open={isModalOpen} onOpenChange={(open) => toggleModal(open)}>
         <ModalContent isOpen={isModalOpen} isCenter>

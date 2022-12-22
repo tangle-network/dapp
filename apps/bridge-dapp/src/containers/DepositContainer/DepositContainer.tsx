@@ -40,6 +40,7 @@ import {
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
+import { getDefaultConnection } from '../../utils';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardProps;
@@ -317,7 +318,10 @@ export const DepositContainer = forwardRef<
     const actionOnClick = useCallback(async () => {
       // No wallet connected
       if (!isWalletConnected) {
-        setMainComponentName('chain-selection-wrapper');
+        const { defaultChain, sourceChains } = getDefaultConnection(chains);
+        setMainComponent(
+          <WalletModal chain={defaultChain} sourceChains={sourceChains} />
+        );
         return;
       }
 
