@@ -26,6 +26,8 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
       className: classNameProp,
       color = 'green',
       isDisabled,
+      isSelected,
+      ...restProps
     } = props;
 
     const baseClsx = useMemo(
@@ -34,14 +36,17 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
       []
     );
 
-    const className = useMemo(
-      () =>
-        twMerge(baseClsx, getChipClassName(color, isDisabled), classNameProp),
-      [baseClsx, color, isDisabled, classNameProp]
-    );
+    const className = useMemo(() => {
+      const { activeOrDisable, selected } = getChipClassName(
+        color,
+        isDisabled,
+        isSelected
+      );
+      return twMerge(baseClsx, activeOrDisable, selected, classNameProp);
+    }, [baseClsx, color, isDisabled, isSelected, classNameProp]);
 
     return (
-      <span className={className} ref={ref}>
+      <span className={className} {...restProps} ref={ref}>
         {children}
       </span>
     );

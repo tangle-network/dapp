@@ -29,8 +29,10 @@ import {
   ProposalListItem,
   ProposalStatus,
   useProposalsOverview,
+  useProposalsOvertimeTotalCount,
 } from '../provider/hooks';
 import { mapChainIdToLogo } from '../utils';
+import { StackedAreaChartContainer } from '../containers/StackedAreaChartContainer';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -116,6 +118,7 @@ const Proposals = () => {
     const start = Math.floor(
       Math.max(Number(lastProcessBlock) - rangeTimeSec / blockTime, 0)
     );
+
     return {
       end,
       start,
@@ -205,31 +208,7 @@ const Proposals = () => {
         <Stats items={statsItems} />
       </Card>
 
-      <div className="flex space-x-4">
-        {/* * Proposal Types */}
-        <DonutChartContainer
-          timeRange={timeRange}
-          setTimeRange={setTimeRange}
-          isLoading={overview.isLoading}
-          statsMap={statsMap}
-        />
-
-        {/** Open Proposals */}
-        <CardTable
-          titleProps={{ title: 'Open Proposals' }}
-          className="flex flex-col grow"
-        >
-          {noOpenProposals ? (
-            <div className="flex items-center justify-center min-w-full grow">
-              <Typography ta={'center'} variant={'h4'}>
-                No open proposals
-              </Typography>
-            </div>
-          ) : (
-            <Table tableProps={table as RTTable<unknown>} />
-          )}
-        </CardTable>
-      </div>
+      <StackedAreaChartContainer />
 
       {/** All Proposals */}
       <ProposalsTable />
