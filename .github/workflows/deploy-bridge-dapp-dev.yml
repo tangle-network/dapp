@@ -7,8 +7,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [ develop ]
-    # paths:
-    #   - 'apps/bridge-dapp/**'
+    paths:
+      - 'apps/bridge-dapp/**'
 
   workflow_dispatch:
 
