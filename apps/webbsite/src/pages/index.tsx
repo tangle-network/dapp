@@ -11,8 +11,8 @@ export function Index() {
       <div className=" bg-[#f9faf9]">
         <div className="relative min-h-[1290px] max-h-screen w-full">
           <div className="absolute top-0 left-0 w-full h-full">
-            <dotlottie-player
-              src="/animations/spiral.lottie"
+            <lottie-player
+              src="/animations/spiral.json"
               autoplay
               loop
               style={{ height: '100%', width: '100%' }}

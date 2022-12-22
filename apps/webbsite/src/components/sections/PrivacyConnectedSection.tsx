@@ -14,15 +14,15 @@ import { Transition } from '@headlessui/react';
 
 const tabsContent = {
   ownership: {
-    animationUrl: '/animations/deposit.lottie',
+    animationUrl: '/animations/deposit.json',
     title: 'Proof of Ownership',
   },
   identity: {
-    animationUrl: '/animations/kyc.lottie',
+    animationUrl: '/animations/kyc.json',
     title: 'Proof of Identity',
   },
   privacy: {
-    animationUrl: '/animations/ecosystem.lottie',
+    animationUrl: '/animations/ecosystem.json',
     title: 'Privacy Ecosystems',
   },
 };
@@ -89,7 +89,7 @@ export default PrivacyConnectedSection;
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
-    <dotlottie-player
+    <lottie-player
       src={animationUrl}
       autoplay
       loop
