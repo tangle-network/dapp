@@ -35,7 +35,16 @@ export const WalletModal: FC<WalletModalProps> = ({ chain, sourceChains }) => {
           setMainComponent(undefined);
         }}
       />
-      <Modal open={isModalOpen} onOpenChange={(open) => toggleModal(open)}>
+      <Modal
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          toggleModal(open);
+
+          if (!open) {
+            setMainComponent(undefined);
+          }
+        }}
+      >
         <ModalContent isOpen={isModalOpen} isCenter>
           <WalletConnectionCard
             wallets={Object.values(chain.wallets)}

@@ -45,7 +45,7 @@ export const Header: FC<HeaderProps> = () => {
 
         {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
-          {!activeWallet && (
+          {!activeAccount && (
             <Button
               isLoading={loading}
               loadingText="Connecting..."

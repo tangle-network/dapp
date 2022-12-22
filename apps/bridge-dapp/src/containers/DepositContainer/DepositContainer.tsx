@@ -77,6 +77,7 @@ export const DepositContainer = forwardRef<
       switchChain,
       activeChain,
       activeWallet,
+      activeAccount,
       loading,
       noteManager,
       apiConfig: { currencies },
@@ -247,10 +248,11 @@ export const DepositContainer = forwardRef<
       });
     }, [currencies, populatedSelectableWebbTokens, balances]);
 
-    const isWalletConnected = useMemo(
-      () => activeChain && activeWallet && !loading,
-      [activeChain, activeWallet, loading]
-    );
+    const isWalletConnected = useMemo(() => {
+      return (
+        activeChain && activeWallet && (activeAccount ?? undefined) && !loading
+      );
+    }, [activeChain, activeWallet, activeAccount, loading]);
 
     const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
@@ -367,6 +369,8 @@ export const DepositContainer = forwardRef<
         setMainComponentName('deposit-confirm-container');
       }
     }, [
+      chains,
+      setMainComponent,
       isWalletConnected,
       hasNoteAccount,
       sourceChain,

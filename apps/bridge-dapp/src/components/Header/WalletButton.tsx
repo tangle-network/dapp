@@ -45,6 +45,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     noteManager,
     chains,
     purgeNoteAccount,
+    inactivateApi,
     activeWallet,
     switchChain,
   } = useWebContext();
@@ -223,7 +224,11 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     }
 
     await purgeNoteAccount();
-  }, [currentManagedWallet, purgeNoteAccount]);
+
+    await inactivateApi();
+
+    setMainComponent(undefined);
+  }, [currentManagedWallet, purgeNoteAccount, inactivateApi, setMainComponent]);
 
   return (
     <>
