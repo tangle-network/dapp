@@ -9,6 +9,9 @@ import {
 import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { FC } from 'react';
 import { useConnectWallet } from '../../hooks';
+import { getPlatformMetaData } from '@webb-tools/browser-utils';
+import { walletsConfig } from '@webb-tools/dapp-config';
+import { WalletId } from '@webb-tools/dapp-types';
 
 export type WalletModalProps = {
   sourceChains: ChainType[];
@@ -61,6 +64,14 @@ export const WalletModal: FC<WalletModalProps> = ({ chain, sourceChains }) => {
                 );
               }
               await switchWallet(chain, selectedWallet);
+            }}
+            onDownloadBtnClick={() => {
+              const { id } = getPlatformMetaData();
+
+              window.open(
+                walletsConfig[WalletId.MetaMask].installLinks?.[id],
+                '_blank'
+              );
             }}
           />
         </ModalContent>
