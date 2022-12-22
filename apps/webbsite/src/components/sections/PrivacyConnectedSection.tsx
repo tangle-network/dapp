@@ -6,11 +6,10 @@ import {
   TabTrigger,
 } from '@webb-tools/webb-ui-components/components/Tabs';
 
+import { Transition } from '@headlessui/react';
+import { FC, useState } from 'react';
 import Heading2 from '../Heading2';
 import SubHeading from '../SubHeading';
-import useDynamicLottiePlayer from '../../hooks/useDynamicLottiePlayer';
-import { FC, useState } from 'react';
-import { Transition } from '@headlessui/react';
 
 const tabsContent = {
   ownership: {
@@ -32,9 +31,6 @@ type TabTypes = 'ownership' | 'identity' | 'privacy';
 const PrivacyConnectedSection = () => {
   // State for the selected tab
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
-
-  // Dynamic loading the lottie player in client side
-  useDynamicLottiePlayer();
 
   return (
     <section className="max-w-[932px] mx-auto py-[156px] flex flex-col justify-center w-full">

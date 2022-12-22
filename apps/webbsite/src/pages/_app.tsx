@@ -6,8 +6,14 @@ import Head from 'next/head';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { useEffect } from 'react';
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  // Dynamic loading the lottie player in client side
+  useEffect(() => {
+    import('@lottiefiles/lottie-player');
+  }, []);
+
   return (
     <>
       <Head>
