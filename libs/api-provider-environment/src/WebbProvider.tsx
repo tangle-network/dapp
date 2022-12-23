@@ -866,6 +866,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             setActiveChain(activeChain);
             await activeApi.destroy();
             setActiveApi(undefined);
+            // remove app config from local storage
+            const _networkStorage =
+              networkStorage ?? (await netStorageFactory());
+            if (_networkStorage) {
+              await Promise.all([
+                _networkStorage.set('defaultNetwork', undefined),
+                _networkStorage.set('defaultWallet', undefined),
+                _networkStorage.set('networksConfig', {}),
+              ]);
+            }
           }
         },
         activeFeedback,
