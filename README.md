@@ -129,17 +129,14 @@ docker exec -it $CONTAINER_ID yarn start:stats
 
 ### Expose Ports (if necessary)
 
+* Show open ports
 ```
 apt install nmap
 nmap <IP_ADDRESS> --top-ports 10
+```
 
-sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
-sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --dport 3000 -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --dport 4000 -j ACCEPT
-sudo systemctl restart iptables 
-sudo systemctl restart ip6tables
-
+* Allow ports to be opened
+```
 apt install ufw
 ufw default allow outgoing
 ufw default allow incoming
