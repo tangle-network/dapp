@@ -56,11 +56,9 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { TAppEvent } from './app-event';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { WebbContext } from './webb-context';
-
 import { SettingProvider } from '@webb-tools/react-environment';
 import { unsupportedChain } from './error';
 import { useTxApiQueue } from './transaction';
-
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;
@@ -388,7 +386,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     const keypairStorage = await keypairStorageFactory();
     const currentKeypairPrivateKey = await keypairStorage.get('keypair');
 
-    if (!currentKeypairPrivateKey.keypair) {
+    if (!currentKeypairPrivateKey?.keypair) {
       return;
     }
 
@@ -861,9 +859,23 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         switchChain: switchChainAndStore,
         isConnecting,
         async inactivateApi(): Promise<void> {
-          setActiveApi(undefined);
           if (activeApi) {
+            setAccounts([]);
+            _setActiveAccount(null);
+            setActiveWallet(undefined);
+            setActiveChain(activeChain);
             await activeApi.destroy();
+            setActiveApi(undefined);
+            // remove app config from local storage
+            const _networkStorage =
+              networkStorage ?? (await netStorageFactory());
+            if (_networkStorage) {
+              await Promise.all([
+                _networkStorage.set('defaultNetwork', undefined),
+                _networkStorage.set('defaultWallet', undefined),
+                _networkStorage.set('networksConfig', {}),
+              ]);
+            }
           }
         },
         activeFeedback,

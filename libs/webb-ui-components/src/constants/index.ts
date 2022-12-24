@@ -63,7 +63,7 @@ export const webbApiConfig: webbApiConfigType = {
 };
 
 export const webbAppConfig: ExternalLink = {
-  name: 'Minerva Bridge',
+  name: 'Hubble Bridge',
   href: 'https://webb-bridge-dapp.netlify.app/',
   ...commonExternalProps,
 };
