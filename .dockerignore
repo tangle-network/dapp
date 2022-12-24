@@ -1,0 +1,9 @@
+apps/bridge-dapp/build
+apps/bridge-dapp/node_modules
+apps/stats-dapp/build
+apps/stats-dapp/node_modules
+apps/webbsite/build
+apps/webbsite/node_modules
+build/
+node_modules/
+.env

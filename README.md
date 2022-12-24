@@ -97,7 +97,90 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:stats
    ```
 
-Visit http://localhost:3000/ to see the Webb Stats UI! 🕸️ 🚀
+Visit http://localhost:4000/ to see the Webb Stats UI! 🕸️ 🚀
+
+## Docker
+
+### Setup Container
+
+* Install and run [Docker](https://www.docker.com/)
+* Run Substrate front-end from a Docker container and follow the terminal log instructions.
+```bash
+./docker-dev.sh
+```
+
+### Run Bridge Dapp
+
+* Enter Docker container
+```bash
+docker exec -it $CONTAINER_ID yarn start:bridge
+```
+* Wait until it says `webpack ... compiled`
+* Go to http://<IP_ADDRESS>:3000
+
+### Run Stats Dapp
+
+* Enter Docker container
+```bash
+docker exec -it $CONTAINER_ID yarn start:stats
+```
+* Wait until it says `webpack ... compiled`
+* Go to http://<IP_ADDRESS>:4000
+
+### Expose Ports (if necessary)
+
+```
+apt install nmap
+nmap <IP_ADDRESS> --top-ports 10
+
+sudo iptables -A INPUT -p tcp --dport 3000 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 3000 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 4000 -j ACCEPT
+sudo systemctl restart iptables 
+sudo systemctl restart ip6tables
+
+apt install ufw
+ufw default allow outgoing
+ufw default allow incoming
+ufw enable
+ufw allow 3000/tcp && ufw allow 3000/tcp
+ufw allow 4000/tcp && ufw allow 4000/tcp
+ufw reload
+ufw status
+```
+
+### Useful Docker Commands
+
+* Enter Docker container shell
+```bash
+docker exec -it $CONTAINER_ID /bin/sh
+```
+
+* View Docker container logs
+```bash
+docker logs -f $CONTAINER_ID
+```
+
+* List Docker containers
+```bash
+docker ps -a
+```
+
+* List Docker images
+```bash
+docker images -a
+```
+
+* Remove Docker container
+```bash
+docker stop $CONTAINER_ID; docker rm $CONTAINER_ID;
+```
+
+* Remove Docker image
+```bash
+docker rmi $IMAGE_ID
+```
 
 <h2 id="test"> Testing 🧪 </h2>
 

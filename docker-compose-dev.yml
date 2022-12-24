@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  dev:
+    container_name: ${NAME_PROJECT}-dev
+    restart: always
+    build:
+      context: "."
+      dockerfile: ./docker/Dockerfile.dev
+      args:
+        - NAME_PROJECT=${NAME_PROJECT}
+        - NAME_BRIDGE_DAPP=${NAME_BRIDGE_DAPP}
+        - NAME_STATS_DAPP=${NAME_STATS_DAPP}
+        - PORT_BRIDGE_DAPP=${PORT_BRIDGE_DAPP}
+        - PORT_STATS_DAPP=${PORT_STATS_DAPP}
+    volumes:
+      - ./:/usr/local/${NAME_PROJECT}:delegated
+      - ignore:/usr/local/${NAME_PROJECT}/node_modules
+    ports:
+      - "${PORT_BRIDGE_DAPP}:${PORT_BRIDGE_DAPP}"
+      - "${PORT_STATS_DAPP}:${PORT_STATS_DAPP}"
+    env_file:
+      - .env
+
+volumes:
+  ignore:

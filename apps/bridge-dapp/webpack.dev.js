@@ -17,7 +17,7 @@ module.exports = (env, config) => {
     devServer: {
       hot: true,
       open: false,
-      port: 3000,
+      port: process.env.PORT_BRIDGE_DAPP,
       static: path.resolve(__dirname, 'build'),
       client: {
         overlay: {
