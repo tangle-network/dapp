@@ -127,15 +127,9 @@ docker exec -it $CONTAINER_ID yarn start:stats
 * Wait until it says `webpack ... compiled`
 * Go to http://<IP_ADDRESS>:4000
 
-### Expose Ports (if necessary)
+### Expose Ports
 
-* Show open ports
-```
-apt install nmap
-nmap <IP_ADDRESS> --top-ports 10
-```
-
-* Allow ports to be opened
+* Open relevant ports
 ```
 apt install ufw
 ufw default allow outgoing
