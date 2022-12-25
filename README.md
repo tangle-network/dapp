@@ -129,29 +129,20 @@ docker exec -it $CONTAINER_ID yarn start:stats
 
 ### Expose Ports
 
-* Open relevant ports
+* Open relevant ports if necessary
 ```
+source .env && export PORT_BRIDGE_DAPP PORT_STATS_DAPP
 apt install ufw
 ufw default allow outgoing
 ufw default allow incoming
 ufw enable
-ufw allow 3000/tcp && ufw allow 3000/tcp
-ufw allow 4000/tcp && ufw allow 4000/tcp
+ufw allow $PORT_BRIDGE_DAPP/tcp && ufw allow $PORT_BRIDGE_DAPP/tcp
+ufw allow $PORT_STATS_DAPP/tcp && ufw allow $PORT_STATS_DAPP/tcp
 ufw reload
 ufw status
 ```
 
 ### Useful Docker Commands
-
-* Enter Docker container shell
-```bash
-docker exec -it $CONTAINER_ID /bin/sh
-```
-
-* View Docker container logs
-```bash
-docker logs -f $CONTAINER_ID
-```
 
 * List Docker containers
 ```bash
@@ -161,6 +152,16 @@ docker ps -a
 * List Docker images
 ```bash
 docker images -a
+```
+
+* Enter Docker container shell
+```bash
+docker exec -it $CONTAINER_ID /bin/sh
+```
+
+* View Docker container logs
+```bash
+docker logs -f $CONTAINER_ID
 ```
 
 * Remove Docker container
