@@ -5,4 +5,4 @@ source .env \
     && printf "\n*** Started building Docker container." \
     && printf "\n*** Please wait... \n***" \
     && DOCKER_BUILDKIT=0 docker compose -f docker-compose-dev.yml up --build -d
-printf "\n*** Finished building Docker container."
+printf "\n*** Finished building Docker container.\n"
