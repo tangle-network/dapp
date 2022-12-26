@@ -88,6 +88,7 @@ const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
     <lottie-player
       src={animationUrl}
       autoplay
+      speed={0.8}
       loop
       style={{ height: '100%', width: '100%' }}
     />

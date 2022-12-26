@@ -15,8 +15,9 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PrivacyScaleIllustration from './PrivacyScaleIllustration';
+import { useInView } from 'react-intersection-observer';
 
 const swipersContent: Array<{ title: string; description: string }> = [
   {
@@ -52,6 +53,8 @@ const swipersContent: Array<{ title: string; description: string }> = [
 ];
 
 const PrivacyScaleSwiper = () => {
+  const [ref, inView] = useInView();
+
   // The swiper instance ref
   const swiperRef = useRef<SwiperType>();
 
@@ -62,8 +65,19 @@ const PrivacyScaleSwiper = () => {
   // State to track active index slide
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // When the component is in view, start the autoplay
+  // When the component is not in view, stop the autoplay
+  useEffect(() => {
+    if (inView) {
+      swiperRef.current?.autoplay.start();
+    } else {
+      swiperRef.current?.autoplay.stop();
+    }
+  }, [inView]);
+
   return (
     <div
+      ref={ref}
       className={cx(
         'flex w-[1000px] h-[483px] bg-mono-180 rounded-lg mx-auto',
         'p-6 space-x-16'
