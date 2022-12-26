@@ -1,5 +1,6 @@
 import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 
+import Heading1 from '../Heading1';
 import SubHeading from '../SubHeading';
 
 const manifestoUrl =
@@ -8,14 +9,16 @@ const manifestoUrl =
 const HeroSection = () => {
   return (
     <section className="absolute flex justify-center w-full">
-      <div className="w-[934px] space-y-6 mt-[190px]">
-        <h1 className="text-[84px] text-center font-bold leading-[96px] text-mono-200 font-satoshi">
+      <div className="max-w-[454px] md:max-w-none md:w-[934px] space-y-2 p-4 md:p-0 md:space-y-6 mt-[190px]">
+        <Heading1 className="text-center">
           Privacy that Brings Blockchains Together{' '}
-        </h1>
+        </Heading1>
+
         <SubHeading className="text-center">
           Webb builds infrastructure for connecting zero-knowledge applications
           empowering developers to unlock user privacy in the Web3 ecosystem.
         </SubHeading>
+
         <Button
           href={manifestoUrl}
           target="_blank"
