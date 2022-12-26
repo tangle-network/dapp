@@ -24,7 +24,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const retryLink = new RetryLink({
     delay: () => {
-      console.log('rertyLink');
+      console.log('retryLink');
       return 0;
     },
     attempts: () => {

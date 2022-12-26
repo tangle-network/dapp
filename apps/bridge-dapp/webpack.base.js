@@ -285,7 +285,7 @@ function createWebpack(env, mode = 'production') {
 
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
-      port: process.env.PORT_BRIDGE_DAPP,
+      port: process.env.PORT_BRIDGE_DAPP || 3000,
       host: '0.0.0.0',
       compress: true,
       allowedHosts: 'all',

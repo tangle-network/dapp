@@ -350,7 +350,7 @@ function createWebpackBase(env, mode = 'production') {
 
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
-      port: process.env.PORT_STATS_DAPP,
+      port: process.env.PORT_STATS_DAPP || 3001,
       host: '0.0.0.0',
       compress: true,
       allowedHosts: 'all',

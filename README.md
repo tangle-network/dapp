@@ -97,13 +97,43 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:stats
    ```
 
-Visit http://localhost:4000/ to see the Webb Stats UI! 🕸️ 🚀
+Visit http://localhost:3001/ to see the Webb Stats UI! 🕸️ 🚀
+
+<h2 id="test"> Testing 🧪 </h2>
+
+The following instructions outlines how to run Webb Dapp test suite.
+
+### To run tests
+
+```
+yarn test
+```
+
+### To start [Storybook](https://storybook.js.org/) for component library
+
+1. Install dependencies by `yarn`
+
+   ```bash
+   yarn install
+   ```
+
+2. Start the storybook:
+
+   ```bash
+   yarn nx storybook webb-ui-components 
+   ```
+
+Visit http://localhost:4400/ to see the Webb Component Library! 🕸️ 🚀
 
 ## Docker
 
 ### Setup Container
 
 * Install and run [Docker](https://www.docker.com/)
+* Generate .env file from sample file
+```bash
+cp .env.example .env
+```
 * Run Substrate front-end from a Docker container and follow the terminal log instructions.
 ```bash
 ./docker-dev.sh
@@ -113,10 +143,14 @@ Visit http://localhost:4000/ to see the Webb Stats UI! 🕸️ 🚀
 
 * Enter Docker container
 ```bash
+# last created docker container id
+CONTAINER_ID=$(docker ps -n=1 -q)
 docker exec -it $CONTAINER_ID yarn start:bridge
 ```
 * Wait until it says `webpack ... compiled`
 * Go to http://<IP_ADDRESS>:3000
+
+Note: If run on your local machine then Substitute <IP_ADDRESS> with `localhost`. If hosted on a remote cloud provider then substitute it with the Public IP Address of the cloud provider server instance.
 
 ### Run Stats Dapp
 
@@ -125,7 +159,7 @@ docker exec -it $CONTAINER_ID yarn start:bridge
 docker exec -it $CONTAINER_ID yarn start:stats
 ```
 * Wait until it says `webpack ... compiled`
-* Go to http://<IP_ADDRESS>:4000
+* Go to http://<IP_ADDRESS>:3001
 
 ### Expose Ports
 
@@ -173,32 +207,6 @@ docker stop $CONTAINER_ID; docker rm $CONTAINER_ID;
 ```bash
 docker rmi $IMAGE_ID
 ```
-
-<h2 id="test"> Testing 🧪 </h2>
-
-The following instructions outlines how to run Webb Dapp test suite.
-
-### To run tests
-
-```
-yarn test
-```
-
-### To start [Storybook](https://storybook.js.org/) for component library
-
-1. Install dependencies by `yarn`
-
-   ```bash
-   yarn install
-   ```
-
-2. Start the storybook:
-
-   ```bash
-   yarn nx storybook webb-ui-components 
-   ```
-
-Visit http://localhost:4400/ to see the Webb Component Library! 🕸️ 🚀
 
 <h2 id="contribute"> Contributing </h2>
 
