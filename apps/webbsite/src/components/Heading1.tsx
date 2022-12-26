@@ -2,14 +2,14 @@ import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-const SubHeading = forwardRef<HTMLParagraphElement, PropsOf<'p'>>(
+const Heading1 = forwardRef<HTMLHeadingElement, PropsOf<'h1'>>(
   ({ className, ...props }, ref) => {
     return (
-      <p
+      <h1
         {...props}
         className={twMerge(
-          'text-base font-medium text-mono-180 font-satoshi',
-          'md:text-2xl md:leading-9',
+          'text-[32px] leading-[46px] tracking-tight font-bold text-mono-200 font-satoshi',
+          'md:text-[84px] md:leading-[96px] md:tracking-normal',
           className
         )}
         ref={ref}
@@ -18,6 +18,6 @@ const SubHeading = forwardRef<HTMLParagraphElement, PropsOf<'p'>>(
   }
 );
 
-SubHeading.displayName = 'SubHeading';
+Heading1.displayName = 'Heading1';
 
-export default SubHeading;
+export default Heading1;
