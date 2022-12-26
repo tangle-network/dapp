@@ -12,14 +12,16 @@ export function Index() {
         <div className="relative min-h-[1290px] max-h-screen w-full">
           <div className="absolute top-0 left-0 w-full h-full">
             <lottie-player
-              src="/animations/spiral.json"
+              src="/animations/spiral-with-gradient.json"
               autoplay
               loop
               style={{ height: '100%', width: '100%' }}
+              preserveAspectRatio="xMidYMax slice"
             />
           </div>
           <HeroSection />
         </div>
+
         <PrivacyConnectedSection />
       </div>
 
