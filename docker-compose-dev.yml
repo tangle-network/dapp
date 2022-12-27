@@ -13,8 +13,8 @@ services:
         - PORT_BRIDGE_DAPP=${PORT_BRIDGE_DAPP}
         - PORT_STATS_DAPP=${PORT_STATS_DAPP}
     volumes:
-      - ./:/usr/local/${NAME_PROJECT}:delegated
-      - ignore:/usr/local/${NAME_PROJECT}/node_modules
+      - ./:/app/${NAME_PROJECT}:delegated
+      - ignore:/app/${NAME_PROJECT}/node_modules
     ports:
       - "${PORT_BRIDGE_DAPP}:${PORT_BRIDGE_DAPP}"
       - "${PORT_STATS_DAPP}:${PORT_STATS_DAPP}"

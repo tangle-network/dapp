@@ -6,3 +6,4 @@ apps/webbsite/build
 apps/webbsite/node_modules
 build/
 node_modules/
+.env
