@@ -170,8 +170,8 @@ apt install ufw
 ufw default allow outgoing
 ufw default allow incoming
 ufw enable
-ufw allow $PORT_BRIDGE_DAPP/tcp && ufw allow $PORT_BRIDGE_DAPP/tcp
-ufw allow $PORT_STATS_DAPP/tcp && ufw allow $PORT_STATS_DAPP/tcp
+ufw allow $PORT_BRIDGE_DAPP/tcp && ufw allow $PORT_BRIDGE_DAPP/udp
+ufw allow $PORT_STATS_DAPP/tcp && ufw allow $PORT_STATS_DAPP/udp
 ufw reload
 ufw status
 ```
