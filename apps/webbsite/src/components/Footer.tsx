@@ -138,7 +138,7 @@ const Footer = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <Typography variant="body1">© Text & graphics Apache 2.0</Typography>
+          <Typography variant="body1">Copyright © 2022</Typography>
 
           <div className="flex items-center space-x-6">
             {links.map(({ name, href }, idx) => (
