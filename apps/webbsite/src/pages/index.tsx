@@ -11,7 +11,7 @@ export function Index() {
   return (
     <>
       <div className=" bg-[#f9faf9]">
-        <div className="relative min-h-[1290px] max-h-screen w-full">
+        <div className="relative min-h-[1290px] xl:min-h-[1800px] max-h-screen w-full">
           <div className="absolute top-0 left-0 w-full h-full">
             <Lottie
               animationData={require('../assets/animations/spiral-with-gradient.json')}
@@ -19,7 +19,7 @@ export function Index() {
               loop
               style={{ height: '100%', width: '100%' }}
               rendererSettings={{
-                preserveAspectRatio: 'xMidYMax slice',
+                preserveAspectRatio: 'xMidYMid slice',
               }}
             />
           </div>
