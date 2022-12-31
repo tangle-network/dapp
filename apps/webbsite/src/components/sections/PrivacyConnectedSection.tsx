@@ -33,7 +33,7 @@ const PrivacyConnectedSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
 
   return (
-    <section className="max-w-[932px] mx-auto pb-4 md:pb-[156px] flex flex-col justify-center w-full">
+    <section className="max-w-[932px] mx-auto py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
       <Heading2 className="mt-6 text-center">
         The Future of privacy is Connected
