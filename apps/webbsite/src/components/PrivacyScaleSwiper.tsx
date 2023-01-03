@@ -79,9 +79,10 @@ const PrivacyScaleSwiper = () => {
     <div
       ref={ref}
       className={cx(
-        'flex justify-between w-full sm:max-w-[450px] lg:max-w-[1000px] h-[930px] lg:h-[483px]',
+        'flex justify-between w-full sm:max-w-[450px] md:max-w-[1000px] h-[930px] md:h-[483px]',
         'bg-mono-180 rounded-lg mx-auto',
-        'lg:p-6 space-x-12 lg:space-x-16'
+        'lg:p-6 space-x-7 lg:space-x-16',
+        'md:pr-4'
       )}
     >
       <div className="w-full sm:max-w-[450px]">
@@ -142,7 +143,7 @@ const PrivacyScaleSwiper = () => {
                   </div>
                 </div>
 
-                <div className="relative h-[435px] lg:hidden">
+                <div className="relative h-[435px] md:hidden">
                   <PrivacyScaleIllustration activeIndex={activeIndex} />
                 </div>
               </div>
@@ -161,7 +162,7 @@ const PrivacyScaleSwiper = () => {
         </Swiper>
       </div>
 
-      <div className="relative hidden grow lg:block">
+      <div className="relative hidden grow md:block">
         <PrivacyScaleIllustration activeIndex={activeIndex} />
       </div>
     </div>
