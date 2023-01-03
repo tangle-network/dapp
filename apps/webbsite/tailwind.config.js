@@ -25,6 +25,8 @@ module.exports = {
         hero_bg_image: "url('/static/assets/hero-background.png')",
         tangle_network: "url('/static/assets/tangle-network.png')",
         in_action: "url('/static/assets/in-action.png')",
+        good_pink: "url('/static/assets/good-pink.png')",
+        cool: "url('/static/assets/cool.png')",
       },
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],
