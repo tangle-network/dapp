@@ -1,6 +1,4 @@
-import { Player } from '@lottiefiles/react-lottie-player';
-
-import * as spiralAnimationJson from '../assets/animations/spiral-with-gradient.json';
+import Lottie from 'lottie-react';
 
 import ApplicationsAndInfrastructureSection from '../components/sections/ApplicationsAndInfrastructureSection';
 import HeroSection from '../components/sections/HeroSection';
@@ -15,8 +13,8 @@ export function Index() {
       <div className=" bg-[#f9faf9]">
         <div className="relative min-h-[1000px] xl:min-h-[1300px] max-h-screen w-full">
           <div className="absolute top-0 left-0 w-full h-full">
-            <Player
-              src={spiralAnimationJson}
+            <Lottie
+              animationData={require('../assets/animations/spiral-with-gradient.json')}
               autoplay
               loop
               style={{ height: '100%', width: '100%' }}

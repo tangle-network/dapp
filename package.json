@@ -49,7 +49,6 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@lottiefiles/lottie-player": "^1.6.2",
-    "@lottiefiles/react-lottie-player": "^3.5.0",
     "@mui/material": "^5.8.7",
     "@mui/styled-engine": "5.10.8",
     "@mui/styles": "^5.8.7",

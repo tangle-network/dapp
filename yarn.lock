@@ -3272,13 +3272,6 @@
     pako "^2.0.4"
     resize-observer-polyfill "^1.5.1"
 
-"@lottiefiles/react-lottie-player@^3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@lottiefiles/react-lottie-player/-/react-lottie-player-3.5.0.tgz#74ef0e9990286a5cffbe348b6681b107fddd4e12"
-  integrity sha512-RSlqcq9d204sqmG5ithFYQwxovLP96uj8yY+f2U8WPtdmv4zMvx1C4V4wv5nlcr2drSxvoyykM50YrVDpXjKwQ==
-  dependencies:
-    lottie-web "^5.10.0"
-
 "@mdx-js/mdx@^1.6.22":
   version "1.6.22"
   resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-1.6.22.tgz#8a723157bf90e78f17dc0f27995398e6c731f1ba"

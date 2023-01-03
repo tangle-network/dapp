@@ -4,14 +4,15 @@ import '../styles/globals.css';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 
+import { useEffect } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   // Dynamic loading the lottie player in client side
-  // useEffect(() => {
-  //   import('@lottiefiles/lottie-player');
-  // }, []);
+  useEffect(() => {
+    import('@lottiefiles/lottie-player');
+  }, []);
 
   return (
     <>
