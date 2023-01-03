@@ -29,7 +29,7 @@ import { getButtonClassNameByVariant } from './utils';
  *  <Button variant="utility" isLoading>Button</Button>
  * ```
  */
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLElement, ButtonProps>(
   (props, ref) => {
     const {
       as: asProps,

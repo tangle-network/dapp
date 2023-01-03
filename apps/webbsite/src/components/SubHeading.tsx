@@ -8,7 +8,7 @@ const SubHeading = forwardRef<HTMLParagraphElement, PropsOf<'p'>>(
       <p
         {...props}
         className={twMerge(
-          'text-2xl font-medium leading-9 text-mono-180',
+          'text-2xl font-medium leading-9 text-mono-180 font-satoshi',
           className
         )}
         ref={ref}

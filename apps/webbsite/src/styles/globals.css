@@ -1,3 +1,58 @@
 #__next {
   background-color: #fff;
 }
+
+/** Load fonts */
+
+/* Font Family Satoshi */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Override the swiper styles */
+
+.swiper-pagination {
+  bottom: 24px !important;
+  left: 24px !important;
+  right: auto !important;
+  width: auto !important;
+}
+
+.swiper-pagination-bullet {
+  @apply !bg-mono-120;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-mono-200;
+}
