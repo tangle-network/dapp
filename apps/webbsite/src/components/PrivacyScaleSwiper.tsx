@@ -79,11 +79,12 @@ const PrivacyScaleSwiper = () => {
     <div
       ref={ref}
       className={cx(
-        'flex w-[1000px] h-[483px] bg-mono-180 rounded-lg mx-auto',
-        'p-6 space-x-16'
+        'flex justify-between w-full sm:max-w-[450px] lg:max-w-[1000px] h-[930px] lg:h-[483px]',
+        'bg-mono-180 rounded-lg mx-auto',
+        'lg:p-6 space-x-12 lg:space-x-16'
       )}
     >
-      <div className="w-[450px]">
+      <div className="w-full sm:max-w-[450px]">
         <Swiper
           className="h-full"
           effect={'coverflow'}
@@ -124,19 +125,25 @@ const PrivacyScaleSwiper = () => {
         >
           {swipersContent.map((content, index) => (
             <SwiperSlide key={index}>
-              <div className="p-6 space-y-4">
-                <Heading4 className="text-mono-0">{content.title}</Heading4>
+              <div className="p-6 space-y-9">
+                <div className="space-y-4 h-[315px]">
+                  <Heading4 className="text-mono-0">{content.title}</Heading4>
 
-                <SubHeading2 className="text-mono-80">
-                  {content.description}
-                </SubHeading2>
+                  <SubHeading2 className="text-mono-80">
+                    {content.description}
+                  </SubHeading2>
 
-                <div className="max-w-[402px] min-h-[66px] w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/static/svgs/privacy-set-step-${index + 1}.svg`}
-                    alt={`privacy-scale-${index + 1}`}
-                  />
+                  <div className="max-w-[402px] min-h-[66px] w-full h-full">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/static/svgs/privacy-set-step-${index + 1}.svg`}
+                      alt={`privacy-scale-${index + 1}`}
+                    />
+                  </div>
+                </div>
+
+                <div className="relative h-[435px] lg:hidden">
+                  <PrivacyScaleIllustration activeIndex={activeIndex} />
                 </div>
               </div>
             </SwiperSlide>
@@ -154,7 +161,7 @@ const PrivacyScaleSwiper = () => {
         </Swiper>
       </div>
 
-      <div className="relative grow">
+      <div className="relative hidden grow lg:block">
         <PrivacyScaleIllustration activeIndex={activeIndex} />
       </div>
     </div>
