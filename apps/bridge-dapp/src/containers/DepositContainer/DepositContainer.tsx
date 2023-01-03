@@ -40,6 +40,7 @@ import {
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
+import { getDefaultConnection } from '../../utils';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardProps;
@@ -76,6 +77,7 @@ export const DepositContainer = forwardRef<
       switchChain,
       activeChain,
       activeWallet,
+      activeAccount,
       loading,
       noteManager,
       apiConfig: { currencies },
@@ -246,10 +248,11 @@ export const DepositContainer = forwardRef<
       });
     }, [currencies, populatedSelectableWebbTokens, balances]);
 
-    const isWalletConnected = useMemo(
-      () => activeChain && activeWallet && !loading,
-      [activeChain, activeWallet, loading]
-    );
+    const isWalletConnected = useMemo(() => {
+      return (
+        activeChain && activeWallet && (activeAccount ?? undefined) && !loading
+      );
+    }, [activeChain, activeWallet, activeAccount, loading]);
 
     const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
 
@@ -317,7 +320,10 @@ export const DepositContainer = forwardRef<
     const actionOnClick = useCallback(async () => {
       // No wallet connected
       if (!isWalletConnected) {
-        setMainComponentName('chain-selection-wrapper');
+        const { defaultChain, sourceChains } = getDefaultConnection(chains);
+        setMainComponent(
+          <WalletModal chain={defaultChain} sourceChains={sourceChains} />
+        );
         return;
       }
 
@@ -363,6 +369,8 @@ export const DepositContainer = forwardRef<
         setMainComponentName('deposit-confirm-container');
       }
     }, [
+      chains,
+      setMainComponent,
       isWalletConnected,
       hasNoteAccount,
       sourceChain,
@@ -624,6 +632,7 @@ export const DepositContainer = forwardRef<
       useMemo<ChainSelectionWrapperProps>(() => {
         return {
           sourceChains,
+          handleOnClose: () => setMainComponentName(undefined),
         };
       }, [sourceChains]);
 

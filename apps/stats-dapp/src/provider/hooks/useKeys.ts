@@ -368,7 +368,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
               activeKey,
               {
                 ...nextKey,
-                start: activeKey.end,
+                start: activeKey?.end,
               },
             ],
             isFailed: false,

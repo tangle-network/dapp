@@ -2,7 +2,6 @@ import { Button } from '@webb-tools/webb-ui-components/components/Button/Button'
 import { Input } from '@webb-tools/webb-ui-components/components/Input/Input';
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
 
 import {
   Common2Icon,
@@ -16,7 +15,7 @@ import { IconBase } from '@webb-tools/icons/types';
 import Link from 'next/link';
 import Heading2 from './Heading2';
 import Heading3 from './Heading3';
-import SubHeading from './SubHeading';
+import SubHeading2 from './SubHeading2';
 
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -65,63 +64,65 @@ const links = [
 
 const Footer = () => {
   return (
-    <footer
-      className={cx(
-        'object-cover bg-center bg-no-repeat bg-cover bg-in_action',
-        'p-[156px] space-y-6 flex flex-col justify-center'
-      )}
-    >
-      {/** Title and subtitle */}
-      <div className="pb-9 max-w-[900px] mx-auto space-y-6">
-        <Heading2 className="text-center">
-          Open Source and Community Driven
-        </Heading2>
-        <SubHeading className="text-center max-w-[713px] mx-auto">
-          Webb is an open source community driven by a common passion for
-          cross-chain privacy. Explore how you can contribute.
-        </SubHeading>
-      </div>
-
+    <footer className="dark pb-[156px] bg-mono-200 space-y-6">
       {/** Newsletter */}
-      <div
-        className={cx(
-          'bg-mono-0 shadow-md rounded-lg',
-          'p-9 space-y-6 mx-auto'
-        )}
-      >
-        <Heading3 className="text-center">Follow for Updates</Heading3>
+      <div className="pt-24 space-y-12 bg-mono-180 px-9 pb-9">
+        {/** Title and subtitle */}
+        <div className="pb-9 max-w-[900px] mx-auto space-y-6">
+          <Heading2 className="p-2.5">
+            Scaling Privacy for <br />
+            Everyone, Everything, Everywhere.
+          </Heading2>
 
-        {/** Email input */}
-        <form
-          className={cx(
-            'bg-mono-20 rounded-full p-4',
-            'flex w-[555px] items-center justify-between space-x-6'
-          )}
-        >
-          <div className="flex items-center space-x-2 grow">
-            <span className="text-2xl">✉️</span>
-            <Input
-              placeholder="Satoshi@nakamo.to"
-              isRequired
-              className="grow"
-              id="email"
-              name="email"
-              type="email"
-              size="sm"
-            />
+          <div className="space-y-6">
+            <Heading3 className="dark:text-mono-20">
+              Follow for Updates
+            </Heading3>
+
+            {/** Email input */}
+            <form className="flex items-center space-x-2">
+              <Input
+                className="grow shrink basis-0"
+                id="name"
+                isRequired
+                name="name"
+                placeholder="Name"
+              />
+              <Input
+                className="grow shrink basis-0"
+                id="email"
+                isRequired
+                name="email"
+                placeholder="Email"
+                type="email"
+              />
+              <div className="grow shrink basis-0">
+                <Button variant="primary" isFullWidth>
+                  Subscribe
+                </Button>
+              </div>
+            </form>
+
+            <SubHeading2 className="dark:text-mono-100">
+              By signing up you agree to{' '}
+              <a
+                href={links[1].href}
+                rel="noopener noreferrer"
+                className="dark:text-mono-0 hover:underline"
+              >
+                terms & conditions
+              </a>
+            </SubHeading2>
           </div>
-
-          <Button type="submit">Subscribe</Button>
-        </form>
+        </div>
       </div>
 
       {/** Links and socials */}
-      <div className="py-12 space-y-6 w-full max-w-[900px] mx-auto">
+      <div className="w-full max-w-[900px] py-12 space-y-6 mx-auto">
         <div className="flex items-center justify-between">
           <Link href="/">
             <Logo />
           </Link>
-
           <div className="flex items-center space-x-4">
             {socials.map(({ Icon, name, href }) => (
               <a
@@ -136,10 +137,8 @@ const Footer = () => {
             ))}
           </div>
         </div>
-
         <div className="flex items-center justify-between">
-          <Typography variant="body1">© Text & graphics Apache 2.0</Typography>
-
+          <Typography variant="body1">Copyright © 2022</Typography>
           <div className="flex items-center space-x-6">
             {links.map(({ name, href }, idx) => (
               <Typography

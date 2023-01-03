@@ -3,6 +3,8 @@ name: build 🏗️
 on:
   pull_request:
     branches: [develop, staging, main]
+  push: 
+    branches: [develop, staging, main]
 
   workflow_dispatch:
 

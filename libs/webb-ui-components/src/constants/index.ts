@@ -22,14 +22,48 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-export const webbApiConfig: ExternalLink = {
-  name: 'Arana Alpha',
-  href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
-  ...commonExternalProps,
+type WebbNodeInfo = {
+  parachain: {
+    subqueryEndpoint: string;
+    providerEndpoint: string;
+  };
+  standalone: {
+    subqueryEndpoint: string;
+    providerEndpoint: string;
+  };
+};
+
+export const webbNodes: WebbNodeInfo = {
+  parachain: {
+    subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
+    providerEndpoint: 'wss://tangle-archive.webb.tools/',
+  },
+  standalone: {
+    subqueryEndpoint: 'https://subquery-dev.webb.tools/graphql',
+    providerEndpoint: 'wss://arana-alpha-1.webb.tools/',
+  },
+};
+
+type webbApiConfigType = {
+  parachain: ExternalLink;
+  standalone: ExternalLink;
+};
+
+export const webbApiConfig: webbApiConfigType = {
+  parachain: {
+    name: 'Tangle Network',
+    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
+    ...commonExternalProps,
+  },
+  standalone: {
+    name: 'Arana Alpha',
+    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
+    ...commonExternalProps,
+  },
 };
 
 export const webbAppConfig: ExternalLink = {
-  name: 'Minerva Bridge',
+  name: 'Hubble Bridge',
   href: 'https://webb-bridge-dapp.netlify.app/',
   ...commonExternalProps,
 };
