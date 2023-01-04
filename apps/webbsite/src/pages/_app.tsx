@@ -4,7 +4,7 @@ import '../styles/globals.css';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import Header from '../components/Header';
+import { useEffect } from 'react';
 import Footer from '../components/Footer';
 import { useEffect } from 'react';
 

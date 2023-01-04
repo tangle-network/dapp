@@ -38,6 +38,9 @@ module.exports = {
       screens: {
         xs: '375px',
       },
+      fontFamily: {
+        satoshi: ['Satoshi', 'sans-serif'],
+      },
     },
   },
 };
