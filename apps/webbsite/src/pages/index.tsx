@@ -10,7 +10,7 @@ import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDev
 export function Index() {
   return (
     <>
-      <div className="relative min-h-[900px] xl:min-h-[1500px] max-h-screen w-full">
+      <div className="relative w-full h-screen min-h-[900px] xl:min-h-[1500px]">
         <div className="absolute top-0 left-0 w-full h-full">
           <Lottie
             animationData={require('../assets/animations/hero-loop.json')}
