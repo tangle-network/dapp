@@ -143,7 +143,7 @@ const PrivacyScaleSwiper = () => {
                   </div>
                 </div>
 
-                <div className="relative h-[435px] md:hidden">
+                <div className="relative h-[386px] md:hidden">
                   <PrivacyScaleIllustration activeIndex={activeIndex} />
                 </div>
               </div>
