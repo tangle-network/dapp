@@ -42,7 +42,7 @@ const sections: Array<Section> = [
 
 const ResearchAndDevelopmentSection = () => {
   return (
-    <section className="relative overflow-x-hidden py-16 md:py-[156px] flex items-center justify-center w-full">
+    <section className="relative overflow-hidden py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px] z-10">
         <Heading2 className="px-4 text-center">Research & Development</Heading2>
 
@@ -113,7 +113,7 @@ function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
       </svg>
 
       {/** Blur layer */}
-      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
+      <div className="absolute w-[200vw] h-[200vw] -translate-x-1/2 -translate-y-12 -z-[1] bg-mono-0/50 backdrop-blur-2xl" />
 
       <svg
         width="1em"
@@ -220,9 +220,6 @@ function DistributedKeygenIcon(props: React.SVGProps<SVGSVGElement>) {
           fill="#B5A9F2"
         />
       </svg>
-
-      {/** Blur layer */}
-      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
 
       <svg
         width="1em"
@@ -361,9 +358,6 @@ function ZkMessagingIcon(props: React.SVGProps<SVGSVGElement>) {
           fill="#85DC8E"
         />
       </svg>
-
-      {/** Blur layer */}
-      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-12 -z-[1] inset-0 backdrop-blur-2xl" />
 
       <svg
         width="1em"
