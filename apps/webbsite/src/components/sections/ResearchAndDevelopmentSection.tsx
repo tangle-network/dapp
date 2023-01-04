@@ -42,11 +42,11 @@ const sections: Array<Section> = [
 
 const ResearchAndDevelopmentSection = () => {
   return (
-    <section className="h-[1215px] w-full flex items-center justify-center relative">
+    <section className="relative overflow-x-hidden py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px] z-10">
-        <Heading2 className="text-center">Research & Development</Heading2>
+        <Heading2 className="px-4 text-center">Research & Development</Heading2>
 
-        <SubHeading className="mt-6 text-center mx-auto max-w-[773px]">
+        <SubHeading className="mt-6 px-4 text-center mx-auto max-w-[773px]">
           Building interoperable zero-knowledge applications to scale privacy
           for all users in the Web3 ecosystem.
         </SubHeading>
@@ -54,7 +54,7 @@ const ResearchAndDevelopmentSection = () => {
         <div className="space-y-4 mt-9">
           {sections.map((section, idx) => (
             <div key={`${section.title}-${idx}`} className="flex space-x-6 p-9">
-              <div className="text-[100px]">{section.icon}</div>
+              <div className="text-[50px] md:text-[100px]">{section.icon}</div>
 
               <div>
                 <Heading3>{section.title}</Heading3>
@@ -91,10 +91,11 @@ export default ResearchAndDevelopmentSection;
 
 function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <div className="text-[100px] relative w-[100px]">
+    <div className="relative text-[50px] md:text-[100px] w-[50px] md:w-[100px]">
       <svg
-        width={138}
-        height={144}
+        width="1.5em"
+        height="1.5em"
+        viewBox="0 0 138 144"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute right-0 -z-10"
@@ -109,7 +110,7 @@ function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
       </svg>
 
       {/** Blur layer */}
-      <div className="absolute w-screen h-72 -translate-x-1/2 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
+      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
 
       <svg
         width="1em"
@@ -199,14 +200,14 @@ function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function DistributedKeygenIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <div className="text-[100px] relative w-[100px]">
+    <div className="relative text-[50px] md:text-[100px] w-[50px] md:w-[100px]">
       <svg
-        width="138"
-        height="144"
+        width="1.5em"
+        height="1.5em"
         viewBox="0 0 138 144"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute -z-[10] right-0 -translate-y-1/3"
+        className="absolute right-0 -z-10 -translate-y-1/3"
       >
         <ellipse
           cx="68.5078"
@@ -218,7 +219,7 @@ function DistributedKeygenIcon(props: React.SVGProps<SVGSVGElement>) {
       </svg>
 
       {/** Blur layer */}
-      <div className="absolute w-screen h-72 -translate-x-1/2 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
+      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-1/3 -z-[1] inset-0 backdrop-blur-2xl" />
 
       <svg
         width="1em"
@@ -340,14 +341,14 @@ function DistributedKeygenIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function ZkMessagingIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <div className="text-[100px] relative h-[100px] w-[100px]">
+    <div className="relative text-[50px] md:text-[100px] w-[50px] md:w-[100px]">
       <svg
-        width="138"
-        height="144"
+        width="1.5em"
+        height="1.5em"
         viewBox="0 0 138 144"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute right-1/4 top-1/4 -z-10"
+        className="absolute -z-10 right-1/4 top-1/4"
       >
         <ellipse
           cx="68.5078"
@@ -359,7 +360,7 @@ function ZkMessagingIcon(props: React.SVGProps<SVGSVGElement>) {
       </svg>
 
       {/** Blur layer */}
-      <div className="absolute w-screen h-72 -translate-x-1/2 -translate-y-1/4 -z-[1] inset-0 backdrop-blur-2xl" />
+      <div className="absolute w-screen h-64 -translate-x-32 -translate-y-12 -z-[1] inset-0 backdrop-blur-2xl" />
 
       <svg
         width="1em"
