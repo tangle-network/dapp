@@ -130,7 +130,7 @@ const Footer = () => {
                 href={href}
                 target="_blank"
                 rel="noreferrer"
-                className="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+                className="dark:text-mono-0 dark:hover:text-mono-100"
               >
                 <Icon className="w-8 h-8 !fill-current" />
               </a>
@@ -141,7 +141,7 @@ const Footer = () => {
         <div className="flex flex-col items-center space-y-2 sm:space-y-0 sm:flex-row sm:justify-between">
           <Typography variant="body1">Copyright © 2022</Typography>
 
-          <div className="flex items-center space-x-6">
+          <div className="flex flex-col items-center space-y-1 xs:space-y-0 xs:flex-row xs:items-center xs:space-x-6">
             {links.map(({ name, href }, idx) => (
               <Typography
                 key={`${name}-${idx}`}
