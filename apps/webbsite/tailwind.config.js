@@ -27,6 +27,8 @@ module.exports = {
         in_action: "url('/static/assets/in-action.png')",
         good_pink: "url('/static/assets/good-pink.png')",
         cool: "url('/static/assets/cool.png')",
+        mock_bridge: "url('/static/assets/mock-bridge.png')",
+        mock_stats: "url('/static/assets/mock-stats.png')",
       },
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],

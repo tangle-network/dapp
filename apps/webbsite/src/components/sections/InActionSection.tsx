@@ -19,13 +19,15 @@ const InActionSection = () => {
     <section
       className={cx(
         'object-cover bg-center bg-no-repeat bg-cover bg-in_action',
-        'p-[156px] space-y-9'
+        'pt-16 md:py-[156px] space-y-9'
       )}
     >
-      <Heading2 className="text-center">Shielded Protocols in Action</Heading2>
+      <Heading2 className="px-4 text-center">
+        Shielded Protocols in Action
+      </Heading2>
 
-      <SubHeading className="text-center">
-        Try out the applications we’re building.
+      <SubHeading className="px-4 text-center">
+        {"Try out the applications we're building."}
       </SubHeading>
 
       <TabsRoot
@@ -37,31 +39,39 @@ const InActionSection = () => {
           <TabTrigger value="stats">Stats</TabTrigger>
         </TabsList>
 
-        <TabContent value="bridge" className="relative w-full h-[450px]">
-          <Image
-            src="/static/assets/moc-bridge.png"
-            sizes="(max-width: 900px)"
-            alt="moc-bridge"
-            fill
-          />
+        <TabContent
+          value="bridge"
+          className="md:bg-mock_bridge md:bg-top w-full h-[527px] md:h-[450px]"
+        >
+          <div>
+            <div className="pt-4 px-4 sm:pt-9 sm:px-9 space-y-4 sm:max-w-[378px]">
+              <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
 
-          <div className="absolute space-y-4 top-9 left-9 max-w-[378px]">
-            <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
+              <SubHeading2>
+                A truly zero-knowledge cross-chain environment to deposit,
+                transfer, and withdraw funds.
+              </SubHeading2>
 
-            <SubHeading2>
-              A truly zero-knowledge cross-chain environment to deposit,
-              transfer, and withdraw funds.
-            </SubHeading2>
+              <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+                Make a Deposit
+              </Button>
+            </div>
 
-            <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
-              Make a Deposit
-            </Button>
+            <div className="relative w-full h-[264px]">
+              <Image
+                className="object-cover object-right md:hidden"
+                alt="mock-bridge"
+                fill
+                sizes="(min-width: 768px) 30vw, 100vw"
+                src="/static/assets/mock-bridge.png"
+              />
+            </div>
           </div>
         </TabContent>
 
         <TabContent value="stats">
-          <div className="flex justify-between space-x-9 h-[450px]">
-            <div className="space-y-4 max-w-[378px] pt-9 pl-9">
+          <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
+            <div className="space-y-4 sm:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
               <Heading4>
                 Explore the Tangle Network with the stats page
               </Heading4>
@@ -76,12 +86,12 @@ const InActionSection = () => {
               </Button>
             </div>
 
-            <div className="relative grow mt-14">
+            <div className="relative grow h-[264px] md:h-auto mt-4 md:mt-14">
               <Image
-                src="/static/assets/moc-stats.png"
-                className="w-1/2"
-                sizes="(max-width: 450px)"
-                alt="moc-stats"
+                className="object-cover object-left-bottom"
+                src="/static/assets/mock-stats.png"
+                sizes="(min-width: 768px) 30vw, 100vw"
+                alt="mock-stats"
                 fill
               />
             </div>
