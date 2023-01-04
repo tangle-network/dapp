@@ -80,8 +80,8 @@ const ApplicationsAndInfrastructureSection = () => {
           </div>
         </div>
 
-        <div className="flex flex-col-reverse space-y-6 md:space-y-0 md:flex-row md:space-x-6 max-w-[900px] mx-auto">
-          <div className="my-auto shrink">
+        <div className="flex flex-col-reverse md:flex-row md:space-x-6 max-w-[900px] mx-auto">
+          <div className="my-auto mt-6 shrink md:mt-0">
             <Heading3>Connected Shielded Identity Protocols</Heading3>
             <SubHeading2 className="mt-2">
               A cross-chain system for creating identities and connecting groups
