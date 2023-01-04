@@ -6,7 +6,6 @@ import {
   TabTrigger,
 } from '@webb-tools/webb-ui-components/components/Tabs';
 
-import { Transition } from '@headlessui/react';
 import { FC, useState } from 'react';
 import Heading2 from '../Heading2';
 import SubHeading from '../SubHeading';
@@ -52,7 +51,7 @@ const PrivacyConnectedSection = () => {
       >
         <TabsList aria-label="tabs" className="mb-4">
           {Object.entries(tabsContent).map(([key, value]) => (
-            <TabTrigger key={key} value={key}>
+            <TabTrigger className="px-2" key={key} value={key}>
               {value.title}
             </TabTrigger>
           ))}
