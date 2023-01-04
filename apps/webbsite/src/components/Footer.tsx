@@ -64,23 +64,23 @@ const links = [
 
 const Footer = () => {
   return (
-    <footer className="dark pb-[156px] bg-mono-200 space-y-6">
+    <footer className="dark pb-4 md:pb-[156px] bg-mono-200 space-y-6">
       {/** Newsletter */}
-      <div className="pt-24 space-y-12 bg-mono-180 px-9 pb-9">
+      <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
-        <div className="pb-9 max-w-[900px] mx-auto space-y-6">
-          <Heading2 className="p-2.5">
+        <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
+          <Heading2 className="p-2.5 text-[34px] leading-[46px]">
             Scaling Privacy for <br />
             Everyone, Everything, Everywhere.
           </Heading2>
 
           <div className="space-y-6">
-            <Heading3 className="dark:text-mono-20">
+            <Heading3 className="text-lg leading-6 dark:text-mono-20">
               Follow for Updates
             </Heading3>
 
             {/** Email input */}
-            <form className="flex items-center space-x-2">
+            <form className="flex flex-col space-y-4 sm:items-center sm:space-y-0 sm:flex-row sm:space-x-2">
               <Input
                 className="grow shrink basis-0"
                 id="name"
@@ -118,8 +118,8 @@ const Footer = () => {
       </div>
 
       {/** Links and socials */}
-      <div className="w-full max-w-[900px] py-12 space-y-6 mx-auto">
-        <div className="flex items-center justify-between">
+      <div className="w-full max-w-[900px] px-4 py-12 space-y-6 mx-auto">
+        <div className="flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-between">
           <Link href="/">
             <Logo />
           </Link>
@@ -137,8 +137,10 @@ const Footer = () => {
             ))}
           </div>
         </div>
-        <div className="flex items-center justify-between">
+
+        <div className="flex flex-col items-center space-y-2 sm:space-y-0 sm:flex-row sm:justify-between">
           <Typography variant="body1">Copyright © 2022</Typography>
+
           <div className="flex items-center space-x-6">
             {links.map(({ name, href }, idx) => (
               <Typography
