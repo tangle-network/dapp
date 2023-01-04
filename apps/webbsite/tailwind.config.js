@@ -30,8 +30,13 @@ module.exports = {
         mock_bridge: "url('/static/assets/mock-bridge.png')",
         mock_stats: "url('/static/assets/mock-stats.png')",
       },
+
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],
+      },
+
+      screens: {
+        xs: '375px',
       },
     },
   },

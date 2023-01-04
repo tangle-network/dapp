@@ -53,7 +53,10 @@ const ResearchAndDevelopmentSection = () => {
 
         <div className="space-y-4 mt-9">
           {sections.map((section, idx) => (
-            <div key={`${section.title}-${idx}`} className="flex space-x-6 p-9">
+            <div
+              key={`${section.title}-${idx}`}
+              className="flex p-4 space-x-4 md:space-x-6 md:p-9"
+            >
               <div className="text-[50px] md:text-[100px]">{section.icon}</div>
 
               <div>
@@ -62,7 +65,7 @@ const ResearchAndDevelopmentSection = () => {
                   {section.description}
                 </SubHeading2>
 
-                <div className="flex mt-6 space-x-2">
+                <div className="flex flex-col mt-4 space-y-2 md:mt-6 xs:space-y-0 xs:flex-row xs:space-x-2">
                   <Button
                     variant="link"
                     href={section.sourceCodeUrl}
