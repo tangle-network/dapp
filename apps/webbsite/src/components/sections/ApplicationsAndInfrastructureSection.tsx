@@ -25,45 +25,42 @@ const ApplicationsAndInfrastructureSection = () => {
       </div>
 
       <div className="px-4 space-y-[72px]">
-        <div>
-          <div className="max-w-[900px] relative bg-tangle_network bg-right md:bg-left h-[471px] mx-auto space-y-[72px] rounded-lg">
-            <div className="absolute top-0 left-0 space-y-4 p-9 max-w-[441px] hidden md:block">
-              <Heading3>Tangle Network</Heading3>
-              <SubHeading2>
-                Cross-chain private applications require governance and
-                trustless proof of events. Tangle provides that using threshold
-                multi-party computation.
-              </SubHeading2>
-
-              <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
-                Learn More
-              </Button>
-            </div>
-          </div>
-
-          <div className="block mt-6 space-y-4 md:hidden">
+        <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
+          <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
             <Heading3>Tangle Network</Heading3>
-            <SubHeading2>
+            <SubHeading2 className="mt-2">
               Cross-chain private applications require governance and trustless
               proof of events. Tangle provides that using threshold multi-party
               computation.
             </SubHeading2>
 
-            <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+            <Button
+              className="mt-6"
+              href={BRIDGE_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
               Learn More
             </Button>
           </div>
-        </div>
 
-        <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row md:space-x-6 max-w-[900px] mx-auto">
           <div
             className={cx(
-              'sm:min-w-[450px] min-h-[401px] grow-0 shrink-0',
+              'sm:min-w-[calc(50%-12.5px)] min-h-[401px] grow-0 shrink-0',
+              'bg-tangle_network bg-center object-fill bg-no-repeat bg-cover rounded-lg'
+            )}
+          />
+        </div>
+
+        <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row md:justify-between max-w-[900px] mx-auto">
+          <div
+            className={cx(
+              'sm:min-w-[calc(50%-12.5px)] min-h-[401px] grow-0 shrink-0',
               'bg-good_pink bg-center object-fill bg-no-repeat bg-cover rounded-lg'
             )}
           />
 
-          <div className="my-auto shrink">
+          <div className="self-start md:w-[calc(50%-12.5px)] md:!my-auto">
             <Heading3>Connected Shielded Pool Protocols</Heading3>
             <SubHeading2 className="mt-2">
               A cross-chain private transaction system for privately moving and
@@ -80,8 +77,8 @@ const ApplicationsAndInfrastructureSection = () => {
           </div>
         </div>
 
-        <div className="flex flex-col-reverse md:flex-row md:space-x-6 max-w-[900px] mx-auto">
-          <div className="my-auto mt-6 shrink md:mt-0">
+        <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
+          <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
             <Heading3>Connected Shielded Identity Protocols</Heading3>
             <SubHeading2 className="mt-2">
               A cross-chain system for creating identities and connecting groups
@@ -99,7 +96,7 @@ const ApplicationsAndInfrastructureSection = () => {
 
           <div
             className={cx(
-              'sm:min-w-[450px] min-h-[401px] grow-0 shrink-0',
+              'sm:min-w-[calc(50%-12.5px)] min-h-[401px] grow-0 shrink-0',
               'bg-cool bg-center object-fill bg-no-repeat bg-cover rounded-lg'
             )}
           />
