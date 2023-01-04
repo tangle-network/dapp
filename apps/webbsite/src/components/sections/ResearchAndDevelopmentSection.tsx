@@ -53,35 +53,33 @@ const ResearchAndDevelopmentSection = () => {
 
         <div className="space-y-4 mt-9">
           {sections.map((section, idx) => (
-            <Fragment key={`${section.title}-${idx}`}>
-              <div className="flex space-x-6 p-9">
-                <div className="text-[100px]">{section.icon}</div>
+            <div key={`${section.title}-${idx}`} className="flex space-x-6 p-9">
+              <div className="text-[100px]">{section.icon}</div>
 
-                <div>
-                  <Heading3>{section.title}</Heading3>
-                  <SubHeading2 className="mt-2 text-mono-160">
-                    {section.description}
-                  </SubHeading2>
+              <div>
+                <Heading3>{section.title}</Heading3>
+                <SubHeading2 className="mt-2 text-mono-160">
+                  {section.description}
+                </SubHeading2>
 
-                  <div className="flex mt-6 space-x-2">
-                    <Button
-                      variant="link"
-                      href={section.sourceCodeUrl}
-                      target="_blank"
-                    >
-                      Source Code
-                    </Button>
-                    <Button
-                      variant="link"
-                      href={section.documentationUrl}
-                      target="_blank"
-                    >
-                      Documentation
-                    </Button>
-                  </div>
+                <div className="flex mt-6 space-x-2">
+                  <Button
+                    variant="link"
+                    href={section.sourceCodeUrl}
+                    target="_blank"
+                  >
+                    Source Code
+                  </Button>
+                  <Button
+                    variant="link"
+                    href={section.documentationUrl}
+                    target="_blank"
+                  >
+                    Documentation
+                  </Button>
                 </div>
               </div>
-            </Fragment>
+            </div>
           ))}
         </div>
       </div>
