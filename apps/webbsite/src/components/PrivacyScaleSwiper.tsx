@@ -67,19 +67,19 @@ const PrivacyScaleSwiper = () => {
 
   // When the component is in view, start the autoplay
   // When the component is not in view, stop the autoplay
-  useEffect(() => {
-    if (inView) {
-      swiperRef.current?.autoplay.start();
-    } else {
-      swiperRef.current?.autoplay.stop();
-    }
-  }, [inView]);
+  // useEffect(() => {
+  //   if (inView) {
+  //     swiperRef.current?.autoplay.start();
+  //   } else {
+  //     swiperRef.current?.autoplay.stop();
+  //   }
+  // }, [inView]);
 
   return (
     <div
       ref={ref}
       className={cx(
-        'flex justify-between w-full sm:max-w-[450px] md:max-w-[1000px] h-[930px] md:h-[483px]',
+        'flex justify-between w-full sm:max-w-[450px] md:max-w-[1000px] h-[850px] xs:h-[900px] md:h-[483px]',
         'bg-mono-180 rounded-lg mx-auto',
         'lg:p-6 space-x-7 lg:space-x-16',
         'md:pr-4'
@@ -99,10 +99,11 @@ const PrivacyScaleSwiper = () => {
             modifier: 1,
             slideShadows: true,
           }}
-          autoplay={{
-            delay: 4600,
-            disableOnInteraction: false,
-          }}
+          // autoplay={{
+          //   delay: 4600,
+          //   disableOnInteraction: false,
+          // }}
+          autoplay={false}
           pagination={{
             clickable: true,
           }}
@@ -126,8 +127,8 @@ const PrivacyScaleSwiper = () => {
         >
           {swipersContent.map((content, index) => (
             <SwiperSlide key={index}>
-              <div className="p-6 space-y-9">
-                <div className="space-y-4 h-[315px]">
+              <div className="p-6 space-y-4 md:space-y-0">
+                <div className="space-y-4 min-h-[315px]">
                   <Heading4 className="text-mono-0">{content.title}</Heading4>
 
                   <SubHeading2 className="text-mono-80">
