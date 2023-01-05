@@ -11,6 +11,8 @@ import {
 import { IconBase } from '@webb-tools/icons/types';
 
 import Link from 'next/link';
+import { useState } from 'react';
+
 import Heading2 from './Heading2';
 import Heading3 from './Heading3';
 import NewletterForm from './NewletterForm';
@@ -62,6 +64,9 @@ const links = [
 ];
 
 const Footer = () => {
+  // State for subscription success
+  const [success, setSuccess] = useState(false);
+
   return (
     <footer className="dark pb-4 md:pb-[156px] bg-mono-200 space-y-6">
       {/** Newsletter */}
@@ -73,24 +78,37 @@ const Footer = () => {
             Everyone, Everything, Everywhere.
           </Heading2>
 
-          <div className="space-y-6">
-            <Heading3 className="text-lg leading-6 dark:text-mono-20">
-              Follow for Updates
-            </Heading3>
+          {!success && (
+            <div className="space-y-6">
+              <Heading3 className="text-lg leading-6 dark:text-mono-20">
+                Follow for Updates
+              </Heading3>
 
-            <NewletterForm />
+              <NewletterForm onSuccess={() => setSuccess(true)} />
 
-            <SubHeading2 className="dark:text-mono-100">
-              By signing up you agree to{' '}
-              <a
-                href={links[1].href}
-                rel="noopener noreferrer"
-                className="dark:text-mono-0 hover:underline"
-              >
-                terms & conditions
-              </a>
-            </SubHeading2>
-          </div>
+              <SubHeading2 className="dark:text-mono-100">
+                By signing up you agree to{' '}
+                <a
+                  href={links[1].href}
+                  rel="noopener noreferrer"
+                  className="dark:text-mono-0 hover:underline"
+                >
+                  terms & conditions
+                </a>
+              </SubHeading2>
+            </div>
+          )}
+
+          {success && (
+            <div className="space-y-6">
+              <Heading3>{"Now you're in the loop"}</Heading3>
+
+              <SubHeading2>
+                Thanks for signing up! Keep an eye on your inbox for updates
+                from the Webb community.
+              </SubHeading2>
+            </div>
+          )}
         </div>
       </div>
 

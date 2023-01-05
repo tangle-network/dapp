@@ -2,9 +2,11 @@ import { InformationLine } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import { Input } from '@webb-tools/webb-ui-components/components/Input/Input';
-import { useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
-const NewletterForm = () => {
+const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
+  onSuccess,
+}) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -57,6 +59,7 @@ const NewletterForm = () => {
           setName('');
           setEmail('');
           setError(null);
+          onSuccess(true);
         } else {
           // Error
           const { message } = await response.json();
@@ -68,7 +71,7 @@ const NewletterForm = () => {
         setLoading(false);
       }
     },
-    []
+    [onSuccess]
   );
 
   return (
