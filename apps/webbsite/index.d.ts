@@ -4,3 +4,9 @@ declare module '*.svg' {
   export const ReactComponent: any;
   export default content;
 }
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    'lottie-player': any;
+  }
+}

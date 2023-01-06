@@ -2,11 +2,7 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import {
-  currenciesConfig,
-  ManagedWallet,
-  WalletConfig,
-} from '@webb-tools/dapp-config';
+import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import {
   ExternalLinkLine,
   LoginBoxLineIcon,
@@ -14,11 +10,10 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount, useWallets } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { Note } from '@webb-tools/sdk-core';
 import {
   Avatar,
   Button,
-  ChainListCard,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
@@ -31,7 +26,6 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ClearDataModal } from './ClearDataModal';
 import { HeaderButton } from './HeaderButton';
-import { WalletModal } from './WalletModal';
 
 export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
@@ -40,14 +34,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const {
-    activeChain,
-    noteManager,
-    chains,
-    purgeNoteAccount,
-    activeWallet,
-    switchChain,
-  } = useWebContext();
+  const { activeChain, noteManager, purgeNoteAccount, inactivateApi } =
+    useWebContext();
 
   // Get all note, syncNotes and isSyncingNote function
   const {
@@ -154,8 +142,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     logger.warn('New notes function is not implemented yet');
   }, []);
 
-  // Funciton to switch chain
-  const handleSwitchChain = useCallback(async () => {
+  // Funciton to switch account within the connected wallet
+  const handleSwitchAccount = useCallback(async () => {
     if (!activeChain) {
       notificationApi({
         variant: 'error',
@@ -164,56 +152,20 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
       return;
     }
 
-    const sourceChains = Object.values(chains).map((val) => {
-      return {
-        name: val.name,
-        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-      };
-    });
-
-    setMainComponent(
-      <ChainListCard
-        className="w-[550px] h-[700px]"
-        overrideScrollAreaProps={{ className: 'h-[550px]' }}
-        chainType="source"
-        chains={sourceChains}
-        value={{ name: activeChain.name, symbol: activeChain.name }}
-        onClose={() => setMainComponent(undefined)}
-        onChange={async (selectedChain) => {
-          const chain = Object.values(chains).find(
-            (val) => val.name === selectedChain.name
-          );
-          if (!chain) {
-            throw new Error('Detect unsupported chain is being selected');
-          }
-
-          const isSupported =
-            activeWallet &&
-            activeWallet.supportedChainIds.includes(
-              calculateTypedChainId(chain.chainType, chain.chainId)
-            );
-
-          // If the selected chain is supported by the active wallet
-          if (isSupported) {
-            await switchChain(chain, activeWallet);
-            setMainComponent(undefined);
-            return;
-          }
-
-          setMainComponent(
-            <WalletModal chain={chain} sourceChains={sourceChains} />
-          );
-        }}
-      />
-    );
-  }, [
-    activeChain,
-    activeWallet,
-    chains,
-    notificationApi,
-    setMainComponent,
-    switchChain,
-  ]);
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.ethereum !== 'undefined'
+    ) {
+      await window.ethereum.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+    }
+  }, [activeChain, notificationApi]);
 
   // Disconnect function
   // TODO: The disconnect function does not work properly
@@ -223,7 +175,11 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     }
 
     await purgeNoteAccount();
-  }, [currentManagedWallet, purgeNoteAccount]);
+
+    await inactivateApi();
+
+    setMainComponent(undefined);
+  }, [currentManagedWallet, purgeNoteAccount, inactivateApi, setMainComponent]);
 
   return (
     <>
@@ -297,7 +253,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
           <div className="flex items-center justify-end space-x-2">
             <Button
-              onClick={handleSwitchChain}
+              onClick={handleSwitchAccount}
               leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
               variant="link"
             >

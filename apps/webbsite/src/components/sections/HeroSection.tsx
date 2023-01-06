@@ -7,9 +7,9 @@ const manifestoUrl =
 
 const HeroSection = () => {
   return (
-    <section className="flex justify-center w-full">
-      <div className="w-[934px] space-y-6 mt-[154px] lg:mt-[308px]">
-        <h1 className="text-[84px] text-center font-bold leading-[96px] text-mono-200">
+    <section className="absolute flex justify-center w-full">
+      <div className="w-[934px] space-y-6 mt-[190px]">
+        <h1 className="text-[84px] text-center font-bold leading-[96px] text-mono-200 font-satoshi">
           Privacy that Brings Blockchains Together{' '}
         </h1>
         <SubHeading className="text-center">

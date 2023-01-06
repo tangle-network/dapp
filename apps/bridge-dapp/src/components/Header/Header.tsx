@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { currenciesConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Button,
@@ -18,7 +17,7 @@ import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { HeaderProps } from './types';
 import { WalletButton } from './WalletButton';
 import { WalletModal } from './WalletModal';
-
+import { getDefaultConnection } from '../../utils';
 /**
  * The statistic `Header` for `Layout` container
  */
@@ -28,15 +27,13 @@ export const Header: FC<HeaderProps> = () => {
 
   const { setMainComponent } = useWebbUI();
 
+  // On connect wallet button click - connect to the default chain(ETH Goerli)
   const onConnectWalletClick = useCallback(() => {
-    const sourceChains: ChainType[] = Object.values(chains).map((val) => {
-      return {
-        name: val.name,
-        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-      };
-    });
+    const { defaultChain, sourceChains } = getDefaultConnection(chains);
 
-    setMainComponent(<ChainSelectionWrapper sourceChains={sourceChains} />);
+    setMainComponent(
+      <WalletModal chain={defaultChain} sourceChains={sourceChains} />
+    );
   }, [chains, setMainComponent]);
 
   return (
@@ -48,7 +45,7 @@ export const Header: FC<HeaderProps> = () => {
 
         {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
-          {!activeWallet && (
+          {!activeAccount && (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
@@ -97,9 +94,11 @@ export const Header: FC<HeaderProps> = () => {
 };
 export type ChainSelectionWrapperProps = {
   sourceChains: ChainType[];
+  handleOnClose?: () => void;
 };
 export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
   sourceChains,
+  handleOnClose,
 }) => {
   const { chains, activeWallet, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
@@ -136,7 +135,10 @@ export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
           <WalletModal chain={chain} sourceChains={sourceChains} />
         );
       }}
-      onClose={() => setMainComponent(undefined)}
+      onClose={() => {
+        setMainComponent(undefined);
+        if (handleOnClose) handleOnClose();
+      }}
     />
   );
 };

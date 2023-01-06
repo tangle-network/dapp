@@ -103,7 +103,7 @@ export type WebbProviderEvents<T = any> = {
   interactiveFeedback: InteractiveFeedback;
   /// The provider is updated and an action is required to handle this update
   providerUpdate: T;
-  // /// accountsChange
+  /// accountsChange
   newAccounts: AccountsAdapter<any>;
 };
 

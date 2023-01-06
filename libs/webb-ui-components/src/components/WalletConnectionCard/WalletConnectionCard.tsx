@@ -118,7 +118,7 @@ export const WalletConnectionCard = forwardRef<
 
             {!failedWallet && !connectingWallet ? (
               <Button variant="utility" size="sm" onClick={onDownloadBtnClick}>
-                Download now
+                Download metamask
               </Button>
             ) : (
               <Button variant="utility" size="sm" onClick={onHelpBtnClick}>
