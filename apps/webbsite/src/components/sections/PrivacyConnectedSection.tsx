@@ -61,7 +61,7 @@ const PrivacyConnectedSection = () => {
         {Object.entries(tabsContent).map(([key, value]) => (
           <TabContent
             key={key}
-            className="max-w-[900px] max-h-[340px] w-full h-max"
+            className="max-w-[900px] max-h-[340px] w-full h-max min-h-[120px] md:min-h-[320px]"
             value={key}
           >
             <LottiePlayer animationUrl={value.animationUrl} />
