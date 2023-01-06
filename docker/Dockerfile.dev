@@ -12,9 +12,11 @@ ENV PATH=${PATH_PROJECT}/node_modules/.bin:$PATH
 
 WORKDIR ${PATH_PROJECT}
 
-COPY package.json .
+COPY package.json yarn.lock ./
 
-RUN apk update && apk add --update git
+RUN apk update && apk add --update git python3 make g++ \
+  && rm -rf /var/cache/apk/*
+
 RUN yarn
 
 COPY . .

@@ -138,6 +138,7 @@ cp .env.example .env
 ```bash
 ./docker-dev.sh
 ```
+Note: The script requires `jq` command to be installed (i.e. Ubuntu `apt-get install -y jq`)
 
 ### Run Bridge Dapp
 
