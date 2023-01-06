@@ -58,7 +58,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+.env*
 packages/apps/public/cached-fixtures
 
 # next.js build output
