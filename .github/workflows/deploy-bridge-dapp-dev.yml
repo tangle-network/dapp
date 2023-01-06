@@ -1,14 +1,14 @@
 # This action deploys a draft deployment using Netlify to view changes prior to being
-# merged. This does NOT deploy to production site and will only be triggered 
+# merged. This does NOT deploy to production site and will only be triggered
 # on changes in the specified paths below.
 name: deploy-bridge-dapp 🌐
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [ develop ]
-    # paths:
-    #   - 'apps/bridge-dapp/**'
+    branches: [develop]
+    paths:
+      - 'apps/bridge-dapp/**'
 
   workflow_dispatch:
 
@@ -56,7 +56,7 @@ jobs:
             ---
 
             _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/webb-bridge-dapp/settings/deploys#deploy-notifications)._
-            
+
         with:
           msg: ${{ env.OUTPUT }}
-          check_for_duplicate_msg: false  # OPTIONAL
+          check_for_duplicate_msg: false # OPTIONAL
