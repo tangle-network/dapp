@@ -192,8 +192,7 @@ export type MixerRelayTx = {
 };
 
 /**
- * Proof data object for VAnchor proofs on any chain
- *
+ * Proof data object for VAnchor proofs on substrate chain
  * @param proof - Encoded proof data
  * @param publicAmount - Public amount for proof
  * @param roots - Merkle roots for the proof
@@ -246,6 +245,26 @@ type VAnchorSubstrateRelayTransaction = {
 };
 
 /**
+ * Proof data object for VAnchor proofs on evm chain
+ * @param proof - Encoded proof data
+ * @param publicAmount - Public amount for proof
+ * @param roots - Merkle roots for the proof
+ * @param extensionRoots - The extra roots for extension VAnchors such as IdentityVAnchor
+ * @param inputNullifiers - nullifer hashes for the proof
+ * @param outputCommitments - Output commitments for the proof
+ * @param extDataHash - External data hash for the proof external data
+ **/
+type EVMProofData = {
+  proof: string;
+  publicAmount: string;
+  roots: string;
+  extensionRoots: string;
+  inputNullifiers: string[];
+  outputCommitments: string[];
+  extDataHash: string;
+};
+
+/**
  * Contains data that is relayed to the VAnchors
  * @param chain_id - The chain_id of a supported chain of this relayer
  * @param id - The tree id of the mixer's underlying tree
@@ -255,7 +274,7 @@ type VAnchorSubstrateRelayTransaction = {
 type VAnchorEVMRelayTransaction = {
   chainId: number;
   id: number | string;
-  proofData: IVariableAnchorPublicInputs;
+  proofData: EVMProofData;
   extData: IVariableAnchorExtData;
 };
 
