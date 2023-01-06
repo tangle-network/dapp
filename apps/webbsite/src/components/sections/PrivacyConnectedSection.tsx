@@ -12,15 +12,15 @@ import SubHeading from '../SubHeading';
 
 const tabsContent = {
   ownership: {
-    animationUrl: '/animations/deposit.json',
+    animationUrl: '/animations/deposit.lottie',
     title: 'Proof of Ownership',
   },
   identity: {
-    animationUrl: '/animations/kyc.json',
+    animationUrl: '/animations/kyc.lottie',
     title: 'Proof of Identity',
   },
   privacy: {
-    animationUrl: '/animations/ecosystem.json',
+    animationUrl: '/animations/ecosystem.lottie',
     title: 'Privacy Ecosystems',
   },
 };
@@ -61,7 +61,7 @@ const PrivacyConnectedSection = () => {
         {Object.entries(tabsContent).map(([key, value]) => (
           <TabContent
             key={key}
-            className="max-w-[900px] max-h-[340px]"
+            className="max-w-[900px] max-h-[340px] w-full h-max"
             value={key}
           >
             <LottiePlayer animationUrl={value.animationUrl} />
@@ -76,7 +76,7 @@ export default PrivacyConnectedSection;
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
-    <lottie-player
+    <dotlottie-player
       src={animationUrl}
       autoplay
       speed={0.8}

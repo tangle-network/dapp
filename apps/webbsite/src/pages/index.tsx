@@ -1,5 +1,3 @@
-import Lottie from 'lottie-react';
-
 import ApplicationsAndInfrastructureSection from '../components/sections/ApplicationsAndInfrastructureSection';
 import HeroSection from '../components/sections/HeroSection';
 import InActionSection from '../components/sections/InActionSection';
@@ -12,14 +10,12 @@ export function Index() {
     <>
       <div className="relative w-full h-screen min-h-[900px] xl:min-h-[1500px]">
         <div className="absolute top-0 left-0 w-full h-full">
-          <Lottie
-            animationData={require('../assets/animations/hero-loop.json')}
+          <dotlottie-player
+            src="/animations/hero-loop.lottie"
             autoplay
             loop
             style={{ height: '100%', width: '100%' }}
-            rendererSettings={{
-              preserveAspectRatio: 'xMidYMid slice',
-            }}
+            preserveAspectRatio="xMidYMid slice"
           />
         </div>
         <HeroSection />
