@@ -4,12 +4,12 @@ import {
   TransactionState,
   WebbRelayer,
 } from '@webb-tools/abstract-api-provider';
-import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
 import {
   misbehavingRelayer,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
+import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
 import { Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
@@ -36,6 +36,7 @@ export type UseWithdrawProps = {
   amount: number;
   unwrapTokenAddress?: string;
 };
+
 /**
  * User withdraw
  * */
@@ -81,8 +82,6 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   }, [stage]);
 
   const withdraw = useCallback(async () => {
-    console.log(params);
-
     if (!withdrawApi || !params.notes?.length) {
       return;
     }
@@ -108,7 +107,26 @@ export const useWithdraw = (params: UseWithdrawProps) => {
           const withdrawNoteStrings = withdrawNotes.map((note) =>
             note.serialize()
           );
-          const payload = await withdrawApi.withdraw(
+
+          const destChainId = Number(withdrawNotes[0].note.targetChainId);
+          const destVAnchorContract =
+            withdrawApi.getDestVAnchorContract(destChainId);
+
+          if (!destVAnchorContract) {
+            console.log('no destVAnchorContract detected');
+            return;
+          }
+
+          // If the token / wrapUnwrapToken
+          // - is undefined -> no wrapping
+          // - is 0x0000000000000000000000000000000000000000 -> native token
+          // - is equal to the FungibleTokenWrapper token -> no wrapping
+          // - is equal to some random address / random ERC20 token -> wrap that token
+          const unwrapTokenAddress =
+            params.unwrapTokenAddress ||
+            (await destVAnchorContract.inner.token());
+
+          const payload = withdrawApi.withdraw(
             withdrawNoteStrings,
             params.recipient,
             ethers.utils
@@ -118,11 +136,13 @@ export const useWithdraw = (params: UseWithdrawProps) => {
               )
               .toString(),
             withdrawNotes[0],
-            params.unwrapTokenAddress
+            unwrapTokenAddress
           );
+
           if (payload instanceof Transaction) {
             txQueueApi.registerTransaction(payload);
           }
+
           const withdrawPayload = await payload;
           setReceipt(withdrawPayload.txHash);
           setOutputNotes(withdrawPayload.outputNotes);
@@ -148,7 +168,9 @@ export const useWithdraw = (params: UseWithdrawProps) => {
     },
     [txQueueApi]
   );
+
   const setStage = useCallback(() => {}, []);
+
   return {
     stage,
     setStage,

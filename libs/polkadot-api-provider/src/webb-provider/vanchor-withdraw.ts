@@ -42,20 +42,16 @@ import {
   getLeaves,
   rootOfLeaves,
 } from '../mt-utils';
+import { VAnchorContract } from '@webb-tools/evm-contracts';
 
 export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
-  /**
-   * notes - Withdraw notes that the use had already deposited , the notes should have the right index
-   * recipient - Recipient account
-   * amount - amount to withdraw in bnUnits (i.e. WEI instead of ETH)
-   * */
-  async withdraw(
+  withdraw(
     notes: string[],
     recipient: string,
     amount: string,
     metadataNote: Note,
-    unwrapTokenAddress?: string // Make use of this to unwrap the token
-  ): Promise<Transaction<NewNotesTxResult>> {
+    unwrapTokenAddress: string // Make use of this to unwrap the token
+  ): Transaction<NewNotesTxResult> {
     const { note } = metadataNote;
     const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
@@ -428,5 +424,9 @@ export class PolkadotVAnchorWithdraw extends VAnchorWithdraw<WebbPolkadot> {
   ): Promise<number> {
     const api = this.inner.api;
     return getLeafIndex(api, leaf, indexBeforeInsertion, treeId);
+  }
+
+  getDestVAnchorContract(destChainId: number): VAnchorContract | null {
+    throw new Error('Method not implemented.');
   }
 }

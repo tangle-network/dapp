@@ -15,6 +15,7 @@ import {
   Transaction,
   TransactionState,
   VAnchorWithdraw,
+  padHexString,
 } from '@webb-tools/abstract-api-provider';
 import {
   bridgeStorageFactory,
@@ -165,7 +166,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
       name: parsedDestChainIdType.chainId.toString(),
     };
 
-    const extAmount = extData.extAmount.toString().replace('0x', '');
+    const extAmount = extData.extAmount.replace('0x', '');
     const relayedDepositTxPayload =
       relayedVAnchorWithdraw.generateWithdrawRequest<
         typeof chainInfo,
@@ -176,14 +177,26 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         extData: {
           recipient: extData.recipient,
           relayer: extData.relayer,
-          extAmount: extAmount as any,
-          fee: extData.fee.toString() as any,
+          extAmount: extAmount,
+          fee: extData.fee,
           encryptedOutput1: extData.encryptedOutput1,
           encryptedOutput2: extData.encryptedOutput2,
-          refund: extData.refund.toString(),
+          refund: extData.refund,
           token: extData.token,
         },
-        proofData: publicInputs,
+        proofData: {
+          proof: publicInputs.proof,
+          extensionRoots: publicInputs.extensionRoots,
+          extDataHash: padHexString(publicInputs.extDataHash.toHexString()),
+          publicAmount: publicInputs.publicAmount,
+          roots: publicInputs.roots,
+          outputCommitments: publicInputs.outputCommitments.map((output) =>
+            padHexString(output.toHexString())
+          ),
+          inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
+            padHexString(nullifier.toHexString())
+          ),
+        },
       });
 
     relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
@@ -201,7 +214,6 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         case RelayedWithdrawResult.Errored:
           // Tx failed
           withdrawTx.fail(message);
-          break;
       }
     });
 
@@ -245,13 +257,23 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     };
   }
 
-  async withdraw(
+  getDestVAnchorContract(destChainId: number): VAnchorContract | null {
+    const activeBridge = this.inner.methods.bridgeApi.getBridge();
+    const destAddress = activeBridge.targets[destChainId];
+    if (!destAddress) {
+      return null;
+    }
+
+    return this.inner.getVariableAnchorByAddress(destAddress);
+  }
+
+  withdraw(
     notes: string[],
     recipient: string,
     amount: string,
     metadataNote: Note,
-    unwrapTokenAddress?: string
-  ): Promise<Transaction<NewNotesTxResult>> {
+    unwrapTokenAddress: string
+  ): Transaction<NewNotesTxResult> {
     const { note } = metadataNote;
     const denomination = note.denomination;
     const formattedAmount = ethers.utils.formatUnits(amount, denomination);
@@ -268,14 +290,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
     const destAddress = activeBridge.targets[destChainId];
     const destVAnchor = this.inner.getVariableAnchorByAddress(destAddress);
 
-    // If the token / wrapUnwrapToken
-    // - is undefined -> no wrapping
-    // - is 0x0000000000000000000000000000000000000000 -> native token
-    // - is equal to the FungibleTokenWrapper token -> no wrapping
-    // - is equal to some random address / random ERC20 token -> wrap that token
-    const wrapUnwrapToken: string =
-      unwrapTokenAddress || (await destVAnchor._contract.token());
-    console.log(`wrapUnwrapToken`);
+    const wrapUnwrapToken: string = unwrapTokenAddress;
     const srcSymbol = wrapUnwrapToken
       ? this.inner.config.getCurrencyByAddress(wrapUnwrapToken).symbol
       : currencySymbol;
@@ -362,7 +377,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
           chainId: destChainIdType.toString(),
           keypair,
         });
-        const outputUtxos = [changeUtxo, dummyUtxo];
+        const outputUtxos: [Utxo, Utxo] = [changeUtxo, dummyUtxo];
 
         const extAmount = BigNumber.from(0)
           .add(
@@ -385,13 +400,13 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             () =>
               destVAnchor.setupTransaction(
                 inputUtxos,
-                [changeUtxo, dummyUtxo],
+                outputUtxos,
                 extAmount,
                 0,
                 0,
                 recipient,
                 relayerAccount,
-                activeBridge.currency.getAddress(destChainIdType),
+                wrapUnwrapToken,
                 leavesMap,
                 provingKey,
                 Buffer.from(wasmBuffer),
@@ -441,6 +456,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             TransactionState.SendingTransaction,
             `Relayer:${activeRelayer.beneficiary}`
           );
+
           const txHash = await this.relayerWithdraw(
             extData,
             publicInputs,
@@ -450,12 +466,8 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
             activeRelayer,
             withdrawTx
           );
+
           withdrawTx.txHash = txHash;
-          // Cleanup NoteAccount state
-          for (const note of notes) {
-            const parsedNote = await Note.deserialize(note);
-            await this.inner.noteManager?.removeNote(parsedNote);
-          }
         } else {
           withdrawTx.next(TransactionState.SendingTransaction, undefined);
 
@@ -505,11 +517,12 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
           const receipt = await tx.wait();
           withdrawTx.txHash = receipt.transactionHash;
-          // Cleanup NoteAccount state
-          for (const note of notes) {
-            const parsedNote = await Note.deserialize(note);
-            await this.inner.noteManager?.removeNote(parsedNote);
-          }
+        }
+
+        // Cleanup NoteAccount state
+        for (const note of notes) {
+          const parsedNote = await Note.deserialize(note);
+          await this.inner.noteManager?.removeNote(parsedNote);
         }
       } catch (e) {
         // Cleanup NoteAccount state for added changeNotes
@@ -530,6 +543,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
         outputNotes: changeNotes,
       };
     };
+
     withdrawTx.executor(executor);
     return withdrawTx;
   }
