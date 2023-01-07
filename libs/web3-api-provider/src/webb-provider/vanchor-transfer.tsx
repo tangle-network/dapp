@@ -8,6 +8,7 @@ import {
   TransactionState,
   VAnchorTransfer,
   VanchorTransferPayload,
+  padHexString,
 } from '@webb-tools/abstract-api-provider';
 import {
   bridgeStorageFactory,
@@ -361,7 +362,21 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
                 refund: extData.refund.toString(),
                 token: extData.token,
               },
-              proofData: publicInputs,
+              proofData: {
+                proof: publicInputs.proof,
+                extensionRoots: publicInputs.extensionRoots,
+                extDataHash: padHexString(
+                  publicInputs.extDataHash.toHexString()
+                ),
+                publicAmount: publicInputs.publicAmount,
+                roots: publicInputs.roots,
+                outputCommitments: publicInputs.outputCommitments.map(
+                  (output) => padHexString(output.toHexString())
+                ),
+                inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
+                  padHexString(nullifier.toHexString())
+                ),
+              },
             });
 
           relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {

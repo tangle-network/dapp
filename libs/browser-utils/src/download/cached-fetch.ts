@@ -1,12 +1,14 @@
-import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { LoggerService } from '../logger';
 
 const logger = LoggerService.get('cached fetch');
+
 export async function cachedFetch(
   ...params: Parameters<typeof fetch>
 ): Promise<Uint8Array> {
   const fixturesCache = await caches.open('fixtures');
-  const reqInput = params[0];
-  let url: string = '';
+  const reqInput: string | URL | Request = params[0];
+  let url = '';
+
   if (typeof reqInput === 'string') {
     url = reqInput;
   } else if (reqInput instanceof URL) {
@@ -14,8 +16,10 @@ export async function cachedFetch(
   } else if (reqInput instanceof Request) {
     url = reqInput.url;
   }
+
   const key = new URL(url);
   const cachedResponse = await fixturesCache.match(key);
+
   logger.info(`Fetching url ${url} ->  key ${key}`);
 
   if (cachedResponse && cachedResponse.ok) {

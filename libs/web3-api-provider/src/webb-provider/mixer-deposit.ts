@@ -6,14 +6,21 @@ import {
   MixerDeposit,
   MixerSize,
 } from '@webb-tools/abstract-api-provider';
-import { IAnchorDepositInfo } from '@webb-tools/interfaces';
+import {
+  IVariableAnchorPublicInputs,
+  IVariableAnchorExtData,
+} from '@webb-tools/interfaces';
 import { Note } from '@webb-tools/sdk-core';
 
 import { WebbWeb3Provider } from '..';
 
 type DepositPayload = IDepositPayload<
   Note,
-  [IAnchorDepositInfo, number | string, string?]
+  [
+    IVariableAnchorPublicInputs | IVariableAnchorExtData,
+    number | string,
+    string?
+  ]
 >;
 
 // The Web3 version used a deprecated fixed anchor where src and target chainID were the same.

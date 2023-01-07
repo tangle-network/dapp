@@ -8,7 +8,7 @@ import { ProvideCapabilities } from '@webb-tools/abstract-api-provider';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
-import { AbstractProvider } from 'web3-core';
+import { AbstractProvider, provider as Provider } from 'web3-core';
 
 export type AddToken = {
   address: string;
@@ -150,7 +150,7 @@ export class Web3Provider<T = unknown> {
   }
 
   get provider() {
-    return this._inner.eth.currentProvider;
+    return this._inner.eth.currentProvider as Provider;
   }
 
   public get capabilities() {
