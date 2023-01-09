@@ -550,6 +550,7 @@ export const DepositContainer = forwardRef<
       balances,
       chains,
     ]);
+
     const destChainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
@@ -709,6 +710,7 @@ export const DepositContainer = forwardRef<
       tokenListWrapAndDepositProps,
       tokenListDepositProps,
     ]);
+
     useEffect(() => {
       const isExistAndFullArgs =
         setMainComponentArgs !== undefined &&
@@ -722,6 +724,7 @@ export const DepositContainer = forwardRef<
         setMainComponent(undefined);
       }
     }, [setMainComponentArgs, setMainComponent]);
+
     return (
       <>
         <div {...props} ref={ref}>

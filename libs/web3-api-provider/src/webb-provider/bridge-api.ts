@@ -86,6 +86,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
 
     return wrappableTokens;
   }
+
   async fetchWrappableAssets(typedChainId: number): Promise<Currency[]> {
     const bridge = this.getBridge();
     return this.fetchWrappableAssetsByBridge(typedChainId, bridge);
