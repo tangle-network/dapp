@@ -16,6 +16,7 @@ export const useCurrencies = () => {
   const [wrappableCurrencies, setWrappableCurrencies] = useState<Currency[]>(
     []
   );
+
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
@@ -23,15 +24,6 @@ export const useCurrencies = () => {
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
   >({});
-
-  // Ref to auto select wrappable token if the selected governance token balance is 0
-  // and no bridgeWrappableCurrency is selected and only check one time every render
-  const autoSelectedWrappableTokenRef = useRef(false);
-
-  const governedCurrencyBalance = useCurrencyBalance(governedCurrency);
-
-  // Other supported tokens balances
-  const balances = useCurrenciesBalances(wrappableCurrencies);
 
   const getPossibleGovernedCurrencies = useCallback(
     (currencyId: number) => {
@@ -112,52 +104,10 @@ export const useCurrencies = () => {
         console.error(e);
       });
     }
-  }, [activeChain, activeApi, setWrappableCurrenciesMap]);
-
-  // Side effect to update the selected token if the selected governance token balance
-  // is 0 and no bridgeWrappableCurrency is selected
-  useEffect(() => {
-    const updateCurrnetToken = async () => {
-      const isNeedAutoSelectWrappableToken =
-        governedCurrency &&
-        !wrappableCurrency &&
-        governedCurrencyBalance === 0 &&
-        !autoSelectedWrappableTokenRef.current;
-
-      if (!isNeedAutoSelectWrappableToken) {
-        return;
-      }
-
-      const foundWrappableCurrency = wrappableCurrencies.find(
-        (currency) => balances[currency.id] > 0
-      );
-      if (!foundWrappableCurrency) {
-        return;
-      }
-
-      autoSelectedWrappableTokenRef.current = true;
-      const tokens = getPossibleGovernedCurrencies(foundWrappableCurrency.id);
-      await setGovernedCurrency(tokens[0]);
-      await setWrappableCurrency(foundWrappableCurrency);
-    };
-
-    updateCurrnetToken();
-
-    return () => {
-      autoSelectedWrappableTokenRef.current = false;
-    };
-  }, [
-    balances,
-    governedCurrency,
-    wrappableCurrency,
-    getPossibleGovernedCurrencies,
-    setGovernedCurrency,
-    setWrappableCurrency,
-    wrappableCurrencies,
-  ]);
+  }, [activeChain, activeApi]);
 
   // Side effect to subscribe to the active api,
-  // then set the governed currencies and wrapable currencies
+  // then set the active bridge
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -212,7 +162,7 @@ export const useCurrencies = () => {
     });
 
     return () => sub.forEach((s) => s.unsubscribe());
-  }, [activeApi, setWrappableCurrencyState, setGovernedCurrencyState]);
+  }, [activeApi]);
 
   return {
     governedCurrencies,
