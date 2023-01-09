@@ -1,7 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 import {
-  useBridge,
   useBridgeDeposit,
   useCurrencies,
   useCurrenciesBalances,
@@ -31,16 +30,17 @@ import {
   useMemo,
   useState,
 } from 'react';
+
 import {
   ChainSelectionWrapper,
   ChainSelectionWrapperProps,
   WalletModal,
   WalletModalProps,
 } from '../../components';
+import { getDefaultConnection } from '../../utils';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
-import { getDefaultConnection } from '../../utils';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardProps;
@@ -71,6 +71,7 @@ export const DepositContainer = forwardRef<
     const [mainComponentName, setMainComponentName] = useState<
       MainComponentVariants | undefined
     >(undefined);
+
     const {
       activeApi,
       chains,
@@ -84,19 +85,18 @@ export const DepositContainer = forwardRef<
     } = useWebContext();
 
     const { generateNote } = useBridgeDeposit();
+
     const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
       undefined
     );
-    const {
-      setGovernedCurrency,
-      setWrappableCurrency,
-      wrappableCurrency,
-      governedCurrency,
-    } = useBridge();
 
     const {
+      governedCurrency,
       governedCurrencies,
+      setGovernedCurrency,
+      wrappableCurrency,
       wrappableCurrencies,
+      setWrappableCurrency,
       getPossibleGovernedCurrencies,
     } = useCurrencies();
 
@@ -114,9 +114,11 @@ export const DepositContainer = forwardRef<
     const [isNoteAccountCreated, setIsNoteAccountCreated] = useState(false);
 
     const [isGeneratingNote, setIsGeneratingNote] = useState(false);
+
     const [sourceChain, setSourceChain] = useState<Chain | undefined>(
       undefined
     );
+
     const [destChain, setDestChain] = useState<Chain | undefined>(
       () => defaultDestinationChain
     );
@@ -140,7 +142,7 @@ export const DepositContainer = forwardRef<
     }, [chains]);
 
     const destChains: ChainType[] = useMemo(() => {
-      if (!activeApi || !activeApi.state.activeBridge) {
+      if (!activeApi || !activeApi.state.activeBridge?.targets) {
         return [];
       }
 
@@ -179,6 +181,7 @@ export const DepositContainer = forwardRef<
         symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
       };
     }, [activeChain, sourceChain]);
+
     const bridgeGovernedCurrency = useMemo(() => {
       if (!governedCurrency) {
         return undefined;
