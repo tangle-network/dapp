@@ -21,10 +21,10 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { currenciesConfig } from '@webb-tools/dapp-config';
 import { useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
-import { chainsConfig, currenciesConfig } from '@webb-tools/dapp-config';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,

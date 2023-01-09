@@ -69,7 +69,11 @@ export const AmountInput = forwardRef<
               />
 
               {amountMenuProps && (
-                <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
+                <Tooltip
+                  delayDuration={100}
+                  isOpen={isOpen}
+                  onChange={(next) => setIsOpen(next)}
+                >
                   <TooltipTrigger>
                     <ChevronDown />
                   </TooltipTrigger>
