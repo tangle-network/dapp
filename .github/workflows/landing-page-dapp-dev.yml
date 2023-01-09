@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Install netlify/plugin-nextjs
+        run: npm install -D @netlify/plugin-nextjs
+
       - name: Build project
         run: yarn build:webbsite
 
