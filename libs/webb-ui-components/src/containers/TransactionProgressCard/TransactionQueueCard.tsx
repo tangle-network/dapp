@@ -269,7 +269,12 @@ export const TransactionQueueCard = forwardRef<
               fw={'bold'}
               className={' text-mono-180 dark:text-mono'}
             >
-              Transaction Processing
+              {txCardProps.length > 0 &&
+                (txCardProps[0].status === 'completed'
+                  ? 'Transaction Completed'
+                  : txCardProps[0].status === 'warning'
+                  ? 'Transaction Failed'
+                  : 'Transaction Processing')}
             </Typography>
             <Typography
               variant={'body4'}
