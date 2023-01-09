@@ -30,7 +30,7 @@ jobs:
         run: yarn install
 
       - name: Install netlify/plugin-nextjs
-        run: yarn add -D @netlify/plugin-nextjs
+        run: yarn add -D @netlify/plugin-nextjs -W
 
       - name: Build project
         run: yarn build:webbsite
