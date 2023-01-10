@@ -83,7 +83,11 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
               titleClassName="uppercase !text-inherit"
             />
             {amountMenuProps && (
-              <Tooltip isOpen={isOpen} onChange={(next) => setIsOpen(next)}>
+              <Tooltip
+                delayDuration={100}
+                isOpen={isOpen}
+                onChange={(next) => setIsOpen(next)}
+              >
                 <TooltipTrigger>
                   <ChevronDown />
                 </TooltipTrigger>

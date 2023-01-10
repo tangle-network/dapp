@@ -272,7 +272,7 @@ export class WebbWeb3Provider
         0,
         abortSignal
       );
-
+      console.log(`stored contract leaves`, storedContractInfo.leaves);
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
       // Cached the new leaves

@@ -1,0 +1,5 @@
+{
+  // Support for Tailwind CSS IntelliSense
+  // Ref: https://github.com/tailwindlabs/tailwindcss/issues/7553#issuecomment-917271069
+  "tailwindCSS.experimental.classRegex": [["/\\*tw\\*/ ([^;]*);", "'([^']*)'"]]
+}

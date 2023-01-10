@@ -36,23 +36,34 @@ function mapTxToPayload(
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
   const { amount, wallets, token, tokens } = tx.metaData;
-  const srcExplorerURI = chainConfig[wallets.src]?.blockExplorerStub ?? '';
+
+  let explorerUri = '';
+
+  if (tx.name === 'Deposit') {
+    explorerUri = chainConfig[wallets.src]?.blockExplorerStub ?? '';
+  } else {
+    explorerUri = chainConfig[wallets.dist]?.blockExplorerStub ?? '';
+  }
+
   const SrcWallet = chainConfig[wallets.src]?.logo;
   const DistWallet = chainConfig[wallets.dist]?.logo;
+
   const getExplorerURI = (
     addOrTxHash: string,
     variant: 'tx' | 'address'
   ): string => {
     return `${
-      srcExplorerURI.endsWith('/') ? srcExplorerURI : srcExplorerURI + '/'
+      explorerUri.endsWith('/') ? explorerUri : explorerUri + '/'
     }${variant}/${addOrTxHash}`;
   };
+
   const onDetails = tx.txHash
     ? () => {
         const url = getExplorerURI(tx.txHash!, 'tx');
         open(url, '_blank', 'noopener noreferrer');
       }
     : undefined;
+
   return {
     id: tx.id,
     txStatus: {

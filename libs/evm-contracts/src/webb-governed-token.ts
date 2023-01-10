@@ -3,12 +3,9 @@
 
 /* eslint-disable camelcase */
 
-import { zeroAddress } from '@webb-tools/dapp-types';
+import { checkNativeAddress, zeroAddress } from '@webb-tools/dapp-types';
 import { LoggerService } from '@webb-tools/app-util';
-import {
-  GovernedTokenWrapper,
-  GovernedTokenWrapper__factory,
-} from '@webb-tools/contracts';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import {
   BigNumberish,
   Contract,
@@ -16,19 +13,12 @@ import {
   providers,
   Signer,
 } from 'ethers';
+import { FungibleTokenWrapper } from '@webb-tools/contracts';
 
 const logger = LoggerService.get('WebbGovernedToken');
 
-function checkNativeAddress(tokenAddress: string): boolean {
-  if (tokenAddress === zeroAddress || tokenAddress === '0') {
-    return true;
-  }
-
-  return false;
-}
-
 export class WebbGovernedToken {
-  private _contract: GovernedTokenWrapper;
+  private _contract: FungibleTokenWrapper;
   private readonly signer: Signer;
 
   constructor(private web3Provider: providers.Web3Provider, address: string) {
@@ -36,7 +26,7 @@ export class WebbGovernedToken {
     logger.info(`Init with address ${address} `);
     this._contract = new Contract(
       address,
-      GovernedTokenWrapper__factory.abi,
+      FungibleTokenWrapper__factory.abi,
       this.signer
     ) as any;
   }
