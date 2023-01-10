@@ -91,6 +91,7 @@ export const DepositContainer = forwardRef<
     );
 
     const {
+      balances,
       governedCurrency,
       governedCurrencies,
       setGovernedCurrency,
@@ -102,14 +103,6 @@ export const DepositContainer = forwardRef<
 
     const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
       useModal(false);
-
-    const allTokens = useMemo(
-      () => governedCurrencies.concat(wrappableCurrencies),
-      [governedCurrencies, wrappableCurrencies]
-    );
-
-    // Other supported tokens balances
-    const balances = useCurrenciesBalances(allTokens);
 
     const { syncNotes } = useNoteAccount();
 

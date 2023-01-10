@@ -1,8 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useCurrencyBalance } from './useCurrencyBalance';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCurrenciesBalances } from './useCurrenciesBalances';
 
 export const useCurrencies = () => {
@@ -24,6 +23,13 @@ export const useCurrencies = () => {
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
   >({});
+
+  const allTokens = useMemo(
+    () => governedCurrencies.concat(wrappableCurrencies),
+    [governedCurrencies, wrappableCurrencies]
+  );
+
+  const balances = useCurrenciesBalances(allTokens);
 
   const getPossibleGovernedCurrencies = useCallback(
     (currencyId: number) => {
@@ -66,6 +72,7 @@ export const useCurrencies = () => {
   );
 
   // Side effect to subscribe to the active chain and fetch the wrappable currencies
+  // then update the wrappableCurrenciesMap
   useEffect(() => {
     if (activeApi && activeChain) {
       const typedChainId = calculateTypedChainId(
@@ -107,7 +114,7 @@ export const useCurrencies = () => {
   }, [activeChain, activeApi]);
 
   // Side effect to subscribe to the active api,
-  // then set the active bridge
+  // then set the governed currencies, wrappable currencies and current governed currency
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -142,6 +149,9 @@ export const useCurrencies = () => {
 
     return () => {
       activeBridgeSub.unsubscribe();
+      setGovernedCurrencies([]);
+      setWrappableCurrencies([]);
+      setGovernedCurrencyState(null);
     };
   }, [activeApi, activeChain]);
 
@@ -161,10 +171,15 @@ export const useCurrencies = () => {
       setWrappableCurrencyState(currency);
     });
 
-    return () => sub.forEach((s) => s.unsubscribe());
+    return () => {
+      sub.forEach((s) => s.unsubscribe());
+      setGovernedCurrencyState(null);
+      setWrappableCurrencyState(null);
+    };
   }, [activeApi]);
 
   return {
+    balances,
     governedCurrencies,
     governedCurrency,
     setGovernedCurrency,

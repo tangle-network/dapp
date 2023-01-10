@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
  */
 export const useCurrenciesBalances = (
   currencies: Currency[]
-): Record<number, number> => {
+): Record<Currency['id'], number> => {
   const { activeApi, activeChain } = useWebContext();
 
   // Balances object map currency id and its balance
