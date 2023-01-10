@@ -163,6 +163,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       try {
         const note = depositPayload.note.note;
         const utxo = depositPayload.params[0];
+        console.log('utxo', utxo);
 
         const sourceEvmId = await this.inner.getChainId();
         const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
@@ -211,32 +212,32 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           abortSignal
         );
         fixturesList.set('VAnchorWasm', 'Done');
-        const leavesMap: Record<string, Uint8Array[]> = {};
+        // const leavesMap: Record<string, Uint8Array[]> = {};
 
         // Fetch the leaves from the source chain
-        depositTx.cancelToken.throwIfCancel();
-        depositTx.next(TransactionState.FetchingLeaves, {
-          end: undefined,
-          currentRange: [0, 1],
-          start: 0,
-        });
-        this.emit('stateChange', TransactionState.FetchingLeaves);
-        let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-        let leaves = await this.cancelToken.handleOrThrow(
-          () =>
-            this.inner.getVariableAnchorLeaves(
-              srcVAnchor,
-              leafStorage,
-              abortSignal
-            ),
-          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-        );
-        // Only populate the leaves map if there are actually leaves to populate.
-        if (leaves.length) {
-          leavesMap[utxo.chainId] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
+        // depositTx.cancelToken.throwIfCancel();
+        // depositTx.next(TransactionState.FetchingLeaves, {
+        //   end: undefined,
+        //   currentRange: [0, 1],
+        //   start: 0,
+        // });
+        // this.emit('stateChange', TransactionState.FetchingLeaves);
+        // let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
+        // let leaves = await this.cancelToken.handleOrThrow(
+        //   () =>
+        //     this.inner.getVariableAnchorLeaves(
+        //       srcVAnchor,
+        //       leafStorage,
+        //       abortSignal
+        //     ),
+        //   () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+        // );
+        // // Only populate the leaves map if there are actually leaves to populate.
+        // if (leaves.length) {
+        //   leavesMap[utxo.chainId] = leaves.map((leaf) => {
+        //     return hexToU8a(leaf);
+        //   });
+        // }
 
         // Set up a provider for the dest chain
         const destTypedChainId = Number(utxo.chainId);
@@ -248,24 +249,24 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           destAddress,
           destEthers
         );
-        leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
+        // leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
 
-        leaves = await this.cancelToken.handleOrThrow(
-          () =>
-            this.inner.getVariableAnchorLeaves(
-              destVAnchor,
-              leafStorage,
-              abortSignal
-            ),
-          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-        );
-        // Only populate the leaves map if there are actually leaves to populate.
-        if (leaves.length) {
-          leavesMap[utxo.chainId] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
-        this.cancelToken.throwIfCancel();
+        // leaves = await this.cancelToken.handleOrThrow(
+        //   () =>
+        //     this.inner.getVariableAnchorLeaves(
+        //       destVAnchor,
+        //       leafStorage,
+        //       abortSignal
+        //     ),
+        //   () => WebbError.from(WebbErrorCodes.TransactionCancelled)
+        // );
+        // // Only populate the leaves map if there are actually leaves to populate.
+        // if (leaves.length) {
+        //   leavesMap[utxo.chainId] = leaves.map((leaf) => {
+        //     return hexToU8a(leaf);
+        //   });
+        // }
+        // this.cancelToken.throwIfCancel();
 
         // Add the note to the noteManager before transaction is sent.
         // This helps to safeguard the user.
@@ -356,7 +357,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             srcVAnchor.deposit(
               depositPayload.params[0] as CircomUtxo,
               wrapUnwrapToken,
-              leavesMap,
+              {},
               smallKey,
               Buffer.from(smallWasm),
               worker
