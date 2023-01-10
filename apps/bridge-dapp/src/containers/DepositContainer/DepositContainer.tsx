@@ -101,19 +101,14 @@ export const DepositContainer = forwardRef<
     } = useCurrencies();
 
     const allTokens = useMemo(
-      () => governedCurrencies.concat(wrappableCurrencies),
-      [governedCurrencies, wrappableCurrencies]
+      () => fungibleCurrencies.concat(wrappableCurrencies),
+      [fungibleCurrencies, wrappableCurrencies]
     );
 
     const balances = useCurrenciesBalances(allTokens);
 
     const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
       useModal(false);
-
-    // Other supported tokens balances
-    const balances = useCurrenciesBalances(
-      fungibleCurrencies.concat(wrappableCurrencies)
-    );
 
     const { syncNotes } = useNoteAccount();
 
@@ -476,9 +471,9 @@ export const DepositContainer = forwardRef<
       setAmount(Number(balance));
     }, [selectedToken]);
 
-    // Effect to update the default fungible currency
+    // Effect to update the default governed currency
     useEffect(() => {
-      async function updatedefaultFungibleCurrency() {
+      async function updateDefaultFungibleCurrency() {
         if (!defaultFungibleCurrency) {
           return;
         }
@@ -489,7 +484,7 @@ export const DepositContainer = forwardRef<
         await setFungibleCurrency(defaultFungibleCurrency);
       }
 
-      updatedefaultFungibleCurrency().catch((e) => {
+      updateDefaultFungibleCurrency().catch((e) => {
         console.log(e);
       });
     }, [defaultFungibleCurrency, setFungibleCurrency, setWrappableCurrency]);

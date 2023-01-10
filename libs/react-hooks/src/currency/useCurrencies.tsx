@@ -1,9 +1,8 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useCurrencyBalance } from './useCurrencyBalance';
-import { useCurrenciesBalances } from './useCurrenciesBalances';
+import { useCallback, useEffect, useState } from 'react';
+import { firstValueFrom } from 'rxjs';
 
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
@@ -20,19 +19,10 @@ export const useCurrencies = () => {
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
-  // GovernableCurrency -> wrappableCurrency[]
+  // FungibleCurrency -> wrappable Currency[]
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
   >({});
-
-  // Ref to auto select wrappable token if the selected governance token balance is 0
-  // and no bridgeWrappableCurrency is selected and only check one time every render
-  const autoSelectedWrappableTokenRef = useRef(false);
-
-  const fungibleCurrencyBalance = useCurrencyBalance(fungibleCurrency);
-
-  // Other supported tokens balances
-  const balances = useCurrenciesBalances(wrappableCurrencies);
 
   const getPossibleFungibleCurrencies = useCallback(
     (currencyId: number) => {
@@ -87,13 +77,11 @@ export const useCurrencies = () => {
         const tokens = await Promise.all(
           Object.values(activeApi.state.getBridgeOptions()).map(
             async (potentialBridge) => {
-              console.log(activeApi.methods);
               const currencies =
                 await activeApi.methods.bridgeApi.fetchWrappableAssetsByBridge(
                   typedChainId,
                   potentialBridge
                 );
-              console.log('currencies', currencies);
               return {
                 currencies,
                 bridgeCurrency: potentialBridge.currency,
@@ -108,69 +96,25 @@ export const useCurrencies = () => {
           }),
           {} as Record<Currency['id'], Currency[]>
         );
-        console.log('tokens', tokens);
         setWrappableCurrenciesMap(nextWrappableCurrenciesMap);
       };
 
       handler().catch((e) => {
-        console.log('here');
         console.log('Error fetching wrappable currencies');
         console.error(e);
       });
     }
-  }, [activeChain, activeApi, setWrappableCurrenciesMap]);
-
-  // Side effect to update the selected token if the selected governance token balance
-  // is 0 and no bridgeWrappableCurrency is selected
-  useEffect(() => {
-    const updateCurrentToken = async () => {
-      const isNeedAutoSelectWrappableToken =
-        fungibleCurrency &&
-        !wrappableCurrency &&
-        fungibleCurrencyBalance === 0 &&
-        !autoSelectedWrappableTokenRef.current;
-
-      if (!isNeedAutoSelectWrappableToken) {
-        return;
-      }
-
-      const foundWrappableCurrency = wrappableCurrencies.find(
-        (currency) => balances[currency.id] > 0
-      );
-      if (!foundWrappableCurrency) {
-        return;
-      }
-
-      autoSelectedWrappableTokenRef.current = true;
-      const tokens = getPossibleFungibleCurrencies(foundWrappableCurrency.id);
-      await setFungibleCurrency(tokens[0]);
-      await setWrappableCurrency(foundWrappableCurrency);
-    };
-
-    updateCurrentToken();
-
-    return () => {
-      autoSelectedWrappableTokenRef.current = false;
-    };
-  }, [
-    balances,
-    fungibleCurrency,
-    wrappableCurrency,
-    getPossibleFungibleCurrencies,
-    setFungibleCurrency,
-    setWrappableCurrency,
-    wrappableCurrencies,
-  ]);
+  }, [activeChain, activeApi]);
 
   // Side effect to subscribe to the active api,
-  // then set the fungible currencies and wrapable currencies
+  // then set the fungible currencies, wrappable currencies and current fungible currency
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
     }
 
     const activeBridgeSub = activeApi.state.$activeBridge.subscribe(
-      (bridge) => {
+      async (bridge) => {
         setFungibleCurrencies(
           Object.values(activeApi.state.getBridgeOptions()).map(
             (potentialBridge) => {
@@ -179,20 +123,57 @@ export const useCurrencies = () => {
           )
         );
 
-        if (bridge?.currency) {
-          setFungibleCurrencyState(bridge.currency);
-          console.log('ACTIVE CHAIN', activeChain);
-          activeApi.methods.bridgeApi
-            .fetchWrappableAssets(
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-            )
-            .then((assets) => {
-              setWrappableCurrencies(assets);
-            })
-            .catch((error) => {
-              console.log('error: ', error);
-            });
+        const currentTypeChainId = calculateTypedChainId(
+          activeChain.chainType,
+          activeChain.chainId
+        );
+
+        const nativeCurrencyConfig =
+          activeApi.config.currencies[activeChain.nativeCurrencyId];
+        if (!nativeCurrencyConfig) {
+          throw new Error(
+            `Native currency ${activeChain.nativeCurrencyId} not found`
+          );
         }
+
+        const nativeCurrency = new Currency(nativeCurrencyConfig);
+
+        if (!bridge?.currency) {
+          return;
+        }
+
+        setFungibleCurrencyState(bridge.currency);
+
+        try {
+          const assets = await activeApi.methods.bridgeApi.fetchWrappableAssets(
+            currentTypeChainId
+          );
+          setWrappableCurrencies(assets);
+
+          const balance = await firstValueFrom(
+            activeApi.methods.chainQuery.tokenBalanceByCurrencyId(
+              currentTypeChainId,
+              bridge.currency.id
+            )
+          );
+
+          if (Number(balance) > 0 || !assets.length) {
+            return;
+          }
+
+          // TODO: We should set the first wrappable currency which has balance
+          // instead of the first one or native
+          const foundAsset = assets.find((a) => a.id === nativeCurrency.id);
+          if (foundAsset) {
+            activeApi.state.wrappableCurrency = foundAsset;
+          } else {
+            activeApi.state.wrappableCurrency = assets[0];
+          }
+        } catch (error) {
+          console.log('Error while fetching wrappable assets', error);
+        }
+      }
+    );
 
     return () => {
       activeBridgeSub.unsubscribe();
@@ -215,8 +196,10 @@ export const useCurrencies = () => {
       setWrappableCurrencyState(currency);
     });
 
-    return () => sub.forEach((s) => s.unsubscribe());
-  }, [activeApi, setWrappableCurrencyState, setFungibleCurrencyState]);
+    return () => {
+      sub.forEach((s) => s.unsubscribe());
+    };
+  }, [activeApi]);
 
   return {
     fungibleCurrencies,
