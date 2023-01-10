@@ -16,6 +16,7 @@ export const useCurrencies = () => {
   const [wrappableCurrencies, setWrappableCurrencies] = useState<Currency[]>(
     []
   );
+
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
@@ -74,6 +75,7 @@ export const useCurrencies = () => {
   );
 
   // Side effect to subscribe to the active chain and fetch the wrappable currencies
+  // then update the wrappableCurrenciesMap
   useEffect(() => {
     if (activeApi && activeChain) {
       const typedChainId = calculateTypedChainId(
@@ -191,8 +193,6 @@ export const useCurrencies = () => {
               console.log('error: ', error);
             });
         }
-      }
-    );
 
     return () => {
       activeBridgeSub.unsubscribe();

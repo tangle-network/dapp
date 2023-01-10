@@ -100,6 +100,13 @@ export const DepositContainer = forwardRef<
       getPossibleFungibleCurrencies,
     } = useCurrencies();
 
+    const allTokens = useMemo(
+      () => governedCurrencies.concat(wrappableCurrencies),
+      [governedCurrencies, wrappableCurrencies]
+    );
+
+    const balances = useCurrenciesBalances(allTokens);
+
     const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
       useModal(false);
 
@@ -529,8 +536,6 @@ export const DepositContainer = forwardRef<
 
       return {
         className: 'w-[550px] h-[700px]',
-        overrideScrollAreaProps: { className: 'h-[550px]' },
-        chainType: 'dest',
         selectTokens: tokens,
         value: destChainInputValue,
         title: 'Select Asset to Deposit',
@@ -543,6 +548,7 @@ export const DepositContainer = forwardRef<
           setDestChain(destChain);
           setMainComponentName(undefined);
         },
+        onClose: () => setMainComponentName(undefined),
       };
     }, [
       wrappableCurrency,
@@ -655,6 +661,7 @@ export const DepositContainer = forwardRef<
               'token-wrap-and-deposit-list-card': tokenListWrapAndDepositProps,
             },
           ];
+
         case 'token-deposit-list-card':
           return [
             TokenListCard,
@@ -662,6 +669,7 @@ export const DepositContainer = forwardRef<
               'token-wrap-and-deposit-list-card': tokenListDepositProps,
             },
           ];
+
         case 'source-chain-list-card':
           return [
             ChainListCard,
@@ -669,6 +677,7 @@ export const DepositContainer = forwardRef<
               'source-chain-list-card': sourceChainListCardProps,
             },
           ];
+
         case 'dest-chain-list-card':
           return [
             ChainListCard,
@@ -676,6 +685,7 @@ export const DepositContainer = forwardRef<
               'dest-chain-list-card': destChainListCardProps,
             },
           ];
+
         case 'wallet-modal':
           return walletModalProps
             ? [
@@ -685,6 +695,7 @@ export const DepositContainer = forwardRef<
                 },
               ]
             : undefined;
+
         case 'chain-selection-wrapper':
           return [
             ChainSelectionWrapper,
@@ -692,6 +703,7 @@ export const DepositContainer = forwardRef<
               'chain-selection-wrapper': chainSelectionWrapperProps,
             },
           ];
+
         case 'deposit-confirm-container':
           return depositConfirmContainerProps
             ? [
@@ -702,6 +714,7 @@ export const DepositContainer = forwardRef<
               ]
             : undefined;
       }
+
       return undefined;
     }, [
       mainComponentName,

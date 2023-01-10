@@ -8,7 +8,7 @@ import {
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
-import { webbFungibleToken } from '@webb-tools/evm-contracts';
+import { WebbFungibleToken } from '@webb-tools/evm-contracts';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ContractTransaction } from 'ethers';
@@ -234,10 +234,10 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     return currency.getAddress(currentNetwork)!;
   }
 
-  fungibleTokenwrapper(currency: Currency): webbFungibleToken {
+  fungibleTokenwrapper(currency: Currency): WebbFungibleToken {
     const contractAddress = this.getAddressFromCurrency(currency);
 
-    return new webbFungibleToken(
+    return new WebbFungibleToken(
       this.inner.getEthersProvider(),
       contractAddress
     );
