@@ -25,11 +25,11 @@ export const anchorsConfig: ApiConfig['anchors'] = {
   },
   [CurrencyId.webbDEV]: {
     [PresetTypedChainId.HermesLocalnet]:
-      '0x6d5a4D246617d711595a1657c55B17B97e20bdda',
+      '0xc705034ded85e817b9E56C977E61A2098362898B',
     [PresetTypedChainId.AthenaLocalnet]:
-      '0x6595b34ED0a270B10a586FC1EA22030A95386f1e',
+      '0x91eB86019FD8D7c5a9E31143D422850A13F670A3',
     [PresetTypedChainId.DemeterLocalnet]:
-      '0xcd75Ad7AC9C9325105f798c476E84176648F391A',
+      '0x6595b34ED0a270B10a586FC1EA22030A95386f1e',
   },
   [CurrencyId.TEST]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '9',
@@ -53,13 +53,13 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xda27349ee55e7c91e1b521ece4c3dcc390383026': 3418157,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
-    '0x6d5a4D246617d711595a1657c55B17B97e20bdda': 95,
+    '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
-    '0x6595b34ED0a270B10a586FC1EA22030A95386f1e': 95,
+    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
-    '0xcd75Ad7AC9C9325105f798c476E84176648F391A': 95,
+    '0x6595b34ED0a270B10a586FC1EA22030A95386f1e': 0,
   },
 };
 

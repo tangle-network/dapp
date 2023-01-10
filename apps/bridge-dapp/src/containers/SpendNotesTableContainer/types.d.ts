@@ -11,9 +11,9 @@ export interface SpendNoteDataType {
   chain: string;
 
   /**
-   * Symbol of the governed (webb<xxx>) asset
+   * Symbol of the fungible (webb<xxx>) asset
    */
-  governedTokenSymbol: string;
+  fungibleTokenSymbol: string;
 
   /**
    * The external url of assets pair
@@ -51,9 +51,9 @@ export interface SpendNoteDataType {
   rawChain: Chain;
 
   /**
-   * The raw governed currency object
+   * The raw fungible currency object
    */
-  rawGovernedCurrency: Currency | undefined;
+  rawFungibleCurrency: Currency | undefined;
 }
 
 export interface SpendNotesTableContainerProps

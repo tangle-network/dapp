@@ -47,7 +47,7 @@ export const WithdrawConfirm = forwardRef<
       relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Withdrawal',
-      governedTokenSymbol: token1Symbol,
+      fungibleTokenSymbol: token1Symbol,
       wrappableTokenSymbol: token2Symbol,
       recipientAddress,
       ...props

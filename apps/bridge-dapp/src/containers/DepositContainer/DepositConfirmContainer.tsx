@@ -183,7 +183,7 @@ export const DepositConfirmContainer = forwardRef<
         onDownload={() => downloadNote(depositPayload)}
         amount={amount}
         wrappingAmount={String(amount)}
-        governedTokenSymbol={token?.symbol}
+        fungibleTokenSymbol={token?.symbol}
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}

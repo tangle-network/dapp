@@ -14,7 +14,7 @@ export interface WebbStateInterface {
   $activeBridge: Observable<Bridge | null>;
 }
 
-// The Bridge class tracks the state of the selected governed currency,
+// The Bridge class tracks the state of the selected fungible currency,
 // The targets are indexed by typedChainIds, and the string value could
 // represent either an address or a treeId.
 // These fields are all readonly, because an observable for an activeBridge is
@@ -46,7 +46,7 @@ export class WebbState implements WebbStateInterface {
   constructor(
     // Currencies are indexed by their Currency IDs
     private supportedCurrencies: Record<number, Currency>,
-    // Bridges are indexed by their governed Currency IDs.
+    // Bridges are indexed by their fungible Currency IDs.
     private supportedBridges: Record<number, Bridge>
   ) {
     const wrappedCurrencies: Record<number, Currency> = {};

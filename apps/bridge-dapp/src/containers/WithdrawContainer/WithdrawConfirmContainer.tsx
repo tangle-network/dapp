@@ -21,13 +21,13 @@ export const WithdrawConfirmContainer = forwardRef<
       changeAmount,
       fees,
       targetChainId,
-      governedCurrency: governedCurrencyProp,
+      fungibleCurrency: fungibleCurrencyProp,
       unwrapCurrency: { value: unwrapCurrency } = {},
       recipient,
     },
     ref
   ) => {
-    const { value: governedCurrency } = governedCurrencyProp;
+    const { value: fungibleCurrency } = fungibleCurrencyProp;
 
     const { withdraw, stage } = useWithdraw({
       amount: amount,
@@ -143,7 +143,7 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}
         relayerAvatarTheme={avatarTheme}
-        governedTokenSymbol={governedCurrency.view.symbol}
+        fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
       />
     );

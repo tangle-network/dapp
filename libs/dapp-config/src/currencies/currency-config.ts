@@ -203,15 +203,15 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     addresses: new Map<number, string>([
       [
         PresetTypedChainId.HermesLocalnet,
-        '0xcbD945E77ADB65651F503723aC322591f3435cC5',
-      ],
-      [
-        PresetTypedChainId.AthenaLocalnet,
         '0x4e3df2073bf4b43B9944b8e5A463b1E185D6448C',
       ],
       [
+        PresetTypedChainId.AthenaLocalnet,
+        '0xbfce6B877Ebff977bB6e80B24FbBb7bC4eBcA4df',
+      ],
+      [
         PresetTypedChainId.DemeterLocalnet,
-        '0x510C6297cC30A058F41eb4AF1BFC9953EaD8b577',
+        '0xcbD945E77ADB65651F503723aC322591f3435cC5',
       ],
     ]),
   },

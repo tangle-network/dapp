@@ -9,7 +9,7 @@ import { ShieldedAssetDataType } from '../containers/ShieldedAssetsTableContaine
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
 
-  const { getWrappableCurrencies, governedCurrencies } = useCurrencies();
+  const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
 
   // Group notes by destination chain and symbol
   const groupedNotes = React.useMemo(() => {
@@ -23,7 +23,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const existedChain = acc.find(
           (item) =>
             item.chain === chain.name &&
-            item.governedTokenSymbol === tokenSymbol
+            item.fungibleTokenSymbol === tokenSymbol
         );
 
         if (existedChain) {
@@ -34,19 +34,19 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         let wrappableCurrencies: Currency[] = [];
 
-        const governedCurrency = governedCurrencies.find(
+        const fungibleCurrency = fungibleCurrencies.find(
           (currency) => currency.view.symbol === tokenSymbol
         );
 
-        if (governedCurrency) {
-          const foundCurrencies = getWrappableCurrencies(governedCurrency.id);
+        if (fungibleCurrency) {
+          const foundCurrencies = getWrappableCurrencies(fungibleCurrency.id);
 
           wrappableCurrencies = foundCurrencies;
         }
 
         let assetsUrl = '#';
         const explorerUrl = chain.blockExplorerStub;
-        const address = governedCurrency?.getAddressOfChain(
+        const address = fungibleCurrency?.getAddressOfChain(
           calculateTypedChainId(chain.chainType, chain.chainId)
         );
 
@@ -59,8 +59,8 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         acc.push({
           chain: chain.name,
           rawChain: chain,
-          governedTokenSymbol: tokenSymbol,
-          rawGovernedCurrency: governedCurrency,
+          fungibleTokenSymbol: tokenSymbol,
+          rawFungibleCurrency: fungibleCurrency,
           assetsUrl,
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
@@ -72,7 +72,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
       return acc;
     }, [] as ShieldedAssetDataType[]);
-  }, [allNotes, governedCurrencies, getWrappableCurrencies]);
+  }, [allNotes, fungibleCurrencies, getWrappableCurrencies]);
 
   return groupedNotes;
 };

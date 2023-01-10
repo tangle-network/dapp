@@ -29,7 +29,7 @@ import { WithdrawContainerProps } from './types';
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ defaultGovernedCurrency, onTryAnotherWallet }, ref) => {
+>(({ defaultFungibleCurrency, onTryAnotherWallet }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -46,15 +46,15 @@ export const WithdrawContainer = forwardRef<
     useWebContext();
 
   const {
-    governedCurrency,
+    fungibleCurrency,
     wrappableCurrency,
-    setGovernedCurrency,
+    setFungibleCurrency,
     setWrappableCurrency,
   } = useBridge();
 
   const { generateNote } = useBridgeDeposit();
 
-  const { governedCurrencies, wrappableCurrencies } = useCurrencies();
+  const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -80,7 +80,7 @@ export const WithdrawContainer = forwardRef<
   const shieldedAssets = useShieldedAssets();
 
   // Retrieve the notes from the note manager for the currently selected chain.
-  // and filter out the notes that are not for the currently selected governed currency.
+  // and filter out the notes that are not for the currently selected fungible currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
     if (!currentTypedChainId) {
       return null;
@@ -90,11 +90,11 @@ export const WithdrawContainer = forwardRef<
     const notes = allNotes
       .get(currentTypedChainId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === governedCurrency?.view?.symbol
+        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
       );
 
     return notes ?? null;
-  }, [allNotes, currentTypedChainId, governedCurrency]);
+  }, [allNotes, currentTypedChainId, fungibleCurrency]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -116,25 +116,25 @@ export const WithdrawContainer = forwardRef<
     );
   }, [availableNotesFromManager]);
 
-  const selectedGovernedToken = useMemo<AssetType | undefined>(() => {
-    if (!governedCurrency) {
+  const selectedFungibleToken = useMemo<AssetType | undefined>(() => {
+    if (!fungibleCurrency) {
       return undefined;
     }
     return {
-      symbol: governedCurrency.view.symbol,
-      name: governedCurrency.view.name,
+      symbol: fungibleCurrency.view.symbol,
+      name: fungibleCurrency.view.name,
       balance: availableAmount,
     };
-  }, [availableAmount, governedCurrency]);
+  }, [availableAmount, fungibleCurrency]);
 
-  const governedTokens = useMemo((): AssetType[] => {
-    return Object.values(governedCurrencies).map((currency) => {
+  const fungibleTokens = useMemo((): AssetType[] => {
+    return Object.values(fungibleCurrencies).map((currency) => {
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
       };
     });
-  }, [governedCurrencies]);
+  }, [fungibleCurrencies]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -174,16 +174,16 @@ export const WithdrawContainer = forwardRef<
     [availableAmount]
   );
 
-  const handleGovernedTokenChange = useCallback(
+  const handleFungibleTokenChange = useCallback(
     async (newToken: AssetType) => {
-      const selectedToken = Object.values(governedCurrencies).find(
+      const selectedToken = Object.values(fungibleCurrencies).find(
         (currency) => currency.view.symbol === newToken.symbol
       );
       if (selectedToken) {
-        setGovernedCurrency(selectedToken);
+        setFungibleCurrency(selectedToken);
       }
     },
-    [governedCurrencies, setGovernedCurrency]
+    [fungibleCurrencies, setFungibleCurrency]
   );
 
   const handleWrappableTokenChange = useCallback(
@@ -219,14 +219,14 @@ export const WithdrawContainer = forwardRef<
 
   const isDisabledWithdraw = useMemo(() => {
     return [
-      Boolean(governedCurrency), // No governed currency selected
+      Boolean(fungibleCurrency), // No fungible currency selected
       isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
     ].some((value) => value === false);
   }, [
-    governedCurrency,
+    fungibleCurrency,
     isUnwrap,
     wrappableCurrency,
     isValidAmount,
@@ -245,9 +245,9 @@ export const WithdrawContainer = forwardRef<
 
     const receivingTokenSymbol = isUnwrap
       ? wrappableCurrency?.view.symbol ?? ''
-      : governedCurrency?.view.symbol ?? '';
+      : fungibleCurrency?.view.symbol ?? '';
 
-    const remainderTokenSymbol = governedCurrency?.view.symbol;
+    const remainderTokenSymbol = fungibleCurrency?.view.symbol;
 
     return {
       receivingAmount,
@@ -258,7 +258,7 @@ export const WithdrawContainer = forwardRef<
   }, [
     amount,
     availableAmount,
-    governedCurrency?.view.symbol,
+    fungibleCurrency?.view.symbol,
     isUnwrap,
     isValidAmount,
     wrappableCurrency?.view.symbol,
@@ -330,12 +330,12 @@ export const WithdrawContainer = forwardRef<
     switchChain,
   ]);
 
-  // Effect to update the governed currency when the default governed currency changes.
+  // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
-    if (defaultGovernedCurrency) {
-      setGovernedCurrency(defaultGovernedCurrency);
+    if (defaultFungibleCurrency) {
+      setFungibleCurrency(defaultFungibleCurrency);
     }
-  }, [defaultGovernedCurrency, setGovernedCurrency]);
+  }, [defaultFungibleCurrency, setFungibleCurrency]);
 
   return (
     <div ref={ref}>
@@ -352,10 +352,10 @@ export const WithdrawContainer = forwardRef<
                 className="w-[550px] h-[700px]"
                 title={'Select Asset to Withdraw'}
                 popularTokens={[]}
-                selectTokens={governedTokens}
+                selectTokens={fungibleTokens}
                 unavailableTokens={[]}
                 onChange={(newAsset) => {
-                  handleGovernedTokenChange(newAsset);
+                  handleFungibleTokenChange(newAsset);
                   setMainComponent(undefined);
                 }}
                 onClose={() => setMainComponent(undefined)}
@@ -363,7 +363,7 @@ export const WithdrawContainer = forwardRef<
               />
             );
           },
-          token: selectedGovernedToken,
+          token: selectedFungibleToken,
         }}
         unwrappingAssetInputProps={{
           onClick: () => {
@@ -390,14 +390,14 @@ export const WithdrawContainer = forwardRef<
         fixedAmountInputProps={{
           onChange: parseUserAmount,
           values: [0.1, 0.25, 0.5, 1.0],
-          isDisabled: !selectedGovernedToken,
+          isDisabled: !selectedFungibleToken,
         }}
         customAmountInputProps={{
           onAmountChange: parseUserAmount,
           amount: amount ? amount.toString() : undefined,
           onMaxBtnClick: () => parseUserAmount(availableAmount),
           errorMessage: amountError,
-          isDisabled: !selectedGovernedToken,
+          isDisabled: !selectedFungibleToken,
         }}
         unwrapSwitcherProps={{
           checked: isUnwrap,
@@ -493,7 +493,7 @@ export const WithdrawContainer = forwardRef<
 
             if (
               !currentTypedChainId ||
-              !governedCurrency ||
+              !fungibleCurrency ||
               !activeApi ||
               !activeApi?.state.activeBridge ||
               !recipient
@@ -501,7 +501,7 @@ export const WithdrawContainer = forwardRef<
               return;
             }
 
-            const governedCurrencyDecimals = governedCurrency.getDecimals();
+            const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
 
             // Find the mixerId (target) of the selected inputs
             const mixerId =
@@ -512,7 +512,7 @@ export const WithdrawContainer = forwardRef<
               availableNotesFromManager ?? [],
               ethers.utils.parseUnits(
                 amount.toString(),
-                governedCurrencyDecimals
+                fungibleCurrencyDecimals
               )
             );
 
@@ -533,14 +533,14 @@ export const WithdrawContainer = forwardRef<
             const changeAmountBigNumber = spentValue.sub(
               ethers.utils.parseUnits(
                 amount.toString(),
-                governedCurrencyDecimals
+                fungibleCurrencyDecimals
               )
             );
 
             const parsedChangeAmount = Number(
               ethers.utils.formatUnits(
                 changeAmountBigNumber,
-                governedCurrencyDecimals
+                fungibleCurrencyDecimals
               )
             );
 
@@ -562,8 +562,8 @@ export const WithdrawContainer = forwardRef<
                 availableNotes={availableNotesFromManager ?? []}
                 amount={amount}
                 fees={0}
-                governedCurrency={{
-                  value: governedCurrency,
+                fungibleCurrency={{
+                  value: fungibleCurrency,
                   balance: availableAmount,
                 }}
                 unwrapCurrency={
