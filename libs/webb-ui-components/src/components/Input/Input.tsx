@@ -57,6 +57,7 @@ export const Input: React.FC<InputProps> = (props) => {
     size = 'md',
     type = 'text',
     value: initialValue = '',
+    inputRef,
     ...restProps
   } = props;
   const [value, setValue] = useState(initialValue);
@@ -78,7 +79,10 @@ export const Input: React.FC<InputProps> = (props) => {
     if (!leftIconProp) {
       return;
     }
-    return React.cloneElement(leftIconProp, { ...leftIconProp.props, size: 'md' });
+    return React.cloneElement(leftIconProp, {
+      ...leftIconProp.props,
+      size: 'md',
+    });
   }, [leftIconProp]);
 
   // Override the size of right icon prop to 'md'
@@ -86,10 +90,16 @@ export const Input: React.FC<InputProps> = (props) => {
     if (!rightIconProp) {
       return;
     }
-    return React.cloneElement(rightIconProp, { ...rightIconProp.props, size: 'md' });
+    return React.cloneElement(rightIconProp, {
+      ...rightIconProp.props,
+      size: 'md',
+    });
   }, [rightIconProp]);
 
-  const isInvalid = useMemo(() => isInvalidProp || errorMessage, [isInvalidProp, errorMessage]);
+  const isInvalid = useMemo(
+    () => isInvalidProp || errorMessage,
+    [isInvalidProp, errorMessage]
+  );
 
   const paddingX = useMemo(
     () =>
@@ -109,13 +119,19 @@ export const Input: React.FC<InputProps> = (props) => {
         'form-input w-full transition-none body1 bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
         'placeholder:italic placeholder:text-mono-100 dark:placeholder:text-mono-120',
         paddingX,
-        isInvalid ? ('border-red-40' as const) : ('border-mono-80 dark:border-mono-120' as const)
+        isInvalid
+          ? ('border-red-40' as const)
+          : ('border-mono-80 dark:border-mono-120' as const)
       ),
     [isInvalid, paddingX]
   );
-  const inputClsxHover = useMemo(() => 'hover:border-blue-40 dark:hover:border-blue-70', []);
+  const inputClsxHover = useMemo(
+    () => 'hover:border-blue-40 dark:hover:border-blue-70',
+    []
+  );
   const inputClsxFocus = useMemo(
-    () => 'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70',
+    () =>
+      'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70',
     []
   );
   const inputClsxDisabled = useMemo(
@@ -127,7 +143,12 @@ export const Input: React.FC<InputProps> = (props) => {
   const mergedInputClsx = useMemo(
     () =>
       size === 'md'
-        ? twMerge(inputClsxBase, inputClsxHover, inputClsxFocus, inputClsxDisabled)
+        ? twMerge(
+            inputClsxBase,
+            inputClsxHover,
+            inputClsxFocus,
+            inputClsxDisabled
+          )
         : cx(
             'border-none w-full bg-transparent focus:ring-0 p-0 body1 font-bold',
             'placeholder:text-mono-100 dark:placeholder:text-mono-80 text-mono-200 dark:text-mono-0'
@@ -136,7 +157,13 @@ export const Input: React.FC<InputProps> = (props) => {
   );
 
   const iconClsx = useMemo(
-    () => cx(twMerge('text-mono-140 dark:text-mono-40', isDisabled ? 'text-mono-100 dark:text-mono-120' : '')),
+    () =>
+      cx(
+        twMerge(
+          'text-mono-140 dark:text-mono-40',
+          isDisabled ? 'text-mono-100 dark:text-mono-120' : ''
+        )
+      ),
     [isDisabled]
   );
 
@@ -144,12 +171,13 @@ export const Input: React.FC<InputProps> = (props) => {
     <div className={className}>
       <div className={cx('relative', { 'shadow-sm': size === 'md' })}>
         {leftIcon && (
-          <div className='absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none'>
+          <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
             <span className={iconClsx}>{leftIcon}</span>
           </div>
         )}
 
         <input
+          ref={inputRef}
           size={htmlSize}
           type={type}
           name={id}
@@ -164,13 +192,17 @@ export const Input: React.FC<InputProps> = (props) => {
         />
 
         {rightIcon && (
-          <div className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <span className={iconClsx}>{rightIcon}</span>
           </div>
         )}
       </div>
 
-      {errorMessage && <span className='block mt-2 ml-4 utility text-red dark:text-red-50'>{errorMessage}</span>}
+      {errorMessage && (
+        <span className="block mt-2 ml-4 utility text-red dark:text-red-50">
+          {errorMessage}
+        </span>
+      )}
     </div>
   );
 };

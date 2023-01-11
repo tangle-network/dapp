@@ -12,9 +12,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: true,
   },
-  images: {
-    unoptimized: true,
-  },
 };
 
 module.exports = withNx(nextConfig);
