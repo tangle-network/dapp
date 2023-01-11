@@ -185,7 +185,7 @@ export class WebbWeb3Provider
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.ethersProvider.provider?.on?.('chainChanged', handler);
+    this.ethersProvider.provider?.once?.('chainChanged', handler);
   }
 
   async setAccountListener() {

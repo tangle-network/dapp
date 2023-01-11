@@ -39,7 +39,6 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
               titleClassName="uppercase !text-inherit"
             />
           </Label>
-
           {chain ? (
             <p className="flex items-center space-x-1">
               <ChainIcon name={chain.name} size="lg" />
@@ -54,7 +53,6 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
             </Typography>
           )}
         </div>
-
         <ChevronRight className="inline-block" />
       </InputWrapper>
     );

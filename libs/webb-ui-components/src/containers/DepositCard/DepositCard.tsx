@@ -55,7 +55,6 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         <div className="space-y-4">
           <BridgeInputGroup className="flex flex-col space-y-2">
             <ChainInput {...sourceChainProps} chainType="source" />
-
             <div className="flex space-x-2">
               <TokenInput
                 {...tokenInputProps}

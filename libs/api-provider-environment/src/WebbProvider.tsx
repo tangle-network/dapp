@@ -725,6 +725,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = async (chain: Chain, wallet: Wallet) => {
     setIsConnecting(true);
+    console.log('switch chain [handler]' ,chain.chainId);
 
     try {
       const provider = await switchChain(chain, wallet);
@@ -822,6 +823,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       setLoading(false);
     });
     appEvent.on('networkSwitched', async ([chain, wallet]) => {
+      console.log('switch chain App Event [listener::networkSwitched]');
+
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
       await Promise.all([
@@ -830,6 +833,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       ]);
     });
     appEvent.on('switchNetwork', ([chain, wallet]) => {
+      console.log('switch chain App Event [listener::switchNetwork]');
       switchChainAndStore(chain, wallet);
     });
     appEvent.on('setActiveAccount', (nextAccount) => {
