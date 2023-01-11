@@ -144,7 +144,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     } else {
       const tokenAddress = wrappableToken.getAddress(this.currentChainId!)!;
 
-      return webbFungibleToken.canwrap(tokenAddress);
+      return webbFungibleToken.canWrap(tokenAddress);
     }
   }
 
