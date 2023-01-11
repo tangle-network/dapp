@@ -1,5 +1,3 @@
-import Lottie from 'lottie-react';
-
 import ApplicationsAndInfrastructureSection from '../components/sections/ApplicationsAndInfrastructureSection';
 import HeroSection from '../components/sections/HeroSection';
 import InActionSection from '../components/sections/InActionSection';
@@ -10,24 +8,20 @@ import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDev
 export function Index() {
   return (
     <>
-      <div className=" bg-[#f9faf9]">
-        <div className="relative min-h-[1000px] xl:min-h-[1300px] max-h-screen w-full">
-          <div className="absolute top-0 left-0 w-full h-full">
-            <Lottie
-              animationData={require('../assets/animations/spiral-with-gradient.json')}
-              autoplay
-              loop
-              style={{ height: '100%', width: '100%' }}
-              rendererSettings={{
-                preserveAspectRatio: 'xMidYMid slice',
-              }}
-            />
-          </div>
-          <HeroSection />
+      <div className="relative w-full h-screen min-h-[900px] xl:min-h-[1500px]">
+        <div className="absolute top-0 left-0 w-full h-full">
+          <dotlottie-player
+            src="/animations/hero-loop.lottie"
+            autoplay
+            loop
+            style={{ height: '100%', width: '100%' }}
+            preserveAspectRatio="xMidYMid slice"
+          />
         </div>
-
-        <PrivacyConnectedSection />
+        <HeroSection />
       </div>
+
+      <PrivacyConnectedSection />
 
       <PrivacyScaleSection />
 
