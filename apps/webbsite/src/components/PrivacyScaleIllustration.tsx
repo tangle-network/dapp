@@ -8,7 +8,7 @@ const PrivacyScaleIllustration: FC<{ activeIndex: number }> = ({
     <>
       {Array.from({ length: 6 }).map((_, index) => (
         <Transition
-          className="absolute top-0 left-0 w-full h-full"
+          className="absolute top-0 left-0 flex items-start justify-center w-full h-full md:items-center"
           appear={true}
           key={index}
           show={index === activeIndex}

@@ -6,22 +6,21 @@ import {
   TabTrigger,
 } from '@webb-tools/webb-ui-components/components/Tabs';
 
-import { Transition } from '@headlessui/react';
 import { FC, useState } from 'react';
 import Heading2 from '../Heading2';
 import SubHeading from '../SubHeading';
 
 const tabsContent = {
   ownership: {
-    animationUrl: '/animations/deposit.json',
+    animationUrl: '/animations/deposit.lottie',
     title: 'Proof of Ownership',
   },
   identity: {
-    animationUrl: '/animations/kyc.json',
+    animationUrl: '/animations/kyc.lottie',
     title: 'Proof of Identity',
   },
   privacy: {
-    animationUrl: '/animations/ecosystem.json',
+    animationUrl: '/animations/ecosystem.lottie',
     title: 'Privacy Ecosystems',
   },
 };
@@ -33,12 +32,12 @@ const PrivacyConnectedSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
 
   return (
-    <section className="max-w-[932px] mx-auto py-[156px] flex flex-col justify-center w-full">
+    <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
-      <Heading2 className="text-[48px] leading-[72px] text-mono-200 font-bold text-center mt-6">
+      <Heading2 className="px-4 mt-6 text-center">
         The Future of privacy is Connected
       </Heading2>
-      <SubHeading className="text-center mt-9">
+      <SubHeading className="px-4 mt-6 text-center md:mt-9">
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our
         Web3 ecosystem.
@@ -52,7 +51,7 @@ const PrivacyConnectedSection = () => {
       >
         <TabsList aria-label="tabs" className="mb-4">
           {Object.entries(tabsContent).map(([key, value]) => (
-            <TabTrigger key={key} value={key}>
+            <TabTrigger className="px-2" key={key} value={key}>
               {value.title}
             </TabTrigger>
           ))}
@@ -60,21 +59,13 @@ const PrivacyConnectedSection = () => {
 
         {/* Tabs content */}
         {Object.entries(tabsContent).map(([key, value]) => (
-          <Transition
-            appear
-            show={key === activeTab}
-            enter="transition-opacity duration-[1000]"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-[1000]"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+          <TabContent
             key={key}
+            className="max-w-[900px] max-h-[340px] w-full h-max min-h-[120px] md:min-h-[320px]"
+            value={key}
           >
-            <TabContent className="w-[900px] h-[340px]" value={key}>
-              <LottiePlayer animationUrl={value.animationUrl} />
-            </TabContent>
-          </Transition>
+            <LottiePlayer animationUrl={value.animationUrl} />
+          </TabContent>
         ))}
       </TabsRoot>
     </section>
@@ -85,7 +76,7 @@ export default PrivacyConnectedSection;
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
-    <lottie-player
+    <dotlottie-player
       src={animationUrl}
       autoplay
       speed={0.8}

@@ -16,6 +16,7 @@ export * from './ChevronLeft';
 export * from './ChevronRight';
 export * from './ChevronUp';
 export * from './Close';
+export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
