@@ -142,7 +142,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
       : currencySymbol;
 
     const depositTx = Transaction.new<NewNotesTxResult>('Deposit', {
-      wallets: { src: Number(srcChainId), dist: Number(destChainId) },
+      wallets: { src: Number(srcChainId), dest: Number(destChainId) },
       tokens: [srcSymbol, currencySymbol],
       token: currencySymbol,
       amount: Number(formattedAmount),

@@ -8,7 +8,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { Note } from '@webb-tools/sdk-core';
 import { NewNotesTxResult } from '..';
 import { CancellationToken } from '../cancelation-token';
-import { TransactionState, WebbWithdrawEvents } from '../transaction';
+import { TransactionState, ActionEvent } from '../transaction';
 import { Chain } from '@webb-tools/dapp-config';
 
 /**
@@ -32,7 +32,7 @@ export interface VanchorTransferPayload {
 
 export abstract class VAnchorTransfer<
   T extends WebbApiProvider<any>
-> extends EventBus<WebbWithdrawEvents> {
+> extends EventBus<ActionEvent> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
 
@@ -42,6 +42,7 @@ export abstract class VAnchorTransfer<
 
   cancel(): Promise<void> {
     this.cancelToken.cancel();
+    this.state = TransactionState.Cancelling;
     this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);

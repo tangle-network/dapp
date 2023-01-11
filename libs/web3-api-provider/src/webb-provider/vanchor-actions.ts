@@ -1,13 +1,89 @@
 import {
   CancellationToken,
+  FixturesStatus,
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
+import {
+  VAnchor,
+} from '@webb-tools/anchors';
 import { registrationStorageFactory } from '@webb-tools/browser-utils/storage';
-import { Keypair, Note } from '@webb-tools/sdk-core';
+import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '@webb-tools/fixtures-deployments';
+import { buildVariableWitnessCalculator, Keypair, Note, Utxo } from '@webb-tools/sdk-core';
+import { ZkComponents } from '@webb-tools/utils';
+import { BigNumberish } from 'ethers';
 
 import { WebbWeb3Provider } from '../webb-provider';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
+  async transact(
+    tx: Transaction<NewNotesTxResult>,
+    contractAddress: string,
+    inputs: Utxo[],
+    outputs: Utxo[],
+    fee: BigNumberish,
+    refund: BigNumberish,
+    recipient: string,
+    relayer: string,
+    wrapUnwrapToken: string,
+    leavesMap: Record<string, Uint8Array[]>
+  ): Promise<void> {
+    const signer = await this.inner.getProvider().getSigner();
+    const smallFixtures: ZkComponents = await this.fetchSmallFixtures(tx, 1);
+    const dummyFixtures: ZkComponents = { zkey: new Uint8Array(), wasm: Buffer.from(""), witnessCalculator: undefined };
+    const vanchor = await VAnchor.connect(contractAddress, smallFixtures, dummyFixtures, signer);
+    await vanchor.transact(
+      inputs,
+      outputs,
+      fee,
+      refund,
+      recipient,
+      relayer,
+      wrapUnwrapToken,
+      leavesMap,
+    );
+    return;
+  }
+
+  async fetchSmallFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents> {
+    return this.fetchFixtures(tx, maxEdges, true);
+  }
+
+  async fetchLargeFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents> {
+    return this.fetchFixtures(tx, maxEdges, false);
+  }
+
+  async fetchFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number, isSmall: boolean): Promise<ZkComponents> {
+    this.emit('stateChange', TransactionState.FetchingFixtures);
+    const fixturesList = new Map<string, FixturesStatus>();
+    fixturesList.set('VAnchorKey', 'Waiting');
+    fixturesList.set('VAnchorWasm', 'Waiting');
+    tx.next(TransactionState.FetchingFixtures, {
+      fixturesList,
+    });
+    fixturesList.set('VAnchorKey', 0);
+    const smallKey = await fetchVAnchorKeyFromAws(
+      maxEdges,
+      isSmall,
+      tx.cancelToken.abortSignal,
+    );
+    fixturesList.set('VAnchorKey', 'Done');
+    fixturesList.set('VAnchorWasm', 0);
+    const smallWasm = await fetchVAnchorWasmFromAws(
+      maxEdges,
+      isSmall,
+      tx.cancelToken.abortSignal,
+    );
+    fixturesList.set('VAnchorWasm', 'Done');
+    return {
+      zkey: smallKey,
+      wasm: Buffer.from(smallWasm),
+      witnessCalculator: buildVariableWitnessCalculator,
+    }
+  }
+
   // Check if the evm address and keyData pairing has already registered.
   async isPairRegistered(
     anchorAddress: string,

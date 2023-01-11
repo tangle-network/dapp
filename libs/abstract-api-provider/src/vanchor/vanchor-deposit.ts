@@ -9,18 +9,7 @@ import { NewNotesTxResult, TransactionState } from '../transaction';
 import { WebbApiProvider } from '../webb-provider.interface';
 import { BridgeApi } from './bridge-api';
 import { LoggerService } from '@webb-tools/browser-utils';
-
-// Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
-
-export type VAnchorDepositEvents = {
-  // Generic Error by the provider
-  error: string;
-  // The instance State change event to track the current status of the instance
-  stateChange: TransactionState;
-  // the instance is ready
-  ready: void;
-  loading: boolean;
-};
+import { AbstractState } from '.';
 
 /**
  * Anchor deposit abstract interface as fixed anchor share similar functionality as the mixer
@@ -29,13 +18,8 @@ export type VAnchorDepositEvents = {
 export abstract class VAnchorDeposit<
   T extends WebbApiProvider<any> = WebbApiProvider<any>,
   K extends DepositPayload = DepositPayload<any>
-> extends EventBus<VAnchorDepositEvents> {
-  state: TransactionState = TransactionState.Ideal;
-  cancelToken: CancellationToken = new CancellationToken();
+> extends AbstractState<T> {
   readonly logger = LoggerService.get('VAnchorDeposit');
-  constructor(protected inner: T) {
-    super();
-  }
 
   protected get bridgeApi() {
     return this.inner.methods.bridgeApi as BridgeApi<T>;
@@ -65,12 +49,4 @@ export abstract class VAnchorDeposit<
     amount: number,
     wrappableAssetAddress?: string
   ): Promise<K>;
-
-  cancel(): Promise<void> {
-    this.cancelToken.cancel();
-    this.state = TransactionState.Cancelling;
-    this.emit('stateChange', TransactionState.Cancelling);
-
-    return Promise.resolve(undefined);
-  }
 }

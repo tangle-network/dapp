@@ -7,7 +7,7 @@ import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { VAnchorActionEvent, VAnchorActions } from './vanchor/vanchor-actions';
+import { VAnchorActions } from './vanchor/vanchor-actions';
 import { VAnchorTransfer } from './vanchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './vanchor';
@@ -21,7 +21,7 @@ import {
   MixerWithdraw,
 } from './mixer';
 import { WebbState } from './state';
-import { WebbWithdrawEvents } from './transaction';
+import { ActionEvent } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
 import { Observable } from 'rxjs';
 
@@ -70,14 +70,14 @@ export interface WebbMixer<T extends WebbApiProvider<any>> {
   // deposit
   deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
   // withdraw
-  withdraw: WebbMethod<MixerWithdraw<T>, WebbWithdrawEvents>;
+  withdraw: WebbMethod<MixerWithdraw<T>, ActionEvent>;
 }
 
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
   deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
   withdraw: WebbTransactionMethod<VAnchorWithdraw<T>>;
-  transfer: WebbMethod<VAnchorTransfer<T>, WebbWithdrawEvents>;
-  actions: WebbMethod<VAnchorActions<T>, VAnchorActionEvent>;
+  transfer: WebbMethod<VAnchorTransfer<T>, ActionEvent>;
+  actions: WebbMethod<VAnchorActions<T>, ActionEvent>;
 }
 
 export interface WrapAndUnwrap<T> {

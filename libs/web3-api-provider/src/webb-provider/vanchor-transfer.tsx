@@ -77,7 +77,7 @@ export class Web3VAnchorTransfer extends VAnchorTransfer<WebbWeb3Provider> {
     const transferTx = Transaction.new<NewNotesTxResult>('Transfer', {
       wallets: {
         src: sourceChainId,
-        dist: targetChainId,
+        dest: targetChainId,
       },
       tokens: [note.note.tokenSymbol, note.note.tokenSymbol],
       token: note.note.tokenSymbol,

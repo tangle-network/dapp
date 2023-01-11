@@ -297,7 +297,7 @@ export class Web3VAnchorWithdraw extends VAnchorWithdraw<WebbWeb3Provider> {
 
     // TODO: Change `dist` to `dest` (for destination)
     const withdrawTx = Transaction.new<NewNotesTxResult>('Withdraw', {
-      wallets: { src: Number(srcChainId), dist: Number(destChainId) },
+      wallets: { src: Number(srcChainId), dest: Number(destChainId) },
       tokens: [srcSymbol, currencySymbol],
       token: currencySymbol,
       amount: Number(formattedAmount),

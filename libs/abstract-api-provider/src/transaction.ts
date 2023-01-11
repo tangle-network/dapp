@@ -27,7 +27,7 @@ export enum TransactionState {
 }
 
 // Events that can be emitted using the {EventBus}
-export type WebbWithdrawEvents = {
+export type ActionEvent = {
   // Generic Error by the provider or doing an intermediate step
   error: string;
   // Validation Error for the withdrawing note
@@ -96,10 +96,11 @@ type TransactionMetaData = {
   tokens: [string, string];
   wallets: {
     src: number;
-    dist: number;
+    dest: number;
   };
   token: string;
   recipient?: string;
+  address?: string;
 };
 
 type PromiseExec<T> = (
