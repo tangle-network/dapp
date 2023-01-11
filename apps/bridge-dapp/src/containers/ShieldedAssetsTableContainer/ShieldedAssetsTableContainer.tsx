@@ -47,7 +47,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
     ),
   }),
 
-  columnHelper.accessor('governedTokenSymbol', {
+  columnHelper.accessor('fungibleTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
       const assetSymbol = props.getValue<string>();
@@ -132,7 +132,7 @@ export const ShieldedAssetsTableContainer: FC<
   onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  onDefaultGovernedCurrencyChange,
+  ondefaultFungibleCurrencyChange,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -140,18 +140,18 @@ export const ShieldedAssetsTableContainer: FC<
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Transfer');
 
-      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+      const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
       onDefaultDestinationChainChange?.(rawChain);
 
-      if (rawGovernedCurrency) {
-        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      if (rawFungibleCurrency) {
+        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      onDefaultGovernedCurrencyChange,
+      ondefaultFungibleCurrencyChange,
     ]
   );
 
@@ -159,18 +159,18 @@ export const ShieldedAssetsTableContainer: FC<
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Deposit');
 
-      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+      const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
       onDefaultDestinationChainChange?.(rawChain);
 
-      if (rawGovernedCurrency) {
-        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      if (rawFungibleCurrency) {
+        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      onDefaultGovernedCurrencyChange,
+      ondefaultFungibleCurrencyChange,
     ]
   );
 
@@ -178,18 +178,18 @@ export const ShieldedAssetsTableContainer: FC<
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Withdraw');
 
-      const { rawChain, rawGovernedCurrency } = shieldedAsset;
+      const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
       onDefaultDestinationChainChange?.(rawChain);
 
-      if (rawGovernedCurrency) {
-        onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+      if (rawFungibleCurrency) {
+        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      onDefaultGovernedCurrencyChange,
+      ondefaultFungibleCurrencyChange,
     ]
   );
 

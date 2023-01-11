@@ -44,10 +44,10 @@ export const TransferContainer = forwardRef<
   TransferContainerProps
 >(
   (
-    { defaultDestinationChain, defaultGovernedCurrency, onTryAnotherWallet },
+    { defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet },
     ref
   ) => {
-    const { governedCurrency, setGovernedCurrency } = useBridge();
+    const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
     const { activeChain, activeApi } = useWebContext();
 
@@ -252,15 +252,15 @@ export const TransferContainer = forwardRef<
           ({ currency }) => currency.view.symbol === newToken.symbol
         );
         if (selecteCurrency) {
-          setGovernedCurrency(selecteCurrency.currency);
+          setFungibleCurrency(selecteCurrency.currency);
         }
       },
-      [currenciyRecordFromNotes, setGovernedCurrency]
+      [currenciyRecordFromNotes, setFungibleCurrency]
     );
 
     // The selected asset to display in the transfer card
     const selectedBridgingAsset = useMemo<AssetType | undefined>(() => {
-      if (!governedCurrency) {
+      if (!fungibleCurrency) {
         return undefined;
       }
 
@@ -271,15 +271,15 @@ export const TransferContainer = forwardRef<
           destChain.chainId
         );
         balance =
-          balanceRecordFromNotes[governedCurrency.id]?.[destChainTypeId];
+          balanceRecordFromNotes[fungibleCurrency.id]?.[destChainTypeId];
       }
 
       return {
-        symbol: governedCurrency.view.symbol,
-        name: governedCurrency.view.name,
+        symbol: fungibleCurrency.view.symbol,
+        name: fungibleCurrency.view.name,
         balance,
       };
-    }, [balanceRecordFromNotes, destChain, governedCurrency]);
+    }, [balanceRecordFromNotes, destChain, fungibleCurrency]);
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
@@ -468,7 +468,7 @@ export const TransferContainer = forwardRef<
     // Boolean state for whether the transfer button is disabled
     const isTransferButtonDisabled = useMemo<boolean>(() => {
       return [
-        Boolean(governedCurrency), // No governed currency selected
+        Boolean(fungibleCurrency), // No fungible currency selected
         Boolean(destChain), // No destination chain selected
         recipientError === '', // Invalid recipient public key
         isValidAmount, // Is valid amount
@@ -477,7 +477,7 @@ export const TransferContainer = forwardRef<
       ].some((value) => value === false);
     }, [
       destChain,
-      governedCurrency,
+      fungibleCurrency,
       isValidAmount,
       recipient,
       recipientError,
@@ -486,7 +486,7 @@ export const TransferContainer = forwardRef<
 
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
-      if (!destChain || !governedCurrency || !amount) {
+      if (!destChain || !fungibleCurrency || !amount) {
         return [];
       }
 
@@ -499,7 +499,7 @@ export const TransferContainer = forwardRef<
         allNotes
           .get(destTypedChainId.toString())
           ?.filter(
-            (note) => note.note.tokenSymbol === governedCurrency.view.symbol
+            (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
           ) ?? [];
 
       return (
@@ -507,11 +507,11 @@ export const TransferContainer = forwardRef<
           avaiNotes,
           ethers.utils.parseUnits(
             amount.toString(),
-            governedCurrency.view.decimals
+            fungibleCurrency.view.decimals
           )
         ) ?? []
       );
-    }, [allNotes, amount, destChain, governedCurrency]);
+    }, [allNotes, amount, destChain, fungibleCurrency]);
 
     // Calculate the info for UI display
     const infoCalculated = useMemo(() => {
@@ -520,11 +520,11 @@ export const TransferContainer = forwardRef<
         ethers.BigNumber.from(0)
       );
 
-      const changeAmountBigNumber = governedCurrency
+      const changeAmountBigNumber = fungibleCurrency
         ? spentValue.sub(
             ethers.utils.parseUnits(
               amount?.toString() ?? '0',
-              governedCurrency.view.decimals
+              fungibleCurrency.view.decimals
             )
           )
         : ethers.BigNumber.from(0);
@@ -534,12 +534,12 @@ export const TransferContainer = forwardRef<
         : undefined;
 
       const changeAmount =
-        isValidAmount && governedCurrency
+        isValidAmount && fungibleCurrency
           ? getRoundedAmountString(
               Number(
                 ethers.utils.formatUnits(
                   changeAmountBigNumber,
-                  governedCurrency.view.decimals
+                  fungibleCurrency.view.decimals
                 )
               )
             )
@@ -552,7 +552,7 @@ export const TransferContainer = forwardRef<
       };
     }, [
       amount,
-      governedCurrency,
+      fungibleCurrency,
       inputNotes,
       isValidAmount,
       selectedBridgingAsset?.symbol,
@@ -561,13 +561,13 @@ export const TransferContainer = forwardRef<
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
       if (
-        !governedCurrency ||
+        !fungibleCurrency ||
         !destChain ||
         !activeApi?.state?.activeBridge ||
         !amount
       ) {
         throw new Error(
-          "Can't transfer without a governed currency or dest chain"
+          "Can't transfer without a fungible currency or dest chain"
         );
       }
 
@@ -598,7 +598,7 @@ export const TransferContainer = forwardRef<
           inputNotes={inputNotes}
           amount={amount}
           changeAmount={changeAmount}
-          currency={governedCurrency}
+          currency={fungibleCurrency}
           destChain={destChain}
           recipient={recipient}
           relayer={activeRelayer}
@@ -611,7 +611,7 @@ export const TransferContainer = forwardRef<
       amount,
       destChain,
       generateNote,
-      governedCurrency,
+      fungibleCurrency,
       infoCalculated.changeAmount,
       inputNotes,
       recipient,
@@ -624,13 +624,13 @@ export const TransferContainer = forwardRef<
           setDestChain(defaultDestinationChain);
         }
 
-        if (defaultGovernedCurrency) {
-          setGovernedCurrency(defaultGovernedCurrency);
+        if (defaultFungibleCurrency) {
+          setFungibleCurrency(defaultFungibleCurrency);
         }
       };
 
       updateDefaultValues();
-    }, [defaultDestinationChain, defaultGovernedCurrency, setGovernedCurrency]);
+    }, [defaultDestinationChain, defaultFungibleCurrency, setFungibleCurrency]);
 
     return (
       <TransferCard

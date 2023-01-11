@@ -82,7 +82,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
-  governedTokenSymbol?: string;
+  fungibleTokenSymbol?: string;
 
   wrappableTokenSymbol?: string;
 
@@ -99,7 +99,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  governedTokenSymbol: string;
+  fungibleTokenSymbol: string;
 
   /**
    * The second token symbol
@@ -138,7 +138,7 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   /**
    * The first token symbol
    */
-  governedTokenSymbol?: string;
+  fungibleTokenSymbol?: string;
 
   /**
    * The relayer address

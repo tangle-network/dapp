@@ -11,9 +11,9 @@ export interface BridgeTabContainerProps {
   defaultDestinationChain?: Chain;
 
   /**
-   * The default governed currency
+   * The default fungible currency
    */
-  defaultGovernedCurrency?: Currency;
+  defaultFungibleCurrency?: Currency;
 
   /**
    * The on try another wallet callback
@@ -40,8 +40,8 @@ export interface NoteAccountTableContainerProps {
   onDefaultDestinationChainChange?: (chain: Chain) => void;
 
   /**
-   * The callback to update the default governed currency
+   * The callback to update the default fungible currency
    * @param {Currency} currency - The currency object
    */
-  onDefaultGovernedCurrencyChange?: (currency: Currency) => void;
+  ondefaultFungibleCurrencyChange?: (currency: Currency) => void;
 }

@@ -176,7 +176,7 @@ export const fetchVAnchorKeyFromAws = async (
 
     return key;
   } catch (e) {
-    console.log('error when fetching circuit key from ipfs: ', e);
+    console.log('error when fetching circuit key from aws: ', e);
     throw e;
   }
 };
@@ -238,7 +238,7 @@ export const fetchVAnchorWasmFromAws = async (
 
     return wasm;
   } catch (e) {
-    console.log('error when fetching wasm from ipfs: ', e);
+    console.log('error when fetching wasm from aws: ', e);
     throw e;
   }
 };

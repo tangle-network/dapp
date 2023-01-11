@@ -269,7 +269,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
       const predictedIndex = leafsCount;
       let tx;
       if (wrapAndDepositFlow) {
-        const governedToken =
+        const fungibleToken =
           // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           this.inner.methods.bridgeApi.getBridge()?.currency!;
         const chainId = this.inner.typedChainId;
@@ -282,7 +282,7 @@ export class PolkadotVAnchorDeposit extends VAnchorDeposit<
         const wrappableToken = wrappableAssets.find(
           (asset) => asset.id === wrappableAssetId
         )!;
-        const wrappedTokenId = governedToken.getAddress(chainId)!;
+        const wrappedTokenId = fungibleToken.getAddress(chainId)!;
         const wrappableTokenId = wrappableToken.getAddress(chainId)!;
         const address = account.address;
         const amount = note.amount;

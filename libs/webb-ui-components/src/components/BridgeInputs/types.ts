@@ -68,7 +68,7 @@ export type TokenType = {
  */
 export type PoolAssetType = {
   /**
-   * The symbol of the pool (bridge, governed) token
+   * The symbol of the pool (bridge, fungible) token
    */
   symbol: string;
 

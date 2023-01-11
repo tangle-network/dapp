@@ -27,7 +27,7 @@ export interface VAnchorTransferApi {
   transfer(): Promise<void>;
   cancel(): Promise<void>;
   stage: TransactionState;
-  setGovernedCurrency(currency: Currency): void;
+  setFungibleCurrency(currency: Currency): void;
   error: string;
   transferApi: VAnchorTransfer<any> | null;
   relayersState: RelayersState;
@@ -149,7 +149,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     transferApi,
   ]);
 
-  const setGovernedCurrency = useCallback(
+  const setFungibleCurrency = useCallback(
     (currency: Currency): void => {
       if (!activeApi) {
         return;
@@ -242,7 +242,7 @@ export const useTransfer = (props: UseTransferProps): VAnchorTransferApi => {
     relayersState,
     setRelayer,
     stage,
-    setGovernedCurrency,
+    setFungibleCurrency,
     transferApi,
     transfer,
     error: error.error,

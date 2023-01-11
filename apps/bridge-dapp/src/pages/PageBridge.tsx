@@ -54,16 +54,16 @@ const PageBridge = () => {
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
 
-  // Default state for destination chain and governed currency
+  // Default state for destination chain and fungible currency
   // when action buttons are clicked in the note account table
   const [defaultDestinationChain, setDefaultDestinationChain] = useState<
     Chain | undefined
   >(undefined);
-  const [defaultGovernedCurrency, setDefaultGovernedCurrency] = useState<
+  const [defaultFungibleCurrency, setdefaultFungibleCurrency] = useState<
     Currency | undefined
   >(undefined);
 
-  // Callback to update the default destination chain and governed currency
+  // Callback to update the default destination chain and fungible currency
   const updateDefaultDestinationChain = useCallback(
     (chain: Chain) => {
       smoothScrollToTop();
@@ -72,8 +72,8 @@ const PageBridge = () => {
     [smoothScrollToTop]
   );
 
-  const updateDefaultGovernedCurrency = useCallback((currency: Currency) => {
-    setDefaultGovernedCurrency(currency);
+  const updatedefaultFungibleCurrency = useCallback((currency: Currency) => {
+    setdefaultFungibleCurrency(currency);
   }, []);
 
   // Callback to open upload modal
@@ -95,13 +95,13 @@ const PageBridge = () => {
         onActiveTabChange: handleChangeTab,
         onOpenUploadModal: handleOpenUploadModal,
         onDefaultDestinationChainChange: updateDefaultDestinationChain,
-        onDefaultGovernedCurrencyChange: updateDefaultGovernedCurrency,
+        ondefaultFungibleCurrencyChange: updatedefaultFungibleCurrency,
       }),
       [
         handleChangeTab,
         handleOpenUploadModal,
         updateDefaultDestinationChain,
-        updateDefaultGovernedCurrency,
+        updatedefaultFungibleCurrency,
       ]
     );
 
@@ -145,21 +145,21 @@ const PageBridge = () => {
           <TabContent value="Deposit">
             <DepositContainer
               defaultDestinationChain={defaultDestinationChain}
-              defaultGovernedCurrency={defaultGovernedCurrency}
+              defaultFungibleCurrency={defaultFungibleCurrency}
               onTryAnotherWallet={onTryAnotherWallet}
             />
           </TabContent>
           <TabContent value="Transfer">
             <TransferContainer
               defaultDestinationChain={defaultDestinationChain}
-              defaultGovernedCurrency={defaultGovernedCurrency}
+              defaultFungibleCurrency={defaultFungibleCurrency}
               onTryAnotherWallet={onTryAnotherWallet}
             />
           </TabContent>
           <TabContent value="Withdraw">
             <WithdrawContainer
               defaultDestinationChain={defaultDestinationChain}
-              defaultGovernedCurrency={defaultGovernedCurrency}
+              defaultFungibleCurrency={defaultFungibleCurrency}
               onTryAnotherWallet={onTryAnotherWallet}
             />
           </TabContent>

@@ -28,8 +28,8 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
       return wrappableTokens;
     }
 
-    const governedTokenAddress = this.getTokenTarget(typedChainId);
-    if (!governedTokenAddress) {
+    const fungibleTokenAddress = this.getTokenTarget(typedChainId);
+    if (!fungibleTokenAddress) {
       return wrappableTokens;
     }
 
@@ -52,7 +52,7 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
         } as unknown as AssetMetadata;
       });
     const poolshare = assets.find((asset) => {
-      return asset.id === Number(governedTokenAddress);
+      return asset.id === Number(fungibleTokenAddress);
     })!;
     console.log(assets);
     const ORMLAssetMetaData: AssetMetadata[] = [];
