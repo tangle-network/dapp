@@ -146,8 +146,6 @@ export const TransactionQueueCard = forwardRef<
             tx.getExplorerURI?.(tx.txStatus.txHash ?? '', 'tx') ?? '#';
           const recipientURI =
             tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
-          console.log(txURI, recipientURI);
-          console.log(tx.txStatus);
           return {
             id: tx.id,
             method: tx.method,
@@ -271,7 +269,12 @@ export const TransactionQueueCard = forwardRef<
               fw={'bold'}
               className={' text-mono-180 dark:text-mono'}
             >
-              Transaction Processing
+              {txCardProps.length > 0 &&
+                (txCardProps[0].status === 'completed'
+                  ? 'Transaction Completed'
+                  : txCardProps[0].status === 'warning'
+                  ? 'Transaction Failed'
+                  : 'Transaction Processing')}
             </Typography>
             <Typography
               variant={'body4'}

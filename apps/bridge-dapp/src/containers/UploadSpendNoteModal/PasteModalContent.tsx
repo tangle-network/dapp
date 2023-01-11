@@ -49,7 +49,6 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
       } catch (error) {
-        console.log('Error while parsing note', error);
         setErrors((prevErrors) => ({
           ...prevErrors,
           [id]: 'Error: incorrect format',

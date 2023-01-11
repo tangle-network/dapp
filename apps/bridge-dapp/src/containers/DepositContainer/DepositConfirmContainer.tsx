@@ -7,6 +7,7 @@ import { useBridgeDeposit } from '@webb-tools/react-hooks';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+
 import { DepositConfirmContainerProps } from './types';
 
 export const DepositConfirmContainer = forwardRef<
@@ -28,8 +29,11 @@ export const DepositConfirmContainer = forwardRef<
     const [checked, setChecked] = useState(false);
 
     const { deposit, stage, startNewTransaction } = useBridgeDeposit();
+
     const { setMainComponent, notificationApi } = useWebbUI();
+
     const [progress, setProgress] = useState<null | number>(null);
+
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
@@ -49,6 +53,7 @@ export const DepositConfirmContainer = forwardRef<
       },
       [copy]
     );
+
     const onClick = useCallback(async () => {
       // Set transaction payload for transaction processing card
       // Start a new transaction
@@ -105,6 +110,33 @@ export const DepositConfirmContainer = forwardRef<
       );
     }, [activeApi]);
 
+    const cardTitle = useMemo(() => {
+      let status = '';
+
+      switch (stage) {
+        case TransactionState.Ideal: {
+          break;
+        }
+
+        case TransactionState.Done: {
+          status = 'Completed';
+          break;
+        }
+
+        case TransactionState.Failed: {
+          status = 'Failed';
+          break;
+        }
+
+        default: {
+          status = 'In-Progress';
+          break;
+        }
+      }
+
+      return wrappingFlow ? `Wrap and Deposit ${status}` : `Deposit ${status}`;
+    }, [stage, wrappingFlow]);
+
     // Effect to update the progress bar
     useEffect(() => {
       switch (stage) {
@@ -154,19 +186,13 @@ export const DepositConfirmContainer = forwardRef<
 
     return (
       <DepositConfirm
-        title={
-          depositTxInProgress
-            ? wrappingFlow
-              ? 'Wrap and Deposit In-Progress'
-              : 'Deposit In-Progress'
-            : undefined
-        }
+        title={cardTitle.trim()}
         activeChains={activeChains}
         ref={ref}
         note={depositPayload.note.serialize()}
         progress={progress}
         actionBtnProps={{
-          isDisabled: !checked,
+          isDisabled: depositTxInProgress ? false : !checked,
           children: depositTxInProgress
             ? 'New Transaction'
             : wrappingFlow
@@ -176,6 +202,7 @@ export const DepositConfirmContainer = forwardRef<
         }}
         checkboxProps={{
           isChecked: checked,
+          isDisabled: depositTxInProgress,
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}

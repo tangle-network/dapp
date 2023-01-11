@@ -4,7 +4,7 @@
 import { withLocalFixtures } from '@webb-tools/react-environment/app-mode';
 
 import { getCachedFixtureURI } from '..';
-
+import { cachedFetch } from '@webb-tools/browser-utils';
 // Variable anchor deployments either have 1 edge, or 7 edges.
 // Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
 //    and a large circuit (16 input UTXOs)
@@ -53,9 +53,7 @@ export const fetchVAnchorKeyFromIpfs = async (
     const url = withLocalFixtures()
       ? cachedURI
       : `https://ipfs.io/ipfs/${ipfsHash}`;
-    const keyRequest = await fetch(url, { signal: abortSignal });
-    const keyArrayBuffer = await keyRequest.arrayBuffer();
-    const key = new Uint8Array(keyArrayBuffer);
+    const key = await cachedFetch(url, { signal: abortSignal });
 
     return key;
   } catch (e) {
@@ -112,11 +110,9 @@ export const fetchVAnchorWasmFromIpfs = async (
     const url = withLocalFixtures()
       ? cachedURI
       : `https://ipfs.io/ipfs/${ipfsHash}`;
-    const cachedWasmRequest = await fetch(url, {
+    const wasm = await cachedFetch(url, {
       signal: abortSignal,
     });
-    const wasmBuffer = await cachedWasmRequest.arrayBuffer();
-    const wasm = new Uint8Array(wasmBuffer);
 
     return wasm;
   } catch (e) {
@@ -176,9 +172,7 @@ export const fetchVAnchorKeyFromAws = async (
       ? cachedURI
       : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     console.log('fetching zkey from', url);
-    const keyRequest = await fetch(url, { signal: abortSignal });
-    const keyArrayBuffer = await keyRequest.arrayBuffer();
-    const key = new Uint8Array(keyArrayBuffer);
+    const key = await cachedFetch(url, { signal: abortSignal });
 
     return key;
   } catch (e) {
@@ -238,11 +232,9 @@ export const fetchVAnchorWasmFromAws = async (
       ? cachedURI
       : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
     console.log('fetching wasm from', url);
-    const cachedWasmRequest = await fetch(url, {
+    const wasm = await cachedFetch(url, {
       signal: abortSignal,
     });
-    const wasmBuffer = await cachedWasmRequest.arrayBuffer();
-    const wasm = new Uint8Array(wasmBuffer);
 
     return wasm;
   } catch (e) {

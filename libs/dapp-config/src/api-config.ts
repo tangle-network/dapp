@@ -82,11 +82,12 @@ export class ApiConfig {
     );
     return this.currencies[currency as any] ?? undefined;
   }
-  getCurrencyByAddress(address: string): CurrencyConfig | undefined {
+  getCurrencyByAddress(rawAddress: string): CurrencyConfig | undefined {
+    const address = rawAddress.toLowerCase();
     const currency = Object.keys(this.currencies).find((key) => {
       const addresses = Array.from(
         this.currencies[key as any].addresses.values()
-      ) as string[];
+      ).map((address) => address.toLowerCase()) as string[];
       return addresses.includes(address);
     });
     return this.currencies[currency as any] ?? undefined;

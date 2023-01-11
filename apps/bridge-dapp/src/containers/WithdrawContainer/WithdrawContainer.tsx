@@ -7,19 +7,24 @@ import {
   useNoteAccount,
   useRelayers,
 } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, ChainType, Note } from '@webb-tools/sdk-core';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  getRoundedAmountString,
+  ChainListCard,
   RelayerListCard,
   TokenListCard,
-  useWebbUI,
   WithdrawCard,
+  getRoundedAmountString,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { WithdrawContainerProps } from './types';
+
+import { currenciesConfig } from '@webb-tools/dapp-config';
+import { useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+import { WithdrawContainerProps } from './types';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -37,7 +42,8 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi, activeChain, activeWallet, chains, switchChain } =
+    useWebContext();
 
   const {
     governedCurrency,
@@ -70,6 +76,8 @@ export const WithdrawContainer = forwardRef<
   });
 
   const { allNotes } = useNoteAccount();
+
+  const shieldedAssets = useShieldedAssets();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected governed currency.
@@ -193,7 +201,22 @@ export const WithdrawContainer = forwardRef<
   const isValidAmount = useMemo(() => {
     return amount > 0 && amount <= availableAmount;
   }, [amount, availableAmount]);
+
   const [isValidRecipient, setIsValidRecipient] = useState(false);
+
+  // Calculate other destination chains from the shielded assets data
+  // which suggest user to switch to if the current chain has no balance
+  const otherAvailableChains = useMemo(() => {
+    // If current chain has balance, then no need to show other chains
+    if (availableAmount > 0) {
+      return [];
+    }
+
+    // If current chain has no balance, then show other chains
+    // which has balance
+    return shieldedAssets.map((asset) => asset.rawChain);
+  }, [availableAmount, shieldedAssets]);
+
   const isDisabledWithdraw = useMemo(() => {
     return [
       Boolean(governedCurrency), // No governed currency selected
@@ -204,11 +227,11 @@ export const WithdrawContainer = forwardRef<
     ].some((value) => value === false);
   }, [
     governedCurrency,
-    isValidRecipient,
     isUnwrap,
+    wrappableCurrency,
     isValidAmount,
     recipient,
-    wrappableCurrency,
+    isValidRecipient,
   ]);
 
   // Calculate the info for UI display
@@ -241,6 +264,72 @@ export const WithdrawContainer = forwardRef<
     wrappableCurrency?.view.symbol,
   ]);
 
+  const handleSwitchToOtherDestChains = useCallback(async () => {
+    if (otherAvailableChains.length === 0 || !activeWallet) {
+      return;
+    }
+
+    if (otherAvailableChains.length === 1) {
+      const chain = otherAvailableChains[0];
+      await switchChain(chain, activeWallet);
+      setMainComponent(undefined);
+      return;
+    }
+
+    const activeChainType = activeChain
+      ? {
+          name: activeChain.name,
+          symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
+        }
+      : undefined;
+
+    setMainComponent(
+      <ChainListCard
+        className="w-[550px] h-[700px]"
+        chainType="dest"
+        chains={otherAvailableChains.map((chain) => ({
+          name: chain.name,
+          symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
+        }))}
+        value={activeChainType}
+        onChange={async (selectedChain) => {
+          const chain = Object.values(chains).find(
+            (val) => val.name === selectedChain.name
+          );
+
+          if (!chain) {
+            throw new Error('Detect unsupported chain is being selected');
+          }
+
+          const isSupported =
+            activeWallet &&
+            activeWallet.supportedChainIds.includes(
+              calculateTypedChainId(chain.chainType, chain.chainId)
+            );
+
+          if (!isSupported) {
+            throw new Error(
+              'Detect unsupported chain is being selected for the wallet'
+            );
+          }
+
+          await switchChain(chain, activeWallet);
+          setMainComponent(undefined);
+        }}
+        onClose={() => {
+          setMainComponent(undefined);
+        }}
+      />
+    );
+  }, [
+    activeChain,
+    activeWallet,
+    chains,
+    otherAvailableChains,
+    setMainComponent,
+    switchChain,
+  ]);
+
   // Effect to update the governed currency when the default governed currency changes.
   useEffect(() => {
     if (defaultGovernedCurrency) {
@@ -254,23 +343,25 @@ export const WithdrawContainer = forwardRef<
         className="h-[615px]"
         tokenInputProps={{
           onClick: () => {
-            if (activeApi) {
-              setMainComponent(
-                <TokenListCard
-                  className="w-[550px] h-[700px]"
-                  title={'Select Asset to Withdraw'}
-                  popularTokens={[]}
-                  selectTokens={governedTokens}
-                  unavailableTokens={[]}
-                  onChange={(newAsset) => {
-                    handleGovernedTokenChange(newAsset);
-                    setMainComponent(undefined);
-                  }}
-                  onClose={() => setMainComponent(undefined)}
-                  onConnect={onTryAnotherWallet}
-                />
-              );
+            if (!activeApi) {
+              return;
             }
+
+            setMainComponent(
+              <TokenListCard
+                className="w-[550px] h-[700px]"
+                title={'Select Asset to Withdraw'}
+                popularTokens={[]}
+                selectTokens={governedTokens}
+                unavailableTokens={[]}
+                onChange={(newAsset) => {
+                  handleGovernedTokenChange(newAsset);
+                  setMainComponent(undefined);
+                }}
+                onClose={() => setMainComponent(undefined)}
+                onConnect={onTryAnotherWallet}
+              />
+            );
           },
           token: selectedGovernedToken,
         }}
@@ -386,8 +477,20 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         withdrawBtnProps={{
-          isDisabled: isDisabledWithdraw,
+          isDisabled: isDisabledWithdraw
+            ? otherAvailableChains.length > 0
+              ? false
+              : true
+            : isDisabledWithdraw,
+          children:
+            isDisabledWithdraw && otherAvailableChains.length > 0
+              ? 'Switch chain to withdraw'
+              : undefined,
           onClick: async () => {
+            if (isDisabledWithdraw && otherAvailableChains.length > 0) {
+              return await handleSwitchToOtherDestChains();
+            }
+
             if (
               !currentTypedChainId ||
               !governedCurrency ||

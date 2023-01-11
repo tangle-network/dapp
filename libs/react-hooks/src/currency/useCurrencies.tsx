@@ -2,18 +2,20 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useState } from 'react';
+import { firstValueFrom } from 'rxjs';
 
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
+
   const [governedCurrencies, setGovernedCurrencies] = useState<Currency[]>([]);
 
-  const [governedCurrency, setGovernedCurrency] = useState<Currency | null>(
-    null
-  );
+  const [governedCurrency, setGovernedCurrencyState] =
+    useState<Currency | null>(null);
 
   const [wrappableCurrencies, setWrappableCurrencies] = useState<Currency[]>(
     []
   );
+
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
@@ -22,6 +24,48 @@ export const useCurrencies = () => {
     Record<Currency['id'], Currency[]>
   >({});
 
+  const getPossibleGovernedCurrencies = useCallback(
+    (currencyId: number) => {
+      const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
+        wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId)
+      );
+      return governedCurrencies.filter((c) => ids.includes(String(c.id)));
+    },
+    [wrappableCurrenciesMap, governedCurrencies]
+  );
+
+  /**
+   * Function to get the wrappable currencies for a given gorvened currency
+   */
+  const getWrappableCurrencies = useCallback(
+    (currencyId: number) => {
+      return wrappableCurrenciesMap[currencyId] || [];
+    },
+    [wrappableCurrenciesMap]
+  );
+
+  const setWrappableCurrency = useCallback(
+    async (currency: Currency | null) => {
+      if (activeApi) {
+        activeApi.state.wrappableCurrency = currency;
+      }
+    },
+    [activeApi]
+  );
+
+  const setGovernedCurrency = useCallback(
+    async (currency: Currency | null) => {
+      if (!activeApi) {
+        return;
+      }
+
+      activeApi.methods.bridgeApi.setBridgeByCurrency(currency);
+    },
+    [activeApi]
+  );
+
+  // Side effect to subscribe to the active chain and fetch the wrappable currencies
+  // then update the wrappableCurrenciesMap
   useEffect(() => {
     if (activeApi && activeChain) {
       const typedChainId = calculateTypedChainId(
@@ -60,35 +104,17 @@ export const useCurrencies = () => {
         console.error(e);
       });
     }
-  }, [activeChain, activeApi, setWrappableCurrenciesMap]);
+  }, [activeChain, activeApi]);
 
-  const getPossibleGovernedCurrencies = useCallback(
-    (currencyId: number) => {
-      const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
-        wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId)
-      );
-      return governedCurrencies.filter((c) => ids.includes(String(c.id)));
-    },
-    [wrappableCurrenciesMap, governedCurrencies]
-  );
-
-  /**
-   * Function to get the wrappable currencies for a given gorvened currency
-   */
-  const getWrappableCurrencies = useCallback(
-    (currencyId: number) => {
-      return wrappableCurrenciesMap[currencyId] || [];
-    },
-    [wrappableCurrenciesMap]
-  );
-
+  // Side effect to subscribe to the active api,
+  // then set the governed currencies, wrappable currencies and current governed currency
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
     }
 
     const activeBridgeSub = activeApi.state.$activeBridge.subscribe(
-      (bridge) => {
+      async (bridge) => {
         setGovernedCurrencies(
           Object.values(activeApi.state.getBridgeOptions()).map(
             (potentialBridge) => {
@@ -97,40 +123,91 @@ export const useCurrencies = () => {
           )
         );
 
-        if (bridge?.currency) {
-          setGovernedCurrency(bridge.currency);
+        const currentTypeChainId = calculateTypedChainId(
+          activeChain.chainType,
+          activeChain.chainId
+        );
 
-          activeApi.methods.bridgeApi
-            .fetchWrappableAssets(
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-            )
-            .then((assets) => {
-              setWrappableCurrencies(assets);
-            })
-            .catch((error) => {
-              console.log('error: ', error);
-            });
+        const nativeCurrencyConfig =
+          activeApi.config.currencies[activeChain.nativeCurrencyId];
+        if (!nativeCurrencyConfig) {
+          throw new Error(
+            `Native currency ${activeChain.nativeCurrencyId} not found`
+          );
         }
-      }
-    );
 
-    const wrappableCurrencySub = activeApi.state.$wrappableCurrency.subscribe(
-      (token) => {
-        setWrappableCurrencyState(token);
+        const nativeCurrency = new Currency(nativeCurrencyConfig);
+
+        if (!bridge?.currency) {
+          return;
+        }
+
+        setGovernedCurrencyState(bridge.currency);
+
+        try {
+          const assets = await activeApi.methods.bridgeApi.fetchWrappableAssets(
+            currentTypeChainId
+          );
+          setWrappableCurrencies(assets);
+
+          const balance = await firstValueFrom(
+            activeApi.methods.chainQuery.tokenBalanceByCurrencyId(
+              currentTypeChainId,
+              bridge.currency.id
+            )
+          );
+
+          if (Number(balance) > 0 || !assets.length) {
+            return;
+          }
+
+          // TODO: We should set the first wrappable currency which has balance
+          // instead of the first one or native
+          const foundAsset = assets.find((a) => a.id === nativeCurrency.id);
+          if (foundAsset) {
+            activeApi.state.wrappableCurrency = foundAsset;
+          } else {
+            activeApi.state.wrappableCurrency = assets[0];
+          }
+        } catch (error) {
+          console.log('Error while fetching wrappable assets', error);
+        }
       }
     );
 
     return () => {
       activeBridgeSub.unsubscribe();
-      wrappableCurrencySub.unsubscribe();
     };
   }, [activeApi, activeChain]);
+
+  // Side effect to subscribe to governed currency and wrappable currency
+  useEffect(() => {
+    if (!activeApi) {
+      return;
+    }
+
+    const sub: { unsubscribe(): void }[] = [];
+
+    sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
+      setGovernedCurrencyState(bridge?.currency ?? null);
+    });
+
+    sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
+      setWrappableCurrencyState(currency);
+    });
+
+    return () => {
+      sub.forEach((s) => s.unsubscribe());
+    };
+  }, [activeApi]);
 
   return {
     governedCurrencies,
     governedCurrency,
+    setGovernedCurrency,
     wrappableCurrencies,
     wrappableCurrency,
+    setWrappableCurrency,
     getWrappableCurrencies,
     getPossibleGovernedCurrencies,
   };

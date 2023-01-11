@@ -197,11 +197,11 @@ export class Web3RelayerManager extends WebbRelayerManager {
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
-        const levels = await contract.inner.levels();
+        const levels = await contract.inner.getLevels();
         const tree = MerkleTree.createTreeWithRoot(
           levels,
           relayerLeaves.leaves,
-          await contract.getLastRoot()
+          (await contract.getLastRoot()).toString()
         );
 
         // If we were able to build the tree, set local storage and break out of the loop

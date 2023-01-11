@@ -4,10 +4,12 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
 import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import { useWebbUI, WithdrawConfirm } from '@webb-tools/webb-ui-components';
+import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+
 import { useTransactionProgressValue } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
+import { TransactionState } from '@webb-tools/dapp-types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -52,7 +54,10 @@ export const WithdrawConfirmContainer = forwardRef<
     });
 
     const [checked, setChecked] = useState(false);
-    const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+    const withdrawTxInProgress = useMemo(() => {
+      return stage !== TransactionState.Ideal;
+    }, [stage]);
 
     const activeChains = useMemo<string[]>(() => {
       if (!activeApi) {
@@ -97,36 +102,73 @@ export const WithdrawConfirmContainer = forwardRef<
         : 'substrate';
     }, [targetChainId]);
 
+    const cardTitle = useMemo(() => {
+      let status = '';
+
+      switch (stage) {
+        case TransactionState.Ideal: {
+          break;
+        }
+
+        case TransactionState.Done: {
+          status = 'Completed';
+          break;
+        }
+
+        case TransactionState.Failed: {
+          status = 'Failed';
+          break;
+        }
+
+        default: {
+          status = 'In-Progress';
+          break;
+        }
+      }
+
+      return unwrapCurrency
+        ? `Unwrap and Withdraw ${status}`
+        : `Withdraw ${status}`;
+    }, [stage, unwrapCurrency]);
+
     // The main action onClick handler
     const onClick = useCallback(async () => {
-      if (isWithdrawing) {
+      if (withdrawTxInProgress) {
         setMainComponent(undefined);
         return;
       }
-
-      setIsWithdrawing(true);
 
       if (changeNote) {
         downloadNote(changeNote);
       }
 
       await withdraw();
-
-      setIsWithdrawing(false);
-    }, [changeNote, downloadNote, isWithdrawing, setMainComponent, withdraw]);
+    }, [
+      changeNote,
+      downloadNote,
+      withdrawTxInProgress,
+      setMainComponent,
+      withdraw,
+    ]);
 
     return (
       <WithdrawConfirm
         ref={ref}
+        title={cardTitle}
         activeChains={activeChains}
         destChain={chainsPopulated[targetChainId]?.name}
         actionBtnProps={{
-          isDisabled: changeAmount ? !checked : false,
-          children: isWithdrawing ? 'New Transaction' : 'Withdraw',
+          isDisabled: withdrawTxInProgress
+            ? false
+            : changeAmount
+            ? !checked
+            : false,
+          children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
           onClick,
         }}
         checkboxProps={{
           isChecked: checked,
+          isDisabled: withdrawTxInProgress,
           children: 'I have copy the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
