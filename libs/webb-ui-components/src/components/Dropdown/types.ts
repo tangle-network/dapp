@@ -1,4 +1,7 @@
-import { DropdownMenuContentProps, DropdownMenuProps as RdxDropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import {
+  DropdownMenuContentProps,
+  DropdownMenuProps as RdxDropdownMenuProps,
+} from '@radix-ui/react-dropdown-menu';
 import { PropsOf, WebbComponentBase, IWebbComponentBase } from '../../types';
 
 import { DropdownMenuProps } from '../DropdownMenu/types';
@@ -26,4 +29,10 @@ type DropdownBodyPickedKeys = 'size';
 export interface DropdownBodyProps
   extends IWebbComponentBase,
     Pick<DropdownMenuProps, DropdownBodyPickedKeys>,
-    DropdownMenuContentProps {}
+    DropdownMenuContentProps {
+  /**
+   * If true, the dropdown will be rendered as a portal
+   * @default true
+   */
+  isPorttal?: boolean;
+}

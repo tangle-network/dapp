@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Install netlify/plugin-nextjs
+        run: yarn add -D @netlify/plugin-nextjs -W
+
       - name: Build project
         run: yarn build:webbsite
 
@@ -39,7 +42,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_WEBBSITE_ID }}
         with:
-          args: deploy context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/out/
+          args: deploy context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0

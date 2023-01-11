@@ -11,7 +11,7 @@ import Header from '../components/Header';
 function CustomApp({ Component, pageProps }: AppProps) {
   // Dynamic loading the lottie player in client side
   useEffect(() => {
-    import('@lottiefiles/lottie-player');
+    import('@johanaarstein/dotlottie-player');
   }, []);
 
   return (
