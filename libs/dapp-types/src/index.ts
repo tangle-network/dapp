@@ -23,3 +23,10 @@ export const isZero = (value: string | number) => {
 
   return value === 0;
 };
+
+export function checkNativeAddress(tokenAddress: string): boolean {
+  if (tokenAddress === zeroAddress || tokenAddress === '0') {
+    return true;
+  }
+  return false;
+}

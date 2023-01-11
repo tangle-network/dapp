@@ -67,23 +67,25 @@ const PrivacyScaleSwiper = () => {
 
   // When the component is in view, start the autoplay
   // When the component is not in view, stop the autoplay
-  useEffect(() => {
-    if (inView) {
-      swiperRef.current?.autoplay.start();
-    } else {
-      swiperRef.current?.autoplay.stop();
-    }
-  }, [inView]);
+  // useEffect(() => {
+  //   if (inView) {
+  //     swiperRef.current?.autoplay.start();
+  //   } else {
+  //     swiperRef.current?.autoplay.stop();
+  //   }
+  // }, [inView]);
 
   return (
     <div
       ref={ref}
       className={cx(
-        'flex w-[1000px] h-[483px] bg-mono-180 rounded-lg mx-auto',
-        'p-6 space-x-16'
+        'flex justify-between w-full sm:max-w-[450px] md:max-w-[1000px] h-[850px] xs:h-[900px] md:h-[483px]',
+        'bg-mono-180 rounded-lg mx-auto',
+        'lg:p-6 space-x-7 lg:space-x-16',
+        'md:pr-4'
       )}
     >
-      <div className="w-[450px]">
+      <div className="w-full sm:max-w-[450px]">
         <Swiper
           className="h-full"
           effect={'coverflow'}
@@ -97,10 +99,11 @@ const PrivacyScaleSwiper = () => {
             modifier: 1,
             slideShadows: true,
           }}
-          autoplay={{
-            delay: 4600,
-            disableOnInteraction: false,
-          }}
+          // autoplay={{
+          //   delay: 4600,
+          //   disableOnInteraction: false,
+          // }}
+          autoplay={false}
           pagination={{
             clickable: true,
           }}
@@ -124,19 +127,25 @@ const PrivacyScaleSwiper = () => {
         >
           {swipersContent.map((content, index) => (
             <SwiperSlide key={index}>
-              <div className="p-6 space-y-4">
-                <Heading4 className="text-mono-0">{content.title}</Heading4>
+              <div className="p-6 space-y-4 md:space-y-0">
+                <div className="space-y-4 min-h-[315px]">
+                  <Heading4 className="text-mono-0">{content.title}</Heading4>
 
-                <SubHeading2 className="text-mono-80">
-                  {content.description}
-                </SubHeading2>
+                  <SubHeading2 className="text-mono-80">
+                    {content.description}
+                  </SubHeading2>
 
-                <div className="max-w-[402px] min-h-[66px] w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/static/svgs/privacy-set-step-${index + 1}.svg`}
-                    alt={`privacy-scale-${index + 1}`}
-                  />
+                  <div className="max-w-[402px] min-h-[66px] w-full h-full">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/static/svgs/privacy-set-step-${index + 1}.svg`}
+                      alt={`privacy-scale-${index + 1}`}
+                    />
+                  </div>
+                </div>
+
+                <div className="relative h-[386px] md:hidden">
+                  <PrivacyScaleIllustration activeIndex={activeIndex} />
                 </div>
               </div>
             </SwiperSlide>
@@ -154,7 +163,7 @@ const PrivacyScaleSwiper = () => {
         </Swiper>
       </div>
 
-      <div className="relative grow">
+      <div className="relative hidden grow md:block">
         <PrivacyScaleIllustration activeIndex={activeIndex} />
       </div>
     </div>

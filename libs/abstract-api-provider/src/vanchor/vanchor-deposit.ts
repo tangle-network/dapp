@@ -8,6 +8,7 @@ import { DepositPayload } from '../mixer/mixer-deposit';
 import { NewNotesTxResult, TransactionState } from '../transaction';
 import { WebbApiProvider } from '../webb-provider.interface';
 import { BridgeApi } from './bridge-api';
+import { LoggerService } from '@webb-tools/browser-utils';
 
 // Todo: should we extract the interface of MixerDeposit on another class and rename `generateBridgeNote` to generate note
 
@@ -31,7 +32,7 @@ export abstract class VAnchorDeposit<
 > extends EventBus<VAnchorDepositEvents> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
-
+  readonly logger = LoggerService.get('VAnchorDeposit');
   constructor(protected inner: T) {
     super();
   }

@@ -1,7 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 import {
-  useBridge,
   useBridgeDeposit,
   useCurrencies,
   useCurrenciesBalances,
@@ -31,16 +30,17 @@ import {
   useMemo,
   useState,
 } from 'react';
+
 import {
   ChainSelectionWrapper,
   ChainSelectionWrapperProps,
   WalletModal,
   WalletModalProps,
 } from '../../components';
+import { getDefaultConnection } from '../../utils';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
-import { getDefaultConnection } from '../../utils';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardProps;
@@ -71,6 +71,7 @@ export const DepositContainer = forwardRef<
     const [mainComponentName, setMainComponentName] = useState<
       MainComponentVariants | undefined
     >(undefined);
+
     const {
       activeApi,
       chains,
@@ -84,29 +85,30 @@ export const DepositContainer = forwardRef<
     } = useWebContext();
 
     const { generateNote } = useBridgeDeposit();
+
     const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
       undefined
     );
-    const {
-      setGovernedCurrency,
-      setWrappableCurrency,
-      wrappableCurrency,
-      governedCurrency,
-    } = useBridge();
 
     const {
+      governedCurrency,
       governedCurrencies,
+      setGovernedCurrency,
+      wrappableCurrency,
       wrappableCurrencies,
+      setWrappableCurrency,
       getPossibleGovernedCurrencies,
     } = useCurrencies();
 
+    const allTokens = useMemo(
+      () => governedCurrencies.concat(wrappableCurrencies),
+      [governedCurrencies, wrappableCurrencies]
+    );
+
+    const balances = useCurrenciesBalances(allTokens);
+
     const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
       useModal(false);
-
-    // Other supported tokens balances
-    const balances = useCurrenciesBalances(
-      governedCurrencies.concat(wrappableCurrencies)
-    );
 
     const { syncNotes } = useNoteAccount();
 
@@ -114,9 +116,11 @@ export const DepositContainer = forwardRef<
     const [isNoteAccountCreated, setIsNoteAccountCreated] = useState(false);
 
     const [isGeneratingNote, setIsGeneratingNote] = useState(false);
+
     const [sourceChain, setSourceChain] = useState<Chain | undefined>(
       undefined
     );
+
     const [destChain, setDestChain] = useState<Chain | undefined>(
       () => defaultDestinationChain
     );
@@ -140,7 +144,7 @@ export const DepositContainer = forwardRef<
     }, [chains]);
 
     const destChains: ChainType[] = useMemo(() => {
-      if (!activeApi || !activeApi.state.activeBridge) {
+      if (!activeApi || !activeApi.state.activeBridge?.targets) {
         return [];
       }
 
@@ -179,6 +183,7 @@ export const DepositContainer = forwardRef<
         symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
       };
     }, [activeChain, sourceChain]);
+
     const bridgeGovernedCurrency = useMemo(() => {
       if (!governedCurrency) {
         return undefined;
@@ -526,8 +531,6 @@ export const DepositContainer = forwardRef<
 
       return {
         className: 'w-[550px] h-[700px]',
-        overrideScrollAreaProps: { className: 'h-[550px]' },
-        chainType: 'dest',
         selectTokens: tokens,
         value: destChainInputValue,
         title: 'Select Asset to Deposit',
@@ -540,6 +543,7 @@ export const DepositContainer = forwardRef<
           setDestChain(destChain);
           setMainComponentName(undefined);
         },
+        onClose: () => setMainComponentName(undefined),
       };
     }, [
       wrappableCurrency,
@@ -550,6 +554,7 @@ export const DepositContainer = forwardRef<
       balances,
       chains,
     ]);
+
     const destChainListCardProps = useMemo<ChainListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
@@ -651,6 +656,7 @@ export const DepositContainer = forwardRef<
               'token-wrap-and-deposit-list-card': tokenListWrapAndDepositProps,
             },
           ];
+
         case 'token-deposit-list-card':
           return [
             TokenListCard,
@@ -658,6 +664,7 @@ export const DepositContainer = forwardRef<
               'token-wrap-and-deposit-list-card': tokenListDepositProps,
             },
           ];
+
         case 'source-chain-list-card':
           return [
             ChainListCard,
@@ -665,6 +672,7 @@ export const DepositContainer = forwardRef<
               'source-chain-list-card': sourceChainListCardProps,
             },
           ];
+
         case 'dest-chain-list-card':
           return [
             ChainListCard,
@@ -672,6 +680,7 @@ export const DepositContainer = forwardRef<
               'dest-chain-list-card': destChainListCardProps,
             },
           ];
+
         case 'wallet-modal':
           return walletModalProps
             ? [
@@ -681,6 +690,7 @@ export const DepositContainer = forwardRef<
                 },
               ]
             : undefined;
+
         case 'chain-selection-wrapper':
           return [
             ChainSelectionWrapper,
@@ -688,6 +698,7 @@ export const DepositContainer = forwardRef<
               'chain-selection-wrapper': chainSelectionWrapperProps,
             },
           ];
+
         case 'deposit-confirm-container':
           return depositConfirmContainerProps
             ? [
@@ -698,6 +709,7 @@ export const DepositContainer = forwardRef<
               ]
             : undefined;
       }
+
       return undefined;
     }, [
       mainComponentName,
@@ -709,6 +721,7 @@ export const DepositContainer = forwardRef<
       tokenListWrapAndDepositProps,
       tokenListDepositProps,
     ]);
+
     useEffect(() => {
       const isExistAndFullArgs =
         setMainComponentArgs !== undefined &&
@@ -722,6 +735,7 @@ export const DepositContainer = forwardRef<
         setMainComponent(undefined);
       }
     }, [setMainComponentArgs, setMainComponent]);
+
     return (
       <>
         <div {...props} ref={ref}>

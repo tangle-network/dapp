@@ -237,6 +237,10 @@ export const StatsProvider: React.FC<
           const data = r.data._metadata;
           const lastSession = r.data.sessions?.nodes[0];
 
+          if (!lastSession) {
+            return null;
+          }
+
           return {
             currentBlock: String(data.targetHeight),
             lastProcessBlock: String(data.lastProcessedHeight),

@@ -51,7 +51,6 @@ import {
   WebbWeb3Provider,
 } from '@webb-tools/web3-api-provider';
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
-import { logger } from 'ethers';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { TAppEvent } from './app-event';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
@@ -66,7 +65,7 @@ interface WebbProviderProps extends BareProps {
 }
 
 const chains = chainsPopulated;
-
+const logger = LoggerService.get('WebbProvider');
 const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
   interactiveFeedback: InteractiveFeedback
@@ -660,7 +659,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   }
                 })
                 ?.catch(async (switchError) => {
-                  console.log('inside catch for switchChain', switchError);
+                  logger.error('inside catch for switchChain', switchError);
 
                   // cannot switch because network not recognized, so prompt to add it
                   if (switchError.code === 4902 && chain.chainId) {
@@ -717,7 +716,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         /// Catch the errors for the switcher while switching
         catchWebbError(e);
       }
-      console.log(e);
+      logger.error(e);
       LoggerService.get('App').error(e);
       return null;
     }

@@ -44,7 +44,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     syncNotes: handleSyncNotes,
   } = useNoteAccount();
 
-  const { setMainComponent, notificationApi } = useWebbUI();
+  const { setMainComponent, notificationApi, logger } = useWebbUI();
 
   // Get all managed wallets
   const { wallets } = useWallets();
@@ -105,7 +105,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         message: 'All notes are cleared',
       });
     } catch (error) {
-      console.log('Error inside clear data', error);
+      logger.error('Error inside clear data', error);
       notificationApi({
         variant: 'error',
         message: 'Failed to clear notes',
@@ -138,8 +138,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // TODO: Implement a function when user click on the new notes link
   // on the notification
   const handleNewNotes = useCallback(async (notes: Note[]) => {
-    console.log('Handle new notes: ', notes);
-    console.warn('New notes function is not implemented yet');
+    logger.info('Handle new notes: ', notes);
+    logger.warn('New notes function is not implemented yet');
   }, []);
 
   // Funciton to switch account within the connected wallet

@@ -107,6 +107,7 @@ function createWebpackBase(env, mode = 'production') {
             loader: 'babel-loader',
             options: {
               presets: [
+                '@nrwl/web/babel',
                 [
                   '@babel/preset-env',
                   {
@@ -122,9 +123,20 @@ function createWebpackBase(env, mode = 'production') {
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
               plugins: [
+                '@babel/plugin-proposal-nullish-coalescing-operator',
+                '@babel/plugin-proposal-numeric-separator',
+                '@babel/plugin-proposal-optional-chaining',
                 isDevelopment && require.resolve('react-refresh/babel'),
-                ['@babel/plugin-transform-runtime', { loose: false }],
-                ['@babel/plugin-proposal-class-properties', { loose: false }],
+                [
+                  '@babel/plugin-transform-runtime',
+                  { useESModules: false, loose: false },
+                ],
+                '@babel/plugin-transform-react-jsx',
+                '@babel/plugin-syntax-bigint',
+                '@babel/plugin-syntax-dynamic-import',
+                '@babel/plugin-syntax-import-meta',
+                '@babel/plugin-syntax-top-level-await',
+                '@babel/plugin-proposal-class-properties',
                 [
                   '@babel/plugin-proposal-private-property-in-object',
                   { loose: false },
@@ -371,13 +383,5 @@ function createWebpackBase(env, mode = 'production') {
     },
   };
 }
-
-// module.exports = (config, context) => {
-//   console.log('context: ', context);
-//   console.log('config: ', config);
-//   const webpackBase = createWebpackBase();
-
-//   return merge(config, webpackBase);
-// }
 
 module.exports = createWebpackBase;

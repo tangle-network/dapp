@@ -109,7 +109,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     <Typography
                       variant="body1"
                       fw="bold"
-                      className="capitalize"
+                      className="capitalize cursor-default"
                     >
                       {currentChain.name}
                     </Typography>
@@ -123,7 +123,11 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     </div>
                   )}
 
-                  {isSelected && <Chip color="yellow">Connected</Chip>}
+                  {isSelected && (
+                    <Chip className="cursor-default" color="yellow">
+                      Connected
+                    </Chip>
+                  )}
                 </ListItem>
               );
             })}
