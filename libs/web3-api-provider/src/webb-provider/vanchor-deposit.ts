@@ -298,7 +298,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             srcVAnchor.deposit(
               depositPayload.params[0] as CircomUtxo,
               wrapUnwrapToken,
-              leavesMap,
+              {},
               smallKey,
               Buffer.from(smallWasm),
               worker
