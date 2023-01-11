@@ -210,7 +210,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           abortSignal
         );
         fixturesList.set('VAnchorWasm', 'Done');
-
+        const leavesMap: Record<string, Uint8Array[]> = {};
         // Add the note to the noteManager before transaction is sent.
         // This helps to safeguard the user.
         if (this.inner.noteManager) {
@@ -240,7 +240,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           // approve the token
           approvalTransaction = await currentWebbToken.approve(
             srcAddress,
-            amount
+            amount,
+            { gasLimit: '0x5B8D80' },
           );
         } else if (
           await srcVAnchor.isWrappableTokenApprovalRequired(
@@ -298,7 +299,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
             srcVAnchor.deposit(
               depositPayload.params[0] as CircomUtxo,
               wrapUnwrapToken,
-              {},
+              leavesMap,
               smallKey,
               Buffer.from(smallWasm),
               worker
