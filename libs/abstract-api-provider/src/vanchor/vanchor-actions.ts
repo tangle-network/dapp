@@ -5,7 +5,7 @@ import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
 import { ActionEvent, NewNotesTxResult, Transaction, TransactionState } from '../transaction';
-import { BigNumberish } from 'ethers';
+import { BigNumberish, ContractReceipt } from 'ethers';
 import { ZkComponents } from '@webb-tools/utils';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { CancellationToken } from '../cancelation-token';
@@ -74,5 +74,5 @@ export abstract class VAnchorActions<
     relayer: string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
-  ): Promise<void>;
+  ): Promise<ContractReceipt>;
 }

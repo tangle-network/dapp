@@ -2,11 +2,13 @@ import { txpayment } from '@polkadot/types/interfaces/definitions';
 import { NewNotesTxResult, Transaction } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { useVAnchor } from '@webb-tools/react-hooks';
+import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
+import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,6 +34,7 @@ export const DepositConfirmContainer = forwardRef<
     ref
   ) => {
     const wrappingFlow = Boolean(wrappedAsset);
+    const { txQueue, currentTxId, api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, stage, startNewTransaction } = useVAnchor();
     const { setMainComponent, notificationApi } = useWebbUI();
@@ -114,12 +117,37 @@ export const DepositConfirmContainer = forwardRef<
           },
           token: tokenSymbol,
         });
+        txQueueApi.registerTransaction(tx);
         const args = await api?.prepareTransaction(tx, note, wrappedAsset);
+        // Add the note to the noteManager before transaction is sent.
+        // This helps to safeguard the user.
+        if (noteManager) {
+          await noteManager.addNote(note);
+        }
         if (args) {
-          await api.transact(...args);
+          const receipt = await api.transact(...args);
+
+          const srcContract = VAnchor__factory.connect(
+            sourceIdentifyingData,
+            Web3Provider.fromUri(activeChain.url).intoEthersProvider()
+          );
+  
+          // TODO: Make this parse the receipt for the index data
+          const noteIndex = (await srcContract.getNextIndex()) - 1;
+          const indexedNote = await Note.deserialize(note.serialize());
+          indexedNote.mutateIndex(noteIndex.toString());
+          await noteManager?.addNote(indexedNote);
+          await noteManager?.removeNote(note);
+  
+          // Notification Success Transaction
+          tx.next(TransactionState.Done, {
+            txHash: receipt.transactionHash,
+            outputNotes: [indexedNote],
+          });
         }
       } catch (error) {
         console.log('Deposit error', error);
+        noteManager?.removeNote(note);
         notificationApi(DEPOSIT_FAILURE_MSG);
       } finally {
         setMainComponent(undefined);
@@ -128,6 +156,8 @@ export const DepositConfirmContainer = forwardRef<
       api,
       note,
       wrappedAsset,
+      noteManager,
+      txQueueApi,
       activeApi,
       activeChain,
       activeAccount,

@@ -7,7 +7,6 @@ import { Currency } from '../currency';
 import { Bridge } from '../state';
 
 export type AnchorBase = {
-  amount?: string | number;
   // Neighbors are indexed on their typedChainId
   neighbours: Record<number, string | number>;
 };
@@ -65,7 +64,7 @@ export abstract class BridgeApi<
       : null;
   }
 
-  async getAnchors(): Promise<AnchorBase[]> {
+  async getVAnchors(): Promise<AnchorBase[]> {
     return this.inner.state.activeBridge
       ? [
           {

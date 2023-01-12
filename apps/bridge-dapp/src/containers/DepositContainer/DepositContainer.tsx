@@ -367,7 +367,7 @@ export const DepositContainer = forwardRef<
         console.log('newNote', newNote);
         setIsGeneratingNote(false);
         setDepositContainerProps({
-          wrappedAsset: wrappableTokenAddress,
+          wrappedAsset: wrappableTokenAddress || '',
           wrappableTokenSymbol: fungibleCurrency?.view.symbol,
           amount,
           token: selectedToken,
