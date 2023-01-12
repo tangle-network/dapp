@@ -1,12 +1,14 @@
 import { txpayment } from '@polkadot/types/interfaces/definitions';
+import { NewNotesTxResult, Transaction } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import { useVAnchor } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { DEPOSIT_FAILURE_MSG, getCardTitle } from '../../utils';
 import { updateProgress } from '../../utils/setProgress';
@@ -21,7 +23,7 @@ export const DepositConfirmContainer = forwardRef<
     {
       note,
       amount,
-      wrappingFlow,
+      wrappedAsset,
       token,
       sourceChain,
       destChain,
@@ -29,6 +31,7 @@ export const DepositConfirmContainer = forwardRef<
     },
     ref
   ) => {
+    const wrappingFlow = Boolean(wrappedAsset);
     const [checked, setChecked] = useState(false);
     const { api, stage, startNewTransaction } = useVAnchor();
     const { setMainComponent, notificationApi } = useWebbUI();
@@ -38,7 +41,7 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi } = useWebContext();
+    const { activeApi, activeAccount, activeChain, noteManager } = useWebContext();
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
       const noteStr = note.serialize();
@@ -55,7 +58,17 @@ export const DepositConfirmContainer = forwardRef<
       [copy]
     );
 
-    const onClick = useCallback(async () => {
+    const currentWebbToken = useMemo(() => {
+      if (!activeApi || !activeChain) return;
+
+      return activeApi.state.activeBridge?.currency.getAddress(
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+      );
+    }, [activeApi, activeChain]);
+
+    const onClickExecuteDeposit = useCallback(async () => {
+      if (!api || !activeApi || !activeAccount || !activeChain || !currentWebbToken) return;
+
       // Set transaction payload for transaction processing card
       // Start a new transaction
       if (depositTxInProgress) {
@@ -67,21 +80,44 @@ export const DepositConfirmContainer = forwardRef<
 
       try {
         downloadNote(note);
-        const args = {
-          tx: null,
-          contractAddress: null,
-          inputs: null,
-          outputs: null,
-          fee: null,
-          refund: null,
-          recipient: null,
-          relayer: null,
-          wrapUnwrapToken: null,
-          leavesMap: null,
-        };
-        await api.transact(
-          ...Object.values(args)
-        );
+        const {
+          amount,
+          denomination,
+          sourceChainId,
+          sourceIdentifyingData,
+          targetChainId,
+          tokenSymbol,
+        } = note.note;
+        // Calculate the amount
+        const formattedAmount = ethers.utils.formatUnits(amount, denomination);
+
+        // Get the deposit token symbol
+        let srcToken = tokenSymbol;
+        console.log('wrappedAsset', wrappedAsset)
+        if (wrappedAsset) {
+          const currencyFromConfig = activeApi?.config.getCurrencyByAddress(wrappedAsset);
+          if (!currencyFromConfig) {
+            throw new Error('Token not found in the api config');
+          }
+
+          srcToken = currencyFromConfig.symbol;
+        }
+
+        // Get the destination token symbol
+        const destToken = tokenSymbol;
+        const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+          amount: +formattedAmount,
+          tokens: [srcToken, destToken],
+          wallets: {
+            src: +sourceChainId,
+            dest: +targetChainId,
+          },
+          token: tokenSymbol,
+        });
+        const args = await api?.prepareTransaction(tx, note, wrappedAsset);
+        if (args) {
+          await api.transact(...args);
+        }
       } catch (error) {
         console.log('Deposit error', error);
         notificationApi(DEPOSIT_FAILURE_MSG);
@@ -91,6 +127,11 @@ export const DepositConfirmContainer = forwardRef<
     }, [
       api,
       note,
+      wrappedAsset,
+      activeApi,
+      activeChain,
+      activeAccount,
+      currentWebbToken,
       downloadNote,
       depositTxInProgress,
       notificationApi,
@@ -144,7 +185,7 @@ export const DepositConfirmContainer = forwardRef<
             : wrappingFlow
             ? 'Wrap And Deposit'
             : 'Deposit',
-          onClick,
+          onClick: onClickExecuteDeposit,
         }}
         checkboxProps={{
           isChecked: checked,

@@ -7,7 +7,7 @@ import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
 import { ActionEvent, NewNotesTxResult, Transaction, TransactionState } from '../transaction';
 import { BigNumberish } from 'ethers';
 import { ZkComponents } from '@webb-tools/utils';
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { CancellationToken } from '../cancelation-token';
 
 export abstract class AbstractState<
@@ -34,8 +34,14 @@ export abstract class AbstractState<
   }
 }
 
+// Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
+export type TransactionPayloadType = Note;
 
-export abstract class VAnchorActions<T extends WebbApiProvider<any>> extends AbstractState<T> {
+export abstract class VAnchorActions<
+  T extends WebbApiProvider<any> = WebbApiProvider<any>
+> extends AbstractState<T> {
+  logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
+
   abstract fetchSmallFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents>;
   abstract fetchLargeFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents>;
   // A function to check if the (account, public key) pair is registered.
@@ -49,8 +55,13 @@ export abstract class VAnchorActions<T extends WebbApiProvider<any>> extends Abs
     vAnchorId: number | string,
     destTypedChainId: number,
     amount: number,
-    asset: string | undefined
   ): Promise<Note>;
+  // A function to prepare the parameters for a transaction
+  abstract prepareTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: TransactionPayloadType,
+    wrapUnwrapToken: string,
+  ): Promise<Awaited<Parameters<VAnchorActions['transact']>>> | never;
   // A function for transcting
   abstract transact(
     tx: Transaction<NewNotesTxResult>,

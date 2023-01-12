@@ -355,25 +355,25 @@ export const DepositContainer = forwardRef<
           activeChain.chainType,
           activeChain.chainId
         );
-        const wrappbleTokenAddress =
+        const wrappableTokenAddress =
           wrappableCurrency?.getAddress(chainId) ?? undefined;
-        const newDepositPayload = await api.generateNote(
+        const newNote = await api.generateNote(
           activeApi.state.activeBridge.targets[
             calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
           ],
           calculateTypedChainId(destChain.chainType, destChain.chainId),
           amount,
-          wrappbleTokenAddress
         );
+        console.log('newNote', newNote);
         setIsGeneratingNote(false);
         setDepositContainerProps({
-          wrappingFlow: Boolean(wrappbleTokenAddress),
+          wrappedAsset: wrappableTokenAddress,
           wrappableTokenSymbol: fungibleCurrency?.view.symbol,
           amount,
           token: selectedToken,
           sourceChain: selectedSourceChain,
           destChain: destChainInputValue,
-          note: newDepositPayload,
+          note: newNote,
         });
         setMainComponentName('deposit-confirm-container');
       }

@@ -149,7 +149,6 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   }
 
   private isValidProgress<T extends TransactionState>(next: T): boolean {
-    /// TODO implement this and standardise all transactions progress
     switch (this._status.value[0]) {
       case TransactionState.Cancelling:
         break;

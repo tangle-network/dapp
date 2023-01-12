@@ -8,7 +8,6 @@ import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { VAnchorActions } from './vanchor/vanchor-actions';
-import { VAnchorTransfer } from './vanchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { BridgeApi } from './vanchor';
 import { ChainQuery } from './chain-query';
@@ -32,12 +31,9 @@ export interface WebbMethods<T extends WebbApiProvider<any>> {
   wrapUnwrap: WrapAndUnwrap<T>;
   // Chain query : an API for querying chain storage used currently for balances
   chainQuery: ChainQuery<T>;
-  // Anchor API developed initially for to handle the difference between
-  // web3 (Chains that depend on static configs) and chains that will need to query the anchor
-  //
   // Methods for querying information about the current bridge
   bridgeApi: BridgeApi<T>;
-  // Calaims
+  // Claims
   claim: {
     core: ECDSAClaims<T>;
     enabled: boolean;
@@ -207,6 +203,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
 
+  type(): string;
   destroy(): Promise<void> | void;
 
   capabilities?: ProvideCapabilities;

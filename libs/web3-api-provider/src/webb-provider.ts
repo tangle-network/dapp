@@ -51,6 +51,10 @@ export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
+  type(): string {
+    return 'Web3';
+  }
+
   state: WebbState;
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
   readonly methods: WebbMethods<WebbWeb3Provider>;
