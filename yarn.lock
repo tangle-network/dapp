@@ -3177,6 +3177,15 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@johanaarstein/dotlottie-player@^1.2.34":
+  version "1.2.34"
+  resolved "https://registry.yarnpkg.com/@johanaarstein/dotlottie-player/-/dotlottie-player-1.2.34.tgz#567f66a9c123b7c8057c8d158bb2cb9864c54f0f"
+  integrity sha512-CFJ4CAj4oBp+AudN+Z9COcuWUySTMMvGJdVSnwPBJ92qc491MrdCEHnB/hUZPc7IH+SuGHTzyE8GonVwArVmgQ==
+  dependencies:
+    fflate "^0.7.4"
+    lit "^2.4.1"
+    lottie-web "^5.9.6"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -3343,6 +3352,7 @@
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
+<<<<<<< HEAD
 "@lottiefiles/lottie-player@^1.6.2":
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/@lottiefiles/lottie-player/-/lottie-player-1.6.3.tgz#291e7fc69521ed97781a644893f9d59051c8d56c"
@@ -3354,6 +3364,8 @@
     pako "^2.0.4"
     resize-observer-polyfill "^1.5.1"
 
+=======
+>>>>>>> 78586fa0bd9abfd17c8a50c51311193e19b29b12
 "@mdx-js/mdx@^1.6.22":
   version "1.6.22"
   resolved "https://registry.yarnpkg.com/@mdx-js/mdx/-/mdx-1.6.22.tgz#8a723157bf90e78f17dc0f27995398e6c731f1ba"
@@ -7797,11 +7809,6 @@
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/@types/npmlog/-/npmlog-4.1.4.tgz#30eb872153c7ead3e8688c476054ddca004115f6"
   integrity sha512-WKG4gTr8przEZBiJ5r3s8ZIAoMXNbOgQ+j/d5O4X3x6kZJRLNvyUJuUK/KoG3+8BaOHPhp2m7WC6JKKeovDSzQ==
-
-"@types/pako@^1.0.1":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@types/pako/-/pako-1.0.4.tgz#b4262aef92680a9331fcdb8420c69cf3dd98d3f3"
-  integrity sha512-Z+5bJSm28EXBSUJEgx29ioWeEEHUh6TiMkZHDhLwjc9wVFH+ressbkmX6waUZc5R3Gobn4Qu5llGxaoflZ+yhA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -16363,6 +16370,11 @@ ffjavascript@^0.2.38, ffjavascript@^0.2.48, ffjavascript@^0.2.54:
     wasmcurves "0.2.0"
     web-worker "^1.2.0"
 
+fflate@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.7.4.tgz#61587e5d958fdabb5a9368a302c25363f4f69f50"
+  integrity sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==
+
 figgy-pudding@^3.5.1:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
@@ -21053,10 +21065,17 @@ lit-html@^2.2.0, lit-html@^2.6.0:
   dependencies:
     "@types/trusted-types" "^2.0.2"
 
+<<<<<<< HEAD
 lit@^2.1.2:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/lit/-/lit-2.6.0.tgz#d72a1d3901d443510e9fdc45a3c5eb944464737f"
   integrity sha512-GUKVozhomdYlFVuB4UNipbPB5RcXNX4ns43uDA1gSTZN1oHe7mnj05fpYbESxXfxg/Gn905HTIzymCFrr/cn3A==
+=======
+lit@^2.4.1:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/lit/-/lit-2.5.0.tgz#3a425d69ff8483effb2026957b86ae45de0bc51a"
+  integrity sha512-DtnUP6vR3l4Q8nRPPNBD+UxbAhwJPeky+OVbi3pdgMqm0g57xFSl1Sj64D1rIB+nVNdiVVg8YxB0hqKjvdadZA==
+>>>>>>> 78586fa0bd9abfd17c8a50c51311193e19b29b12
   dependencies:
     "@lit/reactive-element" "^1.6.0"
     lit-element "^3.2.0"
@@ -25210,11 +25229,6 @@ reselect@^4.0.0:
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.7.tgz#56480d9ff3d3188970ee2b76527bd94a95567a42"
   integrity sha512-Zu1xbUt3/OPwsXL46hvOOoQrap2azE7ZQbokq61BQfiXvhewsKDwhMeZjTX9sX0nvw1t/U5Audyn1I9P/m9z0A==
-
-resize-observer-polyfill@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
-  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-alpn@^1.0.0, resolve-alpn@^1.2.0:
   version "1.2.1"

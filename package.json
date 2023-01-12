@@ -8,7 +8,7 @@
     "test": "nx test",
     "lint": "nx run-many --all --target=lint",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
-    "build:webbsite": "yarn nx build webbsite && cd ./dist/apps/webbsite/ && next export",
+    "build:webbsite": "yarn nx build webbsite",
     "gql:codegen": "graphql-codegen --config codegen.yml",
     "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
     "start:stats": "nx serve stats-dapp",
@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
-    "@lottiefiles/lottie-player": "^1.6.2",
+    "@johanaarstein/dotlottie-player": "^1.2.34",
     "@mui/material": "^5.8.7",
     "@mui/styled-engine": "5.10.8",
     "@mui/styles": "^5.8.7",
@@ -155,6 +155,7 @@
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
+    "@storybook/addon-a11y": "^6.5.15",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "6.5.15",
     "@storybook/addon-interactions": "^6.5.12",
@@ -268,4 +269,3 @@
     "webpack-merge": "^5.8.0"
   }
 }
-

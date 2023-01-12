@@ -68,18 +68,20 @@ export const DepositConfirmContainer = forwardRef<
       try {
         downloadNote(note);
         const args = {
-          tx,
-          contractAddress,
-          inputs,
-          outputs,
-          fee,
-          refund,
-          recipient,
-          relayer,
-          wrapUnwrapToken,
-          leavesMap,
+          tx: null,
+          contractAddress: null,
+          inputs: null,
+          outputs: null,
+          fee: null,
+          refund: null,
+          recipient: null,
+          relayer: null,
+          wrapUnwrapToken: null,
+          leavesMap: null,
         };
-        await api.transact(note);
+        await api.transact(
+          ...Object.values(args)
+        );
       } catch (error) {
         console.log('Deposit error', error);
         notificationApi(DEPOSIT_FAILURE_MSG);
