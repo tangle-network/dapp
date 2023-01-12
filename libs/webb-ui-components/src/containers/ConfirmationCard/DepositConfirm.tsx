@@ -84,7 +84,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             }
             destLabel={
               destChain && sourceChain !== destChain
-                ? 'Destination chain'
+                ? 'Depositing to'
                 : undefined
             }
             sourceChain={sourceChain}
