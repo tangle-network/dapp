@@ -40,7 +40,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       relayerAvatarTheme,
       sourceChain,
       title = 'Confirm Transfer',
-      governedTokenSymbol: token1Symbol,
+      fungibleTokenSymbol: token1Symbol,
       ...props
     },
     ref

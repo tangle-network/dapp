@@ -19,10 +19,10 @@ export interface ShieldedAssetDataType {
   chain: string;
 
   /**
-   * The shielded asset symbol (governed token)
+   * The shielded asset symbol (fungible token)
    * @example "ETH"
    */
-  governedTokenSymbol: string;
+  fungibleTokenSymbol: string;
 
   /**
    * The external url of assets pair
@@ -50,9 +50,9 @@ export interface ShieldedAssetDataType {
   rawChain: Chain;
 
   /**
-   * The raw governed currency object
+   * The raw fungible currency object
    */
-  rawGovernedCurrency: Currency | undefined;
+  rawFungibleCurrency: Currency | undefined;
 }
 
 export interface ShieldedAssetsTableContainerProps

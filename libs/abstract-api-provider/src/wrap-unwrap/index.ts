@@ -13,7 +13,7 @@ export type WrappingEvent = {
   ready: null;
   stateUpdate: null;
   wrappableTokenUpdate: Currency | null;
-  governedTokenUpdate: Currency | null;
+  fungibleTokenUpdate: Currency | null;
 };
 export type WrappingEventNames = keyof WrappingEvent;
 export type Amount = {
@@ -43,7 +43,7 @@ export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapP
 
   /**
    *  Wrap call
-   *  - Can wrap a token to a GovernedToken
+   *  - Can wrap a token to a FungibleToken
    *  - Can wrap a token to an ERC20
    **/
   abstract wrap(wrapPayload: WrapPayload): Promise<string>;
@@ -57,7 +57,7 @@ export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapP
 
   /**
    *  Unwrap call
-   *  - Can Unwrap a token to a GovernedToken
+   *  - Can Unwrap a token to a FungibleToken
    **/
   abstract unwrap(unwrapPayload: UnwrapPayload): Promise<string>;
 }

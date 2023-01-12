@@ -283,7 +283,7 @@ export class VAnchorContract {
           BigNumber.from(0)
         )
       );
-
+    console.log('About to setup tx');
     const { extData, publicInputs } = await this.setupTransaction(
       inputs,
       outputs,
@@ -298,7 +298,7 @@ export class VAnchorContract {
       circuitWasm,
       worker
     );
-
+    console.log('After setting up TX');
     // A deposit is meant for the same recipient as signer
     let options = {};
     if (extAmount.gt(0) && checkNativeAddress(wrapUnwrapToken)) {

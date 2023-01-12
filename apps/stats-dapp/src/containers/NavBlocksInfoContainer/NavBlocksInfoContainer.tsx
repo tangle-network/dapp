@@ -29,11 +29,11 @@ export const NavBoxInfoContainer = () => {
   const { val: keyData } = useActiveKeys();
   const { val: blocksData } = useBlocks();
 
-  const { nextKey } = useMemo<{
-    nextKey: PublicKey | null | undefined;
+  const { currentKey } = useMemo<{
+    currentKey: PublicKey | null | undefined;
   }>(() => {
     return {
-      nextKey: keyData ? keyData[1] : null,
+      currentKey: keyData ? keyData[0] : null, // current key
     };
   }, [keyData]);
 
@@ -124,8 +124,8 @@ export const NavBoxInfoContainer = () => {
         </Chip>
         <Chip color="blue">
           <RefreshIcon size="lg" className="fill-blue-90 dark:fill-blue-30" />{' '}
-          {nextKey ? (
-            `Session: ${Number(nextKey?.session).toLocaleString()}`
+          {currentKey ? (
+            `Session: ${Number(currentKey?.session).toLocaleString()}`
           ) : (
             <Spinner size="md" />
           )}

@@ -19,6 +19,8 @@ const Keys = () => {
     };
   }, [data]);
 
+  console.log(currentKey);
+
   const { time } = useStatsContext();
 
   if (isLoading || currentKey === null || nextKey === null) {
@@ -42,7 +44,11 @@ const Keys = () => {
   return (
     <div>
       <div className="flex space-x-4">
-        <KeyStatusCardContainer now={time} keyType="current" data={nextKey} />
+        <KeyStatusCardContainer
+          now={time}
+          keyType="current"
+          data={currentKey}
+        />
       </div>
 
       <div className="mt-4">

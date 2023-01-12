@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-    paths: ["libs/webb-ui-components/src/stories/**"] # Trigger the action only when files change in the folders defined here
+    paths: ["libs/webb-ui-components/src/stories/**", "libs/webb-ui-components/.storybook/**", ".storybook" ] # Trigger the action only when files change in the folders defined here
 jobs:
   component-docs:
     runs-on: ubuntu-latest

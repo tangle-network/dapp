@@ -7,9 +7,9 @@ import { firstValueFrom } from 'rxjs';
 export const useCurrencies = () => {
   const { activeApi, activeChain } = useWebContext();
 
-  const [governedCurrencies, setGovernedCurrencies] = useState<Currency[]>([]);
+  const [fungibleCurrencies, setFungibleCurrencies] = useState<Currency[]>([]);
 
-  const [governedCurrency, setGovernedCurrencyState] =
+  const [fungibleCurrency, setFungibleCurrencyState] =
     useState<Currency | null>(null);
 
   const [wrappableCurrencies, setWrappableCurrencies] = useState<Currency[]>(
@@ -19,19 +19,19 @@ export const useCurrencies = () => {
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
-  // GovernableCurrency -> wrappableCurrency[]
+  // FungibleCurrency -> wrappable Currency[]
   const [wrappableCurrenciesMap, setWrappableCurrenciesMap] = useState<
     Record<Currency['id'], Currency[]>
   >({});
 
-  const getPossibleGovernedCurrencies = useCallback(
+  const getPossibleFungibleCurrencies = useCallback(
     (currencyId: number) => {
       const ids = Object.keys(wrappableCurrenciesMap).filter((key) =>
         wrappableCurrenciesMap[Number(key)].find((c) => c.id === currencyId)
       );
-      return governedCurrencies.filter((c) => ids.includes(String(c.id)));
+      return fungibleCurrencies.filter((c) => ids.includes(String(c.id)));
     },
-    [wrappableCurrenciesMap, governedCurrencies]
+    [wrappableCurrenciesMap, fungibleCurrencies]
   );
 
   /**
@@ -53,7 +53,7 @@ export const useCurrencies = () => {
     [activeApi]
   );
 
-  const setGovernedCurrency = useCallback(
+  const setFungibleCurrency = useCallback(
     async (currency: Currency | null) => {
       if (!activeApi) {
         return;
@@ -107,7 +107,7 @@ export const useCurrencies = () => {
   }, [activeChain, activeApi]);
 
   // Side effect to subscribe to the active api,
-  // then set the governed currencies, wrappable currencies and current governed currency
+  // then set the fungible currencies, wrappable currencies and current fungible currency
   useEffect(() => {
     if (!activeApi || !activeChain) {
       return;
@@ -115,7 +115,7 @@ export const useCurrencies = () => {
 
     const activeBridgeSub = activeApi.state.$activeBridge.subscribe(
       async (bridge) => {
-        setGovernedCurrencies(
+        setFungibleCurrencies(
           Object.values(activeApi.state.getBridgeOptions()).map(
             (potentialBridge) => {
               return potentialBridge.currency;
@@ -142,7 +142,7 @@ export const useCurrencies = () => {
           return;
         }
 
-        setGovernedCurrencyState(bridge.currency);
+        setFungibleCurrencyState(bridge.currency);
 
         try {
           const assets = await activeApi.methods.bridgeApi.fetchWrappableAssets(
@@ -180,7 +180,7 @@ export const useCurrencies = () => {
     };
   }, [activeApi, activeChain]);
 
-  // Side effect to subscribe to governed currency and wrappable currency
+  // Side effect to subscribe to fungible currency and wrappable currency
   useEffect(() => {
     if (!activeApi) {
       return;
@@ -189,7 +189,7 @@ export const useCurrencies = () => {
     const sub: { unsubscribe(): void }[] = [];
 
     sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
-      setGovernedCurrencyState(bridge?.currency ?? null);
+      setFungibleCurrencyState(bridge?.currency ?? null);
     });
 
     sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
@@ -202,13 +202,13 @@ export const useCurrencies = () => {
   }, [activeApi]);
 
   return {
-    governedCurrencies,
-    governedCurrency,
-    setGovernedCurrency,
+    fungibleCurrencies,
+    fungibleCurrency,
+    setFungibleCurrency,
     wrappableCurrencies,
     wrappableCurrency,
     setWrappableCurrency,
     getWrappableCurrencies,
-    getPossibleGovernedCurrencies,
+    getPossibleFungibleCurrencies,
   };
 };

@@ -45,16 +45,16 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     ),
   }),
 
-  columnHelper.accessor('governedTokenSymbol', {
+  columnHelper.accessor('fungibleTokenSymbol', {
     header: 'Shielded Asset',
     cell: (props) => {
-      const governedTokenSymbol = props.getValue<string>();
+      const fungibleTokenSymbol = props.getValue<string>();
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
         <div className="flex items-center space-x-1.5">
           <Typography className="uppercase" variant="body1" fw="bold">
-            {governedTokenSymbol}
+            {fungibleTokenSymbol}
           </Typography>
 
           <a href={tokenUrl} target="_blank" rel="noopener noreferrer">
@@ -133,7 +133,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  onDefaultGovernedCurrencyChange,
+  ondefaultFungibleCurrencyChange,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -150,7 +150,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
             <ActionDropdownButton
               onActiveTabChange={onActiveTabChange}
               onDefaultDestinationChainChange={onDefaultDestinationChainChange}
-              onDefaultGovernedCurrencyChange={onDefaultGovernedCurrencyChange}
+              ondefaultFungibleCurrencyChange={ondefaultFungibleCurrencyChange}
               data={data}
             />
           );
@@ -160,7 +160,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   }, [
     onActiveTabChange,
     onDefaultDestinationChainChange,
-    onDefaultGovernedCurrencyChange,
+    ondefaultFungibleCurrencyChange,
   ]);
 
   const table = useReactTable({
@@ -205,46 +205,46 @@ const ActionDropdownButton: FC<
     SpendNotesTableContainerProps,
     | 'onActiveTabChange'
     | 'onDefaultDestinationChainChange'
-    | 'onDefaultGovernedCurrencyChange'
+    | 'ondefaultFungibleCurrencyChange'
   >
 > = ({
   data,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  onDefaultGovernedCurrencyChange,
+  ondefaultFungibleCurrencyChange,
 }) => {
   const onQuickTransfer = useCallback(() => {
-    const { rawChain, rawGovernedCurrency } = data;
+    const { rawChain, rawFungibleCurrency } = data;
 
     onActiveTabChange?.('Transfer');
 
     onDefaultDestinationChainChange?.(rawChain);
 
-    if (rawGovernedCurrency) {
-      onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+    if (rawFungibleCurrency) {
+      ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
     }
   }, [
     data,
     onActiveTabChange,
     onDefaultDestinationChainChange,
-    onDefaultGovernedCurrencyChange,
+    ondefaultFungibleCurrencyChange,
   ]);
 
   const onQuickWithdraw = useCallback(() => {
-    const { rawChain, rawGovernedCurrency } = data;
+    const { rawChain, rawFungibleCurrency } = data;
 
     onActiveTabChange?.('Withdraw');
 
     onDefaultDestinationChainChange?.(rawChain);
 
-    if (rawGovernedCurrency) {
-      onDefaultGovernedCurrencyChange?.(rawGovernedCurrency);
+    if (rawFungibleCurrency) {
+      ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
     }
   }, [
     data,
     onActiveTabChange,
     onDefaultDestinationChainChange,
-    onDefaultGovernedCurrencyChange,
+    ondefaultFungibleCurrencyChange,
   ]);
 
   return (
