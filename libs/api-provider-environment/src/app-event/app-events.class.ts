@@ -1,8 +1,8 @@
-import { Account } from '@webb-tools/abstract-api-provider';
-import { Chain, Wallet } from '@webb-tools/dapp-config';
-import { TypedChainId, WalletId } from '@webb-tools/dapp-types';
-import { EventBus } from '@webb-tools/app-util';
-import { BehaviorSubject } from 'rxjs';
+import {Account} from '@webb-tools/abstract-api-provider';
+import {Chain, Wallet} from '@webb-tools/dapp-config';
+import {TypedChainId, WalletId} from '@webb-tools/dapp-types';
+import {EventBus} from '@webb-tools/app-util';
+import {BehaviorSubject} from 'rxjs';
 
 export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;
@@ -11,6 +11,7 @@ export type AppEvents = {
   walletConnectionState: 'idle' | 'loading' | 'sucess' | 'failed';
   setActiveAccount: Account;
 };
+
 export enum CurrentConnectionStatus {
   /**
    * The wallet is connected and the current active chain is both on the wallet and the DApp side
@@ -25,6 +26,7 @@ export enum CurrentConnectionStatus {
    * */
   Switching
 }
+
 export enum NextConnectionStatus {
   /**
    * Connection is being processed
@@ -35,20 +37,22 @@ export enum NextConnectionStatus {
    * */
   Failed
 }
-type ConnectionStatus<Value , ConnectionStatus> ={
+
+type ConnectionStatus<Value, ConnectionStatus> = {
   /**
    * Connection value type
    * */
-  connectionValue:Value,
+  connectionValue: Value,
   /**
    * Connection status
    * */
-  status:ConnectionStatus,
+  status: ConnectionStatus,
   /**
    * Description message for the current status
    * */
-  note?:string
+  note?: string
 }
+
 /**
  * Current selected network -> could be undefined
  *  - Connected,Connecting,Failure,Switching
@@ -58,23 +62,47 @@ type ConnectionStatus<Value , ConnectionStatus> ={
  * */
 export class NetworkManger {
 
-  private _currentConnection = new BehaviorSubject<ConnectionStatus<[TypedChainId, WalletId],CurrentConnectionStatus>|null>(null);
-  private _nextNetwork =  new BehaviorSubject<ConnectionStatus<[Chain, Wallet],NextConnectionStatus>|null>(null);
-  private _walletConnectionState: 'idle' | 'loading' | 'sucess' | 'failed';
-  private _setActiveAccount: Account;
+  private _currentConnection = new BehaviorSubject<ConnectionStatus<[TypedChainId, WalletId], CurrentConnectionStatus> | null>(null);
+  private _nextConnection = new BehaviorSubject<ConnectionStatus<[Chain, Wallet], NextConnectionStatus> | null>(null);
+  private _activeAccount = new BehaviorSubject<Account | null>(null);
 
 
-  get $currentConnection(){
+  get $currentConnection() {
     return this._currentConnection.asObservable()
   }
 
-  get currentConnection(){
+  get currentConnection() {
     return this._currentConnection.value
   }
 
 
+  get $nextConnection() {
+    return this._nextConnection.asObservable()
+  }
+
+  get nextConnection() {
+    return this._nextConnection.value
+  }
+
+
+  get $activeAccount() {
+    return this._activeAccount.asObservable()
+  }
+
+  get activeAccount() {
+    return this._activeAccount.value
+  }
+
+  set activeAccount(account: Account | null) {
+    this._activeAccount.next(account)
+  }
+
+
+
+
 
 }
+
 export class AppEvent extends EventBus<AppEvents> {
 
   public readonly send: <E extends keyof AppEvents>(

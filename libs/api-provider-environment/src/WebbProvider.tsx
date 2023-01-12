@@ -157,6 +157,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeApi, setActiveApi] = useState<WebbApiProvider<any> | undefined>(
     undefined
   );
+
   const [loading, setLoading] = useState(true);
   const [networkStorage, setNetworkStorage] = useState<NetworkStorage | null>(
     null
