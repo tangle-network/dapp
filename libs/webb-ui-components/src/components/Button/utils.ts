@@ -32,7 +32,7 @@ const classNames: ButtonClassNames = {
   utility: {
     base: {
       common:
-        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-20',
+        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-50',
       hover: 'hover:bg-blue-10 hover:text-blue-90 dark:hover:bg-blue-110',
       active: 'active:border-blue-50 dark:active:border-blue-50',
       disabled:
