@@ -2,7 +2,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useBridgeDeposit,
+  useVAnchor,
   useCurrencies,
   useNoteAccount,
   useRelayers,
@@ -52,7 +52,7 @@ export const WithdrawContainer = forwardRef<
     setWrappableCurrency,
   } = useBridge();
 
-  const { generateNote } = useBridgeDeposit();
+  const { api } = useVAnchor();
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
 
@@ -487,6 +487,9 @@ export const WithdrawContainer = forwardRef<
               ? 'Switch chain to withdraw'
               : undefined,
           onClick: async () => {
+            if (!api) {
+              return;
+            }
             if (isDisabledWithdraw && otherAvailableChains.length > 0) {
               return await handleSwitchToOtherDestChains();
             }
@@ -503,8 +506,8 @@ export const WithdrawContainer = forwardRef<
 
             const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
 
-            // Find the mixerId (target) of the selected inputs
-            const mixerId =
+            // Find the treeId (target) of the selected inputs
+            const treeId =
               activeApi.state.activeBridge.targets[currentTypedChainId];
 
             // Get the notes that will be spent for this withdraw
@@ -546,12 +549,14 @@ export const WithdrawContainer = forwardRef<
 
             // Generate a change note if applicable
             const changeNote = changeAmountBigNumber.gt(0)
-              ? await generateNote(
-                  mixerId,
-                  currentTypedChainId,
-                  parsedChangeAmount,
-                  undefined
-                ).then((note) => note.note.serialize())
+              ? await api
+                  .generateNote(
+                    treeId,
+                    currentTypedChainId,
+                    parsedChangeAmount,
+                    undefined
+                  )
+                  .then((note) => note.note.serialize())
               : undefined;
 
             setMainComponent(

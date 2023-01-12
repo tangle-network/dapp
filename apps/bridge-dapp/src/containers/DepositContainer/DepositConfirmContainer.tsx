@@ -1,12 +1,15 @@
-import { DepositPayload } from '@webb-tools/abstract-api-provider';
+import { txpayment } from '@polkadot/types/interfaces/definitions';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
-import { useBridgeDeposit } from '@webb-tools/react-hooks';
+import { useVAnchor } from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { DEPOSIT_FAILURE_MSG, getCardTitle } from '../../utils';
+import { updateProgress } from '../../utils/setProgress';
 
 import { DepositConfirmContainerProps } from './types';
 
@@ -16,7 +19,7 @@ export const DepositConfirmContainer = forwardRef<
 >(
   (
     {
-      depositPayload,
+      note,
       amount,
       wrappingFlow,
       token,
@@ -27,11 +30,8 @@ export const DepositConfirmContainer = forwardRef<
     ref
   ) => {
     const [checked, setChecked] = useState(false);
-
-    const { deposit, stage, startNewTransaction } = useBridgeDeposit();
-
+    const { api, stage, startNewTransaction } = useVAnchor();
     const { setMainComponent, notificationApi } = useWebbUI();
-
     const [progress, setProgress] = useState<null | number>(null);
 
     const depositTxInProgress = useMemo(
@@ -40,17 +40,18 @@ export const DepositConfirmContainer = forwardRef<
     );
     const { activeApi } = useWebContext();
     // Download for the deposit confirm
-    const downloadNote = useCallback((depositPayload: DepositPayload) => {
-      const note = depositPayload?.note?.serialize() ?? '';
-      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
+    const downloadNote = useCallback((note: Note) => {
+      const noteStr = note.serialize();
+      downloadString(
+        JSON.stringify(noteStr),
+        noteStr.slice(-noteStr.length) + '.json'
+      );
     }, []);
 
     // Copy for the deposit confirm
     const { copy, isCopied } = useCopyable();
     const handleCopy = useCallback(
-      (depositPayload: DepositPayload): void => {
-        copy(depositPayload.note.serialize() ?? '');
-      },
+      (note: Note): void => copy(note.serialize()),
       [copy]
     );
 
@@ -65,21 +66,29 @@ export const DepositConfirmContainer = forwardRef<
       }
 
       try {
-        downloadNote(depositPayload);
-        await deposit(depositPayload);
+        downloadNote(note);
+        const args = {
+          tx,
+          contractAddress,
+          inputs,
+          outputs,
+          fee,
+          refund,
+          recipient,
+          relayer,
+          wrapUnwrapToken,
+          leavesMap,
+        };
+        await api.transact(note);
       } catch (error) {
         console.log('Deposit error', error);
-        notificationApi({
-          variant: 'error',
-          message: 'Deposit failed',
-          secondaryMessage: 'Something went wrong when depositing',
-        });
+        notificationApi(DEPOSIT_FAILURE_MSG);
       } finally {
         setMainComponent(undefined);
       }
     }, [
-      deposit,
-      depositPayload,
+      api,
+      note,
       downloadNote,
       depositTxInProgress,
       notificationApi,
@@ -111,85 +120,20 @@ export const DepositConfirmContainer = forwardRef<
     }, [activeApi]);
 
     const cardTitle = useMemo(() => {
-      let status = '';
-
-      switch (stage) {
-        case TransactionState.Ideal: {
-          break;
-        }
-
-        case TransactionState.Done: {
-          status = 'Completed';
-          break;
-        }
-
-        case TransactionState.Failed: {
-          status = 'Failed';
-          break;
-        }
-
-        default: {
-          status = 'In-Progress';
-          break;
-        }
-      }
-
-      return wrappingFlow ? `Wrap and Deposit ${status}` : `Deposit ${status}`;
+      return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
     // Effect to update the progress bar
     useEffect(() => {
-      switch (stage) {
-        case TransactionState.FetchingFixtures: {
-          setProgress(0);
-          break;
-        }
-
-        case TransactionState.FetchingLeaves: {
-          setProgress(25);
-          break;
-        }
-        case TransactionState.Intermediate: {
-          setProgress(40);
-          break;
-        }
-
-        case TransactionState.GeneratingZk: {
-          setProgress(50);
-          break;
-        }
-
-        case TransactionState.SendingTransaction: {
-          setProgress(75);
-          break;
-        }
-
-        case TransactionState.Done:
-        case TransactionState.Failed: {
-          setProgress(100);
-          break;
-        }
-
-        case TransactionState.Cancelling:
-        case TransactionState.Ideal: {
-          setProgress(null);
-          break;
-        }
-
-        default: {
-          throw new Error(
-            'Unknown transaction state in DepositConfirmContainer component'
-          );
-        }
-      }
+      updateProgress(stage, setProgress);
     }, [stage, setProgress]);
 
     return (
       <DepositConfirm
-        title={cardTitle.trim()}
+        title={cardTitle}
         activeChains={activeChains}
         ref={ref}
-        note={depositPayload.note.serialize()}
+        note={note.note.serialize()}
         progress={progress}
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
@@ -206,8 +150,8 @@ export const DepositConfirmContainer = forwardRef<
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}
-        onCopy={() => handleCopy(depositPayload)}
-        onDownload={() => downloadNote(depositPayload)}
+        onCopy={() => handleCopy(note)}
+        onDownload={() => downloadNote(note)}
         amount={amount}
         wrappingAmount={String(amount)}
         fungibleTokenSymbol={token?.symbol}

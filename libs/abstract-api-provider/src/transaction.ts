@@ -31,7 +31,7 @@ export type ActionEvent = {
   // Generic Error by the provider or doing an intermediate step
   error: string;
   // Validation Error for the withdrawing note
-  // TODO : update this to be more verbose and not just relate to the note but also the params for `generateNote` and `withdraw`
+  // TODO : update this to be more verbose and not just relate to the note but also the params for `generateNote` and `transact`
   validationError: {
     note: string;
     recipient: string;

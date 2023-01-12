@@ -8,7 +8,7 @@ import {
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useBridgeDeposit,
+  useVAnchor,
   useNoteAccount,
   useRelayers,
 } from '@webb-tools/react-hooks';
@@ -55,7 +55,7 @@ export const TransferContainer = forwardRef<
 
     const { allNotes } = useNoteAccount();
 
-    const { generateNote } = useBridgeDeposit();
+    const { api } = useVAnchor();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -121,11 +121,11 @@ export const TransferContainer = forwardRef<
             }
 
             // Calculate destination chain
-            const destChainTypeId = Number(targetChainId);
+            const destTypedChainId = Number(targetChainId);
             const detsChain = Object.values(chainsPopulated).find(
               (chain) =>
                 calculateTypedChainId(chain.chainType, chain.chainId) ===
-                destChainTypeId
+                destTypedChainId
             );
 
             if (!detsChain) {
@@ -138,7 +138,7 @@ export const TransferContainer = forwardRef<
               const destChainRecord: ChainRecord = {};
 
               if (detsChain) {
-                destChainRecord[destChainTypeId] = detsChain;
+                destChainRecord[destTypedChainId] = detsChain;
               }
 
               acc[currency.id] = {
@@ -150,10 +150,10 @@ export const TransferContainer = forwardRef<
             }
 
             const existedDestChain =
-              existedCurrency.destChainRecord[destChainTypeId];
+              existedCurrency.destChainRecord[destTypedChainId];
             if (!existedDestChain) {
               acc[existedCurrency.currency.id].destChainRecord[
-                destChainTypeId
+                destTypedChainId
               ] = detsChain;
             }
           });
@@ -176,11 +176,11 @@ export const TransferContainer = forwardRef<
               (currency) => currency.symbol === tkSymbol
             );
 
-            const destChainTypeId = Number(targetChainId);
+            const destTypedChainId = Number(targetChainId);
             const chain = Object.values(chainsPopulated).find(
               (chain) =>
                 calculateTypedChainId(chain.chainType, chain.chainId) ===
-                destChainTypeId
+                destTypedChainId
             );
 
             if (!currency || !chain) {
@@ -192,19 +192,19 @@ export const TransferContainer = forwardRef<
             if (!acc[currency.id]) {
               acc[currency.id] = {};
 
-              acc[currency.id][destChainTypeId] = Number(
+              acc[currency.id][destTypedChainId] = Number(
                 ethers.utils.formatUnits(amount, denomination)
               );
               return;
             }
 
-            const existedBalance = acc[currency.id][destChainTypeId];
+            const existedBalance = acc[currency.id][destTypedChainId];
             if (existedBalance) {
-              acc[currency.id][destChainTypeId] =
+              acc[currency.id][destTypedChainId] =
                 existedBalance +
                 Number(ethers.utils.formatUnits(amount, denomination));
             } else {
-              acc[currency.id][destChainTypeId] = Number(
+              acc[currency.id][destTypedChainId] = Number(
                 ethers.utils.formatUnits(amount, denomination)
               );
             }
@@ -226,11 +226,11 @@ export const TransferContainer = forwardRef<
           let balance = undefined;
 
           if (destChain) {
-            const destChainTypeId = calculateTypedChainId(
+            const destTypedChainId = calculateTypedChainId(
               destChain.chainType,
               destChain.chainId
             );
-            balance = balanceRecordFromNotes[currency.id]?.[destChainTypeId];
+            balance = balanceRecordFromNotes[currency.id]?.[destTypedChainId];
           }
 
           acc.push({
@@ -266,12 +266,12 @@ export const TransferContainer = forwardRef<
 
       let balance = undefined;
       if (destChain) {
-        const destChainTypeId = calculateTypedChainId(
+        const destTypedChainId = calculateTypedChainId(
           destChain.chainType,
           destChain.chainId
         );
         balance =
-          balanceRecordFromNotes[fungibleCurrency.id]?.[destChainTypeId];
+          balanceRecordFromNotes[fungibleCurrency.id]?.[destTypedChainId];
       }
 
       return {
@@ -560,6 +560,10 @@ export const TransferContainer = forwardRef<
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
+      if (!api) {
+        return;
+      }
+
       if (
         !fungibleCurrency ||
         !destChain ||
@@ -576,20 +580,22 @@ export const TransferContainer = forwardRef<
         destChain.chainId
       );
 
-      // Find the mixerId (target) of the selected inputs
-      const mixerId = activeApi.state.activeBridge.targets[destTypedChainId];
+      // Find the treeId (target) of the selected inputs
+      const treeId = activeApi.state.activeBridge.targets[destTypedChainId];
 
       const changeAmount = Number(infoCalculated.changeAmount ?? '0');
 
       // Calculate the chain note if the change amount is greater than 0
       const changeNote =
         changeAmount > 0
-          ? await generateNote(
-              mixerId,
-              destTypedChainId,
-              Number(infoCalculated.changeAmount),
-              undefined
-            ).then((note) => note.note.serialize())
+          ? await api
+              .generateNote(
+                treeId,
+                destTypedChainId,
+                Number(infoCalculated.changeAmount),
+                undefined
+              )
+              .then((note) => note.note.serialize())
           : undefined;
 
       setMainComponent(
@@ -606,11 +612,11 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
+      api,
       activeApi?.state.activeBridge,
       activeRelayer,
       amount,
       destChain,
-      generateNote,
       fungibleCurrency,
       infoCalculated.changeAmount,
       inputNotes,

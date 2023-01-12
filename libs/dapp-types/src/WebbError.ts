@@ -7,8 +7,6 @@ export enum WebbErrorCodes {
   UnsupportedChain,
   /// Unselected chain is a mismatch between provider and application
   UnselectedChain,
-  /// Attempt to find a mixer size on a contract
-  MixerSizeNotFound,
   /// No accounts are available
   NoAccountAvailable,
   /// Failed to parse deposit note
@@ -27,8 +25,8 @@ export enum WebbErrorCodes {
   InsufficientProviderInterface,
   /// EVM session already ended
   EVMSessionAlreadyEnded,
-  /// Relayer does not support the mixer
-  RelayerUnsupportedMixer,
+  /// Relayer does not support the functionality
+  NoRelayerSupport,
   /// Relayer is not operating properly (sending bad leaves, etc.)
   RelayerMisbehaving,
   /// Failed to parse the chainId
@@ -85,12 +83,6 @@ export class WebbError extends Error {
           message: 'User did not select the chain',
         };
 
-      case WebbErrorCodes.MixerSizeNotFound:
-        return {
-          code,
-          message: 'Mixer size not found in contract',
-        };
-
       case WebbErrorCodes.NoAccountAvailable:
         return {
           code,
@@ -145,10 +137,10 @@ export class WebbError extends Error {
           message: "Attempt to end session and it' already ended or unknown error",
         };
 
-      case WebbErrorCodes.RelayerUnsupportedMixer:
+      case WebbErrorCodes.NoRelayerSupport:
         return {
           code,
-          message: 'Attempt to use a relayer which does not support the mixer',
+          message: 'Attempt to use a relayer which does not support the functionality',
         };
 
       case WebbErrorCodes.RelayerMisbehaving:

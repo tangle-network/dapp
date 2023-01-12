@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 import {
-  useBridgeDeposit,
+  useVAnchor,
   useCurrencies,
   useCurrenciesBalances,
   useNoteAccount,
@@ -84,7 +84,7 @@ export const DepositContainer = forwardRef<
       apiConfig: { currencies },
     } = useWebContext();
 
-    const { generateNote } = useBridgeDeposit();
+    const { api } = useVAnchor();
 
     const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
       undefined
@@ -323,6 +323,10 @@ export const DepositContainer = forwardRef<
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
+      if (!api) {
+        return;
+      }
+
       // No wallet connected
       if (!isWalletConnected) {
         const { defaultChain, sourceChains } = getDefaultConnection(chains);
@@ -353,7 +357,7 @@ export const DepositContainer = forwardRef<
         );
         const wrappbleTokenAddress =
           wrappableCurrency?.getAddress(chainId) ?? undefined;
-        const newDepositPayload = await generateNote(
+        const newDepositPayload = await api.generateNote(
           activeApi.state.activeBridge.targets[
             calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
           ],
@@ -369,11 +373,12 @@ export const DepositContainer = forwardRef<
           token: selectedToken,
           sourceChain: selectedSourceChain,
           destChain: destChainInputValue,
-          depositPayload: newDepositPayload,
+          note: newDepositPayload,
         });
         setMainComponentName('deposit-confirm-container');
       }
     }, [
+      api,
       chains,
       setMainComponent,
       isWalletConnected,
@@ -386,7 +391,6 @@ export const DepositContainer = forwardRef<
       activeChain,
       setMainComponentName,
       setNoteAccountModalOpen,
-      generateNote,
       selectedSourceChain,
       destChainInputValue,
       wrappableCurrency,

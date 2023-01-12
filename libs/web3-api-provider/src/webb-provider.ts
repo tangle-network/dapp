@@ -41,13 +41,8 @@ import { hexToU8a } from '@polkadot/util';
 
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
-import { Web3MixerDeposit } from './webb-provider/mixer-deposit';
-import { Web3MixerWithdraw } from './webb-provider/mixer-withdraw';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
-import { Web3VAnchorDeposit } from './webb-provider/vanchor-deposit';
-import { Web3VAnchorTransfer } from './webb-provider/vanchor-transfer';
-import { Web3VAnchorWithdraw } from './webb-provider/vanchor-withdraw';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 import { Web3Accounts, Web3Provider } from './ext-provider';
 import { BehaviorSubject } from 'rxjs';
@@ -92,29 +87,7 @@ export class WebbWeb3Provider
       },
       bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
-      mixer: {
-        deposit: {
-          enabled: true,
-          inner: new Web3MixerDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3MixerWithdraw(this),
-        },
-      },
       variableAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new Web3VAnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3VAnchorWithdraw(this),
-        },
-        transfer: {
-          enabled: true,
-          inner: new Web3VAnchorTransfer(this),
-        },
         actions: {
           enabled: true,
           inner: new Web3VAnchorActions(this),

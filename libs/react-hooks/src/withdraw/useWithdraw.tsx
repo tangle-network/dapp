@@ -66,7 +66,7 @@ export const useWithdraw = (params: UseWithdrawProps) => {
   const { registerInteractiveFeedback } = useWebContext();
 
   const withdrawApi = useMemo(() => {
-    const withdraw = activeApi?.methods.variableAnchor.withdraw;
+    const withdraw = activeApi?.methods.variableAnchor.actions;
     if (!withdraw?.enabled) {
       return null;
     }

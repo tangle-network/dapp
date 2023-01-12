@@ -53,10 +53,10 @@ export class Web3RelayerManager extends WebbRelayerManager {
             return address.toLowerCase() === contractAddress.toLowerCase();
           });
 
-        // The user somehow selected a relayer which does not support the mixer.
-        // This should not be possible as only supported mixers should be selectable in the UI.
+        // The user somehow selected a relayer which does not support the functionality.
+        // This should not be possible as only supported functionalities should be selectable in the UI.
         if (!supportedContract) {
-          throw WebbError.from(WebbErrorCodes.RelayerUnsupportedMixer);
+          throw WebbError.from(WebbErrorCodes.NoRelayerSupport);
         }
 
         const principleBig = ethers.utils.parseUnits(

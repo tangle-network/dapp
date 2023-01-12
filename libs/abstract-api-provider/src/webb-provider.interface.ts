@@ -10,16 +10,10 @@ import { AccountsAdapter } from './account/Accounts.adapter';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { VAnchorTransfer } from './vanchor/vanchor-transfer';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './vanchor';
+import { BridgeApi } from './vanchor';
 import { ChainQuery } from './chain-query';
 import { ApiConfig } from '@webb-tools/dapp-config';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
-import {
-  DepositPayload,
-  MixerDeposit,
-  MixerDepositEvents,
-  MixerWithdraw,
-} from './mixer';
 import { WebbState } from './state';
 import { ActionEvent } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
@@ -32,8 +26,6 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T extends WebbApiProvider<any>> {
-  // Mixer API
-  mixer: WebbMixer<T>;
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<T>;
   // Wrap and unwrap API
@@ -66,17 +58,7 @@ export type WebbTransactionMethod<T> = {
   enabled: boolean;
 };
 
-export interface WebbMixer<T extends WebbApiProvider<any>> {
-  // deposit
-  deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
-  // withdraw
-  withdraw: WebbMethod<MixerWithdraw<T>, ActionEvent>;
-}
-
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
-  deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
-  withdraw: WebbTransactionMethod<VAnchorWithdraw<T>>;
-  transfer: WebbMethod<VAnchorTransfer<T>, ActionEvent>;
   actions: WebbMethod<VAnchorActions<T>, ActionEvent>;
 }
 

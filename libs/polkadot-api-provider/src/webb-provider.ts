@@ -36,13 +36,8 @@ import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotCrowdloan } from './webb-provider/crowdloan';
 import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
-import { PolkadotMixerDeposit } from './webb-provider/mixer-deposit';
-import { PolkadotMixerWithdraw } from './webb-provider/mixer-withdraw';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
-import { PolkadotVAnchorDeposit } from './webb-provider/vanchor-deposit';
-import { PolkadotVAnchorTransfer } from './webb-provider/vanchor-transfer';
-import { PolkadotVAnchorWithdraw } from './webb-provider/vanchor-withdraw';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
@@ -92,32 +87,10 @@ export class WebbPolkadot
         core: new PolkadotECDSAClaims(this),
         enabled: true,
       },
-      mixer: {
-        deposit: {
-          enabled: true,
-          inner: new PolkadotMixerDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new PolkadotMixerWithdraw(this),
-        },
-      },
       variableAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new PolkadotVAnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new PolkadotVAnchorWithdraw(this),
-        },
         actions: {
           enabled: false,
           inner: new PolkadotVAnchorActions(this),
-        },
-        transfer: {
-          enabled: true,
-          inner: new PolkadotVAnchorTransfer(this),
         },
       },
       wrapUnwrap: {
@@ -219,9 +192,8 @@ export class WebbPolkadot
     const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
     // merkle rpc
     const merklePallet = this.api.query.merkleTreeBn254;
-    const mixerPallet = this.api.query.mixerBn254;
-
-    if (!merklePallet || !merkleRPC || !mixerPallet) {
+    const vAnchorPallet = this.api.query.vAnchorBn254;
+    if (!merklePallet || !merkleRPC || !vAnchorPallet) {
       throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
     }
 

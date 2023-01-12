@@ -4,12 +4,13 @@
 import { Storage } from '@webb-tools/storage';
 import { Keypair } from '@webb-tools/sdk-core';
 
+/// The `BridgeStorage` is used to store the leaves of the merkle tree
+/// of the underlying VAnchor contract. The key is the contract address.
 export type BridgeStorage = Record<
   string,
   { lastQueriedBlock: number; leaves: string[] }
 >;
 export const bridgeStorageFactory = (chainIdType: number) => {
-  // localStorage will have key: <Currency name>, value: { Record<contractAddress: string, info: DynamicMixerInfoStore> }
   return Storage.newFromCache<BridgeStorage>(chainIdType.toString(), {
     async commit(key: string, data: BridgeStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
@@ -28,9 +29,9 @@ export const bridgeStorageFactory = (chainIdType: number) => {
   });
 };
 
+/// The `KeypairStorage` is used to store the keypairs of the user.
 export type KeypairStorage = Record<string, { keypair: string | null }>;
 export const keypairStorageFactory = () => {
-  // localStorage will have key: 'keypair', value: { keypair: privKey.toHexString() | null }
   return Storage.newFromCache<KeypairStorage>('keypair', {
     async commit(key: string, data: KeypairStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
@@ -49,13 +50,12 @@ export const keypairStorageFactory = () => {
   });
 };
 
-// Keypair.pubkey -> targetChainId -> noteString
-export type NoteStorage = {
-  encryptedNotes: Record<string, string[]>;
-};
 
+/// The `NoteStorage` is used to store the encrypted notes of the user.
+/// The key is the keypair of the user.The `NoteStorage` is used to store the encrypted notes of the user.
+/// The key is the public key of the given keypair being used.
+export type NoteStorage = { encryptedNotes: Record<string, string[]> };
 export const noteStorageFactory = (keypair: Keypair) => {
-  // localStorage will have key: Keypair.pubkey, value: Record<targetTypedChainId, EncryptedNote[]>
   return Storage.newFromCache<NoteStorage>(keypair.toString(), {
     async commit(key: string, data: NoteStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
@@ -76,9 +76,10 @@ export const noteStorageFactory = (keypair: Keypair) => {
   });
 };
 
-// account -> anchor address -> pubkeys
+// The `RegistrationStorage` is used to store the registered public keys.
+// The key is the note account public key of the user. The values are
+// the registered public keys for a given VAnchor.
 export type RegistrationStorage = Record<string, string[]>;
-
 export const registrationStorageFactory = (account: string) => {
   return Storage.newFromCache<RegistrationStorage>(account, {
     async commit(key: string, data: RegistrationStorage): Promise<void> {

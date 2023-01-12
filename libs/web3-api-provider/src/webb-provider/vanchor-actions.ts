@@ -77,6 +77,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       tx.cancelToken.abortSignal,
     );
     fixturesList.set('VAnchorWasm', 'Done');
+
     return {
       zkey: smallKey,
       wasm: Buffer.from(smallWasm),

@@ -1,3 +1,4 @@
+import { Note } from '@webb-tools/sdk-core';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import {
   ChainType,
@@ -14,7 +15,7 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The deposit payload
    */
-  depositPayload: DepositPayload;
+  note: Note;
 
   /**
    * The deposit amount

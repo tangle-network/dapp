@@ -1,7 +1,7 @@
 title: \- VBridge Deposit Currency Selection;
 
 C: Component;
-H: useBridgeDeposit
+H: useVAnchor
    useCurrencies;
 S: WebbState;
 M: WebbMethods;
@@ -11,7 +11,7 @@ C->H: \- get currencies;
 H->S: \- subscribe $activeBridge;
 H>>C: \- currencies ;
 C->H: \- get action methods;
-H>>C: \- setWrap, setGov, deposit, generateNote;
+H>>C: \- setWrap, setGov, transact, generateNote;
 <-C: \- Page Display;
 ---;
 C->C: \- change govToken;

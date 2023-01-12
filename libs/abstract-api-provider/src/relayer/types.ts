@@ -157,41 +157,6 @@ export type RelayerMessage = {
 };
 
 /**
- * Relayer Mixer transaction payload (Substrate payload)
- * @param chain - chain name
- * @param id - Mixer identifier (Tree id for substrate)
- * @param proof  - An Array of bytes from the proof
- * @param root  - Tree Root from the merkle path
- * @param nullifierHash - Nullifier hash
- * @param recipient - Recipient `AccountId` `SS558` format for substrate
- * @param relayer - Relayer  `AccountId` `SS558` format for substrate
- * @param fee - relayer fee
- * @param refund - .
- *
- * `proof` ,`root` ,and nullifierHash are obtained from `sdk-core` .
- * For `proof` and `root` the type can be ontained from `Uint8Array` in the next example
- * ```typescript
- * const proof:UnitArray = ...;
- * // The way to send the proof to the relayer
- * const proofForRelayerSubmission = Array.from(proof);
- * ```
- **/
-export type MixerRelayTx = {
-  chain: string;
-  // Tree ID (Mixer tree id)
-  id: number;
-  proof: Array<number>;
-  root: Array<number>;
-  nullifierHash: Array<number>;
-  // Ss558 Format
-  recipient: string;
-  // Ss558 Format
-  relayer: string;
-  fee: number;
-  refund: number;
-};
-
-/**
  * Proof data object for VAnchor proofs on substrate chain
  * @param proof - Encoded proof data
  * @param publicAmount - Public amount for proof
@@ -233,7 +198,7 @@ type SubstrateExtData = {
 /**
  * Contains data that is relayed to the VAnchors
  * @param chain_id - The chain_id of a supported chain of this relayer
- * @param id - The tree id of the mixer's underlying tree
+ * @param id - The tree id of the vanchor's underlying tree
  * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
  * @param extData - The external data structure for arbitrary inputs
  * */
@@ -267,7 +232,7 @@ type EVMProofData = {
 /**
  * Contains data that is relayed to the VAnchors
  * @param chain_id - The chain_id of a supported chain of this relayer
- * @param id - The tree id of the mixer's underlying tree
+ * @param id - The tree id of the vanchor's underlying tree
  * @param proofData - The zero-knowledge proof data structure for VAnchor transactions
  * @param extData - The external data structure for arbitrary inputs
  * */
@@ -282,7 +247,6 @@ type VAnchorEVMRelayTransaction = {
  * Relayed transaction for substrate
  **/
 export type RelayerSubstrateCommands = {
-  mixer: MixerRelayTx;
   vAnchor: VAnchorSubstrateRelayTransaction;
 };
 

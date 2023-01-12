@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './account';
-export * from './mixer';
 export * from './vanchor';
 export * from './chain-query';
 export * from './currency';
-export * from './mixer';
 export * from './relayer';
 export * from './state';
 export * from './wrap-unwrap';
