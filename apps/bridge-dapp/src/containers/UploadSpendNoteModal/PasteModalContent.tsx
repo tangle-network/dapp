@@ -78,7 +78,6 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         onClick={() => setRawNotes((prev) => ({ ...prev, [uniqueId()]: '' }))}
         variant="link"
         size="sm"
-        className="mt-2"
       >
         Add more
       </Button>
