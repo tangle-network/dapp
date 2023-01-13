@@ -42,11 +42,11 @@ function mapTxToPayload(
   if (tx.name === 'Deposit') {
     explorerUri = chainConfig[wallets.src]?.blockExplorerStub ?? '';
   } else {
-    explorerUri = chainConfig[wallets.dist]?.blockExplorerStub ?? '';
+    explorerUri = chainConfig[wallets.dest]?.blockExplorerStub ?? '';
   }
 
   const SrcWallet = chainConfig[wallets.src]?.logo;
-  const DistWallet = chainConfig[wallets.dist]?.logo;
+  const DistWallet = chainConfig[wallets.dest]?.logo;
 
   const getExplorerURI = (
     addOrTxHash: string,
@@ -59,7 +59,7 @@ function mapTxToPayload(
 
   const onDetails = tx.txHash
     ? () => {
-        const url = getExplorerURI(tx.txHash!, 'tx');
+        const url = getExplorerURI(tx.txHash ?? '', 'tx');
         open(url, '_blank', 'noopener noreferrer');
       }
     : undefined;

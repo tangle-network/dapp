@@ -7,37 +7,59 @@ import {
   TransactionState,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
-import {
-  VAnchor,
-} from '@webb-tools/anchors';
+import { VAnchor } from '@webb-tools/anchors';
 import { registrationStorageFactory } from '@webb-tools/browser-utils/storage';
 import { ERC20__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import { VAnchorContract } from '@webb-tools/evm-contracts';
-import { fetchVAnchorKeyFromAws, fetchVAnchorWasmFromAws } from '@webb-tools/fixtures-deployments';
-import { buildVariableWitnessCalculator, calculateTypedChainId, ChainType, CircomUtxo, Keypair, Note, NoteGenInput, toFixedHex, Utxo } from '@webb-tools/sdk-core';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
+import {
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  ChainType,
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  toFixedHex,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { hexToU8a, ZERO_ADDRESS, ZkComponents } from '@webb-tools/utils';
-import { BigNumberish, ContractReceipt, ContractTransaction, ethers } from 'ethers';
+import {
+  BigNumberish,
+  ContractReceipt,
+  ContractTransaction,
+  ethers,
+} from 'ethers';
 
 import { WebbWeb3Provider } from '../webb-provider';
 
-export const isVAnchorDepositPayload = (payload: TransactionPayloadType): boolean => {
+export const isVAnchorDepositPayload = (
+  payload: TransactionPayloadType
+): boolean => {
   return payload instanceof Note;
 };
 
-export const isVAnchorWithdrawPayload = (payload: TransactionPayloadType): boolean => {
+export const isVAnchorWithdrawPayload = (
+  payload: TransactionPayloadType
+): boolean => {
   return false;
 };
 
-export const isVAnchorTransferPayload = (payload: TransactionPayloadType): boolean => {
+export const isVAnchorTransferPayload = (
+  payload: TransactionPayloadType
+): boolean => {
   return false;
 };
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async getVAnchor(
     tx: Transaction<NewNotesTxResult>,
-    payload: TransactionPayloadType,
+    payload: TransactionPayloadType
   ): Promise<VAnchorContract> {
     const { note } = payload;
     const { sourceChainId } = note;
@@ -57,9 +79,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const srcVAnchor = this.inner.getVariableAnchorByAddress(srcAddress);
     return srcVAnchor;
   }
+
   async getTokenWrapper(
     tx: Transaction<NewNotesTxResult>,
-    payload: TransactionPayloadType,
+    payload: TransactionPayloadType
   ): Promise<FungibleTokenWrapper> {
     const srcVAnchor = await this.getVAnchor(tx, payload);
     const currentWebbToken = await srcVAnchor.getWebbToken();
@@ -72,12 +95,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async checkHasBalance(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapToken: string,
-  ): Promise<boolean> {
-    const provider = this.inner.getEthersProvider()
+    wrapUnwrapToken: string
+  ): Promise<void> | never {
+    const provider = this.inner.getEthersProvider();
     const signer = await provider.getSigner().getAddress();
     // Checking for balance of the wrapUnwrapToken
-    let hasBalance;
+    let hasBalance: boolean;
     // If the `wrapUnwrapToken` is the `ZERO_ADDRESS`, we are wrapping
     // the native token. Therefore, we must check the native balance.
     if (wrapUnwrapToken === ZERO_ADDRESS) {
@@ -88,7 +111,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       // the `wrapUnwrapToken` has been set to either the wrappedToken address
       // of the address of a wrappable ERC20 token. In either case, we can check the
       // balance using the `ERC20` contract.
-      const erc20 = await ERC20__factory.connect(wrapUnwrapToken, provider);
+      const erc20 = ERC20__factory.connect(wrapUnwrapToken, provider);
       const balance = await erc20.balanceOf(signer);
       hasBalance = balance.gte(payload.note.amount);
     }
@@ -98,20 +121,16 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       await this.inner.noteManager?.removeNote(payload);
       tx.fail('Not enough balance');
     }
-
-    return hasBalance;
   }
+
   async checkApproval(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string,
-    tokenWrapper: FungibleTokenWrapper,
+    tokenWrapper: FungibleTokenWrapper
   ): Promise<void> {
     const { note } = payload;
-    const {
-      amount,
-      sourceChainId,
-    } = note;
+    const { amount, sourceChainId } = note;
     const srcVAnchor = await this.getVAnchor(tx, payload);
     const currentWebbToken = await srcVAnchor.getWebbToken();
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
@@ -123,9 +142,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       (await srcVAnchor.isWebbTokenApprovalRequired(amount))
     ) {
       // approve the token
-      approvalTransaction = await currentWebbToken.approve(srcVAnchor._contract.address, amount, {
-        gasLimit: '0x5B8D80',
-      });
+      approvalTransaction = await currentWebbToken.approve(
+        srcVAnchor._contract.address,
+        amount,
+        {
+          gasLimit: '0x5B8D80',
+        }
+      );
     } else if (
       await srcVAnchor.isWrappableTokenApprovalRequired(
         wrapUnwrapToken,
@@ -165,25 +188,30 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapToken: string,
-  ): Promise<[
-    tx: Transaction<NewNotesTxResult>,
-    contractAddress: string,
-    inputs: Utxo[],
-    outputs: Utxo[],
-    fee: BigNumberish,
-    refund: BigNumberish,
-    recipient: string,
-    relayer: string,
-    wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>
-  ]> {
+    wrapUnwrapToken: string
+  ): Promise<
+    [
+      tx: Transaction<NewNotesTxResult>,
+      contractAddress: string,
+      inputs: Utxo[],
+      outputs: Utxo[],
+      fee: BigNumberish,
+      refund: BigNumberish,
+      recipient: string,
+      relayer: string,
+      wrapUnwrapToken: string,
+      leavesMap: Record<string, Uint8Array[]>
+    ]
+  > {
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
       const tokenWrapper = await this.getTokenWrapper(tx, payload);
-      if (wrapUnwrapToken === '') wrapUnwrapToken = tokenWrapper.contract.address;
-      this.checkHasBalance(tx, payload, wrapUnwrapToken);
-      this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
+      if (wrapUnwrapToken === '')
+        wrapUnwrapToken = tokenWrapper.contract.address;
+
+      await this.checkHasBalance(tx, payload, wrapUnwrapToken);
+
+      await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
 
       const secrets = payload.note.secrets.split(':');
       const depositUtxo = await CircomUtxo.generateUtxo({
@@ -197,16 +225,16 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       });
       console.log('depositUtxo', depositUtxo);
       return Promise.resolve([
-        tx,                                     // tx
-        payload.note.sourceIdentifyingData,     // contractAddress
-        [],                                     // inputs
-        [depositUtxo],                          // outputs
-        0,                                      // fee
-        0,                                      // refund
-        ZERO_ADDRESS,                           // recipient
-        ZERO_ADDRESS,                           // relayer
-        wrapUnwrapToken,                        // wrapUnwrapToken
-        {},                                     // leavesMap
+        tx, // tx
+        payload.note.sourceIdentifyingData, // contractAddress
+        [], // inputs
+        [depositUtxo], // outputs
+        0, // fee
+        0, // refund
+        ZERO_ADDRESS, // recipient
+        ZERO_ADDRESS, // relayer
+        wrapUnwrapToken, // wrapUnwrapToken
+        {}, // leavesMap
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
       throw new Error('Invalid payload');
@@ -216,7 +244,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       throw new Error('Invalid payload');
     }
   }
-  async generateNote(vAnchorId: string | number, destTypedChainId: number, amount: number): Promise<Note> {
+
+  async generateNote(
+    vAnchorId: string | number,
+    destTypedChainId: number,
+    amount: number
+  ): Promise<Note> {
     this.logger.trace('generateNote: ', vAnchorId, destTypedChainId, amount);
     const bridge = this.inner.methods.bridgeApi.getBridge();
     const currency = bridge?.currency;
@@ -285,6 +318,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     return note;
   }
+
   async transact(
     tx: Transaction<NewNotesTxResult>,
     contractAddress: string,
@@ -298,10 +332,23 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
+
     const smallFixtures: ZkComponents = await this.fetchSmallFixtures(tx, 1);
-    const dummyFixtures: ZkComponents = { zkey: new Uint8Array(), wasm: Buffer.from(""), witnessCalculator: undefined };
-    const vanchor = await VAnchor.connect(contractAddress, smallFixtures, dummyFixtures, signer);
+    const dummyFixtures: ZkComponents = {
+      zkey: new Uint8Array(),
+      wasm: Buffer.from(''),
+      witnessCalculator: undefined,
+    };
+
+    const vanchor = await VAnchor.connect(
+      contractAddress,
+      smallFixtures,
+      dummyFixtures,
+      signer
+    );
+
     tx.next(TransactionState.SendingTransaction, '0x');
+
     return vanchor.transact(
       inputs,
       outputs,
@@ -310,19 +357,29 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       recipient,
       relayer,
       wrapUnwrapToken,
-      leavesMap,
+      leavesMap
     );
   }
 
-  async fetchSmallFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents> {
+  async fetchSmallFixtures(
+    tx: Transaction<NewNotesTxResult>,
+    maxEdges: number
+  ): Promise<ZkComponents> {
     return this.fetchFixtures(tx, maxEdges, true);
   }
 
-  async fetchLargeFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents> {
+  async fetchLargeFixtures(
+    tx: Transaction<NewNotesTxResult>,
+    maxEdges: number
+  ): Promise<ZkComponents> {
     return this.fetchFixtures(tx, maxEdges, false);
   }
 
-  async fetchFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number, isSmall: boolean): Promise<ZkComponents> {
+  async fetchFixtures(
+    tx: Transaction<NewNotesTxResult>,
+    maxEdges: number,
+    isSmall: boolean
+  ): Promise<ZkComponents> {
     this.emit('stateChange', TransactionState.FetchingFixtures);
     const fixturesList = new Map<string, FixturesStatus>();
     fixturesList.set('VAnchorKey', 'Waiting');
@@ -334,14 +391,14 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const smallKey = await fetchVAnchorKeyFromAws(
       maxEdges,
       isSmall,
-      tx.cancelToken.abortSignal,
+      tx.cancelToken.abortSignal
     );
     fixturesList.set('VAnchorKey', 'Done');
     fixturesList.set('VAnchorWasm', 0);
     const smallWasm = await fetchVAnchorWasmFromAws(
       maxEdges,
       isSmall,
-      tx.cancelToken.abortSignal,
+      tx.cancelToken.abortSignal
     );
     fixturesList.set('VAnchorWasm', 'Done');
 
@@ -349,7 +406,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       zkey: smallKey,
       wasm: Buffer.from(smallWasm),
       witnessCalculator: buildVariableWitnessCalculator,
-    }
+    };
   }
 
   // Check if the evm address and keyData pairing has already registered.

@@ -1,12 +1,14 @@
-import { txpayment } from '@polkadot/types/interfaces/definitions';
-import { NewNotesTxResult, Transaction } from '@webb-tools/abstract-api-provider';
+import {
+  NewNotesTxResult,
+  Transaction,
+} from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
@@ -34,7 +36,7 @@ export const DepositConfirmContainer = forwardRef<
     ref
   ) => {
     const wrappingFlow = Boolean(wrappedAsset);
-    const { txQueue, currentTxId, api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, stage, startNewTransaction } = useVAnchor();
     const { setMainComponent, notificationApi } = useWebbUI();
@@ -44,7 +46,8 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi, activeAccount, activeChain, noteManager } = useWebContext();
+    const { activeApi, activeAccount, activeChain, noteManager } =
+      useWebContext();
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
       const noteStr = note.serialize();
@@ -70,7 +73,14 @@ export const DepositConfirmContainer = forwardRef<
     }, [activeApi, activeChain]);
 
     const onClickExecuteDeposit = useCallback(async () => {
-      if (!api || !activeApi || !activeAccount || !activeChain || !currentWebbToken) return;
+      if (
+        !api ||
+        !activeApi ||
+        !activeAccount ||
+        !activeChain ||
+        !currentWebbToken
+      )
+        return;
 
       // Set transaction payload for transaction processing card
       // Start a new transaction
@@ -96,9 +106,10 @@ export const DepositConfirmContainer = forwardRef<
 
         // Get the deposit token symbol
         let srcToken = tokenSymbol;
-        console.log('wrappedAsset', wrappedAsset)
+        console.log('wrappedAsset', wrappedAsset);
         if (wrappedAsset) {
-          const currencyFromConfig = activeApi?.config.getCurrencyByAddress(wrappedAsset);
+          const currencyFromConfig =
+            activeApi?.config.getCurrencyByAddress(wrappedAsset);
           if (!currencyFromConfig) {
             throw new Error('Token not found in the api config');
           }
@@ -131,14 +142,14 @@ export const DepositConfirmContainer = forwardRef<
             sourceIdentifyingData,
             Web3Provider.fromUri(activeChain.url).intoEthersProvider()
           );
-  
+
           // TODO: Make this parse the receipt for the index data
           const noteIndex = (await srcContract.getNextIndex()) - 1;
           const indexedNote = await Note.deserialize(note.serialize());
           indexedNote.mutateIndex(noteIndex.toString());
           await noteManager?.addNote(indexedNote);
           await noteManager?.removeNote(note);
-  
+
           // Notification Success Transaction
           tx.next(TransactionState.Done, {
             txHash: receipt.transactionHash,

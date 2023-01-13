@@ -22,9 +22,9 @@ export interface VAnchorAPI {
 
 export const useVAnchor = (): VAnchorAPI => {
   const { activeApi } = useWebContext();
-  const [ error ] = useState('');
-  const { txQueue, txPayloads, currentTxId, api: txQueueApi } = useTxQueue();
-  
+  const [error] = useState('');
+  const { txQueue, currentTxId, api: txQueueApi } = useTxQueue();
+
   const stage = useMemo(() => {
     const txes = txQueue.filter((tx) => tx.name === 'Deposit');
     if (txes.length === 0 || currentTxId === null) {
@@ -32,8 +32,8 @@ export const useVAnchor = (): VAnchorAPI => {
     }
     const lastTx = txes[txes.length - 1];
     return lastTx.currentStatus[0];
-  }, [txQueue, txPayloads, currentTxId]);
-  
+  }, [txQueue, currentTxId]);
+
   /// api
   const api = useMemo(() => {
     const api = activeApi?.methods.variableAnchor.actions;
