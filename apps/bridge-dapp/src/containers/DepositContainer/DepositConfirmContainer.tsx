@@ -1,11 +1,12 @@
 import {
+  Currency,
   NewNotesTxResult,
   Transaction,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -27,15 +28,14 @@ export const DepositConfirmContainer = forwardRef<
     {
       note,
       amount,
-      wrappedAsset,
       token,
       sourceChain,
       destChain,
-      wrappableTokenSymbol,
+      fungibleTokenId,
+      wrappedTokenId,
     },
     ref
   ) => {
-    const wrappingFlow = Boolean(wrappedAsset);
     const { api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, stage, startNewTransaction } = useVAnchor();
@@ -62,6 +62,23 @@ export const DepositConfirmContainer = forwardRef<
     const handleCopy = useCallback(
       (note: Note): void => copy(note.serialize()),
       [copy]
+    );
+
+    const fungibleToken = useMemo(() => {
+      return new Currency(currenciesConfig[fungibleTokenId]);
+    }, [fungibleTokenId]);
+
+    const wrappableToken = useMemo(() => {
+      if (!wrappedTokenId) {
+        return;
+      }
+
+      return new Currency(currenciesConfig[wrappedTokenId]);
+    }, [wrappedTokenId]);
+
+    const wrappingFlow = useMemo(
+      () => typeof wrappedTokenId !== 'undefined',
+      [wrappedTokenId]
     );
 
     const currentWebbToken = useMemo(() => {
@@ -96,66 +113,69 @@ export const DepositConfirmContainer = forwardRef<
         const {
           amount,
           denomination,
-          sourceChainId,
+          sourceChainId: sourceTypedChainId,
           sourceIdentifyingData,
-          targetChainId,
+          targetChainId: destTypedChainId,
           tokenSymbol,
         } = note.note;
         // Calculate the amount
         const formattedAmount = ethers.utils.formatUnits(amount, denomination);
 
         // Get the deposit token symbol
-        let srcToken = tokenSymbol;
-        console.log('wrappedAsset', wrappedAsset);
-        if (wrappedAsset) {
-          const currencyFromConfig =
-            activeApi?.config.getCurrencyByAddress(wrappedAsset);
-          if (!currencyFromConfig) {
-            throw new Error('Token not found in the api config');
-          }
+        let srcTokenSymbol = tokenSymbol;
+        console.log('wrappableTokenSymbol', wrappableToken);
 
-          srcToken = currencyFromConfig.symbol;
+        if (wrappableToken) {
+          srcTokenSymbol = wrappableToken.view.symbol;
         }
 
         // Get the destination token symbol
         const destToken = tokenSymbol;
+
         const tx = Transaction.new<NewNotesTxResult>('Deposit', {
           amount: +formattedAmount,
-          tokens: [srcToken, destToken],
+          tokens: [srcTokenSymbol, destToken],
           wallets: {
-            src: +sourceChainId,
-            dest: +targetChainId,
+            src: +sourceTypedChainId,
+            dest: +destTypedChainId,
           },
           token: tokenSymbol,
         });
         txQueueApi.registerTransaction(tx);
-        const args = await api?.prepareTransaction(tx, note, wrappedAsset);
+        const args = await api?.prepareTransaction(
+          tx,
+          note,
+          wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
+        );
+        if (!args) {
+          return txQueueApi.cancelTransaction(tx.id);
+        }
+
         // Add the note to the noteManager before transaction is sent.
         // This helps to safeguard the user.
         if (noteManager) {
           await noteManager.addNote(note);
         }
-        if (args) {
-          const receipt = await api.transact(...args);
 
-          const srcContract = VAnchor__factory.connect(
-            sourceIdentifyingData,
-            Web3Provider.fromUri(activeChain.url).intoEthersProvider()
-          );
+        const receipt = await api.transact(...args);
 
-          // TODO: Make this parse the receipt for the index data
-          const noteIndex = (await srcContract.getNextIndex()) - 1;
-          const indexedNote = await Note.deserialize(note.serialize());
-          indexedNote.mutateIndex(noteIndex.toString());
-          await noteManager?.addNote(indexedNote);
-          await noteManager?.removeNote(note);
+        const srcContract = VAnchor__factory.connect(
+          sourceIdentifyingData,
+          Web3Provider.fromUri(activeChain.url).intoEthersProvider()
+        );
 
-          // Notification Success Transaction
-          tx.next(TransactionState.Done, {
-            txHash: receipt.transactionHash,
-            outputNotes: [indexedNote],
-          });
-        }
+        // TODO: Make this parse the receipt for the index data
+        const noteIndex = (await srcContract.getNextIndex()) - 1;
+        const indexedNote = await Note.deserialize(note.serialize());
+        indexedNote.mutateIndex(noteIndex.toString());
+        await noteManager?.addNote(indexedNote);
+        await noteManager?.removeNote(note);
+
+        // Notification Success Transaction
+        tx.next(TransactionState.Done, {
+          txHash: receipt.transactionHash,
+          outputNotes: [indexedNote],
+        });
       } catch (error) {
         console.log('Deposit error', error);
         noteManager?.removeNote(note);
@@ -165,19 +185,19 @@ export const DepositConfirmContainer = forwardRef<
       }
     }, [
       api,
-      note,
-      wrappedAsset,
-      noteManager,
-      txQueueApi,
       activeApi,
-      activeChain,
       activeAccount,
+      activeChain,
       currentWebbToken,
-      downloadNote,
       depositTxInProgress,
-      notificationApi,
-      setMainComponent,
       startNewTransaction,
+      setMainComponent,
+      downloadNote,
+      note,
+      wrappableToken,
+      txQueueApi,
+      noteManager,
+      notificationApi,
     ]);
 
     const activeChains = useMemo<string[]>(() => {
@@ -243,7 +263,7 @@ export const DepositConfirmContainer = forwardRef<
         destChain={destChain?.name}
         fee={0}
         onClose={() => setMainComponent(undefined)}
-        wrappableTokenSymbol={wrappableTokenSymbol}
+        wrappableTokenSymbol={wrappableToken?.view.symbol}
       />
     );
   }

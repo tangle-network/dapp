@@ -343,40 +343,52 @@ export const DepositContainer = forwardRef<
       }
 
       if (
-        sourceChain &&
-        destChain &&
-        selectedToken &&
-        amount !== 0 &&
-        activeApi?.state?.activeBridge &&
-        activeChain
+        !sourceChain ||
+        !destChain ||
+        !selectedToken ||
+        amount === 0 ||
+        !activeApi?.state?.activeBridge ||
+        !activeChain ||
+        !noteManager ||
+        !fungibleCurrency
       ) {
-        setIsGeneratingNote(true);
-        const chainId = calculateTypedChainId(
-          activeChain.chainType,
-          activeChain.chainId
-        );
-        const wrappableTokenAddress =
-          wrappableCurrency?.getAddress(chainId) ?? undefined;
-        const newNote = await api.generateNote(
-          activeApi.state.activeBridge.targets[
-            calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
-          ],
-          calculateTypedChainId(destChain.chainType, destChain.chainId),
-          amount,
-        );
-        console.log('newNote', newNote);
-        setIsGeneratingNote(false);
-        setDepositContainerProps({
-          wrappedAsset: wrappableTokenAddress || '',
-          wrappableTokenSymbol: fungibleCurrency?.view.symbol,
-          amount,
-          token: selectedToken,
-          sourceChain: selectedSourceChain,
-          destChain: destChainInputValue,
-          note: newNote,
-        });
-        setMainComponentName('deposit-confirm-container');
+        return;
       }
+
+      setIsGeneratingNote(true);
+
+      const sourceTypedChainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+
+      const destTypedChainId = calculateTypedChainId(
+        destChain.chainType,
+        destChain.chainId
+      );
+
+      const currency = wrappableCurrency ?? fungibleCurrency;
+
+      const newNote = await noteManager.generateNote(
+        sourceTypedChainId,
+        destTypedChainId,
+        currency.view.symbol,
+        currency.getDecimals(),
+        amount
+      );
+      console.log('newNote', newNote);
+      setIsGeneratingNote(false);
+      setDepositContainerProps({
+        fungibleTokenId: fungibleCurrency.id,
+        wrappedTokenId: wrappableCurrency?.id,
+        amount,
+        token: selectedToken,
+        sourceChain: selectedSourceChain,
+        destChain: destChainInputValue,
+        note: newNote,
+      });
+
+      setMainComponentName('deposit-confirm-container');
     }, [
       api,
       chains,
@@ -387,6 +399,7 @@ export const DepositContainer = forwardRef<
       destChain,
       selectedToken,
       amount,
+      noteManager,
       activeApi?.state?.activeBridge,
       activeChain,
       setMainComponentName,

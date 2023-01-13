@@ -38,8 +38,12 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   destChain?: ChainType;
 
   /**
-   * The signal to wrap and deposit flow
-   * */
-  wrappedAsset: string;
-  wrappableTokenSymbol?: string;
+   * The fungible token id
+   */
+  fungibleTokenId: number;
+
+  /**
+   * The wrapped token id
+   */
+  wrappedTokenId?: number;
 }
