@@ -4,7 +4,12 @@
 import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import { ActionEvent, NewNotesTxResult, Transaction, TransactionState } from '../transaction';
+import {
+  ActionEvent,
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '../transaction';
 import { BigNumberish, ContractReceipt } from 'ethers';
 import { ZkComponents } from '@webb-tools/utils';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
@@ -42,26 +47,40 @@ export abstract class VAnchorActions<
 > extends AbstractState<T> {
   logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
 
-  abstract fetchSmallFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents>;
-  abstract fetchLargeFixtures(tx: Transaction<NewNotesTxResult>, maxEdges: number): Promise<ZkComponents>;
+  abstract fetchSmallFixtures(
+    tx: Transaction<NewNotesTxResult>,
+    maxEdges: number
+  ): Promise<ZkComponents>;
+
+  abstract fetchLargeFixtures(
+    tx: Transaction<NewNotesTxResult>,
+    maxEdges: number
+  ): Promise<ZkComponents>;
+
   // A function to check if the (account, public key) pair is registered.
-  abstract isPairRegistered(target: string, account: string, pubkey: string): Promise<boolean>;
+  abstract isPairRegistered(
+    target: string,
+    account: string,
+    pubkey: string
+  ): Promise<boolean>;
+
   // A function to register an account. It will return true if the account was registered, and false otherwise.
-  abstract register(target: string, account: string, pubkey: string): Promise<boolean>;
+  abstract register(
+    target: string,
+    account: string,
+    pubkey: string
+  ): Promise<boolean>;
+
   // A function to retrieve notes from chain that are spendable by a keypair
   abstract syncNotesForKeypair(target: string, owner: Keypair): Promise<Note[]>;
-  // A function to generate a note for VAnchor transactions
-  abstract generateNote(
-    vAnchorId: number | string,
-    destTypedChainId: number,
-    amount: number,
-  ): Promise<Note>;
+
   // A function to prepare the parameters for a transaction
   abstract prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
-    wrapUnwrapToken: string,
+    wrapUnwrapToken: string
   ): Promise<Awaited<Parameters<VAnchorActions['transact']>>> | never;
+
   // A function for transcting
   abstract transact(
     tx: Transaction<NewNotesTxResult>,

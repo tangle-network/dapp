@@ -2,8 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NoteStorage } from '@webb-tools/browser-utils/storage';
+import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
+import {
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 
@@ -228,5 +235,67 @@ export class NoteManager {
     }
 
     return currentAmount.gte(targetAmount) ? currentNotes : null;
+  }
+
+  /**
+   * Generate a note
+   * @param sourceTypedChainId The source typed chain id
+   * @param destTypedChainId The destination typed chain id
+   * @param tokenSymbol The token symbol of the note
+   * @param tokenDecimals The token decimals of the note
+   * @param amount The amount of the note
+   * @returns The generated note
+   */
+  async generateNote(
+    sourceTypedChainId: number,
+    destTypedChainId: number,
+    tokenSymbol: string,
+    tokenDecimals: number,
+    amount: number
+  ): Promise<Note> {
+    const amountBigNumber = ethers.utils
+      .parseUnits(amount.toString(), tokenDecimals)
+      .toString();
+
+    // Convert the amount to units of wei
+    const outputUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: amountBigNumber,
+      originChainId: sourceTypedChainId.toString(),
+      chainId: destTypedChainId.toString(),
+      keypair: this.keypair,
+    });
+
+    const srcAddress = getLatestAnchorAddress(sourceTypedChainId);
+    const destAddress = getLatestAnchorAddress(destTypedChainId);
+    if (!srcAddress || !destAddress) {
+      throw new Error('No anchor address found');
+    }
+
+    const noteInput: NoteGenInput = {
+      amount: amountBigNumber,
+      backend: 'Circom',
+      curve: 'Bn254',
+      denomination: '18',
+      exponentiation: '5',
+      hashFunction: 'Poseidon',
+      protocol: 'vanchor',
+      secrets: [
+        toFixedHex(destTypedChainId, 8).substring(2),
+        toFixedHex(outputUtxo.amount, 16).substring(2),
+        toFixedHex(this.keypair.privkey).substring(2),
+        toFixedHex(`0x${outputUtxo.blinding}`).substring(2),
+      ].join(':'),
+      sourceChain: sourceTypedChainId.toString(),
+      sourceIdentifyingData: srcAddress,
+      targetChain: destTypedChainId.toString(),
+      targetIdentifyingData: destAddress,
+      tokenSymbol: tokenSymbol,
+      version: 'v1',
+      width: '5',
+    };
+
+    return Note.generateNote(noteInput);
   }
 }

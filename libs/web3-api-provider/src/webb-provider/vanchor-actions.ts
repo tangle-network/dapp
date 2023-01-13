@@ -206,6 +206,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
       const tokenWrapper = await this.getTokenWrapper(tx, payload);
+      console.log(
+        'Token wrapper contract address: ',
+        tokenWrapper.contract.address
+      );
       if (wrapUnwrapToken === '')
         wrapUnwrapToken = tokenWrapper.contract.address;
 
@@ -243,80 +247,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     } else {
       throw new Error('Invalid payload');
     }
-  }
-
-  async generateNote(
-    vAnchorId: string | number,
-    destTypedChainId: number,
-    amount: number
-  ): Promise<Note> {
-    this.logger.trace('generateNote: ', vAnchorId, destTypedChainId, amount);
-    const bridge = this.inner.methods.bridgeApi.getBridge();
-    const currency = bridge?.currency;
-
-    if (!bridge || !currency) {
-      this.logger.error('Api not ready');
-      throw new Error('api not ready');
-    }
-    // Convert the amount to bn units (i.e. WEI instead of ETH)
-    const bnAmount = ethers.utils
-      .parseUnits(amount.toString(), currency.getDecimals())
-      .toString();
-    const tokenSymbol = currency.view.symbol;
-    const sourceEvmId = await this.inner.getChainId();
-    const sourceChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
-
-    const keypair = this.inner.noteManager
-      ? this.inner.noteManager.getKeypair()
-      : new Keypair();
-
-    this.logger.info('got the keypair', keypair);
-
-    // Convert the amount to units of wei
-    const depositOutputUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
-      amount: bnAmount,
-      originChainId: sourceChainId.toString(),
-      chainId: destTypedChainId.toString(),
-      keypair,
-    });
-
-    this.logger.info('generated the utxo: ', depositOutputUtxo.serialize());
-
-    const srcAddress = bridge.targets[sourceChainId];
-    const destAddress = bridge.targets[destTypedChainId];
-
-    const noteInput: NoteGenInput = {
-      amount: bnAmount.toString(),
-      backend: 'Circom',
-      curve: 'Bn254',
-      denomination: '18',
-      exponentiation: '5',
-      hashFunction: 'Poseidon',
-      protocol: 'vanchor',
-      secrets: [
-        toFixedHex(destTypedChainId, 8).substring(2),
-        toFixedHex(depositOutputUtxo.amount, 16).substring(2),
-        toFixedHex(keypair.privkey).substring(2),
-        toFixedHex(`0x${depositOutputUtxo.blinding}`).substring(2),
-      ].join(':'),
-      sourceChain: sourceChainId.toString(),
-      sourceIdentifyingData: srcAddress,
-      targetChain: destTypedChainId.toString(),
-      targetIdentifyingData: destAddress,
-      tokenSymbol: tokenSymbol,
-      version: 'v1',
-      width: '5',
-    };
-
-    this.logger.log('before generating the note: ', noteInput);
-
-    const note = await Note.generateNote(noteInput);
-
-    this.logger.log('after generating the note');
-
-    return note;
   }
 
   async transact(
