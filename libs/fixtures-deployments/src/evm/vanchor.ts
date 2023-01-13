@@ -5,121 +5,6 @@ import { withLocalFixtures } from '@webb-tools/react-environment/app-mode';
 
 import { getCachedFixtureURI } from '..';
 import { cachedFetch } from '@webb-tools/browser-utils';
-// Variable anchor deployments either have 1 edge, or 7 edges.
-// Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
-//    and a large circuit (16 input UTXOs)
-export const fetchVAnchorKeyFromIpfs = async (
-  maxEdges: number,
-  small: boolean,
-  abortSignal: AbortSignal
-) => {
-  let ipfsHash: string;
-  let cachedURI: string;
-
-  switch (maxEdges) {
-    case 1:
-      if (small) {
-        ipfsHash = 'QmVETChPLMDpmrLPBKVBsetNcq48ssF2opHtjjKxxuxEQ3';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
-      } else {
-        ipfsHash = 'QmQiucesWVmfesvHXw3KoxLRynq2TXFQzBRhnURWcCp89J';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
-      }
-
-      break;
-    case 7:
-      if (small) {
-        ipfsHash = 'QmeM3d7Lt56W1dQwajcfkNZMP7WHWdrPeqJxBPK5hor5nW';
-        cachedURI = getCachedFixtureURI('vanchor_key_8_small.zkey');
-      } else {
-        ipfsHash = 'QmcZGwTgrJgUEsQ27wLmFXu86L7XeKnb7dW7xATXKAj2vE';
-        cachedURI = getCachedFixtureURI('vanchor_key_8_large.zkey');
-      }
-
-      break;
-    default:
-      if (small) {
-        ipfsHash = 'QmVETChPLMDpmrLPBKVBsetNcq48ssF2opHtjjKxxuxEQ3';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
-      } else {
-        ipfsHash = 'QmQiucesWVmfesvHXw3KoxLRynq2TXFQzBRhnURWcCp89J';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
-      }
-
-      break;
-  }
-
-  try {
-    const url = withLocalFixtures()
-      ? cachedURI
-      : `https://ipfs.io/ipfs/${ipfsHash}`;
-    const key = await cachedFetch(url, { signal: abortSignal });
-
-    return key;
-  } catch (e) {
-    console.log('error when fetching circuit key from ipfs: ', e);
-    throw e;
-  }
-};
-
-// Variable anchor deployments either have 1 edge, or 7 edges.
-// Each vanchor deployment corresponding to an edge has a small (2 input UTXOs)
-//    and a large circuit (16 input UTXOs)
-export const fetchVAnchorWasmFromIpfs = async (
-  maxEdges: number,
-  small: boolean,
-  abortSignal: AbortSignal
-) => {
-  let ipfsHash: string;
-  let cachedURI: string;
-
-  switch (maxEdges) {
-    case 1:
-      if (small) {
-        ipfsHash = 'QmNrN9W8ejsSzjqrZYVZDwt7yh4Ldw62az3qmrkaSRXgGX';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
-      } else {
-        ipfsHash = 'QmXRJRWLXvjVF9rwnVzwbDx2RGQEkkWcKnjjWjKQzwKizg';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
-      }
-
-      break;
-    case 7:
-      if (small) {
-        ipfsHash = 'QmTaghBK7qzrCpWBCZAUxrrF5ga4dGAmsfBB6ShFueFnV3';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_8_small.wasm');
-      } else {
-        ipfsHash = 'QmZZtkzKJgoV8cAWrZm3QU7d1QPiEunHMhP6vcNPXfv8yk';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_8_large.wasm');
-      }
-
-      break;
-    default:
-      if (small) {
-        ipfsHash = 'QmNrN9W8ejsSzjqrZYVZDwt7yh4Ldw62az3qmrkaSRXgGX';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
-      } else {
-        ipfsHash = 'QmXRJRWLXvjVF9rwnVzwbDx2RGQEkkWcKnjjWjKQzwKizg';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
-      }
-
-      break;
-  }
-
-  try {
-    const url = withLocalFixtures()
-      ? cachedURI
-      : `https://ipfs.io/ipfs/${ipfsHash}`;
-    const wasm = await cachedFetch(url, {
-      signal: abortSignal,
-    });
-
-    return wasm;
-  } catch (e) {
-    console.log('error when fetching wasm from ipfs: ', e);
-    throw e;
-  }
-};
 
 export const fetchVAnchorKeyFromAws = async (
   maxEdges: number,
@@ -133,30 +18,30 @@ export const fetchVAnchorKeyFromAws = async (
     case 1:
       if (small) {
         filePath = 'vanchor_2/2/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/2/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     case 7:
       if (small) {
         filePath = 'vanchor_2/8/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_8_small.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/8/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_8_large.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     default:
       if (small) {
         filePath = 'vanchor_2/2/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_small.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/2/circuit_final.zkey';
-        cachedURI = getCachedFixtureURI('vanchor_key_2_large.zkey');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
@@ -193,30 +78,30 @@ export const fetchVAnchorWasmFromAws = async (
     case 1:
       if (small) {
         filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/2/poseidon_vanchor_16_2.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     case 7:
       if (small) {
         filePath = 'vanchor_2/8/poseidon_vanchor_2_8.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_8_small.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/8/poseidon_vanchor_16_8.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_8_large.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     default:
       if (small) {
         filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_small.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       } else {
         filePath = 'vanchor_16/2/poseidon_vanchor_16_2.wasm';
-        cachedURI = getCachedFixtureURI('vanchor_wasm_2_large.wasm');
+        cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
