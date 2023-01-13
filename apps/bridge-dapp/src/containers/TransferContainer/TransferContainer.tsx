@@ -49,7 +49,7 @@ export const TransferContainer = forwardRef<
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
-    const { activeChain, activeApi } = useWebContext();
+    const { activeChain, activeApi, noteManager } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -560,13 +560,12 @@ export const TransferContainer = forwardRef<
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
-      if (!api) {
-        return;
-      }
-
       if (
         !fungibleCurrency ||
         !destChain ||
+        !api ||
+        !noteManager ||
+        !fungibleCurrency ||
         !activeApi?.state?.activeBridge ||
         !amount
       ) {
@@ -588,12 +587,13 @@ export const TransferContainer = forwardRef<
       // Calculate the chain note if the change amount is greater than 0
       const changeNote =
         changeAmount > 0
-          ? await api
+          ? await noteManager
               .generateNote(
-                treeId,
+                +treeId,
                 destTypedChainId,
-                Number(infoCalculated.changeAmount),
-                undefined
+                fungibleCurrency.view.symbol,
+                fungibleCurrency.getDecimals(),
+                changeAmount
               )
               .then((note) => note.note.serialize())
           : undefined;
@@ -612,16 +612,17 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
-      api,
-      activeApi?.state.activeBridge,
-      activeRelayer,
-      amount,
-      destChain,
       fungibleCurrency,
+      destChain,
+      api,
+      noteManager,
+      activeApi?.state.activeBridge,
+      amount,
       infoCalculated.changeAmount,
+      setMainComponent,
       inputNotes,
       recipient,
-      setMainComponent,
+      activeRelayer,
     ]);
 
     useEffect(() => {

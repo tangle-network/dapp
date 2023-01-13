@@ -42,8 +42,14 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const { activeApi, activeChain, activeWallet, chains, switchChain } =
-    useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    activeWallet,
+    chains,
+    switchChain,
+    noteManager,
+  } = useWebContext();
 
   const {
     fungibleCurrency,
@@ -487,9 +493,6 @@ export const WithdrawContainer = forwardRef<
               ? 'Switch chain to withdraw'
               : undefined,
           onClick: async () => {
-            if (!api) {
-              return;
-            }
             if (isDisabledWithdraw && otherAvailableChains.length > 0) {
               return await handleSwitchToOtherDestChains();
             }
@@ -497,14 +500,19 @@ export const WithdrawContainer = forwardRef<
             if (
               !currentTypedChainId ||
               !fungibleCurrency ||
-              !activeApi ||
+              !api ||
+              !noteManager ||
               !activeApi?.state.activeBridge ||
               !recipient
             ) {
               return;
             }
 
-            const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
+            const currentCurrecy =
+              isUnwrap && wrappableCurrency
+                ? wrappableCurrency
+                : fungibleCurrency;
+            const currentCurrencyDecimals = currentCurrecy.getDecimals();
 
             // Find the treeId (target) of the selected inputs
             const treeId =
@@ -515,7 +523,7 @@ export const WithdrawContainer = forwardRef<
               availableNotesFromManager ?? [],
               ethers.utils.parseUnits(
                 amount.toString(),
-                fungibleCurrencyDecimals
+                currentCurrencyDecimals
               )
             );
 
@@ -536,25 +544,26 @@ export const WithdrawContainer = forwardRef<
             const changeAmountBigNumber = spentValue.sub(
               ethers.utils.parseUnits(
                 amount.toString(),
-                fungibleCurrencyDecimals
+                currentCurrencyDecimals
               )
             );
 
             const parsedChangeAmount = Number(
               ethers.utils.formatUnits(
                 changeAmountBigNumber,
-                fungibleCurrencyDecimals
+                currentCurrencyDecimals
               )
             );
 
             // Generate a change note if applicable
             const changeNote = changeAmountBigNumber.gt(0)
-              ? await api
+              ? await noteManager
                   .generateNote(
-                    treeId,
+                    +treeId,
                     currentTypedChainId,
-                    parsedChangeAmount,
-                    undefined
+                    currentCurrecy.view.symbol,
+                    currentCurrencyDecimals,
+                    amount
                   )
                   .then((note) => note.note.serialize())
               : undefined;
