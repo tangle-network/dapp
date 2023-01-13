@@ -15,7 +15,11 @@ export const FileUploadList = forwardRef<HTMLUListElement, FileUploadListProps>(
       >
         <ul className="space-y-2" {...props} ref={ref}>
           {title && (
-            <Typography component="p" variant="utility">
+            <Typography
+              component="p"
+              variant="utility"
+              className="normal-case text-base"
+            >
               {title}
             </Typography>
           )}
