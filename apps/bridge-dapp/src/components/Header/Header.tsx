@@ -51,7 +51,7 @@ export const Header: FC<HeaderProps> = () => {
               loadingText="Connecting..."
               onClick={onConnectWalletClick}
             >
-              Connect Wallet
+              Connect wallet
             </Button>
           )}
 
