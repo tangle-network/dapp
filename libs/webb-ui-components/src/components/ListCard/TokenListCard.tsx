@@ -135,7 +135,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
             className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
             ta="center"
           >
-            Dont see your asset?
+            Don't see your asset?
           </Typography>
 
           <Button

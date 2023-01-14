@@ -66,8 +66,8 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               </Typography>
             </p>
           ) : (
-            <Typography variant="body1" fw="bold" className="capitalize">
-              Select {title}
+            <Typography variant="body1" fw="bold">
+              Select {title.toLowerCase()}
             </Typography>
           )}
         </div>

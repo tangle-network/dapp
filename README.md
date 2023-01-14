@@ -51,7 +51,7 @@ npm install --global yarn
 
 Great! Now your **Node** environment is ready! 🚀🚀
 
-## Run bridge-dapp locally 💻
+## Run Hubble bridge locally 💻
 
 Once the development environment is set up, you may proceed to install the required dependencies and run the dapp locally.
 
