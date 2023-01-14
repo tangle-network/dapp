@@ -345,7 +345,6 @@ export const DepositContainer = forwardRef<
       if (
         !sourceChain ||
         !destChain ||
-        !selectedToken ||
         amount === 0 ||
         !activeApi?.state?.activeBridge ||
         !activeChain ||
@@ -367,22 +366,19 @@ export const DepositContainer = forwardRef<
         destChain.chainId
       );
 
-      const currency = wrappableCurrency ?? fungibleCurrency;
-
       const newNote = await noteManager.generateNote(
         sourceTypedChainId,
         destTypedChainId,
-        currency.view.symbol,
-        currency.getDecimals(),
+        fungibleCurrency.view.symbol,
+        fungibleCurrency.getDecimals(),
         amount
       );
       console.log('newNote', newNote);
       setIsGeneratingNote(false);
       setDepositContainerProps({
         fungibleTokenId: fungibleCurrency.id,
-        wrappedTokenId: wrappableCurrency?.id,
+        wrappableTokenId: wrappableCurrency?.id,
         amount,
-        token: selectedToken,
         sourceChain: selectedSourceChain,
         destChain: destChainInputValue,
         note: newNote,
@@ -397,7 +393,6 @@ export const DepositContainer = forwardRef<
       hasNoteAccount,
       sourceChain,
       destChain,
-      selectedToken,
       amount,
       noteManager,
       activeApi?.state?.activeBridge,

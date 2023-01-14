@@ -23,11 +23,6 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   amount: number;
 
   /**
-   * The selected token to deposit
-   */
-  token?: TokenType;
-
-  /**
    * The source chain
    */
   sourceChain?: ChainType;
@@ -45,5 +40,5 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The wrapped token id
    */
-  wrappedTokenId?: number;
+  wrappableTokenId?: number;
 }

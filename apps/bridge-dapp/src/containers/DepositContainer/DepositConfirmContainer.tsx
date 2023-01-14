@@ -25,15 +25,7 @@ export const DepositConfirmContainer = forwardRef<
   DepositConfirmContainerProps
 >(
   (
-    {
-      note,
-      amount,
-      token,
-      sourceChain,
-      destChain,
-      fungibleTokenId,
-      wrappedTokenId,
-    },
+    { note, amount, sourceChain, destChain, fungibleTokenId, wrappableTokenId },
     ref
   ) => {
     const { api: txQueueApi } = useTxQueue();
@@ -48,6 +40,7 @@ export const DepositConfirmContainer = forwardRef<
     );
     const { activeApi, activeAccount, activeChain, noteManager } =
       useWebContext();
+
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
       const noteStr = note.serialize();
@@ -69,16 +62,16 @@ export const DepositConfirmContainer = forwardRef<
     }, [fungibleTokenId]);
 
     const wrappableToken = useMemo(() => {
-      if (!wrappedTokenId) {
+      if (!wrappableTokenId) {
         return;
       }
 
-      return new Currency(currenciesConfig[wrappedTokenId]);
-    }, [wrappedTokenId]);
+      return new Currency(currenciesConfig[wrappableTokenId]);
+    }, [wrappableTokenId]);
 
     const wrappingFlow = useMemo(
-      () => typeof wrappedTokenId !== 'undefined',
-      [wrappedTokenId]
+      () => typeof wrappableTokenId !== 'undefined',
+      [wrappableTokenId]
     );
 
     const currentWebbToken = useMemo(() => {
@@ -172,6 +165,7 @@ export const DepositConfirmContainer = forwardRef<
         await noteManager?.removeNote(note);
 
         // Notification Success Transaction
+        tx.txHash = receipt.transactionHash;
         tx.next(TransactionState.Done, {
           txHash: receipt.transactionHash,
           outputNotes: [indexedNote],
@@ -258,7 +252,7 @@ export const DepositConfirmContainer = forwardRef<
         onDownload={() => downloadNote(note)}
         amount={amount}
         wrappingAmount={String(amount)}
-        fungibleTokenSymbol={token?.symbol}
+        fungibleTokenSymbol={fungibleToken.view.symbol}
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
