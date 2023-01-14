@@ -36,7 +36,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       () => ({
         ...bridgeAssetInputProps,
         title: bridgeAssetInputProps?.title ?? 'Bridging Asset',
-        info: bridgeAssetInputProps?.info ?? 'Bridging Asset',
+        info: bridgeAssetInputProps?.info ?? 'bridging asset',
       }),
       [bridgeAssetInputProps]
     );

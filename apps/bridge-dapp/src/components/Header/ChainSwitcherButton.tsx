@@ -46,7 +46,7 @@ export const ChainSwitcherButton: FC = () => {
             chainType="source"
             chains={sourceChains}
             value={{
-              name: activeChain?.name ?? 'Select Chain',
+              name: activeChain?.name ?? 'Select chain',
               symbol: activeChain?.name ?? '',
             }}
             onClose={() => setMainComponent(undefined)}
