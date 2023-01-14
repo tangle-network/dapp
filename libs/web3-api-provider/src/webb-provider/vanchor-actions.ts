@@ -277,6 +277,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       signer
     );
 
+    tx.txHash = '0x';
     tx.next(TransactionState.SendingTransaction, '0x');
 
     return vanchor.transact(
