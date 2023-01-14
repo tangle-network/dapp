@@ -4,7 +4,6 @@ export * from './vanchor/useVAnchor';
 export * from './relayer/useRelayers';
 export * from './note';
 export * from './transfer/useTransfer';
-export * from './withdraw/useWithdraw';
 export * from './types';
 export * from './useAccounts';
 export * from './useFetch';

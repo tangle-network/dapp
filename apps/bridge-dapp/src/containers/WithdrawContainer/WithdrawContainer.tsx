@@ -514,10 +514,6 @@ export const WithdrawContainer = forwardRef<
                 : fungibleCurrency;
             const currentCurrencyDecimals = currentCurrecy.getDecimals();
 
-            // Find the treeId (target) of the selected inputs
-            const treeId =
-              activeApi.state.activeBridge.targets[currentTypedChainId];
-
             // Get the notes that will be spent for this withdraw
             const inputNotes = NoteManager.getNotesFifo(
               availableNotesFromManager ?? [],
@@ -555,11 +551,13 @@ export const WithdrawContainer = forwardRef<
               )
             );
 
+            const sourceTypedChainId = inputNotes[0].note.sourceChainId;
+
             // Generate a change note if applicable
             const changeNote = changeAmountBigNumber.gt(0)
               ? await noteManager
                   .generateNote(
-                    +treeId,
+                    +sourceTypedChainId,
                     currentTypedChainId,
                     currentCurrecy.view.symbol,
                     currentCurrencyDecimals,
