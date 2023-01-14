@@ -106,7 +106,7 @@ export const WithDrawListCard = forwardRef<HTMLDivElement, WithDrawListCardProps
 
         <div className={cx({ hidden: !isDisconnected })} hidden={!isDisconnected}>
           <Button isFullWidth className={cx('justify-center')} onClick={onConnectWallet as unknown as MouseEventHandler<HTMLButtonElement>}>
-            Connect Wallet
+            Connect wallet
           </Button>
         </div>
       </ListCardWrapper>

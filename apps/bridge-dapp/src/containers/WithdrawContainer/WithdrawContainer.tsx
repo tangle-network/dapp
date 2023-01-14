@@ -371,7 +371,7 @@ export const WithdrawContainer = forwardRef<
               setMainComponent(
                 <TokenListCard
                   className="w-[550px] h-[700px]"
-                  title={'Select Asset to Unwrap into'}
+                  title={'Select Asset to Unwrap'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
                   unavailableTokens={[]}
