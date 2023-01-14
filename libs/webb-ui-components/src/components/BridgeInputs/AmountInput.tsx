@@ -98,6 +98,7 @@ export const AmountInput = forwardRef<
               size="sm"
               autoComplete="off"
               isDisabled={isDisabled}
+              min={0}
               {...overrideInputProps}
             />
           </div>
