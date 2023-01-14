@@ -1,15 +1,15 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
+import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { TransactionState } from '@webb-tools/dapp-types';
 import { useTransactionProgressValue } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
-import { TransactionState } from '@webb-tools/dapp-types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -31,12 +31,11 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const { withdraw, stage } = useWithdraw({
-      amount: amount,
-      notes: availableNotes,
-      recipient: recipient,
-      unwrapTokenAddress: unwrapCurrency?.getAddressOfChain(targetChainId),
-    });
+    const [stage, setStage] = useState<TransactionState>(
+      TransactionState.Ideal
+    );
+
+    const { getLatestTx } = useVAnchor();
 
     const progressValue = useTransactionProgressValue(stage);
 
@@ -132,7 +131,7 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [stage, unwrapCurrency]);
 
     // The main action onClick handler
-    const onClick = useCallback(async () => {
+    const handleExecuteWithdraw = useCallback(async () => {
       if (withdrawTxInProgress) {
         setMainComponent(undefined);
         return;
@@ -141,15 +140,23 @@ export const WithdrawConfirmContainer = forwardRef<
       if (changeNote) {
         downloadNote(changeNote);
       }
+    }, [changeNote, downloadNote, withdrawTxInProgress, setMainComponent]);
 
-      await withdraw();
-    }, [
-      changeNote,
-      downloadNote,
-      withdrawTxInProgress,
-      setMainComponent,
-      withdraw,
-    ]);
+    // Effect to subscribe to the latest tx and update the stage
+    useEffect(() => {
+      const tx = getLatestTx('Withdraw');
+      if (!tx) {
+        return;
+      }
+
+      const sub = tx.$currentStatus.subscribe(([status]) => {
+        setStage(status);
+      });
+
+      return () => {
+        sub.unsubscribe();
+      };
+    }, [getLatestTx]);
 
     return (
       <WithdrawConfirm
@@ -164,7 +171,7 @@ export const WithdrawConfirmContainer = forwardRef<
             ? !checked
             : false,
           children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
-          onClick,
+          onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
           isChecked: checked,
