@@ -130,6 +130,7 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@headlessui/react": "^1.7.3",
+    "@netlify/plugin-nextjs": "^4.30.0",
     "@ngneat/falso": "^6.1.0",
     "@nrwl/cli": "15.4.5",
     "@nrwl/cypress": "15.4.5",

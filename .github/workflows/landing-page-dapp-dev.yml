@@ -35,6 +35,9 @@ jobs:
       - name: Build project
         run: yarn build:webbsite
 
+      - name: Copy deployment config to root
+        run: cp apps/webbsite/netlify.toml netlify.toml
+
       - name: Deploy to Netlify
         id: deploy-netlify
         uses: netlify/actions/cli@master
@@ -42,7 +45,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_WEBBSITE_ID }}
         with:
-          args: deploy context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
+          args: deploy --build context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
