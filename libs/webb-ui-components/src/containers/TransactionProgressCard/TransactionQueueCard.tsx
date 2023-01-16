@@ -266,7 +266,7 @@ export const TransactionQueueCard = forwardRef<
 
           <div className={'grow'}>
             <Typography
-              variant={'body2'}
+              variant={'body1'}
               fw={'bold'}
               className={' text-mono-180 dark:text-mono'}
             >
@@ -278,7 +278,7 @@ export const TransactionQueueCard = forwardRef<
                   : 'Transaction Processing')}
             </Typography>
             <Typography
-              variant={'body4'}
+              variant={'body2'}
               className={'text-mono-120 dark:text-mono-80 pr-1'}
             >
               {transactionSummeryText}

@@ -217,7 +217,7 @@ export const TransactionProgressCard = forwardRef<
             </div>
             <Typography
               fw={'bold'}
-              variant={'body3'}
+              variant={'body2'}
               className={'whitespace-nowrap'}
             >
               {timeLabel}
@@ -238,7 +238,7 @@ export const TransactionProgressCard = forwardRef<
               </Typography>
               {labelVariant === 'native' ? (
                 <Typography
-                  variant={'body4'}
+                  variant={'body1'}
                   fw={'bold'}
                   className={'py-0 text-mono-100'}
                 >
@@ -246,7 +246,7 @@ export const TransactionProgressCard = forwardRef<
                 </Typography>
               ) : (
                 <Typography
-                  variant={'body4'}
+                  variant={'body1'}
                   fw={'bold'}
                   className="flex items-center py-0 uppercase text-mono-200"
                 >
