@@ -91,7 +91,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             destChain={destChain}
             amount={amount}
             tokenPairString={`${fungibleTokenSymbol}${
-              wrappableTokenSymbol ? `-${wrappableTokenSymbol}` : ''
+              wrappableTokenSymbol ? `/${wrappableTokenSymbol}` : ''
             }`}
           />
         </div>
