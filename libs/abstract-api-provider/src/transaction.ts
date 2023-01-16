@@ -1,6 +1,7 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CancellationToken } from './cancelation-token';
+import { notificationApi } from '@webb-tools/webb-ui-components';
 
 export interface TXresultBase {
   // method: MethodPath;
@@ -140,10 +141,21 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
           if (state === TransactionState.Done) {
             resolve(data as T);
           } else if (state === TransactionState.Failed) {
-            reject(data as FailedTransaction);
+            const failedData = data as FailedTransaction;
+            notificationApi.addToQueue({
+              variant: 'error',
+              message: 'Transaction Failed',
+              secondaryMessage: failedData.error,
+            });
           }
         })
-        .catch(reject);
+        .catch((reason) => {
+          notificationApi.addToQueue({
+            variant: 'error',
+            message: 'Executor reject',
+            secondaryMessage: reason.toString?.(),
+          });
+        });
     };
     return new Transaction(exec, name, metadata, status);
   }
@@ -184,12 +196,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     this._status.next([status, data]);
   }
 
-  fail(error: string): never {
+  fail(error: string): void {
     this.next(TransactionState.Failed, {
       error,
       txHash: this.txHash,
     });
-    throw new Error(error);
   }
 
   cancel() {
