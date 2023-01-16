@@ -53,7 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |
-            <span aria-hidden="true">✅</span> Deploy Preview for *webbsite development* is ready! Thanks for the contribution @${{ github.actor }}
+            <span aria-hidden="true">✅</span> Deploy Preview for *development webbsite* is ready! Thanks for the contribution @${{ github.actor }}
 
             |  Name | Link |
             |---------------------------------|------------------------|
