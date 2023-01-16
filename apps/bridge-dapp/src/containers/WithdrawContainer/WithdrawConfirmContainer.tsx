@@ -44,7 +44,7 @@ export const WithdrawConfirmContainer = forwardRef<
       TransactionState.Ideal
     );
 
-    const { api: vAnchorApi, getLatestTx } = useVAnchor();
+    const { api: vAnchorApi } = useVAnchor();
 
     const progressValue = useTransactionProgressValue(stage);
 
@@ -53,6 +53,7 @@ export const WithdrawConfirmContainer = forwardRef<
     const { activeApi, noteManager } = useWebContext();
 
     const { api: txQueueApi } = useTxQueue();
+    const { getLatestTransaction } = txQueueApi;
 
     const {
       relayersState: { activeRelayer },
@@ -186,8 +187,6 @@ export const WithdrawConfirmContainer = forwardRef<
           unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
         );
 
-        console.log('args', args);
-
         // Add the change note before sending the tx
         if (changeNoteStr) {
           noteManager?.addNote(await Note.deserialize(changeNoteStr));
@@ -239,7 +238,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // Effect to subscribe to the latest tx and update the stage
     useEffect(() => {
-      const tx = getLatestTx('Withdraw');
+      const tx = getLatestTransaction('Withdraw');
       if (!tx) {
         return;
       }
@@ -251,7 +250,7 @@ export const WithdrawConfirmContainer = forwardRef<
       return () => {
         sub.unsubscribe();
       };
-    }, [getLatestTx]);
+    }, [getLatestTransaction]);
 
     return (
       <WithdrawConfirm

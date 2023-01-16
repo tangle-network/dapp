@@ -4,6 +4,7 @@ import {
   TransactionPayload,
 } from '@webb-tools/webb-ui-components';
 import {
+  NewNotesTxResult,
   Transaction,
   TransactionState,
   TransactionStatusValue,
@@ -131,6 +132,15 @@ export type TransactionQueueApi = {
     dismissTransaction(id: string): void;
     registerTransaction(tx: Transaction<any>): void;
     startNewTransaction(): void;
+
+    /**
+     * Get the latest transaction of the given name
+     * @param name The name of the transaction (Deposit, Withdraw, Transfer)
+     * @returns The latest transaction of the given name or null if no transaction is found
+     */
+    getLatestTransaction(
+      name: 'Deposit' | 'Withdraw' | 'Transfer'
+    ): Transaction<NewNotesTxResult> | null;
   };
 };
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
@@ -249,6 +259,19 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
     setMainTxId(null);
   }, [setMainTxId]);
 
+  const getLatestTransaction = useCallback(
+    (
+      name: 'Deposit' | 'Withdraw' | 'Transfer'
+    ): Transaction<NewNotesTxResult> | null => {
+      const txes = txQueue.filter((tx) => tx.name === name);
+      if (txes.length === 0) {
+        return null;
+      }
+      return txes[txes.length - 1];
+    },
+    [txQueue]
+  );
+
   return useMemo(
     () => ({
       txQueue,
@@ -259,6 +282,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         dismissTransaction,
         registerTransaction,
         startNewTransaction,
+        getLatestTransaction,
       },
     }),
     [
