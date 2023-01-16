@@ -230,7 +230,7 @@ export const TransactionProgressCard = forwardRef<
             </div>
             <div className={'px-3'}>
               <Typography
-                variant={'h5'}
+                variant={'h4'}
                 fw={'bold'}
                 className={'py-0 text-mono-200'}
               >
@@ -245,18 +245,24 @@ export const TransactionProgressCard = forwardRef<
                   {(label as NativeLabel).nativeValue} USD
                 </Typography>
               ) : (
-                <Typography
-                  variant={'body1'}
-                  fw={'bold'}
-                  className="flex items-center py-0 uppercase text-mono-200"
+                <a
+                  rel="noopener noreferrer"
+                  href={(label as BridgeLabel).tokenURI}
+                  target="_blank"
                 >
-                  {(label as BridgeLabel).token}
-                  <ExternalLinkLine
-                    width={12}
-                    height={12}
-                    className="!fill-current inline whitespace-nowrap ml-1"
-                  />
-                </Typography>
+                  <Typography
+                    variant={'body1'}
+                    fw={'bold'}
+                    className="flex items-center py-0 uppercase text-mono-200"
+                  >
+                    {(label as BridgeLabel).token}
+                    <ExternalLinkLine
+                      width={12}
+                      height={12}
+                      className="!fill-current inline whitespace-nowrap ml-1"
+                    />
+                  </Typography>
+                </a>
               )}
             </div>
             <div className={'h-full self-start items-end grow flex flex-col'}>
