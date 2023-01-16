@@ -29,8 +29,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Build project
+        run: yarn build:webbsite
+
       - name: Copy deployment config to root
-        run: cp apps/webbsite/netlify.toml netlify.toml
+        run: |
+          echo ${{ github_workspace }}
+          ls ${{ github_workspace }}
+          cp apps/webbsite/netlify.toml ${{ github_workspace }}/netlify.toml
 
       - name: Deploy to Netlify
         id: deploy-netlify
