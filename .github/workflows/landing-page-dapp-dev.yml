@@ -37,8 +37,8 @@ jobs:
       - name: Build project
         run: yarn build:webbsite
 
-      # - name: Copy deployment config to root
-      #   run: cp apps/webbsite/netlify.toml netlify.toml
+      - name: Copy deployment config to root
+        run: cp apps/webbsite/netlify.toml netlify.toml
 
       - name: Deploy to Netlify
         id: deploy-netlify
