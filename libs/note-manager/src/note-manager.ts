@@ -68,6 +68,32 @@ export class NoteManager {
     return noteManager;
   }
 
+  // Trim the available notes to get the notes needed for a target amount.
+  // It is assumed the notes passed are grouped for the same target and asset.
+  static getNotesFifo(
+    notes: Note[],
+    targetAmount: ethers.BigNumber
+  ): Note[] | null {
+    let currentAmount = ethers.BigNumber.from(0);
+    const currentNotes: Note[] = [];
+
+    for (const note of notes) {
+      if (currentAmount.gte(targetAmount)) {
+        break;
+      }
+
+      currentAmount = currentAmount.add(note.note.amount);
+      currentNotes.push(note);
+    }
+
+    return currentAmount.gte(targetAmount) ? currentNotes : null;
+  }
+
+  static keypairFromNote(note: Note): Keypair {
+    const secrets = note.note.secrets.split(':');
+    return new Keypair(`0x${secrets[2]}`);
+  }
+
   get $notesUpdated() {
     return this.notesUpdatedSubject.asObservable();
   }
@@ -94,6 +120,55 @@ export class NoteManager {
 
   getAllNotes(): Map<string, Note[]> {
     return this.notesMap;
+  }
+
+  getNotesOfChain(typedChainId: number): Note[] | undefined {
+    return this.notesMap.get(typedChainId.toString());
+  }
+
+  // Return enough notes to satisfy the amount
+  // Returns null if it cannot satisfy
+  getNotesForTransact(
+    typedChainId: number,
+    amount: ethers.BigNumber
+  ): Note[] | null {
+    const currentAmount = ethers.BigNumber.from(0);
+    const currentNotes: Note[] = [];
+
+    const availableNotes = this.notesMap.get(typedChainId.toString());
+
+    if (!availableNotes) {
+      return null;
+    }
+
+    while (currentAmount.lt(amount)) {
+      const currentNote = availableNotes.pop();
+
+      if (!currentNote) {
+        return null;
+      }
+
+      currentAmount.add(currentNote.note.amount);
+      currentNotes.push(currentNote);
+    }
+
+    return currentNotes;
+  }
+
+  getWithdrawableAmount(
+    typedChainId: number,
+    tokenName: string
+  ): ethers.BigNumber {
+    const availableChainNotes = this.notesMap.get(typedChainId.toString());
+    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
+
+    availableChainNotes
+      ?.filter((note) => note.note.tokenSymbol === tokenName)
+      .map((note) => {
+        amount.add(note.note.amount);
+      });
+
+    return amount;
   }
 
   async addNote(note: Note) {
@@ -165,76 +240,6 @@ export class NoteManager {
 
     await this.noteStorage.set('encryptedNotes', encryptedNotes);
     return;
-  }
-
-  getNotesOfChain(typedChainId: number): Note[] | undefined {
-    return this.notesMap.get(typedChainId.toString());
-  }
-
-  // Return enough notes to satisfy the amount
-  // Returns null if it cannot satisfy
-  getNotesForTransact(
-    typedChainId: number,
-    amount: ethers.BigNumber
-  ): Note[] | null {
-    const currentAmount = ethers.BigNumber.from(0);
-    const currentNotes: Note[] = [];
-
-    const availableNotes = this.notesMap.get(typedChainId.toString());
-
-    if (!availableNotes) {
-      return null;
-    }
-
-    while (currentAmount.lt(amount)) {
-      const currentNote = availableNotes.pop();
-
-      if (!currentNote) {
-        return null;
-      }
-
-      currentAmount.add(currentNote.note.amount);
-      currentNotes.push(currentNote);
-    }
-
-    return currentNotes;
-  }
-
-  getWithdrawableAmount(
-    typedChainId: number,
-    tokenName: string
-  ): ethers.BigNumber {
-    const availableChainNotes = this.notesMap.get(typedChainId.toString());
-    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
-
-    availableChainNotes
-      ?.filter((note) => note.note.tokenSymbol === tokenName)
-      .map((note) => {
-        amount.add(note.note.amount);
-      });
-
-    return amount;
-  }
-
-  // Trim the available notes to get the notes needed for a target amount.
-  // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(
-    notes: Note[],
-    targetAmount: ethers.BigNumber
-  ): Note[] | null {
-    let currentAmount = ethers.BigNumber.from(0);
-    const currentNotes: Note[] = [];
-
-    for (const note of notes) {
-      if (currentAmount.gte(targetAmount)) {
-        break;
-      }
-
-      currentAmount = currentAmount.add(note.note.amount);
-      currentNotes.push(note);
-    }
-
-    return currentAmount.gte(targetAmount) ? currentNotes : null;
   }
 
   /**

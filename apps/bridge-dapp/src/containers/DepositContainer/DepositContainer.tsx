@@ -373,7 +373,7 @@ export const DepositContainer = forwardRef<
         fungibleCurrency.getDecimals(),
         amount
       );
-      console.log('newNote', newNote);
+
       setIsGeneratingNote(false);
       setDepositContainerProps({
         fungibleTokenId: fungibleCurrency.id,
