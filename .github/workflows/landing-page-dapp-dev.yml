@@ -33,7 +33,7 @@ jobs:
         run: yarn build:webbsite
 
       - name: Copy deployment config to root
-        run: cp apps/webbsite/netlify.toml ${{ github_workspace }}/netlify.toml
+        run: cp apps/webbsite/netlify.toml netlify.toml
 
       - name: Deploy to Netlify
         id: deploy-netlify
