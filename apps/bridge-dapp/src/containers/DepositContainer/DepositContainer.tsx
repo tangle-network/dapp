@@ -745,6 +745,7 @@ export const DepositContainer = forwardRef<
               chain: selectedSourceChain,
               onClick: sourceChainInputOnClick,
               chainType: 'source',
+              info: 'Source chain',
             }}
             bridgingTokenProps={bridgingTokenProps}
             destChainProps={{
@@ -753,6 +754,7 @@ export const DepositContainer = forwardRef<
                 setMainComponentName('dest-chain-list-card');
               },
               chainType: 'dest',
+              info: 'Destination chain',
             }}
             tokenInputProps={{
               onClick: () => {
@@ -766,7 +768,7 @@ export const DepositContainer = forwardRef<
               amount: amount ? amount.toString() : undefined,
               onAmountChange,
               onMaxBtnClick,
-              isDisabled: !selectedToken,
+              isDisabled: !selectedToken || !destChain,
               errorMessage: amountErrorMessage,
             }}
             buttonProps={{
