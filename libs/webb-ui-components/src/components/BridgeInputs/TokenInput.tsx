@@ -11,13 +11,6 @@ import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
 
-{
-  /* <TokenPairIcons
-token1Symbol={firstToken}
-token2Symbol={secondToken}
-/> */
-}
-
 /**
  * Token Input component, for selecting token on the bridge
  *
