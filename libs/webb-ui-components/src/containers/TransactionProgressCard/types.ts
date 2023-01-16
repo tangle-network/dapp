@@ -45,7 +45,7 @@ export interface TransactionCardItemProps extends PropsOf<'div'> {
   firedAt: Date;
   note?: string;
   status: TransactionItemStatus;
-  tokens: Array<JSX.Element>;
+  tokens: JSX.Element;
   wallets: {
     src: JSX.Element;
     dist: JSX.Element;
