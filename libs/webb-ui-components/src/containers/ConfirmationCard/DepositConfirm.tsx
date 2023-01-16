@@ -118,7 +118,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 />
                 <ArrowRight />
                 <TokenWithAmount
-                  token1Symbol={wrappableTokenSymbol}
+                  token1Symbol={fungibleTokenSymbol}
+                  token2Symbol={wrappableTokenSymbol}
                   amount={amount}
                 />
               </div>
