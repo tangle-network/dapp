@@ -91,7 +91,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             destChain={destChain}
             amount={amount}
             tokenPairString={`${fungibleTokenSymbol}${
-              wrappableTokenSymbol ? `-${wrappableTokenSymbol}` : ''
+              wrappableTokenSymbol ? `/${wrappableTokenSymbol}` : ''
             }`}
           />
         </div>
@@ -118,7 +118,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 />
                 <ArrowRight />
                 <TokenWithAmount
-                  token1Symbol={wrappableTokenSymbol}
+                  token1Symbol={fungibleTokenSymbol}
+                  token2Symbol={wrappableTokenSymbol}
                   amount={amount}
                 />
               </div>
@@ -182,8 +183,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               leftTextProps={{
                 variant: 'utility',
                 title: 'Depositing',
+                info: 'Depositing',
               }}
-              rightContent={fungibleTokenValue}
+              rightContent={
+                fungibleTokenValue +
+                '/' +
+                wrappableTokenSymbol?.trim().toUpperCase()
+              }
             />
             <InfoItem
               leftTextProps={{

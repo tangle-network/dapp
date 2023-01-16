@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChevronRight, TokenIcon } from '@webb-tools/icons';
+import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 
@@ -59,11 +60,26 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
           {token ? (
             <p className="flex items-center space-x-1">
-              <TokenIcon name={token.symbol.trim().toLowerCase()} size="lg" />
+              {token.tokenComposition ? (
+                <TokenPairIcons
+                  token1Symbol={token.tokenComposition[0].trim().toLowerCase()}
+                  token2Symbol={token.tokenComposition[1].trim().toLowerCase()}
+                />
+              ) : (
+                <TokenIcon name={token.symbol.trim().toLowerCase()} size="lg" />
+              )}
 
-              <Typography component="span" variant="body1" fw="bold">
-                {token.symbol.trim().toUpperCase()}
-              </Typography>
+              {token.tokenComposition ? (
+                <Typography component="span" variant="body1" fw="bold">
+                  {token.tokenComposition[0].trim().toUpperCase() +
+                    '/' +
+                    token.tokenComposition[1].trim().toUpperCase()}
+                </Typography>
+              ) : (
+                <Typography component="span" variant="body1" fw="bold">
+                  {token.symbol.trim().toUpperCase()}
+                </Typography>
+              )}
             </p>
           ) : (
             <Typography variant="body1" fw="bold">
