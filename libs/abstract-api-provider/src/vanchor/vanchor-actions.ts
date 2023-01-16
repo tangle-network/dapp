@@ -3,17 +3,17 @@
 
 import type { WebbApiProvider } from '../webb-provider.interface';
 
+import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
+import { ZkComponents } from '@webb-tools/utils';
+import { BigNumberish, ContractReceipt } from 'ethers';
+import { CancellationToken } from '../cancelation-token';
 import {
   ActionEvent,
   NewNotesTxResult,
   Transaction,
   TransactionState,
 } from '../transaction';
-import { BigNumberish, ContractReceipt } from 'ethers';
-import { ZkComponents } from '@webb-tools/utils';
-import { EventBus, LoggerService } from '@webb-tools/app-util';
-import { CancellationToken } from '../cancelation-token';
 
 export abstract class AbstractState<
   T extends WebbApiProvider<any>
@@ -38,9 +38,6 @@ export abstract class AbstractState<
     this.emit('stateChange', state);
   }
 }
-
-// Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
-export type TransactionPayloadType = Note;
 
 export abstract class VAnchorActions<
   T extends WebbApiProvider<any> = WebbApiProvider<any>
@@ -95,3 +92,12 @@ export abstract class VAnchorActions<
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<ContractReceipt>;
 }
+
+export type WithdrawTransactionPayloadType = {
+  notes: Note[];
+  recipient: string;
+  amount: number;
+};
+
+// Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
+export type TransactionPayloadType = Note | WithdrawTransactionPayloadType;

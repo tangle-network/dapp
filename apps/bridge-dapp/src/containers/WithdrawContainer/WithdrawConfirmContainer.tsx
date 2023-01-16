@@ -1,15 +1,24 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { ChainType } from '@webb-tools/sdk-core';
+import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { ChainType, Note } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  WithdrawConfirm,
+  notificationApi,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TransactionState } from '@webb-tools/dapp-types';
 import { useTransactionProgressValue } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
+import {
+  NewNotesTxResult,
+  Transaction,
+} from '@webb-tools/abstract-api-provider';
+import { DEPOSIT_FAILURE_MSG } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -17,7 +26,7 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
-      changeNote,
+      changeNote: changeNoteStr,
       availableNotes,
       amount,
       changeAmount,
@@ -35,13 +44,15 @@ export const WithdrawConfirmContainer = forwardRef<
       TransactionState.Ideal
     );
 
-    const { getLatestTx } = useVAnchor();
+    const { api: vAnchorApi, getLatestTx } = useVAnchor();
 
     const progressValue = useTransactionProgressValue(stage);
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi } = useWebContext();
+    const { activeApi, noteManager } = useWebContext();
+
+    const { api: txQueueApi } = useTxQueue();
 
     const {
       relayersState: { activeRelayer },
@@ -132,15 +143,99 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(async () => {
+      if (availableNotes.length === 0 || !vAnchorApi) {
+        return;
+      }
+
       if (withdrawTxInProgress) {
         setMainComponent(undefined);
         return;
       }
 
-      if (changeNote) {
-        downloadNote(changeNote);
+      changeNoteStr && downloadNote(changeNoteStr);
+
+      const note: Note = availableNotes[0];
+      const {
+        sourceChainId: sourceTypedChainId,
+        targetChainId: destTypedChainId,
+        tokenSymbol,
+      } = note.note;
+
+      const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
+
+      const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
+        amount,
+        tokens: [tokenSymbol, unwrapTokenSymbol],
+        wallets: {
+          src: +sourceTypedChainId,
+          dest: +destTypedChainId,
+        },
+        token: tokenSymbol,
+      });
+
+      try {
+        txQueueApi.registerTransaction(tx);
+
+        const args = await vAnchorApi.prepareTransaction(
+          tx,
+          {
+            notes: availableNotes,
+            recipient,
+            amount,
+          },
+          unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
+        );
+
+        console.log('args', args);
+
+        // Add the change note before sending the tx
+        if (changeNoteStr) {
+          noteManager?.addNote(await Note.deserialize(changeNoteStr));
+        }
+
+        const receipt = await vAnchorApi.transact(...args);
+
+        const outputNotes = changeNoteStr
+          ? [await Note.deserialize(changeNoteStr)]
+          : [];
+
+        // Notification Success Transaction
+        tx.txHash = receipt.transactionHash;
+        tx.next(TransactionState.Done, {
+          txHash: receipt.transactionHash,
+          outputNotes,
+        });
+
+        // Cleanup NoteAccount state
+        for (const note of availableNotes) {
+          await noteManager?.removeNote(note);
+        }
+      } catch (error) {
+        console.log('Error while executing withdraw', error);
+        changeNoteStr &&
+          (await noteManager?.removeNote(
+            await Note.deserialize(changeNoteStr)
+          ));
+
+        if (error instanceof Error) {
+          tx.fail(error['message' ?? '']);
+        }
+      } finally {
+        setMainComponent(undefined);
       }
-    }, [changeNote, downloadNote, withdrawTxInProgress, setMainComponent]);
+    }, [
+      availableNotes,
+      vAnchorApi,
+      withdrawTxInProgress,
+      setMainComponent,
+      changeNoteStr,
+      downloadNote,
+      unwrapCurrency,
+      amount,
+      txQueueApi,
+      recipient,
+      noteManager,
+    ]);
 
     // Effect to subscribe to the latest tx and update the stage
     useEffect(() => {
@@ -180,12 +275,12 @@ export const WithdrawConfirmContainer = forwardRef<
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}
-        onCopy={() => handleCopy(changeNote)}
-        onDownload={() => downloadNote(changeNote ?? '')}
+        onCopy={() => handleCopy(changeNoteStr)}
+        onDownload={() => downloadNote(changeNoteStr ?? '')}
         amount={amount}
         fee={fees}
         onClose={() => setMainComponent(undefined)}
-        note={changeNote}
+        note={changeNoteStr}
         changeAmount={changeAmount}
         progress={progressValue}
         recipientAddress={recipient}
