@@ -104,7 +104,7 @@ function getTxMessageFromStatus<Key extends TransactionState>(
     case TransactionState.Cancelling:
       return 'Canceling transaction';
     case TransactionState.Ideal:
-      return 'Transaction completed';
+      return 'Transaction in-progress';
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
     case TransactionState.FetchingLeaves:
