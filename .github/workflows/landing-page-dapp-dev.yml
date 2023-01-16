@@ -24,6 +24,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
+
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -36,8 +37,8 @@ jobs:
       - name: Build project
         run: yarn build:webbsite
 
-      - name: Copy deployment config to root
-        run: cp apps/webbsite/netlify.toml netlify.toml
+      # - name: Copy deployment config to root
+      #   run: cp apps/webbsite/netlify.toml netlify.toml
 
       - name: Deploy to Netlify
         id: deploy-netlify

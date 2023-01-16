@@ -2,4 +2,5 @@
 package = "@netlify/plugin-nextjs"
 
 [build]
+command = "yarn build:webbsite"
 publish = "./dist/apps/webbsite/.next"
