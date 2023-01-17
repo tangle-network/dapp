@@ -6,12 +6,12 @@ const classNames: ButtonClassNames = {
   primary: {
     base: {
       common:
-        'rounded-full px-9 py-2 bg-mono-200 border-2 border-transparent text-mono-0 font-bold dark:bg-mono-180 dark:border-2 dark:border-mono-20 dark:text-mono-20',
-      hover: 'hover:bg-mono-160 dark:hover:bg-mono-160',
+        'rounded-full px-9 py-2 bg-mono-200 border-2 border-transparent text-mono-0 font-bold dark:bg-mono-20 dark:border-2 dark:border-mono-20 dark:text-mono-180',
+      hover: 'hover:bg-mono-160 dark:hover:bg-mono-40',
       active:
         'active:border-mono-200 dark:active:bg-mono-20 dark:active:border-mono-160 dark:active:text-mono-180',
       disabled:
-        'disabled:bg-mono-80 dark:disabled:bg-mono-80 dark:disabled:border-transparent',
+        'disabled:bg-mono-80 dark:disabled:bg-mono-80 dark:disabled:border-transparent dark:disabled:text-mono-0',
     },
     md: 'body1',
     sm: 'body3',
@@ -32,7 +32,7 @@ const classNames: ButtonClassNames = {
   utility: {
     base: {
       common:
-        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-20',
+        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-50',
       hover: 'hover:bg-blue-10 hover:text-blue-90 dark:hover:bg-blue-110',
       active: 'active:border-blue-50 dark:active:border-blue-50',
       disabled:

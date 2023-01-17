@@ -179,7 +179,7 @@ const ConnectedNoteAccountView: React.FC = () => {
     purgeNoteAccount,
   } = useWebContext();
   const { allNotes } = useNoteAccount();
-  const { governedCurrencies, governedCurrency } = useCurrencies();
+  const { fungibleCurrencies, fungibleCurrency } = useCurrencies();
   const [loadNoteText, setLoadNoteText] = useState('');
   const enteredNote = useDepositNote(loadNoteText);
 

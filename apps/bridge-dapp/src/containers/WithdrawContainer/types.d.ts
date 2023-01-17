@@ -56,7 +56,7 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The token to withdraw
    */
-  governedCurrency: CurrencyWithBalance;
+  fungibleCurrency: CurrencyWithBalance;
 
   /**
    * The unwrap token

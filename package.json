@@ -155,6 +155,7 @@
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-switch": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
+    "@storybook/addon-a11y": "^6.5.15",
     "@storybook/addon-actions": "^6.5.12",
     "@storybook/addon-essentials": "6.5.15",
     "@storybook/addon-interactions": "^6.5.12",
@@ -183,17 +184,17 @@
     "@types/tinycolor2": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
+    "@webb-tools/anchors": "0.5.3",
     "@webb-tools/api": "0.1.4-119",
     "@webb-tools/api-derive": "0.1.4-119",
     "@webb-tools/app-util": "0.1.4-119",
-    "@webb-tools/protocol-substrate-types": "0.0.3",
-    "@webb-tools/sdk-core": "0.1.4-119",
-    "@webb-tools/wasm-utils": "0.1.4-119",
-    "@webb-tools/anchors": "0.5.3",
-    "@webb-tools/tokens": "0.5.3",
     "@webb-tools/contracts": "0.5.3",
     "@webb-tools/interfaces": "0.5.3",
+    "@webb-tools/protocol-substrate-types": "0.0.3",
+    "@webb-tools/sdk-core": "0.1.4-119",
+    "@webb-tools/tokens": "0.5.3",
     "@webb-tools/utils": "0.5.3",
+    "@webb-tools/wasm-utils": "0.1.4-119",
     "autoprefixer": "10.4.13",
     "babel-jest": "28.1.1",
     "babel-loader": "8.1.0",
@@ -268,4 +269,3 @@
     "webpack-merge": "^5.8.0"
   }
 }
-

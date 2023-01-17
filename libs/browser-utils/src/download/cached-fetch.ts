@@ -28,7 +28,7 @@ export async function cachedFetch(
     const reqData = new Uint8Array(keyArrayBuffer);
     return reqData;
   } else {
-    logger.info(`Key :${url} wasn't found on the cache `);
+    logger.info(`Key: ${url} wasn't found on the cache `);
     const response = await fetch(...params);
     if (response.ok) {
       await fixturesCache.put(url, response.clone());

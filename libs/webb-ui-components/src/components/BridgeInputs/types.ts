@@ -61,6 +61,11 @@ export type TokenType = {
    * Token token balance in usd
    */
   balanceInUsd?: number | string;
+
+  /**
+   * The token composition if the token is a pool token
+   */
+  tokenComposition?: string[];
 };
 
 /**
@@ -68,7 +73,7 @@ export type TokenType = {
  */
 export type PoolAssetType = {
   /**
-   * The symbol of the pool (bridge, governed) token
+   * The symbol of the pool (bridge, fungible) token
    */
   symbol: string;
 

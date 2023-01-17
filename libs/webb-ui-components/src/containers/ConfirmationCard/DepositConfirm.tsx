@@ -36,23 +36,23 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       progress = null,
       sourceChain,
       title = 'Confirm Deposit',
-      governedTokenSymbol,
+      fungibleTokenSymbol,
       wrappableTokenSymbol,
       ...props
     },
     ref
   ) => {
-    const governedTokenValue = useMemo(() => {
+    const fungibleTokenValue = useMemo(() => {
       if (!amount) {
         return '0';
       }
 
-      if (governedTokenSymbol) {
-        return `${amount} ${governedTokenSymbol.toUpperCase()}`;
+      if (fungibleTokenSymbol) {
+        return `${amount} ${fungibleTokenSymbol.toUpperCase()}`;
       }
 
       return amount.toString();
-    }, [governedTokenSymbol, amount]);
+    }, [fungibleTokenSymbol, amount]);
 
     return (
       <div
@@ -79,19 +79,19 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             activeChains={activeChains}
             sourceLabel={
               sourceChain && sourceChain === destChain
-                ? 'Depositing from & destination chain'
+                ? 'Depositing from & to'
                 : 'Depositing from'
             }
             destLabel={
               destChain && sourceChain !== destChain
-                ? 'Destination chain'
+                ? 'Depositing to'
                 : undefined
             }
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
-            tokenPairString={`${governedTokenSymbol}${
-              wrappableTokenSymbol ? `-${wrappableTokenSymbol}` : ''
+            tokenPairString={`${fungibleTokenSymbol}${
+              wrappableTokenSymbol ? `/${wrappableTokenSymbol}` : ''
             }`}
           />
         </div>
@@ -100,7 +100,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
         {/** Wrapping info */}
-        {wrappableTokenSymbol && governedTokenSymbol && (
+        {wrappableTokenSymbol && fungibleTokenSymbol && (
           <WrapperCard>
             <div className="space-y-4">
               <TitleWithInfo
@@ -113,12 +113,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               />
               <div className="flex items-center space-x-4">
                 <TokenWithAmount
-                  token1Symbol={governedTokenSymbol}
+                  token1Symbol={fungibleTokenSymbol}
                   amount={wrappingAmount}
                 />
                 <ArrowRight />
                 <TokenWithAmount
-                  token1Symbol={wrappableTokenSymbol}
+                  token1Symbol={fungibleTokenSymbol}
+                  token2Symbol={wrappableTokenSymbol}
                   amount={amount}
                 />
               </div>
@@ -182,8 +183,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               leftTextProps={{
                 variant: 'utility',
                 title: 'Depositing',
+                info: 'Depositing',
               }}
-              rightContent={governedTokenValue}
+              rightContent={
+                fungibleTokenValue +
+                '/' +
+                wrappableTokenSymbol?.trim().toUpperCase()
+              }
             />
             <InfoItem
               leftTextProps={{

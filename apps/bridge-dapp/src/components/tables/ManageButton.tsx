@@ -33,7 +33,7 @@ export const ManageButton: FC<ManageButtonProps> = ({
           Upload
         </MenuItem>
         <MenuItem onClick={onDownload} icon={<Download size="lg" />}>
-          Download
+          Download All
         </MenuItem>
       </DropdownBody>
     </Dropdown>

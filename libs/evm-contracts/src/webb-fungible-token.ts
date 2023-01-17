@@ -15,9 +15,9 @@ import {
 } from 'ethers';
 import { FungibleTokenWrapper } from '@webb-tools/contracts';
 
-const logger = LoggerService.get('WebbGovernedToken');
+const logger = LoggerService.get('WebbFungibleToken');
 
-export class WebbGovernedToken {
+export class WebbFungibleToken {
   private _contract: FungibleTokenWrapper;
   private readonly signer: Signer;
 
@@ -55,7 +55,7 @@ export class WebbGovernedToken {
     return this._contract.balanceOf(account);
   }
 
-  /// todo assume native
+  // TODO: assume native
   async wrap(address: string, amount: BigNumberish) {
     const isNative = checkNativeAddress(address);
     const amountParam = isNative ? 0 : amount;
@@ -128,9 +128,9 @@ export class WebbGovernedToken {
     return nativeAllowed;
   }
 
-  // Checks if the governed token wraps a particular token.
+  // Checks if the fungible token wraps a particular token.
   // Does NOT check if allowances for ERC20s are satisfied.
-  async canwrap(tokenAddress: string) {
+  async canWrap(tokenAddress: string) {
     const tokens = await this._contract.getTokens();
 
     if (tokens.includes(tokenAddress)) {

@@ -21,7 +21,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
 
   canWrap() {
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
     const wrappableToken = this.inner.state.wrappableCurrency;
     //... Get the asset id
     const asset = this.inner.query.assetRegistery.assets(assetId).unwrap();
@@ -29,7 +29,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   }
 
   canUnwrap() {
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
     const wrappableToken = this.inner.state.wrappableCurrency;
     //... Get the asset id
     const asset = this.inner.query.assetRegistery.assets(assetId).unwrap();
@@ -45,7 +45,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     }
     ;
 
-    const governedToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
     const wrappableToken = this.inner.state.wrappableCurrency;
     const wrappableAssetId = "..";
 

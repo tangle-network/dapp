@@ -15,7 +15,7 @@ const createdTime = randRecentDate();
 export const useSpendNotes = (): SpendNoteDataType[] => {
   const { allNotes } = useNoteAccount();
 
-  const { getWrappableCurrencies, governedCurrencies } = useCurrencies();
+  const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
 
   const [nextIndices, setNextIndices] = useState<
     { address: string; typedChainId: number; nextIndex: number }[]
@@ -64,18 +64,18 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           // Calculate the wrappable currencies
           let wrappableCurrencies: Currency[] = [];
-          const governedCurrency = governedCurrencies.find(
+          const fungibleCurrency = fungibleCurrencies.find(
             (currency) => currency.view.symbol === note.note.tokenSymbol
           );
-          if (governedCurrency) {
-            const foundCurrencies = getWrappableCurrencies(governedCurrency.id);
+          if (fungibleCurrency) {
+            const foundCurrencies = getWrappableCurrencies(fungibleCurrency.id);
             wrappableCurrencies = foundCurrencies;
           }
 
           // Calculate the assets url
           let assetsUrl = '#';
           const explorerUrl = chain.blockExplorerStub;
-          const address = governedCurrency?.getAddressOfChain(
+          const address = fungibleCurrency?.getAddressOfChain(
             calculateTypedChainId(chain.chainType, chain.chainId)
           );
 
@@ -86,8 +86,8 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
           }
 
           acc.push({
-            governedTokenSymbol: note.note.tokenSymbol,
-            rawGovernedCurrency: governedCurrency,
+            fungibleTokenSymbol: note.note.tokenSymbol,
+            rawFungibleCurrency: fungibleCurrency,
             chain: chain.name.toLowerCase(),
             rawChain: chain,
             note: note.serialize(),
@@ -109,7 +109,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
       },
       [] as Array<SpendNoteDataType>
     );
-  }, [allNotes, getWrappableCurrencies, governedCurrencies, nextIndices]);
+  }, [allNotes, getWrappableCurrencies, fungibleCurrencies, nextIndices]);
 
   // Effect to get next indices asynchorously
   useEffect(() => {

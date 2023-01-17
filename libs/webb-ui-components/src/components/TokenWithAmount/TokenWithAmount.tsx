@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { TokenPair } from '../TokenPair';
 import { TokenWithAmountProps } from './types';
+import { TokenPairIcons } from '../TokenPairIcons';
 
 export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
   ({ amount, className, token1Symbol, token2Symbol, ...props }, ref) => {
@@ -23,7 +24,18 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
 
         {/** Icon */}
         {token2Symbol ? (
-          <TokenPair token1Symbol={token1Symbol} token2Symbol={token2Symbol} /> // Token pair
+          // Token pair
+          <p className="flex items-center space-x-1">
+            <TokenPairIcons
+              token1Symbol={token1Symbol}
+              token2Symbol={token2Symbol}
+            />
+            <Typography component="span" variant="body1" fw="bold">
+              {token1Symbol.trim().toUpperCase() +
+                '/' +
+                token2Symbol.trim().toUpperCase()}
+            </Typography>
+          </p>
         ) : (
           <TokenIcon size="lg" name={token1Symbol} /> // Only one token
         )}

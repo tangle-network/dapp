@@ -120,7 +120,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
             />
           </TabContent>
 
-          <TabContent className="space-y-8" value="patse">
+          <TabContent className="space-y-2" value="patse">
             <PasteModalContent onNotesChange={handleNotesChange} />
           </TabContent>
         </TabsRoot>

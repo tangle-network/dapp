@@ -117,7 +117,7 @@ export const Input: React.FC<InputProps> = (props) => {
     () =>
       cx(
         'form-input w-full transition-none body1 bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
-        'placeholder:italic placeholder:text-mono-100 dark:placeholder:text-mono-120',
+        'placeholder:placeholder:text-mono-100 dark:placeholder:text-mono-120',
         paddingX,
         isInvalid
           ? ('border-red-40' as const)

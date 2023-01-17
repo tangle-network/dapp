@@ -3,16 +3,16 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useEffect, useState } from 'react';
 
 export interface BridgeApi {
-  setGovernedCurrency(currency: Currency | null): Promise<void>;
+  setFungibleCurrency(currency: Currency | null): Promise<void>;
 
   setWrappableCurrency(currency: Currency | null): Promise<void>;
   wrappableCurrency: Currency | null;
-  governedCurrency: Currency | null;
+  fungibleCurrency: Currency | null;
 }
 
 export const useBridge = (): BridgeApi => {
   const { activeApi } = useWebContext();
-  const [governedCurrency, setGovernedCurrencyState] =
+  const [fungibleCurrency, setFungibleCurrencyState] =
     useState<Currency | null>(activeApi?.state.activeBridge?.currency ?? null);
   const [wrappableCurrency, setWrapableCurrencyState] =
     useState<Currency | null>(activeApi?.state.wrappableCurrency ?? null);
@@ -26,7 +26,7 @@ export const useBridge = (): BridgeApi => {
     [activeApi]
   );
 
-  const setGovernedCurrency = useCallback(
+  const setFungibleCurrency = useCallback(
     async (currency: Currency | null) => {
       if (!activeApi) {
         return;
@@ -40,19 +40,19 @@ export const useBridge = (): BridgeApi => {
     if (activeApi) {
       const sub: { unsubscribe(): void }[] = [];
       sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
-        setGovernedCurrencyState(bridge?.currency ?? null);
+        setFungibleCurrencyState(bridge?.currency ?? null);
       });
       sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
         setWrapableCurrencyState(currency);
       });
       return () => sub.forEach((s) => s.unsubscribe());
     }
-  }, [activeApi, setWrapableCurrencyState, setGovernedCurrencyState]);
+  }, [activeApi, setWrapableCurrencyState, setFungibleCurrencyState]);
 
   return {
     setWrappableCurrency,
-    setGovernedCurrency,
+    setFungibleCurrency,
     wrappableCurrency,
-    governedCurrency,
+    fungibleCurrency,
   };
 };

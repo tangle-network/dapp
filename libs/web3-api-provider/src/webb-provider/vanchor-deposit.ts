@@ -176,9 +176,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           depositTx.fail('No variable anchor configured for selected token');
         }
 
-        // Get the contract address for the destination chain
+        // Get the contract address for the src chain
         const srcAddress = vanchor.neighbours[sourceChainId] as string;
-
         if (!srcAddress) {
           depositTx.fail(`No Anchor for the chain ${note.targetChainId}`);
         }
@@ -212,67 +211,11 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         );
         fixturesList.set('VAnchorWasm', 'Done');
         const leavesMap: Record<string, Uint8Array[]> = {};
-
-        // Fetch the leaves from the source chain
-        depositTx.cancelToken.throwIfCancel();
-        depositTx.next(TransactionState.FetchingLeaves, {
-          end: undefined,
-          currentRange: [0, 1],
-          start: 0,
-        });
-        this.emit('stateChange', TransactionState.FetchingLeaves);
-        let leafStorage = await bridgeStorageFactory(Number(sourceChainId));
-        let leaves = await this.cancelToken.handleOrThrow(
-          () =>
-            this.inner.getVariableAnchorLeaves(
-              srcVAnchor,
-              leafStorage,
-              abortSignal
-            ),
-          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-        );
-        // Only populate the leaves map if there are actually leaves to populate.
-        if (leaves.length) {
-          leavesMap[utxo.chainId] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
-
-        // Set up a provider for the dest chain
-        const destTypedChainId = Number(utxo.chainId);
-        const destChainConfig = this.config.chains[destTypedChainId];
-        const destHttpProvider = Web3Provider.fromUri(destChainConfig.url);
-        const destEthers = destHttpProvider.intoEthersProvider();
-        const destAddress = vanchor.neighbours[destTypedChainId] as string;
-        const destVAnchor = this.inner.getVariableAnchorByAddressAndProvider(
-          destAddress,
-          destEthers
-        );
-        leafStorage = await bridgeStorageFactory(Number(utxo.chainId));
-
-        leaves = await this.cancelToken.handleOrThrow(
-          () =>
-            this.inner.getVariableAnchorLeaves(
-              destVAnchor,
-              leafStorage,
-              abortSignal
-            ),
-          () => WebbError.from(WebbErrorCodes.TransactionCancelled)
-        );
-        // Only populate the leaves map if there are actually leaves to populate.
-        if (leaves.length) {
-          leavesMap[utxo.chainId] = leaves.map((leaf) => {
-            return hexToU8a(leaf);
-          });
-        }
-        this.cancelToken.throwIfCancel();
-
         // Add the note to the noteManager before transaction is sent.
         // This helps to safeguard the user.
         if (this.inner.noteManager) {
           await this.inner.noteManager.addNote(depositPayload.note);
         }
-
         // If the token / wrapUnwrapToken:
         // - is 0x0000000000000000000000000000000000000000 -> native token
         // - is equal to the FungibleTokenWrapper token -> no wrapping
@@ -297,7 +240,8 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           // approve the token
           approvalTransaction = await currentWebbToken.approve(
             srcAddress,
-            amount
+            amount,
+            { gasLimit: '0x5B8D80' },
           );
         } else if (
           await srcVAnchor.isWrappableTokenApprovalRequired(
@@ -312,10 +256,10 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           );
           approvalTransaction = await token.approve(
             currentWebbToken.address,
-            approvalValue
+            approvalValue,
+            { gasLimit: '0x5B8D80' },
           );
         }
-
         if (approvalTransaction) {
           // Notification Waiting for approval notification
           depositTx.next(TransactionState.Intermediate, {
@@ -337,7 +281,6 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
         // Checking for balance
         // TODO: Check for the balance
         const enoughBalance = true;
-
         // Notification failed transaction if not enough balance
         if (!enoughBalance) {
           this.emit('stateChange', TransactionState.Failed);

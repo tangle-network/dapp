@@ -162,7 +162,7 @@ export const TransferConfirmContainer = forwardRef<
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}
         relayerExternalUrl={relayer?.endpoint}
-        governedTokenSymbol={currency.view.symbol}
+        fungibleTokenSymbol={currency.view.symbol}
         relayerAvatarTheme={
           activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
         }

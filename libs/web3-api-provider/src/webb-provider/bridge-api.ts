@@ -19,25 +19,23 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   ): Promise<Currency[]> {
     const wrappableTokens: Currency[] = [];
     const bridgeAsset = bridge.currency;
-    const governedTokenAddress = bridgeAsset.getAddress(typedChainId);
-    if (!governedTokenAddress) {
+    const fungibleTokenAddress = bridgeAsset.getAddress(typedChainId);
+    if (!fungibleTokenAddress) {
       return wrappableTokens;
     }
 
     // Get the available token addresses which can wrap into the wrappedToken
-    const governedToken = FungibleTokenWrapper.connect(
-      governedTokenAddress,
+    const fungibleToken = FungibleTokenWrapper.connect(
+      fungibleTokenAddress,
       this.inner.getEthersProvider().getSigner()
     );
-    const allTokenAddresses = await governedToken.contract.getTokens();
-
+    const allTokenAddresses = await fungibleToken.contract.getTokens();
     await Promise.all(
       allTokenAddresses.map(async (tokenAddress) => {
         const registeredCurrency = this.inner.state
           .getReverseCurrencyMapWithChainId(typedChainId)
           .get(tokenAddress);
         const knownCurrencies = this.inner.state.getCurrencies();
-
         if (!registeredCurrency) {
           // Read data about the new currencyAddress
           const newERC20Token = ERC20Factory.connect(
@@ -59,7 +57,6 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
             symbol: symbol,
             type: CurrencyType.ERC20,
           });
-
           // Add any newly discovered currencies to the state
           this.inner.state.addCurrency(newToken);
 
@@ -74,7 +71,7 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
     );
 
     // Add the chain's native currency if the wrappableToken allows native
-    if (await governedToken.contract.isNativeAllowed()) {
+    if (await fungibleToken.contract.isNativeAllowed()) {
       wrappableTokens.push(
         new Currency(
           this.inner.config.currencies[

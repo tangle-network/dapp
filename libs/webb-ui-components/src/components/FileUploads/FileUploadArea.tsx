@@ -37,7 +37,7 @@ export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(
               isDragActive
                 ? 'bg-mono-20 dark:bg-mono-120'
                 : 'bg-mono-0 dark:bg-mono-160',
-              'border border-dashed border-mono-80 dark:border-mono-100',
+              'border-2 border-dashed border-mono-80 dark:border-mono-100',
               'flex flex-col items-center justify-center',
               'space-y-8'
             ),

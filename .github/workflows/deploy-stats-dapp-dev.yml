@@ -55,7 +55,7 @@ jobs:
             |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) |
             ---
 
-            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/stats-dev/settings/deploys#deploy-notifications)._
+            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/development-stats/settings/deploys#deploy-notifications)._
             
         with:
           msg: ${{ env.OUTPUT }}

@@ -2,3 +2,9 @@
 
 /dist
 /coverage
+/build
+/apps/bridge-dapp/build/**/*
+/apps/stats-dapp/build/**/*
+/apps/webbsite/build/**/*
+/node_modules
+/.vscode
