@@ -1,7 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/dapp-types';
+import { TransactionState } from '@webb-tools/abstract-api-provider';
 import {
   BlockIcon,
   CoinIcon,

@@ -4,21 +4,19 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
-import {
-  WithdrawConfirm,
-  notificationApi,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 
-import { TransactionState } from '@webb-tools/dapp-types';
-import { useTransactionProgressValue } from '../../hooks';
-import { WithdrawConfirmContainerProps } from './types';
 import {
   NewNotesTxResult,
   Transaction,
+  TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { DEPOSIT_FAILURE_MSG } from '../../utils';
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
+import { WithdrawConfirmContainerProps } from './types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -40,9 +38,7 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const [stage, setStage] = useState<TransactionState>(
-      TransactionState.Ideal
-    );
+    const stage = useLatestTransactionStage('Withdraw');
 
     const { api: vAnchorApi } = useVAnchor();
 
@@ -53,7 +49,6 @@ export const WithdrawConfirmContainer = forwardRef<
     const { activeApi, noteManager } = useWebContext();
 
     const { api: txQueueApi } = useTxQueue();
-    const { getLatestTransaction } = txQueueApi;
 
     const {
       relayersState: { activeRelayer },
@@ -235,22 +230,6 @@ export const WithdrawConfirmContainer = forwardRef<
       recipient,
       noteManager,
     ]);
-
-    // Effect to subscribe to the latest tx and update the stage
-    useEffect(() => {
-      const tx = getLatestTransaction('Withdraw');
-      if (!tx) {
-        return;
-      }
-
-      const sub = tx.$currentStatus.subscribe(([status]) => {
-        setStage(status);
-      });
-
-      return () => {
-        sub.unsubscribe();
-      };
-    }, [getLatestTransaction]);
 
     return (
       <WithdrawConfirm

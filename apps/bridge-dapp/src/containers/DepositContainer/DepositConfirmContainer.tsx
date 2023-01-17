@@ -7,7 +7,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/dapp-types';
+import { TransactionState } from '@webb-tools/abstract-api-provider';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';

@@ -1,4 +1,4 @@
-import { TransactionState } from '@webb-tools/dapp-types';
+import { TransactionState } from '@webb-tools/abstract-api-provider';
 
 export const updateProgress = (
   stage: TransactionState,
