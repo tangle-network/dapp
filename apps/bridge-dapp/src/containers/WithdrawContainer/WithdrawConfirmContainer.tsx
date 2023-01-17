@@ -93,7 +93,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: string) => {
-      downloadString(note, note.slice(-note.length - 10) + '.txt');
+      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
     }, []);
 
     const avatarTheme = useMemo(() => {
@@ -169,7 +169,7 @@ export const WithdrawConfirmContainer = forwardRef<
         checkboxProps={{
           isChecked: checked,
           isDisabled: withdrawTxInProgress,
-          children: 'I have copy the change note',
+          children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}

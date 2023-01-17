@@ -73,23 +73,25 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         </div>
 
         {/** Popular tokens */}
-        <div className="flex flex-col p-2 space-y-2">
-          <Typography variant="utility" className="uppercase mb-0.5">
-            Popular tokens
-          </Typography>
+        {filteredPopular.length > 0 ? (
+          <div className="flex flex-col p-2 space-y-2">
+            <Typography variant="utility" className="uppercase mb-0.5">
+              Popular tokens
+            </Typography>
 
-          <div className="flex flex-wrap gap-2">
-            {filteredPopular.map((current, idx) => (
-              <TokenSelector
-                className="uppercase"
-                key={`${current.name}-${idx}`}
-                onClick={() => onItemChange(current)}
-              >
-                {current.symbol}
-              </TokenSelector>
-            ))}
+            <div className="flex flex-wrap gap-2">
+              {filteredPopular.map((current, idx) => (
+                <TokenSelector
+                  className="uppercase"
+                  key={`${current.name}-${idx}`}
+                  onClick={() => onItemChange(current)}
+                >
+                  {current.symbol}
+                </TokenSelector>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {/** Select tokens */}
         <div className="flex flex-col p-2 space-y-2">
