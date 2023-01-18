@@ -224,8 +224,7 @@ export const KeygenTable: FC = () => {
         .filter((v) => {
           return (
             v.keyGenThreshold &&
-            v.signatureThreshold &&
-            Number(v.session) < Number(nextKey?.session)
+            v.signatureThreshold
           );
         })
         .map(

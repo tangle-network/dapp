@@ -244,7 +244,7 @@ export const StatsProvider: React.FC<
           return {
             currentBlock: String(data.targetHeight),
             lastProcessBlock: String(data.lastProcessedHeight),
-            activeSession: String(Number(lastSession.id) - 1),
+            activeSession: String(Number(lastSession.id)),
             lastSession: lastSession.id,
             activeSessionBlock: lastSession.blockNumber,
           };
