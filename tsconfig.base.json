@@ -38,8 +38,6 @@
       "@webb-tools/dapp-config/*": ["libs/dapp-config/src/*"],
       "@webb-tools/dapp-types": ["libs/dapp-types/src/index.ts"],
       "@webb-tools/dapp-types/*": ["libs/dapp-types/src/*"],
-      "@webb-tools/evm-contracts": ["libs/evm-contracts/src/index.ts"],
-      "@webb-tools/evm-contracts/*": ["libs/evm-contracts/src/*"],
       "@webb-tools/fixtures-deployments": [
         "libs/fixtures-deployments/src/index.ts"
       ],

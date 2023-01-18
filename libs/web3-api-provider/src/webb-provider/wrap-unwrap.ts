@@ -8,14 +8,14 @@ import {
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
-import { WebbFungibleToken } from '@webb-tools/evm-contracts';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
+import { ERC20__factory as ERC20Factory, FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
-import { ContractTransaction } from 'ethers';
+import { BigNumberish, ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import Web3 from 'web3';
 
 import { WebbWeb3Provider } from '../webb-provider';
+import { FungibleTokenWrapper } from '@webb-tools/tokens';
 
 export type Web3WrapPayload = Amount;
 export type Web3UnwrapPayload = Amount;
@@ -70,7 +70,30 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     const account = await this.inner.accounts.accounts();
     const currentAccount = account[0];
 
-    return webbFungibleToken.canUnwrap(currentAccount.address, Number(amount));
+    const fn = async (account: string, amount: BigNumberish) => {
+      const [currentWrappedLiquidity] = await Promise.all([
+        webbFungibleToken.contract.totalSupply(),
+        webbFungibleToken.contract.provider.getBalance(webbFungibleToken.contract.address),
+      ]);
+  
+      if (
+        currentWrappedLiquidity.lt(amount) ||
+        currentWrappedLiquidity.lt(amount)
+      ) {
+        // no enough liquidity
+        return false;
+      }
+  
+      const userBalance = await webbFungibleToken.contract.balanceOf(account);
+  
+      if (userBalance.gte(amount)) {
+        return true;
+      }
+  
+      return false;
+    }
+
+    return fn(currentAccount.address, Number(amount));
   }
 
   async unwrap(unwrapPayload: Web3UnwrapPayload): Promise<string> {
@@ -103,7 +126,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
           `No wrappable token address for ${wrappableToken.view.name} on selected chain`
         );
       }
-      const tx = await webbFungibleToken.unwrap(wrappableTokenAddress, amount);
+      const tx = await webbFungibleToken.contract.unwrap(wrappableTokenAddress, amount);
 
       await tx.wait();
       this.inner.notificationHandler({
@@ -191,7 +214,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             persist: true,
           });
           tx = await wrappableTokenInstance.approve(
-            webbFungibleToken.address,
+            webbFungibleToken.contract.address,
             amount
           );
           await tx.wait();
@@ -199,7 +222,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         }
       }
 
-      tx = await webbFungibleToken.wrap(
+      tx = await webbFungibleToken.contract.wrap(
         this.getAddressFromCurrency(wrappableToken),
         amount
       );
@@ -234,12 +257,13 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     return currency.getAddress(currentNetwork)!;
   }
 
-  fungibleTokenwrapper(currency: Currency): WebbFungibleToken {
+  fungibleTokenwrapper(currency: Currency): FungibleTokenWrapper {
     const contractAddress = this.getAddressFromCurrency(currency);
-
-    return new WebbFungibleToken(
-      this.inner.getEthersProvider(),
-      contractAddress
+    const signer = this.inner.getEthersProvider().getSigner();
+    const contract = FungibleTokenWrapper__factory.connect(
+      contractAddress,
+      signer,
     );
+    return new FungibleTokenWrapper(contract, signer);
   }
 }

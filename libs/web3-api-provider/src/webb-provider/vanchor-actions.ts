@@ -16,11 +16,6 @@ import {
 import { ERC20__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
-  VAnchorContract,
-  generateCircomCommitment,
-  utxoFromVAnchorNote,
-} from '@webb-tools/evm-contracts';
-import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
@@ -40,6 +35,7 @@ import {
   hexToU8a,
   u8aToHex,
 } from '@webb-tools/utils';
+import { assert } from 'console';
 import {
   BigNumber,
   BigNumberish,
@@ -306,7 +302,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     owner: Keypair
   ): Promise<Note[]> {
     const cancelToken = new CancellationToken();
-    const vanchor = this.inner.getVariableAnchorByAddress(anchorAddress);
+    const vanchor = await this.inner.getVariableAnchorByAddress(anchorAddress);
     const notes = await this.inner.getVAnchorNotesFromChain(
       vanchor,
       owner,
@@ -326,7 +322,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     const payload = notes[0];
     const destVAnchor = await this.getVAnchor(tx, payload, true);
-    const treeHeight = await destVAnchor._contract.getLevels();
+    const treeHeight = await destVAnchor.contract.getLevels();
 
     // Loop through the notes and populate the leaves map
     const leavesMap: Record<string, Uint8Array[]> = {};
@@ -378,7 +374,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
-    destVAnchor: VAnchorContract,
+    destVAnchor: VAnchor,
     treeHeight: number
   ) {
     const parsedNote = note.note;
@@ -392,7 +388,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
       const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
       const sourceEthers = sourceHttpProvider.intoEthersProvider();
-      const sourceVAnchor = this.inner.getVariableAnchorByAddressAndProvider(
+      const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(
         sourceAddress,
         sourceEthers
       );
@@ -414,13 +410,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (parsedNote.sourceChainId === parsedNote.targetChainId) {
-      const destRoot = await destVAnchor.inner.getLastRoot();
+      const destRoot = await destVAnchor.contract.getLastRoot();
       destHistorySourceRoot = destRoot.toHexString();
     } else {
-      const edgeIndex = await destVAnchor.inner.edgeIndex(
+      const edgeIndex = await destVAnchor.contract.edgeIndex(
         parsedNote.sourceChainId
       );
-      const edge = await destVAnchor.inner.edgeList(edgeIndex);
+      const edge = await destVAnchor.contract.edgeList(edgeIndex);
       destHistorySourceRoot = edge[1].toHexString();
     }
 
@@ -440,9 +436,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       .elements()
       .map((el) => hexToU8a(el.toHexString()));
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
-    const commitment = generateCircomCommitment(parsedNote);
+    const commitment = parsedNote.getLeafCommitment();
     const leafIndex = provingTree.getIndexByElement(commitment);
-    const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+    const utxo = parsedNote.getUtxo();
+    assert(utxo.index == leafIndex);
 
     return {
       leafIndex,
@@ -489,7 +486,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     payload: Note,
     isDestAnchor = false
-  ): Promise<VAnchorContract> {
+  ): Promise<VAnchor> {
     const { note } = payload;
     const { sourceChainId, targetChainId } = note;
     const vanchors = await this.inner.methods.bridgeApi.getVAnchors();
@@ -515,7 +512,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       return;
     }
 
-    return this.inner.getVariableAnchorByAddress(vanchorAddress);
+    return await this.inner.getVariableAnchorByAddress(vanchorAddress);
   }
 
   private async getTokenWrapper(
@@ -524,9 +521,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     isDest = false
   ): Promise<FungibleTokenWrapper> {
     const vAnchor = await this.getVAnchor(tx, payload, isDest);
-    const currentWebbToken = await vAnchor.getWebbToken();
+    const currentWebbToken = await vAnchor.contract.token();
     return FungibleTokenWrapper.connect(
-      currentWebbToken.address,
+      currentWebbToken,
       this.inner.getEthersProvider().getSigner()
     );
   }
@@ -583,7 +580,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     ) {
       // approve the token
       approvalTransaction = await currentWebbToken.approve(
-        srcVAnchor._contract.address,
+        srcVAnchor.contract.address,
         amount,
         {
           gasLimit: '0x5B8D80',

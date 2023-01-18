@@ -3345,10 +3345,17 @@
   resolved "https://registry.yarnpkg.com/@lit-labs/ssr-dom-shim/-/ssr-dom-shim-1.0.0.tgz#427e19a2765681fd83411cd72c55ba80a01e0523"
   integrity sha512-ic93MBXfApIFTrup4a70M/+ddD8xdt2zxxj9sRwHQzhS9ag/syqkD8JPdTXsc1gUy2K8TTirhlCqyTEM/sifNw==
 
-"@lit/reactive-element@^1.3.0", "@lit/reactive-element@^1.6.0":
+"@lit/reactive-element@^1.3.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@lit/reactive-element/-/reactive-element-1.6.0.tgz#7504988fc3d7895c032f035eca23f0697b472e59"
   integrity sha512-33H04h4tx9NVEADti0haZTNxssCnqZlMlyjri5k9kwDWAe2W1iENroZt7VWwmsPhlWUD8sSoPXSHqd0DdL29Pw==
+  dependencies:
+    "@lit-labs/ssr-dom-shim" "^1.0.0"
+
+"@lit/reactive-element@^1.5.0":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@lit/reactive-element/-/reactive-element-1.6.1.tgz#0d958b6d479d0e3db5fc1132ecc4fa84be3f0b93"
+  integrity sha512-va15kYZr7KZNNPZdxONGQzpUr+4sxVu7V/VG7a8mRfPPXUyhEYj5RzXCQmGrlP3tAh0L3HHm5AjBMFYRqlM9SA==
   dependencies:
     "@lit-labs/ssr-dom-shim" "^1.0.0"
 
@@ -8985,17 +8992,18 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.4.tgz#1bad4a5bb78285c2fd63c462d276d61d6bff3138"
-  integrity sha512-dLfhQcVz0v/wAdjnR6UumZ5WanOxF+qAp0e12B/mBLyZtqyV/dxMNBEHZvNr8q2eUhzcq4Mmgd8WxT8PibCw+g==
+"@webb-tools/anchors@0.5.8", "@webb-tools/anchors@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.8.tgz#5bb1cf8f938ef221b4b678f6b63830478ed13b95"
+  integrity sha512-xtA2vIVZECDpy3KjlTtzh/F0pRVNXrSq8eCQObPS2MJL/TWEaDZObeFC2nmo9uV0rXGIODAuI7uA2uE2iAu8jA==
   dependencies:
-    "@webb-tools/contracts" "^0.5.4"
-    "@webb-tools/interfaces" "^0.5.4"
+    "@webb-tools/contracts" "^0.5.6"
+    "@webb-tools/interfaces" "^0.5.6"
     "@webb-tools/sdk-core" "0.1.4-119"
     "@webb-tools/semaphore" "0.0.1-5"
-    "@webb-tools/utils" "^0.5.4"
+    "@webb-tools/utils" "^0.5.7"
     ethers "5.7.0"
+    jssha "^3.2.0"
 
 "@webb-tools/anchors@^0.2.6", "@webb-tools/anchors@^0.2.7", "@webb-tools/anchors@^0.2.9":
   version "0.2.9"
@@ -9106,10 +9114,10 @@
     "@webb-tools/utils" "^0.4.2"
     ethers "5.7.0"
 
-"@webb-tools/contracts@0.5.4", "@webb-tools/contracts@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.5.4.tgz#2374820f1729c6df0c724b6e6c10df680bd5ea5b"
-  integrity sha512-75tpzigZcei/QchCjdhE53oIo4NFIR0V8JQ+KdykQvFw/BlY6/3nD2upNMJf9NndYf+BG+8YzeVVt1MuMrnAEA==
+"@webb-tools/contracts@0.5.6", "@webb-tools/contracts@^0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.5.6.tgz#dbc2ddbd7be061b1122a5a70d7fcef3e21e0022d"
+  integrity sha512-FNBOHI/ftpy4+18uU4MVq8NK37zYtyzyueM/zCkd9GmZxV2/Oa4PGCBAKSFZIGMHX66BwRdC8Sgyi5ZKs4RNkQ==
   dependencies:
     "@nomiclabs/hardhat-waffle" "^2.0.3"
     "@openzeppelin/contracts" "^4.7.3"
@@ -9167,12 +9175,12 @@
     "@polkadot/typegen" "9.2.4"
     "@polkadot/types" "9.2.4"
 
-"@webb-tools/interfaces@0.5.4", "@webb-tools/interfaces@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.5.4.tgz#e53d1a2d6e32c5114d91b6fde6ac4fd52d9d6aa8"
-  integrity sha512-ESRfgKwPsFHHnOusMcnNz5rzbbQ7Zbpu/NgpoT3V3Ah7JHlEaNC9uspcyDSJ74u8vMBIApQ2tePhfAvpKuI6bA==
+"@webb-tools/interfaces@0.5.6", "@webb-tools/interfaces@^0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.5.6.tgz#3387f187a7f0815152415c7dc7b983ef964ce2c5"
+  integrity sha512-55uf3jIngGoL/vNMimXXO6riNho3D4mQMv05kJJHXR7HATUpmkcuzlaLSKRzeCcR8ijyw4ymo0idYjRnrNOf2Q==
   dependencies:
-    "@webb-tools/contracts" "^0.5.4"
+    "@webb-tools/contracts" "^0.5.6"
     "@webb-tools/sdk-core" "0.1.4-119"
 
 "@webb-tools/interfaces@^0.2.6", "@webb-tools/interfaces@^0.2.7", "@webb-tools/interfaces@^0.2.9":
@@ -9574,14 +9582,15 @@
     "@webb-tools/utils" "^0.4.2"
     ethers "5.7.0"
 
-"@webb-tools/tokens@0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.5.4.tgz#6f427a17fa543cb2c123c67574b72a6d115177d1"
-  integrity sha512-gHK+RjgFCM2WktK4a7qhjrH5cXX3A3u1onXMbhv9STkAHm7GFHYkOkcJJypJ5OJ9nci2hXV4a2syNbhWSLC6BA==
+"@webb-tools/tokens@0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.5.8.tgz#e985a2ed330c7178a55827a8c8f1a5cf20fed894"
+  integrity sha512-dEHjwbwba85SLytYyVABc32uG5IRmc1szQ1JKbeTB41OurP3CzVtBnN0h6m1PaExhqESV266hu09j6/ckYCVeg==
   dependencies:
-    "@webb-tools/contracts" "^0.5.4"
+    "@webb-tools/anchors" "^0.5.8"
+    "@webb-tools/contracts" "^0.5.6"
     "@webb-tools/sdk-core" "0.1.4-119"
-    "@webb-tools/utils" "^0.5.4"
+    "@webb-tools/utils" "^0.5.7"
     ethers "5.7.0"
 
 "@webb-tools/tokens@^0.2.6", "@webb-tools/tokens@^0.2.7", "@webb-tools/tokens@^0.2.9":
@@ -9618,10 +9627,10 @@
     "@webb-tools/sdk-core" "0.1.4-113"
     ethers "5.7.0"
 
-"@webb-tools/utils@0.5.4", "@webb-tools/utils@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.4.tgz#6cb6cf8ea6006803aa44e7295d2fe2da3bfc79bd"
-  integrity sha512-Zw9qP+38vJXk9REph5rQDyPIxrEFTrKmUwqWnMShH1PK0urwtSbgf/jglFfklesNYiPRsg87SL1i9XHRpqz6ig==
+"@webb-tools/utils@0.5.7", "@webb-tools/utils@^0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.7.tgz#a84d3c3edc3686663c5608156208599038abf7f8"
+  integrity sha512-Ng0YSsyH/JccVvKS/GN5WBDoYA2DTAnJjniLFI+QR7PKxQMZdmqA2hEzVu7KWSp7myffEgBGrpngs5uuHgRrjA==
   dependencies:
     "@webb-tools/sdk-core" "0.1.4-119"
     ethers "5.7.0"
@@ -20757,6 +20766,11 @@ jss@10.9.2, jss@^10.9.2:
     is-in-browser "^1.1.3"
     tiny-warning "^1.0.2"
 
+jssha@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/jssha/-/jssha-3.3.0.tgz#44b5531bcf55a12f4a388476c647a9a1cca92839"
+  integrity sha512-w9OtT4ALL+fbbwG3gw7erAO0jvS5nfvrukGPMWIAoea359B26ALXGpzy4YJSp9yGnpUvuvOw1nSjSoHDfWSr1w==
+
 jstransform@^11.0.3:
   version "11.0.3"
   resolved "https://registry.yarnpkg.com/jstransform/-/jstransform-11.0.3.tgz#09a78993e0ae4d4ef4487f6155a91f6190cb4223"
@@ -21207,10 +21221,17 @@ lit-element@^3.2.0:
     "@lit/reactive-element" "^1.3.0"
     lit-html "^2.2.0"
 
-lit-html@^2.2.0, lit-html@^2.6.0:
+lit-html@^2.2.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-2.6.0.tgz#85ef3f0b76c58b70a43c545c02a302b83ee1dbd0"
   integrity sha512-slNAAYfvC7LxeryDOnPFl5uTpxGYGJ6UR9SFmfY+gQ+sf30z1atDPXlgjcSTtwymNdlwDhfGjq+EemQRXp9z1g==
+  dependencies:
+    "@types/trusted-types" "^2.0.2"
+
+lit-html@^2.5.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-2.6.1.tgz#eb29f0b0c2ab54ea77379db11fc011b0c71f1cda"
+  integrity sha512-Z3iw+E+3KKFn9t2YKNjsXNEu/LRLI98mtH/C6lnFg7kvaqPIzPn124Yd4eT/43lyqrejpc5Wb6BHq3fdv4S8Rw==
   dependencies:
     "@types/trusted-types" "^2.0.2"
 

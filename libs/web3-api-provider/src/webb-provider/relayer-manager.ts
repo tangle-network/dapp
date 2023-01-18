@@ -11,7 +11,6 @@ import {
 } from '@webb-tools/abstract-api-provider/relayer';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { Storage } from '@webb-tools/storage';
 import {
   calculateTypedChainId,
@@ -21,6 +20,7 @@ import {
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
+import { VAnchor } from '@webb-tools/anchors';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -168,12 +168,12 @@ export class Web3RelayerManager extends WebbRelayerManager {
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
-    contract: VAnchorContract,
+    vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
     abortSignal: AbortSignal
   ): Promise<string[] | null> {
     let leaves: string[] = [];
-    const sourceEvmId = await contract.getEvmId();
+    const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // loop through the sourceRelayers to fetch leaves
@@ -182,14 +182,14 @@ export class Web3RelayerManager extends WebbRelayerManager {
       try {
         relayerLeaves = await relayers[i].getLeaves(
           typedChainId,
-          contract.inner.address,
+          vanchor.contract.address,
           abortSignal
         );
       } catch (e) {
         continue;
       }
 
-      const validLatestLeaf = await contract.leafCreatedAtBlock(
+      const validLatestLeaf = await vanchor.leafCreatedAtBlock(
         relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
         relayerLeaves.lastQueriedBlock
       );
@@ -197,18 +197,18 @@ export class Web3RelayerManager extends WebbRelayerManager {
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
-        const levels = await contract.inner.getLevels();
+        const levels = await vanchor.contract.getLevels();
         const tree = MerkleTree.createTreeWithRoot(
           levels,
           relayerLeaves.leaves,
-          (await contract.getLastRoot()).toString()
+          (await vanchor.contract.getLastRoot()).toString()
         );
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {
           leaves = relayerLeaves.leaves;
 
-          await storage.set(contract.inner.address.toLowerCase(), {
+          await storage.set(vanchor.contract.address.toLowerCase(), {
             lastQueriedBlock: relayerLeaves.lastQueriedBlock,
             leaves: relayerLeaves.leaves,
           });
