@@ -13,13 +13,23 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
   // Effect to update the progress bar
   useEffect(() => {
     switch (stage) {
-      case TransactionState.FetchingFixtures: {
-        setProgress(0);
+      case TransactionState.PreparingTransaction: {
+        setProgress(5);
         break;
       }
 
       case TransactionState.FetchingLeaves: {
+        setProgress(10);
+        break;
+      }
+
+      case TransactionState.FetchingFixtures: {
         setProgress(25);
+        break;
+      }
+
+      case TransactionState.Intermediate: {
+        setProgress(40);
         break;
       }
 
@@ -39,8 +49,17 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
         break;
       }
 
-      default: {
+      case TransactionState.Cancelling:
+      case TransactionState.Ideal: {
         setProgress(null);
+        break;
+      }
+
+      default: {
+        console.error(
+          'Unknown transaction state in DepositConfirmContainer component'
+        );
+        break;
       }
     }
   }, [stage, setProgress]);

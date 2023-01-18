@@ -2,22 +2,25 @@ import {
   Currency,
   NewNotesTxResult,
   Transaction,
+  TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/abstract-api-provider';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCopyable } from '@webb-tools/ui-hooks';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { DEPOSIT_FAILURE_MSG, getCardTitle } from '../../utils';
-import { updateProgress } from '../../utils/setProgress';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { getCardTitle, getErrorMessage } from '../../utils';
 
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
 import { DepositConfirmContainerProps } from './types';
 
 export const DepositConfirmContainer = forwardRef<
@@ -30,9 +33,12 @@ export const DepositConfirmContainer = forwardRef<
   ) => {
     const { api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
-    const { api, stage, startNewTransaction } = useVAnchor();
-    const { setMainComponent, notificationApi } = useWebbUI();
-    const [progress, setProgress] = useState<null | number>(null);
+    const { api, startNewTransaction } = useVAnchor();
+    const { setMainComponent } = useWebbUI();
+
+    const stage = useLatestTransactionStage('Deposit');
+
+    const progress = useTransactionProgressValue(stage);
 
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
@@ -82,7 +88,7 @@ export const DepositConfirmContainer = forwardRef<
       );
     }, [activeApi, activeChain]);
 
-    const onClickExecuteDeposit = useCallback(async () => {
+    const handleExecuteDeposit = useCallback(async () => {
       if (
         !api ||
         !activeApi ||
@@ -101,39 +107,41 @@ export const DepositConfirmContainer = forwardRef<
         return;
       }
 
+      downloadNote(note);
+
+      const {
+        amount,
+        denomination,
+        sourceChainId: sourceTypedChainId,
+        sourceIdentifyingData,
+        targetChainId: destTypedChainId,
+        tokenSymbol,
+      } = note.note;
+      // Calculate the amount
+      const formattedAmount = ethers.utils.formatUnits(amount, denomination);
+
+      // Get the deposit token symbol
+      let srcTokenSymbol = tokenSymbol;
+      console.log('wrappableTokenSymbol', wrappableToken);
+
+      if (wrappableToken) {
+        srcTokenSymbol = wrappableToken.view.symbol;
+      }
+
+      // Get the destination token symbol
+      const destToken = tokenSymbol;
+
+      const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+        amount: +formattedAmount,
+        tokens: [srcTokenSymbol, destToken],
+        wallets: {
+          src: +sourceTypedChainId,
+          dest: +destTypedChainId,
+        },
+        token: tokenSymbol,
+      });
+
       try {
-        downloadNote(note);
-        const {
-          amount,
-          denomination,
-          sourceChainId: sourceTypedChainId,
-          sourceIdentifyingData,
-          targetChainId: destTypedChainId,
-          tokenSymbol,
-        } = note.note;
-        // Calculate the amount
-        const formattedAmount = ethers.utils.formatUnits(amount, denomination);
-
-        // Get the deposit token symbol
-        let srcTokenSymbol = tokenSymbol;
-        console.log('wrappableTokenSymbol', wrappableToken);
-
-        if (wrappableToken) {
-          srcTokenSymbol = wrappableToken.view.symbol;
-        }
-
-        // Get the destination token symbol
-        const destToken = tokenSymbol;
-
-        const tx = Transaction.new<NewNotesTxResult>('Deposit', {
-          amount: +formattedAmount,
-          tokens: [srcTokenSymbol, destToken],
-          wallets: {
-            src: +sourceTypedChainId,
-            dest: +destTypedChainId,
-          },
-          token: tokenSymbol,
-        });
         txQueueApi.registerTransaction(tx);
         const args = await api?.prepareTransaction(
           tx,
@@ -171,9 +179,9 @@ export const DepositConfirmContainer = forwardRef<
           outputNotes: [indexedNote],
         });
       } catch (error) {
-        console.log('Deposit error', error);
+        console.error(error);
         noteManager?.removeNote(note);
-        notificationApi(DEPOSIT_FAILURE_MSG);
+        tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
       }
@@ -191,7 +199,6 @@ export const DepositConfirmContainer = forwardRef<
       wrappableToken,
       txQueueApi,
       noteManager,
-      notificationApi,
     ]);
 
     const activeChains = useMemo<string[]>(() => {
@@ -221,11 +228,6 @@ export const DepositConfirmContainer = forwardRef<
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
-    // Effect to update the progress bar
-    useEffect(() => {
-      updateProgress(stage, setProgress);
-    }, [stage, setProgress]);
-
     return (
       <DepositConfirm
         title={cardTitle}
@@ -240,7 +242,7 @@ export const DepositConfirmContainer = forwardRef<
             : wrappingFlow
             ? 'Wrap And Deposit'
             : 'Deposit',
-          onClick: onClickExecuteDeposit,
+          onClick: handleExecuteDeposit,
         }}
         checkboxProps={{
           isChecked: checked,

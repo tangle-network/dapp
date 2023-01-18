@@ -13,7 +13,10 @@ import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { TransferConfirmContainerProps } from './types';
-import { useLatestTransactionStage } from '../../hooks';
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
 import { getErrorMessage } from '../../utils';
 
 const logger = LoggerService.get('TransferConfirmContainer');
@@ -40,8 +43,7 @@ export const TransferConfirmContainer = forwardRef<
 
     const { api: vAnchorApi } = useVAnchor();
 
-    // State for progress bar value
-    const [progress, setProgress] = useState<null | number>(null);
+    const progress = useTransactionProgressValue(stage);
 
     const { activeApi, activeChain, noteManager } = useWebContext();
 
@@ -178,53 +180,6 @@ export const TransferConfirmContainer = forwardRef<
       recipient,
       noteManager,
     ]);
-
-    // Effect to update the progress bar
-    useEffect(() => {
-      switch (stage) {
-        case TransactionState.FetchingFixtures: {
-          setProgress(0);
-          break;
-        }
-
-        case TransactionState.FetchingLeaves: {
-          setProgress(25);
-          break;
-        }
-        case TransactionState.Intermediate: {
-          setProgress(40);
-          break;
-        }
-
-        case TransactionState.GeneratingZk: {
-          setProgress(50);
-          break;
-        }
-
-        case TransactionState.SendingTransaction: {
-          setProgress(75);
-          break;
-        }
-
-        case TransactionState.Done:
-        case TransactionState.Failed: {
-          setProgress(100);
-          break;
-        }
-
-        case TransactionState.Cancelling:
-        case TransactionState.Ideal: {
-          setProgress(null);
-          break;
-        }
-
-        default: {
-          throw new Error(
-            'Unknown transaction state in DepositConfirmContainer component'
-          );
-        }
-      }
-    }, [stage]);
 
     return (
       <TransferConfirm

@@ -1,16 +1,10 @@
-import {
-  NewNotesTxResult,
-  Transaction,
-  TransactionState,
-  VAnchorActions,
-} from '@webb-tools/abstract-api-provider';
+import { VAnchorActions } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useMemo, useState } from 'react';
 import { useTxQueue } from '../transaction';
 
 export interface VAnchorAPI {
   cancel(): Promise<void>;
-  stage: TransactionState;
   error: string;
   api: VAnchorActions<any> | null;
   startNewTransaction(): void;
@@ -19,16 +13,7 @@ export interface VAnchorAPI {
 export const useVAnchor = (): VAnchorAPI => {
   const { activeApi } = useWebContext();
   const [error] = useState('');
-  const { txQueue, currentTxId, api: txQueueApi } = useTxQueue();
-
-  const stage = useMemo(() => {
-    const txes = txQueue.filter((tx) => tx.name === 'Deposit');
-    if (txes.length === 0 || currentTxId === null) {
-      return TransactionState.Ideal;
-    }
-    const lastTx = txes[txes.length - 1];
-    return lastTx.currentStatus[0];
-  }, [txQueue, currentTxId]);
+  const { api: txQueueApi } = useTxQueue();
 
   /// api
   const api = useMemo(() => {
@@ -47,7 +32,6 @@ export const useVAnchor = (): VAnchorAPI => {
   }, [api]);
 
   return {
-    stage,
     startNewTransaction: txQueueApi.startNewTransaction,
     api,
     error,

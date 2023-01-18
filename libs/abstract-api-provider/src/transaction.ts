@@ -16,6 +16,8 @@ export enum TransactionState {
   Cancelling, // Withdraw canceled
   Ideal, // initial status where the instance is Idea and ready for a withdraw
 
+  PreparingTransaction, // Preparing the arguments for a transaction
+
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
   FetchingLeaves, // To create a merkle proof, the elements of the merkle tree must be fetched.
   GeneratingZk, // There is a withdraw in progress, and it's on the step of generating the Zero-knowledge proof
@@ -70,6 +72,8 @@ type FailedTransaction = {
 type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
+
+  [TransactionState.PreparingTransaction]: undefined;
 
   [TransactionState.FetchingFixtures]: FixturesProgress;
   [TransactionState.FetchingLeaves]: LeavesProgress;
