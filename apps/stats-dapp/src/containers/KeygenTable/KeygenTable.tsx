@@ -13,7 +13,12 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { PageInfoQuery, useKeys } from '../../provider/hooks';
+import {
+  PageInfoQuery,
+  useKeys,
+  PublicKey,
+  useActiveKeys,
+} from '../../provider/hooks';
 import {
   Accordion,
   AccordionButton,
@@ -173,6 +178,16 @@ export const KeygenTable: FC = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
+  const { error, isFailed, isLoading, val: activeKeyData } = useActiveKeys();
+
+  const { nextKey } = useMemo<{
+    nextKey: PublicKey | null | undefined;
+  }>(() => {
+    return {
+      nextKey: activeKeyData ? activeKeyData[1] : null,
+    };
+  }, [activeKeyData]);
+
   // Pagination state
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -206,7 +221,12 @@ export const KeygenTable: FC = () => {
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items
-        .filter((v) => v.keyGenThreshold && v.signatureThreshold)
+        .filter((v) => {
+          return (
+            v.keyGenThreshold &&
+            v.signatureThreshold
+          );
+        })
         .map(
           (item): KeygenType => ({
             height: Number(item.height),
@@ -336,3 +356,4 @@ export const KeygenTable: FC = () => {
     </CardTable>
   );
 };
+
