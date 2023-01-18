@@ -6,7 +6,33 @@ import { ModalContent } from '../../components/Modal/ModalContent';
 import { WalletConnectionCard } from '../../components/WalletConnectionCard';
 import { Button } from '../../components/Button';
 
-import { wallets } from '../templates/WalletConnectionCard.stories';
+const wallets = [
+  {
+    id: 'metamask',
+    name: 'MetaMask',
+    title: 'MetaMask Wallet',
+  },
+  {
+    id: 'walletconnect',
+    name: 'WalletConnect',
+    title: 'WalletConnect',
+  },
+  {
+    id: 'polkadot-js',
+    name: 'Polkadot-JS',
+    title: 'Polkadot-JS Wallet',
+  },
+  {
+    id: 'talisman',
+    name: 'Talisman',
+    title: 'Talisman Wallet',
+  },
+  {
+    id: 'subwallet',
+    name: 'Subwallet',
+    title: 'Subwallet',
+  },
+];
 
 export default {
   title: 'Design System/Organisms/Modal',

@@ -37,9 +37,9 @@ WithReadonly.args = {
 export const isDisabled = Template.bind({});
 isDisabled.args = {
   id: 'disabled',
-  value: 'isDisabled',
+  name: 'disabled',
+  value: 'disabled',
   isDisabled: true,
-  leftIcon: <Graph className="fill-current dark:fill-current" />,
   className: 'mt-3',
 };
 
