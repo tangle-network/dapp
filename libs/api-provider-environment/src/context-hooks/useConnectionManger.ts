@@ -179,21 +179,11 @@ export function useConnectionManger(providerState: WebbProviderState) {
     }
     const chain = nextConnection.connectionValue[0];
     const wallet = nextConnection.connectionValue[1];
-    switchChain(
-      chain,
-      wallet,
-      activeApi,
-      registerInteractiveFeedback,
-      setInteractiveFeedbacks,
-      apiConfig,
-      notificationHandler,
-      networkStorage,
-      abortController.signal
-    )
+    switchChain(chain, wallet, providerState, abortController.signal)
       .then()
       .catch();
     return () => abortController.abort();
-  }, [nextConnection, activeApi]);
+  }, [nextConnection, providerState, activeApi]);
 
   return {
     activeAccount,
@@ -203,14 +193,16 @@ export function useConnectionManger(providerState: WebbProviderState) {
 const switchChain = async (
   chain: Chain,
   wallet: Wallet,
-  activeApi: WebbApiProvider<any>,
-  registerInteractiveFeedback: RegisterInteractiveFeedback,
-  setInteractiveFeedbacks: RegisterInteractiveFeedbackSetter,
-  apiConfig: ApiConfig,
-  notificationHandler: NotificationHandier,
-  networkStorage?: NetworkStorage | undefined,
+  providerState: WebbProviderState,
   abortSignal: AbortSignal
 ) => {
+  const {
+    activeApi,
+    registerInteractiveFeedback,
+    setInteractiveFeedbacks,
+    apiConfig,
+    notificationHandler,
+  } = providerState;
   const relayerManagerFactory = await getRelayerManagerFactory();
 
   // wallet cleanup
