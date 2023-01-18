@@ -1,6 +1,10 @@
 import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import { walletsConfig, WalletId } from '@webb-tools/dapp-config'
+import {
+  MetaMaskIcon,
+  PolkadotJsIcon
+} from '@webb-tools/icons';
+import { WalletId } from '@webb-tools/dapp-types/WalletId';
 
 export default {
   title: 'Design System/Templates/WalletConnectionCard',
@@ -8,7 +12,38 @@ export default {
   decorators: [withRouter],
 };
 
-const wallets = walletsConfig;
+const walletsConfig = {
+  [WalletId.MetaMask]: {
+    id: WalletId.MetaMask,
+    Logo: <MetaMaskIcon />,
+    name: 'metamask',
+    title: `MetaMask`,
+    platform: 'EVM',
+    enabled: true,
+    detect() {
+      const hasWeb3 = web3 !== 'undefined';
+      if (hasWeb3) {
+        return (window).web3.__isMetaMaskShim__
+      }
+      return false;
+    },
+    homeLink: 'https://metamask.io/',
+  },
+  [WalletId.Polkadot]: {
+    id: WalletId.Polkadot,
+    Logo: <PolkadotJsIcon />,
+    name: 'polkadot-js',
+    title: `PolkadotJS Extension`,
+    platform: 'Substrate',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    homeLink: 'https://polkadot.js.org/extension',
+  },
+};
+
+let wallets = Object.values(walletsConfig);
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <WalletConnectionCard {...args} />;
@@ -21,7 +56,7 @@ Default.args = {
 };
 
 export const Failed = Template.bind({});
-Failed.args = { wallets, failedWalletId: WalletId.Polkadot, connectingWalletId: WalletId.MetaMask };
+Failed.args = { wallets, failedWalletId: WalletId.MetaMask };
 
 export const Loading = Template.bind({});
-Loading.args = { wallets, connectingWalletId: WalletId.Polkadot };
+Loading.args = { wallets, connectingWalletId: WalletId.MetaMask };
