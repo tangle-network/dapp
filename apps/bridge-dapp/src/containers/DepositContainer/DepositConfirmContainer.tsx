@@ -134,7 +134,25 @@ export const DepositConfirmContainer = forwardRef<
         }
       }
 
-      return wrappingFlow ? `Wrap and Deposit ${status}` : `Deposit ${status}`;
+      if (wrappingFlow) {
+        if (
+          status !== 'Completed' &&
+          status !== 'Failed' &&
+          status !== 'In-Progress'
+        ) {
+          return `Confirm Wrap and Deposit`;
+        } else {
+          return `Wrap and Deposit ${status}`;
+        }
+      } else if (
+        status !== 'Completed' &&
+        status !== 'Failed' &&
+        status !== 'In-Progress'
+      ) {
+        return `Confirm Deposit`;
+      } else {
+        return `Deposit ${status}`;
+      }
     }, [stage, wrappingFlow]);
 
     // Effect to update the progress bar

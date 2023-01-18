@@ -12,7 +12,12 @@ import {
   TransactionQueueProps,
 } from './types';
 import { TransactionProgressCard } from './TransactionProgressCard';
-import { shortenHex, Typography } from '@webb-tools/webb-ui-components';
+import {
+  shortenHex,
+  Typography,
+  IconWithTooltip,
+  TokenPairIcons,
+} from '@webb-tools/webb-ui-components';
 import {
   ChevronUp,
   ExternalLinkLine,
@@ -46,10 +51,7 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({
   );
 };
 
-const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({
-  uri,
-  method,
-}) => {
+const FailedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => {
   const message = useMemo(() => {
     switch (method) {
       case 'Transfer':
@@ -66,11 +68,6 @@ const FailedFooter: FC<{ uri: string; method: TransactionItemVariant }> = ({
         <AlertFill maxWidth={16} />
       </span>
       <span className={'text-inherit dark:text-inherit'}>{message} &nbsp;</span>
-      <ExternalLinkLine
-        width={12}
-        height={12}
-        className="text-inherit dark:text-inherit !fill-current inline whitespace-nowrap"
-      />
     </>
   );
 };
@@ -157,15 +154,14 @@ export const TransactionQueueCard = forwardRef<
               hasWarning: isErrored,
               link: isCompleted
                 ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
-                : isErrored
-                ? {
-                    uri: txURI,
-                    text: <FailedFooter uri={txURI} method={tx.method} />,
-                  }
                 : tx.txStatus.message
                 ? undefined
                 : { uri: recipientURI, text: recipientFooter },
-              message: tx.txStatus.message,
+              message: isErrored ? (
+                <FailedFooter method={tx.method} />
+              ) : (
+                tx.txStatus.message
+              ),
             },
             label: {
               amount: tx.amount,
@@ -173,13 +169,18 @@ export const TransactionQueueCard = forwardRef<
               tokenURI: '#',
               nativeValue: tx.nativeValue,
             },
-            tokens: tx.tokens.map((t) => (
-              <TokenIcon
-                key={`${tx.id}-${t}-${tx.method}`}
-                size={'lg'}
-                name={t}
-              />
-            )),
+            tokens:
+              tx.tokens.length === 1 ? (
+                <IconWithTooltip
+                  icon={<TokenIcon name={tx.tokens[0]} />}
+                  content={tx.tokens[0]}
+                />
+              ) : (
+                <TokenPairIcons
+                  token1Symbol={tx.tokens[0]}
+                  token2Symbol={tx.tokens[1]}
+                />
+              ),
 
             onDismiss: tx.onDismiss,
             onSyncNote: tx.onSyncNote,
@@ -265,7 +266,7 @@ export const TransactionQueueCard = forwardRef<
 
           <div className={'grow'}>
             <Typography
-              variant={'body2'}
+              variant={'body1'}
               fw={'bold'}
               className={' text-mono-180 dark:text-mono'}
             >
@@ -277,7 +278,7 @@ export const TransactionQueueCard = forwardRef<
                   : 'Transaction Processing')}
             </Typography>
             <Typography
-              variant={'body4'}
+              variant={'body2'}
               className={'text-mono-120 dark:text-mono-80 pr-1'}
             >
               {transactionSummeryText}

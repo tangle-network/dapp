@@ -62,7 +62,7 @@ export const TransactionCardFooter: FC<
   }, [showDetails]);
   return (
     <div
-      className={cx('my-0 flex items-center p-4', {
+      className={cx('my-0 flex items-center p-4 py-2', {
         'bg-yellow-10 border-t-2 border-yellow-90 dark:bg-yellow-120':
           hasWarning,
       })}
@@ -76,7 +76,7 @@ export const TransactionCardFooter: FC<
 
         {message && !link && (
           <Typography
-            variant={'body4'}
+            variant={'body3'}
             fw={'bold'}
             className={twMerge(textClass, 'flex items-center')}
           >
@@ -86,7 +86,7 @@ export const TransactionCardFooter: FC<
         {link && (
           <a rel="noopener noreferrer" href={link.uri} target="_blank">
             <Typography
-              variant={'body4'}
+              variant={'body3'}
               fw={'bold'}
               className={twMerge(textClass, 'flex items-center')}
             >
