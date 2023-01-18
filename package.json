@@ -15,7 +15,8 @@
     "start:stats": "nx serve stats-dapp",
     "start:webbsite": "nx serve webbsite",
     "start:storybook": "nx storybook webb-ui-components",
-    "format": "prettier --write \"{lib,apps,tools}/**/*.{ts,js,jsx,tsx}\" "
+    "format": "prettier --write \"{lib,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
+    "chromatic": "npx chromatic --build-script-name=build:storybook"
   },
   "private": true,
   "workspaces": [
@@ -270,5 +271,7 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4",
     "webpack-merge": "^5.8.0"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "webb-monorepo@0.0.0"
 }
