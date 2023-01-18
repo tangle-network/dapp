@@ -10,9 +10,12 @@ import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
-import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  DepositConfirm,
+  useCopyable,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { getCardTitle, getErrorMessage } from '../../utils';

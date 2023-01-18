@@ -3,8 +3,11 @@ import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
-import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  WithdrawConfirm,
+  useCopyable,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
 import {
@@ -251,7 +254,7 @@ export const WithdrawConfirmContainer = forwardRef<
         checkboxProps={{
           isChecked: checked,
           isDisabled: withdrawTxInProgress,
-          children: 'I have copy the change note',
+          children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}

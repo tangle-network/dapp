@@ -61,6 +61,11 @@ export type TokenType = {
    * Token token balance in usd
    */
   balanceInUsd?: number | string;
+
+  /**
+   * The token composition if the token is a pool token
+   */
+  tokenComposition?: string[];
 };
 
 /**

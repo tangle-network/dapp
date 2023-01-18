@@ -447,6 +447,7 @@ export const DepositContainer = forwardRef<
         token: {
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
+          tokenComposition: [selectedToken?.symbol, targetSymbol],
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -459,6 +460,7 @@ export const DepositContainer = forwardRef<
       bridgeFungibleCurrency,
       selectedSourceChain,
       setMainComponentName,
+      selectedToken,
     ]);
 
     const handleOpenChange = useCallback(
@@ -509,7 +511,7 @@ export const DepositContainer = forwardRef<
     const tokenListDepositProps = useMemo<TokenListCardProps>(() => {
       return {
         className: 'w-[550px] h-[700px]',
-        title: 'Select Asset to Deposit',
+        title: `Select a token from ${selectedSourceChain?.name}`,
         popularTokens: [],
         selectTokens: populatedSelectableWebbTokens,
         unavailableTokens: populatedAllTokens,
@@ -523,6 +525,7 @@ export const DepositContainer = forwardRef<
       handleTokenChange,
       setMainComponentName,
       onTryAnotherWallet,
+      selectedSourceChain,
     ]);
 
     const tokenListWrapAndDepositProps = useMemo<
@@ -757,6 +760,7 @@ export const DepositContainer = forwardRef<
               chain: selectedSourceChain,
               onClick: sourceChainInputOnClick,
               chainType: 'source',
+              info: 'Source chain',
             }}
             bridgingTokenProps={bridgingTokenProps}
             destChainProps={{
@@ -765,6 +769,7 @@ export const DepositContainer = forwardRef<
                 setMainComponentName('dest-chain-list-card');
               },
               chainType: 'dest',
+              info: 'Destination chain',
             }}
             tokenInputProps={{
               onClick: () => {
@@ -778,7 +783,7 @@ export const DepositContainer = forwardRef<
               amount: amount ? amount.toString() : undefined,
               onAmountChange,
               onMaxBtnClick,
-              isDisabled: !selectedToken,
+              isDisabled: !selectedToken || !destChain,
               errorMessage: amountErrorMessage,
             }}
             buttonProps={{

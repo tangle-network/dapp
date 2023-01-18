@@ -37,7 +37,8 @@ import {
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
-import { useTxQueue } from '@webb-tools/react-hooks';
+import { useTxQueue, useNoteAccount } from '@webb-tools/react-hooks';
+import { downloadString } from '@webb-tools/browser-utils';
 
 const PageBridge = () => {
   // State for the tabs
@@ -88,6 +89,31 @@ const PageBridge = () => {
     },
     []
   );
+
+  const { allNotes } = useNoteAccount();
+  const { notificationApi } = useWebbUI();
+
+  // download all notes
+  const handleDownload = useCallback(async () => {
+    if (!allNotes.size) {
+      notificationApi({
+        variant: 'error',
+        message: 'No notes to download',
+      });
+      return;
+    }
+
+    // Serialize all notes to array of string
+    const notes = Array.from(allNotes.values()).reduce((acc, curr) => {
+      curr.forEach((note) => {
+        acc.push(note.serialize());
+      });
+      return acc;
+    }, [] as string[]);
+
+    // Download the notes as a file
+    downloadString(JSON.stringify(notes), 'notes.json', '.json');
+  }, [allNotes, notificationApi]);
 
   const sharedNoteAccountTableContainerProps =
     useMemo<NoteAccountTableContainerProps>(
@@ -253,7 +279,10 @@ const PageBridge = () => {
 
             {/** Right buttons (manage and filter) */}
             <div className="space-x-1">
-              <ManageButton onUpload={handleOpenUploadModal} />
+              <ManageButton
+                onUpload={handleOpenUploadModal}
+                onDownload={handleDownload}
+              />
             </div>
           </div>
 

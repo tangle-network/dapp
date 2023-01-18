@@ -190,8 +190,13 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               leftTextProps={{
                 variant: 'utility',
                 title: 'Depositing',
+                info: 'Depositing',
               }}
-              rightContent={fungibleTokenValue}
+              rightContent={
+                fungibleTokenValue +
+                '/' +
+                wrappableTokenSymbol?.trim().toUpperCase()
+              }
             />
             <InfoItem
               leftTextProps={{
