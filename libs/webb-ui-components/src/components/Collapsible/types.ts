@@ -4,8 +4,16 @@ import {
 } from '@radix-ui/react-collapsible';
 import { PropsOf, IWebbComponentBase } from '../../types';
 
-export interface CollapsibleProps extends IWebbComponentBase, PropsOf<'div'>, CollapsibleContentProps {}
+export interface CollapsibleProps
+  extends IWebbComponentBase,
+    PropsOf<'div'>,
+    CollapsibleContentProps {}
 
-export interface CollapsibleButtonProps extends IWebbComponentBase, PropsOf<'button'>, CollapsibleTriggerProps {}
+export interface CollapsibleButtonProps
+  extends IWebbComponentBase,
+    PropsOf<'button'>,
+    CollapsibleTriggerProps {}
 
-export interface CollapsibleContentProps extends IWebbComponentBase, RdxCollapsibleContentProps {}
+export interface CollapsibleContentProps
+  extends IWebbComponentBase,
+    RdxCollapsibleContentProps {}

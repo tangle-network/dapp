@@ -8,7 +8,9 @@ import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
 
 export abstract class WebbRelayerManager {
-  private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(null);
+  private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(
+    null
+  );
   readonly activeRelayerWatcher: Observable<OptionalActiveRelayer>;
   private _listUpdated = new Subject<void>();
   public readonly listUpdated: Observable<void>;
@@ -21,7 +23,10 @@ export abstract class WebbRelayerManager {
     this.listUpdated = this._listUpdated.asObservable();
   }
 
-  async setActiveRelayer(relayer: WebbRelayer | null, typedChainId: number): Promise<void> {
+  async setActiveRelayer(
+    relayer: WebbRelayer | null,
+    typedChainId: number
+  ): Promise<void> {
     const active = await this.mapRelayerIntoActive(relayer, typedChainId);
 
     this.activeRelayer = active;
@@ -33,7 +38,10 @@ export abstract class WebbRelayerManager {
     this._listUpdated.next();
   }
 
-  abstract mapRelayerIntoActive(relayer: OptionalRelayer, typedChainId: number): Promise<OptionalActiveRelayer>;
+  abstract mapRelayerIntoActive(
+    relayer: OptionalRelayer,
+    typedChainId: number
+  ): Promise<OptionalActiveRelayer>;
 
   /*
    *  get a list of the suitable relayers for a given query
@@ -42,5 +50,8 @@ export abstract class WebbRelayerManager {
    **/
   abstract getRelayers(query: RelayerQuery): WebbRelayer[];
   abstract getRelayersByNote(note: Note): Promise<WebbRelayer[]>;
-  abstract getRelayersByChainAndAddress(typedChainId: number, address: string): Promise<WebbRelayer[]>;
+  abstract getRelayersByChainAndAddress(
+    typedChainId: number,
+    address: string
+  ): Promise<WebbRelayer[]>;
 }

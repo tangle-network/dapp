@@ -30,7 +30,9 @@ type KeysToFunc<T extends object> = {
 export type Size = typeof size;
 type SizeEntry = keyof Size;
 
-export const above: KeysToFunc<typeof size> = (Object.keys(size) as SizeEntry[]).reduce((acc: any, label) => {
+export const above: KeysToFunc<typeof size> = (
+  Object.keys(size) as SizeEntry[]
+).reduce((acc: any, label) => {
   acc[label] = (styler?: Styler) => {
     if (!styler) {
       return '';
@@ -52,7 +54,9 @@ export const above: KeysToFunc<typeof size> = (Object.keys(size) as SizeEntry[])
 }, {} as KeysToFunc<typeof size>);
 
 // todo fix this
-export const below: KeysToFunc<typeof size> = (Object.keys(size) as SizeEntry[]).reduce((acc: any, label) => {
+export const below: KeysToFunc<typeof size> = (
+  Object.keys(size) as SizeEntry[]
+).reduce((acc: any, label) => {
   acc[label] = (styler?: Styler) => {
     if (!styler) {
       return '';

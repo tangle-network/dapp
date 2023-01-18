@@ -28,5 +28,7 @@ export const shortenHex = (hexStr: string, chars = 4): string => {
     startStr = hexLower.split('').slice(0, chars).join('');
     endStr = hexLower.split('').slice(-chars).join('');
   }
-  return isStartWith0x ? `${startStr}...${endStr}` : `0x${startStr}...${endStr}`;
+  return isStartWith0x
+    ? `${startStr}...${endStr}`
+    : `0x${startStr}...${endStr}`;
 };

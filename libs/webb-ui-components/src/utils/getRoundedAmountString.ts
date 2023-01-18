@@ -6,7 +6,10 @@ import numbro from 'numbro';
  * @param digits: Represents the number of digits to display
  * @returns: Returns an abbreviated formatted number (e.g. millions - m, billions b)
  */
-export function getRoundedAmountString(num: number | undefined, digits = 3): string {
+export function getRoundedAmountString(
+  num: number | undefined,
+  digits = 3
+): string {
   if (num === 0) {
     return '0';
   }

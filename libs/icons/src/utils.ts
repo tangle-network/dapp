@@ -11,7 +11,9 @@ export function getStrokeColor(darkMode?: boolean) {
   if (darkMode === undefined) {
     return 'stroke-mono-200 dark:stroke-mono-40' as const;
   } else {
-    return darkMode ? ('stroke-mono-40' as const) : ('stroke-mono-200' as const);
+    return darkMode
+      ? ('stroke-mono-40' as const)
+      : ('stroke-mono-200' as const);
   }
 }
 

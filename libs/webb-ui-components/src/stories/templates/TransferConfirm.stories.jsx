@@ -20,7 +20,7 @@ export const Default = Template.bind({});
 Default.args = {
   title: 'Transfer In-Progress',
   progress: 25,
-  activeChains:['Optimism', 'Arbitrum'],
+  activeChains: ['Optimism', 'Arbitrum'],
   note: 'webb://v2:vanchor/1099511627780:109951123431284u182p347130287412083741289341238412472389741382974',
   amount: 1.01,
   changeAmount: 2.02,

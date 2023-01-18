@@ -9,7 +9,10 @@ interface ReturnData {
   update: (status: boolean) => void;
 }
 
-export const useModal = (defaultStatus = false, callback?: () => void): ReturnData => {
+export const useModal = (
+  defaultStatus = false,
+  callback?: () => void
+): ReturnData => {
   const [status, setStatus] = useState<boolean>(defaultStatus);
   const open = useCallback((): void => setStatus(true), []);
   const close = useCallback((): void => setStatus(false), []);

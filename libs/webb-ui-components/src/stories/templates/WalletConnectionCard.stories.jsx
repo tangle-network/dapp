@@ -1,9 +1,6 @@
 import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components';
 import { withRouter } from 'storybook-addon-react-router-v6';
-import {
-  MetaMaskIcon,
-  PolkadotJsIcon
-} from '@webb-tools/icons';
+import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
 
 export default {
@@ -23,7 +20,7 @@ const walletsConfig = {
     detect() {
       const hasWeb3 = web3 !== 'undefined';
       if (hasWeb3) {
-        return (window).web3.__isMetaMaskShim__
+        return window.web3.__isMetaMaskShim__;
       }
       return false;
     },
@@ -51,8 +48,8 @@ const Template = (args) => <WalletConnectionCard {...args} />;
 export const Default = Template.bind({});
 
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = { 
- wallets
+Default.args = {
+  wallets,
 };
 
 export const Failed = Template.bind({});

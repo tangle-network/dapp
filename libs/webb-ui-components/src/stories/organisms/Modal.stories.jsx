@@ -5,34 +5,41 @@ import { ModalTrigger } from '../../components/Modal/ModalTrigger';
 import { ModalContent } from '../../components/Modal/ModalContent';
 import { WalletConnectionCard } from '../../components/WalletConnectionCard';
 import { Button } from '../../components/Button';
+import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
+import { WalletId } from '@webb-tools/dapp-types/WalletId';
 
-const wallets = [
-  {
-    id: 'metamask',
-    name: 'MetaMask',
-    title: 'MetaMask Wallet',
+const walletsConfig = {
+  [WalletId.MetaMask]: {
+    id: WalletId.MetaMask,
+    Logo: <MetaMaskIcon />,
+    name: 'metamask',
+    title: `MetaMask`,
+    platform: 'EVM',
+    enabled: true,
+    detect() {
+      const hasWeb3 = web3 !== 'undefined';
+      if (hasWeb3) {
+        return window.web3.__isMetaMaskShim__;
+      }
+      return false;
+    },
+    homeLink: 'https://metamask.io/',
   },
-  {
-    id: 'walletconnect',
-    name: 'WalletConnect',
-    title: 'WalletConnect',
+  [WalletId.Polkadot]: {
+    id: WalletId.Polkadot,
+    Logo: <PolkadotJsIcon />,
+    name: 'polkadot-js',
+    title: `PolkadotJS Extension`,
+    platform: 'Substrate',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    homeLink: 'https://polkadot.js.org/extension',
   },
-  {
-    id: 'polkadot-js',
-    name: 'Polkadot-JS',
-    title: 'Polkadot-JS Wallet',
-  },
-  {
-    id: 'talisman',
-    name: 'Talisman',
-    title: 'Talisman Wallet',
-  },
-  {
-    id: 'subwallet',
-    name: 'Subwallet',
-    title: 'Subwallet',
-  },
-];
+};
+
+let wallets = Object.values(walletsConfig);
 
 export default {
   title: 'Design System/Organisms/Modal',

@@ -23,7 +23,10 @@ import { NetworkThresholdsCardProps } from './types';
  *  <NetworkThresholdsCard {...seedData} className='max-w-[1376px] mt-6' />
  * ```
  */
-export const NetworkThresholdsCard = forwardRef<HTMLDivElement, NetworkThresholdsCardProps>(
+export const NetworkThresholdsCard = forwardRef<
+  HTMLDivElement,
+  NetworkThresholdsCardProps
+>(
   (
     {
       endTime,
@@ -43,20 +46,35 @@ export const NetworkThresholdsCard = forwardRef<HTMLDivElement, NetworkThreshold
     return (
       <Card {...props} ref={ref}>
         {/** Top */}
-        <TitleWithInfo title={title} info={titleInfo} variant='h5' titleComponent='h5' />
+        <TitleWithInfo
+          title={title}
+          info={titleInfo}
+          variant="h5"
+          titleComponent="h5"
+        />
 
         {/** Content */}
-        <div className='flex justify-evenly'>
-          <div className='flex flex-col items-center justify-center'>
-            <TitleWithInfo title='Keygen' info='Keygen' variant='body2' titleComponent='p' />
-            <Typography variant='h4' fw='bold' className='mt-2'>
+        <div className="flex justify-evenly">
+          <div className="flex flex-col items-center justify-center">
+            <TitleWithInfo
+              title="Keygen"
+              info="Keygen"
+              variant="body2"
+              titleComponent="p"
+            />
+            <Typography variant="h4" fw="bold" className="mt-2">
               {keygenThreshold}
             </Typography>
           </div>
 
-          <div className='flex flex-col items-center justify-center'>
-            <TitleWithInfo title='Signature' info='Signature' variant='body2' titleComponent='p' />
-            <Typography variant='h4' fw='bold' className='mt-2'>
+          <div className="flex flex-col items-center justify-center">
+            <TitleWithInfo
+              title="Signature"
+              info="Signature"
+              variant="body2"
+              titleComponent="p"
+            />
+            <Typography variant="h4" fw="bold" className="mt-2">
               {signatureThreshold}
             </Typography>
           </div>
@@ -65,16 +83,22 @@ export const NetworkThresholdsCard = forwardRef<HTMLDivElement, NetworkThreshold
         <TimeProgress startTime={startTime} endTime={endTime} />
 
         {/** Bottom */}
-        <div className='flex justify-between'>
-          <div className='flex items-center space-x-2'>
-            <Chip color='green' className='inline-block'>
+        <div className="flex justify-between">
+          <div className="flex items-center space-x-2">
+            <Chip color="green" className="inline-block">
               {thresholdType}
             </Chip>
-            <LabelWithValue label='session:' value={sessionNumber} />
-            <span className='inline-block font-semibold body2'>/</span>
-            <KeyValueWithButton size='sm' keyValue={keyValue} />
+            <LabelWithValue label="session:" value={sessionNumber} />
+            <span className="inline-block font-semibold body2">/</span>
+            <KeyValueWithButton size="sm" keyValue={keyValue} />
           </div>
-          <Button className='block' variant='link' href={viewHistoryUrl} target='_blank' size='sm'>
+          <Button
+            className="block"
+            variant="link"
+            href={viewHistoryUrl}
+            target="_blank"
+            size="sm"
+          >
             View history
           </Button>
         </div>

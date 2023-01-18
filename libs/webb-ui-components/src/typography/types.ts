@@ -2,7 +2,10 @@ import { ReactHTML } from 'react';
 
 import { WebbComponentBase } from '../types';
 
-export type TypographyBaseProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+export type TypographyBaseProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLElement>,
+  HTMLElement
+>;
 
 export type TypographyAlignValues = 'center' | 'justify' | 'right' | 'left';
 
@@ -18,7 +21,12 @@ export type LabelVariant = 'label' | 'utility';
 
 export type MonospaceVariant = 'mono1' | 'mono2';
 
-export type WebbTypographyVariant = HeadingVariant | BodyVariant | MonospaceVariant | ParagraphVariant | LabelVariant;
+export type WebbTypographyVariant =
+  | HeadingVariant
+  | BodyVariant
+  | MonospaceVariant
+  | ParagraphVariant
+  | LabelVariant;
 
 /**
  * Properties of typography component

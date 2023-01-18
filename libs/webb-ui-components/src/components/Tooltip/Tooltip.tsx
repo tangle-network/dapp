@@ -18,7 +18,13 @@ import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
  *    </ToolTipBody>
  * ```
  */
-export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, className, title, ...props }) => {
+export const TooltipBody: React.FC<TooltipBodyProps> = ({
+  button,
+  children,
+  className,
+  title,
+  ...props
+}) => {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -34,11 +40,16 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
         )}
         {...props}
       >
-        <TooltipPrimitive.Arrow className='fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm' />
-        <div className={twMerge('body4 text-mono-140 dark:text-mono-80 font-normal', className)}>
-          {title && <h6 className='mb-2 utility'>{title}</h6>}
+        <TooltipPrimitive.Arrow className="fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm" />
+        <div
+          className={twMerge(
+            'body4 text-mono-140 dark:text-mono-80 font-normal',
+            className
+          )}
+        >
+          {title && <h6 className="mb-2 utility">{title}</h6>}
           {children}
-          {button && <div className='flex justify-end mt-4'>{button}</div>}
+          {button && <div className="flex justify-end mt-4">{button}</div>}
         </div>
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
@@ -57,7 +68,11 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({ button, children, clas
  *    </ToolTipTrigger>
  * ```
  */
-export const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, className, ...props }) => {
+export const TooltipTrigger: React.FC<TooltipTriggerProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
     <TooltipPrimitive.Trigger className={className} {...props}>
       {children}

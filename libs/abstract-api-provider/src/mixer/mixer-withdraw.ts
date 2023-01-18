@@ -15,7 +15,9 @@ export type CancelToken = {
  * The underlying method should be implemented to  get a functioning mixerWithdraw for a `WebbApiProvider`
  * @param T - the provider WebbApiProvider
  */
-export abstract class MixerWithdraw<T extends WebbApiProvider<any>> extends EventBus<WebbWithdrawEvents> {
+export abstract class MixerWithdraw<
+  T extends WebbApiProvider<any>
+> extends EventBus<WebbWithdrawEvents> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancelToken = { cancelled: false };
 

@@ -1,6 +1,14 @@
 import { PropsOf } from '../../types';
 
-export type TokenRingValue = 'eth' | 'dot' | 'avax' | 'ksm' | 'one' | 'arbitrum' | 'op' | 'matic';
+export type TokenRingValue =
+  | 'eth'
+  | 'dot'
+  | 'avax'
+  | 'ksm'
+  | 'one'
+  | 'arbitrum'
+  | 'op'
+  | 'matic';
 
 export interface TokensRingProps extends PropsOf<'div'> {
   /**

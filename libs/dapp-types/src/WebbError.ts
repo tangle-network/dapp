@@ -142,7 +142,8 @@ export class WebbError extends Error {
       case WebbErrorCodes.EVMSessionAlreadyEnded:
         return {
           code,
-          message: "Attempt to end session and it' already ended or unknown error",
+          message:
+            "Attempt to end session and it' already ended or unknown error",
         };
 
       case WebbErrorCodes.RelayerUnsupportedMixer:
