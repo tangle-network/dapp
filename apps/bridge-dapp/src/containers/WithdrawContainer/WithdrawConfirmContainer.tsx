@@ -3,22 +3,20 @@ import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
 import {
   WithdrawConfirm,
-  notificationApi,
+  useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { TransactionState } from '@webb-tools/dapp-types';
-import { useTransactionProgressValue } from '../../hooks';
-import { WithdrawConfirmContainerProps } from './types';
 import {
   NewNotesTxResult,
   Transaction,
 } from '@webb-tools/abstract-api-provider';
-import { DEPOSIT_FAILURE_MSG } from '../../utils';
+import { TransactionState } from '@webb-tools/dapp-types';
+import { useTransactionProgressValue } from '../../hooks';
+import { WithdrawConfirmContainerProps } from './types';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,

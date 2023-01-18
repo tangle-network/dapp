@@ -10,9 +10,12 @@ import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
 import { TransactionState } from '@webb-tools/dapp-types';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
-import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  DepositConfirm,
+  useCopyable,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { DEPOSIT_FAILURE_MSG, getCardTitle } from '../../utils';
