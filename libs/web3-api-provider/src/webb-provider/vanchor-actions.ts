@@ -128,7 +128,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         keypair: new Keypair(`0x${secrets[2]}`),
         blinding: hexToU8a(`0x${secrets[3]}`),
       });
-
+      console.log('Returning deposit utxo tx details');
       return Promise.resolve([
         tx, // tx
         payload.note.sourceIdentifyingData, // contractAddress
@@ -315,7 +315,17 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     tx.txHash = '0x';
     tx.next(TransactionState.SendingTransaction, '0x');
-
+    console.log('here');
+    console.log({
+      inputs,
+      outputs,
+      fee,
+      refund,
+      recipient,
+      relayer,
+      wrapUnwrapToken,
+      leavesMap
+    })
     return vanchor.transact(
       inputs,
       outputs,

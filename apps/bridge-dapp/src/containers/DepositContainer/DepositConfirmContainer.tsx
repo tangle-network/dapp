@@ -151,6 +151,7 @@ export const DepositConfirmContainer = forwardRef<
           note,
           wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
         );
+        console.log('prepare tx args', args);
         if (!args) {
           return txQueueApi.cancelTransaction(tx.id);
         }
