@@ -3,7 +3,6 @@ export * from './bridge/useBridge';
 export * from './vanchor/useVAnchor';
 export * from './relayer/useRelayers';
 export * from './note';
-export * from './transfer/useTransfer';
 export * from './types';
 export * from './useAccounts';
 export * from './useFetch';
