@@ -11,6 +11,7 @@ import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
+  WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import {
   useLatestTransactionStage,
@@ -99,7 +100,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: string) => {
-      downloadString(note, note.slice(-note.length - 10) + '.txt');
+      downloadString(note, note.slice(note.length - 10) + '.json');
     }, []);
 
     const avatarTheme = useMemo(() => {
@@ -172,13 +173,14 @@ export const WithdrawConfirmContainer = forwardRef<
       try {
         txQueueApi.registerTransaction(tx);
 
+        const txPayload: WithdrawTransactionPayloadType = {
+          notes: availableNotes,
+          recipient,
+          amount,
+        };
         const args = await vAnchorApi.prepareTransaction(
           tx,
-          {
-            notes: availableNotes,
-            recipient,
-            amount,
-          },
+          txPayload,
           unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
         );
 
