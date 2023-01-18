@@ -38,6 +38,7 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { WalletModal } from '../../components';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -49,7 +50,8 @@ export const TransferContainer = forwardRef<
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
-    const { activeChain, activeApi, noteManager } = useWebContext();
+    const { activeChain, activeApi, activeWallet, noteManager, switchChain } =
+      useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -90,6 +92,8 @@ export const TransferContainer = forwardRef<
 
     // State for the recipient address
     const [recipient, setRecipient] = useState<string>('');
+
+    const [isValidRecipient, setIsValidRecipient] = useState(false);
 
     // Calculate recipient error message
     const recipientError = useMemo(() => {
@@ -464,7 +468,7 @@ export const TransferContainer = forwardRef<
         amount <= (selectedBridgingAsset?.balance ?? 0)
       );
     }, [amount, selectedBridgingAsset?.balance]);
-    const [isValidRecipient, setIsValidRecipient] = useState(false);
+
     // Boolean state for whether the transfer button is disabled
     const isTransferButtonDisabled = useMemo<boolean>(() => {
       return [
@@ -549,6 +553,12 @@ export const TransferContainer = forwardRef<
         transferAmount,
         changeAmount,
         transferTokenSymbol: selectedBridgingAsset?.symbol,
+        rawChangeAmount: fungibleCurrency
+          ? +ethers.utils.formatUnits(
+              changeAmountBigNumber,
+              fungibleCurrency.getDecimals()
+            )
+          : 0,
       };
     }, [
       amount,
@@ -557,6 +567,38 @@ export const TransferContainer = forwardRef<
       isValidAmount,
       selectedBridgingAsset?.symbol,
     ]);
+
+    const handleSwitchChain = useCallback(
+      async (destChain: Chain) => {
+        if (!activeChain) {
+          console.error('No active chain when handleSwitchChain called');
+          return;
+        }
+
+        if (destChain.chainId === activeChain.chainId) {
+          console.error('Same chain when handleSwitchChain called');
+          return;
+        }
+
+        const isSupported =
+          activeWallet &&
+          activeWallet.supportedChainIds.includes(
+            calculateTypedChainId(destChain.chainType, destChain.chainId)
+          );
+
+        try {
+          if (isSupported) {
+            await switchChain(destChain, activeWallet);
+            return;
+          }
+
+          setMainComponent(<WalletModal chain={destChain} sourceChains={[]} />);
+        } catch (error) {
+          console.error('Failed to switch chain', error);
+        }
+      },
+      [activeChain, activeWallet, setMainComponent, switchChain]
+    );
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
@@ -574,22 +616,29 @@ export const TransferContainer = forwardRef<
         );
       }
 
+      if (inputNotes.length === 0) {
+        throw new Error('No input notes');
+      }
+
+      if (destChain.chainId !== activeChain?.chainId) {
+        await handleSwitchChain(destChain);
+        return;
+      }
+
+      const sourceTypecChainId = inputNotes[0].note.sourceChainId;
       const destTypedChainId = calculateTypedChainId(
         destChain.chainType,
         destChain.chainId
       );
 
-      // Find the treeId (target) of the selected inputs
-      const treeId = activeApi.state.activeBridge.targets[destTypedChainId];
-
-      const changeAmount = Number(infoCalculated.changeAmount ?? '0');
+      const changeAmount = infoCalculated.rawChangeAmount;
 
       // Calculate the chain note if the change amount is greater than 0
       const changeNote =
         changeAmount > 0
           ? await noteManager
               .generateNote(
-                +treeId,
+                +sourceTypecChainId,
                 destTypedChainId,
                 fungibleCurrency.view.symbol,
                 fungibleCurrency.getDecimals(),
@@ -616,14 +665,28 @@ export const TransferContainer = forwardRef<
       destChain,
       api,
       noteManager,
-      activeApi?.state.activeBridge,
+      activeApi?.state?.activeBridge,
       amount,
-      infoCalculated.changeAmount,
-      setMainComponent,
       inputNotes,
+      activeChain?.chainId,
+      infoCalculated.rawChangeAmount,
+      setMainComponent,
       recipient,
       activeRelayer,
+      handleSwitchChain,
     ]);
+
+    const buttonText = useMemo(() => {
+      if (
+        activeChain &&
+        destChain &&
+        activeChain.chainId !== destChain.chainId
+      ) {
+        return 'Switch chain to transfer';
+      }
+
+      return 'Transfer';
+    }, [activeChain, destChain]);
 
     useEffect(() => {
       const updateDefaultValues = () => {
@@ -683,6 +746,7 @@ export const TransferContainer = forwardRef<
         }}
         transferBtnProps={{
           isDisabled: isTransferButtonDisabled,
+          children: buttonText,
           onClick: handleTransferClick,
         }}
         transferAmount={infoCalculated.transferAmount}
