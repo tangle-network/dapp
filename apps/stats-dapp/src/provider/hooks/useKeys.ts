@@ -8,7 +8,11 @@ import {
 import { mapAuthorities } from './mappers';
 import { thresholdMap } from '../hooks/mappers/thresholds';
 import { useCurrentMetaData } from './useCurrentMetaData';
-import { useActiveSession, useStaticConfig } from '../stats-provider';
+import {
+  useActiveSession,
+  useStaticConfig,
+  useStatsContext,
+} from '../stats-provider';
 import { useEffect, useState } from 'react';
 
 import {
@@ -175,7 +179,8 @@ export function useKeys(
   reqQuery: PageInfoQuery
 ): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
-  const { blockTime, sessionHeight } = useStaticConfig();
+  const { sessionHeight } = useStaticConfig();
+  const { blockTime } = useStatsContext();
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
@@ -293,7 +298,9 @@ export function useKeys(
 export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
-  const { blockTime, sessionHeight } = useStaticConfig();
+  const { sessionHeight } = useStaticConfig();
+  const { blockTime } = useStatsContext();
+
   const activeSession = useActiveSession();
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
@@ -405,7 +412,8 @@ export function useKey(id: string): PublicKeyDetailsPage {
     isFailed: false,
     isLoading: true,
   });
-  const { blockTime, sessionHeight } = useStaticConfig();
+  const { sessionHeight } = useStaticConfig();
+  const { blockTime } = useStatsContext();
   const activeSession = useActiveSession();
   const [prevAndNextKey, setPrevAndNextKey] = useState<
     Loadable<NextAndPrevKeyStatus>

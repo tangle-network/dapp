@@ -8,6 +8,7 @@
 import {
   AccountId,
   CurrencyId,
+  // @ts-ignore
 } from '@webb-tools/protocol-substrate-types/interfaces';
 
 export type CallParam = any;
