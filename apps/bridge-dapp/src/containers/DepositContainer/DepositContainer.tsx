@@ -1,17 +1,17 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 import {
-  useVAnchor,
   useCurrencies,
   useCurrenciesBalances,
   useNoteAccount,
+  useVAnchor,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useModal } from '@webb-tools/ui-hooks';
 import {
   ChainListCard,
   DepositCard,
   TokenListCard,
+  useModal,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
