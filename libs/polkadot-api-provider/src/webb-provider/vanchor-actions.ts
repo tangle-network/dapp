@@ -5,7 +5,7 @@ import {
 import { VAnchorActions } from '@webb-tools/abstract-api-provider/vanchor/vanchor-actions';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
-import { BigNumberish } from 'ethers';
+import { BigNumberish, ContractReceipt } from 'ethers';
 
 import { WebbPolkadot } from '../webb-provider';
 
@@ -53,7 +53,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     relayer: string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
-  ): Promise<void> {
+  ): Promise<ContractReceipt> {
     throw new Error('Method not implemented.');
   }
 

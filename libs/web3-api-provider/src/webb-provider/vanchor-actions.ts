@@ -225,7 +225,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const notePayload = notes[0];
       const vAnchor = await this.getVAnchor(tx, notePayload, true);
-      const treeHeight = await vAnchor._contract.getLevels();
+      const treeHeight = await vAnchor.contract.getLevels();
 
       // For all notes, get any leaves in parallel
       const notesLeaves = await Promise.all(
@@ -237,7 +237,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
         sumInputNotes = sumInputNotes.add(amount);
         leafIndices.push(leafIndex);
-        inputUtxos.push(utxo);
+        inputUtxos.push(new Utxo(utxo));
       });
 
       // Create the output UTXOs
@@ -274,7 +274,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       return Promise.resolve([
         tx, // tx
-        vAnchor._contract.address, // contractAddress
+        vAnchor.contract.address, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
         0, // fee
