@@ -35,7 +35,6 @@ import {
   hexToU8a,
   u8aToHex,
 } from '@webb-tools/utils';
-import { assert } from 'console';
 import {
   BigNumber,
   BigNumberish,
@@ -46,6 +45,7 @@ import {
 
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
+import assert from 'assert';
 
 export const isVAnchorDepositPayload = (
   payload: TransactionPayloadType
@@ -345,7 +345,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
       sumInputNotes = sumInputNotes.add(amount);
       leafIndices.push(leafIndex);
-      inputUtxos.push(utxo);
+      inputUtxos.push(new Utxo(utxo));
     });
 
     const destTypedChainId = payload.note.targetChainId;
@@ -388,10 +388,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
       const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
       const sourceEthers = sourceHttpProvider.intoEthersProvider();
-      const sourceVAnchor = await this.inner.getVariableAnchorByAddressAndProvider(
-        sourceAddress,
-        sourceEthers
-      );
+      const sourceVAnchor =
+        await this.inner.getVariableAnchorByAddressAndProvider(
+          sourceAddress,
+          sourceEthers
+        );
       const leafStorage = await bridgeStorageFactory(
         Number(parsedNote.sourceChainId)
       );
