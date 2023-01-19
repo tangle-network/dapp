@@ -28,6 +28,7 @@ import { NoteManager } from '@webb-tools/note-manager';
 import { Storage } from '@webb-tools/storage';
 import { EventBus } from '@webb-tools/app-util';
 import {
+  buildVariableWitnessCalculator,
   calculateTypedChainId,
   ChainType,
   CircomUtxo,
@@ -51,6 +52,10 @@ import { BehaviorSubject } from 'rxjs';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -204,27 +209,28 @@ export class WebbWeb3Provider
   getVariableAnchorByAddress(address: string): Promise<VAnchor> {
     return this.getVariableAnchorByAddressAndProvider(
       address,
-      this.ethersProvider,
+      this.ethersProvider
     );
   }
 
-  getVariableAnchorByAddressAndProvider(
+  async getVariableAnchorByAddressAndProvider(
     address: string,
     provider: providers.Web3Provider
   ): Promise<VAnchor> {
+    const abortSignal = new AbortController().signal;
     return VAnchor.connect(
       address,
       {
-        wasm: undefined,
-        zkey: undefined,
-        witnessCalculator: undefined
+        wasm: Buffer.from(await fetchVAnchorWasmFromAws(7, true, abortSignal)),
+        zkey: await fetchVAnchorKeyFromAws(1, true, abortSignal),
+        witnessCalculator: buildVariableWitnessCalculator,
       },
       {
-        wasm: undefined,
-        zkey: undefined,
-        witnessCalculator: undefined
+        wasm: Buffer.from(await fetchVAnchorWasmFromAws(7, false, abortSignal)),
+        zkey: await fetchVAnchorKeyFromAws(7, false, abortSignal),
+        witnessCalculator: buildVariableWitnessCalculator,
       },
-      provider.getSigner(),
+      provider.getSigner()
     );
   }
 
@@ -294,10 +300,11 @@ export class WebbWeb3Provider
     const tokenSymbol = await this.methods.bridgeApi.getCurrency();
     const utxos = await vanchor.getSpendableUtxosFromChain(
       owner,
-      getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) || 1,
+      getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
+        1,
       0,
       abortSignal,
-      retryPromise,
+      retryPromise
     );
 
     const notes = Promise.all(

@@ -176,6 +176,11 @@ export const WithdrawConfirmContainer = forwardRef<
       try {
         txQueueApi.registerTransaction(tx);
 
+        // Add the change note before sending the tx
+        if (changeNoteStr) {
+          noteManager?.addNote(await Note.deserialize(changeNoteStr));
+        }
+
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
           recipient,
@@ -186,11 +191,6 @@ export const WithdrawConfirmContainer = forwardRef<
           txPayload,
           unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
         );
-
-        // Add the change note before sending the tx
-        if (changeNoteStr) {
-          noteManager?.addNote(await Note.deserialize(changeNoteStr));
-        }
 
         const receipt = await vAnchorApi.transact(...args);
 

@@ -59,7 +59,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
           </Label>
 
           {token ? (
-            <p className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1">
               {token.tokenComposition ? (
                 <TokenPairIcons
                   token1Symbol={token.tokenComposition[0].trim().toLowerCase()}
@@ -80,7 +80,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
                   {token.symbol.trim().toUpperCase()}
                 </Typography>
               )}
-            </p>
+            </div>
           ) : (
             <Typography variant="body1" fw="bold">
               Select {title.toLowerCase()}

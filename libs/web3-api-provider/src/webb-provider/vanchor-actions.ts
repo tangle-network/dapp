@@ -51,6 +51,8 @@ import {
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
 import assert from 'assert';
+import { JsNote } from '@webb-tools/wasm-utils';
+import { poseidon } from 'circomlibjs';
 
 export const isVAnchorDepositPayload = (
   payload: TransactionPayloadType
@@ -100,6 +102,46 @@ export const isVAnchorTransferPayload = (
     payload['amount'] > 0
   );
 };
+
+export const generateCircomCommitment = (note: JsNote): string => {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+
+  const keypair = new Keypair(secretKey);
+
+  const hash = poseidon([chainId, amount, keypair.getPubKey(), blinding]);
+
+  return BigNumber.from(hash).toHexString();
+};
+
+export async function utxoFromVAnchorNote(
+  note: JsNote,
+  leafIndex: number
+): Promise<Utxo> {
+  const noteSecretParts = note.secrets.split(':');
+  const chainId = note.targetChainId;
+  console.log('chainId inside [utxoFromVAnchorNote]', chainId);
+  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const secretKey = '0x' + noteSecretParts[2];
+  const blinding = '0x' + noteSecretParts[3];
+  const originChainId = note.sourceChainId;
+
+  const keypair = new Keypair(secretKey);
+
+  return CircomUtxo.generateUtxo({
+    curve: note.curve,
+    backend: note.backend,
+    amount,
+    blinding: hexToU8a(blinding),
+    originChainId,
+    chainId,
+    index: leafIndex.toString(),
+    keypair,
+  });
+}
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -153,6 +195,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const { inputUtxos, leavesMap, sumInputNotes } =
         await this.commitmentsSetup(tx, notes);
+
+      console.log('Inisde the prepare transaction');
+      console.log('inputUtxos: ', inputUtxos);
+      console.log('leavesMap: ', leavesMap);
+      console.log('sumInputNotes: ', sumInputNotes);
 
       const keypair =
         this.inner.noteManager?.getKeypair() ??
@@ -237,7 +284,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
         sumInputNotes = sumInputNotes.add(amount);
         leafIndices.push(leafIndex);
-        inputUtxos.push(new Utxo(utxo));
+        inputUtxos.push(utxo);
       });
 
       // Create the output UTXOs
@@ -303,7 +350,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
 
-    const smallFixtures: ZkComponents = await this.fetchSmallFixtures(tx, 1);
+    const smallFixtures: ZkComponents = await this.fetchSmallFixtures(tx, 7);
     const largeFixtures: ZkComponents = await this.fetchLargeFixtures(tx, 7);
 
     const vanchor = await VAnchor.connect(
@@ -324,8 +371,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       recipient,
       relayer,
       wrapUnwrapToken,
-      leavesMap
-    })
+      leavesMap,
+    });
     return vanchor.transact(
       inputs,
       outputs,
@@ -439,6 +486,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     notes: Note[]
   ) {
+    console.log('[commitmentsSetup] notes: ', notes);
     if (notes.length === 0) {
       tx.fail('No notes to deposit');
       return;
@@ -457,6 +505,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       )
     );
 
+    console.log('[commitmentsSetup] notesLeaves: ', notesLeaves);
+
     // Keep track of the leafindices for each note
     const leafIndices: number[] = [];
 
@@ -469,8 +519,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
       sumInputNotes = sumInputNotes.add(amount);
       leafIndices.push(leafIndex);
-      inputUtxos.push(new Utxo(utxo));
+      inputUtxos.push(utxo);
     });
+
+    console.log('[commitmentsSetup] inputUtxos: ', inputUtxos);
 
     const destTypedChainId = payload.note.targetChainId;
     // Populate the leaves for the destination if not already populated
@@ -531,7 +583,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leafStorage,
         tx.cancelToken.abortSignal
       );
-      console.log('leaves', leaves);
+      console.log('leaves: ', leaves);
+      console.log('leavesMap: ', leavesMap);
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
       });
@@ -551,12 +604,16 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       destHistorySourceRoot = edge[1].toHexString();
     }
 
+    console.log('destHistorySourceRoot: ', destHistorySourceRoot);
+
     // Remove leaves from the leaves map which have not yet been relayed
     const provingTree = MerkleTree.createTreeWithRoot(
       treeHeight,
       leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
       destHistorySourceRoot
     );
+
+    console.log('provingTree: ', provingTree);
 
     if (!provingTree) {
       console.log('fetched leaves do not match bridged anchor state');
@@ -566,11 +623,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const provingLeaves = provingTree
       .elements()
       .map((el) => hexToU8a(el.toHexString()));
+
+    console.log('provingLeaves: ', provingLeaves);
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
-    const commitment = parsedNote.getLeafCommitment();
+    const commitment = generateCircomCommitment(parsedNote);
+    console.log('commitment: ', commitment);
     const leafIndex = provingTree.getIndexByElement(commitment);
-    const utxo = parsedNote.getUtxo();
-    assert(utxo.index == leafIndex);
+    console.log('leafIndex: ', leafIndex);
+    const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+    console.log('utxo: ', utxo);
 
     return {
       leafIndex,
