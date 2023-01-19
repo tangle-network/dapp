@@ -322,9 +322,6 @@ export const DepositContainer = forwardRef<
       ]
     );
 
-    console.log(activeApi?.state?.activeBridge?.targets);
-    console.log(destChains);
-
     const sourceChainInputOnClick = useCallback(() => {
       setMainComponentName('source-chain-list-card');
     }, [setMainComponentName]);
