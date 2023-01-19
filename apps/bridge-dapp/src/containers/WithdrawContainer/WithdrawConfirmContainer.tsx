@@ -28,7 +28,8 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
-      changeNote: changeNoteStr,
+      changeUtxo,
+      changeNote,
       availableNotes,
       amount,
       changeAmount,
@@ -103,7 +104,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: string) => {
-      downloadString(note, note.slice(note.length - 10) + '.json');
+      downloadString(note, note.slice(0, note.length - 10) + '.json');
     }, []);
 
     const avatarTheme = useMemo(() => {
@@ -152,7 +153,7 @@ export const WithdrawConfirmContainer = forwardRef<
         return;
       }
 
-      changeNoteStr && downloadNote(changeNoteStr);
+      changeNote && downloadNote(changeNote.serialize());
 
       const note: Note = availableNotes[0];
       const {
@@ -177,14 +178,14 @@ export const WithdrawConfirmContainer = forwardRef<
         txQueueApi.registerTransaction(tx);
 
         // Add the change note before sending the tx
-        if (changeNoteStr) {
-          noteManager?.addNote(await Note.deserialize(changeNoteStr));
+        if (changeNote) {
+          noteManager?.addNote(changeNote);
         }
 
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
+          changeUtxo,
           recipient,
-          amount,
         };
         const args = await vAnchorApi.prepareTransaction(
           tx,
@@ -194,9 +195,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
         const receipt = await vAnchorApi.transact(...args);
 
-        const outputNotes = changeNoteStr
-          ? [await Note.deserialize(changeNoteStr)]
-          : [];
+        const outputNotes = changeNote ? [changeNote] : [];
 
         // Notification Success Transaction
         tx.txHash = receipt.transactionHash;
@@ -211,10 +210,7 @@ export const WithdrawConfirmContainer = forwardRef<
         }
       } catch (error) {
         console.log('Error while executing withdraw', error);
-        changeNoteStr &&
-          (await noteManager?.removeNote(
-            await Note.deserialize(changeNoteStr)
-          ));
+        changeNote && (await noteManager?.removeNote(changeNote));
 
         if (error instanceof Error) {
           tx.fail(error['message' ?? '']);
@@ -226,11 +222,12 @@ export const WithdrawConfirmContainer = forwardRef<
       availableNotes,
       vAnchorApi,
       withdrawTxInProgress,
-      setMainComponent,
-      changeNoteStr,
+      changeUtxo,
+      changeNote,
       downloadNote,
       unwrapCurrency,
       amount,
+      setMainComponent,
       txQueueApi,
       recipient,
       noteManager,
@@ -258,12 +255,12 @@ export const WithdrawConfirmContainer = forwardRef<
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}
-        onCopy={() => handleCopy(changeNoteStr)}
-        onDownload={() => downloadNote(changeNoteStr ?? '')}
+        onCopy={() => handleCopy(changeNote?.serialize())}
+        onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         fee={fees}
         onClose={() => setMainComponent(undefined)}
-        note={changeNoteStr}
+        note={changeNote?.serialize()}
         changeAmount={changeAmount}
         progress={progressValue}
         recipientAddress={recipient}

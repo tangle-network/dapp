@@ -63,6 +63,11 @@ export const isVAnchorDepositPayload = (
 export const isVAnchorWithdrawPayload = (
   payload: TransactionPayloadType
 ): payload is WithdrawTransactionPayloadType => {
+  const changeUtxo: Utxo | undefined = payload['changeUtxo'];
+  if (!changeUtxo || !(changeUtxo instanceof Utxo)) {
+    return false;
+  }
+
   const notes: Note[] | undefined = payload['notes'];
   if (!notes) {
     return false;
@@ -74,10 +79,7 @@ export const isVAnchorWithdrawPayload = (
   }
 
   return (
-    typeof payload['recipient'] === 'string' &&
-    payload['recipient'].length > 0 &&
-    typeof payload['amount'] === 'number' &&
-    payload['amount'] > 0
+    typeof payload['recipient'] === 'string' && payload['recipient'].length > 0
   );
 };
 
@@ -184,42 +186,17 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         {}, // leavesMap
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
-      const { notes, recipient, amount } = payload;
+      const { changeUtxo, notes, recipient } = payload;
 
       if (wrapUnwrapToken === '') {
         const tokenWrapper = await this.getTokenWrapper(tx, notes[0], true);
         wrapUnwrapToken = tokenWrapper.contract.address;
       }
 
-      const { targetChainId: destTypedChainId, denomination } = notes[0].note;
-
-      const { inputUtxos, leavesMap, sumInputNotes } =
-        await this.commitmentsSetup(tx, notes);
-
-      console.log('Inisde the prepare transaction');
-      console.log('inputUtxos: ', inputUtxos);
-      console.log('leavesMap: ', leavesMap);
-      console.log('sumInputNotes: ', sumInputNotes);
-
-      const keypair =
-        this.inner.noteManager?.getKeypair() ??
-        NoteManager.keypairFromNote(notes[0]);
-
-      // Create the output UTXOs
-      const changeAmount = sumInputNotes.sub(
-        ethers.utils.parseUnits(amount.toString(), denomination)
-      );
-      const changeUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: changeAmount.toString(),
-        chainId: destTypedChainId.toString(),
-        keypair,
-        originChainId: destTypedChainId.toString(),
-      });
+      const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
 
       const relayer =
-        this.inner.relayerManager.activeRelayer?.account ?? ZERO_ADDRESS;
+        this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
       return Promise.resolve([
         tx, // tx
@@ -486,7 +463,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     notes: Note[]
   ) {
-    console.log('[commitmentsSetup] notes: ', notes);
     if (notes.length === 0) {
       tx.fail('No notes to deposit');
       return;
@@ -505,8 +481,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       )
     );
 
-    console.log('[commitmentsSetup] notesLeaves: ', notesLeaves);
-
     // Keep track of the leafindices for each note
     const leafIndices: number[] = [];
 
@@ -521,8 +495,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       leafIndices.push(leafIndex);
       inputUtxos.push(utxo);
     });
-
-    console.log('[commitmentsSetup] inputUtxos: ', inputUtxos);
 
     const destTypedChainId = payload.note.targetChainId;
     // Populate the leaves for the destination if not already populated
@@ -552,7 +524,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap: Record<string, Uint8Array[]>,
     destVAnchor: VAnchor,
     treeHeight: number
-  ) {
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> {
     tx.next(TransactionState.FetchingLeaves, {
       end: undefined,
       currentRange: [0, 1],
@@ -583,8 +555,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leafStorage,
         tx.cancelToken.abortSignal
       );
-      console.log('leaves: ', leaves);
-      console.log('leavesMap: ', leavesMap);
+      console.log('leaves', leaves);
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
       });
@@ -604,16 +575,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       destHistorySourceRoot = edge[1].toHexString();
     }
 
-    console.log('destHistorySourceRoot: ', destHistorySourceRoot);
-
     // Remove leaves from the leaves map which have not yet been relayed
     const provingTree = MerkleTree.createTreeWithRoot(
       treeHeight,
       leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
       destHistorySourceRoot
     );
-
-    console.log('provingTree: ', provingTree);
 
     if (!provingTree) {
       console.log('fetched leaves do not match bridged anchor state');
@@ -623,15 +590,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const provingLeaves = provingTree
       .elements()
       .map((el) => hexToU8a(el.toHexString()));
-
-    console.log('provingLeaves: ', provingLeaves);
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
     const commitment = generateCircomCommitment(parsedNote);
-    console.log('commitment: ', commitment);
     const leafIndex = provingTree.getIndexByElement(commitment);
-    console.log('leafIndex: ', leafIndex);
     const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
-    console.log('utxo: ', utxo);
 
     return {
       leafIndex,

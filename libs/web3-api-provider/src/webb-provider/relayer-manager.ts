@@ -178,7 +178,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      let relayerLeaves;
+      let relayerLeaves: Awaited<ReturnType<WebbRelayer['getLeaves']>>;
       try {
         relayerLeaves = await relayers[i].getLeaves(
           typedChainId,

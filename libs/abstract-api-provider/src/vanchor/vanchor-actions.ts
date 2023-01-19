@@ -95,8 +95,8 @@ export abstract class VAnchorActions<
 
 export type WithdrawTransactionPayloadType = {
   notes: Note[];
+  changeUtxo: Utxo;
   recipient: string;
-  amount: number;
 };
 
 export type TransferTransactionPayloadType = {
