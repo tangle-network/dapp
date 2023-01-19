@@ -328,9 +328,10 @@ export const DepositContainer = forwardRef<
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
-      // Dismiss all the failed txns in the queue before starting a new txn
+      // Dismiss all the completed and failed txns in the queue before starting a new txn
       const txns = txQueue.txPayloads.filter(
-        (tx) => tx.txStatus.status === 'warning'
+        (tx) =>
+          tx.txStatus.status === 'warning' || tx.txStatus.status === 'completed'
       );
       txns.map((tx) => tx.onDismiss());
 
