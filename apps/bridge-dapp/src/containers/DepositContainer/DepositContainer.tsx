@@ -72,6 +72,10 @@ export const DepositContainer = forwardRef<
       MainComponentVariants | undefined
     >(undefined);
 
+    const setMainComponentHandler = (component: string | undefined) => {
+      setMainComponentName(component as MainComponentVariants);
+    };
+
     const {
       activeApi,
       chains,
@@ -370,6 +374,7 @@ export const DepositContainer = forwardRef<
           sourceChain: selectedSourceChain,
           destChain: destChainInputValue,
           depositPayload: newDepositPayload,
+          setMainComponentHandler: setMainComponentHandler,
         });
         setMainComponentName('deposit-confirm-container');
       }

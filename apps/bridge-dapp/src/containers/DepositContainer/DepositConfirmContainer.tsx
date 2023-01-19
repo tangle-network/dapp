@@ -23,6 +23,7 @@ export const DepositConfirmContainer = forwardRef<
       sourceChain,
       destChain,
       wrappableTokenSymbol,
+      setMainComponentHandler,
     },
     ref
   ) => {
@@ -30,7 +31,7 @@ export const DepositConfirmContainer = forwardRef<
 
     const { deposit, stage, startNewTransaction } = useBridgeDeposit();
 
-    const { setMainComponent, notificationApi } = useWebbUI();
+    const { notificationApi } = useWebbUI();
 
     const [progress, setProgress] = useState<null | number>(null);
 
@@ -60,7 +61,7 @@ export const DepositConfirmContainer = forwardRef<
       if (depositTxInProgress) {
         console.log('Start a new transaction');
         startNewTransaction();
-        setMainComponent(undefined);
+        setMainComponentHandler(undefined);
         return;
       }
 
@@ -75,7 +76,7 @@ export const DepositConfirmContainer = forwardRef<
           secondaryMessage: 'Something went wrong when depositing',
         });
       } finally {
-        setMainComponent(undefined);
+        setMainComponentHandler(undefined);
       }
     }, [
       deposit,
@@ -83,7 +84,7 @@ export const DepositConfirmContainer = forwardRef<
       downloadNote,
       depositTxInProgress,
       notificationApi,
-      setMainComponent,
+      setMainComponentHandler,
       startNewTransaction,
     ]);
 
@@ -232,7 +233,7 @@ export const DepositConfirmContainer = forwardRef<
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
-        onClose={() => setMainComponent(undefined)}
+        onClose={() => setMainComponentHandler(undefined)}
         wrappableTokenSymbol={wrappableTokenSymbol}
       />
     );
