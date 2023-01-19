@@ -449,7 +449,6 @@ export const DepositContainer = forwardRef<
         token: {
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
-          tokenComposition: [selectedToken?.symbol, targetSymbol],
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -462,7 +461,6 @@ export const DepositContainer = forwardRef<
       bridgeFungibleCurrency,
       selectedSourceChain,
       setMainComponentName,
-      selectedToken,
     ]);
 
     const handleOpenChange = useCallback(
