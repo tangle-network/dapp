@@ -30,6 +30,8 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
       this.inner.getEthersProvider().getSigner()
     );
     const allTokenAddresses = await fungibleToken.contract.getTokens();
+    console.log(allTokenAddresses);
+    
     await Promise.all(
       allTokenAddresses.map(async (tokenAddress) => {
         const registeredCurrency = this.inner.state

@@ -136,7 +136,12 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     type: CurrencyType.NATIVE,
     role: CurrencyRole.Wrappable,
     icon: PolygonLogo,
-    addresses: new Map([[PresetTypedChainId.PolygonTestnet, zeroAddress]]),
+    addresses: new Map<number, string>([
+      [
+        PresetTypedChainId.PolygonTestnet,
+        '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+      ],
+    ]),
   },
   [CurrencyId.webbETH]: {
     name: 'webbETH',

@@ -149,7 +149,7 @@ export const DepositContainer = forwardRef<
     }, [chains]);
 
     const destChains: ChainType[] = useMemo(() => {
-      if (!activeApi || !activeApi.state.activeBridge?.targets) {
+      if (!activeApi?.state.activeBridge?.targets) {
         return [];
       }
 
@@ -166,7 +166,7 @@ export const DepositContainer = forwardRef<
           return undefined;
         })
         .filter((chain): chain is ChainType => !!chain);
-    }, [activeApi, chains]);
+    }, [activeApi?.state?.activeBridge?.targets, chains]);
 
     const destChainInputValue = useMemo(
       () => destChains.find((chain) => chain.name === destChain?.name),
@@ -321,6 +321,9 @@ export const DepositContainer = forwardRef<
         getPossibleFungibleCurrencies,
       ]
     );
+
+    console.log(activeApi?.state?.activeBridge?.targets);
+    console.log(destChains);
 
     const sourceChainInputOnClick = useCallback(() => {
       setMainComponentName('source-chain-list-card');
