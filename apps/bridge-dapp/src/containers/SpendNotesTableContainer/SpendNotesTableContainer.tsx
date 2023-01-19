@@ -195,6 +195,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
+        title="Spend Notes"
       />
     </div>
   );

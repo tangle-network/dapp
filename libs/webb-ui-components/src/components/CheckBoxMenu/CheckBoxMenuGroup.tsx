@@ -35,6 +35,7 @@ export function CheckBoxMenuGroup<T>({
   return (
     <>
       <CheckBoxMenu
+        className="px-2"
         checkboxProps={{
           isChecked: isAllSelected,
         }}
@@ -46,6 +47,7 @@ export function CheckBoxMenuGroup<T>({
 
       {options.map((opt) => (
         <CheckBoxMenu
+          className="px-2"
           onChange={() => {
             const isSelected =
               isAllSelected || (value as T[]).indexOf(opt) > -1;

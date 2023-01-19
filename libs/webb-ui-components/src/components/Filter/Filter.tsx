@@ -56,6 +56,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
           </div>
 
           {/** Filter body */}
+
           {children}
         </DropdownBody>
       </Dropdown>

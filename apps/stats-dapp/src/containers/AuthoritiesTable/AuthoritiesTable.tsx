@@ -65,11 +65,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
       const countryCode = props.getValue();
       return (
         <Typography variant="body1" fw="bold" component="span">
-          {countryCode ? (
-            <CountryIcon size={'lg'} name={countryCode} />
-          ) : (
-            'Unknown'
-          )}
+          {countryCode ? <CountryIcon size={'lg'} name={countryCode} /> : `🌎`}
         </Typography>
       );
     },
@@ -223,9 +219,9 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
           }}
         >
           <Accordion type={'single'} collapsible>
-            <AccordionItem className={'p-4 py-0'} value={'location'}>
+            <AccordionItem className={'p-0 py-0'} value={'location'}>
               <AccordionButton>Location</AccordionButton>
-              <AccordionContent className={`space-x-1 `}>
+              <AccordionContent>
                 <LocationFilter
                   selected={selectedCountries}
                   countries={countries}
@@ -236,7 +232,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'uptime'}>
+            <AccordionItem className={'p-0 py-0'} value={'uptime'}>
               <AccordionButton>Uptime</AccordionButton>
               <AccordionContent>
                 <Slider
@@ -250,7 +246,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'reputation'}>
+            <AccordionItem className={'p-0 py-0'} value={'reputation'}>
               <AccordionButton>Reputation</AccordionButton>
               <AccordionContent>
                 <Slider
@@ -271,6 +267,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={totalItems}
+        title="DKG Authorities"
       />
     </CardTable>
   );

@@ -204,7 +204,11 @@ export const AuthorityDetail = () => {
           variant: 'h5',
         }}
       >
-        <Table tableProps={table as RTTable<unknown>} isPaginated={true} />
+        <Table
+          tableProps={table as RTTable<unknown>}
+          isPaginated={true}
+          title="Keygens"
+        />
       </CardTable>
     </div>
   );

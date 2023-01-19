@@ -17,6 +17,7 @@
     "start:storybook": "nx storybook webb-ui-components",
     "format": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
     "format:check": "prettier --check \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
+    "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" && nx run-many --all --target=lint && nx build",
     "chromatic": "npx chromatic --build-script-name=build:storybook"
   },
   "private": true,

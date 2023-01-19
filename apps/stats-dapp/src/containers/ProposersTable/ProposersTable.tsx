@@ -156,6 +156,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({
         isPaginated
         totalRecords={totalItems}
         className="mt-2"
+        title="Proposers"
       />
     </div>
   );

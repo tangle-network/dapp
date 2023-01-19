@@ -279,9 +279,9 @@ export const ProposalsTable = () => {
           }}
         >
           <Accordion type={'single'} collapsible>
-            <AccordionItem className={'p-4 py-0'} value={'proposal-type'}>
+            <AccordionItem className={'p-0 py-0'} value={'proposal-type'}>
               <AccordionButton>Proposal Type</AccordionButton>
-              <AccordionContent>
+              <AccordionContent className="p-0">
                 <div
                   className={
                     'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
@@ -303,9 +303,9 @@ export const ProposalsTable = () => {
                 </div>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem className={'p-4 py-0'} value={'proposal-status'}>
+            <AccordionItem className={'p-0 py-0'} value={'proposal-status'}>
               <AccordionButton>Proposal Status</AccordionButton>
-              <AccordionContent>
+              <AccordionContent className="p-0">
                 <div
                   className={
                     'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
@@ -332,9 +332,9 @@ export const ProposalsTable = () => {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'chain'}>
+            <AccordionItem className={'p-0'} value={'chain'}>
               <AccordionButton>Chain</AccordionButton>
-              <AccordionContent>
+              <AccordionContent className="p-2">
                 <div className="max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto">
                   <CheckBoxMenuGroup
                     value={selectedChains}
@@ -361,6 +361,7 @@ export const ProposalsTable = () => {
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={totalItems}
+        title="Proposals"
       />
     </CardTable>
   );
