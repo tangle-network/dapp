@@ -27,11 +27,16 @@ export interface PaginationItemsOptions {
  * Get the array of displayed items of pagination. E.g. [1, 'start-ellipsis', 4, 5, 6, 'end-ellipsis', 10,]
  * @param options {PaginationItemsOptions} The hook options
  */
-export const getPaginationItems = (options: PaginationItemsOptions): (number | string)[] => {
+export const getPaginationItems = (
+  options: PaginationItemsOptions
+): (number | string)[] => {
   const { boundaryCount = 1, count = 1, page = 1, siblingCount = 1 } = options;
 
   const startPages = range(1, Math.min(boundaryCount, count));
-  const endPages = range(Math.max(count - boundaryCount + 1, boundaryCount + 1), count);
+  const endPages = range(
+    Math.max(count - boundaryCount + 1, boundaryCount + 1),
+    count
+  );
 
   const siblingsStart = Math.max(
     Math.min(

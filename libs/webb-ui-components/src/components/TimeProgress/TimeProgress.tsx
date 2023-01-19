@@ -16,7 +16,9 @@ import { TimeProgressProps } from './types';
  */
 export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
   ({ endTime, now, startTime, ...props }, ref) => {
-    const [dateProgress, setDateProgress] = useState<number | null>(calculateDateProgress(startTime, endTime, now));
+    const [dateProgress, setDateProgress] = useState<number | null>(
+      calculateDateProgress(startTime, endTime, now)
+    );
     const timerRef = useRef<NodeJS.Timeout>();
 
     // Re-calculate progress each 1s
@@ -37,11 +39,11 @@ export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
 
     return (
       <div {...props} ref={ref}>
-        <div className='flex items-center justify-between'>
-          <LabelWithValue label='start:' value={formatDateToUtc(startTime)} />
-          <LabelWithValue label='end:' value={formatDateToUtc(endTime)} />
+        <div className="flex items-center justify-between">
+          <LabelWithValue label="start:" value={formatDateToUtc(startTime)} />
+          <LabelWithValue label="end:" value={formatDateToUtc(endTime)} />
         </div>
-        <Progress value={dateProgress} className='w-full mt-3' />
+        <Progress value={dateProgress} className="w-full mt-3" />
       </div>
     );
   }

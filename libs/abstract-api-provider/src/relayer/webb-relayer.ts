@@ -64,7 +64,8 @@ type RelayerLeaves = {
 class RelayedWithdraw {
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
   readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
-  private emitter: Subject<[RelayedWithdrawResult, string | undefined]> = new Subject();
+  private emitter: Subject<[RelayedWithdrawResult, string | undefined]> =
+    new Subject();
 
   constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
@@ -86,9 +87,14 @@ class RelayedWithdraw {
     };
   }
 
-  private handleMessage = (data: RelayerMessage): [RelayedWithdrawResult, string | undefined] => {
+  private handleMessage = (
+    data: RelayerMessage
+  ): [RelayedWithdrawResult, string | undefined] => {
     if (data.error || data.withdraw?.errored) {
-      return [RelayedWithdrawResult.Errored, data.error || data.withdraw?.errored?.reason];
+      return [
+        RelayedWithdrawResult.Errored,
+        data.error || data.withdraw?.errored?.reason,
+      ];
     } else if (data.network === 'invalidRelayerAddress') {
       return [RelayedWithdrawResult.Errored, 'Invalid relayer address'];
     } else if (data.withdraw?.finalized) {
@@ -98,10 +104,10 @@ class RelayedWithdraw {
     }
   };
 
-  generateWithdrawRequest<T extends RelayedChainInput, C extends CMDSwitcher<T['baseOn']>>(
-    chain: T,
-    payload: WithdrawRelayerArgs<T['baseOn'], C>
-  ) {
+  generateWithdrawRequest<
+    T extends RelayedChainInput,
+    C extends CMDSwitcher<T['baseOn']>
+  >(chain: T, payload: WithdrawRelayerArgs<T['baseOn'], C>) {
     console.log('withdraw payload: ', payload);
 
     return {
@@ -127,7 +133,10 @@ class RelayedWithdraw {
     return this.watcher
       .pipe(
         filter(([next]) => {
-          return next === RelayedWithdrawResult.CleanExit || next === RelayedWithdrawResult.Errored;
+          return (
+            next === RelayedWithdrawResult.CleanExit ||
+            next === RelayedWithdrawResult.Errored
+          );
         })
       )
       .toPromise();
@@ -174,18 +183,28 @@ export class WebbRelayer {
     }
   }
 
-  async getLeaves(typedChainId: number, contractAddress: string, abortSignal?: AbortSignal): Promise<RelayerLeaves> {
+  async getLeaves(
+    typedChainId: number,
+    contractAddress: string,
+    abortSignal?: AbortSignal
+  ): Promise<RelayerLeaves> {
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     let url = '';
     switch (chainType) {
       case ChainType.EVM:
-        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
+        url = `${
+          this.endpoint
+        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
         break;
       case ChainType.Substrate:
-        url = `${this.endpoint}/api/v1/leaves/substrate/${chainId.toString()}/${contractAddress}`;
+        url = `${
+          this.endpoint
+        }/api/v1/leaves/substrate/${chainId.toString()}/${contractAddress}`;
         break;
       default:
-        url = `${this.endpoint}/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
+        url = `${
+          this.endpoint
+        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
         break;
     }
     const req = await fetch(url, { signal: abortSignal });
@@ -209,9 +228,18 @@ export class WebbRelayer {
   static intoActiveWebRelayer(
     instance: WebbRelayer,
     query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
+    getFees: (
+      note: string
+    ) => Promise<
+      { totalFees: string; withdrawFeePercentage: number } | undefined
+    >
   ): ActiveWebbRelayer {
-    return new ActiveWebbRelayer(instance.endpoint, instance.capabilities, query, getFees);
+    return new ActiveWebbRelayer(
+      instance.endpoint,
+      instance.capabilities,
+      query,
+      getFees
+    );
   }
 }
 
@@ -220,7 +248,11 @@ export class ActiveWebbRelayer extends WebbRelayer {
     endpoint: string,
     capabilities: Capabilities,
     private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    private getFees: (note: string) => Promise<{ totalFees: string; withdrawFeePercentage: number } | undefined>
+    private getFees: (
+      note: string
+    ) => Promise<
+      { totalFees: string; withdrawFeePercentage: number } | undefined
+    >
   ) {
     super(endpoint, capabilities);
   }

@@ -1,12 +1,7 @@
 import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components';
-import {
-  MetaMaskIcon,
-  PolkadotJsIcon,
-  SubWalletIcon,
-  TalismanIcon,
-  WalletConnectIcon,
-} from '@webb-tools/icons';
 import { withRouter } from 'storybook-addon-react-router-v6';
+import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
+import { WalletId } from '@webb-tools/dapp-types/WalletId';
 
 export default {
   title: 'Design System/Templates/WalletConnectionCard',
@@ -14,48 +9,51 @@ export default {
   decorators: [withRouter],
 };
 
-export const wallets = [
-  {
-    id: 'metamask',
-    name: 'MetaMask',
-    title: 'MetaMask Wallet',
-    logo: <MetaMaskIcon />,
+const walletsConfig = {
+  [WalletId.MetaMask]: {
+    id: WalletId.MetaMask,
+    Logo: <MetaMaskIcon />,
+    name: 'metamask',
+    title: `MetaMask`,
+    platform: 'EVM',
+    enabled: true,
+    detect() {
+      const hasWeb3 = web3 !== 'undefined';
+      if (hasWeb3) {
+        return window.web3.__isMetaMaskShim__;
+      }
+      return false;
+    },
+    homeLink: 'https://metamask.io/',
   },
-  {
-    id: 'walletconnect',
-    name: 'WalletConnect',
-    title: 'WalletConnect',
-    logo: <WalletConnectIcon />,
+  [WalletId.Polkadot]: {
+    id: WalletId.Polkadot,
+    Logo: <PolkadotJsIcon />,
+    name: 'polkadot-js',
+    title: `PolkadotJS Extension`,
+    platform: 'Substrate',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    homeLink: 'https://polkadot.js.org/extension',
   },
-  {
-    id: 'polkadot-js',
-    name: 'Polkadot-JS',
-    title: 'Polkadot-JS Wallet',
-    logo: <PolkadotJsIcon />,
-  },
-  {
-    id: 'talisman',
-    name: 'Talisman',
-    title: 'Talisman Wallet',
-    logo: <TalismanIcon />,
-  },
-  {
-    id: 'subwallet',
-    name: 'Subwallet',
-    title: 'Subwallet',
-    logo: <SubWalletIcon />,
-  },
-];
+};
+
+let wallets = Object.values(walletsConfig);
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <WalletConnectionCard {...args} />;
 
 export const Default = Template.bind({});
+
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = { wallets };
+Default.args = {
+  wallets,
+};
 
 export const Failed = Template.bind({});
-Failed.args = { wallets, failedWalletId: wallets[0].id };
+Failed.args = { wallets, failedWalletId: WalletId.MetaMask };
 
 export const Loading = Template.bind({});
-Loading.args = { wallets, connectingWalletId: wallets[2].id };
+Loading.args = { wallets, connectingWalletId: WalletId.MetaMask };

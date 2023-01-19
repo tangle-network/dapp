@@ -222,10 +222,7 @@ export const KeygenTable: FC = () => {
     if (keysStats.val) {
       return keysStats.val.items
         .filter((v) => {
-          return (
-            v.keyGenThreshold &&
-            v.signatureThreshold
-          );
+          return v.keyGenThreshold && v.signatureThreshold;
         })
         .map(
           (item): KeygenType => ({
@@ -356,4 +353,3 @@ export const KeygenTable: FC = () => {
     </CardTable>
   );
 };
-

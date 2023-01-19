@@ -26,7 +26,10 @@ export abstract class AccountsAdapter<T = unknown, K = unknown> {
 
   constructor(protected readonly _inner: T) {}
 
-  abstract get activeOrDefault(): Promise<Account<K> | null> | Account<K> | null;
+  abstract get activeOrDefault():
+    | Promise<Account<K> | null>
+    | Account<K>
+    | null;
 
   abstract accounts(): PromiseOrT<Account<T | K>[]>;
 

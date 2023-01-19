@@ -42,7 +42,12 @@ export class ActionsBuilder {
   }
 
   /// Adds an action for the builder actions
-  action(name: string, handler: () => any, level: FeedbackLevel = 'info', id: string | null = null): ActionsBuilder {
+  action(
+    name: string,
+    handler: () => any,
+    level: FeedbackLevel = 'info',
+    id: string | null = null
+  ): ActionsBuilder {
     this._actions[name] = {
       id,
       level,
@@ -61,7 +66,9 @@ export class ActionsBuilder {
 
 /// InteractiveFeedback a class that wrappers and error metadata and provide handlers for it
 /// A `canceled` event is trigger only once, when the state changes to be`_canceled=true`
-export class InteractiveFeedback extends EventBus<{ canceled: InteractiveFeedback }> {
+export class InteractiveFeedback extends EventBus<{
+  canceled: InteractiveFeedback;
+}> {
   private _canceled = false;
   private selectedAction: Action | null = null;
 

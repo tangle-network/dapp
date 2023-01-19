@@ -28,9 +28,22 @@ import { SliderProps, SliderThumbProps } from './types';
  * ```
  */
 export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
-  ({ className, defaultValue, hasLabel, isDisabled, onChange, value: valueProp, ...props }, ref) => {
+  (
+    {
+      className,
+      defaultValue,
+      hasLabel,
+      isDisabled,
+      onChange,
+      value: valueProp,
+      ...props
+    },
+    ref
+  ) => {
     // Internal state to display labels
-    const [value, setValue] = useState<number[] | undefined>(valueProp ?? defaultValue);
+    const [value, setValue] = useState<number[] | undefined>(
+      valueProp ?? defaultValue
+    );
 
     useEffect(() => {
       if (!value || !value.length || value.length > 2) {
@@ -51,21 +64,28 @@ export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
     );
 
     return (
-      <div className={twMerge('min-w-[495px] min-h-[36px] flex items-end', className)}>
+      <div
+        className={twMerge(
+          'min-w-[495px] min-h-[36px] flex items-end',
+          className
+        )}
+      >
         <SliderPrimitive.Root
           {...props}
           defaultValue={value}
           ref={ref}
-          aria-label='value'
+          aria-label="value"
           className={'relative flex items-center w-full h-4 touch-none'}
           value={value}
           onValueChange={onValueChange}
         >
-          <SliderPrimitive.Track className='relative w-full h-2 rounded-full bg-mono-80 dark:bg-mono-140 grow'>
-            <SliderPrimitive.Range className='absolute h-full rounded-full bg-blue dark:bg-blue-50' />
+          <SliderPrimitive.Track className="relative w-full h-2 rounded-full bg-mono-80 dark:bg-mono-140 grow">
+            <SliderPrimitive.Range className="absolute h-full rounded-full bg-blue dark:bg-blue-50" />
           </SliderPrimitive.Track>
 
-          {value?.length === 1 && <SliderThumb hasLabel={hasLabel} value={value[0]} />}
+          {value?.length === 1 && (
+            <SliderThumb hasLabel={hasLabel} value={value[0]} />
+          )}
 
           {value?.length === 2 && (
             <>
@@ -95,7 +115,11 @@ function SliderThumb({ hasLabel, value }: SliderThumbProps) {
         'focus:ring-opacity-75 dark:focus:ring-opacity-50'
       )}
     >
-      {hasLabel && <span className='absolute left-0 translate-x-1/4 -top-5 utility'>{value}</span>}
+      {hasLabel && (
+        <span className="absolute left-0 translate-x-1/4 -top-5 utility">
+          {value}
+        </span>
+      )}
     </SliderPrimitive.Thumb>
   );
 }

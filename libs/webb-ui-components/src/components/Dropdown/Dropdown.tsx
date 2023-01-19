@@ -7,10 +7,18 @@ import { DropdownProps } from './types';
 /**
  * The wrapper of Radix `DropdownRoot`
  */
-export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(({ children, className, ...props }, ref) => {
-  return (
-    <div {...props} className={twMerge('relative inline-block text-left', className)} ref={ref}>
-      <DropdownMenuPrimitive.Root modal={false}>{children}</DropdownMenuPrimitive.Root>
-    </div>
-  );
-});
+export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <div
+        {...props}
+        className={twMerge('relative inline-block text-left', className)}
+        ref={ref}
+      >
+        <DropdownMenuPrimitive.Root modal={false}>
+          {children}
+        </DropdownMenuPrimitive.Root>
+      </div>
+    );
+  }
+);

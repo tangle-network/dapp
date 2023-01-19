@@ -241,7 +241,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           approvalTransaction = await currentWebbToken.approve(
             srcAddress,
             amount,
-            { gasLimit: '0x5B8D80' },
+            { gasLimit: '0x5B8D80' }
           );
         } else if (
           await srcVAnchor.isWrappableTokenApprovalRequired(
@@ -257,7 +257,7 @@ export class Web3VAnchorDeposit extends VAnchorDeposit<
           approvalTransaction = await token.approve(
             currentWebbToken.address,
             approvalValue,
-            { gasLimit: '0x5B8D80' },
+            { gasLimit: '0x5B8D80' }
           );
         }
         if (approvalTransaction) {

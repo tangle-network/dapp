@@ -21,7 +21,14 @@ import { twMerge } from 'tailwind-merge';
 export const BridgeInputGroup = forwardRef<HTMLDivElement, PropsOf<'div'>>(
   ({ children, className, ...props }, ref) => {
     return (
-      <div {...props} className={twMerge('p-2 bg-mono-20 dark:bg-mono-160 rounded-lg', className)} ref={ref}>
+      <div
+        {...props}
+        className={twMerge(
+          'p-2 bg-mono-20 dark:bg-mono-160 rounded-lg',
+          className
+        )}
+        ref={ref}
+      >
         {children}
       </div>
     );

@@ -91,21 +91,6 @@ export const walletsConfig: Record<number, WalletConfig> = {
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
   },
-  // [WalletId.OneWallet]: {
-  //   id: WalletId.OneWallet,
-  //   logo: HarmonyLogo,
-  //   name: 'one wallet',
-  //   title: 'One',
-  //   enabled: true,
-  //   detect() {
-  //     const hasOneWallet = typeof (window as any).onewallet !== 'undefined';
-  //     if (hasOneWallet) {
-  //       return (window as any).onewallet.isOneWallet as boolean;
-  //     }
-  //     return false;
-  //   },
-  //   supportedChainIds: [ChainId.HarmonyTestnet1],
-  // },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
     Logo: <TalismanIcon />,

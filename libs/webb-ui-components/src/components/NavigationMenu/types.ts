@@ -5,7 +5,8 @@ import { MenuItem } from '../MenuItem';
 
 export interface NavigationMenuProps extends ComponentProps<typeof Dropdown> {}
 
-export interface NavigationMenuContentProps extends ComponentProps<typeof DropdownBody> {
+export interface NavigationMenuContentProps
+  extends ComponentProps<typeof DropdownBody> {
   /**
    * The callback when user hits testnet menu item
    */
@@ -37,4 +38,5 @@ export interface NavigationMenuContentProps extends ComponentProps<typeof Dropdo
   version?: string;
 }
 
-export interface NavigationMenuTriggerProps extends ComponentProps<typeof DropdownBasicButton> {}
+export interface NavigationMenuTriggerProps
+  extends ComponentProps<typeof DropdownBasicButton> {}

@@ -15,6 +15,8 @@ import { CollapsibleProps } from './types';
  *    </Collapsible>
  * ```
  */
-export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>((props, ref) => {
-  return <CollapsiblePrimitive.Root {...props} ref={ref} />;
-});
+export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
+  (props, ref) => {
+    return <CollapsiblePrimitive.Root {...props} ref={ref} />;
+  }
+);

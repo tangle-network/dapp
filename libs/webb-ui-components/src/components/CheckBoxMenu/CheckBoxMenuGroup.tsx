@@ -28,7 +28,10 @@ export function CheckBoxMenuGroup<T>({
   options,
   value,
 }: CheckBoxMenuGroupProps<T>) {
-  const isAllSelected = useMemo(() => value === 'all' || value.length === options.length, [value, options]);
+  const isAllSelected = useMemo(
+    () => value === 'all' || value.length === options.length,
+    [value, options]
+  );
   return (
     <>
       <CheckBoxMenu
@@ -44,7 +47,8 @@ export function CheckBoxMenuGroup<T>({
       {options.map((opt) => (
         <CheckBoxMenu
           onChange={() => {
-            const isSelected = isAllSelected || (value as T[]).indexOf(opt) > -1;
+            const isSelected =
+              isAllSelected || (value as T[]).indexOf(opt) > -1;
             if (isAllSelected) {
               onChange(options.filter((o) => o !== opt));
             } else if (Array.isArray(value)) {
