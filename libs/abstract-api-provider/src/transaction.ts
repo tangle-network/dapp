@@ -184,12 +184,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     this._status.next([status, data]);
   }
 
-  fail(error: string): never {
+  fail(error: string): void {
     this.next(TransactionState.Failed, {
       error,
       txHash: this.txHash,
     });
-    throw new Error(error);
   }
 
   cancel() {

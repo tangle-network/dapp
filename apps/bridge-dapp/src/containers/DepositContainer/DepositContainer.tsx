@@ -86,6 +86,7 @@ export const DepositContainer = forwardRef<
       loading,
       noteManager,
       apiConfig: { currencies },
+      txQueue,
     } = useWebContext();
 
     const { generateNote } = useBridgeDeposit();
@@ -327,6 +328,12 @@ export const DepositContainer = forwardRef<
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
+      // Dismiss all the failed txns in the queue before starting a new txn
+      const txns = txQueue.txPayloads.filter(
+        (tx) => tx.txStatus.status === 'warning'
+      );
+      txns.map((tx) => tx.onDismiss());
+
       // No wallet connected
       if (!isWalletConnected) {
         const { defaultChain, sourceChains } = getDefaultConnection(chains);
@@ -396,6 +403,7 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       wrappableCurrency,
       fungibleCurrency,
+      txQueue,
     ]);
 
     // Only disable button when the wallet is connected and exists a note account
