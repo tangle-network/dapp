@@ -275,6 +275,7 @@ export const ShieldedAssetsTableContainer: FC<
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
+        title="Shielded Asset"
       />
     </div>
   );

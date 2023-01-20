@@ -199,7 +199,7 @@ const Authorities = () => {
             <Spinner size="xl" />
           </div>
         ) : (
-          <Table tableProps={table as RTTable<unknown>} />
+          <Table tableProps={table as RTTable<unknown>} title="Thresholds" />
         )}
       </CardTable>
 

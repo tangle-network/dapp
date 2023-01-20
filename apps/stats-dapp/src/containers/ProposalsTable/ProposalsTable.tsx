@@ -33,6 +33,7 @@ import {
   Filter,
   LabelWithValue,
   Table,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
@@ -265,7 +266,7 @@ export const ProposalsTable = () => {
       }}
       leftTitle={
         <Filter
-          searchPlaceholder={'Search  proposal type ,Chain , proposal status'}
+          searchPlaceholder={'Search proposals'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());
@@ -279,9 +280,10 @@ export const ProposalsTable = () => {
           }}
         >
           <Accordion type={'single'} collapsible>
-            <AccordionItem className={'p-4 py-0'} value={'proposal-type'}>
-              <AccordionButton>Proposal Type</AccordionButton>
-              <AccordionContent>
+            <AccordionItem className={'p-0 py-0'} value={'proposal-type'}>
+              <AccordionButton>Type</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
+              <AccordionContent className="p-0">
                 <div
                   className={
                     'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
@@ -303,9 +305,10 @@ export const ProposalsTable = () => {
                 </div>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem className={'p-4 py-0'} value={'proposal-status'}>
-              <AccordionButton>Proposal Status</AccordionButton>
-              <AccordionContent>
+            <AccordionItem className={'p-0 py-0'} value={'proposal-status'}>
+              <AccordionButton>Status</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
+              <AccordionContent className="p-0">
                 <div
                   className={
                     'max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto'
@@ -332,9 +335,9 @@ export const ProposalsTable = () => {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'chain'}>
+            <AccordionItem className={'p-0'} value={'chain'}>
               <AccordionButton>Chain</AccordionButton>
-              <AccordionContent>
+              <AccordionContent className="p-2">
                 <div className="max-w-[300px] max-h-[300px] overflow-x-hidden overflow-y-auto">
                   <CheckBoxMenuGroup
                     value={selectedChains}
@@ -361,6 +364,7 @@ export const ProposalsTable = () => {
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={totalItems}
+        title="Proposals"
       />
     </CardTable>
   );

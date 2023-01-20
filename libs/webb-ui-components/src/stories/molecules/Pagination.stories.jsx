@@ -25,4 +25,5 @@ Primary.args = {
   canNextPage: true,
   nextPage: 3,
   setPageIndex: 2,
+  title: 'Keys',
 };

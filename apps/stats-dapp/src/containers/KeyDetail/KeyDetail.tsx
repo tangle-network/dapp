@@ -30,6 +30,7 @@ import {
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { getChipColorByKeyStatus } from '../../utils';
 import {
   ArrowLeft,
   ArrowRight,
@@ -166,9 +167,9 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
           {/** Session number */}
           <div className="flex items-center space-x-2">
-            <Chip color="green">
+            <Chip color={getChipColorByKeyStatus(keyDetail.isCurrent)}>
               {keyDetail.isDone
-                ? 'History'
+                ? 'Previous'
                 : keyDetail.isCurrent
                 ? 'Current'
                 : 'Next'}
@@ -242,9 +243,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                             keyValue={keyDetail.uncompressed}
                             size="sm"
                           />
-                          {/*<Button variant="link" size="sm">
-                            Detail
-                          </Button>*/}
                         </div>
                       }
                     />
@@ -288,10 +286,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                               }
                             />
                           )}
-                          {/*TODO: Show proposers page for the participants of this key*/}
-                          {/*<Button size="sm" variant="link">
-                            Details
-                          </Button>*/}
                         </div>
                       }
                     />
@@ -377,16 +371,19 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
 
   columnHelper.accessor('location', {
     header: 'Location',
-    cell: (props) => (
-      <Typography
-        variant="h5"
-        fw="bold"
-        component="span"
-        className="!text-inherit"
-      >
-        {getUnicodeFlagIcon(props.getValue())}
-      </Typography>
-    ),
+    cell: (props) => {
+      const countryCode = getUnicodeFlagIcon(props.getValue());
+      return (
+        <Typography
+          variant="h5"
+          fw="bold"
+          component="span"
+          className="!text-inherit"
+        >
+          {countryCode ? `🌎` : countryCode}
+        </Typography>
+      );
+    },
   }),
 
   columnHelper.accessor('uptime', {
@@ -440,6 +437,10 @@ const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
     manualPagination: false,
   });
   return (
-    <Table tableProps={table as RTTable<unknown>} totalRecords={data.length} />
+    <Table
+      tableProps={table as RTTable<unknown>}
+      totalRecords={data.length}
+      title="DKG Authorities"
+    />
   );
 };

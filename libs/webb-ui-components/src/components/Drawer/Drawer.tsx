@@ -25,7 +25,7 @@ const DrawerContent = forwardRef<HTMLDivElement, DrawerContentProps>(
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cx(
-          'fixed top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.15)]',
+          'fixed top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.25)]',
           'radix-state-open:animate-drawer-overlay-open radix-state-closed:animate-drawer-overlay-close'
         )}
       />
