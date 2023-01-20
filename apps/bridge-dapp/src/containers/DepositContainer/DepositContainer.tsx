@@ -638,7 +638,7 @@ export const DepositContainer = forwardRef<
       activeWallet,
       setMainComponentName,
       setSelectedChain,
-      activeChain
+      activeChain,
     ]);
 
     const walletModalProps = useMemo<WalletModalProps | undefined>(() => {
