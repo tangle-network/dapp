@@ -33,6 +33,7 @@ import {
   Slider,
   Table,
   TitleWithInfo,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
@@ -308,6 +309,7 @@ export const KeygenTable: FC = () => {
           <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-0 py-0'} value={'keygenThreshold'}>
               <AccordionButton>Keygen Threshold</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent className="p-0">
                 <Slider
                   max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}

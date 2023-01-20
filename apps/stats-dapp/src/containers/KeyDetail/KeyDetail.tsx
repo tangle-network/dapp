@@ -371,16 +371,19 @@ const columns: ColumnDef<KeyGenAuthority, any>[] = [
 
   columnHelper.accessor('location', {
     header: 'Location',
-    cell: (props) => (
-      <Typography
-        variant="h5"
-        fw="bold"
-        component="span"
-        className="!text-inherit"
-      >
-        {getUnicodeFlagIcon(props.getValue())}
-      </Typography>
-    ),
+    cell: (props) => {
+      const countryCode = getUnicodeFlagIcon(props.getValue());
+      return (
+        <Typography
+          variant="h5"
+          fw="bold"
+          component="span"
+          className="!text-inherit"
+        >
+          {countryCode ? `🌎` : countryCode}
+        </Typography>
+      );
+    },
   }),
 
   columnHelper.accessor('uptime', {

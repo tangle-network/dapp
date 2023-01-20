@@ -31,6 +31,7 @@ import {
   Progress,
   Slider,
   Table,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
@@ -208,7 +209,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
       }}
       leftTitle={
         <Filter
-          searchPlaceholder={'Search  authority account'}
+          searchPlaceholder={'Search authorities'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());
@@ -221,6 +222,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
           <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-0 py-0'} value={'location'}>
               <AccordionButton>Location</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent>
                 <LocationFilter
                   selected={selectedCountries}
@@ -234,6 +236,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
 
             <AccordionItem className={'p-0 py-0'} value={'uptime'}>
               <AccordionButton>Uptime</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent>
                 <Slider
                   max={100}

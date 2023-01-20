@@ -16,7 +16,7 @@ import { KeyCardProps } from './types';
  * ```
  */
 export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
-  ({ className, keyValue, title, ...props }, ref) => {
+  ({ className, keyValue, title, btmClass, ...props }, ref) => {
     const mergedClsx = useMemo(
       () => twMerge('max-w-[343px] break-all', className),
       [className]
@@ -24,7 +24,7 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
     return (
       <div {...props} className={mergedClsx} ref={ref}>
         {/** Top */}
-        <div className="flex items-center justify-between">
+        <div className="items-center justify-between">
           <Typography variant="utility" className="uppercase">
             {title}
           </Typography>
@@ -33,7 +33,7 @@ export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
         </div>
 
         {/** Bottom */}
-        <div className="p-3 mt-4 rounded-md bg-mono-20 dark:bg-mono-160">
+        <div className="h-40 p-3 mt-4 rounded-md bg-mono-20 dark:bg-mono-160">
           <Typography variant="mono1">{keyValue}</Typography>
         </div>
       </div>

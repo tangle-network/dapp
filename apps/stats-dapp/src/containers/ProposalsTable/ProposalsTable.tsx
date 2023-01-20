@@ -33,6 +33,7 @@ import {
   Filter,
   LabelWithValue,
   Table,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
@@ -265,7 +266,7 @@ export const ProposalsTable = () => {
       }}
       leftTitle={
         <Filter
-          searchPlaceholder={'Search  proposal type ,Chain , proposal status'}
+          searchPlaceholder={'Search proposals'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());
@@ -280,7 +281,8 @@ export const ProposalsTable = () => {
         >
           <Accordion type={'single'} collapsible>
             <AccordionItem className={'p-0 py-0'} value={'proposal-type'}>
-              <AccordionButton>Proposal Type</AccordionButton>
+              <AccordionButton>Type</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent className="p-0">
                 <div
                   className={
@@ -304,7 +306,8 @@ export const ProposalsTable = () => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem className={'p-0 py-0'} value={'proposal-status'}>
-              <AccordionButton>Proposal Status</AccordionButton>
+              <AccordionButton>Status</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent className="p-0">
                 <div
                   className={
