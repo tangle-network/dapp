@@ -243,6 +243,7 @@ export class WebbWeb3Provider
     storage: Storage<BridgeStorage>,
     abortSignal: AbortSignal
   ): Promise<string[]> {
+    console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     // First, try to fetch the leaves from the supported relayers
@@ -256,6 +257,8 @@ export class WebbWeb3Provider
       storage,
       abortSignal
     );
+
+    console.log('Leaves from relayers: ', leaves);
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
@@ -271,12 +274,17 @@ export class WebbWeb3Provider
         leaves: [] as string[],
       };
 
+      console.log('Stored contract info: ', storedContractInfo);
+
       const leavesFromChain = await vanchor.getDepositLeaves(
         storedContractInfo.lastQueriedBlock + 1,
         0,
         abortSignal,
         retryPromise
       );
+
+      console.log('Leaves from chain: ', leavesFromChain);
+
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
       // Cached the new leaves
@@ -285,6 +293,8 @@ export class WebbWeb3Provider
         leaves,
       });
     }
+
+    console.groupEnd();
 
     return leaves;
   }
