@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { currenciesConfig } from '@webb-tools/dapp-config';
-import { ChainIcon, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   ChainListCard,
   Typography,
@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import cx from 'classnames';
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { WalletModal } from './WalletModal';
 import { HeaderButton } from './HeaderButton';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -30,6 +30,10 @@ export const ChainSwitcherButton: FC = () => {
       };
     });
   }, [chains]);
+
+  // useEffect(() => {
+  //   console.log(activeChain);
+  // });
 
   return (
     <HeaderButton
