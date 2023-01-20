@@ -141,7 +141,8 @@ export class WebbError extends Error {
       case WebbErrorCodes.NoRelayerSupport:
         return {
           code,
-          message: 'Attempt to use a relayer which does not support the functionality',
+          message:
+            'Attempt to use a relayer which does not support the functionality',
         };
 
       case WebbErrorCodes.RelayerMisbehaving:

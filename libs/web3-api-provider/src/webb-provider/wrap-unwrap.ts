@@ -8,7 +8,10 @@ import {
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyType, zeroAddress } from '@webb-tools/dapp-types';
-import { ERC20__factory as ERC20Factory, FungibleTokenWrapper__factory } from '@webb-tools/contracts';
+import {
+  ERC20__factory as ERC20Factory,
+  FungibleTokenWrapper__factory,
+} from '@webb-tools/contracts';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { BigNumberish, ContractTransaction } from 'ethers';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -73,9 +76,11 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     const fn = async (account: string, amount: BigNumberish) => {
       const [currentWrappedLiquidity] = await Promise.all([
         webbFungibleToken.contract.totalSupply(),
-        webbFungibleToken.contract.provider.getBalance(webbFungibleToken.contract.address),
+        webbFungibleToken.contract.provider.getBalance(
+          webbFungibleToken.contract.address
+        ),
       ]);
-  
+
       if (
         currentWrappedLiquidity.lt(amount) ||
         currentWrappedLiquidity.lt(amount)
@@ -83,15 +88,15 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         // no enough liquidity
         return false;
       }
-  
+
       const userBalance = await webbFungibleToken.contract.balanceOf(account);
-  
+
       if (userBalance.gte(amount)) {
         return true;
       }
-  
+
       return false;
-    }
+    };
 
     return fn(currentAccount.address, Number(amount));
   }
@@ -126,7 +131,10 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
           `No wrappable token address for ${wrappableToken.view.name} on selected chain`
         );
       }
-      const tx = await webbFungibleToken.contract.unwrap(wrappableTokenAddress, amount);
+      const tx = await webbFungibleToken.contract.unwrap(
+        wrappableTokenAddress,
+        amount
+      );
 
       await tx.wait();
       this.inner.notificationHandler({
@@ -262,7 +270,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     const signer = this.inner.getEthersProvider().getSigner();
     const contract = FungibleTokenWrapper__factory.connect(
       contractAddress,
-      signer,
+      signer
     );
     return new FungibleTokenWrapper(contract, signer);
   }

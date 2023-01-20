@@ -50,7 +50,6 @@ export const keypairStorageFactory = () => {
   });
 };
 
-
 /// The `NoteStorage` is used to store the encrypted notes of the user.
 /// The key is the keypair of the user.The `NoteStorage` is used to store the encrypted notes of the user.
 /// The key is the public key of the given keypair being used.
