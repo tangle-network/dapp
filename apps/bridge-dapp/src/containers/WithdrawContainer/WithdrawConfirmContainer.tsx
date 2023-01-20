@@ -21,6 +21,7 @@ import {
   useTransactionProgressValue,
 } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
+import { getErrorMessage } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -188,6 +189,7 @@ export const WithdrawConfirmContainer = forwardRef<
           changeUtxo,
           recipient,
         };
+
         const args = await vAnchorApi.prepareTransaction(
           tx,
           txPayload,
@@ -211,11 +213,10 @@ export const WithdrawConfirmContainer = forwardRef<
         }
       } catch (error) {
         console.log('Error while executing withdraw', error);
+
         changeNote && (await noteManager?.removeNote(changeNote));
 
-        if (error instanceof Error) {
-          tx.fail(error['message' ?? '']);
-        }
+        tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
       }
