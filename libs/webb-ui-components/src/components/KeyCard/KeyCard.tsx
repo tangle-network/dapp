@@ -16,7 +16,7 @@ import { KeyCardProps } from './types';
  * ```
  */
 export const KeyCard = forwardRef<HTMLDivElement, KeyCardProps>(
-  ({ className, keyValue, title, btmClass, ...props }, ref) => {
+  ({ className, keyValue, title, ...props }, ref) => {
     const mergedClsx = useMemo(
       () => twMerge('max-w-[343px] break-all', className),
       [className]
