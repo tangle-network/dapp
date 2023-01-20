@@ -3,6 +3,9 @@ import { forwardRef } from 'react';
 
 import { PopoverTriggerProps } from './types';
 
-export const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>((props, ref) => {
+export const PopoverTrigger = forwardRef<
+  HTMLButtonElement,
+  PopoverTriggerProps
+>((props, ref) => {
   return <PopoverPrimitive.Trigger {...props} ref={ref} />;
 });

@@ -16,11 +16,16 @@ export class Storage<Store> extends EventBus<{
 }> {
   static instances = new Map<string, Storage<any>>();
 
-  static get<Store extends Record<string, unknown>>(key: string): Storage<Store> {
+  static get<Store extends Record<string, unknown>>(
+    key: string
+  ): Storage<Store> {
     return Storage.instances.get(key) as Storage<Store>;
   }
 
-  static async newFresh<Store>(name: string, handler: StorageHandler<Store>): Promise<Storage<Store>> {
+  static async newFresh<Store>(
+    name: string,
+    handler: StorageHandler<Store>
+  ): Promise<Storage<Store>> {
     const instance = new Storage<Store>(name, handler);
 
     Storage.instances.set(name, instance);
@@ -29,7 +34,10 @@ export class Storage<Store> extends EventBus<{
     return instance;
   }
 
-  static async newFromCache<Store>(name: string, data: Omit<StorageHandler<Store>, 'inner'>): Promise<Storage<Store>> {
+  static async newFromCache<Store>(
+    name: string,
+    data: Omit<StorageHandler<Store>, 'inner'>
+  ): Promise<Storage<Store>> {
     const storage = await data.fetch(name);
     const instance = new Storage<Store>(name, {
       ...data,

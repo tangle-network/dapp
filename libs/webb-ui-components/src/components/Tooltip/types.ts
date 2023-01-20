@@ -6,7 +6,11 @@ import {
 import { IWebbComponentBase } from '../../types';
 import React from 'react';
 
-type OmittedKeys = 'open' | 'defaultOpen' | 'disableHoverableContent' | 'onOpenChange';
+type OmittedKeys =
+  | 'open'
+  | 'defaultOpen'
+  | 'disableHoverableContent'
+  | 'onOpenChange';
 
 type TooltipPropsBase = Omit<RdxTooltipPropsBase, OmittedKeys>;
 
@@ -32,7 +36,9 @@ export interface TooltipProps extends IWebbComponentBase, TooltipPropsBase {
 /**
  * The `TooltipBody` props
  */
-export interface TooltipBodyProps extends IWebbComponentBase, RdxTooltipContentProps {
+export interface TooltipBodyProps
+  extends IWebbComponentBase,
+    RdxTooltipContentProps {
   /**
    * The `title` of the tooltip content
    */
@@ -46,6 +52,6 @@ export interface TooltipBodyProps extends IWebbComponentBase, RdxTooltipContentP
 /**
  * The `TooltipTrigger` props
  */
-export interface TooltipTriggerProps extends IWebbComponentBase, RdxTooltipTriggerProps {
-
-}
+export interface TooltipTriggerProps
+  extends IWebbComponentBase,
+    RdxTooltipTriggerProps {}

@@ -16,5 +16,5 @@ export interface FilterProps extends IWebbComponentBase, PropsOf<'div'> {
 
   /**
    * Search field place holder*/
-   searchPlaceholder?: string;
+  searchPlaceholder?: string;
 }

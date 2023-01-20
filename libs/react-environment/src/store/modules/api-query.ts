@@ -1,13 +1,21 @@
-import { createStore, ManipulationParams, ManipulationsConfig } from '../createStore';
+import {
+  createStore,
+  ManipulationParams,
+  ManipulationsConfig,
+} from '../createStore';
 
 type ApiQueryStoreState = Record<string, any>;
 
-interface ApiQueryStoreManipulate<T = ApiQueryStoreState> extends ManipulationsConfig<T> {
+interface ApiQueryStoreManipulate<T = ApiQueryStoreState>
+  extends ManipulationsConfig<T> {
   get: (params: ManipulationParams<T>) => (key: string) => any;
   set: (params: ManipulationParams<T>) => (key: string, value: any) => void;
 }
 
-export const useApiQueryStore = createStore<ApiQueryStoreState, ApiQueryStoreManipulate<ApiQueryStoreState>>(
+export const useApiQueryStore = createStore<
+  ApiQueryStoreState,
+  ApiQueryStoreManipulate<ApiQueryStoreState>
+>(
   {},
   {
     get:

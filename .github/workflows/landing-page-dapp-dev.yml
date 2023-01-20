@@ -20,6 +20,11 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -29,11 +34,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Install netlify/plugin-nextjs
-        run: yarn add -D @netlify/plugin-nextjs -W
-
       - name: Build project
         run: yarn build:webbsite
+
+      - name: Copy deployment config to root
+        run: cp apps/webbsite/netlify.toml netlify.toml
 
       - name: Deploy to Netlify
         id: deploy-netlify
@@ -42,14 +47,14 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_WEBBSITE_ID }}
         with:
-          args: deploy context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
+          args: deploy --build context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |
-            <span aria-hidden="true">✅</span> Deploy Preview for *webbsite development* is ready! Thanks for the contribution @${{ github.actor }}
+            <span aria-hidden="true">✅</span> Deploy Preview for *development webbsite* is ready! Thanks for the contribution @${{ github.actor }}
 
             |  Name | Link |
             |---------------------------------|------------------------|
@@ -58,7 +63,7 @@ jobs:
             |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) |
             ---
 
-            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/webbsite/settings/deploys#deploy-notifications)._
+            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/development-webbsite/settings/deploys#deploy-notifications)._
             
         with:
           msg: ${{ env.OUTPUT }}

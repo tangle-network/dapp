@@ -4,7 +4,7 @@
  * @param chars first and last number of characters to display
  * @returns the shortened string
  */
- export const shortenString = (str: string, chars = 4): string => {
+export const shortenString = (str: string, chars = 4): string => {
   if (str.length <= chars * 2) {
     return str;
   }

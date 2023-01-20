@@ -54,19 +54,25 @@ export function createIcon(options: CreateIconOptions) {
   const _path = Children.toArray(path);
   const _size = getIconSizeInPixel(size);
 
-  const _className = colorUsingStroke ? getStrokeColor(darkMode) : getFillColor(darkMode);
+  const _className = colorUsingStroke
+    ? getStrokeColor(darkMode)
+    : getFillColor(darkMode);
 
   const Comp: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg
       viewBox={viewBox}
       width={_size}
       height={_size}
-      className={twMerge(_className, colorUsingStroke ? 'fill-transparent' : 'stroke-transparent', className)}
+      className={twMerge(
+        _className,
+        colorUsingStroke ? 'fill-transparent' : 'stroke-transparent',
+        className
+      )}
       {...restOptions}
       {...defaultProps}
       {...props}
     >
-      {_path.length ? _path : <path fill='inherit' d={pathDefinition} />}
+      {_path.length ? _path : <path fill="inherit" d={pathDefinition} />}
     </svg>
   );
 

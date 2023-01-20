@@ -17,11 +17,5 @@ export const Default = Template.bind({});
 Default.args = {
   keyValue: '0x958aa9ddbd62f989dec2fd1468bf436aebeb8be6',
   size: 'sm',
-};
-
-export const withShortenValue = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-  keyValue: '0x958aa9ddbd62f989dec2fd1468bf436aebeb8be6',
-  size: 'sm',
+  hasShortenValue: true,
 };

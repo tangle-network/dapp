@@ -67,7 +67,10 @@ export class CancellationToken {
    * @param  onCancel - Handler for the cancellation
    *
    * */
-  handleOrThrow<T = any>(resolver: () => Promise<T>, onCancel: () => any): Promise<T> {
+  handleOrThrow<T = any>(
+    resolver: () => Promise<T>,
+    onCancel: () => any
+  ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const sub = this.$canceled().subscribe(() => {
         // terminate the webb worker on cancellation

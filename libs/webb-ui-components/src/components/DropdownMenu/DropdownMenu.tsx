@@ -26,51 +26,73 @@ import { DropdownMenuProps } from './types';
  *  />
  * ```
  */
-export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>((props, ref) => {
-  const { className, icon: iconProp, label, menuOptions, onChange, size = 'md', value } = props;
+export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
+  (props, ref) => {
+    const {
+      className,
+      icon: iconProp,
+      label,
+      menuOptions,
+      onChange,
+      size = 'md',
+      value,
+    } = props;
 
-  const icon = useMemo(() => {
-    if (!iconProp) {
-      return;
-    }
+    const icon = useMemo(() => {
+      if (!iconProp) {
+        return;
+      }
 
-    return React.cloneElement(iconProp, {
-      ...iconProp.props,
-      size: size === 'md' ? 'lg' : 'md',
-      className: twMerge('fill-current dark:fill-current', iconProp.props['className']),
-    });
-  }, [iconProp, size]);
+      return React.cloneElement(iconProp, {
+        ...iconProp.props,
+        size: size === 'md' ? 'lg' : 'md',
+        className: twMerge(
+          'fill-current dark:fill-current',
+          iconProp.props['className']
+        ),
+      });
+    }, [iconProp, size]);
 
-  // Calculate the display text on the trigger button
-  const triggerText = useMemo(() => {
-    if (value) {
-      return value;
-    }
+    // Calculate the display text on the trigger button
+    const triggerText = useMemo(() => {
+      if (value) {
+        return value;
+      }
 
-    if (!label && !menuOptions.length) {
-      throw new Error('DropdownMenu without label needs an option list to render');
-    }
+      if (!label && !menuOptions.length) {
+        throw new Error(
+          'DropdownMenu without label needs an option list to render'
+        );
+      }
 
-    if (!label && menuOptions.length > 0) {
-      return menuOptions[0].value;
-    }
+      if (!label && menuOptions.length > 0) {
+        return menuOptions[0].value;
+      }
 
-    return label;
-  }, [label, menuOptions, value]);
+      return label;
+    }, [label, menuOptions, value]);
 
-  return (
-    <Dropdown className={className} ref={ref}>
-      <DropdownButton label={triggerText} icon={icon} size={size} />
+    return (
+      <Dropdown className={className} ref={ref}>
+        <DropdownButton label={triggerText} icon={icon} size={size} />
 
-      <DropdownBody size={size}>
-        <DropdownMenuPrimitive.RadioGroup value={value} onValueChange={onChange}>
-          {menuOptions.map(({ icon, value }, i) => (
-            <DropdownMenuPrimitive.RadioItem key={`${value}-${i}`} value={value} asChild>
-              <MenuItem icon={icon}>{value}</MenuItem>
-            </DropdownMenuPrimitive.RadioItem>
-          ))}
-        </DropdownMenuPrimitive.RadioGroup>
-      </DropdownBody>
-    </Dropdown>
-  );
-});
+        <DropdownBody size={size}>
+          <DropdownMenuPrimitive.RadioGroup
+            value={value}
+            onValueChange={onChange}
+          >
+            {menuOptions.map(({ icon, value }, i) => (
+              <DropdownMenuPrimitive.RadioItem
+                key={`${value}-${i}`}
+                value={value}
+                asChild
+              >
+                <MenuItem icon={icon}>{value}</MenuItem>
+              </DropdownMenuPrimitive.RadioItem>
+            ))}
+          </DropdownMenuPrimitive.RadioGroup>
+        </DropdownBody>
+      </Dropdown>
+    );
+  }
+);

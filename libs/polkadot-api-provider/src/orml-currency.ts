@@ -30,7 +30,8 @@ export class ORMLCurrency {
           const assetRegistryValues = i.unwrap();
           return {
             name: assetRegistryValues.name.toString(),
-            existentialDeposit: assetRegistryValues.existentialDeposit.toString(),
+            existentialDeposit:
+              assetRegistryValues.existentialDeposit.toString(),
             locked: assetRegistryValues.locked.toJSON(),
             id: storageKey[0].toString(),
           } as ORMLAsset;
@@ -45,7 +46,9 @@ export class ORMLCurrency {
     logger.info('active account', activeAccount);
 
     if (activeAccount) {
-      const ormlBalances = await this.api.api.query.tokens.accounts.entries(activeAccount.address);
+      const ormlBalances = await this.api.api.query.tokens.accounts.entries(
+        activeAccount.address
+      );
 
       logger.info(`ORML Balances ${ormlBalances.length}`, ormlBalances);
 

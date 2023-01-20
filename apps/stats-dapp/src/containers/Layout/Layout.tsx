@@ -83,7 +83,6 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
       <ApolloProvider client={apolloClient}>
         <StatsProvider
-          blockTime={6}
           sessionHeight={600}
           connectedEndpoint={connectedEndpoint}
         >
