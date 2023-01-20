@@ -255,7 +255,7 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
   },
   [CurrencyId.moonDEV]: {
     name: 'moonbase Dev',
-    symbol: 'DEV',
+    symbol: 'MDEV',
     decimals: 12,
     color: '',
     id: CurrencyId.moonDEV,
