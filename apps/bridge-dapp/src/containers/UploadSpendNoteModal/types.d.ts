@@ -32,6 +32,16 @@ export interface BaseUploadModalContentProps {
   onRemoveNote?: (id: string) => void;
 }
 
-export interface UploadModalContentProps extends BaseUploadModalContentProps {}
+export interface UploadModalContentProps extends BaseUploadModalContentProps {
+  /**
+   * True if the user wants to re-upload the note
+   */
+  reUploadNote: boolean;
+
+  /**
+   * Handler to set if the user wants to re-upload the note
+   */
+  handleReUploadNote: () => void;
+}
 
 export interface PasteModalContentProps extends BaseUploadModalContentProps {}
