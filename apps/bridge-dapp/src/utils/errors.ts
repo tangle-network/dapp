@@ -31,19 +31,19 @@ const hasReason = (error: unknown): error is { reason: string } => {
  */
 export const getErrorMessage = (error: unknown) => {
   if (hasReason(error)) {
-    return error.reason;
+    return error.reason.slice(0, 50);
   }
 
   if (error instanceof Error) {
-    return error.message;
+    return error.message.slice(0, 50);
   }
 
   if (typeof error === 'string') {
-    return error;
+    return error.slice(0, 50);
   }
 
   if (hasMessage(error)) {
-    return error.message;
+    return error.message.slice(0, 50);
   }
 
   return 'An unknown error occurred';
