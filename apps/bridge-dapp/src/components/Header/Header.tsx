@@ -56,7 +56,7 @@ export const Header: FC<HeaderProps> = () => {
           )}
 
           {/** Wallet is actived */}
-          {activeAccount && activeWallet && activeChain && !loading && (
+          {activeAccount && activeWallet && activeChain && (
             <>
               <ChainSwitcherButton />
               <WalletButton account={activeAccount} wallet={activeWallet} />
