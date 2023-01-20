@@ -69,10 +69,22 @@ export interface TransferConfirmContainerProps
   /**
    * The change note
    */
-  note?: string | null;
+  note?: Note;
 
   /**
    * The input notes to transfer
    */
   inputNotes: Note[];
+
+  /**
+   * The generated change utxo,
+   * this will be stored on-chain
+   */
+  changeUtxo: Utxo;
+
+  /**
+   * The generated transfer utxo,
+   * this will be stored on-chain
+   */
+  transferUtxo: Utxo;
 }

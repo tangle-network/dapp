@@ -91,9 +91,8 @@ export type WithdrawTransactionPayloadType = {
 
 export type TransferTransactionPayloadType = {
   notes: Note[];
-  destTypedChainId: number;
-  recipientPublicKey: string;
-  amount: number;
+  changeUtxo: Utxo;
+  transferUtxo: Utxo;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)

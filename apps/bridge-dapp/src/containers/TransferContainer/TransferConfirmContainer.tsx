@@ -33,6 +33,8 @@ export const TransferConfirmContainer = forwardRef<
     recipient,
     relayer,
     note: changeNote,
+    changeUtxo,
+    transferUtxo,
     inputNotes,
     ...props
   }) => {
@@ -92,14 +94,16 @@ export const TransferConfirmContainer = forwardRef<
       }
 
       if (isTransfering) {
+        txQueueApi.startNewTransaction();
         setMainComponent(undefined);
         return;
       }
 
       if (changeNote) {
+        const changeNoteStr = changeNote.serialize();
         downloadString(
-          JSON.stringify(changeNote),
-          changeNote.slice(changeNote.length - 10) + '.json'
+          JSON.stringify(changeNoteStr),
+          changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
         );
       }
 
@@ -123,28 +127,22 @@ export const TransferConfirmContainer = forwardRef<
       try {
         txQueueApi.registerTransaction(tx);
 
+        // Add the change note before sending the tx
+        if (changeNote) {
+          noteManager?.addNote(changeNote);
+        }
+
         const txPayload: TransferTransactionPayloadType = {
           notes: inputNotes,
-          destTypedChainId: calculateTypedChainId(
-            destChain.chainType,
-            destChain.chainId
-          ),
-          recipientPublicKey: recipient,
-          amount,
+          changeUtxo,
+          transferUtxo,
         };
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
 
-        // Add the change note before sending the tx
-        if (changeNote) {
-          noteManager?.addNote(await Note.deserialize(changeNote));
-        }
-
         const receipt = await vAnchorApi.transact(...args);
 
-        const outputNotes = changeNote
-          ? [await Note.deserialize(changeNote)]
-          : [];
+        const outputNotes = changeNote ? [changeNote] : [];
 
         // Notification Success Transaction
         tx.txHash = receipt.transactionHash;
@@ -160,8 +158,7 @@ export const TransferConfirmContainer = forwardRef<
       } catch (error) {
         console.error('Error occured while transfering', error);
 
-        changeNote &&
-          (await noteManager?.removeNote(await Note.deserialize(changeNote)));
+        changeNote && (await noteManager?.removeNote(changeNote));
 
         tx.fail(getErrorMessage(error));
       } finally {
@@ -175,9 +172,8 @@ export const TransferConfirmContainer = forwardRef<
       amount,
       setMainComponent,
       txQueueApi,
-      destChain.chainType,
-      destChain.chainId,
-      recipient,
+      changeUtxo,
+      transferUtxo,
       noteManager,
     ]);
 
@@ -190,7 +186,7 @@ export const TransferConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         sourceChain={activeChain?.name}
         destChain={destChain.name}
-        note={changeNote}
+        note={changeNote?.serialize()}
         progress={progress}
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}

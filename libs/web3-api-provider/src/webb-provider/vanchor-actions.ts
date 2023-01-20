@@ -97,10 +97,8 @@ export const isVAnchorTransferPayload = (
   }
 
   return (
-    typeof payload['recipientPublicKey'] === 'string' &&
-    payload['recipientPublicKey'].length > 0 &&
-    typeof payload['amount'] === 'number' &&
-    payload['amount'] > 0
+    payload['changeUtxo'] instanceof Utxo &&
+    payload['transferUtxo'] instanceof Utxo
   );
 };
 
@@ -208,101 +206,21 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leavesMap, // leavesMap
       ]);
     } else if (isVAnchorTransferPayload(payload)) {
-      const { notes, recipientPublicKey, amount, destTypedChainId } = payload;
-      const activeBridge: Bridge | undefined = this.inner.state.activeBridge;
-      const bridgeCurrency: Currency | undefined = activeBridge?.currency;
+      const { changeUtxo, transferUtxo, notes } = payload;
 
-      if (notes.length === 0) {
-        tx.fail('No notes to deposit');
-        return;
-      }
-
-      if (!this.inner.noteManager) {
-        tx.fail('No note manager found');
-        return;
-      }
-
-      if (!bridgeCurrency) {
-        tx.fail('No bridge currency found');
-        return;
-      }
-
-      const parsedAmount = ethers.utils.parseUnits(
-        amount.toString(),
-        bridgeCurrency.getDecimals()
-      );
-
-      // Loop through the notes and populate the leaves map
-      const leavesMap: Record<string, Uint8Array[]> = {};
-
-      // Keep track of the leafindices for each note
-      const leafIndices: number[] = [];
-
-      // calculate the sum of input notes (for calculating the change utxo)
-      let sumInputNotes: BigNumber = BigNumber.from(0);
-
-      // Create input UTXOs for convenience calculations
-      const inputUtxos: Utxo[] = [];
-
-      const notePayload = notes[0];
-      const vAnchor = await this.getVAnchor(tx, notePayload, true);
-      const treeHeight = await vAnchor.contract.getLevels();
-
-      // For all notes, get any leaves in parallel
-      const notesLeaves = await Promise.all(
-        notes.map((note: Note) =>
-          this.fetchNoteLeaves(tx, note, leavesMap, vAnchor, treeHeight)
-        )
-      );
-
-      notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
-        sumInputNotes = sumInputNotes.add(amount);
-        leafIndices.push(leafIndex);
-        inputUtxos.push(utxo);
-      });
-
-      // Create the output UTXOs
-      const changeAmount = sumInputNotes.sub(parsedAmount);
-
-      const activeChain = await this.inner.getChainId();
+      const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
 
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
-      const sourceTypedChainId = calculateTypedChainId(
-        ChainType.EVM,
-        activeChain
-      );
-
-      const changeUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: changeAmount.toString(),
-        chainId: sourceTypedChainId.toString(),
-        keypair: this.inner.noteManager.getKeypair(),
-        originChainId: sourceTypedChainId.toString(),
-      });
-
-      // Setup the recipient's keypair.
-      const recipientKeypair = Keypair.fromString(recipientPublicKey);
-
-      const transferUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: parsedAmount.toString(),
-        chainId: destTypedChainId.toString(),
-        keypair: recipientKeypair,
-        originChainId: sourceTypedChainId.toString(),
-      });
-
       return Promise.resolve([
         tx, // tx
-        vAnchor.contract.address, // contractAddress
+        notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
         0, // fee
         0, // refund
         ZERO_ADDRESS, // recipient
         this.inner.relayerManager.activeRelayer?.account ?? ZERO_ADDRESS, // relayer
-        bridgeCurrency.getAddress(sourceTypedChainId), // wrapUnwrapToken
+        '', // wrapUnwrapToken (not used for transfers)
         leavesMap, // leavesMap
       ]);
     } else {
@@ -552,8 +470,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     );
 
     if (!provingTree) {
-      console.error('fetched leaves do not match bridged anchor state');
-      return;
+      throw new Error('fetched leaves do not match bridged anchor state');
     }
 
     const provingLeaves = provingTree
