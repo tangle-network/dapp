@@ -91,6 +91,8 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   // useMemo to memoize the note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
+  const [reUploadNote, setReUploadNote] = useState(false);
+
   return (
     <Modal open={isOpen} onOpenChange={(isOpen) => setIsOpen(isOpen)}>
       <ModalContent
@@ -98,7 +100,12 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
         isCenter
         isOpen={isOpen}
       >
-        <ModalHeader onClose={() => setIsOpen(false)}>
+        <ModalHeader
+          onClose={() => {
+            setIsOpen(false);
+            setNotes({});
+          }}
+        >
           Upload Spend Note
         </ModalHeader>
 
@@ -117,6 +124,8 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
               onRemoveAllNotes={handleRemoveAll}
               onRemoveNote={handleRemoveNote}
               onNotesChange={handleNotesChange}
+              reUploadNote={reUploadNote}
+              handleReUploadNote={() => setReUploadNote(false)}
             />
           </TabContent>
 
@@ -135,6 +144,16 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
           >
             Save
           </Button>
+
+          {noteSize > 0 && (
+            <Button
+              isFullWidth
+              variant="secondary"
+              onClick={() => setReUploadNote(true)}
+            >
+              Back
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
