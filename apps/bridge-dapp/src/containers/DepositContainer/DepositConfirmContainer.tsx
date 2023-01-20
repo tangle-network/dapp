@@ -23,7 +23,7 @@ export const DepositConfirmContainer = forwardRef<
       sourceChain,
       destChain,
       wrappableTokenSymbol,
-      setMainComponentHandler,
+      resetMainComponent,
     },
     ref
   ) => {
@@ -61,7 +61,7 @@ export const DepositConfirmContainer = forwardRef<
       if (depositTxInProgress) {
         console.log('Start a new transaction');
         startNewTransaction();
-        setMainComponentHandler(undefined);
+        resetMainComponent();
         return;
       }
 
@@ -76,7 +76,7 @@ export const DepositConfirmContainer = forwardRef<
           secondaryMessage: 'Something went wrong when depositing',
         });
       } finally {
-        setMainComponentHandler(undefined);
+        resetMainComponent();
       }
     }, [
       deposit,
@@ -84,7 +84,7 @@ export const DepositConfirmContainer = forwardRef<
       downloadNote,
       depositTxInProgress,
       notificationApi,
-      setMainComponentHandler,
+      resetMainComponent,
       startNewTransaction,
     ]);
 
@@ -233,7 +233,7 @@ export const DepositConfirmContainer = forwardRef<
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
-        onClose={() => setMainComponentHandler(undefined)}
+        onClose={() => resetMainComponent()}
         wrappableTokenSymbol={wrappableTokenSymbol}
       />
     );

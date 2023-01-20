@@ -41,5 +41,5 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * */
   wrappingFlow: boolean;
   wrappableTokenSymbol?: string;
-  setMainComponentHandler: (x: string | undefined) => void;
+  resetMainComponent: () => void;
 }

@@ -72,9 +72,9 @@ export const DepositContainer = forwardRef<
       MainComponentVariants | undefined
     >(undefined);
 
-    const setMainComponentHandler = (component: string | undefined) => {
-      setMainComponentName(component as MainComponentVariants);
-    };
+    const resetMainComponent = useCallback(() => {
+      setMainComponentName(undefined);
+    }, [setMainComponentName]);
 
     const {
       activeApi,
@@ -382,7 +382,7 @@ export const DepositContainer = forwardRef<
           sourceChain: selectedSourceChain,
           destChain: destChainInputValue,
           depositPayload: newDepositPayload,
-          setMainComponentHandler: setMainComponentHandler,
+          resetMainComponent: resetMainComponent,
         });
         setMainComponentName('deposit-confirm-container');
       }
@@ -405,6 +405,7 @@ export const DepositContainer = forwardRef<
       wrappableCurrency,
       fungibleCurrency,
       txQueue,
+      resetMainComponent,
     ]);
 
     // Only disable button when the wallet is connected and exists a note account
