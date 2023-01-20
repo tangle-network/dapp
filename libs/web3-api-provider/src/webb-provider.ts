@@ -13,8 +13,8 @@ import {
   WebbProviderEvents,
   WebbState,
 } from '@webb-tools/abstract-api-provider';
+import { EventBus } from '@webb-tools/app-util';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
-import { Log } from '@ethersproject/abstract-provider';
 import {
   ApiConfig,
   getAnchorDeploymentBlockNumber,
@@ -25,37 +25,34 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { Storage } from '@webb-tools/storage';
-import { EventBus } from '@webb-tools/app-util';
 import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   ChainType,
-  CircomUtxo,
   Keypair,
   Note,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
   toFixedHex,
-  Utxo,
 } from '@webb-tools/sdk-core';
-import { BigNumber, logger, providers } from 'ethers';
+import { Storage } from '@webb-tools/storage';
+import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
 
-import { Web3BridgeApi } from './webb-provider/bridge-api';
-import { Web3ChainQuery } from './webb-provider/chain-query';
-import { Web3RelayerManager } from './webb-provider/relayer-manager';
-import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
-import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import { Web3Accounts, Web3Provider } from './ext-provider';
-import { BehaviorSubject } from 'rxjs';
-import { VAnchor__factory } from '@webb-tools/contracts';
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
+import { ZkComponents } from '@webb-tools/utils';
+import { BehaviorSubject } from 'rxjs';
+import { Web3Accounts, Web3Provider } from './ext-provider';
+import { Web3BridgeApi } from './webb-provider/bridge-api';
+import { Web3ChainQuery } from './webb-provider/chain-query';
+import { Web3RelayerManager } from './webb-provider/relayer-manager';
+import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
+import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -66,15 +63,27 @@ export class WebbWeb3Provider
   }
 
   state: WebbState;
+
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
+
+  private readonly MAX_EDGES = 7;
+
+  private smallFixtures: ZkComponents | null = null;
+
+  private largeFixtures: ZkComponents | null = null;
+
+  private ethersProvider: providers.Web3Provider;
+
   readonly methods: WebbMethods<WebbWeb3Provider>;
+
   readonly relayChainMethods: RelayChainMethods<
     WebbApiProvider<WebbWeb3Provider>
   > | null;
-  private ethersProvider: providers.Web3Provider;
+
   get newBlock() {
     return this._newBlock.asObservable();
   }
+
   private constructor(
     private web3Provider: Web3Provider,
     protected chainId: number,
@@ -217,19 +226,10 @@ export class WebbWeb3Provider
     address: string,
     provider: providers.Web3Provider
   ): Promise<VAnchor> {
-    const abortSignal = new AbortController().signal;
     return VAnchor.connect(
       address,
-      {
-        wasm: Buffer.from(await fetchVAnchorWasmFromAws(7, true, abortSignal)),
-        zkey: await fetchVAnchorKeyFromAws(1, true, abortSignal),
-        witnessCalculator: buildVariableWitnessCalculator,
-      },
-      {
-        wasm: Buffer.from(await fetchVAnchorWasmFromAws(7, false, abortSignal)),
-        zkey: await fetchVAnchorKeyFromAws(7, false, abortSignal),
-        witnessCalculator: buildVariableWitnessCalculator,
-      },
+      await this.getZkFixtures(true),
+      await this.getZkFixtures(false),
       provider.getSigner()
     );
   }
@@ -451,5 +451,61 @@ export class WebbWeb3Provider
       sig,
       account: address,
     };
+  }
+
+  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+    const dummyAbortSignal = new AbortController().signal;
+
+    if (isSmall) {
+      if (this.smallFixtures) {
+        return this.smallFixtures;
+      }
+
+      const smallKey = await fetchVAnchorKeyFromAws(
+        this.MAX_EDGES,
+        isSmall,
+        dummyAbortSignal
+      );
+
+      const smallWasm = await fetchVAnchorWasmFromAws(
+        this.MAX_EDGES,
+        isSmall,
+        dummyAbortSignal
+      );
+
+      const smallFixtures = {
+        zkey: smallKey,
+        wasm: Buffer.from(smallWasm),
+        witnessCalculator: buildVariableWitnessCalculator,
+      };
+
+      this.smallFixtures = smallFixtures;
+      return smallFixtures;
+    }
+
+    if (this.largeFixtures) {
+      return this.largeFixtures;
+    }
+
+    const largeKey = await fetchVAnchorKeyFromAws(
+      this.MAX_EDGES,
+      isSmall,
+      dummyAbortSignal
+    );
+
+    const largeWasm = await fetchVAnchorWasmFromAws(
+      this.MAX_EDGES,
+      isSmall,
+      dummyAbortSignal
+    );
+
+    const largeFixtures = {
+      zkey: largeKey,
+      wasm: Buffer.from(largeWasm),
+      witnessCalculator: buildVariableWitnessCalculator,
+    };
+
+    this.largeFixtures = largeFixtures;
+    return largeFixtures;
   }
 }

@@ -327,13 +327,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
 
-    const smallFixtures: ZkComponents = await this.fetchSmallFixtures(tx, 7);
-    const largeFixtures: ZkComponents = await this.fetchLargeFixtures(tx, 7);
-
     const vanchor = await VAnchor.connect(
       contractAddress,
-      smallFixtures,
-      largeFixtures,
+      await this.inner.getZkFixtures(true),
+      await this.inner.getZkFixtures(false),
       signer
     );
 
@@ -360,20 +357,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       wrapUnwrapToken,
       leavesMap
     );
-  }
-
-  async fetchSmallFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents> {
-    return this.fetchFixtures(tx, maxEdges, true);
-  }
-
-  async fetchLargeFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents> {
-    return this.fetchFixtures(tx, maxEdges, false);
   }
 
   // Check if the evm address and keyData pairing has already registered.
@@ -599,40 +582,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       leafIndex,
       utxo,
       amount,
-    };
-  }
-
-  private async fetchFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number,
-    isSmall: boolean
-  ): Promise<ZkComponents> {
-    this.emit('stateChange', TransactionState.FetchingFixtures);
-    const fixturesList = new Map<string, FixturesStatus>();
-    fixturesList.set('VAnchorKey', 'Waiting');
-    fixturesList.set('VAnchorWasm', 'Waiting');
-    tx.next(TransactionState.FetchingFixtures, {
-      fixturesList,
-    });
-    fixturesList.set('VAnchorKey', 0);
-    const smallKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      isSmall,
-      tx.cancelToken.abortSignal
-    );
-    fixturesList.set('VAnchorKey', 'Done');
-    fixturesList.set('VAnchorWasm', 0);
-    const smallWasm = await fetchVAnchorWasmFromAws(
-      maxEdges,
-      isSmall,
-      tx.cancelToken.abortSignal
-    );
-    fixturesList.set('VAnchorWasm', 'Done');
-
-    return {
-      zkey: smallKey,
-      wasm: Buffer.from(smallWasm),
-      witnessCalculator: buildVariableWitnessCalculator,
     };
   }
 

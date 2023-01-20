@@ -17,6 +17,7 @@ import { WebbState } from './state';
 import { ActionEvent } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
 import { Observable } from 'rxjs';
+import { ZkComponents } from '@webb-tools/utils';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -227,4 +228,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   wasmFactory: WasmFactory;
   // new block observable
   newBlock: Observable<unknown>;
+  // get zk fixtures
+  getZkFixtures: (isSmall: boolean) => Promise<ZkComponents>;
 }

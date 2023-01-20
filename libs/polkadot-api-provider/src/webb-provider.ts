@@ -42,6 +42,7 @@ import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ZkComponents } from '@webb-tools/utils';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -310,5 +311,9 @@ export class WebbPolkadot
   }
   get newBlock(): Observable<number | null> {
     return this._newBlock.asObservable();
+  }
+
+  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+    throw new Error('Method not implemented.');
   }
 }

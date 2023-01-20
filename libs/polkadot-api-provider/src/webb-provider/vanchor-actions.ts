@@ -30,18 +30,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   > {
     throw new Error('Method not implemented.');
   }
-  fetchSmallFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents> {
-    throw new Error('Method not implemented.');
-  }
-  fetchLargeFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents> {
-    throw new Error('Method not implemented.');
-  }
   transact(
     tx: Transaction<NewNotesTxResult>,
     contractAddress: string,

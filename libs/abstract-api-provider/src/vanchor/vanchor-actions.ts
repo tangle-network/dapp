@@ -44,16 +44,6 @@ export abstract class VAnchorActions<
 > extends AbstractState<T> {
   logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
 
-  abstract fetchSmallFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents>;
-
-  abstract fetchLargeFixtures(
-    tx: Transaction<NewNotesTxResult>,
-    maxEdges: number
-  ): Promise<ZkComponents>;
-
   // A function to check if the (account, public key) pair is registered.
   abstract isPairRegistered(
     target: string,
