@@ -201,7 +201,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         const tree = MerkleTree.createTreeWithRoot(
           levels,
           relayerLeaves.leaves,
-          (await vanchor.contract.getLastRoot()).toString()
+          (await vanchor.contract.getLastRoot()).toHexString()
         );
 
         // If we were able to build the tree, set local storage and break out of the loop
