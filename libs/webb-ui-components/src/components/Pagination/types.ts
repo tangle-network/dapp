@@ -7,7 +7,13 @@ type PickedKeys = 'boundaryCount' | 'siblingCount';
 /**
  * The `Pagination` props
  */
-export interface PaginationProps extends WebbComponentBase, Pick<PaginationItemsOptions, PickedKeys> {
+export interface PaginationProps
+  extends WebbComponentBase,
+    Pick<PaginationItemsOptions, PickedKeys> {
+  /**
+   * The table title to display in the pagination
+   */
+  title?: string;
   /**
    * The number of items per page
    */

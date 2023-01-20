@@ -29,7 +29,11 @@ export type WrappingBalance = {
  * Contains the methods used for making the appropriate provider calls to
  * perform currency wrapping or unwrapping
  **/
-export abstract class WrapUnwrap<T, WrapPayload extends Amount = Amount, UnwrapPayload extends Amount = Amount> {
+export abstract class WrapUnwrap<
+  T,
+  WrapPayload extends Amount = Amount,
+  UnwrapPayload extends Amount = Amount
+> {
   constructor(protected inner: T) {}
 
   abstract get subscription(): Observable<Partial<WrappingEvent>>;

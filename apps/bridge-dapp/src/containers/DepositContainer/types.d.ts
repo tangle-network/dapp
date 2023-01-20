@@ -41,4 +41,10 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * The wrapped token id
    */
   wrappableTokenId?: number;
+
+  /**
+   * Function to reset the main component
+   * @returns void
+   */
+  resetMainComponent: () => void;
 }

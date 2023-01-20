@@ -19,9 +19,9 @@ const classNames: ButtonClassNames = {
   secondary: {
     base: {
       common:
-        'rounded-full px-9 py-2 bg-mono-0 border-2 border-mono-200 text-mono-200 font-bold dark:bg-mono-140 dark:border-mono-140 dark:text-mono-20',
+        'rounded-full px-9 py-2 bg-mono-0 border-2 border-mono-200 text-mono-200 font-bold dark:bg-mono-180 dark:border-mono-20 dark:text-mono-20',
       hover:
-        'hover:border-mono-140 hover:text-mono-140 dark:hover:bg-mono-100 dark:hover:border-mono-100',
+        'hover:border-mono-140 hover:text-mono-140 dark:hover:border-mono-100 dark:hover:text-mono-60 dark:hover:border-mono-60',
       active: 'active:bg-mono-20 dark:active:text-mono-0',
       disabled:
         'disabled:border-mono-100 disabled:text-mono-100 disabled:bg-mono-20 dark:disabled:border-mono-100 dark:disabled:text-mono-100 dark:disabled:bg-mono-20',

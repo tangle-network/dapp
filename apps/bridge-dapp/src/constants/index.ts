@@ -49,11 +49,6 @@ export const footerNavs: FooterNavsType = {
       href: 'https://docs.webb.tools/v1/applications/asset-protocol/',
       ...commonExternalProps,
     },
-    // {
-    //   name: 'wrap',
-    //   href: 'https://app.webb.tools/#/wrap-unwrap',
-    //   ...commonExternalProps,
-    // },
   ],
   network: [
     {

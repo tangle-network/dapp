@@ -1,6 +1,8 @@
 import { IWebbComponentBase, PropsOf } from '../../types';
 
-export interface TokenSelectorProps extends IWebbComponentBase, PropsOf<'button'> {
+export interface TokenSelectorProps
+  extends IWebbComponentBase,
+    PropsOf<'button'> {
   /**
    * The chidren must be a token symbol (e.g. eth, dot, ...)
    */

@@ -31,6 +31,7 @@ import {
   Progress,
   Slider,
   Table,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { CheckBoxMenuGroup } from '@webb-tools/webb-ui-components/components/CheckBoxMenu/CheckBoxMenuGroup';
@@ -65,11 +66,7 @@ const columns: ColumnDef<AuthorityListItem, any>[] = [
       const countryCode = props.getValue();
       return (
         <Typography variant="body1" fw="bold" component="span">
-          {countryCode ? (
-            <CountryIcon size={'lg'} name={countryCode} />
-          ) : (
-            'Unknown'
-          )}
+          {countryCode ? <CountryIcon size={'lg'} name={countryCode} /> : `🌎`}
         </Typography>
       );
     },
@@ -212,7 +209,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
       }}
       leftTitle={
         <Filter
-          searchPlaceholder={'Search  authority account'}
+          searchPlaceholder={'Search authorities'}
           searchText={globalFilter}
           onSearchChange={(nextValue: string | number) => {
             setGlobalFilter(nextValue.toString());
@@ -223,9 +220,10 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
           }}
         >
           <Accordion type={'single'} collapsible>
-            <AccordionItem className={'p-4 py-0'} value={'location'}>
+            <AccordionItem className={'p-0 py-0'} value={'location'}>
               <AccordionButton>Location</AccordionButton>
-              <AccordionContent className={`space-x-1 `}>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
+              <AccordionContent>
                 <LocationFilter
                   selected={selectedCountries}
                   countries={countries}
@@ -236,8 +234,9 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'uptime'}>
+            <AccordionItem className={'p-0 py-0'} value={'uptime'}>
               <AccordionButton>Uptime</AccordionButton>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
               <AccordionContent>
                 <Slider
                   max={100}
@@ -250,7 +249,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem className={'p-4 py-0'} value={'reputation'}>
+            <AccordionItem className={'p-0 py-0'} value={'reputation'}>
               <AccordionButton>Reputation</AccordionButton>
               <AccordionContent>
                 <Slider
@@ -271,6 +270,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={totalItems}
+        title="DKG Authorities"
       />
     </CardTable>
   );

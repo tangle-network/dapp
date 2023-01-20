@@ -1,4 +1,4 @@
-name: lint 🧹
+name: clean 🧹
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: run
+    name: lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,3 +27,20 @@ jobs:
         run: |
           yarn install
           yarn nx run-many --all --target=lint
+
+  format:
+    name: format
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: prettier
+        run: |
+          yarn install
+          yarn format:check

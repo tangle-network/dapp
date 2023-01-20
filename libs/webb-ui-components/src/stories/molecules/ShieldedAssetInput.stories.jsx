@@ -18,11 +18,11 @@ Default.args = {};
 export const withAsset = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 withAsset.args = {
-  ...Default.args,
   asset: {
     token1Symbol: 'webb',
     token2Symbol: 'eth',
     balance: 2.1,
     balanceInUsd: 100,
+    symbol: 'ETH',
   },
 };

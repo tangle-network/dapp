@@ -3,4 +3,4 @@ import { WebbComponentBase } from '../../types';
 /**
  * The `Card` props
  */
-export type CardProps = WebbComponentBase
+export type CardProps = WebbComponentBase;

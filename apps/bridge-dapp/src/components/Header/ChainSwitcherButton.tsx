@@ -11,7 +11,6 @@ import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import cx from 'classnames';
 import { FC, useMemo } from 'react';
 import { WalletModal } from './WalletModal';
-import { WalletConnectionCard } from '@webb-tools/webb-ui-components/components/WalletConnectionCard';
 import { HeaderButton } from './HeaderButton';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 

@@ -23,11 +23,23 @@ import { CardTableProps } from './types';
  *    </CardTable>
  * ```
  */
-export const CardTable: React.FC<CardTableProps> = ({ children, className, leftTitle, titleProps, ...props }) => {
+export const CardTable: React.FC<CardTableProps> = ({
+  children,
+  className,
+  leftTitle,
+  titleProps,
+  ...props
+}) => {
   return (
-    <div {...props} className={twMerge('rounded-lg bg-mono-0 dark:bg-mono-180 overflow-hidden', className)}>
+    <div
+      {...props}
+      className={twMerge(
+        'rounded-lg bg-mono-0 dark:bg-mono-180 overflow-hidden',
+        className
+      )}
+    >
       {/** Title and filter */}
-      <div className='flex items-center justify-between px-6 pt-4 pb-2'>
+      <div className="flex items-center justify-between px-6 pt-4 pb-2">
         <TitleWithInfo {...titleProps} />
 
         {leftTitle}

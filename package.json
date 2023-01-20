@@ -9,11 +9,16 @@
     "lint": "nx run-many --all --target=lint",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
     "build:webbsite": "nx build webbsite",
+    "build:storybook": "nx build-storybook webb-ui-components",
     "gql:codegen": "graphql-codegen --config codegen.yml",
     "start:bridge": "cd apps/bridge-dapp && yarn webpack-cli serve --config webpack.dev.js --port 3000",
     "start:stats": "nx serve stats-dapp",
     "start:webbsite": "nx serve webbsite",
-    "format": "prettier --write \"{lib,apps,tools}/**/*.{ts,js,jsx,tsx}\" "
+    "start:storybook": "nx storybook webb-ui-components",
+    "format": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
+    "format:check": "prettier --check \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
+    "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" && nx run-many --all --target=lint && nx build",
+    "chromatic": "npx chromatic --build-script-name=build:storybook"
   },
   "private": true,
   "workspaces": [
@@ -73,6 +78,7 @@
     "D": "^1.0.0",
     "chai": "4.3.6",
     "chart.js": "^3.8.0",
+    "chromatic": "^6.14.0",
     "circomlibjs": "0.0.8",
     "core-js": "^3.6.5",
     "country-flag-icons": "^1.5.5",

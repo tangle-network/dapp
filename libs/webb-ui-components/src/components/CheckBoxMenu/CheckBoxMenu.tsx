@@ -23,8 +23,22 @@ import { CheckBoxMenuProps } from './types';
  *  />
  * ```
  */
-export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
-  ({ checkboxProps, children, className: clsxProp, icon, label, onChange, ...props }, ref) => {
+export const CheckBoxMenu = React.forwardRef<
+  HTMLLabelElement,
+  CheckBoxMenuProps
+>(
+  (
+    {
+      checkboxProps,
+      children,
+      className: clsxProp,
+      icon,
+      label,
+      onChange,
+      ...props
+    },
+    ref
+  ) => {
     const className = useMemo(() => {
       return twMerge(
         cx(
@@ -40,8 +54,14 @@ export const CheckBoxMenu = React.forwardRef<HTMLLabelElement, CheckBoxMenuProps
     const id = useMemo(() => Math.random().toString(16), []);
     const inputProps = useMemo(() => checkboxProps ?? {}, [checkboxProps]);
     return (
-      <label htmlFor={id} role={'listitem'} className={className} {...props} ref={ref}>
-        <span className='text-inherit dark:text-inherit'>{icon}</span>
+      <label
+        htmlFor={id}
+        role={'listitem'}
+        className={className}
+        {...props}
+        ref={ref}
+      >
+        <span className="text-inherit dark:text-inherit">{icon}</span>
         <span className={'flex-grow px-2'}>{label}</span>
         <CheckBox id={id} onChange={onChange} {...inputProps} />
       </label>

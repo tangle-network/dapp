@@ -31,7 +31,15 @@ export const DepositConfirmContainer = forwardRef<
   DepositConfirmContainerProps
 >(
   (
-    { note, amount, sourceChain, destChain, fungibleTokenId, wrappableTokenId },
+    {
+      note,
+      amount,
+      sourceChain,
+      destChain,
+      fungibleTokenId,
+      wrappableTokenId,
+      resetMainComponent,
+    },
     ref
   ) => {
     const { api: txQueueApi } = useTxQueue();
@@ -92,21 +100,16 @@ export const DepositConfirmContainer = forwardRef<
     }, [activeApi, activeChain]);
 
     const handleExecuteDeposit = useCallback(async () => {
-      if (
-        !api ||
-        !activeApi ||
-        !activeAccount ||
-        !activeChain ||
-        !currentWebbToken
-      )
+      if (!api || !activeApi || !activeChain) {
         return;
+      }
 
       // Set transaction payload for transaction processing card
       // Start a new transaction
       if (depositTxInProgress) {
         console.log('Start a new transaction');
         startNewTransaction();
-        setMainComponent(undefined);
+        resetMainComponent();
         return;
       }
 
@@ -187,17 +190,15 @@ export const DepositConfirmContainer = forwardRef<
         noteManager?.removeNote(note);
         tx.fail(getErrorMessage(error));
       } finally {
-        setMainComponent(undefined);
+        resetMainComponent();
       }
     }, [
       api,
       activeApi,
-      activeAccount,
       activeChain,
-      currentWebbToken,
       depositTxInProgress,
+      resetMainComponent,
       startNewTransaction,
-      setMainComponent,
       downloadNote,
       note,
       wrappableToken,
@@ -262,8 +263,8 @@ export const DepositConfirmContainer = forwardRef<
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
-        onClose={() => setMainComponent(undefined)}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
+        onClose={() => resetMainComponent()}
       />
     );
   }

@@ -34,7 +34,9 @@ const def = getDefaultValues();
 
 export const dimensionContext = React.createContext<DimensionsStateProps>(def);
 
-export const DimensionsProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const DimensionsProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
   const [state, setState] = useState(getDefaultValues().state);
   useEffect(() => {
     setState(getDefaultValues().state);

@@ -18,7 +18,10 @@ export type UIData = {
 
 export type UIAction =
   | { type: 'set_theme'; value: string }
-  | { type: 'set_page_title'; value: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] } }
+  | {
+      type: 'set_page_title';
+      value: { content: ReactNode; breadcrumb?: UIData['breadcrumb'] };
+    }
   | { type: 'set_sub_menu'; value: SubMenu | null };
 
 const initState: UIData = {

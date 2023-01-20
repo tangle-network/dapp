@@ -19,8 +19,6 @@ const Keys = () => {
     };
   }, [data]);
 
-  console.log(currentKey);
-
   const { time } = useStatsContext();
 
   if (isLoading || currentKey === null || nextKey === null) {

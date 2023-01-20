@@ -21,6 +21,8 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
   onNotesChange,
   onRemoveAllNotes,
   onRemoveNote,
+  reUploadNote,
+  handleReUploadNote,
 }) => {
   const {
     apiConfig: { currencies },
@@ -47,12 +49,24 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     [onRemoveAllNotes]
   );
 
+  const handleRemoveAllNotes = useCallback(() => {
+    setFile(undefined);
+    setNotes({});
+    onRemoveAllNotes?.();
+  }, [onRemoveAllNotes]);
+
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
   // Effect run when file changes
   useEffect(() => {
     async function processFile() {
+      if (reUploadNote) {
+        handleRemoveAllNotes();
+        handleReUploadNote();
+        return;
+      }
+
       if (!file) {
         return;
       }
@@ -103,11 +117,11 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     }
 
     processFile();
-  }, [file, onNotesChange]);
+  }, [file, onNotesChange, reUploadNote, handleRemoveAllNotes]);
 
   return (
     <>
-      <FileUploadArea onDrop={handleUpload} />
+      {!noteSize && <FileUploadArea onDrop={handleUpload} />}
 
       {!!file && (
         <FileUploadList>
@@ -129,11 +143,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
                 <Progress className="mt-1" value={progress} />
               </>
             }
-            onRemove={() => {
-              setFile(undefined);
-              setNotes({});
-              onRemoveAllNotes?.();
-            }}
+            onRemove={handleRemoveAllNotes}
           />
         </FileUploadList>
       )}

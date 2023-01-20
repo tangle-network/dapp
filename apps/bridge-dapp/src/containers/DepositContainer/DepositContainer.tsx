@@ -72,6 +72,10 @@ export const DepositContainer = forwardRef<
       MainComponentVariants | undefined
     >(undefined);
 
+    const resetMainComponent = useCallback(() => {
+      setMainComponentName(undefined);
+    }, [setMainComponentName]);
+
     const {
       activeApi,
       chains,
@@ -82,6 +86,7 @@ export const DepositContainer = forwardRef<
       loading,
       noteManager,
       apiConfig: { currencies },
+      txQueue,
     } = useWebContext();
 
     const { api } = useVAnchor();
@@ -144,7 +149,7 @@ export const DepositContainer = forwardRef<
     }, [chains]);
 
     const destChains: ChainType[] = useMemo(() => {
-      if (!activeApi || !activeApi.state.activeBridge?.targets) {
+      if (!activeApi?.state.activeBridge?.targets) {
         return [];
       }
 
@@ -161,7 +166,7 @@ export const DepositContainer = forwardRef<
           return undefined;
         })
         .filter((chain): chain is ChainType => !!chain);
-    }, [activeApi, chains]);
+    }, [activeApi?.state?.activeBridge?.targets, chains]);
 
     const destChainInputValue = useMemo(
       () => destChains.find((chain) => chain.name === destChain?.name),
@@ -323,9 +328,12 @@ export const DepositContainer = forwardRef<
 
     // Main action on click
     const actionOnClick = useCallback(async () => {
-      if (!api) {
-        return;
-      }
+      // Dismiss all the completed and failed txns in the queue before starting a new txn
+      const txns = txQueue.txPayloads.filter(
+        (tx) =>
+          tx.txStatus.status === 'warning' || tx.txStatus.status === 'completed'
+      );
+      txns.map((tx) => tx.onDismiss());
 
       // No wallet connected
       if (!isWalletConnected) {
@@ -375,6 +383,7 @@ export const DepositContainer = forwardRef<
       );
 
       setIsGeneratingNote(false);
+
       setDepositContainerProps({
         fungibleTokenId: fungibleCurrency.id,
         wrappableTokenId: wrappableCurrency?.id,
@@ -382,27 +391,28 @@ export const DepositContainer = forwardRef<
         sourceChain: selectedSourceChain,
         destChain: destChainInputValue,
         note: newNote,
+        resetMainComponent: resetMainComponent,
       });
 
       setMainComponentName('deposit-confirm-container');
     }, [
-      api,
-      chains,
-      setMainComponent,
+      txQueue.txPayloads,
       isWalletConnected,
       hasNoteAccount,
       sourceChain,
       destChain,
       amount,
-      noteManager,
       activeApi?.state?.activeBridge,
       activeChain,
-      setMainComponentName,
-      setNoteAccountModalOpen,
+      noteManager,
+      fungibleCurrency,
+      wrappableCurrency?.id,
       selectedSourceChain,
       destChainInputValue,
-      wrappableCurrency,
-      fungibleCurrency,
+      resetMainComponent,
+      chains,
+      setMainComponent,
+      setNoteAccountModalOpen,
     ]);
 
     // Only disable button when the wallet is connected and exists a note account
@@ -447,7 +457,6 @@ export const DepositContainer = forwardRef<
         token: {
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
-          tokenComposition: [selectedToken?.symbol, targetSymbol],
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -460,7 +469,6 @@ export const DepositContainer = forwardRef<
       bridgeFungibleCurrency,
       selectedSourceChain,
       setMainComponentName,
-      selectedToken,
     ]);
 
     const handleOpenChange = useCallback(
