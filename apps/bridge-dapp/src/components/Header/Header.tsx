@@ -100,7 +100,7 @@ export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
   sourceChains,
   handleOnClose,
 }) => {
-  const { chains, activeWallet, switchChain } = useWebContext();
+  const { chains, activeWallet, activeChain, switchChain } = useWebContext();
   const { setMainComponent } = useWebbUI();
 
   return (
@@ -109,6 +109,7 @@ export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
       overrideScrollAreaProps={{ className: 'h-[550px]' }}
       chainType="source"
       chains={sourceChains}
+      currentActiveChain={activeChain?.name}
       onChange={async (selectedChain) => {
         const chain = Object.values(chains).find(
           (val) => val.name === selectedChain.name

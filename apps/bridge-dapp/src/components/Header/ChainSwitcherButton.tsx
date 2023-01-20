@@ -48,6 +48,7 @@ export const ChainSwitcherButton: FC = () => {
             overrideScrollAreaProps={{ className: 'h-[550px]' }}
             chainType="source"
             chains={sourceChains}
+            currentActiveChain={activeChain?.name}
             value={{
               name: activeChain?.name ?? 'Select chain',
               symbol: activeChain?.name ?? '',

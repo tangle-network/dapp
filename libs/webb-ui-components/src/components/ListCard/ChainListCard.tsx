@@ -2,7 +2,6 @@ import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Input } from '../Input';
@@ -20,12 +19,12 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       onClose,
       value: selectedChain,
       overrideScrollAreaProps,
+      currentActiveChain,
       ...props
     },
     ref
   ) => {
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
-    const { activeChain } = useWebContext();
 
     // Search text
     const [searchText, setSearchText] = useState('');
@@ -90,7 +89,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         >
           <ul className="p-2">
             {filteredChains.map((currentChain, idx) => {
-              const isConnected = currentChain.name === activeChain?.name;
+              const isConnected = currentChain.name === currentActiveChain;
 
               return (
                 <ListItem

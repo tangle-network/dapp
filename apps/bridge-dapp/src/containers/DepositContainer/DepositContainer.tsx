@@ -602,6 +602,7 @@ export const DepositContainer = forwardRef<
         chainType: 'source',
         chains: sourceChains,
         value: selectedSourceChain,
+        currentActiveChain: activeChain?.name,
         onChange: async (selectedChain) => {
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
@@ -637,6 +638,7 @@ export const DepositContainer = forwardRef<
       activeWallet,
       setMainComponentName,
       setSelectedChain,
+      activeChain
     ]);
 
     const walletModalProps = useMemo<WalletModalProps | undefined>(() => {

@@ -356,6 +356,7 @@ export const TransferContainer = forwardRef<
               } as ChainType)
           )}
           value={selectedDestChain}
+          currentActiveChain={activeChain?.name}
           onClose={() => setMainComponent(undefined)}
           onChange={(newChain) => {
             const chain = availableDestChains.find(
@@ -369,7 +370,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [availableDestChains, selectedDestChain, setMainComponent]);
+    }, [availableDestChains, selectedDestChain, setMainComponent, activeChain]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(
