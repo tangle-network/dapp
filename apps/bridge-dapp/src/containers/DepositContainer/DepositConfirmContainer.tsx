@@ -9,13 +9,9 @@ import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
-import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { Note } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
-import {
-  DepositConfirm,
-  useCopyable,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
+import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { getCardTitle, getErrorMessage } from '../../utils';
@@ -45,7 +41,6 @@ export const DepositConfirmContainer = forwardRef<
     const { api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, startNewTransaction } = useVAnchor();
-    const { setMainComponent } = useWebbUI();
 
     const stage = useLatestTransactionStage('Deposit');
 
@@ -55,8 +50,7 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi, activeAccount, activeChain, noteManager } =
-      useWebContext();
+    const { activeApi, activeChain, noteManager } = useWebContext();
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
@@ -91,14 +85,6 @@ export const DepositConfirmContainer = forwardRef<
       [wrappableTokenId]
     );
 
-    const currentWebbToken = useMemo(() => {
-      if (!activeApi || !activeChain) return;
-
-      return activeApi.state.activeBridge?.currency.getAddress(
-        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-      );
-    }, [activeApi, activeChain]);
-
     const handleExecuteDeposit = useCallback(async () => {
       if (!api || !activeApi || !activeChain) {
         return;
@@ -107,7 +93,6 @@ export const DepositConfirmContainer = forwardRef<
       // Set transaction payload for transaction processing card
       // Start a new transaction
       if (depositTxInProgress) {
-        console.log('Start a new transaction');
         startNewTransaction();
         resetMainComponent();
         return;
@@ -128,7 +113,6 @@ export const DepositConfirmContainer = forwardRef<
 
       // Get the deposit token symbol
       let srcTokenSymbol = tokenSymbol;
-      console.log('wrappableTokenSymbol', wrappableToken);
 
       if (wrappableToken) {
         srcTokenSymbol = wrappableToken.view.symbol;
@@ -154,7 +138,6 @@ export const DepositConfirmContainer = forwardRef<
           note,
           wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
         );
-        console.log('prepare tx args', args);
         if (!args) {
           return txQueueApi.cancelTransaction(tx.id);
         }

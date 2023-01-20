@@ -86,7 +86,6 @@ export const isVAnchorWithdrawPayload = (
 export const isVAnchorTransferPayload = (
   payload: TransactionPayloadType
 ): payload is TransferTransactionPayloadType => {
-  console.log(payload);
   const notes: Note[] | undefined = payload['notes'];
   if (!notes) {
     return false;
@@ -125,7 +124,6 @@ export async function utxoFromVAnchorNote(
 ): Promise<Utxo> {
   const noteSecretParts = note.secrets.split(':');
   const chainId = note.targetChainId;
-  console.log('chainId inside [utxoFromVAnchorNote]', chainId);
   const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
   const secretKey = '0x' + noteSecretParts[2];
   const blinding = '0x' + noteSecretParts[3];
@@ -172,7 +170,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         keypair: new Keypair(`0x${secrets[2]}`),
         blinding: hexToU8a(`0x${secrets[3]}`),
       });
-      console.log('Returning deposit utxo tx details');
       return Promise.resolve([
         tx, // tx
         payload.note.sourceIdentifyingData, // contractAddress
@@ -309,7 +306,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leavesMap, // leavesMap
       ]);
     } else {
-      throw new Error('Invalid payload');
+      console.error('Invalid payload');
     }
   }
 
@@ -336,17 +333,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     tx.txHash = '0x';
     tx.next(TransactionState.SendingTransaction, '0x');
-    console.log('here');
-    console.log({
-      inputs,
-      outputs,
-      fee,
-      refund,
-      recipient,
-      relayer,
-      wrapUnwrapToken,
-      leavesMap,
-    });
+
     return vanchor.transact(
       inputs,
       outputs,
@@ -538,7 +525,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leafStorage,
         tx.cancelToken.abortSignal
       );
-      console.log('leaves', leaves);
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
       });
@@ -566,8 +552,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     );
 
     if (!provingTree) {
-      console.log('fetched leaves do not match bridged anchor state');
-      throw new Error('fetched leaves do not match bridged anchor state');
+      console.error('fetched leaves do not match bridged anchor state');
+      return;
     }
 
     const provingLeaves = provingTree

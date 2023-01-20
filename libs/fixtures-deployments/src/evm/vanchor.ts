@@ -56,7 +56,7 @@ export const fetchVAnchorKeyFromAws = async (
     const url = withLocalFixtures()
       ? cachedURI
       : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
-    console.log('fetching zkey from', url);
+
     const key = await cachedFetch(url, { signal: abortSignal });
 
     return key;
@@ -116,7 +116,7 @@ export const fetchVAnchorWasmFromAws = async (
     const url = withLocalFixtures()
       ? cachedURI
       : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
-    console.log('fetching wasm from', url);
+
     const wasm = await cachedFetch(url, {
       signal: abortSignal,
     });

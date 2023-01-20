@@ -149,6 +149,7 @@ export const WithdrawConfirmContainer = forwardRef<
       }
 
       if (withdrawTxInProgress) {
+        txQueueApi.startNewTransaction();
         setMainComponent(undefined);
         return;
       }
@@ -222,13 +223,13 @@ export const WithdrawConfirmContainer = forwardRef<
       availableNotes,
       vAnchorApi,
       withdrawTxInProgress,
-      changeUtxo,
       changeNote,
       downloadNote,
       unwrapCurrency,
       amount,
       setMainComponent,
       txQueueApi,
+      changeUtxo,
       recipient,
       noteManager,
     ]);
