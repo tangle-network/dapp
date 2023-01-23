@@ -2,7 +2,6 @@ import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-
 import { Button } from '../Button';
 import { Chip } from '../Chip';
 import { Input } from '../Input';
@@ -20,6 +19,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       onClose,
       value: selectedChain,
       overrideScrollAreaProps,
+      currentActiveChain,
       ...props
     },
     ref
@@ -89,9 +89,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         >
           <ul className="p-2">
             {filteredChains.map((currentChain, idx) => {
-              const isSelected =
-                currentChain.name === chain?.name &&
-                currentChain.symbol === chain?.symbol;
+              const isConnected = currentChain.name === currentActiveChain;
 
               return (
                 <ListItem
@@ -101,7 +99,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                 >
                   <div className="flex items-center space-x-2">
                     <ChainIcon
-                      isActive={isSelected}
+                      isActive={isConnected}
                       size="lg"
                       name={currentChain.name}
                     />
@@ -115,7 +113,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     </Typography>
                   </div>
 
-                  {!isSelected && (
+                  {!isConnected && (
                     <div className="hidden group-hover:block">
                       <Button variant="link" size="sm">
                         Select
@@ -123,7 +121,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     </div>
                   )}
 
-                  {isSelected && (
+                  {isConnected && (
                     <Chip className="cursor-default" color="yellow">
                       Connected
                     </Chip>

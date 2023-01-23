@@ -296,6 +296,7 @@ export const WithdrawContainer = forwardRef<
           symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
         }))}
         value={activeChainType}
+        currentActiveChain={activeChain?.name}
         onChange={async (selectedChain) => {
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
