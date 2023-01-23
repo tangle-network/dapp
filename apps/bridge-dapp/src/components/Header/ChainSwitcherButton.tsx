@@ -31,10 +31,6 @@ export const ChainSwitcherButton: FC = () => {
     });
   }, [chains]);
 
-  // useEffect(() => {
-  //   console.log(activeChain);
-  // });
-
   return (
     <HeaderButton
       className={cx(
