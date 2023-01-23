@@ -400,6 +400,11 @@ export const TransferContainer = forwardRef<
         return;
       }
 
+      if (activeRelayer) {
+        setRelayer(null);
+        return;
+      }
+
       const relayerList = relayers
         .map((relayer) => {
           const relayerData = relayer.capabilities.supportedChains[

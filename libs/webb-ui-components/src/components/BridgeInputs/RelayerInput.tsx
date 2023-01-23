@@ -1,4 +1,4 @@
-import { ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
+import { ChevronRight, ExternalLinkLine, Close } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 import { forwardRef } from 'react';
@@ -69,7 +69,11 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
           )}
         </div>
 
-        <ChevronRight className="inline-block" />
+        {relayerAddress ? (
+          <Close className="inline-block" />
+        ) : (
+          <ChevronRight className="inline-block" />
+        )}
       </InputWrapper>
     );
   }

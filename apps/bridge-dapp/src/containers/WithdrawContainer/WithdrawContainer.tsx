@@ -132,9 +132,13 @@ export const WithdrawContainer = forwardRef<
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
+        balance:
+          selectedFungibleToken?.symbol === currency.view.symbol
+            ? availableAmount
+            : 0,
       };
     });
-  }, [fungibleCurrencies]);
+  }, [fungibleCurrencies, availableAmount, selectedFungibleToken]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -413,6 +417,11 @@ export const WithdrawContainer = forwardRef<
             : undefined,
           onClick: () => {
             if (!activeApi || !activeChain) {
+              return;
+            }
+
+            if (activeRelayer) {
+              setRelayer(null);
               return;
             }
 
