@@ -415,6 +415,11 @@ export const WithdrawContainer = forwardRef<
               return;
             }
 
+            if (activeRelayer) {
+              setRelayer(null);
+              return;
+            }
+
             setMainComponent(
               <RelayerListCard
                 className="w-[550px] h-[700px]"
