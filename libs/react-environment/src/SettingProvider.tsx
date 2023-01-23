@@ -1,12 +1,11 @@
-import { useModal } from '@webb-tools/ui-hooks';
+import { useModal } from '@webb-tools/webb-ui-components';
 import { noop } from 'lodash';
-import React, {
+import {
   createContext,
   FC,
   PropsWithChildren,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 

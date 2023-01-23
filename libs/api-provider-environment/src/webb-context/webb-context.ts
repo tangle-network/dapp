@@ -94,6 +94,9 @@ export const WebbContext = React.createContext<WebbContextState>({
       registerTransaction(_tx: Transaction<any>) {
         return;
       },
+      getLatestTransaction(_name: 'Deposit' | 'Withdraw' | 'Transfer') {
+        return null;
+      },
     },
   },
 });

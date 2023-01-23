@@ -1,15 +1,25 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/dapp-types';
-import { useTransfer } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+  TransferTransactionPayloadType,
+} from '@webb-tools/abstract-api-provider';
+import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { TransferConfirmContainerProps } from './types';
-import { LoggerService } from '@webb-tools/app-util';
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
+import { getErrorMessage } from '../../utils';
 
-const logger = LoggerService.get('ui');
+const logger = LoggerService.get('TransferConfirmContainer');
 
 export const TransferConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -22,35 +32,26 @@ export const TransferConfirmContainer = forwardRef<
     destChain,
     recipient,
     relayer,
-    note,
+    note: changeNote,
+    changeUtxo,
+    transferUtxo,
     inputNotes,
     ...props
   }) => {
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    // State for progress bar value
-    const [progress, setProgress] = useState<null | number>(null);
+    const stage = useLatestTransactionStage('Transfer');
 
-    const { activeApi, activeChain } = useWebContext();
+    const { api: vAnchorApi } = useVAnchor();
+
+    const progress = useTransactionProgressValue(stage);
+
+    const { activeApi, activeChain, noteManager } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
-    const transferHookArgs = useMemo(
-      () => ({
-        notes: inputNotes,
-        destination: calculateTypedChainId(
-          destChain.chainType,
-          destChain.chainId
-        ),
-        recipient,
-        amount,
-      }),
-      [amount, destChain, inputNotes, recipient]
-    );
-
-    // The transfer hook
-    const { transfer, stage } = useTransfer(transferHookArgs);
+    const { api: txQueueApi } = useTxQueue();
 
     const activeChains = useMemo<string[]>(() => {
       if (!activeApi) {
@@ -81,72 +82,100 @@ export const TransferConfirmContainer = forwardRef<
     );
 
     // The callback for the transfer button
-    const onTransfer = useCallback(async () => {
+    const handleTransferExecute = useCallback(async () => {
+      if (inputNotes.length === 0) {
+        logger.error('No input notes provided');
+        return;
+      }
+
+      if (!vAnchorApi) {
+        logger.error('No vAnchor API provided');
+        return;
+      }
+
       if (isTransfering) {
+        txQueueApi.startNewTransaction();
         setMainComponent(undefined);
         return;
       }
 
-      if (note) {
+      if (changeNote) {
+        const changeNoteStr = changeNote.serialize();
         downloadString(
-          JSON.stringify(note),
-          note.slice(-note.length) + '.json'
+          JSON.stringify(changeNoteStr),
+          changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
         );
       }
 
+      const note: Note = inputNotes[0];
+      const {
+        sourceChainId: sourceTypedChainId,
+        targetChainId: destTypedChainId,
+        tokenSymbol,
+      } = note.note;
+
+      const tx = Transaction.new<NewNotesTxResult>('Transfer', {
+        amount,
+        tokens: [tokenSymbol, tokenSymbol],
+        wallets: {
+          src: +sourceTypedChainId,
+          dest: +destTypedChainId,
+        },
+        token: tokenSymbol,
+      });
+
       try {
-        await transfer();
+        txQueueApi.registerTransaction(tx);
+
+        // Add the change note before sending the tx
+        if (changeNote) {
+          noteManager?.addNote(changeNote);
+        }
+
+        const txPayload: TransferTransactionPayloadType = {
+          notes: inputNotes,
+          changeUtxo,
+          transferUtxo,
+        };
+
+        const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
+
+        const receipt = await vAnchorApi.transact(...args);
+
+        const outputNotes = changeNote ? [changeNote] : [];
+
+        // Notification Success Transaction
+        tx.txHash = receipt.transactionHash;
+        tx.next(TransactionState.Done, {
+          txHash: receipt.transactionHash,
+          outputNotes,
+        });
+
+        // Cleanup NoteAccount state
+        for (const note of inputNotes) {
+          await noteManager?.removeNote(note);
+        }
       } catch (error) {
-        logger.error('Error occured while transfering', error);
+        console.error('Error occured while transfering', error);
+
+        changeNote && (await noteManager?.removeNote(changeNote));
+
+        tx.fail(getErrorMessage(error));
+      } finally {
+        setMainComponent(undefined);
       }
-    }, [isTransfering, note, setMainComponent, transfer]);
-
-    // Effect to update the progress bar
-    useEffect(() => {
-      switch (stage) {
-        case TransactionState.FetchingFixtures: {
-          setProgress(0);
-          break;
-        }
-
-        case TransactionState.FetchingLeaves: {
-          setProgress(25);
-          break;
-        }
-        case TransactionState.Intermediate: {
-          setProgress(40);
-          break;
-        }
-
-        case TransactionState.GeneratingZk: {
-          setProgress(50);
-          break;
-        }
-
-        case TransactionState.SendingTransaction: {
-          setProgress(75);
-          break;
-        }
-
-        case TransactionState.Done:
-        case TransactionState.Failed: {
-          setProgress(100);
-          break;
-        }
-
-        case TransactionState.Cancelling:
-        case TransactionState.Ideal: {
-          setProgress(null);
-          break;
-        }
-
-        default: {
-          throw new Error(
-            'Unknown transaction state in DepositConfirmContainer component'
-          );
-        }
-      }
-    }, [stage, setProgress]);
+    }, [
+      inputNotes,
+      vAnchorApi,
+      isTransfering,
+      changeNote,
+      amount,
+      setMainComponent,
+      txQueueApi,
+      changeUtxo,
+      transferUtxo,
+      noteManager,
+    ]);
 
     return (
       <TransferConfirm
@@ -157,7 +186,7 @@ export const TransferConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         sourceChain={activeChain?.name}
         destChain={destChain.name}
-        note={note}
+        note={changeNote?.serialize()}
         progress={progress}
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}
@@ -173,8 +202,8 @@ export const TransferConfirmContainer = forwardRef<
           onChange: () => setIsChecked((prev) => !prev),
         }}
         actionBtnProps={{
-          isDisabled: note ? !isChecked : false,
-          onClick: onTransfer,
+          isDisabled: changeNote ? !isChecked : false,
+          onClick: handleTransferExecute,
           children: isTransfering ? 'New Transfer' : 'Transfer',
         }}
       />

@@ -1,7 +1,8 @@
 import { randRecentDate } from '@ngneat/falso';
 import { Currency } from '@webb-tools/abstract-api-provider';
+import { VAnchor } from '@webb-tools/anchors';
+import { VAnchorTree__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
@@ -120,10 +121,8 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             const provider = Web3Provider.fromUri(
               chainsPopulated[typedChainId].url
             ).intoEthersProvider();
-            const contract = new VAnchorContract(provider, address, true);
-
+            const contract = VAnchorTree__factory.connect(address, provider);
             const nextIndex = await contract.getNextIndex();
-
             return {
               address,
               typedChainId,

@@ -1,15 +1,27 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useWithdraw } from '@webb-tools/react-hooks';
-import { ChainType } from '@webb-tools/sdk-core';
-import { useCopyable } from '@webb-tools/ui-hooks';
-import { WithdrawConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { ChainType, Note } from '@webb-tools/sdk-core';
+import {
+  WithdrawConfirm,
+  useCopyable,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
-import { useTransactionProgressValue } from '../../hooks';
+import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+  WithdrawTransactionPayloadType,
+} from '@webb-tools/abstract-api-provider';
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
-import { TransactionState } from '@webb-tools/dapp-types';
+import { getErrorMessage } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -17,6 +29,7 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
+      changeUtxo,
       changeNote,
       availableNotes,
       amount,
@@ -31,18 +44,17 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const { withdraw, stage } = useWithdraw({
-      amount: amount,
-      notes: availableNotes,
-      recipient: recipient,
-      unwrapTokenAddress: unwrapCurrency?.getAddressOfChain(targetChainId),
-    });
+    const stage = useLatestTransactionStage('Withdraw');
+
+    const { api: vAnchorApi } = useVAnchor();
 
     const progressValue = useTransactionProgressValue(stage);
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi } = useWebContext();
+    const { activeApi, noteManager } = useWebContext();
+
+    const { api: txQueueApi } = useTxQueue();
 
     const {
       relayersState: { activeRelayer },
@@ -93,7 +105,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: string) => {
-      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
+      downloadString(note, note.slice(0, note.length - 10) + '.json');
     }, []);
 
     const avatarTheme = useMemo(() => {
@@ -132,23 +144,95 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [stage, unwrapCurrency]);
 
     // The main action onClick handler
-    const onClick = useCallback(async () => {
+    const handleExecuteWithdraw = useCallback(async () => {
+      if (availableNotes.length === 0 || !vAnchorApi) {
+        return;
+      }
+
       if (withdrawTxInProgress) {
+        txQueueApi.startNewTransaction();
         setMainComponent(undefined);
         return;
       }
 
-      if (changeNote) {
-        downloadNote(changeNote);
-      }
+      changeNote && downloadNote(changeNote.serialize());
 
-      await withdraw();
+      const note: Note = availableNotes[0];
+      const {
+        sourceChainId: sourceTypedChainId,
+        targetChainId: destTypedChainId,
+        tokenSymbol,
+      } = note.note;
+
+      const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
+
+      const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
+        amount,
+        tokens: [tokenSymbol, unwrapTokenSymbol],
+        wallets: {
+          src: +sourceTypedChainId,
+          dest: +destTypedChainId,
+        },
+        token: tokenSymbol,
+      });
+
+      try {
+        txQueueApi.registerTransaction(tx);
+
+        // Add the change note before sending the tx
+        if (changeNote) {
+          noteManager?.addNote(changeNote);
+        }
+
+        const txPayload: WithdrawTransactionPayloadType = {
+          notes: availableNotes,
+          changeUtxo,
+          recipient,
+        };
+
+        const args = await vAnchorApi.prepareTransaction(
+          tx,
+          txPayload,
+          unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
+        );
+
+        const receipt = await vAnchorApi.transact(...args);
+
+        const outputNotes = changeNote ? [changeNote] : [];
+
+        // Notification Success Transaction
+        tx.txHash = receipt.transactionHash;
+        tx.next(TransactionState.Done, {
+          txHash: receipt.transactionHash,
+          outputNotes,
+        });
+
+        // Cleanup NoteAccount state
+        for (const note of availableNotes) {
+          await noteManager?.removeNote(note);
+        }
+      } catch (error) {
+        console.log('Error while executing withdraw', error);
+
+        changeNote && (await noteManager?.removeNote(changeNote));
+
+        tx.fail(getErrorMessage(error));
+      } finally {
+        setMainComponent(undefined);
+      }
     }, [
+      availableNotes,
+      vAnchorApi,
+      withdrawTxInProgress,
       changeNote,
       downloadNote,
-      withdrawTxInProgress,
+      unwrapCurrency,
+      amount,
       setMainComponent,
-      withdraw,
+      txQueueApi,
+      changeUtxo,
+      recipient,
+      noteManager,
     ]);
 
     return (
@@ -164,7 +248,7 @@ export const WithdrawConfirmContainer = forwardRef<
             ? !checked
             : false,
           children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
-          onClick,
+          onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
           isChecked: checked,
@@ -173,12 +257,12 @@ export const WithdrawConfirmContainer = forwardRef<
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}
-        onCopy={() => handleCopy(changeNote)}
-        onDownload={() => downloadNote(changeNote ?? '')}
+        onCopy={() => handleCopy(changeNote?.serialize())}
+        onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         fee={fees}
         onClose={() => setMainComponent(undefined)}
-        note={changeNote}
+        note={changeNote?.serialize()}
         changeAmount={changeAmount}
         progress={progressValue}
         recipientAddress={recipient}

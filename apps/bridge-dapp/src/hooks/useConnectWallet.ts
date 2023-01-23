@@ -1,8 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WalletId } from '@webb-tools/dapp-types';
 import { Chain, WalletConfig } from '@webb-tools/dapp-config';
-import { useModal } from '@webb-tools/ui-hooks';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { WalletId } from '@webb-tools/dapp-types';
+import { useModal, useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /**

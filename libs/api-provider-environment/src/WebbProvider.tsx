@@ -318,8 +318,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         break;
       case WebbErrorCodes.UnselectedChain:
         break;
-      case WebbErrorCodes.MixerSizeNotFound:
-        break;
       case WebbErrorCodes.MetaMaskExtensionNotInstalled:
       case WebbErrorCodes.PolkaDotExtensionNotInstalled:
       case WebbErrorCodes.TalismanExtensionNotInstalled:

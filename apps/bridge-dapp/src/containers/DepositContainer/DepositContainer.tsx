@@ -1,17 +1,17 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
 import {
-  useBridgeDeposit,
   useCurrencies,
   useCurrenciesBalances,
   useNoteAccount,
+  useVAnchor,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useModal } from '@webb-tools/ui-hooks';
 import {
   ChainListCard,
   DepositCard,
   TokenListCard,
+  useModal,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -89,7 +89,7 @@ export const DepositContainer = forwardRef<
       txQueue,
     } = useWebContext();
 
-    const { generateNote } = useBridgeDeposit();
+    const { api } = useVAnchor();
 
     const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
       undefined
@@ -351,61 +351,68 @@ export const DepositContainer = forwardRef<
       }
 
       if (
-        sourceChain &&
-        destChain &&
-        selectedToken &&
-        amount !== 0 &&
-        activeApi?.state?.activeBridge &&
-        activeChain
+        !sourceChain ||
+        !destChain ||
+        amount === 0 ||
+        !activeApi?.state?.activeBridge ||
+        !activeChain ||
+        !noteManager ||
+        !fungibleCurrency
       ) {
-        setIsGeneratingNote(true);
-        const chainId = calculateTypedChainId(
-          activeChain.chainType,
-          activeChain.chainId
-        );
-        const wrappbleTokenAddress =
-          wrappableCurrency?.getAddress(chainId) ?? undefined;
-        const newDepositPayload = await generateNote(
-          activeApi.state.activeBridge.targets[
-            calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
-          ],
-          calculateTypedChainId(destChain.chainType, destChain.chainId),
-          amount,
-          wrappbleTokenAddress
-        );
-        setIsGeneratingNote(false);
-        setDepositContainerProps({
-          wrappingFlow: Boolean(wrappbleTokenAddress),
-          wrappableTokenSymbol: fungibleCurrency?.view.symbol,
-          amount,
-          token: selectedToken,
-          sourceChain: selectedSourceChain,
-          destChain: destChainInputValue,
-          depositPayload: newDepositPayload,
-          resetMainComponent: resetMainComponent,
-        });
-        setMainComponentName('deposit-confirm-container');
+        return;
       }
+
+      setIsGeneratingNote(true);
+
+      const sourceTypedChainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+
+      const destTypedChainId = calculateTypedChainId(
+        destChain.chainType,
+        destChain.chainId
+      );
+
+      const newNote = await noteManager.generateNote(
+        sourceTypedChainId,
+        destTypedChainId,
+        fungibleCurrency.view.symbol,
+        fungibleCurrency.getDecimals(),
+        amount
+      );
+
+      setIsGeneratingNote(false);
+
+      setDepositContainerProps({
+        fungibleTokenId: fungibleCurrency.id,
+        wrappableTokenId: wrappableCurrency?.id,
+        amount,
+        sourceChain: selectedSourceChain,
+        destChain: destChainInputValue,
+        note: newNote,
+        resetMainComponent: resetMainComponent,
+      });
+
+      setMainComponentName('deposit-confirm-container');
     }, [
-      chains,
-      setMainComponent,
+      txQueue.txPayloads,
       isWalletConnected,
       hasNoteAccount,
       sourceChain,
       destChain,
-      selectedToken,
       amount,
       activeApi?.state?.activeBridge,
       activeChain,
-      setMainComponentName,
-      setNoteAccountModalOpen,
-      generateNote,
+      noteManager,
+      fungibleCurrency,
+      wrappableCurrency?.id,
       selectedSourceChain,
       destChainInputValue,
-      wrappableCurrency,
-      fungibleCurrency,
-      txQueue,
       resetMainComponent,
+      chains,
+      setMainComponent,
+      setNoteAccountModalOpen,
     ]);
 
     // Only disable button when the wallet is connected and exists a note account

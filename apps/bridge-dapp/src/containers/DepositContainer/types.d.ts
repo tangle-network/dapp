@@ -1,3 +1,4 @@
+import { Note } from '@webb-tools/sdk-core';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import {
   ChainType,
@@ -14,17 +15,12 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The deposit payload
    */
-  depositPayload: DepositPayload;
+  note: Note;
 
   /**
    * The deposit amount
    */
   amount: number;
-
-  /**
-   * The selected token to deposit
-   */
-  token?: TokenType;
 
   /**
    * The source chain
@@ -37,9 +33,18 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   destChain?: ChainType;
 
   /**
-   * The signal to wrap and deposit flow
-   * */
-  wrappingFlow: boolean;
-  wrappableTokenSymbol?: string;
+   * The fungible token id
+   */
+  fungibleTokenId: number;
+
+  /**
+   * The wrapped token id
+   */
+  wrappableTokenId?: number;
+
+  /**
+   * Function to reset the main component
+   * @returns void
+   */
   resetMainComponent: () => void;
 }

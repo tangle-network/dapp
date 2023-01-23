@@ -13,6 +13,7 @@ import {
   WebbProviderEvents,
   WebbState,
 } from '@webb-tools/abstract-api-provider';
+import { EventBus } from '@webb-tools/app-util';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
@@ -23,49 +24,66 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { VAnchorContract } from '@webb-tools/evm-contracts';
 import { NoteManager } from '@webb-tools/note-manager';
-import { Storage } from '@webb-tools/storage';
-import { EventBus } from '@webb-tools/app-util';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
   Note,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
+import { Storage } from '@webb-tools/storage';
 import { providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
 
+import { VAnchor } from '@webb-tools/anchors';
+import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
+import { ZkComponents } from '@webb-tools/utils';
+import { BehaviorSubject } from 'rxjs';
+import { Web3Accounts, Web3Provider } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
-import { Web3MixerDeposit } from './webb-provider/mixer-deposit';
-import { Web3MixerWithdraw } from './webb-provider/mixer-withdraw';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
-import { Web3VAnchorDeposit } from './webb-provider/vanchor-deposit';
-import { Web3VAnchorTransfer } from './webb-provider/vanchor-transfer';
-import { Web3VAnchorWithdraw } from './webb-provider/vanchor-withdraw';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import { Web3Accounts, Web3Provider } from './ext-provider';
-import { BehaviorSubject } from 'rxjs';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
+  type(): string {
+    return 'Web3';
+  }
+
   state: WebbState;
+
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
+
+  private readonly MAX_EDGES = 7;
+
+  private smallFixtures: ZkComponents | null = null;
+
+  private largeFixtures: ZkComponents | null = null;
+
+  private ethersProvider: providers.Web3Provider;
+
   readonly methods: WebbMethods<WebbWeb3Provider>;
+
   readonly relayChainMethods: RelayChainMethods<
     WebbApiProvider<WebbWeb3Provider>
   > | null;
-  private ethersProvider: providers.Web3Provider;
+
   get newBlock() {
     return this._newBlock.asObservable();
   }
+
   private constructor(
     private web3Provider: Web3Provider,
     protected chainId: number,
@@ -92,29 +110,7 @@ export class WebbWeb3Provider
       },
       bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
-      mixer: {
-        deposit: {
-          enabled: true,
-          inner: new Web3MixerDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3MixerWithdraw(this),
-        },
-      },
       variableAnchor: {
-        deposit: {
-          enabled: true,
-          inner: new Web3VAnchorDeposit(this),
-        },
-        withdraw: {
-          enabled: true,
-          inner: new Web3VAnchorWithdraw(this),
-        },
-        transfer: {
-          enabled: true,
-          inner: new Web3VAnchorTransfer(this),
-        },
         actions: {
           enabled: true,
           inner: new Web3VAnchorActions(this),
@@ -219,15 +215,23 @@ export class WebbWeb3Provider
   }
 
   // VAnchors require zero knowledge proofs on deposit - Fetch the small and large circuits.
-  getVariableAnchorByAddress(address: string): VAnchorContract {
-    return new VAnchorContract(this.ethersProvider, address);
+  getVariableAnchorByAddress(address: string): Promise<VAnchor> {
+    return this.getVariableAnchorByAddressAndProvider(
+      address,
+      this.ethersProvider
+    );
   }
 
-  getVariableAnchorByAddressAndProvider(
+  async getVariableAnchorByAddressAndProvider(
     address: string,
     provider: providers.Web3Provider
-  ): VAnchorContract {
-    return new VAnchorContract(provider, address, true);
+  ): Promise<VAnchor> {
+    return VAnchor.connect(
+      address,
+      await this.getZkFixtures(true),
+      await this.getZkFixtures(false),
+      provider.getSigner()
+    );
   }
 
   getEthersProvider(): providers.Web3Provider {
@@ -235,69 +239,81 @@ export class WebbWeb3Provider
   }
 
   async getVariableAnchorLeaves(
-    contract: VAnchorContract,
+    vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
     abortSignal: AbortSignal
   ): Promise<string[]> {
-    const evmId = await contract.getEvmId();
+    console.group('getVariableAnchorLeaves()');
+    const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
       typedChainId,
-      contract.inner.address
+      vanchor.contract.address
     );
     let leaves = await this.relayerManager.fetchLeavesFromRelayers(
       relayers,
-      contract,
+      vanchor,
       storage,
       abortSignal
     );
+
+    console.log('Leaves from relayers: ', leaves);
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
       const storedContractInfo: BridgeStorage[0] = (await storage.get(
-        contract.inner.address.toLowerCase()
+        vanchor.contract.address.toLowerCase()
       )) || {
         lastQueriedBlock:
           getAnchorDeploymentBlockNumber(
             typedChainId,
-            contract.inner.address
+            vanchor.contract.address
           ) || 0,
         leaves: [] as string[],
       };
 
-      const leavesFromChain = await contract.getDepositLeaves(
+      console.log('Stored contract info: ', storedContractInfo);
+
+      const leavesFromChain = await vanchor.getDepositLeaves(
         storedContractInfo.lastQueriedBlock + 1,
         0,
-        abortSignal
+        abortSignal,
+        retryPromise
       );
-      console.log(`stored contract leaves`, storedContractInfo.leaves);
+
+      console.log('Leaves from chain: ', leavesFromChain);
+
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
       // Cached the new leaves
-      await storage.set(contract.inner.address.toLowerCase(), {
+      await storage.set(vanchor.contract.address.toLowerCase(), {
         lastQueriedBlock: leavesFromChain.lastQueriedBlock,
         leaves,
       });
     }
 
+    console.groupEnd();
+
     return leaves;
   }
 
   async getVAnchorNotesFromChain(
-    contract: VAnchorContract,
+    vanchor: VAnchor,
     owner: Keypair,
     abortSignal: AbortSignal
   ): Promise<Note[]> {
-    const evmId = await contract.getEvmId();
+    const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = await this.methods.bridgeApi.getCurrency();
-    const utxos = await contract.getSpendableUtxosFromChain(
+    const utxos = await vanchor.getSpendableUtxosFromChain(
       owner,
-      getAnchorDeploymentBlockNumber(typedChainId, contract.inner.address) || 1,
+      getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
+        1,
       0,
-      abortSignal
+      abortSignal,
+      retryPromise
     );
 
     const notes = Promise.all(
@@ -322,9 +338,9 @@ export class WebbWeb3Provider
           protocol: 'vanchor',
           secrets,
           sourceChain: typedChainId.toString(),
-          sourceIdentifyingData: contract.inner.address,
+          sourceIdentifyingData: vanchor.contract.address,
           targetChain: utxo.chainId,
-          targetIdentifyingData: contract.inner.address,
+          targetIdentifyingData: vanchor.contract.address,
           tokenSymbol: tokenSymbol.view.symbol,
           version: 'v1',
           width: '5',
@@ -445,5 +461,61 @@ export class WebbWeb3Provider
       sig,
       account: address,
     };
+  }
+
+  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+    const dummyAbortSignal = new AbortController().signal;
+
+    if (isSmall) {
+      if (this.smallFixtures) {
+        return this.smallFixtures;
+      }
+
+      const smallKey = await fetchVAnchorKeyFromAws(
+        this.MAX_EDGES,
+        isSmall,
+        dummyAbortSignal
+      );
+
+      const smallWasm = await fetchVAnchorWasmFromAws(
+        this.MAX_EDGES,
+        isSmall,
+        dummyAbortSignal
+      );
+
+      const smallFixtures = {
+        zkey: smallKey,
+        wasm: Buffer.from(smallWasm),
+        witnessCalculator: buildVariableWitnessCalculator,
+      };
+
+      this.smallFixtures = smallFixtures;
+      return smallFixtures;
+    }
+
+    if (this.largeFixtures) {
+      return this.largeFixtures;
+    }
+
+    const largeKey = await fetchVAnchorKeyFromAws(
+      this.MAX_EDGES,
+      isSmall,
+      dummyAbortSignal
+    );
+
+    const largeWasm = await fetchVAnchorWasmFromAws(
+      this.MAX_EDGES,
+      isSmall,
+      dummyAbortSignal
+    );
+
+    const largeFixtures = {
+      zkey: largeKey,
+      wasm: Buffer.from(largeWasm),
+      witnessCalculator: buildVariableWitnessCalculator,
+    };
+
+    this.largeFixtures = largeFixtures;
+    return largeFixtures;
   }
 }

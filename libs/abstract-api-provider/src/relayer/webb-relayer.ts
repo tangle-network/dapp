@@ -13,6 +13,7 @@ import {
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
+import { u8aToHex } from '@webb-tools/utils';
 
 /**
  * Relayer withdraw status
@@ -212,13 +213,13 @@ export class WebbRelayer {
     if (req.ok) {
       const jsonResponse = await req.json();
       console.log('response: ', jsonResponse);
-      const fetchedLeaves: string[] = jsonResponse.leaves;
+      const fetchedLeaves: Uint8Array[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
-      const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock, 16);
+      const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
-        leaves: fetchedLeaves,
+        leaves: fetchedLeaves.map((leaf) => u8aToHex(leaf)),
       };
     } else {
       throw new Error('network error');
