@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 export const useCurrenciesBalances = (
   currencies: Currency[]
 ): Record<Currency['id'], number> => {
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi, activeChain, activeAccount } = useWebContext();
 
   // Balances object map currency id and its balance
   const [balances, setBalances] = useState<Record<number, number>>({});
@@ -41,7 +41,7 @@ export const useCurrenciesBalances = (
 
     return () =>
       subscriptions.forEach((subscription) => subscription.unsubscribe());
-  }, [activeApi, activeChain, currencies]);
+  }, [activeApi, activeChain, activeAccount, currencies]);
 
   return balances;
 };
