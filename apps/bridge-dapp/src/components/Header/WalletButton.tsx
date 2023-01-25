@@ -157,14 +157,18 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
       typeof window !== 'undefined' &&
       typeof window.ethereum !== 'undefined'
     ) {
-      await window.ethereum.request({
-        method: 'wallet_requestPermissions',
-        params: [
-          {
-            eth_accounts: {},
-          },
-        ],
-      });
+      try {
+        await window.ethereum.request({
+          method: 'wallet_requestPermissions',
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [activeChain, notificationApi]);
 
