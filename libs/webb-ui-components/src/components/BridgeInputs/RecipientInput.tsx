@@ -78,9 +78,13 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     const [address, setAddress] = useState<string | undefined>(() => value);
 
     const onClick = useCallback(async () => {
-      const addr = await window.navigator.clipboard.readText();
+      try {
+        const addr = await window.navigator.clipboard.readText();
 
-      setAddress(addr);
+        setAddress(addr);
+      } catch (e) {
+        console.log(e);
+      }
     }, [setAddress]);
     const [recipientError, setRecipientError] = useState<string | undefined>(
       undefined
