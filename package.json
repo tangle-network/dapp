@@ -7,6 +7,7 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "nx run-many --all --target=lint",
+    "build:bridge": "nx build bridge-dapp",
     "build:stats": "cd apps/stats-dapp && NODE_ENV=production webpack",
     "build:webbsite": "nx build webbsite",
     "build:storybook": "nx build-storybook webb-ui-components",

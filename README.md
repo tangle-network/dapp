@@ -1,21 +1,20 @@
-
 <div align="center">
 <a href="https://www.webb.tools/">
 
 ![Webb Logo](./.github/assets/webb_banner_light.png#gh-light-mode-only)
 ![Webb Logo](./.github/assets/webb_banner_dark.png#gh-dark-mode-only)
-  </a>
+</a>
+
   </div>
 
-# Webb Monorepo 
+# Webb Monorepo
 
 <p align="left">
     <strong>🚀  Decentralized interfaces into the Webb protocol 🚀</strong>
     <br />
 </p>
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/webb-tools/webb-dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/webb-tools/webb-dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0) [![Twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=flat-square&label=Twitter&color=1DA1F2)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
-
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/webb-tools/webb-dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/webb-tools/webb-dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0) [![Twitter](https://img.shields.io/badge/follow-%40webbprotocol-1DA1F2?logo=twitter&style=flat-square)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
 <!-- TABLE OF CONTENTS -->
 <h2 id="table-of-contents" style=border:0!important> 📖 Table of Contents</h2>
@@ -34,10 +33,10 @@
 
 This repo is a monorepo containing decentralized interfaces into the Webb protocol! It makes use of [nx.dev](https://nx.dev/) for fast and extensible build system. The repo consists of 3 notable areas:
 
-- [bridge-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp) an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol
-- [stats-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/stats-dapp) an interface for displaying statistics data of Webb's Tangle Network  
-- [webb-ui-components:](https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components) a collection of reusable components for building interfaces quickly
-
+- [bridge-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp) an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
+- [stats-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/stats-dapp) an interface for displaying statistics data of Webb's Tangle Network.
+- [webbsite:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/webbsite) an interface for the Webb ecosystem and development.
+- [webb-ui-components:](https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components) a collection of reusable components for building interfaces quickly.
 
 For additional information, please refer to the [Webb Official Documentation](https://docs.webb.tools/v1/getting-started/overview/) 📝. Have feedback on how to improve the webb-dapp interface? Or have a specific question to ask? Checkout the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback) 💬.
 
@@ -73,7 +72,8 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:bridge
    ```
 
-Visit http://localhost:3000/ to see the Webb Bridge Dapp UI! 🕸️ 🚀
+Visit http://localhost:3000/ to see the Webb Bridge Dapp UI! 🕸️ 🚀 If you would like to utilize the Hubble bridge
+with a local EVM network and local relayer refer to the instructions [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge).
 
 ## Run stats-dapp locally 💻
 
@@ -97,7 +97,7 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:stats
    ```
 
-Visit http://localhost:3000/ to see the Webb Stats UI! 🕸️ 🚀
+Visit http://localhost:3000/ to see the Webb Stats UI! 🕸️ 🚀 If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
 
 <h2 id="test"> Testing 🧪 </h2>
 
@@ -120,7 +120,7 @@ yarn test
 2. Start the storybook:
 
    ```bash
-   yarn nx storybook webb-ui-components 
+   yarn nx storybook webb-ui-components
    ```
 
 Visit http://localhost:4400/ to see the Webb Component Library! 🕸️ 🚀
@@ -133,12 +133,18 @@ If you have a contribution in mind, please check out our [Contribution Guide](./
 
 ### Lint before you push! 🪥
 
-Please ensure you lint and format your changes prior to opening a PR. 
+Please ensure you lint and format your changes prior to opening a PR.
 
 **To lint:**
 
 ```
 yarn lint
+```
+
+**To Format:**
+
+```
+yarn format
 ```
 
 **To Build:**
