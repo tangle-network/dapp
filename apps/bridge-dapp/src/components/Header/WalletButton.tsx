@@ -22,6 +22,7 @@ import {
   shortenString,
   Typography,
   useWebbUI,
+  IconWithTooltip,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ClearDataModal } from './ClearDataModal';
@@ -194,12 +195,10 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
           </HeaderButton>
         </DropdownTrigger>
 
-        <DropdownBody className="mt-6 w-[360px] p-4 space-y-4">
+        <DropdownBody className="mt-6 w-[480px] p-4 space-y-4 dark:bg-mono-160">
           <div className="flex items-center justify-between">
-            {/** Left content */}
-            <div className="flex items-start space-x-2">
-              {/** TODO: Calculate correct theme here */}
-              <Avatar value={account.address} theme="ethereum" />
+            <div className="flex space-x-2">
+              {wallet.Logo}
 
               <div>
                 <Typography variant="h5" fw="bold" className="capitalize">
@@ -207,7 +206,11 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                 </Typography>
 
                 <div className="flex items-center space-x-1">
-                  <Typography variant="body1" fw="bold" className="capitalize">
+                  <Typography
+                    variant="body1"
+                    fw="semibold"
+                    className="capitalize"
+                  >
                     {shortenString(account.address, 6)}
                   </Typography>
 
@@ -215,20 +218,53 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                     <ExternalLinkLine />
                   </a>
                 </div>
-
-                {keyPair && (
-                  <KeyValueWithButton
-                    className="mt-0.5"
-                    label="Pub Key"
-                    keyValue={keyPair.toString()}
-                    size="sm"
-                    valueVariant="body1"
-                  />
-                )}
               </div>
             </div>
+            <div className="flex items-center justify-end space-x-2.5">
+              <Button
+                onClick={handleSwitchAccount}
+                leftIcon={
+                  <WalletLineIcon className="!fill-current" size="lg" />
+                }
+                variant="link"
+              >
+                Switch
+              </Button>
 
-            {/** Right content */}
+              <Button
+                onClick={handleDisconnect}
+                leftIcon={
+                  <LoginBoxLineIcon className="!fill-current" size="lg" />
+                }
+                variant="link"
+              >
+                Disconnect
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg py-2 pl-2 pr-3.5 bg-mono-20 dark:bg-mono-170">
+            <div className="flex items-center space-x-2">
+              {keyPair && (
+                <>
+                  <IconWithTooltip
+                    icon={
+                      <Avatar value={keyPair.toString()} theme="ethereum" />
+                    }
+                    content="Note account"
+                  />
+
+                  <KeyValueWithButton
+                    className="mt-0.5"
+                    label="Public Key:"
+                    keyValue={keyPair.toString()}
+                    size="sm"
+                    labelVariant="body1"
+                    valueVariant="body1"
+                  />
+                </>
+              )}
+            </div>
             <div className="flex items-center space-x-1">
               <Button
                 isLoading={isSyncingNote}
@@ -239,8 +275,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
               </Button>
 
               <Dropdown>
-                <DropdownBasicButton>
-                  <ThreeDotsVerticalIcon />
+                <DropdownBasicButton className="pt-2">
+                  <ThreeDotsVerticalIcon size="lg" />
                 </DropdownBasicButton>
                 <DropdownBody>
                   <MenuItem onClick={() => setIsOpen(true)}>
@@ -249,26 +285,6 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                 </DropdownBody>
               </Dropdown>
             </div>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2">
-            <Button
-              onClick={handleSwitchAccount}
-              leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
-              variant="link"
-            >
-              Switch
-            </Button>
-
-            <Button
-              onClick={handleDisconnect}
-              leftIcon={
-                <LoginBoxLineIcon className="!fill-current" size="lg" />
-              }
-              variant="link"
-            >
-              Disconnect
-            </Button>
           </div>
         </DropdownBody>
       </Dropdown>
