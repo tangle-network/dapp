@@ -313,7 +313,10 @@ export class WebbPolkadot
     return this._newBlock.asObservable();
   }
 
-  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+  async getZkFixtures(
+    maxEdges: number,
+    isSmall?: boolean
+  ): Promise<ZkComponents> {
     throw new Error('Method not implemented.');
   }
 }

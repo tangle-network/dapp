@@ -53,6 +53,7 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+import { VAnchor__factory } from '@webb-tools/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -65,8 +66,6 @@ export class WebbWeb3Provider
   state: WebbState;
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
-
-  private readonly MAX_EDGES = 7;
 
   private smallFixtures: ZkComponents | null = null;
 
@@ -226,11 +225,15 @@ export class WebbWeb3Provider
     address: string,
     provider: providers.Web3Provider
   ): Promise<VAnchor> {
+    const signer = provider.getSigner();
+    const vanchorContract = VAnchor__factory.connect(address, signer);
+    const maxEdges = await vanchorContract.maxEdges();
+
     return VAnchor.connect(
       address,
-      await this.getZkFixtures(true),
-      await this.getZkFixtures(false),
-      provider.getSigner()
+      await this.getZkFixtures(maxEdges, true),
+      await this.getZkFixtures(maxEdges, false),
+      signer
     );
   }
 
@@ -463,7 +466,10 @@ export class WebbWeb3Provider
     };
   }
 
-  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+  async getZkFixtures(
+    maxEdges: number,
+    isSmall?: boolean
+  ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
     if (isSmall) {
@@ -472,13 +478,13 @@ export class WebbWeb3Provider
       }
 
       const smallKey = await fetchVAnchorKeyFromAws(
-        this.MAX_EDGES,
+        maxEdges,
         isSmall,
         dummyAbortSignal
       );
 
       const smallWasm = await fetchVAnchorWasmFromAws(
-        this.MAX_EDGES,
+        maxEdges,
         isSmall,
         dummyAbortSignal
       );
@@ -498,13 +504,13 @@ export class WebbWeb3Provider
     }
 
     const largeKey = await fetchVAnchorKeyFromAws(
-      this.MAX_EDGES,
+      maxEdges,
       isSmall,
       dummyAbortSignal
     );
 
     const largeWasm = await fetchVAnchorWasmFromAws(
-      this.MAX_EDGES,
+      maxEdges,
       isSmall,
       dummyAbortSignal
     );
