@@ -11,6 +11,7 @@ import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { isEthereumAddress } from '@polkadot/util-crypto';
+import { notificationApi } from '../Notification';
 
 function isValidPublicKey(maybePublicKey: string): boolean {
   return maybePublicKey.startsWith('0x') && maybePublicKey.length === 130;
@@ -83,7 +84,12 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
 
         setAddress(addr);
       } catch (e) {
-        console.log(e);
+        notificationApi({
+          message: 'Failed to read clipboard',
+          secondaryMessage:
+            'Please change your browser settings to allow clipboard access.',
+          variant: 'warning',
+        });
       }
     }, [setAddress]);
     const [recipientError, setRecipientError] = useState<string | undefined>(
