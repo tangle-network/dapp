@@ -56,7 +56,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
     const tokenPairString = useMemo(() => {
       if (wrappableTokenSymbol) {
-        return `${wrappableTokenSymbol} - ${fungibleTokenSymbol}`;
+        return `${wrappableTokenSymbol}/${fungibleTokenSymbol}`;
       }
 
       return fungibleTokenSymbol;

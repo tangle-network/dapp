@@ -229,5 +229,5 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // new block observable
   newBlock: Observable<unknown>;
   // get zk fixtures
-  getZkFixtures: (isSmall: boolean) => Promise<ZkComponents>;
+  getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
 }
