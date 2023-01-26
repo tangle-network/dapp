@@ -101,7 +101,7 @@ function ButtonContent(props: ButtonContentProps) {
   return (
     <>
       {leftIcon && (
-        <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>
+        <span className={cx(`mr-1`, 'block !text-inherit')}>{leftIcon}</span>
       )}
       <span
         className={cx(
