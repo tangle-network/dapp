@@ -21,7 +21,7 @@ import {
   useTransactionProgressValue,
 } from '../../hooks';
 import { WithdrawConfirmContainerProps } from './types';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, getTokenURI } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -166,6 +166,8 @@ export const WithdrawConfirmContainer = forwardRef<
 
       const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
 
+      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
         tokens: [tokenSymbol, unwrapTokenSymbol],
@@ -174,6 +176,7 @@ export const WithdrawConfirmContainer = forwardRef<
           dest: +destTypedChainId,
         },
         token: tokenSymbol,
+        tokenURI,
       });
 
       try {
