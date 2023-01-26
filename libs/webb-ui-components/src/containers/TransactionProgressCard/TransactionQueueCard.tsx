@@ -143,6 +143,7 @@ export const TransactionQueueCard = forwardRef<
             tx.getExplorerURI?.(tx.txStatus.txHash ?? '', 'tx') ?? '#';
           const recipientURI =
             tx.getExplorerURI?.(tx.txStatus.recipient ?? '', 'address') ?? '#';
+
           return {
             id: tx.id,
             method: tx.method,
@@ -166,7 +167,7 @@ export const TransactionQueueCard = forwardRef<
             label: {
               amount: tx.amount,
               token: tx.token,
-              tokenURI: '#',
+              tokenURI: tx.tokenURI ?? '#',
               nativeValue: tx.nativeValue,
             },
             tokens:
