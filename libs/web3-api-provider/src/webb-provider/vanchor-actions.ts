@@ -411,14 +411,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     if (leavesMap[parsedNote.sourceChainId] === undefined) {
       // Set up a provider for the source chain
       const sourceAddress = parsedNote.sourceIdentifyingData;
-      const sourceChainConfig =
-        this.inner.config.chains[Number(parsedNote.sourceChainId)];
-      const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
-      const sourceEthers = sourceHttpProvider.intoEthersProvider();
       const sourceVAnchor =
         await this.inner.getVariableAnchorByAddressAndProvider(
           sourceAddress,
-          sourceEthers
+          this.inner.getEthersProvider()
         );
       const leafStorage = await bridgeStorageFactory(
         Number(parsedNote.sourceChainId)
