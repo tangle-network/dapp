@@ -247,8 +247,8 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg py-2 pl-2 pr-3.5 bg-mono-20 dark:bg-mono-170">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 rounded-lg py-4 pl-2 pr-2.5 hover:bg-mono-20 hover:dark:bg-mono-170">
               {keyPair && (
                 <>
                   <IconWithTooltip
