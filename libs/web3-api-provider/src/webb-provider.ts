@@ -34,7 +34,7 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { providers } from 'ethers';
+import { Signer, ethers, providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
@@ -66,6 +66,9 @@ export class WebbWeb3Provider
   state: WebbState;
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
+
+  // Map to store the max edges for each vanchor address
+  private readonly vAnchorMaxEdges = new Map<string, number>();
 
   private smallFixtures: ZkComponents | null = null;
 
@@ -217,23 +220,35 @@ export class WebbWeb3Provider
   getVariableAnchorByAddress(address: string): Promise<VAnchor> {
     return this.getVariableAnchorByAddressAndProvider(
       address,
-      this.ethersProvider
+      this.ethersProvider,
+      this.ethersProvider.getSigner()
     );
   }
 
   async getVariableAnchorByAddressAndProvider(
     address: string,
-    provider: providers.Web3Provider
+    provider: providers.Web3Provider,
+    signer?: Signer
   ): Promise<VAnchor> {
-    const signer = provider.getSigner();
-    const vanchorContract = VAnchor__factory.connect(address, signer);
-    const maxEdges = await vanchorContract.maxEdges();
+    const maxEdges = await this.getVAnchorMaxEdges(address, provider);
+
+    const currentActiveSigner = this.ethersProvider.getSigner();
+
+    let signerOrDummySigner: Signer;
+    if (signer) {
+      signerOrDummySigner = signer;
+    } else {
+      signerOrDummySigner = new ethers.VoidSigner(
+        await currentActiveSigner.getAddress(),
+        provider
+      );
+    }
 
     return VAnchor.connect(
       address,
       await this.getZkFixtures(maxEdges, true),
       await this.getZkFixtures(maxEdges, false),
-      signer
+      signerOrDummySigner
     );
   }
 
@@ -309,7 +324,7 @@ export class WebbWeb3Provider
   ): Promise<Note[]> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const tokenSymbol = await this.methods.bridgeApi.getCurrency();
+    const tokenSymbol = this.methods.bridgeApi.getCurrency();
     const utxos = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
@@ -523,5 +538,24 @@ export class WebbWeb3Provider
 
     this.largeFixtures = largeFixtures;
     return largeFixtures;
+  }
+
+  async getVAnchorMaxEdges(
+    vAnchorAddress: string,
+    provider?: providers.Provider
+  ): Promise<number> {
+    const storedMaxEdges = this.vAnchorMaxEdges.get(vAnchorAddress);
+    if (storedMaxEdges) {
+      return Promise.resolve(storedMaxEdges);
+    }
+
+    const vAnchorContract = VAnchor__factory.connect(
+      vAnchorAddress,
+      provider ?? this.ethersProvider
+    );
+    const maxEdges = await vAnchorContract.maxEdges();
+
+    this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
+    return maxEdges;
   }
 }
