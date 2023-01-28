@@ -26,7 +26,7 @@ export const AmountInput = forwardRef<
       errorMessage,
       id = 'amount',
       info,
-      isDisabled,
+      isDisabled: isDisabledProp,
       onAmountChange,
       onMaxBtnClick,
       overrideInputProps,
@@ -35,6 +35,10 @@ export const AmountInput = forwardRef<
     },
     ref
   ) => {
+    // State to disable the the input when the dropdown is open
+    // (to prevent the re-rendering of the dropdown)
+    const [isDisabled, setIsDisabled] = useState(false);
+
     const mergedClsx = useMemo(
       () => twMerge('cursor-auto select-none space-x-2', className),
       [className]
@@ -54,7 +58,12 @@ export const AmountInput = forwardRef<
           <div className="flex flex-col space-y-1 grow">
             <Label htmlFor={id} className="flex items-center space-x-2">
               {amountMenuProps && (
-                <Dropdown>
+                <Dropdown
+                  radixRootProps={{
+                    onOpenChange: (open) => setIsDisabled(open),
+                    open: isDisabled,
+                  }}
+                >
                   <DropdownTrigger
                     asChild
                     className="flex items-start space-x-1"
@@ -74,7 +83,7 @@ export const AmountInput = forwardRef<
                   <DropdownBody
                     isPorttal={false}
                     align="start"
-                    className="mt-1 z-10"
+                    className="z-10 mt-1"
                   >
                     <AmountMenu
                       {...amountMenuProps}
@@ -94,14 +103,14 @@ export const AmountInput = forwardRef<
               placeholder="0"
               size="sm"
               autoComplete="off"
-              isDisabled={isDisabled}
+              isDisabled={isDisabledProp || isDisabled}
               min={0}
               {...overrideInputProps}
             />
           </div>
 
           <Button
-            isDisabled={isDisabled}
+            isDisabled={isDisabledProp}
             onClick={onMaxBtnClick}
             variant="utility"
             size="sm"
