@@ -334,7 +334,7 @@ export class WebbWeb3Provider
       retryPromise
     );
 
-    console.log(`Found {utxos.length} UTXOs on chain`);
+    console.log(`Found ${utxos.length} UTXOs on chain`);
 
     const notes = Promise.all(
       utxos.map(async (utxo) => {
