@@ -334,9 +334,13 @@ export class WebbWeb3Provider
       retryPromise
     );
 
+    console.log(`Found {utxos.length} UTXOs on chain`);
+
     const notes = Promise.all(
       utxos.map(async (utxo) => {
-        console.log(utxo.serialize());
+        if (utxo.amount !== '0') {
+          console.log(utxo.serialize());
+        }
         const secrets = [
           toFixedHex(utxo.chainId, 8),
           toFixedHex(utxo.amount),
