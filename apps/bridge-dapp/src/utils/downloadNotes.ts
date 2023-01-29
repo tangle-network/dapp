@@ -11,7 +11,11 @@ export const downloadNotes = (notes: Note[]) => {
   const serializedNotes = notes.map((note) => note.serialize());
 
   try {
-    downloadString(JSON.stringify(serializedNotes), 'notes.json', '.json');
+    downloadString(
+      JSON.stringify(serializedNotes),
+      `notes-${Date.now()}.json`,
+      '.json'
+    );
     return true;
   } catch (error) {
     console.log('Error while downloading notes', error);

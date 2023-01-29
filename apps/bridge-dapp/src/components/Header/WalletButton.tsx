@@ -111,7 +111,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         message: 'Failed to clear notes',
       });
     }
-  }, [noteManager, notificationApi]);
+  }, [logger, noteManager, notificationApi]);
 
   // Save backups function
   const handleSaveBackups = useCallback(async () => {
@@ -132,15 +132,18 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     }, [] as string[]);
 
     // Download the notes as a file
-    downloadString(JSON.stringify(notes), 'notes.json', '.json');
+    downloadString(JSON.stringify(notes), `notes-${Date.now()}.json`, '.json');
   }, [allNotes, notificationApi]);
 
   // TODO: Implement a function when user click on the new notes link
   // on the notification
-  const handleNewNotes = useCallback(async (notes: Note[]) => {
-    logger.info('Handle new notes: ', notes);
-    logger.warn('New notes function is not implemented yet');
-  }, []);
+  const handleNewNotes = useCallback(
+    async (notes: Note[]) => {
+      logger.info('Handle new notes: ', notes);
+      logger.warn('New notes function is not implemented yet');
+    },
+    [logger]
+  );
 
   // Funciton to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
