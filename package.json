@@ -198,7 +198,7 @@
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "@webb-tools/sdk-core": "0.1.4-119",
     "@webb-tools/wasm-utils": "0.1.4-119",
-    "@webb-tools/anchors": "0.5.10",
+    "@webb-tools/anchors": "../protocol-solidity/packages/anchors",
     "@webb-tools/tokens": "0.5.10",
     "@webb-tools/contracts": "0.5.8",
     "@webb-tools/interfaces": "0.5.8",
