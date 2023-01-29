@@ -1,6 +1,8 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { Chain } from '@webb-tools/dapp-config';
+
 import { NoteAccountTableContainerProps } from '../types';
+import { Note } from '@webb-tools/sdk-core';
 
 export interface SpendNotesTableContainerProps {}
 
@@ -49,6 +51,11 @@ export interface SpendNoteDataType {
    * The raw destination chain object
    */
   rawChain: Chain;
+
+  /**
+   * The raw note object
+   */
+  rawNote: Note;
 
   /**
    * The raw fungible currency object

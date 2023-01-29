@@ -9,7 +9,7 @@ import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import { SpendNoteDataType } from '../containers/SpendNotesTableContainer/types';
+import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
 
 const createdTime = randRecentDate();
 
@@ -88,9 +88,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           acc.push({
             fungibleTokenSymbol: note.note.tokenSymbol,
-            rawFungibleCurrency: fungibleCurrency,
             chain: chain.name.toLowerCase(),
-            rawChain: chain,
             note: note.serialize(),
             assetsUrl,
             composition: wrappableCurrencies.map(
@@ -103,6 +101,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()
               : '0',
+            rawFungibleCurrency: fungibleCurrency,
+            rawChain: chain,
+            rawNote: note,
           });
         });
 
