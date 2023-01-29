@@ -1,4 +1,5 @@
 import type { Note } from '@webb-tools/sdk-core';
+import { ButtonProps } from '@webb-tools/webb-ui-components';
 
 export interface MoreOptionsDropdownProps {
   /**
@@ -46,4 +47,11 @@ export interface NoteAccountTableContainerProps {
    * @returns void
    */
   onDeleteNotesChange?: (notes: Note[]) => void;
+}
+
+export interface ActionWithTooltipProps extends ButtonProps {
+  /**
+   * The tooltip content
+   */
+  tooltipContent: string;
 }

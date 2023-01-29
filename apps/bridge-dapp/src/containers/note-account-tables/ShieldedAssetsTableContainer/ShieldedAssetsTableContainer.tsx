@@ -34,6 +34,7 @@ import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
 } from './types';
+import { ActionWithTooltip } from '../ActionWithTooltip';
 
 const columnHelper = createColumnHelper<ShieldedAssetDataType>();
 
@@ -208,37 +209,25 @@ export const ShieldedAssetsTableContainer: FC<
 
           return (
             <div className="flex items-center space-x-1">
-              <ActionWithTooltip content="Deposit">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onDeposit(shieldedAsset)}
-                >
-                  <AddBoxLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Deposit"
+                onClick={() => onDeposit(shieldedAsset)}
+              >
+                <AddBoxLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
-              <ActionWithTooltip content="Transfer">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onTransfer(shieldedAsset)}
-                >
-                  <SendPlanLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Transfer"
+                onClick={() => onTransfer(shieldedAsset)}
+              >
+                <SendPlanLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
-              <ActionWithTooltip content="Withdraw">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onWithdraw(shieldedAsset)}
-                >
-                  <WalletLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Withdraw"
+                onClick={() => onWithdraw(shieldedAsset)}
+              >
+                <WalletLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
               <MoreOptionsDropdown
@@ -289,23 +278,5 @@ export const ShieldedAssetsTableContainer: FC<
         title="Shielded Asset"
       />
     </div>
-  );
-};
-
-/***********************
- * Internal components *
- ***********************/
-
-const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
-  content,
-  children,
-}) => {
-  return (
-    <Tooltip delayDuration={200}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipBody>
-        <Typography variant="body3">{content}</Typography>
-      </TooltipBody>
-    </Tooltip>
   );
 };
