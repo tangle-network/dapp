@@ -213,13 +213,14 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                 </Typography>
 
                 <div className="flex items-center space-x-1">
-                  <Typography
-                    variant="body1"
-                    fw="semibold"
-                    className="capitalize"
-                  >
-                    {shortenString(account.address, 6)}
-                  </Typography>
+                  <KeyValueWithButton
+                    className="mt-0.5"
+                    isHiddenLabel
+                    keyValue={account.address}
+                    size="sm"
+                    labelVariant="body1"
+                    valueVariant="body1"
+                  />
 
                   <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
                     <ExternalLinkLine />
