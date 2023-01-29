@@ -22,7 +22,7 @@ export const MoreOptionsDropdown: FC<MoreOptionsDropdownProps> = ({
       <DropdownBasicButton className="flex items-center justify-center">
         <ThreeDotsVerticalIcon size="lg" />
       </DropdownBasicButton>
-      <DropdownBody className="mt-3">
+      <DropdownBody className="radix-side-top:mb-3 radix-side-bottom:mt-3">
         <MenuItem onClick={onDownloadNotes} icon={<Download size="lg" />}>
           Download
         </MenuItem>

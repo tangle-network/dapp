@@ -1,6 +1,7 @@
 import { arrayShuffle } from '@polkadot/util';
 import { ChainIcon } from '@webb-tools/icons';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks';
+import { IconWithTooltip } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { ComponentProps, FC, forwardRef, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -119,11 +120,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
 
           <ChainIconWrapper
             className={cx(
-              'absolute -translate-y-1/2 -translate-x-1/2 top-[15%] left-[15%] z-[1]',
-              {
-                'border-2 border-purple-40 dark:border-purple-90 rounded-full':
-                  !!isDisplaySourceLabel,
-              }
+              'absolute -translate-y-1/2 -translate-x-1/2 top-[15%] left-[15%] z-[1]'
             )}
             size="lg"
             name={displayedChains[0]}
@@ -182,11 +179,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
 
           <ChainIconWrapper
             className={cx(
-              'absolute bottom-[15%] right-[15%] translate-x-1/2 translate-y-1/2 z-[1]',
-              {
-                'border border-purple-40 dark:border-purple-90 bg-purple-40 dark:bg-purple-90 rounded-full':
-                  !!isDisplayDestLabel,
-              }
+              'absolute bottom-[15%] right-[15%] translate-x-1/2 translate-y-1/2 z-[1]'
             )}
             size="lg"
             name={displayedChains[4]}
@@ -291,5 +284,12 @@ export const ChainIconWrapper: FC<ComponentProps<typeof ChainIcon>> = ({
     );
   }
 
-  return <ChainIcon {...props} name={name} className={className} />;
+  return (
+    <span className={className}>
+      <IconWithTooltip
+        icon={<ChainIcon {...props} name={name} />}
+        content={name}
+      />
+    </span>
+  );
 };

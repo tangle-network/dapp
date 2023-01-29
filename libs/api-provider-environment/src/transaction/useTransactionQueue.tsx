@@ -36,7 +36,7 @@ function mapTxToPayload(
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
-  const { amount, wallets, token, tokens } = tx.metaData;
+  const { amount, wallets, token, tokens, tokenURI } = tx.metaData;
 
   let explorerUri = '';
 
@@ -77,6 +77,7 @@ function mapTxToPayload(
     getExplorerURI,
     timestamp: tx.timestamp,
     token,
+    tokenURI,
     tokens: tokens,
     wallets: {
       src: (
