@@ -45,7 +45,7 @@ export const Header: FC<HeaderProps> = () => {
 
         {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
-          {!activeAccount && (
+          {(!activeAccount || !activeChain || !activeWallet) && (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
@@ -92,10 +92,12 @@ export const Header: FC<HeaderProps> = () => {
     </header>
   );
 };
+
 export type ChainSelectionWrapperProps = {
   sourceChains: ChainType[];
   handleOnClose?: () => void;
 };
+
 export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
   sourceChains,
   handleOnClose,
