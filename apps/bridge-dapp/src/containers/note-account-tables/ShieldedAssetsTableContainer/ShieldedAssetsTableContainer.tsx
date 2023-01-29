@@ -26,7 +26,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
-import { EmptyTable, LoadingTable } from '../../components/tables';
+
+import { EmptyTable, LoadingTable } from '../../../components/tables';
+import { downloadNotes } from '../../../utils';
+import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
@@ -129,10 +132,11 @@ export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({
   data = [],
-  onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  ondefaultFungibleCurrencyChange,
+  onDefaultFungibleCurrencyChange,
+  onDeleteNotesChange,
+  onUploadSpendNote,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -145,13 +149,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -164,13 +168,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -183,13 +187,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -236,12 +240,19 @@ export const ShieldedAssetsTableContainer: FC<
                   <WalletLineIcon className="!fill-current" />
                 </Button>
               </ActionWithTooltip>
+
+              <MoreOptionsDropdown
+                onDownloadNotes={() => downloadNotes(shieldedAsset.rawNotes)}
+                onDeleteNotes={() =>
+                  onDeleteNotesChange?.(shieldedAsset.rawNotes)
+                }
+              />
             </div>
           );
         },
       }),
     ],
-    [onDeposit, onTransfer, onWithdraw]
+    [onDeleteNotesChange, onDeposit, onTransfer, onWithdraw]
   );
 
   const table = useReactTable({

@@ -4,7 +4,8 @@ import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React from 'react';
-import { ShieldedAssetDataType } from '../containers/ShieldedAssetsTableContainer/types';
+
+import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
@@ -29,6 +30,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         if (existedChain) {
           existedChain.availableBalance += Number(balance);
           existedChain.numberOfNotesFound += 1;
+          existedChain.rawNotes.push(note);
           return;
         }
 
@@ -58,15 +60,16 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         acc.push({
           chain: chain.name,
-          rawChain: chain,
           fungibleTokenSymbol: tokenSymbol,
-          rawFungibleCurrency: fungibleCurrency,
           assetsUrl,
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
           availableBalance: Number(balance),
           numberOfNotesFound: 1,
+          rawChain: chain,
+          rawFungibleCurrency: fungibleCurrency,
+          rawNotes: [note],
         });
       });
 

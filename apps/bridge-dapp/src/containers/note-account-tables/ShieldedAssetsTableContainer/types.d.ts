@@ -1,6 +1,8 @@
-import { Currency } from '@webb-tools/abstract-api-provider';
-import { Chain } from '@webb-tools/dapp-config';
-import { NoteAccountTableContainerProps } from '../types';
+import type { Currency } from '@webb-tools/abstract-api-provider';
+import type { Chain } from '@webb-tools/dapp-config';
+import type { Note } from '@webb-tools/sdk-core';
+
+import type { NoteAccountTableContainerProps } from '../types';
 
 /**
  * The shielded asset data type for table
@@ -53,6 +55,11 @@ export interface ShieldedAssetDataType {
    * The raw fungible currency object
    */
   rawFungibleCurrency: Currency | undefined;
+
+  /**
+   * The raw notes array
+   */
+  rawNotes: Note[];
 }
 
 export interface ShieldedAssetsTableContainerProps

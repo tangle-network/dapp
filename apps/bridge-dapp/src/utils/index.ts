@@ -1,4 +1,5 @@
+export * from './downloadNotes';
 export * from './errors';
-export * from './getMessageFromTransactionState';
-export * from './getDefaultConnection';
 export * from './getCardTitle';
+export * from './getDefaultConnection';
+export * from './getMessageFromTransactionState';

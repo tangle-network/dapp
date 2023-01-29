@@ -1,7 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/abstract-api-provider';
 import {
   BlockIcon,
   CoinIcon,
@@ -12,34 +11,35 @@ import { useScrollActions } from '@webb-tools/responsive-utils';
 import {
   Button,
   TabContent,
+  TabTrigger,
   TabsList,
   TabsRoot,
-  TabTrigger,
   TransactionQueueCard,
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
+
+import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
+import { InteractiveFeedbackView } from '../components';
 import { ManageButton } from '../components/tables';
+import { DeleteNotesModal, UploadSpendNoteModal } from '../containers';
+import { DepositContainer } from '../containers/DepositContainer';
+import { TransferContainer } from '../containers/TransferContainer';
+import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
-  UploadSpendNoteModal,
-} from '../containers';
-
-import { DepositContainer } from '../containers/DepositContainer';
-import { TransferContainer } from '../containers/TransferContainer';
-import { NoteAccountTableContainerProps } from '../containers/types';
-import { WithdrawContainer } from '../containers/WithdrawContainer';
+} from '../containers/note-account-tables';
+import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
 import {
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
-import { useTxQueue, useNoteAccount } from '@webb-tools/react-hooks';
-import { downloadString } from '@webb-tools/browser-utils';
-import { InteractiveFeedbackView } from '../components';
+import { downloadNotes } from '../utils';
 
 const PageBridge = () => {
   // State for the tabs
@@ -94,8 +94,10 @@ const PageBridge = () => {
   const { allNotes } = useNoteAccount();
   const { notificationApi } = useWebbUI();
 
+  const [deleteNotes, setDeleteNotes] = useState<Note[] | undefined>(undefined);
+
   // download all notes
-  const handleDownload = useCallback(async () => {
+  const handleDownloadAllNotes = useCallback(async () => {
     if (!allNotes.size) {
       notificationApi({
         variant: 'error',
@@ -106,14 +108,10 @@ const PageBridge = () => {
 
     // Serialize all notes to array of string
     const notes = Array.from(allNotes.values()).reduce((acc, curr) => {
-      curr.forEach((note) => {
-        acc.push(note.serialize());
-      });
-      return acc;
-    }, [] as string[]);
+      return acc.concat(curr);
+    }, [] as Note[]);
 
-    // Download the notes as a file
-    downloadString(JSON.stringify(notes), 'notes.json', '.json');
+    downloadNotes(notes);
   }, [allNotes, notificationApi]);
 
   const sharedNoteAccountTableContainerProps =
@@ -122,7 +120,8 @@ const PageBridge = () => {
         onActiveTabChange: handleChangeTab,
         onOpenUploadModal: handleOpenUploadModal,
         onDefaultDestinationChainChange: updateDefaultDestinationChain,
-        ondefaultFungibleCurrencyChange: updatedefaultFungibleCurrency,
+        onDefaultFungibleCurrencyChange: updatedefaultFungibleCurrency,
+        onDeleteNotesChange: (notes) => setDeleteNotes(notes),
       }),
       [
         handleChangeTab,
@@ -287,7 +286,7 @@ const PageBridge = () => {
               <div className="space-x-1">
                 <ManageButton
                   onUpload={handleOpenUploadModal}
-                  onDownload={handleDownload}
+                  onDownload={handleDownloadAllNotes}
                 />
               </div>
             </div>
@@ -313,6 +312,11 @@ const PageBridge = () => {
         />
 
         <TryAnotherWalletModal />
+
+        <DeleteNotesModal
+          notes={deleteNotes}
+          setNotes={(notes) => setDeleteNotes(notes)}
+        />
 
         {/** Last login */}
       </div>
