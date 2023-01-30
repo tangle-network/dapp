@@ -225,41 +225,43 @@ export const TransactionProgressCard = forwardRef<
           </div>
           {/*Card Content*/}
           <div className={twMerge('my-0 flex items-center', sectionPadding)}>
-            <div className={'h-full self-start'}>
-              <div className={'h-full self-start w-8 '}>{tokens}</div>
-            </div>
-            <div className={'px-3'}>
-              <Typography
-                variant={'h4'}
-                fw={'bold'}
-                className={'py-0 text-mono-200'}
-              >
-                {label.amount}
-              </Typography>
-              {labelVariant === 'native' ? (
+            <div className="flex items-start">
+              <div className={'h-full pt-1.5'}>
+                <div className={'h-full w-8'}>{tokens}</div>
+              </div>
+              <div className={'px-3'}>
                 <Typography
-                  variant={'h5'}
+                  variant={'h4'}
                   fw={'bold'}
-                  className={'py-0 text-mono-100'}
+                  className={'py-0 text-mono-200'}
                 >
-                  {(label as NativeLabel).nativeValue} USD
+                  {label.amount}
                 </Typography>
-              ) : (
-                <a
-                  rel="noopener noreferrer"
-                  href={(label as BridgeLabel).tokenURI}
-                  target="_blank"
-                >
+                {labelVariant === 'native' ? (
                   <Typography
-                    variant={'body1'}
+                    variant={'h5'}
                     fw={'bold'}
-                    className="flex items-center py-0 uppercase text-mono-200"
+                    className={'py-0 text-mono-100'}
                   >
-                    {(label as BridgeLabel).token}
-                    <ExternalLinkLine className="!fill-current inline whitespace-nowrap ml-1" />
+                    {(label as NativeLabel).nativeValue} USD
                   </Typography>
-                </a>
-              )}
+                ) : (
+                  <a
+                    rel="noopener noreferrer"
+                    href={(label as BridgeLabel).tokenURI}
+                    target="_blank"
+                  >
+                    <Typography
+                      variant={'body1'}
+                      fw={'bold'}
+                      className="flex items-center py-0 uppercase text-mono-200"
+                    >
+                      {(label as BridgeLabel).token}
+                      <ExternalLinkLine className="!fill-current inline whitespace-nowrap ml-1" />
+                    </Typography>
+                  </a>
+                )}
+              </div>
             </div>
             <div className={'h-full self-start items-end grow flex flex-col'}>
               {hasSyncNote && (
