@@ -260,8 +260,8 @@ export const ShieldedAssetsTableContainer: FC<
   if (!data.length) {
     return (
       <EmptyTable
-        title="No assets found"
-        description="Don't see your assets?"
+        title="No spend notes found"
+        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don’t see your spend note?"
         buttonText="Upload spend Notes"
         onClick={onUploadSpendNote}
       />

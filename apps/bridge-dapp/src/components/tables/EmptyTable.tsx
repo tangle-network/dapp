@@ -11,11 +11,11 @@ export const EmptyTable: FC<EmptyTableProps> = ({
   return (
     <div className="h-[300px] bg-mono-0 dark:bg-mono-160 rounded-lg flex items-center justify-center">
       <div>
-        <Typography variant="h5" ta="center" fw="bold">
+        <Typography variant="h5" ta="center" fw="bold" className='mb-2'>
           {title}
         </Typography>
 
-        <Typography variant="body2" fw="semibold" className="!text-mono-100">
+        <Typography variant="body2" fw="semibold" className="!text-mono-100 px-[180px] text-center">
           {description}
           <Button
             onClick={onClick}
