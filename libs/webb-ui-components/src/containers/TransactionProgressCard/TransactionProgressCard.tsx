@@ -216,9 +216,9 @@ export const TransactionProgressCard = forwardRef<
               <Chip color={chipColor}>{method}</Chip>
             </div>
             <Typography
-              fw={'bold'}
-              variant={'body2'}
-              className={'whitespace-nowrap'}
+              fw={'semibold'}
+              variant={'body1'}
+              className={'whitespace-nowrap uppercase'}
             >
               {timeLabel}
             </Typography>
@@ -238,7 +238,7 @@ export const TransactionProgressCard = forwardRef<
               </Typography>
               {labelVariant === 'native' ? (
                 <Typography
-                  variant={'body1'}
+                  variant={'h5'}
                   fw={'bold'}
                   className={'py-0 text-mono-100'}
                 >
@@ -256,11 +256,7 @@ export const TransactionProgressCard = forwardRef<
                     className="flex items-center py-0 uppercase text-mono-200"
                   >
                     {(label as BridgeLabel).token}
-                    <ExternalLinkLine
-                      width={12}
-                      height={12}
-                      className="!fill-current inline whitespace-nowrap ml-1"
-                    />
+                    <ExternalLinkLine className="!fill-current inline whitespace-nowrap ml-1" />
                   </Typography>
                 </a>
               )}
