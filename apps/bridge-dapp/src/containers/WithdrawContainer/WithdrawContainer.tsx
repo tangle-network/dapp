@@ -2,7 +2,6 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useVAnchor,
   useCurrencies,
   useNoteAccount,
   useRelayers,
@@ -15,7 +14,6 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
-  ChainListCard,
   RelayerListCard,
   TokenListCard,
   WithdrawCard,
@@ -28,6 +26,7 @@ import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
+import { ChainListCardWrapper } from '../../components';
 import { useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
@@ -298,48 +297,18 @@ export const WithdrawContainer = forwardRef<
       : undefined;
 
     setMainComponent(
-      <ChainListCard
-        className="w-[550px] h-[700px]"
+      <ChainListCardWrapper
         chainType="dest"
         chains={otherAvailableChains.map((chain) => ({
           name: chain.name,
           symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
         }))}
         value={activeChainType}
-        currentActiveChain={activeChain?.name}
-        onChange={async (selectedChain) => {
-          const chain = Object.values(chains).find(
-            (val) => val.name === selectedChain.name
-          );
-
-          if (!chain) {
-            throw new Error('Detect unsupported chain is being selected');
-          }
-
-          const isSupported =
-            activeWallet &&
-            activeWallet.supportedChainIds.includes(
-              calculateTypedChainId(chain.chainType, chain.chainId)
-            );
-
-          if (!isSupported) {
-            throw new Error(
-              'Detect unsupported chain is being selected for the wallet'
-            );
-          }
-
-          await switchChain(chain, activeWallet);
-          setMainComponent(undefined);
-        }}
-        onClose={() => {
-          setMainComponent(undefined);
-        }}
       />
     );
   }, [
     activeChain,
     activeWallet,
-    chains,
     otherAvailableChains,
     setMainComponent,
     switchChain,
@@ -592,18 +561,6 @@ export const WithdrawContainer = forwardRef<
                     };
                   })
                   .filter((x) => x !== undefined)}
-                value={
-                  activeRelayer
-                    ? {
-                        address: activeRelayer.beneficiary ?? '',
-                        externalUrl: activeRelayer.endpoint,
-                        theme:
-                          activeChain.chainType === ChainType.EVM
-                            ? 'ethereum'
-                            : 'substrate',
-                      }
-                    : undefined
-                }
                 onClose={() => setMainComponent(undefined)}
                 onChange={(nextRelayer) => {
                   setRelayer(

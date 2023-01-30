@@ -8,33 +8,30 @@ import {
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useVAnchor,
   useNoteAccount,
   useRelayers,
+  useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
-  calculateTypedChainId,
   ChainType as ChainTypeEnum,
   CircomUtxo,
   Keypair,
   Note,
+  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
-  ChainListCard,
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
   TransferCard,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import {
-  AssetType,
-  RelayerType,
-} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChainListCardWrapper, WalletModal } from '../../components';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -42,7 +39,6 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
-import { WalletModal } from '../../components';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -354,9 +350,8 @@ export const TransferContainer = forwardRef<
     // Callback for destination chain input clicked
     const handleDestChainClick = useCallback(() => {
       setMainComponent(
-        <ChainListCard
-          className="w-[550px] h-[700px]"
-          chainType={'dest'}
+        <ChainListCardWrapper
+          chainType="dest"
           chains={availableDestChains.map(
             (chain) =>
               ({
@@ -364,8 +359,6 @@ export const TransferContainer = forwardRef<
               } as ChainType)
           )}
           value={selectedDestChain}
-          currentActiveChain={activeChain?.name}
-          onClose={() => setMainComponent(undefined)}
           onChange={(newChain) => {
             const chain = availableDestChains.find(
               (chain) => chain.name === newChain.name
@@ -378,7 +371,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [availableDestChains, selectedDestChain, setMainComponent, activeChain]);
+    }, [availableDestChains, selectedDestChain, setMainComponent]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(
@@ -434,21 +427,9 @@ export const TransferContainer = forwardRef<
         })
         .filter((x) => !!x);
 
-      const relayerValue = activeRelayer
-        ? ({
-            address: activeRelayer.beneficiary ?? '',
-            externalUrl: activeRelayer.endpoint,
-            theme:
-              activeChain.chainType === ChainTypeEnum.EVM
-                ? 'ethereum'
-                : 'substrate',
-          } as RelayerType)
-        : undefined;
-
       setMainComponent(
         <RelayerListCard
           relayers={relayerList}
-          value={relayerValue}
           className="w-[550px] h-[700px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
@@ -602,7 +583,7 @@ export const TransferContainer = forwardRef<
             return;
           }
 
-          setMainComponent(<WalletModal chain={destChain} sourceChains={[]} />);
+          setMainComponent(<WalletModal chain={destChain} />);
         } catch (error) {
           console.error('Failed to switch chain', error);
         }

@@ -4,11 +4,9 @@ import {
   useCurrencies,
   useCurrenciesBalances,
   useNoteAccount,
-  useVAnchor,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  ChainListCard,
   DepositCard,
   TokenListCard,
   useModal,
@@ -17,7 +15,6 @@ import {
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   AssetType,
-  ChainListCardProps,
   ChainType,
   TokenListCardProps,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
@@ -32,23 +29,23 @@ import {
 } from 'react';
 
 import {
-  ChainSelectionWrapper,
-  ChainSelectionWrapperProps,
+  ChainListCardWrapper,
   WalletModal,
   WalletModalProps,
 } from '../../components';
+import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
 import { getDefaultConnection } from '../../utils';
 import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
 interface MainComponentProposVariants {
-  ['source-chain-list-card']: ChainListCardProps;
-  ['dest-chain-list-card']: ChainListCardProps;
+  ['source-chain-list-card']: ChainListCardWrapperProps;
+  ['dest-chain-list-card']: ChainListCardWrapperProps;
   ['token-deposit-list-card']: TokenListCardProps;
   ['token-wrap-and-deposit-list-card']: TokenListCardProps;
   ['wallet-modal']: WalletModalProps;
-  ['chain-selection-wrapper']: ChainSelectionWrapperProps;
+  ['chain-selection-wrapper']: ChainListCardWrapperProps;
   ['deposit-confirm-container']: DepositConfirmContainerProps;
 }
 
@@ -88,8 +85,6 @@ export const DepositContainer = forwardRef<
       apiConfig: { currencies },
       txQueue,
     } = useWebContext();
-
-    const { api } = useVAnchor();
 
     const [selectedChain, setSelectedChain] = useState<Chain | undefined>(
       undefined
@@ -138,15 +133,6 @@ export const DepositContainer = forwardRef<
         setAmount(parsedAmount);
       }
     }, []);
-
-    const sourceChains: ChainType[] = useMemo(() => {
-      return Object.values(chains).map((val) => {
-        return {
-          name: val.name,
-          symbol: currenciesConfig[val.nativeCurrencyId].symbol,
-        };
-      });
-    }, [chains]);
 
     const destChains: ChainType[] = useMemo(() => {
       if (!activeApi?.state.activeBridge?.targets) {
@@ -338,9 +324,7 @@ export const DepositContainer = forwardRef<
       // No wallet connected
       if (!isWalletConnected) {
         const { defaultChain, sourceChains } = getDefaultConnection(chains);
-        setMainComponent(
-          <WalletModal chain={defaultChain} sourceChains={sourceChains} />
-        );
+        setMainComponent(<WalletModal chain={defaultChain} />);
         return;
       }
 
@@ -578,10 +562,8 @@ export const DepositContainer = forwardRef<
       chains,
     ]);
 
-    const destChainListCardProps = useMemo<ChainListCardProps>(() => {
+    const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
       return {
-        className: 'w-[550px] h-[700px]',
-        overrideScrollAreaProps: { className: 'h-[550px]' },
         chainType: 'dest',
         chains: destChains,
         value: destChainInputValue,
@@ -602,14 +584,9 @@ export const DepositContainer = forwardRef<
       setMainComponentName,
     ]);
 
-    const sourceChainListCardProps = useMemo<ChainListCardProps>(() => {
+    const sourceChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
       return {
-        className: 'w-[550px] h-[700px]',
-        overrideScrollAreaProps: { className: 'h-[550px]' },
-        chainType: 'source',
-        chains: sourceChains,
         value: selectedSourceChain,
-        currentActiveChain: activeChain?.name,
         onChange: async (selectedChain) => {
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
@@ -640,12 +617,10 @@ export const DepositContainer = forwardRef<
     }, [
       switchChain,
       selectedSourceChain,
-      sourceChains,
       chains,
       activeWallet,
       setMainComponentName,
       setSelectedChain,
-      activeChain,
     ]);
 
     const walletModalProps = useMemo<WalletModalProps | undefined>(() => {
@@ -654,17 +629,15 @@ export const DepositContainer = forwardRef<
       }
       return {
         chain: selectedChain,
-        sourceChains,
       };
-    }, [selectedChain, sourceChains]);
+    }, [selectedChain]);
 
     const chainSelectionWrapperProps =
-      useMemo<ChainSelectionWrapperProps>(() => {
+      useMemo<ChainListCardWrapperProps>(() => {
         return {
-          sourceChains,
-          handleOnClose: () => setMainComponentName(undefined),
+          onClose: () => setMainComponentName(undefined),
         };
-      }, [sourceChains]);
+      }, []);
 
     const [depositConfirmContainerProps, setDepositContainerProps] = useState<
       DepositConfirmContainerProps | undefined
@@ -692,7 +665,7 @@ export const DepositContainer = forwardRef<
 
         case 'source-chain-list-card':
           return [
-            ChainListCard,
+            ChainListCardWrapper,
             {
               'source-chain-list-card': sourceChainListCardProps,
             },
@@ -700,7 +673,7 @@ export const DepositContainer = forwardRef<
 
         case 'dest-chain-list-card':
           return [
-            ChainListCard,
+            ChainListCardWrapper,
             {
               'dest-chain-list-card': destChainListCardProps,
             },
@@ -718,7 +691,7 @@ export const DepositContainer = forwardRef<
 
         case 'chain-selection-wrapper':
           return [
-            ChainSelectionWrapper,
+            ChainListCardWrapper,
             {
               'chain-selection-wrapper': chainSelectionWrapperProps,
             },

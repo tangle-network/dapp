@@ -1,23 +1,21 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Button,
-  ChainListCard,
   Logo,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import * as constants from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
+import { getDefaultConnection } from '../../utils';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
-import { HeaderProps } from './types';
 import { WalletButton } from './WalletButton';
 import { WalletModal } from './WalletModal';
-import { getDefaultConnection } from '../../utils';
+import { HeaderProps } from './types';
+
 /**
  * The statistic `Header` for `Layout` container
  */
@@ -29,11 +27,9 @@ export const Header: FC<HeaderProps> = () => {
 
   // On connect wallet button click - connect to the default chain(ETH Goerli)
   const onConnectWalletClick = useCallback(() => {
-    const { defaultChain, sourceChains } = getDefaultConnection(chains);
+    const { defaultChain } = getDefaultConnection(chains);
 
-    setMainComponent(
-      <WalletModal chain={defaultChain} sourceChains={sourceChains} />
-    );
+    setMainComponent(<WalletModal chain={defaultChain} />);
   }, [chains, setMainComponent]);
 
   return (
@@ -90,58 +86,5 @@ export const Header: FC<HeaderProps> = () => {
         </div>
       </div>
     </header>
-  );
-};
-
-export type ChainSelectionWrapperProps = {
-  sourceChains: ChainType[];
-  handleOnClose?: () => void;
-};
-
-export const ChainSelectionWrapper: FC<ChainSelectionWrapperProps> = ({
-  sourceChains,
-  handleOnClose,
-}) => {
-  const { chains, activeWallet, activeChain, switchChain } = useWebContext();
-  const { setMainComponent } = useWebbUI();
-
-  return (
-    <ChainListCard
-      className="w-[550px] h-[700px]"
-      overrideScrollAreaProps={{ className: 'h-[550px]' }}
-      chainType="source"
-      chains={sourceChains}
-      currentActiveChain={activeChain?.name}
-      onChange={async (selectedChain) => {
-        const chain = Object.values(chains).find(
-          (val) => val.name === selectedChain.name
-        );
-
-        if (!chain) {
-          throw new Error('Detect unsupported chain is being selected');
-        }
-
-        const isSupported =
-          activeWallet &&
-          activeWallet.supportedChainIds.includes(
-            calculateTypedChainId(chain.chainType, chain.chainId)
-          );
-
-        // If the selected chain is supported by the active wallet
-        if (isSupported) {
-          await switchChain(chain, activeWallet);
-          setMainComponent(undefined);
-          return;
-        }
-
-        setMainComponent(
-          <WalletModal chain={chain} sourceChains={sourceChains} />
-        );
-      }}
-      onClose={() => {
-        setMainComponent(undefined);
-        if (handleOnClose) handleOnClose();
-      }}
-    />
   );
 };
