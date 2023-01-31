@@ -27,10 +27,10 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
         <RadioGroup.Item
           {...overrideRadixRadioItemProps}
           className={twMerge(
-            'w-[18px] h-[18px] rounded-full bg-mono-0 dark:bg-mono-180 border border-mono-100',
-            'hover:bg-blue-10 hover:dark:bg-blue-120',
-            'radix-state-unchecked:hover:border-blue-40 radix-state-unchecked:hover:dark:border-blue-90',
-            'radix-state-unchecked:hover:shadow-[0_0_0_1px_rgba(213,230,255,1)] hover:dark:shadow-none',
+            'peer w-[18px] h-[18px] rounded-full bg-mono-0 dark:bg-mono-180 border border-mono-100',
+            'enabled:radix-state-unchecked:hover:bg-blue-10 enabled:radix-state-unchecked:hover:dark:bg-blue-120',
+            'enabled:radix-state-unchecked:hover:border-blue-40 enabled:radix-state-unchecked:hover:dark:border-blue-90',
+            'enabled:radix-state-unchecked:hover:shadow-[0_0_0_1px_rgba(213,230,255,1)] hover:dark:shadow-none',
             'radix-state-checked:border-2 radix-state-checked:border-blue-70 dark:radix-state-checked:border-blue-50',
             'radix-disabled:border-mono-80 dark:radix-disabled:border-mono-120 dark:radix-disabled:bg-mono-140',
             overrideRadixRadioItemProps?.className

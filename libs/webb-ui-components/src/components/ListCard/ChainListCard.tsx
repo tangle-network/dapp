@@ -16,17 +16,22 @@ import { RadioGroup, RadioItem } from '../Radio';
 export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
     {
-      chainType,
       chains,
+      chainType,
+      currentActiveChain,
       onChange,
       onClose,
-      value: selectedChain,
+      onlyCategory,
       overrideScrollAreaProps,
-      currentActiveChain,
+      value: selectedChain,
       ...props
     },
     ref
   ) => {
+    // State for network category
+    const [networkCategory, setNetworkCategory] =
+      useState<ChainType['tag']>('test');
+
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
 
     // Search text
@@ -54,20 +59,15 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
     const filteredChains = useMemo(
       () =>
-        chains.filter(
-          (c) =>
-            c.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            c.symbol.toLowerCase().includes(searchText.toLowerCase())
-        ),
-      [chains, searchText]
+        chains
+          .filter(
+            (c) =>
+              c.name.toLowerCase().includes(searchText.toLowerCase()) ||
+              c.symbol.toLowerCase().includes(searchText.toLowerCase())
+          ) // Filter by search text
+          .filter((chain) => chain.tag === networkCategory), // Filter by network category
+      [chains, searchText, networkCategory]
     );
-
-    // Calculate the netowrk categories by tag
-    const networkCategories = useMemo(() => {
-      const categories = new Set<string>();
-      chains.forEach((chain) => categories.add(chain.tag));
-      return Array.from(categories);
-    }, [chains]);
 
     return (
       <ListCardWrapper
@@ -166,16 +166,41 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           </div>
 
           {/** Network categories */}
-          <RadioGroup className="flex items-center justify-center py-4 space-x-4">
-            {networkCategories.map((category, idx) => (
-              <RadioItem
-                key={`${category}-${idx}`}
-                id={category}
-                value={category}
-              >
-                {category}
-              </RadioItem>
-            ))}
+          <RadioGroup
+            defaultValue={networkCategory}
+            value={networkCategory}
+            onValueChange={(val) => setNetworkCategory(val as ChainType['tag'])}
+            className="flex items-center justify-center py-4 space-x-4"
+          >
+            <RadioItem
+              id="live"
+              value="live"
+              overrideRadixRadioItemProps={{
+                disabled: onlyCategory && onlyCategory !== 'live',
+              }}
+            >
+              Live
+            </RadioItem>
+
+            <RadioItem
+              id="test"
+              value="test"
+              overrideRadixRadioItemProps={{
+                disabled: onlyCategory && onlyCategory !== 'test',
+              }}
+            >
+              Testnet
+            </RadioItem>
+
+            <RadioItem
+              id="dev"
+              value="dev"
+              overrideRadixRadioItemProps={{
+                disabled: onlyCategory && onlyCategory !== 'dev',
+              }}
+            >
+              Development
+            </RadioItem>
           </RadioGroup>
         </div>
       </ListCardWrapper>

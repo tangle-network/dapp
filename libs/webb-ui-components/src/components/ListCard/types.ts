@@ -106,6 +106,12 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   onChange?: (nextChain: ChainType) => void;
 
   /**
+   * Only enable the chain with specific category,
+   * if not provided, all chain will be enabled
+   */
+  onlyCategory?: 'dev' | 'test' | 'live';
+
+  /**
    * The override ScrollArea component props
    */
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
