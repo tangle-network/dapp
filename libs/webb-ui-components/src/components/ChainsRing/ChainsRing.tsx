@@ -96,7 +96,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
       <div
         {...props}
         className={cx(
-          'flex items-center justify-center w-[500px] h-[210px] box-border mx-auto',
+          'flex items-center justify-center w-[500px] pb-4 box-border mx-auto',
           className
         )}
         ref={ref}
@@ -104,7 +104,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         <div className="relative">
           <svg
             width={184}
-            height={183}
+            height={184}
             fill="none"
             xmlns="http://www.w3.org/2000/svtg"
           >
@@ -244,7 +244,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             )}
           >
             <Typography
-              variant="body4"
+              variant="body1"
               fw="bold"
               className="text-mono-160 dark:text-mono-0"
             >
@@ -252,7 +252,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             </Typography>
             {tokenPairString && (
               <Typography
-                variant="body4"
+                variant="body2"
                 fw="bold"
                 className="uppercase text-mono-140 dark:text-mono-80"
               >

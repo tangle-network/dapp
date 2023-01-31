@@ -21,6 +21,7 @@ import {
 } from '../../components';
 import { WithdrawConfirmationProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
+import { shortenString } from '../../utils';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -125,60 +126,65 @@ export const WithdrawConfirm = forwardRef<
             </div>
           </Section>
 
-          {/** Relayer */}
-          {relayerAddress && (
-            <Section>
-              <div className="space-y-1">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Relayer"
-                  info="Relayer"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
+          <div className="flex space-x-2">
+            {/** Relayer */}
+            {relayerAddress && (
+              <Section className="flex-initial w-[210px]">
+                <div className="space-y-1">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Relayer"
+                    info="Relayer"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
 
-                <div className="flex items-center space-x-1">
-                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
+                  <div className="flex items-center space-x-1">
+                    <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
+                    <Typography variant="body1" fw="bold">
+                      {relayerAddress.toLowerCase().startsWith('0x')
+                        ? shortenString(relayerAddress.substring(2), 5)
+                        : shortenString(relayerAddress, 5)}
+                    </Typography>
 
-                  <Typography variant="body1" fw="bold">
-                    {relayerAddress}
-                  </Typography>
-
-                  <a
-                    target="_blank"
-                    href={relayerExternalUrl}
-                    rel="noreferrer noopener"
-                  >
-                    <ExternalLinkLine />
-                  </a>
+                    <a
+                      target="_blank"
+                      href={relayerExternalUrl}
+                      rel="noreferrer noopener"
+                    >
+                      <ExternalLinkLine />
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </Section>
-          )}
+              </Section>
+            )}
 
-          {/** Unshielded address */}
-          {recipientAddress && (
-            <Section>
-              <div className="space-y-1">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Recipient address"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
-                <Typography variant="body1" fw="bold">
-                  {recipientAddress}
-                </Typography>
-              </div>
-            </Section>
-          )}
-        </WrapperSection>
+            {/** Unshielded address */}
+            {recipientAddress && (
+              <Section className="flex-initial w-[284px]">
+                <div className="space-y-1">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Recipient address"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="block break-words"
+                  >
+                    {recipientAddress}
+                  </Typography>
+                </div>
+              </Section>
+            )}
+          </div>
 
-        {/** The change note */}
-        {note && (
-          <WrapperSection>
+          {/** The change note */}
+          {note && (
             <Section>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -224,8 +230,8 @@ export const WithdrawConfirm = forwardRef<
                 </CheckBox>
               </div>
             </Section>
-          </WrapperSection>
-        )}
+          )}
+        </WrapperSection>
 
         {/** Transaction Details */}
         <div className="space-y-2">
