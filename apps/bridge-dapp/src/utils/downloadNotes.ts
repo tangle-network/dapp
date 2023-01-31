@@ -7,7 +7,7 @@ import React from 'react';
  * @param notes the notes to download
  * @returns boolean - true if the download was successful
  */
-export const downloadNotes = (notes: Note[]) => {
+export const downloadNotes = (notes: Note[]): boolean => {
   const serializedNotes = notes.map((note) => note.serialize());
 
   try {

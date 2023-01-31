@@ -298,7 +298,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           const acs = await accounts.accounts();
           const active = acs[0] || null;
           setAccounts(acs);
-          _setActiveAccount(acs[0] || null);
+          _setActiveAccount(active);
         });
       } else {
         setActiveApi(nextActiveApi);
