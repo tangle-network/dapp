@@ -9752,7 +9752,7 @@
     "@webb-tools/sdk-core" "0.1.4-113"
     ethers "5.7.0"
 
-"@webb-tools/utils@0.5.12", "@webb-tools/utils@^0.5.7":
+"@webb-tools/utils@0.5.7", "@webb-tools/utils@^0.5.7":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.7.tgz#a84d3c3edc3686663c5608156208599038abf7f8"
   integrity sha512-Ng0YSsyH/JccVvKS/GN5WBDoYA2DTAnJjniLFI+QR7PKxQMZdmqA2hEzVu7KWSp7myffEgBGrpngs5uuHgRrjA==

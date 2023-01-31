@@ -202,7 +202,7 @@
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "@webb-tools/sdk-core": "0.1.4-119",
     "@webb-tools/tokens": "0.5.12",
-    "@webb-tools/utils": "0.5.12",
+    "@webb-tools/utils": "0.5.7",
     "@webb-tools/wasm-utils": "0.1.4-119",
     "autoprefixer": "10.4.13",
     "babel-jest": "28.1.1",
