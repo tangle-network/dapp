@@ -28,11 +28,15 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  ChainType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { ChainListCardWrapper, WalletModal } from '../../components';
+import { ChainListCardWrapper } from '../../components';
+import { useConnectWallet } from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -40,7 +44,6 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
-import { useConnectWallet } from '../../hooks';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -344,14 +347,15 @@ export const TransferContainer = forwardRef<
     }, [selectedBridgingAsset, currencyRecordFromNotes, allDestChains]);
 
     // Selected destination chain
-    const selectedDestChain = useMemo<ChainType | undefined>(() => {
+    const selectedDestChain = useMemo<InputChainType | undefined>(() => {
       if (!destChain) {
         return undefined;
       }
 
       return {
         name: destChain.name,
-      } as ChainType;
+        symbol: destChain.name,
+      } as InputChainType;
     }, [destChain]);
 
     // Callback for destination chain input clicked
@@ -363,9 +367,10 @@ export const TransferContainer = forwardRef<
             (chain) =>
               ({
                 name: chain.name,
+                symbol: chain.name,
+                tag: chain.tag,
               } as ChainType)
           )}
-          value={selectedDestChain}
           onChange={(newChain) => {
             const chain = availableDestChains.find(
               (chain) => chain.name === newChain.name
@@ -378,7 +383,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [availableDestChains, selectedDestChain, setMainComponent]);
+    }, [availableDestChains, setMainComponent]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(

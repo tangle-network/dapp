@@ -9,7 +9,7 @@ export interface ChainConfig {
   name: string;
   group: string;
   chainId: number;
-  tag?: 'dev' | 'test' | 'live';
+  tag: 'dev' | 'test' | 'live';
   url: string;
   evmRpcUrls?: string[];
   blockExplorerStub?: string;

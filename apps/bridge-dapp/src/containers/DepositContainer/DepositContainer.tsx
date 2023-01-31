@@ -9,7 +9,6 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   DepositCard,
   TokenListCard,
-  useModal,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -28,10 +27,9 @@ import {
   useState,
 } from 'react';
 
-import { ChainListCardWrapper, WalletModal } from '../../components';
+import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
 import { useConnectWallet } from '../../hooks';
-import { CreateAccountModal } from '../CreateAccountModal';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
@@ -132,10 +130,10 @@ export const DepositContainer = forwardRef<
           const maybeChain = chains[Number(val)];
           if (maybeChain) {
             return {
-              name: chains[Number(val)].name,
-              symbol:
-                currenciesConfig[chains[Number(val)].nativeCurrencyId].symbol,
-            };
+              name: maybeChain.name,
+              tag: maybeChain.tag,
+              symbol: currenciesConfig[maybeChain.nativeCurrencyId].symbol,
+            } as ChainType;
           }
           return undefined;
         })
@@ -159,6 +157,7 @@ export const DepositContainer = forwardRef<
 
       return {
         name: activeChain.name,
+        tag: activeChain.tag,
         symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
       };
     }, [activeChain, sourceChain]);

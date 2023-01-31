@@ -3,7 +3,8 @@ import { currenciesConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { WalletModal } from '../Header';
+
+import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
 
 /**
@@ -19,6 +20,8 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   ...props
 }) => {
   const { setMainComponent } = useWebbUI();
+
+  const { toggleModal } = useConnectWallet();
 
   const {
     activeChain,
@@ -48,6 +51,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     return Object.values(chainsConfig).map((val) => {
       return {
         name: val.name,
+        tag: val.tag,
         symbol: currenciesConfig[val.nativeCurrencyId].symbol,
       };
     });
@@ -81,9 +85,16 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
         return;
       }
 
-      setMainComponent(<WalletModal chain={chain} />);
+      toggleModal(true, chain);
     },
-    [activeWallet, chainsConfig, onChange, setMainComponent, switchChain]
+    [
+      activeWallet,
+      chainsConfig,
+      onChange,
+      setMainComponent,
+      switchChain,
+      toggleModal,
+    ]
   );
 
   return (
@@ -94,7 +105,6 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       currentActiveChain={currentActiveChain}
       onChange={handleChainChange}
       onClose={handleClose}
-      overrideScrollAreaProps={{ className: 'h-[550px]' }}
       {...props}
     />
   );

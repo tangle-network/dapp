@@ -326,6 +326,7 @@ export const WithdrawContainer = forwardRef<
     const activeChainType = activeChain
       ? {
           name: activeChain.name,
+          tag: activeChain.tag,
           symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
         }
       : undefined;
@@ -335,6 +336,7 @@ export const WithdrawContainer = forwardRef<
         chainType="dest"
         chains={otherAvailableChains.map((chain) => ({
           name: chain.name,
+          tag: chain.tag,
           symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
         }))}
         value={activeChainType}
@@ -488,6 +490,7 @@ export const WithdrawContainer = forwardRef<
     currentTypedChainId,
     fungibleCurrency,
     handleSwitchToOtherDestChains,
+    hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
     isWalletConnected,
@@ -495,6 +498,7 @@ export const WithdrawContainer = forwardRef<
     otherAvailableChains.length,
     recipient,
     setMainComponent,
+    setOpenNoteAccountModal,
     toggleModal,
     txQueue.txPayloads,
     wrappableCurrency,
