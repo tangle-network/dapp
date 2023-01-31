@@ -243,7 +243,6 @@ export const WithdrawContainer = forwardRef<
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
-      otherAvailableChains.length > 0, // Other available chains
     ].some((value) => value === false);
   }, [
     fungibleCurrency,
@@ -252,7 +251,6 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     recipient,
     isValidRecipient,
-    otherAvailableChains.length,
   ]);
 
   const buttonText = useMemo(() => {
@@ -334,6 +332,7 @@ export const WithdrawContainer = forwardRef<
     setMainComponent(
       <ChainListCardWrapper
         chainType="dest"
+        onlyCategory={activeChain?.tag}
         chains={otherAvailableChains.map((chain) => ({
           name: chain.name,
           tag: chain.tag,
@@ -644,7 +643,12 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         withdrawBtnProps={{
-          isDisabled: isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+          isDisabled:
+            isWalletConnected &&
+            hasNoteAccount &&
+            otherAvailableChains.length > 0
+              ? false
+              : true && isDisabledWithdraw,
           children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}
