@@ -36,7 +36,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
-      <div className="flex items-center">
+      <div className="flex items-center justify-center">
         <IconWithTooltip
           icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
           content={props.getValue<string>()}
@@ -52,7 +52,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center justify-center space-x-1.5">
           <Typography className="uppercase" variant="body1" fw="bold">
             {fungibleTokenSymbol}
           </Typography>
@@ -77,7 +77,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       const numOfHiddenTokens = composition.length - 2;
 
       return (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center justify-center space-x-1">
           {firstTwoTokens.length === 1 ? (
             <IconWithTooltip
               icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}
@@ -101,18 +101,18 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 
   columnHelper.accessor('balance', {
-    header: 'Available Balance',
+    header: 'Balance',
     cell: (props) => (
-      <Typography variant="body1" fw="bold">
+      <Typography variant="body1" fw="bold" ta="center">
         {props.getValue()}
       </Typography>
     ),
   }),
 
   columnHelper.accessor('subsequentDeposits', {
-    header: 'Subsequent deposits',
+    header: 'Subsequent Deposits',
     cell: (props) => (
-      <Typography ta="left" variant="body1">
+      <Typography ta="center" variant="body1">
         {props.getValue()}
       </Typography>
     ),
@@ -121,12 +121,14 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('note', {
     header: 'Note',
     cell: (props) => (
-      <KeyValueWithButton
-        shortenFn={(note: string) => shortenString(note, 4)}
-        isHiddenLabel
-        size="sm"
-        keyValue={props.getValue()}
-      />
+      <div className="flex items-center justify-center">
+        <KeyValueWithButton
+          shortenFn={(note: string) => shortenString(note, 4)}
+          isHiddenLabel
+          size="sm"
+          keyValue={props.getValue()}
+        />
+      </div>
     ),
   }),
 ];
@@ -193,12 +195,12 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
       <Table
-        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
+        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160 text-center"
         tdClassName="min-w-max"
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="available notes"
+        title="notes"
       />
     </div>
   );
@@ -266,3 +268,4 @@ const ActionDropdownButton: FC<
     </Dropdown>
   );
 };
+
