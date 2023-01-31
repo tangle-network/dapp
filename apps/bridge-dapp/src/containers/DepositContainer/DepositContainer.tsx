@@ -55,7 +55,6 @@ export const DepositContainer = forwardRef<
       defaultDestinationChain,
       defaultFungibleCurrency,
       onTryAnotherWallet,
-      hasNoteAccount,
       ...props
     },
     ref
@@ -102,13 +101,7 @@ export const DepositContainer = forwardRef<
 
     const balances = useCurrenciesBalances(allTokens);
 
-    const { status: isNoteAccountModalOpen, update: setNoteAccountModalOpen } =
-      useModal(false);
-
-    const { syncNotes } = useNoteAccount();
-
-    // State for note account creation success
-    const [isNoteAccountCreated, setIsNoteAccountCreated] = useState(false);
+    const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
     const [isGeneratingNote, setIsGeneratingNote] = useState(false);
 
@@ -316,7 +309,7 @@ export const DepositContainer = forwardRef<
 
       // No note account exists
       if (!hasNoteAccount) {
-        setNoteAccountModalOpen(true);
+        setOpenNoteAccountModal(true);
         return;
       }
 
@@ -381,7 +374,7 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       resetMainComponent,
       toggleModal,
-      setNoteAccountModalOpen,
+      setOpenNoteAccountModal,
     ]);
 
     // Only disable button when the wallet is connected and exists a note account
@@ -439,23 +432,6 @@ export const DepositContainer = forwardRef<
       selectedSourceChain,
       setMainComponentName,
     ]);
-
-    const handleOpenChange = useCallback(
-      async (nextOpen: boolean) => {
-        setNoteAccountModalOpen(nextOpen);
-
-        // If the modal close and the user has a note account
-        // then we will sync the notes
-        if (!nextOpen && isNoteAccountCreated) {
-          try {
-            await syncNotes();
-          } catch (error) {
-            console.log('Error while syncing notes', error);
-          }
-        }
-      },
-      [isNoteAccountCreated, setNoteAccountModalOpen, syncNotes]
-    );
 
     const handleMaxBtnClick = useCallback(() => {
       const balance = selectedToken?.balance ?? '0';
@@ -692,58 +668,49 @@ export const DepositContainer = forwardRef<
     }, [setMainComponentArgs, setMainComponent]);
 
     return (
-      <>
-        <div {...props} ref={ref}>
-          <DepositCard
-            className="h-[615px]"
-            sourceChainProps={{
-              chain: selectedSourceChain,
-              onClick: sourceChainInputOnClick,
-              chainType: 'source',
-              info: 'Source chain',
-            }}
-            bridgingTokenProps={bridgingTokenProps}
-            destChainProps={{
-              chain: destChainInputValue,
-              onClick: () => {
-                setMainComponentName('dest-chain-list-card');
-              },
-              chainType: 'dest',
-              info: 'Destination chain',
-            }}
-            tokenInputProps={{
-              onClick: () => {
-                if (selectedSourceChain) {
-                  setMainComponentName('token-deposit-list-card');
-                }
-              },
-              token: selectedToken,
-            }}
-            amountInputProps={{
-              amount: amount ? amount.toString() : undefined,
-              onAmountChange,
-              onMaxBtnClick: handleMaxBtnClick,
-              isDisabled: !selectedToken || !destChain,
-              errorMessage: amountErrorMessage,
-            }}
-            buttonProps={{
-              onClick: handleDepositButtonClick,
-              isLoading: loading || isGeneratingNote,
-              loadingText: loading ? 'Connecting...' : 'Generating Note...',
-              isDisabled,
-              children: buttonText,
-            }}
-            token={selectedToken?.symbol}
-          />
-        </div>
-
-        <CreateAccountModal
-          isOpen={isNoteAccountModalOpen}
-          onOpenChange={handleOpenChange}
-          isSuccess={isNoteAccountCreated}
-          onIsSuccessChange={(success) => setIsNoteAccountCreated(success)}
+      <div {...props} ref={ref}>
+        <DepositCard
+          className="h-[615px]"
+          sourceChainProps={{
+            chain: selectedSourceChain,
+            onClick: sourceChainInputOnClick,
+            chainType: 'source',
+            info: 'Source chain',
+          }}
+          bridgingTokenProps={bridgingTokenProps}
+          destChainProps={{
+            chain: destChainInputValue,
+            onClick: () => {
+              setMainComponentName('dest-chain-list-card');
+            },
+            chainType: 'dest',
+            info: 'Destination chain',
+          }}
+          tokenInputProps={{
+            onClick: () => {
+              if (selectedSourceChain) {
+                setMainComponentName('token-deposit-list-card');
+              }
+            },
+            token: selectedToken,
+          }}
+          amountInputProps={{
+            amount: amount ? amount.toString() : undefined,
+            onAmountChange,
+            onMaxBtnClick: handleMaxBtnClick,
+            isDisabled: !selectedToken || !destChain,
+            errorMessage: amountErrorMessage,
+          }}
+          buttonProps={{
+            onClick: handleDepositButtonClick,
+            isLoading: loading || isGeneratingNote,
+            loadingText: loading ? 'Connecting...' : 'Generating Note...',
+            isDisabled,
+            children: buttonText,
+          }}
+          token={selectedToken?.symbol}
         />
-      </>
+      </div>
     );
   }
 );

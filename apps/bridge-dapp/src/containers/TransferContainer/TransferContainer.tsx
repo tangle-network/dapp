@@ -47,12 +47,7 @@ export const TransferContainer = forwardRef<
   TransferContainerProps
 >(
   (
-    {
-      defaultDestinationChain,
-      defaultFungibleCurrency,
-      hasNoteAccount,
-      onTryAnotherWallet,
-    },
+    { defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet },
     ref
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
@@ -62,7 +57,8 @@ export const TransferContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { allNotes } = useNoteAccount();
+    const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
+      useNoteAccount();
 
     const { api } = useVAnchor();
 
@@ -619,6 +615,12 @@ export const TransferContainer = forwardRef<
         return;
       }
 
+      // No note account exists
+      if (!hasNoteAccount) {
+        setOpenNoteAccountModal(true);
+        return;
+      }
+
       if (
         !fungibleCurrency ||
         !destChain ||
@@ -735,6 +737,7 @@ export const TransferContainer = forwardRef<
     }, [
       txQueue.txPayloads,
       isWalletConnected,
+      hasNoteAccount,
       fungibleCurrency,
       destChain,
       api,
@@ -749,6 +752,7 @@ export const TransferContainer = forwardRef<
       setMainComponent,
       activeRelayer,
       toggleModal,
+      setOpenNoteAccountModal,
       handleSwitchChain,
     ]);
 

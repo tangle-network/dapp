@@ -19,9 +19,4 @@ export interface BridgeTabContainerProps {
    * The on try another wallet callback
    */
   onTryAnotherWallet?: () => void;
-
-  /**
-   * Whether the user has note account
-   */
-  hasNoteAccount?: boolean;
 }

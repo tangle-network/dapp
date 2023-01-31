@@ -25,7 +25,11 @@ import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { InteractiveFeedbackView, WalletModal } from '../components';
 import { ManageButton } from '../components/tables';
-import { DeleteNotesModal, UploadSpendNoteModal } from '../containers';
+import {
+  CreateAccountModal,
+  DeleteNotesModal,
+  UploadSpendNoteModal,
+} from '../containers';
 import { DepositContainer } from '../containers/DepositContainer';
 import { TransferContainer } from '../containers/TransferContainer';
 import { WithdrawContainer } from '../containers/WithdrawContainer';
@@ -100,7 +104,13 @@ const PageBridge = () => {
     []
   );
 
-  const { allNotes } = useNoteAccount();
+  const {
+    allNotes,
+    isOpenNoteAccountModal,
+    isSuccessfullyCreatedNoteAccount,
+    setOpenNoteAccountModal,
+    setSuccessfullyCreatedNoteAccount,
+  } = useNoteAccount();
   const { notificationApi } = useWebbUI();
 
   const [deleteNotes, setDeleteNotes] = useState<Note[] | undefined>(undefined);
@@ -151,28 +161,18 @@ const PageBridge = () => {
   const { TryAnotherWalletModal, onTryAnotherWallet } =
     useTryAnotherWalletWithView();
 
-  const { isWalletConnected } = useConnectWallet();
-
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
     [txPayloads]
   );
 
-  const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
-
   const sharedBridgeTabContainerProps = useMemo(
     () => ({
       defaultDestinationChain: defaultDestinationChain,
       defaultFungibleCurrency: defaultFungibleCurrency,
-      hasNoteAccount: hasNoteAccount,
       onTryAnotherWallet: onTryAnotherWallet,
     }),
-    [
-      defaultDestinationChain,
-      defaultFungibleCurrency,
-      hasNoteAccount,
-      onTryAnotherWallet,
-    ]
+    [defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet]
   );
 
   return (
@@ -335,6 +335,15 @@ const PageBridge = () => {
         />
 
         <WalletModal />
+
+        <CreateAccountModal
+          isOpen={isOpenNoteAccountModal}
+          onOpenChange={(isOpen) => setOpenNoteAccountModal(isOpen)}
+          isSuccess={isSuccessfullyCreatedNoteAccount}
+          onIsSuccessChange={(success) =>
+            setSuccessfullyCreatedNoteAccount(success)
+          }
+        />
 
         {/** Last login */}
       </div>

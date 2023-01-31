@@ -35,7 +35,7 @@ import { WithdrawContainerProps } from './types';
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ defaultFungibleCurrency, onTryAnotherWallet, hasNoteAccount }, ref) => {
+>(({ defaultFungibleCurrency, onTryAnotherWallet }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -85,7 +85,8 @@ export const WithdrawContainer = forwardRef<
         : undefined,
   });
 
-  const { allNotes } = useNoteAccount();
+  const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
+    useNoteAccount();
 
   const shieldedAssets = useShieldedAssets();
 
@@ -359,6 +360,12 @@ export const WithdrawContainer = forwardRef<
     // No wallet connected
     if (!isWalletConnected) {
       toggleModal(true);
+      return;
+    }
+
+    // No note account exists
+    if (!hasNoteAccount) {
+      setOpenNoteAccountModal(true);
       return;
     }
 
