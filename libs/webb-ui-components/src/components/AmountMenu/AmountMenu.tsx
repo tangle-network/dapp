@@ -26,7 +26,7 @@ export const AmountMenu = forwardRef<HTMLDivElement, AmountMenuProps>(
     return (
       <div
         {...props}
-        className={twMerge('flex flex-col p-2 space-y-2', className)}
+        className={twMerge('flex flex-col p-4 space-y-2', className)}
         ref={ref}
       >
         <div>
