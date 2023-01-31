@@ -6,19 +6,17 @@ export const getTokenURI = (token: string, chainID: string) => {
   const tokenID = webbCurrencyIdFromString(token);
   const currency = currenciesConfig[tokenID];
 
-  const explorerUri = chainsConfig[Number(chainID)]?.blockExplorerStub ?? '';
+  const blockExplorerStub =
+    chainsConfig[Number(chainID)]?.blockExplorerStub ?? '';
 
-  const getExplorerURI = (
-    addOrTxHash: string,
-    variant: 'tx' | 'address'
-  ): string => {
-    return `${
-      explorerUri.endsWith('/') ? explorerUri : explorerUri + '/'
-    }${variant}/${addOrTxHash}`;
-  };
+  let explorerURI;
 
-  return getExplorerURI(
-    currency.addresses.get(Number(chainID)) ?? '',
-    'address'
-  );
+  explorerURI = blockExplorerStub.endsWith('/')
+    ? blockExplorerStub
+    : blockExplorerStub + '/';
+
+  explorerURI =
+    explorerURI + `address/${currency.addresses.get(Number(chainID)) ?? ''}`;
+
+  return explorerURI;
 };

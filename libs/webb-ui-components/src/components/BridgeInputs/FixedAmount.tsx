@@ -1,14 +1,14 @@
 import { ChevronDown } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
-
 import { AmountMenu } from '../AmountMenu';
 import { Button } from '../Button';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { InputWrapper } from './InputWrapper';
 import { FixedAmountProps } from './types';
+import { Dropdown, DropdownBody } from '../Dropdown';
+import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 
 /**
  * The `FixedAmount` component
@@ -46,9 +46,6 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   ) => {
     const [value, setValue] = useState(() => valueProp);
 
-    // Tooltip state
-    const [isOpen, setIsOpen] = useState(false);
-
     const onClick = useCallback(
       (nextVal: number) => {
         setValue(nextVal);
@@ -60,7 +57,6 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
     // The amount menu callback
     const onAmountTypeChange = useCallback(
       (nextVal: 'fixed' | 'custom') => {
-        setIsOpen(false);
         amountMenuProps?.onChange?.(nextVal);
       },
       [amountMenuProps]
@@ -74,31 +70,32 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
       <InputWrapper {...props} ref={ref}>
         <div className="flex flex-col w-full space-y-2">
           <Label htmlFor={id} className="flex items-center space-x-2">
-            <TitleWithInfo
-              title={title}
-              info={info}
-              variant="utility"
-              titleComponent="span"
-              className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
-            />
             {amountMenuProps && (
-              <Tooltip
-                delayDuration={100}
-                isOpen={isOpen}
-                onChange={(next) => setIsOpen(next)}
-              >
-                <TooltipTrigger>
-                  <ChevronDown />
-                </TooltipTrigger>
-
-                <TooltipBody>
+              <Dropdown>
+                <DropdownTrigger asChild className="flex items-start space-x-1">
+                  <span>
+                    <TitleWithInfo
+                      title={title}
+                      info={info}
+                      variant="utility"
+                      titleComponent="span"
+                      className="text-mono-100 dark:text-mono-80"
+                      titleClassName="uppercase !text-inherit"
+                    />
+                    <ChevronDown />
+                  </span>
+                </DropdownTrigger>
+                <DropdownBody
+                  isPorttal={false}
+                  align="start"
+                  className="z-10 mt-1"
+                >
                   <AmountMenu
                     {...amountMenuProps}
                     onChange={onAmountTypeChange}
                   />
-                </TooltipBody>
-              </Tooltip>
+                </DropdownBody>
+              </Dropdown>
             )}
           </Label>
 
