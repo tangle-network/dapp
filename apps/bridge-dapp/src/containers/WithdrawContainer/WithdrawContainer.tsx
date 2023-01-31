@@ -2,12 +2,18 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useBridgeDeposit,
+  useVAnchor,
   useCurrencies,
   useNoteAccount,
   useRelayers,
 } from '@webb-tools/react-hooks';
-import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  CircomUtxo,
+  Note,
+  calculateTypedChainId,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
 import {
   ChainListCard,
   RelayerListCard,
@@ -42,8 +48,14 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const { activeApi, activeChain, activeWallet, chains, switchChain } =
-    useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    activeWallet,
+    chains,
+    switchChain,
+    noteManager,
+  } = useWebContext();
 
   const {
     fungibleCurrency,
@@ -51,8 +63,6 @@ export const WithdrawContainer = forwardRef<
     setFungibleCurrency,
     setWrappableCurrency,
   } = useBridge();
-
-  const { generateNote } = useBridgeDeposit();
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
 
@@ -132,9 +142,13 @@ export const WithdrawContainer = forwardRef<
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
+        balance:
+          selectedFungibleToken?.symbol === currency.view.symbol
+            ? availableAmount
+            : 0,
       };
     });
-  }, [fungibleCurrencies]);
+  }, [fungibleCurrencies, availableAmount, selectedFungibleToken]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -292,6 +306,7 @@ export const WithdrawContainer = forwardRef<
           symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
         }))}
         value={activeChainType}
+        currentActiveChain={activeChain?.name}
         onChange={async (selectedChain) => {
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
@@ -328,6 +343,135 @@ export const WithdrawContainer = forwardRef<
     otherAvailableChains,
     setMainComponent,
     switchChain,
+  ]);
+
+  const handleWithdrawButtonClick = useCallback(async () => {
+    if (isDisabledWithdraw && otherAvailableChains.length > 0) {
+      return await handleSwitchToOtherDestChains();
+    }
+
+    if (
+      !currentTypedChainId ||
+      !fungibleCurrency ||
+      !noteManager ||
+      !activeApi?.state.activeBridge ||
+      !recipient
+    ) {
+      console.error('Api is not ready to withdraw');
+      return;
+    }
+
+    const activeBridge = activeApi.state.activeBridge;
+    const destAddress = activeBridge.targets[currentTypedChainId];
+
+    const fungibleDecimals = fungibleCurrency.getDecimals();
+
+    // Get the notes that will be spent for this withdraw
+    const inputNotes = NoteManager.getNotesFifo(
+      availableNotesFromManager ?? [],
+      ethers.utils.parseUnits(amount.toString(), fungibleDecimals)
+    );
+
+    if (!inputNotes) {
+      return;
+    }
+
+    // Get the cumulative value of the notes to be spent
+    const sumInputNotes = inputNotes.reduce<ethers.BigNumber>(
+      (currentValue, note) => {
+        return currentValue.add(ethers.BigNumber.from(note.note.amount));
+      },
+      BigNumber.from(0)
+    );
+
+    const changeAmountBigNumber = sumInputNotes.sub(
+      ethers.utils.parseUnits(amount.toString(), fungibleDecimals)
+    );
+
+    const keypair = noteManager.getKeypair();
+    if (!keypair.privkey) {
+      console.error('The provided keypair does not contain the private key');
+      return;
+    }
+
+    // Formatted the change amount for UI displaying
+    const formattedChangeAmount = Number(
+      ethers.utils.formatUnits(changeAmountBigNumber, fungibleDecimals)
+    );
+
+    // Generate change utxo (or dummy utxo if the changeAmount is `0`)
+    const changeUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: changeAmountBigNumber.toString(),
+      chainId: currentTypedChainId.toString(),
+      keypair,
+      originChainId: currentTypedChainId.toString(),
+    });
+
+    // Generate the change note based on the change utxo
+    let changeNote: Note | undefined;
+    if (changeAmountBigNumber.gt(0)) {
+      changeNote = await Note.generateNote({
+        amount: changeUtxo.amount,
+        backend: 'Circom',
+        curve: 'Bn254',
+        denomination: '18',
+        exponentiation: '5',
+        hashFunction: 'Poseidon',
+        protocol: 'vanchor',
+        secrets: [
+          toFixedHex(currentTypedChainId, 8).substring(2),
+          toFixedHex(changeUtxo.amount).substring(2),
+          toFixedHex(keypair.privkey).substring(2),
+          toFixedHex(`0x${changeUtxo.blinding}`).substring(2),
+        ].join(':'),
+        sourceChain: currentTypedChainId.toString(),
+        sourceIdentifyingData: destAddress,
+        targetChain: currentTypedChainId.toString(),
+        targetIdentifyingData: destAddress,
+        tokenSymbol: inputNotes[0].note.tokenSymbol,
+        version: 'v1',
+        width: '4',
+      });
+    }
+
+    setMainComponent(
+      <WithdrawConfirmContainer
+        changeUtxo={changeUtxo}
+        changeNote={changeNote}
+        changeAmount={formattedChangeAmount}
+        targetChainId={currentTypedChainId}
+        availableNotes={inputNotes}
+        amount={amount}
+        fees={0}
+        fungibleCurrency={{
+          value: fungibleCurrency,
+          balance: availableAmount,
+        }}
+        unwrapCurrency={
+          isUnwrap && wrappableCurrency
+            ? { value: wrappableCurrency }
+            : undefined
+        }
+        recipient={recipient}
+      />
+    );
+  }, [
+    activeApi?.state.activeBridge,
+    amount,
+    availableAmount,
+    availableNotesFromManager,
+    currentTypedChainId,
+    fungibleCurrency,
+    handleSwitchToOtherDestChains,
+    isDisabledWithdraw,
+    isUnwrap,
+    noteManager,
+    otherAvailableChains.length,
+    recipient,
+    setMainComponent,
+    wrappableCurrency,
   ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
@@ -415,6 +559,11 @@ export const WithdrawContainer = forwardRef<
               return;
             }
 
+            if (activeRelayer) {
+              setRelayer(null);
+              return;
+            }
+
             setMainComponent(
               <RelayerListCard
                 className="w-[550px] h-[700px]"
@@ -486,95 +635,7 @@ export const WithdrawContainer = forwardRef<
             isDisabledWithdraw && otherAvailableChains.length > 0
               ? 'Switch chain to withdraw'
               : undefined,
-          onClick: async () => {
-            if (isDisabledWithdraw && otherAvailableChains.length > 0) {
-              return await handleSwitchToOtherDestChains();
-            }
-
-            if (
-              !currentTypedChainId ||
-              !fungibleCurrency ||
-              !activeApi ||
-              !activeApi?.state.activeBridge ||
-              !recipient
-            ) {
-              return;
-            }
-
-            const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
-
-            // Find the mixerId (target) of the selected inputs
-            const mixerId =
-              activeApi.state.activeBridge.targets[currentTypedChainId];
-
-            // Get the notes that will be spent for this withdraw
-            const inputNotes = NoteManager.getNotesFifo(
-              availableNotesFromManager ?? [],
-              ethers.utils.parseUnits(
-                amount.toString(),
-                fungibleCurrencyDecimals
-              )
-            );
-
-            if (!inputNotes) {
-              return;
-            }
-
-            // Get the cumulative value of the notes to be spent
-            const spentValue = inputNotes.reduce<ethers.BigNumber>(
-              (currentValue, note) => {
-                return currentValue.add(
-                  ethers.BigNumber.from(note.note.amount)
-                );
-              },
-              BigNumber.from(0)
-            );
-
-            const changeAmountBigNumber = spentValue.sub(
-              ethers.utils.parseUnits(
-                amount.toString(),
-                fungibleCurrencyDecimals
-              )
-            );
-
-            const parsedChangeAmount = Number(
-              ethers.utils.formatUnits(
-                changeAmountBigNumber,
-                fungibleCurrencyDecimals
-              )
-            );
-
-            // Generate a change note if applicable
-            const changeNote = changeAmountBigNumber.gt(0)
-              ? await generateNote(
-                  mixerId,
-                  currentTypedChainId,
-                  parsedChangeAmount,
-                  undefined
-                ).then((note) => note.note.serialize())
-              : undefined;
-
-            setMainComponent(
-              <WithdrawConfirmContainer
-                changeNote={changeNote}
-                changeAmount={parsedChangeAmount}
-                targetChainId={currentTypedChainId}
-                availableNotes={availableNotesFromManager ?? []}
-                amount={amount}
-                fees={0}
-                fungibleCurrency={{
-                  value: fungibleCurrency,
-                  balance: availableAmount,
-                }}
-                unwrapCurrency={
-                  isUnwrap && wrappableCurrency
-                    ? { value: wrappableCurrency }
-                    : undefined
-                }
-                recipient={recipient}
-              />
-            );
-          },
+          onClick: handleWithdrawButtonClick,
         }}
         receivedAmount={infoCalculated.receivingAmount}
         receivedToken={infoCalculated.receivingTokenSymbol}

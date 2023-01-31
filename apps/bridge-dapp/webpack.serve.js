@@ -14,7 +14,7 @@ module.exports = merge(
   {
     plugins: [
       new HtmlWebpackPlugin({
-        PAGE_TITLE: 'Polkadot/Substrate Portal',
+        PAGE_TITLE: 'Hubble Bridge',
         inject: true,
         template: path.join(__dirname, 'src/public/index.html'),
       }),

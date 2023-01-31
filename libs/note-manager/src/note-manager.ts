@@ -2,8 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NoteStorage } from '@webb-tools/browser-utils/storage';
+import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
+import {
+  CircomUtxo,
+  Keypair,
+  Note,
+  NoteGenInput,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 
@@ -61,6 +68,32 @@ export class NoteManager {
     return noteManager;
   }
 
+  // Trim the available notes to get the notes needed for a target amount.
+  // It is assumed the notes passed are grouped for the same target and asset.
+  static getNotesFifo(
+    notes: Note[],
+    targetAmount: ethers.BigNumber
+  ): Note[] | null {
+    let currentAmount = ethers.BigNumber.from(0);
+    const currentNotes: Note[] = [];
+
+    for (const note of notes) {
+      if (currentAmount.gte(targetAmount)) {
+        break;
+      }
+
+      currentAmount = currentAmount.add(note.note.amount);
+      currentNotes.push(note);
+    }
+
+    return currentAmount.gte(targetAmount) ? currentNotes : null;
+  }
+
+  static keypairFromNote(note: Note): Keypair {
+    const secrets = note.note.secrets.split(':');
+    return new Keypair(`0x${secrets[2]}`);
+  }
+
   get $notesUpdated() {
     return this.notesUpdatedSubject.asObservable();
   }
@@ -87,6 +120,55 @@ export class NoteManager {
 
   getAllNotes(): Map<string, Note[]> {
     return this.notesMap;
+  }
+
+  getNotesOfChain(typedChainId: number): Note[] | undefined {
+    return this.notesMap.get(typedChainId.toString());
+  }
+
+  // Return enough notes to satisfy the amount
+  // Returns null if it cannot satisfy
+  getNotesForTransact(
+    typedChainId: number,
+    amount: ethers.BigNumber
+  ): Note[] | null {
+    const currentAmount = ethers.BigNumber.from(0);
+    const currentNotes: Note[] = [];
+
+    const availableNotes = this.notesMap.get(typedChainId.toString());
+
+    if (!availableNotes) {
+      return null;
+    }
+
+    while (currentAmount.lt(amount)) {
+      const currentNote = availableNotes.pop();
+
+      if (!currentNote) {
+        return null;
+      }
+
+      currentAmount.add(currentNote.note.amount);
+      currentNotes.push(currentNote);
+    }
+
+    return currentNotes;
+  }
+
+  getWithdrawableAmount(
+    typedChainId: number,
+    tokenName: string
+  ): ethers.BigNumber {
+    const availableChainNotes = this.notesMap.get(typedChainId.toString());
+    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
+
+    availableChainNotes
+      ?.filter((note) => note.note.tokenSymbol === tokenName)
+      .map((note) => {
+        amount.add(note.note.amount);
+      });
+
+    return amount;
   }
 
   async addNote(note: Note) {
@@ -160,73 +242,65 @@ export class NoteManager {
     return;
   }
 
-  getNotesOfChain(typedChainId: number): Note[] | undefined {
-    return this.notesMap.get(typedChainId.toString());
-  }
+  /**
+   * Generate a note
+   * @param sourceTypedChainId The source typed chain id
+   * @param destTypedChainId The destination typed chain id
+   * @param tokenSymbol The token symbol of the note
+   * @param tokenDecimals The token decimals of the note
+   * @param amount The amount of the note
+   * @returns The generated note
+   */
+  async generateNote(
+    sourceTypedChainId: number,
+    destTypedChainId: number,
+    tokenSymbol: string,
+    tokenDecimals: number,
+    amount: number
+  ): Promise<Note> {
+    const amountBigNumber = ethers.utils
+      .parseUnits(amount.toString(), tokenDecimals)
+      .toString();
 
-  // Return enough notes to satisfy the amount
-  // Returns null if it cannot satisfy
-  getNotesForTransact(
-    typedChainId: number,
-    amount: ethers.BigNumber
-  ): Note[] | null {
-    const currentAmount = ethers.BigNumber.from(0);
-    const currentNotes: Note[] = [];
+    // Convert the amount to units of wei
+    const outputUtxo = await CircomUtxo.generateUtxo({
+      curve: 'Bn254',
+      backend: 'Circom',
+      amount: amountBigNumber,
+      originChainId: sourceTypedChainId.toString(),
+      chainId: destTypedChainId.toString(),
+      keypair: this.keypair,
+    });
 
-    const availableNotes = this.notesMap.get(typedChainId.toString());
-
-    if (!availableNotes) {
-      return null;
+    const srcAddress = getLatestAnchorAddress(sourceTypedChainId);
+    const destAddress = getLatestAnchorAddress(destTypedChainId);
+    if (!srcAddress || !destAddress) {
+      throw new Error('No anchor address found');
     }
 
-    while (currentAmount.lt(amount)) {
-      const currentNote = availableNotes.pop();
+    const noteInput: NoteGenInput = {
+      amount: amountBigNumber,
+      backend: 'Circom',
+      curve: 'Bn254',
+      denomination: '18',
+      exponentiation: '5',
+      hashFunction: 'Poseidon',
+      protocol: 'vanchor',
+      secrets: [
+        toFixedHex(destTypedChainId, 8).substring(2),
+        toFixedHex(outputUtxo.amount, 16).substring(2),
+        toFixedHex(this.keypair.privkey).substring(2),
+        toFixedHex(`0x${outputUtxo.blinding}`).substring(2),
+      ].join(':'),
+      sourceChain: sourceTypedChainId.toString(),
+      sourceIdentifyingData: srcAddress,
+      targetChain: destTypedChainId.toString(),
+      targetIdentifyingData: destAddress,
+      tokenSymbol: tokenSymbol,
+      version: 'v1',
+      width: '5',
+    };
 
-      if (!currentNote) {
-        return null;
-      }
-
-      currentAmount.add(currentNote.note.amount);
-      currentNotes.push(currentNote);
-    }
-
-    return currentNotes;
-  }
-
-  getWithdrawableAmount(
-    typedChainId: number,
-    tokenName: string
-  ): ethers.BigNumber {
-    const availableChainNotes = this.notesMap.get(typedChainId.toString());
-    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
-
-    availableChainNotes
-      ?.filter((note) => note.note.tokenSymbol === tokenName)
-      .map((note) => {
-        amount.add(note.note.amount);
-      });
-
-    return amount;
-  }
-
-  // Trim the available notes to get the notes needed for a target amount.
-  // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(
-    notes: Note[],
-    targetAmount: ethers.BigNumber
-  ): Note[] | null {
-    let currentAmount = ethers.BigNumber.from(0);
-    const currentNotes: Note[] = [];
-
-    for (const note of notes) {
-      if (currentAmount.gte(targetAmount)) {
-        break;
-      }
-
-      currentAmount = currentAmount.add(note.note.amount);
-      currentNotes.push(note);
-    }
-
-    return currentAmount.gte(targetAmount) ? currentNotes : null;
+    return Note.generateNote(noteInput);
   }
 }

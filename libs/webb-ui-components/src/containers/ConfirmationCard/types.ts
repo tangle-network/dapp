@@ -82,11 +82,19 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
-  fungibleTokenSymbol?: string;
+  /**
+   * The fungible token symbol
+   */
+  fungibleTokenSymbol: string;
 
+  /**
+   * The wrappable token symbol
+   */
   wrappableTokenSymbol?: string;
 
-  // Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+  /**
+   * Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+   */
   wrappingAmount?: string;
 }
 

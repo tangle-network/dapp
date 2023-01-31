@@ -38,8 +38,6 @@
       "@webb-tools/dapp-config/*": ["libs/dapp-config/src/*"],
       "@webb-tools/dapp-types": ["libs/dapp-types/src/index.ts"],
       "@webb-tools/dapp-types/*": ["libs/dapp-types/src/*"],
-      "@webb-tools/evm-contracts": ["libs/evm-contracts/src/index.ts"],
-      "@webb-tools/evm-contracts/*": ["libs/evm-contracts/src/*"],
       "@webb-tools/fixtures-deployments": [
         "libs/fixtures-deployments/src/index.ts"
       ],
@@ -71,7 +69,6 @@
       "@webb-tools/storage/*": ["libs/storage/src/*"],
       "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
       "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
-      "@webb-tools/ui-hooks": ["libs/ui-hooks/src/index.ts"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
       "@webb-tools/webb-ui-components": [
         "libs/webb-ui-components/src/index.ts"

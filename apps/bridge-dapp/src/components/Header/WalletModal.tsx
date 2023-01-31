@@ -6,6 +6,7 @@ import {
   useWebbUI,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { FC } from 'react';
 import { useConnectWallet } from '../../hooks';

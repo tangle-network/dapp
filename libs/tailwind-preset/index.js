@@ -32,7 +32,7 @@ const colors = {
   },
   blue: {
     0: '#ECF4FF',
-    10: '#D5E6FF',
+    10: '#ECF4FF',
     20: '#B8D6FF',
     30: '#9BC5FC',
     40: '#81B3F7',
@@ -48,7 +48,7 @@ const colors = {
   },
   green: {
     0: '#E5FFE7',
-    10: '#C7FFCC',
+    10: '#EBFFF0',
     20: '#ACF1B3',
     30: '#85DC8E',
     40: '#6CCA76',
@@ -64,7 +64,7 @@ const colors = {
   },
   yellow: {
     0: '#FFF5D8',
-    10: '#FFF2CA',
+    10: '#FFFAEA',
     20: '#FFEAA6',
     30: '#FFE07C',
     40: '#F8D567',

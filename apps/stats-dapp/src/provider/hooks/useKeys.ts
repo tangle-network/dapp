@@ -146,16 +146,17 @@ type PublicKeyDetailsPage = {
 };
 
 export function sessionFrame(
-  timestamp: string | undefined = undefined,
-  sessionHeight: number,
-  blockTime: number
+  timestamp: string | undefined = undefined
 ): [Date, Date] | [] {
   if (!timestamp) {
     return [];
   }
   const startDateTime = new Date(timestamp);
-  const endTime = startDateTime.getTime() + blockTime * sessionHeight * 1000;
-  return [startDateTime, new Date(endTime)];
+  const endTime = new Date(
+    new Date(new Date(timestamp).getTime() + 60 * 60 * 1000)
+  );
+
+  return [startDateTime, endTime];
 }
 
 /**
@@ -250,11 +251,7 @@ export function useKeys(
                   idx < filteredData.length - 1
                     ? filteredData[idx + 1]?.id
                     : undefined;
-                const [start, end] = sessionFrame(
-                  session.block?.timestamp,
-                  sessionHeight,
-                  blockTime
-                );
+                const [start, end] = sessionFrame(session.block?.timestamp);
                 return {
                   height: String(node.block?.number),
                   session: session.id,
@@ -342,11 +339,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 const publicKey = i.publicKey;
                 const session = i;
                 const sessionTimeStamp = session.block?.timestamp;
-                const [start, end] = sessionFrame(
-                  sessionTimeStamp,
-                  sessionHeight,
-                  blockTime
-                );
+                const [start, end] = sessionFrame(sessionTimeStamp);
 
                 return {
                   id: publicKey.id,
@@ -466,11 +459,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
               };
             });
           const validators = sessionAuthorities.length;
-          const [start, end] = sessionFrame(
-            session.block?.timestamp,
-            sessionHeight,
-            blockTime
-          );
+          const [start, end] = sessionFrame(session.block?.timestamp);
           const thresholds = thresholdMap(session.thresholds);
           const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;

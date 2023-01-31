@@ -33,6 +33,10 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    * The optional class name for overriding style TData component
    */
   tdClassName?: string;
+  /**
+   * The table title to display in the pagination
+   */
+  title?: string;
 }
 
 /**

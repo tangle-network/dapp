@@ -54,8 +54,8 @@ export abstract class WrapUnwrap<
 
   /**
    *  For validation
-   *  -Check there is enough liquidity
-   *  -If Unwrapping to native check if this allowed
+   *  - Check there is enough liquidity
+   *  - If Unwrapping to native check if this allowed
    **/
   abstract canUnwrap(unwrapPayload: UnwrapPayload): Promise<boolean>;
 

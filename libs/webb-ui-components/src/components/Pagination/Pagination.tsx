@@ -21,6 +21,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       siblingCount,
       totalItems,
       totalPages,
+      title,
       ...props
     },
     ref
@@ -56,7 +57,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       <div {...props} className={mergedClsx} ref={ref}>
         {/** Left label */}
         <p className="body1 text-mono-160 dark:text-mono-100">
-          Showing {showingItemsCount} Keys out of {totalItems ?? '-'}
+          Showing {showingItemsCount} {title} out of {totalItems ?? '-'}
         </p>
 
         {/** Right buttons */}

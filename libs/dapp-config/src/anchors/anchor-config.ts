@@ -71,3 +71,28 @@ export const getAnchorDeploymentBlockNumber = (
     (entry) => entry[0].toLowerCase() === contractAddress.toLowerCase()
   )?.[1];
 };
+
+/**
+ * Get the address of the latest anchor deployed on the chain
+ * @param chainIdType the chainIdType of the chain
+ * @returns the latest anchor address for the chain
+ */
+export const getLatestAnchorAddress = (
+  chainIdType: number
+): string | undefined => {
+  const deploymentsBlock = anchorDeploymentBlock[chainIdType];
+  if (!deploymentsBlock) {
+    return undefined;
+  }
+
+  const [address] = Object.entries(deploymentsBlock).reduce(
+    ([prevAddress, prevBlockNumber], [address, blockNumber]) => {
+      if (blockNumber > prevBlockNumber) {
+        return [address, blockNumber];
+      }
+      return [prevAddress, prevBlockNumber];
+    }
+  );
+
+  return address;
+};

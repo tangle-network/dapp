@@ -6,7 +6,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ProvideCapabilities } from '@webb-tools/abstract-api-provider';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { ethers } from 'ethers';
+import { ethers, Signer } from 'ethers';
 import Web3 from 'web3';
 import { AbstractProvider, provider as Provider } from 'web3-core';
 
@@ -85,9 +85,7 @@ export class Web3Provider<T = unknown> {
       // @ts-ignore
       const provider = Web3Provider.currentProvider;
 
-      // Enable the api
-      await provider.enable();
-      await provider.send('eth_requestAccounts', []);
+      await provider.request({ method: 'eth_requestAccounts' });
       const web3Provider = new Web3Provider(new Web3(provider), {
         description: 'MetaMask',
         icons: [],
@@ -208,6 +206,10 @@ export class Web3Provider<T = unknown> {
         type: 'ERC20', // Initially only supports ERC20, but eventually more!
       },
     });
+  }
+
+  async getSigner(): Promise<Signer> {
+    return this.intoEthersProvider().getSigner();
   }
 
   async sign(message: string, account: string): Promise<string> {

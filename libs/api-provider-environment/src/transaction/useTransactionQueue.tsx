@@ -4,6 +4,7 @@ import {
   TransactionPayload,
 } from '@webb-tools/webb-ui-components';
 import {
+  NewNotesTxResult,
   Transaction,
   TransactionState,
   TransactionStatusValue,
@@ -35,18 +36,18 @@ function mapTxToPayload(
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
   const [txStatus, data] = tx.currentStatus;
-  const { amount, wallets, token, tokens } = tx.metaData;
+  const { amount, wallets, token, tokens, tokenURI } = tx.metaData;
 
   let explorerUri = '';
 
   if (tx.name === 'Deposit') {
     explorerUri = chainConfig[wallets.src]?.blockExplorerStub ?? '';
   } else {
-    explorerUri = chainConfig[wallets.dist]?.blockExplorerStub ?? '';
+    explorerUri = chainConfig[wallets.dest]?.blockExplorerStub ?? '';
   }
 
   const SrcWallet = chainConfig[wallets.src]?.logo;
-  const DistWallet = chainConfig[wallets.dist]?.logo;
+  const DistWallet = chainConfig[wallets.dest]?.logo;
 
   const getExplorerURI = (
     addOrTxHash: string,
@@ -59,7 +60,7 @@ function mapTxToPayload(
 
   const onDetails = tx.txHash
     ? () => {
-        const url = getExplorerURI(tx.txHash!, 'tx');
+        const url = getExplorerURI(tx.txHash ?? '', 'tx');
         open(url, '_blank', 'noopener noreferrer');
       }
     : undefined;
@@ -76,6 +77,7 @@ function mapTxToPayload(
     getExplorerURI,
     timestamp: tx.timestamp,
     token,
+    tokenURI,
     tokens: tokens,
     wallets: {
       src: (
@@ -104,7 +106,9 @@ function getTxMessageFromStatus<Key extends TransactionState>(
     case TransactionState.Cancelling:
       return 'Canceling transaction';
     case TransactionState.Ideal:
-      return 'Transaction completed';
+      return 'Transaction in-progress';
+    case TransactionState.PreparingTransaction:
+      return 'Preparing transaction';
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
     case TransactionState.FetchingLeaves:
@@ -131,6 +135,15 @@ export type TransactionQueueApi = {
     dismissTransaction(id: string): void;
     registerTransaction(tx: Transaction<any>): void;
     startNewTransaction(): void;
+
+    /**
+     * Get the latest transaction of the given name
+     * @param name The name of the transaction (Deposit, Withdraw, Transfer)
+     * @returns The latest transaction of the given name or null if no transaction is found
+     */
+    getLatestTransaction(
+      name: 'Deposit' | 'Withdraw' | 'Transfer'
+    ): Transaction<NewNotesTxResult> | null;
   };
 };
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
@@ -249,6 +262,19 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
     setMainTxId(null);
   }, [setMainTxId]);
 
+  const getLatestTransaction = useCallback(
+    (
+      name: 'Deposit' | 'Withdraw' | 'Transfer'
+    ): Transaction<NewNotesTxResult> | null => {
+      const txes = txQueue.filter((tx) => tx.name === name);
+      if (txes.length === 0) {
+        return null;
+      }
+      return txes[txes.length - 1];
+    },
+    [txQueue]
+  );
+
   return useMemo(
     () => ({
       txQueue,
@@ -259,6 +285,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         dismissTransaction,
         registerTransaction,
         startNewTransaction,
+        getLatestTransaction,
       },
     }),
     [

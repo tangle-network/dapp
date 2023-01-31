@@ -104,6 +104,11 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The override ScrollArea component props
    */
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
+
+  /**
+   * The current active/connected chain
+   */
+  currentActiveChain?: string;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {

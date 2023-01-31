@@ -1,6 +1,7 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CancellationToken } from './cancelation-token';
+import { notificationApi } from '@webb-tools/webb-ui-components';
 
 export interface TXresultBase {
   // method: MethodPath;
@@ -15,6 +16,8 @@ export enum TransactionState {
   Cancelling, // Withdraw canceled
   Ideal, // initial status where the instance is Idea and ready for a withdraw
 
+  PreparingTransaction, // Preparing the arguments for a transaction
+
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
   FetchingLeaves, // To create a merkle proof, the elements of the merkle tree must be fetched.
   GeneratingZk, // There is a withdraw in progress, and it's on the step of generating the Zero-knowledge proof
@@ -27,11 +30,11 @@ export enum TransactionState {
 }
 
 // Events that can be emitted using the {EventBus}
-export type WebbWithdrawEvents = {
+export type ActionEvent = {
   // Generic Error by the provider or doing an intermediate step
   error: string;
   // Validation Error for the withdrawing note
-  // TODO : update this to be more verbose and not just relate to the note but also the params for `generateNote` and `withdraw`
+  // TODO : update this to be more verbose and not just relate to the note but also the params for `generateNote` and `transact`
   validationError: {
     note: string;
     recipient: string;
@@ -70,6 +73,8 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
 
+  [TransactionState.PreparingTransaction]: undefined;
+
   [TransactionState.FetchingFixtures]: FixturesProgress;
   [TransactionState.FetchingLeaves]: LeavesProgress;
   [TransactionState.GeneratingZk]: undefined;
@@ -96,10 +101,12 @@ type TransactionMetaData = {
   tokens: [string, string];
   wallets: {
     src: number;
-    dist: number;
+    dest: number;
   };
   token: string;
   recipient?: string;
+  address?: string;
+  tokenURI?: string;
 };
 
 type PromiseExec<T> = (
@@ -139,16 +146,26 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
           if (state === TransactionState.Done) {
             resolve(data as T);
           } else if (state === TransactionState.Failed) {
-            reject(data as FailedTransaction);
+            const failedData = data as FailedTransaction;
+            notificationApi.addToQueue({
+              variant: 'error',
+              message: 'Transaction Failed',
+              secondaryMessage: failedData.error,
+            });
           }
         })
-        .catch(reject);
+        .catch((reason) => {
+          notificationApi.addToQueue({
+            variant: 'error',
+            message: 'Executor reject',
+            secondaryMessage: reason.toString?.(),
+          });
+        });
     };
     return new Transaction(exec, name, metadata, status);
   }
 
   private isValidProgress<T extends TransactionState>(next: T): boolean {
-    /// TODO implement this and standardise all transactions progress
     switch (this._status.value[0]) {
       case TransactionState.Cancelling:
         break;
@@ -184,12 +201,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     this._status.next([status, data]);
   }
 
-  fail(error: string): never {
+  fail(error: string): void {
     this.next(TransactionState.Failed, {
       error,
       txHash: this.txHash,
     });
-    throw new Error(error);
   }
 
   cancel() {

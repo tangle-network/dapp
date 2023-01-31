@@ -1,13 +1,25 @@
-import { DepositPayload } from '@webb-tools/abstract-api-provider';
+import {
+  Currency,
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
-import { TransactionState } from '@webb-tools/dapp-types';
-import { useBridgeDeposit } from '@webb-tools/react-hooks';
-import { useCopyable } from '@webb-tools/ui-hooks';
-import { DepositConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { VAnchor__factory } from '@webb-tools/contracts';
+import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
+import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
+import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
+import { ethers } from 'ethers';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { getCardTitle, getErrorMessage, getTokenURI } from '../../utils';
 
+import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
 import { DepositConfirmContainerProps } from './types';
 
 export const DepositConfirmContainer = forwardRef<
@@ -16,75 +28,168 @@ export const DepositConfirmContainer = forwardRef<
 >(
   (
     {
-      depositPayload,
+      note,
       amount,
-      wrappingFlow,
-      token,
       sourceChain,
       destChain,
-      wrappableTokenSymbol,
+      fungibleTokenId,
+      wrappableTokenId,
+      resetMainComponent,
     },
     ref
   ) => {
+    const { api: txQueueApi } = useTxQueue();
     const [checked, setChecked] = useState(false);
+    const { api, startNewTransaction } = useVAnchor();
 
-    const { deposit, stage, startNewTransaction } = useBridgeDeposit();
+    const stage = useLatestTransactionStage('Deposit');
 
-    const { setMainComponent, notificationApi } = useWebbUI();
-
-    const [progress, setProgress] = useState<null | number>(null);
+    const progress = useTransactionProgressValue(stage);
 
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi } = useWebContext();
+    const { activeApi, activeChain, noteManager } = useWebContext();
+
     // Download for the deposit confirm
-    const downloadNote = useCallback((depositPayload: DepositPayload) => {
-      const note = depositPayload?.note?.serialize() ?? '';
-      downloadString(JSON.stringify(note), note.slice(-note.length) + '.json');
+    const downloadNote = useCallback((note: Note) => {
+      const noteStr = note.serialize();
+      downloadString(
+        JSON.stringify(noteStr),
+        noteStr.slice(-noteStr.length) + '.json'
+      );
     }, []);
 
     // Copy for the deposit confirm
     const { copy, isCopied } = useCopyable();
     const handleCopy = useCallback(
-      (depositPayload: DepositPayload): void => {
-        copy(depositPayload.note.serialize() ?? '');
-      },
+      (note: Note): void => copy(note.serialize()),
       [copy]
     );
 
-    const onClick = useCallback(async () => {
-      // Set transaction payload for transaction processing card
-      // Start a new transaction
-      if (depositTxInProgress) {
-        console.log('Start a new transaction');
-        startNewTransaction();
-        setMainComponent(undefined);
+    const fungibleToken = useMemo(() => {
+      return new Currency(currenciesConfig[fungibleTokenId]);
+    }, [fungibleTokenId]);
+
+    const wrappableToken = useMemo(() => {
+      if (!wrappableTokenId) {
         return;
       }
 
+      return new Currency(currenciesConfig[wrappableTokenId]);
+    }, [wrappableTokenId]);
+
+    const wrappingFlow = useMemo(
+      () => typeof wrappableTokenId !== 'undefined',
+      [wrappableTokenId]
+    );
+
+    const handleExecuteDeposit = useCallback(async () => {
+      if (!api || !activeApi || !activeChain) {
+        return;
+      }
+
+      // Set transaction payload for transaction processing card
+      // Start a new transaction
+      if (depositTxInProgress) {
+        startNewTransaction();
+        resetMainComponent();
+        return;
+      }
+
+      downloadNote(note);
+
+      const {
+        amount,
+        denomination,
+        sourceChainId: sourceTypedChainId,
+        sourceIdentifyingData,
+        targetChainId: destTypedChainId,
+        tokenSymbol,
+      } = note.note;
+      // Calculate the amount
+      const formattedAmount = ethers.utils.formatUnits(amount, denomination);
+
+      // Get the deposit token symbol
+      let srcTokenSymbol = tokenSymbol;
+
+      if (wrappableToken) {
+        srcTokenSymbol = wrappableToken.view.symbol;
+      }
+
+      // Get the destination token symbol
+      const destToken = tokenSymbol;
+
+      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+
+      const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+        amount: +formattedAmount,
+        tokens: [srcTokenSymbol, destToken],
+        wallets: {
+          src: +sourceTypedChainId,
+          dest: +destTypedChainId,
+        },
+        token: tokenSymbol,
+        tokenURI,
+      });
+
       try {
-        downloadNote(depositPayload);
-        await deposit(depositPayload);
-      } catch (error) {
-        console.log('Deposit error', error);
-        notificationApi({
-          variant: 'error',
-          message: 'Deposit failed',
-          secondaryMessage: 'Something went wrong when depositing',
+        txQueueApi.registerTransaction(tx);
+        const args = await api?.prepareTransaction(
+          tx,
+          note,
+          wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
+        );
+        if (!args) {
+          return txQueueApi.cancelTransaction(tx.id);
+        }
+
+        // Add the note to the noteManager before transaction is sent.
+        // This helps to safeguard the user.
+        if (noteManager) {
+          await noteManager.addNote(note);
+        }
+
+        const receipt = await api.transact(...args);
+
+        const srcContract = VAnchor__factory.connect(
+          sourceIdentifyingData,
+          Web3Provider.fromUri(activeChain.url).intoEthersProvider()
+        );
+
+        // TODO: Make this parse the receipt for the index data
+        const noteIndex = (await srcContract.getNextIndex()) - 1;
+        const indexedNote = await Note.deserialize(note.serialize());
+        indexedNote.mutateIndex(noteIndex.toString());
+        await noteManager?.addNote(indexedNote);
+        await noteManager?.removeNote(note);
+
+        // Notification Success Transaction
+        tx.txHash = receipt.transactionHash;
+        tx.next(TransactionState.Done, {
+          txHash: receipt.transactionHash,
+          outputNotes: [indexedNote],
         });
+      } catch (error) {
+        console.error(error);
+        noteManager?.removeNote(note);
+        tx.fail(getErrorMessage(error));
       } finally {
-        setMainComponent(undefined);
+        resetMainComponent();
       }
     }, [
-      deposit,
-      depositPayload,
-      downloadNote,
+      api,
+      activeApi,
+      activeChain,
       depositTxInProgress,
-      notificationApi,
-      setMainComponent,
+      resetMainComponent,
       startNewTransaction,
+      downloadNote,
+      note,
+      wrappableToken,
+      txQueueApi,
+      noteManager,
     ]);
 
     const activeChains = useMemo<string[]>(() => {
@@ -111,103 +216,15 @@ export const DepositConfirmContainer = forwardRef<
     }, [activeApi]);
 
     const cardTitle = useMemo(() => {
-      let status = '';
-
-      switch (stage) {
-        case TransactionState.Ideal: {
-          break;
-        }
-
-        case TransactionState.Done: {
-          status = 'Completed';
-          break;
-        }
-
-        case TransactionState.Failed: {
-          status = 'Failed';
-          break;
-        }
-
-        default: {
-          status = 'In-Progress';
-          break;
-        }
-      }
-
-      if (wrappingFlow) {
-        if (
-          status !== 'Completed' &&
-          status !== 'Failed' &&
-          status !== 'In-Progress'
-        ) {
-          return `Confirm Wrap and Deposit`;
-        } else {
-          return `Wrap and Deposit ${status}`;
-        }
-      } else if (
-        status !== 'Completed' &&
-        status !== 'Failed' &&
-        status !== 'In-Progress'
-      ) {
-        return `Confirm Deposit`;
-      } else {
-        return `Deposit ${status}`;
-      }
+      return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
-
-    // Effect to update the progress bar
-    useEffect(() => {
-      switch (stage) {
-        case TransactionState.FetchingFixtures: {
-          setProgress(0);
-          break;
-        }
-
-        case TransactionState.FetchingLeaves: {
-          setProgress(25);
-          break;
-        }
-        case TransactionState.Intermediate: {
-          setProgress(40);
-          break;
-        }
-
-        case TransactionState.GeneratingZk: {
-          setProgress(50);
-          break;
-        }
-
-        case TransactionState.SendingTransaction: {
-          setProgress(75);
-          break;
-        }
-
-        case TransactionState.Done:
-        case TransactionState.Failed: {
-          setProgress(100);
-          break;
-        }
-
-        case TransactionState.Cancelling:
-        case TransactionState.Ideal: {
-          setProgress(null);
-          break;
-        }
-
-        default: {
-          throw new Error(
-            'Unknown transaction state in DepositConfirmContainer component'
-          );
-        }
-      }
-    }, [stage, setProgress]);
 
     return (
       <DepositConfirm
-        title={cardTitle.trim()}
+        title={cardTitle}
         activeChains={activeChains}
         ref={ref}
-        note={depositPayload.note.serialize()}
+        note={note.note.serialize()}
         progress={progress}
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
@@ -216,7 +233,7 @@ export const DepositConfirmContainer = forwardRef<
             : wrappingFlow
             ? 'Wrap And Deposit'
             : 'Deposit',
-          onClick,
+          onClick: handleExecuteDeposit,
         }}
         checkboxProps={{
           isChecked: checked,
@@ -224,16 +241,16 @@ export const DepositConfirmContainer = forwardRef<
           onChange: () => setChecked((prev) => !prev),
         }}
         isCopied={isCopied}
-        onCopy={() => handleCopy(depositPayload)}
-        onDownload={() => downloadNote(depositPayload)}
+        onCopy={() => handleCopy(note)}
+        onDownload={() => downloadNote(note)}
         amount={amount}
         wrappingAmount={String(amount)}
-        fungibleTokenSymbol={token?.symbol}
+        fungibleTokenSymbol={fungibleToken.view.symbol}
         sourceChain={sourceChain?.name}
         destChain={destChain?.name}
         fee={0}
-        onClose={() => setMainComponent(undefined)}
-        wrappableTokenSymbol={wrappableTokenSymbol}
+        wrappableTokenSymbol={wrappableToken?.view.symbol}
+        onClose={() => resetMainComponent()}
       />
     );
   }

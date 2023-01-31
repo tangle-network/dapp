@@ -14,6 +14,7 @@ const TableComp = <T extends RowData>(
     totalRecords = 0,
     thClassName,
     tdClassName,
+    title,
     ...props
   }: TableProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
@@ -83,6 +84,7 @@ const TableComp = <T extends RowData>(
           canNextPage={table.getCanNextPage()}
           nextPage={table.nextPage}
           setPageIndex={table.setPageIndex}
+          title={title}
         />
       )}
     </div>

@@ -122,6 +122,10 @@ export interface TransactionPayload {
    *  */
   token: string;
   /**
+   *  The transaction token URI on destination chain
+   *  */
+  tokenURI?: string;
+  /**
    *  Used to show the current value against USD
    *  */
   nativeValue?: string;

@@ -50,7 +50,7 @@ export const KeyValueWithButton = forwardRef<
     const mergedClsx = useMemo(() => {
       return twMerge(
         'overflow-hidden rounded-lg',
-        size === 'md' ? 'bg-mono-20 dark:bg-mono-180' : '',
+        size === 'md' ? 'bg-mono-20 dark:bg-mono-160' : '',
         className
       );
     }, [className, size]);
@@ -60,7 +60,7 @@ export const KeyValueWithButton = forwardRef<
         hasShortenValue
           ? shortenFn
             ? shortenFn(keyValue)
-            : shortenHex(keyValue, 3)
+            : shortenHex(keyValue, 5)
           : keyValue,
       [hasShortenValue, keyValue, shortenFn]
     );

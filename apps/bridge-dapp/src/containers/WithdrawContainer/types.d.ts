@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import { BridgeTabContainerProps } from '../types';
+import { Note, Utxo } from '@webb-tools/sdk-core';
 
 export interface WithdrawContainerProps
   extends BridgeTabContainerProps,
@@ -19,9 +20,15 @@ export type CurrencyWithBalance = { value: Currency } & Omit<
 
 export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
+   * The change utxo (or dummy utxo if the changeAmount is `0`),
+   * this will be added on chain
+   */
+  changeUtxo: Utxo;
+
+  /**
    * The note which controls change after the withdraw
    */
-  changeNote?: string;
+  changeNote?: Note;
 
   /**
    * The available notes

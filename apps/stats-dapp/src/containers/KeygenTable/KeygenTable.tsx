@@ -33,6 +33,7 @@ import {
   Slider,
   Table,
   TitleWithInfo,
+  Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
@@ -306,9 +307,10 @@ export const KeygenTable: FC = () => {
           }}
         >
           <Accordion type={'single'} collapsible>
-            <AccordionItem className={'p-4 py-0'} value={'keygenThreshold'}>
+            <AccordionItem className={'p-0 py-0'} value={'keygenThreshold'}>
               <AccordionButton>Keygen Threshold</AccordionButton>
-              <AccordionContent>
+              <Divider className="bg-mono-40 dark:bg-mono-140" />
+              <AccordionContent className="p-0">
                 <Slider
                   max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
                   defaultValue={keygenFilterCol
@@ -323,9 +325,9 @@ export const KeygenTable: FC = () => {
                 />
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem className={'p-4 py-0'} value={'signatureThreholds'}>
+            <AccordionItem className={'p-0 py-0'} value={'signatureThresholds'}>
               <AccordionButton>Signature Threshold</AccordionButton>
-              <AccordionContent>
+              <AccordionContent className="p-0">
                 <Slider
                   max={signatureFilterCol.getFacetedMinMaxValues()?.[1]}
                   defaultValue={signatureFilterCol.getFacetedMinMaxValues()}
@@ -349,6 +351,7 @@ export const KeygenTable: FC = () => {
         totalRecords={totalItems}
         isPaginated
         tdClassName="text-center"
+        title="Keys"
       />
     </CardTable>
   );

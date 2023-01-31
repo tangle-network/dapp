@@ -7,23 +7,17 @@ import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
 
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { VAnchorActionEvent, VAnchorActions } from './vanchor/vanchor-actions';
-import { VAnchorTransfer } from './vanchor/vanchor-transfer';
+import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { BridgeApi, VAnchorDeposit, VAnchorWithdraw } from './vanchor';
+import { BridgeApi } from './vanchor';
 import { ChainQuery } from './chain-query';
 import { ApiConfig } from '@webb-tools/dapp-config';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
-import {
-  DepositPayload,
-  MixerDeposit,
-  MixerDepositEvents,
-  MixerWithdraw,
-} from './mixer';
 import { WebbState } from './state';
-import { WebbWithdrawEvents } from './transaction';
+import { ActionEvent } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
 import { Observable } from 'rxjs';
+import { ZkComponents } from '@webb-tools/utils';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -32,20 +26,15 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<T extends WebbApiProvider<any>> {
-  // Mixer API
-  mixer: WebbMixer<T>;
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<T>;
   // Wrap and unwrap API
   wrapUnwrap: WrapAndUnwrap<T>;
   // Chain query : an API for querying chain storage used currently for balances
   chainQuery: ChainQuery<T>;
-  // Anchor API developed initially for to handle the difference between
-  // web3 (Chains that depend on static configs) and chains that will need to query the anchor
-  //
   // Methods for querying information about the current bridge
   bridgeApi: BridgeApi<T>;
-  // Calaims
+  // Claims
   claim: {
     core: ECDSAClaims<T>;
     enabled: boolean;
@@ -66,18 +55,8 @@ export type WebbTransactionMethod<T> = {
   enabled: boolean;
 };
 
-export interface WebbMixer<T extends WebbApiProvider<any>> {
-  // deposit
-  deposit: WebbMethod<MixerDeposit<T, DepositPayload>, MixerDepositEvents>;
-  // withdraw
-  withdraw: WebbMethod<MixerWithdraw<T>, WebbWithdrawEvents>;
-}
-
 export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
-  deposit: WebbMethod<VAnchorDeposit<T, DepositPayload>, MixerDepositEvents>;
-  withdraw: WebbTransactionMethod<VAnchorWithdraw<T>>;
-  transfer: WebbMethod<VAnchorTransfer<T>, WebbWithdrawEvents>;
-  actions: WebbMethod<VAnchorActions<T>, VAnchorActionEvent>;
+  actions: WebbMethod<VAnchorActions<T>, ActionEvent>;
 }
 
 export interface WrapAndUnwrap<T> {
@@ -225,6 +204,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
 
+  type(): string;
   destroy(): Promise<void> | void;
 
   capabilities?: ProvideCapabilities;
@@ -248,4 +228,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   wasmFactory: WasmFactory;
   // new block observable
   newBlock: Observable<unknown>;
+  // get zk fixtures
+  getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
 }

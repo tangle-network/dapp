@@ -54,6 +54,14 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       return amount.toString();
     }, [fungibleTokenSymbol, amount]);
 
+    const tokenPairString = useMemo(() => {
+      if (wrappableTokenSymbol) {
+        return `${wrappableTokenSymbol}/${fungibleTokenSymbol}`;
+      }
+
+      return fungibleTokenSymbol;
+    }, [wrappableTokenSymbol, fungibleTokenSymbol]);
+
     return (
       <div
         {...props}
@@ -90,9 +98,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             sourceChain={sourceChain}
             destChain={destChain}
             amount={amount}
-            tokenPairString={`${fungibleTokenSymbol}${
-              wrappableTokenSymbol ? `/${wrappableTokenSymbol}` : ''
-            }`}
+            tokenPairString={tokenPairString}
           />
         </div>
 
@@ -100,32 +106,33 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
         {/** Wrapping info */}
-        {wrappableTokenSymbol && fungibleTokenSymbol && (
-          <WrapperCard>
-            <div className="space-y-4">
-              <TitleWithInfo
-                titleComponent="h6"
-                title="Wrapping"
-                variant="utility"
-                info="Wrapping"
-                titleClassName="text-mono-100 dark:text-mono-80"
-                className="text-mono-100 dark:text-mono-80"
+        <WrapperCard>
+          <div className="space-y-4">
+            <TitleWithInfo
+              titleComponent="h6"
+              title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
+              variant="utility"
+              info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
+              titleClassName="text-mono-100 dark:text-mono-80"
+              className="text-mono-100 dark:text-mono-80"
+            />
+            <div className="flex items-center space-x-4">
+              {wrappableTokenSymbol && (
+                <>
+                  <TokenWithAmount
+                    token1Symbol={wrappableTokenSymbol}
+                    amount={wrappingAmount}
+                  />
+                  <ArrowRight />
+                </>
+              )}
+              <TokenWithAmount
+                token1Symbol={fungibleTokenSymbol}
+                amount={amount}
               />
-              <div className="flex items-center space-x-4">
-                <TokenWithAmount
-                  token1Symbol={fungibleTokenSymbol}
-                  amount={wrappingAmount}
-                />
-                <ArrowRight />
-                <TokenWithAmount
-                  token1Symbol={fungibleTokenSymbol}
-                  token2Symbol={wrappableTokenSymbol}
-                  amount={amount}
-                />
-              </div>
             </div>
-          </WrapperCard>
-        )}
+          </div>
+        </WrapperCard>
 
         {/** New spend note */}
         <WrapperSection>
