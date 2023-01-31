@@ -62,9 +62,7 @@ export const WalletModal: FC = () => {
           failedWalletId={failedWalletId}
           onTryAgainBtnClick={async () => {
             if (!selectedWallet) {
-              throw new Error(
-                'No wallet selected. Please try again.'
-              );
+              throw new Error('No wallet selected. Please try again.');
             }
             await switchWallet(chain, selectedWallet);
           }}
