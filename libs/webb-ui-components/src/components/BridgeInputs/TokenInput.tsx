@@ -94,7 +94,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               variant="body4"
               fw="bold"
               component="span"
-              className="uppercase text-mono-100 dark:text-mono-80"
+              className="uppercase text-mono-100 dark:text-mono-80 text-[12px] leading-[15px]"
             >
               Balance: {balance} {balanceInUsd ? `≈ $${balanceInUsd}` : ''}
             </Typography>
