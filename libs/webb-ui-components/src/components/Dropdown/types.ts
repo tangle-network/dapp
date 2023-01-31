@@ -2,14 +2,19 @@ import {
   DropdownMenuContentProps,
   DropdownMenuProps as RdxDropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu';
-import { PropsOf, WebbComponentBase, IWebbComponentBase } from '../../types';
+import { IWebbComponentBase, PropsOf } from '../../types';
 
 import { DropdownMenuProps } from '../DropdownMenu/types';
 
 /**
  * The `Dropdown` props
  */
-export interface DropdownProps extends PropsOf<'div'>, IWebbComponentBase {}
+export interface DropdownProps extends PropsOf<'div'>, IWebbComponentBase {
+  /**
+   * The root radix dropdown props
+   */
+  radixRootProps?: RdxDropdownMenuProps;
+}
 
 type DropdownButtonPickedKeys = 'label' | 'icon' | 'size';
 

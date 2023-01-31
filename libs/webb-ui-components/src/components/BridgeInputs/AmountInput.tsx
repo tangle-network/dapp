@@ -1,8 +1,7 @@
 import { ChevronDown, InformationLine } from '@webb-tools/icons';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
-
 import {
   AmountMenu,
   Button,
@@ -10,11 +9,10 @@ import {
   InputWrapper,
   Label,
   TitleWithInfo,
-  Tooltip,
-  TooltipBody,
-  TooltipTrigger,
 } from '..';
 import { AmountInputComponentProps } from './types';
+import { Dropdown, DropdownBody } from '../Dropdown';
+import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 
 export const AmountInput = forwardRef<
   HTMLDivElement,
@@ -28,7 +26,7 @@ export const AmountInput = forwardRef<
       errorMessage,
       id = 'amount',
       info,
-      isDisabled,
+      isDisabled: isDisabledProp,
       onAmountChange,
       onMaxBtnClick,
       overrideInputProps,
@@ -37,18 +35,18 @@ export const AmountInput = forwardRef<
     },
     ref
   ) => {
+    // State to disable the the input when the dropdown is open
+    // (to prevent the re-rendering of the dropdown)
+    const [isDisabled, setIsDisabled] = useState(false);
+
     const mergedClsx = useMemo(
       () => twMerge('cursor-auto select-none space-x-2', className),
       [className]
     );
 
-    // Tooltip state
-    const [isOpen, setIsOpen] = useState(false);
-
     // The amount menu callback
     const onAmountTypeChange = useCallback(
       (nextVal: 'fixed' | 'custom') => {
-        setIsOpen(false);
         amountMenuProps?.onChange?.(nextVal);
       },
       [amountMenuProps]
@@ -59,32 +57,40 @@ export const AmountInput = forwardRef<
         <InputWrapper {...props} className={mergedClsx} ref={ref}>
           <div className="flex flex-col space-y-1 grow">
             <Label htmlFor={id} className="flex items-center space-x-2">
-              <TitleWithInfo
-                title={title}
-                info={info}
-                variant="utility"
-                titleComponent="span"
-                className="text-mono-100 dark:text-mono-80"
-                titleClassName="uppercase !text-inherit"
-              />
-
               {amountMenuProps && (
-                <Tooltip
-                  delayDuration={100}
-                  isOpen={isOpen}
-                  onChange={(next) => setIsOpen(next)}
+                <Dropdown
+                  radixRootProps={{
+                    onOpenChange: (open) => setIsDisabled(open),
+                    open: isDisabled,
+                  }}
                 >
-                  <TooltipTrigger>
-                    <ChevronDown />
-                  </TooltipTrigger>
-
-                  <TooltipBody>
+                  <DropdownTrigger
+                    asChild
+                    className="flex items-start space-x-1"
+                  >
+                    <span className="cursor-pointer">
+                      <TitleWithInfo
+                        title={title}
+                        info={info}
+                        variant="utility"
+                        titleComponent="span"
+                        className="text-mono-100 dark:text-mono-80"
+                        titleClassName="uppercase !text-inherit"
+                      />
+                      <ChevronDown />
+                    </span>
+                  </DropdownTrigger>
+                  <DropdownBody
+                    isPorttal={false}
+                    align="start"
+                    className="z-10 mt-1"
+                  >
                     <AmountMenu
                       {...amountMenuProps}
                       onChange={onAmountTypeChange}
                     />
-                  </TooltipBody>
-                </Tooltip>
+                  </DropdownBody>
+                </Dropdown>
               )}
             </Label>
 
@@ -97,14 +103,14 @@ export const AmountInput = forwardRef<
               placeholder="0"
               size="sm"
               autoComplete="off"
-              isDisabled={isDisabled}
+              isDisabled={isDisabledProp || isDisabled}
               min={0}
               {...overrideInputProps}
             />
           </div>
 
           <Button
-            isDisabled={isDisabled}
+            isDisabled={isDisabledProp}
             onClick={onMaxBtnClick}
             variant="utility"
             size="sm"
