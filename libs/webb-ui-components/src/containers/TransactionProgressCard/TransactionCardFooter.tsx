@@ -62,7 +62,7 @@ export const TransactionCardFooter: FC<
   }, [showDetails]);
   return (
     <div
-      className={cx('my-0 flex items-center p-4 py-2', {
+      className={cx('my-0 flex items-center px-4 py-3', {
         'bg-yellow-10 border-t-2 border-yellow-90 dark:bg-yellow-120':
           hasWarning,
       })}
@@ -76,8 +76,8 @@ export const TransactionCardFooter: FC<
 
         {message && !link && (
           <Typography
-            variant={'body3'}
-            fw={'bold'}
+            variant={'body1'}
+            fw={'normal'}
             className={twMerge(textClass, 'flex items-center')}
           >
             {message}
@@ -86,16 +86,12 @@ export const TransactionCardFooter: FC<
         {link && (
           <a rel="noopener noreferrer" href={link.uri} target="_blank">
             <Typography
-              variant={'body3'}
-              fw={'bold'}
+              variant={'body1'}
+              fw={'normal'}
               className={twMerge(textClass, 'flex items-center')}
             >
               {link.text}
-              <ExternalLinkIcon
-                width={12}
-                height={12}
-                className="!fill-current inline whitespace-nowrap ml-1"
-              />
+              <ExternalLinkIcon className="!fill-current inline whitespace-nowrap ml-1" />
             </Typography>
           </a>
         )}
@@ -104,7 +100,7 @@ export const TransactionCardFooter: FC<
         <Button
           onClick={buttonHandler}
           variant={'link'}
-          size={'sm'}
+          size={'md'}
           className={hasWarning ? textClass : undefined}
         >
           {showDetails ? 'DETAILS' : 'DISMISS'}
