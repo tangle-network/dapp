@@ -21,7 +21,7 @@ jobs:
         node-version: [16.x]
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,7 +50,7 @@ jobs:
           args: deploy --build context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.0
+        uses: unsplash/comment-on-pr@v1.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |
