@@ -10,6 +10,11 @@ export type ChainType = {
   name: string;
 
   /**
+   * The chain tag (use to categorize the chain)
+   */
+  tag: 'dev' | 'test' | 'live';
+
+  /**
    * The token symbol of the chain
    */
   symbol: string;
