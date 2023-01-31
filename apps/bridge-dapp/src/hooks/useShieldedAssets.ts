@@ -6,9 +6,12 @@ import { ethers } from 'ethers';
 import React from 'react';
 
 import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
+
+  const { activeChain } = useWebContext();
 
   const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
 
@@ -20,6 +23,10 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         const chain = chainsPopulated[Number(targetChainId)];
         const balance = ethers.utils.formatUnits(amount, denomination);
+
+        if (chain.tag !== activeChain?.tag) {
+          return;
+        }
 
         const existedChain = acc.find(
           (item) =>
@@ -75,7 +82,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
       return acc;
     }, [] as ShieldedAssetDataType[]);
-  }, [allNotes, fungibleCurrencies, getWrappableCurrencies]);
+  }, [activeChain?.tag, allNotes, fungibleCurrencies, getWrappableCurrencies]);
 
   return groupedNotes;
 };

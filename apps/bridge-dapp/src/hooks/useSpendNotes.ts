@@ -1,6 +1,5 @@
 import { randRecentDate } from '@ngneat/falso';
 import { Currency } from '@webb-tools/abstract-api-provider';
-import { VAnchor } from '@webb-tools/anchors';
 import { VAnchorTree__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
@@ -10,6 +9,7 @@ import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 
 const createdTime = randRecentDate();
 
@@ -17,6 +17,8 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
   const { allNotes } = useNoteAccount();
 
   const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
+
+  const { activeChain, chains } = useWebContext();
 
   const [nextIndices, setNextIndices] = useState<
     { address: string; typedChainId: number; nextIndex: number }[]
@@ -49,6 +51,16 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
   const notes = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(
       (acc, [typedChainId, notes]) => {
+        const currentChain = chains[Number(typedChainId)];
+        if (!currentChain) {
+          console.trace('Chain not found with typedChainId: ', typedChainId);
+          return acc;
+        }
+
+        if (currentChain.tag !== activeChain?.tag) {
+          return acc;
+        }
+
         notes.forEach((note) => {
           // Get the information about the chain
           const chain = chainsPopulated[Number(typedChainId)];
@@ -111,7 +123,14 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
       },
       [] as Array<SpendNoteDataType>
     );
-  }, [allNotes, getWrappableCurrencies, fungibleCurrencies, nextIndices]);
+  }, [
+    allNotes,
+    chains,
+    activeChain?.tag,
+    nextIndices,
+    fungibleCurrencies,
+    getWrappableCurrencies,
+  ]);
 
   // Effect to get next indices asynchorously
   useEffect(() => {
