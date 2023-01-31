@@ -85,7 +85,11 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                     <ChevronDown />
                   </span>
                 </DropdownTrigger>
-                <DropdownBody isPorttal={false} align="start" className="mt-1">
+                <DropdownBody
+                  isPorttal={false}
+                  align="start"
+                  className="z-10 mt-1"
+                >
                   <AmountMenu
                     {...amountMenuProps}
                     onChange={onAmountTypeChange}
