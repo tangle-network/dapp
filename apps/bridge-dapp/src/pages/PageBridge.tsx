@@ -119,7 +119,7 @@ const PageBridge = () => {
     useMemo<NoteAccountTableContainerProps>(
       () => ({
         onActiveTabChange: handleChangeTab,
-        onOpenUploadModal: handleOpenUploadModal,
+        onUploadSpendNote: handleOpenUploadModal,
         onDefaultDestinationChainChange: updateDefaultDestinationChain,
         ondefaultFungibleCurrencyChange: updatedefaultFungibleCurrency,
       }),
