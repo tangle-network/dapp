@@ -363,6 +363,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <ChainListCardWrapper
           chainType="dest"
+          onlyCategory={activeChain?.tag}
           chains={availableDestChains.map(
             (chain) =>
               ({
@@ -383,7 +384,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [availableDestChains, setMainComponent]);
+    }, [activeChain?.tag, availableDestChains, setMainComponent]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(

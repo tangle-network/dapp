@@ -525,6 +525,7 @@ export const DepositContainer = forwardRef<
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
       return {
         chainType: 'dest',
+        onlyCategory: activeChain?.tag,
         chains: destChains,
         value: destChainInputValue,
         onChange: async (selectedChain) => {
@@ -536,13 +537,7 @@ export const DepositContainer = forwardRef<
         },
         onClose: () => setMainComponentName(undefined),
       };
-    }, [
-      chains,
-      destChains,
-      destChainInputValue,
-      setDestChain,
-      setMainComponentName,
-    ]);
+    }, [activeChain?.tag, destChains, destChainInputValue, chains]);
 
     const sourceChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
       return {
