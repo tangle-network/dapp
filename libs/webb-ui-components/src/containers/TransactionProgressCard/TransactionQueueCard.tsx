@@ -51,23 +51,15 @@ const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({
   );
 };
 
-const FailedFooter: FC<{ method: TransactionItemVariant }> = ({ method }) => {
-  const message = useMemo(() => {
-    switch (method) {
-      case 'Transfer':
-        return 'Failed to  transfer!';
-      case 'Deposit':
-        return 'Failed to deposit';
-      case 'Withdraw':
-        return 'Failed to withdraw';
-    }
-  }, [method]);
+const FailedFooter = () => {
   return (
     <>
       <span className={'inline-block pr-2'}>
         <AlertFill maxWidth={16} />
       </span>
-      <span className={'text-inherit dark:text-inherit'}>{message} &nbsp;</span>
+      <span className={'text-inherit dark:text-inherit'}>
+        Transaction failed &nbsp;
+      </span>
     </>
   );
 };
@@ -155,14 +147,12 @@ export const TransactionQueueCard = forwardRef<
               hasWarning: isErrored,
               link: isCompleted
                 ? { uri: txURI, text: <CompletedFooter method={tx.method} /> }
+                : isErrored
+                ? { uri: txURI, text: <FailedFooter /> }
                 : tx.txStatus.message
                 ? undefined
                 : { uri: recipientURI, text: recipientFooter },
-              message: isErrored ? (
-                <FailedFooter method={tx.method} />
-              ) : (
-                tx.txStatus.message
-              ),
+              message: isErrored ? <FailedFooter /> : tx.txStatus.message,
             },
             label: {
               amount: tx.amount,
@@ -267,7 +257,7 @@ export const TransactionQueueCard = forwardRef<
 
           <div className={'grow'}>
             <Typography
-              variant={'body1'}
+              variant={'h5'}
               fw={'bold'}
               className={' text-mono-180 dark:text-mono'}
             >
@@ -279,7 +269,7 @@ export const TransactionQueueCard = forwardRef<
                   : 'Transaction Processing')}
             </Typography>
             <Typography
-              variant={'body2'}
+              variant={'body1'}
               className={'text-mono-120 dark:text-mono-80 pr-1'}
             >
               {transactionSummeryText}
