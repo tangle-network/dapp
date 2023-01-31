@@ -27980,9 +27980,9 @@ swarm-js@^0.1.40:
     xhr-request "^1.0.1"
 
 swiper@^8.4.5:
-  version "8.4.6"
-  resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.4.6.tgz#5b52c83cb4aa9ce6f1640e44d3f93ff4ea6f7682"
-  integrity sha512-HACW035vBz2T6Kfut23EAzXhcDpgR8doX+wjq0ZUvJgS5SQApGrV885DAPLBFnmPUISsAhNSVxPKDxqroFvXvQ==
+  version "8.4.7"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.4.7.tgz#0301d385c3efc8efe8b66a64187edcb30e3067ee"
+  integrity sha512-VwO/KU3i9IV2Sf+W2NqyzwWob4yX9Qdedq6vBtS0rFqJ6Fa5iLUJwxQkuD4I38w0WDJwmFl8ojkdcRFPHWD+2g==
   dependencies:
     dom7 "^4.0.4"
     ssr-window "^4.0.2"
