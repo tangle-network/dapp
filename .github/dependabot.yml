@@ -52,7 +52,6 @@ updates:
       - 'dependencies'
 
   - package-ecosystem: 'github-actions'
-    versioning-strategy: increase-if-necessary
     # Workflow files stored in the
     # default location of `.github/workflows`
     directory: '/'
@@ -65,6 +64,7 @@ updates:
       prefix: 'chore: '
     # Allow up to 2 open pull requests for gh-actions dependencies
     open-pull-requests-limit: 2
+    versioning-strategy: increase-if-necessary
     labels:
       - 'needs review 👓'
       - 'dependencies'
