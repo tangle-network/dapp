@@ -1,12 +1,3 @@
----
-name: Pull request
-about: Proposed changes
-title: ''
-labels: 'needs review 👓'
-assignees: ''
-
----
-
 ## Summary of changes
 _Provide a detailed description of proposed changes._
 - 
