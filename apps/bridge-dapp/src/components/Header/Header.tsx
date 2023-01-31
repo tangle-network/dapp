@@ -10,27 +10,24 @@ import {
 import * as constants from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
-import { getDefaultConnection } from '../../utils';
+
+import { useConnectWallet } from '../../hooks';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { WalletButton } from './WalletButton';
-import { WalletModal } from './WalletModal';
 import { HeaderProps } from './types';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
-  const { activeAccount, activeWallet, activeChain, loading, chains } =
-    useWebContext();
+  const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
 
-  const { setMainComponent } = useWebbUI();
+  const { isModalOpen, toggleModal } = useConnectWallet();
 
   // On connect wallet button click - connect to the default chain(ETH Goerli)
-  const onConnectWalletClick = useCallback(() => {
-    const { defaultChain } = getDefaultConnection(chains);
-
-    setMainComponent(<WalletModal chain={defaultChain} />);
-  }, [chains, setMainComponent]);
+  const handleConnectWalletClick = useCallback(() => {
+    toggleModal(true);
+  }, [toggleModal]);
 
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
@@ -45,7 +42,7 @@ export const Header: FC<HeaderProps> = () => {
             <Button
               isLoading={loading}
               loadingText="Connecting..."
-              onClick={onConnectWalletClick}
+              onClick={handleConnectWalletClick}
             >
               Connect wallet
             </Button>

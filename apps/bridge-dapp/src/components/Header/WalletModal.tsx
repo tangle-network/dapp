@@ -1,48 +1,63 @@
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
-import { Chain, walletsConfig } from '@webb-tools/dapp-config';
+import { walletsConfig } from '@webb-tools/dapp-config';
 import { WalletId } from '@webb-tools/dapp-types';
 import {
   Modal,
   ModalContent,
   WalletConnectionCard,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useCallback, useMemo } from 'react';
+
 import { useConnectWallet } from '../../hooks';
+import { getDefaultConnection } from '../../utils';
 
-export type WalletModalProps = {
-  chain: Chain;
-};
-
-export const WalletModal: FC<WalletModalProps> = ({ chain }) => {
-  const { setMainComponent } = useWebbUI();
+export const WalletModal: FC = () => {
   const {
-    isModalOpen,
-    toggleModal,
-    switchWallet,
+    chain: selectedChain,
     connectingWalletId,
     failedWalletId,
+    isModalOpen,
+    resetState,
     selectedWallet,
-  } = useConnectWallet(true);
+    switchWallet,
+    toggleModal,
+  } = useConnectWallet();
+
+  const { chains } = useWebContext();
+
+  const chain = useMemo(() => {
+    if (!selectedChain) {
+      return getDefaultConnection(chains).defaultChain;
+    }
+
+    return selectedChain;
+  }, [chains, selectedChain]);
+
+  const handleOpenChange = useCallback(
+    (isOpen: boolean) => {
+      toggleModal(isOpen);
+    },
+    [toggleModal]
+  );
+
+  const handleCloseAutoFocus = useCallback(() => {
+    resetState();
+  }, [resetState]);
 
   return (
-    <Modal
-      open={isModalOpen}
-      onOpenChange={(open) => {
-        toggleModal(open);
-
-        if (!open) {
-          setMainComponent(undefined);
-        }
-      }}
-    >
-      <ModalContent isOpen={isModalOpen} isCenter>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent
+        onCloseAutoFocus={handleCloseAutoFocus}
+        isOpen={isModalOpen}
+        isCenter
+      >
         <WalletConnectionCard
           wallets={Object.values(chain.wallets)}
           onWalletSelect={async (wallet) => {
             await switchWallet(chain, wallet);
           }}
-          onClose={() => setMainComponent(undefined)}
+          onClose={() => toggleModal(false)}
           connectingWalletId={connectingWalletId}
           failedWalletId={failedWalletId}
           onTryAgainBtnClick={async () => {

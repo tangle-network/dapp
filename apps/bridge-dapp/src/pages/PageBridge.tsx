@@ -23,7 +23,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
-import { InteractiveFeedbackView } from '../components';
+import { InteractiveFeedbackView, WalletModal } from '../components';
 import { ManageButton } from '../components/tables';
 import { DeleteNotesModal, UploadSpendNoteModal } from '../containers';
 import { DepositContainer } from '../containers/DepositContainer';
@@ -35,6 +35,7 @@ import {
 } from '../containers/note-account-tables';
 import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
 import {
+  useConnectWallet,
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
@@ -48,7 +49,15 @@ const PageBridge = () => {
   >('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { noteManager, activeFeedback } = useWebContext();
+  const {
+    activeAccount,
+    activeChain,
+    activeFeedback,
+    activeWallet,
+    loading,
+    noteManager,
+  } = useWebContext();
+
   const { smoothScrollToTop } = useScrollActions();
 
   const { txPayloads } = useTxQueue();
@@ -142,9 +151,28 @@ const PageBridge = () => {
   const { TryAnotherWalletModal, onTryAnotherWallet } =
     useTryAnotherWalletWithView();
 
+  const { isWalletConnected } = useConnectWallet();
+
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
     [txPayloads]
+  );
+
+  const hasNoteAccount = useMemo(() => Boolean(noteManager), [noteManager]);
+
+  const sharedBridgeTabContainerProps = useMemo(
+    () => ({
+      defaultDestinationChain: defaultDestinationChain,
+      defaultFungibleCurrency: defaultFungibleCurrency,
+      hasNoteAccount: hasNoteAccount,
+      onTryAnotherWallet: onTryAnotherWallet,
+    }),
+    [
+      defaultDestinationChain,
+      defaultFungibleCurrency,
+      hasNoteAccount,
+      onTryAnotherWallet,
+    ]
   );
 
   return (
@@ -172,25 +200,13 @@ const PageBridge = () => {
               <TabTrigger value="Withdraw">Withdraw</TabTrigger>
             </TabsList>
             <TabContent value="Deposit">
-              <DepositContainer
-                defaultDestinationChain={defaultDestinationChain}
-                defaultFungibleCurrency={defaultFungibleCurrency}
-                onTryAnotherWallet={onTryAnotherWallet}
-              />
+              <DepositContainer {...sharedBridgeTabContainerProps} />
             </TabContent>
             <TabContent value="Transfer">
-              <TransferContainer
-                defaultDestinationChain={defaultDestinationChain}
-                defaultFungibleCurrency={defaultFungibleCurrency}
-                onTryAnotherWallet={onTryAnotherWallet}
-              />
+              <TransferContainer {...sharedBridgeTabContainerProps} />
             </TabContent>
             <TabContent value="Withdraw">
-              <WithdrawContainer
-                defaultDestinationChain={defaultDestinationChain}
-                defaultFungibleCurrency={defaultFungibleCurrency}
-                onTryAnotherWallet={onTryAnotherWallet}
-              />
+              <WithdrawContainer {...sharedBridgeTabContainerProps} />
             </TabContent>
           </TabsRoot>
 
@@ -317,6 +333,8 @@ const PageBridge = () => {
           notes={deleteNotes}
           setNotes={(notes) => setDeleteNotes(notes)}
         />
+
+        <WalletModal />
 
         {/** Last login */}
       </div>
