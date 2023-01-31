@@ -457,7 +457,7 @@ export const DepositContainer = forwardRef<
       [isNoteAccountCreated, setNoteAccountModalOpen, syncNotes]
     );
 
-    const onMaxBtnClick = useCallback(() => {
+    const handleMaxBtnClick = useCallback(() => {
       const balance = selectedToken?.balance ?? '0';
       setAmount(Number(balance));
     }, [selectedToken]);
@@ -722,7 +722,7 @@ export const DepositContainer = forwardRef<
             amountInputProps={{
               amount: amount ? amount.toString() : undefined,
               onAmountChange,
-              onMaxBtnClick,
+              onMaxBtnClick: handleMaxBtnClick,
               isDisabled: !selectedToken || !destChain,
               errorMessage: amountErrorMessage,
             }}

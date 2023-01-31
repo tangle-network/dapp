@@ -5,6 +5,7 @@ import {
   useCurrencies,
   useNoteAccount,
   useRelayers,
+  useTxQueue,
 } from '@webb-tools/react-hooks';
 import {
   ChainType,
@@ -27,14 +28,14 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
-import { useShieldedAssets } from '../../hooks';
+import { useConnectWallet, useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
->(({ defaultFungibleCurrency, onTryAnotherWallet }, ref) => {
+>(({ defaultFungibleCurrency, onTryAnotherWallet, hasNoteAccount }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
@@ -87,6 +88,10 @@ export const WithdrawContainer = forwardRef<
   const { allNotes } = useNoteAccount();
 
   const shieldedAssets = useShieldedAssets();
+
+  const txQueue = useTxQueue();
+
+  const { isWalletConnected, toggleModal } = useConnectWallet();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
@@ -237,6 +242,7 @@ export const WithdrawContainer = forwardRef<
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
+      otherAvailableChains.length > 0, // Other available chains
     ].some((value) => value === false);
   }, [
     fungibleCurrency,
@@ -245,6 +251,33 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     recipient,
     isValidRecipient,
+    otherAvailableChains.length,
+  ]);
+
+  const buttonText = useMemo(() => {
+    if (!isWalletConnected) {
+      return 'Connect wallet';
+    }
+
+    if (!hasNoteAccount) {
+      return 'Create Note Account';
+    }
+
+    if (isDisabledWithdraw && otherAvailableChains.length > 0) {
+      return 'Switch chain to withdraw';
+    }
+
+    if (selectedUnwrapToken) {
+      return 'Unwrap and Withdraw';
+    }
+
+    return 'Withdraw';
+  }, [
+    hasNoteAccount,
+    isDisabledWithdraw,
+    isWalletConnected,
+    otherAvailableChains.length,
+    selectedUnwrapToken,
   ]);
 
   // Calculate the info for UI display
@@ -315,6 +348,20 @@ export const WithdrawContainer = forwardRef<
   ]);
 
   const handleWithdrawButtonClick = useCallback(async () => {
+    // Dismiss all the completed and failed txns in the queue before starting a new txn
+    txQueue.txPayloads
+      .filter(
+        (tx) =>
+          tx.txStatus.status === 'warning' || tx.txStatus.status === 'completed'
+      )
+      .map((tx) => tx.onDismiss());
+
+    // No wallet connected
+    if (!isWalletConnected) {
+      toggleModal(true);
+      return;
+    }
+
     if (isDisabledWithdraw && otherAvailableChains.length > 0) {
       return await handleSwitchToOtherDestChains();
     }
@@ -436,10 +483,13 @@ export const WithdrawContainer = forwardRef<
     handleSwitchToOtherDestChains,
     isDisabledWithdraw,
     isUnwrap,
+    isWalletConnected,
     noteManager,
     otherAvailableChains.length,
     recipient,
     setMainComponent,
+    toggleModal,
+    txQueue.txPayloads,
     wrappableCurrency,
   ]);
 
@@ -583,15 +633,8 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         withdrawBtnProps={{
-          isDisabled: isDisabledWithdraw
-            ? otherAvailableChains.length > 0
-              ? false
-              : true
-            : isDisabledWithdraw,
-          children:
-            isDisabledWithdraw && otherAvailableChains.length > 0
-              ? 'Switch chain to withdraw'
-              : undefined,
+          isDisabled: isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+          children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}
         receivedAmount={infoCalculated.receivingAmount}

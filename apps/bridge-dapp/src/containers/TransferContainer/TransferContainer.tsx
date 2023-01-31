@@ -10,6 +10,7 @@ import {
   useBridge,
   useNoteAccount,
   useRelayers,
+  useTxQueue,
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
@@ -39,13 +40,19 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { useConnectWallet } from '../../hooks';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
   TransferContainerProps
 >(
   (
-    { defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet },
+    {
+      defaultDestinationChain,
+      defaultFungibleCurrency,
+      hasNoteAccount,
+      onTryAnotherWallet,
+    },
     ref
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
@@ -58,6 +65,10 @@ export const TransferContainer = forwardRef<
     const { allNotes } = useNoteAccount();
 
     const { api } = useVAnchor();
+
+    const txQueue = useTxQueue();
+
+    const { isWalletConnected, toggleModal } = useConnectWallet();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -583,16 +594,31 @@ export const TransferContainer = forwardRef<
             return;
           }
 
-          setMainComponent(<WalletModal chain={destChain} />);
+          toggleModal(true, destChain);
         } catch (error) {
           console.error('Failed to switch chain', error);
         }
       },
-      [activeChain, activeWallet, setMainComponent, switchChain]
+      [activeChain, activeWallet, switchChain, toggleModal]
     );
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
+      // Dismiss all the completed and failed txns in the queue before starting a new txn
+      txQueue.txPayloads
+        .filter(
+          (tx) =>
+            tx.txStatus.status === 'warning' ||
+            tx.txStatus.status === 'completed'
+        )
+        .map((tx) => tx.onDismiss());
+
+      // No wallet connected
+      if (!isWalletConnected) {
+        toggleModal(true);
+        return;
+      }
+
       if (
         !fungibleCurrency ||
         !destChain ||
@@ -707,23 +733,34 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
+      txQueue.txPayloads,
+      isWalletConnected,
       fungibleCurrency,
-      currentTypedChainId,
       destChain,
       api,
       noteManager,
-      activeApi?.state?.activeBridge,
+      activeApi?.state.activeBridge,
       amount,
+      currentTypedChainId,
       inputNotes,
       activeChain?.chainId,
       infoCalculated.rawChangeAmount,
-      setMainComponent,
       recipientPubKey,
+      setMainComponent,
       activeRelayer,
+      toggleModal,
       handleSwitchChain,
     ]);
 
     const buttonText = useMemo(() => {
+      if (!isWalletConnected) {
+        return 'Connect wallet';
+      }
+
+      if (!hasNoteAccount) {
+        return 'Create Note Account';
+      }
+
       if (
         activeChain &&
         destChain &&
@@ -733,7 +770,7 @@ export const TransferContainer = forwardRef<
       }
 
       return 'Transfer';
-    }, [activeChain, destChain]);
+    }, [activeChain, destChain, hasNoteAccount, isWalletConnected]);
 
     useEffect(() => {
       const updateDefaultValues = () => {
@@ -792,7 +829,8 @@ export const TransferContainer = forwardRef<
           },
         }}
         transferBtnProps={{
-          isDisabled: isTransferButtonDisabled,
+          isDisabled:
+            isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
           children: buttonText,
           onClick: handleTransferClick,
         }}
