@@ -82,7 +82,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
         <div className="flex items-center space-x-1">
           {!secondToken ? (
             <IconWithTooltip
-              icon={<TokenIcon name={firstToken} />}
+              icon={<TokenIcon size="lg" name={firstToken} />}
               content={firstToken}
             />
           ) : (
@@ -275,7 +275,7 @@ export const ShieldedAssetsTableContainer: FC<
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="Shielded Asset"
+        title="available assets"
       />
     </div>
   );

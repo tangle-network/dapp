@@ -79,7 +79,10 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       return (
         <div className="flex items-center space-x-1">
           {firstTwoTokens.length === 1 ? (
-            <TokenIcon name={firstTwoTokens[0]} />
+            <IconWithTooltip
+              icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}
+              content={firstTwoTokens[0]}
+            />
           ) : (
             <TokenPairIcons
               token1Symbol={firstTwoTokens[0]}
@@ -195,7 +198,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="Spend Notes"
+        title="available notes"
       />
     </div>
   );
