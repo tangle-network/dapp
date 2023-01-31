@@ -103,7 +103,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   }),
 
   columnHelper.accessor('availableBalance', {
-    header: 'Available Balance',
+    header: 'Total Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
         {props.getValue()}

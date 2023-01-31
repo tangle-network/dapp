@@ -98,7 +98,12 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             ),
             createdTime, // TODO: get the actual created time
             balance: Number(
-              ethers.utils.formatUnits(note.note.amount, note.note.denomination)
+              Number(
+                ethers.utils.formatUnits(
+                  note.note.amount,
+                  note.note.denomination
+                )
+              ).toFixed(6)
             ),
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()

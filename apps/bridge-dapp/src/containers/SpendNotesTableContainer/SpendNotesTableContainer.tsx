@@ -109,7 +109,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   columnHelper.accessor('subsequentDeposits', {
     header: 'Subsequent deposits',
     cell: (props) => (
-      <Typography ta="center" variant="body1">
+      <Typography ta="left" variant="body1">
         {props.getValue()}
       </Typography>
     ),
