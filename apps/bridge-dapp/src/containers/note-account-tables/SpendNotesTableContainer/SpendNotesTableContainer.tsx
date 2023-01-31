@@ -229,7 +229,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
     return (
       <EmptyTable
         title="No spend notes found"
-        description="Don't see your spend note?"
+        description="Notes are stored locally and encrypted on-chain. Can't find spend note?"
         buttonText="Upload spend Notes"
         onClick={onUploadSpendNote}
       />
