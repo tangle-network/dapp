@@ -1,9 +1,9 @@
 ---
 name: UI Update
 about: Description of UI improvement
-title: ''
-labels: ''
-assignees: ''
+title: '[UI] '
+labels: 'design-system 🎨'
+assignees: '@monaiuu @seeddisperser'
 
 ---
 
