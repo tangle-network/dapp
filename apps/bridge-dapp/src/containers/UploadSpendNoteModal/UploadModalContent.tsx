@@ -58,6 +58,15 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
+  // Parse JSON string
+  const parseJSON = (str: string) => {
+    try {
+      return [null, JSON.parse(str)];
+    } catch (err) {
+      return [err];
+    }
+  };
+
   // Effect run when file changes
   useEffect(() => {
     async function processFile() {
@@ -76,7 +85,15 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
       reader.onload = async () => {
         const text = reader.result as string;
 
-        const parsedNote = JSON.parse(text);
+        const [err, parsedNote] = parseJSON(text);
+
+        if (err) {
+          notificationApi({
+            variant: 'error',
+            message: 'Invalid note format',
+          });
+          return;
+        }
 
         if (typeof parsedNote === 'string') {
           const note = await Note.deserialize(parsedNote);
