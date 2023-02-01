@@ -38,7 +38,7 @@ This repo is a monorepo containing decentralized interfaces into the Webb protoc
 - [webbsite:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/webbsite) an interface for the Webb ecosystem and development.
 - [webb-ui-components:](https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components) a collection of reusable components for building interfaces quickly.
 
-For additional information, please refer to the [Webb Official Documentation](https://docs.webb.tools/v1/getting-started/overview/) 📝. Have feedback on how to improve the webb-dapp interface? Or have a specific question to ask? Checkout the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback) 💬.
+For additional information, please refer to the [Webb Official Documentation](https://docs.webb.tools/) 📝. Have feedback on how to improve the webb-dapp interface? Or have a specific question to ask? Checkout the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback) 💬.
 
 ## Prerequisites
 
@@ -72,7 +72,7 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:bridge
    ```
 
-Visit http://localhost:3000/ to see the Webb Bridge Dapp UI! 🕸️ 🚀 If you would like to utilize the Hubble bridge
+Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI! 🕸️ 🚀 If you would like to utilize the Hubble bridge
 with a local EVM network and local relayer refer to the instructions [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge).
 
 ## Run stats-dapp locally 💻
@@ -97,7 +97,7 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:stats
    ```
 
-Visit http://localhost:3000/ to see the Webb Stats UI! 🕸️ 🚀 If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
+Visit `http://localhost:3000/` to see the Webb Stats UI! 🕸️ 🚀 If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
 
 <h2 id="test"> Testing 🧪 </h2>
 
@@ -123,7 +123,7 @@ yarn test
    yarn nx storybook webb-ui-components
    ```
 
-Visit http://localhost:4400/ to see the Webb Component Library! 🕸️ 🚀
+Visit `http://localhost:4400/` to see the Webb Component Library! 🕸️ 🚀
 
 <h2 id="contribute"> Contributing </h2>
 
