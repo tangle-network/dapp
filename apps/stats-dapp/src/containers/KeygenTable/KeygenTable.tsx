@@ -38,7 +38,7 @@ import {
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<KeygenType>();
@@ -289,14 +289,17 @@ export const KeygenTable: FC = () => {
     [headers]
   );
 
-  const getSliderDefaultValue = (column: Column<KeygenType, unknown>) =>
-    column.getFacetedMinMaxValues()?.[0] ===
-    column.getFacetedMinMaxValues()?.[1]
-      ? [
-          column.getFacetedMinMaxValues()?.[0] ?? 0,
-          column.getFacetedMinMaxValues()?.[1] ?? 0,
-        ]
-      : column.getFacetedMinMaxValues() ?? [0, 0];
+  const getSliderDefaultValue = useCallback(
+    (column: Column<KeygenType, unknown>) =>
+      column.getFacetedMinMaxValues()?.[0] ===
+      column.getFacetedMinMaxValues()?.[1]
+        ? [
+            column.getFacetedMinMaxValues()?.[0] ?? 0,
+            column.getFacetedMinMaxValues()?.[1] ?? 0,
+          ]
+        : column.getFacetedMinMaxValues() ?? [0, 0],
+    []
+  );
 
   return (
     <CardTable
