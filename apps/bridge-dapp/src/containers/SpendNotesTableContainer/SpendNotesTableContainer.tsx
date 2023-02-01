@@ -122,7 +122,12 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
 
   columnHelper.accessor('note', {
     header: () => (
-      <TitleWithInfo title="Spend Note" info="Spend note" variant="body1" className='justify-center' />
+      <TitleWithInfo
+        title="Spend Note"
+        info="Spend note"
+        variant="body1"
+        className="justify-center"
+      />
     ),
     cell: (props) => (
       <div className="flex items-center justify-center">
