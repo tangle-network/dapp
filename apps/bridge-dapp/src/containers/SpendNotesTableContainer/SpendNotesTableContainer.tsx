@@ -26,6 +26,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  TitleWithInfo,
 } from '@webb-tools/webb-ui-components';
 import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { EmptyTable, LoadingTable } from '../../components/tables';
@@ -120,7 +121,14 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 
   columnHelper.accessor('note', {
-    header: 'Note',
+    header: () => (
+      <TitleWithInfo
+        title="Spend Note"
+        info="Spend note"
+        variant="body1"
+        className="justify-center"
+      />
+    ),
     cell: (props) => (
       <div className="flex items-center justify-center">
         <KeyValueWithButton
