@@ -6,3 +6,6 @@ contact_links:
     - name: Webb Discord Server
       url: https://discord.com/invite/cv8EfJu3Tn
       about: Please ask and answer questions here.
+    - name: Webb Feedback Discussion
+      url: https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback
+      about: Please provide feedback and discussion here.
