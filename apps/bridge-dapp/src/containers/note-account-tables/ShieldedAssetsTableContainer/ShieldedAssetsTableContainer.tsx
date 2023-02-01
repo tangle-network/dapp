@@ -42,7 +42,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
-      <div className="flex items-center">
+      <div className="flex items-center justify-center">
         <IconWithTooltip
           icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
           content={props.getValue<string>()}
@@ -58,7 +58,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center justify-center space-x-1.5">
           <Typography className="uppercase" variant="body1" fw="bold">
             {assetSymbol}
           </Typography>
@@ -83,10 +83,10 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       const numOfHiddenTokens = composition.length - 2;
 
       return (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center justify-center space-x-1">
           {!secondToken ? (
             <IconWithTooltip
-              icon={<TokenIcon name={firstToken} />}
+              icon={<TokenIcon size="lg" name={firstToken} />}
               content={firstToken}
             />
           ) : (
@@ -97,7 +97,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
           )}
 
           {numOfHiddenTokens > 0 && (
-            <Typography className="inline-block" variant="body3">
+            <Typography className="inline-block" variant="body3" ta="center">
               +3 others
             </Typography>
           )}
@@ -107,9 +107,9 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   }),
 
   columnHelper.accessor('availableBalance', {
-    header: 'Available Balance',
+    header: 'Balance',
     cell: (props) => (
-      <Typography variant="body1" fw="bold">
+      <Typography variant="body1" fw="bold" ta="center">
         {props.getValue()}
       </Typography>
     ),
@@ -122,6 +122,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
         variant="body1"
         fw="bold"
         className="text-blue-70 dark:text-blue-50"
+        ta="center"
       >
         {props.getValue()}
       </Typography>
@@ -144,25 +145,6 @@ export const ShieldedAssetsTableContainer: FC<
   const onTransfer = useCallback(
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Transfer');
-
-      const { rawChain, rawFungibleCurrency } = shieldedAsset;
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      onDefaultFungibleCurrencyChange,
-    ]
-  );
-
-  const onDeposit = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
-      onActiveTabChange?.('Deposit');
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
@@ -210,13 +192,6 @@ export const ShieldedAssetsTableContainer: FC<
           return (
             <div className="flex items-center space-x-1">
               <ActionWithTooltip
-                tooltipContent="Deposit"
-                onClick={() => onDeposit(shieldedAsset)}
-              >
-                <AddBoxLineIcon className="!fill-current" />
-              </ActionWithTooltip>
-
-              <ActionWithTooltip
                 tooltipContent="Transfer"
                 onClick={() => onTransfer(shieldedAsset)}
               >
@@ -241,7 +216,7 @@ export const ShieldedAssetsTableContainer: FC<
         },
       }),
     ],
-    [onDeleteNotesChange, onDeposit, onTransfer, onWithdraw]
+    [onDeleteNotesChange, onTransfer, onWithdraw]
   );
 
   const table = useReactTable({
@@ -271,11 +246,11 @@ export const ShieldedAssetsTableContainer: FC<
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
       <Table
-        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
+        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160 text-center"
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="Shielded Asset"
+        title="assets"
       />
     </div>
   );
