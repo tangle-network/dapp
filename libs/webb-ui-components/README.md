@@ -18,9 +18,9 @@
 
 <h2 id="start"> Getting Started  🎉 </h2>
 
-This is the official component library for the Webb Ecosystem! It makes use of [nx.dev](https://nx.dev/) for fast and extensible build system. The **webb-ui-kit** allows developers to quickly build beautiful user interfaces for Web3 applications. 
+This is the official component library for the Webb Ecosystem! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
 
-The webb-ui-kit makes use of [Storybook](https://storybook.js.org/) for component documentation. Interested in the available components included in this library, checkout the official documentation [here](https://webb-tools.github.io/webb-dapp/) 📝. Have feedback on how to improve the component library? Or have a specific question to ask? Checkout the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback) 💬. **PR's WELCOMED!!!!** 
+To view the available components, check out the official documentation [here](https://webb-tools.github.io/webb-dapp/). If you have feedback or questions, head to the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback). Contributions through PRs are welcomed!
 
 ## Prerequisites
 
@@ -36,9 +36,7 @@ Great! Now your environment is ready! 🚀🚀
 
 ## Usage
 
-The Webb component library can be used for external dApp developers for their own development purposes. Instructions are provided below to provide guidance on how to make use of the library for applications outside this monorepo. 
-
-In addition, instructions for developers who are interested in contributing to the component library or dApps included in this monorepo. 
+This component library can be used by external dApp developers for their own projects, and by developers who want to contribute to the library or dApps within this monorepo. Instructions for both usages outlined below.
 
 ### External Usage
 
