@@ -138,7 +138,14 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     }
 
     processFile();
-  }, [file, onNotesChange, reUploadNote, handleRemoveAllNotes]);
+  }, [
+    file,
+    onNotesChange,
+    reUploadNote,
+    handleRemoveAllNotes,
+    handleReUploadNote,
+    parseJSON,
+  ]);
 
   return (
     <>
