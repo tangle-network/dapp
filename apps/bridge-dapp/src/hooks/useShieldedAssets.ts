@@ -27,7 +27,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (existedChain) {
-          existedChain.availableBalance += Number(balance);
+          existedChain.availableBalance = Number(
+            Number(Number(balance) + existedChain.availableBalance).toFixed(2)
+          );
           existedChain.numberOfNotesFound += 1;
           return;
         }
@@ -65,7 +67,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(balance),
+          availableBalance: Number(Number(balance).toFixed(2)),
           numberOfNotesFound: 1,
         });
       });
