@@ -68,7 +68,7 @@ const Navbar = () => {
   return (
     <nav>
       <ul className="flex items-center space-x-6">
-        {navItems.map((item, idx) => (
+        {/* {navItems.map((item, idx) => (
           <li className="hidden md:block" key={idx}>
             {isNavItem(item) ? (
               <NavLink url={item.url} isInternal={item.isInternal}>
@@ -117,7 +117,7 @@ const Navbar = () => {
               </Dropdown>
             )}
           </li>
-        ))}
+        ))} */}
 
         <li>
           <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
@@ -125,9 +125,9 @@ const Navbar = () => {
           </Button>
         </li>
 
-        <li className="flex items-center justify-center md:hidden">
+        {/* <li className="flex items-center justify-center md:hidden">
           <MobileNav />
-        </li>
+        </li> */}
       </ul>
     </nav>
   );
