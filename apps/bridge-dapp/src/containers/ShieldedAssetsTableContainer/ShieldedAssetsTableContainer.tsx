@@ -155,25 +155,6 @@ export const ShieldedAssetsTableContainer: FC<
     ]
   );
 
-  const onDeposit = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
-      onActiveTabChange?.('Deposit');
-
-      const { rawChain, rawFungibleCurrency } = shieldedAsset;
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
-    ]
-  );
-
   const onWithdraw = useCallback(
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Withdraw');
@@ -204,17 +185,6 @@ export const ShieldedAssetsTableContainer: FC<
 
           return (
             <div className="flex items-center space-x-1">
-              <ActionWithTooltip content="Deposit">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onDeposit(shieldedAsset)}
-                >
-                  <AddBoxLineIcon className="!fill-current" />
-                </Button>
-              </ActionWithTooltip>
-
               <ActionWithTooltip content="Transfer">
                 <Button
                   variant="utility"
@@ -241,7 +211,7 @@ export const ShieldedAssetsTableContainer: FC<
         },
       }),
     ],
-    [onDeposit, onTransfer, onWithdraw]
+    [onTransfer, onWithdraw]
   );
 
   const table = useReactTable({
