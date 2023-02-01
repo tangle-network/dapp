@@ -31,5 +31,5 @@ jobs:
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          buildScriptName: 'chromatic'
+          buildScriptName: 'chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }}'
           exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
