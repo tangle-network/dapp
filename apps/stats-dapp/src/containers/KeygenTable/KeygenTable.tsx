@@ -1,4 +1,5 @@
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   createColumnHelper,
@@ -37,7 +38,7 @@ import {
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<KeygenType>();
@@ -288,6 +289,18 @@ export const KeygenTable: FC = () => {
     [headers]
   );
 
+  const getSliderDefaultValue = useCallback(
+    (column: Column<KeygenType, unknown>) =>
+      column.getFacetedMinMaxValues()?.[0] ===
+      column.getFacetedMinMaxValues()?.[1]
+        ? [
+            column.getFacetedMinMaxValues()?.[0] ?? 0,
+            column.getFacetedMinMaxValues()?.[1] ?? 0,
+          ]
+        : column.getFacetedMinMaxValues() ?? [0, 0],
+    []
+  );
+
   return (
     <CardTable
       titleProps={{
@@ -310,12 +323,10 @@ export const KeygenTable: FC = () => {
             <AccordionItem className={'p-0 py-0'} value={'keygenThreshold'}>
               <AccordionButton>Keygen Threshold</AccordionButton>
               <Divider className="bg-mono-40 dark:bg-mono-140" />
-              <AccordionContent className="p-0">
+              <AccordionContent>
                 <Slider
                   max={keygenFilterCol.getFacetedMinMaxValues()?.[1]}
-                  defaultValue={keygenFilterCol
-                    .getFacetedMinMaxValues()
-                    ?.map((i) => (i ? 0 : i))}
+                  defaultValue={getSliderDefaultValue(keygenFilterCol)}
                   value={keygenFilterCol.getFilterValue() as [number, number]}
                   onChange={(nextValue) =>
                     keygenFilterCol.setFilterValue(nextValue)
@@ -327,10 +338,10 @@ export const KeygenTable: FC = () => {
             </AccordionItem>
             <AccordionItem className={'p-0 py-0'} value={'signatureThresholds'}>
               <AccordionButton>Signature Threshold</AccordionButton>
-              <AccordionContent className="p-0">
+              <AccordionContent>
                 <Slider
                   max={signatureFilterCol.getFacetedMinMaxValues()?.[1]}
-                  defaultValue={signatureFilterCol.getFacetedMinMaxValues()}
+                  defaultValue={getSliderDefaultValue(signatureFilterCol)}
                   value={
                     signatureFilterCol.getFilterValue() as [number, number]
                   }
