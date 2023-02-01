@@ -58,14 +58,18 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
-  // Parse JSON string
-  const parseJSON = (str: string) => {
+  /**
+   * Parse JSON string and return error if any
+   * @param str - The JSON string to parse
+   * @returns [error, parsed]
+   */
+  const parseJSON = useCallback((str: string) => {
     try {
       return [null, JSON.parse(str)];
     } catch (err) {
       return [err];
     }
-  };
+  }, []);
 
   // Effect run when file changes
   useEffect(() => {
