@@ -9,24 +9,25 @@ import {
   ChainIcon,
   ChevronDown,
   ExternalLinkLine,
+  SendPlanLineIcon,
+  WalletLineIcon,
   TokenIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
   Button,
-  Dropdown,
-  DropdownBasicButton,
-  DropdownBody,
   fuzzyFilter,
   IconWithTooltip,
   KeyValueWithButton,
-  MenuItem,
   shortenString,
   Table,
   TokenPairIcons,
   Typography,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 import { EmptyTable, LoadingTable } from '../../components/tables';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
@@ -254,17 +255,46 @@ const ActionDropdownButton: FC<
   ]);
 
   return (
-    <Dropdown>
-      <DropdownBasicButton>
-        <Button as="span" variant="utility" size="sm" className="p-2">
-          <ChevronDown className="!fill-current" />
+    <div className="flex items-center space-x-1">
+      <ActionWithTooltip content="Transfer">
+        <Button
+          variant="utility"
+          size="sm"
+          className="p-2"
+          onClick={onQuickTransfer}
+        >
+          <SendPlanLineIcon className="!fill-current" />
         </Button>
-      </DropdownBasicButton>
+      </ActionWithTooltip>
 
-      <DropdownBody className="min-w-[200px]" size="sm">
-        <MenuItem onClick={onQuickTransfer}>Quick Transfer</MenuItem>
-        <MenuItem onClick={onQuickWithdraw}>Quick Withdraw</MenuItem>
-      </DropdownBody>
-    </Dropdown>
+      <ActionWithTooltip content="Withdraw">
+        <Button
+          variant="utility"
+          size="sm"
+          className="p-2"
+          onClick={onQuickWithdraw}
+        >
+          <WalletLineIcon className="!fill-current" />
+        </Button>
+      </ActionWithTooltip>
+    </div>
+  );
+};
+
+/***********************
+ * Internal components *
+ ***********************/
+
+const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
+  content,
+  children,
+}) => {
+  return (
+    <Tooltip delayDuration={200}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipBody>
+        <Typography variant="body3">{content}</Typography>
+      </TooltipBody>
+    </Tooltip>
   );
 };
