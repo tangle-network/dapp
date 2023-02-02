@@ -100,9 +100,9 @@
 }
 
 .notion-text {
-  @apply sub-heading-1;
+  @apply sub-heading-2;
 }
 
 .notion-list li {
-  @apply sub-heading-2;
+  @apply text-base font-semibold;
 }
