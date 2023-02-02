@@ -266,7 +266,7 @@ export const WithdrawContainer = forwardRef<
       return 'Switch chain to withdraw';
     }
 
-    if (selectedUnwrapToken) {
+    if (selectedUnwrapToken && isUnwrap) {
       return 'Unwrap and Withdraw';
     }
 
@@ -274,6 +274,7 @@ export const WithdrawContainer = forwardRef<
   }, [
     hasNoteAccount,
     isDisabledWithdraw,
+    isUnwrap,
     isWalletConnected,
     otherAvailableChains.length,
     selectedUnwrapToken,
