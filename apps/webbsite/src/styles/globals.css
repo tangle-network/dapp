@@ -106,3 +106,7 @@
 .notion-list li {
   @apply text-base font-semibold;
 }
+
+.notion-link {
+  @apply inline-block;
+}
