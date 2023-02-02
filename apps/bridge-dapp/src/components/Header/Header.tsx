@@ -30,9 +30,12 @@ export const Header: FC<HeaderProps> = () => {
   }, [toggleModal]);
 
   return (
-    <header className="bg-mono-0 dark:bg-mono-180">
-      <div className="flex items-center justify-between p-4">
-        <NavLink to={constants.logoConfig.path}>
+    <header className="bg-mono-0 dark:bg-mono-180 py-4">
+      <div className="flex justify-between px-2 max-w-[1160px] h-[40px] mx-auto">
+        <NavLink
+          to={constants.logoConfig.path}
+          className="flex flex-col justify-center"
+        >
           <Logo />
         </NavLink>
 

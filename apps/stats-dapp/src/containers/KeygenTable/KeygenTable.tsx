@@ -40,6 +40,7 @@ import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/ut
 import { KeygenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Spinner } from '@webb-tools/icons';
 
 const columnHelper = createColumnHelper<KeygenType>();
 
@@ -357,13 +358,19 @@ export const KeygenTable: FC = () => {
         </Filter>
       }
     >
-      <Table
-        tableProps={table as RTTable<unknown>}
-        totalRecords={totalItems}
-        isPaginated
-        tdClassName="text-center"
-        title="Keys"
-      />
+      {totalItems <= 0 ? (
+        <div className="flex items-center justify-center min-w-full min-h-[700px]">
+          <Spinner size="xl" />
+        </div>
+      ) : (
+        <Table
+          tableProps={table as RTTable<unknown>}
+          totalRecords={totalItems}
+          isPaginated
+          tdClassName="text-center"
+          title="Keys"
+        />
+      )}
     </CardTable>
   );
 };
