@@ -125,7 +125,7 @@ If you have a contribution in mind, please check out our [Contribution Guide](..
 
 ### New Component Proposals
 
-We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [ issue template](https://github.com/webb-tools/webb-dapp/issues/new/choose) and we will get in touch!
+We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/webb-tools/webb-dapp/issues/new/choose) and we will get in touch!
 
 ### Lint before you push! 🪥
 
