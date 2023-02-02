@@ -391,7 +391,7 @@ export const DepositContainer = forwardRef<
       }
 
       if (isWalletConnected) {
-        return 'Create Note Account';
+        return 'Create note account';
       }
 
       return 'Connect wallet';

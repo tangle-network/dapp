@@ -65,23 +65,23 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
 
         <div className="space-y-4 p-9">
           <Typography component="p" fw="semibold" variant="body1">
-            All ({notes.length}) spend note{notes.length > 1 ? 's' : ''} that
-            you have selected will be permanently deleted from local storage.
-            You may want to{' '}
+            Attention! Deleting the selected ({notes.length}) spend note
+            {notes.length > 1 ? 's' : ''} will permanently remove them from your
+            local storage. Consider{' '}
             <Button
               onClick={handleDownloadNotes}
               as="span"
               variant="link"
               className="inline-block"
             >
-              download
+              downloading
             </Button>{' '}
-            of these before deleting.
+            a copy of the spend notes before proceeding with deletion.
           </Typography>
 
           <Typography component="p" fw="semibold" variant="body1">
-            This cannot be undone. Please ensure that you are deleting the
-            correct account.
+            This action cannot be undone, so please ensure that you are deleting
+            the correct item.
           </Typography>
         </div>
 

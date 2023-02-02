@@ -140,7 +140,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // on the notification
   const handleNewNotes = useCallback(
     async (notes: Note[]) => {
-      logger.info('Handle new notes: ', notes);
+      logger.info(`Handle ${notes.length} new notes`);
       logger.warn('New notes function is not implemented yet');
     },
     [logger]

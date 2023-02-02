@@ -768,7 +768,7 @@ export const TransferContainer = forwardRef<
       }
 
       if (!hasNoteAccount) {
-        return 'Create Note Account';
+        return 'Create note account';
       }
 
       if (

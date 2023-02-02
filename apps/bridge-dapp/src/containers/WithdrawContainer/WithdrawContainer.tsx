@@ -259,7 +259,7 @@ export const WithdrawContainer = forwardRef<
     }
 
     if (!hasNoteAccount) {
-      return 'Create Note Account';
+      return 'Create note account';
     }
 
     if (isDisabledWithdraw && otherAvailableChains.length > 0) {

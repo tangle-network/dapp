@@ -69,7 +69,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       );
 
       if (!chain) {
-        throw new Error('Detect unsupported chain is being selected');
+        throw new Error('Selected chain is currently unsupported');
       }
 
       const isSupported =
