@@ -31,5 +31,5 @@ jobs:
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          buildScriptName: 'npx chromatic --build-script-name=build:storybook --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }} --exit-zero-on-changes'
+          buildScriptName: 'build:storybook'
           exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
