@@ -93,6 +93,7 @@
     "history": "^5.0.0",
     "ip-regex": "^2.1.0",
     "next": "13.0.0",
+    "notion-client": "^6.15.6",
     "notistack": "^2.0.5",
     "prop-types": "^15.7.2",
     "react": "18.2.0",
