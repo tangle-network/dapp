@@ -1,6 +1,19 @@
 {
   "name": "@webb-tools/webb-ui-components",
   "version": "0.0.2",
+  "description": "Webb UI Component Library",
+  "keywords": ["webb", "webb-tools", "webb-ui-components", "webb-ui", "webb-ui-library", "webb-ui-component-library", "dApp"],
+  "homepage": "https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components#readme",
+  "bugs": "https://github.com/webb-tools/webb-dapp/issues/new/choose",
+  "license": "Apache 2.0",
+  "author": "Webb Developers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webb-tools/webb-dapp"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "main": "src/index.js",
   "devDependencies": {
     "@rollup/plugin-json": "^5.0.1"
