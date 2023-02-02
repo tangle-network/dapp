@@ -263,6 +263,8 @@ export const ProposalsTable = () => {
     <CardTable
       titleProps={{
         title: 'All Proposals',
+        info: 'All proposals',
+        variant: 'h5',
       }}
       leftTitle={
         <Filter
