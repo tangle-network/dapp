@@ -39,7 +39,6 @@ import {
 } from '../containers/note-account-tables';
 import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
 import {
-  useConnectWallet,
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
@@ -53,14 +52,7 @@ const PageBridge = () => {
   >('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const {
-    activeAccount,
-    activeChain,
-    activeFeedback,
-    activeWallet,
-    loading,
-    noteManager,
-  } = useWebContext();
+  const { activeFeedback, noteManager } = useWebContext();
 
   const { smoothScrollToTop } = useScrollActions();
 
