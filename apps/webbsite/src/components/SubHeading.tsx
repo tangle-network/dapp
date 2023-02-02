@@ -5,15 +5,7 @@ import { twMerge } from 'tailwind-merge';
 const SubHeading = forwardRef<HTMLParagraphElement, PropsOf<'p'>>(
   ({ className, ...props }, ref) => {
     return (
-      <p
-        {...props}
-        className={twMerge(
-          'text-base font-medium text-mono-180 font-satoshi',
-          'md:text-2xl md:leading-9',
-          className
-        )}
-        ref={ref}
-      />
+      <p {...props} className={twMerge('sub-heading-1', className)} ref={ref} />
     );
   }
 );

@@ -56,3 +56,53 @@
 .swiper-pagination-bullet-active {
   @apply !bg-mono-200;
 }
+
+/** Headings and subheadings */
+
+.heading-1 {
+  @apply text-[32px] leading-[46px] tracking-tight font-bold text-mono-200 font-satoshi
+    md:text-[84px] md:leading-[96px] md:tracking-normal;
+}
+
+.heading-2 {
+  @apply text-[30px] leading-[41px] text-mono-200 font-bold font-satoshi
+    md:text-[48px] md:leading-[72px];
+}
+
+.heading-3 {
+  @apply text-[24px] leading-8 text-mono-200 font-black font-satoshi
+    md:text-[36px] md:leading-[54px];
+}
+
+.heading-4 {
+  @apply text-[24px] leading-[36px] text-mono-200 font-black font-satoshi;
+}
+
+.sub-heading-1 {
+  @apply text-base font-medium text-mono-180 font-satoshi md:text-2xl md:leading-9;
+}
+
+.sub-heading-2 {
+  @apply text-base leading-[22px] font-medium text-mono-180 font-satoshi
+    md:text-[18px] md:leading-[27px];
+}
+
+/** Override the notion styles */
+
+.notion-h3 {
+  @apply heading-4;
+  /** Override */
+  @apply !font-semibold;
+
+  span {
+    @apply flex items-center;
+  }
+}
+
+.notion-text {
+  @apply sub-heading-1;
+}
+
+.notion-list li {
+  @apply sub-heading-2;
+}
