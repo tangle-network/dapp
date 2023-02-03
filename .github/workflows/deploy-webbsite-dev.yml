@@ -52,7 +52,6 @@ jobs:
         shell: bash
         run : |
           echo "OUTPUT=npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" >> $GITHUB_ENV
-
           NETLIFY_OUTPUT=$(echo "$env.OUTPUT")
           NETLIFY_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*") #Unique key: --
           NETLIFY_LOGS_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*") #Unique key: app.netlify.com
