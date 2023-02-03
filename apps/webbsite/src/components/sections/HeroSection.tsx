@@ -4,7 +4,7 @@ import Heading1 from '../Heading1';
 import SubHeading from '../SubHeading';
 
 const manifestoUrl =
-  'https://docs.webb.tools/v1/getting-started/privacy-manifesto/';
+  'https://docs.webb.tools/docs/overview/privacy-manifesto/';
 
 const HeroSection = () => {
   return (
