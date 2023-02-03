@@ -48,6 +48,7 @@ jobs:
         run: yarn build:webbsite
 
       - name: Deploy site
+        id: deploy-netlify
         shell: bash
         run : |
           npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next
