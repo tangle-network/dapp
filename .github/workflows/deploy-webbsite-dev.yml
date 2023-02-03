@@ -51,17 +51,12 @@ jobs:
         id: deploy-netlify
         shell: bash
         run : |
-          echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" >> $GITHUB_ENV
+          echo "OUTPUT=npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" >> $GITHUB_ENV
 
-          NETLIFY_OUTPUT=$(echo "$GITHUB_ENV")
-          NETLIFY_URL=$(echo "$GITHUB_ENV" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
-          NETLIFY_LOGS_URL=$(echo "$GITHUB_ENV" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
-          NETLIFY_LIVE_URL=$(echo "$GITHUB_ENV" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
-
-          echo "::set-output name=NETLIFY_OUTPUT::$NETLIFY_OUTPUT"
-          echo "::set-output name=NETLIFY_URL::$NETLIFY_URL"
-          echo "::set-output name=NETLIFY_LOGS_URL::$NETLIFY_LOGS_URL"
-          echo "::set-output name=NETLIFY_LIVE_URL::$NETLIFY_LIVE_URL"
+          NETLIFY_OUTPUT=$(echo "$env.OUTPUT")
+          NETLIFY_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*") #Unique key: --
+          NETLIFY_LOGS_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*") #Unique key: app.netlify.com
+          NETLIFY_LIVE_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
@@ -73,8 +68,8 @@ jobs:
             |  Name | Link |
             |---------------------------------|------------------------|
             |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/webb-tools/webb-dapp/commit/${{ github.event.pull_request.head.sha }}) |
-            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }} |
-            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) |
+            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ env.NETLIFY_LOGS_URL }} |
+            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ env.NETLIFY_URL }}](${{ env.NETLIFY_URL }}) |
             ---
 
             _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/development-webbsite/settings/deploys#deploy-notifications)._
