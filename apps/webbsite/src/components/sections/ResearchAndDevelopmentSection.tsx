@@ -36,7 +36,8 @@ const sections: Array<Section> = [
     description:
       'The message schema and circuits that enable zero-knowledge proofs of membership and property testing for assets, identities, and data.',
     sourceCodeUrl: 'https://github.com/webb-tools/zero-knowledge-gadgets',
-    documentationUrl: 'https://github.com/webb-tools/zero-knowledge-gadgets#--table-of-contents',
+    documentationUrl:
+      'https://github.com/webb-tools/zero-knowledge-gadgets#--table-of-contents',
   },
 ];
 
