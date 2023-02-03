@@ -19,7 +19,7 @@ env:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/develop' && github.event.pull_request.draft == false
+    # if: github.ref != 'refs/heads/develop' && github.event.pull_request.draft == false
     strategy:
       matrix:
         node-version: [16.x]
