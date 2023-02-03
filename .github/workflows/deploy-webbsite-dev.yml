@@ -12,6 +12,10 @@ on:
 
   workflow_dispatch:
 
+env:
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  NETLIFY_WEBBSITE_ID: ${{ secrets.NETLIFY_WEBBSITE_ID }}
+
 jobs:
   preview:
     runs-on: ubuntu-latest
@@ -30,24 +34,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      
+      - name: Copy deployment config to root
+        run: cp apps/webbsite/netlify.toml netlify.toml
 
       - name: Install dependencies
         run: yarn install
 
+      - name: Install netlify-cli
+        run: yarn add -D -W netlify-cli
+
       - name: Build project
         run: yarn build:webbsite
 
-      - name: Copy deployment config to root
-        run: cp apps/webbsite/netlify.toml netlify.toml
-
-      - name: Deploy to Netlify
-        id: deploy-netlify
-        uses: netlify/actions/cli@master
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_WEBBSITE_ID }}
-        with:
-          args: deploy --build context=deploy-preview site=$NETLIFY_WEBBSITE_ID --dir=./dist/apps/webbsite/.next
+      - name: Deploy site
+        shell: bash
+        run : |
+          npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
