@@ -5,10 +5,10 @@ name: deploy-webbsite 🌐
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    # types: [opened, synchronize, reopened, ready_for_review]
     branches: [ develop ]
-    paths:
-      - 'apps/webbsite/**'
+    # paths:
+    #   - 'apps/webbsite/**'
 
   workflow_dispatch:
 
