@@ -1,15 +1,16 @@
 import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 
 import cx from 'classnames';
-import Image from 'next/image';
 
-import { BRIDGE_URL, STATS_URL } from '../../constants';
+import {
+  CONNECTED_SHIELDED_IDENTITY_URL,
+  CONNECTED_SHIELDED_POOLS_URL,
+  TANGLE_NETWORK_URL,
+} from '../../constants';
 import Heading2 from '../Heading2';
 import Heading3 from '../Heading3';
 import SubHeading from '../SubHeading';
 import SubHeading2 from '../SubHeading2';
-
-const identityProtocolUrl = 'https://webb.tools';
 
 const ApplicationsAndInfrastructureSection = () => {
   return (
@@ -36,7 +37,7 @@ const ApplicationsAndInfrastructureSection = () => {
 
             <Button
               className="mt-6"
-              href={BRIDGE_URL}
+              href={TANGLE_NETWORK_URL}
               target="_blank"
               rel="noreferrer"
             >
@@ -67,7 +68,7 @@ const ApplicationsAndInfrastructureSection = () => {
               privately transferring assets between blockchains.
             </SubHeading2>
             <Button
-              href={STATS_URL}
+              href={CONNECTED_SHIELDED_POOLS_URL}
               target="_blank"
               rel="noreferrer"
               className="mt-6"
@@ -85,7 +86,7 @@ const ApplicationsAndInfrastructureSection = () => {
               between blockchains.
             </SubHeading2>
             <Button
-              href={identityProtocolUrl}
+              href={CONNECTED_SHIELDED_IDENTITY_URL}
               target="_blank"
               rel="noreferrer"
               className="mt-6"

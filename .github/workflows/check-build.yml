@@ -25,6 +25,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: create env file
+        run: |
+          touch .env
+          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
+          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
+          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
+          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
       - name: build
         run: |
           yarn install
