@@ -51,11 +51,11 @@ jobs:
         id: deploy-netlify
         shell: bash
         run : |
-          echo "OUTPUT=npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" >> $GITHUB_ENV
-          NETLIFY_OUTPUT=$(echo "$env.OUTPUT")
-          NETLIFY_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*") #Unique key: --
-          NETLIFY_LOGS_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*") #Unique key: app.netlify.com
-          NETLIFY_LIVE_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
+          echo "OUTPUT=$(npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next)" >> $GITHUB_ENV
+          echo NETLIFY_OUTPUT=$(echo "$env.OUTPUT")
+          echo NETLIFY_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*") #Unique key: --
+          echo NETLIFY_LOGS_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*") #Unique key: app.netlify.com
+          echo NETLIFY_LIVE_URL=$(echo "$env.OUTPUT" | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
