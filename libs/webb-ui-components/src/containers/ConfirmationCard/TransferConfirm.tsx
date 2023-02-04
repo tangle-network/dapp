@@ -124,7 +124,11 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
             {/** Recipient public key */}
             {recipientPublicKey && (
-              <Section className="grow">
+              <Section
+                className={
+                  relayerAddress ? 'flex-initial w-[284px]' : 'flex-auto'
+                }
+              >
                 <div className="space-y-4">
                   <TitleWithInfo
                     titleComponent="h6"
