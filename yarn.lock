@@ -9138,10 +9138,8 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.5.13", "@webb-tools/anchors@^0.5.13":
+"@webb-tools/anchors@../protocol-solidity/packages/anchors", "@webb-tools/anchors@^0.5.13":
   version "0.5.13"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.13.tgz#10856b753a9127d286066d8b43aff63bee5bd0cf"
-  integrity sha512-oxhRNh58rVoI3OBXSsWjQgyHgotiuaRjozJZaV8So6SIJXckkwHvMwaHujjL2AGtAvbB9nuY7ZYHPQXKTIGscA==
   dependencies:
     "@webb-tools/contracts" "^0.5.13"
     "@webb-tools/interfaces" "^0.5.13"

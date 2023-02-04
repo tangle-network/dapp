@@ -29,6 +29,7 @@ import {
   BigNumberish,
   ContractReceipt,
   ContractTransaction,
+  Overrides,
 } from 'ethers';
 
 import { JsNote } from '@webb-tools/wasm-utils';
@@ -160,7 +161,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         ZERO_ADDRESS, // recipient
         ZERO_ADDRESS, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
-        {}, // leavesMap
+        {}, // leavesMap,
+        { gasLimit: 5_000_000 }, // Overrides transaction
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
       const { changeUtxo, notes, recipient } = payload;
@@ -220,7 +222,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
+    overridesTransaction?: Overrides
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
@@ -243,7 +246,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       recipient,
       relayer,
       wrapUnwrapToken,
-      leavesMap
+      leavesMap,
+      overridesTransaction
     );
   }
 
