@@ -432,41 +432,21 @@ export class WebbWeb3Provider
   }
 
   switchOrAddChain(evmChainId: number) {
-    return this.web3Provider
-      .switchChain({
-        chainId: `0x${evmChainId.toString(16)}`,
-      })
-      ?.catch(async (switchError) => {
-        console.log('inside catch for switchChain', switchError);
+    const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
+    const chain = this.config.chains[chainId];
 
-        // cannot switch because network not recognized, so fetch configuration
-        const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
-        const chain = this.config.chains[chainId];
+    const currency = this.config.currencies[chain.nativeCurrencyId];
 
-        // prompt to add the chain
-        if (switchError.code === 4902) {
-          const currency = this.config.currencies[chain.nativeCurrencyId];
-
-          await this.web3Provider.addChain({
-            chainId: `0x${evmChainId.toString(16)}`,
-            chainName: chain.name,
-            nativeCurrency: {
-              decimals: 18,
-              name: currency.name,
-              symbol: currency.symbol,
-            },
-            rpcUrls: chain.evmRpcUrls,
-          });
-          // add network will prompt the switch, check evmId again and throw if user rejected
-          const newChainId = await this.web3Provider.network;
-
-          if (newChainId !== chain.chainId) {
-            throw switchError;
-          }
-        } else {
-          throw switchError;
-        }
-      });
+    return this.web3Provider.addChain({
+      chainId: `0x${evmChainId.toString(16)}`,
+      chainName: chain.name,
+      nativeCurrency: {
+        decimals: 18,
+        name: currency.name,
+        symbol: currency.symbol,
+      },
+      rpcUrls: chain.evmRpcUrls,
+    });
   }
 
   async sign(message: string): Promise<{
