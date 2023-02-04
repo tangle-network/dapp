@@ -1,8 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  TransactionItemStatus,
-  TransactionPayload,
-} from '@webb-tools/webb-ui-components';
 import {
   NewNotesTxResult,
   Transaction,
@@ -14,6 +9,11 @@ import {
   ChainConfig,
   CurrencyConfig,
 } from '@webb-tools/dapp-config';
+import {
+  TransactionItemStatus,
+  TransactionPayload,
+} from '@webb-tools/webb-ui-components';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 function transactionItemStatusFromTxStatus<Key extends TransactionState>(
   txStatus: TransactionState
@@ -58,13 +58,6 @@ function mapTxToPayload(
     }${variant}/${addOrTxHash}`;
   };
 
-  const onDetails = tx.txHash
-    ? () => {
-        const url = getExplorerURI(tx.txHash ?? '', 'tx');
-        open(url, '_blank', 'noopener noreferrer');
-      }
-    : undefined;
-
   return {
     id: tx.id,
     txStatus: {
@@ -94,7 +87,6 @@ function mapTxToPayload(
     onDismiss(): void {
       return dismissTransaction(tx.id);
     },
-    onDetails,
     method: tx.name as any,
   };
 }
@@ -212,15 +204,8 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
             if (txPayload.id !== tx.id) {
               return txPayload;
             }
-            const onDetails = txHash
-              ? () => {
-                  const uri = txPayload.getExplorerURI?.(txHash, 'tx');
-                  open(uri, '_blank');
-                }
-              : undefined;
             return {
               ...txPayload,
-              onDetails,
               txStatus: {
                 ...txPayload.txStatus,
                 txHash,
@@ -235,8 +220,6 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
       setTxQueue,
       setTxPayloads,
       subscriptions,
-      txQueue,
-      transactionPayloads,
       dismissTransaction,
       currencies,
       chains,
@@ -289,12 +272,14 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
       },
     }),
     [
-      mainTxId,
-      transactionPayloads,
       txQueue,
-      registerTransaction,
-      dismissTransaction,
+      transactionPayloads,
+      mainTxId,
       cancelTransaction,
+      dismissTransaction,
+      registerTransaction,
+      startNewTransaction,
+      getLatestTransaction,
     ]
   );
 }

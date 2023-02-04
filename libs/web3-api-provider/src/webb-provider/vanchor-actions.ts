@@ -235,8 +235,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       signer
     );
 
-    tx.txHash = '0x';
-    tx.next(TransactionState.SendingTransaction, '0x');
+    tx.txHash = '';
+    tx.next(TransactionState.SendingTransaction, '');
 
     return vanchor.transact(
       inputs,
@@ -544,6 +544,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       // balance using the `ERC20` contract.
       const erc20 = ERC20__factory.connect(wrapUnwrapToken, provider);
       const balance = await erc20.balanceOf(signer);
+      console.log('Balance: ', balance);
       hasBalance = balance.gte(payload.note.amount);
     }
     // Notification failed transaction if not enough balance

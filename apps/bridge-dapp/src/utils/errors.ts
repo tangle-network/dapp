@@ -83,7 +83,7 @@ const hasReceipt = (
 /**
  * Get the transaction hash from an unknown type error
  * @param error The `unknown` error to parse and get the transaction hash from
- * @returns the transaction hash from the unknown error or `0x` if not found
+ * @returns the transaction hash from the unknown error or '' if not found
  */
 export const getTransactionHash = (error: unknown) => {
   if (hasTransactionHash(error)) {
@@ -91,12 +91,12 @@ export const getTransactionHash = (error: unknown) => {
   }
 
   if (hasTransaction(error)) {
-    return error.transaction?.hash ?? '0x';
+    return error.transaction?.hash ?? '';
   }
 
   if (hasReceipt(error)) {
-    return error.receipt?.transactionHash ?? '0x';
+    return error.receipt?.transactionHash ?? '';
   }
 
-  return '0x';
+  return '';
 };
