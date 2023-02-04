@@ -34,7 +34,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       onCopy,
       onDownload,
       progress,
-      recipientAddress,
       recipientPublicKey,
       relayerAddress,
       relayerExternalUrl,
@@ -123,32 +122,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               </Section>
             )}
 
-            {/** Recipient address */}
-            {recipientAddress && (
-              <Section className="flex-initial w-[284px]">
-                <div className="space-y-4">
-                  <TitleWithInfo
-                    titleComponent="h6"
-                    title="Recipient address"
-                    variant="utility"
-                    titleClassName="text-mono-100 dark:text-mono-80"
-                    className="text-mono-100 dark:text-mono-80"
-                  />
-
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="block break-words"
-                  >
-                    {recipientAddress}
-                  </Typography>
-                </div>
-              </Section>
-            )}
-
             {/** Recipient public key */}
             {recipientPublicKey && (
-              <Section className="flex-initial w-[284px]">
+              <Section className="grow">
                 <div className="space-y-4">
                   <TitleWithInfo
                     titleComponent="h6"
