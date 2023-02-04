@@ -1,23 +1,23 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { LoggerService } from '@webb-tools/app-util';
-import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
 import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { LoggerService } from '@webb-tools/app-util';
+import { downloadString } from '@webb-tools/browser-utils';
+import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
-import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ChainType, Note } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { TransferConfirmContainerProps } from './types';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage, getTokenURI } from '../../utils';
+import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
+import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -163,6 +163,7 @@ export const TransferConfirmContainer = forwardRef<
 
         changeNote && (await noteManager?.removeNote(changeNote));
 
+        tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);

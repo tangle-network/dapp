@@ -20,8 +20,8 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
+import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
-import { getErrorMessage, getTokenURI } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -219,6 +219,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
         changeNote && (await noteManager?.removeNote(changeNote));
 
+        tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
