@@ -645,11 +645,9 @@ export const WithdrawContainer = forwardRef<
         }}
         withdrawBtnProps={{
           isDisabled:
-            isWalletConnected &&
-            hasNoteAccount &&
             otherAvailableChains.length > 0
               ? false
-              : true && isDisabledWithdraw,
+              : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
           children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}

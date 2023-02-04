@@ -29,7 +29,7 @@ import {
 
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
-import { useConnectWallet } from '../../hooks';
+import { WalletState, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
@@ -59,7 +59,7 @@ export const DepositContainer = forwardRef<
   ) => {
     const { setMainComponent } = useWebbUI();
 
-    const { toggleModal, isWalletConnected } = useConnectWallet();
+    const { toggleModal, isWalletConnected, walletState } = useConnectWallet();
 
     const [mainComponentName, setMainComponentName] = useState<
       MainComponentVariants | undefined
@@ -660,6 +660,14 @@ export const DepositContainer = forwardRef<
         setMainComponent(undefined);
       }
     }, [setMainComponentArgs, setMainComponent]);
+
+    // Effect reset the main component when
+    // the `walletState` failed
+    useEffect(() => {
+      if (walletState === WalletState.FAILED) {
+        setMainComponentName(undefined);
+      }
+    }, [walletState]);
 
     return (
       <div {...props} ref={ref}>
