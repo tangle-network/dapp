@@ -162,7 +162,7 @@ export const WithdrawConfirm = forwardRef<
 
             {/** Unshielded address */}
             {recipientAddress && (
-              <Section className="flex-initial w-[284px]">
+              <Section className="grow">
                 <div className="space-y-1">
                   <TitleWithInfo
                     titleComponent="h6"
