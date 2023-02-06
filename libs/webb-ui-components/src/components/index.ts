@@ -4,6 +4,7 @@ export * from './Avatar';
 export * from './AvatarGroup';
 export * from './Breadcrumbs';
 export * from './BridgeInputs';
+export * from './Banner';
 export * from './Button';
 export * from './Card';
 export * from './CardTable';
