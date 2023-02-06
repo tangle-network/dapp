@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  AddBoxLineIcon,
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
@@ -15,18 +14,18 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
-  Button,
   fuzzyFilter,
   IconWithTooltip,
   Table,
   TokenPairIcons,
-  Tooltip,
-  TooltipBody,
-  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
-import { EmptyTable, LoadingTable } from '../../components/tables';
+import { FC, useCallback, useMemo } from 'react';
+
+import { EmptyTable, LoadingTable } from '../../../components/tables';
+import { downloadNotes } from '../../../utils';
+import { ActionWithTooltip } from '../ActionWithTooltip';
+import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
@@ -38,7 +37,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('chain', {
     header: 'Chain',
     cell: (props) => (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center">
         <IconWithTooltip
           icon={<ChainIcon size="lg" name={props.getValue<string>()} />}
           content={props.getValue<string>()}
@@ -54,7 +53,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       const tokenUrl = props.row.original.assetsUrl;
 
       return (
-        <div className="flex items-center justify-center space-x-1.5">
+        <div className="flex items-center space-x-1.5">
           <Typography className="uppercase" variant="body1" fw="bold">
             {assetSymbol}
           </Typography>
@@ -79,7 +78,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       const numOfHiddenTokens = composition.length - 2;
 
       return (
-        <div className="flex items-center justify-center space-x-1">
+        <div className="flex items-center space-x-1">
           {!secondToken ? (
             <IconWithTooltip
               icon={<TokenIcon size="lg" name={firstToken} />}
@@ -105,7 +104,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   columnHelper.accessor('availableBalance', {
     header: 'Balance',
     cell: (props) => (
-      <Typography variant="body1" fw="bold" ta="center">
+      <Typography variant="body1" fw="bold">
         {props.getValue()}
       </Typography>
     ),
@@ -118,7 +117,6 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
         variant="body1"
         fw="bold"
         className="text-blue-70 dark:text-blue-50"
-        ta="center"
       >
         {props.getValue()}
       </Typography>
@@ -130,10 +128,11 @@ export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({
   data = [],
-  onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  ondefaultFungibleCurrencyChange,
+  onDefaultFungibleCurrencyChange,
+  onDeleteNotesChange,
+  onUploadSpendNote,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -146,13 +145,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -165,13 +164,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -185,34 +184,33 @@ export const ShieldedAssetsTableContainer: FC<
           const shieldedAsset = props.row.original;
 
           return (
-            <div className="flex items-center justify-center space-x-1">
-              <ActionWithTooltip content="Transfer">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onTransfer(shieldedAsset)}
-                >
-                  <SendPlanLineIcon className="!fill-current" />
-                </Button>
+            <div className="flex items-center space-x-1">
+              <ActionWithTooltip
+                tooltipContent="Transfer"
+                onClick={() => onTransfer(shieldedAsset)}
+              >
+                <SendPlanLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
-              <ActionWithTooltip content="Withdraw">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onWithdraw(shieldedAsset)}
-                >
-                  <WalletLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Withdraw"
+                onClick={() => onWithdraw(shieldedAsset)}
+              >
+                <WalletLineIcon className="!fill-current" />
               </ActionWithTooltip>
+
+              <MoreOptionsDropdown
+                onDownloadNotes={() => downloadNotes(shieldedAsset.rawNotes)}
+                onDeleteNotes={() =>
+                  onDeleteNotesChange?.(shieldedAsset.rawNotes)
+                }
+              />
             </div>
           );
         },
       }),
     ],
-    [onTransfer, onWithdraw]
+    [onDeleteNotesChange, onTransfer, onWithdraw]
   );
 
   const table = useReactTable({
@@ -232,7 +230,7 @@ export const ShieldedAssetsTableContainer: FC<
     return (
       <EmptyTable
         title="No spend notes found"
-        description="Notes are stored locally and encrypted on-chain. Can't find spend note?"
+        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
         buttonText="Upload spend Notes"
         onClick={onUploadSpendNote}
       />
@@ -242,30 +240,12 @@ export const ShieldedAssetsTableContainer: FC<
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
       <Table
-        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160 text-center"
+        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
         title="assets"
       />
     </div>
-  );
-};
-
-/***********************
- * Internal components *
- ***********************/
-
-const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
-  content,
-  children,
-}) => {
-  return (
-    <Tooltip delayDuration={200}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipBody>
-        <Typography variant="body3">{content}</Typography>
-      </TooltipBody>
-    </Tooltip>
   );
 };

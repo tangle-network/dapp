@@ -223,9 +223,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
-
-    const vanchorContract = VAnchor__factory.connect(contractAddress, signer);
-    const maxEdges = await vanchorContract.maxEdges();
+    const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
     const vanchor = await VAnchor.connect(
       contractAddress,
@@ -410,12 +408,18 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     // fetch leaves if we don't have them
     if (leavesMap[parsedNote.sourceChainId] === undefined) {
       // Set up a provider for the source chain
+      const sourceChainConfig =
+        this.inner.config.chains[Number(parsedNote.sourceChainId)];
+      const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
       const sourceAddress = parsedNote.sourceIdentifyingData;
+      const sourceEthers = sourceHttpProvider.intoEthersProvider();
+
       const sourceVAnchor =
         await this.inner.getVariableAnchorByAddressAndProvider(
           sourceAddress,
-          this.inner.getEthersProvider()
+          sourceEthers
         );
+
       const leafStorage = await bridgeStorageFactory(
         Number(parsedNote.sourceChainId)
       );

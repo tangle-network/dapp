@@ -43,6 +43,7 @@ import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ZkComponents } from '@webb-tools/utils';
+import { providers } from 'ethers';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -317,6 +318,13 @@ export class WebbPolkadot
     maxEdges: number,
     isSmall?: boolean
   ): Promise<ZkComponents> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getVAnchorMaxEdges(
+    vAnchorAddress: string,
+    provider?: providers.Provider
+  ): Promise<number> {
     throw new Error('Method not implemented.');
   }
 }
