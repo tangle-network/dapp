@@ -197,7 +197,7 @@
     "@webb-tools/api": "0.1.4-119",
     "@webb-tools/api-derive": "0.1.4-119",
     "@webb-tools/app-util": "0.1.4-119",
-    "@webb-tools/contracts": "0.5.13",
+    "@webb-tools/contracts": "../protocol-solidity/packages/contracts",
     "@webb-tools/interfaces": "0.5.13",
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "@webb-tools/sdk-core": "0.1.4-119",
