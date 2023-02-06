@@ -38,7 +38,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     group: 'eth',
     chainId: EVMChainId.OptimismTestnet,
     name: 'Optimism',
-    url: 'https://goerli.optimism.io',
+    url: 'https://opt-goerli.g.alchemy.com/v2/demo',
     evmRpcUrls: [
       'https://endpoints.omniatech.io/v1/op/goerli/public',
       'https://optimism-goerli.infura.io/v3',
