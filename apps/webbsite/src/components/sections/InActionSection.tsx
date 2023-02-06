@@ -32,7 +32,7 @@ const InActionSection = () => {
 
       <TabsRoot
         className="rounded-lg bg-mono-0 max-w-[900px] mx-auto"
-        defaultValue="stats"
+        defaultValue="bridge"
       >
         <TabsList aria-label="in-action-tabs" className="p-4">
           <TabTrigger value="bridge">Bridge</TabTrigger>

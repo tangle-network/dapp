@@ -7,27 +7,28 @@ import {
 } from '@tanstack/react-table';
 import {
   ChainIcon,
-  ChevronDown,
   ExternalLinkLine,
+  SendPlanLineIcon,
   TokenIcon,
+  WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
-  Button,
-  Dropdown,
-  DropdownBasicButton,
-  DropdownBody,
   fuzzyFilter,
   IconWithTooltip,
   KeyValueWithButton,
-  MenuItem,
   shortenString,
   Table,
+  TitleWithInfo,
   TokenPairIcons,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { EmptyTable, LoadingTable } from '../../components/tables';
+
+import { EmptyTable, LoadingTable } from '../../../components/tables';
+import { downloadNotes } from '../../../utils';
+import { ActionWithTooltip } from '../ActionWithTooltip';
+import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
 import { SpendNoteDataType, SpendNotesTableContainerProps } from './types';
 
 const columnHelper = createColumnHelper<SpendNoteDataType>();
@@ -79,7 +80,10 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       return (
         <div className="flex items-center space-x-1">
           {firstTwoTokens.length === 1 ? (
-            <TokenIcon name={firstTwoTokens[0]} />
+            <IconWithTooltip
+              icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}
+              content={firstTwoTokens[0]}
+            />
           ) : (
             <TokenPairIcons
               token1Symbol={firstTwoTokens[0]}
@@ -98,7 +102,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 
   columnHelper.accessor('balance', {
-    header: 'Available Balance',
+    header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
         {props.getValue()}
@@ -107,7 +111,11 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 
   columnHelper.accessor('subsequentDeposits', {
-    header: 'Subsequent deposits',
+    header: () => (
+      <span className="inline-block w-full text-center">
+        Subsequent Deposits
+      </span>
+    ),
     cell: (props) => (
       <Typography ta="center" variant="body1">
         {props.getValue()}
@@ -116,26 +124,74 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
   }),
 
   columnHelper.accessor('note', {
-    header: 'Note',
-    cell: (props) => (
-      <KeyValueWithButton
-        shortenFn={(note: string) => shortenString(note, 4)}
-        isHiddenLabel
-        size="sm"
-        keyValue={props.getValue()}
+    header: () => (
+      <TitleWithInfo
+        title="Spend Note"
+        info="Spend note"
+        variant="body1"
+        className="justify-center"
       />
+    ),
+    cell: (props) => (
+      <div className="flex items-center">
+        <KeyValueWithButton
+          shortenFn={(note: string) => shortenString(note, 4)}
+          isHiddenLabel
+          size="sm"
+          keyValue={props.getValue()}
+        />
+      </div>
     ),
   }),
 ];
 
 export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   data = [],
-  onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  ondefaultFungibleCurrencyChange,
+  onDefaultFungibleCurrencyChange,
+  onDeleteNotesChange,
+  onUploadSpendNote,
 }) => {
   const { isSyncingNote } = useNoteAccount();
+
+  const onQuickTransfer = useCallback(
+    (data: SpendNoteDataType) => {
+      const { rawChain, rawFungibleCurrency } = data;
+
+      onActiveTabChange?.('Transfer');
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawFungibleCurrency) {
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultFungibleCurrencyChange,
+    ]
+  );
+
+  const onQuickWithdraw = useCallback(
+    (data: SpendNoteDataType) => {
+      const { rawChain, rawFungibleCurrency } = data;
+
+      onActiveTabChange?.('Withdraw');
+
+      onDefaultDestinationChainChange?.(rawChain);
+
+      if (rawFungibleCurrency) {
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+      }
+    },
+    [
+      onActiveTabChange,
+      onDefaultDestinationChainChange,
+      onDefaultFungibleCurrencyChange,
+    ]
+  );
 
   const columns = useMemo<Array<ColumnDef<SpendNoteDataType, any>>>(() => {
     return [
@@ -147,21 +203,31 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
           const data = props.row.original;
 
           return (
-            <ActionDropdownButton
-              onActiveTabChange={onActiveTabChange}
-              onDefaultDestinationChainChange={onDefaultDestinationChainChange}
-              ondefaultFungibleCurrencyChange={ondefaultFungibleCurrencyChange}
-              data={data}
-            />
+            <div className="flex items-center space-x-1">
+              <ActionWithTooltip
+                tooltipContent="Quick Transfer"
+                onClick={() => onQuickTransfer(data)}
+              >
+                <SendPlanLineIcon className="!fill-current" />
+              </ActionWithTooltip>
+
+              <ActionWithTooltip
+                tooltipContent="Quick Withdraw"
+                onClick={() => onQuickWithdraw(data)}
+              >
+                <WalletLineIcon className="!fill-current" />
+              </ActionWithTooltip>
+
+              <MoreOptionsDropdown
+                onDownloadNotes={() => downloadNotes([data.rawNote])}
+                onDeleteNotes={() => onDeleteNotesChange?.([data.rawNote])}
+              />
+            </div>
           );
         },
       }),
     ];
-  }, [
-    onActiveTabChange,
-    onDefaultDestinationChainChange,
-    ondefaultFungibleCurrencyChange,
-  ]);
+  }, [onDeleteNotesChange, onQuickTransfer, onQuickWithdraw]);
 
   const table = useReactTable({
     data,
@@ -180,7 +246,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
     return (
       <EmptyTable
         title="No spend notes found"
-        description="Don't see your spend note?"
+        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
         buttonText="Upload spend Notes"
         onClick={onUploadSpendNote}
       />
@@ -195,71 +261,8 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="Spend Notes"
+        title="notes"
       />
     </div>
-  );
-};
-
-const ActionDropdownButton: FC<
-  { data: SpendNoteDataType } & Pick<
-    SpendNotesTableContainerProps,
-    | 'onActiveTabChange'
-    | 'onDefaultDestinationChainChange'
-    | 'ondefaultFungibleCurrencyChange'
-  >
-> = ({
-  data,
-  onActiveTabChange,
-  onDefaultDestinationChainChange,
-  ondefaultFungibleCurrencyChange,
-}) => {
-  const onQuickTransfer = useCallback(() => {
-    const { rawChain, rawFungibleCurrency } = data;
-
-    onActiveTabChange?.('Transfer');
-
-    onDefaultDestinationChainChange?.(rawChain);
-
-    if (rawFungibleCurrency) {
-      ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-    }
-  }, [
-    data,
-    onActiveTabChange,
-    onDefaultDestinationChainChange,
-    ondefaultFungibleCurrencyChange,
-  ]);
-
-  const onQuickWithdraw = useCallback(() => {
-    const { rawChain, rawFungibleCurrency } = data;
-
-    onActiveTabChange?.('Withdraw');
-
-    onDefaultDestinationChainChange?.(rawChain);
-
-    if (rawFungibleCurrency) {
-      ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-    }
-  }, [
-    data,
-    onActiveTabChange,
-    onDefaultDestinationChainChange,
-    ondefaultFungibleCurrencyChange,
-  ]);
-
-  return (
-    <Dropdown>
-      <DropdownBasicButton>
-        <Button as="span" variant="utility" size="sm" className="p-2">
-          <ChevronDown className="!fill-current" />
-        </Button>
-      </DropdownBasicButton>
-
-      <DropdownBody className="min-w-[200px]" size="sm">
-        <MenuItem onClick={onQuickTransfer}>Quick Transfer</MenuItem>
-        <MenuItem onClick={onQuickWithdraw}>Quick Withdraw</MenuItem>
-      </DropdownBody>
-    </Dropdown>
   );
 };

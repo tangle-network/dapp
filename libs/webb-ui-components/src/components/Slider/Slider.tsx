@@ -47,8 +47,8 @@ export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
 
     useEffect(() => {
       if (!value || !value.length || value.length > 2) {
-        throw new Error(
-          '[Slider.tsx] You must provide `defaultValue` or `value` and `value.length` should less than 3 to the Slider component'
+        console.trace(
+          '[Slider.tsx] You must provide `defaultValue` or `value` and `value.length` should be less than 3'
         );
       }
     }, [value]);

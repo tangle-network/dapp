@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  AddBoxLineIcon,
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
@@ -15,18 +14,18 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
-  Button,
   fuzzyFilter,
   IconWithTooltip,
   Table,
   TokenPairIcons,
-  Tooltip,
-  TooltipBody,
-  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, PropsWithChildren, useCallback, useMemo } from 'react';
-import { EmptyTable, LoadingTable } from '../../components/tables';
+import { FC, useCallback, useMemo } from 'react';
+
+import { EmptyTable, LoadingTable } from '../../../components/tables';
+import { downloadNotes } from '../../../utils';
+import { ActionWithTooltip } from '../ActionWithTooltip';
+import { MoreOptionsDropdown } from '../MoreOptionsDropdown';
 import {
   ShieldedAssetDataType,
   ShieldedAssetsTableContainerProps,
@@ -82,7 +81,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
         <div className="flex items-center space-x-1">
           {!secondToken ? (
             <IconWithTooltip
-              icon={<TokenIcon name={firstToken} />}
+              icon={<TokenIcon size="lg" name={firstToken} />}
               content={firstToken}
             />
           ) : (
@@ -93,7 +92,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
           )}
 
           {numOfHiddenTokens > 0 && (
-            <Typography className="inline-block" variant="body3">
+            <Typography className="inline-block" variant="body3" ta="center">
               +3 others
             </Typography>
           )}
@@ -103,7 +102,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
   }),
 
   columnHelper.accessor('availableBalance', {
-    header: 'Available Balance',
+    header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
         {props.getValue()}
@@ -129,10 +128,11 @@ export const ShieldedAssetsTableContainer: FC<
   ShieldedAssetsTableContainerProps
 > = ({
   data = [],
-  onUploadSpendNote,
   onActiveTabChange,
   onDefaultDestinationChainChange,
-  ondefaultFungibleCurrencyChange,
+  onDefaultFungibleCurrencyChange,
+  onDeleteNotesChange,
+  onUploadSpendNote,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -145,32 +145,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
-    ]
-  );
-
-  const onDeposit = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
-      onActiveTabChange?.('Deposit');
-
-      const { rawChain, rawFungibleCurrency } = shieldedAsset;
-
-      onDefaultDestinationChainChange?.(rawChain);
-
-      if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
-      }
-    },
-    [
-      onActiveTabChange,
-      onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -183,13 +164,13 @@ export const ShieldedAssetsTableContainer: FC<
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
-        ondefaultFungibleCurrencyChange?.(rawFungibleCurrency);
+        onDefaultFungibleCurrencyChange?.(rawFungibleCurrency);
       }
     },
     [
       onActiveTabChange,
       onDefaultDestinationChainChange,
-      ondefaultFungibleCurrencyChange,
+      onDefaultFungibleCurrencyChange,
     ]
   );
 
@@ -204,44 +185,32 @@ export const ShieldedAssetsTableContainer: FC<
 
           return (
             <div className="flex items-center space-x-1">
-              <ActionWithTooltip content="Deposit">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onDeposit(shieldedAsset)}
-                >
-                  <AddBoxLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Transfer"
+                onClick={() => onTransfer(shieldedAsset)}
+              >
+                <SendPlanLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
-              <ActionWithTooltip content="Transfer">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onTransfer(shieldedAsset)}
-                >
-                  <SendPlanLineIcon className="!fill-current" />
-                </Button>
+              <ActionWithTooltip
+                tooltipContent="Withdraw"
+                onClick={() => onWithdraw(shieldedAsset)}
+              >
+                <WalletLineIcon className="!fill-current" />
               </ActionWithTooltip>
 
-              <ActionWithTooltip content="Withdraw">
-                <Button
-                  variant="utility"
-                  size="sm"
-                  className="p-2"
-                  onClick={() => onWithdraw(shieldedAsset)}
-                >
-                  <WalletLineIcon className="!fill-current" />
-                </Button>
-              </ActionWithTooltip>
+              <MoreOptionsDropdown
+                onDownloadNotes={() => downloadNotes(shieldedAsset.rawNotes)}
+                onDeleteNotes={() =>
+                  onDeleteNotesChange?.(shieldedAsset.rawNotes)
+                }
+              />
             </div>
           );
         },
       }),
     ],
-    [onDeposit, onTransfer, onWithdraw]
+    [onDeleteNotesChange, onTransfer, onWithdraw]
   );
 
   const table = useReactTable({
@@ -260,8 +229,8 @@ export const ShieldedAssetsTableContainer: FC<
   if (!data.length) {
     return (
       <EmptyTable
-        title="No assets found"
-        description="Don't see your assets?"
+        title="No spend notes found"
+        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
         buttonText="Upload spend Notes"
         onClick={onUploadSpendNote}
       />
@@ -275,26 +244,8 @@ export const ShieldedAssetsTableContainer: FC<
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
-        title="Shielded Asset"
+        title="assets"
       />
     </div>
-  );
-};
-
-/***********************
- * Internal components *
- ***********************/
-
-const ActionWithTooltip: FC<PropsWithChildren<{ content: string }>> = ({
-  content,
-  children,
-}) => {
-  return (
-    <Tooltip delayDuration={200}>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipBody>
-        <Typography variant="body3">{content}</Typography>
-      </TooltipBody>
-    </Tooltip>
   );
 };

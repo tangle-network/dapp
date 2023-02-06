@@ -10,6 +10,11 @@ export type ChainType = {
   name: string;
 
   /**
+   * The chain tag (use to categorize the chain)
+   */
+  tag: 'dev' | 'test' | 'live';
+
+  /**
    * The token symbol of the chain
    */
   symbol: string;
@@ -99,6 +104,12 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The callback to control the state of the component
    */
   onChange?: (nextChain: ChainType) => void;
+
+  /**
+   * Only enable the chain with specific category,
+   * if not provided, all chain will be enabled
+   */
+  onlyCategory?: 'dev' | 'test' | 'live';
 
   /**
    * The override ScrollArea component props

@@ -14,16 +14,21 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { uniqueId } from 'lodash';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { UploadModalContentProps } from './types';
+import {
+  FC,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
+import { RefHandle, UploadModalContentProps } from './types';
 
-export const UploadModalContent: FC<UploadModalContentProps> = ({
-  onNotesChange,
-  onRemoveAllNotes,
-  onRemoveNote,
-  reUploadNote,
-  handleReUploadNote,
-}) => {
+export const UploadModalContent = forwardRef<
+  RefHandle,
+  UploadModalContentProps
+>(({ onNotesChange, onRemoveAllNotes, onRemoveNote }, ref) => {
   const {
     apiConfig: { currencies },
   } = useWebContext();
@@ -55,18 +60,29 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     onRemoveAllNotes?.();
   }, [onRemoveAllNotes]);
 
+  useImperativeHandle(ref, () => ({
+    removeAllNotes: handleRemoveAllNotes,
+  }));
+
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
+
+  /**
+   * Parse JSON string and return error if any
+   * @param str - The JSON string to parse
+   * @returns [error, parsed]
+   */
+  const parseJSON = useCallback((str: string) => {
+    try {
+      return [null, JSON.parse(str)];
+    } catch (err) {
+      return [err];
+    }
+  }, []);
 
   // Effect run when file changes
   useEffect(() => {
     async function processFile() {
-      if (reUploadNote) {
-        handleRemoveAllNotes();
-        handleReUploadNote();
-        return;
-      }
-
       if (!file) {
         return;
       }
@@ -76,7 +92,15 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
       reader.onload = async () => {
         const text = reader.result as string;
 
-        const parsedNote = JSON.parse(text);
+        const [err, parsedNote] = parseJSON(text);
+
+        if (err) {
+          notificationApi({
+            variant: 'error',
+            message: 'Invalid note format',
+          });
+          return;
+        }
 
         if (typeof parsedNote === 'string') {
           const note = await Note.deserialize(parsedNote);
@@ -117,7 +141,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     }
 
     processFile();
-  }, [file, onNotesChange, reUploadNote, handleRemoveAllNotes]);
+  }, [file, onNotesChange, handleRemoveAllNotes, parseJSON]);
 
   return (
     <>
@@ -206,4 +230,4 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
       ) : null}
     </>
   );
-};
+});

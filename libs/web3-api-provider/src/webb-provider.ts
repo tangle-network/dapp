@@ -34,7 +34,7 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { providers } from 'ethers';
+import { Signer, ethers, providers } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
@@ -53,6 +53,7 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+import { VAnchor__factory } from '@webb-tools/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -66,7 +67,8 @@ export class WebbWeb3Provider
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
 
-  private readonly MAX_EDGES = 7;
+  // Map to store the max edges for each vanchor address
+  private readonly vAnchorMaxEdges = new Map<string, number>();
 
   private smallFixtures: ZkComponents | null = null;
 
@@ -218,19 +220,35 @@ export class WebbWeb3Provider
   getVariableAnchorByAddress(address: string): Promise<VAnchor> {
     return this.getVariableAnchorByAddressAndProvider(
       address,
-      this.ethersProvider
+      this.ethersProvider,
+      this.ethersProvider.getSigner()
     );
   }
 
   async getVariableAnchorByAddressAndProvider(
     address: string,
-    provider: providers.Web3Provider
+    provider: providers.Web3Provider,
+    signer?: Signer
   ): Promise<VAnchor> {
+    const maxEdges = await this.getVAnchorMaxEdges(address, provider);
+
+    const currentActiveSigner = this.ethersProvider.getSigner();
+
+    let signerOrDummySigner: Signer;
+    if (signer) {
+      signerOrDummySigner = signer;
+    } else {
+      signerOrDummySigner = new ethers.VoidSigner(
+        await currentActiveSigner.getAddress(),
+        provider
+      );
+    }
+
     return VAnchor.connect(
       address,
-      await this.getZkFixtures(true),
-      await this.getZkFixtures(false),
-      provider.getSigner()
+      await this.getZkFixtures(maxEdges, true),
+      await this.getZkFixtures(maxEdges, false),
+      signerOrDummySigner
     );
   }
 
@@ -306,7 +324,7 @@ export class WebbWeb3Provider
   ): Promise<Note[]> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const tokenSymbol = await this.methods.bridgeApi.getCurrency();
+    const tokenSymbol = this.methods.bridgeApi.getCurrency();
     const utxos = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
@@ -316,9 +334,13 @@ export class WebbWeb3Provider
       retryPromise
     );
 
+    console.log(`Found ${utxos.length} UTXOs on chain`);
+
     const notes = Promise.all(
       utxos.map(async (utxo) => {
-        console.log(utxo.serialize());
+        if (utxo.amount !== '0') {
+          console.log(utxo.serialize());
+        }
         const secrets = [
           toFixedHex(utxo.chainId, 8),
           toFixedHex(utxo.amount),
@@ -463,7 +485,10 @@ export class WebbWeb3Provider
     };
   }
 
-  async getZkFixtures(isSmall: boolean): Promise<ZkComponents> {
+  async getZkFixtures(
+    maxEdges: number,
+    isSmall?: boolean
+  ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
     if (isSmall) {
@@ -472,13 +497,13 @@ export class WebbWeb3Provider
       }
 
       const smallKey = await fetchVAnchorKeyFromAws(
-        this.MAX_EDGES,
+        maxEdges,
         isSmall,
         dummyAbortSignal
       );
 
       const smallWasm = await fetchVAnchorWasmFromAws(
-        this.MAX_EDGES,
+        maxEdges,
         isSmall,
         dummyAbortSignal
       );
@@ -498,13 +523,13 @@ export class WebbWeb3Provider
     }
 
     const largeKey = await fetchVAnchorKeyFromAws(
-      this.MAX_EDGES,
+      maxEdges,
       isSmall,
       dummyAbortSignal
     );
 
     const largeWasm = await fetchVAnchorWasmFromAws(
-      this.MAX_EDGES,
+      maxEdges,
       isSmall,
       dummyAbortSignal
     );
@@ -517,5 +542,24 @@ export class WebbWeb3Provider
 
     this.largeFixtures = largeFixtures;
     return largeFixtures;
+  }
+
+  async getVAnchorMaxEdges(
+    vAnchorAddress: string,
+    provider?: providers.Provider
+  ): Promise<number> {
+    const storedMaxEdges = this.vAnchorMaxEdges.get(vAnchorAddress);
+    if (storedMaxEdges) {
+      return Promise.resolve(storedMaxEdges);
+    }
+
+    const vAnchorContract = VAnchor__factory.connect(
+      vAnchorAddress,
+      provider ?? this.ethersProvider
+    );
+    const maxEdges = await vAnchorContract.maxEdges();
+
+    this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
+    return maxEdges;
   }
 }

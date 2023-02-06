@@ -40,18 +40,10 @@ const Keys = () => {
   }
 
   return (
-    <div>
-      <div className="flex space-x-4">
-        <KeyStatusCardContainer
-          now={time}
-          keyType="current"
-          data={currentKey}
-        />
-      </div>
+    <div className="flex flex-col space-y-4">
+      <KeyStatusCardContainer now={time} keyType="current" data={currentKey} />
 
-      <div className="mt-4">
-        <KeygenTable />
-      </div>
+      <KeygenTable />
 
       <Outlet />
     </div>

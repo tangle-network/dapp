@@ -15,6 +15,7 @@ import {
 } from '../../components';
 import { TransferConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
+import { shortenString } from '../../utils';
 
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
@@ -87,80 +88,90 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         {typeof progress === 'number' && <Progress value={progress} />}
 
         <WrapperSection>
-          {/** Relayer */}
-          {relayerAddress && (
-            <Section>
-              <div className="space-y-4">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Relayer"
-                  info="Relayer"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
+          <div className="flex space-x-2">
+            {/** Relayer */}
+            {relayerAddress && (
+              <Section className="flex-initial w-[210px]">
+                <div className="space-y-4">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Relayer"
+                    info="Relayer"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
 
-                <div className="flex items-center space-x-1">
-                  <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
+                  <div className="flex items-center space-x-1">
+                    <Avatar theme={relayerAvatarTheme} value={relayerAddress} />
 
-                  <Typography variant="body1" fw="bold">
-                    {relayerAddress}
-                  </Typography>
+                    <Typography variant="body1" fw="bold">
+                      {relayerAddress.toLowerCase().startsWith('0x')
+                        ? shortenString(relayerAddress.substring(2), 5)
+                        : shortenString(relayerAddress, 5)}
+                    </Typography>
 
-                  <a
-                    target="_blank"
-                    href={relayerExternalUrl}
-                    rel="noreferrer noopener"
-                  >
-                    <ExternalLinkLine />
-                  </a>
+                    <a
+                      target="_blank"
+                      href={relayerExternalUrl}
+                      rel="noreferrer noopener"
+                    >
+                      <ExternalLinkLine />
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </Section>
-          )}
+              </Section>
+            )}
 
-          {/** Recipient address */}
-          {recipientAddress && (
-            <Section>
-              <div className="space-y-4">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Recipient address"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
+            {/** Recipient address */}
+            {recipientAddress && (
+              <Section className="flex-initial w-[284px]">
+                <div className="space-y-4">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Recipient address"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
 
-                <Typography variant="body1" fw="bold">
-                  {recipientAddress}
-                </Typography>
-              </div>
-            </Section>
-          )}
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="block break-words"
+                  >
+                    {recipientAddress}
+                  </Typography>
+                </div>
+              </Section>
+            )}
 
-          {/** Recipient public key */}
-          {recipientPublicKey && (
-            <Section>
-              <div className="space-y-4">
-                <TitleWithInfo
-                  titleComponent="h6"
-                  title="Recipient address"
-                  variant="utility"
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
+            {/** Recipient public key */}
+            {recipientPublicKey && (
+              <Section className="flex-initial w-[284px]">
+                <div className="space-y-4">
+                  <TitleWithInfo
+                    titleComponent="h6"
+                    title="Recipient"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
 
-                <Typography className="truncate" variant="body1" fw="bold">
-                  {recipientPublicKey}
-                </Typography>
-              </div>
-            </Section>
-          )}
-        </WrapperSection>
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="block break-words"
+                  >
+                    {recipientPublicKey}
+                  </Typography>
+                </div>
+              </Section>
+            )}
+          </div>
 
-        {/** New spend note */}
-        {note && (
-          <WrapperSection>
+          {/** New spend note */}
+          {note && (
             <Section>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -206,8 +217,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 </CheckBox>
               </div>
             </Section>
-          </WrapperSection>
-        )}
+          )}
+        </WrapperSection>
 
         {/** Transaction Details */}
         <div className="space-y-2">

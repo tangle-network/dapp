@@ -17,7 +17,7 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage } from '../../utils';
+import { getErrorMessage, getTokenURI } from '../../utils';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -114,6 +114,8 @@ export const TransferConfirmContainer = forwardRef<
         tokenSymbol,
       } = note.note;
 
+      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+
       const tx = Transaction.new<NewNotesTxResult>('Transfer', {
         amount,
         tokens: [tokenSymbol, tokenSymbol],
@@ -122,6 +124,7 @@ export const TransferConfirmContainer = forwardRef<
           dest: +destTypedChainId,
         },
         token: tokenSymbol,
+        tokenURI,
       });
 
       try {

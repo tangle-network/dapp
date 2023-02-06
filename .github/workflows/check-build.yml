@@ -17,14 +17,21 @@ jobs:
         node-version: [16.x]
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
-          access_token: ${{ github.token }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: create env file
+        run: |
+          touch .env
+          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
+          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
+          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
+          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
       - name: build
         run: |
           yarn install
