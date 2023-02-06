@@ -68,8 +68,8 @@ const InActionSection = () => {
         </TabContent>
 
         <TabContent value="stats">
-          <div className="flex flex-col sm:flex-row justify-between h-[527px] sm:h-[450px]">
-            <div className="space-y-4 sm:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
+          <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
+            <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
               <Heading4>
                 Explore the Tangle Network with the stats page
               </Heading4>
@@ -84,9 +84,9 @@ const InActionSection = () => {
               </Button>
             </div>
 
-            <div className="relative w-full h-[340px]">
+            <div className="relative grow h-[264px] md:h-auto mt-6 md:mt-14">
               <Image
-                className="object-cover object-left-bottom"
+                className="object-cover object-left-bottom sm:object-fill"
                 src="/static/assets/mock-stats.png"
                 sizes="(min-width: 768px) 30vw, 100vw"
                 alt="mock-stats"
