@@ -264,11 +264,15 @@ export class WebbWeb3Provider
     console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
+    const chain = this.config.chains[typedChainId];
+    console.log('On chain: ', chain?.name);
+
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
       typedChainId,
       vanchor.contract.address
     );
+
     let leaves = await this.relayerManager.fetchLeavesFromRelayers(
       relayers,
       vanchor,

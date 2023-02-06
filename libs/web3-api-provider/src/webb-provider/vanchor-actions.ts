@@ -37,13 +37,13 @@ import { poseidon } from 'circomlibjs';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
 
-export const isVAnchorDepositPayload = (
+const isVAnchorDepositPayload = (
   payload: TransactionPayloadType
 ): payload is Note => {
   return payload instanceof Note;
 };
 
-export const isVAnchorWithdrawPayload = (
+const isVAnchorWithdrawPayload = (
   payload: TransactionPayloadType
 ): payload is WithdrawTransactionPayloadType => {
   const changeUtxo: Utxo | undefined = payload['changeUtxo'];
@@ -66,7 +66,7 @@ export const isVAnchorWithdrawPayload = (
   );
 };
 
-export const isVAnchorTransferPayload = (
+const isVAnchorTransferPayload = (
   payload: TransactionPayloadType
 ): payload is TransferTransactionPayloadType => {
   const notes: Note[] | undefined = payload['notes'];
@@ -85,7 +85,7 @@ export const isVAnchorTransferPayload = (
   );
 };
 
-export const generateCircomCommitment = (note: JsNote): string => {
+const generateCircomCommitment = (note: JsNote): string => {
   const noteSecretParts = note.secrets.split(':');
   const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
   const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
@@ -99,7 +99,7 @@ export const generateCircomCommitment = (note: JsNote): string => {
   return BigNumber.from(hash).toHexString();
 };
 
-export async function utxoFromVAnchorNote(
+async function utxoFromVAnchorNote(
   note: JsNote,
   leafIndex: number
 ): Promise<Utxo> {
@@ -162,7 +162,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         ZERO_ADDRESS, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
         {}, // leavesMap,
-        { gasLimit: 5_000_000 }, // Overrides transaction
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
       const { changeUtxo, notes, recipient } = payload;
