@@ -20,11 +20,8 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           buttonText="Report Bug"
           bannerText="Hubble Bridge is in beta version."
           buttonProps={{
-            onClick: () =>
-              window.open(
-                'https://github.com/webb-tools/webb-dapp/issues/new/choose',
-                '_blank'
-              ),
+            href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
+            target: '_blank',
           }}
         />
       )}

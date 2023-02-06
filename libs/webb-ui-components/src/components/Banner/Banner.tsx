@@ -45,7 +45,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
 
     const buttonBaseClx = useMemo(
       () =>
-        'ml-2 py-2 px-3 rounded-lg uppercase bg-mono-0 text-blue-70 dark:text-blue-120 hover:bg-mono-10',
+        'ml-2 py-2 px-3 rounded-lg uppercase bg-mono-0 text-blue-70 dark:text-blue-120 hover:bg-mono-10 border-none',
       []
     );
     const buttonClassName = useMemo(
