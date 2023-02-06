@@ -14,16 +14,21 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { uniqueId } from 'lodash';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { UploadModalContentProps } from './types';
+import {
+  FC,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
+import { RefHandle, UploadModalContentProps } from './types';
 
-export const UploadModalContent: FC<UploadModalContentProps> = ({
-  onNotesChange,
-  onRemoveAllNotes,
-  onRemoveNote,
-  reUploadNote,
-  handleReUploadNote,
-}) => {
+export const UploadModalContent = forwardRef<
+  RefHandle,
+  UploadModalContentProps
+>(({ onNotesChange, onRemoveAllNotes, onRemoveNote }, ref) => {
   const {
     apiConfig: { currencies },
   } = useWebContext();
@@ -55,6 +60,10 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     onRemoveAllNotes?.();
   }, [onRemoveAllNotes]);
 
+  useImperativeHandle(ref, () => ({
+    removeAllNotes: handleRemoveAllNotes,
+  }));
+
   // useMemo for note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
@@ -74,12 +83,6 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
   // Effect run when file changes
   useEffect(() => {
     async function processFile() {
-      if (reUploadNote) {
-        handleRemoveAllNotes();
-        handleReUploadNote();
-        return;
-      }
-
       if (!file) {
         return;
       }
@@ -138,14 +141,7 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
     }
 
     processFile();
-  }, [
-    file,
-    onNotesChange,
-    reUploadNote,
-    handleRemoveAllNotes,
-    handleReUploadNote,
-    parseJSON,
-  ]);
+  }, [file, onNotesChange, handleRemoveAllNotes, parseJSON]);
 
   return (
     <>
@@ -234,4 +230,4 @@ export const UploadModalContent: FC<UploadModalContentProps> = ({
       ) : null}
     </>
   );
-};
+});

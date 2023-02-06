@@ -42,18 +42,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     },
     ref
   ) => {
-    const fungibleTokenValue = useMemo(() => {
-      if (!amount) {
-        return '0';
-      }
-
-      if (fungibleTokenSymbol) {
-        return `${amount} ${fungibleTokenSymbol.toUpperCase()}`;
-      }
-
-      return amount.toString();
-    }, [fungibleTokenSymbol, amount]);
-
     const tokenPairString = useMemo(() => {
       if (wrappableTokenSymbol) {
         return `${wrappableTokenSymbol}/${fungibleTokenSymbol}`;
@@ -61,6 +49,17 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       return fungibleTokenSymbol;
     }, [wrappableTokenSymbol, fungibleTokenSymbol]);
+
+    const depositingInfoStr = useMemo(() => {
+      let symbolStr = '';
+      if (wrappableTokenSymbol) {
+        symbolStr += `${wrappableTokenSymbol.trim()}/`;
+      }
+
+      symbolStr += fungibleTokenSymbol.toUpperCase();
+
+      return `${amount ?? '0'} ${symbolStr}`;
+    }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
     return (
       <div
@@ -192,11 +191,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 title: 'Depositing',
                 info: 'Depositing',
               }}
-              rightContent={
-                fungibleTokenValue +
-                '/' +
-                wrappableTokenSymbol?.trim().toUpperCase()
-              }
+              rightContent={depositingInfoStr}
             />
             <InfoItem
               leftTextProps={{

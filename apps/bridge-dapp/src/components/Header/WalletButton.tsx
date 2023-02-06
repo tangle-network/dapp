@@ -112,7 +112,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
         message: 'Failed to clear notes',
       });
     }
-  }, [noteManager, notificationApi]);
+  }, [logger, noteManager, notificationApi]);
 
   // Save backups function
   const handleSaveBackups = useCallback(async () => {
@@ -133,15 +133,18 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     }, [] as string[]);
 
     // Download the notes as a file
-    downloadString(JSON.stringify(notes), 'notes.json', '.json');
+    downloadString(JSON.stringify(notes), `notes-${Date.now()}.json`, '.json');
   }, [allNotes, notificationApi]);
 
   // TODO: Implement a function when user click on the new notes link
   // on the notification
-  const handleNewNotes = useCallback(async (notes: Note[]) => {
-    logger.info('Handle new notes: ', notes);
-    logger.warn('New notes function is not implemented yet');
-  }, []);
+  const handleNewNotes = useCallback(
+    async (notes: Note[]) => {
+      logger.info(`Handle ${notes.length} new notes`);
+      logger.warn('New notes function is not implemented yet');
+    },
+    [logger]
+  );
 
   // Funciton to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
@@ -210,13 +213,14 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
                 </Typography>
 
                 <div className="flex items-center space-x-1">
-                  <Typography
-                    variant="body1"
-                    fw="semibold"
-                    className="capitalize"
-                  >
-                    {shortenString(account.address, 6)}
-                  </Typography>
+                  <KeyValueWithButton
+                    className="mt-0.5"
+                    isHiddenLabel
+                    keyValue={account.address}
+                    size="sm"
+                    labelVariant="body1"
+                    valueVariant="body1"
+                  />
 
                   <a href={accountExplorerUrl} target="_blank" rel="noreferrer">
                     <ExternalLinkLine />
