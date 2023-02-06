@@ -26,12 +26,6 @@ import congratJson from './congrat.json';
 // TODO: Update message
 const loginMessage = 'Logging into Webb';
 
-// TODO: Correct the url here
-const bridgeDocsSite = 'https://docs.webb.tools/v1/getting-started/overview/';
-
-// TODO: Correct the url here
-const accountDocsSite = 'https://docs.webb.tools/v1/getting-started/overview/';
-
 const successBridgeInfo = [
   {
     title: 'Deposit',
@@ -181,7 +175,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           <Button
             variant="secondary"
             isFullWidth
-            href={isSuccess ? bridgeDocsSite : accountDocsSite}
+            href="https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/account/"
             target="_blank"
             rel="noopener noreferrer"
           >
