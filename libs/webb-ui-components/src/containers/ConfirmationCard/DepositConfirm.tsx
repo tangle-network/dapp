@@ -42,18 +42,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     },
     ref
   ) => {
-    const fungibleTokenValue = useMemo(() => {
-      if (!amount) {
-        return '0';
-      }
-
-      if (fungibleTokenSymbol) {
-        return `${amount} ${fungibleTokenSymbol.toUpperCase()}`;
-      }
-
-      return amount.toString();
-    }, [fungibleTokenSymbol, amount]);
-
     const tokenPairString = useMemo(() => {
       if (wrappableTokenSymbol) {
         return `${wrappableTokenSymbol}/${fungibleTokenSymbol}`;
@@ -70,8 +58,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       symbolStr += fungibleTokenSymbol.toUpperCase();
 
-      return `${fungibleTokenValue} ${symbolStr}`;
-    }, [fungibleTokenValue, fungibleTokenSymbol, wrappableTokenSymbol]);
+      return `${amount ?? '0'} ${symbolStr}`;
+    }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
     return (
       <div
