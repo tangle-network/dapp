@@ -240,9 +240,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       name: chainId.toString(),
     };
 
-    const setupTransactionArgs = restArgs.slice(0, -1) as Parameters<
-      VAnchor['setupTransaction']
-    >;
+    const setupTransactionArgs = (
+      restArgs.length === 8 ? restArgs : restArgs.slice(0, -1)
+    ) as Parameters<VAnchor['setupTransaction']>;
 
     const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
       ...setupTransactionArgs
@@ -258,11 +258,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         extData: {
           recipient: extData.recipient,
           relayer: extData.relayer,
-          extAmount: extAmount as any,
-          fee: extData.fee.toString() as any,
+          extAmount: extAmount.toHexString().replace('0x', ''),
+          fee: extData.fee,
           encryptedOutput1: extData.encryptedOutput1,
           encryptedOutput2: extData.encryptedOutput2,
-          refund: extData.refund.toString(),
+          refund: extData.refund,
           token: extData.token,
         },
         proofData: {
