@@ -103,6 +103,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       chains={chains}
       className="w-[550px] h-[700px]"
       currentActiveChain={currentActiveChain}
+      defaultCategory={activeChain?.tag}
       onChange={handleChainChange}
       onClose={handleClose}
       {...props}

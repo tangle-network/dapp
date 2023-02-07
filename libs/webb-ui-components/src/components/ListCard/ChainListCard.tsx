@@ -19,6 +19,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       chains,
       chainType,
       currentActiveChain,
+      defaultCategory = 'test',
       onChange,
       onClose,
       onlyCategory,
@@ -29,8 +30,9 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     ref
   ) => {
     // State for network category
-    const [networkCategory, setNetworkCategory] =
-      useState<ChainType['tag']>('test');
+    const [networkCategory, setNetworkCategory] = useState<ChainType['tag']>(
+      onlyCategory ?? defaultCategory
+    );
 
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
 
