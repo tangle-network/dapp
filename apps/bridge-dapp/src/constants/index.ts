@@ -53,7 +53,7 @@ export const footerNavs: FooterNavsType = {
   network: [
     {
       name: 'statistics',
-      href: 'https://www.stats.webb.tools/',
+      href: 'https://stats.webb.tools/',
       ...commonExternalProps,
     },
     {
@@ -65,7 +65,7 @@ export const footerNavs: FooterNavsType = {
   developer: [
     {
       name: 'documentation',
-      href: 'http://docs.webb.tools/',
+      href: 'https://docs.webb.tools/',
       ...commonExternalProps,
     },
     {

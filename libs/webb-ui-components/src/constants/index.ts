@@ -99,7 +99,7 @@ export const footerNavs: FooterNavsType = {
   network: [
     {
       name: 'statistics',
-      href: 'https://www.stats.webb.tools/',
+      href: 'https://stats.webb.tools/',
       ...commonExternalProps,
     },
     {
