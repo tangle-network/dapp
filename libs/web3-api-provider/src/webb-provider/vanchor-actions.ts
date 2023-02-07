@@ -1,4 +1,6 @@
 import {
+  ActiveWebbRelayer,
+  ParametersOfTransactMethod,
   CancellationToken,
   NewNotesTxResult,
   Transaction,
@@ -7,6 +9,9 @@ import {
   TransferTransactionPayloadType,
   VAnchorActions,
   WithdrawTransactionPayloadType,
+  RelayedChainInput,
+  padHexString,
+  RelayedWithdrawResult,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
@@ -129,7 +134,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<Awaited<Parameters<Web3VAnchorActions['transact']>>> | never {
+  ): Promise<ParametersOfTransactMethod> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
@@ -208,6 +213,106 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       ]);
     } else {
       console.error('Invalid payload');
+    }
+  }
+
+  async transactWithRelayer(
+    activeRelayer: ActiveWebbRelayer,
+    txArgs: ParametersOfTransactMethod,
+    changeNotes: Note[]
+  ): Promise<void> {
+    let txHash = '';
+
+    const [tx, contractAddress, ...restArgs] = txArgs;
+
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+    const vanchor = await this.inner.getVariableAnchorByAddress(
+      contractAddress
+    );
+
+    const chainId = await vanchor.contract.getChainId();
+
+    const chainInfo: RelayedChainInput = {
+      baseOn: 'evm',
+      contractAddress: contractAddress,
+      endpoint: '',
+      name: chainId.toString(),
+    };
+
+    const setupTransactionArgs = restArgs.slice(0, -1) as Parameters<
+      VAnchor['setupTransaction']
+    >;
+
+    const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
+      ...setupTransactionArgs
+    );
+
+    const relayedDepositTxPayload =
+      relayedVAnchorWithdraw.generateWithdrawRequest<
+        typeof chainInfo,
+        'vAnchor'
+      >(chainInfo, {
+        chainId: chainId.toNumber(),
+        id: contractAddress,
+        extData: {
+          recipient: extData.recipient,
+          relayer: extData.relayer,
+          extAmount: extAmount as any,
+          fee: extData.fee.toString() as any,
+          encryptedOutput1: extData.encryptedOutput1,
+          encryptedOutput2: extData.encryptedOutput2,
+          refund: extData.refund.toString(),
+          token: extData.token,
+        },
+        proofData: {
+          proof: publicInputs.proof,
+          extensionRoots: publicInputs.extensionRoots,
+          extDataHash: padHexString(publicInputs.extDataHash.toHexString()),
+          publicAmount: publicInputs.publicAmount,
+          roots: publicInputs.roots,
+          outputCommitments: publicInputs.outputCommitments.map((output) =>
+            padHexString(output.toHexString())
+          ),
+          inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
+            padHexString(nullifier.toHexString())
+          ),
+        },
+      });
+
+    // Subscribe to the relayer's transaction status.
+    relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+      switch (results) {
+        case RelayedWithdrawResult.PreFlight:
+          tx.next(TransactionState.SendingTransaction, '');
+          break;
+        case RelayedWithdrawResult.OnFlight:
+          break;
+        case RelayedWithdrawResult.Continue:
+          break;
+        case RelayedWithdrawResult.CleanExit:
+          tx.next(TransactionState.Done, {
+            txHash,
+            outputNotes: changeNotes,
+          });
+          break;
+        case RelayedWithdrawResult.Errored:
+          tx.fail('Transaction with relayer failed');
+          break;
+      }
+    });
+
+    tx.next(TransactionState.Intermediate, {
+      name: 'Sending TX to relayer',
+    });
+
+    // Send the transaction to the relayer.
+    relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+    const results = await relayedVAnchorWithdraw.await();
+    if (results) {
+      const [, message] = results;
+      txHash = message ?? '';
+      tx.txHash = txHash;
     }
   }
 

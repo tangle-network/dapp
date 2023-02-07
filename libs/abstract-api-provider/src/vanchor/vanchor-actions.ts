@@ -13,6 +13,11 @@ import {
   Transaction,
   TransactionState,
 } from '../transaction';
+import { ActiveWebbRelayer } from '../relayer';
+
+export type ParametersOfTransactMethod = Awaited<
+  Parameters<VAnchorActions['transact']>
+>;
 
 export abstract class AbstractState<
   T extends WebbApiProvider<any>
@@ -65,7 +70,19 @@ export abstract class VAnchorActions<
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<Awaited<Parameters<VAnchorActions['transact']>>> | never;
+  ): Promise<ParametersOfTransactMethod> | never;
+
+  /**
+   * A function to send a transaction to the relayer
+   * @param activeRelayer The active relayer.
+   * @param txArgs The transaction payload.
+   * @param changeNotes The change notes.
+   */
+  abstract transactWithRelayer(
+    activeRelayer: ActiveWebbRelayer,
+    txArgs: ParametersOfTransactMethod,
+    changeNotes: Note[]
+  ): Promise<void>;
 
   // A function for transcting
   abstract transact(
