@@ -1,6 +1,6 @@
-export const BRIDGE_URL = 'https://development-hubble-bridge.netlify.app/';
+export const BRIDGE_URL = 'https://app.webb.tools/';
 
-export const STATS_URL = 'https://www.stats-dev.webb.tools/';
+export const STATS_URL = 'https://www.stats.webb.tools/';
 
 export const TANGLE_NETWORK_URL =
   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-archive.webb.tools#/explorer';
