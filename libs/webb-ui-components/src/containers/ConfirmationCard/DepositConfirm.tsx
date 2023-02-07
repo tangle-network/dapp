@@ -42,25 +42,24 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
     },
     ref
   ) => {
-    const fungibleTokenValue = useMemo(() => {
-      if (!amount) {
-        return '0';
-      }
-
-      if (fungibleTokenSymbol) {
-        return `${amount} ${fungibleTokenSymbol.toUpperCase()}`;
-      }
-
-      return amount.toString();
-    }, [fungibleTokenSymbol, amount]);
-
     const tokenPairString = useMemo(() => {
       if (wrappableTokenSymbol) {
-        return `${wrappableTokenSymbol} - ${fungibleTokenSymbol}`;
+        return `${wrappableTokenSymbol}/${fungibleTokenSymbol}`;
       }
 
       return fungibleTokenSymbol;
     }, [wrappableTokenSymbol, fungibleTokenSymbol]);
+
+    const depositingInfoStr = useMemo(() => {
+      let symbolStr = '';
+      if (wrappableTokenSymbol) {
+        symbolStr += `${wrappableTokenSymbol.trim()}/`;
+      }
+
+      symbolStr += fungibleTokenSymbol.toUpperCase();
+
+      return `${amount ?? '0'} ${symbolStr}`;
+    }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
     return (
       <div
@@ -105,37 +104,37 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         {/** Transaction progress */}
         {typeof progress === 'number' ? <Progress value={progress} /> : null}
 
-        {/** Wrapping info */}
-        <WrapperCard>
-          <div className="space-y-4">
-            <TitleWithInfo
-              titleComponent="h6"
-              title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-              variant="utility"
-              info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
-            <div className="flex items-center space-x-4">
-              {wrappableTokenSymbol && (
-                <>
-                  <TokenWithAmount
-                    token1Symbol={wrappableTokenSymbol}
-                    amount={wrappingAmount}
-                  />
-                  <ArrowRight />
-                </>
-              )}
-              <TokenWithAmount
-                token1Symbol={fungibleTokenSymbol}
-                amount={amount}
-              />
-            </div>
-          </div>
-        </WrapperCard>
-
-        {/** New spend note */}
         <WrapperSection>
+          {/** Wrapping info */}
+          <Section>
+            <div className="space-y-4">
+              <TitleWithInfo
+                titleComponent="h6"
+                title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
+                variant="utility"
+                info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
+                titleClassName="text-mono-100 dark:text-mono-80"
+                className="text-mono-100 dark:text-mono-80"
+              />
+              <div className="flex items-center space-x-4">
+                {wrappableTokenSymbol && (
+                  <>
+                    <TokenWithAmount
+                      token1Symbol={wrappableTokenSymbol}
+                      amount={wrappingAmount}
+                    />
+                    <ArrowRight />
+                  </>
+                )}
+                <TokenWithAmount
+                  token1Symbol={fungibleTokenSymbol}
+                  amount={amount}
+                />
+              </div>
+            </div>
+          </Section>
+
+          {/** New spend note */}
           <Section>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -192,11 +191,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 title: 'Depositing',
                 info: 'Depositing',
               }}
-              rightContent={
-                fungibleTokenValue +
-                '/' +
-                wrappableTokenSymbol?.trim().toUpperCase()
-              }
+              rightContent={depositingInfoStr}
             />
             <InfoItem
               leftTextProps={{
@@ -212,29 +207,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         <Button {...actionBtnProps} isFullWidth className="justify-center">
           {actionBtnProps?.children ?? 'Deposit'}
         </Button>
-      </div>
-    );
-  }
-);
-
-/***********************
- * Internal components *
- ***********************/
-
-const WrapperCard = forwardRef<HTMLDivElement, PropsOf<'div'>>(
-  ({ className, children, ...props }, ref) => {
-    return (
-      <div
-        {...props}
-        className={twMerge(
-          'p-2 bg-mono-20 dark:bg-mono-160 rounded-lg',
-          className
-        )}
-        ref={ref}
-      >
-        <div className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-140">
-          {children}
-        </div>
       </div>
     );
   }

@@ -18,6 +18,7 @@ import { ActionEvent } from './transaction';
 import { WrapUnwrap } from './wrap-unwrap';
 import { Observable } from 'rxjs';
 import { ZkComponents } from '@webb-tools/utils';
+import { providers } from 'ethers';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -222,12 +223,22 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // Configuration passed to the ApiProvider on initialization.
   // Then, the config is used as state for the provider.
   config: ApiConfig;
+
   // Notification handler
   notificationHandler: NotificationHandler;
+
   // wasm-utils workers factory
   wasmFactory: WasmFactory;
+
   // new block observable
   newBlock: Observable<unknown>;
+
   // get zk fixtures
-  getZkFixtures: (isSmall: boolean) => Promise<ZkComponents>;
+  getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
+
+  // get vanchor max edges
+  getVAnchorMaxEdges: (
+    vAnchorAddress: string,
+    provider?: providers.Provider
+  ) => Promise<number>;
 }

@@ -2,10 +2,10 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useVAnchor,
   useCurrencies,
   useNoteAccount,
   useRelayers,
+  useTxQueue,
 } from '@webb-tools/react-hooks';
 import {
   ChainType,
@@ -15,7 +15,6 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
-  ChainListCard,
   RelayerListCard,
   TokenListCard,
   WithdrawCard,
@@ -28,7 +27,8 @@ import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
-import { useShieldedAssets } from '../../hooks';
+import { ChainListCardWrapper } from '../../components';
+import { useConnectWallet, useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 
@@ -85,9 +85,14 @@ export const WithdrawContainer = forwardRef<
         : undefined,
   });
 
-  const { allNotes } = useNoteAccount();
+  const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
+    useNoteAccount();
 
   const shieldedAssets = useShieldedAssets();
+
+  const txQueue = useTxQueue();
+
+  const { isWalletConnected, toggleModal } = useConnectWallet();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
@@ -248,6 +253,33 @@ export const WithdrawContainer = forwardRef<
     isValidRecipient,
   ]);
 
+  const buttonText = useMemo(() => {
+    if (!isWalletConnected) {
+      return 'Connect wallet';
+    }
+
+    if (!hasNoteAccount) {
+      return 'Create note account';
+    }
+
+    if (isDisabledWithdraw && otherAvailableChains.length > 0) {
+      return 'Switch chain to withdraw';
+    }
+
+    if (selectedUnwrapToken && isUnwrap) {
+      return 'Unwrap and Withdraw';
+    }
+
+    return 'Withdraw';
+  }, [
+    hasNoteAccount,
+    isDisabledWithdraw,
+    isUnwrap,
+    isWalletConnected,
+    otherAvailableChains.length,
+    selectedUnwrapToken,
+  ]);
+
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
     const receivingAmount = isValidAmount
@@ -293,59 +325,52 @@ export const WithdrawContainer = forwardRef<
     const activeChainType = activeChain
       ? {
           name: activeChain.name,
+          tag: activeChain.tag,
           symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
         }
       : undefined;
 
     setMainComponent(
-      <ChainListCard
-        className="w-[550px] h-[700px]"
+      <ChainListCardWrapper
         chainType="dest"
+        onlyCategory={activeChain?.tag}
         chains={otherAvailableChains.map((chain) => ({
           name: chain.name,
+          tag: chain.tag,
           symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
         }))}
         value={activeChainType}
-        currentActiveChain={activeChain?.name}
-        onChange={async (selectedChain) => {
-          const chain = Object.values(chains).find(
-            (val) => val.name === selectedChain.name
-          );
-
-          if (!chain) {
-            throw new Error('Detect unsupported chain is being selected');
-          }
-
-          const isSupported =
-            activeWallet &&
-            activeWallet.supportedChainIds.includes(
-              calculateTypedChainId(chain.chainType, chain.chainId)
-            );
-
-          if (!isSupported) {
-            throw new Error(
-              'Detect unsupported chain is being selected for the wallet'
-            );
-          }
-
-          await switchChain(chain, activeWallet);
-          setMainComponent(undefined);
-        }}
-        onClose={() => {
-          setMainComponent(undefined);
-        }}
       />
     );
   }, [
     activeChain,
     activeWallet,
-    chains,
     otherAvailableChains,
     setMainComponent,
     switchChain,
   ]);
 
   const handleWithdrawButtonClick = useCallback(async () => {
+    // Dismiss all the completed and failed txns in the queue before starting a new txn
+    txQueue.txPayloads
+      .filter(
+        (tx) =>
+          tx.txStatus.status === 'warning' || tx.txStatus.status === 'completed'
+      )
+      .map((tx) => tx.onDismiss());
+
+    // No wallet connected
+    if (!isWalletConnected) {
+      toggleModal(true);
+      return;
+    }
+
+    // No note account exists
+    if (!hasNoteAccount) {
+      setOpenNoteAccountModal(true);
+      return;
+    }
+
     if (isDisabledWithdraw && otherAvailableChains.length > 0) {
       return await handleSwitchToOtherDestChains();
     }
@@ -465,12 +490,17 @@ export const WithdrawContainer = forwardRef<
     currentTypedChainId,
     fungibleCurrency,
     handleSwitchToOtherDestChains,
+    hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
+    isWalletConnected,
     noteManager,
     otherAvailableChains.length,
     recipient,
     setMainComponent,
+    setOpenNoteAccountModal,
+    toggleModal,
+    txQueue.txPayloads,
     wrappableCurrency,
   ]);
 
@@ -592,18 +622,6 @@ export const WithdrawContainer = forwardRef<
                     };
                   })
                   .filter((x) => x !== undefined)}
-                value={
-                  activeRelayer
-                    ? {
-                        address: activeRelayer.beneficiary ?? '',
-                        externalUrl: activeRelayer.endpoint,
-                        theme:
-                          activeChain.chainType === ChainType.EVM
-                            ? 'ethereum'
-                            : 'substrate',
-                      }
-                    : undefined
-                }
                 onClose={() => setMainComponent(undefined)}
                 onChange={(nextRelayer) => {
                   setRelayer(
@@ -626,15 +644,11 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         withdrawBtnProps={{
-          isDisabled: isDisabledWithdraw
-            ? otherAvailableChains.length > 0
+          isDisabled:
+            otherAvailableChains.length > 0
               ? false
-              : true
-            : isDisabledWithdraw,
-          children:
-            isDisabledWithdraw && otherAvailableChains.length > 0
-              ? 'Switch chain to withdraw'
-              : undefined,
+              : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+          children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}
         receivedAmount={infoCalculated.receivingAmount}

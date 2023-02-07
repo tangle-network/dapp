@@ -1,3 +1,6 @@
+// core styles shared by all of react-notion-x (required)
+import 'react-notion-x/src/styles.css';
+
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 

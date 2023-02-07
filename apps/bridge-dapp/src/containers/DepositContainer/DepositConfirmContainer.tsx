@@ -14,7 +14,7 @@ import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { getCardTitle, getErrorMessage } from '../../utils';
+import { getCardTitle, getErrorMessage, getTokenURI } from '../../utils';
 
 import {
   useLatestTransactionStage,
@@ -121,6 +121,8 @@ export const DepositConfirmContainer = forwardRef<
       // Get the destination token symbol
       const destToken = tokenSymbol;
 
+      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+
       const tx = Transaction.new<NewNotesTxResult>('Deposit', {
         amount: +formattedAmount,
         tokens: [srcTokenSymbol, destToken],
@@ -129,6 +131,7 @@ export const DepositConfirmContainer = forwardRef<
           dest: +destTypedChainId,
         },
         token: tokenSymbol,
+        tokenURI,
       });
 
       try {

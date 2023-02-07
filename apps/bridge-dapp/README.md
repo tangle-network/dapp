@@ -35,7 +35,7 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:bridge
    ```
 
-Visit http://localhost:3000/ to see the Webb Bridge Dapp UI! 🕸️ 🚀
+Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI! 🕸️ 🚀
 
 ### Run local Webb relayer and local network alongside Hubble bridge
 

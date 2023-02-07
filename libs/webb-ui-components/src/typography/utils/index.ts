@@ -80,6 +80,6 @@ export function isMonospaceVariant(
 
 export function getDefaultTextColor(variant: WebbTypographyVariant) {
   return variant.startsWith('h')
-    ? 'text-mono-200 dark:text-mono-40'
-    : 'text-mono-160 dark:text-mono-60';
+    ? 'text-mono-200 dark:text-mono-00'
+    : 'text-mono-160 dark:text-mono-80';
 }

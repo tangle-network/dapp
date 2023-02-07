@@ -17,6 +17,9 @@ import Heading2 from './Heading2';
 import Heading3 from './Heading3';
 import NewletterForm from './NewletterForm';
 import SubHeading2 from './SubHeading2';
+import InternalOrExternalLink, {
+  IInternalOrExternalLink,
+} from './InternalOrExternalLink';
 
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -52,14 +55,16 @@ const socials: Array<SocialType> = [
   },
 ];
 
-const links = [
+const links: Array<IInternalOrExternalLink> = [
   {
-    name: 'Privacy Policy',
-    href: '#', // TODO: add privacy policy link
+    label: 'Privacy Policy',
+    url: '/privacy-policy',
+    isInternal: false,
   },
   {
-    name: 'Terms & Conditions',
-    href: '#', // TODO: add terms and conditions link
+    label: 'Terms & Conditions',
+    url: '/terms-and-conditions',
+    isInternal: false,
   },
 ];
 
@@ -88,13 +93,12 @@ const Footer = () => {
 
               <SubHeading2 className="dark:text-mono-100">
                 By signing up you agree to{' '}
-                <a
-                  href={links[1].href}
-                  rel="noopener noreferrer"
-                  className="dark:text-mono-0 hover:underline"
+                <InternalOrExternalLink
+                  {...links[1]}
+                  className="inline-block dark:text-mono-0 hover:underline"
                 >
                   terms & conditions
-                </a>
+                </InternalOrExternalLink>
               </SubHeading2>
             </div>
           )}
@@ -133,19 +137,22 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center space-y-2 sm:space-y-0 sm:flex-row sm:justify-between">
-          <Typography variant="body1">Copyright © 2022</Typography>
+        <div className="flex flex-col items-center space-y-2 md:space-y-0 md:flex-row md:justify-between">
+          <Typography variant="body1">
+            © {new Date().getFullYear()} Webb Technologies, Inc. All rights
+            reserved.
+          </Typography>
 
           <div className="flex flex-col items-center space-y-1 xs:space-y-0 xs:flex-row xs:items-center xs:space-x-6">
-            {links.map(({ name, href }, idx) => (
+            {links.map(({ label, ...restProps }, idx) => (
               <Typography
-                key={`${name}-${idx}`}
+                key={`${label}-${idx}`}
                 variant="body1"
                 className="hover:underline"
               >
-                <a target="_blank" rel="noreferrer" href={href}>
-                  {name}
-                </a>
+                <InternalOrExternalLink {...restProps}>
+                  {label}
+                </InternalOrExternalLink>
               </Typography>
             ))}
           </div>

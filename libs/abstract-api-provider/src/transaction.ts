@@ -106,6 +106,7 @@ type TransactionMetaData = {
   token: string;
   recipient?: string;
   address?: string;
+  tokenURI?: string;
 };
 
 type PromiseExec<T> = (

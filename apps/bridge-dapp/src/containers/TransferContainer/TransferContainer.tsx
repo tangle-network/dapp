@@ -8,33 +8,35 @@ import {
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
-  useVAnchor,
   useNoteAccount,
   useRelayers,
+  useTxQueue,
+  useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
-  calculateTypedChainId,
   ChainType as ChainTypeEnum,
   CircomUtxo,
   Keypair,
   Note,
+  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
-  ChainListCard,
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
   TransferCard,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { ChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   AssetType,
-  RelayerType,
+  ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChainListCardWrapper } from '../../components';
+import { useConnectWallet } from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -42,7 +44,6 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
-import { WalletModal } from '../../components';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -59,9 +60,14 @@ export const TransferContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { allNotes } = useNoteAccount();
+    const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
+      useNoteAccount();
 
     const { api } = useVAnchor();
+
+    const txQueue = useTxQueue();
+
+    const { isWalletConnected, toggleModal } = useConnectWallet();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -341,31 +347,31 @@ export const TransferContainer = forwardRef<
     }, [selectedBridgingAsset, currencyRecordFromNotes, allDestChains]);
 
     // Selected destination chain
-    const selectedDestChain = useMemo<ChainType | undefined>(() => {
+    const selectedDestChain = useMemo<InputChainType | undefined>(() => {
       if (!destChain) {
         return undefined;
       }
 
       return {
         name: destChain.name,
-      } as ChainType;
+        symbol: destChain.name,
+      } as InputChainType;
     }, [destChain]);
 
     // Callback for destination chain input clicked
     const handleDestChainClick = useCallback(() => {
       setMainComponent(
-        <ChainListCard
-          className="w-[550px] h-[700px]"
-          chainType={'dest'}
+        <ChainListCardWrapper
+          chainType="dest"
+          onlyCategory={activeChain?.tag}
           chains={availableDestChains.map(
             (chain) =>
               ({
                 name: chain.name,
+                symbol: chain.name,
+                tag: chain.tag,
               } as ChainType)
           )}
-          value={selectedDestChain}
-          currentActiveChain={activeChain?.name}
-          onClose={() => setMainComponent(undefined)}
           onChange={(newChain) => {
             const chain = availableDestChains.find(
               (chain) => chain.name === newChain.name
@@ -378,7 +384,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [availableDestChains, selectedDestChain, setMainComponent, activeChain]);
+    }, [activeChain?.tag, availableDestChains, setMainComponent]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(
@@ -434,21 +440,9 @@ export const TransferContainer = forwardRef<
         })
         .filter((x) => !!x);
 
-      const relayerValue = activeRelayer
-        ? ({
-            address: activeRelayer.beneficiary ?? '',
-            externalUrl: activeRelayer.endpoint,
-            theme:
-              activeChain.chainType === ChainTypeEnum.EVM
-                ? 'ethereum'
-                : 'substrate',
-          } as RelayerType)
-        : undefined;
-
       setMainComponent(
         <RelayerListCard
           relayers={relayerList}
-          value={relayerValue}
           className="w-[550px] h-[700px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
@@ -602,16 +596,37 @@ export const TransferContainer = forwardRef<
             return;
           }
 
-          setMainComponent(<WalletModal chain={destChain} sourceChains={[]} />);
+          toggleModal(true, destChain);
         } catch (error) {
           console.error('Failed to switch chain', error);
         }
       },
-      [activeChain, activeWallet, setMainComponent, switchChain]
+      [activeChain, activeWallet, switchChain, toggleModal]
     );
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
+      // Dismiss all the completed and failed txns in the queue before starting a new txn
+      txQueue.txPayloads
+        .filter(
+          (tx) =>
+            tx.txStatus.status === 'warning' ||
+            tx.txStatus.status === 'completed'
+        )
+        .map((tx) => tx.onDismiss());
+
+      // No wallet connected
+      if (!isWalletConnected) {
+        toggleModal(true);
+        return;
+      }
+
+      // No note account exists
+      if (!hasNoteAccount) {
+        setOpenNoteAccountModal(true);
+        return;
+      }
+
       if (
         !fungibleCurrency ||
         !destChain ||
@@ -726,23 +741,36 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
+      txQueue.txPayloads,
+      isWalletConnected,
+      hasNoteAccount,
       fungibleCurrency,
-      currentTypedChainId,
       destChain,
       api,
       noteManager,
-      activeApi?.state?.activeBridge,
+      activeApi?.state.activeBridge,
       amount,
+      currentTypedChainId,
       inputNotes,
       activeChain?.chainId,
       infoCalculated.rawChangeAmount,
-      setMainComponent,
       recipientPubKey,
+      setMainComponent,
       activeRelayer,
+      toggleModal,
+      setOpenNoteAccountModal,
       handleSwitchChain,
     ]);
 
     const buttonText = useMemo(() => {
+      if (!isWalletConnected) {
+        return 'Connect wallet';
+      }
+
+      if (!hasNoteAccount) {
+        return 'Create note account';
+      }
+
       if (
         activeChain &&
         destChain &&
@@ -752,7 +780,7 @@ export const TransferContainer = forwardRef<
       }
 
       return 'Transfer';
-    }, [activeChain, destChain]);
+    }, [activeChain, destChain, hasNoteAccount, isWalletConnected]);
 
     useEffect(() => {
       const updateDefaultValues = () => {
@@ -811,7 +839,8 @@ export const TransferContainer = forwardRef<
           },
         }}
         transferBtnProps={{
-          isDisabled: isTransferButtonDisabled,
+          isDisabled:
+            isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
           children: buttonText,
           onClick: handleTransferClick,
         }}

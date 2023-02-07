@@ -17,30 +17,15 @@ import {
   DropdownBody,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 
 import cx from 'classnames';
-import Link from 'next/link';
 
-import { PropsWithChildren } from 'react';
 import { BRIDGE_URL } from '../constants';
+import InternalOrExternalLink, {
+  IInternalOrExternalLink,
+} from './InternalOrExternalLink';
 
-interface NavItem {
-  /**
-   * The label of the link
-   */
-  label: string;
-
-  /**
-   * The url of the link
-   */
-  url: string;
-
-  /**
-   * If true, the link will use the Next.js link component
-   */
-  isInternal?: boolean;
-}
+type NavItem = IInternalOrExternalLink;
 
 const isNavItem = (item: any): item is NavItem => {
   return 'label' in item && 'url' in item;
@@ -68,10 +53,10 @@ const Navbar = () => {
   return (
     <nav>
       <ul className="flex items-center space-x-6">
-        {navItems.map((item, idx) => (
+        {/* {navItems.map((item, idx) => (
           <li className="hidden md:block" key={idx}>
             {isNavItem(item) ? (
-              <NavLink url={item.url} isInternal={item.isInternal}>
+              <InternalOrExternalLink url={item.url} isInternal={item.isInternal}>
                 <Typography
                   className="capitalize"
                   variant="body1"
@@ -80,7 +65,7 @@ const Navbar = () => {
                 >
                   {item.label}
                 </Typography>
-              </NavLink>
+              </InternalOrExternalLink>
             ) : (
               <Dropdown>
                 <DropdownBasicButton className="flex items-center space-x-2 group">
@@ -98,7 +83,7 @@ const Navbar = () => {
                   align="start"
                 >
                   {Object.values(item)[0].map((subItem, idx) => (
-                    <NavLink
+                    <InternalOrExternalLink
                       key={idx}
                       url={subItem.url}
                       isInternal={subItem.isInternal}
@@ -111,13 +96,13 @@ const Navbar = () => {
                       >
                         {subItem.label}
                       </MenuItem>
-                    </NavLink>
+                    </InternalOrExternalLink>
                   ))}
                 </DropdownBody>
               </Dropdown>
             )}
           </li>
-        ))}
+        ))} */}
 
         <li>
           <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
@@ -125,36 +110,15 @@ const Navbar = () => {
           </Button>
         </li>
 
-        <li className="flex items-center justify-center md:hidden">
+        {/* <li className="flex items-center justify-center md:hidden">
           <MobileNav />
-        </li>
+        </li> */}
       </ul>
     </nav>
   );
 };
 
 export default Navbar;
-
-const NavLink = ({
-  url,
-  isInternal,
-  children,
-}: PropsWithChildren<Omit<NavItem, 'label'>>) => {
-  return isInternal ? (
-    <Link href={url} className="!text-inherit block">
-      {children}
-    </Link>
-  ) : (
-    <a
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-      className="!text-inherit block"
-    >
-      {children}
-    </a>
-  );
-};
 
 const MobileNav = () => {
   return (
@@ -176,7 +140,7 @@ const MobileNav = () => {
       >
         {navItems.map((item, idx) =>
           isNavItem(item) ? (
-            <NavLink key={idx} {...item}>
+            <InternalOrExternalLink key={idx} {...item}>
               <MenuItem
                 className={cx('px-4 py-2 rounded-lg', {
                   'hover:!bg-transparent': !isNavItem(item),
@@ -189,7 +153,7 @@ const MobileNav = () => {
               >
                 {item.label}
               </MenuItem>
-            </NavLink>
+            </InternalOrExternalLink>
           ) : (
             <Accordion key={idx} type={'single'} collapsible>
               <AccordionItem className="p-0" value={Object.keys(item)[0]}>
@@ -210,7 +174,7 @@ const MobileNav = () => {
 
                 <AccordionContent className="pt-0 pb-4 pl-4 pr-0 mt-4 space-y-4 border-b-2 border-mono-200">
                   {Object.values(item)[0].map((subItem, idx) => (
-                    <NavLink key={idx} {...subItem}>
+                    <InternalOrExternalLink key={idx} {...subItem}>
                       <MenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
                         icon={
@@ -220,7 +184,7 @@ const MobileNav = () => {
                       >
                         {subItem.label}
                       </MenuItem>
-                    </NavLink>
+                    </InternalOrExternalLink>
                   ))}
                 </AccordionContent>
               </AccordionItem>

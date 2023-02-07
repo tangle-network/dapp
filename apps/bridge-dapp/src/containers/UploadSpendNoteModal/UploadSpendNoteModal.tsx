@@ -12,9 +12,9 @@ import {
   TabsRoot,
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { PasteModalContent } from './PasteModalContent';
-import { UploadSpendNoteModalProps } from './types';
+import { RefHandle, UploadSpendNoteModalProps } from './types';
 import { UploadModalContent } from './UploadModalContent';
 
 export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
@@ -26,6 +26,9 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
 
   // State for saving notes
   const [saving, setSaving] = useState(false);
+
+  // Ref for reset upload file and notes
+  const ref = useRef<RefHandle | null>(null);
 
   // Get noteManager from context
   const { noteManager } = useWebContext();
@@ -65,33 +68,25 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   }, [noteManager, notes, setIsOpen]);
 
   // Handle set new note
-  const handleNotesChange = useCallback(
-    (id: string, note: Note) => {
-      setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
-    },
-    [setNotes]
-  );
+  const handleNotesChange = useCallback((id: string, note: Note) => {
+    setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
+  }, []);
 
   // Handle remove all notes
   const handleRemoveAll = useCallback(() => {
     setNotes({});
-  }, [setNotes]);
+  }, []);
 
   // Handle remove note by id
-  const handleRemoveNote = useCallback(
-    (id: string) => {
-      setNotes((prevNotes) => {
-        const { [id]: _, ...rest } = prevNotes;
-        return rest;
-      });
-    },
-    [setNotes]
-  );
+  const handleRemoveNote = useCallback((id: string) => {
+    setNotes((prevNotes) => {
+      const { [id]: _, ...rest } = prevNotes;
+      return rest;
+    });
+  }, []);
 
   // useMemo to memoize the note size
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
-
-  const [reUploadNote, setReUploadNote] = useState(false);
 
   return (
     <Modal open={isOpen} onOpenChange={(isOpen) => setIsOpen(isOpen)}>
@@ -121,11 +116,10 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
 
           <TabContent className="space-y-8" value="upload">
             <UploadModalContent
+              ref={ref}
               onRemoveAllNotes={handleRemoveAll}
               onRemoveNote={handleRemoveNote}
               onNotesChange={handleNotesChange}
-              reUploadNote={reUploadNote}
-              handleReUploadNote={() => setReUploadNote(false)}
             />
           </TabContent>
 
@@ -149,7 +143,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
             <Button
               isFullWidth
               variant="secondary"
-              onClick={() => setReUploadNote(true)}
+              onClick={() => ref.current?.removeAllNotes?.()}
             >
               Back
             </Button>

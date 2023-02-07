@@ -4,10 +4,14 @@ import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React from 'react';
-import { ShieldedAssetDataType } from '../containers/ShieldedAssetsTableContainer/types';
+
+import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
+
+  const { activeChain } = useWebContext();
 
   const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
 
@@ -20,6 +24,10 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const chain = chainsPopulated[Number(targetChainId)];
         const balance = ethers.utils.formatUnits(amount, denomination);
 
+        if (chain.tag !== activeChain?.tag) {
+          return;
+        }
+
         const existedChain = acc.find(
           (item) =>
             item.chain === chain.name &&
@@ -27,8 +35,11 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (existedChain) {
-          existedChain.availableBalance += Number(balance);
+          existedChain.availableBalance = Number(
+            Number(Number(balance) + existedChain.availableBalance).toFixed(2)
+          );
           existedChain.numberOfNotesFound += 1;
+          existedChain.rawNotes.push(note);
           return;
         }
 
@@ -58,21 +69,22 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         acc.push({
           chain: chain.name,
-          rawChain: chain,
           fungibleTokenSymbol: tokenSymbol,
-          rawFungibleCurrency: fungibleCurrency,
           assetsUrl,
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(balance),
+          availableBalance: Number(Number(balance).toFixed(2)),
           numberOfNotesFound: 1,
+          rawChain: chain,
+          rawFungibleCurrency: fungibleCurrency,
+          rawNotes: [note],
         });
       });
 
       return acc;
     }, [] as ShieldedAssetDataType[]);
-  }, [allNotes, fungibleCurrencies, getWrappableCurrencies]);
+  }, [activeChain?.tag, allNotes, fungibleCurrencies, getWrappableCurrencies]);
 
   return groupedNotes;
 };

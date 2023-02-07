@@ -1,9 +1,10 @@
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
 import cx from 'classnames';
-
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
+
 import Navbar from './Navbar';
-// webb-shadow-sm
+
 const Header = () => {
   // State for tracking whether the user has scrolled down the page
   const [scrolled, setScrolled] = useState(false);
@@ -31,7 +32,9 @@ const Header = () => {
       })}
     >
       <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
 
         <Navbar />
       </div>

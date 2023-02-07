@@ -22,6 +22,7 @@ export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './Copyright';
 export * from './DefaultTokenIcon';
+export * from './DeleteBinIcon';
 export * from './DiscordFill';
 export * from './Download';
 export * from './EditLine';

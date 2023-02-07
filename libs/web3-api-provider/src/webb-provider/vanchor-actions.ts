@@ -1,7 +1,5 @@
 import {
   CancellationToken,
-  Currency,
-  FixturesStatus,
   NewNotesTxResult,
   Transaction,
   TransactionPayloadType,
@@ -10,49 +8,33 @@ import {
   VAnchorActions,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
-import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { VAnchor } from '@webb-tools/anchors';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20__factory } from '@webb-tools/contracts';
+import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
-import { NoteManager } from '@webb-tools/note-manager';
-import {
-  ChainType,
   CircomUtxo,
   Keypair,
   MerkleTree,
   Note,
   Utxo,
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
-import {
-  ZERO_ADDRESS,
-  ZkComponents,
-  hexToU8a,
-  u8aToHex,
-} from '@webb-tools/utils';
+import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import {
   BigNumber,
   BigNumberish,
   ContractReceipt,
   ContractTransaction,
-  ethers,
 } from 'ethers';
 
-import { Web3Provider } from '../ext-provider';
-import { WebbWeb3Provider } from '../webb-provider';
-import assert from 'assert';
 import { JsNote } from '@webb-tools/wasm-utils';
 import { poseidon } from 'circomlibjs';
+import { Web3Provider } from '../ext-provider';
+import { WebbWeb3Provider } from '../webb-provider';
 
 export const isVAnchorDepositPayload = (
   payload: TransactionPayloadType
@@ -241,11 +223,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
+    const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
     const vanchor = await VAnchor.connect(
       contractAddress,
-      await this.inner.getZkFixtures(true),
-      await this.inner.getZkFixtures(false),
+      await this.inner.getZkFixtures(maxEdges, true),
+      await this.inner.getZkFixtures(maxEdges, false),
       signer
     );
 
@@ -425,16 +408,18 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     // fetch leaves if we don't have them
     if (leavesMap[parsedNote.sourceChainId] === undefined) {
       // Set up a provider for the source chain
-      const sourceAddress = parsedNote.sourceIdentifyingData;
       const sourceChainConfig =
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
       const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+      const sourceAddress = parsedNote.sourceIdentifyingData;
       const sourceEthers = sourceHttpProvider.intoEthersProvider();
+
       const sourceVAnchor =
         await this.inner.getVariableAnchorByAddressAndProvider(
           sourceAddress,
           sourceEthers
         );
+
       const leafStorage = await bridgeStorageFactory(
         Number(parsedNote.sourceChainId)
       );
@@ -573,7 +558,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tokenWrapper: FungibleTokenWrapper
   ): Promise<void> {
     const { note } = payload;
-    const { amount, sourceChainId } = note;
+    const { amount } = note;
     const srcVAnchor = await this.getVAnchor(tx, payload);
     const currentWebbToken = await srcVAnchor.getWebbToken();
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
