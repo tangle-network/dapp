@@ -43,35 +43,33 @@ const InActionSection = () => {
           value="bridge"
           className="md:bg-mock_bridge md:bg-top w-full h-[527px] md:h-[450px]"
         >
-          <div>
-            <div className="pt-4 px-4 sm:pt-9 sm:px-9 space-y-4 sm:max-w-[378px]">
-              <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
+          <div className="pt-4 px-4 md:pt-9 md:px-9 space-y-4 md:max-w-[378px]">
+            <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
 
-              <SubHeading2>
-                A truly zero-knowledge cross-chain environment to deposit,
-                transfer, and withdraw funds.
-              </SubHeading2>
+            <SubHeading2>
+              A truly zero-knowledge cross-chain environment to deposit,
+              transfer, and withdraw funds.
+            </SubHeading2>
 
-              <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
-                Make a Deposit
-              </Button>
-            </div>
+            <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+              Make a Deposit
+            </Button>
+          </div>
 
-            <div className="relative w-full h-[264px]">
-              <Image
-                className="object-cover object-right md:hidden"
-                alt="mock-bridge"
-                fill
-                sizes="(min-width: 768px) 30vw, 100vw"
-                src="/static/assets/mock-bridge.png"
-              />
-            </div>
+          <div className="relative w-full h-[340px]">
+            <Image
+              className="object-cover object-right md:hidden"
+              alt="mock-bridge"
+              fill
+              sizes="(min-width: 768px) 30vw, 100vw"
+              src="/static/assets/mock-bridge.png"
+            />
           </div>
         </TabContent>
 
         <TabContent value="stats">
           <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
-            <div className="space-y-4 sm:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
+            <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
               <Heading4>
                 Explore the Tangle Network with the stats page
               </Heading4>
@@ -86,9 +84,9 @@ const InActionSection = () => {
               </Button>
             </div>
 
-            <div className="relative grow h-[264px] md:h-auto mt-4 md:mt-14">
+            <div className="relative grow h-[264px] md:h-auto mt-6 md:mt-14">
               <Image
-                className="object-cover object-left-bottom"
+                className="object-cover object-left-bottom sm:object-fill"
                 src="/static/assets/mock-stats.png"
                 sizes="(min-width: 768px) 30vw, 100vw"
                 alt="mock-stats"
