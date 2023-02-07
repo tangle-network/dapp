@@ -199,16 +199,24 @@ export const WithdrawConfirmContainer = forwardRef<
           unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
         );
 
-        const receipt = await vAnchorApi.transact(...args);
-
         const outputNotes = changeNote ? [changeNote] : [];
 
-        // Notification Success Transaction
-        tx.txHash = receipt.transactionHash;
-        tx.next(TransactionState.Done, {
-          txHash: receipt.transactionHash,
-          outputNotes,
-        });
+        if (activeRelayer) {
+          await vAnchorApi.transactWithRelayer(
+            activeRelayer,
+            args,
+            outputNotes
+          );
+        } else {
+          const receipt = await vAnchorApi.transact(...args);
+
+          // Notification Success Transaction
+          tx.txHash = receipt.transactionHash;
+          tx.next(TransactionState.Done, {
+            txHash: receipt.transactionHash,
+            outputNotes,
+          });
+        }
 
         // Cleanup NoteAccount state
         for (const note of availableNotes) {
@@ -232,10 +240,11 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       amount,
-      setMainComponent,
       txQueueApi,
+      setMainComponent,
       changeUtxo,
       recipient,
+      activeRelayer,
       noteManager,
     ]);
 
