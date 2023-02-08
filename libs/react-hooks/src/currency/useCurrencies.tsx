@@ -109,7 +109,7 @@ export const useCurrencies = () => {
   // Side effect to subscribe to the active api,
   // then set the fungible currencies, wrappable currencies and current fungible currency
   useEffect(() => {
-    if (!activeApi || !activeChain) {
+    if (!activeApi?.state?.activeBridge || !activeChain) {
       return;
     }
 
@@ -182,7 +182,7 @@ export const useCurrencies = () => {
 
   // Side effect to subscribe to fungible currency and wrappable currency
   useEffect(() => {
-    if (!activeApi) {
+    if (!activeApi?.state?.activeBridge) {
       return;
     }
 
