@@ -46,26 +46,26 @@ export const footerNavs: FooterNavsType = {
   dapp: [
     {
       name: 'bridge',
-      href: 'https://docs.webb.tools/v1/applications/asset-protocol/',
+      href: 'https://app.webb.tools/',
       ...commonExternalProps,
     },
   ],
   network: [
     {
       name: 'statistics',
-      href: 'https://www.stats-dev.webb.tools/',
+      href: 'https://stats.webb.tools/',
       ...commonExternalProps,
     },
     {
       name: 'tangle',
-      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
+      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
       ...commonExternalProps,
     },
   ],
   developer: [
     {
       name: 'documentation',
-      href: 'https://docs.webb.tools/v1/getting-started/overview/',
+      href: 'https://docs.webb.tools/',
       ...commonExternalProps,
     },
     {
@@ -77,14 +77,14 @@ export const footerNavs: FooterNavsType = {
   resources: [
     {
       name: 'community',
-      href: 'https://docs.webb.tools/v1/getting-started/overview/#join-the-community',
+      href: 'https://t.me/webbprotocol',
       ...commonExternalProps,
     },
-    {
-      name: 'FAQs',
-      href: '#',
-      ...commonExternalProps,
-    },
+    // {
+    //   name: 'FAQs',
+    //   href: '#',
+    //   ...commonExternalProps,
+    // },
   ],
   company: [
     {
@@ -103,19 +103,19 @@ export const footerNavs: FooterNavsType = {
 export const bottomLinks: ExternalLink[] = [
   {
     name: 'Terms of Service',
-    href: '#',
+    href: 'https://webb.tools/terms-and-conditions',
     ...commonExternalProps,
   },
   {
     name: 'Privacy Policy',
-    href: '#',
+    href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
-  {
-    name: 'Security',
-    href: '#',
-    ...commonExternalProps,
-  },
+  // {
+  //   name: 'Security',
+  //   href: '#',
+  //   ...commonExternalProps,
+  // },
 ];
 
 export const socialConfigs: Array<SocialConfigsType> = [

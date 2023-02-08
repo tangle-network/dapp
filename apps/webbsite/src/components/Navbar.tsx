@@ -5,6 +5,7 @@ import {
   CloseCircleLineIcon,
   Menu,
 } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +21,7 @@ import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 
 import cx from 'classnames';
 
-import { BRIDGE_URL } from '../constants';
+import { BRIDGE_URL, WEBB_DOCS_URL } from '../constants';
 import InternalOrExternalLink, {
   IInternalOrExternalLink,
 } from './InternalOrExternalLink';
@@ -32,31 +33,34 @@ const isNavItem = (item: any): item is NavItem => {
 };
 
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
-  {
-    protocols: [
-      {
-        label: 'Shielded Pool Protocols',
-        url: '#',
-      },
-      {
-        label: 'Shielded Identity Protocols',
-        url: '#',
-      },
-    ],
-  },
-  { label: 'research', url: '#', isInternal: true },
-  { label: 'community', url: '#' },
-  { label: 'developer', url: '#' },
+  // {
+  //   protocols: [
+  //     {
+  //       label: 'Shielded Pool Protocols',
+  //       url: '#',
+  //     },
+  //     {
+  //       label: 'Shielded Identity Protocols',
+  //       url: '#',
+  //     },
+  //   ],
+  // },
+  // { label: 'community', url: '#' },
+  { label: 'docs', url: WEBB_DOCS_URL },
+  // { label: 'blog', url: '#' },
 ];
 
 const Navbar = () => {
   return (
     <nav>
       <ul className="flex items-center space-x-6">
-        {/* {navItems.map((item, idx) => (
+        {navItems.map((item, idx) => (
           <li className="hidden md:block" key={idx}>
             {isNavItem(item) ? (
-              <InternalOrExternalLink url={item.url} isInternal={item.isInternal}>
+              <InternalOrExternalLink
+                url={item.url}
+                isInternal={item.isInternal}
+              >
                 <Typography
                   className="capitalize"
                   variant="body1"
@@ -102,7 +106,7 @@ const Navbar = () => {
               </Dropdown>
             )}
           </li>
-        ))} */}
+        ))}
 
         <li>
           <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
@@ -110,9 +114,9 @@ const Navbar = () => {
           </Button>
         </li>
 
-        {/* <li className="flex items-center justify-center md:hidden">
+        <li className="flex items-center justify-center md:hidden">
           <MobileNav />
-        </li> */}
+        </li>
       </ul>
     </nav>
   );

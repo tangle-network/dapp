@@ -59,12 +59,12 @@ const links: Array<IInternalOrExternalLink> = [
   {
     label: 'Privacy Policy',
     url: '/privacy-policy',
-    isInternal: true,
+    isInternal: false,
   },
   {
     label: 'Terms & Conditions',
     url: '/terms-and-conditions',
-    isInternal: true,
+    isInternal: false,
   },
 ];
 
