@@ -34,7 +34,7 @@ const socials: Array<SocialType> = [
     href: 'https://commonwealth.im/webb',
   },
   {
-    name: 'Telagram',
+    name: 'Telegram',
     Icon: TelegramFill,
     href: 'https://t.me/webbprotocol',
   },
