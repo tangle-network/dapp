@@ -662,9 +662,12 @@ export const DepositContainer = forwardRef<
     }, [setMainComponentArgs, setMainComponent]);
 
     // Effect reset the main component when
-    // the `walletState` failed
+    // the `walletState` failed or succeed
     useEffect(() => {
-      if (walletState === WalletState.FAILED) {
+      if (
+        walletState === WalletState.FAILED ||
+        walletState === WalletState.SUCCESS
+      ) {
         setMainComponentName(undefined);
       }
     }, [walletState]);
@@ -705,7 +708,10 @@ export const DepositContainer = forwardRef<
           }}
           buttonProps={{
             onClick: handleDepositButtonClick,
-            isLoading: loading || isGeneratingNote,
+            isLoading:
+              loading ||
+              isGeneratingNote ||
+              walletState === WalletState.CONNECTING,
             loadingText: loading ? 'Connecting...' : 'Generating Note...',
             isDisabled,
             children: buttonText,

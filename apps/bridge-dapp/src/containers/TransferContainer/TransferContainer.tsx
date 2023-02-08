@@ -36,7 +36,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
-import { useConnectWallet } from '../../hooks';
+import { WalletState, useConnectWallet } from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -55,8 +55,14 @@ export const TransferContainer = forwardRef<
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
-    const { activeChain, activeApi, activeWallet, noteManager, switchChain } =
-      useWebContext();
+    const {
+      activeChain,
+      activeApi,
+      activeWallet,
+      loading,
+      noteManager,
+      switchChain,
+    } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -67,7 +73,7 @@ export const TransferContainer = forwardRef<
 
     const txQueue = useTxQueue();
 
-    const { isWalletConnected, toggleModal } = useConnectWallet();
+    const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -841,6 +847,8 @@ export const TransferContainer = forwardRef<
         transferBtnProps={{
           isDisabled:
             isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
+          isLoading: loading || walletState === WalletState.CONNECTING,
+          loadingText: 'Connecting...',
           children: buttonText,
           onClick: handleTransferClick,
         }}

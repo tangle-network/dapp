@@ -28,7 +28,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
-import { useConnectWallet, useShieldedAssets } from '../../hooks';
+import { WalletState, useConnectWallet, useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 
@@ -52,9 +52,9 @@ export const WithdrawContainer = forwardRef<
     activeApi,
     activeChain,
     activeWallet,
-    chains,
-    switchChain,
+    loading,
     noteManager,
+    switchChain,
   } = useWebContext();
 
   const {
@@ -92,7 +92,7 @@ export const WithdrawContainer = forwardRef<
 
   const txQueue = useTxQueue();
 
-  const { isWalletConnected, toggleModal } = useConnectWallet();
+  const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
@@ -648,6 +648,8 @@ export const WithdrawContainer = forwardRef<
             otherAvailableChains.length > 0
               ? false
               : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+          isLoading: loading || walletState === WalletState.CONNECTING,
+          loadingText: 'Connecting...',
           children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}
