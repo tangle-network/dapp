@@ -64,9 +64,9 @@ const links: Array<LinksType> = [
   },
   {
     Icon: ForumIcon,
-    name: 'Forum',
-    href: 'https://commonwealth.im/webb',
-    description: 'Contribute and learn on the forum',
+    name: 'Feedback',
+    href: 'https://github.com/webb-tools/feedback/discussions',
+    description: 'Give feedback on how we can improve',
   },
 ];
 
