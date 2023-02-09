@@ -61,23 +61,29 @@ jobs:
         run : |
           COMMAND=$(echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" )
           OUTPUT=$(sh -c "$COMMAND")
-          NETLIFY_OUTPUT=$(echo "$OUTPUT")
-          NETLIFY_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
-          NETLIFY_LOGS_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
-          NETLIFY_LIVE_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't containr -- and app.netlify.com
-          echo "NETLIFY_OUTPUT=$NETLIFY_OUTPUT" >> $GITHUB_OUTPUT
-          echo "NETLIFY_URL=$NETLIFY_URL" >> $GITHUB_OUTPUT
-          echo "NETLIFY_LOGS_URL=$NETLIFY_LOGS_URL" >> $GITHUB_OUTPUT
-          echo "NETLIFY_LIVE_URL=$NETLIFY_LIVE_URL" >> $GITHUB_OUTPUT
-         
-      # - name: Set variables for GH bot
-      #   id: deploy-details
-      #   shell: bash
-      #   run: |
-      #     echo "NETLIFY_OUTPUT=${{ steps.deploy-netlify.outputs.net }}" >> $GITHUB_OUTPUT
-      #     echo "NETLIFY_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: --
-      #     echo "NETLIFY_LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: app.netlify.com
-      #     echo "NETLIFY_LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com")" >> $GITHUB_OUTPUT #Unique key: don't container -- and app.netlify.com
+          echo "response<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+        # NETLIFY_OUTPUT=$(echo "$OUTPUT")
+        # NETLIFY_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
+        # NETLIFY_LOGS_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
+        # NETLIFY_LIVE_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't containr -- and app.netlify.com
+
+        # echo "NETLIFY_OUTPUT=$NETLIFY_OUTPUT" >> $GITHUB_OUTPUT
+        # echo z
+        # echo "NETLIFY_OUTPUT=netlify" >> $GITHUB_OUTPUT
+        # echo "NETLIFY_URL=netlify | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: --
+        # echo "NETLIFY_LOGS_URL=netlify | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: app.netlify.com
+        # echo "NETLIFY_LIVE_URL=netlify | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com")" >> $GITHUB_OUTPUT #Unique key: don't container -- and app.netlify.com
+
+      - name: Set variables for GH bot
+        id: deploy-details
+        shell: bash
+        run: |
+          echo "NETLIFY_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: --
+          echo "NETLIFY_LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: app.netlify.com
+          echo "NETLIFY_LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com")" >> $GITHUB_OUTPUT #Unique key: don't container -- and app.netlify.com
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
@@ -89,8 +95,8 @@ jobs:
             |  Name | Link |
             |---------------------------------|------------------------|
             |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/webb-tools/webb-dapp/commit/${{ github.event.pull_request.head.sha }}) |
-            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }} |
-            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-details.outputs.NETLIFY_URL }}) |
+            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-details.outputs.NETLIFY_LOGS_URL }} |
+            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-details.outputs.NETLIFY_URL }}](${{ steps.deploy-details.outputs.NETLIFY_URL }}) |
             ---
 
             _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/development-webbsite/settings/deploys#deploy-notifications)._
