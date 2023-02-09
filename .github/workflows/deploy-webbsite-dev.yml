@@ -70,10 +70,13 @@ jobs:
         id: deploy-details
         shell: bash
         run: |
-          NETLIFY_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
-          NETLIFY_LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
-          NETLIFY_LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
-
+          URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
+          LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
+          LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.response }} | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't container -- and app.netlify.com
+          echo "NETLIFY_URL=URL" >> $GITHUB_OUTPUT
+          echo "NETLIFY_LOGS_URL=LOGS_URL" >> $GITHUB_OUTPUT
+          echo "NETLIFY_LIVE_URL=LIVE_URL" >> $GITHUB_OUTPUT
+          
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
         env:
