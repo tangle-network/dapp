@@ -87,6 +87,23 @@
     md:text-[18px] md:leading-[27px];
 }
 
+/** Cards title, description and link */
+
+.card-title {
+  @apply text-base leading-[24.3px] font-black text-mono-200 font-satoshi
+    md:text-[24px] md:leading-[32.4px];
+}
+
+.card-text {
+  @apply text-base leading-[21.6px] font-medium text-mono-140 font-satoshi
+    md:text-[18px] md:leading-[24.3px];
+}
+
+.card-link-text {
+  @apply text-base leading-[21.6px] font-bold text-blue-70 font-satoshi
+    md:text-[18px] md:leading-[24.3px];
+}
+
 /** Override the notion styles */
 
 .notion-h3 {
