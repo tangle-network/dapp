@@ -51,16 +51,17 @@ jobs:
         id: deploy-netlify
         shell: bash
         run : |
-          echo "OUTPUT=$(npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next)" >> $GITHUB_OUTPUT
+          netlify=$( npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next )
+          echo "net=netlify >> $GITHUB_OUTPUT"
 
       - name: Set variables for GH bot
         id: deploy-details
         shell: bash
         run: |
-          echo "NETLIFY_OUTPUT=${{ steps.deploy-netlify.outputs.OUTPUT }}" >> $GITHUB_OUTPUT
-          echo "NETLIFY_URL=$(echo ${{ steps.deploy-netlify.outputs.OUTPUT }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: --
-          echo "NETLIFY_LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.OUTPUT }} | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: app.netlify.com
-          echo "NETLIFY_LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.OUTPUT }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com")" >> $GITHUB_OUTPUT #Unique key: don't container -- and app.netlify.com
+          echo "NETLIFY_OUTPUT=${{ steps.deploy-netlify.outputs.net }}" >> $GITHUB_OUTPUT
+          echo "NETLIFY_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: --
+          echo "NETLIFY_LOGS_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*")" >> $GITHUB_OUTPUT #Unique key: app.netlify.com
+          echo "NETLIFY_LIVE_URL=$(echo ${{ steps.deploy-netlify.outputs.net }} | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com")" >> $GITHUB_OUTPUT #Unique key: don't container -- and app.netlify.com
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
