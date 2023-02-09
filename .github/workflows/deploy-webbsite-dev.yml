@@ -40,6 +40,14 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+      
+      - name: create env file
+        run: |
+          touch .env
+          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
+          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
+          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
+          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
 
       - name: Install netlify-cli
         run: yarn add -D -W netlify-cli

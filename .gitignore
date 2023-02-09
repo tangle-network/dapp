@@ -84,5 +84,4 @@ tmp
 
 # Local Netlify folder
 .netlify
-
 .dccache

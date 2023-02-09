@@ -47,6 +47,7 @@ export default async function handler(
     },
     body: JSON.stringify({
       attributes: { FIRSTNAME: name },
+      listIds: [5],
       updateEnabled: false,
       email,
     }),

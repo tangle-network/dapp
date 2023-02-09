@@ -14,12 +14,13 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       content: 'Please consider switching back to a supported chain',
     },
     {
-      list: [apiConfig.getEVMChainName(EVMChainId.HarmonyTestnet1)],
+      list: [apiConfig.getEVMChainName(EVMChainId.Goerli)],
     },
     {
       content: 'Switch back via MetaMask',
     },
   ]);
+
   const actions = InteractiveFeedback.actionsBuilder()
     .action(
       'Ok',
@@ -29,6 +30,7 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
       'success'
     )
     .actions();
+
   const interactiveFeedback = new InteractiveFeedback(
     'error',
     actions,
@@ -38,5 +40,6 @@ export function unsupportedChain(apiConfig: ApiConfig): InteractiveFeedback {
     feedbackBody,
     WebbErrorCodes.UnsupportedChain
   );
+
   return interactiveFeedback;
 }

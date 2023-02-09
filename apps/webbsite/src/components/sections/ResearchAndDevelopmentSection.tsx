@@ -19,16 +19,16 @@ const sections: Array<Section> = [
     icon: <AnchorIcon />,
     title: 'Anchor System',
     description: `A technical protocol for connecting many cryptographic accumulators together and enabling zero-knowledge proofs of membership between them.`,
-    sourceCodeUrl: 'https://github.com/webb-tools',
-    documentationUrl: 'https://docs.webb.tools/v1/anchor-system/overview/',
+    sourceCodeUrl: 'https://github.com/webb-tools/protocol-solidity',
+    documentationUrl: 'https://docs.webb.tools/docs/anchor-system/overview/',
   },
   {
     icon: <DistributedKeygenIcon />,
     title: 'Distributed Key Generation Protocols',
     description:
-      'We leverage multi-party computation protocols used to decentralize trust over a set of parties to facilitate governance and operation of Anchor Protocol instances.',
-    sourceCodeUrl: 'https://webb-tools.github.io/dkg-substrate/',
-    documentationUrl: 'https://docs.webb.tools/v1/dkg/overview/',
+      'We leverage multi-party computation protocols used to decentralize trust over a set of parties to facilitate governance and operation of Anchor System instances.',
+    sourceCodeUrl: 'https://github.com/webb-tools/dkg-substrate',
+    documentationUrl: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
   },
   {
     icon: <ZkMessagingIcon />,
@@ -36,7 +36,8 @@ const sections: Array<Section> = [
     description:
       'The message schema and circuits that enable zero-knowledge proofs of membership and property testing for assets, identities, and data.',
     sourceCodeUrl: 'https://github.com/webb-tools/zero-knowledge-gadgets',
-    documentationUrl: 'https://docs.webb.tools',
+    documentationUrl:
+      'https://github.com/webb-tools/zero-knowledge-gadgets#--table-of-contents',
   },
 ];
 

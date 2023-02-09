@@ -26,12 +26,6 @@ import congratJson from './congrat.json';
 // TODO: Update message
 const loginMessage = 'Logging into Webb';
 
-// TODO: Correct the url here
-const bridgeDocsSite = 'https://docs.webb.tools/v1/getting-started/overview/';
-
-// TODO: Correct the url here
-const accountDocsSite = 'https://docs.webb.tools/v1/getting-started/overview/';
-
 const successBridgeInfo = [
   {
     title: 'Deposit',
@@ -99,14 +93,14 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
   const handleOpenChange = useCallback(
     async (nextOpen: boolean) => {
       onOpenChange(nextOpen);
-
-      if (!nextOpen) {
-        setIsChecked(false);
-        setIsSuccess?.(false);
-      }
     },
-    [onOpenChange, setIsSuccess]
+    [onOpenChange]
   );
+
+  const handleCloseAutoFocus = useCallback(() => {
+    setIsChecked(false);
+    setIsSuccess?.(false);
+  }, [setIsSuccess]);
 
   return (
     <Modal open={isOpen} onOpenChange={handleOpenChange}>
@@ -114,6 +108,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
         isCenter
         isOpen={isOpen}
         className="overflow-hidden bg-mono-0 dark:bg-mono-160 rounded-xl w-[420px]"
+        onCloseAutoFocus={handleCloseAutoFocus}
       >
         <ModalHeader onClose={() => handleOpenChange(false)}>
           {isSuccess ? 'Congrats!' : 'Create Note Account'}
@@ -180,7 +175,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           <Button
             variant="secondary"
             isFullWidth
-            href={isSuccess ? bridgeDocsSite : accountDocsSite}
+            href="https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/account/"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -7,7 +7,7 @@ const PrivacyScaleSection = () => {
   return (
     <section
       className={cx(
-        'bg-mono-200',
+        'bg-mono-200 dark',
         'py-16 lg:px-[72px] md:py-[156px] space-y-9'
       )}
     >

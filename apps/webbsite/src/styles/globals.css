@@ -56,3 +56,74 @@
 .swiper-pagination-bullet-active {
   @apply !bg-mono-200;
 }
+
+/** Headings and subheadings */
+
+.heading-1 {
+  @apply text-[32px] leading-[46px] tracking-tight font-bold text-mono-200 font-satoshi
+    md:text-[84px] md:leading-[96px] md:tracking-normal;
+}
+
+.heading-2 {
+  @apply text-[30px] leading-[41px] text-mono-200 font-bold font-satoshi
+    md:text-[48px] md:leading-[72px];
+}
+
+.heading-3 {
+  @apply text-[24px] leading-8 text-mono-200 font-black font-satoshi
+    md:text-[36px] md:leading-[54px];
+}
+
+.heading-4 {
+  @apply text-[24px] leading-[36px] text-mono-200 font-black font-satoshi;
+}
+
+.sub-heading-1 {
+  @apply text-base font-medium text-mono-180 font-satoshi md:text-2xl md:leading-9;
+}
+
+.sub-heading-2 {
+  @apply text-base leading-[22px] font-medium text-mono-180 font-satoshi
+    md:text-[18px] md:leading-[27px];
+}
+
+/** Cards title, description and link */
+
+.card-title {
+  @apply text-base leading-[24.3px] font-black text-mono-200 font-satoshi
+    md:text-[24px] md:leading-[32.4px];
+}
+
+.card-text {
+  @apply text-base leading-[21.6px] font-medium text-mono-140 font-satoshi
+    md:text-[18px] md:leading-[24.3px];
+}
+
+.card-link-text {
+  @apply text-base leading-[21.6px] font-bold text-blue-70 font-satoshi
+    md:text-[18px] md:leading-[24.3px];
+}
+
+/** Override the notion styles */
+
+.notion-h3 {
+  @apply heading-4;
+  /** Override */
+  @apply !font-semibold;
+
+  span {
+    @apply flex items-center;
+  }
+}
+
+.notion-text {
+  @apply sub-heading-2;
+}
+
+.notion-list li {
+  @apply text-base font-semibold;
+}
+
+.notion-link {
+  @apply inline-block;
+}
