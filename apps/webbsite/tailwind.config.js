@@ -29,6 +29,7 @@ module.exports = {
         cool: "url('/static/assets/cool.png')",
         mock_bridge: "url('/static/assets/mock-bridge.png')",
         mock_stats: "url('/static/assets/mock-stats.png')",
+        community_bg_texture: "url('/static/assets/community-texture.png')",
       },
 
       fontFamily: {
