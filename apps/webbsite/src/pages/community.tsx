@@ -1,16 +1,17 @@
-import Heading2 from '../components/Heading2';
-import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
 import {
   Common2Icon,
   DiscordFill,
+  DocumentationIcon,
+  ExchangeFunds,
+  ForumIcon,
   GithubFill,
   TelegramFill,
   TwitterFill,
-  ExchangeFunds,
-  DocumentationIcon,
-  ForumIcon,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
+import { NextSeo } from 'next-seo';
+import Heading2 from '../components/Heading2';
+import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -73,6 +74,8 @@ const links: Array<LinksType> = [
 const Community = () => {
   return (
     <>
+      <NextSeo title="Community" />
+
       <section className="py-[156px] flex items-center justify-center w-full bg-community_bg_texture bg-no-repeat bg-cover">
         <div className="max-w-[900px]">
           <Heading2 className="px-4 text-center">Get Started</Heading2>
