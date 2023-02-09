@@ -15,7 +15,7 @@ const TermsAndConditions: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
     <>
       <NextSeo
         title="Terms and Conditions"
-        description="The Webb's Terms and Conditions"
+        description="Terms and Conditions of Webb"
       />
 
       <NotionRenderer

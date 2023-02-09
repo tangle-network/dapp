@@ -12,7 +12,7 @@ import { PRIVACY_POLICY_PAGE_ID } from '../libs/notion/server-constants';
 const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
   return (
     <>
-      <NextSeo title="Privacy Policy" description="The Webb's Privacy Policy" />
+      <NextSeo title="Privacy Policy" description="Privacy Policy of Webb" />
 
       <NotionRenderer
         bodyClassName="!mt-[68px]"
