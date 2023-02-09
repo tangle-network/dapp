@@ -34,6 +34,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       
       - name: Copy deployment config to root
         run: cp apps/webbsite/netlify.toml netlify.toml
