@@ -26,7 +26,7 @@ const sections: Array<Section> = [
     icon: <DistributedKeygenIcon />,
     title: 'Distributed Key Generation Protocols',
     description:
-      'We leverage multi-party computation protocols used to decentralize trust over a set of parties to facilitate governance and operation of Anchor Protocol instances.',
+      'We leverage multi-party computation protocols used to decentralize trust over a set of parties to facilitate governance and operation of Anchor System instances.',
     sourceCodeUrl: 'https://github.com/webb-tools/dkg-substrate',
     documentationUrl: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
   },
