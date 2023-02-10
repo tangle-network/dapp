@@ -40,6 +40,12 @@ function CustomApp({ Component, pageProps }: AppProps) {
               height: 1800,
               alt: 'Og Image Alt',
             },
+            {
+              url: '/static/assets/og-optimize.png',
+              width: 1200,
+              height: 630,
+              alt: 'Optimized Og Image Alt',
+            },
           ],
         }}
         twitter={{
