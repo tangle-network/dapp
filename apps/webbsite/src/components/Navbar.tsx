@@ -45,7 +45,7 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   //     },
   //   ],
   // },
-  // { label: 'community', url: '#' },
+  { label: 'community', url: '/community', isInternal: true },
   { label: 'docs', url: WEBB_DOCS_URL },
   // { label: 'blog', url: '#' },
 ];
