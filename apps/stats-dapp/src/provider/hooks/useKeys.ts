@@ -153,7 +153,7 @@ export function sessionFrame(
   }
   const startDateTime = new Date(timestamp);
   const endTime = new Date(
-    new Date(new Date(timestamp).getTime() + 60 * 60 * 1000)
+    new Date(new Date(timestamp).getTime() + 6 * 60 * 60 * 1000)
   );
 
   return [startDateTime, endTime];
