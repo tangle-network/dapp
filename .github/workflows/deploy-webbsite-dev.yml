@@ -72,8 +72,8 @@ jobs:
         run: |
           URL=$(echo "${{ steps.deploy-netlify.outputs.response }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') 
           LOGS_URL=$(echo "${{ steps.deploy-netlify.outputs.response }}" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*')
-          echo "NETLIFY_URL=URL" >> $GITHUB_OUTPUT
-          echo "NETLIFY_LOGS_URL=LOGS_URL" >> $GITHUB_OUTPUT
+          echo "NETLIFY_URL=$URL" >> $GITHUB_OUTPUT
+          echo "NETLIFY_LOGS_URL=$LOGS_URL" >> $GITHUB_OUTPUT
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0
