@@ -5,6 +5,7 @@ import {
   FileUploadList,
   TokenPairIcons,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { uniqueId } from 'lodash';
@@ -20,12 +21,13 @@ const initialNotes = {
 
 export const PasteModalContent: FC<PasteModalContentProps> = ({
   onNotesChange,
-  onRemoveAllNotes,
   onRemoveNote,
 }) => {
   const {
     apiConfig: { currencies },
   } = useWebContext();
+
+  const { notificationApi } = useWebbUI();
 
   // The raw notes string array from the user
   const [rawNotes, setRawNotes] =
@@ -33,9 +35,6 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
 
   // The derialized notes record
   const [notes, setNotes] = useState<Record<string, Note>>({});
-
-  // The error message record when deserializing notes
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // The note size memo
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
@@ -49,13 +48,13 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
       } catch (error) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [id]: 'Error: incorrect format',
-        }));
+        notificationApi({
+          variant: 'error',
+          message: 'Incorrect note format',
+        });
       }
     },
-    [rawNotes, onNotesChange]
+    [rawNotes, onNotesChange, notificationApi]
   );
 
   return (
@@ -69,7 +68,6 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
               setRawNotes((prev) => ({ ...prev, [id]: value }));
             }}
             onUpload={() => handleUpload(id)}
-            error={errors[id]}
           />
         ))}
       </FileUploadList>
