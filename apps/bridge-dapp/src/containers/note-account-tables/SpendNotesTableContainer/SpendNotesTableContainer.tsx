@@ -22,6 +22,7 @@ import {
   TitleWithInfo,
   TokenPairIcons,
   Typography,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -105,7 +106,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {props.getValue()}
+        {formatTokenAmount(props.getValue())}
       </Typography>
     ),
   }),

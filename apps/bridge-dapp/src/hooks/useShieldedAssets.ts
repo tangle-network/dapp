@@ -74,7 +74,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(Number(balance).toFixed(2)),
+          availableBalance: Number(balance),
           numberOfNotesFound: 1,
           rawChain: chain,
           rawFungibleCurrency: fungibleCurrency,
