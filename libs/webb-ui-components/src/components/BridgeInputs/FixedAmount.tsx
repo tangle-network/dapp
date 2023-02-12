@@ -103,11 +103,11 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
             {values.map((val, idx) => (
               <div
                 key={`${val}-${idx}`}
-                className="cursor-pointer grow shrink basis-0"
+                className="grow shrink basis-0"
               >
                 <Button
                   isFullWidth
-                  size="sm"
+                  size="md"
                   variant="utility"
                   className={cx(
                     'justify-center',
