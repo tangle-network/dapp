@@ -36,6 +36,7 @@ export const TransferConfirmContainer = forwardRef<
     changeUtxo,
     transferUtxo,
     inputNotes,
+    onResetState,
     ...props
   }) => {
     // State for tracking the status of the change note checkbox
@@ -189,6 +190,7 @@ export const TransferConfirmContainer = forwardRef<
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
+        onResetState?.();
       }
     }, [
       inputNotes,
@@ -202,6 +204,7 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       activeRelayer,
       noteManager,
+      onResetState,
     ]);
 
     return (

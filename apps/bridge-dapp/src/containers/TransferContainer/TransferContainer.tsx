@@ -610,6 +610,14 @@ export const TransferContainer = forwardRef<
       [activeChain, activeWallet, switchChain, toggleModal]
     );
 
+    const handleResetState = useCallback(() => {
+      setDestChain(undefined);
+      setAmountError('');
+      setRecipientPubKey('');
+      setIsValidRecipient(false);
+      setRelayer(null);
+    }, [setRelayer]);
+
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
       // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -744,6 +752,7 @@ export const TransferContainer = forwardRef<
           note={changeNote}
           changeUtxo={changeUtxo}
           transferUtxo={transferUtxo}
+          onResetState={handleResetState}
         />
       );
     }, [
@@ -763,6 +772,7 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
       setMainComponent,
       activeRelayer,
+      handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
       handleSwitchChain,
