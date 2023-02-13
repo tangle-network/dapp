@@ -1,6 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain } from '@webb-tools/dapp-config';
+import { Chain, ChainConfig } from '@webb-tools/dapp-config';
 import {
   BlockIcon,
   CoinIcon,
@@ -24,7 +24,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { InteractiveFeedbackView, WalletModal } from '../components';
-import { ManageButton } from '../components/tables';
+import { ManageButton, FilterButton } from '../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
@@ -125,6 +125,8 @@ const PageBridge = () => {
     downloadNotes(notes);
   }, [allNotes, notificationApi]);
 
+  const [globalSearchText, setGlobalSearchText] = useState('');
+
   const sharedNoteAccountTableContainerProps =
     useMemo<NoteAccountTableContainerProps>(
       () => ({
@@ -133,12 +135,14 @@ const PageBridge = () => {
         onDefaultDestinationChainChange: updateDefaultDestinationChain,
         onDefaultFungibleCurrencyChange: updatedefaultFungibleCurrency,
         onDeleteNotesChange: (notes) => setDeleteNotes(notes),
+        globalSearchText: globalSearchText,
       }),
       [
         handleChangeTab,
         handleOpenUploadModal,
         updateDefaultDestinationChain,
         updatedefaultFungibleCurrency,
+        globalSearchText,
       ]
     );
 
@@ -147,6 +151,47 @@ const PageBridge = () => {
 
   // Spend notes table data
   const spendNotesTableData = useSpendNotes();
+
+  const [activeTable, setActiveTable] = useState<
+    'shielded-assets' | 'available-spend-notes'
+  >('shielded-assets');
+
+  const destinationChains = useMemo(() => {
+    return shieldedAssetsTableData.map((asset) => asset.chain);
+  }, [shieldedAssetsTableData]);
+
+  const [selectedChains, setSelectedChains] = useState<
+    'all' | [string, ChainConfig][]
+  >('all');
+
+  const shieldedAssetsFilteredTableData = useMemo(() => {
+    if (selectedChains === 'all') {
+      return shieldedAssetsTableData;
+    }
+    return shieldedAssetsTableData.filter((asset) =>
+      selectedChains.some(
+        (chain: any) =>
+          chain['1'].name.toLowerCase() === asset.chain.toLowerCase()
+      )
+    );
+  }, [selectedChains, shieldedAssetsTableData]);
+
+  const spendNotesFilteredTableData = useMemo(() => {
+    if (selectedChains === 'all') {
+      return spendNotesTableData;
+    }
+    return spendNotesTableData.filter((note) =>
+      selectedChains.some(
+        (chain: any) =>
+          chain['1'].name.toLowerCase() === note.chain.toLowerCase()
+      )
+    );
+  }, [selectedChains, spendNotesTableData]);
+
+  const clearAllFilters = useCallback(() => {
+    setSelectedChains('all');
+    setGlobalSearchText('');
+  }, []);
 
   // Try again for try another wallet link
   // in the token list
@@ -267,7 +312,11 @@ const PageBridge = () => {
 
         {/** Account stats table */}
         {noteManager && (
-          <TabsRoot defaultValue="shielded-assets" className="mt-12 space-y-4">
+          <TabsRoot
+            defaultValue="shielded-assets"
+            className="mt-12 space-y-4"
+            onValueChange={(val) => setActiveTable(val as typeof activeTable)}
+          >
             <div className="flex items-center justify-between mb-4">
               {/** Tabs buttons */}
               <TabsList
@@ -291,23 +340,36 @@ const PageBridge = () => {
               </TabsList>
 
               {/** Right buttons (manage and filter) */}
-              <div className="space-x-1">
+              <div className="flex items-center space-x-2">
                 <ManageButton
                   onUpload={handleOpenUploadModal}
                   onDownload={handleDownloadAllNotes}
+                />
+                <FilterButton
+                  destinationChains={destinationChains}
+                  setSelectedChains={setSelectedChains}
+                  selectedChains={selectedChains}
+                  searchPlaceholder={
+                    activeTable === 'shielded-assets'
+                      ? 'Search asset'
+                      : 'Search spend note'
+                  }
+                  globalSearchText={globalSearchText}
+                  setGlobalSearchText={setGlobalSearchText}
+                  clearAllFilters={clearAllFilters}
                 />
               </div>
             </div>
 
             <TabContent value="shielded-assets">
               <ShieldedAssetsTableContainer
-                data={shieldedAssetsTableData}
+                data={shieldedAssetsFilteredTableData}
                 {...sharedNoteAccountTableContainerProps}
               />
             </TabContent>
             <TabContent value="available-spend-notes">
               <SpendNotesTableContainer
-                data={spendNotesTableData}
+                data={spendNotesFilteredTableData}
                 {...sharedNoteAccountTableContainerProps}
               />
             </TabContent>

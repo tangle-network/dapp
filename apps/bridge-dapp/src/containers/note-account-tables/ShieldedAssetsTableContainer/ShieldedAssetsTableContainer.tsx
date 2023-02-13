@@ -2,6 +2,7 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
@@ -134,6 +135,7 @@ export const ShieldedAssetsTableContainer: FC<
   onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
+  globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -217,10 +219,15 @@ export const ShieldedAssetsTableContainer: FC<
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      globalFilter: globalSearchText,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   if (isSyncingNote) {
