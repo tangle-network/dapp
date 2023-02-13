@@ -38,6 +38,7 @@ export const WithdrawConfirmContainer = forwardRef<
       targetChainId,
       fungibleCurrency: fungibleCurrencyProp,
       unwrapCurrency: { value: unwrapCurrency } = {},
+      onResetState,
       recipient,
     },
     ref
@@ -231,6 +232,7 @@ export const WithdrawConfirmContainer = forwardRef<
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
+        onResetState?.();
       }
     }, [
       availableNotes,
@@ -246,6 +248,7 @@ export const WithdrawConfirmContainer = forwardRef<
       recipient,
       activeRelayer,
       noteManager,
+      onResetState,
     ]);
 
     return (

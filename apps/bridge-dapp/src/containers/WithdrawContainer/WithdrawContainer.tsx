@@ -183,7 +183,7 @@ export const WithdrawContainer = forwardRef<
       }
 
       if (parsedAmount > availableAmount) {
-        setAmountError('Insufficient balance');
+        setAmountError('Insufficient balance, maybe incorrect chain?');
         return;
       }
 
@@ -309,6 +309,14 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     wrappableCurrency?.view.symbol,
   ]);
+
+  const handleResetState = useCallback(() => {
+    setAmountError('');
+    setAmount(0);
+    setRecipient('');
+    setIsUnwrap(false);
+    setRelayer(null);
+  }, [setRelayer]);
 
   const handleSwitchToOtherDestChains = useCallback(async () => {
     if (otherAvailableChains.length === 0 || !activeWallet) {
@@ -480,6 +488,7 @@ export const WithdrawContainer = forwardRef<
             : undefined
         }
         recipient={recipient}
+        onResetState={handleResetState}
       />
     );
   }, [
@@ -489,6 +498,7 @@ export const WithdrawContainer = forwardRef<
     availableNotesFromManager,
     currentTypedChainId,
     fungibleCurrency,
+    handleResetState,
     handleSwitchToOtherDestChains,
     hasNoteAccount,
     isDisabledWithdraw,
@@ -636,6 +646,7 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         recipientInputProps={{
+          value: recipient,
           isValidSet(valid: boolean) {
             setIsValidRecipient(valid);
           },
