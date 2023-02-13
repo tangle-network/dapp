@@ -69,7 +69,7 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
       </div>
 
       {error && (
-        <div className="flex items-center space-x-1 text-red-50">
+        <div className="flex items-center space-x-1 !text-red-50">
           <InformationLine className="!fill-current" />
 
           <Typography className="!text-current" variant="body1">

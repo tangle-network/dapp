@@ -647,39 +647,35 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                try {
-                  const currency = currenciesConfig[chain.nativeCurrencyId];
-                  await web3Provider.addChain({
-                    chainId: `0x${chain.chainId.toString(16)}`,
-                    chainName: chain.name,
-                    rpcUrls: chain.evmRpcUrls ?? [],
-                    nativeCurrency: {
-                      decimals: 18,
-                      name: currency.name,
-                      symbol: currency.symbol,
-                    },
-                  });
-                  // add network will prompt the switch, check evmId again and throw if user rejected
-                  const newChainId = await web3Provider.network;
+                const currency = currenciesConfig[chain.nativeCurrencyId];
+                await web3Provider.addChain({
+                  chainId: `0x${chain.chainId.toString(16)}`,
+                  chainName: chain.name,
+                  rpcUrls: chain.evmRpcUrls ?? [],
+                  nativeCurrency: {
+                    decimals: 18,
+                    name: currency.name,
+                    symbol: currency.symbol,
+                  },
+                });
+                // add network will prompt the switch, check evmId again and throw if user rejected
+                const newChainId = await web3Provider.network;
 
-                  if (newChainId != chain.chainId) {
-                    appEvent.send('walletConnectionState', 'failed');
-                  }
-
-                  // Emit events
-                  appEvent.send('networkSwitched', [
-                    {
-                      chainType: chain.chainType,
-                      chainId: chain.chainId,
-                    },
-                    web3Provider instanceof WalletConnectProvider
-                      ? WalletId.WalletConnectV1
-                      : WalletId.MetaMask,
-                  ]);
-                } catch (error) {
+                if (newChainId != chain.chainId) {
                   appEvent.send('walletConnectionState', 'failed');
-                  throw error;
+                  throw new Error('User rejected network switch');
                 }
+
+                // Emit events
+                appEvent.send('networkSwitched', [
+                  {
+                    chainType: chain.chainType,
+                    chainId: chain.chainId,
+                  },
+                  web3Provider instanceof WalletConnectProvider
+                    ? WalletId.WalletConnectV1
+                    : WalletId.MetaMask,
+                ]);
               }
 
               await setActiveApiWithAccounts(
