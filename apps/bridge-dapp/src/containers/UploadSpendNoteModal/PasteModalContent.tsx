@@ -14,6 +14,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { ethers } from 'ethers';
 import { PasteModalContentProps } from './types';
+import { isValidNote } from '../../utils';
 
 const initialNotes = {
   [uniqueId()]: '',
@@ -65,9 +66,18 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
             key={id}
             value={note}
             onChange={(value) => {
+              if (!isValidNote(value)) {
+                notificationApi({
+                  variant: 'error',
+                  message: 'Incorrect note format',
+                });
+
+                return;
+              }
+
               setRawNotes((prev) => ({
                 ...prev,
-                [id]: value.replace(/['"“”‘]/g, ''), // Remove quotes from the string
+                [id]: value,
               }));
             }}
             onUpload={() => handleUpload(id)}
