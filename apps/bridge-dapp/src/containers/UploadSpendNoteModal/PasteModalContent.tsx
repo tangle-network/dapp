@@ -65,7 +65,10 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
             key={id}
             value={note}
             onChange={(value) => {
-              setRawNotes((prev) => ({ ...prev, [id]: value }));
+              setRawNotes((prev) => ({
+                ...prev,
+                [id]: value.replace(/['"“”‘]/g, ''), // Remove quotes from the string
+              }));
             }}
             onUpload={() => handleUpload(id)}
           />
