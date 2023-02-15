@@ -9,14 +9,14 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 // Anchor config is indexed by WebbCurrencyId
 export const anchorsConfig: ApiConfig['anchors'] = {
   [CurrencyId.webbETH]: {
-    [PresetTypedChainId.Goerli]: '0x8cb70a61dd0b372be194e33a6712cd33ff154a11',
-    [PresetTypedChainId.Sepolia]: '0x8cb70a61dd0b372be194e33a6712cd33ff154a11',
+    [PresetTypedChainId.Goerli]: '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f',
+    [PresetTypedChainId.Sepolia]: '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f',
     [PresetTypedChainId.PolygonTestnet]:
-      '0x8cb70a61dd0b372be194e33a6712cd33ff154a11',
+      '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f',
     [PresetTypedChainId.OptimismTestnet]:
-      '0x8cb70a61dd0b372be194e33a6712cd33ff154a11',
+      '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f',
     [PresetTypedChainId.MoonbaseAlpha]:
-      '0x8cb70a61dd0b372be194e33a6712cd33ff154a11',
+      '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f',
   },
   [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
@@ -38,19 +38,19 @@ export const anchorsConfig: ApiConfig['anchors'] = {
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0x8cb70a61dd0b372be194e33a6712cd33ff154a11': 8404094,
+    '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f': 8492118,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0x8cb70a61dd0b372be194e33a6712cd33ff154a11': 2797926,
+    '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f': 2901098,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0x8cb70a61dd0b372be194e33a6712cd33ff154a11': 31571829,
+    '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f': 32051308,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0x8cb70a61dd0b372be194e33a6712cd33ff154a11': 4833236,
+    '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f': 5489478,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0x8cb70a61dd0b372be194e33a6712cd33ff154a11': 3648044,
+    '0x66834ffeeda7dc330c702e9ffc5db6820eab2f1f': 3752115,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
