@@ -1,11 +1,9 @@
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
-
-import Heading1 from '../Heading1';
-import SubHeading from '../SubHeading';
+import { Button } from '@webb-tools/webb-ui-components';
+import { Heading1, SubHeading } from '../../components';
 
 const manifestoUrl = 'https://docs.webb.tools/docs/overview/privacy-manifesto/';
 
-const HeroSection = () => {
+export const HeroSection = () => {
   return (
     <section className="absolute w-full -translate-y-1/3 top-1/4">
       <div className="max-w-[454px] md:max-w-[934px] space-y-2 p-4 mx-auto w-full lg:p-0 md:space-y-6">
@@ -30,5 +28,3 @@ const HeroSection = () => {
     </section>
   );
 };
-
-export default HeroSection;

@@ -1,6 +1,4 @@
-import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-
+import { Logo, Typography } from '@webb-tools/webb-ui-components';
 import {
   Common2Icon,
   DiscordFill,
@@ -9,17 +7,16 @@ import {
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-
 import Link from 'next/link';
 import { useState } from 'react';
-
-import Heading2 from './Heading2';
-import Heading3 from './Heading3';
-import NewletterForm from './NewletterForm';
-import SubHeading2 from './SubHeading2';
-import InternalOrExternalLink, {
+import {
+  Heading2,
+  Heading3,
+  NewletterForm,
+  SubHeading2,
+  InternalOrExternalLink,
   IInternalOrExternalLink,
-} from './InternalOrExternalLink';
+} from '../components';
 
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -68,7 +65,7 @@ const links: Array<IInternalOrExternalLink> = [
   },
 ];
 
-const Footer = () => {
+export const Footer = () => {
   // State for subscription success
   const [success, setSuccess] = useState(false);
 
@@ -161,5 +158,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

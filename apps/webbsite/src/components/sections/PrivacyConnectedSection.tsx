@@ -4,11 +4,9 @@ import {
   TabsList,
   TabsRoot,
   TabTrigger,
-} from '@webb-tools/webb-ui-components/components/Tabs';
-
+} from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
-import Heading2 from '../Heading2';
-import SubHeading from '../SubHeading';
+import { Heading2, SubHeading } from '../../components';
 
 const tabsContent = {
   ownership: {
@@ -27,7 +25,7 @@ const tabsContent = {
 
 type TabTypes = 'ownership' | 'identity' | 'privacy';
 
-const PrivacyConnectedSection = () => {
+export const PrivacyConnectedSection = () => {
   // State for the selected tab
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
 
@@ -71,8 +69,6 @@ const PrivacyConnectedSection = () => {
     </section>
   );
 };
-
-export default PrivacyConnectedSection;
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (

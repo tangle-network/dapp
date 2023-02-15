@@ -1,9 +1,7 @@
 import cx from 'classnames';
-import Heading2 from '../Heading2';
-import PrivacyScaleSwiper from '../PrivacyScaleSwiper';
-import SubHeading from '../SubHeading';
+import { Heading2, PrivacyScaleSwiper, SubHeading } from '../../components';
 
-const PrivacyScaleSection = () => {
+export const PrivacyScaleSection = () => {
   return (
     <section
       className={cx(
@@ -27,5 +25,3 @@ const PrivacyScaleSection = () => {
     </section>
   );
 };
-
-export default PrivacyScaleSection;

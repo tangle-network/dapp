@@ -10,8 +10,7 @@ import {
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import { NextSeo } from 'next-seo';
-import Heading2 from '../components/Heading2';
-import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
+import { Heading2, ResearchAndDevelopmentSection } from '../components';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;

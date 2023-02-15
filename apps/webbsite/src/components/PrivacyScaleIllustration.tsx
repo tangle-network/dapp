@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { FC } from 'react';
 
-const PrivacyScaleIllustration: FC<{ activeIndex: number }> = ({
+export const PrivacyScaleIllustration: FC<{ activeIndex: number }> = ({
   activeIndex,
 }) => {
   return (
@@ -29,5 +29,3 @@ const PrivacyScaleIllustration: FC<{ activeIndex: number }> = ({
     </>
   );
 };
-
-export default PrivacyScaleIllustration;

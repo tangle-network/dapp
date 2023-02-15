@@ -1,18 +1,13 @@
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
-
+import { Button } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-
 import {
   CONNECTED_SHIELDED_IDENTITY_URL,
   CONNECTED_SHIELDED_POOLS_URL,
   TANGLE_NETWORK_URL,
 } from '../../constants';
-import Heading2 from '../Heading2';
-import Heading3 from '../Heading3';
-import SubHeading from '../SubHeading';
-import SubHeading2 from '../SubHeading2';
+import { Heading2, Heading3, SubHeading, SubHeading2 } from '../../components';
 
-const ApplicationsAndInfrastructureSection = () => {
+export const ApplicationsAndInfrastructureSection = () => {
   return (
     <section className="py-16 md:py-[156px] space-y-6">
       <div className="pb-9 space-y-9 px-4 max-w-[900px] mx-auto">
@@ -106,5 +101,3 @@ const ApplicationsAndInfrastructureSection = () => {
     </section>
   );
 };
-
-export default ApplicationsAndInfrastructureSection;

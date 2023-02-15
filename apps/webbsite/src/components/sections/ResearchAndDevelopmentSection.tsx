@@ -1,9 +1,6 @@
 import { Button } from '@webb-tools/webb-ui-components';
-import React, { Fragment } from 'react';
-import Heading2 from '../Heading2';
-import Heading3 from '../Heading3';
-import SubHeading from '../SubHeading';
-import SubHeading2 from '../SubHeading2';
+import React from 'react';
+import { Heading2, Heading3, SubHeading, SubHeading2 } from '../../components';
 import { twMerge } from 'tailwind-merge';
 
 export type Section = {
@@ -41,7 +38,7 @@ const sections: Array<Section> = [
   },
 ];
 
-const ResearchAndDevelopmentSection = () => {
+export const ResearchAndDevelopmentSection = () => {
   return (
     <section className="py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px]">
@@ -90,8 +87,6 @@ const ResearchAndDevelopmentSection = () => {
     </section>
   );
 };
-
-export default ResearchAndDevelopmentSection;
 
 function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
   return (

@@ -1,15 +1,11 @@
 // core styles shared by all of react-notion-x (required)
 import 'react-notion-x/src/styles.css';
-
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
-
 import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
 import { useEffect } from 'react';
-
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import { Header, Footer } from '../components';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   // Dynamic loading the lottie player in client side

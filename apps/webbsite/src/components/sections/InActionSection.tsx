@@ -1,20 +1,16 @@
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import {
+  Button,
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
-} from '@webb-tools/webb-ui-components/components/Tabs';
-
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Image from 'next/image';
 import { BRIDGE_URL, STATS_URL } from '../../constants';
-import Heading2 from '../Heading2';
-import Heading4 from '../Heading4';
-import SubHeading from '../SubHeading';
-import SubHeading2 from '../SubHeading2';
+import { Heading2, Heading4, SubHeading, SubHeading2 } from '../../components';
 
-const InActionSection = () => {
+export const InActionSection = () => {
   return (
     <section
       className={cx(
@@ -99,5 +95,3 @@ const InActionSection = () => {
     </section>
   );
 };
-
-export default InActionSection;

@@ -1,22 +1,15 @@
 import cx from 'classnames';
-import Heading4 from './Heading4';
-import SubHeading2 from './SubHeading2';
-
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
-
+import { Heading4, SubHeading2, PrivacyScaleIllustration } from '../components';
+import { Button } from '@webb-tools/webb-ui-components';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
 // import required modules
 import { Autoplay, EffectCoverflow, Navigation, Pagination } from 'swiper';
-
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
-
 import { useEffect, useRef, useState } from 'react';
-import PrivacyScaleIllustration from './PrivacyScaleIllustration';
 import { useInView } from 'react-intersection-observer';
 
 const swipersContent: Array<{ title: string; description: string }> = [
@@ -52,7 +45,7 @@ const swipersContent: Array<{ title: string; description: string }> = [
   },
 ];
 
-const PrivacyScaleSwiper = () => {
+export const PrivacyScaleSwiper = () => {
   const [ref, inView] = useInView();
 
   // The swiper instance ref
@@ -169,5 +162,3 @@ const PrivacyScaleSwiper = () => {
     </div>
   );
 };
-
-export default PrivacyScaleSwiper;
