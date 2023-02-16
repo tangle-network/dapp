@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Set variables
-REPO_URL="https://github.com/webb-tools/protocol-solidity.git"
+REPO_URL="https://github.com/webb-tools/relayer.git"
 CURRENT_DIR=$(pwd)
 defaultPath="$CURRENT_DIR/local-webb-dapp"
 
@@ -30,9 +30,11 @@ else
   cd relayer
 fi
 
+echo "Fetching webb-relayer binary v0.5.0-rc8/webb-relayer-aarch64-apple-darwin.tar.gz from GitHub...\n"
+
 # Download the relayer binary
 RELAYER_VERSION="v0.5.0-rc8"
-RELAYER_FILENAME="relayer_${RELAYER_VERSION}_darwin_amd64.tar.gz"
+RELAYER_FILENAME="webb-relayer-aarch64-apple-darwin.tar.gz"
 RELAYER_URL="https://github.com/webb-tools/relayer/releases/download/${RELAYER_VERSION}/${RELAYER_FILENAME}"
 if ! curl -f -C - -L -o "$RELAYER_FILENAME" "$RELAYER_URL"; then
     echo "Failed to download $RELAYER_FILENAME from $RELAYER_URL"
@@ -71,4 +73,4 @@ EOF
 
 # Run the relayer
 echo "Running the relayer..."
-./rly -c config/development/evm-localnet/ -vv
+./webb-relayer -c config/development/evm-localnet/ -vv
