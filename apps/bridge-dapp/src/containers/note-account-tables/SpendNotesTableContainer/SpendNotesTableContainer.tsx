@@ -240,9 +240,9 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   if (!data.length) {
     return (
       <EmptyTable
-        title="No spend notes found"
-        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
-        buttonText="Upload spend Notes"
+        title="Shielded Assets"
+        description="When you make a deposit, you'll see your shielded assets here."
+        buttonText="Upload a spend note."
         onClick={onUploadSpendNote}
       />
     );
