@@ -37,6 +37,9 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
   // The derialized notes record
   const [notes, setNotes] = useState<Record<string, Note>>({});
 
+  // The error message record when deserializing notes
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   // The note size memo
   const noteSize = useMemo(() => Object.keys(notes).length, [notes]);
 
@@ -45,14 +48,23 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
     async (id: string) => {
       try {
         const rawNote = rawNotes[id];
+        if (!isValidNote(rawNote)) {
+          notificationApi({
+            variant: 'error',
+            message: 'Incorrect note format',
+          });
+
+          return;
+        }
+
         const note = await Note.deserialize(rawNote);
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
       } catch (error) {
-        notificationApi({
-          variant: 'error',
-          message: 'Incorrect note format',
-        });
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [id]: 'Error: incorrect format',
+        }));
       }
     },
     [rawNotes, onNotesChange, notificationApi]
@@ -66,21 +78,13 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
             key={id}
             value={note}
             onChange={(value) => {
-              if (!isValidNote(value)) {
-                notificationApi({
-                  variant: 'error',
-                  message: 'Incorrect note format',
-                });
-
-                return;
-              }
-
               setRawNotes((prev) => ({
                 ...prev,
                 [id]: value,
               }));
             }}
             onUpload={() => handleUpload(id)}
+            error={errors[id]}
           />
         ))}
       </FileUploadList>
