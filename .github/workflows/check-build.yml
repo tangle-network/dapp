@@ -3,7 +3,7 @@ name: build 🏗️
 on:
   pull_request:
     branches: [develop, staging, main]
-  push: 
+  push:
     branches: [develop, staging, main]
 
   workflow_dispatch:
@@ -32,6 +32,7 @@ jobs:
           echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
           echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
           echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
+          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
       - name: build
         run: |
           yarn install

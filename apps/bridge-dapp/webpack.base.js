@@ -253,9 +253,14 @@ function createWebpack(env, mode = 'production') {
       }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(mode),
-        'process.env.LOCAL_FIXTURES': JSON.stringify(env.LOCAL_FIXTURES),
+        'process.env.LOCAL_FIXTURES': JSON.stringify(
+          process.env.LOCAL_FIXTURES
+        ),
         'process.env.DEPLOYMENT': JSON.stringify(
           process.env.DEPLOYMENT ?? 'develop'
+        ),
+        'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
+          process.env.NX_BRIDGE_APP_DOMAIN
         ),
       }),
       new webpack.optimize.SplitChunksPlugin(),

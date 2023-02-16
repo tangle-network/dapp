@@ -18,13 +18,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 import { CreateAccountModalProps } from './types';
-
 import Lottie from 'lottie-react';
 import privacySecurityJson from './privacy-security.json';
-import congratJson from './congrat.json';
-
-// TODO: Update message
-const loginMessage = 'Logging into Webb';
+import congratsJson from './congrats.json';
+import { createSignInMessage } from '../../constants/signIn';
 
 const successBridgeInfo = [
   {
@@ -73,8 +70,13 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
       const metamask = await Web3Provider.fromExtension();
       const accounts = await metamask.eth.getAccounts();
       if (accounts.length && accounts[0] != null) {
+        const msg = createSignInMessage(
+          accounts[0],
+          await metamask.eth.getChainId()
+        );
+        console.log(msg);
         const signedString = await metamask.eth.personal.sign(
-          loginMessage,
+          msg,
           accounts[0],
           undefined as any
         );
@@ -155,7 +157,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           {isSuccess && (
             <Lottie
               className={cx('absolute inset-0 !mt-0')}
-              animationData={congratJson}
+              animationData={congratsJson}
             />
           )}
         </div>
