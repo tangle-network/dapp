@@ -177,8 +177,9 @@ const PageBridge = () => {
             'bg-center object-fill bg-no-repeat bg-cover'
           )}
         >
-          <div className="max-w-[1160px] mx-auto flex items-start space-x-4">
+          <div className="max-w-[1160px] mx-auto grid grid-cols-2 gap-9">
             {customMainComponent}
+
             {/** Bridge tabs */}
             <TabsRoot
               value={activeTab}
@@ -188,7 +189,7 @@ const PageBridge = () => {
               // The customMainComponent alters the global mainComponent for display.
               // Therfore, if the customMainComponent exists (input selected) then hide the base component.
               className={cx(
-                'max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                'min-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
                 customMainComponent ? 'hidden' : 'block'
               )}
             >
@@ -207,6 +208,7 @@ const PageBridge = () => {
                 <WithdrawContainer {...sharedBridgeTabContainerProps} />
               </TabContent>
             </TabsRoot>
+
             <div>
               {/** Transaction Queue Card */}
               {isDisplayTxQueueCard && (
@@ -215,8 +217,9 @@ const PageBridge = () => {
                   transactions={txPayloads}
                 />
               )}
+
               {/** Education cards */}
-              <div className="p-9 max-w-[386px] bg-blue-10 dark:bg-blue-120 rounded-lg">
+              <div className="p-9 min-w-[386px] w-full bg-blue-10 dark:bg-blue-120 rounded-lg">
                 <Typography
                   variant="body1"
                   fw="semibold"
