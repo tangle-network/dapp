@@ -1,6 +1,12 @@
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
-import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
+import {
+  Banner,
+  Button,
+  Footer,
+} from '@webb-tools/webb-ui-components/components';
+import { Transition } from '@headlessui/react';
+import cx from 'classnames';
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -13,7 +19,12 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
     <div className="min-w-full min-h-full">
       <Header />
 
-      {showBanner && (
+      <Transition
+        show={showBanner}
+        leave={cx('transition-transform origin-top duration-500')}
+        leaveFrom={cx('[transform:rotateX(0deg)]')}
+        leaveTo={cx('[transform:rotateX(-90deg)]')}
+      >
         <Banner
           onClose={onCloseHandler}
           dappName="stats"
@@ -24,7 +35,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             target: '_blank',
           }}
         />
-      )}
+      </Transition>
 
       <main className="max-w-[960px] w-full mx-auto">{children}</main>
 
