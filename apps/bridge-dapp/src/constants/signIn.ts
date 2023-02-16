@@ -1,9 +1,6 @@
-const domain = process.env.REACT_APP_DOMAIN ?? 'localhost';
+const domain = process.env.NX_BRIDGE_APP_DOMAIN ?? 'localhost';
 
 const origin = `http${domain === 'localhost' ? '' : 's'}://${domain}/login`;
-
-console.log('origin', origin);
-console.log('domain', domain);
 
 export const SIGN_IN_MESSAGE = `
 Logging into Webb's Hubble Bridge!
