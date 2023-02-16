@@ -113,7 +113,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
                   note.note.amount,
                   note.note.denomination
                 )
-              ).toFixed(8)
+              )
             ),
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()

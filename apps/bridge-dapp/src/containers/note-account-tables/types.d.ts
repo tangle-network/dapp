@@ -47,6 +47,11 @@ export interface NoteAccountTableContainerProps {
    * @returns void
    */
   onDeleteNotesChange?: (notes: Note[]) => void;
+
+  /**
+   * Global search text
+   * */
+  globalSearchText: string;
 }
 
 export interface ActionWithTooltipProps extends ButtonProps {
