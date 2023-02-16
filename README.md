@@ -75,6 +75,17 @@ Once the development environment is set up, you may proceed to install the requi
 Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI! 🕸️ 🚀 If you would like to utilize the Hubble bridge
 with a local EVM network and local relayer refer to the instructions [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge).
 
+### Setting Up a Local EVM Network with Hubble Bridge
+
+If you want to create a local EVM network with a local relayer and Hubble bridge, we have step-by-step instructions you can follow [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge).
+
+If you're comfortable running scripts and using a macOS environment, you can use the following scripts in the `/tools/scripts/` directory to quickly set up a local testing environment:
+
+- `contracts.sh`: This script compiles Webb smart contracts from [protocol-solidity](https://github.com/webb-tools/protocol-solidity), sets up an EVM localnet (e.g. Hermes, Athena, and Demeter), and populates required fixtures. You can use this script on its own.
+- `relayer.sh`: This script sets up the required `.env` variables for running a [Webb relayer](https://github.com/webb-tools/relayer) for the EVM localnets, fetches the `webb-relayer` binary, and executes it. You must have an EVM localnet running to use this script.
+- `bridge.sh`: This script sets up and starts the Hubble bridge at `localhost:3000`. You can use this script on its own.
+- `local-bridge-network.sh`: This script runs all the above scripts for an entire local network setup. It compiles the Webb smart contracts, sets up the EVM localnet, adds the required `.env` variables, fetches the `webb-relayer` binary, executes it, and starts the local Hubble bridge at `localhost:3000`. It opens three Terminal windows and can only be run in a macOS environment.
+
 ## Run stats-dapp locally 💻
 
 Once the development environment is set up, you may proceed to install the required dependencies and run the dapp locally.
