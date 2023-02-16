@@ -33,6 +33,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: create env file
+        run: |
+          touch .env
+          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
+
       - name: Build project
         run: yarn nx build bridge-dapp
 

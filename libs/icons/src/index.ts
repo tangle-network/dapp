@@ -36,6 +36,7 @@ export * from './FileCodeLineIcon';
 export * from './FileCopyLine';
 export * from './FileUploadLine';
 export * from './FilterIcon';
+export * from './FilterIcon2';
 export * from './FlaskLineIcon';
 export * from './FoldersFillIcon';
 export * from './ForumIcon';

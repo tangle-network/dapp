@@ -17,6 +17,7 @@ import { calculateTypedChainId, Keypair, Note } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { createSignInMessage } from '../constants/signIn';
 
 const NoteAccountDetailsWrapper = styled.div`
   padding: 20px;
@@ -68,7 +69,7 @@ enum DisconnectView {
 const DisconnectedNoteAccountView: React.FC = () => {
   const [view, setView] = useState<DisconnectView>(DisconnectView.Prompt);
   const [accountInputString, setAccountInputString] = useState('');
-  const { loginNoteAccount, wallets } = useWebContext();
+  const { loginNoteAccount, activeWallet } = useWebContext();
 
   return (
     <div>
@@ -100,9 +101,12 @@ const DisconnectedNoteAccountView: React.FC = () => {
                 const accounts = await metamask.eth.getAccounts();
                 if (accounts.length && accounts[0] != null) {
                   const signedString = await metamask.eth.personal.sign(
-                    'Logging into Webb',
+                    createSignInMessage(
+                      accounts[0],
+                      await metamask.eth.getChainId()
+                    ),
                     accounts[0],
-                    undefined
+                    undefined as any
                   );
                   loginNoteAccount(signedString.slice(0, 66));
                 }
