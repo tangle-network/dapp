@@ -1,21 +1,13 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain } from '@webb-tools/dapp-config';
-import {
-  BlockIcon,
-  CoinIcon,
-  HelpLineIcon,
-  SosLineIcon,
-} from '@webb-tools/icons';
 import { useScrollActions } from '@webb-tools/responsive-utils';
 import {
-  Button,
   TabContent,
   TabTrigger,
   TabsList,
   TabsRoot,
   TransactionQueueCard,
-  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
@@ -23,7 +15,11 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
-import { InteractiveFeedbackView, WalletModal } from '../components';
+import {
+  EducationCard,
+  InteractiveFeedbackView,
+  WalletModal,
+} from '../components';
 import { ManageButton } from '../components/tables';
 import {
   CreateAccountModal,
@@ -219,56 +215,7 @@ const PageBridge = () => {
               )}
 
               {/** Education cards */}
-              <div className="p-9 min-w-[386px] w-full bg-blue-10 dark:bg-blue-120 rounded-lg">
-                <Typography
-                  variant="body1"
-                  fw="semibold"
-                  className="text-blue-70 dark:text-blue-50"
-                >
-                  Learn about what makes Webb private and how this makes using
-                  it different from other bridges.
-                </Typography>
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  <Button
-                    leftIcon={<CoinIcon size="lg" className="!fill-current" />}
-                    href="https://docs.webb.tools" // TODO: Determine link here
-                    target="_blank"
-                    variant="link"
-                  >
-                    Usage Guide
-                  </Button>
-                  <Button
-                    leftIcon={
-                      <BlockIcon size="lg" className="!stroke-current" />
-                    }
-                    href="https://docs.webb.tools" // TODO: Determine link here
-                    target="_blank"
-                    variant="link"
-                  >
-                    FAQ
-                  </Button>
-                  <Button
-                    leftIcon={
-                      <HelpLineIcon size="lg" className="!fill-current" />
-                    }
-                    href="https://docs.webb.tools"
-                    target="_blank"
-                    variant="link"
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    leftIcon={
-                      <SosLineIcon size="lg" className="!fill-current" />
-                    }
-                    href="https://t.me/webbprotocol"
-                    target="_blank"
-                    variant="link"
-                  >
-                    Support
-                  </Button>
-                </div>
-              </div>
+              <EducationCard currentTab={activeTab} />
             </div>
           </div>
         </div>

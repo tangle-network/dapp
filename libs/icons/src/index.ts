@@ -5,6 +5,7 @@ export * from './ArrowLeft';
 export * from './ArrowRight';
 export * from './AuctionLine';
 export * from './BankLine';
+export * from './BellIcon';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';
@@ -65,6 +66,7 @@ export * from './TimeLineIcon';
 export * from './TokenIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';
+export * from './UsageGuideIcon';
 export * from './UserStarFillIcon';
 export * from './WalletLineIcon';
 
