@@ -2,6 +2,7 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
@@ -22,6 +23,7 @@ import {
   TitleWithInfo,
   TokenPairIcons,
   Typography,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -105,7 +107,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {props.getValue()}
+        {formatTokenAmount(props.getValue())}
       </Typography>
     ),
   }),
@@ -152,6 +154,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
+  globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -232,10 +235,15 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      globalFilter: globalSearchText,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   if (isSyncingNote) {

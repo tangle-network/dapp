@@ -5,6 +5,7 @@ import {
   FileUploadList,
   TokenPairIcons,
   Typography,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { uniqueId } from 'lodash';
@@ -13,6 +14,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { ethers } from 'ethers';
 import { PasteModalContentProps } from './types';
+import { isValidNote } from '../../utils';
 
 const initialNotes = {
   [uniqueId()]: '',
@@ -20,12 +22,13 @@ const initialNotes = {
 
 export const PasteModalContent: FC<PasteModalContentProps> = ({
   onNotesChange,
-  onRemoveAllNotes,
   onRemoveNote,
 }) => {
   const {
     apiConfig: { currencies },
   } = useWebContext();
+
+  const { notificationApi } = useWebbUI();
 
   // The raw notes string array from the user
   const [rawNotes, setRawNotes] =
@@ -45,6 +48,15 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
     async (id: string) => {
       try {
         const rawNote = rawNotes[id];
+        if (!isValidNote(rawNote)) {
+          notificationApi({
+            variant: 'error',
+            message: 'Incorrect note format',
+          });
+
+          return;
+        }
+
         const note = await Note.deserialize(rawNote);
         setNotes((prevNotes) => ({ ...prevNotes, [id]: note }));
         onNotesChange?.(id, note);
@@ -55,7 +67,7 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
         }));
       }
     },
-    [rawNotes, onNotesChange]
+    [rawNotes, onNotesChange, notificationApi]
   );
 
   return (
@@ -66,7 +78,10 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
             key={id}
             value={note}
             onChange={(value) => {
-              setRawNotes((prev) => ({ ...prev, [id]: value }));
+              setRawNotes((prev) => ({
+                ...prev,
+                [id]: value,
+              }));
             }}
             onUpload={() => handleUpload(id)}
             error={errors[id]}

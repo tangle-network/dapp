@@ -32,26 +32,27 @@ const classNames: ButtonClassNames = {
   utility: {
     base: {
       common:
-        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-50',
+        'rounded-lg px-3 py-2 bg-blue-0 border border-transparent text-blue-70 dark:bg-blue-120 dark:text-blue-50 font-bold',
       hover: 'hover:bg-blue-10 hover:text-blue-90 dark:hover:bg-blue-110',
       active: 'active:border-blue-50 dark:active:border-blue-50',
       disabled:
-        'disabled:border-none disabled:bg-mono-40 disabled:text-mono-120 disabled:border-transparent dark:disabled:bg-mono-140 dark:disabled:text-mono-100',
+        'disabled:border-none disabled:bg-blue-10 disabled:text-blue-70 disabled:border-transparent dark:disabled:bg-blue-120 dark:disabled:text-blue-50 disabled:opacity-50',
     },
-    md: 'body1 font-semibold',
-    sm: 'utility font-bold uppercase',
+    md: 'body1',
+    sm: 'utility uppercase',
   },
   link: {
     base: {
-      common: 'group text-blue-70 border-transparent dark:text-blue-50',
+      common:
+        'group text-blue-70 border-transparent dark:text-blue-50 font-bold',
       hover:
         'hover:border-blue-70 dark:hover:text-blue-30 dark:hover:border-blue-30',
       active:
         'active:text-blue-90 active:border-blue-90 dark:active:text-blue-30 dark:active:border-blue-30',
       disabled: 'disabled:text-blue-40 disabled:dark:text-blue-90',
     },
-    md: 'body1 font-semibold',
-    sm: 'utility font-bold uppercase',
+    md: 'body1',
+    sm: 'utility uppercase',
   },
 };
 
