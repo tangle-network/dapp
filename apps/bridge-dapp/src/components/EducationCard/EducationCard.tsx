@@ -29,16 +29,23 @@ const howItWorksContent: {
 } = {
   Deposit: [
     {
-      title: 'Deposit',
-      description: 'Make a deposit and choose a destination chain',
+      title: 'Create Note Account',
+      description:
+        'Create a Note account to start transacting using your connected MetaMask address.',
     },
     {
-      title: 'Switch Networks',
-      description: 'Hop over to the destination chain',
+      title: 'Select Token and Amount',
+      description:
+        'Choose the token you wish to deposit and specify the deposit amount.',
     },
     {
-      title: 'Withdraw',
-      description: 'Withdraw using fixed amounts for max privacy',
+      title: 'Select Desired Chains',
+      description: 'Select the source and destination chains for your deposit.',
+    },
+    {
+      title: 'Confirm Deposit',
+      description:
+        'Review and confirm the details of your deposit before submitting it.',
     },
   ],
   Transfer: [
@@ -57,16 +64,24 @@ const howItWorksContent: {
   ],
   Withdraw: [
     {
-      title: 'Deposit',
-      description: 'Make a deposit and choose a destination chain',
+      title: 'Connect to Destination chain',
+      description:
+        'To withdraw your tokens, switch to the destination chain where you have a balance of the token you want to withdraw.',
     },
     {
-      title: 'Switch Networks',
-      description: 'Hop over to the destination chain',
+      title: 'Specify the Withdrawal Amount',
+      description:
+        'Choose the amount you want to withdraw. For maximum privacy, we recommend using fixed withdrawal amounts.',
     },
     {
-      title: 'Withdraw',
-      description: 'Withdraw using fixed amounts for max privacy',
+      title: 'Choose a Relayer',
+      description:
+        'To maximize your privacy, select a relayer to facilitate your transaction.',
+    },
+    {
+      title: 'Confirm Withdraw',
+      description:
+        'Review and confirm the details of your withdraw before submitting it.',
     },
   ],
 };
@@ -155,41 +170,44 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                   return (
                     <div
                       key={`${content.title}-${index}`}
-                      className="relative flex items-start space-x-2"
+                      className="relative flex items-start"
                     >
                       {/** Vertical line */}
                       <span
                         className={cx(
                           {
-                            'content-[""] absolute w-0.5 h-[calc(100%-16px)]':
+                            'absolute w-0.5 h-[calc(100%-16px)]':
                               index !==
                               howItWorksContent[currentTab].length - 1,
                           },
                           {
-                            'translate-y-6 translate-x-[18px] bg-mono-120 dark:bg-mono-100':
+                            'translate-y-6 translate-x-3 bg-mono-120 dark:bg-mono-100':
                               index !==
                               howItWorksContent[currentTab].length - 1,
                           }
                         )}
                       />
 
-                      <Typography
-                        component="p"
+                      <div
                         className={cx(
-                          'flex items-center justify-center w-6 h-6 border-2 rounded-full',
+                          'flex items-center justify-center grow-0 shrink-0 basis-6 h-6 border-2 rounded-full',
                           { 'border-mono-200 dark:border-mono-0': !index },
-                          {
-                            'border-mono-120 dark:border-mono-100 text-mono-120 dark:text-mono-100':
-                              index,
-                          }
+                          { 'border-mono-120 dark:border-mono-100': index }
                         )}
-                        variant="mono2"
-                        fw="bold"
                       >
-                        {index + 1}
-                      </Typography>
+                        <Typography
+                          component="p"
+                          className={cx({
+                            'text-mono-120 dark:text-mono-100': index,
+                          })}
+                          variant="mono2"
+                          fw="bold"
+                        >
+                          {index + 1}
+                        </Typography>
+                      </div>
 
-                      <div className="space-y-1">
+                      <div className="max-w-sm ml-2 space-y-1">
                         <Typography
                           variant="body1"
                           fw="bold"
