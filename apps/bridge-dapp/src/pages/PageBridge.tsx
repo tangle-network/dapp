@@ -169,97 +169,102 @@ const PageBridge = () => {
 
   return (
     <>
-      <div className="w-full mt-6">
-        <div className="flex items-start space-x-4">
-          {customMainComponent}
-
-          {/** Bridge tabs */}
-          <TabsRoot
-            value={activeTab}
-            onValueChange={(nextTab) =>
-              setActiveTab(nextTab as typeof activeTab)
-            }
-            // The customMainComponent alters the global mainComponent for display.
-            // Therfore, if the customMainComponent exists (input selected) then hide the base component.
-            className={cx(
-              'max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
-              customMainComponent ? 'hidden' : 'block'
-            )}
-          >
-            <TabsList aria-label="bridge action" className="mb-4">
-              <TabTrigger value="Deposit">Deposit</TabTrigger>
-              <TabTrigger value="Transfer">Transfer</TabTrigger>
-              <TabTrigger value="Withdraw">Withdraw</TabTrigger>
-            </TabsList>
-            <TabContent value="Deposit">
-              <DepositContainer {...sharedBridgeTabContainerProps} />
-            </TabContent>
-            <TabContent value="Transfer">
-              <TransferContainer {...sharedBridgeTabContainerProps} />
-            </TabContent>
-            <TabContent value="Withdraw">
-              <WithdrawContainer {...sharedBridgeTabContainerProps} />
-            </TabContent>
-          </TabsRoot>
-
-          <div>
-            {/** Transaction Queue Card */}
-            {isDisplayTxQueueCard && (
-              <TransactionQueueCard
-                className="w-full mb-4 max-w-none"
-                transactions={txPayloads}
-              />
-            )}
-
-            {/** Education cards */}
-            <div className="p-9 max-w-[386px] bg-blue-10 dark:bg-blue-120 rounded-lg">
-              <Typography
-                variant="body1"
-                fw="semibold"
-                className="text-blue-70 dark:text-blue-50"
-              >
-                Learn about what makes Webb private and how this makes using it
-                different from other bridges.
-              </Typography>
-
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <Button
-                  leftIcon={<CoinIcon size="lg" className="!fill-current" />}
-                  href="https://docs.webb.tools" // TODO: Determine link here
-                  target="_blank"
-                  variant="link"
+      <div className="w-full">
+        <div
+          className={cx(
+            ' p-9',
+            "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
+            'bg-center object-fill bg-no-repeat bg-cover'
+          )}
+        >
+          <div className="max-w-[1160px] mx-auto flex items-start space-x-4">
+            {customMainComponent}
+            {/** Bridge tabs */}
+            <TabsRoot
+              value={activeTab}
+              onValueChange={(nextTab) =>
+                setActiveTab(nextTab as typeof activeTab)
+              }
+              // The customMainComponent alters the global mainComponent for display.
+              // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+              className={cx(
+                'max-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                customMainComponent ? 'hidden' : 'block'
+              )}
+            >
+              <TabsList aria-label="bridge action" className="mb-4">
+                <TabTrigger value="Deposit">Deposit</TabTrigger>
+                <TabTrigger value="Transfer">Transfer</TabTrigger>
+                <TabTrigger value="Withdraw">Withdraw</TabTrigger>
+              </TabsList>
+              <TabContent value="Deposit">
+                <DepositContainer {...sharedBridgeTabContainerProps} />
+              </TabContent>
+              <TabContent value="Transfer">
+                <TransferContainer {...sharedBridgeTabContainerProps} />
+              </TabContent>
+              <TabContent value="Withdraw">
+                <WithdrawContainer {...sharedBridgeTabContainerProps} />
+              </TabContent>
+            </TabsRoot>
+            <div>
+              {/** Transaction Queue Card */}
+              {isDisplayTxQueueCard && (
+                <TransactionQueueCard
+                  className="w-full mb-4 max-w-none"
+                  transactions={txPayloads}
+                />
+              )}
+              {/** Education cards */}
+              <div className="p-9 max-w-[386px] bg-blue-10 dark:bg-blue-120 rounded-lg">
+                <Typography
+                  variant="body1"
+                  fw="semibold"
+                  className="text-blue-70 dark:text-blue-50"
                 >
-                  Usage Guide
-                </Button>
-
-                <Button
-                  leftIcon={<BlockIcon size="lg" className="!stroke-current" />}
-                  href="https://docs.webb.tools" // TODO: Determine link here
-                  target="_blank"
-                  variant="link"
-                >
-                  FAQ
-                </Button>
-
-                <Button
-                  leftIcon={
-                    <HelpLineIcon size="lg" className="!fill-current" />
-                  }
-                  href="https://docs.webb.tools"
-                  target="_blank"
-                  variant="link"
-                >
-                  Get Started
-                </Button>
-
-                <Button
-                  leftIcon={<SosLineIcon size="lg" className="!fill-current" />}
-                  href="https://t.me/webbprotocol"
-                  target="_blank"
-                  variant="link"
-                >
-                  Support
-                </Button>
+                  Learn about what makes Webb private and how this makes using
+                  it different from other bridges.
+                </Typography>
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <Button
+                    leftIcon={<CoinIcon size="lg" className="!fill-current" />}
+                    href="https://docs.webb.tools" // TODO: Determine link here
+                    target="_blank"
+                    variant="link"
+                  >
+                    Usage Guide
+                  </Button>
+                  <Button
+                    leftIcon={
+                      <BlockIcon size="lg" className="!stroke-current" />
+                    }
+                    href="https://docs.webb.tools" // TODO: Determine link here
+                    target="_blank"
+                    variant="link"
+                  >
+                    FAQ
+                  </Button>
+                  <Button
+                    leftIcon={
+                      <HelpLineIcon size="lg" className="!fill-current" />
+                    }
+                    href="https://docs.webb.tools"
+                    target="_blank"
+                    variant="link"
+                  >
+                    Get Started
+                  </Button>
+                  <Button
+                    leftIcon={
+                      <SosLineIcon size="lg" className="!fill-current" />
+                    }
+                    href="https://t.me/webbprotocol"
+                    target="_blank"
+                    variant="link"
+                  >
+                    Support
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -267,7 +272,10 @@ const PageBridge = () => {
 
         {/** Account stats table */}
         {noteManager && (
-          <TabsRoot defaultValue="shielded-assets" className="mt-12 space-y-4">
+          <TabsRoot
+            defaultValue="shielded-assets"
+            className="max-w-[1160px] mx-auto mt-4 space-y-4"
+          >
             <div className="flex items-center justify-between mb-4">
               {/** Tabs buttons */}
               <TabsList
@@ -314,31 +322,31 @@ const PageBridge = () => {
           </TabsRoot>
         )}
 
-        <UploadSpendNoteModal
-          isOpen={isUploadModalOpen}
-          setIsOpen={(isOpen) => setUploadModalIsOpen(isOpen)}
-        />
-
-        <TryAnotherWalletModal />
-
-        <DeleteNotesModal
-          notes={deleteNotes}
-          setNotes={(notes) => setDeleteNotes(notes)}
-        />
-
-        <WalletModal />
-
-        <CreateAccountModal
-          isOpen={isOpenNoteAccountModal}
-          onOpenChange={(isOpen) => setOpenNoteAccountModal(isOpen)}
-          isSuccess={isSuccessfullyCreatedNoteAccount}
-          onIsSuccessChange={(success) =>
-            setSuccessfullyCreatedNoteAccount(success)
-          }
-        />
-
         {/** Last login */}
       </div>
+
+      <UploadSpendNoteModal
+        isOpen={isUploadModalOpen}
+        setIsOpen={(isOpen) => setUploadModalIsOpen(isOpen)}
+      />
+
+      <TryAnotherWalletModal />
+
+      <DeleteNotesModal
+        notes={deleteNotes}
+        setNotes={(notes) => setDeleteNotes(notes)}
+      />
+
+      <WalletModal />
+
+      <CreateAccountModal
+        isOpen={isOpenNoteAccountModal}
+        onOpenChange={(isOpen) => setOpenNoteAccountModal(isOpen)}
+        isSuccess={isSuccessfullyCreatedNoteAccount}
+        onIsSuccessChange={(success) =>
+          setSuccessfullyCreatedNoteAccount(success)
+        }
+      />
 
       <InteractiveFeedbackView activeFeedback={activeFeedback} />
     </>

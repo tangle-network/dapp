@@ -21,7 +21,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
 
       <Transition
         show={showBanner}
-        leave={cx('transition-transform origin-top duration-500')}
+        leave={cx('transition-transform origin-top duration-200')}
         leaveFrom={cx('[transform:rotateX(0deg)]')}
         leaveTo={cx('[transform:rotateX(-90deg)]')}
       >
@@ -37,9 +37,9 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
         />
       </Transition>
 
-      <main className="max-w-[960px] w-full mx-auto">{children}</main>
+      <main className="w-full mx-auto">{children}</main>
 
-      <Footer className="max-w-[960px] w-full" />
+      <Footer className="max-w-[1160px] w-full" />
     </div>
   );
 };
