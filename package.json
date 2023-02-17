@@ -74,6 +74,8 @@
     "@rollup/plugin-image": "3.0.1",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-typescript": "^9.0.1",
+    "@sentry/react": "^7.37.2",
+    "@sentry/tracing": "^7.37.2",
     "@walletconnect/client": "^1.7.1",
     "@walletconnect/qrcode-modal": "^1.7.1",
     "@walletconnect/web3-provider": "^1.7.1",
