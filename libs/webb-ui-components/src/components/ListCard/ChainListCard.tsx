@@ -102,7 +102,9 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         >
           <ul className="py-2">
             {filteredChains.map((currentChain, idx) => {
-              const isConnected = currentChain.name === currentActiveChain;
+              const isConnected =
+                chainType === 'source' &&
+                currentChain.name === currentActiveChain;
 
               return (
                 <ListItem
