@@ -9,14 +9,14 @@ import { Transition } from '@headlessui/react';
 const links = [
   {
     label: 'Usage Guide',
-    href: 'https://docs.webb.tools/docs/dapps/hubble-bridge/overview/',
-    Icon: UsageGuideIcon,
-  },
-  {
-    label: 'Get Started',
     getLink: (tab: EducationCardProps['currentTab']) => {
       return `https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/${tab.toLowerCase()}/`;
     },
+    Icon: UsageGuideIcon,
+  },
+  {
+    label: 'Getting Started',
+    href: 'https://docs.webb.tools/docs/dapps/hubble-bridge/overview/',
     Icon: UsageGuideIcon,
   },
 ];
@@ -55,9 +55,9 @@ const howItWorksContent: {
         'Connect to the destination chain with a balance of the shielded token you want to transfer.',
     },
     {
-      title: 'Choose a Relayer',
+      title: 'Select Token and Amount',
       description:
-        'Select a relayer to maximize your privacy and facilitate your transaction.',
+        'Choose the shielded token you want to transfer and specify the deposit amount.',
     },
     {
       title: 'Enter Public Note Account Key',
