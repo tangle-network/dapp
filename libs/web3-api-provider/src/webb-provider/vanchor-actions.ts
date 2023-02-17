@@ -296,9 +296,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
             outputNotes: changeNotes,
           });
           break;
-        case RelayedWithdrawResult.Errored:
-          tx.fail('Transaction with relayer failed');
+        case RelayedWithdrawResult.Errored: {
+          changeNotes.forEach((note) =>
+            this.inner.noteManager?.removeNote(note)
+          );
+          tx.fail(message.length ? message : 'Transaction failed');
           break;
+        }
       }
     });
 
