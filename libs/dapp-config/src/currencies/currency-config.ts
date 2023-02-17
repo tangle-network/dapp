@@ -150,22 +150,22 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     role: CurrencyRole.Governable,
     icon: () => WebbWrappedLogo(EtherLogo()),
     addresses: new Map<number, string>([
-      [PresetTypedChainId.Goerli, '0xd0ad5973371a4469755a418c2f93fbfbfbb02a9a'],
+      [PresetTypedChainId.Goerli, '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3'],
       [
         PresetTypedChainId.Sepolia,
-        '0xd0ad5973371a4469755a418c2f93fbfbfbb02a9a',
+        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
       ],
       [
         PresetTypedChainId.PolygonTestnet,
-        '0xd0ad5973371a4469755a418c2f93fbfbfbb02a9a',
+        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
       ],
       [
         PresetTypedChainId.OptimismTestnet,
-        '0xd0ad5973371a4469755a418c2f93fbfbfbb02a9a',
+        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
       ],
       [
         PresetTypedChainId.MoonbaseAlpha,
-        '0xd0ad5973371a4469755a418c2f93fbfbfbb02a9a',
+        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
       ],
     ]),
   },
