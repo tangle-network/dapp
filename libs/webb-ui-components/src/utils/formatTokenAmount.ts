@@ -1,3 +1,14 @@
+import { round } from 'lodash';
+
+const generateNumber = (decimalDigits: number) => {
+  return parseInt(
+    `0.${Array(decimalDigits - 1)
+      .fill(0)
+      .join('')}1`,
+    10
+  );
+};
+
 /**
  * Formats a token amount to a given number of decimal places and adds a < symbol if the amount is less than 0.001
  * @param amount The amount to format
@@ -5,9 +16,10 @@
  * @returns The formatted amount
  */
 export const formatTokenAmount = (amount: string, decimalPlaces = 3) => {
-  const formattedAmount = parseFloat(amount).toFixed(decimalPlaces);
-  if (Number(formattedAmount) < 0.001) {
-    return `< 0.001`;
+  const number = generateNumber(decimalPlaces);
+  if (Number(amount) < number) {
+    return `<0.${number}`;
   }
-  return formattedAmount;
+
+  return round(Number(amount), decimalPlaces).toLocaleString();
 };
