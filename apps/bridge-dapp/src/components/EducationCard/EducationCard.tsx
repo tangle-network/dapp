@@ -144,7 +144,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
               <Close size="lg" />
             </button>
 
-            <div className="space-y-4 grow">
+            <div className="space-y-4">
               <Typography variant="h3" fw="bold">
                 Privacy for everyone, everything, everywhere.
               </Typography>

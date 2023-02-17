@@ -218,7 +218,7 @@ const PageBridge = () => {
             'bg-center object-fill bg-no-repeat bg-cover'
           )}
         >
-          <div className="max-w-[1160px] mx-auto grid grid-cols-2 gap-9">
+          <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
             {customMainComponent}
 
             {/** Bridge tabs */}
