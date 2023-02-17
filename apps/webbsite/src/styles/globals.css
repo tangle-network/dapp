@@ -104,6 +104,17 @@
     md:text-[18px] md:leading-[24.3px];
 }
 
+/** Blog related styles */
+.blog-card-tag {
+  @apply text-base leading-[27px] font-black text-mono-120 font-satoshi
+    text-[18px];
+}
+
+.blog-card-title {
+  @apply text-base leading-[24.3px] font-black text-mono-200 font-satoshi
+    text-[24px] md:leading-[32.4px];
+}
+
 /** Override the notion styles */
 
 .notion-h3 {
