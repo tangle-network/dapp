@@ -5,6 +5,8 @@ import { FC } from 'react';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { config as routerConfig } from './routes';
 
+import * as Sentry from '@sentry/react';
+
 // Singleton app event instance
 export const appEvent = new AppEvent();
 
@@ -18,4 +20,4 @@ const App: FC = () => {
   );
 };
 
-export default App;
+export default Sentry.withProfiler(App);
