@@ -31,12 +31,12 @@ const howItWorksContent: {
     {
       title: 'Create Note Account',
       description:
-        'Create a Note account to start transacting using your connected MetaMask address.',
+        'Create a Note account and connect it to your MetaMask address to start depositing tokens.',
     },
     {
       title: 'Select Token and Amount',
       description:
-        'Choose the token you wish to deposit and specify the deposit amount.',
+        'Choose the token you want to deposit and specify the deposit amount.',
     },
     {
       title: 'Select Desired Chains',
@@ -50,23 +50,31 @@ const howItWorksContent: {
   ],
   Transfer: [
     {
-      title: 'Deposit',
-      description: 'Make a deposit and choose a destination chain',
+      title: 'Connect to Destination chain',
+      description:
+        'Connect to the destination chain with a balance of the shielded token you want to transfer.',
     },
     {
-      title: 'Switch Networks',
-      description: 'Hop over to the destination chain',
+      title: 'Choose a Relayer',
+      description:
+        'Select a relayer to maximize your privacy and facilitate your transaction.',
     },
     {
-      title: 'Withdraw',
-      description: 'Withdraw using fixed amounts for max privacy',
+      title: 'Enter Public Note Account Key',
+      description:
+        'Provide the public key for the note account you want to transfer to.',
+    },
+    {
+      title: 'Confirm Transfer',
+      description:
+        'Review and confirm the details of your transfer before submitting it.',
     },
   ],
   Withdraw: [
     {
       title: 'Connect to Destination chain',
       description:
-        'To withdraw your tokens, switch to the destination chain where you have a balance of the token you want to withdraw.',
+        'Connect to the destination chain with a balance of the token you want to withdraw.',
     },
     {
       title: 'Specify the Withdrawal Amount',
@@ -76,7 +84,7 @@ const howItWorksContent: {
     {
       title: 'Choose a Relayer',
       description:
-        'To maximize your privacy, select a relayer to facilitate your transaction.',
+        'Select a relayer to maximize your privacy and facilitate your transaction.',
     },
     {
       title: 'Confirm Withdraw',
