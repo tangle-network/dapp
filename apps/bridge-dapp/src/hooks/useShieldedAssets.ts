@@ -22,7 +22,6 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const { targetChainId, tokenSymbol, amount, denomination } = note.note;
 
         const chain = chainsPopulated[Number(targetChainId)];
-        const balance = ethers.utils.formatUnits(amount, denomination);
 
         if (chain.tag !== activeChain?.tag) {
           return;
@@ -35,9 +34,19 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (existedChain) {
-          existedChain.availableBalance = BigNumber.from(balance)
-            .add(existedChain.availableBalance)
-            .toNumber();
+          const parsedAvailableBalance = ethers.utils.parseUnits(
+            existedChain.availableBalance.toString(),
+            denomination
+          );
+
+          const summedBalance = BigNumber.from(amount).add(
+            parsedAvailableBalance
+          );
+
+          existedChain.availableBalance = Number(
+            ethers.utils.formatUnits(summedBalance, denomination)
+          );
+
           existedChain.numberOfNotesFound += 1;
           existedChain.rawNotes.push(note);
           return;
@@ -74,7 +83,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(balance),
+          availableBalance: Number(
+            ethers.utils.formatUnits(amount, denomination)
+          ),
           numberOfNotesFound: 1,
           rawChain: chain,
           rawFungibleCurrency: fungibleCurrency,
