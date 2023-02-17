@@ -40,6 +40,7 @@ export const WithdrawConfirmContainer = forwardRef<
       unwrapCurrency: { value: unwrapCurrency } = {},
       onResetState,
       recipient,
+      ...props
     },
     ref
   ) => {
@@ -253,6 +254,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     return (
       <WithdrawConfirm
+        {...props}
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}

@@ -471,6 +471,7 @@ export const WithdrawContainer = forwardRef<
 
     setMainComponent(
       <WithdrawConfirmContainer
+        className="w-[550px]" // TODO: Remove hardcoded width
         changeUtxo={changeUtxo}
         changeNote={changeNote}
         changeAmount={formattedChangeAmount}

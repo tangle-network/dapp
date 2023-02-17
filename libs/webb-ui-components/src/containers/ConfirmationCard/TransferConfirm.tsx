@@ -1,7 +1,7 @@
 import { Close, Download, ExternalLinkLine } from '@webb-tools/icons';
+import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography';
 
 import {
   Avatar,
@@ -13,9 +13,10 @@ import {
   Progress,
   TitleWithInfo,
 } from '../../components';
-import { TransferConfirmProps } from './types';
-import { Section, WrapperSection } from './WrapperSection';
+import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
+import { Section, WrapperSection } from './WrapperSection';
+import { TransferConfirmProps } from './types';
 
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
@@ -87,10 +88,15 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         {typeof progress === 'number' && <Progress value={progress} />}
 
         <WrapperSection>
-          <div className="flex space-x-2">
+          <div
+            className={cx(
+              'grid gap-2',
+              relayerAddress ? 'grid-cols-2' : 'grid-cols-1'
+            )}
+          >
             {/** Relayer */}
             {relayerAddress && (
-              <Section className="flex-initial w-[210px]">
+              <Section>
                 <div className="space-y-4">
                   <TitleWithInfo
                     titleComponent="h6"
@@ -124,11 +130,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
             {/** Recipient public key */}
             {recipientPublicKey && (
-              <Section
-                className={
-                  relayerAddress ? 'flex-initial w-[284px]' : 'flex-auto'
-                }
-              >
+              <Section>
                 <div className="space-y-4">
                   <TitleWithInfo
                     titleComponent="h6"
