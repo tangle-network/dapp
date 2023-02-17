@@ -9,20 +9,20 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/app-util';
 import {
+  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
-  NetworkStorage,
   noteStorageFactory,
 } from '@webb-tools/browser-utils/storage';
 import {
-  anchorsConfig,
   ApiConfig,
-  bridgeConfigByAsset,
   Chain,
+  Wallet,
+  anchorsConfig,
+  bridgeConfigByAsset,
   chainsConfig,
   chainsPopulated,
   currenciesConfig,
-  Wallet,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -37,13 +37,14 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
   Web3Provider,
@@ -52,12 +53,14 @@ import {
 } from '@webb-tools/web3-api-provider';
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+
 import { TAppEvent } from './app-event';
-import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import { WebbContext } from './webb-context';
-import { SettingProvider } from '@webb-tools/react-environment';
 import { unsupportedChain } from './error';
+import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
+import { getNativeTokenInfo } from './utils';
+import { WebbContext } from './webb-context';
+
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;
@@ -66,6 +69,7 @@ interface WebbProviderProps extends BareProps {
 
 const chains = chainsPopulated;
 const logger = LoggerService.get('WebbProvider');
+
 const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
   interactiveFeedback: InteractiveFeedback
@@ -647,7 +651,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                const currency = currenciesConfig[chain.nativeCurrencyId];
+                const currency = await getNativeTokenInfo(chain.chainId);
+                if (!currency) {
+                  throw new Error('Native token not found');
+                }
+
                 await web3Provider.addChain({
                   chainId: `0x${chain.chainId.toString(16)}`,
                   chainName: chain.name,
@@ -657,6 +665,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     name: currency.name,
                     symbol: currency.symbol,
                   },
+                  blockExplorerUrls: chain.blockExplorerStub
+                    ? [chain.blockExplorerStub]
+                    : [],
                 });
                 // add network will prompt the switch, check evmId again and throw if user rejected
                 const newChainId = await web3Provider.network;
