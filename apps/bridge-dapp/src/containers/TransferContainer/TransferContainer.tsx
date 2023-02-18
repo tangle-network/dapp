@@ -305,7 +305,7 @@ export const TransferContainer = forwardRef<
     const handleBridgingAssetInputClick = useCallback(() => {
       setMainComponent(
         <TokenListCard
-          className="w-[550px] h-[700px]"
+          className="min-w-[550px] h-[700px]"
           title="Select Asset to Transfer"
           popularTokens={[]}
           selectTokens={bridgingAssets}
@@ -449,7 +449,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <RelayerListCard
           relayers={relayerList}
-          className="w-[550px] h-[700px]"
+          className="min-w-[550px] h-[700px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
             setRelayer(
@@ -741,7 +741,7 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TransferConfirmContainer
-          className="w-[550px]"
+          className="min-w-[550px]"
           inputNotes={inputNotes}
           amount={amount}
           changeAmount={changeAmount}
@@ -815,7 +815,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="h-[615px]"
+        className="h-[615px] max-w-none"
         bridgeAssetInputProps={{
           token: selectedBridgingAsset,
           onClick: handleBridgingAssetInputClick,
