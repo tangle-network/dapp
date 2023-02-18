@@ -12,13 +12,4 @@ const Template = (args) => <ErrorFallback {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-  contactUsLinkProps: {
-    href: 'https://t.me/webbprotocol',
-    target: '_blank',
-  },
-  reportIssueButtonProps: {
-    href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
-    target: '_blank',
-  },
-};
+Default.args = {};

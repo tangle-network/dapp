@@ -1,9 +1,16 @@
 import { Fragment, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import * as constants from '../../constants';
 import { Typography } from '../../typography';
 import { Button, ButtonProps } from '../Button';
 import { ErrorFallbackProps } from './types';
+
+const telegramInfo = constants.socialConfigs.find((c) => c.name === 'telegram');
+const contactLink = telegramInfo?.href ?? '';
+
+const githubInfo = constants.socialConfigs.find((c) => c.name === 'github');
+const reportIssueLink = `${githubInfo?.href ?? ''}/webb-dapp/issues/new/choose`;
 
 export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
   (
@@ -32,6 +39,8 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
             <span className="inline-block w-9/12 mx-auto">
               If the issue persists, please{' '}
               <Button
+                href={contactLink}
+                target="_blank"
                 {...contactUsLinkProps}
                 variant="link"
                 className="inline-block"
@@ -66,6 +75,8 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
           children: 'Refresh Page',
         },
         {
+          href: reportIssueLink,
+          target: '_blank',
           ...reportIssueButtonProps,
           ...commonButtonProps,
           variant: 'secondary',
