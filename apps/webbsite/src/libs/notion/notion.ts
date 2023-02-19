@@ -25,16 +25,20 @@ export class Notion {
       );
     }
 
-    this.notion = new Client({
-      auth: NOTION_BLOG_INTEGRATION_TOKEN,
-    });
+    try {
+      this.notion = new Client({
+        auth: NOTION_BLOG_INTEGRATION_TOKEN,
+      });
 
-    this.databaseID = NOTION_BLOG_INTEGRATION_DATABASE_ID;
+      this.databaseID = NOTION_BLOG_INTEGRATION_DATABASE_ID;
 
-    this.notionAPI = new NotionAPI({
-      authToken: NOTION_TOKEN_V2,
-      activeUser: NOTION_ACTIVE_USER,
-    });
+      this.notionAPI = new NotionAPI({
+        authToken: NOTION_TOKEN_V2,
+        activeUser: NOTION_ACTIVE_USER,
+      });
+    } catch (error) {
+      throw new Error('Failed to initialize Notion API client');
+    }
   }
 
   async getPosts() {
@@ -56,6 +60,8 @@ export class Notion {
 
     const posts = await Promise.all(
       response.results.map(async (post: any) => {
+        if (!post) return;
+
         const metadata = {
           id: post.id,
           title: post.properties.Title.title[0].plain_text,
@@ -96,7 +102,11 @@ export class Notion {
   async getPostBySlug(slug: string | string[]) {
     const posts = await this.getPosts();
 
-    const post = posts.find((post) => post.metadata.slug === slug);
+    const post = posts.find((post) => {
+      if (!post) return;
+
+      return post.metadata.slug === slug;
+    });
 
     if (!post) {
       throw new Error(`Post with slug ${slug} not found`);

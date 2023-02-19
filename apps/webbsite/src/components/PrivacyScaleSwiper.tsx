@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { Heading4, SubHeading2, PrivacyScaleIllustration } from '../components';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import required modules
@@ -122,9 +122,9 @@ export const PrivacyScaleSwiper = () => {
             <SwiperSlide key={index}>
               <div className="p-6 space-y-4 md:space-y-0">
                 <div className="space-y-4 min-h-[315px]">
-                  <Heading4 className="text-mono-0">{content.title}</Heading4>
+                  <Heading4 className="dark:text-mono-0">{content.title}</Heading4>
 
-                  <SubHeading2 className="text-mono-80">
+                  <SubHeading2 className="dark:text-mono-80">
                     {content.description}
                   </SubHeading2>
 

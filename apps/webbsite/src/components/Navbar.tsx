@@ -103,7 +103,12 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+          <Button
+            href={BRIDGE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="button-primary"
+          >
             Bridge
           </Button>
         </li>

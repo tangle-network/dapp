@@ -75,14 +75,14 @@ export const Footer = () => {
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
         <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
-          <Heading2 className="text-[34px] leading-[46px]">
+          <Heading2 className="text-[34px] leading-[46px] dark:text-mono-0">
             Scaling Privacy for <br />
             Everyone, Everything, Everywhere.
           </Heading2>
 
           {!success && (
             <div className="space-y-6">
-              <Heading3 className="text-lg leading-6 dark:text-mono-20">
+              <Heading3 className="text-lg leading-6 dark:text-mono-80">
                 Follow for Updates
               </Heading3>
 

@@ -6,7 +6,7 @@ import {
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
-import { Heading2, SubHeading } from '../../components';
+import { Heading2, SubHeading1 } from '../../components';
 
 const tabsContent = {
   ownership: {
@@ -32,14 +32,14 @@ export const PrivacyConnectedSection = () => {
   return (
     <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
-      <Heading2 className="px-4 mt-6 text-center">
+      <Heading2 className="px-4 mt-6 text-center text-mono-200">
         The Future of privacy is Connected
       </Heading2>
-      <SubHeading className="px-4 mt-6 text-center md:mt-9">
+      <SubHeading1 className="px-4 mt-6 text-center md:mt-9 text-mono-180">
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our
         Web3 ecosystem.
-      </SubHeading>
+      </SubHeading1>
 
       <TabsRoot
         defaultValue={activeTab}

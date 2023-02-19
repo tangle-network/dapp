@@ -18,9 +18,29 @@ export type PostMetadata = {
   };
 };
 
+export type VideoMetadata = {
+  id: string;
+  title: string;
+  tags: string[];
+  link: string;
+  cover: string;
+  slug?: string;
+};
+
 export type Post = {
   metadata: PostMetadata;
   recordMap: ExtendedRecordMap;
+};
+
+export type Video = {
+  metadata: VideoMetadata;
+};
+
+export type PostOrVideo = {
+  metadata:
+    | Omit<PostMetadata, 'author' | 'description' | 'published' | 'dateAndTime'>
+    | VideoMetadata;
+  recordMap?: ExtendedRecordMap;
 };
 
 export interface StaticPropsParams extends ParsedUrlQuery {

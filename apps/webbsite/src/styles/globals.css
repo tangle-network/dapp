@@ -57,62 +57,107 @@
   @apply !bg-mono-200;
 }
 
-/** Headings and subheadings */
+/* Headings, sub-headings, card texts */
 
 .heading-1 {
-  @apply text-[32px] leading-[46px] tracking-tight font-bold text-mono-200 font-satoshi
-    md:text-[84px] md:leading-[96px] md:tracking-normal;
+  @apply text-base
+  text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
+  md:text-[84px] md:leading-[113px] /** medium screen */
+  font-black font-satoshi;
 }
 
 .heading-2 {
-  @apply text-[30px] leading-[41px] text-mono-200 font-bold font-satoshi
-    md:text-[48px] md:leading-[72px];
+  @apply text-base
+  text-[30px] leading-[40.5px] /** small screen */
+  md:text-[48px] md:leading-[72px] /** medium screen */
+  font-black font-satoshi;
 }
 
 .heading-3 {
-  @apply text-[24px] leading-8 text-mono-200 font-black font-satoshi
-    md:text-[36px] md:leading-[54px];
+  @apply text-base
+  text-[24px] leading-[32.4px] /** small screen */
+  md:text-[36px] md:leading-[54px] /** medium screen */
+  font-black font-satoshi;
 }
 
 .heading-4 {
-  @apply text-[24px] leading-[36px] text-mono-200 font-black font-satoshi;
+  @apply text-base
+  text-[24px] leading-[36px] /** small screen */
+  font-bold font-satoshi;
 }
 
 .sub-heading-1 {
-  @apply text-base font-medium text-mono-180 font-satoshi md:text-2xl md:leading-9;
+  @apply text-base
+  text-[16px] leading-[21.6px] /** small screen */
+  md:text-[18px] md:leading-[27px] /** medium screen */
+  font-medium font-satoshi;
 }
 
 .sub-heading-2 {
-  @apply text-base leading-[22px] font-medium text-mono-180 font-satoshi
-    md:text-[18px] md:leading-[27px];
+  @apply text-base
+  text-[16px] leading-[21.6px] /** small screen */
+  md:leading-[24px] /** medium screen */
+  font-medium font-satoshi;
 }
 
-/** Cards title, description and link */
+.button-primary {
+  @apply text-base
+  text-[14px] leading-[27px] /** small screen */
+  md:text-[18px] /** medium screen */
+  py-[8px] px-[36px] rounded-[30px]
+ text-mono-0 bg-mono-200 dark:text-mono-180 dark:bg-mono-20
+  font-bold md:font-black font-satoshi;
+}
+
+.button-secondary {
+  @apply text-base
+  text-[14px]  leading-[27px] /** small screen */
+  md:text-[16px] /** medium screen */
+  py-[8px] px-[36px] rounded-[30px]
+ text-mono-200 bg-mono-0 border-[2px] hover:text-mono-200 hover:bg-mono-20 border-mono-200
+  font-bold md:font-black font-satoshi;
+}
 
 .card-title {
-  @apply text-base leading-[24.3px] font-black text-mono-200 font-satoshi
-    md:text-[24px] md:leading-[32.4px];
+  @apply text-base
+  text-[18px] leading-[24.3px] /** small screen */
+  md:text-[24px] md:leading-[32.4px] /** medium screen */
+  font-black font-satoshi;
 }
 
 .card-text {
-  @apply text-base leading-[21.6px] font-medium text-mono-140 font-satoshi
-    md:text-[18px] md:leading-[24.3px];
+  @apply text-base
+  text-[16px] leading-[21.6px] /** small screen */
+  md:text-[18px] md:leading-[24.3px] /** medium screen */
+  font-medium font-satoshi;
 }
 
-.card-link-text {
-  @apply text-base leading-[21.6px] font-bold text-blue-70 font-satoshi
-    md:text-[18px] md:leading-[24.3px];
+.card-tag {
+  @apply text-base
+  text-[16px] leading-[27px] /** small screen */
+  md:text-[18px] /** medium screen */
+  font-black font-satoshi;
 }
 
-/** Blog related styles */
-.blog-card-tag {
-  @apply text-base leading-[27px] font-black text-mono-120 font-satoshi
-    text-[18px];
+.blog-section-title {
+  @apply text-base
+  text-[24px] leading-[28.8px] /** small screen */
+  md:text-[36px] md:leading-[72px] /** medium screen */
+  font-bold font-satoshi;
 }
 
-.blog-card-title {
-  @apply text-base leading-[24.3px] font-black text-mono-200 font-satoshi
-    text-[24px] md:leading-[32.4px];
+.tag {
+  @apply text-base
+  text-[16px] leading-[24px] tracking-[0.01em] /** small screen */
+  md:text-[18px] /** medium screen */
+  text-mono-120 py-[8px] px-[12px] capitalize cursor-pointer rounded-lg font-black font-satoshi;
+}
+
+.tag-selected {
+  @apply text-base
+  text-[16px] leading-[24px] tracking-[0.01em] /** small screen */
+  md:text-[18px] /** medium screen */
+  text-blue-70 bg-blue-10 py-[8px] px-[12px] capitalize cursor-pointer rounded-lg font-black font-satoshi;
 }
 
 /** Override the notion styles */

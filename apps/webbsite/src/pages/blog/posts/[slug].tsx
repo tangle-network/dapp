@@ -3,8 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 import { NotionRenderer } from 'react-notion-x';
-import { Heading2 } from '../../components';
-import { Notion, Post, StaticPropsParams } from '../../libs/notion';
+import { Heading2 } from '../../../components';
+import { Notion, Post, StaticPropsParams } from '../../../libs/notion';
 
 const Post: FC<{ post: Post }> = ({ post }) => {
   return (
@@ -28,8 +28,14 @@ export const getStaticPaths = async () => {
 
   const posts = await notion.getPosts();
 
+  if (!posts) return;
+
   return {
-    paths: posts.map((post) => `/blog/${post.metadata.slug}`),
+    paths: posts.map((post) => {
+      if (!post) return;
+
+      return `/blog/posts/${post.metadata.slug}`;
+    }),
     fallback: true,
   };
 };
