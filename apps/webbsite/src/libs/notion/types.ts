@@ -16,6 +16,7 @@ export type PostMetadata = {
     lastEditedDate: string;
     lastEditedTime: string;
   };
+  link?: string;
 };
 
 export type VideoMetadata = {
@@ -36,7 +37,7 @@ export type Video = {
   metadata: VideoMetadata;
 };
 
-export type PostOrVideo = {
+export type PostsOrVideos = {
   metadata:
     | Omit<PostMetadata, 'author' | 'description' | 'published' | 'dateAndTime'>
     | VideoMetadata;

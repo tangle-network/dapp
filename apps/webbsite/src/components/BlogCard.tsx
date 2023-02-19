@@ -13,7 +13,7 @@ export const BlogCard = (post: BlogCardProps) => {
   const { title, tags, cover, link } = post;
 
   return (
-    <div className="rounded-b-lg break-words shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+    <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
       <Link href={link}>
         <img
           src={cover}

@@ -1,18 +1,12 @@
 import { useMemo, useState } from 'react';
-import { PostOrVideo } from '../../libs/notion';
+import { PostsOrVideos } from '../../libs/notion';
 import { BlogCard, Heading3 } from '../../components';
-import {
-  Button,
-  TabContent,
-  TabsList,
-  TabsRoot,
-  TabTrigger,
-} from '@webb-tools/webb-ui-components';
+import { Button } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 
 type BlogSectionProps = {
   type: 'post' | 'video';
-  items: PostOrVideo[];
+  items: PostsOrVideos[];
   showAllItems?: boolean;
 };
 
@@ -49,12 +43,12 @@ export const BlogSection = (data: BlogSectionProps) => {
   }, [filter, allItems]);
 
   return (
-    <div className="mt-24 px-4">
+    <div className="px-4 mt-[18px]">
       <Heading3 className="mb-8 blog-section-title text-mono-200">
         {type === 'post' ? 'Writing By Topic' : 'Videos By Topic'}
       </Heading3>
 
-      <div className="mb-8">
+      <div className="mb-8 flex flex-wrap">
         {tags.map((tag) => (
           <span
             key={tag}
@@ -68,11 +62,11 @@ export const BlogSection = (data: BlogSectionProps) => {
         ))}
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-[72px]">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
         {filteredItems.map((item) => {
-          const { id, title, slug, tags, cover } = item.metadata;
+          console.log(item);
 
-          const link = `/blog/posts/${slug}`;
+          const { id, title, slug, tags, cover, link } = item.metadata;
 
           return (
             <BlogCard
@@ -80,7 +74,7 @@ export const BlogSection = (data: BlogSectionProps) => {
               title={title}
               tags={tags}
               cover={cover}
-              link={link}
+              link={link ? link : `/blog/posts/${slug}`}
             />
           );
         })}
