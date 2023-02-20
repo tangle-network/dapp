@@ -748,7 +748,7 @@ export const TransferContainer = forwardRef<
           currency={fungibleCurrency}
           destChain={destChain}
           recipient={recipientPubKey}
-          relayer={activeRelayer}
+          relayer={null}
           note={changeNote}
           changeUtxo={changeUtxo}
           transferUtxo={transferUtxo}
@@ -771,7 +771,6 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       setMainComponent,
-      activeRelayer,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
