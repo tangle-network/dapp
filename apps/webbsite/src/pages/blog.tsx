@@ -10,7 +10,7 @@ type BlogProps = {
 const Blog: FC<{ blog: BlogProps }> = ({ blog }) => {
   const { posts, videos } = blog;
 
-  const featuredPost = posts[posts.length - 1];
+  const featuredPost = posts[4];
   const recentVideos = videos.slice(-3);
 
   return (

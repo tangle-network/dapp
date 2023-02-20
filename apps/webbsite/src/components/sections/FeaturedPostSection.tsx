@@ -12,7 +12,7 @@ type FeaturedPostSectionProps = {
 
 export const FeaturedPostSection = (data: FeaturedPostSectionProps) => {
   const { featuredPost, recentVideos } = data;
-  const { title, tags, cover, link, slug, description } = featuredPost.metadata;
+  const { title, cover, slug, description } = featuredPost.metadata;
 
   return (
     <div className="px-4 mt-[18px] grid lg:grid-cols-2 gap-x-6 gap-y-[72px] py-[72px]">
