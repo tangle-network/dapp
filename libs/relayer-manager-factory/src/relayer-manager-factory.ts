@@ -8,6 +8,7 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
+import { LoggerService } from '@webb-tools/browser-utils';
 import {
   RelayerCMDBase,
   RelayerConfig,
@@ -38,6 +39,8 @@ export async function getRelayerManagerFactory() {
  * @param chainNameAdapter - An adapter for getting the typedChainId from the chain name and the base
  **/
 export class WebbRelayerManagerFactory {
+  private logger = LoggerService.get('RelayerManagerFactory');
+
   private capabilities: Record<RelayerConfig['endpoint'], Capabilities> = {};
 
   private constructor(
@@ -52,8 +55,6 @@ export class WebbRelayerManagerFactory {
     info: RelayerInfo,
     nameAdapter: ChainNameIntoChainId
   ): Capabilities {
-    console.log('received info: ', info);
-
     return {
       hasIpService: true,
       supportedChains: {
@@ -91,19 +92,21 @@ export class WebbRelayerManagerFactory {
     this.capabilities[config.endpoint] = await this.fetchCapabilities(
       config.endpoint
     );
-    console.log(this.capabilities[config.endpoint]);
-
     return this.capabilities;
   }
 
   public async fetchCapabilities(endpoint: string): Promise<Capabilities> {
-    const res = await fetch(`${endpoint}/api/v1/info`);
-    const info: RelayerInfo = await res.json();
-
-    return WebbRelayerManagerFactory.infoIntoCapabilities(
-      info,
-      this.chainNameAdapter
-    );
+    try {
+      const response = await fetch(`${endpoint}/api/v1/info`);
+      const info: RelayerInfo = await response.json();
+      this.logger.info('Received relayer info from endpoint: ', endpoint, info);
+      return WebbRelayerManagerFactory.infoIntoCapabilities(
+        info,
+        this.chainNameAdapter
+      );
+    } catch (error) {
+      // Ignore errors
+    }
   }
 
   // Examine the data for saved (already fetched) capabilities. For easier
