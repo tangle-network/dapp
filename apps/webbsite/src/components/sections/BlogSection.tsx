@@ -64,8 +64,6 @@ export const BlogSection = (data: BlogSectionProps) => {
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
         {filteredItems.map((item) => {
-          console.log(item);
-
           const { id, title, slug, tags, cover, link } = item.metadata;
 
           return (

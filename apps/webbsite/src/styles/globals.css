@@ -160,6 +160,27 @@
   text-blue-70 bg-blue-10 py-[8px] px-[12px] capitalize cursor-pointer rounded-lg font-black font-satoshi;
 }
 
+.featured-post-title {
+  @apply text-base
+  text-[30px] leading-[40.5px] /** small screen */
+  md:text-[38px] md:leading-[51.3px] /** medium screen */
+  font-black font-satoshi;
+}
+
+.featured-post-text {
+  @apply text-base
+  text-[18px] leading-[24.3px] /** small screen */
+  md:text-[24px] md:leading-[36px] /** medium screen */
+  font-medium font-satoshi;
+}
+
+.recent-video-title {
+  @apply text-base
+  text-[18px] leading-[24.3px] /** small screen */
+  md:text-[24px] md:leading-[32.4px] /** medium screen */
+  font-black font-satoshi;
+}
+
 /** Override the notion styles */
 
 .notion-h3 {

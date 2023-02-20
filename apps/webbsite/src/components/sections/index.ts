@@ -5,3 +5,4 @@ export * from './PrivacyConnectedSection';
 export * from './PrivacyScaleSection';
 export * from './ResearchAndDevelopmentSection';
 export * from './BlogSection';
+export * from './FeaturedPostSection';

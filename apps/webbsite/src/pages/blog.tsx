@@ -1,20 +1,27 @@
 import { FC } from 'react';
-import { BlogSection, Heading2 } from '../components';
-import { Notion, Post } from '../libs/notion';
+import { BlogSection, FeaturedPostSection, Heading2 } from '../components';
+import { Notion, Post, Video } from '../libs/notion';
 
 type BlogProps = {
   posts: Post[];
-  videos: Post[];
+  videos: Video[];
 };
 
 const Blog: FC<{ blog: BlogProps }> = ({ blog }) => {
   const { posts, videos } = blog;
 
+  const featuredPost = posts[posts.length - 1];
+  const recentVideos = videos.slice(-3);
+
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Heading2 className="text-center text-mono-200 mb-24">
+      <Heading2 className="text-center text-mono-200 mb-[24px]">
         The Webb Blog
       </Heading2>
+      <FeaturedPostSection
+        featuredPost={featuredPost}
+        recentVideos={recentVideos}
+      />
       <BlogSection type="post" items={posts} />
       <BlogSection type="video" items={videos} />
     </div>
