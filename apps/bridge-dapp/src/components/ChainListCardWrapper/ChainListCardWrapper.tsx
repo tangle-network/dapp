@@ -101,7 +101,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     <ChainListCard
       chainType={chainType}
       chains={chains}
-      className="w-[550px] h-[700px]"
+      className="min-w-[550px] w-full h-[700px]"
       currentActiveChain={currentActiveChain}
       onChange={handleChainChange}
       onClose={handleClose}

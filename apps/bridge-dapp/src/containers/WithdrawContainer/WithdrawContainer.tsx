@@ -514,7 +514,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
-        className="h-[615px]"
+        className="h-[615px] max-w-none"
         tokenInputProps={{
           onClick: () => {
             if (!activeApi) {
@@ -523,7 +523,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <TokenListCard
-                className="w-[550px] h-[700px]"
+                className="min-w-[550px] h-[700px]"
                 title={'Select Asset to Withdraw'}
                 popularTokens={[]}
                 selectTokens={fungibleTokens}
@@ -544,7 +544,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[700px]"
+                  className="min-w-[550px] h-[700px]"
                   title={'Select Asset to Unwrap'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
@@ -596,7 +596,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <RelayerListCard
-                className="w-[550px] h-[700px]"
+                className="min-w-[550px] h-[700px]"
                 relayers={relayers
                   .map((relayer) => {
                     const relayerData = relayer.capabilities.supportedChains[

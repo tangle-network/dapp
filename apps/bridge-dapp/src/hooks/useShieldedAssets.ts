@@ -36,7 +36,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         if (existedChain) {
           existedChain.availableBalance = Number(
-            Number(Number(balance) + existedChain.availableBalance).toFixed(2)
+            Number(Number(balance) + existedChain.availableBalance)
           );
           existedChain.numberOfNotesFound += 1;
           existedChain.rawNotes.push(note);
@@ -74,7 +74,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(Number(balance).toFixed(2)),
+          availableBalance: Number(balance),
           numberOfNotesFound: 1,
           rawChain: chain,
           rawFungibleCurrency: fungibleCurrency,

@@ -2,6 +2,7 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
@@ -22,6 +23,7 @@ import {
   TitleWithInfo,
   TokenPairIcons,
   Typography,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -105,7 +107,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {props.getValue()}
+        {formatTokenAmount(props.getValue())}
       </Typography>
     ),
   }),
@@ -125,12 +127,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
 
   columnHelper.accessor('note', {
     header: () => (
-      <TitleWithInfo
-        title="Spend Note"
-        info="Spend note"
-        variant="body1"
-        className="justify-center"
-      />
+      <TitleWithInfo title="Spend Note" info="Spend note" variant="body1" />
     ),
     cell: (props) => (
       <div className="flex items-center">
@@ -152,6 +149,7 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
+  globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -232,10 +230,15 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      globalFilter: globalSearchText,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   if (isSyncingNote) {
@@ -245,9 +248,9 @@ export const SpendNotesTableContainer: FC<SpendNotesTableContainerProps> = ({
   if (!data.length) {
     return (
       <EmptyTable
-        title="No spend notes found"
-        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
-        buttonText="Upload spend Notes"
+        title="Shielded Assets"
+        description="When you make a deposit, you'll see your shielded assets here."
+        buttonText="Upload a spend note."
         onClick={onUploadSpendNote}
       />
     );
