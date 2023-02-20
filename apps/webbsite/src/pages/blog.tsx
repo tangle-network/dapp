@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import { FC } from 'react';
 import { BlogSection, FeaturedPostSection, Heading2 } from '../components';
 import { Notion, Post, Video } from '../libs/notion';
@@ -28,7 +29,7 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog }) => {
   );
 };
 
-export const getStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const notion = new Notion();
 
   const posts = await notion.getPosts();
@@ -41,7 +42,6 @@ export const getStaticProps = async () => {
         videos,
       },
     },
-    revalidate: 60,
   };
 };
 

@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import { FC } from 'react';
 import { BlogSection, Heading2 } from '../..//components';
 import { Notion, Video } from '../../libs/notion';
@@ -13,7 +14,7 @@ const Videos: FC<{ videos: Video[] }> = ({ videos }) => {
   );
 };
 
-export const getStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const notion = new Notion();
 
   const videos = await notion.getVideos();
@@ -22,7 +23,6 @@ export const getStaticProps = async () => {
     props: {
       videos,
     },
-    revalidate: 60,
   };
 };
 
