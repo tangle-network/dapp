@@ -5,7 +5,9 @@ import { Notion, Post } from '../../libs/notion';
 const Posts: FC<{ posts: Post[] }> = ({ posts }) => {
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Heading2 className="text-center text-mono-200">All Blog Posts</Heading2>
+      <Heading2 className="text-center text-mono-200 mb-[24px]">
+        All Blog Posts
+      </Heading2>
       <BlogSection type="post" items={posts} showAllItems />
     </div>
   );
