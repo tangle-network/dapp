@@ -166,7 +166,7 @@ export const bottomLinks: ExternalLink[] = [
 
 export const socialConfigs: Array<SocialConfigsType> = [
   {
-    name: 'telagram',
+    name: 'telegram',
     Icon: TelegramFill,
     href: 'https://t.me/webbprotocol',
     ...commonExternalProps,

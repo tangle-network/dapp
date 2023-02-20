@@ -1,5 +1,6 @@
 import React, { ErrorInfo } from 'react';
 
+import { ErrorFallback } from '../../components';
 import { WebbUIErrorBoudaryProps, WebbUIErrorBoudaryState } from './types';
 
 export class WebbUIErrorBoudary extends React.Component<
@@ -29,13 +30,8 @@ export class WebbUIErrorBoudary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div>
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error && this.state.error.toString()}
-            <br />
-            {this.state.errorInfo?.componentStack}
-          </details>
+        <div className="flex items-center justify-center w-screen h-screen">
+          <ErrorFallback />
         </div>
       );
     }

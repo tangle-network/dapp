@@ -3,6 +3,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
 import { useScrollActions } from '@webb-tools/responsive-utils';
 import {
+  ErrorFallback,
   TabContent,
   TabTrigger,
   TabsList,
@@ -40,6 +41,7 @@ import {
   useTryAnotherWalletWithView,
 } from '../hooks';
 import { downloadNotes } from '../utils';
+import { ErrorBoundary } from '@sentry/react';
 
 const PageBridge = () => {
   // State for the tabs
@@ -211,59 +213,61 @@ const PageBridge = () => {
   return (
     <>
       <div className="w-full">
-        <div
-          className={cx(
-            ' p-9',
-            "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
-            'bg-center object-fill bg-no-repeat bg-cover'
-          )}
-        >
-          <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
-            {customMainComponent}
+        <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
+          <div
+            className={cx(
+              ' p-9',
+              "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
+              'bg-center object-fill bg-no-repeat bg-cover'
+            )}
+          >
+            <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
+              {customMainComponent}
 
-            {/** Bridge tabs */}
-            <TabsRoot
-              value={activeTab}
-              onValueChange={(nextTab) =>
-                setActiveTab(nextTab as typeof activeTab)
-              }
-              // The customMainComponent alters the global mainComponent for display.
-              // Therfore, if the customMainComponent exists (input selected) then hide the base component.
-              className={cx(
-                'min-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
-                customMainComponent ? 'hidden' : 'block'
-              )}
-            >
-              <TabsList aria-label="bridge action" className="mb-4">
-                <TabTrigger value="Deposit">Deposit</TabTrigger>
-                <TabTrigger value="Transfer">Transfer</TabTrigger>
-                <TabTrigger value="Withdraw">Withdraw</TabTrigger>
-              </TabsList>
-              <TabContent value="Deposit">
-                <DepositContainer {...sharedBridgeTabContainerProps} />
-              </TabContent>
-              <TabContent value="Transfer">
-                <TransferContainer {...sharedBridgeTabContainerProps} />
-              </TabContent>
-              <TabContent value="Withdraw">
-                <WithdrawContainer {...sharedBridgeTabContainerProps} />
-              </TabContent>
-            </TabsRoot>
+              {/** Bridge tabs */}
+              <TabsRoot
+                value={activeTab}
+                onValueChange={(nextTab) =>
+                  setActiveTab(nextTab as typeof activeTab)
+                }
+                // The customMainComponent alters the global mainComponent for display.
+                // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+                className={cx(
+                  'min-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                  customMainComponent ? 'hidden' : 'block'
+                )}
+              >
+                <TabsList aria-label="bridge action" className="mb-4">
+                  <TabTrigger value="Deposit">Deposit</TabTrigger>
+                  <TabTrigger value="Transfer">Transfer</TabTrigger>
+                  <TabTrigger value="Withdraw">Withdraw</TabTrigger>
+                </TabsList>
+                <TabContent value="Deposit">
+                  <DepositContainer {...sharedBridgeTabContainerProps} />
+                </TabContent>
+                <TabContent value="Transfer">
+                  <TransferContainer {...sharedBridgeTabContainerProps} />
+                </TabContent>
+                <TabContent value="Withdraw">
+                  <WithdrawContainer {...sharedBridgeTabContainerProps} />
+                </TabContent>
+              </TabsRoot>
 
-            <div>
-              {/** Transaction Queue Card */}
-              {isDisplayTxQueueCard && (
-                <TransactionQueueCard
-                  className="w-full mb-4 max-w-none"
-                  transactions={txPayloads}
-                />
-              )}
+              <div>
+                {/** Transaction Queue Card */}
+                {isDisplayTxQueueCard && (
+                  <TransactionQueueCard
+                    className="w-full mb-4 max-w-none"
+                    transactions={txPayloads}
+                  />
+                )}
 
-              {/** Education cards */}
-              <EducationCard currentTab={activeTab} />
+                {/** Education cards */}
+                <EducationCard currentTab={activeTab} />
+              </div>
             </div>
           </div>
-        </div>
+        </ErrorBoundary>
 
         {/** Account stats table */}
         {noteManager && (
