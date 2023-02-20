@@ -88,6 +88,9 @@ export class Web3RelayerManager extends WebbRelayerManager {
     const { baseOn, contractAddress, ipService, typedChainId } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
+      if (!capabilities) {
+        return false;
+      }
 
       if (ipService) {
         if (!capabilities.hasIpService) {

@@ -1,11 +1,10 @@
 import { round } from 'lodash';
 
 const generateNumber = (decimalDigits: number) => {
-  return parseInt(
+  return parseFloat(
     `0.${Array(decimalDigits - 1)
       .fill(0)
-      .join('')}1`,
-    10
+      .join('')}1`
   );
 };
 
@@ -18,7 +17,7 @@ const generateNumber = (decimalDigits: number) => {
 export const formatTokenAmount = (amount: string, decimalPlaces = 3) => {
   const number = generateNumber(decimalPlaces);
   if (Number(amount) < number) {
-    return `<0.${number}`;
+    return `<${number}`;
   }
 
   return round(Number(amount), decimalPlaces).toLocaleString();
