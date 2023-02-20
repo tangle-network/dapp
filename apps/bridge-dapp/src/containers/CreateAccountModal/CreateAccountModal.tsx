@@ -74,7 +74,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           accounts[0],
           await metamask.eth.getChainId()
         );
-        console.log(msg);
+
         const signedString = await metamask.eth.personal.sign(
           msg,
           accounts[0],

@@ -94,56 +94,48 @@ const howItWorksContent: {
   ],
 };
 
-const commonTransitionClass = cx('transition-all duration-200');
+const commonTransitionClass = cx('transition-all !duration-150');
 
 export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
   ({ currentTab, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-      <>
-        <Transition
-          enter={commonTransitionClass}
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave={commonTransitionClass}
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          show={!isOpen}
+      <div className="">
+        <div
+          {...props}
+          className={twMerge(
+            'flex flex-row-reverse items-start',
+            props.className
+          )}
+          ref={ref}
         >
           <button
             className="py-2 px-2.5 space-x-1 flex items-center ml-auto"
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsOpen((prev) => !prev)}
           >
-            <HelpLineIcon size="lg" />
-
-            <Typography component="span" variant="body1" fw="bold">
-              Guide
-            </Typography>
-          </button>
-        </Transition>
-
-        <Transition
-          enter={cx(commonTransitionClass, 'origin-top-right delay-200')}
-          enterFrom={cx('opacity-0 scale-0')}
-          enterTo={cx('opacity-100 scale-100')}
-          leave={cx(commonTransitionClass, 'origin-top-right')}
-          leaveFrom={cx('opacity-100 scale-100')}
-          leaveTo={cx('opacity-0 scale-0')}
-          show={isOpen}
-        >
-          <div
-            {...props}
-            className={twMerge(
-              'flex flex-row-reverse items-start',
-              props.className
-            )}
-            ref={ref}
-          >
-            <button onClick={() => setIsOpen(false)}>
+            {isOpen ? (
               <Close size="lg" />
-            </button>
+            ) : (
+              <>
+                <HelpLineIcon size="lg" />
 
+                <Typography component="span" variant="body1" fw="bold">
+                  Guide
+                </Typography>
+              </>
+            )}
+          </button>
+
+          <Transition
+            className={cx(commonTransitionClass, 'origin-top-right')}
+            enter={cx('!delay-150')}
+            enterFrom={cx('opacity-0 scale-0')}
+            enterTo={cx('opacity-100 scale-100')}
+            leaveFrom={cx('opacity-100 scale-100')}
+            leaveTo={cx('opacity-0 scale-0')}
+            show={isOpen}
+          >
             <div className="space-y-4">
               <Typography variant="h3" fw="bold">
                 Privacy for everyone, everything, everywhere.
@@ -238,9 +230,9 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                 })}
               </div>
             </div>
-          </div>
-        </Transition>
-      </>
+          </Transition>
+        </div>
+      </div>
     );
   }
 );
