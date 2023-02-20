@@ -13,7 +13,7 @@ export interface ErrorFallbackProps extends PropsOf<'div'> {
   /**
    * The error description to display,
    * can be a string or a react element (string with links, etc.).
-   * when noWrapper is true, the children will be rendered without a wrapper (`<Typography />`)
+   * When noWrapper is true, the children will be rendered without a wrapper (`<Typography />`)
    */
   description?: Array<string | { noWrapper: boolean; children: ReactElement }>;
 
