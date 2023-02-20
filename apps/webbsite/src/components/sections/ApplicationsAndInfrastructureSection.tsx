@@ -23,7 +23,7 @@ export const ApplicationsAndInfrastructureSection = () => {
       <div className="px-4 space-y-[72px]">
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Heading3 className='text-mono-200'>Tangle Network</Heading3>
+            <Heading3 className="text-mono-200">Tangle Network</Heading3>
             <SubHeading2 className="mt-2 text-mono-180">
               Cross-chain private applications require governance and trustless
               proof of events. Tangle provides that using threshold multi-party
@@ -57,7 +57,9 @@ export const ApplicationsAndInfrastructureSection = () => {
           />
 
           <div className="self-start md:w-[calc(50%-12.5px)] md:!my-auto">
-            <Heading3 className='text-mono-200'>Connected Shielded Pool Protocols</Heading3>
+            <Heading3 className="text-mono-200">
+              Connected Shielded Pool Protocols
+            </Heading3>
             <SubHeading2 className="mt-2 text-mono-180">
               A cross-chain private transaction system for privately moving and
               privately transferring assets between blockchains.
@@ -75,7 +77,9 @@ export const ApplicationsAndInfrastructureSection = () => {
 
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Heading3 className='text-mono-200'>Connected Shielded Identity Protocols</Heading3>
+            <Heading3 className="text-mono-200">
+              Connected Shielded Identity Protocols
+            </Heading3>
             <SubHeading2 className="mt-2 text-mono-180">
               A cross-chain system for creating identities and connecting groups
               between blockchains.

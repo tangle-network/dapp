@@ -122,7 +122,9 @@ export const PrivacyScaleSwiper = () => {
             <SwiperSlide key={index}>
               <div className="p-6 space-y-4 md:space-y-0">
                 <div className="space-y-4 min-h-[315px]">
-                  <Heading4 className="dark:text-mono-0">{content.title}</Heading4>
+                  <Heading4 className="dark:text-mono-0">
+                    {content.title}
+                  </Heading4>
 
                   <SubHeading2 className="dark:text-mono-80">
                     {content.description}

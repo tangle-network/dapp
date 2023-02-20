@@ -42,7 +42,9 @@ export const ResearchAndDevelopmentSection = () => {
   return (
     <section className="py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px]">
-        <Heading2 className="px-4 text-center text-mono-200">Research & Development</Heading2>
+        <Heading2 className="px-4 text-center text-mono-200">
+          Research & Development
+        </Heading2>
 
         <SubHeading1 className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-180">
           Building interoperable zero-knowledge applications to scale privacy
@@ -58,7 +60,7 @@ export const ResearchAndDevelopmentSection = () => {
               {section.icon}
 
               <div>
-                <Heading3 className='text-mono-200'>{section.title}</Heading3>
+                <Heading3 className="text-mono-200">{section.title}</Heading3>
                 <SubHeading2 className="mt-2 text-mono-160">
                   {section.description}
                 </SubHeading2>
