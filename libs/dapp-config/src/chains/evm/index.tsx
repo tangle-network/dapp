@@ -74,11 +74,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.PolygonTestnet,
     name: 'Mumbai',
     tag: 'test',
-    url: 'https://rpc-mumbai.maticvigil.com/',
+    url: 'https://matic-mumbai.chainstacklabs.com/',
     evmRpcUrls: [
-      'https://rpc-mumbai.maticvigil.com/',
-      'https://polygon-mumbai.infura.io/v3',
       'https://matic-mumbai.chainstacklabs.com/',
+      'https://polygon-mumbai.infura.io/v3',
       'https://polygon-mumbai.g.alchemy.com/v2',
     ],
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
