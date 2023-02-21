@@ -112,6 +112,12 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   onlyCategory?: 'dev' | 'test' | 'live';
 
   /**
+   * The default category to display
+   * @default 'test'
+   */
+  defaultCategory?: 'dev' | 'test' | 'live';
+
+  /**
    * The override ScrollArea component props
    */
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;

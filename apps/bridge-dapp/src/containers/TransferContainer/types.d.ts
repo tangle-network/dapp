@@ -87,4 +87,10 @@ export interface TransferConfirmContainerProps
    * this will be stored on-chain
    */
   transferUtxo: Utxo;
+
+  /**
+   * The callbacl to reset the parent state
+   * @returns void
+   */
+  onResetState?: () => void;
 }

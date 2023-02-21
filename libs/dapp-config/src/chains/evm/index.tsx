@@ -1,3 +1,8 @@
+// Copyright 2022 @webb-tools/
+// SPDX-License-Identifier: Apache-2.0
+
+// The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
+
 import { CurrencyId, EVMChainId } from '@webb-tools/dapp-types';
 import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
@@ -18,6 +23,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
     evmRpcUrls: [
       'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+      'https://goerli.infura.io/v3',
+      'https://rpc.ankr.com/eth_goerli',
+      'https://eth-goerli.g.alchemy.com/v2',
     ],
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
@@ -31,9 +39,31 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.OptimismTestnet,
     name: 'Optimism',
     url: 'https://goerli.optimism.io',
-    evmRpcUrls: ['https://goerli.optimism.io'],
+    evmRpcUrls: [
+      'https://endpoints.omniatech.io/v1/op/goerli/public',
+      'https://optimism-goerli.infura.io/v3',
+      'https://opt-goerli.g.alchemy.com/v2/demo',
+      'https://goerli.optimism.io',
+    ],
     blockExplorerStub: 'https://blockscout.com/optimism/goerli',
     logo: OptimismLogo,
+    tag: 'test',
+    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
+    nativeCurrencyId: CurrencyId.ETH,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.ArbitrumTestnet,
+    name: 'Arbitrum',
+    url: 'https://goerli-rollup.arbitrum.io/rpc',
+    evmRpcUrls: [
+      'https://goerli-rollup.arbitrum.io/rpc',
+      'https://arbitrum-goerli.infura.io/v3',
+      'https://arb-goerli.g.alchemy.com/v2',
+    ],
+    blockExplorerStub: 'https://goerli-rollup-explorer.arbitrum.io/',
+    logo: ArbitrumLogo,
     tag: 'test',
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,
@@ -44,8 +74,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.PolygonTestnet,
     name: 'Mumbai',
     tag: 'test',
-    url: 'https://rpc-mumbai.maticvigil.com/',
-    evmRpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+    url: 'https://matic-mumbai.chainstacklabs.com/',
+    evmRpcUrls: [
+      'https://matic-mumbai.chainstacklabs.com/',
+      'https://polygon-mumbai.infura.io/v3',
+      'https://polygon-mumbai.g.alchemy.com/v2',
+    ],
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
     currencies: [CurrencyId.MATIC, CurrencyId.WETH, CurrencyId.webbETH],
@@ -94,7 +128,11 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Moonbase Alpha',
     tag: 'test',
     url: 'https://moonbeam-alpha.api.onfinality.io/public',
-    evmRpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
+    evmRpcUrls: [
+      'https://moonbeam-alpha.api.onfinality.io/public',
+      'https://rpc.api.moonbase.moonbeam.network',
+      'https://rpc.testnet.moonbeam.network	',
+    ],
     blockExplorerStub: 'https://moonbase.moonscan.io/',
     logo: MoonbeamLogo,
     currencies: [CurrencyId.WETH, CurrencyId.moonDEV, CurrencyId.webbETH],
@@ -108,7 +146,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     tag: 'test',
     url: 'https://rpc.sepolia.org',
     blockExplorerStub: 'https://sepolia.etherscan.io/',
-    evmRpcUrls: ['https://rpc.sepolia.org'],
+    evmRpcUrls: [
+      'https://rpc.sepolia.org',
+      'https://sepolia.infura.io/v3',
+      'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+      'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
+    ],
     logo: EtherLogo,
     currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
     nativeCurrencyId: CurrencyId.ETH,

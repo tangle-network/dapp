@@ -1,12 +1,8 @@
+import { Transition } from '@headlessui/react';
+import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
+import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
-import {
-  Banner,
-  Button,
-  Footer,
-} from '@webb-tools/webb-ui-components/components';
-import { Transition } from '@headlessui/react';
-import cx from 'classnames';
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -21,11 +17,12 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
 
       <Transition
         show={showBanner}
-        leave={cx('transition-transform origin-top duration-200')}
+        className={cx('[transform-style:preserve-3d] origin-top duration-200')}
         leaveFrom={cx('[transform:rotateX(0deg)]')}
         leaveTo={cx('[transform:rotateX(-90deg)]')}
       >
         <Banner
+          className="[backface-visibility:hidden]"
           onClose={onCloseHandler}
           dappName="stats"
           buttonText="Report Bug"
