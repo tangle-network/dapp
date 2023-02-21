@@ -1,7 +1,7 @@
 import { Close, HelpLineIcon, UsageGuideIcon } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { EducationCardProps } from './types';
 import { Transition } from '@headlessui/react';
@@ -97,8 +97,13 @@ const howItWorksContent: {
 const commonTransitionClass = cx('transition-all !duration-150');
 
 export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
-  ({ currentTab, ...props }, ref) => {
-    const [isOpen, setIsOpen] = useState(true);
+  ({ currentTab, defaultOpen = true, ...props }, ref) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+
+    useEffect(() => {
+      // Reset the state when the defaultOpen prop changes
+      setIsOpen(defaultOpen);
+    }, [defaultOpen]);
 
     return (
       <div className="">
