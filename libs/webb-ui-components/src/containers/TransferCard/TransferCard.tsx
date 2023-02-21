@@ -62,8 +62,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
           </BridgeInputGroup>
 
           <BridgeInputGroup className="flex flex-col space-y-2">
-            {/* Temporary comment until the relayer supports */}
-            {/* <RelayerInput {...relayerInputProps} /> */}
+            <RelayerInput {...relayerInputProps} />
 
             <RecipientInput {...recipientInputProps} />
           </BridgeInputGroup>

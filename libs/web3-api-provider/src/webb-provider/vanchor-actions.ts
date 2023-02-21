@@ -198,6 +198,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
 
+      const relayer =
+        this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
         tx, // tx
@@ -207,7 +210,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         0, // fee
         0, // refund
         ZERO_ADDRESS, // recipient
-        this.inner.relayerManager.activeRelayer?.account ?? ZERO_ADDRESS, // relayer
+        relayer, // relayer
         '', // wrapUnwrapToken (not used for transfers)
         leavesMap, // leavesMap
       ]);
