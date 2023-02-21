@@ -615,6 +615,7 @@ export const TransferContainer = forwardRef<
       setAmountError('');
       setRecipientPubKey('');
       setIsValidRecipient(false);
+      setAmount(undefined);
       setRelayer(null);
     }, [setRelayer]);
 
@@ -748,7 +749,7 @@ export const TransferContainer = forwardRef<
           currency={fungibleCurrency}
           destChain={destChain}
           recipient={recipientPubKey}
-          relayer={null}
+          relayer={activeRelayer}
           note={changeNote}
           changeUtxo={changeUtxo}
           transferUtxo={transferUtxo}
@@ -771,6 +772,7 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       setMainComponent,
+      activeRelayer,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
@@ -846,6 +848,7 @@ export const TransferContainer = forwardRef<
           },
           title: 'Recipient Public Key',
           errorMessage: recipientError,
+          value: recipientPubKey,
           onChange: (recipient) => {
             setRecipientPubKey(recipient);
           },

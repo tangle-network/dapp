@@ -280,7 +280,7 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    console.log('Leaves from relayers: ', leaves);
+    console.log(`Got ${leaves.length} leaves from relayers.`);
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
@@ -331,7 +331,7 @@ export class WebbWeb3Provider
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
-    const utxos = await vanchor.getSpendableUtxosFromChain(
+    const utxosFromChain = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
         1,
@@ -339,6 +339,29 @@ export class WebbWeb3Provider
       abortSignal,
       retryPromise
     );
+
+    const utxos = (
+      await Promise.all(
+        utxosFromChain.map(async (utxo) => {
+          const typedChainId = Number(utxo.chainId);
+          const chain = this.config.chains[typedChainId];
+          if (!chain) {
+            throw new Error('Chain not found'); // Development error
+          }
+
+          const provider = Web3Provider.fromUri(chain.url);
+          const vAnchorContract = VAnchor__factory.connect(
+            vanchor.contract.address,
+            provider.intoEthersProvider()
+          );
+          const alreadySpent = await vAnchorContract.isSpent(
+            toFixedHex(`0x${utxo.nullifier}`, 32)
+          );
+
+          return alreadySpent ? null : utxo;
+        })
+      )
+    ).filter((utxo) => !!utxo && utxo.amount !== '0');
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
