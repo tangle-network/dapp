@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 
 export const useCurrencies = () => {
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi, activeChain, loading } = useWebContext();
 
   const [fungibleCurrencies, setFungibleCurrencies] = useState<Currency[]>([]);
 
@@ -67,7 +67,7 @@ export const useCurrencies = () => {
   // Side effect to subscribe to the active chain and fetch the wrappable currencies
   // then update the wrappableCurrenciesMap
   useEffect(() => {
-    if (activeApi && activeChain) {
+    if (activeApi && activeChain && !loading) {
       const typedChainId = calculateTypedChainId(
         activeChain.chainType,
         activeChain.chainId
@@ -104,12 +104,12 @@ export const useCurrencies = () => {
         console.error(e);
       });
     }
-  }, [activeChain, activeApi]);
+  }, [activeChain, activeApi, loading]);
 
   // Side effect to subscribe to the active api,
   // then set the fungible currencies, wrappable currencies and current fungible currency
   useEffect(() => {
-    if (!activeApi || !activeChain) {
+    if (!activeApi || !activeChain || loading) {
       return;
     }
 
@@ -178,11 +178,11 @@ export const useCurrencies = () => {
     return () => {
       activeBridgeSub.unsubscribe();
     };
-  }, [activeApi, activeChain]);
+  }, [activeApi, activeChain, loading]);
 
   // Side effect to subscribe to fungible currency and wrappable currency
   useEffect(() => {
-    if (!activeApi) {
+    if (!activeApi || loading) {
       return;
     }
 
@@ -199,7 +199,7 @@ export const useCurrencies = () => {
     return () => {
       sub.forEach((s) => s.unsubscribe());
     };
-  }, [activeApi]);
+  }, [activeApi, loading]);
 
   return {
     fungibleCurrencies,
