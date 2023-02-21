@@ -482,7 +482,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const destTypedChainId = payload.note.targetChainId;
     // Populate the leaves for the destination if not already populated
     if (!leavesMap[destTypedChainId.toString()]) {
-      const leafStorage = await bridgeStorageFactory(+destTypedChainId);
+      const leafStorage = await bridgeStorageFactory(
+        destVAnchor.contract.address
+      );
       const leaves = await this.inner.getVariableAnchorLeaves(
         destVAnchor,
         leafStorage,
@@ -533,7 +535,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         );
 
       const leafStorage = await bridgeStorageFactory(
-        Number(parsedNote.sourceChainId)
+        sourceVAnchor.contract.address
       );
       const leaves = await this.inner.getVariableAnchorLeaves(
         sourceVAnchor,

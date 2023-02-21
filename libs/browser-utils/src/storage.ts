@@ -5,13 +5,18 @@ import { Storage } from '@webb-tools/storage';
 import { Keypair } from '@webb-tools/sdk-core';
 
 /// The `BridgeStorage` is used to store the leaves of the merkle tree
-/// of the underlying VAnchor contract. The key is the contract address.
-export type BridgeStorage = Record<
-  string,
-  { lastQueriedBlock: number; leaves: string[] }
->;
-export const bridgeStorageFactory = (chainIdType: number) => {
-  return Storage.newFromCache<BridgeStorage>(chainIdType.toString(), {
+/// of the underlying VAnchor contract. The key is the typed chain id.
+export type BridgeStorage = {
+  [typedChainId: number]: {
+    leaves: {
+      lastQueriedBlock: number;
+      value: string[];
+    };
+  };
+};
+
+export const bridgeStorageFactory = (create2Address: string) => {
+  return Storage.newFromCache<BridgeStorage>(create2Address, {
     async commit(key: string, data: BridgeStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
