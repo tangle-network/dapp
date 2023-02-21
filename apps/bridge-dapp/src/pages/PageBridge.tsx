@@ -263,7 +263,10 @@ const PageBridge = () => {
                 )}
 
                 {/** Education cards */}
-                <EducationCard currentTab={activeTab} />
+                <EducationCard
+                  defaultOpen={!isDisplayTxQueueCard} // If there is a tx queue card, then don't open the education card by default
+                  currentTab={activeTab}
+                />
               </div>
             </div>
           </div>
