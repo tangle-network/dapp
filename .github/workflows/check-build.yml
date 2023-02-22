@@ -33,6 +33,9 @@ jobs:
           echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
           echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
           echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
+          echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
+          echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
+          echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
       - name: build
         run: |
           yarn install
