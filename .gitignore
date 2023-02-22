@@ -85,3 +85,7 @@ tmp
 # Local Netlify folder
 .netlify
 .dccache
+/tools/scripts/local-webb-dapp
+/tools/scripts/protocol-solidity/
+/tools/scripts/relayer/
+/tools/scripts/webb-dapp/

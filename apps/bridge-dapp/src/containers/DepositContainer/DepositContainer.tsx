@@ -29,7 +29,7 @@ import {
 
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
-import { useConnectWallet } from '../../hooks';
+import { WalletState, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
@@ -59,7 +59,7 @@ export const DepositContainer = forwardRef<
   ) => {
     const { setMainComponent } = useWebbUI();
 
-    const { toggleModal, isWalletConnected } = useConnectWallet();
+    const { toggleModal, isWalletConnected, walletState } = useConnectWallet();
 
     const [mainComponentName, setMainComponentName] = useState<
       MainComponentVariants | undefined
@@ -462,7 +462,7 @@ export const DepositContainer = forwardRef<
 
     const tokenListDepositProps = useMemo<TokenListCardProps>(() => {
       return {
-        className: 'w-[550px] h-[700px]',
+        className: 'min-w-[550px] h-[700px]',
         title: `Select a token from ${selectedSourceChain?.name}`,
         popularTokens: [],
         selectTokens: populatedSelectableWebbTokens,
@@ -497,7 +497,7 @@ export const DepositContainer = forwardRef<
       );
 
       return {
-        className: 'w-[550px] h-[700px]',
+        className: 'min-w-[550px] h-[700px]',
         selectTokens: tokens,
         value: destChainInputValue,
         title: 'Select Asset to Deposit',
@@ -661,10 +661,21 @@ export const DepositContainer = forwardRef<
       }
     }, [setMainComponentArgs, setMainComponent]);
 
+    // Effect reset the main component when
+    // the `walletState` failed or succeed
+    useEffect(() => {
+      if (
+        walletState === WalletState.FAILED ||
+        walletState === WalletState.SUCCESS
+      ) {
+        setMainComponentName(undefined);
+      }
+    }, [walletState]);
+
     return (
       <div {...props} ref={ref}>
         <DepositCard
-          className="h-[615px]"
+          className="h-[615px] max-w-none"
           sourceChainProps={{
             chain: selectedSourceChain,
             onClick: sourceChainInputOnClick,
@@ -697,7 +708,10 @@ export const DepositContainer = forwardRef<
           }}
           buttonProps={{
             onClick: handleDepositButtonClick,
-            isLoading: loading || isGeneratingNote,
+            isLoading:
+              loading ||
+              isGeneratingNote ||
+              walletState === WalletState.CONNECTING,
             loadingText: loading ? 'Connecting...' : 'Generating Note...',
             isDisabled,
             children: buttonText,

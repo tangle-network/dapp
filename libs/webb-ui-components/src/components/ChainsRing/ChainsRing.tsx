@@ -1,7 +1,10 @@
 import { arrayShuffle } from '@polkadot/util';
 import { ChainIcon } from '@webb-tools/icons';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components';
+import {
+  IconWithTooltip,
+  formatTokenAmount,
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { ComponentProps, FC, forwardRef, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -244,15 +247,15 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
             )}
           >
             <Typography
-              variant="body1"
+              variant="h5"
               fw="bold"
               className="text-mono-160 dark:text-mono-0"
             >
-              {amount.toString()}
+              {formatTokenAmount(amount.toString())}
             </Typography>
             {tokenPairString && (
               <Typography
-                variant="body2"
+                variant="body1"
                 fw="bold"
                 className="uppercase text-mono-140 dark:text-mono-80"
               >

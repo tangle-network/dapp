@@ -34,3 +34,40 @@ export interface EmptyTableProps {
    */
   onClick?: ComponentProps<typeof Button>['onClick'];
 }
+
+export interface FilterButtonProps {
+  /**
+   * Available destination chains to filter
+   * */
+  destinationChains: string[];
+
+  /**
+   * Set destination chains to filter
+   * */
+  setSelectedChains: (chains: 'all' | [string, ChainConfig][]) => void;
+
+  /**
+   * Selected destination chains to filter
+   * */
+  selectedChains: 'all' | [string, ChainConfig][];
+
+  /**
+   * Search input placeholder
+   * */
+  searchPlaceholder: string;
+
+  /**
+   * Search input value
+   * */
+  globalSearchText: string;
+
+  /**
+   * Set search input value
+   * */
+  setGlobalSearchText: (text: string) => void;
+
+  /**
+   * Clear all applied filters
+   * */
+  clearAllFilters: () => void;
+}

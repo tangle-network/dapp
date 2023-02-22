@@ -47,7 +47,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col justify-between max-w-[518px]',
+          'flex flex-col justify-between max-w-[518px] w-full',
           className
         )}
         ref={ref}

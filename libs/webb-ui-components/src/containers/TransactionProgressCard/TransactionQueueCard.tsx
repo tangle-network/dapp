@@ -247,7 +247,7 @@ export const TransactionQueueCard = forwardRef<
         {...props}
         className={twMerge(
           'rounded-lg shadow-xl overflow-hidden',
-          'flex flex-col max-w-[295px] dark:bg-mono-160',
+          'flex flex-col max-w-[295px] bg-mono-0 dark:bg-mono-160',
           className
         )}
         ref={ref}

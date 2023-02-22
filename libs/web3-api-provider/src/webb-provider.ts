@@ -264,11 +264,15 @@ export class WebbWeb3Provider
     console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
+    const chain = this.config.chains[typedChainId];
+    console.log('On chain: ', chain?.name);
+
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
       typedChainId,
       vanchor.contract.address
     );
+
     let leaves = await this.relayerManager.fetchLeavesFromRelayers(
       relayers,
       vanchor,
@@ -276,7 +280,7 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    console.log('Leaves from relayers: ', leaves);
+    console.log(`Got ${leaves.length} leaves from relayers.`);
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
@@ -325,7 +329,7 @@ export class WebbWeb3Provider
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
-    const utxos = await vanchor.getSpendableUtxosFromChain(
+    const utxosFromChain = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
         1,
@@ -333,6 +337,29 @@ export class WebbWeb3Provider
       abortSignal,
       retryPromise
     );
+
+    const utxos = (
+      await Promise.all(
+        utxosFromChain.map(async (utxo) => {
+          const typedChainId = Number(utxo.chainId);
+          const chain = this.config.chains[typedChainId];
+          if (!chain) {
+            throw new Error('Chain not found'); // Development error
+          }
+
+          const provider = Web3Provider.fromUri(chain.url);
+          const vAnchorContract = VAnchor__factory.connect(
+            vanchor.contract.address,
+            provider.intoEthersProvider()
+          );
+          const alreadySpent = await vAnchorContract.isSpent(
+            toFixedHex(`0x${utxo.nullifier}`, 32)
+          );
+
+          return alreadySpent ? null : utxo;
+        })
+      )
+    ).filter((utxo) => !!utxo && utxo.amount !== '0');
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
@@ -432,41 +459,21 @@ export class WebbWeb3Provider
   }
 
   switchOrAddChain(evmChainId: number) {
-    return this.web3Provider
-      .switchChain({
-        chainId: `0x${evmChainId.toString(16)}`,
-      })
-      ?.catch(async (switchError) => {
-        console.log('inside catch for switchChain', switchError);
+    const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
+    const chain = this.config.chains[chainId];
 
-        // cannot switch because network not recognized, so fetch configuration
-        const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
-        const chain = this.config.chains[chainId];
+    const currency = this.config.currencies[chain.nativeCurrencyId];
 
-        // prompt to add the chain
-        if (switchError.code === 4902) {
-          const currency = this.config.currencies[chain.nativeCurrencyId];
-
-          await this.web3Provider.addChain({
-            chainId: `0x${evmChainId.toString(16)}`,
-            chainName: chain.name,
-            nativeCurrency: {
-              decimals: 18,
-              name: currency.name,
-              symbol: currency.symbol,
-            },
-            rpcUrls: chain.evmRpcUrls,
-          });
-          // add network will prompt the switch, check evmId again and throw if user rejected
-          const newChainId = await this.web3Provider.network;
-
-          if (newChainId !== chain.chainId) {
-            throw switchError;
-          }
-        } else {
-          throw switchError;
-        }
-      });
+    return this.web3Provider.addChain({
+      chainId: `0x${evmChainId.toString(16)}`,
+      chainName: chain.name,
+      nativeCurrency: {
+        decimals: 18,
+        name: currency.name,
+        symbol: currency.symbol,
+      },
+      rpcUrls: chain.evmRpcUrls,
+    });
   }
 
   async sign(message: string): Promise<{

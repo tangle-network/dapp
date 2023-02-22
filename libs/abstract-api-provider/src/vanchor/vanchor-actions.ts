@@ -5,8 +5,7 @@ import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import { ZkComponents } from '@webb-tools/utils';
-import { BigNumberish, ContractReceipt } from 'ethers';
+import { BigNumberish, ContractReceipt, Overrides } from 'ethers';
 import { CancellationToken } from '../cancelation-token';
 import {
   ActionEvent,
@@ -14,6 +13,11 @@ import {
   Transaction,
   TransactionState,
 } from '../transaction';
+import { ActiveWebbRelayer } from '../relayer';
+
+export type ParametersOfTransactMethod = Awaited<
+  Parameters<VAnchorActions['transact']>
+>;
 
 export abstract class AbstractState<
   T extends WebbApiProvider<any>
@@ -66,7 +70,19 @@ export abstract class VAnchorActions<
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<Awaited<Parameters<VAnchorActions['transact']>>> | never;
+  ): Promise<ParametersOfTransactMethod> | never;
+
+  /**
+   * A function to send a transaction to the relayer
+   * @param activeRelayer The active relayer.
+   * @param txArgs The transaction payload.
+   * @param changeNotes The change notes.
+   */
+  abstract transactWithRelayer(
+    activeRelayer: ActiveWebbRelayer,
+    txArgs: ParametersOfTransactMethod,
+    changeNotes: Note[]
+  ): Promise<void>;
 
   // A function for transcting
   abstract transact(
@@ -79,7 +95,8 @@ export abstract class VAnchorActions<
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
+    overridesTransaction?: Overrides
   ): Promise<ContractReceipt>;
 }
 
