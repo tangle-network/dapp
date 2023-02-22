@@ -1,10 +1,13 @@
 import {
-  Transaction,
+  ActiveWebbRelayer,
   NewNotesTxResult,
+  Transaction,
 } from '@webb-tools/abstract-api-provider';
-import { VAnchorActions } from '@webb-tools/abstract-api-provider/vanchor/vanchor-actions';
+import {
+  ParametersOfTransactMethod,
+  VAnchorActions,
+} from '@webb-tools/abstract-api-provider/vanchor/vanchor-actions';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import { ZkComponents } from '@webb-tools/utils';
 import { BigNumberish, ContractReceipt } from 'ethers';
 
 import { WebbPolkadot } from '../webb-provider';
@@ -14,22 +17,18 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx: Transaction<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapToken: string
-  ): Promise<
-    [
-      tx: Transaction<NewNotesTxResult>,
-      contractAddress: string,
-      inputs: Utxo[],
-      outputs: Utxo[],
-      fee: BigNumberish,
-      refund: BigNumberish,
-      recipient: string,
-      relayer: string,
-      wrapUnwrapToken: string,
-      leavesMap: Record<string, Uint8Array[]>
-    ]
-  > {
+  ): Promise<ParametersOfTransactMethod> | never {
     throw new Error('Method not implemented.');
   }
+
+  transactWithRelayer(
+    activeRelayer: ActiveWebbRelayer,
+    txArgs: ParametersOfTransactMethod,
+    changeNotes: Note[]
+  ): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   transact(
     tx: Transaction<NewNotesTxResult>,
     contractAddress: string,

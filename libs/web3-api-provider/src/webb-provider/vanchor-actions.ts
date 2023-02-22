@@ -1,4 +1,6 @@
 import {
+  ActiveWebbRelayer,
+  ParametersOfTransactMethod,
   CancellationToken,
   NewNotesTxResult,
   Transaction,
@@ -7,6 +9,9 @@ import {
   TransferTransactionPayloadType,
   VAnchorActions,
   WithdrawTransactionPayloadType,
+  RelayedChainInput,
+  padHexString,
+  RelayedWithdrawResult,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
@@ -29,6 +34,7 @@ import {
   BigNumberish,
   ContractReceipt,
   ContractTransaction,
+  Overrides,
 } from 'ethers';
 
 import { JsNote } from '@webb-tools/wasm-utils';
@@ -36,13 +42,13 @@ import { poseidon } from 'circomlibjs';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
 
-export const isVAnchorDepositPayload = (
+const isVAnchorDepositPayload = (
   payload: TransactionPayloadType
 ): payload is Note => {
   return payload instanceof Note;
 };
 
-export const isVAnchorWithdrawPayload = (
+const isVAnchorWithdrawPayload = (
   payload: TransactionPayloadType
 ): payload is WithdrawTransactionPayloadType => {
   const changeUtxo: Utxo | undefined = payload['changeUtxo'];
@@ -65,7 +71,7 @@ export const isVAnchorWithdrawPayload = (
   );
 };
 
-export const isVAnchorTransferPayload = (
+const isVAnchorTransferPayload = (
   payload: TransactionPayloadType
 ): payload is TransferTransactionPayloadType => {
   const notes: Note[] | undefined = payload['notes'];
@@ -84,7 +90,7 @@ export const isVAnchorTransferPayload = (
   );
 };
 
-export const generateCircomCommitment = (note: JsNote): string => {
+const generateCircomCommitment = (note: JsNote): string => {
   const noteSecretParts = note.secrets.split(':');
   const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
   const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
@@ -98,7 +104,7 @@ export const generateCircomCommitment = (note: JsNote): string => {
   return BigNumber.from(hash).toHexString();
 };
 
-export async function utxoFromVAnchorNote(
+async function utxoFromVAnchorNote(
   note: JsNote,
   leafIndex: number
 ): Promise<Utxo> {
@@ -128,7 +134,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<Awaited<Parameters<Web3VAnchorActions['transact']>>> | never {
+  ): Promise<ParametersOfTransactMethod> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
@@ -160,7 +166,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         ZERO_ADDRESS, // recipient
         ZERO_ADDRESS, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
-        {}, // leavesMap
+        {}, // leavesMap,
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
       const { changeUtxo, notes, recipient } = payload;
@@ -192,6 +198,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
 
+      const relayer =
+        this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
         tx, // tx
@@ -201,12 +210,116 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         0, // fee
         0, // refund
         ZERO_ADDRESS, // recipient
-        this.inner.relayerManager.activeRelayer?.account ?? ZERO_ADDRESS, // relayer
+        relayer, // relayer
         '', // wrapUnwrapToken (not used for transfers)
         leavesMap, // leavesMap
       ]);
     } else {
       console.error('Invalid payload');
+    }
+  }
+
+  async transactWithRelayer(
+    activeRelayer: ActiveWebbRelayer,
+    txArgs: ParametersOfTransactMethod,
+    changeNotes: Note[]
+  ): Promise<void> {
+    let txHash = '';
+
+    const [tx, contractAddress, ...restArgs] = txArgs;
+
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+    const vanchor = await this.inner.getVariableAnchorByAddress(
+      contractAddress
+    );
+
+    const chainId = await vanchor.contract.getChainId();
+
+    const chainInfo: RelayedChainInput = {
+      baseOn: 'evm',
+      contractAddress: contractAddress,
+      endpoint: '',
+      name: chainId.toString(),
+    };
+
+    const setupTransactionArgs = (
+      restArgs.length === 8 ? restArgs : restArgs.slice(0, -1)
+    ) as Parameters<VAnchor['setupTransaction']>;
+
+    const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
+      ...setupTransactionArgs
+    );
+
+    const relayedDepositTxPayload =
+      relayedVAnchorWithdraw.generateWithdrawRequest<
+        typeof chainInfo,
+        'vAnchor'
+      >(chainInfo, {
+        chainId: chainId.toNumber(),
+        id: contractAddress,
+        extData: {
+          recipient: extData.recipient,
+          relayer: extData.relayer,
+          extAmount: extAmount.toHexString().replace('0x', ''),
+          fee: extData.fee,
+          encryptedOutput1: extData.encryptedOutput1,
+          encryptedOutput2: extData.encryptedOutput2,
+          refund: extData.refund,
+          token: extData.token,
+        },
+        proofData: {
+          proof: publicInputs.proof,
+          extensionRoots: publicInputs.extensionRoots,
+          extDataHash: padHexString(publicInputs.extDataHash.toHexString()),
+          publicAmount: publicInputs.publicAmount,
+          roots: publicInputs.roots,
+          outputCommitments: publicInputs.outputCommitments.map((output) =>
+            padHexString(output.toHexString())
+          ),
+          inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
+            padHexString(nullifier.toHexString())
+          ),
+        },
+      });
+
+    // Subscribe to the relayer's transaction status.
+    relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+      switch (results) {
+        case RelayedWithdrawResult.PreFlight:
+          tx.next(TransactionState.SendingTransaction, '');
+          break;
+        case RelayedWithdrawResult.OnFlight:
+          break;
+        case RelayedWithdrawResult.Continue:
+          break;
+        case RelayedWithdrawResult.CleanExit:
+          tx.next(TransactionState.Done, {
+            txHash,
+            outputNotes: changeNotes,
+          });
+          break;
+        case RelayedWithdrawResult.Errored: {
+          changeNotes.forEach((note) =>
+            this.inner.noteManager?.removeNote(note)
+          );
+          tx.fail(message.length ? message : 'Transaction failed');
+          break;
+        }
+      }
+    });
+
+    tx.next(TransactionState.Intermediate, {
+      name: 'Sending TX to relayer',
+    });
+
+    // Send the transaction to the relayer.
+    relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+    const results = await relayedVAnchorWithdraw.await();
+    if (results) {
+      const [, message] = results;
+      txHash = message ?? '';
+      tx.txHash = txHash;
     }
   }
 
@@ -220,7 +333,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>
+    leavesMap: Record<string, Uint8Array[]>,
+    overridesTransaction?: Overrides
   ): Promise<ContractReceipt> {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
@@ -232,8 +346,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       signer
     );
 
-    tx.txHash = '0x';
-    tx.next(TransactionState.SendingTransaction, '0x');
+    tx.txHash = '';
+    tx.next(TransactionState.SendingTransaction, '');
 
     return vanchor.transact(
       inputs,
@@ -243,7 +357,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       recipient,
       relayer,
       wrapUnwrapToken,
-      leavesMap
+      leavesMap,
+      overridesTransaction
     );
   }
 
@@ -540,6 +655,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       // balance using the `ERC20` contract.
       const erc20 = ERC20__factory.connect(wrapUnwrapToken, provider);
       const balance = await erc20.balanceOf(signer);
+      console.log('Balance: ', balance);
       hasBalance = balance.gte(payload.note.amount);
     }
     // Notification failed transaction if not enough balance

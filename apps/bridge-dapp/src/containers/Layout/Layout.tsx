@@ -1,6 +1,8 @@
+import { Transition } from '@headlessui/react';
+import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
+import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
-import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -13,8 +15,14 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
     <div className="min-w-full min-h-full">
       <Header />
 
-      {showBanner && (
+      <Transition
+        show={showBanner}
+        className={cx('[transform-style:preserve-3d] origin-top duration-200')}
+        leaveFrom={cx('[transform:rotateX(0deg)]')}
+        leaveTo={cx('[transform:rotateX(-90deg)]')}
+      >
         <Banner
+          className="[backface-visibility:hidden]"
           onClose={onCloseHandler}
           dappName="stats"
           buttonText="Report Bug"
@@ -24,11 +32,11 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             target: '_blank',
           }}
         />
-      )}
+      </Transition>
 
-      <main className="max-w-[960px] w-full mx-auto">{children}</main>
+      <main className="w-full mx-auto">{children}</main>
 
-      <Footer className="max-w-[960px] w-full" />
+      <Footer className="max-w-[1160px] w-full" />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export const LoadingTable = () => {
   return (
-    <div className="h-[300px] bg-mono-0 dark:bg-mono-160 rounded-lg flex items-center justify-center">
+    <div className="h-[511px] bg-mono-0 dark:bg-mono-160 rounded-lg flex items-center justify-center">
       <div>
         <div className="flex justify-center">
           <Spinner size="lg" className="mb-2" />

@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { Spinner } from './Spinner';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
-import { Spinner } from '@webb-tools/icons/Spinner';
 
 export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   props

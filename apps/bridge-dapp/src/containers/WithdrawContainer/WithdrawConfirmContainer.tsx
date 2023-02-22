@@ -20,8 +20,8 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
+import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
-import { getErrorMessage, getTokenURI } from '../../utils';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -38,7 +38,9 @@ export const WithdrawConfirmContainer = forwardRef<
       targetChainId,
       fungibleCurrency: fungibleCurrencyProp,
       unwrapCurrency: { value: unwrapCurrency } = {},
+      onResetState,
       recipient,
+      ...props
     },
     ref
   ) => {
@@ -199,16 +201,24 @@ export const WithdrawConfirmContainer = forwardRef<
           unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
         );
 
-        const receipt = await vAnchorApi.transact(...args);
-
         const outputNotes = changeNote ? [changeNote] : [];
 
-        // Notification Success Transaction
-        tx.txHash = receipt.transactionHash;
-        tx.next(TransactionState.Done, {
-          txHash: receipt.transactionHash,
-          outputNotes,
-        });
+        if (activeRelayer) {
+          await vAnchorApi.transactWithRelayer(
+            activeRelayer,
+            args,
+            outputNotes
+          );
+        } else {
+          const receipt = await vAnchorApi.transact(...args);
+
+          // Notification Success Transaction
+          tx.txHash = receipt.transactionHash;
+          tx.next(TransactionState.Done, {
+            txHash: receipt.transactionHash,
+            outputNotes,
+          });
+        }
 
         // Cleanup NoteAccount state
         for (const note of availableNotes) {
@@ -219,9 +229,11 @@ export const WithdrawConfirmContainer = forwardRef<
 
         changeNote && (await noteManager?.removeNote(changeNote));
 
+        tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
+        onResetState?.();
       }
     }, [
       availableNotes,
@@ -231,15 +243,18 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       amount,
-      setMainComponent,
       txQueueApi,
+      setMainComponent,
       changeUtxo,
       recipient,
+      activeRelayer,
       noteManager,
+      onResetState,
     ]);
 
     return (
       <WithdrawConfirm
+        {...props}
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}

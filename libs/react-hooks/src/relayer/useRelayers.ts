@@ -30,7 +30,7 @@ export const useRelayers = (props: UseRelayersProps) => {
         activeApi?.relayerManager.setActiveRelayer(nextRelayer, typedChainId);
       }
     },
-    [activeApi?.relayerManager]
+    [activeApi?.relayerManager, typedChainId]
   );
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export const useRelayers = (props: UseRelayersProps) => {
       availableRelayersSubscription?.unsubscribe();
       activeRelayerSubscription?.unsubscribe();
     };
-  }, [activeApi, typedChainId]);
+  }, [activeApi, target, typedChainId]);
 
   return {
     relayerMethods: activeApi?.relayerManager,

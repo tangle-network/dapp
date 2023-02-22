@@ -1,23 +1,23 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { LoggerService } from '@webb-tools/app-util';
-import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
 import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
-import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { LoggerService } from '@webb-tools/app-util';
+import { downloadString } from '@webb-tools/browser-utils';
+import { chainsPopulated } from '@webb-tools/dapp-config';
+import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { TransferConfirmContainerProps } from './types';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage, getTokenURI } from '../../utils';
+import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
+import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -36,6 +36,7 @@ export const TransferConfirmContainer = forwardRef<
     changeUtxo,
     transferUtxo,
     inputNotes,
+    onResetState,
     ...props
   }) => {
     // State for tracking the status of the change note checkbox
@@ -52,6 +53,20 @@ export const TransferConfirmContainer = forwardRef<
     const { setMainComponent } = useWebbUI();
 
     const { api: txQueueApi } = useTxQueue();
+
+    const targetChainId = useMemo(
+      () => calculateTypedChainId(destChain.chainType, destChain.chainId),
+      [destChain]
+    );
+
+    const {
+      relayersState: { activeRelayer },
+    } = useRelayers({
+      typedChainId: targetChainId,
+      target: activeApi?.state.activeBridge
+        ? activeApi.state.activeBridge.targets[targetChainId]
+        : undefined,
+    });
 
     const activeChains = useMemo<string[]>(() => {
       if (!activeApi) {
@@ -143,16 +158,24 @@ export const TransferConfirmContainer = forwardRef<
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
 
-        const receipt = await vAnchorApi.transact(...args);
-
         const outputNotes = changeNote ? [changeNote] : [];
 
-        // Notification Success Transaction
-        tx.txHash = receipt.transactionHash;
-        tx.next(TransactionState.Done, {
-          txHash: receipt.transactionHash,
-          outputNotes,
-        });
+        if (activeRelayer) {
+          await vAnchorApi.transactWithRelayer(
+            activeRelayer,
+            args,
+            outputNotes
+          );
+        } else {
+          const receipt = await vAnchorApi.transact(...args);
+
+          // Notification Success Transaction
+          tx.txHash = receipt.transactionHash;
+          tx.next(TransactionState.Done, {
+            txHash: receipt.transactionHash,
+            outputNotes,
+          });
+        }
 
         // Cleanup NoteAccount state
         for (const note of inputNotes) {
@@ -163,9 +186,11 @@ export const TransferConfirmContainer = forwardRef<
 
         changeNote && (await noteManager?.removeNote(changeNote));
 
+        tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
       } finally {
         setMainComponent(undefined);
+        onResetState?.();
       }
     }, [
       inputNotes,
@@ -173,11 +198,13 @@ export const TransferConfirmContainer = forwardRef<
       isTransfering,
       changeNote,
       amount,
-      setMainComponent,
       txQueueApi,
+      setMainComponent,
       changeUtxo,
       transferUtxo,
+      activeRelayer,
       noteManager,
+      onResetState,
     ]);
 
     return (

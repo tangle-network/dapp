@@ -36,7 +36,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
-import { useConnectWallet } from '../../hooks';
+import { WalletState, useConnectWallet } from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -55,8 +55,14 @@ export const TransferContainer = forwardRef<
   ) => {
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
-    const { activeChain, activeApi, activeWallet, noteManager, switchChain } =
-      useWebContext();
+    const {
+      activeChain,
+      activeApi,
+      activeWallet,
+      loading,
+      noteManager,
+      switchChain,
+    } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -67,7 +73,7 @@ export const TransferContainer = forwardRef<
 
     const txQueue = useTxQueue();
 
-    const { isWalletConnected, toggleModal } = useConnectWallet();
+    const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -299,7 +305,7 @@ export const TransferContainer = forwardRef<
     const handleBridgingAssetInputClick = useCallback(() => {
       setMainComponent(
         <TokenListCard
-          className="w-[550px] h-[700px]"
+          className="min-w-[550px] h-[700px]"
           title="Select Asset to Transfer"
           popularTokens={[]}
           selectTokens={bridgingAssets}
@@ -443,7 +449,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <RelayerListCard
           relayers={relayerList}
-          className="w-[550px] h-[700px]"
+          className="min-w-[550px] h-[700px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
             setRelayer(
@@ -604,6 +610,15 @@ export const TransferContainer = forwardRef<
       [activeChain, activeWallet, switchChain, toggleModal]
     );
 
+    const handleResetState = useCallback(() => {
+      setDestChain(undefined);
+      setAmountError('');
+      setRecipientPubKey('');
+      setIsValidRecipient(false);
+      setAmount(undefined);
+      setRelayer(null);
+    }, [setRelayer]);
+
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {
       // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -727,7 +742,7 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TransferConfirmContainer
-          className="w-[550px]"
+          className="min-w-[550px]"
           inputNotes={inputNotes}
           amount={amount}
           changeAmount={changeAmount}
@@ -738,6 +753,7 @@ export const TransferContainer = forwardRef<
           note={changeNote}
           changeUtxo={changeUtxo}
           transferUtxo={transferUtxo}
+          onResetState={handleResetState}
         />
       );
     }, [
@@ -757,6 +773,7 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
       setMainComponent,
       activeRelayer,
+      handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
       handleSwitchChain,
@@ -799,7 +816,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="h-[615px]"
+        className="h-[615px] max-w-none"
         bridgeAssetInputProps={{
           token: selectedBridgingAsset,
           onClick: handleBridgingAssetInputClick,
@@ -831,6 +848,7 @@ export const TransferContainer = forwardRef<
           },
           title: 'Recipient Public Key',
           errorMessage: recipientError,
+          value: recipientPubKey,
           onChange: (recipient) => {
             setRecipientPubKey(recipient);
           },
@@ -841,6 +859,8 @@ export const TransferContainer = forwardRef<
         transferBtnProps={{
           isDisabled:
             isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
+          isLoading: loading || walletState === WalletState.CONNECTING,
+          loadingText: 'Connecting...',
           children: buttonText,
           onClick: handleTransferClick,
         }}

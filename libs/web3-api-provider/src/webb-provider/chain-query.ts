@@ -33,8 +33,6 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         const accounts = await this.inner.accounts.accounts();
 
         if (!accounts || !accounts.length) {
-          console.log('no account selected');
-
           return '';
         }
 
@@ -52,9 +50,6 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           // Find the currency address on this chain
           const currency = this.inner.state.getCurrencies()[currencyId];
           if (!currency) {
-            console.log(
-              `could not find currencyId ${currencyId} in supportedCurrencies`
-            );
             return '';
           }
 

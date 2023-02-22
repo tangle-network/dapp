@@ -165,11 +165,6 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
 
   /**
-   * Recipient address
-   */
-  recipientAddress?: string;
-
-  /**
    * Recipient public key
    */
   recipientPublicKey?: string;

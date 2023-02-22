@@ -28,7 +28,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
-import { useConnectWallet, useShieldedAssets } from '../../hooks';
+import { WalletState, useConnectWallet, useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 
@@ -52,9 +52,9 @@ export const WithdrawContainer = forwardRef<
     activeApi,
     activeChain,
     activeWallet,
-    chains,
-    switchChain,
+    loading,
     noteManager,
+    switchChain,
   } = useWebContext();
 
   const {
@@ -92,7 +92,7 @@ export const WithdrawContainer = forwardRef<
 
   const txQueue = useTxQueue();
 
-  const { isWalletConnected, toggleModal } = useConnectWallet();
+  const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
@@ -183,7 +183,7 @@ export const WithdrawContainer = forwardRef<
       }
 
       if (parsedAmount > availableAmount) {
-        setAmountError('Insufficient balance');
+        setAmountError('Insufficient balance, maybe incorrect chain?');
         return;
       }
 
@@ -309,6 +309,14 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     wrappableCurrency?.view.symbol,
   ]);
+
+  const handleResetState = useCallback(() => {
+    setAmountError('');
+    setAmount(0);
+    setRecipient('');
+    setIsUnwrap(false);
+    setRelayer(null);
+  }, [setRelayer]);
 
   const handleSwitchToOtherDestChains = useCallback(async () => {
     if (otherAvailableChains.length === 0 || !activeWallet) {
@@ -463,6 +471,7 @@ export const WithdrawContainer = forwardRef<
 
     setMainComponent(
       <WithdrawConfirmContainer
+        className="w-[550px]" // TODO: Remove hardcoded width
         changeUtxo={changeUtxo}
         changeNote={changeNote}
         changeAmount={formattedChangeAmount}
@@ -480,6 +489,7 @@ export const WithdrawContainer = forwardRef<
             : undefined
         }
         recipient={recipient}
+        onResetState={handleResetState}
       />
     );
   }, [
@@ -489,6 +499,7 @@ export const WithdrawContainer = forwardRef<
     availableNotesFromManager,
     currentTypedChainId,
     fungibleCurrency,
+    handleResetState,
     handleSwitchToOtherDestChains,
     hasNoteAccount,
     isDisabledWithdraw,
@@ -514,7 +525,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
-        className="h-[615px]"
+        className="h-[615px] max-w-none"
         tokenInputProps={{
           onClick: () => {
             if (!activeApi) {
@@ -523,7 +534,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <TokenListCard
-                className="w-[550px] h-[700px]"
+                className="min-w-[550px] h-[700px]"
                 title={'Select Asset to Withdraw'}
                 popularTokens={[]}
                 selectTokens={fungibleTokens}
@@ -544,7 +555,7 @@ export const WithdrawContainer = forwardRef<
             if (activeApi) {
               setMainComponent(
                 <TokenListCard
-                  className="w-[550px] h-[700px]"
+                  className="min-w-[550px] h-[700px]"
                   title={'Select Asset to Unwrap'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
@@ -596,7 +607,7 @@ export const WithdrawContainer = forwardRef<
 
             setMainComponent(
               <RelayerListCard
-                className="w-[550px] h-[700px]"
+                className="min-w-[550px] h-[700px]"
                 relayers={relayers
                   .map((relayer) => {
                     const relayerData = relayer.capabilities.supportedChains[
@@ -636,6 +647,7 @@ export const WithdrawContainer = forwardRef<
           },
         }}
         recipientInputProps={{
+          value: recipient,
           isValidSet(valid: boolean) {
             setIsValidRecipient(valid);
           },
@@ -648,6 +660,8 @@ export const WithdrawContainer = forwardRef<
             otherAvailableChains.length > 0
               ? false
               : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+          isLoading: loading || walletState === WalletState.CONNECTING,
+          loadingText: 'Connecting...',
           children: buttonText,
           onClick: handleWithdrawButtonClick,
         }}

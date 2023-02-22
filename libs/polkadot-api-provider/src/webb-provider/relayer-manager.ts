@@ -44,6 +44,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
     const { baseOn, chainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
+      if (!capabilities) {
+        return false;
+      }
 
       if (ipService) {
         if (!capabilities.hasIpService) {

@@ -2,7 +2,7 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import React from 'react';
 
 import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
@@ -22,7 +22,6 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const { targetChainId, tokenSymbol, amount, denomination } = note.note;
 
         const chain = chainsPopulated[Number(targetChainId)];
-        const balance = ethers.utils.formatUnits(amount, denomination);
 
         if (chain.tag !== activeChain?.tag) {
           return;
@@ -35,9 +34,19 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (existedChain) {
-          existedChain.availableBalance = Number(
-            Number(Number(balance) + existedChain.availableBalance).toFixed(2)
+          const parsedAvailableBalance = ethers.utils.parseUnits(
+            existedChain.availableBalance.toString(),
+            denomination
           );
+
+          const summedBalance = BigNumber.from(amount).add(
+            parsedAvailableBalance
+          );
+
+          existedChain.availableBalance = Number(
+            ethers.utils.formatUnits(summedBalance, denomination)
+          );
+
           existedChain.numberOfNotesFound += 1;
           existedChain.rawNotes.push(note);
           return;
@@ -74,7 +83,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           composition: wrappableCurrencies.map(
             (currency) => currency.view.symbol
           ),
-          availableBalance: Number(Number(balance).toFixed(2)),
+          availableBalance: Number(
+            ethers.utils.formatUnits(amount, denomination)
+          ),
           numberOfNotesFound: 1,
           rawChain: chain,
           rawFungibleCurrency: fungibleCurrency,

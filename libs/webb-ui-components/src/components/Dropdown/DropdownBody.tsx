@@ -25,7 +25,7 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
                   ? 'rounded-b-lg border border-t-0'
                   : 'rounded-lg border',
                 'border-mono-80 dark:border-mono-120',
-                'bg-mono-0 dark:bg-mono-180'
+                'bg-mono-0 dark:bg-mono-200'
               ),
               className
             )}
@@ -50,7 +50,7 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
               ? 'rounded-b-lg border border-t-0'
               : 'rounded-lg border',
             'border-mono-80 dark:border-mono-120',
-            'bg-mono-0 dark:bg-mono-180'
+            'bg-mono-0 dark:bg-mono-200'
           ),
           className
         )}

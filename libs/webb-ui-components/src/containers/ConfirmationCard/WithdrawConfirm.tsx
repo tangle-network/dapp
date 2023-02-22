@@ -4,9 +4,9 @@ import {
   Download,
   ExternalLinkLine,
 } from '@webb-tools/icons';
+import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography';
 
 import {
   Avatar,
@@ -19,9 +19,10 @@ import {
   TitleWithInfo,
   TokenWithAmount,
 } from '../../components';
-import { WithdrawConfirmationProps } from './types';
-import { Section, WrapperSection } from './WrapperSection';
+import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
+import { Section, WrapperSection } from './WrapperSection';
+import { WithdrawConfirmationProps } from './types';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -126,10 +127,15 @@ export const WithdrawConfirm = forwardRef<
             </div>
           </Section>
 
-          <div className="flex space-x-2">
+          <div
+            className={cx(
+              'grid gap-2',
+              relayerAddress ? 'grid-cols-2' : 'grid-cols-1'
+            )}
+          >
             {/** Relayer */}
             {relayerAddress && (
-              <Section className="flex-initial w-[210px]">
+              <Section>
                 <div className="space-y-1">
                   <TitleWithInfo
                     titleComponent="h6"
@@ -162,7 +168,7 @@ export const WithdrawConfirm = forwardRef<
 
             {/** Unshielded address */}
             {recipientAddress && (
-              <Section className="flex-initial w-[284px]">
+              <Section>
                 <div className="space-y-1">
                   <TitleWithInfo
                     titleComponent="h6"

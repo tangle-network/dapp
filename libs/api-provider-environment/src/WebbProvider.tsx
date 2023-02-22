@@ -9,20 +9,20 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/app-util';
 import {
+  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
-  NetworkStorage,
   noteStorageFactory,
 } from '@webb-tools/browser-utils/storage';
 import {
-  anchorsConfig,
   ApiConfig,
-  bridgeConfigByAsset,
   Chain,
+  Wallet,
+  anchorsConfig,
+  bridgeConfigByAsset,
   chainsConfig,
   chainsPopulated,
   currenciesConfig,
-  Wallet,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -37,13 +37,14 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
   Web3Provider,
@@ -52,12 +53,14 @@ import {
 } from '@webb-tools/web3-api-provider';
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+
 import { TAppEvent } from './app-event';
-import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
-import { WebbContext } from './webb-context';
-import { SettingProvider } from '@webb-tools/react-environment';
 import { unsupportedChain } from './error';
+import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
+import { getNativeTokenInfo } from './utils';
+import { WebbContext } from './webb-context';
+
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
   applicationName: string;
@@ -66,6 +69,7 @@ interface WebbProviderProps extends BareProps {
 
 const chains = chainsPopulated;
 const logger = LoggerService.get('WebbProvider');
+
 const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
   interactiveFeedback: InteractiveFeedback
@@ -645,67 +649,44 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
               await webbWeb3Provider.setChainListener();
               await webbWeb3Provider.setAccountListener();
-              const cantAddChain = !chain.chainId && !chain.evmRpcUrls;
-              const addEvmChain = async () => {
-                if (cantAddChain) {
-                  return;
+
+              if (chainId !== chain.chainId) {
+                const currency = await getNativeTokenInfo(chain.chainId);
+                if (!currency) {
+                  throw new Error('Native token not found');
                 }
 
-                // If we support the evmId but don't have an evmRpcUrl, then it is default on metamask
-                await web3Provider
-                  .switchChain({
-                    chainId: `0x${chain.chainId?.toString(16)}`,
-                  })
-                  ?.then(async () => {
-                    if (web3Provider instanceof WalletConnectProvider) {
-                      appEvent.send('networkSwitched', [
-                        {
-                          chainType: chain.chainType,
-                          chainId: chain.chainId,
-                        },
-                        WalletId.WalletConnectV1,
-                      ]);
-                    } else {
-                      appEvent.send('networkSwitched', [
-                        {
-                          chainType: chain.chainType,
-                          chainId: chain.chainId,
-                        },
-                        WalletId.MetaMask,
-                      ]);
-                    }
-                  })
-                  ?.catch(async (switchError) => {
-                    logger.error('inside catch for switchChain', switchError);
+                await web3Provider.addChain({
+                  chainId: `0x${chain.chainId.toString(16)}`,
+                  chainName: chain.name,
+                  rpcUrls: chain.evmRpcUrls ?? [],
+                  nativeCurrency: {
+                    decimals: 18,
+                    name: currency.name,
+                    symbol: currency.symbol,
+                  },
+                  blockExplorerUrls: chain.blockExplorerStub
+                    ? [chain.blockExplorerStub]
+                    : [],
+                });
+                // add network will prompt the switch, check evmId again and throw if user rejected
+                const newChainId = await web3Provider.network;
 
-                    // cannot switch because network not recognized, so prompt to add it
-                    if (switchError.code === 4902 && chain.chainId) {
-                      const currency = currenciesConfig[chain.nativeCurrencyId];
-                      await web3Provider.addChain({
-                        chainId: `0x${chain.chainId.toString(16)}`,
-                        chainName: chain.name,
-                        rpcUrls: chain.evmRpcUrls ?? [],
-                        nativeCurrency: {
-                          decimals: 18,
-                          name: currency.name,
-                          symbol: currency.symbol,
-                        },
-                      });
-                      // add network will prompt the switch, check evmId again and throw if user rejected
-                      const newChainId = await web3Provider.network;
+                if (newChainId != chain.chainId) {
+                  appEvent.send('walletConnectionState', 'failed');
+                  throw new Error('User rejected network switch');
+                }
 
-                      if (newChainId != chain.chainId) {
-                        appEvent.send('walletConnectionState', 'failed');
-                        throw switchError;
-                      }
-                    } else {
-                      appEvent.send('walletConnectionState', 'failed');
-                      throw switchError;
-                    }
-                  });
-              };
-              if (chainId !== chain.chainId) {
-                await addEvmChain();
+                // Emit events
+                appEvent.send('networkSwitched', [
+                  {
+                    chainType: chain.chainType,
+                    chainId: chain.chainId,
+                  },
+                  web3Provider instanceof WalletConnectProvider
+                    ? WalletId.WalletConnectV1
+                    : WalletId.MetaMask,
+                ]);
               }
 
               await setActiveApiWithAccounts(

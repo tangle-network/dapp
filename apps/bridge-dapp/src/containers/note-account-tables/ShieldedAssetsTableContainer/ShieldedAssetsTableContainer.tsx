@@ -2,6 +2,7 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
@@ -19,6 +20,7 @@ import {
   Table,
   TokenPairIcons,
   Typography,
+  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -105,7 +107,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
     header: 'Balance',
     cell: (props) => (
       <Typography variant="body1" fw="bold">
-        {props.getValue()}
+        {formatTokenAmount(props.getValue())}
       </Typography>
     ),
   }),
@@ -133,6 +135,7 @@ export const ShieldedAssetsTableContainer: FC<
   onDefaultFungibleCurrencyChange,
   onDeleteNotesChange,
   onUploadSpendNote,
+  globalSearchText,
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
@@ -216,10 +219,15 @@ export const ShieldedAssetsTableContainer: FC<
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    state: {
+      globalFilter: globalSearchText,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   if (isSyncingNote) {
@@ -229,9 +237,9 @@ export const ShieldedAssetsTableContainer: FC<
   if (!data.length) {
     return (
       <EmptyTable
-        title="No spend notes found"
-        description="Your notes are stored locally as you transact and encrypted on-chain for persistent storage. Don't see your assets?"
-        buttonText="Upload spend Notes"
+        title="Shielded Assets"
+        description="When you make a deposit, you'll see your shielded assets here."
+        buttonText="Upload a spend note."
         onClick={onUploadSpendNote}
       />
     );

@@ -20,15 +20,13 @@ export async function cachedFetch(
   const key = new URL(url);
   const cachedResponse = await fixturesCache.match(key);
 
-  logger.info(`Fetching url ${url} ->  key ${key}`);
-
   if (cachedResponse && cachedResponse.ok) {
-    logger.info(`Key :${url} was found on the cache `);
+    logger.info(`Found key: ${url} on the cache`);
     const keyArrayBuffer = await cachedResponse.arrayBuffer();
     const reqData = new Uint8Array(keyArrayBuffer);
     return reqData;
   } else {
-    logger.info(`Key: ${url} wasn't found on the cache `);
+    logger.info(`Fetching key: ${url} from the network`);
     const response = await fetch(...params);
     if (response.ok) {
       await fixturesCache.put(url, response.clone());
