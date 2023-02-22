@@ -23,6 +23,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
 import { FC, useCallback, useState, PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
+import { NetworkSelector } from '../NetworkSelector/NetworkSelector';
 
 type HeaderProps = {
   connectedEndpoint: string;
@@ -148,10 +149,10 @@ export const Header: FC<HeaderProps> = ({
 
                 <MenuItem className="px-4 py-2">
                   <Typography variant="label" fw="bold">
-                    ADVANCED
+                    Advanced
                   </Typography>
 
-                  <div className="flex items-center justify-between pt-4">
+                  {/* <div className="flex items-center justify-between pt-4">
                     <Typography variant="body1">Custom Data Source</Typography>
 
                     <Button
@@ -172,7 +173,8 @@ export const Header: FC<HeaderProps> = ({
                     className="pt-2 pb-4"
                     onChange={(val) => setEndpointUserInput(val.toString())}
                     value={endpointUserInput}
-                  />
+                  /> */}
+                  <NetworkSelector />
                 </MenuItem>
               </DropdownBody>
             </Dropdown>
