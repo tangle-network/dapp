@@ -24,7 +24,11 @@ import {
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import { EventBus } from '@webb-tools/app-util';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+  ResourceId,
+} from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import {
@@ -154,6 +158,11 @@ export class WebbPolkadot
   getChainId() {
     // const chainType = await this.provider.api.consts.linkableTreeBn254.chainType;
     return this.typedChainId;
+  }
+
+  async getResourceId(): Promise<ResourceId | null> {
+    throw new Error('Method not implemented.');
+    return null;
   }
 
   async awaitMetaDataCheck() {

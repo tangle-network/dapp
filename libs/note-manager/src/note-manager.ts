@@ -8,9 +8,12 @@ import {
   Keypair,
   Note,
   NoteGenInput,
+  ResourceId,
+  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
+import { hexToU8a } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 
@@ -30,35 +33,75 @@ export class NoteManager {
     this.notesMap = new Map();
   }
 
+  /**
+   * Get the resource id of the note
+   * @param note the note to parse and get the resource id
+   * @param isSource if true, get the resource id of the source chain,
+   * otherwise get the resource id of the target chain
+   */
+  static getResourceId(note: Note, isSource?: boolean): ResourceId {
+    const typedChainId = isSource
+      ? note.note.sourceChainId
+      : note.note.targetChainId;
+    const { chainId, chainType } = parseTypedChainId(+typedChainId);
+
+    const contractAddress = isSource
+      ? note.note.sourceIdentifyingData
+      : note.note.targetIdentifyingData;
+
+    return new ResourceId(contractAddress, chainType, chainId);
+  }
+
   static async initAndDecryptNotes(
     noteStorage: Storage<NoteStorage>,
     keypair: Keypair
   ): Promise<NoteManager> {
     const noteManager = new NoteManager(noteStorage, keypair);
 
-    const encryptedNotesMap = await noteStorage.get('encryptedNotes');
+    const encryptedNotesRecord = await noteStorage.get('encryptedNotes');
+
+    // 32-bytes size resource id where each byte is represented by 2 characters
+    const resourceIdSize = 32 * 2;
+
+    // Only get the stored notes with the key is the resource id
+    const encryptedNotesMap = Object.entries(encryptedNotesRecord).reduce(
+      (acc, [resourceIdOrTypedChainId, notes]) => {
+        // Only get the notes where the key if resource id
+        if (
+          resourceIdOrTypedChainId.replace('0x', '').length === resourceIdSize
+        ) {
+          acc[resourceIdOrTypedChainId] = notes;
+        }
+
+        return acc;
+      },
+      {} as Record<string, Array<string>>
+    );
 
     if (encryptedNotesMap) {
       // decrypt notes and populate the notesMap of the noteManager
       await Promise.all(
-        Object.entries(encryptedNotesMap).map(async (entry) => {
-          const decryptedNoteStrings = entry[1].map((encNote) => {
-            return noteManager.keypair.decrypt(encNote).toString();
-          });
+        Object.entries(encryptedNotesMap).map(
+          async ([resourceIdStr, encryptedNotes]) => {
+            const decryptedNoteStrings = encryptedNotes.map((encNote) => {
+              return noteManager.keypair.decrypt(encNote).toString();
+            });
 
-          const notes: Note[] = [];
+            const notes: Note[] = [];
 
-          for (const decNote of decryptedNoteStrings) {
-            notes.push(await Note.deserialize(decNote));
+            for (const decNote of decryptedNoteStrings) {
+              notes.push(await Note.deserialize(decNote));
+            }
+
+            // TODO: Filter / other validation can occur on initialization as a
+            // check against loading into the noteManager (maybe the note was stored,
+            // but spent elsewhere?)
+            if (notes.length > 0) {
+              const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
+              noteManager.notesMap.set(resourceId.toString(), notes);
+            }
           }
-
-          // TODO: Filter / other validation can occur on initialization as a
-          // check against loading into the noteManager (maybe the note was stored,
-          // but spent elsewhere?)
-          if (notes.length > 0) {
-            noteManager.notesMap.set(entry[0], notes);
-          }
-        })
+        )
       );
     } else {
       // Set the encryptedNotes value in localStorage
@@ -122,20 +165,20 @@ export class NoteManager {
     return this.notesMap;
   }
 
-  getNotesOfChain(typedChainId: number): Note[] | undefined {
-    return this.notesMap.get(typedChainId.toString());
+  getNotesOfChain(resourceId: string): Note[] | undefined {
+    return this.notesMap.get(resourceId);
   }
 
   // Return enough notes to satisfy the amount
   // Returns null if it cannot satisfy
   getNotesForTransact(
-    typedChainId: number,
+    resourceId: string,
     amount: ethers.BigNumber
   ): Note[] | null {
     const currentAmount = ethers.BigNumber.from(0);
     const currentNotes: Note[] = [];
 
-    const availableNotes = this.notesMap.get(typedChainId.toString());
+    const availableNotes = this.notesMap.get(resourceId);
 
     if (!availableNotes) {
       return null;
@@ -156,10 +199,10 @@ export class NoteManager {
   }
 
   getWithdrawableAmount(
-    typedChainId: number,
+    resourceId: string,
     tokenName: string
   ): ethers.BigNumber {
-    const availableChainNotes = this.notesMap.get(typedChainId.toString());
+    const availableChainNotes = this.notesMap.get(resourceId);
     const amount: ethers.BigNumber = ethers.BigNumber.from(0);
 
     availableChainNotes
@@ -172,11 +215,12 @@ export class NoteManager {
   }
 
   async addNote(note: Note) {
-    const targetNotes = this.notesMap.get(note.note.targetChainId);
+    const resourceId = NoteManager.getResourceId(note).toString();
+    const targetNotes = this.notesMap.get(resourceId);
 
     if (!targetNotes) {
       // Create a new entry into the notes map
-      this.notesMap.set(note.note.targetChainId, [note]);
+      this.notesMap.set(resourceId, [note]);
     } else {
       // Check if this same note has already been added
       if (
@@ -189,7 +233,7 @@ export class NoteManager {
 
       // Append the note to the existing available notes
       targetNotes.push(note);
-      this.notesMap.set(note.note.targetChainId, targetNotes);
+      this.notesMap.set(resourceId, targetNotes);
     }
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
 
@@ -197,8 +241,10 @@ export class NoteManager {
   }
 
   async removeNote(note: Note) {
+    const resourceId = NoteManager.getResourceId(note).toString();
+
     // Remove the note from the local map
-    const targetNotes = this.notesMap.get(note.note.targetChainId);
+    const targetNotes = this.notesMap.get(resourceId);
     if (!targetNotes) {
       return;
     }
@@ -208,9 +254,9 @@ export class NoteManager {
     );
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
-      this.notesMap.set(note.note.targetChainId, targetNotes);
+      this.notesMap.set(resourceId, targetNotes);
     } else {
-      this.notesMap.delete(note.note.targetChainId);
+      this.notesMap.delete(resourceId);
     }
 
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);

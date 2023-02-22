@@ -29,6 +29,7 @@ import {
   ChainType,
   Keypair,
   Note,
+  ResourceId,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   toFixedHex,
@@ -161,6 +162,18 @@ export class WebbWeb3Provider
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
+  }
+
+  async getResourceId(): Promise<ResourceId | null> {
+    const vanchors = await this.methods.bridgeApi.getVAnchors();
+    if (vanchors.length === 0) {
+      return null;
+    }
+
+    const typedChainId = calculateTypedChainId(ChainType.EVM, this.chainId);
+    const address = vanchors[0].neighbours[typedChainId];
+
+    return new ResourceId(address.toString(), ChainType.EVM, this.chainId);
   }
 
   getProvider(): Web3Provider {

@@ -119,9 +119,6 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
       // Syncing notes
       noteManager.isSyncingNote = true;
 
-      // Removing all notes before syncing
-      noteManager.removeAllNotes();
-
       const chainNotes =
         await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
           activeApi.state.activeBridge.targets[
