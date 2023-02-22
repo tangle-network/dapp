@@ -9,15 +9,14 @@ type BlogCardProps = {
   link: string;
 };
 
-export const BlogCard = (post: BlogCardProps) => {
-  const { title, tags, cover, link } = post;
+export const BlogCard = (data: BlogCardProps) => {
+  const { title, tags, cover, link } = data;
 
   return (
     <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
       <Link href={link}>
-        <img
-          src={cover}
-          alt={title}
+        <div
+          style={{ backgroundImage: `url(${cover})`, backgroundSize: 'cover' }}
           className="w-full h-[220px] md:h-[250px] rounded-t-lg"
         />
       </Link>

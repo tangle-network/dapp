@@ -19,9 +19,11 @@ export const FeaturedPostSection = (data: FeaturedPostSectionProps) => {
       {/* Featured Post - fetching last one from the array */}
       <div className="break-words">
         <Link href={`/blog/posts/${slug}`}>
-          <img
-            src={cover}
-            alt={title}
+          <div
+            style={{
+              backgroundImage: `url(${cover})`,
+              backgroundSize: 'cover',
+            }}
             className="w-full h-[220px] md:h-[250px] rounded-lg"
           />
         </Link>

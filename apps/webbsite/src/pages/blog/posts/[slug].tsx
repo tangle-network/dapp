@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -23,7 +23,20 @@ const Post: FC<{ post: Post }> = ({ post }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths = async () => {
+  const notion = new Notion();
+
+  const posts = await notion.getPosts();
+
+  if (!posts) return { paths: [], fallback: true };
+
+  return {
+    paths: posts.map((post: any) => `/blog/${post.metadata.slug}`),
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
   const { slug } = context.params as StaticPropsParams;
 
   if (!slug) throw new Error('Slug is not defined.');
@@ -32,10 +45,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const post = await notion.getPostBySlug(slug);
 
+  if (!post) return { props: { post: {} }, fallback: true };
+
   return {
     props: {
       post: post ?? {},
     },
+    revalidate: 60,
   };
 };
 
