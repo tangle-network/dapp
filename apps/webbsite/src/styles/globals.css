@@ -2,8 +2,6 @@
   background-color: #fff;
 }
 
-/** Load fonts */
-
 /* Font Family Satoshi */
 @font-face {
   font-family: 'Satoshi';
@@ -41,7 +39,6 @@
 }
 
 /* Override the swiper styles */
-
 .swiper-pagination {
   bottom: 24px !important;
   left: 24px !important;
@@ -58,7 +55,6 @@
 }
 
 /* Headings, sub-headings, card texts */
-
 .heading-1 {
   @apply text-base
   text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
@@ -181,20 +177,46 @@
   font-black font-satoshi;
 }
 
+.single-post-card-title {
+  @apply text-base
+  text-[24px] leading-[32.4px] /** small screen */
+  lg:text-[48px] lg:leading-[64.8px] /** large screen */
+  font-black font-satoshi;
+}
+
+.single-post-card-description {
+  @apply text-base
+  text-[16px] leading-[21.6px] /** small screen */
+  lg:text-[24px] lg:leading-[36px] /** large screen */
+  font-medium font-satoshi;
+}
+
+.single-post-card-author {
+  @apply text-base
+  text-[16px] leading-[21.6px] tracking-[0.01em] /** small screen */
+  lg:text-[18px] lg:leading-[24.3px] /** large screen */
+  capitalize font-bold font-satoshi;
+}
+
+.single-post-card-date {
+  @apply text-base
+  lg:text-[18px] lg:leading-[27px] /** large screen */
+  font-medium font-satoshi;
+}
+
+.single-post-card-tag {
+  @apply text-base
+  lg:text-[18px] lg:leading-[27px] /** large screen */
+  font-black font-satoshi;
+}
+
 /** Override the notion styles */
-
-.notion-h3 {
-  @apply heading-4;
-  /** Override */
-  @apply !font-semibold;
-
-  span {
-    @apply flex items-center;
-  }
+.notion-h-title {
+  @apply heading-3;
 }
 
 .notion-text {
-  @apply sub-heading-2;
+  @apply sub-heading-1;
 }
 
 .notion-list li {
@@ -203,4 +225,8 @@
 
 .notion-link {
   @apply inline-block;
+}
+
+.notion-h2 {
+  @apply mt-0;
 }

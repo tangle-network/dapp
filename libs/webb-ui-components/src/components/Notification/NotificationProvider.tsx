@@ -1,5 +1,5 @@
 import { SnackbarContent, SnackbarKey, SnackbarProvider } from 'notistack';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { SnackBarOpts } from './NotificationContext';
 import { NotificationItem } from './NotificationItem';
@@ -9,6 +9,8 @@ export const NotificationProvider: React.FC<{
   children?: React.ReactNode;
 }> = ({ children }) => {
   const [notificationOptions] = useState<Record<SnackbarKey, SnackBarOpts>>({});
+
+  const [domRoot, setDomRoot] = useState<HTMLElement | undefined>(undefined);
 
   const cleanOpt = useCallback(
     (key: SnackbarKey) => {
@@ -24,6 +26,10 @@ export const NotificationProvider: React.FC<{
     [notificationOptions]
   );
 
+  useEffect(() => {
+    setDomRoot(document?.getElementById('notification-root') ?? undefined);
+  }, []);
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -33,7 +39,7 @@ export const NotificationProvider: React.FC<{
       autoHideDuration={5000}
       preventDuplicate
       maxSnack={10}
-      domRoot={document.getElementById('notification-root') ?? undefined}
+      domRoot={domRoot}
       content={(key) => {
         const opts = notificationOptions[key];
 
