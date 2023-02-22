@@ -4,6 +4,7 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
+import Script from 'next/script';
 import { useEffect } from 'react';
 import { Header, Footer } from '../components';
 
@@ -55,6 +56,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
       <main className="app">
         <Component {...pageProps} />
+        <Script
+          defer
+          data-domain="webb.tools"
+          src="https://plausible.io/js/script.js"
+        />
       </main>
 
       <Footer />
