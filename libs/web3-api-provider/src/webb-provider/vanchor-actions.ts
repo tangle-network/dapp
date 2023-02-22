@@ -21,10 +21,12 @@ import {
 import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
+  ChainType,
   CircomUtxo,
   Keypair,
   MerkleTree,
   Note,
+  ResourceId,
   Utxo,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
@@ -485,9 +487,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const destTypedChainId = payload.note.targetChainId;
     // Populate the leaves for the destination if not already populated
     if (!leavesMap[destTypedChainId.toString()]) {
-      const leafStorage = await bridgeStorageFactory(
-        destVAnchor.contract.address
+      const chainId = await destVAnchor.contract.getChainId();
+      const resourceId = ResourceId.newFromContractAddress(
+        destVAnchor.contract.address,
+        ChainType.EVM,
+        chainId.toNumber()
       );
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
       const leaves = await this.inner.getVariableAnchorLeaves(
         destVAnchor,
         leafStorage,
@@ -537,9 +543,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
           sourceEthers
         );
 
-      const leafStorage = await bridgeStorageFactory(
-        sourceVAnchor.contract.address
+      const chainId = await sourceVAnchor.contract.getChainId();
+      const resourceId = ResourceId.newFromContractAddress(
+        sourceVAnchor.contract.address,
+        ChainType.EVM,
+        chainId.toNumber()
       );
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
       const leaves = await this.inner.getVariableAnchorLeaves(
         sourceVAnchor,
         leafStorage,

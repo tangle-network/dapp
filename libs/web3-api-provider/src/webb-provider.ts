@@ -285,15 +285,17 @@ export class WebbWeb3Provider
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
-      const storedContractInfo: BridgeStorage[0]['leaves'] = (
-        await storage.get(typedChainId)
-      )?.leaves || {
+      const lastQueriedBlock = await storage.get('lastQueriedBlock');
+      const storedLeaves = await storage.get('leaves');
+
+      const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
+          lastQueriedBlock ??
           getAnchorDeploymentBlockNumber(
             typedChainId,
             vanchor.contract.address
-          ) || 0,
-        value: [] as string[],
+          ),
+        leaves: storedLeaves ?? [],
       };
 
       console.log('Stored contract info: ', storedContractInfo);
@@ -307,15 +309,11 @@ export class WebbWeb3Provider
 
       console.log('Leaves from chain: ', leavesFromChain);
 
-      leaves = [...storedContractInfo.value, ...leavesFromChain.newLeaves];
+      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
       // Cached the new leaves
-      await storage.set(typedChainId, {
-        leaves: {
-          lastQueriedBlock: leavesFromChain.lastQueriedBlock,
-          value: leaves,
-        },
-      });
+      await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
+      await storage.set('leaves', leaves);
     }
 
     console.groupEnd();
