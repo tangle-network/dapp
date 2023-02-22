@@ -31,7 +31,7 @@ export const getStaticPaths = async () => {
   if (!posts) return { paths: [], fallback: true };
 
   return {
-    paths: posts.map((post: any) => `/blog/${post.metadata.slug}`),
+    paths: posts.map((post: any) => `/blog/posts/${post.metadata.slug}`),
     fallback: true,
   };
 };

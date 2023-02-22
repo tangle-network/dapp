@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Post, PostsOrVideos, Video } from '../../libs/notion';
-import { BlogCard, Heading3, SubHeading1 } from '../../components';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Post, Video } from '../../libs/notion';
+import { Heading3, SubHeading1 } from '../../components';
 import Link from 'next/link';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 

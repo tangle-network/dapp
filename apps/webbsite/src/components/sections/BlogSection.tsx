@@ -29,7 +29,7 @@ export const BlogSection = (data: BlogSectionProps) => {
       return accumulator;
     }, []);
 
-    tags.push('All');
+    tags.unshift('All');
 
     return tags;
   }, [tagsArrays]);
@@ -72,6 +72,7 @@ export const BlogSection = (data: BlogSectionProps) => {
               title={title}
               tags={tags}
               cover={cover}
+              type={type}
               link={link ? link : `/blog/posts/${slug}`}
             />
           );
