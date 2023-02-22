@@ -58,13 +58,15 @@ export const keypairStorageFactory = () => {
 /// The key is the public key of the user.
 /// The `NoteStorage` is used to store the encrypted notes of the user.
 /// The key is the resource id.
-export type NoteStorage = {
-  encryptedNotes: {
-    [resourceId: string]: string[];
-  };
+export type NoteStorage = Record<string, string[]>;
+const NOTE_STORAGE_KEY = 'encryptedNotes';
+
+export const resetNoteStorage = () => {
+  localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify({}));
 };
-export const noteStorageFactory = (keypair: Keypair) => {
-  return Storage.newFromCache<NoteStorage>(keypair.toString(), {
+
+export const noteStorageFactory = () => {
+  return Storage.newFromCache<NoteStorage>(NOTE_STORAGE_KEY, {
     async commit(key: string, data: NoteStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
@@ -77,9 +79,7 @@ export const noteStorageFactory = (keypair: Keypair) => {
         };
       }
 
-      return {
-        encryptedNotes: {},
-      };
+      return {};
     },
   });
 };

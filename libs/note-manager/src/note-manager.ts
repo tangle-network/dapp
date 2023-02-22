@@ -1,7 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { NoteStorage } from '@webb-tools/browser-utils/storage';
+import {
+  NoteStorage,
+  resetNoteStorage,
+} from '@webb-tools/browser-utils/storage';
 import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
 import {
   CircomUtxo,
@@ -58,7 +61,7 @@ export class NoteManager {
   ): Promise<NoteManager> {
     const noteManager = new NoteManager(noteStorage, keypair);
 
-    const encryptedNotesRecord = await noteStorage.get('encryptedNotes');
+    const encryptedNotesRecord = await noteStorage.dump();
 
     // 32-bytes size resource id where each byte is represented by 2 characters
     const resourceIdSize = 32 * 2;
@@ -105,7 +108,7 @@ export class NoteManager {
       );
     } else {
       // Set the encryptedNotes value in localStorage
-      noteStorage.set('encryptedNotes', {});
+      resetNoteStorage();
     }
 
     return noteManager;
@@ -273,19 +276,14 @@ export class NoteManager {
   }
 
   async updateStorage() {
-    const encryptedNotes: Record<string, string[]> = {};
-
     for (const chainGroupedNotes of this.notesMap.entries()) {
       const encNoteStrings = chainGroupedNotes[1].map((note) => {
         const noteStr = note.serialize();
         return this.keypair.encrypt(Buffer.from(noteStr));
       });
 
-      encryptedNotes[chainGroupedNotes[0]] = encNoteStrings;
+      await this.noteStorage.set(chainGroupedNotes[0], encNoteStrings);
     }
-
-    await this.noteStorage.set('encryptedNotes', encryptedNotes);
-    return;
   }
 
   /**
