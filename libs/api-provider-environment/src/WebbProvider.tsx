@@ -18,14 +18,9 @@ import {
   ApiConfig,
   Chain,
   Wallet,
-  anchorDeploymentBlock,
-  anchorsConfig,
-  bridgeConfigByAsset,
   chainsConfig,
   chainsPopulated,
-  fetchEVMCurrenciesConfig,
   fetchEVMNativeCurrency,
-  getLatestAnchorAddress,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -87,8 +82,6 @@ const registerInteractiveFeedback = (
 };
 
 const defaultApiConfig = ApiConfig.init({
-  anchors: anchorsConfig,
-  bridgeByAsset: bridgeConfigByAsset,
   chains: chainsConfig,
   wallets: walletsConfig,
 });
@@ -154,18 +147,6 @@ function notificationHandler(notification: NotificationPayload) {
 notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
-
-// For the fetching currency on chain effect
-const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
-  (acc, typedChainId) => {
-    const address = getLatestAnchorAddress(+typedChainId);
-    if (address) {
-      acc[+typedChainId] = address;
-    }
-    return acc;
-  },
-  {} as Record<number, string>
-);
 
 // For the fetching currency on chain effect
 const providerFactory = (typedChainId: number): ethers.providers.Provider => {
@@ -586,18 +567,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   'evm'
                 )) as Web3RelayerManager;
 
-              const currenciesConfigOnChain = await fetchEVMCurrenciesConfig(
-                parsedAnchorConfig,
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
                 providerFactory
               );
-
-              const apiConfig = ApiConfig.init({
-                anchors: defaultApiConfig.anchors,
-                currencies: currenciesConfigOnChain,
-                bridgeByAsset: defaultApiConfig.bridgeByAsset,
-                wallets: defaultApiConfig.wallets,
-                chains: defaultApiConfig.chains,
-              });
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,
@@ -901,23 +874,23 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   useEffect(() => {
     let isSubscribed = true;
 
-    fetchEVMCurrenciesConfig(parsedAnchorConfig, providerFactory)
-      .then((fetchedCurrenciesConfig) => {
-        if (isSubscribed) {
-          setApiConfig((prev) =>
-            ApiConfig.init({
-              anchors: prev.anchors,
-              currencies: fetchedCurrenciesConfig,
-              bridgeByAsset: prev.bridgeByAsset,
-              wallets: prev.wallets,
-              chains: prev.chains,
-            })
-          );
+    const fetchApiConfigData = async () => {
+      try {
+        const apiConfigFromApi = await ApiConfig.initFromApi(
+          defaultApiConfig,
+          providerFactory
+        );
+        if (!isSubscribed) {
+          return;
         }
-      })
-      .catch((error) =>
-        console.error('Error while fetching currencies config', error)
-      );
+
+        setApiConfig(apiConfigFromApi);
+      } catch (error) {
+        console.error('Error while fetching currencies config', error);
+      }
+    };
+
+    fetchApiConfigData();
 
     return () => {
       isSubscribed = false;

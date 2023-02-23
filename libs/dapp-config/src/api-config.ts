@@ -5,11 +5,18 @@ import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 
+import { ethers } from 'ethers';
+import {
+  anchorDeploymentBlock,
+  getAnchorConfig,
+  getLatestAnchorAddress,
+} from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
+import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
-import { getNativeCurrencyFromConfig } from './utils';
+import { fetchEVMCurrenciesConfig, getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
@@ -24,6 +31,18 @@ export type ApiConfigInput = {
   bridgeByAsset?: Record<number, BridgeConfigEntry>;
   anchors?: Record<number, AnchorConfigEntry>;
 };
+
+// For the fetching currency on chain effect
+const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
+  (acc, typedChainId) => {
+    const address = getLatestAnchorAddress(+typedChainId);
+    if (address) {
+      acc[+typedChainId] = address;
+    }
+    return acc;
+  },
+  {} as Record<number, string>
+);
 
 export class ApiConfig {
   constructor(
@@ -41,6 +60,28 @@ export class ApiConfig {
       config.currencies ?? {},
       config.bridgeByAsset ?? {},
       config.anchors ?? {}
+    );
+  };
+
+  static initFromApi = async (
+    config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
+    providerFactory: (typedChainId: number) => ethers.providers.Provider
+  ) => {
+    const currenciesOnChain = await fetchEVMCurrenciesConfig(
+      parsedAnchorConfig,
+      providerFactory
+    );
+
+    const anchors = await getAnchorConfig(currenciesOnChain);
+
+    const bridgeByAsset = await getBridgeConfigByAsset(currenciesOnChain);
+
+    return new ApiConfig(
+      config.wallets ?? {},
+      config.chains ?? {},
+      currenciesOnChain,
+      bridgeByAsset,
+      anchors
     );
   };
 

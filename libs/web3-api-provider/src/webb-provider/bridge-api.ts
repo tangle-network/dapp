@@ -3,15 +3,14 @@
 import { Bridge, BridgeApi, Currency } from '@webb-tools/abstract-api-provider';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import {
-  CurrencyId,
   CurrencyRole,
   CurrencyType,
   checkNativeAddress,
 } from '@webb-tools/dapp-types';
 
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { WebbWeb3Provider } from '../webb-provider';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssetsByBridge(
@@ -46,13 +45,16 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
           const decimals = await newERC20Token.decimals();
           const name = await newERC20Token.name();
           const symbol = await newERC20Token.symbol();
-          const wrappableTokenLength = Object.keys(knownCurrencies).length;
+
+          const nextCurrencyId = Object.keys(
+            this.inner.config.currencies
+          ).length;
 
           const newToken: Currency = new Currency({
             //TODO: Ensure the webbState has the right address map (EX: the token is in another chain)
             addresses: new Map<number, string>([[typedChainId, tokenAddress]]),
             decimals: decimals,
-            id: CurrencyId.DYNAMIC_CURRENCY_STARTING_ID + wrappableTokenLength,
+            id: nextCurrencyId,
             name: name,
             role: CurrencyRole.Wrappable,
             symbol: symbol,

@@ -3,7 +3,7 @@
 
 // The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
 
-import { CurrencyId, EVMChainId } from '@webb-tools/dapp-types';
+import { EVMChainId } from '@webb-tools/dapp-types';
 import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
 import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
