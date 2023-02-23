@@ -16,8 +16,10 @@ export const getNativeCurrencyFromConfig = (
       return currency.type === CurrencyType.NATIVE;
     })
     .find((currency) => {
-      return Object.keys(currency.addresses).find(
-        (currentTypedChainId) => currentTypedChainId === typedChainId.toString()
+      return Array.from(currency.addresses.keys()).find(
+        (currentTypedChainId) => {
+          return currentTypedChainId === typedChainId;
+        }
       );
     });
 };
