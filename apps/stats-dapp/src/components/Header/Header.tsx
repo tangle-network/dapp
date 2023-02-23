@@ -81,9 +81,9 @@ export const Header: FC<HeaderProps> = ({
                 <ThreeDotsVerticalIcon size="lg" />
               </DropdownBasicButton>
 
-              <DropdownBody className="mt-6 w-[260px]">
+              <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
                 <MenuItem
-                  className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
+                  className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
                     window.open(selectedNetwork.polkadotExplorer, '_blank');
@@ -95,7 +95,7 @@ export const Header: FC<HeaderProps> = ({
                 </MenuItem>
 
                 <MenuItem
-                  className="px-4 py-3.5 border-b border-mono-40 dark:border-mono-140"
+                  className="px-4 py-3.5 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0  dark:hover:bg-mono-180"
                   icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
                     window.open('https://docs.webb.tools', '_blank');
@@ -106,7 +106,7 @@ export const Header: FC<HeaderProps> = ({
                   </Typography>
                 </MenuItem>
 
-                <MenuItem className="px-4 py-2">
+                <MenuItem className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
                   <Typography variant="label" fw="bold">
                     Advanced
                   </Typography>

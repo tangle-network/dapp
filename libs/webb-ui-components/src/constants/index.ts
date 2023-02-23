@@ -59,7 +59,7 @@ export const webbNetworks: webbNetworksType[] = [
         subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
         polkadotEndpoint: 'wss://tangle-archive.webb.tools/',
         polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-archive.webb.tools#/explorer',
+          'https://polkadot.js.org/apps/?rpc=wss://tangle-archive.webb.tools/#/explorer',
         avatar: '',
       },
       {
@@ -69,7 +69,7 @@ export const webbNetworks: webbNetworksType[] = [
         subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
         polkadotEndpoint: 'wss://tangle-standalone-archive.webb.tools',
         polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
+          'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer',
         avatar: '',
       },
     ],
@@ -78,13 +78,13 @@ export const webbNetworks: webbNetworksType[] = [
     networkType: 'dev',
     networks: [
       {
-        name: 'Local endpoint (127.0.0.1)',
+        name: 'Local endpoint',
         networkType: 'dev',
         networkNodeType: 'standalone',
         subqueryEndpoint: 'http://localhost:4000/',
         polkadotEndpoint: 'ws://127.0.0.1:9944',
         polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2F127.0.0.1:9944%2F#/explorer',
+          'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
         avatar: '',
       },
     ],

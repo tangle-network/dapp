@@ -4,8 +4,20 @@ import {
   Network,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
-import { RadioGroup, RadioItem } from '@webb-tools/webb-ui-components';
+import {
+  Input,
+  RadioGroup,
+  RadioItem,
+  TitleWithInfo,
+} from '@webb-tools/webb-ui-components';
 import { TangleLogo } from '@webb-tools/logos';
+import {
+  DeleteBinIcon,
+  DeleteBinWithBg,
+  Save,
+  SaveFill,
+  SaveWithBg,
+} from '@webb-tools/icons';
 
 type NetworkSelectorProps = {
   selectedNetwork: Network;
@@ -31,6 +43,10 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
         defaultValue={selectedNetwork.name}
         value={selectedNetwork.name}
         onValueChange={(val) => {
+          if (val === 'Custom') {
+            return;
+          }
+
           const network = filteredNetworkType[0].networks.filter(
             (network) => network.name === val
           );
@@ -47,6 +63,23 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
               {selectedNetworkType !== 'dev' && <TangleLogo size="lg" />}
             </div>
           ))}
+          {selectedNetworkType === 'dev' && (
+            <div className="flex flex-col space-y-2.5">
+              <RadioItem id="Custom" value="Custom">
+                Custom
+              </RadioItem>
+              <Input
+                id="Subquery endpoint"
+                placeholder="Subquery endpoint"
+                rightIcon={<Save />}
+              />
+              <Input
+                id="Polkadot endpoint"
+                placeholder="Polkadot endpoint"
+                rightIcon={<Save />}
+              />
+            </div>
+          )}
         </div>
       </RadioGroup>
 
@@ -76,3 +109,5 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
     </div>
   );
 };
+
+// https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer
