@@ -43,7 +43,11 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
         defaultValue={selectedNetwork.name}
         value={selectedNetwork.name}
         onValueChange={(val) => {
-          if (val === 'Custom') {
+          // TODO: Work in progress for custom network selection and local endpoint selection (not yet implemented)
+          // TODO: Need to handle error if local endpoint is selected but no local endpoint is running
+          // TODO: Need to use verifyEndpoint() to verify the custom network endpoint provided by the user
+          // TODO: Need to create a new NETWORK type for custom network selection using the custom input fields and set it to the userSelectedNetwork
+          if (val === 'Local endpoint' || val === 'Custom') {
             return;
           }
 
