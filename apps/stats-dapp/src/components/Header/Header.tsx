@@ -1,17 +1,15 @@
-import * as constants from '@webb-tools/webb-ui-components/constants';
+import {
+  webbAppConfig,
+  logoConfig,
+  headerNavs,
+} from '@webb-tools/webb-ui-components/constants';
 import {
   Button,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  Input,
   Logo,
   MenuItem,
-  ThemeSwitcherMenuItem,
-  Divider,
   ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
 import {
@@ -21,62 +19,41 @@ import {
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
 import cx from 'classnames';
-import { FC, useCallback, useState, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren } from 'react';
 import { NavLink } from 'react-router-dom';
 import { NetworkSelector } from '../NetworkSelector/NetworkSelector';
+import { Network } from '@webb-tools/webb-ui-components/constants';
 
 type HeaderProps = {
-  connectedEndpoint: string;
-  setConnectedEndpoint: (endpoint: string) => Promise<void>;
+  selectedNetwork: Network;
+  setUserSelectedNetwork: (network: Network) => void;
 };
 
-/**
- * The statistic `Header` for `Layout` container
- */
 export const Header: FC<HeaderProps> = ({
-  connectedEndpoint,
-  setConnectedEndpoint,
+  selectedNetwork,
+  setUserSelectedNetwork,
 }) => {
-  const { webbApiConfig, webbAppConfig, webbNodes } = constants;
-
-  // This state variable tracks the user input of the 'Custom Data Source'
-  const [endpointUserInput, setEndpointUserInput] = useState(connectedEndpoint);
-
-  // A function to verify the user input before setting the connection.
-  const verifyEndpoint = async (maybeEndpoint: string) => {
-    // verify graphql service at endpoint:
-    const req = await fetch(`${maybeEndpoint}?query=%7B__typename%7D`);
-    if (req.ok) {
-      return true;
-    } else {
-      throw false;
-    }
-  };
-
-  const setEndpoint = useCallback(
-    async (endpoint: string) => {
-      const verified = await verifyEndpoint(endpoint);
-      if (verified) {
-        localStorage.setItem('statsEndpoint', endpoint);
-        await setConnectedEndpoint(endpoint);
-      } else {
-        setEndpointUserInput(connectedEndpoint);
-      }
-    },
-    [connectedEndpoint, setConnectedEndpoint]
-  );
+  // // A function to verify the user input before setting the connection.
+  // const verifyEndpoint = async (maybeEndpoint: string) => {
+  //   // verify graphql service at endpoint:
+  //   const req = await fetch(`${maybeEndpoint}?query=%7B__typename%7D`);
+  //   if (req.ok) {
+  //     return true;
+  //   } else {
+  //     throw false;
+  //   }
+  // };
 
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
       <div className="relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto">
-        <NavLink to={constants.logoConfig.path}>
+        <NavLink to={logoConfig.path}>
           <Logo />
         </NavLink>
 
-        {/** Center the nav */}
         <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 rounded-full bg-mono-20 dark:bg-mono-140 py-1.5">
           <ul className="flex items-center space-x-9">
-            {constants.headerNavs.map(({ name, path }) => (
+            {headerNavs.map(({ name, path }) => (
               <NavButton key={`${name}-${path}`} path={path}>
                 {name}
               </NavButton>
@@ -104,34 +81,16 @@ export const Header: FC<HeaderProps> = ({
                 <ThreeDotsVerticalIcon size="lg" />
               </DropdownBasicButton>
 
-              <DropdownBody
-                className="mt-6 w-[260px]"
-                onInteractOutside={async () =>
-                  await setEndpoint(endpointUserInput)
-                }
-              >
+              <DropdownBody className="mt-6 w-[260px]">
                 <MenuItem
                   className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
-                    window.open(
-                      endpointUserInput === webbNodes.parachain.subqueryEndpoint
-                        ? webbApiConfig.parachain.href
-                        : endpointUserInput ===
-                          webbNodes.standalone.subqueryEndpoint
-                        ? webbApiConfig.standalone.href
-                        : '',
-                      '_blank'
-                    );
+                    window.open(selectedNetwork.polkadotExplorer, '_blank');
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {endpointUserInput === webbNodes.parachain.subqueryEndpoint
-                      ? webbApiConfig.parachain.name
-                      : endpointUserInput ===
-                        webbNodes.standalone.subqueryEndpoint
-                      ? webbApiConfig.standalone.name
-                      : ''}
+                    {selectedNetwork.name}
                   </Typography>
                 </MenuItem>
 
@@ -152,29 +111,16 @@ export const Header: FC<HeaderProps> = ({
                     Advanced
                   </Typography>
 
-                  {/* <div className="flex items-center justify-between pt-4">
-                    <Typography variant="body1">Custom Data Source</Typography>
+                  <Typography variant="body1" className="pt-4">
+                    Data Source
+                  </Typography>
 
-                    <Button
-                      size="sm"
-                      variant="link"
-                      onClick={() => {
-                        setEndpointUserInput(
-                          webbNodes.parachain.subqueryEndpoint
-                        );
-                      }}
-                    >
-                      Reset
-                    </Button>
+                  <div className="pt-4">
+                    <NetworkSelector
+                      selectedNetwork={selectedNetwork}
+                      setUserSelectedNetwork={setUserSelectedNetwork}
+                    />
                   </div>
-
-                  <Input
-                    id="endpoint"
-                    className="pt-2 pb-4"
-                    onChange={(val) => setEndpointUserInput(val.toString())}
-                    value={endpointUserInput}
-                  /> */}
-                  <NetworkSelector />
                 </MenuItem>
               </DropdownBody>
             </Dropdown>
@@ -184,12 +130,6 @@ export const Header: FC<HeaderProps> = ({
     </header>
   );
 };
-
-const SettingItem: FC<PropsWithChildren> = ({ children }) => (
-  <div className="px-4 py-2 w-[298px] flex items-center justify-between text-mono-180 dark:text-mono-0">
-    {children}
-  </div>
-);
 
 /***********************
  * Internal components *

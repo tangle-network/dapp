@@ -22,45 +22,74 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-type WebbNodeInfo = {
-  parachain: {
-    subqueryEndpoint: string;
-    providerEndpoint: string;
-  };
-  standalone: {
-    subqueryEndpoint: string;
-    providerEndpoint: string;
-  };
+/**
+ * The network type (use to categorize the network)
+ */
+export type NetworkType = 'live' | 'testnet' | 'dev';
+
+export type NetworkNodeType = 'parachain' | 'standalone';
+
+export type Network = {
+  name: string;
+  networkType: NetworkType;
+  networkNodeType: NetworkNodeType;
+  subqueryEndpoint: string;
+  polkadotEndpoint: string;
+  polkadotExplorer: string;
+  avatar: string;
 };
 
-export const webbNodes: WebbNodeInfo = {
-  parachain: {
-    subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
-    providerEndpoint: 'wss://tangle-archive.webb.tools/',
-  },
-  standalone: {
-    subqueryEndpoint: 'https://subquery-dev.webb.tools/graphql',
-    providerEndpoint: 'wss://arana-alpha-1.webb.tools/',
-  },
+export type webbNetworksType = {
+  networkType: NetworkType;
+  networks: Network[];
 };
 
-type webbApiConfigType = {
-  parachain: ExternalLink;
-  standalone: ExternalLink;
-};
-
-export const webbApiConfig: webbApiConfigType = {
-  parachain: {
-    name: 'Tangle Network',
-    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
-    ...commonExternalProps,
+export const webbNetworks: webbNetworksType[] = [
+  {
+    networkType: 'live',
+    networks: [],
   },
-  standalone: {
-    name: 'Arana Alpha',
-    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
-    ...commonExternalProps,
+  {
+    networkType: 'testnet',
+    networks: [
+      {
+        name: 'Tangle Alpha',
+        networkType: 'testnet',
+        networkNodeType: 'parachain',
+        subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
+        polkadotEndpoint: 'wss://tangle-archive.webb.tools/',
+        polkadotExplorer:
+          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-archive.webb.tools#/explorer',
+        avatar: '',
+      },
+      {
+        name: 'Tangle Standalone',
+        networkType: 'testnet',
+        networkNodeType: 'standalone',
+        subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
+        polkadotEndpoint: 'wss://tangle-standalone-archive.webb.tools',
+        polkadotExplorer:
+          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
+        avatar: '',
+      },
+    ],
   },
-};
+  {
+    networkType: 'dev',
+    networks: [
+      {
+        name: 'Local endpoint (127.0.0.1)',
+        networkType: 'dev',
+        networkNodeType: 'standalone',
+        subqueryEndpoint: 'http://localhost:4000/',
+        polkadotEndpoint: 'ws://127.0.0.1:9944',
+        polkadotExplorer:
+          'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2F127.0.0.1:9944%2F#/explorer',
+        avatar: '',
+      },
+    ],
+  },
+];
 
 export const webbAppConfig: ExternalLink = {
   name: 'Hubble Bridge',
