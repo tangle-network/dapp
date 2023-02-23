@@ -24,15 +24,15 @@ export const WalletModal: FC = () => {
     toggleModal,
   } = useConnectWallet();
 
-  const { chains } = useWebContext();
+  const { chains, apiConfig } = useWebContext();
 
   const chain = useMemo(() => {
     if (!selectedChain) {
-      return getDefaultConnection(chains).defaultChain;
+      return getDefaultConnection(chains, apiConfig.currencies).defaultChain;
     }
 
     return selectedChain;
-  }, [chains, selectedChain]);
+  }, [apiConfig, chains, selectedChain]);
 
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {

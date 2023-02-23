@@ -1,11 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { currenciesConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 /**
  * The wrapper component for the ChainListCard component
@@ -26,6 +26,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const {
     activeChain,
     activeWallet,
+    apiConfig,
     chains: chainsConfig,
     switchChain,
   } = useWebContext();
@@ -49,13 +50,21 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     if (chainsProps) return chainsProps;
 
     return Object.values(chainsConfig).map((val) => {
+      const currency = getNativeCurrencyFromConfig(
+        apiConfig.currencies,
+        calculateTypedChainId(val.chainType, val.chainId)
+      );
+      if (!currency) {
+        console.error('Currency not found on chain: ', val.name);
+      }
+
       return {
         name: val.name,
         tag: val.tag,
-        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
+        symbol: currency?.symbol ?? 'Unknown',
       };
     });
-  }, [chainsConfig, chainsProps]);
+  }, [apiConfig, chainsConfig, chainsProps]);
 
   const handleChainChange = useCallback<NonNullable<typeof onChange>>(
     async (selectedChain) => {

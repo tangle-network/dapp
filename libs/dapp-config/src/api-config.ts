@@ -3,13 +3,19 @@
 
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 
+import { CurrencyType } from '@webb-tools/dapp-types';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
 import { WalletConfig } from './wallets/wallet-config.interface';
+import { getNativeCurrencyFromConfig } from './utils';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
@@ -64,24 +70,21 @@ export class ApiConfig {
   };
 
   getNativeCurrencySymbol = (evmId: number): string => {
-    const chain = Object.values(this.chains).find(
-      (chainsConfig) => chainsConfig.chainId === evmId
+    const currency = getNativeCurrencyFromConfig(
+      this.currencies,
+      calculateTypedChainId(ChainType.EVM, evmId)
     );
 
-    if (chain) {
-      const nativeCurrency = chain.nativeCurrencyId;
-
-      return this.currencies[nativeCurrency].symbol;
-    }
-
-    return 'Unknown';
+    return currency?.symbol ?? 'Unknown';
   };
+
   getCurrencyBySymbol(symbol: string): CurrencyConfig | undefined {
     const currency = Object.keys(this.currencies).find(
       (key) => this.currencies[key as any].symbol === symbol
     );
     return this.currencies[currency as any] ?? undefined;
   }
+
   getCurrencyByAddress(rawAddress: string): CurrencyConfig | undefined {
     const address = rawAddress.toLowerCase();
     const currency = Object.keys(this.currencies).find((key) => {

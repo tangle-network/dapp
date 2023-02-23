@@ -14,5 +14,4 @@ export interface ChainConfig {
   evmRpcUrls?: string[];
   blockExplorerStub?: string;
   logo: React.ComponentType | React.ElementType;
-  nativeCurrencyId: CurrencyId;
 }

@@ -7,7 +7,7 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import { chainsPopulated, currenciesConfig } from '@webb-tools/dapp-config';
+import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
@@ -55,7 +55,7 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi, activeChain, noteManager } = useWebContext();
+    const { activeApi, activeChain, noteManager, apiConfig } = useWebContext();
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
@@ -74,16 +74,16 @@ export const DepositConfirmContainer = forwardRef<
     );
 
     const fungibleToken = useMemo(() => {
-      return new Currency(currenciesConfig[fungibleTokenId]);
-    }, [fungibleTokenId]);
+      return new Currency(apiConfig.currencies[fungibleTokenId]);
+    }, [apiConfig.currencies, fungibleTokenId]);
 
     const wrappableToken = useMemo(() => {
       if (!wrappableTokenId) {
         return;
       }
 
-      return new Currency(currenciesConfig[wrappableTokenId]);
-    }, [wrappableTokenId]);
+      return new Currency(apiConfig.currencies[wrappableTokenId]);
+    }, [wrappableTokenId, apiConfig.currencies]);
 
     const wrappingFlow = useMemo(
       () => typeof wrappableTokenId !== 'undefined',
@@ -126,7 +126,13 @@ export const DepositConfirmContainer = forwardRef<
       // Get the destination token symbol
       const destToken = tokenSymbol;
 
-      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      if (!currency) {
+        console.error(`Currency not found for symbol ${tokenSymbol}`);
+        return;
+      }
+
+      const tokenURI = getTokenURI(currency, destTypedChainId);
 
       const tx = Transaction.new<NewNotesTxResult>('Deposit', {
         amount: +formattedAmount,
@@ -189,11 +195,12 @@ export const DepositConfirmContainer = forwardRef<
       activeApi,
       activeChain,
       depositTxInProgress,
-      resetMainComponent,
-      startNewTransaction,
       downloadNote,
       note,
       wrappableToken,
+      apiConfig,
+      startNewTransaction,
+      resetMainComponent,
       txQueueApi,
       noteManager,
     ]);

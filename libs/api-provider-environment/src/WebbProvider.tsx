@@ -23,7 +23,6 @@ import {
   bridgeConfigByAsset,
   chainsConfig,
   chainsPopulated,
-  currenciesConfig,
   fetchEVMCurrenciesConfig,
   fetchEVMNativeCurrency,
   getLatestAnchorAddress,
@@ -91,7 +90,6 @@ const defaultApiConfig = ApiConfig.init({
   anchors: anchorsConfig,
   bridgeByAsset: bridgeConfigByAsset,
   chains: chainsConfig,
-  currencies: currenciesConfig,
   wallets: walletsConfig,
 });
 

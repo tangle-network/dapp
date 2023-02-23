@@ -11,6 +11,7 @@ import {
 
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { WebbWeb3Provider } from '../webb-provider';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
   async fetchWrappableAssetsByBridge(
@@ -72,13 +73,15 @@ export class Web3BridgeApi extends BridgeApi<WebbWeb3Provider> {
 
     // Add the chain's native currency if the wrappableToken allows native
     if (await fungibleToken.contract.isNativeAllowed()) {
-      wrappableTokens.push(
-        new Currency(
-          this.inner.config.currencies[
-            this.inner.config.chains[typedChainId].nativeCurrencyId
-          ]
-        )
+      const currencyConfig = getNativeCurrencyFromConfig(
+        this.inner.config.currencies,
+        typedChainId
       );
+      if (currencyConfig) {
+        wrappableTokens.push(new Currency(currencyConfig));
+      } else {
+        console.error(`Native currency not found for chainId: ${typedChainId}`);
+      }
     }
 
     return wrappableTokens;

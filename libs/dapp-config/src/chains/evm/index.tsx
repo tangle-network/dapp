@@ -30,7 +30,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
     chainType: ChainType.EVM,
@@ -47,7 +46,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://blockscout.com/optimism/goerli',
     logo: OptimismLogo,
     tag: 'test',
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
     chainType: ChainType.EVM,
@@ -63,7 +61,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://goerli-rollup-explorer.arbitrum.io/',
     logo: ArbitrumLogo,
     tag: 'test',
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     chainType: ChainType.EVM,
@@ -79,7 +76,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
-    nativeCurrencyId: CurrencyId.MATIC,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     chainType: ChainType.EVM,
@@ -90,7 +86,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5001',
     evmRpcUrls: ['http://127.0.0.1:5001'],
     logo: GanacheLogo,
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
     chainType: ChainType.EVM,
@@ -101,7 +96,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5002',
     evmRpcUrls: ['http://127.0.0.1:5002'],
     logo: GanacheLogo,
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
     chainType: ChainType.EVM,
@@ -112,7 +106,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5003',
     evmRpcUrls: ['http://127.0.0.1:5003'],
     logo: GanacheLogo,
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
     chainType: ChainType.EVM,
@@ -128,7 +121,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     blockExplorerStub: 'https://moonbase.moonscan.io/',
     logo: MoonbeamLogo,
-    nativeCurrencyId: CurrencyId.moonDEV,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
     chainType: ChainType.EVM,
@@ -145,6 +137,5 @@ export const chainsConfig: Record<number, ChainConfig> = {
       'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
     ],
     logo: EtherLogo,
-    nativeCurrencyId: CurrencyId.ETH,
   },
 };

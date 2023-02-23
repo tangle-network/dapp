@@ -1,5 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useCallback, useEffect, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
@@ -128,12 +129,12 @@ export const useCurrencies = () => {
           activeChain.chainId
         );
 
-        const nativeCurrencyConfig =
-          activeApi.config.currencies[activeChain.nativeCurrencyId];
+        const nativeCurrencyConfig = getNativeCurrencyFromConfig(
+          activeApi.config.currencies,
+          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+        );
         if (!nativeCurrencyConfig) {
-          throw new Error(
-            `Native currency ${activeChain.nativeCurrencyId} not found`
-          );
+          throw new Error(`Native currency ${activeChain.name} not found`);
         }
 
         const nativeCurrency = new Currency(nativeCurrencyConfig);

@@ -9,9 +9,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { uniqueId } from 'lodash';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import {
+  chainsPopulated,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { ethers } from 'ethers';
 import { PasteModalContentProps } from './types';
 import { isValidNote } from '../../utils';
@@ -110,8 +113,14 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
               return null;
             }
 
-            const sourceCurrency = currencies[sourceChain.nativeCurrencyId];
-            const destCurrency = currencies[destChain.nativeCurrencyId];
+            const sourceCurrency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
+            );
+            const destCurrency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(destChain.chainType, destChain.chainId)
+            );
 
             if (!sourceCurrency || !destCurrency) {
               return null;

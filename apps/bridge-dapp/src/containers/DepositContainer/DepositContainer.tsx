@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
+import { Chain, getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import {
   useCurrencies,
   useCurrenciesBalances,
@@ -75,7 +75,6 @@ export const DepositContainer = forwardRef<
       switchChain,
       activeChain,
       activeWallet,
-      activeAccount,
       loading,
       noteManager,
       apiConfig: { currencies },
@@ -129,16 +128,24 @@ export const DepositContainer = forwardRef<
         .map((val) => {
           const maybeChain = chains[Number(val)];
           if (maybeChain) {
+            const currency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(maybeChain.chainType, maybeChain.chainId)
+            );
+            if (!currency) {
+              console.error('Currency not found for chain: ', maybeChain.name);
+            }
+
             return {
               name: maybeChain.name,
               tag: maybeChain.tag,
-              symbol: currenciesConfig[maybeChain.nativeCurrencyId].symbol,
+              symbol: currency?.symbol ?? 'Unknown',
             } as ChainType;
           }
           return undefined;
         })
         .filter((chain): chain is ChainType => !!chain);
-    }, [activeApi?.state?.activeBridge?.targets, chains]);
+    }, [activeApi?.state.activeBridge?.targets, chains, currencies]);
 
     const destChainInputValue = useMemo(
       () => destChains.find((chain) => chain.name === destChain?.name),
@@ -155,12 +162,20 @@ export const DepositContainer = forwardRef<
         setSourceChain(activeChain);
       }
 
+      const currency = getNativeCurrencyFromConfig(
+        currencies,
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+      );
+      if (!currency) {
+        console.error('Currency not found for chain: ', activeChain.name);
+      }
+
       return {
         name: activeChain.name,
         tag: activeChain.tag,
-        symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
+        symbol: currency?.symbol ?? 'Unknown',
       };
-    }, [activeChain, sourceChain]);
+    }, [activeChain, currencies, sourceChain]);
 
     const bridgeFungibleCurrency = useMemo(() => {
       if (!fungibleCurrency) {
