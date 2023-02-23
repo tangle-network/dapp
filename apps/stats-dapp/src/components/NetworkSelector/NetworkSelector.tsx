@@ -4,20 +4,9 @@ import {
   Network,
   webbNetworks,
 } from '@webb-tools/webb-ui-components/constants';
-import {
-  Input,
-  RadioGroup,
-  RadioItem,
-  TitleWithInfo,
-} from '@webb-tools/webb-ui-components';
-import { TangleLogo } from '@webb-tools/logos';
-import {
-  DeleteBinIcon,
-  DeleteBinWithBg,
-  Save,
-  SaveFill,
-  SaveWithBg,
-} from '@webb-tools/icons';
+import { Input, RadioGroup, RadioItem } from '@webb-tools/webb-ui-components';
+import { TangleIcon } from '@webb-tools/icons';
+import { Save } from '@webb-tools/icons';
 
 type NetworkSelectorProps = {
   selectedNetwork: Network;
@@ -64,7 +53,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
               <RadioItem id={network.name} value={network.name}>
                 {network.name}
               </RadioItem>
-              {selectedNetworkType !== 'dev' && <TangleLogo size="lg" />}
+              {selectedNetworkType !== 'dev' && <TangleIcon size="lg" />}
             </div>
           ))}
           {selectedNetworkType === 'dev' && (

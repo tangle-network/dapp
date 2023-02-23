@@ -82,3 +82,6 @@ export * from './wallets';
 export * from './AlertFill';
 export * from './Alert';
 export * from './PartyFill';
+
+// Tangle Icons
+export * from './TangleIcon';
