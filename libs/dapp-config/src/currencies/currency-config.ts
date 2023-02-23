@@ -5,15 +5,15 @@ import {
   PresetTypedChainId,
   zeroAddress,
 } from '@webb-tools/dapp-types';
+
+import EtherLogo from '@webb-tools/logos/Eth';
+import WebbWrappedLogo from '@webb-tools/logos/WebbWrappedLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
 import HarmonyLogo from '@webb-tools/logos/chains/HarmonyLogo';
 import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
 import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
 import ShidenLogo from '@webb-tools/logos/chains/ShidenLogo';
 import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
-import EtherLogo from '@webb-tools/logos/Eth';
-import WebbWrappedLogo from '@webb-tools/logos/WebbWrappedLogo';
-
 import { CurrencyConfig } from './currency-config.interface';
 
 export const currenciesConfig: Record<number, CurrencyConfig> = {
