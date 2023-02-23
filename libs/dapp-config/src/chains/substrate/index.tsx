@@ -19,7 +19,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
     name: 'Substrate',
-    currencies: [CurrencyId.WEBB, CurrencyId.TEST],
     nativeCurrencyId: CurrencyId.WEBB,
   },
   [PresetTypedChainId.LocalTangleStandalone]: {
@@ -30,7 +29,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: WEBBLogo,
     url: 'wss://standalone.webb.tools',
     name: 'Tangle',
-    currencies: [CurrencyId.WEBB],
     nativeCurrencyId: CurrencyId.WEBB,
   },
   [PresetTypedChainId.Kusama]: {
@@ -41,7 +39,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: KSMLogo,
     url: 'wss://kusama-rpc.polkadot.io',
     name: 'Kusama',
-    currencies: [CurrencyId.KSM],
     nativeCurrencyId: CurrencyId.KSM,
   },
   [PresetTypedChainId.Polkadot]: {
@@ -52,7 +49,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: DOTLogo,
     url: 'wss://rpc.polkadot.io',
     name: 'Polkadot',
-    currencies: [CurrencyId.DOT],
     nativeCurrencyId: CurrencyId.DOT,
   },
 };

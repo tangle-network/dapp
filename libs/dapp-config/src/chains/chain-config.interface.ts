@@ -15,5 +15,4 @@ export interface ChainConfig {
   blockExplorerStub?: string;
   logo: React.ComponentType | React.ElementType;
   nativeCurrencyId: CurrencyId;
-  currencies: Array<CurrencyId>;
 }
