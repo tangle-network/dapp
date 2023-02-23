@@ -1,5 +1,5 @@
 import { CurrencyType } from '@webb-tools/dapp-types';
-import { CurrencyConfig } from '../../currencies';
+import { CurrencyConfig } from '../currencies';
 
 /**
  * Returns the native currency config for the given chain id

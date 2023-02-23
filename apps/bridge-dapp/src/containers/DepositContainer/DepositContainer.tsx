@@ -132,9 +132,6 @@ export const DepositContainer = forwardRef<
               currencies,
               calculateTypedChainId(maybeChain.chainType, maybeChain.chainId)
             );
-            if (!currency) {
-              console.error('Currency not found for chain: ', maybeChain.name);
-            }
 
             return {
               name: maybeChain.name,
@@ -166,9 +163,6 @@ export const DepositContainer = forwardRef<
         currencies,
         calculateTypedChainId(activeChain.chainType, activeChain.chainId)
       );
-      if (!currency) {
-        console.error('Currency not found for chain: ', activeChain.name);
-      }
 
       return {
         name: activeChain.name,

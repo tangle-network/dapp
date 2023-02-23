@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import { getAcitveSourceChains } from '../../utils/getAcitveSourceChains';
 
 /**
  * The wrapper component for the ChainListCard component
@@ -49,7 +50,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const chains = useMemo(() => {
     if (chainsProps) return chainsProps;
 
-    return Object.values(chainsConfig).map((val) => {
+    return getAcitveSourceChains(apiConfig.chains).map((val) => {
       const currency = getNativeCurrencyFromConfig(
         apiConfig.currencies,
         calculateTypedChainId(val.chainType, val.chainId)
@@ -64,7 +65,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
         symbol: currency?.symbol ?? 'Unknown',
       };
     });
-  }, [apiConfig, chainsConfig, chainsProps]);
+  }, [apiConfig, chainsProps]);
 
   const handleChainChange = useCallback<NonNullable<typeof onChange>>(
     async (selectedChain) => {
