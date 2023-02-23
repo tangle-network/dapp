@@ -81,19 +81,36 @@ export class NoteManager {
       {} as Record<string, Array<string>>
     );
 
-    if (encryptedNotesMap) {
+    if (Object.keys(encryptedNotesMap).length > 0) {
       // decrypt notes and populate the notesMap of the noteManager
-      await Promise.all(
+      await Promise.allSettled(
         Object.entries(encryptedNotesMap).map(
           async ([resourceIdStr, encryptedNotes]) => {
-            const decryptedNoteStrings = encryptedNotes.map((encNote) => {
-              return noteManager.keypair.decrypt(encNote).toString();
-            });
+            // First decrypt the notes
+            const decryptedNoteStrings = encryptedNotes
+              .map((encNote) => {
+                try {
+                  return noteManager.keypair.decrypt(encNote).toString();
+                } catch {
+                  console.error(
+                    `Failed to decrypt note: ${encNote}, keypair: ${noteManager.keypair}`
+                  );
+                  return null;
+                }
+              })
+              .filter((note) => Boolean(note));
 
             const notes: Note[] = [];
 
+            // Deserialize the decrypted notes
             for (const decNote of decryptedNoteStrings) {
-              notes.push(await Note.deserialize(decNote));
+              try {
+                notes.push(await Note.deserialize(decNote));
+              } catch (error) {
+                console.error(
+                  `Failed to deserialize note: ${decNote}, error: ${error}`
+                );
+              }
             }
 
             // TODO: Filter / other validation can occur on initialization as a

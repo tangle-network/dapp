@@ -18,8 +18,12 @@ export const useCurrentResourceId = () => {
     }
 
     const fetchResourceId = async () => {
-      const resourceId = await activeApi.getResourceId();
-      setResourceId(resourceId);
+      try {
+        const resourceId = await activeApi.getResourceId();
+        setResourceId(resourceId);
+      } catch (error) {
+        console.error('Failed to fetch resource id', error);
+      }
     };
 
     fetchResourceId();
