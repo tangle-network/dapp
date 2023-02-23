@@ -3,19 +3,14 @@
 
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import {
-  ChainType,
-  calculateTypedChainId,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 
-import { CurrencyType } from '@webb-tools/dapp-types';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
-import { WalletConfig } from './wallets/wallet-config.interface';
 import { getNativeCurrencyFromConfig } from './utils';
+import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;

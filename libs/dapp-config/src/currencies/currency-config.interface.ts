@@ -5,11 +5,8 @@ import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types/Currency';
 
 export interface CurrencyView {
   id: number;
-  icon?: any;
-  imageUrl?: string;
   type: CurrencyType;
   name: string;
-  color?: string;
   decimals: number;
   symbol: string;
 }
