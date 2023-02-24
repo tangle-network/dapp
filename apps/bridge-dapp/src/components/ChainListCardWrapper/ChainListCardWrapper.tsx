@@ -55,9 +55,6 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
         apiConfig.currencies,
         calculateTypedChainId(val.chainType, val.chainId)
       );
-      if (!currency) {
-        console.error('Currency not found on chain: ', val.name);
-      }
 
       return {
         name: val.name,

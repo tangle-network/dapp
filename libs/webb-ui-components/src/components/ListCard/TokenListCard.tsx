@@ -82,7 +82,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
             <div className="flex flex-wrap gap-2">
               {filteredPopular.map((current, idx) => (
                 <TokenSelector
-                  className="uppercase"
                   key={`${current.name}-${idx}`}
                   onClick={() => onItemChange(current)}
                 >
