@@ -293,6 +293,11 @@ export class NoteManager {
   }
 
   async updateStorage() {
+    if (this.notesMap.size === 0) {
+      resetNoteStorage();
+      return;
+    }
+
     for (const chainGroupedNotes of this.notesMap.entries()) {
       const encNoteStrings = chainGroupedNotes[1].map((note) => {
         const noteStr = note.serialize();
