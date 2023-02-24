@@ -30,6 +30,7 @@ export type ApiConfigInput = {
   currencies?: Record<number, CurrencyConfig>;
   bridgeByAsset?: Record<number, BridgeConfigEntry>;
   anchors?: Record<number, AnchorConfigEntry>;
+  fungibleToWrappableMap?: Map<number, Map<number, Set<number>>>;
 };
 
 // For the fetching currency on chain effect
@@ -50,7 +51,9 @@ export class ApiConfig {
     public chains: Record<number, ChainConfig>,
     public currencies: Record<number, CurrencyConfig>,
     public bridgeByAsset: Record<number, BridgeConfigEntry>,
-    public anchors: Record<number, AnchorConfigEntry>
+    public anchors: Record<number, AnchorConfigEntry>,
+    // fungible currency id -> typed chain id -> wrappable currency ids
+    public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
   ) {}
 
   static init = (config: ApiConfigInput) => {
@@ -59,7 +62,8 @@ export class ApiConfig {
       config.chains ?? {},
       config.currencies ?? {},
       config.bridgeByAsset ?? {},
-      config.anchors ?? {}
+      config.anchors ?? {},
+      config.fungibleToWrappableMap ?? new Map()
     );
   };
 
@@ -67,10 +71,8 @@ export class ApiConfig {
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
     providerFactory: (typedChainId: number) => ethers.providers.Provider
   ) => {
-    const currenciesOnChain = await fetchEVMCurrenciesConfig(
-      parsedAnchorConfig,
-      providerFactory
-    );
+    const { currenciesConfig: currenciesOnChain, fungibleToWrappableMap } =
+      await fetchEVMCurrenciesConfig(parsedAnchorConfig, providerFactory);
 
     const anchors = await getAnchorConfig(currenciesOnChain);
 
@@ -81,7 +83,8 @@ export class ApiConfig {
       config.chains ?? {},
       currenciesOnChain,
       bridgeByAsset,
-      anchors
+      anchors,
+      fungibleToWrappableMap
     );
   };
 

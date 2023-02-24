@@ -1,10 +1,11 @@
-import { ERC20, ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
 import { ethers } from 'ethers';
 
 import { getLatestAnchorAddress } from '../../anchors';
+import { IEVMCurrency } from './types';
 
-// Cache the fungible currencies (typed chain id -> ERC20 | Error)
-const fungibleCurrenciesCache = new Map<number, ERC20 | Error>();
+// Cache the fungible currencies (typed chain id -> IEVMCurrency | Error)
+const fungibleCurrenciesCache = new Map<number, IEVMCurrency | Error>();
 
 /**
  * Get the fungible currency config for a given typed chain id,
@@ -14,7 +15,7 @@ const fungibleCurrenciesCache = new Map<number, ERC20 | Error>();
 export const fetchEVMFungibleCurrency = async (
   typedChainId: number,
   provider: ethers.providers.Provider
-): Promise<ERC20 | null> => {
+): Promise<IEVMCurrency | null> => {
   if (fungibleCurrenciesCache.has(typedChainId)) {
     const cached = fungibleCurrenciesCache.get(typedChainId);
     if (cached instanceof Error) {
@@ -36,8 +37,21 @@ export const fetchEVMFungibleCurrency = async (
       fungibleTokenAddress,
       provider
     );
-    fungibleCurrenciesCache.set(typedChainId, erc20Currency);
-    return erc20Currency;
+
+    const [name, symbol, decimals] = await Promise.all([
+      erc20Currency.name(),
+      erc20Currency.symbol(),
+      erc20Currency.decimals(),
+    ]);
+
+    const returnVal = {
+      name,
+      symbol,
+      decimals,
+      address: fungibleTokenAddress,
+    };
+    fungibleCurrenciesCache.set(typedChainId, returnVal);
+    return returnVal;
   } catch (error) {
     fungibleCurrenciesCache.set(typedChainId, error);
   }

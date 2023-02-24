@@ -1,19 +1,20 @@
 import { parseTypedChainId } from '@webb-tools/sdk-core';
 
-interface EVMNativeCurrency {
-  decimals: number;
-  symbol: string;
-  name: string;
-}
+import { zeroAddress } from '@webb-tools/dapp-types';
+import { IEVMCurrency } from './types';
 
 // The chain info is retrieved from https://github.com/ethereum-lists/chains
 const CHAIN_URL = 'https://chainid.network/chains.json';
 
-let chainData: Array<{ nativeCurrency: EVMNativeCurrency; chainId: number }>;
+let chainData: Array<{
+  // The native currencies response doesn't include the address
+  nativeCurrency: Omit<IEVMCurrency, 'address'>;
+  chainId: number;
+}>;
 
 // Cache the native currencies to avoid fetching the chain data multiple times
 // chainId -> nativeCurrency
-const nativeCurrenciesCache = new Map<number, EVMNativeCurrency>();
+const nativeCurrenciesCache = new Map<number, IEVMCurrency>();
 
 /**
  * Retrieves the native token info for the given evm chain id
@@ -22,7 +23,7 @@ const nativeCurrenciesCache = new Map<number, EVMNativeCurrency>();
  */
 export const fetchEVMNativeCurrency = async (
   typedChainId: number
-): Promise<EVMNativeCurrency | null> => {
+): Promise<IEVMCurrency | null> => {
   const { chainId } = parseTypedChainId(typedChainId);
   if (!chainData) {
     try {
@@ -48,6 +49,10 @@ export const fetchEVMNativeCurrency = async (
     return null;
   }
 
-  nativeCurrenciesCache.set(chainId, chain.nativeCurrency);
-  return chain.nativeCurrency;
+  const returnVal = {
+    ...chain.nativeCurrency,
+    address: zeroAddress,
+  };
+  nativeCurrenciesCache.set(chainId, returnVal);
+  return returnVal;
 };
