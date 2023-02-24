@@ -146,15 +146,20 @@ type PublicKeyDetailsPage = {
 };
 
 export function sessionFrame(
-  timestamp: string | undefined = undefined
-): [Date, Date] | [] {
+  timestamp?: string
+): [startDateTime: Date, endTime: Date] | [] {
   if (!timestamp) {
     return [];
   }
+
   const startDateTime = new Date(timestamp);
-  const endTime = new Date(
-    new Date(new Date(timestamp).getTime() + 6 * 60 * 60 * 1000)
-  );
+
+  if (isNaN(startDateTime.getTime())) {
+    console.error(`Invalid timestamp: ${timestamp}`);
+    return [];
+  }
+
+  const endTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
 
   return [startDateTime, endTime];
 }
