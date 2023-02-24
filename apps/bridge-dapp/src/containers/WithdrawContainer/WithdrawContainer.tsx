@@ -3,6 +3,7 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
   useCurrencies,
+  useCurrentResourceId,
   useNoteAccount,
   useRelayers,
   useTxQueue,
@@ -89,6 +90,8 @@ export const WithdrawContainer = forwardRef<
   const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
     useNoteAccount();
 
+  const currentResourceId = useCurrentResourceId();
+
   const shieldedAssets = useShieldedAssets();
 
   const txQueue = useTxQueue();
@@ -98,19 +101,19 @@ export const WithdrawContainer = forwardRef<
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
-    if (!currentTypedChainId) {
+    if (!currentResourceId) {
       return null;
     }
 
     // Get the notes of the currently selected chain.
     const notes = allNotes
-      .get(currentTypedChainId.toString())
+      .get(currentResourceId.toString())
       ?.filter(
         (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
       );
 
     return notes ?? null;
-  }, [allNotes, currentTypedChainId, fungibleCurrency]);
+  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {

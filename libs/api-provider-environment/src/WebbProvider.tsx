@@ -9,6 +9,7 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/app-util';
 import {
+  resetNoteStorage,
   NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
@@ -377,7 +378,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       });
 
       // create a NoteManager instance
-      const noteStorage = await noteStorageFactory(accountKeypair);
+      const noteStorage = await noteStorageFactory();
       const noteManager = await NoteManager.initAndDecryptNotes(
         noteStorage,
         accountKeypair
@@ -414,10 +415,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       return;
     }
 
-    const currentKeypair = new Keypair(currentKeypairPrivateKey.keypair);
-
-    const noteStorage = await noteStorageFactory(currentKeypair);
-    noteStorage.set('encryptedNotes', {});
+    resetNoteStorage();
 
     keypairStorage.set('keypair', {
       keypair: null,

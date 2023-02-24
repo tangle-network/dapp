@@ -5,13 +5,14 @@ import { Storage } from '@webb-tools/storage';
 import { Keypair } from '@webb-tools/sdk-core';
 
 /// The `BridgeStorage` is used to store the leaves of the merkle tree
-/// of the underlying VAnchor contract. The key is the contract address.
-export type BridgeStorage = Record<
-  string,
-  { lastQueriedBlock: number; leaves: string[] }
->;
-export const bridgeStorageFactory = (chainIdType: number) => {
-  return Storage.newFromCache<BridgeStorage>(chainIdType.toString(), {
+/// of the underlying VAnchor contract. The key is the resource id
+export type BridgeStorage = {
+  lastQueriedBlock: number;
+  leaves: string[];
+};
+
+export const bridgeStorageFactory = (resourceId: string) => {
+  return Storage.newFromCache<BridgeStorage>(resourceId, {
     async commit(key: string, data: BridgeStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
@@ -24,7 +25,10 @@ export const bridgeStorageFactory = (chainIdType: number) => {
         };
       }
 
-      return {};
+      return {
+        lastQueriedBlock: 0,
+        leaves: [],
+      };
     },
   });
 };
@@ -51,11 +55,18 @@ export const keypairStorageFactory = () => {
 };
 
 /// The `NoteStorage` is used to store the encrypted notes of the user.
-/// The key is the keypair of the user.The `NoteStorage` is used to store the encrypted notes of the user.
-/// The key is the public key of the given keypair being used.
-export type NoteStorage = { encryptedNotes: Record<string, string[]> };
-export const noteStorageFactory = (keypair: Keypair) => {
-  return Storage.newFromCache<NoteStorage>(keypair.toString(), {
+/// The key is the public key of the user.
+/// The `NoteStorage` is used to store the encrypted notes of the user.
+/// The key is the resource id.
+export type NoteStorage = Record<string, string[]>;
+const NOTE_STORAGE_KEY = 'encryptedNotes';
+
+export const resetNoteStorage = () => {
+  localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify({}));
+};
+
+export const noteStorageFactory = () => {
+  return Storage.newFromCache<NoteStorage>(NOTE_STORAGE_KEY, {
     async commit(key: string, data: NoteStorage): Promise<void> {
       localStorage.setItem(key, JSON.stringify(data));
     },
@@ -68,9 +79,7 @@ export const noteStorageFactory = (keypair: Keypair) => {
         };
       }
 
-      return {
-        encryptedNotes: {},
-      };
+      return {};
     },
   });
 };

@@ -19,6 +19,7 @@ import { WrapUnwrap } from './wrap-unwrap';
 import { Observable } from 'rxjs';
 import { ZkComponents } from '@webb-tools/utils';
 import { providers } from 'ethers';
+import { ResourceId } from '@webb-tools/sdk-core';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -206,6 +207,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   noteManager: NoteManager | null;
 
   type(): string;
+
   destroy(): Promise<void> | void;
 
   capabilities?: ProvideCapabilities;
@@ -241,4 +243,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
     vAnchorAddress: string,
     provider?: providers.Provider
   ) => Promise<number>;
+
+  // get the current resource id
+  getResourceId(): Promise<ResourceId | null>;
 }

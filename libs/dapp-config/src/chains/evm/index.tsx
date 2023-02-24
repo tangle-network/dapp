@@ -58,7 +58,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
       'https://arbitrum-goerli.infura.io/v3',
       'https://arb-goerli.g.alchemy.com/v2',
     ],
-    blockExplorerStub: 'https://goerli-rollup-explorer.arbitrum.io/',
+    blockExplorerStub: 'https://goerli.arbiscan.io/',
     logo: ArbitrumLogo,
     tag: 'test',
   },

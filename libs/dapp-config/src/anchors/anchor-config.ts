@@ -5,6 +5,9 @@ import { ApiConfig } from '../api-config';
 import { CurrencyConfig } from '../currencies';
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
+  },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
   },

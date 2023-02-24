@@ -64,7 +64,7 @@ export const Header: FC<HeaderProps> = () => {
             <NavigationMenuContent
               onTestnetClick={() =>
                 window.open(
-                  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
+                  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
                   '_blank'
                 )
               }
