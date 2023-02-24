@@ -190,12 +190,7 @@ export const StatsProvider: React.FC<
 
   useEffect(() => {
     const getPromiseApi = async (): Promise<void> => {
-      const providerEndpoint =
-        props.connectedEndpoint === webbNodes.parachain.subqueryEndpoint
-          ? webbNodes.parachain.providerEndpoint
-          : props.connectedEndpoint === webbNodes.standalone.subqueryEndpoint
-          ? webbNodes.standalone.providerEndpoint
-          : '';
+      const providerEndpoint = webbNodes.standalone.providerEndpoint;
       const wsProvider = new WsProvider(providerEndpoint);
       const apiPromise = await ApiPromise.create({ provider: wsProvider });
       setApi(apiPromise);
