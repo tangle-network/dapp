@@ -29,6 +29,7 @@ import {
   ChainType,
   Keypair,
   Note,
+  ResourceId,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   toFixedHex,
@@ -163,6 +164,18 @@ export class WebbWeb3Provider
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
+  async getResourceId(): Promise<ResourceId | null> {
+    const vanchors = await this.methods.bridgeApi.getVAnchors();
+    if (vanchors.length === 0) {
+      return null;
+    }
+
+    const typedChainId = calculateTypedChainId(ChainType.EVM, this.chainId);
+    const address = vanchors[0].neighbours[typedChainId];
+
+    return new ResourceId(address.toString(), ChainType.EVM, this.chainId);
+  }
+
   getProvider(): Web3Provider {
     return this.web3Provider;
   }
@@ -285,15 +298,17 @@ export class WebbWeb3Provider
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
-      const storedContractInfo: BridgeStorage[0] = (await storage.get(
-        vanchor.contract.address.toLowerCase()
-      )) || {
+      const lastQueriedBlock = await storage.get('lastQueriedBlock');
+      const storedLeaves = await storage.get('leaves');
+
+      const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
+          lastQueriedBlock ??
           getAnchorDeploymentBlockNumber(
             typedChainId,
             vanchor.contract.address
-          ) || 0,
-        leaves: [] as string[],
+          ),
+        leaves: storedLeaves ?? [],
       };
 
       console.log('Stored contract info: ', storedContractInfo);
@@ -310,10 +325,8 @@ export class WebbWeb3Provider
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
       // Cached the new leaves
-      await storage.set(vanchor.contract.address.toLowerCase(), {
-        lastQueriedBlock: leavesFromChain.lastQueriedBlock,
-        leaves,
-      });
+      await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
+      await storage.set('leaves', leaves);
     }
 
     console.groupEnd();
