@@ -106,7 +106,6 @@ export class WebbRelayerManagerFactory {
       );
     } catch (error) {
       // Ignore errors and clear the network errors
-      console.clear();
     }
   }
 
