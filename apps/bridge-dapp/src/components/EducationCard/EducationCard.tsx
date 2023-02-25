@@ -101,7 +101,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
   ({ currentTab, defaultOpen = true, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
-    const { step } = useEducationCardStep();
+    const { educationCardStep } = useEducationCardStep();
 
     useEffect(() => {
       // Reset the state when the defaultOpen prop changes
@@ -175,7 +175,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
 
               <div className="space-y-2">
                 {howItWorksContent[currentTab].map((content, index) => {
-                  const isCurrentStep = index + 1 === step;
+                  const isCurrentStep = index + 1 === educationCardStep;
 
                   return (
                     <div
