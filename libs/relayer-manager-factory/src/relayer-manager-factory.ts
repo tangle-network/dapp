@@ -105,7 +105,8 @@ export class WebbRelayerManagerFactory {
         this.chainNameAdapter
       );
     } catch (error) {
-      // Ignore errors
+      // Ignore errors and clear the network errors
+      console.clear();
     }
   }
 
