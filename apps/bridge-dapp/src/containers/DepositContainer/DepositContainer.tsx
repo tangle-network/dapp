@@ -678,7 +678,6 @@ export const DepositContainer = forwardRef<
     // Side effect to set the education card step
     useEffect(() => {
       if (!hasNoteAccount) {
-        console.log('Not have note account');
         setEducationCardStep(1);
         return;
       }

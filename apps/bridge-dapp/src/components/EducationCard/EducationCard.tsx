@@ -35,13 +35,13 @@ const howItWorksContent: {
         'Create a Note account and connect it to your MetaMask address to start depositing tokens.',
     },
     {
-      title: 'Select Token and Amount',
-      description:
-        'Choose the token you want to deposit and specify the deposit amount.',
+      title: 'Select Token',
+      description: 'Choose the token you want to deposit.',
     },
     {
-      title: 'Select Desired Chains',
-      description: 'Select the source and destination chains for your deposit.',
+      title: 'Select Desired Chains and Amount',
+      description:
+        'Select the source, destination chains and specify the deposit amount for your deposit.',
     },
     {
       title: 'Confirm Deposit',
