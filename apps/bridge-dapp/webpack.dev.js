@@ -20,9 +20,10 @@ module.exports = (env, config) => {
       port: 3000,
       static: path.resolve(__dirname, 'build'),
       client: {
+        logging: 'none', // Hide info in the client logs as they present on the terminal
         overlay: {
           errors: true,
-          warnings: false, // Hide warnings as they present on the terminal
+          warnings: false, // Hide overlay warnings as they present on the terminal
         },
       },
     },
