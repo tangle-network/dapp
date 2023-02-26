@@ -40,6 +40,7 @@ export const DepositConfirmContainer = forwardRef<
       fungibleTokenId,
       wrappableTokenId,
       resetMainComponent,
+      onResetState,
     },
     ref
   ) => {
@@ -189,6 +190,7 @@ export const DepositConfirmContainer = forwardRef<
         tx.fail(getErrorMessage(error));
       } finally {
         resetMainComponent();
+        onResetState?.();
       }
     }, [
       api,
@@ -203,6 +205,7 @@ export const DepositConfirmContainer = forwardRef<
       resetMainComponent,
       txQueueApi,
       noteManager,
+      onResetState,
     ]);
 
     const activeChains = useMemo<string[]>(() => {

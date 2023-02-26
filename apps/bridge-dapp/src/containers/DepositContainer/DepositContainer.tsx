@@ -301,6 +301,12 @@ export const DepositContainer = forwardRef<
       setMainComponentName('source-chain-list-card');
     }, [setMainComponentName]);
 
+    const handleResetState = useCallback(() => {
+      setAmount(0);
+      setDestChain(undefined);
+      setMainComponentName(undefined);
+    }, []);
+
     // Main action on click
     const handleDepositButtonClick = useCallback(async () => {
       // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -364,6 +370,7 @@ export const DepositContainer = forwardRef<
         destChain: destChainInputValue,
         note: newNote,
         resetMainComponent: resetMainComponent,
+        onResetState: handleResetState,
       });
 
       setMainComponentName('deposit-confirm-container');
@@ -382,6 +389,7 @@ export const DepositContainer = forwardRef<
       selectedSourceChain,
       destChainInputValue,
       resetMainComponent,
+      handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
     ]);

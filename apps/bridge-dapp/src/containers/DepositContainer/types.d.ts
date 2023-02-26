@@ -47,4 +47,10 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * @returns void
    */
   resetMainComponent: () => void;
+
+  /**
+   * The callback to reset the parent state
+   * @returns void
+   */
+  onResetState?: () => void;
 }

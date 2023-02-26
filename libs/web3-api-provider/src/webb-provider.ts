@@ -171,10 +171,11 @@ export class WebbWeb3Provider
       return null;
     }
 
-    const typedChainId = calculateTypedChainId(ChainType.EVM, this.chainId);
+    const chainId = await this.getChainId();
+    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     const address = vanchors[0].neighbours[typedChainId];
 
-    return new ResourceId(address.toString(), ChainType.EVM, this.chainId);
+    return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }
 
   getProvider(): Web3Provider {
@@ -294,8 +295,6 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    console.log(`Got ${leaves.length} leaves from relayers.`);
-
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
@@ -304,12 +303,12 @@ export class WebbWeb3Provider
 
       const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
-          lastQueriedBlock ??
+          lastQueriedBlock ||
           getAnchorDeploymentBlockNumber(
             typedChainId,
             vanchor.contract.address
           ),
-        leaves: storedLeaves ?? [],
+        leaves: storedLeaves || [],
       };
 
       console.log('Stored contract info: ', storedContractInfo);
@@ -328,6 +327,8 @@ export class WebbWeb3Provider
       // Cached the new leaves
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
+    } else {
+      console.log(`Got ${leaves?.length} leaves from relayers.`);
     }
 
     console.groupEnd();
@@ -352,6 +353,7 @@ export class WebbWeb3Provider
       retryPromise
     );
 
+    // Check if the UTXOs are already spent on chain
     const utxos = (
       await Promise.all(
         utxosFromChain.map(async (utxo) => {
