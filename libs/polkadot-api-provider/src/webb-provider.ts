@@ -58,11 +58,14 @@ export class WebbPolkadot
   }
   state: WebbState;
   noteManager: NoteManager | null = null;
+
   readonly methods: WebbMethods<WebbPolkadot>;
   readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
+
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
   private _newBlock = new BehaviorSubject<null | number>(null);
+
   private constructor(
     apiPromise: ApiPromise,
     readonly typedChainId: number,
