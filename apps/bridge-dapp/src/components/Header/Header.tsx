@@ -7,7 +7,7 @@ import {
   NavigationMenuTrigger,
 } from '@webb-tools/webb-ui-components';
 import * as constants from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useConnectWallet } from '../../hooks';
@@ -28,6 +28,12 @@ export const Header: FC<HeaderProps> = () => {
     toggleModal(true);
   }, [toggleModal]);
 
+  // Boolean to display the network switcher and wallet button
+  const isDisplayNetworkSwitcherAndWalletButton = useMemo(
+    () => [!loading, activeAccount, activeWallet, activeChain].every(Boolean),
+    [activeAccount, activeChain, activeWallet, loading]
+  );
+
   return (
     <header className="py-4 bg-mono-0 dark:bg-mono-180">
       <div className="flex justify-between px-2 max-w-[1160px] h-[40px] mx-auto">
@@ -40,7 +46,15 @@ export const Header: FC<HeaderProps> = () => {
 
         {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
-          {loading && (
+          {/** Wallet is actived */}
+          {isDisplayNetworkSwitcherAndWalletButton &&
+          activeAccount &&
+          activeWallet ? (
+            <>
+              <ChainSwitcherButton />
+              <WalletButton account={activeAccount} wallet={activeWallet} />
+            </>
+          ) : (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
@@ -48,14 +62,6 @@ export const Header: FC<HeaderProps> = () => {
             >
               Connect wallet
             </Button>
-          )}
-
-          {/** Wallet is actived */}
-          {!loading && activeAccount && activeWallet && activeChain && (
-            <>
-              <ChainSwitcherButton />
-              <WalletButton account={activeAccount} wallet={activeWallet} />
-            </>
           )}
 
           <NavigationMenu>

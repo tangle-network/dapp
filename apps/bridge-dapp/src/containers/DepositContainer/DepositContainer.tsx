@@ -32,6 +32,7 @@ import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper
 import { WalletState, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
+import { CurrencyType } from '@webb-tools/dapp-types';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
@@ -680,6 +681,28 @@ export const DepositContainer = forwardRef<
         setMainComponentName(undefined);
       }
     }, [walletState]);
+
+    // Side effect to auto set the wrappable currency if user has no balance of fungible currency
+    useEffect(() => {
+      // If the user has no balance of the fungible currency
+      if (
+        fungibleCurrency &&
+        balances[fungibleCurrency.id] === 0 &&
+        !wrappableCurrency &&
+        wrappableCurrencies.length > 0
+      ) {
+        const native = wrappableCurrencies.find(
+          (currency) => currency.view.type === CurrencyType.NATIVE
+        );
+        setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
+      }
+    }, [
+      balances,
+      fungibleCurrency,
+      setWrappableCurrency,
+      wrappableCurrencies,
+      wrappableCurrency,
+    ]);
 
     return (
       <div {...props} ref={ref}>
