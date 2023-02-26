@@ -254,7 +254,7 @@ export const TransactionProgressCard = forwardRef<
                     <Typography
                       variant={'body1'}
                       fw={'bold'}
-                      className="flex items-center py-0 uppercase text-mono-200"
+                      className="flex items-center py-0 text-mono-200"
                     >
                       {(label as BridgeLabel).token}
                       <ExternalLinkLine className="!fill-current inline whitespace-nowrap ml-1" />
