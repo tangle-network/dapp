@@ -23,10 +23,6 @@ export const logoConfig: Link = {
 };
 
 type WebbNodeInfo = {
-  parachain: {
-    subqueryEndpoint: string;
-    providerEndpoint: string;
-  };
   standalone: {
     subqueryEndpoint: string;
     providerEndpoint: string;
@@ -34,30 +30,20 @@ type WebbNodeInfo = {
 };
 
 export const webbNodes: WebbNodeInfo = {
-  parachain: {
-    subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
-    providerEndpoint: 'wss://tangle-archive.webb.tools/',
-  },
   standalone: {
-    subqueryEndpoint: 'https://subquery-dev.webb.tools/graphql',
-    providerEndpoint: 'wss://arana-alpha-1.webb.tools/',
+    subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
+    providerEndpoint: 'wss://tangle-standalone-archive.webb.tools',
   },
 };
 
 type webbApiConfigType = {
-  parachain: ExternalLink;
   standalone: ExternalLink;
 };
 
 export const webbApiConfig: webbApiConfigType = {
-  parachain: {
-    name: 'Tangle Network',
-    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
-    ...commonExternalProps,
-  },
   standalone: {
-    name: 'Arana Alpha',
-    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Farana-alpha-1.webb.tools#/explorer',
+    name: 'Tangle Standalone',
+    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
     ...commonExternalProps,
   },
 };
@@ -90,11 +76,6 @@ export const footerNavs: FooterNavsType = {
       href: 'https://apps.webb.tools/',
       ...commonExternalProps,
     },
-    // {
-    //   name: 'wrap',
-    //   href: 'https://app.webb.tools/#/wrap-unwrap',
-    //   ...commonExternalProps,
-    // },
   ],
   network: [
     {
@@ -104,7 +85,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'tangle',
-      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
+      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
       ...commonExternalProps,
     },
   ],
@@ -126,11 +107,6 @@ export const footerNavs: FooterNavsType = {
       href: 'https://t.me/webbprotocol',
       ...commonExternalProps,
     },
-    // {
-    //   name: 'FAQs',
-    //   href: '#',
-    //   ...commonExternalProps,
-    // },
   ],
   company: [
     {
@@ -157,11 +133,6 @@ export const bottomLinks: ExternalLink[] = [
     href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
-  // {
-  //   name: 'Security',
-  //   href: '#',
-  //   ...commonExternalProps,
-  // },
 ];
 
 export const socialConfigs: Array<SocialConfigsType> = [
