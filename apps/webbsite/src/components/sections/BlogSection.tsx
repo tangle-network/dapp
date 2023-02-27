@@ -62,20 +62,16 @@ export const BlogSection = ({ type, items, showAllItems = false }: BlogSectionPr
       </div>
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
-        {filteredItems.map((item) => {
-          const { id, title, slug, tags, cover, link } = item.metadata;
-
-          return (
-            <BlogCard
-              key={id}
-              title={title}
-              tags={tags}
-              cover={cover}
-              type={type}
-              link={link ? link : `/blog/posts/${slug}`}
-            />
-          );
-        })}
+        {filteredItems.map(({ id, metadata: { title, slug, tags, cover, link } }) => (
+          <BlogCard
+            key={id}
+            title={title}
+            tags={tags}
+            cover={cover}
+            type={type}
+            link={link ? link : `/blog/posts/${slug}`}
+          />
+        ))}
       </div>
 
       {!showAllItems && (
