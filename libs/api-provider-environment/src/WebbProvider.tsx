@@ -9,11 +9,11 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/app-util';
 import {
-  resetNoteStorage,
   NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
   noteStorageFactory,
+  resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
@@ -21,7 +21,6 @@ import {
   Wallet,
   chainsConfig,
   chainsPopulated,
-  fetchEVMNativeCurrency,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -670,7 +669,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   ChainType.EVM,
                   chain.chainId
                 );
-                const currency = await fetchEVMNativeCurrency(typedChainId);
+                const currency = Object.values(apiConfig.currencies).find((c) =>
+                  Array.from(c.addresses.keys()).includes(typedChainId)
+                );
                 if (!currency) {
                   throw new Error('Native token not found');
                 }

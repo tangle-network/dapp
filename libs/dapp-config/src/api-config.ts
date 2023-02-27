@@ -4,8 +4,8 @@
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
-
 import { ethers } from 'ethers';
+
 import {
   anchorDeploymentBlock,
   getAnchorConfig,
@@ -16,7 +16,8 @@ import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
-import { fetchEVMCurrenciesConfig, getNativeCurrencyFromConfig } from './utils';
+import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
+import { getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
@@ -71,17 +72,33 @@ export class ApiConfig {
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
     providerFactory: (typedChainId: number) => ethers.providers.Provider
   ) => {
-    const { currenciesConfig: currenciesOnChain, fungibleToWrappableMap } =
-      await fetchEVMCurrenciesConfig(parsedAnchorConfig, providerFactory);
+    const evmOnChainConfig = EVMOnChainConfig.getInstance();
+    const substrateOnChainConfig = SubstrateOnChainConfig.getInstance();
 
-    const anchors = await getAnchorConfig(currenciesOnChain);
+    const {
+      currenciesConfig: onChainConfig,
+      fungibleToWrappableMap: evmFungibleToWrappableMap,
+    } = await evmOnChainConfig.fetchCurrenciesConfig(
+      parsedAnchorConfig,
+      providerFactory
+    );
 
-    const bridgeByAsset = await getBridgeConfigByAsset(currenciesOnChain);
+    const { currenciesConfig, fungibleToWrappableMap: fungibleToWrappableMap } =
+      await substrateOnChainConfig.fetchCurrenciesConfig(
+        parsedAnchorConfig,
+        providerFactory as any, // Temporary providerFactory for substrate
+        onChainConfig,
+        evmFungibleToWrappableMap
+      );
+
+    const anchors = await getAnchorConfig(currenciesConfig);
+
+    const bridgeByAsset = await getBridgeConfigByAsset(currenciesConfig);
 
     return new ApiConfig(
       config.wallets ?? {},
       config.chains ?? {},
-      currenciesOnChain,
+      currenciesConfig,
       bridgeByAsset,
       anchors,
       fungibleToWrappableMap
