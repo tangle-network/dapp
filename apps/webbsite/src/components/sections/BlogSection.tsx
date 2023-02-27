@@ -10,8 +10,7 @@ type BlogSectionProps = {
   showAllItems?: boolean;
 };
 
-export const BlogSection = (data: BlogSectionProps) => {
-  const { type, items, showAllItems = false } = data;
+export const BlogSection = ({ type, items, showAllItems = false }: BlogSectionProps) => {
 
   const allItems = showAllItems ? items : items.slice(0, 6);
 
