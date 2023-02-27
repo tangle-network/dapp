@@ -108,7 +108,8 @@ function createWebpack(env, mode = 'production') {
           ],
         },
         {
-          exclude: /(node_modules)/,
+          // exclude all node_modules except @webb-tools/contracts
+          exclude: /node_modules\/(?!(@webb-tools\/contracts(\/.*)?)).*/,
           test: /\.(js|mjs|ts|tsx)$/,
           use: [
             require.resolve('thread-loader'),
