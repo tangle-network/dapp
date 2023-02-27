@@ -11,16 +11,17 @@ import { Save } from '@webb-tools/icons';
 type NetworkSelectorProps = {
   selectedNetwork: Network;
   setUserSelectedNetwork: (network: Network) => void;
+  selectedNetworkType: NetworkType;
+  setSelectedNetworkType: (networkType: NetworkType) => void;
 };
 
 export const NetworkSelector: FC<NetworkSelectorProps> = ({
   selectedNetwork,
   setUserSelectedNetwork,
+  selectedNetworkType,
+  setSelectedNetworkType,
 }) => {
   const networkTypes = ['live', 'testnet', 'dev'];
-
-  const [selectedNetworkType, setSelectedNetworkType] =
-    useState<NetworkType>('testnet');
 
   const filteredNetworkType = webbNetworks.filter(
     (network) => network.networkType === selectedNetworkType
@@ -36,7 +37,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           // TODO: Need to handle error if local endpoint is selected but no local endpoint is running
           // TODO: Need to use verifyEndpoint() to verify the custom network endpoint provided by the user
           // TODO: Need to create a new NETWORK type for custom network selection using the custom input fields and set it to the userSelectedNetwork
-          if (val === 'Local endpoint' || val === 'Custom') {
+          if (val === 'Custom') {
             return;
           }
 
@@ -102,5 +103,3 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
     </div>
   );
 };
-
-// https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer

@@ -15,6 +15,7 @@ import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
 import {
   webbNetworks,
   Network,
+  NetworkType,
 } from '@webb-tools/webb-ui-components/constants';
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
@@ -31,6 +32,9 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
     return defaultNetworkType[0].networks[0];
   });
+
+  const [selectedNetworkType, setSelectedNetworkType] =
+    useState<NetworkType>('testnet');
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -94,6 +98,8 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       <Header
         selectedNetwork={selectedNetwork}
         setUserSelectedNetwork={setUserSelectedNetwork}
+        selectedNetworkType={selectedNetworkType}
+        setSelectedNetworkType={setSelectedNetworkType}
       />
 
       <ApolloProvider client={apolloClient}>

@@ -2,6 +2,7 @@ import {
   webbAppConfig,
   logoConfig,
   headerNavs,
+  NetworkType,
 } from '@webb-tools/webb-ui-components/constants';
 import {
   Button,
@@ -27,11 +28,15 @@ import { Network } from '@webb-tools/webb-ui-components/constants';
 type HeaderProps = {
   selectedNetwork: Network;
   setUserSelectedNetwork: (network: Network) => void;
+  selectedNetworkType: NetworkType;
+  setSelectedNetworkType: (networkType: NetworkType) => void;
 };
 
 export const Header: FC<HeaderProps> = ({
   selectedNetwork,
   setUserSelectedNetwork,
+  selectedNetworkType,
+  setSelectedNetworkType,
 }) => {
   // // A function to verify the user input before setting the connection.
   // const verifyEndpoint = async (maybeEndpoint: string) => {
@@ -119,6 +124,8 @@ export const Header: FC<HeaderProps> = ({
                     <NetworkSelector
                       selectedNetwork={selectedNetwork}
                       setUserSelectedNetwork={setUserSelectedNetwork}
+                      selectedNetworkType={selectedNetworkType}
+                      setSelectedNetworkType={setSelectedNetworkType}
                     />
                   </div>
                 </MenuItem>

@@ -53,16 +53,6 @@ export const webbNetworks: webbNetworksType[] = [
     networkType: 'testnet',
     networks: [
       {
-        name: 'Tangle Alpha',
-        networkType: 'testnet',
-        networkNodeType: 'parachain',
-        subqueryEndpoint: 'https://tangle-subquery.webb.tools/graphql',
-        polkadotEndpoint: 'wss://tangle-archive.webb.tools/',
-        polkadotExplorer:
-          'https://polkadot.js.org/apps/?rpc=wss://tangle-archive.webb.tools/#/explorer',
-        avatar: '',
-      },
-      {
         name: 'Tangle Standalone',
         networkType: 'testnet',
         networkNodeType: 'standalone',
