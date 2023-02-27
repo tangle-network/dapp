@@ -33,6 +33,7 @@ import { WalletState, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
@@ -100,6 +101,8 @@ export const DepositContainer = forwardRef<
     const balances = useCurrenciesBalances(allTokens);
 
     const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
+
+    const { setEducationCardStep } = useEducationCardStep();
 
     const [isGeneratingNote, setIsGeneratingNote] = useState(false);
 
@@ -710,6 +713,37 @@ export const DepositContainer = forwardRef<
       setWrappableCurrency,
       wrappableCurrencies,
       wrappableCurrency,
+    ]);
+
+    // Side effect to set the education card step
+    useEffect(() => {
+      if (!hasNoteAccount) {
+        setEducationCardStep(1);
+        return;
+      }
+
+      // If not exit the `wrappableCurrency` and `fungibleCurrency` at the same time
+      // or only exit the `fungibleCurrency`
+      if (!((wrappableCurrency && fungibleCurrency) || fungibleCurrency)) {
+        setEducationCardStep(2);
+        return;
+      }
+
+      // If not destination chain is selected
+      if (!destChain || !amount) {
+        setEducationCardStep(3);
+        return;
+      }
+
+      // Otherwise
+      setEducationCardStep(4);
+    }, [
+      hasNoteAccount,
+      setEducationCardStep,
+      destChain,
+      wrappableCurrency,
+      fungibleCurrency,
+      amount,
     ]);
 
     return (

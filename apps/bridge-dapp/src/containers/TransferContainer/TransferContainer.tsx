@@ -41,6 +41,7 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -110,6 +111,8 @@ export const TransferContainer = forwardRef<
     const [recipientPubKey, setRecipientPubKey] = useState<string>('');
 
     const [isValidRecipient, setIsValidRecipient] = useState(false);
+
+    const { setEducationCardStep } = useEducationCardStep();
 
     // Calculate recipient error message
     const recipientError = useMemo(() => {
@@ -807,6 +810,32 @@ export const TransferContainer = forwardRef<
 
       updateDefaultValues();
     }, [defaultDestinationChain, defaultFungibleCurrency, setFungibleCurrency]);
+
+    // Side effect to set the education card step
+    useEffect(() => {
+      if (!destChain) {
+        setEducationCardStep(1);
+        return;
+      }
+
+      if (!fungibleCurrency || !amount) {
+        setEducationCardStep(2);
+        return;
+      }
+
+      if (!recipientPubKey) {
+        setEducationCardStep(3);
+        return;
+      }
+
+      setEducationCardStep(4);
+    }, [
+      destChain,
+      setEducationCardStep,
+      fungibleCurrency,
+      amount,
+      recipientPubKey,
+    ]);
 
     return (
       <TransferCard
