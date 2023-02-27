@@ -18,17 +18,20 @@ type SharableLinkType = {
   onClick?: () => void;
 };
 
-const Post: FC<{ post: Post }> = ({ post }) => {
-  const {
-    title,
-    cover,
-    description,
-    author,
-    tags,
-    slug,
-    dateAndTime: { lastEditedDate },
-  } = post.metadata;
-
+const Post: FC<{ post: Post }> = ({
+  post: {
+    metadata: {
+      title,
+      cover,
+      description,
+      author,
+      tags,
+      slug,
+      dateAndTime: { lastEditedDate },
+    },
+    recordMap,
+  },
+}) => {
   const { notificationApi } = useWebbUI();
 
   const shareLink = `https://webb.tools/blog/posts/${slug}`;
@@ -127,7 +130,7 @@ const Post: FC<{ post: Post }> = ({ post }) => {
                 nextImage: Image,
                 nextLink: Link,
               }}
-              recordMap={post.recordMap}
+              recordMap={recordMap}
             />
           </div>
         </div>

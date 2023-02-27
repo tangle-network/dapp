@@ -8,9 +8,7 @@ type BlogProps = {
   videos: Video[];
 };
 
-const Blog: FC<{ blog: BlogProps }> = ({ blog }) => {
-  const { posts, videos } = blog;
-
+const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
   // Featured post is the last one in the array
   const featuredPost = posts[posts.length - 1];
   // Recent videos are the last 3 in the array
