@@ -211,10 +211,8 @@ export class Web3RelayerManager extends WebbRelayerManager {
         if (tree) {
           leaves = relayerLeaves.leaves;
 
-          await storage.set(vanchor.contract.address.toLowerCase(), {
-            lastQueriedBlock: relayerLeaves.lastQueriedBlock,
-            leaves: relayerLeaves.leaves,
-          });
+          await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
+          await storage.set('leaves', relayerLeaves.leaves);
 
           return leaves;
         }
