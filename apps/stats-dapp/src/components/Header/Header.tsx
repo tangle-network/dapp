@@ -1,17 +1,12 @@
 import * as constants from '@webb-tools/webb-ui-components/constants';
 import {
   Button,
-  Collapsible,
-  CollapsibleButton,
-  CollapsibleContent,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   Input,
   Logo,
   MenuItem,
-  ThemeSwitcherMenuItem,
-  Divider,
   ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
 import {
@@ -113,24 +108,11 @@ export const Header: FC<HeaderProps> = ({
                   className="px-4 py-3.5 pt-4 border-b border-mono-40 dark:border-mono-140"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
-                    window.open(
-                      endpointUserInput === webbNodes.parachain.subqueryEndpoint
-                        ? webbApiConfig.parachain.href
-                        : endpointUserInput ===
-                          webbNodes.standalone.subqueryEndpoint
-                        ? webbApiConfig.standalone.href
-                        : '',
-                      '_blank'
-                    );
+                    window.open(webbApiConfig.standalone.href, '_blank');
                   }}
                 >
                   <Typography variant="label" fw="bold">
-                    {endpointUserInput === webbNodes.parachain.subqueryEndpoint
-                      ? webbApiConfig.parachain.name
-                      : endpointUserInput ===
-                        webbNodes.standalone.subqueryEndpoint
-                      ? webbApiConfig.standalone.name
-                      : ''}
+                    {webbApiConfig.standalone.name}
                   </Typography>
                 </MenuItem>
 
@@ -159,7 +141,7 @@ export const Header: FC<HeaderProps> = ({
                       variant="link"
                       onClick={() => {
                         setEndpointUserInput(
-                          webbNodes.parachain.subqueryEndpoint
+                          webbNodes.standalone.subqueryEndpoint
                         );
                       }}
                     >

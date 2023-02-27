@@ -16,19 +16,19 @@ import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
     const storedEndpoint = localStorage.getItem('statsEndpoint');
-    if (storedEndpoint) {
-      return storedEndpoint;
+    if (storedEndpoint && storedEndpoint !== defaultEndpoint) {
+      localStorage.setItem('statsEndpoint', defaultEndpoint);
+    } else if (!storedEndpoint) {
+      localStorage.setItem('statsEndpoint', defaultEndpoint);
     }
     return defaultEndpoint;
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const retryLink = new RetryLink({
     delay: () => {
-      console.log('rertyLink');
       return 0;
     },
     attempts: () => {
-      console.log('Should attempt');
       return Promise.resolve(true);
     },
   });
@@ -68,14 +68,6 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <div className="min-w-full min-h-full">
-      {/*TODO Register a notification*/}
-      {/* <div
-        onClick={() => {
-          setErrorMessage(null);
-        }}
-      >
-        {errorMessage}
-      </div>*/}
       <Header
         connectedEndpoint={connectedEndpoint}
         setConnectedEndpoint={setEndpoint}

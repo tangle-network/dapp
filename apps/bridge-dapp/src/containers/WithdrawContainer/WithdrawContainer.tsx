@@ -3,6 +3,7 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
   useCurrencies,
+  useCurrentResourceId,
   useNoteAccount,
   useRelayers,
   useTxQueue,
@@ -31,6 +32,7 @@ import { ChainListCardWrapper } from '../../components';
 import { WalletState, useConnectWallet, useShieldedAssets } from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -88,28 +90,32 @@ export const WithdrawContainer = forwardRef<
   const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
     useNoteAccount();
 
+  const currentResourceId = useCurrentResourceId();
+
   const shieldedAssets = useShieldedAssets();
 
   const txQueue = useTxQueue();
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
+  const { setEducationCardStep } = useEducationCardStep();
+
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
-    if (!currentTypedChainId) {
+    if (!currentResourceId) {
       return null;
     }
 
     // Get the notes of the currently selected chain.
     const notes = allNotes
-      .get(currentTypedChainId.toString())
+      .get(currentResourceId.toString())
       ?.filter(
         (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
       );
 
     return notes ?? null;
-  }, [allNotes, currentTypedChainId, fungibleCurrency]);
+  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -521,6 +527,40 @@ export const WithdrawContainer = forwardRef<
       setFungibleCurrency(defaultFungibleCurrency);
     }
   }, [defaultFungibleCurrency, setFungibleCurrency]);
+
+  // Side effect to set the education card step
+  useEffect(() => {
+    // If the user has no available amount,
+    // show the first step to switch to other chains
+    if (availableAmount === 0) {
+      setEducationCardStep(1);
+      return;
+    }
+
+    const isValidCurrency =
+      (!isUnwrap && fungibleCurrency) ||
+      (isUnwrap && wrappableCurrency && fungibleCurrency);
+
+    if (!isValidCurrency || !amount) {
+      setEducationCardStep(2);
+      return;
+    }
+
+    if (!activeRelayer) {
+      setEducationCardStep(3);
+      return;
+    }
+
+    setEducationCardStep(4);
+  }, [
+    availableAmount,
+    setEducationCardStep,
+    isUnwrap,
+    fungibleCurrency,
+    wrappableCurrency,
+    amount,
+    activeRelayer,
+  ]);
 
   return (
     <div ref={ref}>

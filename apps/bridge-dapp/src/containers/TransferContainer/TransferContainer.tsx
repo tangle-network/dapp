@@ -8,6 +8,7 @@ import {
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
+  useCurrentResourceId,
   useNoteAccount,
   useRelayers,
   useTxQueue,
@@ -44,6 +45,7 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -74,6 +76,8 @@ export const TransferContainer = forwardRef<
     const txQueue = useTxQueue();
 
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
+
+    const currentResourceId = useCurrentResourceId();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -110,6 +114,8 @@ export const TransferContainer = forwardRef<
     const [recipientPubKey, setRecipientPubKey] = useState<string>('');
 
     const [isValidRecipient, setIsValidRecipient] = useState(false);
+
+    const { setEducationCardStep } = useEducationCardStep();
 
     // Calculate recipient error message
     const recipientError = useMemo(() => {
@@ -500,18 +506,13 @@ export const TransferContainer = forwardRef<
 
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
-      if (!destChain || !fungibleCurrency || !amount) {
+      if (!destChain || !fungibleCurrency || !amount || !currentResourceId) {
         return [];
       }
 
-      const destTypedChainId = calculateTypedChainId(
-        destChain.chainType,
-        destChain.chainId
-      );
-
       const avaiNotes =
         allNotes
-          .get(destTypedChainId.toString())
+          .get(currentResourceId.toString())
           ?.filter(
             (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
           ) ?? [];
@@ -525,7 +526,7 @@ export const TransferContainer = forwardRef<
           )
         ) ?? []
       );
-    }, [allNotes, amount, destChain, fungibleCurrency]);
+    }, [allNotes, amount, currentResourceId, destChain, fungibleCurrency]);
 
     // Calculate the info for UI display
     const infoCalculated = useMemo(() => {
@@ -812,6 +813,32 @@ export const TransferContainer = forwardRef<
 
       updateDefaultValues();
     }, [defaultDestinationChain, defaultFungibleCurrency, setFungibleCurrency]);
+
+    // Side effect to set the education card step
+    useEffect(() => {
+      if (!destChain) {
+        setEducationCardStep(1);
+        return;
+      }
+
+      if (!fungibleCurrency || !amount) {
+        setEducationCardStep(2);
+        return;
+      }
+
+      if (!recipientPubKey) {
+        setEducationCardStep(3);
+        return;
+      }
+
+      setEducationCardStep(4);
+    }, [
+      destChain,
+      setEducationCardStep,
+      fungibleCurrency,
+      amount,
+      recipientPubKey,
+    ]);
 
     return (
       <TransferCard

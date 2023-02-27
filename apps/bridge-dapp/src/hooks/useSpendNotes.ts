@@ -3,13 +3,14 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { VAnchorTree__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { hexToU8a } from '@webb-tools/utils';
 
 const createdTime = randRecentDate();
 
@@ -50,21 +51,24 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
   const notes = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(
-      (acc, [typedChainId, notes]) => {
-        const currentChain = chains[Number(typedChainId)];
-        if (!currentChain) {
+      (acc, [resourceIdStr, notes]) => {
+        const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdStr));
+        const typedChainId = calculateTypedChainId(
+          resourceId.chainType,
+          resourceId.chainId
+        );
+
+        const chain = chains[typedChainId];
+        if (!chain) {
           console.trace('Chain not found with typedChainId: ', typedChainId);
           return acc;
         }
 
-        if (currentChain.tag !== activeChain?.tag) {
+        if (chain.tag !== activeChain?.tag) {
           return acc;
         }
 
         notes.forEach((note) => {
-          // Get the information about the chain
-          const chain = chainsPopulated[Number(typedChainId)];
-
           const nextIndex = nextIndices.find(
             (item) =>
               item.address === note.note.sourceIdentifyingData &&
@@ -108,12 +112,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             ),
             createdTime, // TODO: get the actual created time
             balance: Number(
-              Number(
-                ethers.utils.formatUnits(
-                  note.note.amount,
-                  note.note.denomination
-                )
-              )
+              ethers.utils.formatUnits(note.note.amount, note.note.denomination)
             ),
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()
