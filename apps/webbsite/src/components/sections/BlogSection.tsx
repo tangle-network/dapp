@@ -10,35 +10,34 @@ type BlogSectionProps = {
   showAllItems?: boolean;
 };
 
-export const BlogSection = ({ type, items, showAllItems = false }: BlogSectionProps) => {
-
+export const BlogSection = ({
+  type,
+  items,
+  showAllItems = false,
+}: BlogSectionProps) => {
   const allItems = showAllItems ? items : items.slice(0, 6);
-
-  const tagsArrays = allItems.map((object) => object.metadata['tags']);
 
   const [filter, setFilter] = useState('All');
 
   const tags = useMemo(() => {
-    const tags = tagsArrays.reduce((accumulator, current) => {
-      current.forEach((tag) => {
-        if (!accumulator.includes(tag)) {
-          accumulator.push(tag);
-        }
-      });
-      return accumulator;
-    }, []);
-
-    tags.unshift('All');
-
+    const tags = allItems.reduce(
+      (accumulator, { metadata: { tags } }) => {
+        tags.forEach((tag) => {
+          if (!accumulator.includes(tag)) {
+            accumulator.push(tag);
+          }
+        });
+        return accumulator;
+      },
+      ['All']
+    );
     return tags;
-  }, [tagsArrays]);
+  }, [allItems]);
 
   const filteredItems = useMemo(() => {
-    if (filter === 'All') {
-      return allItems;
-    } else {
-      return allItems.filter((item) => item.metadata.tags.includes(filter));
-    }
+    return filter === 'All'
+      ? allItems
+      : allItems.filter((item) => item.metadata.tags.includes(filter));
   }, [filter, allItems]);
 
   return (
@@ -62,16 +61,18 @@ export const BlogSection = ({ type, items, showAllItems = false }: BlogSectionPr
       </div>
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
-        {filteredItems.map(({ id, metadata: { title, slug, tags, cover, link } }) => (
-          <BlogCard
-            key={id}
-            title={title}
-            tags={tags}
-            cover={cover}
-            type={type}
-            link={link ? link : `/blog/posts/${slug}`}
-          />
-        ))}
+        {filteredItems.map(
+          ({ metadata: { id, title, slug, tags, cover, link } }) => (
+            <BlogCard
+              key={id}
+              title={title}
+              tags={tags}
+              cover={cover}
+              type={type}
+              link={link ? link : `/blog/posts/${slug}`}
+            />
+          )
+        )}
       </div>
 
       {!showAllItems && (
