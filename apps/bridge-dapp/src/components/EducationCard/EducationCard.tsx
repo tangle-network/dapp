@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { EducationCardProps } from './types';
 import { Transition } from '@headlessui/react';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 const links = [
   {
@@ -34,13 +35,13 @@ const howItWorksContent: {
         'Create a Note account and connect it to your MetaMask address to start depositing tokens.',
     },
     {
-      title: 'Select Token and Amount',
-      description:
-        'Choose the token you want to deposit and specify the deposit amount.',
+      title: 'Select Token',
+      description: 'Choose the token you want to deposit.',
     },
     {
-      title: 'Select Desired Chains',
-      description: 'Select the source and destination chains for your deposit.',
+      title: 'Select Desired Chains and Amount',
+      description:
+        'Select the source, destination chains and specify the deposit amount for your deposit.',
     },
     {
       title: 'Confirm Deposit',
@@ -99,6 +100,8 @@ const commonTransitionClass = cx('transition-all !duration-150');
 export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
   ({ currentTab, defaultOpen = true, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
+
+    const { educationCardStep } = useEducationCardStep();
 
     useEffect(() => {
       // Reset the state when the defaultOpen prop changes
@@ -172,6 +175,8 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
 
               <div className="space-y-2">
                 {howItWorksContent[currentTab].map((content, index) => {
+                  const isCurrentStep = index + 1 === educationCardStep;
+
                   return (
                     <div
                       key={`${content.title}-${index}`}
@@ -196,14 +201,19 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                       <div
                         className={cx(
                           'flex items-center justify-center grow-0 shrink-0 basis-6 h-6 border-2 rounded-full',
-                          { 'border-mono-200 dark:border-mono-0': !index },
-                          { 'border-mono-120 dark:border-mono-100': index }
+                          {
+                            'border-mono-200 dark:border-mono-0': isCurrentStep,
+                          },
+                          {
+                            'border-mono-120 dark:border-mono-100':
+                              !isCurrentStep,
+                          }
                         )}
                       >
                         <Typography
                           component="p"
                           className={cx({
-                            'text-mono-120 dark:text-mono-100': index,
+                            'text-mono-120 dark:text-mono-100': !isCurrentStep,
                           })}
                           variant="mono2"
                           fw="bold"
@@ -217,7 +227,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
                           variant="body1"
                           fw="bold"
                           className={cx({
-                            'text-mono-120 dark:text-mono-100': index,
+                            'text-mono-120 dark:text-mono-100': !isCurrentStep,
                           })}
                         >
                           {content.title}
