@@ -35,8 +35,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const posts = await notion.getPosts();
   const videos = await notion.getVideos();
 
-  if (!posts || !videos) return { props: { blog: {} } };
-
   return {
     props: {
       blog: {

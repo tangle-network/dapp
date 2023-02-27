@@ -144,11 +144,9 @@ export const getStaticPaths = async () => {
 
   const posts = await notion.getPosts();
 
-  if (!posts) return { paths: [], fallback: true };
-
   return {
-    paths: posts.map((post: any) => `/blog/posts/${post.metadata.slug}`),
-    fallback: true,
+    paths: posts.map((post) => `/blog/posts/${post.metadata.slug}`),
+    fallback: 'blocking',
   };
 };
 
@@ -161,11 +159,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const post = await notion.getPostBySlug(slug);
 
-  if (!post) return { props: { post: {} }, fallback: true };
-
   return {
     props: {
-      post: post ?? {},
+      post: post,
     },
     revalidate: 60,
   };

@@ -19,8 +19,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const videos = await notion.getVideos();
 
-  if (!videos) return { props: { videos: {} } };
-
   return {
     props: {
       videos,
