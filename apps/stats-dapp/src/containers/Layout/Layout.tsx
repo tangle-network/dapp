@@ -8,8 +8,8 @@ import {
 import { onError } from '@apollo/client/link/error';
 import { Header } from '../../components';
 import { StatsProvider } from '../../provider';
-import { FC, PropsWithChildren, useMemo, useState } from 'react';
-import { Footer } from '@webb-tools/webb-ui-components';
+import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { Footer, useWebbUI } from '@webb-tools/webb-ui-components';
 import { RetryLink } from '@apollo/client/link/retry';
 import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
 import {
@@ -17,8 +17,11 @@ import {
   Network,
   NetworkType,
 } from '@webb-tools/webb-ui-components/constants';
+import { VariantType } from '@webb-tools/abstract-api-provider';
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
+  const { notificationApi } = useWebbUI();
+
   const defaultNetworkType = webbNetworks.filter(
     (network) => network.networkType === 'testnet'
   );
@@ -69,7 +72,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     );
 
     const httpLink = new HttpLink({
-      uri: selectedNetwork.subqueryEndpoint, // subqueryEndpoint - graphql endpoint,
+      uri: selectedNetwork.subqueryEndpoint,
     });
 
     return new ApolloClient({
@@ -79,9 +82,61 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   }, [selectedNetwork, setErrorMessage]);
 
   const setUserSelectedNetwork = async (network: Network) => {
-    localStorage.setItem('selectedNetwork', JSON.stringify(network));
+    const handleSuccess = () => {
+      notificationApi({
+        variant: 'success',
+        message: `Connected to ${network.name}`,
+      });
+      localStorage.setItem('selectedNetwork', JSON.stringify(network));
+      setSelectedNetwork(network);
+    };
 
-    setSelectedNetwork(network);
+    const handleClose = () => {
+      notificationApi({
+        variant: 'error',
+        message: `Please make sure you have a running node at the selected network.`,
+      });
+      localStorage.setItem(
+        'selectedNetwork',
+        JSON.stringify(defaultNetworkType[0].networks[0])
+      );
+      setSelectedNetwork(defaultNetworkType[0].networks[0]);
+    };
+
+    if (network.name === 'Local endpoint') {
+      try {
+        const response = await fetch(network.subqueryEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query: '{__schema{types{name}}}' }),
+        });
+
+        if (response.ok) {
+          const ws = new WebSocket(network.polkadotEndpoint);
+
+          const handleOpen = () => {
+            handleSuccess();
+            ws.removeEventListener('open', handleOpen);
+          };
+
+          const handleCloseEvent = () => {
+            handleClose();
+            ws.removeEventListener('close', handleCloseEvent);
+          };
+
+          ws.addEventListener('open', handleOpen);
+          ws.addEventListener('close', handleCloseEvent);
+        } else {
+          handleClose();
+        }
+      } catch (error) {
+        handleClose();
+      }
+    } else {
+      handleSuccess();
+    }
   };
 
   const subqueryEndpoint = useMemo(

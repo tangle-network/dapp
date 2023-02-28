@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   NetworkType,
   Network,
@@ -27,6 +27,16 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
     (network) => network.networkType === selectedNetworkType
   );
 
+  const [localHostSelected, setLocalHostSelected] = useState(false);
+
+  useEffect(() => {
+    if (selectedNetwork.name === 'Local') {
+      setLocalHostSelected(true);
+    } else {
+      setLocalHostSelected(false);
+    }
+  }, [localHostSelected]);
+
   return (
     <div>
       <RadioGroup
@@ -37,6 +47,11 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           // TODO: Need to handle error if local endpoint is selected but no local endpoint is running
           // TODO: Need to use verifyEndpoint() to verify the custom network endpoint provided by the user
           // TODO: Need to create a new NETWORK type for custom network selection using the custom input fields and set it to the userSelectedNetwork
+
+          // val == 'Local'
+
+          // checkEndpoint(val);
+
           if (val === 'Custom') {
             return;
           }
@@ -44,6 +59,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           const network = filteredNetworkType[0].networks.filter(
             (network) => network.name === val
           );
+
           setUserSelectedNetwork(network[0] as Network);
         }}
         className="border-b border-mono-40 dark:border-mono-140 pb-4"
@@ -102,4 +118,19 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
       </RadioGroup>
     </div>
   );
+};
+
+const isLocalhostRunning = async (endpoint: string): Promise<boolean> => {
+  try {
+    await new Promise((resolve, reject) => {
+      const ws = new WebSocket(endpoint);
+      ws.addEventListener('open', resolve);
+      ws.addEventListener('error', reject);
+    });
+    console.log('Endpoint is running');
+    return true;
+  } catch (error) {
+    console.error('Endpoint is not running:', error);
+    return false;
+  }
 };

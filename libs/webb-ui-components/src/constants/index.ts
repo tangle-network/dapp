@@ -71,7 +71,7 @@ export const webbNetworks: webbNetworksType[] = [
         name: 'Local endpoint',
         networkType: 'dev',
         networkNodeType: 'standalone',
-        subqueryEndpoint: 'http://localhost:4000/',
+        subqueryEndpoint: 'http://localhost:4000/graphql',
         polkadotEndpoint: 'ws://127.0.0.1:9944',
         polkadotExplorer:
           'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
