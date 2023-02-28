@@ -68,7 +68,7 @@ export const webbNetworks: webbNetworksType[] = [
     networkType: 'dev',
     networks: [
       {
-        name: 'Local endpoint',
+        name: 'Local endpoint (127.0.0.1)',
         networkType: 'dev',
         networkNodeType: 'standalone',
         subqueryEndpoint: 'http://localhost:4000/graphql',

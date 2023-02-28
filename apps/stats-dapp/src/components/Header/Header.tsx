@@ -38,17 +38,6 @@ export const Header: FC<HeaderProps> = ({
   selectedNetworkType,
   setSelectedNetworkType,
 }) => {
-  // // A function to verify the user input before setting the connection.
-  // const verifyEndpoint = async (maybeEndpoint: string) => {
-  //   // verify graphql service at endpoint:
-  //   const req = await fetch(`${maybeEndpoint}?query=%7B__typename%7D`);
-  //   if (req.ok) {
-  //     return true;
-  //   } else {
-  //     throw false;
-  //   }
-  // };
-
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
       <div className="relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto">

@@ -171,7 +171,7 @@ export const Input: React.FC<InputProps> = (props) => {
     <div className={className}>
       <div className={cx('relative', { 'shadow-sm': size === 'md' })}>
         {leftIcon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-2">
             <span className={iconClsx}>{leftIcon}</span>
           </div>
         )}
@@ -192,7 +192,7 @@ export const Input: React.FC<InputProps> = (props) => {
         />
 
         {rightIcon && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2">
             <span className={iconClsx}>{rightIcon}</span>
           </div>
         )}

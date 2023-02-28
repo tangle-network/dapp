@@ -17,7 +17,7 @@ import {
   Network,
   NetworkType,
 } from '@webb-tools/webb-ui-components/constants';
-import { VariantType } from '@webb-tools/abstract-api-provider';
+import { isValidSubqueryEndpoint } from '../../utils';
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const { notificationApi } = useWebbUI();
@@ -103,39 +103,27 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       setSelectedNetwork(defaultNetworkType[0].networks[0]);
     };
 
-    if (network.name === 'Local endpoint') {
-      try {
-        const response = await fetch(network.subqueryEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query: '{__schema{types{name}}}' }),
-        });
+    try {
+      if (await isValidSubqueryEndpoint(network.subqueryEndpoint)) {
+        const ws = new WebSocket(network.polkadotEndpoint);
 
-        if (response.ok) {
-          const ws = new WebSocket(network.polkadotEndpoint);
+        const handleOpen = () => {
+          handleSuccess();
+          ws.removeEventListener('open', handleOpen);
+        };
 
-          const handleOpen = () => {
-            handleSuccess();
-            ws.removeEventListener('open', handleOpen);
-          };
-
-          const handleCloseEvent = () => {
-            handleClose();
-            ws.removeEventListener('close', handleCloseEvent);
-          };
-
-          ws.addEventListener('open', handleOpen);
-          ws.addEventListener('close', handleCloseEvent);
-        } else {
+        const handleCloseEvent = () => {
           handleClose();
-        }
-      } catch (error) {
+          ws.removeEventListener('close', handleCloseEvent);
+        };
+
+        ws.addEventListener('open', handleOpen);
+        ws.addEventListener('close', handleCloseEvent);
+      } else {
         handleClose();
       }
-    } else {
-      handleSuccess();
+    } catch (error) {
+      handleClose();
     }
   };
 
