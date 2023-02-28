@@ -9,10 +9,9 @@ import {
   useWebbUI,
   RadioGroup,
   RadioItem,
-  TitleWithInfo,
-  Tooltip,
+  IconWithTooltip,
 } from '@webb-tools/webb-ui-components';
-import { TangleIcon } from '@webb-tools/icons';
+import { InformationLine, TangleIcon } from '@webb-tools/icons';
 import { Save, SaveWithBg, DeleteBinWithBg } from '@webb-tools/icons';
 import { isValidSubqueryEndpoint, isValidPolkadotEndpoint } from '../../utils';
 
@@ -132,9 +131,16 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
           {selectedNetworkType === 'dev' && (
             <div>
               <div className="flex items-center justify-between">
-                <RadioItem id="Custom Network" value="Custom Network">
-                  Custom Network
-                </RadioItem>
+                <div className="flex items-center gap-2">
+                  <RadioItem id="Custom Network" value="Custom Network">
+                    Custom Network
+                  </RadioItem>
+                  <IconWithTooltip
+                    icon={<InformationLine />}
+                    content={`example subquery: http://localhost:4000/graphql
+                      example polkadot: ws://127.0.0.1:9944`}
+                  />
+                </div>
                 {selectedNetworkType !== 'dev' && <TangleIcon size="lg" />}
               </div>
 
