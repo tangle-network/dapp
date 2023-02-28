@@ -26,6 +26,7 @@ import {
 import {
   BareProps,
   CurrencyRole,
+  CurrencyType,
   EVMChainId,
   InteractiveFeedback,
   WalletId,
@@ -669,8 +670,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   ChainType.EVM,
                   chain.chainId
                 );
-                const currency = Object.values(apiConfig.currencies).find((c) =>
-                  Array.from(c.addresses.keys()).includes(typedChainId)
+                const currency = Object.values(apiConfig.currencies).find(
+                  (c) =>
+                    c.type === CurrencyType.NATIVE &&
+                    Array.from(c.addresses.keys()).includes(typedChainId)
                 );
                 if (!currency) {
                   throw new Error('Native token not found');
