@@ -119,11 +119,6 @@ export const footerNavs: FooterNavsType = {
       href: 'https://apps.webb.tools/',
       ...commonExternalProps,
     },
-    // {
-    //   name: 'wrap',
-    //   href: 'https://app.webb.tools/#/wrap-unwrap',
-    //   ...commonExternalProps,
-    // },
   ],
   network: [
     {
@@ -133,7 +128,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'tangle',
-      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/explorer',
+      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
       ...commonExternalProps,
     },
   ],
@@ -155,11 +150,6 @@ export const footerNavs: FooterNavsType = {
       href: 'https://t.me/webbprotocol',
       ...commonExternalProps,
     },
-    // {
-    //   name: 'FAQs',
-    //   href: '#',
-    //   ...commonExternalProps,
-    // },
   ],
   company: [
     {
@@ -186,11 +176,6 @@ export const bottomLinks: ExternalLink[] = [
     href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
-  // {
-  //   name: 'Security',
-  //   href: '#',
-  //   ...commonExternalProps,
-  // },
 ];
 
 export const socialConfigs: Array<SocialConfigsType> = [

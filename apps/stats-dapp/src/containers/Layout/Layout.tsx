@@ -36,11 +36,9 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   const retryLink = new RetryLink({
     delay: () => {
-      console.log('rertyLink');
       return 0;
     },
     attempts: () => {
-      console.log('Should attempt');
       return Promise.resolve(true);
     },
   });
