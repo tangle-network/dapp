@@ -210,9 +210,7 @@ export const TransferContainer = forwardRef<
             );
 
             if (!currency || !chain) {
-              throw new Error(
-                'Detect unsupoorted chain or currency parsed from note'
-              );
+              return acc;
             }
 
             if (!acc[currency.id]) {
