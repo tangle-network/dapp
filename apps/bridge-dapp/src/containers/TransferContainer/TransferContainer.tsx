@@ -37,7 +37,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
-import { WalletState, useConnectWallet } from '../../hooks';
+import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -116,6 +116,8 @@ export const TransferContainer = forwardRef<
     const [isValidRecipient, setIsValidRecipient] = useState(false);
 
     const { setEducationCardStep } = useEducationCardStep();
+
+    const addCurrency = useAddCurrency();
 
     // Calculate recipient error message
     const recipientError = useMemo(() => {
@@ -302,8 +304,9 @@ export const TransferContainer = forwardRef<
         symbol: fungibleCurrency.view.symbol,
         name: fungibleCurrency.view.name,
         balance,
+        onTokenClick: () => addCurrency(fungibleCurrency),
       };
-    }, [balanceRecordFromNotes, destChain, fungibleCurrency]);
+    }, [addCurrency, balanceRecordFromNotes, destChain, fungibleCurrency]);
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {

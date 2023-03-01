@@ -29,7 +29,12 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
-import { WalletState, useConnectWallet, useShieldedAssets } from '../../hooks';
+import {
+  WalletState,
+  useAddCurrency,
+  useConnectWallet,
+  useShieldedAssets,
+} from '../../hooks';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
@@ -100,6 +105,8 @@ export const WithdrawContainer = forwardRef<
 
   const { setEducationCardStep } = useEducationCardStep();
 
+  const addCurrency = useAddCurrency();
+
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
@@ -145,8 +152,9 @@ export const WithdrawContainer = forwardRef<
       symbol: fungibleCurrency.view.symbol,
       name: fungibleCurrency.view.name,
       balance: availableAmount,
+      onTokenClick: () => addCurrency(fungibleCurrency),
     };
-  }, [availableAmount, fungibleCurrency]);
+  }, [addCurrency, availableAmount, fungibleCurrency]);
 
   const fungibleTokens = useMemo((): AssetType[] => {
     return Object.values(fungibleCurrencies).map((currency) => {
@@ -168,8 +176,9 @@ export const WithdrawContainer = forwardRef<
     return {
       symbol: wrappableCurrency.view.symbol,
       name: wrappableCurrency.view.name,
+      onTokenClick: () => addCurrency(wrappableCurrency),
     };
-  }, [wrappableCurrency]);
+  }, [addCurrency, wrappableCurrency]);
 
   const wrappableTokens = useMemo((): AssetType[] => {
     return wrappableCurrencies.map((currency) => {
