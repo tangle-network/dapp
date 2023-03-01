@@ -1,8 +1,8 @@
-import cx from 'classnames';
-import { forwardRef, useCallback, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { ChevronRight, TokenIcon } from '@webb-tools/icons';
 import { TokenPairIcons } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
+import { MouseEventHandler, forwardRef, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 
@@ -10,6 +10,8 @@ import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
+import { ComponentProps } from 'react';
+import { MouseEvent } from 'react';
 
 /**
  * Token Input component, for selecting token on the bridge
@@ -42,7 +44,8 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
     const handleTokenIconClick = useMemo(() => {
       if (token && typeof token.onTokenClick === 'function') {
-        return () => {
+        return (event: MouseEvent<SVGSVGElement>) => {
+          event.stopPropagation();
           token?.onTokenClick?.(token?.symbol);
         };
       }
