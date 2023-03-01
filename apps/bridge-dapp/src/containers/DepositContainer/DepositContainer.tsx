@@ -29,7 +29,7 @@ import {
 
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
-import { WalletState, useConnectWallet } from '../../hooks';
+import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
@@ -92,6 +92,8 @@ export const DepositContainer = forwardRef<
       setWrappableCurrency,
       getPossibleFungibleCurrencies,
     } = useCurrencies();
+
+    const addCurrency = useAddCurrency();
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
@@ -191,17 +193,21 @@ export const DepositContainer = forwardRef<
         return {
           symbol: bridgeWrappableCurrency.currency.view.symbol,
           balance: bridgeWrappableCurrency.balance,
+          onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
         };
       }
+
       if (!bridgeFungibleCurrency) {
         return undefined;
       }
+
       // Deposit flow
       return {
         symbol: bridgeFungibleCurrency.currency.view.symbol,
         balance: bridgeFungibleCurrency.balance,
+        onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
       };
-    }, [bridgeFungibleCurrency, bridgeWrappableCurrency]);
+    }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
       return Object.values(fungibleCurrencies.concat(wrappableCurrencies)).map(
@@ -421,6 +427,7 @@ export const DepositContainer = forwardRef<
         token: {
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
+          onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -431,8 +438,8 @@ export const DepositContainer = forwardRef<
     }, [
       wrappableCurrency,
       bridgeFungibleCurrency,
+      addCurrency,
       selectedSourceChain,
-      setMainComponentName,
     ]);
 
     const handleMaxBtnClick = useCallback(() => {
