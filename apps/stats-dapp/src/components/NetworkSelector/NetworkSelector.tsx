@@ -137,8 +137,15 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   </RadioItem>
                   <IconWithTooltip
                     icon={<InformationLine />}
-                    content={`example subquery: http://localhost:4000/graphql
-                      example polkadot: ws://127.0.0.1:9944`}
+                    content={
+                      <span className="text-sm">
+                        Example endpoints:
+                        <br />
+                        Subquery: http://localhost:4000/graphql
+                        <br />
+                        Polkadot: ws://127.0.0.1:9944
+                      </span>
+                    }
                   />
                 </div>
                 {selectedNetworkType !== 'dev' && <TangleIcon size="lg" />}
