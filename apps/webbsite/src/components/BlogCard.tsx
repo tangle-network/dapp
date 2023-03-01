@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heading3 } from './Heading3';
 
 type BlogCardProps = {
@@ -21,11 +21,12 @@ export const BlogCard = (data: BlogCardProps) => {
           className="w-full h-[220px] md:h-[250px] rounded-t-lg relative"
         >
           {type === 'video' && (
-            <img
-              src={`/static/svgs/play-button.svg`}
-              width="100"
-              alt={title}
+            <Image
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              src={`/static/svgs/play-button.svg`}
+              alt="Play button"
+              width="100"
+              height="100"
             />
           )}
         </div>

@@ -92,7 +92,7 @@ export class Notion {
               tags: post.properties.Tags.multi_select.map(
                 (tag: any) => tag.name
               ),
-              cover: post.cover.file.url,
+              cover: post.cover.file.url ?? '',
               dateAndTime: {
                 createdDate: formatDate(post.properties.Created.created_time),
                 createdTime: formatTime(post.properties.Created.created_time),

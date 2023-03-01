@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { TwitterFill, CopyLinkFill } from '@webb-tools/icons';
 import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';

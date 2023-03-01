@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { Post, Video } from '../../libs/notion';
 import { Heading3, SubHeading1 } from '../../components';
 import Link from 'next/link';
