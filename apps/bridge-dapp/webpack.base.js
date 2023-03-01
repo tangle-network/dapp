@@ -29,6 +29,7 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
+  console.log('Running webpack in: ', mode);
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(__dirname, `../../libs/${dir}/src`);

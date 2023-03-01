@@ -11,7 +11,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = (env, config) => {
   env.context = __dirname;
-  console.log('environment in dev');
   return merge(baseConfig(env, 'development'), {
     devtool: 'eval-source-map',
     devServer: {
