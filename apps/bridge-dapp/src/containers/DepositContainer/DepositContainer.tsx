@@ -216,10 +216,11 @@ export const DepositContainer = forwardRef<
             name: currency.view.name,
             symbol: currency.view.symbol,
             balance: balances[currency.id],
+            onTokenClick: () => addCurrency(currency),
           };
         }
       );
-    }, [fungibleCurrencies, wrappableCurrencies, balances]);
+    }, [addCurrency, balances, fungibleCurrencies, wrappableCurrencies]);
 
     const populatedAllTokens = useMemo((): AssetType[] => {
       // Filter currencies that are not in the populated selectable tokens
@@ -474,8 +475,8 @@ export const DepositContainer = forwardRef<
       return {
         className: 'min-w-[550px] h-[700px]',
         title: `Select a token from ${selectedSourceChain?.name}`,
-        popularTokens: [],
-        selectTokens: populatedSelectableWebbTokens,
+        popularTokens: populatedSelectableWebbTokens,
+        selectTokens: [],
         unavailableTokens: populatedAllTokens,
         onChange: handleTokenChange,
         onClose: () => setMainComponentName(undefined),

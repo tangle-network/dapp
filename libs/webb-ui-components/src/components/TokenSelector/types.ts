@@ -7,8 +7,14 @@ export interface TokenSelectorProps
    * The chidren must be a token symbol (e.g. eth, dot, ...)
    */
   children: string;
+
   /**
    * If `true`, the component will display as disable state
    */
   isActive?: boolean;
+
+  /**
+   * The callback when user clicks on the token
+   */
+  onTokenClick?: (symbol: string) => void;
 }
