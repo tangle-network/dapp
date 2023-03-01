@@ -26,6 +26,7 @@ export type VideoMetadata = {
   link: string;
   cover: string;
   slug?: string;
+  published: boolean;
 };
 
 export type Post = {

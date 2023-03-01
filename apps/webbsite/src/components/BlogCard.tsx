@@ -10,9 +10,7 @@ type BlogCardProps = {
   type: 'post' | 'video';
 };
 
-export const BlogCard = (data: BlogCardProps) => {
-  const { title, tags, cover, type, link } = data;
-
+export const BlogCard = ({ title, tags, cover, type, link }: BlogCardProps) => {
   return (
     <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
       <Link href={link}>

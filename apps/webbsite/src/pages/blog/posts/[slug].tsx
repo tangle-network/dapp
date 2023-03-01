@@ -128,6 +128,7 @@ const Post: FC<{ post: Post }> = ({
                 Header: Heading2,
                 nextImage: Image,
                 nextLink: Link,
+                Collection: () => null,
               }}
               recordMap={recordMap}
             />

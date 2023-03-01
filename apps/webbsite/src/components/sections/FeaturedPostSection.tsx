@@ -8,13 +8,15 @@ type FeaturedPostSectionProps = {
   recentVideos: Video[];
 };
 
-export const FeaturedPostSection = (data: FeaturedPostSectionProps) => {
-  const { featuredPost, recentVideos } = data;
-  const { title, cover, slug, description } = featuredPost.metadata;
-
+export const FeaturedPostSection = ({
+  featuredPost: {
+    metadata: { title, cover, slug, description },
+  },
+  recentVideos,
+}: FeaturedPostSectionProps) => {
   return (
     <div className="px-4 mt-[18px] grid lg:grid-cols-2 gap-x-6 gap-y-[72px] py-[72px]">
-      {/* Featured Post - fetching last one from the array */}
+      {/* Featured Post */}
       <div className="break-words">
         <Link href={`/blog/posts/${slug}`}>
           <div

@@ -2,7 +2,7 @@ import { Client } from '@notionhq/client';
 import { NotionAPI } from 'notion-client';
 import { formatDate, formatTime } from '../../utils';
 import { ExtendedRecordMap } from 'notion-types';
-import { Post, Video } from './types';
+import { Post, PostMetadata, Video, VideoMetadata } from './types';
 import {
   NOTION_TOKEN_V2,
   NOTION_ACTIVE_USER,
@@ -78,21 +78,22 @@ export class Notion {
       const posts = await Promise.all(
         response.results.map(async (post: any) => {
           try {
-            const metadata = {
+            const metadata: PostMetadata = {
               id: post.id,
-              title: post.properties.Title.title[0].plain_text,
+              title: post.properties.Title.title[0]?.plain_text,
               author: await this.notion.users
                 .retrieve({
                   user_id: post.properties.Author.people[0].id,
                 })
                 .then((user: any) => user.name),
-              description: post.properties.Description.rich_text[0].plain_text,
+              description:
+                post.properties.Description.rich_text[0]?.plain_text ?? '',
               published: post.properties.Published.checkbox,
               slug: post.properties.Slug.formula.string,
               tags: post.properties.Tags.multi_select.map(
                 (tag: any) => tag.name
               ),
-              cover: post.cover.file.url ?? '',
+              cover: post.cover?.file.url ?? '',
               dateAndTime: {
                 createdDate: formatDate(post.properties.Created.created_time),
                 createdTime: formatTime(post.properties.Created.created_time),
@@ -160,7 +161,7 @@ export class Notion {
       const videos = await Promise.all(
         response.results.map(async (video: any) => {
           try {
-            const metadata = {
+            const metadata: VideoMetadata = {
               id: video.id,
               title: video.properties.Title.title[0].plain_text,
               published: video.properties.Published.checkbox,

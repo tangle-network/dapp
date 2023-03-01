@@ -10,9 +10,10 @@ type BlogProps = {
 
 const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
   // Featured post is the last one in the array
-  const featuredPost = posts[posts.length - 1];
+  const featuredPost =
+    posts.length > 0 ? posts[posts.length - 1] : ({} as Post);
   // Recent videos are the last 3 in the array
-  const recentVideos = videos.slice(-3);
+  const recentVideos = videos.length > 0 ? videos.slice(-3) : ([] as Video[]);
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
