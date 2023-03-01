@@ -165,9 +165,15 @@ export const WithdrawContainer = forwardRef<
           selectedFungibleToken?.symbol === currency.view.symbol
             ? availableAmount
             : 0,
+        onTokenClick: () => addCurrency(currency),
       };
     });
-  }, [fungibleCurrencies, availableAmount, selectedFungibleToken]);
+  }, [
+    fungibleCurrencies,
+    selectedFungibleToken?.symbol,
+    availableAmount,
+    addCurrency,
+  ]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -185,9 +191,10 @@ export const WithdrawContainer = forwardRef<
       return {
         name: currency.view.name,
         symbol: currency.view.symbol,
+        onTokenClick: () => addCurrency(currency),
       };
     });
-  }, [wrappableCurrencies]);
+  }, [addCurrency, wrappableCurrencies]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {

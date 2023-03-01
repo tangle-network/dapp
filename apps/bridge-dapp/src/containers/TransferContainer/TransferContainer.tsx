@@ -263,13 +263,19 @@ export const TransferContainer = forwardRef<
             name: currency.view.name,
             symbol: currency.view.symbol,
             balance,
+            onTokenClick: () => addCurrency(currency),
           });
 
           return acc;
         },
         [] as AssetType[]
       );
-    }, [balanceRecordFromNotes, currencyRecordFromNotes, destChain]);
+    }, [
+      addCurrency,
+      balanceRecordFromNotes,
+      currencyRecordFromNotes,
+      destChain,
+    ]);
 
     // Callback when a chain item is selected
     const handlebridgingAssetChange = useCallback(

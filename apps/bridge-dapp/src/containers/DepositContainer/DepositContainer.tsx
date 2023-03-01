@@ -475,8 +475,8 @@ export const DepositContainer = forwardRef<
       return {
         className: 'min-w-[550px] h-[700px]',
         title: `Select a token from ${selectedSourceChain?.name}`,
-        popularTokens: populatedSelectableWebbTokens,
-        selectTokens: [],
+        popularTokens: [],
+        selectTokens: populatedSelectableWebbTokens,
         unavailableTokens: populatedAllTokens,
         onChange: handleTokenChange,
         onClose: () => setMainComponentName(undefined),
@@ -502,8 +502,8 @@ export const DepositContainer = forwardRef<
         (currency): AssetType => ({
           name: currency.view.name,
           balance: balances[currency.id] ?? 0,
-
           symbol: currency.view.symbol,
+          onTokenClick: () => addCurrency(currency),
         })
       );
 
@@ -530,6 +530,7 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       populatedAllTokens,
       balances,
+      addCurrency,
       chains,
     ]);
 
