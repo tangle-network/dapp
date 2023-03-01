@@ -40,7 +40,12 @@ const plugins = fs.existsSync(path.join(__dirname, 'src/public'))
     ]
   : [];
 
-function createWebpackBase(env, mode = 'production') {
+function createWebpackBase() {
+  console.log(
+    'Running webpack in: ',
+    isDevelopment ? 'development' : 'production'
+  );
+
   return {
     mode: isDevelopment ? 'development' : 'production',
     devtool: isDevelopment ? 'source-map' : false,
@@ -297,7 +302,7 @@ function createWebpackBase(env, mode = 'production') {
       .filter(Boolean),
 
     optimization: {
-      minimize: mode === 'production',
+      minimize: !isDevelopment,
 
       minimizer: [
         new TerserPlugin({
