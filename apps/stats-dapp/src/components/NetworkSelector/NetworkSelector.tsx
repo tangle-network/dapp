@@ -163,6 +163,9 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   onChange={(val) => {
                     setCustomSubqueryEndpoint(val);
                   }}
+                  onFocus={() => {
+                    setCustomSubqueryEndpointIsValid(true);
+                  }}
                   rightIcon={
                     savedEnpoints.customSubqueryEndpoint ? (
                       <DeleteBinWithBg
@@ -216,6 +219,9 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   value={customPolkadotEndpoint}
                   onChange={(val) => {
                     setCustomPolkadotEndpoint(val);
+                  }}
+                  onFocus={() => {
+                    setCustomPolkadotEndpointIsValid(true);
                   }}
                   rightIcon={
                     savedEnpoints.customPolkadotEndpoint ? (
