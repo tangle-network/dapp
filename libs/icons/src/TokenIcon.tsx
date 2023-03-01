@@ -1,20 +1,23 @@
-import React from 'react';
+import cx from 'classnames';
+import React, { useMemo } from 'react';
 
 import { Spinner } from './Spinner';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
+import { twMerge } from 'tailwind-merge';
 
 export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   props
 ) => {
   const {
-    className,
+    className: classNameProp,
     isActive,
     name,
     onCompleted,
     onError,
     size = 'md',
+    onClick,
     ...restProps
   } = props;
 
@@ -22,6 +25,11 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
     onCompleted,
     onError,
   });
+
+  const className = useMemo(
+    () => twMerge(cx({ 'cursor-copy': Boolean(onClick) }), classNameProp),
+    [classNameProp]
+  );
 
   if (error) {
     return <span>{error.message}</span>;

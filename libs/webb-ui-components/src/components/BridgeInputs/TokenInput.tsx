@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChevronRight, TokenIcon } from '@webb-tools/icons';
 import { TokenPairIcons } from '@webb-tools/webb-ui-components';
@@ -40,6 +40,14 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
       return [balance, balanceInUsd];
     }, [token]);
 
+    const handleTokenIconClick = useMemo(() => {
+      if (token && typeof token.onTokenClick === 'function') {
+        return () => {
+          token?.onTokenClick?.(token?.symbol);
+        };
+      }
+    }, [token]);
+
     return (
       <InputWrapper
         {...props}
@@ -66,7 +74,11 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
                   token2Symbol={token.tokenComposition[1].trim().toLowerCase()}
                 />
               ) : (
-                <TokenIcon name={token.symbol.trim().toLowerCase()} size="lg" />
+                <TokenIcon
+                  onClick={handleTokenIconClick}
+                  name={token.symbol.trim().toLowerCase()}
+                  size="lg"
+                />
               )}
 
               {token.tokenComposition ? (
