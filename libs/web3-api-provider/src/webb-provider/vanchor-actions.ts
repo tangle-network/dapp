@@ -28,6 +28,7 @@ import {
   Note,
   ResourceId,
   Utxo,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
@@ -573,6 +574,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const edge = await destVAnchor.contract.edgeList(edgeIndex);
       destHistorySourceRoot = edge[1].toHexString();
     }
+
+    // Fixed the root to be 32 bytes
+    destHistorySourceRoot = toFixedHex(destHistorySourceRoot);
 
     // Remove leaves from the leaves map which have not yet been relayed
     const provingTree = MerkleTree.createTreeWithRoot(

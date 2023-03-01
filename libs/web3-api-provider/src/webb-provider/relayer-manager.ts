@@ -18,6 +18,7 @@ import {
   MerkleTree,
   Note,
   parseTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 import { VAnchor } from '@webb-tools/anchors';
@@ -201,10 +202,14 @@ export class Web3RelayerManager extends WebbRelayerManager {
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
         const levels = await vanchor.contract.getLevels();
+        const lastRootBigNumber = await vanchor.contract.getLastRoot();
+
+        // Fixed the last root to be 32 bytes
+        const lastRoot = toFixedHex(lastRootBigNumber.toHexString());
         const tree = MerkleTree.createTreeWithRoot(
           levels,
           relayerLeaves.leaves,
-          (await vanchor.contract.getLastRoot()).toHexString()
+          lastRoot
         );
 
         // If we were able to build the tree, set local storage and break out of the loop

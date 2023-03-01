@@ -170,10 +170,11 @@ export class WebbWeb3Provider
       return null;
     }
 
-    const typedChainId = calculateTypedChainId(ChainType.EVM, this.chainId);
+    const chainId = await this.getChainId();
+    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     const address = vanchors[0].neighbours[typedChainId];
 
-    return new ResourceId(address.toString(), ChainType.EVM, this.chainId);
+    return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }
 
   getProvider(): Web3Provider {
@@ -323,6 +324,9 @@ export class WebbWeb3Provider
       console.log('Leaves from chain: ', leavesFromChain);
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+
+      // Fixed all the leaves to be 32 bytes
+      leaves = leaves.map((leaf) => toFixedHex(leaf));
 
       // Cached the new leaves
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
