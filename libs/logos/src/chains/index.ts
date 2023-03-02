@@ -9,4 +9,3 @@ export * from './PolkadotLogo';
 export * from './PolygonLogo';
 export * from './ShidenLogo';
 export * from './WebbLogo';
-export * from './TangleLogo';

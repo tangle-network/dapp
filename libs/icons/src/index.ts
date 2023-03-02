@@ -55,7 +55,6 @@ export * from './MoonLine';
 export * from './QRCode';
 export * from './RefreshIcon';
 export * from './Save';
-export * from './SaveFill';
 export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
