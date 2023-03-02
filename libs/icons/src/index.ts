@@ -25,6 +25,7 @@ export * from './Copyright';
 export * from './CopyLinkFill';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
+export * from './DeleteBinWithBg';
 export * from './DiscordFill';
 export * from './DocumentationIcon';
 export * from './Download';
@@ -54,6 +55,8 @@ export * from './Memu';
 export * from './MoonLine';
 export * from './QRCode';
 export * from './RefreshIcon';
+export * from './Save';
+export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
 export * from './ShieldKeyholeIcon';
@@ -79,3 +82,6 @@ export * from './wallets';
 export * from './AlertFill';
 export * from './Alert';
 export * from './PartyFill';
+
+// Tangle Icons
+export * from './TangleIcon';
