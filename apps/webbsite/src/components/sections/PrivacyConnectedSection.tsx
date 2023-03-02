@@ -32,7 +32,7 @@ export const PrivacyConnectedSection = () => {
   return (
     <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
-      <Heading2 className="px-4 mt-6 text-center text-mono-200">
+      <Heading2 className="px-4 mt-6 text-center">
         The Future of privacy is Connected
       </Heading2>
       <SubHeading1 className="px-4 mt-6 text-center md:mt-9 text-mono-180">

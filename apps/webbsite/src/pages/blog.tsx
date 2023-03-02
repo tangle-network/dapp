@@ -17,9 +17,7 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Heading2 className="text-center text-mono-200 mb-[24px]">
-        The Webb Blog
-      </Heading2>
+      <Heading2 className="text-center mb-[24px]">The Webb Blog</Heading2>
       <FeaturedPostSection
         featuredPost={featuredPost}
         recentVideos={recentVideos}

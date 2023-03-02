@@ -18,7 +18,7 @@ export const InActionSection = () => {
         'pt-16 md:py-[156px] space-y-9'
       )}
     >
-      <Heading2 className="px-4 text-center text-mono-200">
+      <Heading2 className="px-4 text-center">
         Shielded Protocols in Action
       </Heading2>
 

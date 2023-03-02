@@ -11,7 +11,7 @@ export const ApplicationsAndInfrastructureSection = () => {
   return (
     <section className="py-16 md:py-[156px] space-y-6">
       <div className="pb-9 space-y-9 px-4 max-w-[900px] mx-auto">
-        <Heading2 className="text-center text-mono-200">
+        <Heading2 className="text-center">
           Applications & Infrastructure
         </Heading2>
         <SubHeading1 className="text-center text-mono-180 md:px-24">

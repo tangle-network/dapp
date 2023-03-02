@@ -10,7 +10,7 @@ export const PrivacyScaleSection = () => {
       )}
     >
       <div className="space-y-4 md:space-y-9">
-        <Heading2 className="px-4 text-center dark:text-mono-0">
+        <Heading2 className="px-4 text-center">
           How the Future of Privacy Scales
         </Heading2>
 
