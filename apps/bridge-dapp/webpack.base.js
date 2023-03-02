@@ -109,17 +109,14 @@ function createWebpack(env, mode = 'production') {
           ],
         },
         {
-          exclude: /(node_modules)/,
+          // exclude all node_modules except @webb-tools/contracts
+          exclude: /node_modules\/(?!(@webb-tools\/contracts(\/.*)?)).*/,
           test: /\.(js|mjs|ts|tsx)$/,
           use: [
             require.resolve('thread-loader'),
             {
               loader: require.resolve('babel-loader'),
               options: {
-                assumptions: {
-                  privateFieldsAsProperties: true,
-                  setPublicClassFields: true,
-                },
                 presets: [
                   [
                     '@babel/preset-env',
@@ -142,12 +139,12 @@ function createWebpack(env, mode = 'production') {
                   ...(polkadotBabelWebpackConfig.plugins ?? []),
                   isDevelopment && require.resolve('react-refresh/babel'),
                   ['@babel/plugin-transform-runtime', { loose: false }],
-                  ['@babel/plugin-proposal-class-properties', { loose: false }],
+                  ['@babel/plugin-proposal-class-properties', { loose: true }],
                   [
                     '@babel/plugin-proposal-private-property-in-object',
-                    { loose: false },
+                    { loose: true },
                   ],
-                  ['@babel/plugin-proposal-private-methods', { loose: false }],
+                  ['@babel/plugin-proposal-private-methods', { loose: true }],
                 ].filter(Boolean),
               },
             },
