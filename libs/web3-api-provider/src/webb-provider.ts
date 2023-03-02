@@ -294,8 +294,6 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    console.log(`Got ${leaves.length} leaves from relayers.`);
-
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
@@ -331,6 +329,8 @@ export class WebbWeb3Provider
       // Cached the new leaves
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
+    } else {
+      console.log(`Got ${leaves.length} leaves from relayers.`);
     }
 
     console.groupEnd();
