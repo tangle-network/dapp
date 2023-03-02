@@ -170,10 +170,11 @@ export class WebbWeb3Provider
       return null;
     }
 
-    const typedChainId = calculateTypedChainId(ChainType.EVM, this.chainId);
+    const chainId = await this.getChainId();
+    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     const address = vanchors[0].neighbours[typedChainId];
 
-    return new ResourceId(address.toString(), ChainType.EVM, this.chainId);
+    return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }
 
   getProvider(): Web3Provider {
@@ -293,8 +294,6 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    console.log(`Got ${leaves.length} leaves from relayers.`);
-
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
       // check if we already cached some values.
@@ -316,17 +315,22 @@ export class WebbWeb3Provider
       const leavesFromChain = await vanchor.getDepositLeaves(
         storedContractInfo.lastQueriedBlock + 1,
         0,
-        abortSignal,
-        retryPromise
+        retryPromise,
+        abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
+      // Fixed all the leaves to be 32 bytes
+      leaves = leaves.map((leaf) => toFixedHex(leaf));
+
       // Cached the new leaves
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
+    } else {
+      console.log(`Got ${leaves.length} leaves from relayers.`);
     }
 
     console.groupEnd();
@@ -347,8 +351,8 @@ export class WebbWeb3Provider
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
         1,
       0,
-      abortSignal,
-      retryPromise
+      retryPromise,
+      abortSignal
     );
 
     const utxos = (
