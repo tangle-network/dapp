@@ -169,7 +169,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   rightIcon={
                     savedEnpoints.customSubqueryEndpoint ? (
                       <DeleteBinWithBg
-                        size="lg"
                         onClick={() => {
                           setDefaultEndpointsAsUserSelected();
                           localStorage.removeItem('customSubqueryEndpoint');
@@ -182,7 +181,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                       />
                     ) : customSubqueryEndpoint ? (
                       <SaveWithBg
-                        size="lg"
                         onClick={async () => {
                           if (
                             await isValidSubqueryEndpoint(
@@ -205,7 +203,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                         }}
                       />
                     ) : (
-                      <Save size="lg" className="pointer-events-none" />
+                      <Save className="pointer-events-none" />
                     )
                   }
                 />
@@ -226,7 +224,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   rightIcon={
                     savedEnpoints.customPolkadotEndpoint ? (
                       <DeleteBinWithBg
-                        size="lg"
                         onClick={() => {
                           setDefaultEndpointsAsUserSelected();
                           localStorage.removeItem('customPolkadotEndpoint');
@@ -239,7 +236,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                       />
                     ) : customPolkadotEndpoint ? (
                       <SaveWithBg
-                        size="lg"
                         onClick={async () => {
                           if (
                             await isValidPolkadotEndpoint(
@@ -262,7 +258,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                         }}
                       />
                     ) : (
-                      <Save size="lg" className="pointer-events-none" />
+                      <Save className="pointer-events-none" />
                     )
                   }
                 />

@@ -4,6 +4,8 @@ import { IconBase } from './types';
 export const Save = (props: IconBase) => {
   return createIcon({
     ...props,
+    width: 20,
+    height: 20,
     viewBox: '0 0 16 16',
     path: [
       <path
