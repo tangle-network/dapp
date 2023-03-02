@@ -316,8 +316,8 @@ export class WebbWeb3Provider
       const leavesFromChain = await vanchor.getDepositLeaves(
         storedContractInfo.lastQueriedBlock + 1,
         0,
-        abortSignal,
-        retryPromise
+        retryPromise,
+        abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
@@ -347,8 +347,8 @@ export class WebbWeb3Provider
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
         1,
       0,
-      abortSignal,
-      retryPromise
+      retryPromise,
+      abortSignal
     );
 
     const utxos = (
