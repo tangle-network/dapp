@@ -25,20 +25,23 @@ export const TransferConfirmContainer = forwardRef<
   HTMLDivElement,
   TransferConfirmContainerProps
 >(
-  ({
-    amount,
-    changeAmount,
-    currency,
-    destChain,
-    recipient,
-    relayer,
-    note: changeNote,
-    changeUtxo,
-    transferUtxo,
-    inputNotes,
-    onResetState,
-    ...props
-  }) => {
+  (
+    {
+      amount,
+      changeAmount,
+      currency,
+      destChain,
+      recipient,
+      relayer,
+      note: changeNote,
+      changeUtxo,
+      transferUtxo,
+      inputNotes,
+      onResetState,
+      ...props
+    },
+    ref
+  ) => {
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
@@ -210,6 +213,7 @@ export const TransferConfirmContainer = forwardRef<
     return (
       <TransferConfirm
         {...props}
+        ref={ref}
         title={isTransfering ? 'Transfer in Progress' : undefined}
         activeChains={activeChains}
         amount={amount}
