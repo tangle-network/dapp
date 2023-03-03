@@ -293,6 +293,14 @@ export class NoteManager {
   }
 
   async updateStorage() {
+    // Reset the note storage before processing
+    resetNoteStorage();
+
+    // If there are no notes, return
+    if (this.notesMap.size === 0) {
+      return;
+    }
+
     for (const chainGroupedNotes of this.notesMap.entries()) {
       const encNoteStrings = chainGroupedNotes[1].map((note) => {
         const noteStr = note.serialize();
@@ -360,6 +368,7 @@ export class NoteManager {
       tokenSymbol: tokenSymbol,
       version: 'v1',
       width: '5',
+      index: outputUtxo.index,
     };
 
     return Note.generateNote(noteInput);
