@@ -31,7 +31,7 @@ export const ApplicationsAndInfrastructureSection = () => {
             </SubHeading2>
 
             <Button
-              className="mt-6 button-primary"
+              className="mt-6 button-base button-primary"
               href={TANGLE_NETWORK_URL}
               target="_blank"
               rel="noreferrer"
@@ -68,7 +68,7 @@ export const ApplicationsAndInfrastructureSection = () => {
               href={CONNECTED_SHIELDED_POOLS_URL}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 button-primary"
+              className="mt-6 button-base button-primary"
             >
               Learn More
             </Button>
@@ -88,7 +88,7 @@ export const ApplicationsAndInfrastructureSection = () => {
               href={CONNECTED_SHIELDED_IDENTITY_URL}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 button-primary"
+              className="mt-6 button-base button-primary"
             >
               Learn More
             </Button>

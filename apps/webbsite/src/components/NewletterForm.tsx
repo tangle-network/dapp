@@ -103,7 +103,7 @@ export const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
           <Button
             isLoading={loading}
             type="submit"
-            className="button-primary"
+            className="button-base button-primary"
             isFullWidth
           >
             Subscribe

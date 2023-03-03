@@ -20,7 +20,7 @@ export const HeroSection = () => {
           href={manifestoUrl}
           target="_blank"
           rel="noreferrer"
-          className="block button-primary mx-auto"
+          className="block button-base button-primary mx-auto"
         >
           Read the Manifesto
         </Button>

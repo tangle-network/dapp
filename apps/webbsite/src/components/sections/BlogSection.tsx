@@ -77,7 +77,7 @@ export const BlogSection = ({
 
       {!showAllItems && (
         <Link href={type === 'post' ? '/blog/posts' : '/blog/videos'}>
-          <Button className="block button-primary mx-auto mb-[54px]">
+          <Button className="block button-base button-primary mx-auto mb-[54px]">
             See All {type === 'post' ? 'Writing' : 'Videos'}
           </Button>
         </Link>

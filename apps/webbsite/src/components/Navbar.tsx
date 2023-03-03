@@ -107,7 +107,7 @@ export const Navbar = () => {
             href={BRIDGE_URL}
             target="_blank"
             rel="noreferrer"
-            className="button-primary"
+            className="button-base button-primary"
           >
             Bridge
           </Button>
