@@ -63,6 +63,7 @@ export class WebbPolkadot
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
   private _newBlock = new BehaviorSubject<null | number>(null);
+
   private constructor(
     apiPromise: ApiPromise,
     readonly typedChainId: number,

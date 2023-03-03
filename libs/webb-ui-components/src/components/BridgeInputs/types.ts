@@ -66,6 +66,11 @@ export type TokenType = {
    * The token composition if the token is a pool token
    */
   tokenComposition?: string[];
+
+  /**
+   * The callback when user clicks on the token
+   */
+  onTokenClick?: (symbol: string) => void;
 };
 
 /**
