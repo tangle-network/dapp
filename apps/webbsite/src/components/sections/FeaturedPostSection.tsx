@@ -9,13 +9,11 @@ type FeaturedPostSectionProps = {
 };
 
 export const FeaturedPostSection = ({
-  featuredPost,
-  recentVideos = [],
+  featuredPost: {
+    metadata: { title, cover, slug, description },
+  },
+  recentVideos,
 }: FeaturedPostSectionProps) => {
-  const {
-    metadata: { title = '', cover = '', slug = '', description = '' } = {},
-  } = featuredPost ?? {};
-
   return (
     <div className="px-4 mt-[18px] grid lg:grid-cols-2 gap-x-6 gap-y-[72px] py-[72px]">
       {/* Featured Post */}
@@ -46,19 +44,14 @@ export const FeaturedPostSection = ({
             const { id, title, link } = video.metadata;
 
             return (
-              <>
-                <Link href={link} target="_blank" rel="noreferrer">
-                  <li
-                    key={id}
-                    className="flex items-center gap-2 border-b-2 border-mono-200 pb-6 mt-6"
-                  >
-                    <span className="recent-video-title text-mono-200">
-                      {title}
-                    </span>
-                    <ExternalLinkIcon width={18} height={18} color="#1F1D2B" />
-                  </li>
-                </Link>
-              </>
+              <Link key={id} href={link} target="_blank" rel="noreferrer">
+                <li className="flex items-center gap-2 border-b-2 border-mono-200 pb-6 mt-6">
+                  <span className="recent-video-title text-mono-200">
+                    {title}
+                  </span>
+                  <ExternalLinkIcon width={18} height={18} color="#1F1D2B" />
+                </li>
+              </Link>
             );
           })}
         </ul>

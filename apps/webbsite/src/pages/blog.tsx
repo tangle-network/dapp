@@ -18,12 +18,14 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
       <Heading2 className="text-center mb-[24px]">The Webb Blog</Heading2>
-      <FeaturedPostSection
-        featuredPost={featuredPost}
-        recentVideos={recentVideos}
-      />
-      <BlogSection type="post" items={posts} />
-      <BlogSection type="video" items={videos} />
+      {Object.keys(featuredPost).length > 0 && recentVideos.length > 0 && (
+        <FeaturedPostSection
+          featuredPost={featuredPost}
+          recentVideos={recentVideos}
+        />
+      )}
+      {posts.length > 0 && <BlogSection type="post" items={posts} />}
+      {videos.length > 0 && <BlogSection type="video" items={videos} />}
     </div>
   );
 };
