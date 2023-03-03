@@ -1,3 +1,4 @@
+import React from 'react';
 import { TwitterFill, CopyLinkFill } from '@webb-tools/icons';
 import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';
@@ -23,7 +24,7 @@ const Post: FC<{ post: Post }> = ({
       title,
       cover,
       description,
-      author,
+      authors,
       tags,
       slug,
       dateAndTime: { lastEditedDate },
@@ -88,15 +89,28 @@ const Post: FC<{ post: Post }> = ({
           <SubHeading1 className="mt-4 single-post-card-description text-mono-170">
             {description}
           </SubHeading1>
-          <div className="flex items-center justify-between">
-            <Button
-              variant="link"
-              href={``}
-              target="_blank"
-              className="mt-7 single-post-card-author"
-            >
-              {author}
-            </Button>
+          <div className="flex items-center justify-between mt-7">
+            <div className="flex items-baseline gap-4">
+              {authors.map((author) => (
+                <Button
+                  key={author.name}
+                  variant="link"
+                  href={
+                    author.twitter
+                      ? `https://twitter.com/${author.twitter}`
+                      : ''
+                  }
+                  target="_blank"
+                  className={
+                    author.twitter
+                      ? 'single-post-card-author'
+                      : 'single-post-card-author hover:border-transparent pointer-events-none'
+                  }
+                >
+                  {author.name}
+                </Button>
+              ))}
+            </div>
             <span className="card-tag text-mono-120 lg:hidden single-post-card-date">
               {lastEditedDate}
             </span>

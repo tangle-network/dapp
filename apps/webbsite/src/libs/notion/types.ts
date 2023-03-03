@@ -1,10 +1,15 @@
 import { ExtendedRecordMap } from 'notion-types';
 import { ParsedUrlQuery } from 'querystring';
 
+export type Author = {
+  name: string;
+  twitter?: string;
+};
+
 export type PostMetadata = {
   id: string;
   title: string;
-  author: string;
+  authors: Author[];
   description: string;
   published: boolean;
   slug: string;

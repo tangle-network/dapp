@@ -77,15 +77,32 @@ export class Notion {
 
       const posts = await Promise.all(
         response.results.map(async (post: any) => {
+          console.log(
+            post.properties['Author twitter'].multi_select[2]?.name ?? ''
+          );
+
           try {
             const metadata: PostMetadata = {
               id: post.id,
               title: post.properties.Title.title[0]?.plain_text,
-              author: await this.notion.users
-                .retrieve({
-                  user_id: post.properties.Author.people[0].id,
-                })
-                .then((user: any) => user.name),
+              authors: await Promise.all(
+                post.properties.Author.people.map(
+                  async (author: any, index: number) => {
+                    const user = await this.notion.users.retrieve({
+                      user_id: author.id,
+                    });
+                    const twitter =
+                      post.properties['Author twitter'].multi_select[index]
+                        ?.name ?? '';
+                    console.log(twitter);
+
+                    return {
+                      name: user.name,
+                      twitter: twitter,
+                    };
+                  }
+                )
+              ),
               description:
                 post.properties.Description.rich_text[0]?.plain_text ?? '',
               published: post.properties.Published.checkbox,
