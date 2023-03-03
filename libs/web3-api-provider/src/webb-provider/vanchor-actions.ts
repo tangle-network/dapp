@@ -229,7 +229,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<void> {
     let txHash = '';
 
-    const [tx, contractAddress, ...restArgs] = txArgs;
+    const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
+      txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -246,9 +247,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       name: chainId.toString(),
     };
 
-    const setupTransactionArgs = (
-      restArgs.length === 8 ? restArgs : restArgs.slice(0, -1)
-    ) as Parameters<VAnchor['setupTransaction']>;
+    // Pad the input & output utxo
+    const inputUtxos = await vanchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
+    const outputUtxos = await vanchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+
+    const setupTransactionArgs = [
+      inputUtxos,
+      outputUtxos,
+      ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
+    ] as Parameters<typeof vanchor.setupTransaction>;
 
     const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
       ...setupTransactionArgs
