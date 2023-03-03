@@ -63,6 +63,11 @@ export type AssetType = {
    * The asset balance of user
    */
   balance?: number;
+
+  /**
+   * The callback when user clicks on the token
+   */
+  onTokenClick?: (symbol: string) => void;
 };
 
 export interface ListCardWrapperProps
