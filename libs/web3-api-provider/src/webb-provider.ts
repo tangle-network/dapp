@@ -302,12 +302,12 @@ export class WebbWeb3Provider
 
       const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
-          lastQueriedBlock ??
+          lastQueriedBlock ||
           getAnchorDeploymentBlockNumber(
             typedChainId,
             vanchor.contract.address
           ),
-        leaves: storedLeaves ?? [],
+        leaves: storedLeaves || [],
       };
 
       console.log('Stored contract info: ', storedContractInfo);
@@ -355,6 +355,7 @@ export class WebbWeb3Provider
       abortSignal
     );
 
+    // Check if the UTXOs are already spent
     const utxos = (
       await Promise.all(
         utxosFromChain.map(async (utxo) => {
