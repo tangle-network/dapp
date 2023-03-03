@@ -85,6 +85,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                   className="uppercase"
                   key={`${current.name}-${idx}`}
                   onClick={() => onItemChange(current)}
+                  onTokenClick={current.onTokenClick}
                 >
                   {current.symbol}
                 </TokenSelector>
