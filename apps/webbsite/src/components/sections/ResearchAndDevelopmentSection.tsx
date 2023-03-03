@@ -1,9 +1,6 @@
 import { Button } from '@webb-tools/webb-ui-components';
-import React, { Fragment } from 'react';
-import Heading2 from '../Heading2';
-import Heading3 from '../Heading3';
-import SubHeading from '../SubHeading';
-import SubHeading2 from '../SubHeading2';
+import React from 'react';
+import { Heading2, Heading3, SubHeading1, SubHeading2 } from '../../components';
 import { twMerge } from 'tailwind-merge';
 
 export type Section = {
@@ -41,16 +38,16 @@ const sections: Array<Section> = [
   },
 ];
 
-const ResearchAndDevelopmentSection = () => {
+export const ResearchAndDevelopmentSection = () => {
   return (
     <section className="py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px]">
         <Heading2 className="px-4 text-center">Research & Development</Heading2>
 
-        <SubHeading className="mt-6 px-4 text-center mx-auto max-w-[773px]">
+        <SubHeading1 className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-180">
           Building interoperable zero-knowledge applications to scale privacy
           for all users in the Web3 ecosystem.
-        </SubHeading>
+        </SubHeading1>
 
         <div className="space-y-4 mt-9">
           {sections.map((section, idx) => (
@@ -61,7 +58,7 @@ const ResearchAndDevelopmentSection = () => {
               {section.icon}
 
               <div>
-                <Heading3>{section.title}</Heading3>
+                <Heading3 className="text-mono-200">{section.title}</Heading3>
                 <SubHeading2 className="mt-2 text-mono-160">
                   {section.description}
                 </SubHeading2>
@@ -90,8 +87,6 @@ const ResearchAndDevelopmentSection = () => {
     </section>
   );
 };
-
-export default ResearchAndDevelopmentSection;
 
 function AnchorIcon(props: React.SVGProps<SVGSVGElement>) {
   return (

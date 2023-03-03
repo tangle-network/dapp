@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
-import isValidEmail from '../../../utils/isValidEmail';
+import { isValidEmail } from '../../../utils';
 
 type BodyType = {
   email: string;

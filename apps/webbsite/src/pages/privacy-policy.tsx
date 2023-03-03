@@ -3,11 +3,9 @@ import Link from 'next/link';
 import { ExtendedRecordMap } from 'notion-types';
 import { FC } from 'react';
 import { NotionRenderer } from 'react-notion-x';
-
 import { NextSeo } from 'next-seo';
-import Heading2 from '../components/Heading2';
-import getNotionPage from '../libs/notion/getNotionPage';
-import { PRIVACY_POLICY_PAGE_ID } from '../libs/notion/server-constants';
+import { Heading2 } from '../components';
+import { Notion, PRIVACY_POLICY_PAGE_ID } from '../libs/notion';
 
 const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
   return (
@@ -38,7 +36,9 @@ export const getStaticProps = async () => {
     throw new Error('Missing Notion page ID.'); // Only for development
   }
 
-  const data = await getNotionPage(pageId);
+  const notion = new Notion();
+
+  const data = await notion.getPostRecordMap(pageId);
 
   return {
     props: {

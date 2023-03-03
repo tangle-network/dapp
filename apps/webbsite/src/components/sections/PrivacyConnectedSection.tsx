@@ -4,11 +4,9 @@ import {
   TabsList,
   TabsRoot,
   TabTrigger,
-} from '@webb-tools/webb-ui-components/components/Tabs';
-
+} from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
-import Heading2 from '../Heading2';
-import SubHeading from '../SubHeading';
+import { Heading2, SubHeading1 } from '../../components';
 
 const tabsContent = {
   ownership: {
@@ -27,7 +25,7 @@ const tabsContent = {
 
 type TabTypes = 'ownership' | 'identity' | 'privacy';
 
-const PrivacyConnectedSection = () => {
+export const PrivacyConnectedSection = () => {
   // State for the selected tab
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
 
@@ -37,11 +35,11 @@ const PrivacyConnectedSection = () => {
       <Heading2 className="px-4 mt-6 text-center">
         The Future of privacy is Connected
       </Heading2>
-      <SubHeading className="px-4 mt-6 text-center md:mt-9">
+      <SubHeading1 className="px-4 mt-6 text-center md:mt-9 text-mono-180">
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our
         Web3 ecosystem.
-      </SubHeading>
+      </SubHeading1>
 
       <TabsRoot
         defaultValue={activeTab}
@@ -71,8 +69,6 @@ const PrivacyConnectedSection = () => {
     </section>
   );
 };
-
-export default PrivacyConnectedSection;
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
