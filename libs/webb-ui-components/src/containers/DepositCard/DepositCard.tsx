@@ -8,7 +8,6 @@ import {
   Button,
   ChainInput,
   InfoItem,
-  ShieldedAssetInput,
   TokenInput,
 } from '../../components';
 import { DepositCardProps } from './types';
