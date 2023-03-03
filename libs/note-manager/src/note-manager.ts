@@ -293,9 +293,11 @@ export class NoteManager {
   }
 
   async updateStorage() {
-    // If there are no notes, reset the storage
+    // Reset the note storage before processing
+    resetNoteStorage();
+
+    // If there are no notes, return
     if (this.notesMap.size === 0) {
-      resetNoteStorage();
       return;
     }
 
