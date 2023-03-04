@@ -71,6 +71,12 @@ export class Storage<Store> extends EventBus<{
     return this.data;
   }
 
+  async clear() {
+    this.data = {} as Store;
+    await this.commit(this.name, this.data);
+    this.emit('update', this.data);
+  }
+
   async set<Key extends keyof Store>(key: Key, data: Store[Key]) {
     this.data = {
       ...this.data,

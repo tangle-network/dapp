@@ -38,13 +38,16 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
     }
   }, [notes, setNotes]);
 
-  const handleDeleteNotes = useCallback(() => {
+  const handleDeleteNotes = useCallback(async () => {
     if (!notes || !noteManager) {
       console.trace('No notes or note manager found');
       return;
     }
 
-    notes.forEach((note) => noteManager.removeNote(note));
+    for (const note of notes) {
+      await noteManager.removeNote(note);
+    }
+
     setNotes?.(undefined);
   }, [notes, setNotes, noteManager]);
 
