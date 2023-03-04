@@ -1,10 +1,8 @@
 import { InformationLine } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
-import { Input } from '@webb-tools/webb-ui-components/components/Input/Input';
+import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 
-const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
+export const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
   onSuccess,
 }) => {
   const [email, setEmail] = useState('');
@@ -105,7 +103,7 @@ const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
           <Button
             isLoading={loading}
             type="submit"
-            variant="primary"
+            className="button-base button-primary"
             isFullWidth
           >
             Subscribe
@@ -123,5 +121,3 @@ const NewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
     </div>
   );
 };
-
-export default NewletterForm;

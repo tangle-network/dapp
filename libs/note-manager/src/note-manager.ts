@@ -372,6 +372,7 @@ export class NoteManager {
       tokenSymbol: tokenSymbol,
       version: 'v1',
       width: '5',
+      index: outputUtxo.index,
     };
 
     return Note.generateNote(noteInput);

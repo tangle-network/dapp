@@ -5,10 +5,9 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import * as constants from '@webb-tools/webb-ui-components/constants';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { useConnectWallet } from '../../hooks';
@@ -22,15 +21,21 @@ import { HeaderProps } from './types';
 export const Header: FC<HeaderProps> = () => {
   const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
 
-  const { isModalOpen, toggleModal } = useConnectWallet();
+  const { toggleModal } = useConnectWallet();
 
   // On connect wallet button click - connect to the default chain(ETH Goerli)
   const handleConnectWalletClick = useCallback(() => {
     toggleModal(true);
   }, [toggleModal]);
 
+  // Boolean to display the network switcher and wallet button
+  const isDisplayNetworkSwitcherAndWalletButton = useMemo(
+    () => [!loading, activeAccount, activeWallet, activeChain].every(Boolean),
+    [activeAccount, activeChain, activeWallet, loading]
+  );
+
   return (
-    <header className="bg-mono-0 dark:bg-mono-180 py-4">
+    <header className="py-4 bg-mono-0 dark:bg-mono-180">
       <div className="flex justify-between px-2 max-w-[1160px] h-[40px] mx-auto">
         <NavLink
           to={constants.logoConfig.path}
@@ -39,9 +44,16 @@ export const Header: FC<HeaderProps> = () => {
           <Logo />
         </NavLink>
 
-        {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
-          {(!activeAccount || !activeChain || !activeWallet) && (
+          {/** Wallet is actived */}
+          {isDisplayNetworkSwitcherAndWalletButton &&
+          activeAccount &&
+          activeWallet ? (
+            <>
+              <ChainSwitcherButton />
+              <WalletButton account={activeAccount} wallet={activeWallet} />
+            </>
+          ) : (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
@@ -49,14 +61,6 @@ export const Header: FC<HeaderProps> = () => {
             >
               Connect wallet
             </Button>
-          )}
-
-          {/** Wallet is actived */}
-          {activeAccount && activeWallet && activeChain && (
-            <>
-              <ChainSwitcherButton />
-              <WalletButton account={activeAccount} wallet={activeWallet} />
-            </>
           )}
 
           <NavigationMenu>

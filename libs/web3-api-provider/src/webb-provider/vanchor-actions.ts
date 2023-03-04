@@ -593,7 +593,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     );
 
     if (!provingTree) {
-      throw new Error('fetched leaves do not match bridged anchor state');
+      // Outer try/catch will handle this
+      throw new Error('Fetched leaves do not match bridged anchor state');
     }
 
     const provingLeaves = provingTree
@@ -602,6 +603,14 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
     const commitment = generateCircomCommitment(parsedNote);
     const leafIndex = provingTree.getIndexByElement(commitment);
+    // Validate that the commitment is in the tree
+    if (leafIndex === -1) {
+      // Outer try/catch will handle this
+      throw new Error(
+        'Commitment not found in tree, maybe waiting for relaying'
+      );
+    }
+
     const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
 
     return {
