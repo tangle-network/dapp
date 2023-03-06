@@ -43,6 +43,11 @@ export interface DepositCardProps extends PropsOf<'div'> {
   feePercentage?: number;
 
   /**
+   * The actual fee value (less precedence than `feePercentage`)
+   */
+  feeValue?: number;
+
+  /**
    * The fee token to display after the fee value
    */
   feeToken?: string;

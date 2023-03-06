@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
@@ -43,6 +44,14 @@ type RelayerLeaves = {
   leaves: string[];
   lastQueriedBlock: number;
 };
+
+export interface RelayerFeeInfo {
+  estimatedFee: BigNumber;
+  gasPrice: BigNumber;
+  refundExchangeRate: BigNumber;
+  maxRefund: BigNumber;
+  timestamp: string;
+}
 
 /**
  * Relayed withdraw is a class meant to encapsulate the communication between client (WebbRelayer instance)
@@ -224,6 +233,21 @@ export class WebbRelayer {
     } else {
       throw new Error('network error');
     }
+  }
+
+  public async getFeeInfo(
+    chainId: number,
+    vanchor: string,
+    gas_amount: BigNumber
+  ): Promise<RelayerFeeInfo> | never {
+    const endpoint = `${
+      this.endpoint.endsWith('/') ? this.endpoint.slice(0, -1) : this.endpoint
+    }/api/v1/fee_info/${chainId}/${vanchor}/${gas_amount}`;
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`Failed to get fee info: ${response.statusText}`);
+    }
+    return response.json();
   }
 
   static intoActiveWebRelayer(
