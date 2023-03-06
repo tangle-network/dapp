@@ -7,6 +7,7 @@ export * from './types';
 export * from './useAccounts';
 export * from './useCurrentResourceId';
 export * from './useFetch';
+export * from './useGasAmount';
 export * from './useIp';
 export * from './useNoteAccount';
 export * from './useSetting';

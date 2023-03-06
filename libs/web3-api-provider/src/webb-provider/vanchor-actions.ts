@@ -1,24 +1,24 @@
 import {
   ActiveWebbRelayer,
-  ParametersOfTransactMethod,
   CancellationToken,
   NewNotesTxResult,
+  ParametersOfTransactMethod,
+  RelayedChainInput,
+  RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
   TransferTransactionPayloadType,
   VAnchorActions,
   WithdrawTransactionPayloadType,
-  RelayedChainInput,
   padHexString,
-  RelayedWithdrawResult,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import { ERC20__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -107,7 +107,7 @@ const generateCircomCommitment = (note: JsNote): string => {
   return BigNumber.from(hash).toHexString();
 };
 
-async function utxoFromVAnchorNote(
+export async function utxoFromVAnchorNote(
   note: JsNote,
   leafIndex: number
 ): Promise<Utxo> {
@@ -453,6 +453,41 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       cancelToken.abortSignal
     );
     return notes;
+  }
+
+  async getGasAmount(
+    vAnchorAddress: string,
+    option: {
+      input: Utxo[];
+      output: Utxo[];
+      fee: number;
+      refund: number;
+      recipient: string;
+      relayer: string;
+      wrapUnwrapToken: string;
+      leavesMap: Record<string, Uint8Array[]>;
+    }
+  ): Promise<BigNumber> {
+    const vanchor = await this.inner.getVariableAnchorByAddress(vAnchorAddress);
+
+    const { publicInputs, extData } = await vanchor.setupTransaction(
+      await vanchor.padUtxos(option.input, 16), // 16 is the max number of inputs
+      await vanchor.padUtxos(option.output, 2), // 2 is the max number of outputs
+      option.fee,
+      option.refund,
+      option.recipient,
+      option.relayer,
+      option.wrapUnwrapToken,
+      option.leavesMap
+    );
+
+    return vanchor.contract.estimateGas.transact(
+      publicInputs.proof,
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      extData,
+      publicInputs,
+      extData
+    );
   }
 
   private async commitmentsSetup(
