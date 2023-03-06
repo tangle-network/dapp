@@ -316,19 +316,22 @@ export class WebbWeb3Provider
       const leavesFromChain = await vanchor.getDepositLeaves(
         storedContractInfo.lastQueriedBlock + 1,
         0,
-        abortSignal,
-        retryPromise
+        retryPromise,
+        abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
 
       leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
 
+      // Fixed all the leaves to be 32 bytes
+      leaves = leaves.map((leaf) => toFixedHex(leaf));
+
       // Cached the new leaves
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
     } else {
-      console.log(`Got ${leaves?.length} leaves from relayers.`);
+      console.log(`Got ${leaves.length} leaves from relayers.`);
     }
 
     console.groupEnd();
@@ -349,8 +352,8 @@ export class WebbWeb3Provider
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
         1,
       0,
-      abortSignal,
-      retryPromise
+      retryPromise,
+      abortSignal
     );
 
     // Check if the UTXOs are already spent on chain

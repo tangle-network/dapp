@@ -6,24 +6,41 @@ import {
   InMemoryCache,
 } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { Header } from '@webb-tools/stats-dapp/components';
-import { defaultEndpoint } from '@webb-tools/stats-dapp/constants';
-import { StatsProvider } from '@webb-tools/stats-dapp/provider/stats-provider';
-import { FC, PropsWithChildren, useMemo, useState } from 'react';
-import { Footer } from '@webb-tools/webb-ui-components';
+import { Header } from '../../components';
+import { StatsProvider } from '../../provider';
+import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { Footer, useWebbUI } from '@webb-tools/webb-ui-components';
 import { RetryLink } from '@apollo/client/link/retry';
 import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
+import {
+  webbNetworks,
+  Network,
+  NetworkType,
+} from '@webb-tools/webb-ui-components/constants';
+import { isValidSubqueryEndpoint } from '../../utils';
+
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const [connectedEndpoint, setConnectedEndpoint] = useState((): string => {
-    const storedEndpoint = localStorage.getItem('statsEndpoint');
-    if (storedEndpoint && storedEndpoint !== defaultEndpoint) {
-      localStorage.setItem('statsEndpoint', defaultEndpoint);
-    } else if (!storedEndpoint) {
-      localStorage.setItem('statsEndpoint', defaultEndpoint);
+  const { notificationApi } = useWebbUI();
+
+  const defaultNetworkType = webbNetworks.filter(
+    (network) => network.networkType === 'testnet'
+  );
+
+  const [selectedNetwork, setSelectedNetwork] = useState((): Network => {
+    const storedSelectedNetwork = localStorage.getItem('selectedNetwork');
+
+    if (storedSelectedNetwork) {
+      return JSON.parse(storedSelectedNetwork);
     }
-    return defaultEndpoint;
+
+    return defaultNetworkType[0].networks[0];
   });
+
+  const [selectedNetworkType, setSelectedNetworkType] =
+    useState<NetworkType>('testnet');
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const retryLink = new RetryLink({
     delay: () => {
       return 0;
@@ -32,6 +49,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       return Promise.resolve(true);
     },
   });
+
   const apolloClient = useMemo(() => {
     const errorLink = onError(
       ({ graphQLErrors, networkError, forward, operation }) => {
@@ -52,31 +70,86 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         }
       }
     );
+
     const httpLink = new HttpLink({
-      uri: connectedEndpoint,
+      uri: selectedNetwork.subqueryEndpoint,
     });
+
     return new ApolloClient({
       cache: new InMemoryCache(),
       link: from([errorLink, retryLink, httpLink]),
     });
-  }, [connectedEndpoint, setErrorMessage]);
+  }, [selectedNetwork, setErrorMessage]);
 
-  const setEndpoint = async (endpoint: string) => {
-    localStorage.setItem('statsEndpoint', endpoint);
-    setConnectedEndpoint(endpoint);
+  const setUserSelectedNetwork = async (network: Network) => {
+    const handleSuccess = () => {
+      notificationApi({
+        variant: 'success',
+        message: `Connected to ${network.name}`,
+      });
+      localStorage.setItem('selectedNetwork', JSON.stringify(network));
+      setSelectedNetwork(network);
+    };
+
+    const handleClose = () => {
+      notificationApi({
+        variant: 'error',
+        message: `Please make sure you have a running node at the selected network.`,
+      });
+      localStorage.setItem(
+        'selectedNetwork',
+        JSON.stringify(defaultNetworkType[0].networks[0])
+      );
+      setSelectedNetwork(defaultNetworkType[0].networks[0]);
+    };
+
+    try {
+      if (await isValidSubqueryEndpoint(network.subqueryEndpoint)) {
+        const ws = new WebSocket(network.polkadotEndpoint);
+
+        const handleOpen = () => {
+          handleSuccess();
+          ws.removeEventListener('open', handleOpen);
+        };
+
+        const handleCloseEvent = () => {
+          handleClose();
+          ws.removeEventListener('close', handleCloseEvent);
+        };
+
+        ws.addEventListener('open', handleOpen);
+        ws.addEventListener('close', handleCloseEvent);
+      } else {
+        handleClose();
+      }
+    } catch (error) {
+      handleClose();
+    }
   };
+
+  const subqueryEndpoint = useMemo(
+    () => selectedNetwork.subqueryEndpoint,
+    [selectedNetwork]
+  );
+  const polkadotEndpoint = useMemo(
+    () => selectedNetwork.polkadotEndpoint,
+    [selectedNetwork]
+  );
 
   return (
     <div className="min-w-full min-h-full">
       <Header
-        connectedEndpoint={connectedEndpoint}
-        setConnectedEndpoint={setEndpoint}
+        selectedNetwork={selectedNetwork}
+        setUserSelectedNetwork={setUserSelectedNetwork}
+        selectedNetworkType={selectedNetworkType}
+        setSelectedNetworkType={setSelectedNetworkType}
       />
 
       <ApolloProvider client={apolloClient}>
         <StatsProvider
           sessionHeight={600}
-          connectedEndpoint={connectedEndpoint}
+          subqueryEndpoint={subqueryEndpoint}
+          polkadotEndpoint={polkadotEndpoint}
         >
           <NavBoxInfoContainer />
           <main className="max-w-[1160px] mx-auto">{children}</main>

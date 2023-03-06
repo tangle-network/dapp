@@ -1,11 +1,10 @@
-import { Logo } from '@webb-tools/webb-ui-components/components/Logo/Logo';
+import { Logo } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Navbar } from '../components';
 
-import Navbar from './Navbar';
-
-const Header = () => {
+export const Header = () => {
   // State for tracking whether the user has scrolled down the page
   const [scrolled, setScrolled] = useState(false);
 
@@ -27,7 +26,7 @@ const Header = () => {
 
   return (
     <header
-      className={cx('fixed z-50 w-full bg-mono-0', {
+      className={cx('fixed z-50 w-full bg-mono-0 min-h-[72px]', {
         'webb-shadow-sm': scrolled,
       })}
     >
@@ -41,5 +40,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;

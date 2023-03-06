@@ -29,7 +29,7 @@ import {
 
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
-import { WalletState, useConnectWallet } from '../../hooks';
+import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
@@ -92,6 +92,8 @@ export const DepositContainer = forwardRef<
       setWrappableCurrency,
       getPossibleFungibleCurrencies,
     } = useCurrencies();
+
+    const addCurrency = useAddCurrency();
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
@@ -201,17 +203,21 @@ export const DepositContainer = forwardRef<
         return {
           symbol: bridgeWrappableCurrency.currency.view.symbol,
           balance: bridgeWrappableCurrency.balance,
+          onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
         };
       }
+
       if (!bridgeFungibleCurrency) {
         return undefined;
       }
+
       // Deposit flow
       return {
         symbol: bridgeFungibleCurrency.currency.view.symbol,
         balance: bridgeFungibleCurrency.balance,
+        onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
       };
-    }, [bridgeFungibleCurrency, bridgeWrappableCurrency]);
+    }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
       return Object.values(fungibleCurrencies.concat(wrappableCurrencies)).map(
@@ -220,10 +226,11 @@ export const DepositContainer = forwardRef<
             name: currency.view.name,
             symbol: currency.view.symbol,
             balance: balances[currency.id],
+            onTokenClick: () => addCurrency(currency),
           };
         }
       );
-    }, [fungibleCurrencies, wrappableCurrencies, balances]);
+    }, [addCurrency, balances, fungibleCurrencies, wrappableCurrencies]);
 
     const populatedAllTokens = useMemo((): AssetType[] => {
       // Filter currencies that are not in the populated selectable tokens
@@ -439,6 +446,7 @@ export const DepositContainer = forwardRef<
         token: {
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
+          onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -449,8 +457,8 @@ export const DepositContainer = forwardRef<
     }, [
       wrappableCurrency,
       bridgeFungibleCurrency,
+      addCurrency,
       selectedSourceChain,
-      setMainComponentName,
     ]);
 
     const handleMaxBtnClick = useCallback(() => {
@@ -512,8 +520,8 @@ export const DepositContainer = forwardRef<
         (currency): AssetType => ({
           name: currency.view.name,
           balance: balances[currency.id] ?? 0,
-
           symbol: currency.view.symbol,
+          onTokenClick: () => addCurrency(currency),
         })
       );
 
@@ -540,6 +548,7 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       populatedAllTokens,
       balances,
+      addCurrency,
       chains,
     ]);
 

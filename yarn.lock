@@ -4121,6 +4121,14 @@
     "@types/sinon-chai" "^3.2.3"
     "@types/web3" "1.0.19"
 
+"@notionhq/client@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.3.tgz#b8563994fd116123b0b2e39fca43a593faaf8360"
+  integrity sha512-ZqUzY0iRg/LIrwS+wzz/6osSB2nxIpmqdAtdUwzpcimc9Jlu1j85FeYdaU26Shr193CFrl2TLFeKqpk/APRQ4g==
+  dependencies:
+    "@types/node-fetch" "^2.5.10"
+    node-fetch "^2.6.1"
+
 "@npmcli/fs@^1.0.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@npmcli/fs/-/fs-1.1.1.tgz#72f719fe935e687c56a4faecf3c03d06ba593257"
@@ -8343,7 +8351,7 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-9.1.1.tgz#e7c4f1001eefa4b8afbd1eee27a237fee3bf29c4"
   integrity sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==
 
-"@types/node-fetch@^2.5.5", "@types/node-fetch@^2.5.7", "@types/node-fetch@^2.6.2":
+"@types/node-fetch@^2.5.10", "@types/node-fetch@^2.5.5", "@types/node-fetch@^2.5.7", "@types/node-fetch@^2.6.2":
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.2.tgz#d1a9c5fd049d9415dce61571557104dec3ec81da"
   integrity sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==
@@ -9454,16 +9462,16 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.5.17", "@webb-tools/anchors@^0.5.17":
-  version "0.5.17"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.17.tgz#9a6972fcc905d5c553d9b08e482abcc80fbc12eb"
-  integrity sha512-vlfjW/RDvCpnoLVi14FJG5xb1BwLLW1XcDP1D73zd7gJS/VQ9/HJlwbOpNQTNZcw8VQPRRQX5noYwcLF3OJrdA==
+"@webb-tools/anchors@0.5.24", "@webb-tools/anchors@^0.5.24":
+  version "0.5.24"
+  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.24.tgz#28e64379524d214f805935d23842fcb7d899f457"
+  integrity sha512-1hb8qKmEi0CU1DIazeWVj1ToCXh7A+CZT9vHU6/1uykutde+KTu+ENJB+Mypry6y91To/3de+vW9Ee3V2Sc7Dw==
   dependencies:
-    "@webb-tools/contracts" "^0.5.17"
-    "@webb-tools/interfaces" "^0.5.17"
+    "@webb-tools/contracts" "^0.5.24"
+    "@webb-tools/interfaces" "^0.5.24"
     "@webb-tools/sdk-core" "0.1.4-119"
     "@webb-tools/semaphore" "0.0.1-5"
-    "@webb-tools/utils" "^0.5.9"
+    "@webb-tools/utils" "^0.5.16"
     ethers "5.7.0"
     jssha "^3.2.0"
 
@@ -9576,10 +9584,10 @@
     "@webb-tools/utils" "^0.4.2"
     ethers "5.7.0"
 
-"@webb-tools/contracts@0.5.17", "@webb-tools/contracts@^0.5.17":
-  version "0.5.17"
-  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.5.17.tgz#05468e2fc280826f119c68cb3a264fad521cf2aa"
-  integrity sha512-448h5vV5Kq4RBcA2NpKzFs9/bomcRlLletRfZX/dv0OgRdpT/ZzpZYp2458cnw8qAI+VQh4AevIpKGN+2+WlSA==
+"@webb-tools/contracts@0.5.24", "@webb-tools/contracts@^0.5.24":
+  version "0.5.24"
+  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.5.24.tgz#c8cf5c56a3b40d7ff17004eea1d1ca032ff3a28f"
+  integrity sha512-UMqn9UOLfqrRF/joEiTCDi5O7J0JSS/5IOqx/GxWv01qmBYr6tvyUJvyDaW9ucDTscG+egARM9D8YqCFbwNeeQ==
   dependencies:
     "@nomiclabs/hardhat-waffle" "^2.0.3"
     "@openzeppelin/contracts" "^4.7.3"
@@ -9637,12 +9645,12 @@
     "@polkadot/typegen" "9.2.4"
     "@polkadot/types" "9.2.4"
 
-"@webb-tools/interfaces@0.5.17", "@webb-tools/interfaces@^0.5.17":
-  version "0.5.17"
-  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.5.17.tgz#e9bbf6a74d8b740d779aa7d03b31c5d471267647"
-  integrity sha512-6UFYtBCaG25FpUipAXC6I5IquMh+SIiXb9Cqx8KFsgMAgPJ3LrWMHvpXrFyOO+jwmuCo2aq7vfwMTH4yAnlkoQ==
+"@webb-tools/interfaces@0.5.24", "@webb-tools/interfaces@^0.5.24":
+  version "0.5.24"
+  resolved "https://registry.yarnpkg.com/@webb-tools/interfaces/-/interfaces-0.5.24.tgz#c1a45612a353caae541cf18c074727c1b249e2b5"
+  integrity sha512-DomNqmX2AyvQoA3zYi02x3BNN99QiW5xD/0k9J+kzCg7/vN+raG5OUrBfjd6ovx37ettlLKlwZz7S0LzDmWRcA==
   dependencies:
-    "@webb-tools/contracts" "^0.5.17"
+    "@webb-tools/contracts" "^0.5.24"
     "@webb-tools/sdk-core" "0.1.4-119"
 
 "@webb-tools/interfaces@^0.2.6", "@webb-tools/interfaces@^0.2.7", "@webb-tools/interfaces@^0.2.9":
@@ -10044,15 +10052,15 @@
     "@webb-tools/utils" "^0.4.2"
     ethers "5.7.0"
 
-"@webb-tools/tokens@0.5.17":
-  version "0.5.17"
-  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.5.17.tgz#0df5070615a77e53571830aa2b32f6aa273ecc58"
-  integrity sha512-aMZ66rDX99DxAZzspnbyu+Zkq8H+74lGbo+ucbW0/WUvxlt81RzXPwK48OqOGPWyR+ks1kcH9sAJZolInbj1xg==
+"@webb-tools/tokens@0.5.24":
+  version "0.5.24"
+  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.5.24.tgz#92c9b826965c11ba0a034c2521e453946c2e8918"
+  integrity sha512-cuk24vDVeEEg4s9bngSO34HunqaOR7g9HTpqGZxVVuv0A/LgUzYH2jDPcyY/2Gx8fEWa2i/5kiNeznDvn+5vng==
   dependencies:
-    "@webb-tools/anchors" "^0.5.17"
-    "@webb-tools/contracts" "^0.5.17"
+    "@webb-tools/anchors" "^0.5.24"
+    "@webb-tools/contracts" "^0.5.24"
     "@webb-tools/sdk-core" "0.1.4-119"
-    "@webb-tools/utils" "^0.5.9"
+    "@webb-tools/utils" "^0.5.16"
     ethers "5.7.0"
 
 "@webb-tools/tokens@^0.2.6", "@webb-tools/tokens@^0.2.7", "@webb-tools/tokens@^0.2.9":
@@ -10105,10 +10113,10 @@
     "@webb-tools/sdk-core" "0.1.4-105"
     ethers "5.7.0"
 
-"@webb-tools/utils@^0.5.9":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.9.tgz#d36bb347613052b8bc9b2ebe1c5a57e655274159"
-  integrity sha512-W7rd+Quwu9RLhaI6/GnJLF/yvBFUBemJBryu8UeDFsVjuOR0UE/zMCI42jYVsCxLNGTYWaAjEVDUCm7FigF0VQ==
+"@webb-tools/utils@^0.5.16":
+  version "0.5.16"
+  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-0.5.16.tgz#521d3250b1f5ad56e68cc19b4acbee5f9c788629"
+  integrity sha512-700t+4qiqQ9caOu8HSxtj0RainqFj4vb/OCRLSi2vyKgvjHlo+JTCXl6NXSGZKAj3gr1iSlDOD/UJykqFnUlyg==
   dependencies:
     "@webb-tools/sdk-core" "0.1.4-119"
     ethers "5.7.0"
@@ -23984,6 +23992,11 @@ notion-types@^6.15.4, notion-types@^6.15.6:
   resolved "https://registry.yarnpkg.com/notion-types/-/notion-types-6.15.6.tgz#eabbb28e1c514f421f0ffbf06ecdecd90e8ec8e3"
   integrity sha512-JgLWDN4oHg/1sNdHDCeKUfdPl1AYsjOTnYkq+Zn7vITPykxbhw7nIxbAJ7owWUTro1cYTPh+GVmdX0mPiZGujg==
 
+notion-types@^6.16.0:
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/notion-types/-/notion-types-6.16.0.tgz#1c676b180095d14209a6760dd8586db55a115e91"
+  integrity sha512-Cv83GaAczx57q1qsnuG8DHOuOb63c83u9LX2IainG5aqBEB0GUuLZ4DUQfB6MaXt+FMY9fO+KTgPeZWwX9hbrQ==
+
 notion-utils@^6.15.4, notion-utils@^6.15.6:
   version "6.15.6"
   resolved "https://registry.yarnpkg.com/notion-utils/-/notion-utils-6.15.6.tgz#d172faa2c29d62eac71b4e17ed01336d5e372d02"
@@ -23993,6 +24006,17 @@ notion-utils@^6.15.4, notion-utils@^6.15.6:
     mem "^9.0.2"
     normalize-url "^7.0.3"
     notion-types "^6.15.6"
+    p-queue "^7.2.0"
+
+notion-utils@^6.16.0:
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/notion-utils/-/notion-utils-6.16.0.tgz#b81567b9d8d7ee6199383b9b41f58f5f297a1c36"
+  integrity sha512-DxToriZAJW/64O1xlAjyU/50dRmkO1e54+i0dEAPDij0MlHyihEivAMsdEG/6/4eFC972BIsEKZ6BXsSTUYKlQ==
+  dependencies:
+    is-url-superb "^6.1.0"
+    mem "^9.0.2"
+    normalize-url "^7.0.3"
+    notion-types "^6.16.0"
     p-queue "^7.2.0"
 
 notistack@^2.0.5:

@@ -44,7 +44,6 @@ export const Header: FC<HeaderProps> = () => {
           <Logo />
         </NavLink>
 
-        {/** No wallet is actived */}
         <div className="flex items-center space-x-2">
           {/** Wallet is actived */}
           {isDisplayNetworkSwitcherAndWalletButton &&

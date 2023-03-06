@@ -22,31 +22,64 @@ export const logoConfig: Link = {
   path: '/',
 };
 
-type WebbNodeInfo = {
-  standalone: {
-    subqueryEndpoint: string;
-    providerEndpoint: string;
-  };
+/**
+ * The network type (use to categorize the network)
+ */
+export type NetworkType = 'live' | 'testnet' | 'dev';
+
+export type NetworkNodeType = 'parachain' | 'standalone';
+
+export type Network = {
+  name: string;
+  networkType: NetworkType;
+  networkNodeType: NetworkNodeType;
+  subqueryEndpoint: string;
+  polkadotEndpoint: string;
+  polkadotExplorer: string;
+  avatar: string;
 };
 
-export const webbNodes: WebbNodeInfo = {
-  standalone: {
-    subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
-    providerEndpoint: 'wss://tangle-standalone-archive.webb.tools',
+export type webbNetworksType = {
+  networkType: NetworkType;
+  networks: Network[];
+};
+
+export const webbNetworks: webbNetworksType[] = [
+  {
+    networkType: 'live',
+    networks: [],
   },
-};
-
-type webbApiConfigType = {
-  standalone: ExternalLink;
-};
-
-export const webbApiConfig: webbApiConfigType = {
-  standalone: {
-    name: 'Tangle Standalone',
-    href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
-    ...commonExternalProps,
+  {
+    networkType: 'testnet',
+    networks: [
+      {
+        name: 'Tangle Standalone',
+        networkType: 'testnet',
+        networkNodeType: 'standalone',
+        subqueryEndpoint: 'https://standalone-subql.webb.tools/graphql',
+        polkadotEndpoint: 'wss://tangle-standalone-archive.webb.tools',
+        polkadotExplorer:
+          'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer',
+        avatar: '',
+      },
+    ],
   },
-};
+  {
+    networkType: 'dev',
+    networks: [
+      {
+        name: 'Local endpoint (127.0.0.1)',
+        networkType: 'dev',
+        networkNodeType: 'standalone',
+        subqueryEndpoint: 'http://localhost:4000/graphql',
+        polkadotEndpoint: 'ws://127.0.0.1:9944',
+        polkadotExplorer:
+          'https://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944#/explorer',
+        avatar: '',
+      },
+    ],
+  },
+];
 
 export const webbAppConfig: ExternalLink = {
   name: 'Hubble Bridge',

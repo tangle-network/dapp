@@ -293,8 +293,11 @@ export class NoteManager {
   }
 
   async updateStorage() {
+    // Reset the note storage before processing
+    resetNoteStorage();
+
+    // If there are no notes, return
     if (this.notesMap.size === 0) {
-      resetNoteStorage();
       return;
     }
 
@@ -365,6 +368,7 @@ export class NoteManager {
       tokenSymbol: tokenSymbol,
       version: 'v1',
       width: '5',
+      index: outputUtxo.index,
     };
 
     return Note.generateNote(noteInput);

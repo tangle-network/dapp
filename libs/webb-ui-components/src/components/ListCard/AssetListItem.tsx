@@ -1,7 +1,7 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import { ComponentProps, forwardRef } from 'react';
+import { ComponentProps, MouseEvent, forwardRef, useMemo, useRef } from 'react';
 
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
@@ -9,7 +9,18 @@ import { AssetType } from './types';
 export const AssetListItem = forwardRef<
   HTMLLIElement,
   AssetType & ComponentProps<typeof ListItem>
->(({ balance, name, symbol, ...props }, ref) => {
+>(({ balance, name, symbol, onTokenClick, ...props }, ref) => {
+  const onTokenClickRef = useRef(onTokenClick);
+
+  const handleTokenIconClick = useMemo(() => {
+    if (typeof onTokenClick === 'function') {
+      return (event: MouseEvent<SVGSVGElement>) => {
+        event.stopPropagation();
+        onTokenClickRef.current?.(symbol);
+      };
+    }
+  }, []);
+
   return (
     <ListItem
       {...props}
@@ -17,7 +28,12 @@ export const AssetListItem = forwardRef<
       ref={ref}
     >
       <div className="flex items-center">
-        <TokenIcon size="lg" name={symbol} className="mr-2" />
+        <TokenIcon
+          onClick={handleTokenIconClick}
+          size="lg"
+          name={symbol}
+          className="mr-2"
+        />
 
         <p>
           <Typography

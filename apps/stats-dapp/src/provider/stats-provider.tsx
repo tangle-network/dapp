@@ -53,10 +53,12 @@ type StatsProvidervalue = {
   isReady: boolean;
   // polkadot api
   api?: ApiPromise;
-  // connected subquery endpoint
-  connectedEndpoint?: string;
   // is dark mode
   isDarkMode?: boolean;
+  // subquery endpoint
+  subqueryEndpoint: string;
+  // polkadot endpoint
+  polkadotEndpoint: string;
 };
 
 /**
@@ -104,7 +106,8 @@ const statsContext: React.Context<StatsProvidervalue> =
       activeSessionBlock: 0,
     },
     isReady: false,
-    connectedEndpoint: '',
+    subqueryEndpoint: '',
+    polkadotEndpoint: '',
   });
 export function useStatsContext() {
   return useContext(statsContext);
@@ -152,8 +155,6 @@ export const StatsProvider: React.FC<
   const [isReady, setIsReady] = useState(false);
   const [api, setApi] = useState<ApiPromise | undefined>();
 
-  const { webbNodes } = constants;
-
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -184,14 +185,15 @@ export const StatsProvider: React.FC<
       metaData,
       api,
       isDarkMode,
+      subqueryEndpoint: props.subqueryEndpoint,
+      polkadotEndpoint: props.polkadotEndpoint,
     };
   }, [staticConfig, metaData, isReady, time, api, isDarkMode]);
   const query = useLastBlockQuery();
 
   useEffect(() => {
     const getPromiseApi = async (): Promise<void> => {
-      const providerEndpoint = webbNodes.standalone.providerEndpoint;
-      const wsProvider = new WsProvider(providerEndpoint);
+      const wsProvider = new WsProvider(props.polkadotEndpoint);
       const apiPromise = await ApiPromise.create({ provider: wsProvider });
       setApi(apiPromise);
       const blockTime =
@@ -200,7 +202,7 @@ export const StatsProvider: React.FC<
     };
 
     getPromiseApi();
-  }, [props.connectedEndpoint]);
+  }, [props.polkadotEndpoint]);
 
   useEffect(() => {
     const subscription = query.observable

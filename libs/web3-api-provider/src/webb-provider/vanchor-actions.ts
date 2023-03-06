@@ -28,6 +28,7 @@ import {
   Note,
   ResourceId,
   Utxo,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
@@ -228,7 +229,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<void> {
     let txHash = '';
 
-    const [tx, contractAddress, ...restArgs] = txArgs;
+    const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
+      txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -245,9 +247,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       name: chainId.toString(),
     };
 
-    const setupTransactionArgs = (
-      restArgs.length === 8 ? restArgs : restArgs.slice(0, -1)
-    ) as Parameters<VAnchor['setupTransaction']>;
+    // Pad the input & output utxo
+    const inputUtxos = await vanchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
+    const outputUtxos = await vanchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+
+    const setupTransactionArgs = [
+      inputUtxos,
+      outputUtxos,
+      ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
+    ] as Parameters<typeof vanchor.setupTransaction>;
 
     const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
       ...setupTransactionArgs
@@ -574,6 +582,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       destHistorySourceRoot = edge[1].toHexString();
     }
 
+    // Fixed the root to be 32 bytes
+    destHistorySourceRoot = toFixedHex(destHistorySourceRoot);
+
     // Remove leaves from the leaves map which have not yet been relayed
     const provingTree = MerkleTree.createTreeWithRoot(
       treeHeight,
@@ -582,7 +593,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     );
 
     if (!provingTree) {
-      throw new Error('fetched leaves do not match bridged anchor state');
+      // Outer try/catch will handle this
+      throw new Error('Fetched leaves do not match bridged anchor state');
     }
 
     const provingLeaves = provingTree
@@ -591,6 +603,14 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     leavesMap[parsedNote.sourceChainId] = provingLeaves;
     const commitment = generateCircomCommitment(parsedNote);
     const leafIndex = provingTree.getIndexByElement(commitment);
+    // Validate that the commitment is in the tree
+    if (leafIndex === -1) {
+      // Outer try/catch will handle this
+      throw new Error(
+        'Commitment not found in tree, maybe waiting for relaying'
+      );
+    }
+
     const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
 
     return {
