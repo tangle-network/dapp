@@ -294,22 +294,20 @@ export class NoteManager {
 
   async updateStorage() {
     if (this.notesMap.size !== 0) {
-      const promises = [];
-
       await this.noteStorage.reset({});
 
-      for (const chainGroupedNotes of this.notesMap.entries()) {
-        const encNoteStrings = chainGroupedNotes[1].map((note) => {
-          const noteStr = note.serialize();
-          return this.keypair.encrypt(Buffer.from(noteStr));
-        });
+      const promises = [...this.notesMap.entries()].map(
+        async ([chain, notes]) => {
+          const encNoteStrings = notes.map((note) => {
+            const noteStr = note.serialize();
+            return this.keypair.encrypt(Buffer.from(noteStr));
+          });
 
-        promises.push(
-          this.noteStorage.set(chainGroupedNotes[0], encNoteStrings)
-        );
-      }
+          await this.noteStorage.set(chain, encNoteStrings);
+        }
+      );
 
-      await Promise.allSettled(promises);
+      await Promise.all(promises);
     } else {
       resetNoteStorage();
     }
