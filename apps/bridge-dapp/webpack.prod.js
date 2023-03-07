@@ -11,6 +11,15 @@ module.exports = (env) => {
 
   return merge(baseConfig(env), {
     devtool: process.env.BUILD_ANALYZE ? 'source-map' : false,
+    devServer: {
+      client: {
+        logging: 'error',
+        overlay: {
+          errors: true,
+          warnings: false, // Hide overlay warnings as they present on the terminal
+        },
+      },
+    },
     plugins: [
       new HtmlWebpackPlugin({
         filename: './index.html',
