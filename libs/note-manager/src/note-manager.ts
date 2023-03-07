@@ -296,7 +296,7 @@ export class NoteManager {
     if (this.notesMap.size !== 0) {
       const promises = [];
 
-      await this.noteStorage.clear();
+      await this.noteStorage.reset({});
 
       for (const chainGroupedNotes of this.notesMap.entries()) {
         const encNoteStrings = chainGroupedNotes[1].map((note) => {

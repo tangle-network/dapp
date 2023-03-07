@@ -44,11 +44,12 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
       return;
     }
 
-    for (const note of notes) {
-      await noteManager.removeNote(note);
+    try {
+      await Promise.all(notes.map((note) => noteManager.removeNote(note)));
+      setNotes?.(undefined);
+    } catch (error) {
+      console.error('Error deleting notes:', error);
     }
-
-    setNotes?.(undefined);
   }, [notes, setNotes, noteManager]);
 
   if (!notes) {
