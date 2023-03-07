@@ -10,6 +10,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
 
@@ -204,6 +205,15 @@ function createWebpack(env, mode = 'production') {
     },
     optimization: {
       minimize: mode === 'production',
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+            },
+          },
+        }),
+      ],
       splitChunks: {
         cacheGroups: {
           ...mapChunks('robohash', [
