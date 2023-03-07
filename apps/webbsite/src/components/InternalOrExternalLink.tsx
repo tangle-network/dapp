@@ -24,10 +24,10 @@ export interface IInternalOrExternalLink extends PropsOf<'a'> {
   isInternal?: boolean;
 }
 
-const InternalOrExternalLink: FC<
+export const InternalOrExternalLink: FC<
   PropsWithChildren<Omit<IInternalOrExternalLink, 'label'>>
 > = ({ children, isInternal, url, ...props }) => {
-  const className = twMerge('!text-inherit block', props.className);
+  const className = twMerge('text-inherit block', props.className);
 
   return isInternal ? (
     <Link {...props} href={url} className={className}>
@@ -39,5 +39,3 @@ const InternalOrExternalLink: FC<
     </a>
   );
 };
-
-export default InternalOrExternalLink;

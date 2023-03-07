@@ -9,9 +9,9 @@ import {
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
+import { Button } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import Heading2 from '../components/Heading2';
-import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
+import { Heading2, ResearchAndDevelopmentSection } from '../components';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -88,20 +88,14 @@ const Community = () => {
               >
                 <span className="flex items-center space-x-2.5">
                   <Icon className="w-8 h-8 !fill-current" />
-                  <span className="card-title">{name}</span>
+                  <span className="card-title text-mono-200">{name}</span>
                 </span>
 
-                <span className="card-text">{description}</span>
+                <span className="card-text text-mono-140">{description}</span>
 
-                <a
-                  key={name}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="card-link-text"
-                >
+                <Button variant="link" href={href} target="_blank">
                   {name}
-                </a>
+                </Button>
               </div>
             ))}
           </div>

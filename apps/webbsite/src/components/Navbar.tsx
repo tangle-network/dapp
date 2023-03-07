@@ -5,26 +5,20 @@ import {
   CloseCircleLineIcon,
   Menu,
 } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
 import {
+  Button,
+  Typography,
   Accordion,
   AccordionContent,
   AccordionItem,
-} from '@webb-tools/webb-ui-components/components/Accordion';
-import { Button } from '@webb-tools/webb-ui-components/components/Button';
-import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
-
+  MenuItem,
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-
 import { BRIDGE_URL, WEBB_DOCS_URL } from '../constants';
-import InternalOrExternalLink, {
-  IInternalOrExternalLink,
-} from './InternalOrExternalLink';
+import { InternalOrExternalLink, IInternalOrExternalLink } from '../components';
 
 type NavItem = IInternalOrExternalLink;
 
@@ -47,10 +41,10 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   // },
   { label: 'community', url: '/community', isInternal: true },
   { label: 'docs', url: WEBB_DOCS_URL },
-  // { label: 'blog', url: '#' },
+  { label: 'blog', url: '/blog', isInternal: true },
 ];
 
-const Navbar = () => {
+export const Navbar = () => {
   return (
     <nav>
       <ul className="flex items-center space-x-6">
@@ -109,7 +103,12 @@ const Navbar = () => {
         ))}
 
         <li>
-          <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
+          <Button
+            href={BRIDGE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="button-base button-primary"
+          >
             Bridge
           </Button>
         </li>
@@ -121,8 +120,6 @@ const Navbar = () => {
     </nav>
   );
 };
-
-export default Navbar;
 
 const MobileNav = () => {
   return (

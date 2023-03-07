@@ -1,20 +1,16 @@
-import { Button } from '@webb-tools/webb-ui-components/components/Button/Button';
 import {
+  Button,
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
-} from '@webb-tools/webb-ui-components/components/Tabs';
-
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import Image from 'next/image';
 import { BRIDGE_URL, STATS_URL } from '../../constants';
-import Heading2 from '../Heading2';
-import Heading4 from '../Heading4';
-import SubHeading from '../SubHeading';
-import SubHeading2 from '../SubHeading2';
+import { Heading2, Heading4, SubHeading1, SubHeading2 } from '../../components';
 
-const InActionSection = () => {
+export const InActionSection = () => {
   return (
     <section
       className={cx(
@@ -26,9 +22,9 @@ const InActionSection = () => {
         Shielded Protocols in Action
       </Heading2>
 
-      <SubHeading className="px-4 text-center">
+      <SubHeading1 className="px-4 text-center text-mono-180">
         {"Try out the applications we're building."}
-      </SubHeading>
+      </SubHeading1>
 
       <TabsRoot
         className="rounded-lg bg-mono-0 max-w-[900px] mx-auto"
@@ -44,9 +40,11 @@ const InActionSection = () => {
           className="md:bg-mock_bridge md:bg-top w-full h-[527px] md:h-[450px]"
         >
           <div className="pt-4 px-4 md:pt-9 md:px-9 space-y-4 md:max-w-[378px]">
-            <Heading4>Zero-Knowledge Cross-Chain Bridging</Heading4>
+            <Heading4 className="text-mono-200">
+              Zero-Knowledge Cross-Chain Bridging
+            </Heading4>
 
-            <SubHeading2>
+            <SubHeading2 className="text-mono-160">
               A truly zero-knowledge cross-chain environment to deposit,
               transfer, and withdraw funds.
             </SubHeading2>
@@ -70,11 +68,11 @@ const InActionSection = () => {
         <TabContent value="stats">
           <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
             <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
-              <Heading4>
+              <Heading4 className="text-mono-200">
                 Explore the Tangle Network with the stats page
               </Heading4>
 
-              <SubHeading2>
+              <SubHeading2 className="text-mono-160">
                 Monitor the health of the Tangle Network, watch proposals and
                 more on the stats page.
               </SubHeading2>
@@ -99,5 +97,3 @@ const InActionSection = () => {
     </section>
   );
 };
-
-export default InActionSection;

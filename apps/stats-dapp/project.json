@@ -59,7 +59,8 @@
       },
       "configurations": {
         "production": {
-          "buildTarget": "stats-dapp:build:production"
+          "buildTarget": "stats-dapp:build:production",
+          "webpackConfig": "apps/stats-dapp/webpack.config.js"
         }
       }
     },

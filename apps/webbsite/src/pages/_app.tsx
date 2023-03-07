@@ -1,25 +1,24 @@
 // core styles shared by all of react-notion-x (required)
 import 'react-notion-x/src/styles.css';
-
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
-
 import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
 import Script from 'next/script';
 import { useEffect } from 'react';
-
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import { Header, Footer } from '../components';
+import { useDarkMode, WebbUIProvider } from '@webb-tools/webb-ui-components';
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  const [, setIsDarkMode] = useDarkMode();
   // Dynamic loading the lottie player in client side
   useEffect(() => {
     import('@johanaarstein/dotlottie-player');
-  }, []);
+    setIsDarkMode('light');
+  }, [setIsDarkMode]);
 
   return (
-    <>
+    <WebbUIProvider>
       <DefaultSeo
         defaultTitle="Welcome to Webb!"
         titleTemplate="Webb | %s"
@@ -68,7 +67,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       </main>
 
       <Footer />
-    </>
+    </WebbUIProvider>
   );
 }
 
