@@ -56,7 +56,8 @@
       },
       "configurations": {
         "production": {
-          "buildTarget": "bridge-dapp:build:production"
+          "buildTarget": "bridge-dapp:build:production",
+          "webpackConfig": "apps/bridge-dapp/webpack.prod.js"
         }
       }
     },
