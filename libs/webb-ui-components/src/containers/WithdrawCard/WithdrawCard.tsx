@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import {
   AmountInput,
   BridgeInputGroup,
@@ -8,18 +9,17 @@ import {
   FixedAmount,
   InfoItem,
   RecipientInput,
+  RefundInput,
   RelayerInput,
   Switcher,
   TokenInput,
 } from '../../components';
 import { Typography } from '../../typography';
-
 import { WithdrawCardProps } from './types';
 
 export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
   (
     {
-      tokenInputProps,
       className,
       customAmountInputProps,
       feeAmount,
@@ -28,11 +28,13 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       receivedAmount,
       receivedToken,
       recipientInputProps,
+      refundInputProps,
       relayerInputProps,
       remainderAmount,
       remainderToken,
-      unwrapSwitcherProps,
+      tokenInputProps,
       unwrappingAssetInputProps,
+      unwrapSwitcherProps,
       withdrawBtnProps,
       ...props
     },
@@ -122,6 +124,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <RelayerInput {...relayerInputProps} />
             <RecipientInput {...recipientInputProps} />
+            <RefundInput {...refundInputProps} />
           </BridgeInputGroup>
           {/** Info */}
           <div className="flex flex-col space-y-1">

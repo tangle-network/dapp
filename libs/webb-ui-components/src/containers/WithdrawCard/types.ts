@@ -6,6 +6,7 @@ import {
   Button,
   FixedAmount,
   RecipientInput,
+  RefundInput,
   RelayerInput,
   ShieldedAssetInput,
   Switcher,
@@ -47,6 +48,11 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
    * The recipient input props
    */
   recipientInputProps?: ComponentProps<typeof RecipientInput>;
+
+  /**
+   * The refund input props
+   */
+  refundInputProps?: ComponentProps<typeof RefundInput>;
 
   /**
    * The received amount
