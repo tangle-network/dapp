@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heading3 } from './Heading3';
 import { Chip } from '@webb-tools/webb-ui-components';
+import { getYouTubeThumbnailUri } from '../utils';
 
 type BlogCardProps = {
   title: string;
@@ -20,11 +21,18 @@ export const BlogCard = ({
   link,
   blogType,
 }: BlogCardProps) => {
+  const coverURI =
+    type === 'video' ? getYouTubeThumbnailUri(link) ?? cover : cover;
+
   return (
     <div className="break-words rounded-lg pb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
       <Link href={link}>
         <div
-          style={{ backgroundImage: `url(${cover})`, backgroundSize: 'cover' }}
+          style={{
+            backgroundImage: `url(${coverURI})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
           className="w-full h-[220px] md:h-[250px] rounded-t-lg relative"
         >
           {type === 'video' && (
