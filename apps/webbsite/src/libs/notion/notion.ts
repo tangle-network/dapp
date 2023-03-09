@@ -77,10 +77,6 @@ export class Notion {
 
       const posts = await Promise.all(
         response.results.map(async (post: any) => {
-          console.log(
-            post.properties['Author twitter'].multi_select[2]?.name ?? ''
-          );
-
           try {
             const metadata: PostMetadata = {
               id: post.id,
@@ -94,8 +90,6 @@ export class Notion {
                     const twitter =
                       post.properties['Author twitter'].multi_select[index]
                         ?.name ?? '';
-                    console.log(twitter);
-
                     return {
                       name: user.name,
                       twitter: twitter,
@@ -110,6 +104,8 @@ export class Notion {
               tags: post.properties.Tags.multi_select.map(
                 (tag: any) => tag.name
               ),
+              type: post.properties.type.select?.name ?? 'post',
+              link: post.properties.link.url ?? '',
               cover: post.cover?.file.url ?? '',
               dateAndTime: {
                 createdDate: formatDate(post.properties.Created.created_time),

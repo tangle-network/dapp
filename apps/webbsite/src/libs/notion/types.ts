@@ -14,6 +14,8 @@ export type PostMetadata = {
   published: boolean;
   slug: string;
   tags: string[];
+  type: string;
+  link?: string;
   cover: string;
   dateAndTime: {
     createdDate: string;
@@ -21,7 +23,6 @@ export type PostMetadata = {
     lastEditedDate: string;
     lastEditedTime: string;
   };
-  link?: string;
 };
 
 export type VideoMetadata = {
@@ -31,6 +32,7 @@ export type VideoMetadata = {
   link: string;
   cover: string;
   slug?: string;
+  type?: string;
   published: boolean;
 };
 

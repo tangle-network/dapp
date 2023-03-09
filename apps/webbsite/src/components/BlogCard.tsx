@@ -1,18 +1,27 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heading3 } from './Heading3';
+import { Chip } from '@webb-tools/webb-ui-components';
 
 type BlogCardProps = {
   title: string;
   tags?: string[];
   cover: string;
   link: string;
+  blogType?: string;
   type: 'post' | 'video';
 };
 
-export const BlogCard = ({ title, tags, cover, type, link }: BlogCardProps) => {
+export const BlogCard = ({
+  title,
+  tags,
+  cover,
+  type,
+  link,
+  blogType,
+}: BlogCardProps) => {
   return (
-    <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
+    <div className="break-words rounded-lg pb-5 shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
       <Link href={link}>
         <div
           style={{ backgroundImage: `url(${cover})`, backgroundSize: 'cover' }}
@@ -29,7 +38,7 @@ export const BlogCard = ({ title, tags, cover, type, link }: BlogCardProps) => {
           )}
         </div>
       </Link>
-      <div className="mt-4 mb-8 px-6 pb-8">
+      <div className="mt-4 mb-3 px-6">
         {tags && (
           <div className="flex items-center gap-4 capitalize">
             {tags.map((tag) => (
@@ -43,6 +52,11 @@ export const BlogCard = ({ title, tags, cover, type, link }: BlogCardProps) => {
           <Heading3 className="card-title mt-2 text-mono-200">{title}</Heading3>
         </Link>
       </div>
+      {type === 'post' && blogType && (
+        <Chip color="blue" className="mx-6">
+          {blogType}
+        </Chip>
+      )}
     </div>
   );
 };
