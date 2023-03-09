@@ -5,8 +5,8 @@ import { Chip } from '@webb-tools/webb-ui-components';
 
 type BlogCardProps = {
   title: string;
-  tags?: string[];
   cover: string;
+  tags: string[];
   link: string;
   blogType?: string;
   type: 'post' | 'video';

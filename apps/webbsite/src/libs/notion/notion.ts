@@ -104,8 +104,8 @@ export class Notion {
               tags: post.properties.Tags.multi_select.map(
                 (tag: any) => tag.name
               ),
-              type: post.properties.type.select?.name ?? 'post',
-              link: post.properties.link.url ?? '',
+              type: post.properties.Type.select?.name ?? 'post',
+              link: post.properties.Link.url ?? '',
               cover: post.cover?.file.url ?? '',
               dateAndTime: {
                 createdDate: formatDate(post.properties.Created.created_time),
@@ -173,6 +173,8 @@ export class Notion {
 
       const videos = await Promise.all(
         response.results.map(async (video: any) => {
+          // console.log(video.properties.Type.select.name);
+
           try {
             const metadata: VideoMetadata = {
               id: video.id,

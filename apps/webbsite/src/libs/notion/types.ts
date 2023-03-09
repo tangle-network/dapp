@@ -28,10 +28,10 @@ export type PostMetadata = {
 export type VideoMetadata = {
   id: string;
   title: string;
-  tags: string[];
   link: string;
   cover: string;
   slug?: string;
+  tags: string[];
   type?: string;
   published: boolean;
 };

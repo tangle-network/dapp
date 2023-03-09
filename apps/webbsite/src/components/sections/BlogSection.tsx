@@ -43,7 +43,7 @@ export const BlogSection = ({
   return (
     <div className="px-4 mt-[18px]">
       <Heading3 className="mb-8 blog-section-title text-mono-200">
-        {type === 'post' ? 'Writing By Topic' : 'Videos By Topic'}
+        {type === 'post' ? 'Writings' : 'Media & Press'}
       </Heading3>
 
       <div className="mb-8 flex flex-wrap">
