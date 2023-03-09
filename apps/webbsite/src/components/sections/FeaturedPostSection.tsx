@@ -23,6 +23,7 @@ export const FeaturedPostSection = ({
             style={{
               backgroundImage: `url(${cover})`,
               backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
             className="w-full h-[220px] md:h-[250px] rounded-lg"
           />
