@@ -1,11 +1,12 @@
 import { NextSeo } from 'next-seo';
-
-import ApplicationsAndInfrastructureSection from '../components/sections/ApplicationsAndInfrastructureSection';
-import HeroSection from '../components/sections/HeroSection';
-import InActionSection from '../components/sections/InActionSection';
-import PrivacyConnectedSection from '../components/sections/PrivacyConnectedSection';
-import PrivacyScaleSection from '../components/sections/PrivacyScaleSection';
-import ResearchAndDevelopmentSection from '../components/sections/ResearchAndDevelopmentSection';
+import {
+  ApplicationsAndInfrastructureSection,
+  HeroSection,
+  InActionSection,
+  PrivacyConnectedSection,
+  PrivacyScaleSection,
+  ResearchAndDevelopmentSection,
+} from '../components';
 
 const description =
   'Webb builds infrastructure for connecting zero-knowledge applications empowering developers to unlock user privacy in the Web3 ecosystem.';
