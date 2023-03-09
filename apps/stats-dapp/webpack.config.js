@@ -316,6 +316,7 @@ function createWebpackBase() {
             compress: {
               ecma: 5,
               inline: 2,
+              drop_console: true,
             },
             mangle: {
               // Find work around for Safari 10+
