@@ -25,6 +25,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       feeAmount,
       feePercentage,
       fixedAmountInputProps,
+      isFetchingFee,
       receivedAmount,
       receivedToken,
       recipientInputProps,
@@ -80,6 +81,18 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       }),
       [switcherChecked, unwrapSwitcherProps]
     );
+
+    const feeContent = useMemo(() => {
+      if (isFetchingFee) {
+        return 'Calculating...';
+      }
+
+      if (feeAmount && remainderToken) {
+        return `${feeAmount} ${remainderToken}`;
+      }
+
+      return feeAmount?.toString();
+    }, [feeAmount, isFetchingFee, remainderToken]);
 
     return (
       <div
@@ -158,9 +171,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
                 variant: 'utility',
                 info: 'Fees',
               }}
-              rightContent={
-                feeAmount ? `${feeAmount} ${remainderToken}` : undefined
-              }
+              rightContent={feeContent}
             />
           </div>
         </div>

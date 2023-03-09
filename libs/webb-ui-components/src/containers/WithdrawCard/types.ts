@@ -65,6 +65,11 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   receivedToken?: string;
 
   /**
+   * Indicates if the fee is being fetched
+   */
+  isFetchingFee?: boolean;
+
+  /**
    * The fee amount
    */
   feeAmount?: number | string;
