@@ -54,6 +54,10 @@ const isVAnchorDepositPayload = (
 const isVAnchorWithdrawPayload = (
   payload: TransactionPayloadType
 ): payload is WithdrawTransactionPayloadType => {
+  if (!('changeUtxo' in payload)) {
+    return false;
+  }
+
   const changeUtxo: Utxo | undefined = payload['changeUtxo'];
   if (!changeUtxo || !(changeUtxo instanceof Utxo)) {
     return false;
@@ -70,13 +74,19 @@ const isVAnchorWithdrawPayload = (
   }
 
   return (
-    typeof payload['recipient'] === 'string' && payload['recipient'].length > 0
+    'recipient' in payload &&
+    typeof payload['recipient'] === 'string' &&
+    payload['recipient'].length > 0
   );
 };
 
 const isVAnchorTransferPayload = (
   payload: TransactionPayloadType
 ): payload is TransferTransactionPayloadType => {
+  if (!('notes' in payload)) {
+    return false;
+  }
+
   const notes: Note[] | undefined = payload['notes'];
   if (!notes) {
     return false;
@@ -88,7 +98,9 @@ const isVAnchorTransferPayload = (
   }
 
   return (
+    'changeUtxo' in payload &&
     payload['changeUtxo'] instanceof Utxo &&
+    'transferUtxo' in payload &&
     payload['transferUtxo'] instanceof Utxo
   );
 };
@@ -141,11 +153,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx.next(TransactionState.PreparingTransaction, undefined);
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
-      const tokenWrapper = await this.getTokenWrapper(tx, payload);
+      const tokenWrapper = await this.getTokenWrapper(payload);
       if (wrapUnwrapToken === '')
         wrapUnwrapToken = tokenWrapper.contract.address;
 
-      await this.checkHasBalance(tx, payload, wrapUnwrapToken);
+      await this.checkHasBalance(payload, wrapUnwrapToken);
 
       await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
 
@@ -175,11 +187,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const { changeUtxo, notes, recipient } = payload;
 
       if (wrapUnwrapToken === '') {
-        const tokenWrapper = await this.getTokenWrapper(tx, notes[0], true);
+        const tokenWrapper = await this.getTokenWrapper(notes[0], true);
         wrapUnwrapToken = tokenWrapper.contract.address;
       }
 
-      const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
+      const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
       const relayer =
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
@@ -199,7 +211,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     } else if (isVAnchorTransferPayload(payload)) {
       const { changeUtxo, transferUtxo, notes } = payload;
 
-      const { inputUtxos, leavesMap } = await this.commitmentsSetup(tx, notes);
+      const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
       const relayer =
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
@@ -218,7 +230,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leavesMap, // leavesMap
       ]);
     } else {
-      console.error('Invalid payload');
+      // Handle by outer try/catch
+      throw new Error('Invalid payload');
     }
   }
 
@@ -226,7 +239,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod,
     changeNotes: Note[]
-  ): Promise<void> {
+  ): Promise<void> | never {
     let txHash = '';
 
     const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
@@ -313,7 +326,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
           changeNotes.forEach((note) =>
             this.inner.noteManager?.removeNote(note)
           );
-          tx.fail(message.length ? message : 'Transaction failed');
+          tx.fail(message ? message : 'Transaction failed');
           break;
         }
       }
@@ -345,7 +358,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
     overridesTransaction?: Overrides
-  ): Promise<ContractReceipt> {
+  ): Promise<ContractReceipt> | never {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
@@ -467,7 +480,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       wrapUnwrapToken: string;
       leavesMap: Record<string, Uint8Array[]>;
     }
-  ): Promise<BigNumber> {
+  ): Promise<BigNumber> | never {
     const vanchor = await this.inner.getVariableAnchorByAddress(vAnchorAddress);
 
     const { publicInputs, extData } = await vanchor.setupTransaction(
@@ -491,16 +504,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   }
 
   private async commitmentsSetup(
-    tx: Transaction<NewNotesTxResult>,
-    notes: Note[]
+    notes: Note[],
+    tx?: Transaction<NewNotesTxResult>
   ) {
     if (notes.length === 0) {
-      tx.fail('No notes to deposit');
-      return;
+      throw new Error('No notes to deposit');
     }
 
     const payload = notes[0];
-    const destVAnchor = await this.getVAnchor(tx, payload, true);
+    const destVAnchor = await this.getVAnchor(payload, true);
     const treeHeight = await destVAnchor.contract.getLevels();
 
     // Loop through the notes and populate the leaves map
@@ -508,7 +520,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     const notesLeaves = await Promise.all(
       notes.map((note) =>
-        this.fetchNoteLeaves(tx, note, leavesMap, destVAnchor, treeHeight)
+        this.fetchNoteLeaves(note, leavesMap, destVAnchor, treeHeight, tx)
       )
     );
 
@@ -540,7 +552,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const leaves = await this.inner.getVariableAnchorLeaves(
         destVAnchor,
         leafStorage,
-        tx.cancelToken.abortSignal
+        tx?.cancelToken.abortSignal
       );
 
       leavesMap[destTypedChainId.toString()] = leaves.map((leaf) => {
@@ -556,17 +568,19 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   }
 
   private async fetchNoteLeaves(
-    tx: Transaction<NewNotesTxResult>,
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
     destVAnchor: VAnchor,
-    treeHeight: number
-  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> {
-    tx.next(TransactionState.FetchingLeaves, {
-      end: undefined,
-      currentRange: [0, 1],
-      start: 0,
-    });
+    treeHeight: number,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> | never {
+    if (tx) {
+      tx.next(TransactionState.FetchingLeaves, {
+        end: undefined,
+        currentRange: [0, 1],
+        start: 0,
+      });
+    }
 
     const parsedNote = note.note;
     const amount = BigNumber.from(parsedNote.amount);
@@ -596,7 +610,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const leaves = await this.inner.getVariableAnchorLeaves(
         sourceVAnchor,
         leafStorage,
-        tx.cancelToken.abortSignal
+        tx?.cancelToken.abortSignal
       );
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
@@ -656,17 +670,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   }
 
   private async getVAnchor(
-    tx: Transaction<NewNotesTxResult>,
     payload: Note,
     isDestAnchor = false
-  ): Promise<VAnchor> {
+  ): Promise<VAnchor> | never {
     const { note } = payload;
     const { sourceChainId, targetChainId } = note;
     const vanchors = await this.inner.methods.bridgeApi.getVAnchors();
 
     if (vanchors.length === 0) {
-      tx.fail('No variable anchor configured for selected token');
-      return;
+      throw new Error('No variable anchor configured for selected token');
     }
 
     const vanchor = vanchors[0];
@@ -675,25 +687,23 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     let vanchorAddress: string;
 
     if (isDestAnchor) {
-      vanchorAddress = vanchor.neighbours[targetChainId] as string;
+      vanchorAddress = vanchor.neighbours[+targetChainId] as string;
     } else {
-      vanchorAddress = vanchor.neighbours[sourceChainId] as string;
+      vanchorAddress = vanchor.neighbours[+sourceChainId] as string;
     }
 
     if (!vanchorAddress) {
-      tx.fail(`No Anchor for the chain ${note.targetChainId}`);
-      return;
+      throw new Error(`No Anchor for the chain ${note.targetChainId}`);
     }
 
     return await this.inner.getVariableAnchorByAddress(vanchorAddress);
   }
 
   private async getTokenWrapper(
-    tx: Transaction<NewNotesTxResult>,
     payload: Note,
     isDest = false
   ): Promise<FungibleTokenWrapper> {
-    const vAnchor = await this.getVAnchor(tx, payload, isDest);
+    const vAnchor = await this.getVAnchor(payload, isDest);
     const currentWebbToken = await vAnchor.contract.token();
     return FungibleTokenWrapper.connect(
       currentWebbToken,
@@ -702,7 +712,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   }
 
   private async checkHasBalance(
-    tx: Transaction<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapToken: string
   ): Promise<void> | never {
@@ -729,8 +738,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     if (!hasBalance) {
       this.emit('stateChange', TransactionState.Failed);
       await this.inner.noteManager?.removeNote(payload);
-      tx.fail('Not enough balance');
-      return;
+      throw new Error('Not enough balance');
     }
   }
 
@@ -739,13 +747,14 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     payload: Note,
     wrapUnwrapToken: string,
     tokenWrapper: FungibleTokenWrapper
-  ): Promise<void> {
+  ): Promise<void> | never {
     const { note } = payload;
     const { amount } = note;
-    const srcVAnchor = await this.getVAnchor(tx, payload);
+    const srcVAnchor = await this.getVAnchor(payload);
     const currentWebbToken = await srcVAnchor.getWebbToken();
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
-    let approvalTransaction: ContractTransaction;
+    let approvalTransaction: ContractTransaction | undefined;
+
     if (checkNativeAddress(wrapUnwrapToken)) {
       /// native token no approval needed
     } else if (
@@ -777,6 +786,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         { gasLimit: '0x5B8D80' }
       );
     }
+
     if (approvalTransaction) {
       // Notification Waiting for approval notification
       tx.next(TransactionState.Intermediate, {

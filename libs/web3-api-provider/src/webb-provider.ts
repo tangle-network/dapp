@@ -30,6 +30,7 @@ import {
   Keypair,
   Note,
   ResourceId,
+  Utxo,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   toFixedHex,
@@ -273,7 +274,7 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal: AbortSignal
+    abortSignal?: AbortSignal
   ): Promise<string[]> {
     console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
@@ -302,11 +303,12 @@ export class WebbWeb3Provider
 
       const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
-          lastQueriedBlock ||
-          getAnchorDeploymentBlockNumber(
-            typedChainId,
-            vanchor.contract.address
-          ),
+          (lastQueriedBlock ||
+            getAnchorDeploymentBlockNumber(
+              typedChainId,
+              vanchor.contract.address
+            )) ??
+          0,
         leaves: storedLeaves || [],
       };
 
@@ -346,6 +348,10 @@ export class WebbWeb3Provider
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
+    if (!tokenSymbol) {
+      throw new Error('Currency not found'); // Development error
+    }
+
     const utxosFromChain = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
@@ -377,7 +383,7 @@ export class WebbWeb3Provider
           return alreadySpent ? null : utxo;
         })
       )
-    ).filter((utxo) => !!utxo && utxo.amount !== '0');
+    ).filter((utxo): utxo is Utxo => !!utxo && utxo.amount !== '0');
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
@@ -490,7 +496,7 @@ export class WebbWeb3Provider
         name: currency.name,
         symbol: currency.symbol,
       },
-      rpcUrls: chain.evmRpcUrls,
+      rpcUrls: chain.evmRpcUrls ?? [],
     });
   }
 
@@ -512,7 +518,7 @@ export class WebbWeb3Provider
 
   async getZkFixtures(
     maxEdges: number,
-    isSmall?: boolean
+    isSmall = false
   ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
