@@ -73,7 +73,7 @@ export const BlogSection = ({
               blogType={blogType}
               type={type}
               link={
-                (type === 'post' && blogType === 'paper' && link) ||
+                (type === 'post' && blogType === 'research' && link) ||
                 (type === 'video' && !blogType && link)
                   ? link
                   : type === 'post' && blogType === 'post'
