@@ -152,24 +152,32 @@ export const currenciesConfig: Record<number, CurrencyConfig> = {
     addresses: new Map<number, string>([
       [
         PresetTypedChainId.ArbitrumTestnet,
-        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
       ],
-      [PresetTypedChainId.Goerli, '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3'],
+      [PresetTypedChainId.Goerli, '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8'],
       [
         PresetTypedChainId.Sepolia,
-        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
       ],
       [
         PresetTypedChainId.PolygonTestnet,
-        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
       ],
       [
         PresetTypedChainId.OptimismTestnet,
-        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
       ],
       [
         PresetTypedChainId.MoonbaseAlpha,
-        '0xe5c04ddc447bee02a0f734d0670e1caa752e9ae3',
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
+      ],
+      [
+        PresetTypedChainId.AvalancheFuji,
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
+      ],
+      [
+        PresetTypedChainId.ScrollAlpha,
+        '0x88aee25bf00e08c1e96c57fa0a786040fd05b8f8',
       ],
     ]),
   },

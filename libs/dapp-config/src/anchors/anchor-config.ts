@@ -10,15 +10,19 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 export const anchorsConfig: ApiConfig['anchors'] = {
   [CurrencyId.webbETH]: {
     [PresetTypedChainId.ArbitrumTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.Goerli]: '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.Sepolia]: '0xa1a2b7e08793b3033122b83cbee56726678588b5',
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
+    [PresetTypedChainId.Goerli]: '0x12f721c568e907126e13d6664ebec606ee65ed3c',
+    [PresetTypedChainId.Sepolia]: '0x12f721c568e907126e13d6664ebec606ee65ed3c',
     [PresetTypedChainId.PolygonTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
     [PresetTypedChainId.OptimismTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
     [PresetTypedChainId.MoonbaseAlpha]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
+    [PresetTypedChainId.AvalancheFuji]:
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
+    [PresetTypedChainId.ScrollAlpha]:
+      '0x12f721c568e907126e13d6664ebec606ee65ed3c',
   },
   [CurrencyId.WEBBSQR]: {
     [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
@@ -40,22 +44,28 @@ export const anchorsConfig: ApiConfig['anchors'] = {
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 10742623,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 8629410,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 2920599,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 3059851,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 5611883,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 6504793,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 32139400,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 32933455,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 3771120,
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 3911017,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 19699986,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
+    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 292290,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
