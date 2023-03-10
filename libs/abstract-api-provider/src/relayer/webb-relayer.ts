@@ -236,14 +236,15 @@ export class WebbRelayer {
   }
 
   public async getFeeInfo(
-    chainId: number,
+    typedChainId: number,
     vanchor: string,
-    gas_amount: BigNumber
+    gasAmount: BigNumber,
+    abortSignal?: AbortSignal
   ): Promise<RelayerFeeInfo> | never {
     const endpoint = `${
       this.endpoint.endsWith('/') ? this.endpoint.slice(0, -1) : this.endpoint
-    }/api/v1/fee_info/${chainId}/${vanchor}/${gas_amount}`;
-    const response = await fetch(endpoint);
+    }/api/v1/fee_info/${typedChainId}/${vanchor}/${gasAmount}`;
+    const response = await fetch(endpoint, { signal: abortSignal });
     if (!response.ok) {
       throw new Error(`Failed to get fee info: ${response.statusText}`);
     }

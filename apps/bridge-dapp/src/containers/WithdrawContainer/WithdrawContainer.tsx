@@ -16,16 +16,26 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
+  Button,
+  CheckBox,
   RelayerListCard,
   TokenListCard,
   WithdrawCard,
+  formatTokenAmount,
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 
 import { BigNumber, ethers } from 'ethers';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ComponentProps,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { currenciesConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
@@ -35,9 +45,11 @@ import {
   useConnectWallet,
   useShieldedAssets,
 } from '../../hooks';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
+import { getErrorMessage } from '../../utils';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
-import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -53,7 +65,7 @@ export const WithdrawContainer = forwardRef<
   // State for error message when user input amount is invalid
   const [amountError, setAmountError] = useState<string>('');
 
-  const { setMainComponent } = useWebbUI();
+  const { setMainComponent, notificationApi } = useWebbUI();
 
   const {
     activeApi,
@@ -123,6 +135,21 @@ export const WithdrawContainer = forwardRef<
 
     return notes ?? null;
   }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
+
+  const {
+    fetchFeeInfo,
+    isLoading: isFetchingFeeInfo,
+    error: fetchFeeInfoError,
+    feeInfo,
+  } = useWithdrawFee(
+    availableNotesFromManager,
+    amount,
+    recipient,
+    activeRelayer,
+    currentTypedChainId
+      ? wrappableCurrency?.getAddress(currentTypedChainId)
+      : ''
+  );
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -288,12 +315,19 @@ export const WithdrawContainer = forwardRef<
       return 'Switch chain to withdraw';
     }
 
+    // If user selects a relayer, require the fee info to be fetched
+    if (activeRelayer && !feeInfo) {
+      return 'Fetching the fee';
+    }
+
     if (selectedUnwrapToken && isUnwrap) {
       return 'Unwrap and Withdraw';
     }
 
     return 'Withdraw';
   }, [
+    activeRelayer,
+    feeInfo,
     hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
@@ -403,6 +437,10 @@ export const WithdrawContainer = forwardRef<
 
     if (isDisabledWithdraw && otherAvailableChains.length > 0) {
       return await handleSwitchToOtherDestChains();
+    }
+
+    if (activeRelayer && !feeInfo) {
+      return await fetchFeeInfo();
     }
 
     if (
@@ -516,10 +554,13 @@ export const WithdrawContainer = forwardRef<
     );
   }, [
     activeApi?.state.activeBridge,
+    activeRelayer,
     amount,
     availableAmount,
     availableNotesFromManager,
     currentTypedChainId,
+    feeInfo,
+    fetchFeeInfo,
     fungibleCurrency,
     handleResetState,
     handleSwitchToOtherDestChains,
@@ -536,6 +577,38 @@ export const WithdrawContainer = forwardRef<
     txQueue.txPayloads,
     wrappableCurrency,
   ]);
+
+  const withdrawButtonProps = useMemo<ComponentProps<typeof Button>>(
+    () => ({
+      isDisabled:
+        otherAvailableChains.length > 0
+          ? false
+          : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+      isLoading:
+        loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
+      loadingText: isFetchingFeeInfo ? 'Fetching fee...' : 'Connecting...',
+      children: buttonText,
+      onClick: handleWithdrawButtonClick,
+    }),
+    [
+      buttonText,
+      handleWithdrawButtonClick,
+      hasNoteAccount,
+      isDisabledWithdraw,
+      isFetchingFeeInfo,
+      isWalletConnected,
+      loading,
+      otherAvailableChains.length,
+      walletState,
+    ]
+  );
+
+  const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
+    () => ({
+      isDisabled: !activeRelayer,
+    }),
+    [activeRelayer]
+  );
 
   // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
@@ -577,6 +650,17 @@ export const WithdrawContainer = forwardRef<
     amount,
     activeRelayer,
   ]);
+
+  // Side effect to show notification when fetching fee info fails
+  useEffect(() => {
+    if (fetchFeeInfoError) {
+      const message = getErrorMessage(fetchFeeInfoError);
+      notificationApi.addToQueue({
+        variant: 'error',
+        message,
+      });
+    }
+  }, [fetchFeeInfoError, notificationApi]);
 
   return (
     <div ref={ref}>
@@ -711,16 +795,16 @@ export const WithdrawContainer = forwardRef<
             setRecipient(recipient);
           },
         }}
-        withdrawBtnProps={{
-          isDisabled:
-            otherAvailableChains.length > 0
-              ? false
-              : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
-          isLoading: loading || walletState === WalletState.CONNECTING,
-          loadingText: 'Connecting...',
-          children: buttonText,
-          onClick: handleWithdrawButtonClick,
+        refundInputProps={{
+          refundCheckboxProps,
         }}
+        withdrawBtnProps={withdrawButtonProps}
+        isFetchingFee={isFetchingFeeInfo}
+        feeAmount={
+          feeInfo?.estimatedFee
+            ? formatTokenAmount(ethers.utils.formatEther(feeInfo.estimatedFee))
+            : undefined
+        }
         receivedAmount={infoCalculated.receivingAmount}
         receivedToken={infoCalculated.receivingTokenSymbol}
         remainderAmount={infoCalculated.remainderAmount}

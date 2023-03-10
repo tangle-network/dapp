@@ -503,10 +503,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     );
   }
 
-  private async commitmentsSetup(
-    notes: Note[],
-    tx?: Transaction<NewNotesTxResult>
-  ) {
+  async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }
