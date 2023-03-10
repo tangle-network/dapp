@@ -1,14 +1,21 @@
 import { Transition } from '@headlessui/react';
-import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import { FC, useEffect, useState } from 'react';
-
+import { ComponentProps, FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from '../Button';
+
 import { CheckBox } from '../CheckBox';
-import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { AmountInput } from './AmountInput';
 import { RefundInputProps } from './types';
+
+const defaultInfo: ComponentProps<typeof CheckBox>['info'] = {
+  title: 'Refund Support',
+  content:
+    'Once a relayer is added, enable refund to receive native tokens on the destination chain for future transactions to preserve privacy. Refunds will be sent to the recipient address.',
+  buttonProps: {
+    href: 'https://docs.webb.tools/bridge/faq#what-is-refund', // TODO: update this link
+    target: '_blank',
+  },
+};
 
 export const RefundInput: FC<RefundInputProps> = ({
   refundCheckboxProps: {
@@ -44,30 +51,10 @@ export const RefundInput: FC<RefundInputProps> = ({
             onChange?.(eve);
           }}
           wrapperClassName={twMerge(wrapperClassName, 'items-center')}
+          info={defaultInfo}
         >
           {children}
         </CheckBox>
-
-        <Tooltip>
-          <TooltipTrigger className="text-center" asChild>
-            <span className="cursor-pointer !text-inherit">
-              <InformationLine className="!fill-current pointer-events-none" />
-            </span>
-          </TooltipTrigger>
-          <TooltipBody
-            title="Refund Support"
-            className="max-w-[185px] break-normal"
-            button={
-              <Button variant="utility" size="sm">
-                Learn more
-              </Button>
-            }
-          >
-            Once a relayer is added, enable refund to receive native tokens on
-            the destination chain for future transactions to preserve privacy.
-            Refunds will be sent to the recipient address.
-          </TooltipBody>
-        </Tooltip>
       </div>
 
       <Transition
