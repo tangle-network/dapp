@@ -16,12 +16,13 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
+  AmountInput,
   Button,
   CheckBox,
   RelayerListCard,
   TokenListCard,
+  Typography,
   WithdrawCard,
-  formatTokenAmount,
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -30,6 +31,7 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
+  FC,
   forwardRef,
   useCallback,
   useEffect,
@@ -65,12 +67,19 @@ export const WithdrawContainer = forwardRef<
   // State for error message when user input amount is invalid
   const [amountError, setAmountError] = useState<string>('');
 
+  // State for refund amount
+  const [refundAmount, setRefundAmount] = useState<number>(0);
+
+  // State for error message when the refund amount is invalid
+  const [refundAmountError, setRefundAmountError] = useState<string>('');
+
   const { setMainComponent, notificationApi } = useWebbUI();
 
   const {
     activeApi,
     activeChain,
     activeWallet,
+    apiConfig,
     loading,
     noteManager,
     switchChain,
@@ -150,6 +159,14 @@ export const WithdrawContainer = forwardRef<
       ? wrappableCurrency?.getAddress(currentTypedChainId)
       : ''
   );
+
+  const currentNativeCurrency = useMemo(() => {
+    if (!activeChain) {
+      return undefined;
+    }
+
+    return apiConfig.currencies[activeChain.nativeCurrencyId];
+  }, [activeChain, apiConfig.currencies]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -338,8 +355,13 @@ export const WithdrawContainer = forwardRef<
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
+    const exchangeRate = feeInfo
+      ? parseFloat(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+      : 1;
+    const amountAfterRefund = amount - refundAmount / exchangeRate;
+
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amount)
+      ? getRoundedAmountString(amountAfterRefund)
       : undefined;
     const remainderAmount = isValidAmount
       ? getRoundedAmountString(availableAmount - amount)
@@ -360,9 +382,11 @@ export const WithdrawContainer = forwardRef<
   }, [
     amount,
     availableAmount,
+    feeInfo,
     fungibleCurrency?.view.symbol,
     isUnwrap,
     isValidAmount,
+    refundAmount,
     wrappableCurrency?.view.symbol,
   ]);
 
@@ -372,6 +396,8 @@ export const WithdrawContainer = forwardRef<
     setRecipient('');
     setIsUnwrap(false);
     setRelayer(null);
+    setRefundAmount(0);
+    setRefundAmountError('');
   }, [setRelayer]);
 
   const handleSwitchToOtherDestChains = useCallback(async () => {
@@ -413,6 +439,28 @@ export const WithdrawContainer = forwardRef<
     setMainComponent,
     switchChain,
   ]);
+
+  const totalFee = useMemo(() => {
+    if (!feeInfo) {
+      return undefined;
+    }
+
+    if (refundAmount) {
+      const refundAmountWei = ethers.utils.parseEther(refundAmount.toString());
+      const totalFeeBigNumber = refundAmountWei.add(feeInfo.estimatedFee);
+      return ethers.utils.formatEther(totalFeeBigNumber);
+    }
+
+    return ethers.utils.formatEther(feeInfo.estimatedFee);
+  }, [feeInfo, refundAmount]);
+
+  const totalFeeFormatted = useMemo(() => {
+    if (!totalFee) {
+      return undefined;
+    }
+
+    return getRoundedAmountString(parseFloat(totalFee));
+  }, [totalFee]);
 
   const handleWithdrawButtonClick = useCallback(async () => {
     // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -538,7 +586,7 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={0}
+        fees={totalFee ? parseFloat(totalFee) : 0}
         fungibleCurrency={{
           value: fungibleCurrency,
           balance: availableAmount,
@@ -574,6 +622,7 @@ export const WithdrawContainer = forwardRef<
     setMainComponent,
     setOpenNoteAccountModal,
     toggleModal,
+    totalFee,
     txQueue.txPayloads,
     wrappableCurrency,
   ]);
@@ -605,9 +654,63 @@ export const WithdrawContainer = forwardRef<
 
   const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
     () => ({
-      isDisabled: !activeRelayer,
+      isDisabled: !activeRelayer || !feeInfo,
     }),
-    [activeRelayer]
+    [activeRelayer, feeInfo]
+  );
+
+  const parseRefundAmount = useCallback(
+    (value: string) => {
+      if (!value) {
+        return;
+      }
+
+      const parsedValue = parseFloat(value);
+      if (Number.isNaN(parsedValue) || parsedValue < 0) {
+        setRefundAmountError('Invalid amount');
+        return;
+      }
+
+      const maxRefundOnRelayer = feeInfo?.maxRefund.toNumber() ?? 0;
+      const exchangeRate = feeInfo
+        ? parseFloat(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+        : 1;
+      const maxRefundOnAmount = amount / exchangeRate;
+      if (parsedValue > maxRefundOnRelayer || parsedValue > maxRefundOnAmount) {
+        const maxVal = Math.min(maxRefundOnRelayer, maxRefundOnAmount);
+        setRefundAmountError(`Amount must be less than or equal to ${maxVal}`);
+        return;
+      }
+
+      setRefundAmountError('');
+      setRefundAmount(parsedValue);
+    },
+    [amount, feeInfo]
+  );
+
+  const refundAmountInputProps = useMemo<ComponentProps<typeof AmountInput>>(
+    () => ({
+      amount: refundAmount ? refundAmount.toString() : undefined,
+      errorMessage: refundAmountError,
+      isDisabled: !feeInfo,
+      onAmountChange: parseRefundAmount,
+      onMaxBtnClick: () => {
+        if (!feeInfo) {
+          return;
+        }
+
+        const exchangeRate = parseFloat(
+          ethers.utils.formatEther(feeInfo.refundExchangeRate)
+        );
+        const maxRefundOnAmount = amount / exchangeRate;
+        const maxVal = Math.min(
+          feeInfo.maxRefund.toNumber(),
+          maxRefundOnAmount
+        );
+        setRefundAmount(maxVal);
+      },
+    }),
+    [amount, feeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
 
   // Effect to update the fungible currency when the default fungible currency changes.
@@ -797,19 +900,51 @@ export const WithdrawContainer = forwardRef<
         }}
         refundInputProps={{
           refundCheckboxProps,
+          refundAmountInputProps,
         }}
         withdrawBtnProps={withdrawButtonProps}
         isFetchingFee={isFetchingFeeInfo}
-        feeAmount={
-          feeInfo?.estimatedFee
-            ? formatTokenAmount(ethers.utils.formatEther(feeInfo.estimatedFee))
-            : undefined
-        }
+        feeAmount={totalFeeFormatted}
         receivedAmount={infoCalculated.receivingAmount}
         receivedToken={infoCalculated.receivingTokenSymbol}
+        receivedInfo={
+          feeInfo ? (
+            <ExchangeRateInfo
+              exchangeRate={
+                +ethers.utils.formatEther(feeInfo.refundExchangeRate)
+              }
+              fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+              nativeTokenSymbol={currentNativeCurrency?.symbol}
+            />
+          ) : undefined
+        }
+        refundAmount={refundAmount}
+        refundToken={currentNativeCurrency?.symbol}
         remainderAmount={infoCalculated.remainderAmount}
         remainderToken={infoCalculated.remainderTokenSymbol}
       />
     </div>
   );
 });
+
+const ExchangeRateInfo: FC<{
+  exchangeRate: number | string;
+  fungibleTokenSymbol?: string;
+  nativeTokenSymbol?: string;
+}> = ({ exchangeRate, fungibleTokenSymbol, nativeTokenSymbol }) => {
+  return (
+    <div className="max-w-[185px] break-normal">
+      <Typography variant="body3" fw="bold">
+        Exchange Rate:
+      </Typography>
+      <Typography variant="body3">
+        1 {nativeTokenSymbol} = {exchangeRate} {fungibleTokenSymbol}
+      </Typography>
+
+      <Typography className="mt-6" variant="body3">
+        <b>Note:</b> rates may change based on network activity; received token
+        amounts will adjust accordingly.
+      </Typography>
+    </div>
+  );
+};

@@ -1,5 +1,5 @@
+import { ComponentProps } from 'react';
 import { PropsOf } from '../../types';
-import { ComponentElement, ComponentProps } from 'react';
 
 import {
   AmountInput,
@@ -8,8 +8,8 @@ import {
   RecipientInput,
   RefundInput,
   RelayerInput,
-  ShieldedAssetInput,
   Switcher,
+  TitleWithInfo,
   TokenInput,
 } from '../../components';
 
@@ -65,6 +65,11 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   receivedToken?: string;
 
   /**
+   * The received info
+   */
+  receivedInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+
+  /**
    * Indicates if the fee is being fetched
    */
   isFetchingFee?: boolean;
@@ -88,6 +93,16 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
    * The remainder token symbol
    */
   remainderToken?: string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: number | string;
+
+  /**
+   * The refund token symbol
+   */
+  refundToken?: string;
 
   /**
    * The withdraw button props

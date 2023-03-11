@@ -50,8 +50,18 @@ export interface RelayerFeeInfo {
   gasPrice: BigNumber;
   refundExchangeRate: BigNumber;
   maxRefund: BigNumber;
-  timestamp: string;
+  timestamp: Date;
 }
+
+export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
+  return {
+    estimatedFee: BigNumber.from(data.estimatedFee),
+    gasPrice: BigNumber.from(data.gasPrice),
+    refundExchangeRate: BigNumber.from(data.refundExchangeRate),
+    maxRefund: BigNumber.from(data.maxRefund),
+    timestamp: new Date(data.timestamp),
+  };
+};
 
 /**
  * Relayed withdraw is a class meant to encapsulate the communication between client (WebbRelayer instance)
@@ -248,7 +258,7 @@ export class WebbRelayer {
     if (!response.ok) {
       throw new Error(`Failed to get fee info: ${response.statusText}`);
     }
-    return response.json();
+    return parseRelayerFeeInfo(await response.json());
   }
 
   static intoActiveWebRelayer(

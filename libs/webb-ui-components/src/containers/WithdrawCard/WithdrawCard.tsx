@@ -27,9 +27,12 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       fixedAmountInputProps,
       isFetchingFee,
       receivedAmount,
+      receivedInfo,
       receivedToken,
       recipientInputProps,
+      refundAmount,
       refundInputProps,
+      refundToken,
       relayerInputProps,
       remainderAmount,
       remainderToken,
@@ -94,6 +97,20 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       return feeAmount?.toString();
     }, [feeAmount, isFetchingFee, remainderToken]);
 
+    const receivedContent = useMemo(() => {
+      if (!receivedAmount) {
+        return undefined;
+      }
+
+      if (refundAmount) {
+        return `${receivedAmount} ${receivedToken ?? ''} + ${refundAmount} ${
+          refundToken ?? ''
+        }`;
+      }
+
+      return `${receivedAmount} ${receivedToken ?? ''}`;
+    }, [receivedAmount, receivedToken, refundAmount, refundToken]);
+
     return (
       <div
         {...props}
@@ -145,19 +162,14 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               leftTextProps={{
                 title: 'Receiving',
                 variant: 'utility',
-                info: 'Receiving',
+                info: receivedInfo,
               }}
-              rightContent={
-                receivedAmount
-                  ? `${receivedAmount} ${receivedToken}`
-                  : undefined
-              }
+              rightContent={receivedContent}
             />
             <InfoItem
               leftTextProps={{
                 title: 'Remainder',
                 variant: 'utility',
-                info: 'Remainder',
               }}
               rightContent={
                 remainderAmount
@@ -169,7 +181,6 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               leftTextProps={{
                 title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
                 variant: 'utility',
-                info: 'Fees',
               }}
               rightContent={feeContent}
             />
