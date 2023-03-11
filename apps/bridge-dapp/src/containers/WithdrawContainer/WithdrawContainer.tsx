@@ -317,7 +317,7 @@ export const WithdrawContainer = forwardRef<
 
     // If user selects a relayer, require the fee info to be fetched
     if (activeRelayer && !feeInfo) {
-      return 'Fetching the fee';
+      return 'Fetch fee info';
     }
 
     if (selectedUnwrapToken && isUnwrap) {
@@ -586,7 +586,7 @@ export const WithdrawContainer = forwardRef<
           : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
       isLoading:
         loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
-      loadingText: isFetchingFeeInfo ? 'Fetching fee...' : 'Connecting...',
+      loadingText: isFetchingFeeInfo ? 'Fetching fee info...' : 'Connecting...',
       children: buttonText,
       onClick: handleWithdrawButtonClick,
     }),

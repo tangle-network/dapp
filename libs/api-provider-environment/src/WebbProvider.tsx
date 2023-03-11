@@ -787,6 +787,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       /// chain config by net id
       const chainConfig = chains[net];
+      if (!chainConfig) {
+        return;
+      }
 
       // wallet config by chain
       const walletConfig =

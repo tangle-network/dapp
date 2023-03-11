@@ -137,6 +137,12 @@ export const useWithdrawFee = (
     wrapUnwrapToken,
   ]);
 
+  useEffect(() => {
+    setFeeInfo(null);
+    setError(null);
+    setIsLoading(false);
+  }, [withdrawNotes, relayer, wrapUnwrapToken]);
+
   return {
     feeInfo,
     fetchFeeInfo: fetchFee,
