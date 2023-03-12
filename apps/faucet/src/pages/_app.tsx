@@ -8,7 +8,7 @@ import '../styles/globals.css';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <WebbUIProvider>
+    <WebbUIProvider defaultThemeMode="light">
       <Head>
         <title>Welcome to faucet!</title>
       </Head>
