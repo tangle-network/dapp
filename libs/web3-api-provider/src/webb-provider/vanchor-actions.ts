@@ -76,7 +76,11 @@ const isVAnchorWithdrawPayload = (
   return (
     'recipient' in payload &&
     typeof payload['recipient'] === 'string' &&
-    payload['recipient'].length > 0
+    payload['recipient'].length > 0 &&
+    'feeAmount' in payload &&
+    payload['feeAmount'] instanceof BigNumber &&
+    'refundAmount' in payload &&
+    payload['refundAmount'] instanceof BigNumber
   );
 };
 
@@ -184,12 +188,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         {}, // leavesMap,
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
-      const { changeUtxo, notes, recipient } = payload;
-
-      if (wrapUnwrapToken === '') {
-        const tokenWrapper = await this.getTokenWrapper(notes[0], true);
-        wrapUnwrapToken = tokenWrapper.contract.address;
-      }
+      const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
@@ -201,8 +200,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo], // outputs
-        0, // fee
-        0, // refund
+        feeAmount, // fee
+        refundAmount, // refund
         recipient, // recipient
         relayer, // relayer
         wrapUnwrapToken, // wrapUnwrapToken

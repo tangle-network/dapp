@@ -24,6 +24,7 @@ import {
 import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
 import { ExchangeRateInfo } from './shared';
+import { BigNumber, ethers } from 'ethers';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -194,10 +195,16 @@ export const WithdrawConfirmContainer = forwardRef<
           noteManager?.addNote(changeNote);
         }
 
+        const refund = refundAmount ?? 0;
+
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
           changeUtxo,
           recipient,
+          refundAmount: BigNumber.from(
+            ethers.utils.parseEther(refund.toString())
+          ),
+          feeAmount: BigNumber.from(ethers.utils.parseEther(fees.toString())),
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -250,8 +257,10 @@ export const WithdrawConfirmContainer = forwardRef<
       amount,
       txQueueApi,
       setMainComponent,
+      refundAmount,
       changeUtxo,
       recipient,
+      fees,
       activeRelayer,
       noteManager,
       onResetState,

@@ -104,6 +104,8 @@ export type WithdrawTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   recipient: string;
+  refundAmount: BigNumberish;
+  feeAmount: BigNumberish;
 };
 
 export type TransferTransactionPayloadType = {
