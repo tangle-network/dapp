@@ -71,6 +71,21 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   unwrapCurrency?: CurrencyWithBalance;
 
   /**
+   * Refund amount
+   */
+  refundAmount?: number;
+
+  /**
+   * Refund token
+   */
+  refundToken?: string;
+
+  /**
+   * Refund exchange rate
+   */
+  refundExchangeRate?: number;
+
+  /**
    * The callbacl to reset the parent state
    * @returns void
    */

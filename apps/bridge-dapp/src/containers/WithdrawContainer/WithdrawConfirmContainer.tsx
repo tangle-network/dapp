@@ -5,6 +5,7 @@ import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
+  getRoundedAmountString,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -22,6 +23,7 @@ import {
 } from '../../hooks';
 import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
+import { ExchangeRateInfo } from './shared';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -39,6 +41,9 @@ export const WithdrawConfirmContainer = forwardRef<
       fungibleCurrency: fungibleCurrencyProp,
       unwrapCurrency: { value: unwrapCurrency } = {},
       onResetState,
+      refundAmount,
+      refundToken,
+      refundExchangeRate,
       recipient,
       ...props
     },
@@ -252,6 +257,18 @@ export const WithdrawConfirmContainer = forwardRef<
       onResetState,
     ]);
 
+    const amountAfterRefund = useMemo(() => {
+      if (!refundAmount) {
+        return getRoundedAmountString(amount);
+      }
+
+      return getRoundedAmountString(
+        amount - refundAmount / (refundExchangeRate ?? 1)
+      );
+    }, [amount, refundAmount, refundExchangeRate]);
+
+    const formattedFees = useMemo(() => getRoundedAmountString(fees), [fees]);
+
     return (
       <WithdrawConfirm
         {...props}
@@ -274,11 +291,23 @@ export const WithdrawConfirmContainer = forwardRef<
           children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
+        refundAmount={refundAmount}
+        refundToken={refundToken}
+        receivingInfo={
+          refundExchangeRate ? (
+            <ExchangeRateInfo
+              exchangeRate={refundExchangeRate}
+              fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+              nativeTokenSymbol={unwrapCurrency?.view.symbol}
+            />
+          ) : undefined
+        }
         isCopied={isCopied}
         onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
-        fee={fees}
+        remainingAmount={amountAfterRefund}
+        fee={formattedFees}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}

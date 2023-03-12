@@ -52,6 +52,7 @@ import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
 import { getErrorMessage } from '../../utils';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
+import { ExchangeRateInfo } from './shared';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -59,6 +60,9 @@ export const WithdrawContainer = forwardRef<
 >(({ defaultFungibleCurrency, onTryAnotherWallet }, ref) => {
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
+
+  // State for refund checkbox
+  const [isRefund, setIsRefund] = useState(false);
 
   const [recipient, setRecipient] = useState<string>('');
 
@@ -155,7 +159,7 @@ export const WithdrawContainer = forwardRef<
     amount,
     recipient,
     activeRelayer,
-    currentTypedChainId
+    currentTypedChainId && isUnwrap
       ? wrappableCurrency?.getAddress(currentTypedChainId)
       : ''
   );
@@ -596,6 +600,13 @@ export const WithdrawContainer = forwardRef<
             ? { value: wrappableCurrency }
             : undefined
         }
+        refundAmount={refundAmount}
+        refundToken={currentNativeCurrency?.symbol}
+        refundExchangeRate={
+          feeInfo
+            ? +ethers.utils.formatEther(feeInfo.refundExchangeRate)
+            : undefined
+        }
         recipient={recipient}
         onResetState={handleResetState}
       />
@@ -606,6 +617,7 @@ export const WithdrawContainer = forwardRef<
     amount,
     availableAmount,
     availableNotesFromManager,
+    currentNativeCurrency?.symbol,
     currentTypedChainId,
     feeInfo,
     fetchFeeInfo,
@@ -619,6 +631,7 @@ export const WithdrawContainer = forwardRef<
     noteManager,
     otherAvailableChains.length,
     recipient,
+    refundAmount,
     setMainComponent,
     setOpenNoteAccountModal,
     toggleModal,
@@ -655,8 +668,10 @@ export const WithdrawContainer = forwardRef<
   const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
     () => ({
       isDisabled: !activeRelayer || !feeInfo,
+      isChecked: isRefund,
+      onChange: () => setIsRefund((prev) => !prev),
     }),
-    [activeRelayer, feeInfo]
+    [activeRelayer, feeInfo, isRefund]
   );
 
   const parseRefundAmount = useCallback(
@@ -764,6 +779,13 @@ export const WithdrawContainer = forwardRef<
       });
     }
   }, [fetchFeeInfoError, notificationApi]);
+
+  // Side effect to uncheck the refund checkbox when feeInfo is not available
+  useEffect(() => {
+    if (!feeInfo) {
+      setIsRefund(false);
+    }
+  }, [feeInfo]);
 
   return (
     <div ref={ref}>
@@ -926,25 +948,3 @@ export const WithdrawContainer = forwardRef<
     </div>
   );
 });
-
-const ExchangeRateInfo: FC<{
-  exchangeRate: number | string;
-  fungibleTokenSymbol?: string;
-  nativeTokenSymbol?: string;
-}> = ({ exchangeRate, fungibleTokenSymbol, nativeTokenSymbol }) => {
-  return (
-    <div className="max-w-[185px] break-normal">
-      <Typography variant="body3" fw="bold">
-        Exchange Rate:
-      </Typography>
-      <Typography variant="body3">
-        1 {nativeTokenSymbol} = {exchangeRate} {fungibleTokenSymbol}
-      </Typography>
-
-      <Typography className="mt-6" variant="body3">
-        <b>Note:</b> rates may change based on network activity; received token
-        amounts will adjust accordingly.
-      </Typography>
-    </div>
-  );
-};

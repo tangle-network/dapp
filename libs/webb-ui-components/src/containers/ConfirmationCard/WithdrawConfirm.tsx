@@ -5,7 +5,7 @@ import {
   ExternalLinkLine,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -30,32 +30,56 @@ export const WithdrawConfirm = forwardRef<
 >(
   (
     {
-      activeChains,
       actionBtnProps,
+      activeChains,
       amount,
       changeAmount,
       checkboxProps,
       className,
       destChain,
       fee,
+      fungibleTokenSymbol: token1Symbol,
+      isCopied,
       note,
       onClose,
-      isCopied,
       onCopy,
       onDownload,
       progress,
+      receivingInfo,
+      recipientAddress,
+      refundAmount,
+      refundToken,
       relayerAddress,
-      relayerExternalUrl,
       relayerAvatarTheme,
+      relayerExternalUrl,
+      remainingAmount,
       sourceChain,
       title = 'Confirm Withdrawal',
-      fungibleTokenSymbol: token1Symbol,
       wrappableTokenSymbol: token2Symbol,
-      recipientAddress,
       ...props
     },
     ref
   ) => {
+    const receivingContent = useMemo(() => {
+      if (!remainingAmount) {
+        return undefined;
+      }
+
+      if (refundAmount) {
+        return `${remainingAmount} ${
+          token2Symbol ?? token1Symbol
+        } + ${refundAmount} ${refundToken ?? ''}`;
+      }
+
+      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`;
+    }, [
+      remainingAmount,
+      refundAmount,
+      refundToken,
+      token1Symbol,
+      token2Symbol,
+    ]);
+
     return (
       <div
         {...props}
@@ -116,13 +140,32 @@ export const WithdrawConfirm = forwardRef<
                     amount={amount}
                   />
                   <ArrowRight />
-                  <TokenWithAmount
-                    token1Symbol={token2Symbol}
-                    amount={amount}
-                  />
+                  <div className="flex items-center space-x-3">
+                    <TokenWithAmount
+                      token1Symbol={token2Symbol}
+                      amount={remainingAmount}
+                    />
+                    {refundAmount && refundToken && (
+                      <TokenWithAmount
+                        token1Symbol={refundToken}
+                        amount={refundAmount}
+                      />
+                    )}
+                  </div>
                 </div>
               ) : (
-                <TokenWithAmount token1Symbol={token1Symbol} amount={amount} />
+                <div className="flex items-center space-x-3">
+                  <TokenWithAmount
+                    token1Symbol={token1Symbol}
+                    amount={remainingAmount}
+                  />
+                  {refundAmount && refundToken && (
+                    <TokenWithAmount
+                      token1Symbol={refundToken}
+                      amount={refundAmount}
+                    />
+                  )}
+                </div>
               )}
             </div>
           </Section>
@@ -253,8 +296,9 @@ export const WithdrawConfirm = forwardRef<
               leftTextProps={{
                 variant: 'body1',
                 title: 'Receiving',
+                info: receivingInfo,
               }}
-              rightContent={amount?.toString()}
+              rightContent={receivingContent}
             />
             <InfoItem
               leftTextProps={{
