@@ -51,7 +51,7 @@ export const TransferConfirmContainer = forwardRef<
 
     const progress = useTransactionProgressValue(stage);
 
-    const { activeApi, activeChain, noteManager } = useWebContext();
+    const { activeApi, activeChain, apiConfig, noteManager } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -132,7 +132,12 @@ export const TransferConfirmContainer = forwardRef<
         tokenSymbol,
       } = note.note;
 
-      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      if (!currency) {
+        console.error(`Currency not found for symbol ${tokenSymbol}`);
+        return;
+      }
+      const tokenURI = getTokenURI(currency, destTypedChainId);
 
       const tx = Transaction.new<NewNotesTxResult>('Transfer', {
         amount,
@@ -200,6 +205,7 @@ export const TransferConfirmContainer = forwardRef<
       vAnchorApi,
       isTransfering,
       changeNote,
+      apiConfig,
       amount,
       txQueueApi,
       setMainComponent,

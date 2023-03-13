@@ -9,26 +9,24 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/app-util';
 import {
-  resetNoteStorage,
   NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
   noteStorageFactory,
+  resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
   Wallet,
-  anchorsConfig,
-  bridgeConfigByAsset,
   chainsConfig,
   chainsPopulated,
-  currenciesConfig,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
   BareProps,
   CurrencyRole,
+  CurrencyType,
   EVMChainId,
   InteractiveFeedback,
   WalletId,
@@ -55,11 +53,11 @@ import {
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ethers } from 'ethers';
 import { TAppEvent } from './app-event';
 import { unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
-import { getNativeTokenInfo } from './utils';
 import { WebbContext } from './webb-context';
 
 interface WebbProviderProps extends BareProps {
@@ -84,11 +82,8 @@ const registerInteractiveFeedback = (
   });
 };
 
-const apiConfig = ApiConfig.init({
-  anchors: anchorsConfig,
-  bridgeByAsset: bridgeConfigByAsset,
+const defaultApiConfig = ApiConfig.init({
   chains: chainsConfig,
-  currencies: currenciesConfig,
   wallets: walletsConfig,
 });
 
@@ -154,6 +149,16 @@ notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
 
+// For the fetching currency on chain effect
+const providerFactory = (typedChainId: number): ethers.providers.Provider => {
+  const chain = chains[typedChainId];
+  if (!chain) {
+    throw new Error(`Chain not found for ${typedChainId}`); // Development error
+  }
+
+  return Web3Provider.fromUri(chain.url).intoEthersProvider();
+};
+
 export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
     undefined
@@ -185,6 +190,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
     InteractiveFeedback[]
   >([]);
+
+  const [apiConfig, setApiConfig] = useState<ApiConfig>(defaultApiConfig);
 
   /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
@@ -358,7 +365,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           alert(code);
       }
     },
-    [appEvent]
+    [apiConfig, appEvent]
   );
 
   const loginNoteAccount = useCallback(
@@ -456,6 +463,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 chain.chainType,
                 chain.chainId
               );
+
+              // TODO: Should initialize the api config with the currencies config
+              // fetched on-chain
+              const apiConfig = defaultApiConfig;
+
               const webbPolkadot = await WebbPolkadot.init(
                 'Webb DApp',
                 [url],
@@ -553,6 +565,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   'evm'
                 )) as Web3RelayerManager;
 
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
+                providerFactory
+              );
+
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,
                 chainId,
@@ -649,7 +666,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                const currency = await getNativeTokenInfo(chain.chainId);
+                const typedChainId = calculateTypedChainId(
+                  ChainType.EVM,
+                  chain.chainId
+                );
+                const currency = Object.values(apiConfig.currencies).find(
+                  (c) =>
+                    c.type === CurrencyType.NATIVE &&
+                    Array.from(c.addresses.keys()).includes(typedChainId)
+                );
                 if (!currency) {
                   throw new Error('Native token not found');
                 }
@@ -857,6 +882,33 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       setActiveAccount(nextAccount);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Effect to update the api config state with currency config fetched on-chain
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const fetchApiConfigData = async () => {
+      try {
+        const apiConfigFromApi = await ApiConfig.initFromApi(
+          defaultApiConfig,
+          providerFactory
+        );
+        if (!isSubscribed) {
+          return;
+        }
+
+        setApiConfig(apiConfigFromApi);
+      } catch (error) {
+        console.error('Error while fetching currencies config', error);
+      }
+    };
+
+    fetchApiConfigData();
+
+    return () => {
+      isSubscribed = false;
+    };
   }, []);
 
   const txQueue = useTxApiQueue(apiConfig);

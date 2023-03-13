@@ -18,11 +18,11 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
       >
         <IconWithTooltip
           icon={<TokenIcon size="lg" name={token1Symbol.toLowerCase()} />}
-          content={token1Symbol.toUpperCase()}
+          content={token1Symbol}
         />
         <IconWithTooltip
           icon={<TokenIcon size="lg" name={token2Symbol.toLowerCase()} />}
-          content={token2Symbol.toUpperCase()}
+          content={token2Symbol}
           overrideTooltipTriggerProps={{
             className: '-ml-2 transition-all group-hover/token:ml-1',
           }}

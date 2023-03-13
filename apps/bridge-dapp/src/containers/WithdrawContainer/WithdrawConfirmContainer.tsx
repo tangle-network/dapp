@@ -60,7 +60,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi, noteManager } = useWebContext();
+    const { activeApi, apiConfig, noteManager } = useWebContext();
 
     const { api: txQueueApi } = useTxQueue();
 
@@ -174,7 +174,12 @@ export const WithdrawConfirmContainer = forwardRef<
 
       const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
 
-      const tokenURI = getTokenURI(tokenSymbol, destTypedChainId);
+      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      if (!currency) {
+        console.error(`Currency not found for symbol ${tokenSymbol}`);
+        return;
+      }
+      const tokenURI = getTokenURI(currency, destTypedChainId);
 
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
@@ -254,6 +259,7 @@ export const WithdrawConfirmContainer = forwardRef<
       changeNote,
       downloadNote,
       unwrapCurrency,
+      apiConfig,
       amount,
       txQueueApi,
       setMainComponent,

@@ -3,12 +3,21 @@
 
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 
+import {
+  anchorDeploymentBlock,
+  getAnchorConfig,
+  getLatestAnchorAddress,
+} from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
+import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
+import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
+import { getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
@@ -22,7 +31,20 @@ export type ApiConfigInput = {
   currencies?: Record<number, CurrencyConfig>;
   bridgeByAsset?: Record<number, BridgeConfigEntry>;
   anchors?: Record<number, AnchorConfigEntry>;
+  fungibleToWrappableMap?: Map<number, Map<number, Set<number>>>;
 };
+
+// For the fetching currency on chain effect
+const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
+  (acc, typedChainId) => {
+    const address = getLatestAnchorAddress(+typedChainId);
+    if (address) {
+      acc[+typedChainId] = address;
+    }
+    return acc;
+  },
+  {} as Record<number, string>
+);
 
 export class ApiConfig {
   constructor(
@@ -30,7 +52,9 @@ export class ApiConfig {
     public chains: Record<number, ChainConfig>,
     public currencies: Record<number, CurrencyConfig>,
     public bridgeByAsset: Record<number, BridgeConfigEntry>,
-    public anchors: Record<number, AnchorConfigEntry>
+    public anchors: Record<number, AnchorConfigEntry>,
+    // fungible currency id -> typed chain id -> wrappable currency ids
+    public fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
   ) {}
 
   static init = (config: ApiConfigInput) => {
@@ -39,7 +63,45 @@ export class ApiConfig {
       config.chains ?? {},
       config.currencies ?? {},
       config.bridgeByAsset ?? {},
-      config.anchors ?? {}
+      config.anchors ?? {},
+      config.fungibleToWrappableMap ?? new Map()
+    );
+  };
+
+  static initFromApi = async (
+    config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
+    providerFactory: (typedChainId: number) => ethers.providers.Provider
+  ) => {
+    const evmOnChainConfig = EVMOnChainConfig.getInstance();
+    const substrateOnChainConfig = SubstrateOnChainConfig.getInstance();
+
+    const {
+      currenciesConfig: onChainConfig,
+      fungibleToWrappableMap: evmFungibleToWrappableMap,
+    } = await evmOnChainConfig.fetchCurrenciesConfig(
+      parsedAnchorConfig,
+      providerFactory
+    );
+
+    const { currenciesConfig, fungibleToWrappableMap: fungibleToWrappableMap } =
+      await substrateOnChainConfig.fetchCurrenciesConfig(
+        parsedAnchorConfig,
+        providerFactory as any, // Temporary providerFactory for substrate
+        onChainConfig,
+        evmFungibleToWrappableMap
+      );
+
+    const anchors = await getAnchorConfig(currenciesConfig);
+
+    const bridgeByAsset = await getBridgeConfigByAsset(currenciesConfig);
+
+    return new ApiConfig(
+      config.wallets ?? {},
+      config.chains ?? {},
+      currenciesConfig,
+      bridgeByAsset,
+      anchors,
+      fungibleToWrappableMap
     );
   };
 
@@ -64,24 +126,21 @@ export class ApiConfig {
   };
 
   getNativeCurrencySymbol = (evmId: number): string => {
-    const chain = Object.values(this.chains).find(
-      (chainsConfig) => chainsConfig.chainId === evmId
+    const currency = getNativeCurrencyFromConfig(
+      this.currencies,
+      calculateTypedChainId(ChainType.EVM, evmId)
     );
 
-    if (chain) {
-      const nativeCurrency = chain.nativeCurrencyId;
-
-      return this.currencies[nativeCurrency].symbol;
-    }
-
-    return 'Unknown';
+    return currency?.symbol ?? 'Unknown';
   };
+
   getCurrencyBySymbol(symbol: string): CurrencyConfig | undefined {
     const currency = Object.keys(this.currencies).find(
       (key) => this.currencies[key as any].symbol === symbol
     );
     return this.currencies[currency as any] ?? undefined;
   }
+
   getCurrencyByAddress(rawAddress: string): CurrencyConfig | undefined {
     const address = rawAddress.toLowerCase();
     const currency = Object.keys(this.currencies).find((key) => {

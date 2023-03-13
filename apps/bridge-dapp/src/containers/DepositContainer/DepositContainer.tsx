@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain, currenciesConfig } from '@webb-tools/dapp-config';
+import { Chain, getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import {
   useCurrencies,
   useCurrenciesBalances,
@@ -32,6 +32,7 @@ import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper
 import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
+import { CurrencyType } from '@webb-tools/dapp-types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 interface MainComponentProposVariants {
@@ -76,7 +77,6 @@ export const DepositContainer = forwardRef<
       switchChain,
       activeChain,
       activeWallet,
-      activeAccount,
       loading,
       noteManager,
       apiConfig: { currencies },
@@ -134,16 +134,21 @@ export const DepositContainer = forwardRef<
         .map((val) => {
           const maybeChain = chains[Number(val)];
           if (maybeChain) {
+            const currency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(maybeChain.chainType, maybeChain.chainId)
+            );
+
             return {
               name: maybeChain.name,
               tag: maybeChain.tag,
-              symbol: currenciesConfig[maybeChain.nativeCurrencyId].symbol,
+              symbol: currency?.symbol ?? 'Unknown',
             } as ChainType;
           }
           return undefined;
         })
         .filter((chain): chain is ChainType => !!chain);
-    }, [activeApi?.state?.activeBridge?.targets, chains]);
+    }, [activeApi?.state.activeBridge?.targets, chains, currencies]);
 
     const destChainInputValue = useMemo(
       () => destChains.find((chain) => chain.name === destChain?.name),
@@ -160,12 +165,17 @@ export const DepositContainer = forwardRef<
         setSourceChain(activeChain);
       }
 
+      const currency = getNativeCurrencyFromConfig(
+        currencies,
+        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+      );
+
       return {
         name: activeChain.name,
         tag: activeChain.tag,
-        symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
+        symbol: currency?.symbol ?? 'Unknown',
       };
-    }, [activeChain, sourceChain]);
+    }, [activeChain, currencies, sourceChain]);
 
     const bridgeFungibleCurrency = useMemo(() => {
       if (!fungibleCurrency) {
@@ -301,6 +311,12 @@ export const DepositContainer = forwardRef<
       setMainComponentName('source-chain-list-card');
     }, [setMainComponentName]);
 
+    const handleResetState = useCallback(() => {
+      setAmount(0);
+      setDestChain(undefined);
+      setMainComponentName(undefined);
+    }, []);
+
     // Main action on click
     const handleDepositButtonClick = useCallback(async () => {
       // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -364,6 +380,7 @@ export const DepositContainer = forwardRef<
         destChain: destChainInputValue,
         note: newNote,
         resetMainComponent: resetMainComponent,
+        onResetState: handleResetState,
       });
 
       setMainComponentName('deposit-confirm-container');
@@ -382,6 +399,7 @@ export const DepositContainer = forwardRef<
       selectedSourceChain,
       destChainInputValue,
       resetMainComponent,
+      handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
     ]);
@@ -683,6 +701,28 @@ export const DepositContainer = forwardRef<
         setMainComponentName(undefined);
       }
     }, [walletState]);
+
+    // Side effect to auto set the wrappable currency if user has no balance of fungible currency
+    useEffect(() => {
+      // If the user has no balance of the fungible currency
+      if (
+        fungibleCurrency &&
+        balances[fungibleCurrency.id] === 0 &&
+        !wrappableCurrency &&
+        wrappableCurrencies.length > 0
+      ) {
+        const native = wrappableCurrencies.find(
+          (currency) => currency.view.type === CurrencyType.NATIVE
+        );
+        setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
+      }
+    }, [
+      balances,
+      fungibleCurrency,
+      setWrappableCurrency,
+      wrappableCurrencies,
+      wrappableCurrency,
+    ]);
 
     // Side effect to set the education card step
     useEffect(() => {
