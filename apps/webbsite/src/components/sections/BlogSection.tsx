@@ -43,7 +43,7 @@ export const BlogSection = ({
   return (
     <div className="px-4 mt-[18px]">
       <Heading3 className="mb-8 blog-section-title text-mono-200">
-        {type === 'post' ? 'Writing By Topic' : 'Videos By Topic'}
+        {type === 'post' ? 'Writings' : 'Media & Press'}
       </Heading3>
 
       <div className="mb-8 flex flex-wrap">
@@ -62,14 +62,24 @@ export const BlogSection = ({
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
         {filteredItems.map(
-          ({ metadata: { id, title, slug, tags, cover, link } }) => (
+          ({
+            metadata: { id, title, slug, tags, cover, link, type: blogType },
+          }) => (
             <BlogCard
               key={id}
               title={title}
               tags={tags}
               cover={cover}
+              blogType={blogType}
               type={type}
-              link={link ? link : `/blog/posts/${slug}`}
+              link={
+                (type === 'post' && blogType === 'research' && link) ||
+                (type === 'video' && !blogType && link)
+                  ? link
+                  : type === 'post' && blogType === 'post'
+                  ? `/blog/posts/${slug}`
+                  : ''
+              }
             />
           )
         )}
