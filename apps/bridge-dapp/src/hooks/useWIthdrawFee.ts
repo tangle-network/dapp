@@ -113,6 +113,8 @@ export const useWithdrawFee = (
         leavesMap,
       });
 
+      console.log('gasAmount', gasAmount.toNumber());
+
       const feeInfo = await relayer.getFeeInfo(
         currentTypedChainId,
         vanchorAddr,
