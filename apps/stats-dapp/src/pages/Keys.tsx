@@ -19,9 +19,6 @@ const Keys = () => {
     };
   }, [data]);
 
-  console.log('currentKey', currentKey?.start?.toLocaleString());
-  console.log('nextKey', nextKey?.start?.toLocaleString());
-
   const { time } = useStatsContext();
 
   if (isLoading || currentKey === null || nextKey === null) {
