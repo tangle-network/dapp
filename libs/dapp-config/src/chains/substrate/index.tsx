@@ -1,8 +1,4 @@
-import {
-  CurrencyId,
-  PresetTypedChainId,
-  SubstrateChainId,
-} from '@webb-tools/dapp-types';
+import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
 import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
@@ -19,8 +15,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
     name: 'Substrate',
-    currencies: [CurrencyId.WEBB, CurrencyId.TEST],
-    nativeCurrencyId: CurrencyId.WEBB,
   },
   [PresetTypedChainId.LocalTangleStandalone]: {
     chainType: ChainType.Substrate,
@@ -30,8 +24,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: WEBBLogo,
     url: 'wss://standalone.webb.tools',
     name: 'Tangle',
-    currencies: [CurrencyId.WEBB],
-    nativeCurrencyId: CurrencyId.WEBB,
   },
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
@@ -41,8 +33,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: KSMLogo,
     url: 'wss://kusama-rpc.polkadot.io',
     name: 'Kusama',
-    currencies: [CurrencyId.KSM],
-    nativeCurrencyId: CurrencyId.KSM,
   },
   [PresetTypedChainId.Polkadot]: {
     chainType: ChainType.PolkadotRelayChain,
@@ -52,7 +42,5 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: DOTLogo,
     url: 'wss://rpc.polkadot.io',
     name: 'Polkadot',
-    currencies: [CurrencyId.DOT],
-    nativeCurrencyId: CurrencyId.DOT,
   },
 };

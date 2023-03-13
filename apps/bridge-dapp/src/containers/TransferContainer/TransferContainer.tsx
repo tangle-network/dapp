@@ -1,10 +1,6 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import {
-  Chain,
-  chainsPopulated,
-  currenciesConfig,
-} from '@webb-tools/dapp-config';
+import { Chain, chainsPopulated } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
@@ -58,9 +54,10 @@ export const TransferContainer = forwardRef<
     const { fungibleCurrency, setFungibleCurrency } = useBridge();
 
     const {
-      activeChain,
       activeApi,
+      activeChain,
       activeWallet,
+      apiConfig,
       loading,
       noteManager,
       switchChain,
@@ -140,7 +137,7 @@ export const TransferContainer = forwardRef<
         return Array.from(allNotes.values()).reduce((acc, notes) => {
           notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
             const tkSymbol = tokenSymbol;
-            const currency = Object.values(currenciesConfig).find(
+            const currency = Object.values(apiConfig.currencies).find(
               (currency) => currency.symbol === tkSymbol
             );
 
@@ -188,7 +185,7 @@ export const TransferContainer = forwardRef<
 
           return acc;
         }, {} as CurrencyRecordWithChainsType);
-      }, [allNotes]);
+      }, [allNotes, apiConfig.currencies]);
 
     // Get balance record from notes
     const balanceRecordFromNotes = useMemo<CurrencyBalanceRecordType>(() => {
@@ -200,7 +197,7 @@ export const TransferContainer = forwardRef<
         notes.forEach(
           ({ note: { tokenSymbol, targetChainId, amount, denomination } }) => {
             const tkSymbol = tokenSymbol;
-            const currency = Object.values(currenciesConfig).find(
+            const currency = Object.values(apiConfig.currencies).find(
               (currency) => currency.symbol === tkSymbol
             );
 
@@ -239,7 +236,7 @@ export const TransferContainer = forwardRef<
 
         return acc;
       }, {} as CurrencyBalanceRecordType);
-    }, [allNotes]);
+    }, [allNotes, apiConfig.currencies]);
 
     // Parse the available assets from currency record
     const bridgingAssets = useMemo((): AssetType[] => {

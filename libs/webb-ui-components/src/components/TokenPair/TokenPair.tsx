@@ -16,8 +16,8 @@ export const TokenPair = forwardRef<HTMLDivElement, TokenPairProps>(
           ref={ref}
         >
           <div className="flex items-center -space-x-2">
-            <TokenIcon size="lg" name={token1Symbol.toLowerCase()} />
-            <TokenIcon size="lg" name={token2Symbol.toLowerCase()} />
+            <TokenIcon size="lg" name={token1Symbol} />
+            <TokenIcon size="lg" name={token2Symbol} />
           </div>
           <p>
             <Typography
@@ -26,16 +26,16 @@ export const TokenPair = forwardRef<HTMLDivElement, TokenPairProps>(
               fw="bold"
               className="block"
             >
-              {token1Symbol.toUpperCase()}/{token2Symbol.toUpperCase()}
+              {token1Symbol}/{token2Symbol}
             </Typography>
             {name && (
               <Typography
                 component="span"
                 variant="utility"
                 fw="bold"
-                className="uppercase text-mono-100 dark:text-mono-80 block mt-0.5"
+                className="text-mono-100 dark:text-mono-80 block mt-0.5"
               >
-                {name.toUpperCase()}
+                {name}
               </Typography>
             )}
           </p>
