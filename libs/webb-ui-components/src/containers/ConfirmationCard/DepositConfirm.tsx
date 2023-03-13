@@ -56,7 +56,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         symbolStr += `${wrappableTokenSymbol.trim()}/`;
       }
 
-      symbolStr += fungibleTokenSymbol.toUpperCase();
+      symbolStr += fungibleTokenSymbol;
 
       return `${amount ?? '0'} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);

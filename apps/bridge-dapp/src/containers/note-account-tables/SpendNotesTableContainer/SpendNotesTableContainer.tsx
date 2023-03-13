@@ -56,7 +56,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
 
       return (
         <div className="flex items-center space-x-1.5">
-          <Typography className="uppercase" variant="body1" fw="bold">
+          <Typography variant="body1" fw="bold">
             {fungibleTokenSymbol}
           </Typography>
 

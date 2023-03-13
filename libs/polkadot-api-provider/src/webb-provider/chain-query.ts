@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
-import { CurrencyId } from '@webb-tools/dapp-types';
 
 import { SignedBlock } from '@polkadot/types/interfaces';
 import { OrmlTokensAccountData } from '@polkadot/types/lookup';
@@ -68,10 +67,10 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
   tokenBalanceByCurrencyId(
     typedChainId: number,
-    currency: CurrencyId
+    currencyId: number
   ): Observable<string> {
     const assetId =
-      this.inner.config.currencies[currency].addresses.get(typedChainId);
+      this.inner.config.currencies[currencyId].addresses.get(typedChainId);
     if (!assetId) {
       return throwError(`unable to find asset`);
     }

@@ -3,7 +3,7 @@
 
 // The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
 
-import { CurrencyId, EVMChainId } from '@webb-tools/dapp-types';
+import { EVMChainId } from '@webb-tools/dapp-types';
 import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
 import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
@@ -30,15 +30,13 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://goerli.etherscan.io',
     logo: EtherLogo,
     tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.OptimismTestnet,
     name: 'Optimism',
-    url: 'https://goerli.optimism.io',
+    url: 'https://endpoints.omniatech.io/v1/op/goerli/public',
     evmRpcUrls: [
       'https://endpoints.omniatech.io/v1/op/goerli/public',
       'https://optimism-goerli.infura.io/v3',
@@ -48,8 +46,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://blockscout.com/optimism/goerli',
     logo: OptimismLogo,
     tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
     chainType: ChainType.EVM,
@@ -65,8 +61,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://goerli.arbiscan.io/',
     logo: ArbitrumLogo,
     tag: 'test',
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     chainType: ChainType.EVM,
@@ -82,8 +76,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
-    currencies: [CurrencyId.MATIC, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.MATIC,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     chainType: ChainType.EVM,
@@ -94,8 +86,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5001',
     evmRpcUrls: ['http://127.0.0.1:5001'],
     logo: GanacheLogo,
-    currencies: [CurrencyId.webbDEV, CurrencyId.DEV, CurrencyId.ETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
     chainType: ChainType.EVM,
@@ -106,8 +96,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5002',
     evmRpcUrls: ['http://127.0.0.1:5002'],
     logo: GanacheLogo,
-    currencies: [CurrencyId.webbDEV, CurrencyId.DEV, CurrencyId.ETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
     chainType: ChainType.EVM,
@@ -118,8 +106,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     url: 'http://127.0.0.1:5003',
     evmRpcUrls: ['http://127.0.0.1:5003'],
     logo: GanacheLogo,
-    currencies: [CurrencyId.webbDEV, CurrencyId.DEV, CurrencyId.ETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
     chainType: ChainType.EVM,
@@ -135,8 +121,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     blockExplorerStub: 'https://moonbase.moonscan.io/',
     logo: MoonbeamLogo,
-    currencies: [CurrencyId.WETH, CurrencyId.moonDEV, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.moonDEV,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
     chainType: ChainType.EVM,
@@ -153,8 +137,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
       'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
     ],
     logo: EtherLogo,
-    currencies: [CurrencyId.ETH, CurrencyId.WETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
     chainType: ChainType.EVM,

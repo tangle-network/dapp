@@ -257,7 +257,7 @@ export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
               <Typography
                 variant="body1"
                 fw="bold"
-                className="uppercase text-mono-140 dark:text-mono-80"
+                className="text-mono-140 dark:text-mono-80"
               >
                 {tokenPairString}
               </Typography>
