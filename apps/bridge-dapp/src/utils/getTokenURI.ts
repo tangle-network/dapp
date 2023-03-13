@@ -1,11 +1,6 @@
-import { currenciesConfig } from '@webb-tools/dapp-config';
-import { webbCurrencyIdFromString } from '@webb-tools/dapp-types';
-import { chainsConfig } from '@webb-tools/dapp-config';
+import { CurrencyConfig, chainsConfig } from '@webb-tools/dapp-config';
 
-export const getTokenURI = (token: string, chainID: string) => {
-  const tokenID = webbCurrencyIdFromString(token);
-  const currency = currenciesConfig[tokenID];
-
+export const getTokenURI = (currency: CurrencyConfig, chainID: string) => {
   const blockExplorerStub =
     chainsConfig[Number(chainID)]?.blockExplorerStub ?? '';
 

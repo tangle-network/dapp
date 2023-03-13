@@ -27,7 +27,7 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { currenciesConfig } from '@webb-tools/dapp-config';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
 import {
   WalletState,
@@ -59,6 +59,7 @@ export const WithdrawContainer = forwardRef<
     activeApi,
     activeChain,
     activeWallet,
+    apiConfig,
     loading,
     noteManager,
     switchChain,
@@ -352,29 +353,46 @@ export const WithdrawContainer = forwardRef<
       return;
     }
 
-    const activeChainType = activeChain
-      ? {
-          name: activeChain.name,
-          tag: activeChain.tag,
-          symbol: currenciesConfig[activeChain.nativeCurrencyId].symbol,
-        }
-      : undefined;
+    if (!activeChain) {
+      return;
+    }
+
+    const activeChainType = {
+      name: activeChain.name,
+      tag: activeChain.tag,
+      symbol:
+        getNativeCurrencyFromConfig(
+          apiConfig.currencies,
+          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+        )?.symbol ?? 'Unknown',
+    };
 
     setMainComponent(
       <ChainListCardWrapper
         chainType="dest"
         onlyCategory={activeChain?.tag}
-        chains={otherAvailableChains.map((chain) => ({
-          name: chain.name,
-          tag: chain.tag,
-          symbol: currenciesConfig[chain.nativeCurrencyId].symbol,
-        }))}
+        chains={otherAvailableChains.map((chain) => {
+          const currency = getNativeCurrencyFromConfig(
+            apiConfig.currencies,
+            calculateTypedChainId(chain.chainType, chain.chainId)
+          );
+          if (!currency) {
+            console.error('No currency found for chain', chain.name);
+          }
+
+          return {
+            name: chain.name,
+            tag: chain.tag,
+            symbol: currency?.symbol ?? 'Unknown',
+          };
+        })}
         value={activeChainType}
       />
     );
   }, [
     activeChain,
     activeWallet,
+    apiConfig,
     otherAvailableChains,
     setMainComponent,
     switchChain,
