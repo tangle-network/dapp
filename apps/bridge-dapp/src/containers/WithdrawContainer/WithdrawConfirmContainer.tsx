@@ -32,20 +32,22 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
-      changeUtxo,
-      changeNote,
-      availableNotes,
       amount,
+      amountAfterFees,
+      availableNotes,
       changeAmount,
+      changeNote,
+      changeUtxo,
       fees,
-      targetChainId,
       fungibleCurrency: fungibleCurrencyProp,
-      unwrapCurrency: { value: unwrapCurrency } = {},
+      isRefund,
       onResetState,
-      refundAmount,
-      refundToken,
-      refundExchangeRate,
       recipient,
+      refundAmount,
+      refundExchangeRate: refundExchangeRateProp,
+      refundToken,
+      targetChainId,
+      unwrapCurrency: { value: unwrapCurrency } = {},
       ...props
     },
     ref
@@ -181,6 +183,8 @@ export const WithdrawConfirmContainer = forwardRef<
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
 
+      const amount = Number(ethers.utils.formatEther(amountAfterFees));
+
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
         tokens: [tokenSymbol, unwrapTokenSymbol],
@@ -200,16 +204,14 @@ export const WithdrawConfirmContainer = forwardRef<
           noteManager?.addNote(changeNote);
         }
 
-        const refund = refundAmount ?? 0;
+        const refund = refundAmount ?? BigNumber.from(0);
 
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
           changeUtxo,
           recipient,
-          refundAmount: BigNumber.from(
-            ethers.utils.parseEther(refund.toString())
-          ),
-          feeAmount: BigNumber.from(ethers.utils.parseEther(fees.toString())),
+          refundAmount: refund,
+          feeAmount: fees,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -260,7 +262,7 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       apiConfig,
-      amount,
+      amountAfterFees,
       txQueueApi,
       setMainComponent,
       refundAmount,
@@ -272,17 +274,39 @@ export const WithdrawConfirmContainer = forwardRef<
       onResetState,
     ]);
 
-    const amountAfterRefund = useMemo(() => {
+    const formattedFees = useMemo(() => {
+      const feesInEthers = Number(ethers.utils.formatEther(fees));
+
+      return getRoundedAmountString(feesInEthers, 3, Math.round);
+    }, [fees]);
+
+    const formattedRefund = useMemo(() => {
       if (!refundAmount) {
-        return getRoundedAmountString(amount);
+        return undefined;
       }
 
-      return getRoundedAmountString(
-        amount - refundAmount / (refundExchangeRate ?? 1)
-      );
-    }, [amount, refundAmount, refundExchangeRate]);
+      const refundInEthers = Number(ethers.utils.formatEther(refundAmount));
 
-    const formattedFees = useMemo(() => getRoundedAmountString(fees), [fees]);
+      return getRoundedAmountString(refundInEthers, 3, Math.round);
+    }, [refundAmount]);
+
+    const remainingAmount = useMemo(() => {
+      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFees));
+
+      return getRoundedAmountString(amountInEthers, 3, Math.round);
+    }, [amountAfterFees]);
+
+    const refundExchangeRate = useMemo(() => {
+      if (!refundExchangeRateProp) {
+        return;
+      }
+
+      const exchangeRate = Number(
+        ethers.utils.formatEther(refundExchangeRateProp)
+      );
+
+      return getRoundedAmountString(exchangeRate, 3, Math.round);
+    }, [refundExchangeRateProp]);
 
     return (
       <WithdrawConfirm
@@ -306,12 +330,12 @@ export const WithdrawConfirmContainer = forwardRef<
           children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
-        refundAmount={refundAmount}
-        refundToken={refundToken}
+        refundAmount={isRefund ? formattedRefund : undefined}
+        refundToken={isRefund ? refundToken : undefined}
         receivingInfo={
-          refundExchangeRate ? (
+          refundExchangeRate && isRefund ? (
             <ExchangeRateInfo
-              exchangeRate={refundExchangeRate}
+              exchangeRate={ethers.utils.formatEther(refundExchangeRate)}
               fungibleTokenSymbol={fungibleCurrency?.view.symbol}
               nativeTokenSymbol={unwrapCurrency?.view.symbol}
             />
@@ -321,7 +345,7 @@ export const WithdrawConfirmContainer = forwardRef<
         onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
-        remainingAmount={amountAfterRefund}
+        remainingAmount={remainingAmount}
         fee={formattedFees}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}

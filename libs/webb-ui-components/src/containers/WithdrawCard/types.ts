@@ -108,4 +108,15 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
    * The withdraw button props
    */
   withdrawBtnProps?: ComponentProps<typeof Button>;
+
+  /**
+   * The description message display below the withdraw button
+   */
+  buttonDesc?: string;
+
+  /**
+   * The variant of message display below the withdraw button
+   * @default 'info'
+   */
+  buttonDescVariant?: 'info' | 'error';
 }

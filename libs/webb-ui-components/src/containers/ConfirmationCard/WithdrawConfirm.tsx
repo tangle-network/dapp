@@ -140,30 +140,42 @@ export const WithdrawConfirm = forwardRef<
                     amount={amount}
                   />
                   <ArrowRight />
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
                     <TokenWithAmount
                       token1Symbol={token2Symbol}
                       amount={remainingAmount}
                     />
                     {refundAmount && refundToken && (
-                      <TokenWithAmount
-                        token1Symbol={refundToken}
-                        amount={refundAmount}
-                      />
+                      <>
+                        <Typography variant="body1" fw="semibold">
+                          +
+                        </Typography>
+
+                        <TokenWithAmount
+                          token1Symbol={refundToken}
+                          amount={refundAmount}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <TokenWithAmount
                     token1Symbol={token1Symbol}
                     amount={remainingAmount}
                   />
                   {refundAmount && refundToken && (
-                    <TokenWithAmount
-                      token1Symbol={refundToken}
-                      amount={refundAmount}
-                    />
+                    <>
+                      <Typography variant="body1" fw="semibold">
+                        +
+                      </Typography>
+
+                      <TokenWithAmount
+                        token1Symbol={refundToken}
+                        amount={refundAmount}
+                      />
+                    </>
                   )}
                 </div>
               )}

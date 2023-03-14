@@ -316,7 +316,7 @@ export const WithdrawContainer = forwardRef<
 
     let feeWei = feeInfo.estimatedFee;
 
-    if (refundAmount) {
+    if (refundAmount && isRefund) {
       const exchangeRate = Number(
         ethers.utils.formatEther(feeInfo.refundExchangeRate)
       );
@@ -328,7 +328,7 @@ export const WithdrawContainer = forwardRef<
     }
 
     return feeWei;
-  }, [feeInfo, refundAmount]);
+  }, [feeInfo, isRefund, refundAmount]);
 
   const isDisabledWithdraw = useMemo(() => {
     const totalFee = Number(
@@ -388,16 +388,19 @@ export const WithdrawContainer = forwardRef<
     selectedUnwrapToken,
   ]);
 
-  const amountAfterFee = useMemo(() => {
+  const amountAfterFeeWei = useMemo(() => {
+    const amountWei = ethers.utils.parseEther(amount.toString());
     if (!totalFeeInWei) {
-      return amount;
+      return amountWei;
     }
 
-    return amount - Number(ethers.utils.formatEther(totalFeeInWei));
+    return amountWei.sub(totalFeeInWei);
   }, [amount, totalFeeInWei]);
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
+    const amountAfterFee = Number(ethers.utils.formatEther(amountAfterFeeWei));
+
     const receivingAmount = isValidAmount
       ? getRoundedAmountString(amountAfterFee, 3, Math.round)
       : undefined;
@@ -419,7 +422,7 @@ export const WithdrawContainer = forwardRef<
     };
   }, [
     amount,
-    amountAfterFee,
+    amountAfterFeeWei,
     availableAmount,
     fungibleCurrency?.view.symbol,
     isUnwrap,
@@ -630,9 +633,10 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={
-          totalFeeInWei ? Number(ethers.utils.formatEther(totalFeeInWei)) : 0
-        }
+        fees={totalFeeInWei ?? BigNumber.from(0)}
+        amountAfterFees={amountAfterFeeWei}
+        refundExchangeRate={feeInfo?.refundExchangeRate}
+        isRefund={isRefund}
         fungibleCurrency={{
           value: fungibleCurrency,
           balance: availableAmount,
@@ -642,13 +646,8 @@ export const WithdrawContainer = forwardRef<
             ? { value: wrappableCurrency }
             : undefined
         }
-        refundAmount={refundAmount}
+        refundAmount={ethers.utils.parseEther(refundAmount.toString())}
         refundToken={currentNativeCurrency?.symbol}
-        refundExchangeRate={
-          feeInfo
-            ? +ethers.utils.formatEther(feeInfo.refundExchangeRate)
-            : undefined
-        }
         recipient={recipient}
         onResetState={handleResetState}
       />
@@ -657,6 +656,7 @@ export const WithdrawContainer = forwardRef<
     activeApi?.state.activeBridge,
     activeRelayer,
     amount,
+    amountAfterFeeWei,
     availableAmount,
     availableNotesFromManager,
     currentNativeCurrency?.symbol,
@@ -668,6 +668,7 @@ export const WithdrawContainer = forwardRef<
     handleSwitchToOtherDestChains,
     hasNoteAccount,
     isDisabledWithdraw,
+    isRefund,
     isUnwrap,
     isWalletConnected,
     noteManager,
@@ -728,21 +729,20 @@ export const WithdrawContainer = forwardRef<
         return;
       }
 
-      const maxRefundOnRelayer = feeInfo?.maxRefund.toNumber() ?? 0;
-      const exchangeRate = feeInfo
-        ? parseFloat(ethers.utils.formatEther(feeInfo.refundExchangeRate))
-        : 1;
-      const maxRefundOnAmount = amount / exchangeRate;
-      if (parsedValue > maxRefundOnRelayer || parsedValue > maxRefundOnAmount) {
-        const maxVal = Math.min(maxRefundOnRelayer, maxRefundOnAmount);
-        setRefundAmountError(`Amount must be less than or equal to ${maxVal}`);
+      const maxRefundOnRelayer = Number(
+        ethers.utils.formatEther(feeInfo?.maxRefund ?? '0')
+      );
+      if (parsedValue > maxRefundOnRelayer) {
+        setRefundAmountError(
+          `Amount must be less than or equal to ${maxRefundOnRelayer}`
+        );
         return;
       }
 
       setRefundAmountError('');
       setRefundAmount(parsedValue);
     },
-    [amount, feeInfo]
+    [feeInfo]
   );
 
   const refundAmountInputProps = useMemo<ComponentProps<typeof AmountInput>>(
@@ -755,20 +755,30 @@ export const WithdrawContainer = forwardRef<
         if (!feeInfo) {
           return;
         }
-
-        const exchangeRate = parseFloat(
-          ethers.utils.formatEther(feeInfo.refundExchangeRate)
-        );
-        const maxRefundOnAmount = amount / exchangeRate;
-        const maxVal = Math.min(
-          feeInfo.maxRefund.toNumber(),
-          maxRefundOnAmount
-        );
-        setRefundAmount(maxVal);
+        const maxRefund = Number(ethers.utils.formatEther(feeInfo.maxRefund));
+        setRefundAmount(maxRefund);
       },
     }),
-    [amount, feeInfo, parseRefundAmount, refundAmount, refundAmountError]
+    [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
+
+  const formattedRefundAmount = useMemo(
+    () => getRoundedAmountString(refundAmount, 3, Math.floor),
+    [refundAmount]
+  );
+
+  const buttonDesc = useMemo(() => {
+    if (!totalFeeInWei) {
+      return undefined;
+    }
+
+    const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
+    const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+
+    if (amount < totalFee) {
+      return `Insufficient funds. You need more than ${formattedFee} to cover the fees`;
+    }
+  }, [amount, totalFeeInWei]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
@@ -826,6 +836,8 @@ export const WithdrawContainer = forwardRef<
   useEffect(() => {
     if (!feeInfo) {
       setIsRefund(false);
+      setRefundAmount(0);
+      setRefundAmountError('');
     }
   }, [feeInfo]);
 
@@ -982,10 +994,12 @@ export const WithdrawContainer = forwardRef<
             />
           ) : undefined
         }
-        refundAmount={refundAmount}
+        refundAmount={isRefund ? formattedRefundAmount : undefined}
         refundToken={currentNativeCurrency?.symbol}
         remainderAmount={infoCalculated.remainderAmount}
         remainderToken={infoCalculated.remainderTokenSymbol}
+        buttonDesc={buttonDesc}
+        buttonDescVariant="error"
       />
     </div>
   );

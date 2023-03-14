@@ -1,6 +1,12 @@
+import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+
+const buttonDescVariantClasses = {
+  info: cx('text-mono-100 dark:text-mono-80'),
+  error: cx('text-red-70 dark:text-red-50'),
+};
 
 import {
   AmountInput,
@@ -20,6 +26,8 @@ import { WithdrawCardProps } from './types';
 export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
   (
     {
+      buttonDesc,
+      buttonDescVariant = 'info',
       className,
       customAmountInputProps,
       feeAmount,
@@ -187,13 +195,29 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           </div>
         </div>
 
-        <Button
-          {...withdrawBtnProps}
-          isFullWidth
-          className={twMerge('justify-center')}
-        >
-          {withdrawBtnProps?.children ?? 'Withdraw'}
-        </Button>
+        <div className="space-y-2">
+          <Button
+            {...withdrawBtnProps}
+            isFullWidth
+            className={twMerge('justify-center')}
+          >
+            {withdrawBtnProps?.children ?? 'Withdraw'}
+          </Button>
+
+          {buttonDesc && (
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className={cx(
+                'flex items-center',
+                buttonDescVariantClasses[buttonDescVariant]
+              )}
+            >
+              <InformationLine className="!fill-current shrink-0 mr-1" />
+              {buttonDesc}
+            </Typography>
+          )}
+        </div>
       </div>
     );
   }

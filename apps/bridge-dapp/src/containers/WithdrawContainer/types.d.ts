@@ -8,6 +8,7 @@ import {
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import { BridgeTabContainerProps } from '../types';
 import { Note, Utxo } from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 
 export interface WithdrawContainerProps
   extends BridgeTabContainerProps,
@@ -48,7 +49,12 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The fee number
    */
-  fees: number;
+  fees: BigNumber;
+
+  /**
+   * The amount after fees
+   */
+  amountAfterFees: BigNumber;
 
   /**
    * Recipient address
@@ -73,7 +79,7 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * Refund amount
    */
-  refundAmount?: number;
+  refundAmount?: BigNumber;
 
   /**
    * Refund token
@@ -83,7 +89,12 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * Refund exchange rate
    */
-  refundExchangeRate?: number;
+  refundExchangeRate?: BigNumber;
+
+  /**
+   * The boolean to check if the user selected refund
+   */
+  isRefund?: boolean;
 
   /**
    * The callbacl to reset the parent state
