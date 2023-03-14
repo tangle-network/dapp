@@ -131,7 +131,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                   </div>
 
                   {isConnectingToChain && isSelectedToConnect ? (
-                    <Chip className="cursor-default" color="green">
+                    <Chip className="cursor-default" color="yellow">
                       Connecting
                     </Chip>
                   ) : null}
@@ -145,7 +145,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                   ) : null}
 
                   {isConnected && !isConnectingToChain ? (
-                    <Chip className="cursor-default" color="yellow">
+                    <Chip className="cursor-default" color="green">
                       Connected
                     </Chip>
                   ) : null}

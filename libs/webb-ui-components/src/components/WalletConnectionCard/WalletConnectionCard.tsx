@@ -1,13 +1,13 @@
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { cloneElement, forwardRef, useMemo } from 'react';
+import { cloneElement, forwardRef, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { Button } from '../Button';
 import { ListItem } from '../ListCard/ListItem';
 import { WalletConnectionCardProps } from './types';
 import { Wallet } from '@webb-tools/dapp-config';
+import { getPlatformMetaData } from '@webb-tools/browser-utils/platform/get-platform-metadata';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,
@@ -148,6 +148,18 @@ const WalletContent = forwardRef<
     { className, connectingWallet, failedWallet, onTryAgainBtnClick, ...props },
     ref
   ) => {
+    useEffect(() => {
+      if (
+        failedWallet &&
+        failedWallet.installLinks &&
+        Object.keys(failedWallet.installLinks).length > 0
+      ) {
+        const { id } = getPlatformMetaData();
+
+        window.open(failedWallet.installLinks[id], '_blank');
+      }
+    }, [failedWallet]);
+
     return (
       <div
         {...props}
@@ -172,7 +184,8 @@ const WalletContent = forwardRef<
               className="text-red-70 dark:text-red-70"
               ta="center"
             >
-              Connection failed
+              Connection Failed! Please check if your wallet is installed and
+              try again.
             </Typography>
 
             <Button className="mx-auto" onClick={onTryAgainBtnClick}>
