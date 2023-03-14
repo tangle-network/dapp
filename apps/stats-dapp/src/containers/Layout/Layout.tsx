@@ -147,7 +147,6 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
       <ApolloProvider client={apolloClient}>
         <StatsProvider
-          sessionHeight={600}
           subqueryEndpoint={subqueryEndpoint}
           polkadotEndpoint={polkadotEndpoint}
         >
