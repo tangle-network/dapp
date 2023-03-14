@@ -1,4 +1,3 @@
-import * as constants from '@webb-tools/webb-ui-components/constants';
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -43,7 +42,7 @@ type StatsProvidervalue = {
   children?: React.ReactNode;
   // Number of seconds for a block to be generated
   blockTime: number;
-  // Number of blocks for a session
+  // Number of blocks for a session * 12 seconds
   sessionHeight: number;
   //SubQuery synced time object
   time: SubQlTime;
@@ -94,7 +93,7 @@ class SubQlTime {
 const statsContext: React.Context<StatsProvidervalue> =
   React.createContext<StatsProvidervalue>({
     blockTime: 0,
-    sessionHeight: 10,
+    sessionHeight: 0,
     time: new SubQlTime(new Date()),
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     updateTime(_time: SubQlTime): void {},
@@ -109,9 +108,11 @@ const statsContext: React.Context<StatsProvidervalue> =
     subqueryEndpoint: '',
     polkadotEndpoint: '',
   });
+
 export function useStatsContext() {
   return useContext(statsContext);
 }
+
 export const useSubQLtime = (): SubQlTime => {
   const ctx = useContext(statsContext);
 
@@ -126,16 +127,24 @@ export const useStaticConfig = () => {
     };
   }, [sessionHeight]);
 };
+
 export const useActiveSession = () => {
   const {
     metaData: { activeSession },
   } = useStatsContext();
   return activeSession;
 };
+
 export const StatsProvider: React.FC<
   Omit<
     StatsProvidervalue,
-    'blockTime' | 'isReady' | 'metaData' | 'updateTime' | 'time' | 'api'
+    | 'blockTime'
+    | 'isReady'
+    | 'metaData'
+    | 'updateTime'
+    | 'time'
+    | 'api'
+    | 'sessionHeight'
   >
 > = (props) => {
   const [blockTime, setBlockTime] = useState(0);
@@ -147,14 +156,9 @@ export const StatsProvider: React.FC<
     lastSession: '',
     activeSessionBlock: 0,
   });
-  const [staticConfig] = useState<{
-    sessionHeight: number;
-  }>({
-    sessionHeight: props.sessionHeight,
-  });
   const [isReady, setIsReady] = useState(false);
   const [api, setApi] = useState<ApiPromise | undefined>();
-
+  const [sessionHeight, setSessionHeight] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -177,7 +181,7 @@ export const StatsProvider: React.FC<
     return {
       blockTime,
       time,
-      ...staticConfig,
+      sessionHeight,
       updateTime: (time: SubQlTime) => {
         setTime(time);
       },
@@ -188,7 +192,8 @@ export const StatsProvider: React.FC<
       subqueryEndpoint: props.subqueryEndpoint,
       polkadotEndpoint: props.polkadotEndpoint,
     };
-  }, [staticConfig, metaData, isReady, time, api, isDarkMode]);
+  }, [sessionHeight, metaData, isReady, time, api, isDarkMode]);
+
   const query = useLastBlockQuery();
 
   useEffect(() => {
@@ -199,6 +204,9 @@ export const StatsProvider: React.FC<
       const blockTime =
         (Number(await apiPromise.consts.timestamp.minimumPeriod) * 2) / 1000;
       setBlockTime(blockTime);
+      const sessionPeriod = await apiPromise.consts.dkg.sessionPeriod;
+      const sessionHeight = Number(sessionPeriod.toString()) * 12;
+      setSessionHeight(sessionHeight);
     };
 
     getPromiseApi();
@@ -222,11 +230,14 @@ export const StatsProvider: React.FC<
           setTime(val);
         }
       });
+
     return () => subscription.unsubscribe();
   }, [query]);
+
   const metaDataQuery = useMetaDataQuery({
     fetchPolicy: 'cache-and-network',
   });
+
   useEffect(() => {
     const unSub = metaDataQuery.observable
       .map((r): Metadata | null => {
@@ -255,7 +266,7 @@ export const StatsProvider: React.FC<
         }
       });
     return () => unSub.unsubscribe();
-  }, [query, metaDataQuery, isReady, staticConfig]);
+  }, [query, metaDataQuery, isReady, sessionHeight]);
 
   useEffect(() => {
     query.startPolling(blockTime * 1000 * 10);
@@ -265,7 +276,7 @@ export const StatsProvider: React.FC<
       query.stopPolling();
       metaDataQuery.stopPolling();
     };
-  }, [query, metaDataQuery, staticConfig, blockTime]);
+  }, [query, metaDataQuery, sessionHeight, blockTime]);
 
   return (
     <statsContext.Provider value={value}>
