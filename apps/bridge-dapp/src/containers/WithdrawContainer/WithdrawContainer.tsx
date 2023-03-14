@@ -165,12 +165,15 @@ export const WithdrawContainer = forwardRef<
   );
 
   const currentNativeCurrency = useMemo(() => {
-    if (!activeChain) {
+    if (!currentTypedChainId) {
       return undefined;
     }
 
-    return apiConfig.currencies[activeChain.nativeCurrencyId];
-  }, [activeChain, apiConfig.currencies]);
+    return getNativeCurrencyFromConfig(
+      apiConfig.currencies,
+      currentTypedChainId
+    );
+  }, [apiConfig.currencies, currentTypedChainId]);
 
   const availableAmount: number = useMemo(() => {
     if (!availableNotesFromManager) {
@@ -306,13 +309,39 @@ export const WithdrawContainer = forwardRef<
     return shieldedAssets.map((asset) => asset.rawChain);
   }, [availableAmount, shieldedAssets]);
 
+  const totalFeeInWei = useMemo(() => {
+    if (!feeInfo) {
+      return undefined;
+    }
+
+    let feeWei = feeInfo.estimatedFee;
+
+    if (refundAmount) {
+      const exchangeRate = Number(
+        ethers.utils.formatEther(feeInfo.refundExchangeRate)
+      );
+      const refundAmountWei = ethers.utils.parseEther(
+        (refundAmount * exchangeRate).toString()
+      );
+
+      feeWei = feeWei.add(refundAmountWei);
+    }
+
+    return feeWei;
+  }, [feeInfo, refundAmount]);
+
   const isDisabledWithdraw = useMemo(() => {
+    const totalFee = Number(
+      ethers.utils.formatEther(totalFeeInWei ?? ethers.constants.Zero)
+    );
+
     return [
       Boolean(fungibleCurrency), // No fungible currency selected
       isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
+      amount >= totalFee,
     ].some((value) => value === false);
   }, [
     fungibleCurrency,
@@ -321,6 +350,8 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     recipient,
     isValidRecipient,
+    amount,
+    totalFeeInWei,
   ]);
 
   const buttonText = useMemo(() => {
@@ -357,15 +388,18 @@ export const WithdrawContainer = forwardRef<
     selectedUnwrapToken,
   ]);
 
+  const amountAfterFee = useMemo(() => {
+    if (!totalFeeInWei) {
+      return amount;
+    }
+
+    return amount - Number(ethers.utils.formatEther(totalFeeInWei));
+  }, [amount, totalFeeInWei]);
+
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
-    const exchangeRate = feeInfo
-      ? parseFloat(ethers.utils.formatEther(feeInfo.refundExchangeRate))
-      : 1;
-    const amountAfterRefund = amount - refundAmount / exchangeRate;
-
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amountAfterRefund)
+      ? getRoundedAmountString(amountAfterFee, 3, Math.round)
       : undefined;
     const remainderAmount = isValidAmount
       ? getRoundedAmountString(availableAmount - amount)
@@ -385,12 +419,11 @@ export const WithdrawContainer = forwardRef<
     };
   }, [
     amount,
+    amountAfterFee,
     availableAmount,
-    feeInfo,
     fungibleCurrency?.view.symbol,
     isUnwrap,
     isValidAmount,
-    refundAmount,
     wrappableCurrency?.view.symbol,
   ]);
 
@@ -461,27 +494,17 @@ export const WithdrawContainer = forwardRef<
     switchChain,
   ]);
 
-  const totalFee = useMemo(() => {
-    if (!feeInfo) {
-      return undefined;
-    }
-
-    if (refundAmount) {
-      const refundAmountWei = ethers.utils.parseEther(refundAmount.toString());
-      const totalFeeBigNumber = refundAmountWei.add(feeInfo.estimatedFee);
-      return ethers.utils.formatEther(totalFeeBigNumber);
-    }
-
-    return ethers.utils.formatEther(feeInfo.estimatedFee);
-  }, [feeInfo, refundAmount]);
-
   const totalFeeFormatted = useMemo(() => {
-    if (!totalFee) {
+    if (!totalFeeInWei) {
       return undefined;
     }
 
-    return getRoundedAmountString(parseFloat(totalFee));
-  }, [totalFee]);
+    return getRoundedAmountString(
+      Number(ethers.utils.formatEther(totalFeeInWei)),
+      3,
+      Math.round
+    );
+  }, [totalFeeInWei]);
 
   const handleWithdrawButtonClick = useCallback(async () => {
     // Dismiss all the completed and failed txns in the queue before starting a new txn
@@ -607,7 +630,9 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={totalFee ? parseFloat(totalFee) : 0}
+        fees={
+          totalFeeInWei ? Number(ethers.utils.formatEther(totalFeeInWei)) : 0
+        }
         fungibleCurrency={{
           value: fungibleCurrency,
           balance: availableAmount,
@@ -652,7 +677,7 @@ export const WithdrawContainer = forwardRef<
     setMainComponent,
     setOpenNoteAccountModal,
     toggleModal,
-    totalFee,
+    totalFeeInWei,
     txQueue.txPayloads,
     wrappableCurrency,
   ]);

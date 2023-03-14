@@ -12,6 +12,13 @@ import { Web3VAnchorActions } from '@webb-tools/web3-api-provider';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 
+type UseWithdrawFeeReturnType = {
+  feeInfo: RelayerFeeInfo | null;
+  fetchFeeInfo: () => Promise<void>;
+  isLoading: boolean;
+  error: unknown | null;
+};
+
 const hasGetGasAmountMethod = (
   vanchorApi: any | undefined
 ): vanchorApi is Web3VAnchorActions => {
@@ -24,7 +31,7 @@ export const useWithdrawFee = (
   recipient: string,
   relayer: ActiveWebbRelayer | null,
   wrapUnwrapToken = ''
-) => {
+): UseWithdrawFeeReturnType => {
   const { activeChain, noteManager } = useWebContext();
 
   const { fungibleCurrency } = useCurrencies();
