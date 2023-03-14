@@ -131,6 +131,11 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The current active/connected chain
    */
   currentActiveChain?: string;
+
+  /**
+   * If `true`, wallet is connecting to chain
+   */
+  isConnectingToChain: boolean;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
