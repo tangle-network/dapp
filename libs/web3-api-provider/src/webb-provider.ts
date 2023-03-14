@@ -277,11 +277,8 @@ export class WebbWeb3Provider
     storage: Storage<BridgeStorage>,
     abortSignal?: AbortSignal
   ): Promise<string[]> {
-    console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const chain = this.config.chains[typedChainId];
-    console.log('On chain: ', chain?.name);
 
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
@@ -335,8 +332,6 @@ export class WebbWeb3Provider
     } else {
       console.log(`Got ${leaves.length} leaves from relayers.`);
     }
-
-    console.groupEnd();
 
     return leaves;
   }
@@ -491,6 +486,9 @@ export class WebbWeb3Provider
       this.config.currencies,
       typedChainId
     );
+    if (!chain || !currency) {
+      throw new Error('Chain or currency not found'); // Development error
+    }
 
     return this.web3Provider.addChain({
       chainId: `0x${evmChainId.toString(16)}`,

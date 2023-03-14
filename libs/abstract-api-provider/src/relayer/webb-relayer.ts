@@ -6,6 +6,8 @@ import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { chainsPopulated } from '@webb-tools/dapp-config';
+import { u8aToHex } from '@webb-tools/utils';
 import {
   Capabilities,
   CMDSwitcher,
@@ -14,7 +16,6 @@ import {
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
-import { u8aToHex } from '@webb-tools/utils';
 
 /**
  * Relayer withdraw status
@@ -208,6 +209,9 @@ export class WebbRelayer {
     contractAddress: string,
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
+    console.group(`getLeaves() for ${this.endpoint}`);
+    console.log('On chain: ', chainsPopulated[typedChainId]?.name);
+
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     let url = '';
     switch (chainType) {
@@ -236,11 +240,13 @@ export class WebbRelayer {
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
+      console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
         leaves: fetchedLeaves.map((leaf) => u8aToHex(leaf)),
       };
     } else {
+      console.groupEnd();
       throw new Error('network error');
     }
   }

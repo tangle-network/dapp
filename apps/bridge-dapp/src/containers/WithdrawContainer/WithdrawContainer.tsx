@@ -176,23 +176,23 @@ export const WithdrawContainer = forwardRef<
   }, [apiConfig.currencies, currentTypedChainId]);
 
   const availableAmount: number = useMemo(() => {
-    if (!availableNotesFromManager) {
+    if (!availableNotesFromManager?.length) {
       return 0;
     }
-    return availableNotesFromManager.reduce<number>(
+
+    let tokenDecimals: number | undefined;
+    const amountBN = availableNotesFromManager.reduce<BigNumber>(
       (accumulatedBalance, newNote) => {
-        return (
-          accumulatedBalance +
-          Number(
-            ethers.utils.formatUnits(
-              newNote.note.amount,
-              newNote.note.denomination
-            )
-          )
-        );
+        if (!tokenDecimals) {
+          tokenDecimals = Number(newNote.note.denomination);
+        }
+
+        return accumulatedBalance.add(newNote.note.amount);
       },
-      0
+      BigNumber.from(0)
     );
+
+    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
   }, [availableNotesFromManager]);
 
   const selectedFungibleToken = useMemo<AssetType | undefined>(() => {
@@ -306,8 +306,14 @@ export const WithdrawContainer = forwardRef<
 
     // If current chain has no balance, then show other chains
     // which has balance
-    return shieldedAssets.map((asset) => asset.rawChain);
-  }, [availableAmount, shieldedAssets]);
+    return shieldedAssets
+      .filter((asset) =>
+        fungibleCurrency
+          ? asset.fungibleTokenSymbol === fungibleCurrency.view.symbol
+          : true
+      )
+      .map((asset) => asset.rawChain);
+  }, [availableAmount, fungibleCurrency, shieldedAssets]);
 
   const totalFeeInWei = useMemo(() => {
     if (!feeInfo) {

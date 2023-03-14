@@ -70,7 +70,9 @@ export const useWithdrawFee = (
         withdrawNotes ?? [],
         utils.parseUnits(amount.toString(), fungibleDecimals)
       );
-      if (!inputNotes) return;
+      if (!inputNotes) {
+        throw new Error('Not enough notes to withdraw');
+      }
 
       // Get the cumulative value of the notes to be spent
       const sumInputNotes = inputNotes.reduce<BigNumber>(
