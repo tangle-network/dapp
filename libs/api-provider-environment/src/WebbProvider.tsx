@@ -665,7 +665,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   },
                   blockExplorerUrls: chain.blockExplorerStub
                     ? [chain.blockExplorerStub]
-                    : [],
+                    : undefined,
                 });
                 // add network will prompt the switch, check evmId again and throw if user rejected
                 const newChainId = await web3Provider.network;
@@ -714,6 +714,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         }
         logger.error(e);
         LoggerService.get('App').error(e);
+
+        // Notify the error
+        if (typeof e === 'object' && e && 'toString' in e) {
+          notificationApi({
+            variant: 'error',
+            message: e.toString(),
+          });
+        }
+
         return null;
       }
     },
