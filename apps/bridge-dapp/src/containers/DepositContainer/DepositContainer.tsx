@@ -79,9 +79,11 @@ export const DepositContainer = forwardRef<
       activeWallet,
       loading,
       noteManager,
-      apiConfig: { currencies },
+      apiConfig,
       txQueue,
     } = useWebContext();
+
+    const { currencies } = apiConfig;
 
     const {
       fungibleCurrency,
@@ -362,9 +364,26 @@ export const DepositContainer = forwardRef<
         destChain.chainId
       );
 
+      const sourceAddress = apiConfig.getAnchorAddress(
+        fungibleCurrency.id,
+        sourceTypedChainId
+      );
+
+      const destAddress = apiConfig.getAnchorAddress(
+        fungibleCurrency.id,
+        destTypedChainId
+      );
+
+      if (!sourceAddress || !destAddress) {
+        console.error('Not found source or destination address');
+        return;
+      }
+
       const newNote = await noteManager.generateNote(
         sourceTypedChainId,
+        sourceAddress,
         destTypedChainId,
+        destAddress,
         fungibleCurrency.view.symbol,
         fungibleCurrency.getDecimals(),
         amount
@@ -395,6 +414,7 @@ export const DepositContainer = forwardRef<
       activeChain,
       noteManager,
       fungibleCurrency,
+      apiConfig,
       wrappableCurrency?.id,
       selectedSourceChain,
       destChainInputValue,

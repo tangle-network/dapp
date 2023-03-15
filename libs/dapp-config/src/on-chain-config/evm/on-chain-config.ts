@@ -13,6 +13,7 @@ import {
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import assert from 'assert';
 
+import { ChainAddressConfig } from '../../anchors';
 import { CurrencyConfig } from '../../currencies';
 import { ICurrency, OnChainConfigBase } from '../on-chain-config-base';
 
@@ -38,6 +39,7 @@ const LOCALNET_CURRENCY: ICurrency = {
 type EVMCurrencyResponse = {
   typedChainId: number;
   nativeCurrency: ICurrency;
+  anchorAddress: string;
   fungibleCurrency: ICurrency;
   wrappableCurrencies: ICurrency[];
 };
@@ -237,10 +239,12 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     providerFactory: (typedChainId: number) => Provider,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
-    existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map()
+    existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
+    existedAnchorConfig: Record<number, ChainAddressConfig> = {}
   ): Promise<{
     currenciesConfig: Record<number, CurrencyConfig>;
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
+    anchorConfig: Record<number, ChainAddressConfig>;
   }> {
     // Get all evm typed chain ids from the anchor config
     let evmTypedChainIds = Object.keys(anchorConfig)
@@ -270,6 +274,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       return {
         currenciesConfig: existedCurreniciesConfig,
         fungibleToWrappableMap: existedFungibleToWrappableMap,
+        anchorConfig: existedAnchorConfig,
       };
     }
 
@@ -316,6 +321,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
                 typedChainId,
                 nativeCurrency,
                 fungibleCurrency: fungible,
+                anchorAddress: address,
               };
             })
           );
@@ -331,9 +337,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         (
           currencies
         ): currencies is {
-          typedChainId: number;
-          nativeCurrency: ICurrency;
+          anchorAddress: string;
           fungibleCurrency: ICurrency | null;
+          nativeCurrency: ICurrency;
+          typedChainId: number;
         }[] => !!currencies && currencies.length > 0
       )
       .reduce((acc, currencies) => [...acc, ...currencies], [])
@@ -341,16 +348,22 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         (
           currency
         ): currency is {
-          typedChainId: number;
-          nativeCurrency: ICurrency;
+          anchorAddress: string;
           fungibleCurrency: ICurrency;
+          nativeCurrency: ICurrency;
+          typedChainId: number;
         } => currency.fungibleCurrency !== null
       );
 
     // Fetch all wrappable currencies
     const wrappableCurrenciesWithNull = await Promise.allSettled(
       fungibleCurrencies.map(
-        async ({ typedChainId, nativeCurrency, fungibleCurrency }) => {
+        async ({
+          typedChainId,
+          nativeCurrency,
+          fungibleCurrency,
+          anchorAddress,
+        }) => {
           const provider = providerFactory(typedChainId);
           const wrappables = await this.fetchWrappableCurrencies(
             fungibleCurrency,
@@ -359,9 +372,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           );
 
           return {
-            typedChainId,
-            nativeCurrency,
+            anchorAddress,
             fungibleCurrency,
+            nativeCurrency,
+            typedChainId,
             wrappableCurrencies: wrappables,
           };
         }
@@ -378,7 +392,8 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     return this.addCurrenciesIntoConfig(
       wrappableCurrencies,
       existedCurreniciesConfig,
-      existedFungibleToWrappableMap
+      existedFungibleToWrappableMap,
+      existedAnchorConfig
     );
   }
 
@@ -395,10 +410,12 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   private addCurrenciesIntoConfig(
     currenciesResponse: EVMCurrencyResponse[],
     currenciesConfig: Record<number, CurrencyConfig>,
-    fungibleToWrappableMap: Map<number, Map<number, Set<number>>>
+    fungibleToWrappableMap: Map<number, Map<number, Set<number>>>,
+    anchorConfig: Record<string, ChainAddressConfig>
   ) {
     currenciesResponse.forEach(
       ({
+        anchorAddress,
         typedChainId,
         nativeCurrency,
         fungibleCurrency,
@@ -461,6 +478,22 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           currentFungible.addresses.set(typedChainId, fungbileAddr);
         }
 
+        // Add anchor
+        const anchor = anchorConfig[currentFungible.id];
+        if (!anchor) {
+          anchorConfig[currentFungible.id] = {
+            [typedChainId]: anchorAddress,
+          };
+        } else {
+          if (anchor[typedChainId]) {
+            console.error(
+              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`
+            );
+          }
+
+          anchor[typedChainId] = anchorAddress;
+        }
+
         // Add wrappable currencies
         const wrappableCurrencyConfigs: CurrencyConfig[] = [];
         wrappableCurrencies.forEach(
@@ -510,6 +543,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     );
 
     return {
+      anchorConfig,
       currenciesConfig,
       fungibleToWrappableMap,
     };

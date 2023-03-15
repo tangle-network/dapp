@@ -1,5 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 
+import { ChainAddressConfig } from '../../anchors';
 import { CurrencyConfig } from '../../currencies';
 import { ICurrency, OnChainConfigBase } from '../on-chain-config-base';
 
@@ -43,14 +44,17 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
     providerFactory: (typedChainId: number) => ApiPromise,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
-    existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map()
+    existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
+    existedAnchorConfig: Record<number, ChainAddressConfig> = {}
   ): Promise<{
     currenciesConfig: Record<number, CurrencyConfig>;
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
+    anchorConfig: Record<number, ChainAddressConfig>;
   }> {
     return {
       currenciesConfig: existedCurreniciesConfig,
       fungibleToWrappableMap: existedFungibleToWrappableMap,
+      anchorConfig: existedAnchorConfig,
     };
   }
 }

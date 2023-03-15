@@ -6,7 +6,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import { anchorDeploymentBlock, getAnchorConfig } from './anchors';
+import { anchorDeploymentBlock } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -74,22 +74,28 @@ export class ApiConfig {
     const {
       currenciesConfig: onChainConfig,
       fungibleToWrappableMap: evmFungibleToWrappableMap,
+      anchorConfig: evmAnchorConfig,
     } = await evmOnChainConfig.fetchCurrenciesConfig(
       parsedAnchorConfig,
       providerFactory
     );
 
-    const { currenciesConfig, fungibleToWrappableMap: fungibleToWrappableMap } =
-      await substrateOnChainConfig.fetchCurrenciesConfig(
-        parsedAnchorConfig,
-        providerFactory as any, // Temporary providerFactory for substrate
-        onChainConfig,
-        evmFungibleToWrappableMap
-      );
+    const {
+      currenciesConfig,
+      fungibleToWrappableMap: fungibleToWrappableMap,
+      anchorConfig: anchors,
+    } = await substrateOnChainConfig.fetchCurrenciesConfig(
+      parsedAnchorConfig,
+      providerFactory as any, // Temporary providerFactory for substrate
+      onChainConfig,
+      evmFungibleToWrappableMap,
+      evmAnchorConfig
+    );
 
-    const anchors = await getAnchorConfig(currenciesConfig);
-
-    const bridgeByAsset = await getBridgeConfigByAsset(currenciesConfig);
+    const bridgeByAsset = await getBridgeConfigByAsset(
+      currenciesConfig,
+      anchors
+    );
 
     return new ApiConfig(
       config.wallets ?? {},
@@ -146,5 +152,13 @@ export class ApiConfig {
       return addresses.includes(address);
     });
     return this.currencies[currency as any] ?? undefined;
+  }
+
+  getAnchorAddress(fungibleCurrencyId: number, typedChainId: number) {
+    const anchor = this.anchors[fungibleCurrencyId];
+    if (!anchor) {
+      return undefined;
+    }
+    return anchor[typedChainId];
   }
 }

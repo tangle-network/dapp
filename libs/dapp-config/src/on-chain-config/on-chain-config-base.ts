@@ -1,5 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { ethers } from 'ethers';
+import { ChainAddressConfig } from '../anchors';
 
 import { CurrencyConfig } from '../currencies';
 
@@ -68,6 +69,9 @@ export abstract class OnChainConfigBase {
    * Get the currencies config and the map of fungible currency to typed chain ids to wrappable currencies
    * @param anchorConfig the anchor config to use (`typedChainId` -> `anchorAddress`)
    * @param providerFactory the provider factory function to get the provider for a given typed chain id
+   * @param existedCurreniciesConfig the existed currencies config (`currencyId` -> `CurrencyConfig`)
+   * @param existedFungibleToWrappableMap the existed map of fungible currency to typed chain ids to wrappable currencies
+   * @param existedAnchorConfig the existed anchor config (`typedChainId` -> `ChainAddressConfig`)
    * @returns the currencies config and the map of fungible currency to typed chain ids to wrappable currencies
    */
   abstract fetchCurrenciesConfig(
@@ -76,9 +80,11 @@ export abstract class OnChainConfigBase {
       typedChainId: number
     ) => ethers.providers.Provider | ApiPromise,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
-    existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>
+    existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
+    existedAnchorConfig?: Record<number, ChainAddressConfig>
   ): Promise<{
     currenciesConfig: Record<number, CurrencyConfig>;
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
+    anchorConfig: Record<number, ChainAddressConfig>;
   }>;
 }
