@@ -47,6 +47,7 @@ export abstract class OnChainConfigBase {
    */
   abstract fetchFungibleCurrency(
     typedChainId: number,
+    anchorAddress: string,
     provider: ethers.providers.Provider | ApiPromise
   ): Promise<ICurrency | null>;
 
@@ -70,7 +71,7 @@ export abstract class OnChainConfigBase {
    * @returns the currencies config and the map of fungible currency to typed chain ids to wrappable currencies
    */
   abstract fetchCurrenciesConfig(
-    anchorConfig: Record<number, string>,
+    anchorConfig: Record<number, string[]>,
     providerFactory: (
       typedChainId: number
     ) => ethers.providers.Provider | ApiPromise,

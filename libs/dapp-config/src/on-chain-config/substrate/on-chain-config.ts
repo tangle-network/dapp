@@ -24,6 +24,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
   async fetchFungibleCurrency(
     typedChainId: number,
+    anchorAddress: string,
     provider: ApiPromise
   ): Promise<ICurrency | null> {
     return null;
@@ -38,7 +39,7 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
   }
 
   async fetchCurrenciesConfig(
-    anchorConfig: Record<number, string>,
+    anchorConfig: Record<number, string[]>,
     providerFactory: (typedChainId: number) => ApiPromise,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore

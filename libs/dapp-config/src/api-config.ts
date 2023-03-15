@@ -3,14 +3,10 @@
 
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import {
-  anchorDeploymentBlock,
-  getAnchorConfig,
-  getLatestAnchorAddress,
-} from './anchors';
+import { anchorDeploymentBlock, getAnchorConfig } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -37,13 +33,13 @@ export type ApiConfigInput = {
 // For the fetching currency on chain effect
 const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
   (acc, typedChainId) => {
-    const address = getLatestAnchorAddress(+typedChainId);
-    if (address) {
-      acc[+typedChainId] = address;
+    const addresses = Object.keys(anchorDeploymentBlock[+typedChainId]);
+    if (addresses && addresses.length > 0) {
+      acc[+typedChainId] = addresses;
     }
     return acc;
   },
-  {} as Record<number, string>
+  {} as Record<number, string[]>
 );
 
 export class ApiConfig {
