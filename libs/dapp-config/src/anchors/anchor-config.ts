@@ -1,42 +1,8 @@
-import { ApiConfig } from '..';
-import {
-  CurrencyId,
-  EVMChainId,
-  PresetTypedChainId,
-} from '@webb-tools/dapp-types';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { CurrencyRole, EVMChainId } from '@webb-tools/dapp-types';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 
-// Anchor config is indexed by WebbCurrencyId
-export const anchorsConfig: ApiConfig['anchors'] = {
-  [CurrencyId.webbETH]: {
-    [PresetTypedChainId.ArbitrumTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.Goerli]: '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.Sepolia]: '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.PolygonTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.OptimismTestnet]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-    [PresetTypedChainId.MoonbaseAlpha]:
-      '0xa1a2b7e08793b3033122b83cbee56726678588b5',
-  },
-  [CurrencyId.WEBBSQR]: {
-    [PresetTypedChainId.ProtocolSubstrateStandalone]: '6',
-    [PresetTypedChainId.LocalTangleStandalone]: '6',
-    [PresetTypedChainId.DkgSubstrateStandalone]: '6',
-  },
-  [CurrencyId.webbDEV]: {
-    [PresetTypedChainId.HermesLocalnet]:
-      '0xc705034ded85e817b9E56C977E61A2098362898B',
-    [PresetTypedChainId.AthenaLocalnet]:
-      '0x91eB86019FD8D7c5a9E31143D422850A13F670A3',
-    [PresetTypedChainId.DemeterLocalnet]:
-      '0x6595b34ED0a270B10a586FC1EA22030A95386f1e',
-  },
-  [CurrencyId.TEST]: {
-    [PresetTypedChainId.ProtocolSubstrateStandalone]: '9',
-  },
-};
+import { ApiConfig } from '../api-config';
+import { CurrencyConfig } from '../currencies';
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
@@ -79,13 +45,13 @@ export const getAnchorDeploymentBlockNumber = (
 
 /**
  * Get the address of the latest anchor deployed on the chain
- * @param chainIdType the chainIdType of the chain
+ * @param typedChainId the chainIdType of the chain
  * @returns the latest anchor address for the chain
  */
 export const getLatestAnchorAddress = (
-  chainIdType: number
+  typedChainId: number
 ): string | undefined => {
-  const deploymentsBlock = anchorDeploymentBlock[chainIdType];
+  const deploymentsBlock = anchorDeploymentBlock[typedChainId];
   if (!deploymentsBlock) {
     return undefined;
   }
@@ -100,4 +66,46 @@ export const getLatestAnchorAddress = (
   );
 
   return address;
+};
+
+// Cache the anchor config
+let anchorsConfig: ApiConfig['anchors'];
+
+/**
+ * Get the anchor config for the currencies
+ * @param currencies the currency config which is fetched on-chain
+ * @returns the anchor config which is indexed by currencyId
+ */
+export const getAnchorConfig = async (
+  currencies: Record<number, CurrencyConfig>
+): Promise<ApiConfig['anchors']> => {
+  // If the anchor config is already calculated, return it
+  if (anchorsConfig) {
+    return anchorsConfig;
+  }
+
+  const anchors: ApiConfig['anchors'] = {};
+
+  const fungibleCurrencies = Object.values(currencies).filter(
+    (currency) => currency.role === CurrencyRole.Governable
+  );
+
+  fungibleCurrencies.forEach((currency) => {
+    anchors[currency.id] = Array.from(currency.addresses.entries()).reduce(
+      (acc, [typedChainId]) => {
+        const address = getLatestAnchorAddress(typedChainId);
+        if (address) {
+          acc[typedChainId] = address;
+        } else {
+          console.error('No anchor address found for chain', typedChainId);
+        }
+        return acc;
+      },
+      {} as Record<number, string>
+    );
+  });
+
+  anchorsConfig = anchors;
+
+  return anchors;
 };

@@ -44,6 +44,16 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
 
     const onItemChange = useCallback(
       (nextItem: AssetType) => {
+        // Check if the selected token is in the unavailable list
+        const isInUnavailableList = unavailableTokens.find(
+          (tk) => tk.name === nextItem.name && tk.symbol === nextItem.symbol
+        );
+
+        // Do not change the selected token if it is in the unavailable list
+        if (isInUnavailableList) {
+          return;
+        }
+
         setAsset(nextItem);
         onChange?.(nextItem);
       },
@@ -82,7 +92,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
             <div className="flex flex-wrap gap-2">
               {filteredPopular.map((current, idx) => (
                 <TokenSelector
-                  className="uppercase"
                   key={`${current.name}-${idx}`}
                   onClick={() => onItemChange(current)}
                   onTokenClick={current.onTokenClick}

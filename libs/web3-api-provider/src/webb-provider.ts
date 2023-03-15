@@ -18,6 +18,7 @@ import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   getAnchorDeploymentBlockNumber,
+  getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
 import {
   CurrencyRole,
@@ -355,7 +356,7 @@ export class WebbWeb3Provider
       abortSignal
     );
 
-    // Check if the UTXOs are already spent
+    // Check if the UTXOs are already spent on chain
     const utxos = (
       await Promise.all(
         utxosFromChain.map(async (utxo) => {
@@ -477,10 +478,13 @@ export class WebbWeb3Provider
   }
 
   switchOrAddChain(evmChainId: number) {
-    const chainId = calculateTypedChainId(ChainType.EVM, evmChainId);
-    const chain = this.config.chains[chainId];
+    const typedChainId = calculateTypedChainId(ChainType.EVM, evmChainId);
+    const chain = this.config.chains[typedChainId];
 
-    const currency = this.config.currencies[chain.nativeCurrencyId];
+    const currency = getNativeCurrencyFromConfig(
+      this.config.currencies,
+      typedChainId
+    );
 
     return this.web3Provider.addChain({
       chainId: `0x${evmChainId.toString(16)}`,

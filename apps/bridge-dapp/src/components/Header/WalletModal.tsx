@@ -28,7 +28,7 @@ export const WalletModal: FC = () => {
 
   const chain = useMemo(() => {
     if (!selectedChain) {
-      return getDefaultConnection(chains).defaultChain;
+      return getDefaultConnection(chains);
     }
 
     return selectedChain;

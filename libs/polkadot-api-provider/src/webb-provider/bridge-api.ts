@@ -6,7 +6,7 @@ import '@webb-tools/protocol-substrate-types';
 
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { BridgeApi } from '@webb-tools/abstract-api-provider';
-import { CurrencyId, CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 
 import { WebbPolkadot } from '../webb-provider';
 
@@ -78,13 +78,13 @@ export class PolkadotBridgeApi extends BridgeApi<WebbPolkadot> {
         .get(currencyMetaData.id.toString());
       const knownCurrencies = this.inner.state.getCurrencies();
       if (typeof currencyRegistered === 'undefined') {
-        const wrappableTokenLength = Object.keys(knownCurrencies).length;
+        const nextCurrencyId = Object.keys(this.inner.config.currencies).length;
         const newToken: Currency = new Currency({
           addresses: new Map<number, string>([
             [typedChainId, currencyMetaData.id.toString()],
           ]),
           decimals: 18,
-          id: CurrencyId.DYNAMIC_CURRENCY_STARTING_ID + wrappableTokenLength,
+          id: nextCurrencyId,
           name: currencyMetaData.name,
           role: CurrencyRole.Wrappable,
           symbol: currencyMetaData.name,

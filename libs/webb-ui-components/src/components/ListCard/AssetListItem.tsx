@@ -40,7 +40,7 @@ export const AssetListItem = forwardRef<
             component="span"
             variant="body2"
             fw="bold"
-            className="block uppercase cursor-default"
+            className="block cursor-default [text-transform:none]"
           >
             {symbol}
           </Typography>
@@ -48,7 +48,7 @@ export const AssetListItem = forwardRef<
           <Typography
             component="span"
             variant="utility"
-            className="block uppercase cursor-default text-mono-100 dark:text-mono-80"
+            className="block cursor-default text-mono-100 dark:text-mono-80 [text-transform:none]"
           >
             {name}
           </Typography>

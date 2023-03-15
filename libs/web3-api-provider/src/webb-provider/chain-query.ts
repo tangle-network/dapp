@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 
 import { WebbWeb3Provider } from '../webb-provider';
 import { Observable, switchMap } from 'rxjs';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   constructor(protected inner: WebbWeb3Provider) {
@@ -36,10 +37,13 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           return '';
         }
 
+        const nativeCurrency = getNativeCurrencyFromConfig(
+          this.inner.config.currencies,
+          typedChainId
+        );
+
         // Return the balance of the account if native currency
-        if (
-          this.inner.config.chains[typedChainId].nativeCurrencyId === currencyId
-        ) {
+        if (nativeCurrency.id === currencyId) {
           const tokenBalanceBig = await provider.getBalance(
             accounts[0].address
           );
