@@ -35,13 +35,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
           url: 'https://webb.tools/',
           images: [
             {
-              url: '/static/assets/og.png',
+              url: 'https://webb-assets.s3.amazonaws.com/og.png',
               width: 2400,
               height: 1800,
               alt: 'Og Image Alt',
             },
             {
-              url: '/static/assets/og-optimize.png',
+              url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
               width: 1200,
               height: 630,
               alt: 'Optimized Og Image Alt',
