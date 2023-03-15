@@ -1,21 +1,23 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import {
+  chainsPopulated,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { KeyIcon } from '@webb-tools/icons';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   FileUploadArea,
   FileUploadItem,
   FileUploadList,
-  getHumanFileSize,
-  notificationApi,
   Progress,
   TokenPairIcons,
   Typography,
+  getHumanFileSize,
+  notificationApi,
 } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { uniqueId } from 'lodash';
 import {
-  FC,
   forwardRef,
   useCallback,
   useEffect,
@@ -185,8 +187,14 @@ export const UploadModalContent = forwardRef<
               return null;
             }
 
-            const sourceCurrency = currencies[sourceChain.nativeCurrencyId];
-            const destCurrency = currencies[destChain.nativeCurrencyId];
+            const sourceCurrency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
+            );
+            const destCurrency = getNativeCurrencyFromConfig(
+              currencies,
+              calculateTypedChainId(destChain.chainType, destChain.chainId)
+            );
 
             if (!sourceCurrency || !destCurrency) {
               return null;

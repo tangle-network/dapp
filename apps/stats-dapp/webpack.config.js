@@ -106,8 +106,9 @@ function createWebpackBase() {
       rules: [
         // js stuffs
         {
+          // exclude all node_modules except @webb-tools/contracts
+          exclude: /node_modules\/(?!(@webb-tools\/contracts(\/.*)?)).*/,
           test: /\.(t|j)sx?$/,
-          exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
             options: {

@@ -50,8 +50,6 @@ export class Currency {
 
   get view(): CurrencyView {
     return {
-      color: this.data.color,
-      icon: this.data.icon,
       id: this.data.id as any,
       name: this.data.name,
       decimals: this.data.decimals,

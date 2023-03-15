@@ -2,7 +2,6 @@ import { ChainIcon, InformationLine, Search } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { Typography } from '../../typography';
 import { Button } from '../Button';
 import { Chip } from '../Chip';
@@ -24,6 +23,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       onClose,
       onlyCategory,
       overrideScrollAreaProps,
+      isConnectingToChain,
       value: selectedChain,
       ...props
     },
@@ -106,6 +106,8 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                 chainType === 'source' &&
                 currentChain.name === currentActiveChain;
 
+              const isSelectedToConnect = chain?.name === currentChain.name;
+
               return (
                 <ListItem
                   key={`${currentChain.name}-${currentChain.symbol}${idx}`}
@@ -128,19 +130,25 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     </Typography>
                   </div>
 
-                  {!isConnected && (
+                  {isConnectingToChain && isSelectedToConnect ? (
+                    <Chip className="cursor-default" color="yellow">
+                      Connecting
+                    </Chip>
+                  ) : null}
+
+                  {!isConnected && !isConnectingToChain ? (
                     <div className="hidden group-hover:block">
                       <Button variant="link" size="sm">
                         Select
                       </Button>
                     </div>
-                  )}
+                  ) : null}
 
-                  {isConnected && (
-                    <Chip className="cursor-default" color="yellow">
+                  {isConnected && !isConnectingToChain ? (
+                    <Chip className="cursor-default" color="green">
                       Connected
                     </Chip>
-                  )}
+                  ) : null}
                 </ListItem>
               );
             })}
