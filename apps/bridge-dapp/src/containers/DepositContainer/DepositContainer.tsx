@@ -294,6 +294,11 @@ export const DepositContainer = forwardRef<
           const tokens = getPossibleFungibleCurrencies(
             selectedWrappableToken.id
           );
+          if (tokens.length === 0) {
+            console.error('No fungible currency found for the wrappable token');
+            return;
+          }
+
           await setFungibleCurrency(tokens[0]);
           await setWrappableCurrency(selectedWrappableToken);
           setMainComponentName(undefined);
@@ -552,13 +557,7 @@ export const DepositContainer = forwardRef<
         title: 'Select Asset to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
-        onChange: (selectedChain) => {
-          const destChain = Object.values(chains).find(
-            (val) => val.name === selectedChain.name
-          );
-          setDestChain(destChain);
-          setMainComponentName(undefined);
-        },
+        onChange: handleTokenChange,
         onClose: () => setMainComponentName(undefined),
       };
     }, [
@@ -567,9 +566,9 @@ export const DepositContainer = forwardRef<
       getPossibleFungibleCurrencies,
       destChainInputValue,
       populatedAllTokens,
+      handleTokenChange,
       balances,
       addCurrency,
-      chains,
     ]);
 
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
