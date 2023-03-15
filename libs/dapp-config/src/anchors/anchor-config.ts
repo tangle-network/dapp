@@ -1,33 +1,35 @@
-import { CurrencyRole, EVMChainId } from '@webb-tools/dapp-types';
+import { EVMChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
-
-import { ApiConfig } from '../api-config';
-import { CurrencyConfig } from '../currencies';
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 10742623,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 8629410,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 8648487,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 3059851,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 2920599,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 3082467,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 6504793,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 5611883,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 6646308,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 32933455,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 32139400,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 33068289,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 3911017,
+    '0xa1a2b7e08793b3033122b83cbee56726678588b5': 3771120,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 3932707,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 19699986,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 19810510,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
-    '0x12f721c568e907126e13d6664ebec606ee65ed3c': 292290,
+    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 387417,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,

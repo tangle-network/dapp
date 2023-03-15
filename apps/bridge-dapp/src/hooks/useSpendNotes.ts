@@ -19,7 +19,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
   const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
 
-  const { activeChain, chains } = useWebContext();
+  const { activeChain, apiConfig, chains } = useWebContext();
 
   const [nextIndices, setNextIndices] = useState<
     { address: string; typedChainId: number; nextIndex: number }[]
@@ -37,7 +37,11 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             val.typedChainId === Number(sourceChainId)
         );
 
-        if (!isExisted) {
+        // Check if the current chain tag is the same as the source chain tag
+        const isCurrentTag =
+          activeChain?.tag === apiConfig.chains[+sourceChainId]?.tag;
+
+        if (!isExisted && isCurrentTag) {
           acc.push({
             address,
             typedChainId: Number(sourceChainId),
@@ -47,7 +51,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
       return acc;
     }, [] as Array<Omit<ArrayElement<typeof nextIndices>, 'nextIndex'>>);
-  }, [allNotes]);
+  }, [allNotes, activeChain?.tag, apiConfig.chains]);
 
   const notes = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(

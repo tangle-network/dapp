@@ -42,6 +42,10 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           typedChainId
         );
 
+        if (!nativeCurrency) {
+          return '';
+        }
+
         // Return the balance of the account if native currency
         if (nativeCurrency.id === currencyId) {
           const tokenBalanceBig = await provider.getBalance(

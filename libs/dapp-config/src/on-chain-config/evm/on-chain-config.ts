@@ -1,4 +1,5 @@
 import { Provider } from '@ethersproject/abstract-provider';
+import { retryPromise } from '@webb-tools/browser-utils';
 import {
   ERC20__factory,
   FungibleTokenWrapper__factory,
@@ -130,16 +131,16 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
     try {
       const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
-      const fungibleCurrencyAddress = await vAcnhorContract.token();
+      const fungibleCurrencyAddress = await retryPromise(vAcnhorContract.token);
       const fungibleCurrencyContract = ERC20__factory.connect(
         fungibleCurrencyAddress,
         provider
       );
 
       const [name, symbol, decimals] = await Promise.all([
-        fungibleCurrencyContract.name(),
-        fungibleCurrencyContract.symbol(),
-        fungibleCurrencyContract.decimals(),
+        retryPromise(fungibleCurrencyContract.name),
+        retryPromise(fungibleCurrencyContract.symbol),
+        retryPromise(fungibleCurrencyContract.decimals),
       ]);
       const fungibleCurrency = {
         address: fungibleCurrencyAddress,
@@ -196,9 +197,9 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       const wrappableCurrenciesResponse = await Promise.allSettled<ICurrency>(
         wrappableERC20Contracts.map(async (ERC20Contract) => {
           const [name, symbol, decimals] = await Promise.all([
-            ERC20Contract.name(),
-            ERC20Contract.symbol(),
-            ERC20Contract.decimals(),
+            retryPromise(ERC20Contract.name),
+            retryPromise(ERC20Contract.symbol),
+            retryPromise(ERC20Contract.decimals),
           ]);
           return {
             address: ERC20Contract.address,
@@ -440,7 +441,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
             addresses: new Map([[typedChainId, nativeAddr]]),
           };
         } else {
-          if (currentNative.addresses.has(typedChainId)) {
+          if (
+            currentNative.addresses.has(typedChainId) &&
+            currentNative.addresses.get(typedChainId) !== nativeAddr
+          ) {
             console.error(
               `Native currency ${currentNative.name} already exists on chain ${typedChainId}`
             );
@@ -469,7 +473,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           };
           currenciesConfig[nextId] = currentFungible;
         } else {
-          if (currentFungible.addresses.has(typedChainId)) {
+          if (
+            currentFungible.addresses.has(typedChainId) &&
+            currentFungible.addresses.get(typedChainId) !== fungbileAddr
+          ) {
             console.error(
               `Fungible currency ${currentFungible.name} already exists on chain ${typedChainId}`
             );
@@ -485,9 +492,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
             [typedChainId]: anchorAddress,
           };
         } else {
-          if (anchor[typedChainId]) {
+          if (anchor[typedChainId] && anchor[typedChainId] !== anchorAddress) {
             console.error(
-              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`
+              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`,
+              `Current: ${anchor[typedChainId]}, new one: ${anchorAddress}`
             );
           }
 
@@ -515,7 +523,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
               };
               currenciesConfig[nextId] = currentWrappble;
             } else {
-              if (currentWrappble.addresses.has(typedChainId)) {
+              if (
+                currentWrappble.addresses.has(typedChainId) &&
+                currentWrappble.addresses.get(typedChainId) !== wrappableAddr
+              ) {
                 console.error(
                   `Wrappable currency ${currentWrappble.name} already exists on chain ${typedChainId}`
                 );

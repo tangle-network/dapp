@@ -570,6 +570,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 providerFactory
               );
 
+              setApiConfig(apiConfig);
+
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,
                 chainId,
@@ -870,33 +872,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       setActiveAccount(nextAccount);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Effect to update the api config state with currency config fetched on-chain
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const fetchApiConfigData = async () => {
-      try {
-        const apiConfigFromApi = await ApiConfig.initFromApi(
-          defaultApiConfig,
-          providerFactory
-        );
-        if (!isSubscribed) {
-          return;
-        }
-
-        setApiConfig(apiConfigFromApi);
-      } catch (error) {
-        console.error('Error while fetching currencies config', error);
-      }
-    };
-
-    fetchApiConfigData();
-
-    return () => {
-      isSubscribed = false;
-    };
   }, []);
 
   const txQueue = useTxApiQueue(apiConfig);

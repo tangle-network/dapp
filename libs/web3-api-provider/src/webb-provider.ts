@@ -139,6 +139,7 @@ export class WebbWeb3Provider
 
     // All supported bridges are supplied by the config, before passing to the state.
     const initialSupportedBridges: Record<number, Bridge> = {};
+
     for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (
         Object.keys(bridgeConfig.anchors).includes(

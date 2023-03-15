@@ -152,8 +152,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
       'https://ava-testnet.public.blastapi.io/ext/bc/C/rpc',
     ],
     logo: EtherLogo,
-    currencies: [CurrencyId.ETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
     chainType: ChainType.EVM,
@@ -165,7 +163,5 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://blockscout.scroll.io/',
     evmRpcUrls: ['https://alpha-rpc.scroll.io/l2'],
     logo: EtherLogo,
-    currencies: [CurrencyId.ETH, CurrencyId.webbETH],
-    nativeCurrencyId: CurrencyId.ETH,
   },
 };
