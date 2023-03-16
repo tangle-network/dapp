@@ -2,7 +2,6 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
@@ -18,6 +17,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   currentActiveChain: currentActiveChainProps,
   onChange,
   onClose,
+  isConnectingToChain,
   ...props
 }) => {
   const { setMainComponent } = useWebbUI();
@@ -29,6 +29,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     activeWallet,
     apiConfig,
     chains: chainsConfig,
+    loading,
     switchChain,
   } = useWebContext();
 
@@ -113,6 +114,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       defaultCategory={activeChain?.tag}
       onChange={handleChainChange}
       onClose={handleClose}
+      isConnectingToChain={loading}
       {...props}
     />
   );
