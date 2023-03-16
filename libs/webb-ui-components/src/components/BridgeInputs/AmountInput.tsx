@@ -75,7 +75,7 @@ export const AmountInput = forwardRef<
                         variant="utility"
                         titleComponent="span"
                         className="text-mono-100 dark:text-mono-80"
-                        titleClassName="uppercase !text-inherit"
+                        titleClassName="capitalize !text-inherit"
                       />
                       <ChevronDown />
                     </span>

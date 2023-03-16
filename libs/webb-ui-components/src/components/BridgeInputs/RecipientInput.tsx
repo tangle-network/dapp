@@ -137,12 +137,12 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
           <div className="flex flex-col w-full space-y-1">
             <Label htmlFor={id}>
               <TitleWithInfo
-                title={(title ?? id).toLocaleUpperCase()}
+                title={title ?? id}
                 info={info}
                 variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"
-                titleClassName="uppercase !text-inherit"
+                titleClassName="capitalize !text-inherit"
               />
             </Label>
             <Input

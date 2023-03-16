@@ -40,7 +40,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
               info={info}
               titleComponent="span"
               className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+              titleClassName="capitalize !text-inherit"
             />
           </Label>
 

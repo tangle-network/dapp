@@ -36,7 +36,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
               info={info}
               variant="utility"
               className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+              titleClassName="capitalize !text-inherit"
             />
           </Label>
 
