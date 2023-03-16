@@ -68,7 +68,7 @@ export const AmountInput = forwardRef<
                     asChild
                     className="flex items-start space-x-1"
                   >
-                    <span className="cursor-pointer">
+                    <span className="flex items-center cursor-pointer">
                       <TitleWithInfo
                         title={title}
                         info={info}

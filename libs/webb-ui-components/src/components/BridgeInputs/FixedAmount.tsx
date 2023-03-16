@@ -73,7 +73,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
             {amountMenuProps && (
               <Dropdown>
                 <DropdownTrigger asChild className="flex items-start space-x-1">
-                  <span>
+                  <span className="flex items-center">
                     <TitleWithInfo
                       title={title}
                       info={info}
