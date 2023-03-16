@@ -104,17 +104,22 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
         </div>
 
         {balance ? (
-          <div className="flex flex-col items-end space-y-1">
-            <Typography
-              variant="body4"
-              fw="bold"
-              component="span"
-              className="uppercase text-mono-100 dark:text-mono-80 text-[12px] leading-[15px]"
-            >
-              Balance: {balance} {balanceInUsd ? `≈ $${balanceInUsd}` : ''}
-            </Typography>
+          <div className="flex flex-col items-end justify-between">
+            <div>
+              <TitleWithInfo
+                title={`Balance: ${balance} ${
+                  balanceInUsd ? `≈ $${balanceInUsd}` : ''
+                }`}
+                variant="utility"
+                titleComponent="span"
+                className="text-mono-100 dark:text-mono-80"
+                titleClassName="capitalize !text-inherit"
+              />
+            </div>
 
-            <ChevronRight className="inline-block grow" />
+            <div>
+              <ChevronRight className="inline-block" />
+            </div>
           </div>
         ) : (
           <ChevronRight className="inline-block" />
