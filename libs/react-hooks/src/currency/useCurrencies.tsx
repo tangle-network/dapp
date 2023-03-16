@@ -2,6 +2,7 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import isEqual from 'lodash/isEqual';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useCurrencies = () => {
@@ -118,11 +119,31 @@ export const useCurrencies = () => {
     const sub: { unsubscribe(): void }[] = [];
 
     sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
-      setFungibleCurrencyState(bridge?.currency ?? null);
+      setFungibleCurrencyState((prevCurrency) => {
+        if (!bridge) {
+          return prevCurrency;
+        }
+
+        if (!prevCurrency) {
+          return bridge.currency;
+        }
+
+        if (isEqual(prevCurrency, bridge.currency)) {
+          return prevCurrency;
+        }
+
+        return bridge.currency;
+      });
     });
 
     sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
-      setWrappableCurrencyState(currency);
+      setWrappableCurrencyState((prevCurrency) => {
+        if (isEqual(prevCurrency, currency)) {
+          return prevCurrency;
+        }
+
+        return currency;
+      });
     });
 
     return () => {

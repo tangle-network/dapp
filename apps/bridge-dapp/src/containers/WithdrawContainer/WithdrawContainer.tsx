@@ -9,35 +9,46 @@ import {
   useTxQueue,
 } from '@webb-tools/react-hooks';
 import {
+  calculateTypedChainId,
   ChainType,
   CircomUtxo,
   Note,
-  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
+  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
-  WithdrawCard,
-  getRoundedAmountString,
   useWebbUI,
+  WithdrawCard,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 
 import { BigNumber, ethers } from 'ethers';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ComponentProps,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import { Currency } from '@webb-tools/abstract-api-provider';
+import {
+  CurrencyConfig,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
 import {
-  WalletState,
   useAddCurrency,
   useConnectWallet,
   useShieldedAssets,
+  WalletState,
 } from '../../hooks';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
-import { WithdrawContainerProps } from './types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { WithdrawContainerProps } from './types';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -72,7 +83,7 @@ export const WithdrawContainer = forwardRef<
     setWrappableCurrency,
   } = useBridge();
 
-  const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
+  const { wrappableCurrencies } = useCurrencies();
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -95,6 +106,23 @@ export const WithdrawContainer = forwardRef<
 
   const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
     useNoteAccount();
+
+  const fungibleCurrencies = useMemo(() => {
+    const tokenSymbolsSet = new Set<string>();
+
+    Array.from(allNotes.values()).forEach((notes) => {
+      notes.forEach((note) => {
+        tokenSymbolsSet.add(note.note.tokenSymbol);
+      });
+    });
+
+    return Array.from(tokenSymbolsSet)
+      .map((symbol) => {
+        return apiConfig.getCurrencyBySymbol(symbol);
+      })
+      .filter((c): c is CurrencyConfig => Boolean(c))
+      .map((c) => new Currency(c));
+  }, [allNotes, apiConfig]);
 
   const currentResourceId = useCurrentResourceId();
 
@@ -157,25 +185,6 @@ export const WithdrawContainer = forwardRef<
     };
   }, [addCurrency, availableAmount, fungibleCurrency]);
 
-  const fungibleTokens = useMemo((): AssetType[] => {
-    return Object.values(fungibleCurrencies).map((currency) => {
-      return {
-        name: currency.view.name,
-        symbol: currency.view.symbol,
-        balance:
-          selectedFungibleToken?.symbol === currency.view.symbol
-            ? availableAmount
-            : 0,
-        onTokenClick: () => addCurrency(currency),
-      };
-    });
-  }, [
-    fungibleCurrencies,
-    selectedFungibleToken?.symbol,
-    availableAmount,
-    addCurrency,
-  ]);
-
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
       return undefined;
@@ -186,16 +195,6 @@ export const WithdrawContainer = forwardRef<
       onTokenClick: () => addCurrency(wrappableCurrency),
     };
   }, [addCurrency, wrappableCurrency]);
-
-  const wrappableTokens = useMemo((): AssetType[] => {
-    return wrappableCurrencies.map((currency) => {
-      return {
-        name: currency.view.name,
-        symbol: currency.view.symbol,
-        onTokenClick: () => addCurrency(currency),
-      };
-    });
-  }, [addCurrency, wrappableCurrencies]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {
@@ -256,8 +255,14 @@ export const WithdrawContainer = forwardRef<
 
     // If current chain has no balance, then show other chains
     // which has balance
-    return shieldedAssets.map((asset) => asset.rawChain);
-  }, [availableAmount, shieldedAssets]);
+    return shieldedAssets
+      .filter((asset) =>
+        fungibleCurrency
+          ? asset.fungibleTokenSymbol === fungibleCurrency.view.symbol
+          : true
+      )
+      .map((asset) => asset.rawChain);
+  }, [availableAmount, fungibleCurrency, shieldedAssets]);
 
   const isDisabledWithdraw = useMemo(() => {
     return [
@@ -555,6 +560,258 @@ export const WithdrawContainer = forwardRef<
     wrappableCurrency,
   ]);
 
+  // WithdrawCard props
+
+  const tokenInputProps = useMemo(
+    () => ({
+      onClick: () => {
+        if (!activeApi) {
+          return;
+        }
+
+        const selectTokens = Object.values(fungibleCurrencies).map(
+          (currency) => {
+            return {
+              name: currency.view.name,
+              symbol: currency.view.symbol,
+              balance:
+                selectedFungibleToken?.symbol === currency.view.symbol
+                  ? availableAmount
+                  : 0,
+              onTokenClick: () => addCurrency(currency),
+            };
+          }
+        );
+
+        setMainComponent(
+          <TokenListCard
+            className="min-w-[550px] h-[700px]"
+            title={'Select Asset to Withdraw'}
+            popularTokens={[]}
+            selectTokens={selectTokens}
+            unavailableTokens={apiConfig
+              .getUnavailableCurrencies(
+                fungibleCurrencies.map((c) => c.getCurrencyConfig())
+              )
+              .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType))}
+            onChange={(newAsset) => {
+              handleFungibleTokenChange(newAsset);
+              setMainComponent(undefined);
+            }}
+            onClose={() => setMainComponent(undefined)}
+            onConnect={onTryAnotherWallet}
+          />
+        );
+      },
+      token: selectedFungibleToken,
+    }),
+    [
+      activeApi,
+      addCurrency,
+      apiConfig,
+      availableAmount,
+      fungibleCurrencies,
+      handleFungibleTokenChange,
+      onTryAnotherWallet,
+      selectedFungibleToken,
+      setMainComponent,
+    ]
+  );
+
+  const unwrappingAssetInputProps = useMemo(
+    () => ({
+      onClick: () => {
+        if (!activeApi) {
+          return;
+        }
+
+        const selectTokens = wrappableCurrencies.map((currency) => {
+          return {
+            name: currency.view.name,
+            symbol: currency.view.symbol,
+            onTokenClick: () => addCurrency(currency),
+          };
+        });
+
+        setMainComponent(
+          <TokenListCard
+            className="min-w-[550px] h-[700px]"
+            title={'Select Asset to Unwrap'}
+            popularTokens={[]}
+            selectTokens={selectTokens}
+            unavailableTokens={apiConfig
+              .getUnavailableCurrencies(
+                wrappableCurrencies.map((c) => c.getCurrencyConfig())
+              )
+              .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType))}
+            onChange={(newAsset) => {
+              handleWrappableTokenChange(newAsset);
+              setMainComponent(undefined);
+            }}
+            onClose={() => setMainComponent(undefined)}
+            onConnect={onTryAnotherWallet}
+          />
+        );
+      },
+      token: selectedUnwrapToken,
+    }),
+    [
+      activeApi,
+      addCurrency,
+      apiConfig,
+      handleWrappableTokenChange,
+      onTryAnotherWallet,
+      selectedUnwrapToken,
+      setMainComponent,
+      wrappableCurrencies,
+    ]
+  );
+
+  const fixedAmountInputProps = useMemo(
+    () => ({
+      onChange: parseUserAmount,
+      values: [0.1, 0.25, 0.5, 1.0],
+      isDisabled: !selectedFungibleToken,
+    }),
+    [parseUserAmount, selectedFungibleToken]
+  );
+
+  const customAmountInputProps = useMemo(
+    () => ({
+      onAmountChange: parseUserAmount,
+      amount: amount ? amount.toString() : undefined,
+      onMaxBtnClick: () => parseUserAmount(availableAmount),
+      errorMessage: amountError,
+      isDisabled: !selectedFungibleToken,
+    }),
+    [
+      amount,
+      amountError,
+      availableAmount,
+      parseUserAmount,
+      selectedFungibleToken,
+    ]
+  );
+
+  const unwrapSwitcherProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['unwrapSwitcherProps']
+  >(
+    () => ({
+      checked: isUnwrap,
+      onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
+    }),
+    [isUnwrap]
+  );
+
+  const relayerInputProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['relayerInputProps']
+  >(
+    () => ({
+      relayerAddress: activeRelayer?.beneficiary,
+      iconTheme: activeChain
+        ? activeChain.chainType === ChainType.EVM
+          ? 'ethereum'
+          : 'substrate'
+        : undefined,
+      onClick: () => {
+        if (!activeApi || !activeChain) {
+          return;
+        }
+
+        if (activeRelayer) {
+          setRelayer(null);
+          return;
+        }
+
+        setMainComponent(
+          <RelayerListCard
+            className="min-w-[550px] h-[700px]"
+            relayers={relayers
+              .map((relayer) => {
+                const relayerData = relayer.capabilities.supportedChains[
+                  activeChain.chainType === ChainType.EVM ? 'evm' : 'substrate'
+                ].get(
+                  calculateTypedChainId(
+                    activeChain.chainType,
+                    activeChain.chainId
+                  )
+                );
+
+                const theme =
+                  activeChain.chainType === ChainType.EVM
+                    ? ('ethereum' as const)
+                    : ('substrate' as const);
+
+                return {
+                  address: relayerData?.beneficiary ?? '',
+                  externalUrl: relayer.endpoint,
+                  theme,
+                };
+              })
+              .filter((x) => x !== undefined)}
+            onClose={() => setMainComponent(undefined)}
+            onChange={(nextRelayer) => {
+              setRelayer(
+                relayers.find((relayer) => {
+                  return relayer.endpoint === nextRelayer.externalUrl;
+                }) ?? null
+              );
+              setMainComponent(undefined);
+            }}
+          />
+        );
+      },
+    }),
+    [
+      activeApi,
+      activeChain,
+      activeRelayer,
+      relayers,
+      setMainComponent,
+      setRelayer,
+    ]
+  );
+
+  const recipientInputProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['recipientInputProps']
+  >(
+    () => ({
+      value: recipient,
+      isValidSet(valid: boolean) {
+        setIsValidRecipient(valid);
+      },
+      onChange: (recipient) => {
+        setRecipient(recipient);
+      },
+    }),
+    [recipient]
+  );
+
+  const withdrawBtnProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['withdrawBtnProps']
+  >(
+    () => ({
+      isDisabled:
+        otherAvailableChains.length > 0
+          ? false
+          : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+      isLoading: loading || walletState === WalletState.CONNECTING,
+      loadingText: 'Connecting...',
+      children: buttonText,
+      onClick: handleWithdrawButtonClick,
+    }),
+    [
+      buttonText,
+      handleWithdrawButtonClick,
+      hasNoteAccount,
+      isDisabledWithdraw,
+      isWalletConnected,
+      loading,
+      otherAvailableChains.length,
+      walletState,
+    ]
+  );
+
   // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
     if (defaultFungibleCurrency) {
@@ -600,145 +857,14 @@ export const WithdrawContainer = forwardRef<
     <div ref={ref}>
       <WithdrawCard
         className="h-[615px] max-w-none"
-        tokenInputProps={{
-          onClick: () => {
-            if (!activeApi) {
-              return;
-            }
-
-            setMainComponent(
-              <TokenListCard
-                className="min-w-[550px] h-[700px]"
-                title={'Select Asset to Withdraw'}
-                popularTokens={[]}
-                selectTokens={fungibleTokens}
-                unavailableTokens={[]}
-                onChange={(newAsset) => {
-                  handleFungibleTokenChange(newAsset);
-                  setMainComponent(undefined);
-                }}
-                onClose={() => setMainComponent(undefined)}
-                onConnect={onTryAnotherWallet}
-              />
-            );
-          },
-          token: selectedFungibleToken,
-        }}
-        unwrappingAssetInputProps={{
-          onClick: () => {
-            if (activeApi) {
-              setMainComponent(
-                <TokenListCard
-                  className="min-w-[550px] h-[700px]"
-                  title={'Select Asset to Unwrap'}
-                  popularTokens={[]}
-                  selectTokens={wrappableTokens}
-                  unavailableTokens={[]}
-                  onChange={(newAsset) => {
-                    handleWrappableTokenChange(newAsset);
-                    setMainComponent(undefined);
-                  }}
-                  onClose={() => setMainComponent(undefined)}
-                  onConnect={onTryAnotherWallet}
-                />
-              );
-            }
-          },
-          token: selectedUnwrapToken,
-        }}
-        fixedAmountInputProps={{
-          onChange: parseUserAmount,
-          values: [0.1, 0.25, 0.5, 1.0],
-          isDisabled: !selectedFungibleToken,
-        }}
-        customAmountInputProps={{
-          onAmountChange: parseUserAmount,
-          amount: amount ? amount.toString() : undefined,
-          onMaxBtnClick: () => parseUserAmount(availableAmount),
-          errorMessage: amountError,
-          isDisabled: !selectedFungibleToken,
-        }}
-        unwrapSwitcherProps={{
-          checked: isUnwrap,
-          onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
-        }}
-        relayerInputProps={{
-          relayerAddress: activeRelayer?.beneficiary,
-          iconTheme: activeChain
-            ? activeChain.chainType === ChainType.EVM
-              ? 'ethereum'
-              : 'substrate'
-            : undefined,
-          onClick: () => {
-            if (!activeApi || !activeChain) {
-              return;
-            }
-
-            if (activeRelayer) {
-              setRelayer(null);
-              return;
-            }
-
-            setMainComponent(
-              <RelayerListCard
-                className="min-w-[550px] h-[700px]"
-                relayers={relayers
-                  .map((relayer) => {
-                    const relayerData = relayer.capabilities.supportedChains[
-                      activeChain.chainType === ChainType.EVM
-                        ? 'evm'
-                        : 'substrate'
-                    ].get(
-                      calculateTypedChainId(
-                        activeChain.chainType,
-                        activeChain.chainId
-                      )
-                    );
-
-                    const theme =
-                      activeChain.chainType === ChainType.EVM
-                        ? ('ethereum' as const)
-                        : ('substrate' as const);
-
-                    return {
-                      address: relayerData?.beneficiary ?? '',
-                      externalUrl: relayer.endpoint,
-                      theme,
-                    };
-                  })
-                  .filter((x) => x !== undefined)}
-                onClose={() => setMainComponent(undefined)}
-                onChange={(nextRelayer) => {
-                  setRelayer(
-                    relayers.find((relayer) => {
-                      return relayer.endpoint === nextRelayer.externalUrl;
-                    }) ?? null
-                  );
-                  setMainComponent(undefined);
-                }}
-              />
-            );
-          },
-        }}
-        recipientInputProps={{
-          value: recipient,
-          isValidSet(valid: boolean) {
-            setIsValidRecipient(valid);
-          },
-          onChange: (recipient) => {
-            setRecipient(recipient);
-          },
-        }}
-        withdrawBtnProps={{
-          isDisabled:
-            otherAvailableChains.length > 0
-              ? false
-              : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
-          isLoading: loading || walletState === WalletState.CONNECTING,
-          loadingText: 'Connecting...',
-          children: buttonText,
-          onClick: handleWithdrawButtonClick,
-        }}
+        tokenInputProps={tokenInputProps}
+        unwrappingAssetInputProps={unwrappingAssetInputProps}
+        fixedAmountInputProps={fixedAmountInputProps}
+        customAmountInputProps={customAmountInputProps}
+        unwrapSwitcherProps={unwrapSwitcherProps}
+        relayerInputProps={relayerInputProps}
+        recipientInputProps={recipientInputProps}
+        withdrawBtnProps={withdrawBtnProps}
         receivedAmount={infoCalculated.receivingAmount}
         receivedToken={infoCalculated.receivingTokenSymbol}
         remainderAmount={infoCalculated.remainderAmount}

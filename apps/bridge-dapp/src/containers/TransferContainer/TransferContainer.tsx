@@ -238,42 +238,6 @@ export const TransferContainer = forwardRef<
       }, {} as CurrencyBalanceRecordType);
     }, [allNotes, apiConfig.currencies]);
 
-    // Parse the available assets from currency record
-    const bridgingAssets = useMemo((): AssetType[] => {
-      return Object.values(currencyRecordFromNotes).reduce(
-        (acc, { currency }) => {
-          if (!currency) {
-            return acc;
-          }
-
-          let balance = undefined;
-
-          if (destChain) {
-            const destTypedChainId = calculateTypedChainId(
-              destChain.chainType,
-              destChain.chainId
-            );
-            balance = balanceRecordFromNotes[currency.id]?.[destTypedChainId];
-          }
-
-          acc.push({
-            name: currency.view.name,
-            symbol: currency.view.symbol,
-            balance,
-            onTokenClick: () => addCurrency(currency),
-          });
-
-          return acc;
-        },
-        [] as AssetType[]
-      );
-    }, [
-      addCurrency,
-      balanceRecordFromNotes,
-      currencyRecordFromNotes,
-      destChain,
-    ]);
-
     // Callback when a chain item is selected
     const handlebridgingAssetChange = useCallback(
       async (newToken: AssetType) => {
@@ -313,13 +277,47 @@ export const TransferContainer = forwardRef<
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
+      const currencies = Object.values(currencyRecordFromNotes);
+      const selectTokens = currencies.reduce((acc, { currency }) => {
+        if (!currency) {
+          return acc;
+        }
+
+        let balance = undefined;
+
+        if (destChain) {
+          const destTypedChainId = calculateTypedChainId(
+            destChain.chainType,
+            destChain.chainId
+          );
+          balance = balanceRecordFromNotes[currency.id]?.[destTypedChainId];
+        }
+
+        acc.push({
+          name: currency.view.name,
+          symbol: currency.view.symbol,
+          balance,
+          onTokenClick: () => addCurrency(currency),
+        });
+
+        return acc;
+      }, [] as AssetType[]);
+
+      const unavailableTokens = apiConfig
+        .getUnavailableCurrencies(
+          currencies.map(({ currency }) => {
+            return currency.getCurrencyConfig();
+          })
+        )
+        .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType));
+
       setMainComponent(
         <TokenListCard
           className="min-w-[550px] h-[700px]"
           title="Select Asset to Transfer"
           popularTokens={[]}
-          selectTokens={bridgingAssets}
-          unavailableTokens={[]}
+          selectTokens={selectTokens}
+          unavailableTokens={unavailableTokens}
           onChange={(newAsset) => {
             handlebridgingAssetChange(newAsset);
             setMainComponent(undefined);
@@ -329,7 +327,11 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
-      bridgingAssets,
+      addCurrency,
+      apiConfig,
+      balanceRecordFromNotes,
+      currencyRecordFromNotes,
+      destChain,
       handlebridgingAssetChange,
       onTryAnotherWallet,
       setMainComponent,

@@ -161,4 +161,13 @@ export class ApiConfig {
     }
     return anchor[typedChainId];
   }
+
+  getUnavailableCurrencies(
+    avaialbleCurrencies: CurrencyConfig[]
+  ): CurrencyConfig[] {
+    const unavailableCurrencies = Object.values(this.currencies).filter(
+      (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id)
+    );
+    return unavailableCurrencies;
+  }
 }
