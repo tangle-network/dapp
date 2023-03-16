@@ -116,7 +116,7 @@ export const Input: React.FC<InputProps> = (props) => {
   const inputClsxBase = useMemo(
     () =>
       cx(
-        'form-input w-full transition-none body1 bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
+        'form-input w-full transition-none text-[20px] leading-[30px] bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
         'placeholder:placeholder:text-mono-100 dark:placeholder:text-mono-120',
         paddingX,
         isInvalid
@@ -150,7 +150,7 @@ export const Input: React.FC<InputProps> = (props) => {
             inputClsxDisabled
           )
         : cx(
-            'border-none w-full bg-transparent focus:ring-0 p-0 body1 font-bold',
+            `border-none w-full bg-transparent focus:ring-0 p-0 text-[20px] leading-[30px] font-bold`,
             'placeholder:text-mono-100 dark:placeholder:text-mono-80 text-mono-200 dark:text-mono-0'
           ),
     [inputClsxBase, inputClsxDisabled, inputClsxFocus, inputClsxHover, size]

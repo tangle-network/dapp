@@ -48,7 +48,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
             <div className="flex items-center space-x-1">
               <Avatar theme={iconTheme} value={relayerAddress} />
 
-              <Typography component="span" variant="body1" fw="bold">
+              <Typography component="span" variant="h5" fw="bold">
                 {shortenString(relayerAddress)}
               </Typography>
 
@@ -63,7 +63,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
               )}
             </div>
           ) : (
-            <Typography variant="body1" fw="bold">
+            <Typography variant="h5" fw="bold">
               Add a relayer
             </Typography>
           )}

@@ -44,12 +44,12 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
             <p className="flex items-center space-x-1">
               <ChainIcon name={chain.name} size="lg" />
 
-              <Typography component="span" variant="body1" fw="bold">
+              <Typography component="span" variant="h5" fw="bold">
                 {chain.name}
               </Typography>
             </p>
           ) : (
-            <Typography variant="body1" fw="bold">
+            <Typography variant="h5" fw="bold">
               Select chain
             </Typography>
           )}

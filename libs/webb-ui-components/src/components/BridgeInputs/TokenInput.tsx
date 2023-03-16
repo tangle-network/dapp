@@ -85,19 +85,19 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               )}
 
               {token.tokenComposition ? (
-                <Typography component="span" variant="body1" fw="bold">
+                <Typography component="span" variant="h5" fw="bold" className='capitalize'>
                   {token.tokenComposition[0].trim() +
                     '/' +
                     token.tokenComposition[1].trim()}
                 </Typography>
               ) : (
-                <Typography component="span" variant="body1" fw="bold">
+                <Typography component="span" variant="h5" fw="bold" className='capitalize'>
                   {token.symbol.trim()}
                 </Typography>
               )}
             </div>
           ) : (
-            <Typography variant="body1" fw="bold">
+            <Typography variant="h5" fw="bold">
               Select {title.toLowerCase()}
             </Typography>
           )}
