@@ -52,7 +52,7 @@ const classNames: ButtonClassNames = {
       disabled: 'disabled:text-blue-40 disabled:dark:text-blue-90',
     },
     md: 'body1',
-    sm: 'utility uppercase',
+    sm: 'body4 uppercase',
   },
 };
 
