@@ -45,7 +45,7 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
 
         {!rightContent ? (
           <Typography
-            variant="body3"
+            variant="body1"
             fw="bold"
             className="text-mono-180 dark:text-mono-80"
           >
@@ -53,9 +53,9 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
           </Typography>
         ) : typeof rightContent === 'string' ? (
           <Typography
-            variant="body3"
+            variant="body1"
             fw="bold"
-            className="text-mono-180 dark:text-mono-80"
+            className="text-mono-180 dark:text-mono-80 capitalize"
           >
             {rightContent}
           </Typography>
