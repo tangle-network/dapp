@@ -103,6 +103,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   isDisableHoverableContent,
   isOpen,
   onChange,
+  delayDuration = 100,
   ...props
 }) => {
   return (
@@ -113,6 +114,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         open={isOpen}
         onOpenChange={onChange}
         disableHoverableContent={isDisableHoverableContent}
+        delayDuration={delayDuration}
       >
         {children}
       </TooltipPrimitive.Root>
