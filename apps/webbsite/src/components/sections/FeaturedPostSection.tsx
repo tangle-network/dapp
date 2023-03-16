@@ -18,18 +18,21 @@ export const FeaturedPostSection = ({
   return (
     <div className="px-4 mt-[18px] grid lg:grid-cols-2 gap-x-6 gap-y-[72px] py-[72px]">
       {/* Featured Post */}
-      <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-        <Link href={link ? link : `/blog/posts/${slug}`}>
+      <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
+        <Link
+          href={link ? link : `/blog/posts/${slug}`}
+          className="w-full h-[220px] md:h-[250px] overflow-hidden block"
+        >
           <div
             style={{
               backgroundImage: `url(${cover})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
-            className="w-full h-[220px] md:h-[250px] rounded-t-lg"
+            className="w-full h-[220px] md:h-[250px] rounded-t-lg transition duration-500 transform hover:scale-110"
           />
         </Link>
-        <div className="px-[24px] py-[16px]">
+        <div className="px-[24px] pt-[16px] pb-[20px]">
           <Link href={link ? link : `/blog/posts/${slug}`}>
             <Heading3 className="featured-post-title text-mono-200">
               {title}
