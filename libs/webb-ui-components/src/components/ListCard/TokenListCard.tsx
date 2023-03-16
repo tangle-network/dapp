@@ -105,7 +105,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
 
         {/** Select tokens */}
         <div className="flex flex-col p-2 space-y-2">
-          <Typography variant="utility" className="uppercase">
+          <Typography variant="body2" className="uppercase" fw="bold">
             Select token
           </Typography>
 
@@ -120,7 +120,8 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 />
               ))}
               <Typography
-                variant="utility"
+                variant="body2"
+                fw="bold"
                 className="uppercase text-mono-100 dark:text-mono-80"
               >
                 Unavailable

@@ -38,17 +38,18 @@ export const AssetListItem = forwardRef<
         <p>
           <Typography
             component="span"
-            variant="body2"
+            variant="h5"
             fw="bold"
-            className="block cursor-default [text-transform:none]"
+            className="block capitalize cursor-default"
           >
             {symbol}
           </Typography>
 
           <Typography
             component="span"
-            variant="utility"
-            className="block cursor-default text-mono-100 dark:text-mono-80 [text-transform:none]"
+            variant="body1"
+            fw='bold'
+            className="block capitalize cursor-default text-mono-100 dark:text-mono-80"
           >
             {name}
           </Typography>
@@ -57,8 +58,7 @@ export const AssetListItem = forwardRef<
 
       <Typography
         className="cursor-default"
-        component="p"
-        variant="body2"
+        variant="h5"
         fw="bold"
       >
         {getRoundedAmountString(balance ?? 0)}
