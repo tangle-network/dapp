@@ -1,7 +1,7 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * Fetch the balances of the currencies list
@@ -13,17 +13,29 @@ export const useCurrenciesBalances = (
 ): Record<Currency['id'], number> => {
   const { activeApi, activeChain, activeAccount } = useWebContext();
 
+  const currencyIds = useRef(
+    new Set<number>(currencies.map((currency) => currency.id))
+  );
+
   // Balances object map currency id and its balance
   const [balances, setBalances] = useState<Record<number, number>>({});
 
-  useEffect(() => {
-    const isSubscribe = true;
+  // Filter the currencies that already in the currencyIds
+  const newCurrencies = useMemo(() => {
+    return currencies.filter((c) => !currencyIds.current.has(c.id));
+  }, [currencies]);
 
-    if (!activeApi || !activeChain) {
+  useEffect(() => {
+    let isSubscribe = true;
+
+    if (!activeApi || !activeChain || !newCurrencies.length) {
       return;
     }
 
-    const subscriptions = currencies.map((currency) => {
+    const subscriptions = newCurrencies.map((currency) => {
+      // Add the new currency id to the currencyIds
+      currencyIds.current.add(currency.id);
+
       return activeApi.methods.chainQuery
         .tokenBalanceByCurrencyId(
           calculateTypedChainId(activeChain.chainType, activeChain.chainId),
@@ -39,9 +51,13 @@ export const useCurrenciesBalances = (
         });
     });
 
-    return () =>
+    return () => {
+      isSubscribe = false;
       subscriptions.forEach((subscription) => subscription.unsubscribe());
-  }, [activeApi, activeChain, activeAccount, currencies]);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!activeApi || !activeChain || !newCurrencies.length, activeAccount]);
 
   return balances;
 };

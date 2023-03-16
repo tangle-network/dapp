@@ -557,7 +557,18 @@ export const DepositContainer = forwardRef<
         title: 'Select Asset to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
-        onChange: handleTokenChange,
+        onChange: async (nextToken) => {
+          const selectedToken = Object.values(fungibleCurrencies).find(
+            (token) =>
+              token.view.symbol === nextToken.symbol &&
+              token.view.name === nextToken.name
+          );
+
+          if (selectedToken) {
+            await setFungibleCurrency(selectedToken);
+            setMainComponentName(undefined);
+          }
+        },
         onClose: () => setMainComponentName(undefined),
       };
     }, [
@@ -566,9 +577,10 @@ export const DepositContainer = forwardRef<
       getPossibleFungibleCurrencies,
       destChainInputValue,
       populatedAllTokens,
-      handleTokenChange,
       balances,
       addCurrency,
+      fungibleCurrencies,
+      setFungibleCurrency,
     ]);
 
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
@@ -721,27 +733,27 @@ export const DepositContainer = forwardRef<
       }
     }, [walletState]);
 
-    // Side effect to auto set the wrappable currency if user has no balance of fungible currency
-    useEffect(() => {
-      // If the user has no balance of the fungible currency
-      if (
-        fungibleCurrency &&
-        balances[fungibleCurrency.id] === 0 &&
-        !wrappableCurrency &&
-        wrappableCurrencies.length > 0
-      ) {
-        const native = wrappableCurrencies.find(
-          (currency) => currency.view.type === CurrencyType.NATIVE
-        );
-        setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
-      }
-    }, [
-      balances,
-      fungibleCurrency,
-      setWrappableCurrency,
-      wrappableCurrencies,
-      wrappableCurrency,
-    ]);
+    // // Side effect to auto set the wrappable currency if user has no balance of fungible currency
+    // useEffect(() => {
+    //   // If the user has no balance of the fungible currency
+    //   if (
+    //     fungibleCurrency &&
+    //     balances[fungibleCurrency.id] === 0 &&
+    //     !wrappableCurrency &&
+    //     wrappableCurrencies.length > 0
+    //   ) {
+    //     const native = wrappableCurrencies.find(
+    //       (currency) => currency.view.type === CurrencyType.NATIVE
+    //     );
+    //     setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
+    //   }
+    // }, [
+    //   balances,
+    //   fungibleCurrency,
+    //   setWrappableCurrency,
+    //   wrappableCurrencies,
+    //   wrappableCurrency,
+    // ]);
 
     // Side effect to set the education card step
     useEffect(() => {

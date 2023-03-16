@@ -14,14 +14,26 @@ export const useCurrencies = () => {
     useState<Currency | null>(null);
 
   const fungibleCurrencies = useMemo(() => {
+    if (!activeChain) {
+      return [];
+    }
+
+    const currentTypedChainId = calculateTypedChainId(
+      activeChain.chainType,
+      activeChain.chainId
+    );
     const currencies = apiConfig.currencies ?? [];
 
     return Object.values(currencies)
       .filter(
-        (currencyConfig) => currencyConfig.role === CurrencyRole.Governable
+        (currencyConfig) =>
+          currencyConfig.role === CurrencyRole.Governable &&
+          Array.from(currencyConfig.addresses.keys()).includes(
+            currentTypedChainId
+          ) // filter out currencies that are not supported on the current chain
       )
       .map((currencyConfig) => new Currency(currencyConfig));
-  }, [apiConfig.currencies]);
+  }, [activeChain, apiConfig.currencies]);
 
   // Record where fungible currency id -> wrappable currencies
   const wrappableCurrenciesMap = useMemo(() => {
