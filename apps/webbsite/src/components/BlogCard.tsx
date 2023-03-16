@@ -65,9 +65,11 @@ export const BlogCard = ({
         </div>
       </div>
       {type === 'post' && blogType && (
-        <Chip color="blue" className="mx-6 w-fit">
-          {blogType}
-        </Chip>
+        <div className="px-6 flex justify-end">
+          <Chip color="blue" className="w-fit">
+            {blogType}
+          </Chip>
+        </div>
       )}
     </div>
   );
