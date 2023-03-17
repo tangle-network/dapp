@@ -308,6 +308,7 @@ export const TransferContainer = forwardRef<
         name: fungibleCurrency.view.name,
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
+        balanceType: 'note',
       };
     }, [addCurrency, balanceRecordFromNotes, destChain, fungibleCurrency]);
 

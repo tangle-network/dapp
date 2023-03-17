@@ -111,7 +111,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
             </div>
           ) : (
             <Typography variant="h5" fw="bold">
-              Select {title.toLowerCase()}
+              Select token
             </Typography>
           )}
         </div>
