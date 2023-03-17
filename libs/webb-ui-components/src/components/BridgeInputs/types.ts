@@ -71,6 +71,11 @@ export type TokenType = {
    * The callback when user clicks on the token
    */
   onTokenClick?: (symbol: string) => void;
+
+  /**
+   * Type of balance
+   */
+  balanceType?: 'wallet' | 'note';
 };
 
 /**

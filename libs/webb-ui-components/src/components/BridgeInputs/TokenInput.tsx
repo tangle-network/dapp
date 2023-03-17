@@ -1,16 +1,19 @@
-import { ChevronRight, TokenIcon } from '@webb-tools/icons';
+import {
+  ChevronRight,
+  ShieldKeyholeIcon,
+  TokenIcon,
+  WalletLineIcon,
+} from '@webb-tools/icons';
 import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { MouseEventHandler, forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
-import { ComponentProps } from 'react';
 import { MouseEvent } from 'react';
 
 /**
@@ -115,11 +118,15 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
         {balance ? (
           <div className="flex flex-col items-end justify-between">
-            <div>
+            <div className="flex items-center gap-1.5">
+              {token?.balanceType === 'note' ? (
+                <ShieldKeyholeIcon size="md" />
+              ) : (
+                <WalletLineIcon size="md" />
+              )}
+
               <TitleWithInfo
-                title={`Balance: ${balance} ${
-                  balanceInUsd ? `≈ $${balanceInUsd}` : ''
-                }`}
+                title={`${balance} ${balanceInUsd ? `≈ $${balanceInUsd}` : ''}`}
                 variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"

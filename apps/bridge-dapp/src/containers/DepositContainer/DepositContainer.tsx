@@ -204,6 +204,7 @@ export const DepositContainer = forwardRef<
           symbol: bridgeWrappableCurrency.currency.view.symbol,
           balance: bridgeWrappableCurrency.balance,
           onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
+          balanceType: 'wallet',
         };
       }
 
@@ -216,6 +217,7 @@ export const DepositContainer = forwardRef<
         symbol: bridgeFungibleCurrency.currency.view.symbol,
         balance: bridgeFungibleCurrency.balance,
         onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
+        balanceType: 'wallet',
       };
     }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
 
@@ -447,6 +449,7 @@ export const DepositContainer = forwardRef<
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
           onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
+          balanceType: 'wallet',
         },
         onClick: () => {
           if (selectedSourceChain) {
