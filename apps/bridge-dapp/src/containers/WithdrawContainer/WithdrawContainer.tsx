@@ -3,6 +3,7 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBridge,
   useCurrencies,
+  useCurrenciesBalances,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
@@ -73,6 +74,13 @@ export const WithdrawContainer = forwardRef<
   } = useBridge();
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
+
+  const allTokens = useMemo(
+    () => fungibleCurrencies.concat(wrappableCurrencies),
+    [fungibleCurrencies, wrappableCurrencies]
+  );
+
+  const balances = useCurrenciesBalances(allTokens);
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -154,6 +162,7 @@ export const WithdrawContainer = forwardRef<
       name: fungibleCurrency.view.name,
       balance: availableAmount,
       onTokenClick: () => addCurrency(fungibleCurrency),
+      balanceType: 'note',
     };
   }, [addCurrency, availableAmount, fungibleCurrency]);
 
@@ -184,8 +193,10 @@ export const WithdrawContainer = forwardRef<
       symbol: wrappableCurrency.view.symbol,
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
+      balanceType: 'wallet',
+      balance: balances[wrappableCurrency.id] ?? 0,
     };
-  }, [addCurrency, wrappableCurrency]);
+  }, [addCurrency, wrappableCurrency, balances]);
 
   const wrappableTokens = useMemo((): AssetType[] => {
     return wrappableCurrencies.map((currency) => {

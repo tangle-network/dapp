@@ -62,7 +62,6 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       () => ({
         ...unwrappingAssetInputProps,
         title: 'Unwrapping Asset',
-        info: 'Unwrapping Asset',
       }),
       [unwrappingAssetInputProps]
     );
