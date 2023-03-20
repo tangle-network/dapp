@@ -35,7 +35,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.OptimismTestnet,
-    name: 'Optimism',
+    name: 'Optimism Goerli',
     url: 'https://endpoints.omniatech.io/v1/op/goerli/public',
     evmRpcUrls: [
       'https://endpoints.omniatech.io/v1/op/goerli/public',
@@ -51,7 +51,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.ArbitrumTestnet,
-    name: 'Arbitrum',
+    name: 'Arbitrum Goerli',
     url: 'https://goerli-rollup.arbitrum.io/rpc',
     evmRpcUrls: [
       'https://goerli-rollup.arbitrum.io/rpc',
@@ -66,7 +66,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainType: ChainType.EVM,
     group: 'matic',
     chainId: EVMChainId.PolygonTestnet,
-    name: 'Mumbai',
+    name: 'Polygon Mumbai',
     tag: 'test',
     url: 'https://matic-mumbai.chainstacklabs.com/',
     evmRpcUrls: [

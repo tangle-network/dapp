@@ -759,7 +759,7 @@ export const DepositContainer = forwardRef<
     ]);
 
     return (
-      <div {...props} ref={ref} className='h-[628px]'>
+      <div {...props} ref={ref} className="h-[628px]">
         <DepositCard
           className="max-w-none"
           sourceChainProps={{
