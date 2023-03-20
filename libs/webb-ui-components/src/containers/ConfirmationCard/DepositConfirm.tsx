@@ -17,6 +17,7 @@ import {
 import { PropsOf } from '../../types';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
+import { formatTokenAmount } from '../../utils/formatTokenAmount';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -62,27 +63,30 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       return `${amount ?? '0'} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
+    console.log(sourceChain, destChain);
+
     return (
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] space-y-6',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] h-[700px] flex flex-col justify-between',
           className
         )}
         ref={ref}
       >
-        {/** Title */}
-        <div className="flex items-center justify-between p-2">
-          <Typography variant="h5" fw="bold">
-            {title}
-          </Typography>
-          <button onClick={onClose}>
-            <Close size="lg" />
-          </button>
-        </div>
+        <div className="space-y-6">
+          {/** Title */}
+          <div className="flex items-center justify-between p-2">
+            <Typography variant="h5" fw="bold">
+              {title}
+            </Typography>
+            <button onClick={onClose}>
+              <Close size="lg" />
+            </button>
+          </div>
 
-        {/** Chains ring */}
-        {/* <div>
+          {/** Chains ring */}
+          {/* <div>
           <ChainsRing
             activeChains={activeChains}
             sourceLabel={
@@ -102,117 +106,118 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           />
         </div> */}
 
-        {/** Transaction progress */}
-        {typeof progress === 'number' ? (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <TitleWithInfo
-                title="Status:"
-                variant="utility"
-                titleClassName="text-mono-200 dark:text-mono-0"
-              />
+          {/** Transaction progress */}
+          {typeof progress === 'number' ? (
+            <div className="flex flex-col gap-3">
               {/* TODO: Get txn status */}
-              <Chip color="blue">Generating ZK proofs...</Chip>
-            </div>
-            <Progress value={progress} />
-          </div>
-        ) : null}
-
-        <WrapperSection>
-          {/** Wrapping info */}
-          <Section>
-            <div className="space-y-4">
-              <TitleWithInfo
-                title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-                variant="utility"
-                info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-                titleClassName="text-mono-100 dark:text-mono-80"
-                className="text-mono-100 dark:text-mono-80"
-              />
-              <div className="flex items-center space-x-4">
-                {wrappableTokenSymbol && (
-                  <>
-                    <TokenWithAmount
-                      token1Symbol={wrappableTokenSymbol}
-                      amount={wrappingAmount}
-                    />
-                    <ArrowRight />
-                  </>
-                )}
-                <TokenWithAmount
-                  token1Symbol={fungibleTokenSymbol}
-                  amount={amount}
-                />
-              </div>
-            </div>
-          </Section>
-
-          {/** New spend note */}
-          <Section>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <TitleWithInfo
-                  title="New Spend Note"
-                  info="New Spend Note"
+                  title="Status:"
                   variant="utility"
+                  titleClassName="text-mono-200 dark:text-mono-0"
+                />
+                <Chip color="blue">...</Chip>
+              </div> */}
+              <Progress value={progress} />
+            </div>
+          ) : null}
+
+          <WrapperSection>
+            {/** Wrapping info */}
+            <Section>
+              <div className="space-y-4">
+                <TitleWithInfo
+                  title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
+                  variant="utility"
+                  info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
                   titleClassName="text-mono-100 dark:text-mono-80"
                   className="text-mono-100 dark:text-mono-80"
                 />
-                <div className="flex space-x-2">
-                  <CopyWithTooltip textToCopy={note ?? ''} />
-                  <Button
-                    variant="utility"
-                    size="sm"
-                    className="p-2"
-                    onClick={onDownload}
-                  >
-                    <Download className="!fill-current" />
-                  </Button>
+                <div className="flex items-center space-x-4">
+                  {wrappableTokenSymbol && (
+                    <>
+                      <TokenWithAmount
+                        token1Symbol={wrappableTokenSymbol}
+                        amount={formatTokenAmount(wrappingAmount ?? '')}
+                      />
+                      <ArrowRight />
+                    </>
+                  )}
+                  <TokenWithAmount
+                    token1Symbol={fungibleTokenSymbol}
+                    amount={formatTokenAmount(amount?.toString() ?? '')}
+                  />
                 </div>
               </div>
+            </Section>
 
-              <div className="flex items-center justify-between max-w-[470px]">
-                <Typography
-                  variant="h5"
-                  fw="bold"
-                  className="block truncate text-mono-140 dark:text-mono-0"
+            {/** New spend note */}
+            <Section>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <TitleWithInfo
+                    title="New Spend Note"
+                    info="New Spend Note"
+                    variant="utility"
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <div className="flex space-x-2">
+                    <CopyWithTooltip textToCopy={note ?? ''} />
+                    <Button
+                      variant="utility"
+                      size="sm"
+                      className="p-2"
+                      onClick={onDownload}
+                    >
+                      <Download className="!fill-current" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between max-w-[470px]">
+                  <Typography
+                    variant="h5"
+                    fw="bold"
+                    className="block truncate text-mono-140 dark:text-mono-0"
+                  >
+                    {note}
+                  </Typography>
+                </div>
+
+                <CheckBox
+                  {...checkboxProps}
+                  wrapperClassName={twMerge(
+                    'flex items-center',
+                    checkboxProps?.wrapperClassName
+                  )}
                 >
-                  {note}
-                </Typography>
+                  {checkboxProps?.children ?? 'I have copied the spend note'}
+                </CheckBox>
               </div>
+            </Section>
+          </WrapperSection>
 
-              <CheckBox
-                {...checkboxProps}
-                wrapperClassName={twMerge(
-                  'flex items-center',
-                  checkboxProps?.wrapperClassName
-                )}
-              >
-                {checkboxProps?.children ?? 'I have copied the spend note'}
-              </CheckBox>
+          {/** Transaction Details */}
+          <div className="px-4 space-y-2">
+            <div className="space-y-1">
+              <InfoItem
+                leftTextProps={{
+                  variant: 'utility',
+                  title: 'Depositing',
+                  info: 'Depositing',
+                }}
+                rightContent={depositingInfoStr}
+              />
+              <InfoItem
+                leftTextProps={{
+                  variant: 'utility',
+                  title: 'Fees',
+                  info: 'Fees',
+                }}
+                rightContent={fee?.toString()}
+              />
             </div>
-          </Section>
-        </WrapperSection>
-
-        {/** Transaction Details */}
-        <div className="px-4 space-y-2">
-          <div className="space-y-1">
-            <InfoItem
-              leftTextProps={{
-                variant: 'utility',
-                title: 'Depositing',
-                info: 'Depositing',
-              }}
-              rightContent={depositingInfoStr}
-            />
-            <InfoItem
-              leftTextProps={{
-                variant: 'utility',
-                title: 'Fees',
-                info: 'Fees',
-              }}
-              rightContent={fee?.toString()}
-            />
           </div>
         </div>
 

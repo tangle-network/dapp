@@ -17,7 +17,7 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
       >
         {/** The amount */}
         {amount && (
-          <Typography variant="body1" fw="bold">
+          <Typography variant="h5" fw="bold">
             {amount.toString()}
           </Typography>
         )}
@@ -30,7 +30,12 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
               token1Symbol={token1Symbol}
               token2Symbol={token2Symbol}
             />
-            <Typography component="span" variant="body1" fw="bold">
+            <Typography
+              component="span"
+              variant="h5"
+              fw="bold"
+              className="capitalize"
+            >
               {token1Symbol.trim() + '/' + token2Symbol.trim()}
             </Typography>
           </p>
@@ -39,7 +44,7 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
         )}
 
         {!token2Symbol && (
-          <Typography variant="body1" fw="bold">
+          <Typography variant="h5" fw="bold" className="capitalize">
             {token1Symbol}
           </Typography>
         )}
