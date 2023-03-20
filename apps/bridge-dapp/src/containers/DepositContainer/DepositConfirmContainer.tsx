@@ -245,10 +245,10 @@ export const DepositConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
           children: depositTxInProgress
-            ? 'New Transaction'
+            ? 'Make Another Transaction'
             : wrappingFlow
-            ? 'Wrap And Deposit'
-            : 'Deposit',
+            ? 'Confirm Wrap And Deposit'
+            : 'Confirm Deposit',
           onClick: handleExecuteDeposit,
         }}
         checkboxProps={{

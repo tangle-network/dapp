@@ -7,6 +7,7 @@ import {
   Button,
   ChainsRing,
   CheckBox,
+  Chip,
   CopyWithTooltip,
   InfoItem,
   Progress,
@@ -81,7 +82,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         </div>
 
         {/** Chains ring */}
-        <div>
+        {/* <div>
           <ChainsRing
             activeChains={activeChains}
             sourceLabel={
@@ -99,17 +100,29 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             amount={amount}
             tokenPairString={tokenPairString}
           />
-        </div>
+        </div> */}
 
         {/** Transaction progress */}
-        {typeof progress === 'number' ? <Progress value={progress} /> : null}
+        {typeof progress === 'number' ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <TitleWithInfo
+                title="Status:"
+                variant="utility"
+                titleClassName="text-mono-200 dark:text-mono-0"
+              />
+              {/* TODO: Get txn status */}
+              <Chip color="blue">Generating ZK proofs...</Chip>
+            </div>
+            <Progress value={progress} />
+          </div>
+        ) : null}
 
         <WrapperSection>
           {/** Wrapping info */}
           <Section>
             <div className="space-y-4">
               <TitleWithInfo
-                titleComponent="h6"
                 title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
                 variant="utility"
                 info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
@@ -139,7 +152,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
-                  titleComponent="h6"
                   title="New Spend Note"
                   info="New Spend Note"
                   variant="utility"
@@ -161,7 +173,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
               <div className="flex items-center justify-between max-w-[470px]">
                 <Typography
-                  variant="mono1"
+                  variant="h5"
                   fw="bold"
                   className="block truncate text-mono-140 dark:text-mono-0"
                 >
@@ -204,9 +216,22 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </div>
         </div>
 
-        <Button {...actionBtnProps} isFullWidth className="justify-center">
-          {actionBtnProps?.children ?? 'Deposit'}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button {...actionBtnProps} isFullWidth className="justify-center">
+            {actionBtnProps?.children ?? 'Deposit'}
+          </Button>
+
+          {!progress && (
+            <Button
+              variant="secondary"
+              isFullWidth
+              className="justify-center"
+              onClick={onClose}
+            >
+              Back
+            </Button>
+          )}
+        </div>
       </div>
     );
   }
