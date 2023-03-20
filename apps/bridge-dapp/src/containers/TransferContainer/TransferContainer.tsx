@@ -848,7 +848,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="h-[700px] max-w-none"
+        className="max-w-none h-[628px]"
         bridgeAssetInputProps={{
           token: selectedBridgingAsset,
           onClick: handleBridgingAssetInputClick,
