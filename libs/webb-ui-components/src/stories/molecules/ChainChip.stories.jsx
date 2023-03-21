@@ -47,7 +47,7 @@ export default {
           'tangle',
           'scroll',
           'athena',
-          'demter',
+          'demeter',
           'hermes',
         ],
       },
