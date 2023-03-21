@@ -34,12 +34,18 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The source chain symbol
    */
-  sourceChain?: string;
+  sourceChain?: {
+    type: string;
+    name: string;
+  };
 
   /**
    * The destination chain symbol
    */
-  destChain?: string;
+  destChain?: {
+    type: string;
+    name: string;
+  };
 
   /**
    * The transaction progress

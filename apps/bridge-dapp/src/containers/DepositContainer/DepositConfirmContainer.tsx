@@ -262,8 +262,8 @@ export const DepositConfirmContainer = forwardRef<
         amount={amount}
         wrappingAmount={String(amount)}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceChain={sourceChain?.name}
-        destChain={destChain?.name}
+        sourceChain={sourceChain}
+        destChain={destChain}
         fee={0}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         onClose={() => resetMainComponent()}

@@ -25,12 +25,18 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The source chain
    */
-  sourceChain?: ChainType;
+  sourceChain?: {
+    type: string;
+    name: string;
+  };
 
   /**
    * The destination chain
    */
-  destChain?: ChainType;
+  destChain?: {
+    type: string;
+    name: string;
+  };
 
   /**
    * The fungible token id

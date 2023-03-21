@@ -6,6 +6,7 @@ import { ChainType } from '@webb-tools/sdk-core';
 export interface ChainConfig {
   chainType: ChainType;
   name: string;
+  base: string;
   group: string;
   chainId: number;
   tag: 'dev' | 'test' | 'live';

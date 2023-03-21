@@ -15,13 +15,6 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
         className={twMerge('flex items-center space-x-1', className)}
         ref={ref}
       >
-        {/** The amount */}
-        {amount && (
-          <Typography variant="h5" fw="bold">
-            {amount.toString()}
-          </Typography>
-        )}
-
         {/** Icon */}
         {token2Symbol ? (
           // Token pair
@@ -30,6 +23,13 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
               token1Symbol={token1Symbol}
               token2Symbol={token2Symbol}
             />
+
+            {amount && (
+              <Typography variant="h5" fw="bold">
+                {amount.toString()}
+              </Typography>
+            )}
+
             <Typography
               component="span"
               variant="h5"
@@ -41,6 +41,13 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
           </p>
         ) : (
           <TokenIcon size="lg" name={token1Symbol} /> // Only one token
+        )}
+
+        {/** The amount */}
+        {amount && (
+          <Typography variant="h5" fw="bold">
+            {amount.toString()}
+          </Typography>
         )}
 
         {!token2Symbol && (

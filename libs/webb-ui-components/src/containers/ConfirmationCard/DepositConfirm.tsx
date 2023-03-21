@@ -5,7 +5,9 @@ import { Typography } from '../../typography';
 
 import {
   Button,
+  ChainChip,
   ChainsRing,
+  ChainType,
   CheckBox,
   Chip,
   CopyWithTooltip,
@@ -14,7 +16,6 @@ import {
   TitleWithInfo,
   TokenWithAmount,
 } from '../../components';
-import { PropsOf } from '../../types';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
 import { formatTokenAmount } from '../../utils/formatTokenAmount';
@@ -63,8 +64,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       return `${amount ?? '0'} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
-    console.log(sourceChain, destChain);
-
     return (
       <div
         {...props}
@@ -85,27 +84,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
             </button>
           </div>
 
-          {/** Chains ring */}
-          {/* <div>
-          <ChainsRing
-            activeChains={activeChains}
-            sourceLabel={
-              sourceChain && sourceChain === destChain
-                ? 'Depositing from & to'
-                : 'Depositing from'
-            }
-            destLabel={
-              destChain && sourceChain !== destChain
-                ? 'Depositing to'
-                : undefined
-            }
-            sourceChain={sourceChain}
-            destChain={destChain}
-            amount={amount}
-            tokenPairString={tokenPairString}
-          />
-        </div> */}
-
           {/** Transaction progress */}
           {typeof progress === 'number' ? (
             <div className="flex flex-col gap-3">
@@ -125,24 +103,45 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           <WrapperSection>
             {/** Wrapping info */}
             <Section>
-              <div className="space-y-4">
-                <TitleWithInfo
-                  title={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-                  variant="utility"
-                  info={wrappableTokenSymbol ? 'Wrapping' : 'Depositing'}
-                  titleClassName="text-mono-100 dark:text-mono-80"
-                  className="text-mono-100 dark:text-mono-80"
-                />
-                <div className="flex items-center space-x-4">
-                  {wrappableTokenSymbol && (
-                    <>
-                      <TokenWithAmount
-                        token1Symbol={wrappableTokenSymbol}
-                        amount={formatTokenAmount(wrappingAmount ?? '')}
-                      />
-                      <ArrowRight />
-                    </>
-                  )}
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col gap-3">
+                  <TitleWithInfo
+                    title={'Depositing from'}
+                    variant="utility"
+                    info={'Depositing'}
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <ChainChip
+                    type={(sourceChain?.type as ChainType) ?? 'webb-dev'}
+                    name={sourceChain?.name ?? ''}
+                  />
+                  <TokenWithAmount
+                    token1Symbol={wrappableTokenSymbol ?? fungibleTokenSymbol}
+                    amount={formatTokenAmount(
+                      wrappingAmount ? wrappingAmount : amount?.toString() ?? ''
+                    )}
+                  />
+                </div>
+
+                <ArrowRight />
+
+                <div className="flex flex-col gap-3">
+                  <TitleWithInfo
+                    title={
+                      wrappableTokenSymbol ? 'Wrapping to' : 'Depositing to'
+                    }
+                    variant="utility"
+                    info={
+                      wrappableTokenSymbol ? 'Wrapping to' : 'Depositing to'
+                    }
+                    titleClassName="text-mono-100 dark:text-mono-80"
+                    className="text-mono-100 dark:text-mono-80"
+                  />
+                  <ChainChip
+                    type={(destChain?.type as ChainType) ?? 'webb-dev'}
+                    name={destChain?.name ?? ''}
+                  />
                   <TokenWithAmount
                     token1Symbol={fungibleTokenSymbol}
                     amount={formatTokenAmount(amount?.toString() ?? '')}
