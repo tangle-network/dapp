@@ -66,7 +66,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         </div>
 
         {/** Token ring */}
-        <div>
+        {/* <div>
           <ChainsRing
             activeChains={activeChains}
             sourceLabel={
@@ -82,7 +82,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             amount={amount}
             tokenPairString={token1Symbol}
           />
-        </div>
+        </div> */}
 
         {/** Transaction progress */}
         {typeof progress === 'number' && <Progress value={progress} />}

@@ -76,7 +76,7 @@ export const WithdrawConfirm = forwardRef<
         </div>
 
         {/** Chains ring */}
-        <div>
+        {/* <div>
           <ChainsRing
             activeChains={activeChains}
             destLabel="Withdrawing to"
@@ -88,7 +88,7 @@ export const WithdrawConfirm = forwardRef<
                 : token1Symbol
             }
           />
-        </div>
+        </div> */}
 
         {/** Transaction progress */}
         {typeof progress === 'number' && <Progress value={progress} />}
