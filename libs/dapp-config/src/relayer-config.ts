@@ -30,12 +30,6 @@ export const relayerConfig: RelayerConfig[] = [
   {
     endpoint: 'https://relayer3.webb.tools',
   },
-  {
-    endpoint: 'https://relayer4.webb.tools',
-  },
-  {
-    endpoint: 'https://relayer5.webb.tools',
-  },
 ];
 
 export function relayerSubstrateNameToTypedChainId(
