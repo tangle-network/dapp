@@ -379,8 +379,8 @@ export const DepositContainer = forwardRef<
         wrappableTokenId: wrappableCurrency?.id,
         amount,
         sourceChain: {
-          type: sourceChain.base,
-          name: sourceChain.name,
+          type: activeChain.base,
+          name: activeChain.name,
         },
         destChain: {
           type: destChain.base,
