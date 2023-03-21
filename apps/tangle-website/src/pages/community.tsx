@@ -10,8 +10,7 @@ import {
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import { Button } from '@webb-tools/webb-ui-components';
-import { NextSeo } from 'next-seo';
-import { Heading2, ResearchAndDevelopmentSection } from '../components';
+import { Heading2 } from '../components';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -74,8 +73,6 @@ const links: Array<LinksType> = [
 const Community = () => {
   return (
     <>
-      <NextSeo title="Community" />
-
       <section className="py-[156px] flex items-center justify-center w-full bg-community_bg_texture bg-no-repeat bg-cover">
         <div className="max-w-[900px]">
           <Heading2 className="px-4 text-center">Get Started</Heading2>
@@ -101,8 +98,6 @@ const Community = () => {
           </div>
         </div>
       </section>
-
-      <ResearchAndDevelopmentSection />
     </>
   );
 };

@@ -12,3 +12,6 @@ export const CONNECTED_SHIELDED_IDENTITY_URL =
   'https://docs.webb.tools/docs/protocols/identity/';
 
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
+
+export const TANGLE_NETWORK_DOCS_URL =
+  'https://docs.webb.tools/docs/tangle-network/overview/';

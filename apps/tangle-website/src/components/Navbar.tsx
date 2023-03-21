@@ -17,7 +17,7 @@ import {
   MenuItem,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { BRIDGE_URL, WEBB_DOCS_URL } from '../constants';
+import { TANGLE_NETWORK_URL, TANGLE_NETWORK_DOCS_URL } from '../constants';
 import { InternalOrExternalLink, IInternalOrExternalLink } from '.';
 
 type NavItem = IInternalOrExternalLink;
@@ -27,21 +27,8 @@ const isNavItem = (item: any): item is NavItem => {
 };
 
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
-  // {
-  //   protocols: [
-  //     {
-  //       label: 'Shielded Pool Protocols',
-  //       url: '#',
-  //     },
-  //     {
-  //       label: 'Shielded Identity Protocols',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
   { label: 'community', url: '/community', isInternal: true },
-  { label: 'docs', url: WEBB_DOCS_URL },
-  { label: 'blog', url: '/blog', isInternal: true },
+  { label: 'docs', url: TANGLE_NETWORK_DOCS_URL },
 ];
 
 export const Navbar = () => {
@@ -104,12 +91,12 @@ export const Navbar = () => {
 
         <li>
           <Button
-            href={BRIDGE_URL}
+            href={TANGLE_NETWORK_URL}
             target="_blank"
             rel="noreferrer"
             className="button-base button-primary"
           >
-            Bridge
+            View Network
           </Button>
         </li>
 

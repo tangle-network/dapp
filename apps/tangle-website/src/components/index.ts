@@ -10,8 +10,5 @@ export * from './SubHeading1';
 export * from './SubHeading2';
 export * from './InternalOrExternalLink';
 export * from './NewletterForm';
-export * from './PrivacyScaleIllustration';
-export * from './PrivacyScaleSwiper';
-export * from './BlogCard';
 // Section components
 export * from './sections';
