@@ -6,5 +6,6 @@
 /apps/bridge-dapp/build/**/*
 /apps/stats-dapp/build/**/*
 /apps/webbsite/build/**/*
+/apps/tangle-website/build/**/*
 /node_modules
 /.vscode
