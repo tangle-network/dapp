@@ -1,18 +1,12 @@
 import { NotionAPI } from 'notion-client';
 import { ExtendedRecordMap } from 'notion-types';
-import {
-  NOTION_TOKEN_V2,
-  NOTION_ACTIVE_USER,
-} from './server-constants';
+import { NOTION_TOKEN_V2, NOTION_ACTIVE_USER } from './server-constants';
 
 export class Notion {
   private readonly notionAPI: NotionAPI;
 
   constructor() {
-    if (
-      !NOTION_TOKEN_V2 ||
-      !NOTION_ACTIVE_USER
-    ) {
+    if (!NOTION_TOKEN_V2 || !NOTION_ACTIVE_USER) {
       throw new Error(
         'Missing one or more Notion API keys, check your .env file and try again. The keys are NOTION_TOKEN_V2 and NOTION_ACTIVE_USER.'
       );

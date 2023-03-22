@@ -2,9 +2,9 @@ import { InformationLine } from '@webb-tools/icons';
 import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 
-export const NewsletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
-  onSuccess,
-}) => {
+export const NewsletterForm: FC<{
+  onSuccess: (isSuccess: boolean) => void;
+}> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
