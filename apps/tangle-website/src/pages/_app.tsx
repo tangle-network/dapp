@@ -1,7 +1,7 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import '@webb-tools/webb-ui-components/tailwind.css';
-import '../styles/globals.css'
+import '../styles/globals.css';
 import './styles.css';
 
 function CustomApp({ Component, pageProps }: AppProps) {
