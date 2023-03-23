@@ -635,7 +635,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                         bridgeCurrency,
                         bridgeTargets
                       );
-                      bridgeOptions[newTypedChainId] = supportedBridge;
+                      bridgeOptions[bridgeCurrency.id] = supportedBridge;
 
                       // Set the first compatible bridge encountered.
                       if (!defaultBridge) {
@@ -643,6 +643,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       }
                     }
                   }
+
+                  console.log('bridgeOptions', bridgeOptions);
 
                   // set the available bridges of the new chain
                   webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
@@ -660,6 +662,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 }
               };
 
+              // Listen for chain updates when user switches chains in the extension
               webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
               await webbWeb3Provider.setChainListener();
