@@ -146,18 +146,6 @@ export const WithdrawConfirm = forwardRef<
                       token1Symbol={token2Symbol}
                       amount={remainingAmount}
                     />
-                    {refundAmount && refundToken && (
-                      <>
-                        <Typography variant="body1" fw="semibold">
-                          +
-                        </Typography>
-
-                        <TokenWithAmount
-                          token1Symbol={refundToken}
-                          amount={refundAmount}
-                        />
-                      </>
-                    )}
                   </div>
                 </div>
               ) : (
@@ -166,18 +154,6 @@ export const WithdrawConfirm = forwardRef<
                     token1Symbol={token1Symbol}
                     amount={remainingAmount}
                   />
-                  {refundAmount && refundToken && (
-                    <>
-                      <Typography variant="body1" fw="semibold">
-                        +
-                      </Typography>
-
-                      <TokenWithAmount
-                        token1Symbol={refundToken}
-                        amount={refundAmount}
-                      />
-                    </>
-                  )}
                 </div>
               )}
             </div>
