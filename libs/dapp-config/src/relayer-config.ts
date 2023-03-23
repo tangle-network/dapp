@@ -5,9 +5,11 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
  * Relayer configuration
  * it's now the endpoint and info/metada ..etc is fetched via http
  * @param endpoint - relayer http endpoint
+ * @param isProduction - is this a production relayer
  **/
 export type RelayerConfig = {
   endpoint: string;
+  isProduction?: boolean;
 };
 
 /**
@@ -23,12 +25,15 @@ export const relayerConfig: RelayerConfig[] = [
   },
   {
     endpoint: 'https://relayer1.webb.tools',
+    isProduction: true,
   },
   {
     endpoint: 'https://relayer2.webb.tools',
+    isProduction: true,
   },
   {
     endpoint: 'https://relayer3.webb.tools',
+    isProduction: true,
   },
   {
     endpoint: 'https://relayer4.webb.tools',
