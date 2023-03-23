@@ -859,7 +859,7 @@ export const WithdrawContainer = forwardRef<
       isRefund
         ? {
             leftTextProps: {
-              title: 'Receiving refund amount',
+              title: 'Refund Amount',
               info: refundInfo,
             },
             rightContent: refundAmountContent,
