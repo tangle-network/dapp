@@ -4,17 +4,20 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
-import { zeroAddress } from '@webb-tools/dapp-types';
+import { PresetTypedChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { useCurrencies, useVAnchor } from '@webb-tools/react-hooks';
-import { CircomUtxo, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Web3VAnchorActions } from '@webb-tools/web3-api-provider';
-import { BigNumber, utils } from 'ethers';
+import { calculateTypedChainId, CircomUtxo, Note } from '@webb-tools/sdk-core';
+import {
+  Web3Provider,
+  Web3VAnchorActions,
+} from '@webb-tools/web3-api-provider';
+import { BigNumber, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 
 type UseWithdrawFeeReturnType = {
-  feeInfo: RelayerFeeInfo | null;
-  fetchFeeInfo: () => Promise<void>;
+  feeInfo: RelayerFeeInfo | BigNumber | null;
+  fetchRelayerFeeInfo: () => Promise<void>;
   isLoading: boolean;
   error: unknown | null;
 };
@@ -25,6 +28,16 @@ const hasGetGasAmountMethod = (
   return !!vanchorApi && typeof vanchorApi['getGasAmount'] === 'function';
 };
 
+// The gas amount config for each chain
+const gasAmountConfig: Record<number, BigNumber> = {
+  [PresetTypedChainId.OptimismTestnet]: BigNumber.from(1800000),
+  [PresetTypedChainId.PolygonTestnet]: BigNumber.from(1800000),
+  [PresetTypedChainId.ArbitrumTestnet]: BigNumber.from(6000000),
+  [PresetTypedChainId.Sepolia]: BigNumber.from(1800000),
+  [PresetTypedChainId.MoonbaseAlpha]: BigNumber.from(1900000),
+  [PresetTypedChainId.Goerli]: BigNumber.from(1900000),
+};
+
 export const useWithdrawFee = (
   withdrawNotes: Note[] | null,
   amount: number,
@@ -32,19 +45,21 @@ export const useWithdrawFee = (
   relayer: ActiveWebbRelayer | null,
   wrapUnwrapToken = ''
 ): UseWithdrawFeeReturnType => {
-  const { activeChain, noteManager } = useWebContext();
+  const { activeApi, activeChain, noteManager } = useWebContext();
 
   const { fungibleCurrency } = useCurrencies();
 
   const { api: vanchorApi } = useVAnchor();
 
-  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | null>(null);
+  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | BigNumber | null>(
+    null
+  );
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [error, setError] = useState<unknown | null>(null);
 
-  const fetchFee = useCallback(async () => {
+  const fetchRelayerFeeInfo = useCallback(async () => {
     try {
       if (!activeChain || !noteManager || !fungibleCurrency || !vanchorApi) {
         throw new Error('Missing required params');
@@ -148,15 +163,86 @@ export const useWithdrawFee = (
     wrapUnwrapToken,
   ]);
 
+  const fetchFeeInfo = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      if (
+        !withdrawNotes?.length ||
+        !amount ||
+        !recipient ||
+        relayer ||
+        !activeChain ||
+        !activeApi
+      ) {
+        return;
+      }
+
+      const currentTypedChain = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+
+      if (!gasAmountConfig[currentTypedChain]) {
+        throw new Error(
+          `No gas amount config for current chain: ${currentTypedChain}`
+        );
+      }
+
+      const provider = activeApi.getProvider();
+      if (!(provider instanceof Web3Provider)) {
+        throw new Error('Provider is not a Web3Provider');
+      }
+
+      const gasAmount = gasAmountConfig[currentTypedChain];
+      const etherProvider = provider.intoEthersProvider();
+
+      // Get the greatest gas price
+      let gasPrice = await etherProvider.getGasPrice();
+      const feeData = await etherProvider.getFeeData();
+      if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
+        gasPrice = feeData.maxFeePerGas;
+      }
+
+      if (
+        feeData.maxPriorityFeePerGas &&
+        feeData.maxPriorityFeePerGas.gt(gasPrice)
+      ) {
+        gasPrice = feeData.maxPriorityFeePerGas;
+      }
+
+      setFeeInfo(gasAmount.mul(gasPrice));
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [
+    activeApi,
+    activeChain,
+    amount,
+    recipient,
+    relayer,
+    withdrawNotes?.length,
+  ]);
+
   useEffect(() => {
     setFeeInfo(null);
     setError(null);
     setIsLoading(false);
   }, [withdrawNotes, relayer, wrapUnwrapToken]);
 
+  useEffect(() => {
+    if (relayer) {
+      setFeeInfo(null);
+    } else {
+      fetchFeeInfo();
+    }
+  }, [fetchFeeInfo, relayer]);
+
   return {
     feeInfo,
-    fetchFeeInfo: fetchFee,
+    fetchRelayerFeeInfo,
     isLoading: isLoading,
     error: error,
   };

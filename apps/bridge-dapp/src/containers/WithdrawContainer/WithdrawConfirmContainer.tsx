@@ -276,10 +276,19 @@ export const WithdrawConfirmContainer = forwardRef<
     ]);
 
     const formattedFees = useMemo(() => {
-      const feesInEthers = Number(ethers.utils.formatEther(fees));
+      const feesInEthers = ethers.utils.formatEther(fees);
 
-      return getRoundedAmountString(feesInEthers, 3, Math.round);
-    }, [fees]);
+      if (activeRelayer) {
+        const formattedRelayerFee = getRoundedAmountString(
+          Number(feesInEthers),
+          3,
+          Math.round
+        );
+        return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
+      }
+
+      return `${feesInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
+    }, [activeRelayer, fees, fungibleCurrency.view.symbol, refundToken]);
 
     const formattedRefund = useMemo(() => {
       if (!refundAmount) {

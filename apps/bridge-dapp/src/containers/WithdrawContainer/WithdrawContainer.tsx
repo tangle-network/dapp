@@ -155,10 +155,10 @@ export const WithdrawContainer = forwardRef<
   }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
   const {
-    fetchFeeInfo,
+    fetchRelayerFeeInfo,
     isLoading: isFetchingFeeInfo,
     error: fetchFeeInfoError,
-    feeInfo,
+    feeInfo: feeInfoOrBigNumber,
   } = useWithdrawFee(
     availableNotesFromManager,
     amount,
@@ -168,6 +168,14 @@ export const WithdrawContainer = forwardRef<
       ? wrappableCurrency?.getAddress(currentTypedChainId)
       : ''
   );
+
+  const feeInfo = useMemo(() => {
+    if (!(feeInfoOrBigNumber instanceof BigNumber)) {
+      return feeInfoOrBigNumber;
+    }
+
+    return null;
+  }, [feeInfoOrBigNumber]);
 
   const currentNativeCurrency = useMemo(() => {
     if (!currentTypedChainId) {
@@ -574,7 +582,7 @@ export const WithdrawContainer = forwardRef<
     }
 
     if (activeRelayer && !feeInfo) {
-      return await fetchFeeInfo();
+      return await fetchRelayerFeeInfo();
     }
 
     if (
@@ -663,6 +671,11 @@ export const WithdrawContainer = forwardRef<
       });
     }
 
+    const fees =
+      feeInfoOrBigNumber instanceof BigNumber
+        ? feeInfoOrBigNumber
+        : totalFeeInWei ?? BigNumber.from(0);
+
     setMainComponent(
       <WithdrawConfirmContainer
         className="w-[550px]" // TODO: Remove hardcoded width
@@ -672,7 +685,7 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={totalFeeInWei ?? BigNumber.from(0)}
+        fees={fees}
         amountAfterFees={amountAfterFeeWei}
         isRefund={isRefund}
         fungibleCurrency={{
@@ -702,7 +715,8 @@ export const WithdrawContainer = forwardRef<
     currentNativeCurrency?.symbol,
     currentTypedChainId,
     feeInfo,
-    fetchFeeInfo,
+    feeInfoOrBigNumber,
+    fetchRelayerFeeInfo,
     fungibleCurrency,
     handleResetState,
     handleSwitchToOtherDestChains,
@@ -845,6 +859,10 @@ export const WithdrawContainer = forwardRef<
           3,
           Math.round
         )} ${fungiCurrencySymbol}`
+      : feeInfoOrBigNumber instanceof BigNumber
+      ? `${ethers.utils.formatEther(
+          feeInfoOrBigNumber
+        )} ${nativeCurrencySymbol}`
       : '--';
 
     return [
@@ -875,7 +893,7 @@ export const WithdrawContainer = forwardRef<
       },
       {
         leftTextProps: {
-          title: 'Transaction fees',
+          title: 'Estimated fees',
           info: transactionFeeInfo,
         },
         rightContent: txFeeContent,
@@ -885,6 +903,7 @@ export const WithdrawContainer = forwardRef<
     >['infoItemProps'];
   }, [
     currentNativeCurrency?.symbol,
+    feeInfoOrBigNumber,
     infoCalculated,
     isFetchingFeeInfo,
     isRefund,
