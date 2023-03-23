@@ -30,20 +30,11 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       buttonDescVariant = 'info',
       className,
       customAmountInputProps,
-      feeAmount,
-      feePercentage,
       fixedAmountInputProps,
-      isFetchingFee,
-      receivedAmount,
-      receivedInfo,
-      receivedToken,
+      infoItemProps,
       recipientInputProps,
-      refundAmount,
       refundInputProps,
-      refundToken,
       relayerInputProps,
-      remainderAmount,
-      remainderToken,
       tokenInputProps,
       unwrappingAssetInputProps,
       unwrapSwitcherProps,
@@ -93,32 +84,6 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       [switcherChecked, unwrapSwitcherProps]
     );
 
-    const feeContent = useMemo(() => {
-      if (isFetchingFee) {
-        return 'Calculating...';
-      }
-
-      if (feeAmount && remainderToken) {
-        return `${feeAmount} ${remainderToken}`;
-      }
-
-      return feeAmount?.toString();
-    }, [feeAmount, isFetchingFee, remainderToken]);
-
-    const receivedContent = useMemo(() => {
-      if (!receivedAmount) {
-        return undefined;
-      }
-
-      if (refundAmount) {
-        return `${receivedAmount} ${receivedToken ?? ''} + ${refundAmount} ${
-          refundToken ?? ''
-        }`;
-      }
-
-      return `${receivedAmount} ${receivedToken ?? ''}`;
-    }, [receivedAmount, receivedToken, refundAmount, refundToken]);
-
     return (
       <div
         {...props}
@@ -165,34 +130,13 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
             <RefundInput {...refundInputProps} />
           </BridgeInputGroup>
           {/** Info */}
-          <div className="flex flex-col space-y-1">
-            <InfoItem
-              leftTextProps={{
-                title: 'Receiving',
-                variant: 'utility',
-                info: receivedInfo,
-              }}
-              rightContent={receivedContent}
-            />
-            <InfoItem
-              leftTextProps={{
-                title: 'Remainder',
-                variant: 'utility',
-              }}
-              rightContent={
-                remainderAmount
-                  ? `${remainderAmount} ${remainderToken}`
-                  : undefined
-              }
-            />
-            <InfoItem
-              leftTextProps={{
-                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
-                variant: 'utility',
-              }}
-              rightContent={feeContent}
-            />
-          </div>
+          {infoItemProps && (
+            <div className="flex flex-col space-y-1">
+              {infoItemProps.map((itemProps, index) => (
+                <InfoItem key={index} {...itemProps} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">

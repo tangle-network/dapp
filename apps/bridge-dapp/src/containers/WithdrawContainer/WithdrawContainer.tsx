@@ -25,6 +25,7 @@ import {
   WithdrawCard,
   getRoundedAmountString,
   useWebbUI,
+  InfoItem,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 
@@ -52,7 +53,9 @@ import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
 import { getErrorMessage } from '../../utils';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
-import { ExchangeRateInfo } from './shared';
+import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
+import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { VAnchor__factory } from '@webb-tools/contracts';
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -503,18 +506,6 @@ export const WithdrawContainer = forwardRef<
     switchChain,
   ]);
 
-  const totalFeeFormatted = useMemo(() => {
-    if (!totalFeeInWei) {
-      return undefined;
-    }
-
-    return getRoundedAmountString(
-      Number(ethers.utils.formatEther(totalFeeInWei)),
-      3,
-      Math.round
-    );
-  }, [totalFeeInWei]);
-
   const handleWithdrawButtonClick = useCallback(async () => {
     // Dismiss all the completed and failed txns in the queue before starting a new txn
     txQueue.txPayloads
@@ -768,11 +759,6 @@ export const WithdrawContainer = forwardRef<
     [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
 
-  const formattedRefundAmount = useMemo(
-    () => getRoundedAmountString(refundAmount, 3, Math.floor),
-    [refundAmount]
-  );
-
   const buttonDesc = useMemo(() => {
     if (!totalFeeInWei) {
       return undefined;
@@ -785,6 +771,113 @@ export const WithdrawContainer = forwardRef<
       return `Insufficient funds. You need more than ${formattedFee} to cover the fees`;
     }
   }, [amount, totalFeeInWei]);
+
+  const infoItemProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['infoItemProps']
+  >(() => {
+    const nativeCurrencySymbol = currentNativeCurrency?.symbol ?? '';
+    const fungiCurrencySymbol = selectedFungibleToken?.symbol ?? '';
+
+    const {
+      receivingAmount,
+      receivingTokenSymbol,
+      remainderAmount,
+      remainderTokenSymbol,
+    } = infoCalculated;
+
+    const formattedRefundAmount = getRoundedAmountString(refundAmount);
+    const refundAmountContent =
+      refundAmount && isRefund
+        ? `${formattedRefundAmount} ${nativeCurrencySymbol}`
+        : '--';
+
+    const txFeeContent = isFetchingFeeInfo
+      ? 'Calculating...'
+      : totalFeeInWei
+      ? `${getRoundedAmountString(
+          Number(ethers.utils.formatEther(totalFeeInWei)),
+          3,
+          Math.round
+        )} ${fungiCurrencySymbol}`
+      : '--';
+
+    const estimatedFee = feeInfo
+      ? getRoundedAmountString(
+          Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
+          3,
+          Math.round
+        )
+      : undefined;
+
+    const refundFee =
+      feeInfo && refundAmount && isRefund
+        ? refundAmount /
+          Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+        : undefined;
+
+    const refundInfo = feeInfo ? (
+      <ExchangeRateInfo
+        exchangeRate={+ethers.utils.formatEther(feeInfo.refundExchangeRate)}
+        fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+        nativeTokenSymbol={currentNativeCurrency?.symbol}
+      />
+    ) : undefined;
+
+    const transactionFeeInfo = estimatedFee ? (
+      <TransactionFeeInfo
+        estimatedFee={estimatedFee}
+        refundFee={refundFee}
+        fungibleTokenSymbol={fungiCurrencySymbol}
+      />
+    ) : undefined;
+
+    return [
+      {
+        leftTextProps: {
+          title: 'Receiving',
+        },
+        rightContent: receivingAmount
+          ? `${receivingAmount} ${receivingTokenSymbol}`
+          : '--',
+      },
+      isRefund
+        ? {
+            leftTextProps: {
+              title: 'Receiving refund amount',
+              info: refundInfo,
+            },
+            rightContent: refundAmountContent,
+          }
+        : undefined,
+      {
+        leftTextProps: {
+          title: 'Remaining balance',
+        },
+        rightContent: remainderAmount
+          ? `${remainderAmount} ${remainderTokenSymbol}`
+          : '--',
+      },
+      {
+        leftTextProps: {
+          title: 'Transaction fees',
+          info: transactionFeeInfo,
+        },
+        rightContent: txFeeContent,
+      },
+    ].filter((item) => item) as ComponentProps<
+      typeof WithdrawCard
+    >['infoItemProps'];
+  }, [
+    currentNativeCurrency?.symbol,
+    feeInfo,
+    fungibleCurrency?.view.symbol,
+    infoCalculated,
+    isFetchingFeeInfo,
+    isRefund,
+    refundAmount,
+    selectedFungibleToken?.symbol,
+    totalFeeInWei,
+  ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
@@ -985,25 +1078,7 @@ export const WithdrawContainer = forwardRef<
           refundAmountInputProps,
         }}
         withdrawBtnProps={withdrawButtonProps}
-        isFetchingFee={isFetchingFeeInfo}
-        feeAmount={totalFeeFormatted}
-        receivedAmount={infoCalculated.receivingAmount}
-        receivedToken={infoCalculated.receivingTokenSymbol}
-        receivedInfo={
-          feeInfo ? (
-            <ExchangeRateInfo
-              exchangeRate={
-                +ethers.utils.formatEther(feeInfo.refundExchangeRate)
-              }
-              fungibleTokenSymbol={fungibleCurrency?.view.symbol}
-              nativeTokenSymbol={currentNativeCurrency?.symbol}
-            />
-          ) : undefined
-        }
-        refundAmount={isRefund ? formattedRefundAmount : undefined}
-        refundToken={currentNativeCurrency?.symbol}
-        remainderAmount={infoCalculated.remainderAmount}
-        remainderToken={infoCalculated.remainderTokenSymbol}
+        infoItemProps={infoItemProps}
         buttonDesc={buttonDesc}
         buttonDescVariant="error"
       />

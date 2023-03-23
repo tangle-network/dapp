@@ -372,8 +372,8 @@ export class WebbWeb3Provider
             vanchor.contract.address,
             provider.intoEthersProvider()
           );
-          const alreadySpent = await vAnchorContract.isSpent(
-            toFixedHex(`0x${utxo.nullifier}`, 32)
+          const alreadySpent = await retryPromise(() =>
+            vAnchorContract.isSpent(toFixedHex(`0x${utxo.nullifier}`, 32))
           );
 
           return alreadySpent ? null : utxo;
@@ -590,7 +590,7 @@ export class WebbWeb3Provider
       vAnchorAddress,
       provider ?? this.ethersProvider
     );
-    const maxEdges = await vAnchorContract.maxEdges();
+    const maxEdges = await retryPromise(vAnchorContract.maxEdges);
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;

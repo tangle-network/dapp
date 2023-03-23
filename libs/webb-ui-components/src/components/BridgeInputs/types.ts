@@ -269,6 +269,7 @@ export interface RelayerInputProps extends InputWrapperComponentProps {
 export interface InfoItemProps extends PropsOf<'div'> {
   /**
    * The left text props (props of TitleWithInfo component)
+   * @default { variant: 'utility' }
    */
   leftTextProps: ComponentProps<typeof TitleWithInfo>;
 
