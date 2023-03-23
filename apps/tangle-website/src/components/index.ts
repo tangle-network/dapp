@@ -10,5 +10,6 @@ export * from './SubHeading1';
 export * from './SubHeading2';
 export * from './InternalOrExternalLink';
 export * from './NewsLetterForm';
+export * from "./TangleLogo";
 // Section components
 export * from './sections';
