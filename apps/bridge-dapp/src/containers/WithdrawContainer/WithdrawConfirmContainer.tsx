@@ -135,7 +135,7 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         default: {
-          status = 'In-Progress';
+          status = 'In Progress';
           break;
         }
       }
@@ -264,7 +264,10 @@ export const WithdrawConfirmContainer = forwardRef<
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}
-        destChain={chainsPopulated[targetChainId]?.name}
+        destChain={{
+          name: chainsPopulated[targetChainId].name,
+          type: chainsPopulated[targetChainId].base ?? 'webb-dev',
+        }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress
             ? false

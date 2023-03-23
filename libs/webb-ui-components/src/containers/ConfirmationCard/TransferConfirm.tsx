@@ -288,9 +288,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           </div>
         </div>
 
-        {/* <Button {...actionBtnProps} isFullWidth className="justify-center">
-          {actionBtnProps?.children ?? 'Transfer'}
-        </Button> */}
         <div className="flex flex-col gap-2">
           <Button {...actionBtnProps} isFullWidth className="justify-center">
             {actionBtnProps?.children ?? 'Transfer'}
