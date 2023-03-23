@@ -224,8 +224,14 @@ export const TransferConfirmContainer = forwardRef<
         activeChains={activeChains}
         amount={amount}
         changeAmount={changeAmount}
-        sourceChain={activeChain?.name}
-        destChain={destChain.name}
+        sourceChain={{
+          name: activeChain?.name ?? '',
+          type: activeChain?.base ?? 'webb-dev',
+        }}
+        destChain={{
+          name: destChain.name,
+          type: destChain.base ?? 'webb-dev',
+        }}
         note={changeNote?.serialize()}
         progress={progress}
         recipientPublicKey={recipient}
