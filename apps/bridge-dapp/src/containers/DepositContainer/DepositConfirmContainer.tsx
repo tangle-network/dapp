@@ -20,12 +20,12 @@ import {
   getTokenURI,
   getTransactionHash,
 } from '../../utils';
-
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
 import { DepositConfirmContainerProps } from './types';
+import * as Sentry from '@sentry/react';
 
 export const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -183,11 +183,14 @@ export const DepositConfirmContainer = forwardRef<
           txHash: receipt.transactionHash,
           outputNotes: [indexedNote],
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
         noteManager?.removeNote(note);
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
+        // Capture error with Sentry.io
+        Sentry.setTag('Deposit Transaction Failed', error);
+        Sentry.captureException(error);
       } finally {
         resetMainComponent();
         onResetState?.();
