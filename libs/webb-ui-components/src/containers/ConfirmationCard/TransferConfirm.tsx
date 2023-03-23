@@ -117,7 +117,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title="Destionation"
+                    title="Destination"
                     variant="utility"
                     info="Destination"
                     titleClassName="text-mono-100 dark:text-mono-80"
