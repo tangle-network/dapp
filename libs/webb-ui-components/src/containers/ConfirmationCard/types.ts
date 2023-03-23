@@ -142,6 +142,11 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   receivingInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
+   * Transaction fee info
+   */
+  feesInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+
+  /**
    * The relayer address
    */
   relayerAddress?: string;

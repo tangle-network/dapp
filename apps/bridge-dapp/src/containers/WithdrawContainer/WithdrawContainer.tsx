@@ -57,6 +57,8 @@ import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
 
+const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
+
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
   WithdrawContainerProps
@@ -439,6 +441,46 @@ export const WithdrawContainer = forwardRef<
     wrappableCurrency?.view.symbol,
   ]);
 
+  const refundInfo = useMemo(
+    () =>
+      feeInfo ? (
+        <ExchangeRateInfo
+          exchangeRate={+ethers.utils.formatEther(feeInfo.refundExchangeRate)}
+          fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+          nativeTokenSymbol={currentNativeCurrency?.symbol}
+        />
+      ) : undefined,
+    [currentNativeCurrency?.symbol, feeInfo, fungibleCurrency?.view.symbol]
+  );
+
+  const transactionFeeInfo = useMemo(() => {
+    const estimatedFee = feeInfo
+      ? getRoundedAmountString(
+          Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
+          3,
+          Math.round
+        )
+      : undefined;
+
+    const refundFee =
+      feeInfo && refundAmount && isRefund
+        ? getRoundedAmountString(
+            refundAmount /
+              Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+          )
+        : undefined;
+
+    const transactionFeeInfo = estimatedFee ? (
+      <TransactionFeeInfo
+        estimatedFee={estimatedFee}
+        refundFee={refundFee}
+        fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+      />
+    ) : undefined;
+
+    return transactionFeeInfo;
+  }, [feeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
+
   const handleResetState = useCallback(() => {
     setAmountError('');
     setAmount(0);
@@ -632,7 +674,6 @@ export const WithdrawContainer = forwardRef<
         amount={amount}
         fees={totalFeeInWei ?? BigNumber.from(0)}
         amountAfterFees={amountAfterFeeWei}
-        refundExchangeRate={feeInfo?.refundExchangeRate}
         isRefund={isRefund}
         fungibleCurrency={{
           value: fungibleCurrency,
@@ -643,6 +684,8 @@ export const WithdrawContainer = forwardRef<
             ? { value: wrappableCurrency }
             : undefined
         }
+        feesInfo={transactionFeeInfo}
+        receivingInfo={refundInfo}
         refundAmount={ethers.utils.parseEther(refundAmount.toString())}
         refundToken={currentNativeCurrency?.symbol}
         recipient={recipient}
@@ -672,10 +715,12 @@ export const WithdrawContainer = forwardRef<
     otherAvailableChains.length,
     recipient,
     refundAmount,
+    refundInfo,
     setMainComponent,
     setOpenNoteAccountModal,
     toggleModal,
     totalFeeInWei,
+    transactionFeeInfo,
     txQueue.txPayloads,
     wrappableCurrency,
   ]);
@@ -717,6 +762,7 @@ export const WithdrawContainer = forwardRef<
   const parseRefundAmount = useCallback(
     (value: string) => {
       if (!value) {
+        setRefundAmount(0);
         return;
       }
 
@@ -801,36 +847,6 @@ export const WithdrawContainer = forwardRef<
         )} ${fungiCurrencySymbol}`
       : '--';
 
-    const estimatedFee = feeInfo
-      ? getRoundedAmountString(
-          Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
-          3,
-          Math.round
-        )
-      : undefined;
-
-    const refundFee =
-      feeInfo && refundAmount && isRefund
-        ? refundAmount /
-          Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
-        : undefined;
-
-    const refundInfo = feeInfo ? (
-      <ExchangeRateInfo
-        exchangeRate={+ethers.utils.formatEther(feeInfo.refundExchangeRate)}
-        fungibleTokenSymbol={fungibleCurrency?.view.symbol}
-        nativeTokenSymbol={currentNativeCurrency?.symbol}
-      />
-    ) : undefined;
-
-    const transactionFeeInfo = estimatedFee ? (
-      <TransactionFeeInfo
-        estimatedFee={estimatedFee}
-        refundFee={refundFee}
-        fungibleTokenSymbol={fungiCurrencySymbol}
-      />
-    ) : undefined;
-
     return [
       {
         leftTextProps: {
@@ -869,14 +885,14 @@ export const WithdrawContainer = forwardRef<
     >['infoItemProps'];
   }, [
     currentNativeCurrency?.symbol,
-    feeInfo,
-    fungibleCurrency?.view.symbol,
     infoCalculated,
     isFetchingFeeInfo,
     isRefund,
     refundAmount,
+    refundInfo,
     selectedFungibleToken?.symbol,
     totalFeeInWei,
+    transactionFeeInfo,
   ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
@@ -992,7 +1008,11 @@ export const WithdrawContainer = forwardRef<
         }}
         fixedAmountInputProps={{
           onChange: parseUserAmount,
-          values: [0.1, 0.25, 0.5, 1.0],
+          value:
+            amount && DEFAULT_FIXED_AMOUNTS.includes(amount)
+              ? amount
+              : undefined,
+          values: DEFAULT_FIXED_AMOUNTS,
           isDisabled: !selectedFungibleToken,
         }}
         customAmountInputProps={{

@@ -39,12 +39,13 @@ export const WithdrawConfirmContainer = forwardRef<
       changeNote,
       changeUtxo,
       fees,
+      feesInfo,
       fungibleCurrency: fungibleCurrencyProp,
       isRefund,
       onResetState,
+      receivingInfo,
       recipient,
       refundAmount,
-      refundExchangeRate: refundExchangeRateProp,
       refundToken,
       targetChainId,
       unwrapCurrency: { value: unwrapCurrency } = {},
@@ -296,18 +297,6 @@ export const WithdrawConfirmContainer = forwardRef<
       return getRoundedAmountString(amountInEthers, 3, Math.round);
     }, [amountAfterFees]);
 
-    const refundExchangeRate = useMemo(() => {
-      if (!refundExchangeRateProp) {
-        return;
-      }
-
-      const exchangeRate = Number(
-        ethers.utils.formatEther(refundExchangeRateProp)
-      );
-
-      return getRoundedAmountString(exchangeRate, 3, Math.round);
-    }, [refundExchangeRateProp]);
-
     return (
       <WithdrawConfirm
         {...props}
@@ -332,20 +321,13 @@ export const WithdrawConfirmContainer = forwardRef<
         }}
         refundAmount={isRefund ? formattedRefund : undefined}
         refundToken={isRefund ? refundToken : undefined}
-        receivingInfo={
-          refundExchangeRate && isRefund ? (
-            <ExchangeRateInfo
-              exchangeRate={ethers.utils.formatEther(refundExchangeRate)}
-              fungibleTokenSymbol={fungibleCurrency?.view.symbol}
-              nativeTokenSymbol={unwrapCurrency?.view.symbol}
-            />
-          ) : undefined
-        }
+        receivingInfo={receivingInfo}
         isCopied={isCopied}
         onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         remainingAmount={remainingAmount}
+        feesInfo={feesInfo}
         fee={formattedFees}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}

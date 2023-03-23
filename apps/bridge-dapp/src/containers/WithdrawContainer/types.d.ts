@@ -1,14 +1,10 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import {
-  ActiveWebbRelayer,
-  Currency,
-  WebbRelayer,
-} from '@webb-tools/abstract-api-provider';
-import { TransactionPayload } from '@webb-tools/webb-ui-components';
-import { BridgeTabContainerProps } from '../types';
+import { Currency } from '@webb-tools/abstract-api-provider';
+import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { Note, Utxo } from '@webb-tools/sdk-core';
+import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { BigNumber } from 'ethers';
+import { BridgeTabContainerProps } from '../types';
 
 export interface WithdrawContainerProps
   extends BridgeTabContainerProps,
@@ -87,9 +83,14 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   refundToken?: string;
 
   /**
-   * Refund exchange rate
+   * The receiving info
    */
-  refundExchangeRate?: BigNumber;
+  receivingInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+
+  /**
+   * The fees info
+   */
+  feesInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
    * The boolean to check if the user selected refund

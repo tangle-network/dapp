@@ -38,6 +38,7 @@ export const WithdrawConfirm = forwardRef<
       className,
       destChain,
       fee,
+      feesInfo,
       fungibleTokenSymbol: token1Symbol,
       isCopied,
       note,
@@ -324,7 +325,7 @@ export const WithdrawConfirm = forwardRef<
               leftTextProps={{
                 variant: 'body1',
                 title: 'Fees',
-                info: 'Fees',
+                info: feesInfo,
               }}
               rightContent={fee?.toString()}
             />
