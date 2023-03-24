@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 import '@webb-tools/protocol-substrate-types';
 
-import { Currency, RelayChainMethods } from '@webb-tools/abstract-api-provider';
 import {
   ApiInitHandler,
+  Currency,
   NotificationHandler,
   ProvideCapabilities,
+  RelayChainMethods,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
@@ -14,6 +15,8 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
+import { EventBus } from '@webb-tools/app-util';
+import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import {
   ActionsBuilder,
   CurrencyRole,
@@ -21,14 +24,8 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
-import { EventBus } from '@webb-tools/app-util';
-import {
-  calculateTypedChainId,
-  ChainType,
-  ResourceId,
-} from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import {
@@ -36,6 +33,11 @@ import {
   InjectedExtension,
 } from '@polkadot/extension-inject/types';
 
+import { ZkComponents } from '@webb-tools/utils';
+import { providers } from 'ethers';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { PolkadotProvider } from './ext-provider';
+import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotCrowdloan } from './webb-provider/crowdloan';
@@ -43,11 +45,6 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-import { PolkadotProvider } from './ext-provider';
-import { PolkaTXBuilder } from './transaction';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ZkComponents } from '@webb-tools/utils';
-import { providers } from 'ethers';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -64,7 +61,9 @@ export class WebbPolkadot
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
+
   private _newBlock = new BehaviorSubject<null | number>(null);
+  readonly typedChainidSubject: BehaviorSubject<number>;
 
   private constructor(
     apiPromise: ApiPromise,
@@ -78,20 +77,30 @@ export class WebbPolkadot
     readonly wasmFactory: WasmFactory
   ) {
     super();
+
+    if (!this.typedChainidSubject) {
+      this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
+    } else {
+      this.typedChainidSubject.next(typedChainId);
+    }
+
     this.provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,
       new PolkaTXBuilder(apiPromise, notificationHandler, injectedExtension)
     );
+
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
+
     this.relayChainMethods = {
       crowdloan: {
         enabled: true,
         inner: new PolkadotCrowdloan(this),
       },
     };
+
     this.methods = {
       bridgeApi: new PolkadotBridgeApi(this),
       chainQuery: new PolkadotChainQuery(this),
@@ -112,6 +121,7 @@ export class WebbPolkadot
         },
       },
     };
+
     // Take the configured values in the config and create objects used in the
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
     const initialSupportedCurrencies: Record<number, Currency> = {};
@@ -161,11 +171,6 @@ export class WebbPolkadot
   getChainId() {
     // const chainType = await this.provider.api.consts.linkableTreeBn254.chainType;
     return this.typedChainId;
-  }
-
-  async getResourceId(): Promise<ResourceId | null> {
-    throw new Error('Method not implemented.');
-    return null;
   }
 
   async awaitMetaDataCheck() {
@@ -312,6 +317,7 @@ export class WebbPolkadot
   async destroy(): Promise<void> {
     await this.provider.destroy();
   }
+
   private async listenerBlocks() {
     const block = await this.provider.api.query.system.number();
     this._newBlock.next(block.toNumber());
@@ -322,6 +328,7 @@ export class WebbPolkadot
     );
     return sub;
   }
+
   get newBlock(): Observable<number | null> {
     return this._newBlock.asObservable();
   }
