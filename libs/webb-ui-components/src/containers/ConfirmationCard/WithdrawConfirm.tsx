@@ -117,7 +117,7 @@ export const WithdrawConfirm = forwardRef<
                   />
                 </div>
 
-                <ArrowRight />
+                <ArrowRight size="lg" />
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo

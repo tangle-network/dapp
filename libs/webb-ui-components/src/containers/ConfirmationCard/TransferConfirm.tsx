@@ -113,7 +113,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   />
                 </div>
 
-                <ArrowRight />
+                <ArrowRight size='lg' />
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo

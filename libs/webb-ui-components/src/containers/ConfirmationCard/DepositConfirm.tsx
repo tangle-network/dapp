@@ -116,7 +116,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   />
                 </div>
 
-                <ArrowRight />
+                <ArrowRight size='lg' />
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
