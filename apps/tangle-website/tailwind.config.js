@@ -20,16 +20,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        community_bg_texture: "url('/static/assets/community-texture.png')",
-      },
-
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],
-      },
-
-      screens: {
-        xs: '375px',
       },
     },
   },
