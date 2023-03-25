@@ -135,10 +135,15 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         default: {
-          status = 'In Progress';
+          status = 'in Progress...';
           break;
         }
       }
+
+      if (!status)
+        return unwrapCurrency
+          ? 'Confirm Unwrap and Withdraw'
+          : 'Confirm Withdraw';
 
       return unwrapCurrency
         ? `Unwrap and Withdraw ${status}`

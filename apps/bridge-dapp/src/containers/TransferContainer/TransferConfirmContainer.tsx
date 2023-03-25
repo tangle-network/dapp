@@ -220,7 +220,7 @@ export const TransferConfirmContainer = forwardRef<
       <TransferConfirm
         {...props}
         ref={ref}
-        title={isTransfering ? 'Transfer in Progress' : undefined}
+        title={isTransfering ? 'Transfer in Progress...' : undefined}
         activeChains={activeChains}
         amount={amount}
         changeAmount={changeAmount}
