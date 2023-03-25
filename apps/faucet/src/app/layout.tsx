@@ -5,6 +5,7 @@ import { FC, PropsWithChildren } from 'react';
 import Provider from '../provider';
 
 import '../styles/globals.css';
+import Header from './Header';
 
 export const metadata: Metadata = {
   title: {
@@ -46,9 +47,11 @@ export const metadata: Metadata = {
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <html lang="en">
-      <body className="min-h-screen">
+      <body className="min-h-[calc(100vh-72px)]">
+        <Header />
+
         <Provider>
-          <main>{children}</main>
+          <main className="mt-[72px]">{children}</main>
         </Provider>
       </body>
     </html>

@@ -1,27 +1,18 @@
+'use client';
+
 import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
 
-import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
 import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
 
+import { Button, Logo, Navbar } from '../components';
+
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
-  // {
-  //   protocols: [
-  //     {
-  //       label: 'Shielded Pool Protocols',
-  //       url: '#',
-  //     },
-  //     {
-  //       label: 'Shielded Identity Protocols',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
-  { label: 'community', url: '/community', isInternal: true },
+  { label: 'community', url: 'https://webb.tools/community' },
   { label: 'docs', url: links.WEBB_DOCS_URL },
-  { label: 'blog', url: '/blog', isInternal: true },
+  { label: 'tangle network', url: links.TANGLE_NETWORK_URL },
 ];
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [
@@ -29,12 +20,11 @@ const buttonProps: Array<ComponentProps<typeof Button>> = [
     href: links.BRIDGE_URL,
     target: '_blank',
     rel: 'noreferrer',
-    children: 'Bridge',
-    className: 'button-base button-primary',
+    children: 'Huddle Bridge',
   },
 ];
 
-export const Header = () => {
+const Header = () => {
   // State for tracking whether the user has scrolled down the page
   const [scrolled, setScrolled] = useState(false);
 
@@ -56,17 +46,21 @@ export const Header = () => {
 
   return (
     <header
-      className={cx('fixed z-50 w-full bg-mono-0 min-h-[72px]', {
-        'webb-shadow-sm': scrolled,
-      })}
+      className={cx(
+        'fixed top-0 z-50 w-full bg-mono-0 min-h-[72px] max-w-[1160px]',
+        'left-1/2 -translate-x-1/2 flex items-center justify-between',
+        {
+          'webb-shadow-sm': scrolled,
+        }
+      )}
     >
-      <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
-        <Link href="/">
-          <Logo />
-        </Link>
+      <Link href="/">
+        <Logo />
+      </Link>
 
-        <Navbar buttonProps={buttonProps} navItems={navItems} />
-      </div>
+      <Navbar buttonProps={buttonProps} navItems={navItems} />
     </header>
   );
 };
+
+export default Header;

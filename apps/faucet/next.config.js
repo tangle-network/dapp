@@ -16,6 +16,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  transpilePackages: ['@webb-tools/icons', '@webb-tools/webb-ui-components'],
 };
 
 module.exports = withNx(nextConfig);

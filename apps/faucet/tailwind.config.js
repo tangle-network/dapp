@@ -11,6 +11,11 @@ module.exports = {
       __dirname,
       'src/{pages,app,components,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
+    join(
+      __dirname,
+      '../../libs/webb-ui-components',
+      'src/**/*!(*.stories|*.spec).{ts,tsx,html,css}'
+    ),
     join(__dirname, 'src/styles/**/*.{css,scss,sass,less,styl}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
