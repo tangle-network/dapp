@@ -1,6 +1,7 @@
-import { Typography } from '../components';
+import cx from 'classnames';
 import { Metadata } from 'next';
-import React from 'react';
+
+import { Typography } from '../components';
 
 export const metadata: Metadata = {
   keywords: ['Faucet', 'Webb Faucet', 'Webb Protocol', 'Crypto Faucet'],
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
 
 const Page = () => {
   return (
-    <Typography variant="h1" className="text-red-60">
-      App dir
-    </Typography>
+    <div className={cx('max-w-[100vw] min-h-[1373px]', 'hero-bg')}>
+      <Typography variant="h1">Faucet</Typography>
+    </div>
   );
 };
 

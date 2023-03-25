@@ -2,6 +2,7 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import { Metadata } from 'next';
 
 import { FC, PropsWithChildren } from 'react';
+import { Footer } from '../components';
 import Provider from '../provider';
 
 import '../styles/globals.css';
@@ -53,6 +54,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <Provider>
           <main className="mt-[72px]">{children}</main>
         </Provider>
+
+        <Footer isNext />
       </body>
     </html>
   );

@@ -46,19 +46,17 @@ const Header = () => {
 
   return (
     <header
-      className={cx(
-        'fixed top-0 z-50 w-full bg-mono-0 min-h-[72px] max-w-[1160px]',
-        'left-1/2 -translate-x-1/2 flex items-center justify-between',
-        {
-          'webb-shadow-sm': scrolled,
-        }
-      )}
+      className={cx('fixed top-0 z-50 w-full bg-mono-0', {
+        'webb-shadow-sm': scrolled,
+      })}
     >
-      <Link href="/">
-        <Logo />
-      </Link>
+      <div className="max-w-[1160px] flex items-center justify-between min-h-[72px] mx-auto">
+        <Link href="/">
+          <Logo />
+        </Link>
 
-      <Navbar buttonProps={buttonProps} navItems={navItems} />
+        <Navbar buttonProps={buttonProps} navItems={navItems} />
+      </div>
     </header>
   );
 };
