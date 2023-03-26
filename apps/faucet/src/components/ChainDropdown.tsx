@@ -7,7 +7,10 @@ import {
   DropdownBody,
   MenuItem,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo, useState } from 'react';
+import { useObservableState } from 'observable-hooks';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+
+import { useFaucetContext } from '../provider';
 
 const ChainDropdown: FC<{
   chainNames: Array<string>;
@@ -15,9 +18,20 @@ const ChainDropdown: FC<{
   // State to hold the selected chain
   const [chain, setChain] = useState<string | undefined>();
 
+  const { inputValues$ } = useFaucetContext();
+
   const chainInputVal = useMemo(
     () => (chain ? { name: chain } : undefined),
     [chain]
+  );
+
+  const handleValueChange = useCallback(
+    (val: string) => {
+      setChain(val);
+      const currentVal = inputValues$.getValue();
+      inputValues$.next({ ...currentVal, chain: val });
+    },
+    [inputValues$]
   );
 
   return (
@@ -30,7 +44,7 @@ const ChainDropdown: FC<{
       </DropdownBasicButton>
 
       <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">
-        <RadioGroup value={chain} onValueChange={(val) => setChain(val)}>
+        <RadioGroup value={chain} onValueChange={handleValueChange}>
           {chainNames.map((chainName, i) => (
             <RadioItem key={`${chainName}-${i}`} value={chainName} asChild>
               <MenuItem startIcon={<ChainIcon size="lg" name={chainName} />}>
