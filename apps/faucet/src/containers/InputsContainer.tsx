@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 
 import ChainDropdown from '../components/ChainDropdown';
 import ContractAddressInput from '../components/ContractAddressInput';
+import RecipientAddressInput from '../components/RecipientAddressInput';
 import TokenDropdown from '../components/TokenDropdown';
 import TwitterLink from '../components/TwitterLink';
 import { useFaucetContext } from '../provider';
@@ -21,13 +22,32 @@ const InputsContainer = () => {
       </div>
 
       {/** Contract address input */}
-      <div className="space-y-4">
-        <label className="link !font-bold !text-mono-200">
-          Network Contract Address:
-        </label>
-
+      <InputWrapper title="Network Contract Address:">
         <ContractAddressInput />
-      </div>
+      </InputWrapper>
+
+      {/** Recipient address input */}
+      <InputWrapper title="Recipient Address:">
+        <RecipientAddressInput />
+      </InputWrapper>
+    </div>
+  );
+};
+
+const InputWrapper = ({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
+  title: string;
+}) => {
+  return (
+    <div>
+      <label className="link !font-bold !text-mono-200 mb-4 block">
+        {title}
+      </label>
+
+      {children}
     </div>
   );
 };
