@@ -32,6 +32,11 @@ export type InputValuesType = {
  */
 export type FaucetContextType = {
   /**
+   * The faucet config contains the supported chains and tokens
+   */
+  config: Record<string, Record<string, string>>;
+
+  /**
    * The observer to hold the all input values for the faucet form
    */
   inputValues$: BehaviorSubject<InputValuesType>;
@@ -43,7 +48,32 @@ export type FaucetContextType = {
   twitterHandle$: BehaviorSubject<string>;
 };
 
+// Note: This is a placeholder for now
+// chain name -> supported token symbol -> contract address
+const config: Record<string, Record<string, string>> = {
+  arbitrum: {
+    wTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  goerli: {
+    webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  'Moonbase Alpha': {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  mumbai: {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  optimism: {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  sepolia: {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+};
+
 const defaultContextValue = {
+  config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   twitterHandle$: new BehaviorSubject<string>(''),
 };

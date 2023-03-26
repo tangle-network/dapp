@@ -12,13 +12,13 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useFaucetContext } from '../provider';
 
-const ChainDropdown: FC<{
-  chainNames: Array<string>;
-}> = ({ chainNames }) => {
+const ChainDropdown: FC = () => {
   // State to hold the selected chain
   const [chain, setChain] = useState<string | undefined>();
 
-  const { inputValues$ } = useFaucetContext();
+  const { config, inputValues$ } = useFaucetContext();
+
+  const chainNames = useMemo(() => Object.keys(config), [config]);
 
   const chainInputVal = useMemo(
     () => (chain ? { name: chain } : undefined),
