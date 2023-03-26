@@ -7,6 +7,7 @@ import {
   MenuItem,
   TokenInput,
 } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
 import { useObservableState } from 'observable-hooks';
 import React, { useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
@@ -57,13 +58,18 @@ const TokenDropdown = () => {
   return (
     <Dropdown className="block grow shrink basis-0">
       <DropdownBasicButton
+        disabled={tokenNames.length === 0}
         className="h-full group focus-visible:outline-none"
         isFullWidth
       >
         <TokenInput className="h-full" token={tokenInputVal} />
       </DropdownBasicButton>
 
-      <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">
+      <DropdownBody
+        className={cx('radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]', {
+          hidden: !tokenNames.length,
+        })}
+      >
         <RadioGroup value={token} onValueChange={handleValueChange}>
           {tokenNames.map((tokenName, i) => (
             <RadioItem key={`${tokenName}-${i}`} value={tokenName} asChild>

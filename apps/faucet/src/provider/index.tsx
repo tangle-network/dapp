@@ -32,6 +32,11 @@ export type InputValuesType = {
  */
 export type FaucetContextType = {
   /**
+   * The default amount to send
+   */
+  amount: number;
+
+  /**
    * The faucet config contains the supported chains and tokens
    * (chain name -> supported token symbol -> contract address)
    */
@@ -73,7 +78,11 @@ const config: Record<string, Record<string, string>> = {
   },
 };
 
+// The default amount to send
+const AMOUNT = 1000;
+
 const defaultContextValue = {
+  amount: AMOUNT,
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   twitterHandle$: new BehaviorSubject<string>(''),
