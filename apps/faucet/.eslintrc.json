@@ -1,4 +1,5 @@
 {
+  "plugins": ["simple-import-sort"],
   "extends": [
     "plugin:@nrwl/nx/react-typescript",
     "next",
@@ -10,7 +11,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@next/next/no-html-link-for-pages": ["error", "apps/faucet/pages"]
+        "@next/next/no-html-link-for-pages": ["error", "apps/faucet/src/pages"]
       }
     },
     {
@@ -23,7 +24,9 @@
     }
   ],
   "rules": {
-    "@next/next/no-html-link-for-pages": "off"
+    "@next/next/no-html-link-for-pages": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
   },
   "env": {
     "jest": true

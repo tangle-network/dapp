@@ -1,8 +1,7 @@
 import links from '@webb-tools/dapp-config/links';
-import cx from 'classnames';
-
 import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
+import cx from 'classnames';
 import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
 

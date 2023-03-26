@@ -1,12 +1,12 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
+import '../styles/globals.css';
 
 import { Footer } from '@webb-tools/webb-ui-components';
-import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 import { AppProps } from 'next/app';
+import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 
 import Header from '../components/Header';
 import Provider from '../provider';
-import '../styles/globals.css';
 
 export const metadata: DefaultSeoProps = {
   defaultTitle: 'Webb Faucet',
