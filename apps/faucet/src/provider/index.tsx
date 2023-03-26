@@ -33,6 +33,7 @@ export type InputValuesType = {
 export type FaucetContextType = {
   /**
    * The faucet config contains the supported chains and tokens
+   * (chain name -> supported token symbol -> contract address)
    */
   config: Record<string, Record<string, string>>;
 
