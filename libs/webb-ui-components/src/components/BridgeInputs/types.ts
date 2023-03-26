@@ -36,11 +36,6 @@ export type ChainType = {
    * The chain name
    */
   name: string;
-
-  /**
-   * The token symbol to display of the chain
-   */
-  symbol: string;
 };
 
 /**

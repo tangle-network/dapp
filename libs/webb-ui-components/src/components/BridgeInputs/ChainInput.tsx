@@ -24,14 +24,17 @@ import { ChainInputComponentProps } from './types';
  */
 
 export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
-  ({ chain, chainType, id, info, ...props }, ref) => {
+  ({ chain, chainType, id, info, title, ...props }, ref) => {
     return (
       <InputWrapper {...props} ref={ref}>
         <div className="flex flex-col space-y-1">
           <Label htmlFor={id}>
             <TitleWithInfo
               title={
-                (chainType === 'source' ? 'Source' : 'Destination') + ' chain'
+                title
+                  ? title
+                  : (chainType === 'source' ? 'Source' : 'Destination') +
+                    ' chain'
               }
               info={info}
               variant="utility"
@@ -44,7 +47,12 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
             <p className="flex items-center space-x-1">
               <ChainIcon name={chain.name} size="lg" />
 
-              <Typography component="span" variant="body1" fw="bold">
+              <Typography
+                className="capitalize"
+                component="span"
+                variant="body1"
+                fw="bold"
+              >
                 {chain.name}
               </Typography>
             </p>

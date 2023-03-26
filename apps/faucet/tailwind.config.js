@@ -9,7 +9,7 @@ module.exports = {
   content: [
     join(
       __dirname,
-      'src/{pages,app,components,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      'src/{pages,app,components,containers,provider}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     join(
       __dirname,
@@ -19,4 +19,11 @@ module.exports = {
     join(__dirname, 'src/styles/**/*.{css,scss,sass,less,styl}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
+  theme: {
+    extend: {
+      fontFamily: {
+        'satoshi-var': ['Satoshi Variable', 'sans-serif'],
+      },
+    },
+  },
 };

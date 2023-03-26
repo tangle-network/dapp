@@ -16,12 +16,15 @@ const CONNECTED_SHIELDED_IDENTITY_URL =
 
 const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 
+const WEBB_TWITTER_URL = 'https://twitter.com/webbprotocol';
+
 // Export default here to avoid import other files
 export default {
   BRIDGE_URL,
+  CONNECTED_SHIELDED_IDENTITY_URL,
+  CONNECTED_SHIELDED_POOLS_URL,
   STATS_URL,
   TANGLE_NETWORK_URL,
-  CONNECTED_SHIELDED_POOLS_URL,
-  CONNECTED_SHIELDED_IDENTITY_URL,
   WEBB_DOCS_URL,
+  WEBB_TWITTER_URL,
 };

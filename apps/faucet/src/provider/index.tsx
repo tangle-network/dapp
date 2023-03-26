@@ -7,4 +7,6 @@ const Provider: FC<PropsWithChildren> = ({ children }) => {
   return <WebbUIProvider defaultThemeMode="light">{children}</WebbUIProvider>;
 };
 
+export * from './FaucetProvider';
+
 export default Provider;

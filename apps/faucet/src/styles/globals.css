@@ -1,3 +1,17 @@
+/* Font Family Satoshi Variable */
+
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('/fonts/Satoshi-Variable.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('/fonts/Satoshi-VariableItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
 .hero-bg {
   @apply bg-center bg-no-repeat object-fill bg-cover;
 
@@ -8,4 +22,22 @@
     ),
     linear-gradient(336.19deg, #f7f8f7 20.32%, rgba(237, 244, 249, 0) 100.5%),
     url('/static/assets/faucet-hero.png');
+}
+
+/** TODO: Consider moving this to tailwind-preset if these classes share with the tangle-website */
+
+.title {
+  @apply text-[44px] leading-[61.6px] font-black text-mono-200;
+}
+
+.body {
+  @apply text-[18px] leading-[32.4px] font-medium text-mono-140;
+}
+
+.link {
+  @apply text-[16px] leading-[24px] font-bold text-blue-70;
+}
+
+.link-sm {
+  @apply text-[14px] leading-[23.8px] tracking-[0.8px] uppercase font-bold text-blue-70;
 }

@@ -19,7 +19,7 @@ import { MenuItemProps } from './types';
  * ```
  */
 export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
-  ({ children, className: clsxProp, icon, ...props }, ref) => {
+  ({ children, className: clsxProp, startIcon, icon, ...props }, ref) => {
     const className = useMemo(() => {
       return twMerge(
         cx(
@@ -35,10 +35,11 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
 
     return (
       <div className={className} {...props} ref={ref}>
+        {startIcon && <div className="mr-4 shrink-0">{startIcon}</div>}
         <span className="flex-grow text-inherit dark:text-inherit">
           {children}
         </span>
-        {icon}
+        {icon && <div className="shrink-0">{icon}</div>}
       </div>
     );
   }

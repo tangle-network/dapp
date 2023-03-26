@@ -5,6 +5,11 @@ import { WebbComponentBase } from '../../types';
  */
 export interface MenuItemProps extends WebbComponentBase {
   /**
+   * The icon displayed before the text
+   */
+  startIcon?: React.ReactElement;
+
+  /**
    * The icon displayed after the text
    */
   icon?: React.ReactElement;
