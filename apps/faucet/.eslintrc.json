@@ -1,5 +1,5 @@
 {
-  "plugins": ["simple-import-sort"],
+  "plugins": ["simple-import-sort", "sort-keys-fix"],
   "extends": [
     "plugin:@nrwl/nx/react-typescript",
     "next",
@@ -26,7 +26,8 @@
   "rules": {
     "@next/next/no-html-link-for-pages": "off",
     "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error"
+    "simple-import-sort/exports": "error",
+    "sort-keys-fix/sort-keys-fix": "error"
   },
   "env": {
     "jest": true

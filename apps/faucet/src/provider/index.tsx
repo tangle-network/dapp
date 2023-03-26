@@ -51,15 +51,15 @@ export type FaucetContextType = {
 // Note: This is a placeholder for now
 // chain name -> supported token symbol -> contract address
 const config: Record<string, Record<string, string>> = {
+  'Moonbase Alpha': {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
   arbitrum: {
     wTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
   goerli: {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
     webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  'Moonbase Alpha': {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
   mumbai: {
     tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',

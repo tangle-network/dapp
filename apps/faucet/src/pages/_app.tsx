@@ -9,42 +9,42 @@ import Header from '../components/Header';
 import Provider from '../provider';
 
 export const metadata: DefaultSeoProps = {
+  additionalLinkTags: [
+    {
+      href: 'https://webb.tools/static/assets/favicon.png',
+      rel: 'icon',
+    },
+  ],
   defaultTitle: 'Webb Faucet',
-  titleTemplate: 'Webb | %s',
   description:
     'Our easy-to-use crypto faucet website allows you to claim free WebTNT with just a few clicks. Start earning fast and hassle-free payouts today!',
-  themeColor: '#ffffff',
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://faucet.webb.tools/',
-    siteName: 'Webb Faucet',
     images: [
       {
+        alt: 'Og Image Alt',
+        height: 1800,
         url: 'https://webb-assets.s3.amazonaws.com/og.png',
         width: 2400,
-        height: 1800,
-        alt: 'Og Image Alt',
       },
       {
+        alt: 'Optimized Og Image Alt',
+        height: 630,
         url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
         width: 1200,
-        height: 630,
-        alt: 'Optimized Og Image Alt',
       },
     ],
+    locale: 'en_US',
+    siteName: 'Webb Faucet',
+    type: 'website',
+    url: 'https://faucet.webb.tools/',
   },
+  themeColor: '#ffffff',
+  titleTemplate: 'Webb | %s',
   twitter: {
     cardType: 'summary_large_image',
     handle: '@webbprotocol',
     site: '@webbprotocol',
   },
-  additionalLinkTags: [
-    {
-      rel: 'icon',
-      href: 'https://webb.tools/static/assets/favicon.png',
-    },
-  ],
 };
 
 const App = ({ Component, pageProps }: AppProps) => {

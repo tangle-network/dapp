@@ -13,10 +13,10 @@ const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [
   {
-    href: links.BRIDGE_URL,
-    target: '_blank',
-    rel: 'noreferrer',
     children: 'Huddle Bridge',
+    href: links.BRIDGE_URL,
+    rel: 'noreferrer',
+    target: '_blank',
   },
 ];
 

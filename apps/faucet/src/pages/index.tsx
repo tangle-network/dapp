@@ -8,12 +8,12 @@ import LoginWithTwitter from '../containers/LoginWithTwitter';
 export const metadata: NextSeoProps = {
   additionalMetaTags: [
     {
-      property: 'keywords',
       content: 'Faucet, Webb Faucet, Webb Protocol, Crypto Faucet',
+      property: 'keywords',
     },
     {
-      property: 'author',
       content: 'Webb Developers',
+      property: 'author',
     },
   ],
 };
