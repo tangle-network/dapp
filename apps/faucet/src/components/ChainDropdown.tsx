@@ -7,8 +7,7 @@ import {
   DropdownBody,
   MenuItem,
 } from '@webb-tools/webb-ui-components';
-import { useObservableState } from 'observable-hooks';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { useFaucetContext } from '../provider';
 
@@ -37,10 +36,15 @@ const ChainDropdown: FC = () => {
   return (
     <Dropdown className="block grow shrink basis-0">
       <DropdownBasicButton
-        className="group focus-visible:outline-none"
+        className="h-full group focus-visible:outline-none"
         isFullWidth
       >
-        <ChainInput chain={chainInputVal} title="Network" chainType="source" />
+        <ChainInput
+          className="h-full"
+          chain={chainInputVal}
+          title="Network"
+          chainType="source"
+        />
       </DropdownBasicButton>
 
       <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">

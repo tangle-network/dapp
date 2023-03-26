@@ -231,6 +231,11 @@ export interface RecipientInputProps
    * set valid state of the input
    * */
   isValidSet?(valid: boolean): void;
+
+  /**
+   * If `true`, the patse button will be hidden
+   */
+  isHiddenPasteBtn?: boolean;
 }
 
 export interface ShieldedAssetInputProps extends InputWrapperProps {

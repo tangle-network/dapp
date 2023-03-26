@@ -65,13 +65,14 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     {
       className,
       errorMessage,
+      isHiddenPasteBtn,
       id = 'recipient',
       info,
+      isValidSet,
       onChange: onChangeProp,
       overrideInputProps,
       title,
       value,
-      isValidSet,
       ...props
     },
     ref
@@ -155,7 +156,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             />
           </div>
 
-          {!address && (
+          {!address && !isHiddenPasteBtn && (
             <Button variant="utility" size="sm" onClick={onClick}>
               Paste
             </Button>

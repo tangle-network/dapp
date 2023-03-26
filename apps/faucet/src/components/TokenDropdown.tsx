@@ -27,13 +27,8 @@ const TokenDropdown = () => {
     if (!selectedChain || !config[selectedChain]) {
       return [];
     }
-    const names = Object.keys(config[selectedChain]);
-    // Set the first token as default
-    if (names.length > 0) {
-      setToken(names[0]);
-    }
 
-    return names;
+    return Object.keys(config[selectedChain]);
   }, [config, selectedChain]);
 
   const tokenInputVal = useMemo(
@@ -50,13 +45,22 @@ const TokenDropdown = () => {
     [inputValues$]
   );
 
+  // Effect to reset the token value when the chain changes
+  useEffect(() => {
+    if (tokenNames.length > 0) {
+      setToken(tokenNames[0]);
+      const currentVal = inputValues$.getValue();
+      inputValues$.next({ ...currentVal, token: tokenNames[0] });
+    }
+  }, [inputValues$, selectedChain, tokenNames]);
+
   return (
     <Dropdown className="block grow shrink basis-0">
       <DropdownBasicButton
-        className="group focus-visible:outline-none"
+        className="h-full group focus-visible:outline-none"
         isFullWidth
       >
-        <TokenInput token={tokenInputVal} />
+        <TokenInput className="h-full" token={tokenInputVal} />
       </DropdownBasicButton>
 
       <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">

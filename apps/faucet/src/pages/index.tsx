@@ -1,7 +1,7 @@
-import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
 import { NextSeo, NextSeoProps } from 'next-seo';
 
+import TwitterLink from '../components/TwitterLink';
 import InputsContainer from '../containers/InputsContainer';
 import LoginWithTwitter from '../containers/LoginWithTwitter';
 
@@ -48,15 +48,7 @@ const Page = () => {
               networks supported by Hubble Bridge.
             </p>
             <p className="text-center font-satoshi-var body">
-              To receive tokens, follow{' '}
-              <a
-                className="link hover:underline"
-                href={links.WEBB_TWITTER_URL}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                @webbprotocol
-              </a>
+              To receive tokens, follow <TwitterLink />
               {
                 " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
               }

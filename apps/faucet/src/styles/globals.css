@@ -35,9 +35,17 @@
 }
 
 .link {
-  @apply text-[16px] leading-[24px] font-bold text-blue-70;
+  @apply text-[16px] leading-[24px] font-bold tracking-[0.01em] text-blue-70;
 }
 
 .link-sm {
   @apply text-[14px] leading-[23.8px] tracking-[0.8px] uppercase font-bold text-blue-70;
+}
+
+.info {
+  @apply text-[12px] leading-[18px] tracking-[0.01em] font-medium text-mono-160;
+}
+
+.input-height {
+  @apply h-[74px];
 }
