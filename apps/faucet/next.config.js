@@ -13,9 +13,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  experimental: {
-    appDir: true,
-  },
   transpilePackages: ['@webb-tools/icons', '@webb-tools/webb-ui-components'],
 };
 

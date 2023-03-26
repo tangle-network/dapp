@@ -1,5 +1,4 @@
-import React from 'react';
-import { Button } from '../components';
+import { Button } from '@webb-tools/webb-ui-components';
 
 const LoginWithTwitter = () => {
   return (

@@ -1,18 +1,28 @@
 import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
-import { Metadata } from 'next';
+import { NextSeo, NextSeoProps } from 'next-seo';
 
 import InputsContainer from '../containers/InputsContainer';
 import LoginWithTwitter from '../containers/LoginWithTwitter';
 
-export const metadata: Metadata = {
-  keywords: ['Faucet', 'Webb Faucet', 'Webb Protocol', 'Crypto Faucet'],
-  creator: 'Webb Developers',
+export const metadata: NextSeoProps = {
+  additionalMetaTags: [
+    {
+      property: 'keywords',
+      content: 'Faucet, Webb Faucet, Webb Protocol, Crypto Faucet',
+    },
+    {
+      property: 'author',
+      content: 'Webb Developers',
+    },
+  ],
 };
 
 const Page = () => {
   return (
     <div className={cx('max-w-[100vw] min-h-[1373px] py-9', 'hero-bg')}>
+      <NextSeo {...metadata} />
+
       {/** The Faucet Card */}
       <div
         className={cx(
@@ -48,7 +58,7 @@ const Page = () => {
                 @webbprotocol
               </a>
               {
-                "on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
+                " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
               }
             </p>
           </div>

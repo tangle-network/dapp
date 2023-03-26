@@ -1,13 +1,10 @@
-'use client';
-
 import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
 
+import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
 import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
-
-import { Button, Logo, Navbar } from '../components';
 
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
   { label: 'community', url: 'https://webb.tools/community' },

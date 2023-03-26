@@ -1,5 +1,3 @@
-'use client';
-
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
 import { ChainIcon } from '@webb-tools/icons';
 import {
@@ -24,11 +22,14 @@ const ChainDropdown: FC<{
 
   return (
     <Dropdown className="block grow shrink basis-0">
-      <DropdownBasicButton isFullWidth>
+      <DropdownBasicButton
+        className="group focus-visible:outline-none"
+        isFullWidth
+      >
         <ChainInput chain={chainInputVal} title="Network" chainType="source" />
       </DropdownBasicButton>
 
-      <DropdownBody className="mt-3 w-[277px]">
+      <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">
         <RadioGroup value={chain} onValueChange={(val) => setChain(val)}>
           {chainNames.map((chainName, i) => (
             <RadioItem key={`${chainName}-${i}`} value={chainName} asChild>

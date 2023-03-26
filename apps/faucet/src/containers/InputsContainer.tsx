@@ -1,4 +1,9 @@
-import { Dropdown, DropdownBasicButton, TokenInput } from '../components';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  TokenInput,
+} from '@webb-tools/webb-ui-components';
+
 import ChainDropdown from '../components/ChainDropdown';
 import { InputValuesType } from '../provider';
 
