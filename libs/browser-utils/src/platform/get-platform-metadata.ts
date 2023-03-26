@@ -12,9 +12,9 @@ type PlatformMetaData = {
 };
 export const getPlatformMetaData = (): PlatformMetaData => {
   const browser = detect();
-  console.log(browser);
 
   const name = browser?.name;
+
   switch (name) {
     case 'firefox':
       return {

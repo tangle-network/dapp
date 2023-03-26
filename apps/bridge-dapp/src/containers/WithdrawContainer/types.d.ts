@@ -71,7 +71,7 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   unwrapCurrency?: CurrencyWithBalance;
 
   /**
-   * The callbacl to reset the parent state
+   * The callback to reset the parent state
    * @returns void
    */
   onResetState?: () => void;

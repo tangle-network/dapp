@@ -25,16 +25,19 @@ export const BlogCard = ({
     type === 'video' ? getYouTubeThumbnailUri(link) ?? cover : cover;
 
   return (
-    <div className="flex flex-col justify-between pb-5 break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px]">
+    <div className="flex flex-col justify-between pb-5 break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] xl:w-[384px] overflow-hidden">
       <div>
-        <Link href={link}>
+        <Link
+          href={link}
+          className="w-full h-[220px] md:h-[250px] overflow-hidden block"
+        >
           <div
             style={{
               backgroundImage: `url(${coverURI})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
-            className="w-full h-[220px] md:h-[250px] rounded-t-lg relative"
+            className="w-full h-[220px] md:h-[250px] rounded-t-lg relative transition duration-500 transform hover:scale-110"
           >
             {type === 'video' && (
               <Image
@@ -65,9 +68,11 @@ export const BlogCard = ({
         </div>
       </div>
       {type === 'post' && blogType && (
-        <Chip color="blue" className="mx-6 w-fit">
-          {blogType}
-        </Chip>
+        <div className="px-6 flex justify-end">
+          <Chip color="blue" className="w-fit">
+            {blogType}
+          </Chip>
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { CurrencyId } from '@webb-tools/dapp-types';
 import { EventBus } from '@webb-tools/app-util';
 import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
@@ -28,8 +27,9 @@ export abstract class Crowdloan<
   T,
   CrowdloanPayload extends ContributePayload
 > extends EventBus<CrowdloanEvent> {
-  protected crowdloanToken: BehaviorSubject<CurrencyId | null> =
-    new BehaviorSubject<null | CurrencyId>(null);
+  // The crowdloan token id
+  protected crowdloanToken: BehaviorSubject<number | null> =
+    new BehaviorSubject<null | number>(null);
 
   constructor(protected inner: T) {
     super();

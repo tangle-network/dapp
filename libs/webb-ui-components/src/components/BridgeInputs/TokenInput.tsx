@@ -86,13 +86,13 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
 
               {token.tokenComposition ? (
                 <Typography component="span" variant="body1" fw="bold">
-                  {token.tokenComposition[0].trim().toUpperCase() +
+                  {token.tokenComposition[0].trim() +
                     '/' +
-                    token.tokenComposition[1].trim().toUpperCase()}
+                    token.tokenComposition[1].trim()}
                 </Typography>
               ) : (
                 <Typography component="span" variant="body1" fw="bold">
-                  {token.symbol.trim().toUpperCase()}
+                  {token.symbol.trim()}
                 </Typography>
               )}
             </div>

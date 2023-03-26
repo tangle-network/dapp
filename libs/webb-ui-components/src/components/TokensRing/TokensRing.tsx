@@ -586,7 +586,7 @@ export const TokensRing = forwardRef<HTMLDivElement, TokensRingProps>(
               <Typography
                 variant="body4"
                 fw="bold"
-                className="uppercase text-mono-140 dark:text-mono-80"
+                className="text-mono-140 dark:text-mono-80"
               >
                 {tokenPairString}
               </Typography>

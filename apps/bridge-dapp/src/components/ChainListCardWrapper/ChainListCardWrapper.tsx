@@ -1,11 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { currenciesConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import { getAcitveSourceChains } from '../../utils/getAcitveSourceChains';
 
 /**
  * The wrapper component for the ChainListCard component
@@ -17,6 +17,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   currentActiveChain: currentActiveChainProps,
   onChange,
   onClose,
+  isConnectingToChain,
   ...props
 }) => {
   const { setMainComponent } = useWebbUI();
@@ -26,7 +27,9 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const {
     activeChain,
     activeWallet,
+    apiConfig,
     chains: chainsConfig,
+    loading,
     switchChain,
   } = useWebContext();
 
@@ -48,14 +51,19 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const chains = useMemo(() => {
     if (chainsProps) return chainsProps;
 
-    return Object.values(chainsConfig).map((val) => {
+    return getAcitveSourceChains(apiConfig.chains).map((val) => {
+      const currency = getNativeCurrencyFromConfig(
+        apiConfig.currencies,
+        calculateTypedChainId(val.chainType, val.chainId)
+      );
+
       return {
         name: val.name,
         tag: val.tag,
-        symbol: currenciesConfig[val.nativeCurrencyId].symbol,
+        symbol: currency?.symbol ?? 'Unknown',
       };
     });
-  }, [chainsConfig, chainsProps]);
+  }, [apiConfig, chainsProps]);
 
   const handleChainChange = useCallback<NonNullable<typeof onChange>>(
     async (selectedChain) => {
@@ -106,6 +114,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       defaultCategory={activeChain?.tag}
       onChange={handleChainChange}
       onClose={handleClose}
+      isConnectingToChain={loading}
       {...props}
     />
   );
