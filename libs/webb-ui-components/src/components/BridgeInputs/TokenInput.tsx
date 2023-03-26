@@ -1,17 +1,17 @@
-import { ChevronRight, TokenIcon } from '@webb-tools/icons';
+import { TokenIcon } from '@webb-tools/icons';
 import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { MouseEventHandler, forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 
+import { MouseEvent } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
-import { ComponentProps } from 'react';
-import { MouseEvent } from 'react';
 
 /**
  * Token Input component, for selecting token on the bridge
@@ -114,10 +114,10 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               Balance: {balance} {balanceInUsd ? `≈ $${balanceInUsd}` : ''}
             </Typography>
 
-            <ChevronRight className="inline-block grow" />
+            <AnimatedChevronRight className="inline-block grow" />
           </div>
         ) : (
-          <ChevronRight className="inline-block" />
+          <AnimatedChevronRight className="inline-block" />
         )}
       </InputWrapper>
     );

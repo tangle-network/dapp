@@ -1,10 +1,10 @@
-import { ChainIcon, ChevronRight } from '@webb-tools/icons';
-import cx from 'classnames';
-import { forwardRef, memo } from 'react';
+import { ChainIcon } from '@webb-tools/icons';
+import { forwardRef } from 'react';
 
 import { Typography } from '../../typography';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { ChainInputComponentProps } from './types';
 
@@ -69,15 +69,3 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
     );
   }
 );
-
-/**
- * Extract icon to prevent re-render and keep the animation
- */
-const AnimatedChevronRight = memo(() => (
-  <ChevronRight
-    className={cx(
-      'inline-block',
-      'transition-transform duration-300 ease-in-out group-radix-state-open:rotate-90'
-    )}
-  />
-));
