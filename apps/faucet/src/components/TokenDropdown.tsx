@@ -52,6 +52,10 @@ const TokenDropdown = () => {
       setToken(tokenNames[0]);
       const currentVal = inputValues$.getValue();
       inputValues$.next({ ...currentVal, token: tokenNames[0] });
+    } else {
+      setToken(undefined);
+      const { token: _, ...currentVal } = inputValues$.getValue();
+      inputValues$.next({ ...currentVal });
     }
   }, [inputValues$, selectedChain, tokenNames]);
 

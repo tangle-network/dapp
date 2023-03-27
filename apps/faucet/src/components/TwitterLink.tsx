@@ -7,7 +7,7 @@ const TwitterLink = forwardRef<HTMLAnchorElement, PropsOf<'a'>>(
   (
     {
       className,
-      href = links.WEBB_TWITTER_URL,
+      href = links.FOLLOW_WEBB_TWITTER_URL,
       rel = 'noopener noreferrer',
       target = '_blank',
       children = '@webbprotocol',
