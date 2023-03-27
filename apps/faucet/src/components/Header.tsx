@@ -42,7 +42,7 @@ const Header = () => {
 
   return (
     <header
-      className={cx('fixed top-0 z-50 w-full bg-mono-0', {
+      className={cx('fixed top-0 z-10 w-full bg-mono-0', {
         'webb-shadow-sm': scrolled,
       })}
     >

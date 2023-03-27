@@ -49,3 +49,11 @@
 .input-height {
   @apply h-[74px];
 }
+
+.lottie-size {
+  @apply w-[200px] h-[200px];
+}
+
+.w-modal {
+  @apply w-[500px];
+}

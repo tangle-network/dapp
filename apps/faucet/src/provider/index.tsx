@@ -52,6 +52,16 @@ export type FaucetContextType = {
    * empty string if not logged in
    */
   twitterHandle$: BehaviorSubject<string>;
+
+  /**
+   * Boolean to show the minting process modal
+   */
+  isMintingModalOpen$: BehaviorSubject<boolean>;
+
+  /**
+   * Boolean to show the minting success modal
+   */
+  isMintingSuccess$: BehaviorSubject<boolean>;
 };
 
 // Note: This is a placeholder for now
@@ -85,6 +95,8 @@ const defaultContextValue = {
   amount: AMOUNT,
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
+  isMintingModalOpen$: new BehaviorSubject<boolean>(false),
+  isMintingSuccess$: new BehaviorSubject<boolean>(false),
   twitterHandle$: new BehaviorSubject<string>(''),
 };
 

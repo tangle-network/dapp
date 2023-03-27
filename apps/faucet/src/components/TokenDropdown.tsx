@@ -23,7 +23,6 @@ const TokenDropdown = () => {
 
   const setToken = useCallback(
     (token: string | undefined) => {
-      console.log('setToken', token);
       const currentVal = inputValues$.getValue();
       inputValues$.next({
         ...currentVal,

@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { NextSeo, NextSeoProps } from 'next-seo';
 
+import ProcessingModal from '../components/ProcessingModal';
 import TwitterLink from '../components/TwitterLink';
 import InputsContainer from '../containers/InputsContainer';
 import LoginWithTwitter from '../containers/LoginWithTwitter';
@@ -62,6 +63,8 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      <ProcessingModal />
     </div>
   );
 };

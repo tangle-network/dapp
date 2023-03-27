@@ -1,6 +1,6 @@
 import { RecipientInput } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import { ComponentProps, useMemo } from 'react';
+import { ComponentProps, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
@@ -41,6 +41,15 @@ const ContractAddressInput = () => {
     () => ({ ...overrideInputProps, isDisabled: !twitterHandle }),
     [twitterHandle]
   );
+
+  // Side effect to update the contract address value
+  useEffect(() => {
+    const inputValues = inputValues$.getValue();
+    inputValues$.next({
+      ...inputValues,
+      contractAddress,
+    });
+  }, [contractAddress, inputValues$]);
 
   return (
     <div className="space-x-2">
