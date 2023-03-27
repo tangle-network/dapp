@@ -85,6 +85,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The checkbox props
    */
   checkboxProps?: ComponentProps<typeof CheckBox>;
+
+  /**
+   * The transaction status message
+   */
+  txStatusMessage?: string;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
