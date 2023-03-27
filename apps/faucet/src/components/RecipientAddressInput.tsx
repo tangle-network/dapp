@@ -1,6 +1,6 @@
 import { RecipientInput } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import React, { ComponentProps, useMemo } from 'react';
+import React, { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
@@ -14,7 +14,7 @@ const overrideInputProps: ComponentProps<
 const RecipientAddressInput = () => {
   const { inputValues$, twitterHandle$ } = useFaucetContext();
 
-  const [recipientAddress, updateRecipientAddress] = useObservableState(() =>
+  const recipientAddress = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.recepient))
   );
 
@@ -27,6 +27,23 @@ const RecipientAddressInput = () => {
     }),
     [twitterHandle]
   );
+
+  const updateRecipientAddress = useCallback(
+    (address: string) => {
+      const inputValues = inputValues$.getValue();
+      inputValues$.next({
+        ...inputValues,
+        recepient: address,
+      });
+    },
+    [inputValues$]
+  );
+
+  useEffect(() => {
+    if (!twitterHandle) {
+      updateRecipientAddress('');
+    }
+  }, [twitterHandle, updateRecipientAddress]);
 
   return (
     <div className="space-y-2">

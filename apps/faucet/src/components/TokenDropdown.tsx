@@ -9,16 +9,29 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useObservableState } from 'observable-hooks';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
 
 const TokenDropdown = () => {
-  // State to hold the selected token
-  const [token, setToken] = React.useState<string | undefined>();
-
   const { config, inputValues$ } = useFaucetContext();
+
+  const token = useObservableState(
+    inputValues$.pipe(map((inputValues) => inputValues.token))
+  );
+
+  const setToken = useCallback(
+    (token: string | undefined) => {
+      console.log('setToken', token);
+      const currentVal = inputValues$.getValue();
+      inputValues$.next({
+        ...currentVal,
+        token,
+      });
+    },
+    [inputValues$]
+  );
 
   const selectedChain = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
@@ -40,24 +53,16 @@ const TokenDropdown = () => {
   const handleValueChange = React.useCallback(
     (val: string) => {
       setToken(val);
-      const currentVal = inputValues$.getValue();
-      inputValues$.next({ ...currentVal, token: val });
     },
-    [inputValues$]
+    [setToken]
   );
 
   // Effect to reset the token value when the chain changes
   useEffect(() => {
     if (tokenNames.length > 0) {
       setToken(tokenNames[0]);
-      const currentVal = inputValues$.getValue();
-      inputValues$.next({ ...currentVal, token: tokenNames[0] });
-    } else {
-      setToken(undefined);
-      const { token: _, ...currentVal } = inputValues$.getValue();
-      inputValues$.next({ ...currentVal });
     }
-  }, [inputValues$, selectedChain, tokenNames]);
+  }, [setToken, tokenNames]);
 
   return (
     <Dropdown className="block grow shrink basis-0">

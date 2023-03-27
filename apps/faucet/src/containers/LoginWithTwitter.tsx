@@ -1,12 +1,7 @@
+import { CheckboxCircleLine } from '@webb-tools/icons';
 import { Button } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useState } from 'react';
 
 import { useFaucetContext } from '../provider';
 
@@ -24,6 +19,8 @@ const LoginWithTwitter = () => {
 
   const { twitterHandle$ } = useFaucetContext();
 
+  const twitterHandle = useObservableState(twitterHandle$);
+
   const handleLoginWithTwitter = useCallback(async () => {
     try {
       setIsLoggingIn(true);
@@ -36,6 +33,10 @@ const LoginWithTwitter = () => {
     }
   }, [twitterHandle$]);
 
+  const handleLogout = useCallback(() => {
+    twitterHandle$.next('');
+  }, [twitterHandle$]);
+
   return (
     <div>
       <Button
@@ -43,9 +44,27 @@ const LoginWithTwitter = () => {
         loadingText="Logging In"
         onClick={handleLoginWithTwitter}
         isFullWidth
+        isDisabled={!!twitterHandle}
+        rightIcon={
+          twitterHandle ? (
+            <CheckboxCircleLine className="!fill-green-70" size="lg" />
+          ) : undefined
+        }
+        variant={twitterHandle ? 'secondary' : 'primary'}
       >
-        Login with Twitter
+        {twitterHandle ? 'Identity Verified' : 'Login with Twitter'}
       </Button>
+
+      {twitterHandle && (
+        <Button
+          onClick={handleLogout}
+          className="mt-2 ml-auto !normal-case"
+          variant="link"
+          size="sm"
+        >
+          Logout {twitterHandle}
+        </Button>
+      )}
     </div>
   );
 };
