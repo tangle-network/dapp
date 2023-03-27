@@ -19,6 +19,7 @@ import {
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
+  captureSentryException,
 } from '../../utils';
 import {
   useLatestTransactionStage,
@@ -93,6 +94,11 @@ export const DepositConfirmContainer = forwardRef<
 
     const handleExecuteDeposit = useCallback(async () => {
       if (!api || !activeApi || !activeChain) {
+        captureSentryException(
+          new Error('No api or chain found'),
+          'transactionType',
+          'deposit'
+        );
         return;
       }
 
@@ -130,6 +136,11 @@ export const DepositConfirmContainer = forwardRef<
       const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
+        captureSentryException(
+          new Error(`Currency not found for symbol ${tokenSymbol}`),
+          'transactionType',
+          'deposit'
+        );
         return;
       }
 
@@ -188,9 +199,7 @@ export const DepositConfirmContainer = forwardRef<
         noteManager?.removeNote(note);
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
-        // Capture error with Sentry.io
-        Sentry.setTag('Deposit Transaction Failed', error);
-        Sentry.captureException(error);
+        captureSentryException(error, 'transactionType', 'deposit');
       } finally {
         resetMainComponent();
         onResetState?.();
