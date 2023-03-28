@@ -86,6 +86,24 @@ html.font-satoshi *:not(code, .mono1, .mono2) {
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 }
 
+/* Applied Satoshi Variable for all element when the html tag has `font-satoshi-var` classnames */
+html.font-satoshi-var *:not(code, .mono1, .mono2) {
+  @font-face {
+    font-family: 'Satoshi Variable';
+    src: url('fonts/Satoshi-Variable.ttf') format('truetype');
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Satoshi Variable';
+    src: url('fonts/Satoshi-VariableItalic.ttf') format('truetype');
+    font-style: italic;
+  }
+
+  font-family: 'Satoshi Variable', -apple-system, BlinkMacSystemFont, Arial,
+    sans-serif;
+}
+
 code,
 .mono1,
 .mono2 {
