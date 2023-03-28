@@ -22,6 +22,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
       destChainProps = {},
       feePercentage,
       feeToken,
+      feeValue,
       sourceChainProps = {},
       token,
       tokenInputProps = {},
@@ -35,7 +36,9 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           ? '--'
           : `${amountInputProps.amount} ${token ?? ''}`,
         fee: !feePercentage
-          ? '--'
+          ? feeValue && feeValue > 0
+            ? feeValue.toString()
+            : '--'
           : `${
               parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
             } ${feeToken ?? ''}`,

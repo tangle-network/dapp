@@ -1,6 +1,13 @@
+import { InformationLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+
+const buttonDescVariantClasses = {
+  info: cx('text-mono-100 dark:text-mono-80'),
+  error: cx('text-red-70 dark:text-red-50'),
+};
+
 import {
   AmountInput,
   BridgeInputGroup,
@@ -8,31 +15,29 @@ import {
   FixedAmount,
   InfoItem,
   RecipientInput,
+  RefundInput,
   RelayerInput,
   Switcher,
   TokenInput,
 } from '../../components';
 import { Typography } from '../../typography';
-
 import { WithdrawCardProps } from './types';
 
 export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
   (
     {
-      tokenInputProps,
+      buttonDesc,
+      buttonDescVariant = 'info',
       className,
       customAmountInputProps,
-      feeAmount,
-      feePercentage,
       fixedAmountInputProps,
-      receivedAmount,
-      receivedToken,
+      infoItemProps,
       recipientInputProps,
+      refundInputProps,
       relayerInputProps,
-      remainderAmount,
-      remainderToken,
-      unwrapSwitcherProps,
+      tokenInputProps,
       unwrappingAssetInputProps,
+      unwrapSwitcherProps,
       withdrawBtnProps,
       ...props
     },
@@ -121,53 +126,41 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <RelayerInput {...relayerInputProps} />
             <RecipientInput {...recipientInputProps} />
+            <RefundInput {...refundInputProps} />
           </BridgeInputGroup>
           {/** Info */}
-          <div className="flex flex-col space-y-1">
-            <InfoItem
-              leftTextProps={{
-                title: 'Receiving',
-                variant: 'utility',
-                info: 'Receiving',
-              }}
-              rightContent={
-                receivedAmount
-                  ? `${receivedAmount} ${receivedToken}`
-                  : undefined
-              }
-            />
-            <InfoItem
-              leftTextProps={{
-                title: 'Remainder',
-                variant: 'utility',
-                info: 'Remainder',
-              }}
-              rightContent={
-                remainderAmount
-                  ? `${remainderAmount} ${remainderToken}`
-                  : undefined
-              }
-            />
-            <InfoItem
-              leftTextProps={{
-                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
-                variant: 'utility',
-                info: 'Fees',
-              }}
-              rightContent={
-                feeAmount ? `${feeAmount} ${remainderToken}` : undefined
-              }
-            />
-          </div>
+          {infoItemProps && (
+            <div className="flex flex-col space-y-1">
+              {infoItemProps.map((itemProps, index) => (
+                <InfoItem key={index} {...itemProps} />
+              ))}
+            </div>
+          )}
         </div>
 
-        <Button
-          {...withdrawBtnProps}
-          isFullWidth
-          className={twMerge('justify-center')}
-        >
-          {withdrawBtnProps?.children ?? 'Withdraw'}
-        </Button>
+        <div className="space-y-2">
+          <Button
+            {...withdrawBtnProps}
+            isFullWidth
+            className={twMerge('justify-center')}
+          >
+            {withdrawBtnProps?.children ?? 'Withdraw'}
+          </Button>
+
+          {buttonDesc && (
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className={cx(
+                'flex items-center',
+                buttonDescVariantClasses[buttonDescVariant]
+              )}
+            >
+              <InformationLine className="!fill-current shrink-0 mr-1" />
+              {buttonDesc}
+            </Typography>
+          )}
+        </div>
       </div>
     );
   }

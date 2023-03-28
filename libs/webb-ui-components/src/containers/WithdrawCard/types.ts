@@ -1,13 +1,14 @@
+import { ComponentProps } from 'react';
 import { PropsOf } from '../../types';
-import { ComponentElement, ComponentProps } from 'react';
 
 import {
   AmountInput,
   Button,
   FixedAmount,
+  InfoItem,
   RecipientInput,
+  RefundInput,
   RelayerInput,
-  ShieldedAssetInput,
   Switcher,
   TokenInput,
 } from '../../components';
@@ -49,37 +50,28 @@ export interface WithdrawCardProps extends PropsOf<'div'> {
   recipientInputProps?: ComponentProps<typeof RecipientInput>;
 
   /**
-   * The received amount
+   * The refund input props
    */
-  receivedAmount?: number | string;
+  refundInputProps?: ComponentProps<typeof RefundInput>;
 
   /**
-   * The received token symbol
+   * The info item props to pass to the info item component
    */
-  receivedToken?: string;
-
-  /**
-   * The fee amount
-   */
-  feeAmount?: number | string;
-
-  /**
-   * The fee percentage to display
-   */
-  feePercentage?: number;
-
-  /**
-   * The remainder amount
-   */
-  remainderAmount?: number | string;
-
-  /**
-   * The remainder token symbol
-   */
-  remainderToken?: string;
+  infoItemProps?: Array<ComponentProps<typeof InfoItem>>;
 
   /**
    * The withdraw button props
    */
   withdrawBtnProps?: ComponentProps<typeof Button>;
+
+  /**
+   * The description message display below the withdraw button
+   */
+  buttonDesc?: string;
+
+  /**
+   * The variant of message display below the withdraw button
+   * @default 'info'
+   */
+  buttonDescVariant?: 'info' | 'error';
 }

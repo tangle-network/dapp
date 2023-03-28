@@ -14,7 +14,12 @@ export const DEPOSIT_FAILURE_MSG: Omit<SnackBarOpts, 'close'> = {
  * @returns true if the error has a `message` property
  */
 const hasMessage = (error: unknown): error is { message: string } => {
-  return typeof error === 'object' && error !== null && 'message' in error;
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    Boolean(error.message)
+  );
 };
 
 /**
@@ -23,7 +28,12 @@ const hasMessage = (error: unknown): error is { message: string } => {
  * @returns true if the error has a `reason` property
  */
 const hasReason = (error: unknown): error is { reason: string } => {
-  return typeof error === 'object' && error !== null && 'reason' in error;
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'reason' in error &&
+    Boolean(error.reason)
+  );
 };
 
 /**

@@ -25,6 +25,8 @@ const ANY_EVM = [
   PresetTypedChainId.AthenaLocalnet,
   PresetTypedChainId.DemeterLocalnet,
   PresetTypedChainId.MoonbaseAlpha,
+  PresetTypedChainId.AvalancheFuji,
+  PresetTypedChainId.ScrollAlpha,
 ];
 
 const ANY_SUBSTRATE = [

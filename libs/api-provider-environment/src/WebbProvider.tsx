@@ -635,7 +635,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                         bridgeCurrency,
                         bridgeTargets
                       );
-                      bridgeOptions[newTypedChainId] = supportedBridge;
+                      bridgeOptions[bridgeCurrency.id] = supportedBridge;
 
                       // Set the first compatible bridge encountered.
                       if (!defaultBridge) {
@@ -643,6 +643,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       }
                     }
                   }
+
+                  console.log('bridgeOptions', bridgeOptions);
 
                   // set the available bridges of the new chain
                   webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
@@ -660,6 +662,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 }
               };
 
+              // Listen for chain updates when user switches chains in the extension
               webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
               await webbWeb3Provider.setChainListener();
@@ -690,7 +693,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   },
                   blockExplorerUrls: chain.blockExplorerStub
                     ? [chain.blockExplorerStub]
-                    : [],
+                    : undefined,
                 });
                 // add network will prompt the switch, check evmId again and throw if user rejected
                 const newChainId = await web3Provider.network;
@@ -739,6 +742,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         }
         logger.error(e);
         LoggerService.get('App').error(e);
+
+        // Notify the error
+        if (typeof e === 'object' && e && 'toString' in e) {
+          notificationApi({
+            variant: 'error',
+            message: e.toString(),
+          });
+        }
+
         return null;
       }
     },
@@ -812,6 +824,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       /// chain config by net id
       const chainConfig = chains[net];
+      if (!chainConfig) {
+        return;
+      }
 
       // wallet config by chain
       const walletConfig =
