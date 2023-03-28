@@ -57,7 +57,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         setAsset(nextItem);
         onChange?.(nextItem);
       },
-      [onChange, setAsset]
+      [onChange, setAsset, unavailableTokens]
     );
 
     const { filteredPopular, filteredSelect, filteredUnavailable } = useMemo(
@@ -126,7 +126,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               <Typography
                 variant="body4"
                 fw="bold"
-                className="uppercase text-mono-100 dark:text-mono-80"
+                className="uppercase text-mono-100 dark:text-mono-80 my-2"
               >
                 Unavailable
               </Typography>

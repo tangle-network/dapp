@@ -123,12 +123,12 @@ export const WithdrawConfirm = forwardRef<
           <WrapperSection>
             {/** Unwrapping\Withdrawing info */}
             <Section>
-              <div className="flex items-end gap-6">
+              <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title={'Withdrawing from'}
+                    title='Souce Chain'
                     variant="utility"
-                    info={'Withdrawing'}
+                    info="Souce Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />
@@ -146,9 +146,9 @@ export const WithdrawConfirm = forwardRef<
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title={token2Symbol ? 'Unwraping to' : 'Withdrawing to'}
+                    title="Destination Chain"
                     variant="utility"
-                    info={token2Symbol ? 'Unwraping to' : 'Withdrawing to'}
+                    info="Destination Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />

@@ -97,9 +97,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title={'Depositing from'}
+                    title="Source Chain"
                     variant="utility"
-                    info={'Depositing'}
+                    info="Source Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />
@@ -119,13 +119,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title={
-                      wrappableTokenSymbol ? 'Wrapping to' : 'Depositing to'
-                    }
+                    title="Destination Chain"
                     variant="utility"
-                    info={
-                      wrappableTokenSymbol ? 'Wrapping to' : 'Depositing to'
-                    }
+                    info="Destination Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />

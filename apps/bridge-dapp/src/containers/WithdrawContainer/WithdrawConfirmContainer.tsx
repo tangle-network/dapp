@@ -357,6 +357,8 @@ export const WithdrawConfirmContainer = forwardRef<
             : false,
           children: withdrawTxInProgress
             ? 'Make Another Transaction'
+            : unwrapCurrency
+            ? 'Unwrap And Withdraw'
             : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}

@@ -97,9 +97,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title="Source"
+                    title="Source Chain"
                     variant="utility"
-                    info="Source"
+                    info="Source Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />
@@ -117,9 +117,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title="Destination"
+                    title="Destination Chain"
                     variant="utility"
-                    info="Destination"
+                    info="Destination Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />
