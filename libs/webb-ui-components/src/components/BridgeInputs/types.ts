@@ -5,6 +5,8 @@ import { AmountMenu } from '../AmountMenu';
 import { InputProps } from '../Input/types';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { AvatarProps } from '../Avatar';
+import { CheckBox } from '../CheckBox';
+import { AmountInput } from './AmountInput';
 
 export interface InputWrapperProps extends IWebbComponentBase {
   /**
@@ -272,6 +274,7 @@ export interface RelayerInputProps extends InputWrapperComponentProps {
 export interface InfoItemProps extends PropsOf<'div'> {
   /**
    * The left text props (props of TitleWithInfo component)
+   * @default { variant: 'utility' }
    */
   leftTextProps: ComponentProps<typeof TitleWithInfo>;
 
@@ -279,4 +282,16 @@ export interface InfoItemProps extends PropsOf<'div'> {
    * Right content
    */
   rightContent?: string | ReactElement;
+}
+
+export interface RefundInputProps {
+  /**
+   * The refund checkbox props
+   */
+  refundCheckboxProps?: ComponentProps<typeof CheckBox>;
+
+  /**
+   * The refund amount input props
+   */
+  refundAmountInputProps?: ComponentProps<typeof AmountInput>;
 }

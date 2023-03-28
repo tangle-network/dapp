@@ -5,7 +5,7 @@ import {
   ExternalLinkLine,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -33,33 +33,58 @@ export const WithdrawConfirm = forwardRef<
 >(
   (
     {
-      activeChains,
       actionBtnProps,
+      activeChains,
       amount,
       changeAmount,
       checkboxProps,
       className,
       destChain,
       fee,
+      feesInfo,
+      fungibleTokenSymbol: token1Symbol,
+      isCopied,
       note,
       onClose,
-      isCopied,
       onCopy,
       onDownload,
       progress,
+      receivingInfo,
+      recipientAddress,
+      refundAmount,
+      refundToken,
       relayerAddress,
-      relayerExternalUrl,
       relayerAvatarTheme,
       txStatusMessage,
+      relayerExternalUrl,
+      remainingAmount,
       sourceChain,
       title = 'Confirm Withdrawal',
-      fungibleTokenSymbol: token1Symbol,
       wrappableTokenSymbol: token2Symbol,
-      recipientAddress,
       ...props
     },
     ref
   ) => {
+    const receivingContent = useMemo(() => {
+      if (!remainingAmount) {
+        return undefined;
+      }
+
+      if (refundAmount) {
+        return `${remainingAmount} ${
+          token2Symbol ?? token1Symbol
+        } + ${refundAmount} ${refundToken ?? ''}`;
+      }
+
+      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`;
+    }, [
+      remainingAmount,
+      refundAmount,
+      refundToken,
+      token1Symbol,
+      token2Symbol,
+    ]);
+
     return (
       <div
         {...props}
@@ -138,120 +163,6 @@ export const WithdrawConfirm = forwardRef<
                 </div>
               </div>
             </Section>
-
-            <div
-              className={cx(
-                'grid gap-2',
-                relayerAddress ? 'grid-cols-2' : 'grid-cols-1'
-              )}
-            >
-              {/** Relayer */}
-              {relayerAddress && (
-                <Section>
-                  <div className="space-y-1">
-                    <TitleWithInfo
-                      titleComponent="h6"
-                      title="Relayer"
-                      info="Relayer"
-                      variant="utility"
-                      titleClassName="text-mono-100 dark:text-mono-80"
-                      className="text-mono-100 dark:text-mono-80"
-                    />
-
-                    <div className="flex items-center space-x-1">
-                      <Avatar
-                        theme={relayerAvatarTheme}
-                        value={relayerAddress}
-                      />
-                      <Typography variant="body1" fw="bold">
-                        {relayerAddress.toLowerCase().startsWith('0x')
-                          ? shortenString(relayerAddress.substring(2), 5)
-                          : shortenString(relayerAddress, 5)}
-                      </Typography>
-
-                      <a
-                        target="_blank"
-                        href={relayerExternalUrl}
-                        rel="noreferrer noopener"
-                      >
-                        <ExternalLinkLine />
-                      </a>
-                    </div>
-                  </div>
-                </Section>
-              )}
-
-              {/** Unshielded address */}
-              {recipientAddress && (
-                <Section>
-                  <div className="space-y-1">
-                    <TitleWithInfo
-                      titleComponent="h6"
-                      title="Recipient address"
-                      variant="utility"
-                      titleClassName="text-mono-100 dark:text-mono-80"
-                      className="text-mono-100 dark:text-mono-80"
-                    />
-                    <Typography
-                      variant="body1"
-                      fw="bold"
-                      className="block break-words"
-                    >
-                      {recipientAddress}
-                    </Typography>
-                  </div>
-                </Section>
-              )}
-            </div>
-
-            {/** The change note */}
-            {note && (
-              <Section>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <TitleWithInfo
-                      titleComponent="h6"
-                      title="Change note"
-                      info="Change note"
-                      variant="utility"
-                      titleClassName="text-mono-100 dark:text-mono-80"
-                      className="text-mono-100 dark:text-mono-80"
-                    />
-                    <div className="flex space-x-2">
-                      <CopyWithTooltip textToCopy={note ?? ''} />
-                      <Button
-                        variant="utility"
-                        size="sm"
-                        className="p-2"
-                        onClick={onDownload}
-                      >
-                        <Download className="!fill-current" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between max-w-[470px]">
-                    <Typography
-                      variant="mono1"
-                      fw="bold"
-                      className="block truncate text-mono-140 dark:text-mono-0"
-                    >
-                      {note}
-                    </Typography>
-                  </div>
-
-                  <CheckBox
-                    {...checkboxProps}
-                    wrapperClassName={twMerge(
-                      'flex items-center',
-                      checkboxProps?.wrapperClassName
-                    )}
-                  >
-                    {checkboxProps?.children ?? 'I have copied the spend note'}
-                  </CheckBox>
-                </div>
-              </Section>
-            )}
           </WrapperSection>
 
           {/** Transaction Details */}
@@ -268,8 +179,9 @@ export const WithdrawConfirm = forwardRef<
                 leftTextProps={{
                   variant: 'body1',
                   title: 'Receiving',
+                  info: receivingInfo,
                 }}
-                rightContent={amount?.toString()}
+                rightContent={receivingContent}
               />
               <InfoItem
                 leftTextProps={{
@@ -282,30 +194,55 @@ export const WithdrawConfirm = forwardRef<
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Fees',
-                  info: 'Fees',
+                  title: 'Estimated fees',
+                  info: feesInfo,
                 }}
                 rightContent={fee?.toString()}
               />
+              <div className="space-y-1">
+                <InfoItem
+                  leftTextProps={{
+                    variant: 'body1',
+                    title: 'Receiving',
+                  }}
+                  rightContent={amount?.toString()}
+                />
+                <InfoItem
+                  leftTextProps={{
+                    variant: 'body1',
+                    title: 'Change Amount',
+                    info: 'Change Amount',
+                  }}
+                  rightContent={changeAmount?.toString()}
+                />
+                <InfoItem
+                  leftTextProps={{
+                    variant: 'body1',
+                    title: 'Fees',
+                    info: 'Fees',
+                  }}
+                  rightContent={fee?.toString()}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <Button {...actionBtnProps} isFullWidth className="justify-center">
-            {actionBtnProps?.children ?? 'Withdraw'}
-          </Button>
-
-          {!progress && (
-            <Button
-              variant="secondary"
-              isFullWidth
-              className="justify-center"
-              onClick={onClose}
-            >
-              Back
+          <div className="flex flex-col gap-2">
+            <Button {...actionBtnProps} isFullWidth className="justify-center">
+              {actionBtnProps?.children ?? 'Withdraw'}
             </Button>
-          )}
+
+            {!progress && (
+              <Button
+                variant="secondary"
+                isFullWidth
+                className="justify-center"
+                onClick={onClose}
+              >
+                Back
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );

@@ -128,7 +128,7 @@ export const AmountInput = forwardRef<
         </InputWrapper>
 
         {errorMessage && (
-          <span className="flex text-red-70 dark:text-red-50 items-center">
+          <span className="flex items-center text-red-70 dark:text-red-50">
             <InformationLine className="!fill-current mr-1" />
             <Typography variant="body1" fw="bold" className="!text-current">
               {errorMessage}

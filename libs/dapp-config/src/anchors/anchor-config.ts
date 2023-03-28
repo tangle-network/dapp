@@ -7,21 +7,32 @@ import { CurrencyConfig } from '../currencies';
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 13062856,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 20151492,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 8703495,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 2920599,
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3146553,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 5611883,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 32139400,
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 33462722,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 3771120,
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3996742,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
