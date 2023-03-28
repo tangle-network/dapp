@@ -6,7 +6,6 @@ import { Typography } from '../../typography';
 import {
   Button,
   ChainChip,
-  ChainsRing,
   ChainType,
   CheckBox,
   Chip,
@@ -66,7 +65,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
         )}
         ref={ref}
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/** Title */}
           <div className="flex items-center justify-between p-2">
             <Typography variant="h5" fw="bold">
@@ -95,7 +94,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           <WrapperSection>
             {/** Wrapping info */}
             <Section>
-              <div className="flex items-center gap-6">
+              <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
                     title={'Depositing from'}
@@ -144,7 +143,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
             {/** New spend note */}
             <Section>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <TitleWithInfo
                     title="New Spend Note"

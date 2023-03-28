@@ -263,7 +263,7 @@ export const TransferConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: changeNote ? !isChecked : false,
           onClick: handleTransferExecute,
-          children: isTransfering ? 'New Transfer' : 'Transfer',
+          children: isTransfering ? 'Make Another Transaction' : 'Transfer',
         }}
         txStatusMessage={txStatusMessage}
       />

@@ -65,7 +65,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         )}
         ref={ref}
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/** Title */}
           <div className="flex items-center justify-between p-2">
             <Typography variant="h5" fw="bold">
@@ -94,7 +94,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           <WrapperSection>
             {/* Transfer info */}
             <Section>
-              <div className="flex items-center gap-6">
+              <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
                     title="Source"
@@ -181,22 +181,26 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               {/** Recipient public key */}
               {recipientPublicKey && (
                 <Section>
-                  <div className="space-y-4">
+                  <div className="space-y-1">
                     <TitleWithInfo
                       titleComponent="h6"
                       title="Recipient"
+                      info="Recipient"
                       variant="utility"
                       titleClassName="text-mono-100 dark:text-mono-80"
                       className="text-mono-100 dark:text-mono-80"
                     />
 
-                    <Typography
-                      variant="body1"
-                      fw="bold"
-                      className="block break-words"
-                    >
-                      {recipientPublicKey}
-                    </Typography>
+                    <div className="flex items-center justify-between">
+                      <Typography
+                        variant="h5"
+                        fw="bold"
+                        className="block break-words text-mono-140 dark:text-mono-0"
+                      >
+                        {shortenString(recipientPublicKey, 19)}
+                      </Typography>
+                      <CopyWithTooltip textToCopy={recipientPublicKey} />
+                    </div>
                   </div>
                 </Section>
               )}
@@ -205,7 +209,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
             {/** New spend note */}
             {note && (
               <Section>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <TitleWithInfo
                       titleComponent="h6"
@@ -230,7 +234,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
 
                   <div className="flex items-center justify-between max-w-[470px]">
                     <Typography
-                      variant="mono1"
+                      variant="h5"
                       fw="bold"
                       className="block truncate text-mono-140 dark:text-mono-0"
                     >
@@ -253,14 +257,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           </WrapperSection>
 
           {/** Transaction Details */}
-          <div className="space-y-2">
-            <TitleWithInfo
-              titleComponent="h6"
-              title={`Transaction Details`}
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-            />
+          <div className="px-4 space-y-2">
             <div className="space-y-1">
               <InfoItem
                 leftTextProps={{

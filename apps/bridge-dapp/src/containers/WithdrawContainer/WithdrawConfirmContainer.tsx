@@ -339,7 +339,7 @@ export const WithdrawConfirmContainer = forwardRef<
             : changeAmount
             ? !checked
             : false,
-          children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
+          children: withdrawTxInProgress ? 'Make Another Transaction' : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{

@@ -260,8 +260,8 @@ export const DepositConfirmContainer = forwardRef<
           children: depositTxInProgress
             ? 'Make Another Transaction'
             : wrappingFlow
-            ? 'Confirm Wrap And Deposit'
-            : 'Confirm Deposit',
+            ? 'Wrap And Deposit'
+            : 'Deposit',
           onClick: handleExecuteDeposit,
         }}
         checkboxProps={{
