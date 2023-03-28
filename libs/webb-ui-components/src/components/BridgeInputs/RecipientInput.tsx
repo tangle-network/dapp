@@ -155,11 +155,14 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             />
           </div>
 
-          {!address && (
-            <Button variant="utility" size="sm" onClick={onClick}>
-              Paste
-            </Button>
-          )}
+          <Button
+            variant="utility"
+            size="sm"
+            onClick={onClick}
+            isDisabled={address ? true : false}
+          >
+            Paste
+          </Button>
         </InputWrapper>
 
         {error && (
