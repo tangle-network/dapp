@@ -5,6 +5,7 @@ import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
+  getRoundedAmountString,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -27,6 +28,8 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
+import { ExchangeRateInfo } from './shared';
+import { BigNumber, ethers } from 'ethers';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -34,17 +37,23 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
-      changeUtxo,
-      changeNote,
-      availableNotes,
       amount,
+      amountAfterFees,
+      availableNotes,
       changeAmount,
+      changeNote,
+      changeUtxo,
       fees,
-      targetChainId,
+      feesInfo,
       fungibleCurrency: fungibleCurrencyProp,
-      unwrapCurrency: { value: unwrapCurrency } = {},
+      isRefund,
       onResetState,
+      receivingInfo,
       recipient,
+      refundAmount,
+      refundToken,
+      targetChainId,
+      unwrapCurrency: { value: unwrapCurrency } = {},
       ...props
     },
     ref
@@ -192,6 +201,8 @@ export const WithdrawConfirmContainer = forwardRef<
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
 
+      const amount = Number(ethers.utils.formatEther(amountAfterFees));
+
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
         tokens: [tokenSymbol, unwrapTokenSymbol],
@@ -211,10 +222,14 @@ export const WithdrawConfirmContainer = forwardRef<
           noteManager?.addNote(changeNote);
         }
 
+        const refund = refundAmount ?? BigNumber.from(0);
+
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
           changeUtxo,
           recipient,
+          refundAmount: refund,
+          feeAmount: fees,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -264,15 +279,48 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       apiConfig,
-      amount,
+      amountAfterFees,
       txQueueApi,
       setMainComponent,
+      refundAmount,
       changeUtxo,
       recipient,
+      fees,
       activeRelayer,
       noteManager,
       onResetState,
     ]);
+
+    const formattedFees = useMemo(() => {
+      const feesInEthers = ethers.utils.formatEther(fees);
+
+      if (activeRelayer) {
+        const formattedRelayerFee = getRoundedAmountString(
+          Number(feesInEthers),
+          3,
+          Math.round
+        );
+        return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
+      }
+
+      return `${feesInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
+    }, [activeRelayer, fees, fungibleCurrency.view.symbol, refundToken]);
+
+    const formattedRefund = useMemo(() => {
+      if (!refundAmount) {
+        return undefined;
+      }
+
+      const refundInEthers = Number(ethers.utils.formatEther(refundAmount));
+
+      return getRoundedAmountString(refundInEthers, 3, Math.round);
+    }, [refundAmount]);
+
+    const remainingAmount = useMemo(() => {
+      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFees));
+
+      return getRoundedAmountString(amountInEthers, 3, Math.round);
+    }, [amountAfterFees]);
 
     return (
       <WithdrawConfirm
@@ -296,11 +344,16 @@ export const WithdrawConfirmContainer = forwardRef<
           children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
+        refundAmount={isRefund ? formattedRefund : undefined}
+        refundToken={isRefund ? refundToken : undefined}
+        receivingInfo={receivingInfo}
         isCopied={isCopied}
         onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
-        fee={fees}
+        remainingAmount={remainingAmount}
+        feesInfo={feesInfo}
+        fee={formattedFees}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}

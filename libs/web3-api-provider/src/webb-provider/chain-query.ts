@@ -8,7 +8,7 @@ import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
 import { ethers } from 'ethers';
 
 import { WebbWeb3Provider } from '../webb-provider';
-import { Observable, switchMap } from 'rxjs';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
@@ -29,11 +29,10 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     const provider = this.inner.getEthersProvider();
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        // check if the token is the native token of this chain
-
         const accounts = await this.inner.accounts.accounts();
+        const defaultAccount = accounts[0];
 
-        if (!accounts || !accounts.length) {
+        if (!accounts || !accounts.length || !defaultAccount?.address) {
           return '';
         }
 
@@ -42,10 +41,14 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           typedChainId
         );
 
+        if (!nativeCurrency) {
+          return '';
+        }
+
         // Return the balance of the account if native currency
         if (nativeCurrency.id === currencyId) {
           const tokenBalanceBig = await provider.getBalance(
-            accounts[0].address
+            defaultAccount.address
           );
           const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
@@ -65,13 +68,14 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           // Create a token instance for this chain
           const tokenInstance = ERC20Factory.connect(currencyOnChain, provider);
           const tokenBalanceBig = await tokenInstance.balanceOf(
-            accounts[0].address
+            defaultAccount.address
           );
           const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
           return tokenBalance;
         }
-      })
+      }),
+      catchError(() => of('')) // Return empty string when error
     );
   }
 
@@ -80,8 +84,9 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
         const accounts = await this.inner.accounts.accounts();
+        const defaultAccount = accounts[0];
 
-        if (!accounts || !accounts.length) {
+        if (!accounts || !accounts.length || !defaultAccount?.address) {
           console.log('no account selected');
 
           return '';
@@ -90,7 +95,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         // Return the balance of the account if native currency
         if (address === zeroAddress) {
           const tokenBalanceBig = await provider.getBalance(
-            accounts[0].address
+            defaultAccount.address
           );
           const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
@@ -99,13 +104,14 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           // Create a token instance for this chain
           const tokenInstance = ERC20Factory.connect(address, provider);
           const tokenBalanceBig = await tokenInstance.balanceOf(
-            accounts[0].address
+            defaultAccount.address
           );
           const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
 
           return tokenBalance;
         }
-      })
+      }),
+      catchError(() => of('')) // Return empty string when error
     );
   }
 }

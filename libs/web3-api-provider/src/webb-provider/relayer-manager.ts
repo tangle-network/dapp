@@ -174,7 +174,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
     relayers: WebbRelayer[],
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal: AbortSignal
+    abortSignal?: AbortSignal
   ): Promise<string[] | null> {
     let leaves: string[] = [];
     const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;

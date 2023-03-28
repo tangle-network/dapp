@@ -1,4 +1,5 @@
 import { Provider } from '@ethersproject/abstract-provider';
+import { retryPromise } from '@webb-tools/browser-utils';
 import {
   ERC20__factory,
   FungibleTokenWrapper__factory,
@@ -133,16 +134,16 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       }
 
       const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
-      const fungibleCurrencyAddress = await vAcnhorContract.token();
+      const fungibleCurrencyAddress = await retryPromise(vAcnhorContract.token);
       const fungibleCurrencyContract = ERC20__factory.connect(
         fungibleCurrencyAddress,
         provider
       );
 
       const [name, symbol, decimals] = await Promise.all([
-        fungibleCurrencyContract.name(),
-        fungibleCurrencyContract.symbol(),
-        fungibleCurrencyContract.decimals(),
+        retryPromise(fungibleCurrencyContract.name),
+        retryPromise(fungibleCurrencyContract.symbol),
+        retryPromise(fungibleCurrencyContract.decimals),
       ]);
       const fungibleCurrency = {
         address: fungibleCurrencyAddress,
@@ -188,9 +189,9 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     try {
       // Filter the zero addresses because they are not ERC20 tokens
       // and we use the isNativeAllowed flag to determine if native currency is allowed
-      const addresses = (await fungibleTokenWrapperContract.getTokens()).filter(
-        (address) => address !== zeroAddress
-      );
+      const addresses = (
+        await retryPromise(fungibleTokenWrapperContract.getTokens)
+      ).filter((address) => address !== zeroAddress);
 
       const wrappableERC20Contracts = addresses.map((address) =>
         ERC20__factory.connect(address, provider)
@@ -199,9 +200,9 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       const wrappableCurrenciesResponse = await Promise.allSettled<ICurrency>(
         wrappableERC20Contracts.map(async (ERC20Contract) => {
           const [name, symbol, decimals] = await Promise.all([
-            ERC20Contract.name(),
-            ERC20Contract.symbol(),
-            ERC20Contract.decimals(),
+            retryPromise(ERC20Contract.name),
+            retryPromise(ERC20Contract.symbol),
+            retryPromise(ERC20Contract.decimals),
           ]);
           return {
             address: ERC20Contract.address,
@@ -217,8 +218,9 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         .filter((currency): currency is ICurrency => Boolean(currency));
 
       // Check if  is allowed
-      const isNativeAllowed =
-        await fungibleTokenWrapperContract.isNativeAllowed();
+      const isNativeAllowed = await retryPromise(
+        fungibleTokenWrapperContract.isNativeAllowed
+      );
       if (isNativeAllowed) {
         const nativeCurrency = await this.fetchNativeCurrency(typedChainId);
         if (nativeCurrency) {

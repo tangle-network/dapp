@@ -36,6 +36,8 @@ export enum EVMChainId {
   AthenaLocalnet = 5002,
   DemeterLocalnet = 5003,
   MoonbaseAlpha = 1287,
+  AvalancheFuji = 43113,
+  ScrollAlpha = 534353,
 }
 
 // Pre-calculated TypedChainId values that are supported in the dapp
@@ -107,6 +109,13 @@ export enum PresetTypedChainId {
     ChainType.EVM,
     EVMChainId.MoonbaseAlpha
   ),
+
+  AvalancheFuji = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.AvalancheFuji
+  ),
+
+  ScrollAlpha = calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha),
 
   HermesLocalnet = calculateTypedChainId(
     ChainType.EVM,

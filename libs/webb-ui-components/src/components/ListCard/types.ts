@@ -135,7 +135,7 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   /**
    * If `true`, wallet is connecting to chain
    */
-  isConnectingToChain: boolean;
+  isConnectingToChain?: boolean;
 }
 
 export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {

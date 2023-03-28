@@ -31,6 +31,7 @@ import {
   Keypair,
   Note,
   ResourceId,
+  Utxo,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   toFixedHex,
@@ -274,13 +275,10 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal: AbortSignal
+    abortSignal?: AbortSignal
   ): Promise<string[]> {
-    console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const chain = this.config.chains[typedChainId];
-    console.log('On chain: ', chain?.name);
 
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
@@ -303,11 +301,12 @@ export class WebbWeb3Provider
 
       const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
-          lastQueriedBlock ||
-          getAnchorDeploymentBlockNumber(
-            typedChainId,
-            vanchor.contract.address
-          ),
+          (lastQueriedBlock ||
+            getAnchorDeploymentBlockNumber(
+              typedChainId,
+              vanchor.contract.address
+            )) ??
+          0,
         leaves: storedLeaves || [],
       };
 
@@ -334,8 +333,6 @@ export class WebbWeb3Provider
       console.log(`Got ${leaves.length} leaves from relayers.`);
     }
 
-    console.groupEnd();
-
     return leaves;
   }
 
@@ -347,6 +344,10 @@ export class WebbWeb3Provider
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
+    if (!tokenSymbol) {
+      throw new Error('Currency not found'); // Development error
+    }
+
     const utxosFromChain = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
@@ -371,14 +372,14 @@ export class WebbWeb3Provider
             vanchor.contract.address,
             provider.intoEthersProvider()
           );
-          const alreadySpent = await vAnchorContract.isSpent(
-            toFixedHex(`0x${utxo.nullifier}`, 32)
+          const alreadySpent = await retryPromise(() =>
+            vAnchorContract.isSpent(toFixedHex(`0x${utxo.nullifier}`, 32))
           );
 
           return alreadySpent ? null : utxo;
         })
       )
-    ).filter((utxo) => !!utxo && utxo.amount !== '0');
+    ).filter((utxo): utxo is Utxo => !!utxo && utxo.amount !== '0');
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
@@ -485,6 +486,9 @@ export class WebbWeb3Provider
       this.config.currencies,
       typedChainId
     );
+    if (!chain || !currency) {
+      throw new Error('Chain or currency not found'); // Development error
+    }
 
     return this.web3Provider.addChain({
       chainId: `0x${evmChainId.toString(16)}`,
@@ -494,7 +498,7 @@ export class WebbWeb3Provider
         name: currency.name,
         symbol: currency.symbol,
       },
-      rpcUrls: chain.evmRpcUrls,
+      rpcUrls: chain.evmRpcUrls ?? [],
     });
   }
 
@@ -516,7 +520,7 @@ export class WebbWeb3Provider
 
   async getZkFixtures(
     maxEdges: number,
-    isSmall?: boolean
+    isSmall = false
   ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
@@ -586,7 +590,7 @@ export class WebbWeb3Provider
       vAnchorAddress,
       provider ?? this.ethersProvider
     );
-    const maxEdges = await vAnchorContract.maxEdges();
+    const maxEdges = await retryPromise(vAnchorContract.maxEdges);
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
