@@ -86,7 +86,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                   variant="utility"
                   titleClassName="text-mono-200 dark:text-mono-0"
                 />
-                <Chip color="blue">{txStatusMessage?.replace('...', '')}</Chip>
+                <Chip color="blue">{txStatusMessage}</Chip>
               </div>
               <Progress value={progress} />
             </div>

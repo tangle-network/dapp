@@ -56,7 +56,9 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, noteManager } = useWebContext();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const {
       relayersState: { activeRelayer },
@@ -191,6 +193,8 @@ export const WithdrawConfirmContainer = forwardRef<
         tokenURI,
       });
 
+      setTxId(tx.id);
+
       try {
         txQueueApi.registerTransaction(tx);
 
@@ -263,6 +267,15 @@ export const WithdrawConfirmContainer = forwardRef<
       onResetState,
     ]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+
     return (
       <WithdrawConfirm
         {...props}
@@ -303,6 +316,7 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusMessage={txStatusMessage}
       />
     );
   }

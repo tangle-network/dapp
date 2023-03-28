@@ -245,7 +245,7 @@ export const DepositConfirmContainer = forwardRef<
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      return txPayload ? txPayload.txStatus.message : '';
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
     }, [txId, txPayloads]);
 
     return (

@@ -50,6 +50,7 @@ export const WithdrawConfirm = forwardRef<
       relayerAddress,
       relayerExternalUrl,
       relayerAvatarTheme,
+      txStatusMessage,
       sourceChain,
       title = 'Confirm Withdrawal',
       fungibleTokenSymbol: token1Symbol,
@@ -82,15 +83,14 @@ export const WithdrawConfirm = forwardRef<
           {/** Transaction progress */}
           {typeof progress === 'number' ? (
             <div className="flex flex-col gap-3">
-              {/* TODO: Get txn status */}
-              {/* <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <TitleWithInfo
                   title="Status:"
                   variant="utility"
                   titleClassName="text-mono-200 dark:text-mono-0"
                 />
-                <Chip color="blue">...</Chip>
-              </div> */}
+                <Chip color="blue">{txStatusMessage}</Chip>
+              </div>
               <Progress value={progress} />
             </div>
           ) : null}
