@@ -10,6 +10,7 @@ import {
   CurrencyConfig,
 } from '@webb-tools/dapp-config';
 import {
+  getRoundedAmountString,
   TransactionItemStatus,
   TransactionPayload,
 } from '@webb-tools/webb-ui-components';
@@ -66,7 +67,7 @@ function mapTxToPayload(
       txHash: tx.txHash,
       recipient: tx.metaData.recipient,
     },
-    amount: String(amount),
+    amount: getRoundedAmountString(amount),
     getExplorerURI,
     timestamp: tx.timestamp,
     token,
