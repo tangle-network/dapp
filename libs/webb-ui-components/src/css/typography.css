@@ -39,29 +39,10 @@
   font-style: normal;
 }
 
-/** Make use fonts */
-html,
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-p,
-table,
-ol,
-ul,
-li,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.body1,
-.body2,
-.body3,
-.body4 {
-  font-family: 'BreezeSans', Arial, sans-serif;
+/** Default font is BreezeSans use fonts */
+*:not(code) {
+  font-family: 'BreezeSans', -apple-system, BlinkMacSystemFont, Arial,
+    sans-serif;
 }
 
 code,
