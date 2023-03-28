@@ -126,7 +126,7 @@ export const WithdrawConfirm = forwardRef<
               <div className="flex items-end justify-between gap-6">
                 <div className="flex flex-col gap-3">
                   <TitleWithInfo
-                    title='Souce Chain'
+                    title="Souce Chain"
                     variant="utility"
                     info="Souce Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
