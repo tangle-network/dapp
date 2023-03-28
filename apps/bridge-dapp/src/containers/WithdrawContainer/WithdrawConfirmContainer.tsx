@@ -21,7 +21,12 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
+import {
+  captureSentryException,
+  getErrorMessage,
+  getTokenURI,
+  getTransactionHash,
+} from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
 import { ExchangeRateInfo } from './shared';
 import { BigNumber, ethers } from 'ethers';
@@ -164,6 +169,13 @@ export const WithdrawConfirmContainer = forwardRef<
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(async () => {
       if (availableNotes.length === 0 || !vAnchorApi) {
+        captureSentryException(
+          new Error(
+            'No notes available to withdraw or vAnchorApi not available'
+          ),
+          'transactionType',
+          'withdraw'
+        );
         return;
       }
 
@@ -187,6 +199,11 @@ export const WithdrawConfirmContainer = forwardRef<
       const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
+        captureSentryException(
+          new Error(`Currency not found for symbol ${tokenSymbol}`),
+          'transactionType',
+          'withdraw'
+        );
         return;
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
@@ -255,11 +272,10 @@ export const WithdrawConfirmContainer = forwardRef<
         }
       } catch (error) {
         console.log('Error while executing withdraw', error);
-
         changeNote && (await noteManager?.removeNote(changeNote));
-
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
+        captureSentryException(error, 'transactionType', 'withdraw');
       } finally {
         setMainComponent(undefined);
         onResetState?.();

@@ -16,7 +16,12 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
+import {
+  captureSentryException,
+  getErrorMessage,
+  getTokenURI,
+  getTransactionHash,
+} from '../../utils';
 import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
@@ -105,11 +110,21 @@ export const TransferConfirmContainer = forwardRef<
     const handleTransferExecute = useCallback(async () => {
       if (inputNotes.length === 0) {
         logger.error('No input notes provided');
+        captureSentryException(
+          new Error('No input notes provided'),
+          'transactionType',
+          'transfer'
+        );
         return;
       }
 
       if (!vAnchorApi) {
         logger.error('No vAnchor API provided');
+        captureSentryException(
+          new Error('No vAnchor API provided'),
+          'transactionType',
+          'transfer'
+        );
         return;
       }
 
@@ -137,6 +152,11 @@ export const TransferConfirmContainer = forwardRef<
       const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
+        captureSentryException(
+          new Error(`Currency not found for symbol ${tokenSymbol}`),
+          'transactionType',
+          'transfer'
+        );
         return;
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
@@ -195,11 +215,10 @@ export const TransferConfirmContainer = forwardRef<
         }
       } catch (error) {
         console.error('Error occured while transfering', error);
-
         changeNote && (await noteManager?.removeNote(changeNote));
-
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
+        captureSentryException(error, 'transactionType', 'transfer');
       } finally {
         setMainComponent(undefined);
         onResetState?.();
