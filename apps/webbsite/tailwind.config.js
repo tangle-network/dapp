@@ -33,7 +33,13 @@ module.exports = {
       },
 
       fontFamily: {
-        satoshi: ['Satoshi', 'sans-serif'],
+        satoshi: [
+          'Satoshi',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Arial',
+          'sans-serif',
+        ],
       },
 
       screens: {

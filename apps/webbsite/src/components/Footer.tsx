@@ -10,10 +10,7 @@ import { IconBase } from '@webb-tools/icons/types';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
-  Heading2,
-  Heading3,
   NewletterForm,
-  SubHeading2,
   InternalOrExternalLink,
   IInternalOrExternalLink,
 } from '../components';
@@ -75,20 +72,23 @@ export const Footer = () => {
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
         <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
-          <Heading2 className="text-[34px] leading-[46px]">
+          <Typography variant="mkt-h2" className="text-[34px] leading-[46px]">
             Scaling Privacy for <br />
             Everyone, Everything, Everywhere.
-          </Heading2>
+          </Typography>
 
           {!success && (
             <div className="space-y-6">
-              <Heading3 className="text-lg leading-6 dark:text-mono-80">
+              <Typography
+                variant="mkt-h3"
+                className="text-lg leading-6 dark:text-mono-80"
+              >
                 Follow for Updates
-              </Heading3>
+              </Typography>
 
               <NewletterForm onSuccess={() => setSuccess(true)} />
 
-              <SubHeading2 className="dark:text-mono-100">
+              <Typography variant="mkt-caption" className="dark:text-mono-100">
                 By signing up you agree to{' '}
                 <InternalOrExternalLink
                   {...links[1]}
@@ -96,18 +96,20 @@ export const Footer = () => {
                 >
                   terms & conditions
                 </InternalOrExternalLink>
-              </SubHeading2>
+              </Typography>
             </div>
           )}
 
           {success && (
             <div className="space-y-6">
-              <Heading3>{"Now you're in the loop"}</Heading3>
+              <Typography variant="mkt-h3">
+                {"Now you're in the loop"}
+              </Typography>
 
-              <SubHeading2>
+              <Typography variant="mkt-caption">
                 Thanks for signing up! Keep an eye on your inbox for updates
                 from the Webb community.
-              </SubHeading2>
+              </Typography>
             </div>
           )}
         </div>
