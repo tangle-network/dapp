@@ -22,8 +22,12 @@ export async function retryPromise<T extends () => Promise<any>>(
     } catch (e) {
       await sleep(sleepTime);
       tries--;
-      console.error(e);
+
+      // Log the error if we are out of retries
+      if (tries === 0) {
+        console.error(e);
+      }
     }
   }
-  throw new Error('Mix retries reached');
+  throw new Error('Max retries reached');
 }
