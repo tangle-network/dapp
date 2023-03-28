@@ -263,6 +263,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 leftTextProps={{
                   variant: 'body1',
                   title: 'Transfering',
+                  info: 'Transfering',
                 }}
                 rightContent={amount?.toString()}
               />
@@ -270,6 +271,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 leftTextProps={{
                   variant: 'body1',
                   title: 'Change Amount',
+                  info: 'Change Amount',
                 }}
                 rightContent={changeAmount?.toString()}
               />

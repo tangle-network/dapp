@@ -880,6 +880,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Receiving',
+          info: 'Receiving',
         },
         rightContent: receivingAmount
           ? `${receivingAmount} ${receivingTokenSymbol}`
@@ -889,7 +890,7 @@ export const WithdrawContainer = forwardRef<
         ? {
             leftTextProps: {
               title: 'Refund Amount',
-              info: refundInfo,
+              info: refundInfo ?? 'Refund Amount',
             },
             rightContent: refundAmountContent,
           }
@@ -897,6 +898,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Remaining balance',
+          info: 'Remaining balance',
         },
         rightContent: remainderAmount
           ? `${remainderAmount} ${remainderTokenSymbol}`
@@ -905,7 +907,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Estimated fees',
-          info: transactionFeeInfo,
+          info: transactionFeeInfo ?? 'Estimated fees',
         },
         rightContent: txFeeContent,
       },
