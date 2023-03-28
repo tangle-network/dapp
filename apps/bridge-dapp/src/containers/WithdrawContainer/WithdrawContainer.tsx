@@ -620,7 +620,7 @@ export const WithdrawContainer = forwardRef<
             setMainComponent(
               <TokenListCard
                 className="min-w-[550px] h-[700px]"
-                title={'Select Asset to Withdraw'}
+                title={'Select a token to Withdraw'}
                 popularTokens={[]}
                 selectTokens={fungibleTokens}
                 unavailableTokens={[]}
@@ -641,7 +641,7 @@ export const WithdrawContainer = forwardRef<
               setMainComponent(
                 <TokenListCard
                   className="min-w-[550px] h-[700px]"
-                  title={'Select Asset to Unwrap'}
+                  title={'Select a token to Unwrap'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
                   unavailableTokens={[]}
@@ -674,6 +674,8 @@ export const WithdrawContainer = forwardRef<
           onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
         }}
         relayerInputProps={{
+          title: 'Relayer',
+          info: 'Relayer',
           relayerAddress: activeRelayer?.beneficiary,
           iconTheme: activeChain
             ? activeChain.chainType === ChainType.EVM
@@ -739,6 +741,8 @@ export const WithdrawContainer = forwardRef<
           onChange: (recipient) => {
             setRecipient(recipient);
           },
+          title: 'Recipient Address',
+          info: "The recipient's wallet address",
         }}
         withdrawBtnProps={{
           isDisabled:

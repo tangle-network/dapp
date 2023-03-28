@@ -72,7 +72,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
     return (
       <ListCardWrapper
         {...props}
-        title={`Select a relayer`}
+        title="Select a Relayer"
         onClose={onClose}
         ref={ref}
       >

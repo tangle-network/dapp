@@ -536,7 +536,7 @@ export const DepositContainer = forwardRef<
         className: 'min-w-[550px] h-[700px]',
         selectTokens: tokens,
         value: destChainInputValue,
-        title: 'Select Asset to Deposit',
+        title: 'Select a token to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
         onChange: (selectedChain) => {

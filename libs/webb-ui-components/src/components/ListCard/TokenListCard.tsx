@@ -19,7 +19,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       onConnect,
       popularTokens,
       selectTokens,
-      title = 'Select a token from Polygon Chain',
+      title = 'Select a Token',
       unavailableTokens,
       value: selectedAsset,
       ...props

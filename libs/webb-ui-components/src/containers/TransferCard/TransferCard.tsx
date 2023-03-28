@@ -35,8 +35,8 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
     const bridgeAssetProps = useMemo(
       () => ({
         ...bridgeAssetInputProps,
-        title: bridgeAssetInputProps?.title ?? 'Bridging Asset',
-        info: bridgeAssetInputProps?.info ?? 'bridging asset',
+        title: bridgeAssetInputProps?.title ?? 'Bridging Token',
+        info: bridgeAssetInputProps?.info ?? 'Bridging Token',
       }),
       [bridgeAssetInputProps]
     );

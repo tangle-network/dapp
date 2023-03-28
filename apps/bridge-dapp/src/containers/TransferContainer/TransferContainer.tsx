@@ -317,7 +317,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <TokenListCard
           className="min-w-[550px] h-[700px]"
-          title="Select Asset to Transfer"
+          title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={bridgingAssets}
           unavailableTokens={[]}
@@ -857,6 +857,7 @@ export const TransferContainer = forwardRef<
           chain: selectedDestChain,
           chainType: 'dest',
           onClick: handleDestChainClick,
+          info: 'Destination chain',
         }}
         amountInputProps={{
           amount: amount ? amount.toString() : undefined,
@@ -879,6 +880,7 @@ export const TransferContainer = forwardRef<
             setIsValidRecipient(valid);
           },
           title: 'Recipient Public Key',
+          info: 'Public key of the recipient',
           errorMessage: recipientError,
           value: recipientPubKey,
           onChange: (recipient) => {
