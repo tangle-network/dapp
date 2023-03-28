@@ -57,7 +57,7 @@ export const AmountInput = forwardRef<
         <InputWrapper {...props} className={mergedClsx} ref={ref}>
           <div className="flex flex-col space-y-1 grow">
             <Label htmlFor={id} className="flex items-center space-x-2">
-              {amountMenuProps && (
+              {amountMenuProps ? (
                 <Dropdown
                   radixRootProps={{
                     onOpenChange: (open) => setIsDisabled(open),
@@ -91,6 +91,15 @@ export const AmountInput = forwardRef<
                     />
                   </DropdownBody>
                 </Dropdown>
+              ) : (
+                <TitleWithInfo
+                  title={title}
+                  info={info}
+                  variant="utility"
+                  titleComponent="span"
+                  className="text-mono-100 dark:text-mono-80"
+                  titleClassName="uppercase !text-inherit"
+                />
               )}
             </Label>
 
@@ -120,7 +129,7 @@ export const AmountInput = forwardRef<
         </InputWrapper>
 
         {errorMessage && (
-          <span className="flex text-red-70 dark:text-red-50">
+          <span className="flex mt-2 text-red-70 dark:text-red-50">
             <InformationLine className="!fill-current mr-1" />
             <Typography variant="body3" fw="bold" className="!text-current">
               {errorMessage}

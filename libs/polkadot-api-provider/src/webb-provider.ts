@@ -78,11 +78,7 @@ export class WebbPolkadot
   ) {
     super();
 
-    if (!this.typedChainidSubject) {
-      this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
-    } else {
-      this.typedChainidSubject.next(typedChainId);
-    }
+    this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
 
     this.provider = new PolkadotProvider(
       apiPromise,

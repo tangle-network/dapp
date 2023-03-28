@@ -16,6 +16,9 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
+  AmountInput,
+  Button,
+  CheckBox,
   getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
@@ -47,8 +50,13 @@ import {
   WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
+import { getErrorMessage } from '../../utils';
+import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+
+const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
 export const WithdrawContainer = forwardRef<
   HTMLDivElement,
@@ -57,6 +65,9 @@ export const WithdrawContainer = forwardRef<
   // State for unwrap checkbox
   const [isUnwrap, setIsUnwrap] = useState(false);
 
+  // State for refund checkbox
+  const [isRefund, setIsRefund] = useState(false);
+
   const [recipient, setRecipient] = useState<string>('');
 
   const [amount, setAmount] = useState<number>(0);
@@ -64,7 +75,13 @@ export const WithdrawContainer = forwardRef<
   // State for error message when user input amount is invalid
   const [amountError, setAmountError] = useState<string>('');
 
-  const { setMainComponent } = useWebbUI();
+  // State for refund amount
+  const [refundAmount, setRefundAmount] = useState<number>(0);
+
+  // State for error message when the refund amount is invalid
+  const [refundAmountError, setRefundAmountError] = useState<string>('');
+
+  const { setMainComponent, notificationApi } = useWebbUI();
 
   const {
     activeApi,
@@ -153,24 +170,58 @@ export const WithdrawContainer = forwardRef<
     return notes ?? null;
   }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
+  const {
+    fetchRelayerFeeInfo,
+    isLoading: isFetchingFeeInfo,
+    error: fetchFeeInfoError,
+    feeInfo: feeInfoOrBigNumber,
+  } = useWithdrawFee(
+    availableNotesFromManager,
+    amount,
+    recipient,
+    activeRelayer,
+    currentTypedChainId && isUnwrap
+      ? wrappableCurrency?.getAddress(currentTypedChainId)
+      : ''
+  );
+
+  const feeInfo = useMemo(() => {
+    if (!(feeInfoOrBigNumber instanceof BigNumber)) {
+      return feeInfoOrBigNumber;
+    }
+
+    return null;
+  }, [feeInfoOrBigNumber]);
+
+  const currentNativeCurrency = useMemo(() => {
+    if (!currentTypedChainId) {
+      return undefined;
+    }
+
+    return getNativeCurrencyFromConfig(
+      apiConfig.currencies,
+      currentTypedChainId
+    );
+  }, [apiConfig.currencies, currentTypedChainId]);
+
   const availableAmount: number = useMemo(() => {
-    if (!availableNotesFromManager) {
+    if (!availableNotesFromManager?.length) {
       return 0;
     }
-    return availableNotesFromManager.reduce<number>(
+
+    let tokenDecimals: number | undefined;
+    const amountBN = availableNotesFromManager.reduce<BigNumber>(
       (accumulatedBalance, newNote) => {
-        return (
-          accumulatedBalance +
-          Number(
-            ethers.utils.formatUnits(
-              newNote.note.amount,
-              newNote.note.denomination
-            )
-          )
-        );
+        if (!tokenDecimals) {
+          tokenDecimals = Number(newNote.note.denomination);
+        }
+
+        return accumulatedBalance.add(newNote.note.amount);
       },
-      0
+      BigNumber.from(0)
     );
+
+    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
   }, [availableNotesFromManager]);
 
   const selectedFungibleToken = useMemo<AssetType | undefined>(() => {
@@ -264,13 +315,39 @@ export const WithdrawContainer = forwardRef<
       .map((asset) => asset.rawChain);
   }, [availableAmount, fungibleCurrency, shieldedAssets]);
 
+  const totalFeeInWei = useMemo(() => {
+    if (!feeInfo) {
+      return undefined;
+    }
+
+    let feeWei = feeInfo.estimatedFee;
+
+    if (refundAmount && isRefund) {
+      const exchangeRate = Number(
+        ethers.utils.formatEther(feeInfo.refundExchangeRate)
+      );
+      const refundAmountWei = ethers.utils.parseEther(
+        (refundAmount * exchangeRate).toString()
+      );
+
+      feeWei = feeWei.add(refundAmountWei);
+    }
+
+    return feeWei;
+  }, [feeInfo, isRefund, refundAmount]);
+
   const isDisabledWithdraw = useMemo(() => {
+    const totalFee = Number(
+      ethers.utils.formatEther(totalFeeInWei ?? ethers.constants.Zero)
+    );
+
     return [
       Boolean(fungibleCurrency), // No fungible currency selected
       isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
+      amount >= totalFee,
     ].some((value) => value === false);
   }, [
     fungibleCurrency,
@@ -279,6 +356,8 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     recipient,
     isValidRecipient,
+    amount,
+    totalFeeInWei,
   ]);
 
   const buttonText = useMemo(() => {
@@ -294,12 +373,19 @@ export const WithdrawContainer = forwardRef<
       return 'Switch chain to withdraw';
     }
 
+    // If user selects a relayer, require the fee info to be fetched
+    if (activeRelayer && !feeInfo) {
+      return 'Fetch fee info';
+    }
+
     if (selectedUnwrapToken && isUnwrap) {
       return 'Unwrap and Withdraw';
     }
 
     return 'Withdraw';
   }, [
+    activeRelayer,
+    feeInfo,
     hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
@@ -308,10 +394,21 @@ export const WithdrawContainer = forwardRef<
     selectedUnwrapToken,
   ]);
 
+  const amountAfterFeeWei = useMemo(() => {
+    const amountWei = ethers.utils.parseEther(amount.toString());
+    if (!totalFeeInWei) {
+      return amountWei;
+    }
+
+    return amountWei.sub(totalFeeInWei);
+  }, [amount, totalFeeInWei]);
+
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
+    const amountAfterFee = Number(ethers.utils.formatEther(amountAfterFeeWei));
+
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amount)
+      ? getRoundedAmountString(amountAfterFee, 3, Math.round)
       : undefined;
     const remainderAmount = isValidAmount
       ? getRoundedAmountString(availableAmount - amount)
@@ -331,6 +428,7 @@ export const WithdrawContainer = forwardRef<
     };
   }, [
     amount,
+    amountAfterFeeWei,
     availableAmount,
     fungibleCurrency?.view.symbol,
     isUnwrap,
@@ -338,12 +436,54 @@ export const WithdrawContainer = forwardRef<
     wrappableCurrency?.view.symbol,
   ]);
 
+  const refundInfo = useMemo(
+    () =>
+      feeInfo ? (
+        <ExchangeRateInfo
+          exchangeRate={+ethers.utils.formatEther(feeInfo.refundExchangeRate)}
+          fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+          nativeTokenSymbol={currentNativeCurrency?.symbol}
+        />
+      ) : undefined,
+    [currentNativeCurrency?.symbol, feeInfo, fungibleCurrency?.view.symbol]
+  );
+
+  const transactionFeeInfo = useMemo(() => {
+    const estimatedFee = feeInfo
+      ? getRoundedAmountString(
+          Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
+          3,
+          Math.round
+        )
+      : undefined;
+
+    const refundFee =
+      feeInfo && refundAmount && isRefund
+        ? getRoundedAmountString(
+            refundAmount /
+              Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+          )
+        : undefined;
+
+    const transactionFeeInfo = estimatedFee ? (
+      <TransactionFeeInfo
+        estimatedFee={estimatedFee}
+        refundFee={refundFee}
+        fungibleTokenSymbol={fungibleCurrency?.view.symbol}
+      />
+    ) : undefined;
+
+    return transactionFeeInfo;
+  }, [feeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
+
   const handleResetState = useCallback(() => {
     setAmountError('');
     setAmount(0);
     setRecipient('');
     setIsUnwrap(false);
     setRelayer(null);
+    setRefundAmount(0);
+    setRefundAmountError('');
   }, [setRelayer]);
 
   const handleSwitchToOtherDestChains = useCallback(async () => {
@@ -426,6 +566,10 @@ export const WithdrawContainer = forwardRef<
 
     if (isDisabledWithdraw && otherAvailableChains.length > 0) {
       return await handleSwitchToOtherDestChains();
+    }
+
+    if (activeRelayer && !feeInfo) {
+      return await fetchRelayerFeeInfo();
     }
 
     if (
@@ -514,6 +658,11 @@ export const WithdrawContainer = forwardRef<
       });
     }
 
+    const fees =
+      feeInfoOrBigNumber instanceof BigNumber
+        ? feeInfoOrBigNumber
+        : totalFeeInWei ?? BigNumber.from(0);
+
     setMainComponent(
       <WithdrawConfirmContainer
         className="w-[550px]" // TODO: Remove hardcoded width
@@ -523,7 +672,9 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={0}
+        fees={fees}
+        amountAfterFees={amountAfterFeeWei}
+        isRefund={isRefund}
         fungibleCurrency={{
           value: fungibleCurrency,
           balance: availableAmount,
@@ -533,29 +684,44 @@ export const WithdrawContainer = forwardRef<
             ? { value: wrappableCurrency }
             : undefined
         }
+        feesInfo={transactionFeeInfo}
+        receivingInfo={refundInfo}
+        refundAmount={ethers.utils.parseEther(refundAmount.toString())}
+        refundToken={currentNativeCurrency?.symbol}
         recipient={recipient}
         onResetState={handleResetState}
       />
     );
   }, [
     activeApi?.state.activeBridge,
+    activeRelayer,
     amount,
+    amountAfterFeeWei,
     availableAmount,
     availableNotesFromManager,
+    currentNativeCurrency?.symbol,
     currentTypedChainId,
+    feeInfo,
+    feeInfoOrBigNumber,
+    fetchRelayerFeeInfo,
     fungibleCurrency,
     handleResetState,
     handleSwitchToOtherDestChains,
     hasNoteAccount,
     isDisabledWithdraw,
+    isRefund,
     isUnwrap,
     isWalletConnected,
     noteManager,
     otherAvailableChains.length,
     recipient,
+    refundAmount,
+    refundInfo,
     setMainComponent,
     setOpenNoteAccountModal,
     toggleModal,
+    totalFeeInWei,
+    transactionFeeInfo,
     txQueue.txPayloads,
     wrappableCurrency,
   ]);
@@ -787,16 +953,15 @@ export const WithdrawContainer = forwardRef<
     [recipient]
   );
 
-  const withdrawBtnProps = useMemo<
-    ComponentProps<typeof WithdrawCard>['withdrawBtnProps']
-  >(
+  const withdrawButtonProps = useMemo<ComponentProps<typeof Button>>(
     () => ({
       isDisabled:
         otherAvailableChains.length > 0
           ? false
           : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
-      isLoading: loading || walletState === WalletState.CONNECTING,
-      loadingText: 'Connecting...',
+      isLoading:
+        loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
+      loadingText: isFetchingFeeInfo ? 'Fetching fee info...' : 'Connecting...',
       children: buttonText,
       onClick: handleWithdrawButtonClick,
     }),
@@ -805,12 +970,163 @@ export const WithdrawContainer = forwardRef<
       handleWithdrawButtonClick,
       hasNoteAccount,
       isDisabledWithdraw,
+      isFetchingFeeInfo,
       isWalletConnected,
       loading,
       otherAvailableChains.length,
       walletState,
     ]
   );
+
+  const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
+    () => ({
+      isDisabled: !activeRelayer || !feeInfo,
+      isChecked: isRefund,
+      onChange: () => setIsRefund((prev) => !prev),
+    }),
+    [activeRelayer, feeInfo, isRefund]
+  );
+
+  const parseRefundAmount = useCallback(
+    (value: string) => {
+      if (!value) {
+        setRefundAmount(0);
+        return;
+      }
+
+      const parsedValue = parseFloat(value);
+      if (Number.isNaN(parsedValue) || parsedValue < 0) {
+        setRefundAmountError('Invalid amount');
+        return;
+      }
+
+      const maxRefundOnRelayer = Number(
+        ethers.utils.formatEther(feeInfo?.maxRefund ?? '0')
+      );
+      if (parsedValue > maxRefundOnRelayer) {
+        setRefundAmountError(
+          `Amount must be less than or equal to ${maxRefundOnRelayer}`
+        );
+        return;
+      }
+
+      setRefundAmountError('');
+      setRefundAmount(parsedValue);
+    },
+    [feeInfo]
+  );
+
+  const refundAmountInputProps = useMemo<ComponentProps<typeof AmountInput>>(
+    () => ({
+      amount: refundAmount ? refundAmount.toString() : undefined,
+      errorMessage: refundAmountError,
+      isDisabled: !feeInfo,
+      onAmountChange: parseRefundAmount,
+      onMaxBtnClick: () => {
+        if (!feeInfo) {
+          return;
+        }
+        const maxRefund = Number(ethers.utils.formatEther(feeInfo.maxRefund));
+        setRefundAmount(maxRefund);
+      },
+    }),
+    [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
+  );
+
+  const buttonDesc = useMemo(() => {
+    if (!totalFeeInWei) {
+      return undefined;
+    }
+
+    const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
+    const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+
+    if (amount < totalFee) {
+      return `Insufficient funds. You need more than ${formattedFee} to cover the fees`;
+    }
+  }, [amount, totalFeeInWei]);
+
+  const infoItemProps = useMemo<
+    ComponentProps<typeof WithdrawCard>['infoItemProps']
+  >(() => {
+    const nativeCurrencySymbol = currentNativeCurrency?.symbol ?? '';
+    const fungiCurrencySymbol = selectedFungibleToken?.symbol ?? '';
+
+    const {
+      receivingAmount,
+      receivingTokenSymbol,
+      remainderAmount,
+      remainderTokenSymbol,
+    } = infoCalculated;
+
+    const formattedRefundAmount = getRoundedAmountString(refundAmount);
+    const refundAmountContent =
+      refundAmount && isRefund
+        ? `${formattedRefundAmount} ${nativeCurrencySymbol}`
+        : '--';
+
+    const txFeeContent = isFetchingFeeInfo
+      ? 'Calculating...'
+      : totalFeeInWei
+      ? `${getRoundedAmountString(
+          Number(ethers.utils.formatEther(totalFeeInWei)),
+          3,
+          Math.round
+        )} ${fungiCurrencySymbol}`
+      : feeInfoOrBigNumber instanceof BigNumber
+      ? `${ethers.utils.formatEther(
+          feeInfoOrBigNumber
+        )} ${nativeCurrencySymbol}`
+      : '--';
+
+    return [
+      {
+        leftTextProps: {
+          title: 'Receiving',
+        },
+        rightContent: receivingAmount
+          ? `${receivingAmount} ${receivingTokenSymbol}`
+          : '--',
+      },
+      isRefund
+        ? {
+            leftTextProps: {
+              title: 'Refund Amount',
+              info: refundInfo,
+            },
+            rightContent: refundAmountContent,
+          }
+        : undefined,
+      {
+        leftTextProps: {
+          title: 'Remaining balance',
+        },
+        rightContent: remainderAmount
+          ? `${remainderAmount} ${remainderTokenSymbol}`
+          : '--',
+      },
+      {
+        leftTextProps: {
+          title: 'Estimated fees',
+          info: transactionFeeInfo,
+        },
+        rightContent: txFeeContent,
+      },
+    ].filter((item) => item) as ComponentProps<
+      typeof WithdrawCard
+    >['infoItemProps'];
+  }, [
+    currentNativeCurrency?.symbol,
+    feeInfoOrBigNumber,
+    infoCalculated,
+    isFetchingFeeInfo,
+    isRefund,
+    refundAmount,
+    refundInfo,
+    selectedFungibleToken?.symbol,
+    totalFeeInWei,
+    transactionFeeInfo,
+  ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
   useEffect(() => {
@@ -853,6 +1169,26 @@ export const WithdrawContainer = forwardRef<
     activeRelayer,
   ]);
 
+  // Side effect to show notification when fetching fee info fails
+  useEffect(() => {
+    if (fetchFeeInfoError) {
+      const message = getErrorMessage(fetchFeeInfoError);
+      notificationApi.addToQueue({
+        variant: 'error',
+        message,
+      });
+    }
+  }, [fetchFeeInfoError, notificationApi]);
+
+  // Side effect to uncheck the refund checkbox when feeInfo is not available
+  useEffect(() => {
+    if (!feeInfo) {
+      setIsRefund(false);
+      setRefundAmount(0);
+      setRefundAmountError('');
+    }
+  }, [feeInfo]);
+
   return (
     <div ref={ref}>
       <WithdrawCard
@@ -864,11 +1200,14 @@ export const WithdrawContainer = forwardRef<
         unwrapSwitcherProps={unwrapSwitcherProps}
         relayerInputProps={relayerInputProps}
         recipientInputProps={recipientInputProps}
-        withdrawBtnProps={withdrawBtnProps}
-        receivedAmount={infoCalculated.receivingAmount}
-        receivedToken={infoCalculated.receivingTokenSymbol}
-        remainderAmount={infoCalculated.remainderAmount}
-        remainderToken={infoCalculated.remainderTokenSymbol}
+        refundInputProps={{
+          refundCheckboxProps,
+          refundAmountInputProps,
+        }}
+        withdrawBtnProps={withdrawButtonProps}
+        infoItemProps={infoItemProps}
+        buttonDesc={buttonDesc}
+        buttonDescVariant="error"
       />
     </div>
   );

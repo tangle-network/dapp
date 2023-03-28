@@ -29,5 +29,5 @@ export async function retryPromise<T extends () => Promise<any>>(
       }
     }
   }
-  throw new Error('Mix retries reached');
+  throw new Error('Max retries reached');
 }
