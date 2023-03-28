@@ -116,46 +116,54 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         return;
       }
 
-      // Syncing notes
-      noteManager.isSyncingNote = true;
+      try {
+        // Syncing notes
+        noteManager.isSyncingNote = true;
 
-      const chainNotes =
-        await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
-          activeApi.state.activeBridge.targets[
-            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-          ],
-          noteManager.getKeypair()
+        const chainNotes =
+          await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
+            activeApi.state.activeBridge.targets[
+              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+            ],
+            noteManager.getKeypair()
+          );
+
+        const notes = await Promise.all(
+          chainNotes
+            // Do not display notes that have zero value.
+            .filter((note) => note.note.amount !== '0')
+            .map(async (note) => {
+              await noteManager.addNote(note);
+              return note;
+            })
         );
 
-      const notes = await Promise.all(
-        chainNotes
-          // Do not display notes that have zero value.
-          .filter((note) => note.note.amount !== '0')
-          .map(async (note) => {
-            await noteManager.addNote(note);
-            return note;
-          })
-      );
-
-      noteManager.isSyncingNote = false;
-
-      notificationApi.addToQueue({
-        variant: 'success',
-        message: 'Note(s) successfully added to account',
-        secondaryMessage: (
-          <Typography variant="body1">
-            <Button
-              variant="link"
-              as="span"
-              className="inline-block"
-              onClick={() => onNewNotes?.(notes)}
-            >
-              {notes.length} new note(s){' '}
-            </Button>{' '}
-            added to your account
-          </Typography>
-        ),
-      });
+        notificationApi.addToQueue({
+          variant: 'success',
+          message: 'Note(s) successfully added to account',
+          secondaryMessage: (
+            <Typography variant="body1">
+              <Button
+                variant="link"
+                as="span"
+                className="inline-block"
+                onClick={() => onNewNotes?.(notes)}
+              >
+                {notes.length} new note(s){' '}
+              </Button>{' '}
+              added to your account
+            </Typography>
+          ),
+        });
+      } catch (error) {
+        console.error('Error while syncing notes', error);
+        notificationApi.addToQueue({
+          variant: 'error',
+          message: 'Something went wrong while syncing notes',
+        });
+      } finally {
+        noteManager.isSyncingNote = false;
+      }
     },
     [activeApi, activeChain, noteManager, notificationApi]
   );

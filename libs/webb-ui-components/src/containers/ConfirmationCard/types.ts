@@ -1,7 +1,7 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 
-import { Avatar, Button, CheckBox } from '../../components';
+import { Avatar, Button, CheckBox, TitleWithInfo } from '../../components';
 import { UseCopyableReturnType } from '../../hooks';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
@@ -120,6 +120,31 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    * @default 'polkadot'
    */
   relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
+
+  /**
+   * The remaining amount (amount - refundAmount)
+   */
+  remainingAmount?: number | string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: number | string;
+
+  /**
+   * The refund token symbol
+   */
+  refundToken?: string;
+
+  /**
+   * The received info
+   */
+  receivingInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+
+  /**
+   * Transaction fee info
+   */
+  feesInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
    * The relayer address
