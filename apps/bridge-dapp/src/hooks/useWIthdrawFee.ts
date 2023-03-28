@@ -3,7 +3,6 @@ import {
   RelayerFeeInfo,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
 import { PresetTypedChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { useCurrencies, useVAnchor } from '@webb-tools/react-hooks';
@@ -45,7 +44,7 @@ export const useWithdrawFee = (
   relayer: ActiveWebbRelayer | null,
   wrapUnwrapToken = ''
 ): UseWithdrawFeeReturnType => {
-  const { activeApi, activeChain, noteManager } = useWebContext();
+  const { activeApi, activeChain, apiConfig, noteManager } = useWebContext();
 
   const { fungibleCurrency } = useCurrencies();
 
@@ -120,7 +119,10 @@ export const useWithdrawFee = (
         inputNotes
       );
 
-      const vanchorAddr = getLatestAnchorAddress(currentTypedChainId);
+      const vanchorAddr = apiConfig.getAnchorAddress(
+        fungibleCurrency.id,
+        currentTypedChainId
+      );
       if (!vanchorAddr) {
         console.error('No anchor address in current active chain');
         return;
@@ -154,6 +156,7 @@ export const useWithdrawFee = (
   }, [
     activeChain,
     amount,
+    apiConfig,
     fungibleCurrency,
     noteManager,
     recipient,
