@@ -80,7 +80,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           {/** Transaction progress */}
           {typeof progress === 'number' ? (
             <div className="flex flex-col gap-3">
-              {/* TODO: Get txn status */}
               <div className="flex items-center justify-between">
                 <TitleWithInfo
                   title="Status:"

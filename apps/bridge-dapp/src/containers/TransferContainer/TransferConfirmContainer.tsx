@@ -55,7 +55,9 @@ export const TransferConfirmContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.chainId),
@@ -150,6 +152,8 @@ export const TransferConfirmContainer = forwardRef<
         tokenURI,
       });
 
+      setTxId(tx.id);
+
       try {
         txQueueApi.registerTransaction(tx);
 
@@ -216,6 +220,15 @@ export const TransferConfirmContainer = forwardRef<
       onResetState,
     ]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message : '';
+    }, [txId, txPayloads]);
+
     return (
       <TransferConfirm
         {...props}
@@ -252,6 +265,7 @@ export const TransferConfirmContainer = forwardRef<
           onClick: handleTransferExecute,
           children: isTransfering ? 'New Transfer' : 'Transfer',
         }}
+        txStatusMessage={txStatusMessage}
       />
     );
   }
