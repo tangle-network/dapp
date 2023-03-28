@@ -89,7 +89,7 @@ export const WithdrawConfirm = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -136,30 +136,11 @@ export const WithdrawConfirm = forwardRef<
                     type={(destChain?.type as ChainType) ?? 'webb-dev'}
                     name={destChain?.name ?? ''}
                   />
-
                   <TokenWithAmount
                     token1Symbol={token1Symbol}
                     amount={formatTokenAmount(amount?.toString() ?? '')}
                   />
                 </div>
-                  <ArrowRight />
-                  <div className="flex items-center space-x-2">
-                    <TokenWithAmount
-                      token1Symbol={token2Symbol}
-                      amount={remainingAmount}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <TokenWithAmount
-                    token1Symbol={token1Symbol}
-                    amount={remainingAmount}
-                  />
-                </div>
-              )}
-            </div>
-          </Section>
 
                 <ArrowRight size="lg" />
 
@@ -185,63 +166,7 @@ export const WithdrawConfirm = forwardRef<
           </WrapperSection>
 
           {/** Transaction Details */}
-          <div className="space-y-2">
-            <TitleWithInfo
-              titleComponent="h6"
-              title={`Transaction Details`}
-              variant="utility"
-              titleClassName="text-mono-100 dark:text-mono-80"
-              className="text-mono-100 dark:text-mono-80"
-
-                <CheckBox
-                  {...checkboxProps}
-                  wrapperClassName={twMerge(
-                    'flex items-center',
-                    checkboxProps?.wrapperClassName
-                  )}
-                >
-                  {checkboxProps?.children ?? 'I have copied the spend note'}
-                </CheckBox>
-              </div>
-            </Section>
-          )}
-        </WrapperSection>
-
-        {/** Transaction Details */}
-        <div className="space-y-2">
-          <TitleWithInfo
-            titleComponent="h6"
-            title={`Transaction Details`}
-            variant="utility"
-            titleClassName="text-mono-100 dark:text-mono-80"
-            className="text-mono-100 dark:text-mono-80"
-          />
-          <div className="space-y-1">
-            <InfoItem
-              leftTextProps={{
-                variant: 'body1',
-                title: 'Receiving',
-                info: receivingInfo,
-              }}
-              rightContent={receivingContent}
-            />
-            <InfoItem
-              leftTextProps={{
-                variant: 'body1',
-                title: 'Change Amount',
-                info: 'Change Amount',
-              }}
-              rightContent={changeAmount?.toString()}
-            />
-            <InfoItem
-              leftTextProps={{
-                variant: 'body1',
-                title: 'Estimated fees',
-                info: feesInfo,
-              }}
-              rightContent={fee?.toString()}
-
-            />
+          <div className="px-4 space-y-2">
             <div className="space-y-1">
               <InfoItem
                 leftTextProps={{
@@ -267,50 +192,25 @@ export const WithdrawConfirm = forwardRef<
                 }}
                 rightContent={fee?.toString()}
               />
-              <div className="space-y-1">
-                <InfoItem
-                  leftTextProps={{
-                    variant: 'body1',
-                    title: 'Receiving',
-                  }}
-                  rightContent={amount?.toString()}
-                />
-                <InfoItem
-                  leftTextProps={{
-                    variant: 'body1',
-                    title: 'Change Amount',
-                    info: 'Change Amount',
-                  }}
-                  rightContent={changeAmount?.toString()}
-                />
-                <InfoItem
-                  leftTextProps={{
-                    variant: 'body1',
-                    title: 'Fees',
-                    info: 'Fees',
-                  }}
-                  rightContent={fee?.toString()}
-                />
-              </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-2">
-            <Button {...actionBtnProps} isFullWidth className="justify-center">
-              {actionBtnProps?.children ?? 'Withdraw'}
+        <div className="flex flex-col gap-2">
+          <Button {...actionBtnProps} isFullWidth className="justify-center">
+            {actionBtnProps?.children ?? 'Withdraw'}
+          </Button>
+
+          {!progress && (
+            <Button
+              variant="secondary"
+              isFullWidth
+              className="justify-center"
+              onClick={onClose}
+            >
+              Back
             </Button>
-
-            {!progress && (
-              <Button
-                variant="secondary"
-                isFullWidth
-                className="justify-center"
-                onClick={onClose}
-              >
-                Back
-              </Button>
-            )}
-          </div>
+          )}
         </div>
       </div>
     );

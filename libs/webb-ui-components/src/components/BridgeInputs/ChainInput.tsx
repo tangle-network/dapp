@@ -49,7 +49,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
               </Typography>
             </p>
           ) : (
-            <Typography variant="h5" fw="bold">
+            <Typography variant="h5" fw="bold" className='text-black dark:text-white'>
               Select chain
             </Typography>
           )}

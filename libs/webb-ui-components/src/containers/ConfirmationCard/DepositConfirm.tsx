@@ -61,7 +61,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}

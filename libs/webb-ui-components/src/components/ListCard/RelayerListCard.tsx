@@ -100,7 +100,7 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
                   <div className="flex items-center space-x-2">
                     <Avatar theme={current.theme} value={current.address} />
 
-                    <Typography variant="body1" fw="bold">
+                    <Typography variant="h5" fw="bold">
                       {shortenString(current.address)}
                     </Typography>
 

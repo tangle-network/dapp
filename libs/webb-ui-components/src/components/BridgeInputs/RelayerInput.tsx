@@ -63,7 +63,11 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
               )}
             </div>
           ) : (
-            <Typography variant="h5" fw="bold">
+            <Typography
+              variant="h5"
+              fw="bold"
+              className="text-black dark:text-white"
+            >
               Add a relayer
             </Typography>
           )}
