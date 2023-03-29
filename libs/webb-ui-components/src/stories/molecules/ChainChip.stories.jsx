@@ -44,6 +44,7 @@ export default {
           'arbitrum',
           'arbitrum goerli',
           'avalanche',
+          'avalanche fuji',
           'tangle',
           'scroll',
           'athena',
