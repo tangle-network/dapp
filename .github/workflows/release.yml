@@ -45,11 +45,6 @@ jobs:
         id: changed-stats
         with:
           paths: apps/stats-dapp
-
-      - uses: marceloprado/has-changed-path@v1
-        id: changed-ui
-        with:
-          paths: libs/webb-ui-components
       
       - name: create env file for webbsite
         run: |
@@ -68,7 +63,7 @@ jobs:
           yarn install
           yarn nx run-many --all --target=build
 
-      #Publish to npm and github releases
+      # Create github release
       - name: Release hubble
         if: steps.changed-hubble.outputs.changed == 'true'
         uses: ./.github/actions/create-release
@@ -82,11 +77,3 @@ jobs:
         with:
           package-path: apps/stats-dapp
           repo-token: ${{ secrets.REPO_TOKEN }}
-
-      # - name: Release webb-ui-kit
-      #   if: steps.changed-ui.outputs.changed == 'true'
-      #   uses: ./.github/actions/create-release
-      #   with:
-      #     package-path: libs/webb-ui-components
-      #     repo-token: ${{ secrets.REPO_TOKEN }}
-      #     npm-token: ${{ secrets.NPM_TOKEN }}
