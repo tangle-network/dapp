@@ -1,9 +1,10 @@
-import { ChainIcon, ChevronRight, TokenIcon } from '@webb-tools/icons';
-import { Typography } from '../../typography';
+import { ChainIcon } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 
+import { Typography } from '../../typography';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { ChainInputComponentProps } from './types';
 
@@ -24,14 +25,17 @@ import { ChainInputComponentProps } from './types';
  */
 
 export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
-  ({ chain, chainType, id, info, ...props }, ref) => {
+  ({ chain, chainType, id, info, title, ...props }, ref) => {
     return (
       <InputWrapper {...props} ref={ref}>
         <div className="flex flex-col space-y-1">
           <Label htmlFor={id}>
             <TitleWithInfo
               title={
-                (chainType === 'source' ? 'Source' : 'Destination') + ' chain'
+                title
+                  ? title
+                  : (chainType === 'source' ? 'Source' : 'Destination') +
+                    ' chain'
               }
               info={info}
               variant="utility"
@@ -44,7 +48,12 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
             <p className="flex items-center space-x-1">
               <ChainIcon name={chain.name} size="lg" />
 
-              <Typography component="span" variant="body1" fw="bold">
+              <Typography
+                className="capitalize"
+                component="span"
+                variant="body1"
+                fw="bold"
+              >
                 {chain.name}
               </Typography>
             </p>
@@ -55,7 +64,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
           )}
         </div>
 
-        <ChevronRight className="inline-block" />
+        <AnimatedChevronRight />
       </InputWrapper>
     );
   }

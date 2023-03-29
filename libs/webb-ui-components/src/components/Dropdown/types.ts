@@ -24,7 +24,12 @@ type DropdownButtonPickedKeys = 'label' | 'icon' | 'size';
 export interface DropdownButtonProps
   extends PropsOf<'button'>,
     IWebbComponentBase,
-    Pick<DropdownMenuProps, DropdownButtonPickedKeys> {}
+    Pick<DropdownMenuProps, DropdownButtonPickedKeys> {
+  /**
+   * If true, the button will be rendered as a full width button
+   */
+  isFullWidth?: boolean;
+}
 
 type DropdownBodyPickedKeys = 'size';
 

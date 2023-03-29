@@ -23,5 +23,11 @@ export type WebbUIProviderProps = {
    */
   hasErrorBoudary?: boolean;
 
+  /**
+   * Default theme mode
+   * @default "dark"
+   */
+  defaultThemeMode?: 'dark' | 'light';
+
   children?: React.ReactNode;
 };
