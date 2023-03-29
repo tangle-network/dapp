@@ -12,7 +12,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: true,
   },
-  transpilePackages: ['@webb-tools/icons'],
 };
 
 module.exports = withNx(nextConfig);

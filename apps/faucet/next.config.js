@@ -13,7 +13,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  transpilePackages: ['@webb-tools/icons', '@webb-tools/webb-ui-components'],
 };
 
 module.exports = withNx(nextConfig);
