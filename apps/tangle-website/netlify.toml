@@ -1,0 +1,6 @@
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+[build]
+command = "yarn nx build tangle-website"
+publish = "./dist/apps/tangle-website/.next"

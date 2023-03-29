@@ -46,6 +46,7 @@ export * from './Stats';
 export * from './Switcher';
 export * from './Table';
 export * from './Tabs';
+export * from './TangleLogo';
 export * from './ThemeSwitcher';
 export * from './TimeLine';
 export * from './TimeProgress';
