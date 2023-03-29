@@ -1,3 +1,6 @@
+import links from '@webb-tools/dapp-config/links';
+import cx from 'classnames';
+
 import {
   Button,
   TabContent,
@@ -5,10 +8,10 @@ import {
   TabsRoot,
   TabTrigger,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
 import Image from 'next/image';
-import { BRIDGE_URL, STATS_URL } from '../../constants';
 import { Heading2, Heading4, SubHeading1, SubHeading2 } from '../../components';
+
+const { BRIDGE_URL, STATS_URL } = links;
 
 export const InActionSection = () => {
   return (
