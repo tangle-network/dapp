@@ -1,11 +1,14 @@
-import { Button } from '@webb-tools/webb-ui-components';
+import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
-import {
+
+import { Button } from '@webb-tools/webb-ui-components';
+import { Heading2, Heading3, SubHeading1, SubHeading2 } from '../../components';
+
+const {
   CONNECTED_SHIELDED_IDENTITY_URL,
   CONNECTED_SHIELDED_POOLS_URL,
   TANGLE_NETWORK_URL,
-} from '../../constants';
-import { Heading2, Heading3, SubHeading1, SubHeading2 } from '../../components';
+} = links;
 
 export const ApplicationsAndInfrastructureSection = () => {
   return (
