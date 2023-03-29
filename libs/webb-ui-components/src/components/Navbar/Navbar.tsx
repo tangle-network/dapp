@@ -6,122 +6,110 @@ import {
   Menu,
 } from '@webb-tools/icons';
 import {
-  Button,
-  Typography,
   Accordion,
   AccordionContent,
   AccordionItem,
+  Button,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   MenuItem,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { BRIDGE_URL, WEBB_DOCS_URL } from '../constants';
-import { InternalOrExternalLink, IInternalOrExternalLink } from '../components';
+import { FC, forwardRef, useMemo } from 'react';
+import { InternalOrExternalLink } from './InternalOrExternalLink';
+import { MobileNavProps, NavbarProps, NavItemType } from './types';
 
-type NavItem = IInternalOrExternalLink;
-
-const isNavItem = (item: any): item is NavItem => {
+const isNavItem = (item: any): item is NavItemType => {
   return 'label' in item && 'url' in item;
 };
 
-const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
-  // {
-  //   protocols: [
-  //     {
-  //       label: 'Shielded Pool Protocols',
-  //       url: '#',
-  //     },
-  //     {
-  //       label: 'Shielded Identity Protocols',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
-  { label: 'community', url: '/community', isInternal: true },
-  { label: 'docs', url: WEBB_DOCS_URL },
-  { label: 'blog', url: '/blog', isInternal: true },
-];
+export const Navbar = forwardRef<HTMLElement, NavbarProps>(
+  ({ navItems: navItemsProp, buttonProps, ...props }, ref) => {
+    const navItems = useMemo(() => navItemsProp ?? [], [navItemsProp]);
 
-export const Navbar = () => {
-  return (
-    <nav>
-      <ul className="flex items-center space-x-6">
-        {navItems.map((item, idx) => (
-          <li className="hidden md:block" key={idx}>
-            {isNavItem(item) ? (
-              <InternalOrExternalLink
-                url={item.url}
-                isInternal={item.isInternal}
-              >
-                <Typography
-                  className="capitalize"
-                  variant="body1"
-                  fw="bold"
-                  component="span"
+    return (
+      <nav {...props} ref={ref}>
+        <ul className="flex items-center gap-x-6">
+          {navItems.map((item, idx) => (
+            <li className="hidden md:block" key={idx}>
+              {isNavItem(item) ? (
+                <InternalOrExternalLink
+                  url={item.url}
+                  isInternal={item.isInternal}
                 >
-                  {item.label}
-                </Typography>
-              </InternalOrExternalLink>
-            ) : (
-              <Dropdown>
-                <DropdownBasicButton className="flex items-center space-x-2 group">
-                  <Typography className="capitalize" variant="body1" fw="bold">
-                    {Object.keys(item)[0]}
+                  <Typography
+                    className="capitalize"
+                    variant="body1"
+                    fw="bold"
+                    component="span"
+                  >
+                    {item.label}
                   </Typography>
-
-                  <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out group-radix-state-open:-rotate-180" />
-                </DropdownBasicButton>
-
-                <DropdownBody
-                  isPorttal={false}
-                  className="p-4 mt-4 space-y-4 w-[374px]"
-                  size="sm"
-                  align="start"
-                >
-                  {Object.values(item)[0].map((subItem, idx) => (
-                    <InternalOrExternalLink
-                      key={idx}
-                      url={subItem.url}
-                      isInternal={subItem.isInternal}
+                </InternalOrExternalLink>
+              ) : (
+                <Dropdown>
+                  <DropdownBasicButton className="flex items-center space-x-2 group">
+                    <Typography
+                      className="capitalize"
+                      variant="body1"
+                      fw="bold"
                     >
-                      <MenuItem
-                        className="px-4 py-2 rounded-lg hover:text-blue-70"
-                        icon={
-                          <ArrowRight className="!fill-current" size="lg" />
-                        }
+                      {Object.keys(item)[0]}
+                    </Typography>
+
+                    <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out group-radix-state-open:-rotate-180" />
+                  </DropdownBasicButton>
+
+                  <DropdownBody
+                    isPorttal={false}
+                    className="p-4 mt-4 space-y-4 w-[374px]"
+                    size="sm"
+                    align="start"
+                  >
+                    {Object.values(item)[0].map((subItem, idx) => (
+                      <InternalOrExternalLink
+                        key={idx}
+                        url={subItem.url}
+                        isInternal={subItem.isInternal}
                       >
-                        {subItem.label}
-                      </MenuItem>
-                    </InternalOrExternalLink>
-                  ))}
-                </DropdownBody>
-              </Dropdown>
-            )}
+                        <MenuItem
+                          className="px-4 py-2 rounded-lg hover:text-blue-70"
+                          icon={
+                            <ArrowRight className="!fill-current" size="lg" />
+                          }
+                        >
+                          {subItem.label}
+                        </MenuItem>
+                      </InternalOrExternalLink>
+                    ))}
+                  </DropdownBody>
+                </Dropdown>
+              )}
+            </li>
+          ))}
+
+          {buttonProps &&
+            buttonProps.length > 0 &&
+            buttonProps.map((buttonProp, key) => (
+              <li key={key}>
+                <Button {...buttonProp} />
+              </li>
+            ))}
+
+          <li className="flex items-center justify-center md:hidden">
+            <MobileNav navItems={navItems} />
           </li>
-        ))}
+        </ul>
+      </nav>
+    );
+  }
+);
 
-        <li>
-          <Button
-            href={BRIDGE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="button-base button-primary"
-          >
-            Bridge
-          </Button>
-        </li>
+const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
+  const navItems = navItemsProp ?? [];
 
-        <li className="flex items-center justify-center md:hidden">
-          <MobileNav />
-        </li>
-      </ul>
-    </nav>
-  );
-};
-
-const MobileNav = () => {
   return (
     <Dropdown>
       <DropdownBasicButton className="flex items-center justify-center group">

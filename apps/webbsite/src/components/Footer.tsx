@@ -1,4 +1,8 @@
-import { Logo, Typography } from '@webb-tools/webb-ui-components';
+import {
+  InternalOrExternalLink,
+  Logo,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import {
   Common2Icon,
   DiscordFill,
@@ -8,15 +12,8 @@ import {
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import Link from 'next/link';
-import { useState } from 'react';
-import {
-  Heading2,
-  Heading3,
-  NewletterForm,
-  SubHeading2,
-  InternalOrExternalLink,
-  IInternalOrExternalLink,
-} from '../components';
+import { ComponentProps, useState } from 'react';
+import { Heading2, Heading3, NewletterForm, SubHeading2 } from '../components';
 
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -52,7 +49,9 @@ const socials: Array<SocialType> = [
   },
 ];
 
-const links: Array<IInternalOrExternalLink> = [
+const links: Array<
+  ComponentProps<typeof InternalOrExternalLink> & { label: string }
+> = [
   {
     label: 'Privacy Policy',
     url: '/privacy-policy',

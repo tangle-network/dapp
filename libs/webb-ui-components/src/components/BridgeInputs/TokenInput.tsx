@@ -10,11 +10,12 @@ import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
+import { MouseEvent } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
-import { MouseEvent } from 'react';
 
 /**
  * Token Input component, for selecting token on the bridge
@@ -138,11 +139,11 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
             </div>
 
             <div>
-              <ChevronRight className="inline-block" />
+              <AnimatedChevronRight className="inline-block grow" />
             </div>
           </div>
         ) : (
-          <ChevronRight className="inline-block" />
+          <AnimatedChevronRight className="inline-block" />
         )}
       </InputWrapper>
     );
