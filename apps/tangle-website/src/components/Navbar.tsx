@@ -2,7 +2,6 @@ import { AccordionTrigger } from '@radix-ui/react-accordion';
 import {
   ArrowRight,
   ChevronDown,
-  CloseCircleLineIcon,
   Menu,
 } from '@webb-tools/icons';
 import {

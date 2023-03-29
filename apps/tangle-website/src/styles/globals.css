@@ -6,43 +6,19 @@
 .heading-1 {
   @apply text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
   md:text-[84px] md:leading-[113px] /** medium screen */
-  font-black font-satoshi;
-}
-
-.heading-2 {
-  @apply text-[30px] leading-[40.5px] /** small screen */
-  md:text-[48px] md:leading-[72px] /** medium screen */
-  text-mono-200 dark:text-mono-0
-  font-black font-satoshi;
-}
-
-.heading-3 {
-  @apply text-[24px] leading-[32.4px] /** small screen */
-  md:text-[36px] md:leading-[54px] /** medium screen */
-  font-black font-satoshi;
-}
-
-.heading-4 {
-  @apply text-[24px] leading-[36px] /** small screen */
-  font-bold font-satoshi;
+  font-black;
 }
 
 .sub-heading-1 {
   @apply text-[16px] leading-[21.6px] /** small screen */
   md:text-[18px] md:leading-[27px] /** medium screen */
-  font-medium font-satoshi;
-}
-
-.sub-heading-2 {
-  @apply text-[16px] leading-[21.6px] /** small screen */
-  md:leading-[24px] /** medium screen */
-  font-medium font-satoshi;
+  font-medium;
 }
 
 .button-base {
   @apply text-[14px] leading-[27px] /** small screen */
   py-[8px] px-[36px] rounded-[30px]
-  font-bold md:font-black font-satoshi;
+  font-bold md:font-black;
 }
 
 .button-primary {

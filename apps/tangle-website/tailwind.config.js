@@ -18,11 +18,4 @@ module.exports = {
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],
-  theme: {
-    extend: {
-      fontFamily: {
-        satoshi: ['Satoshi', 'sans-serif'],
-      },
-    },
-  },
 };
