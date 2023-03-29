@@ -2,16 +2,16 @@ import { InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Typography } from '../../typography/Typography';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Label } from '../Label';
+import { notificationApi } from '../Notification';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { notificationApi } from '../Notification';
 
 function isValidPublicKey(maybePublicKey: string): boolean {
   return maybePublicKey.startsWith('0x') && maybePublicKey.length === 130;
@@ -65,13 +65,14 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
     {
       className,
       errorMessage,
+      isHiddenPasteBtn,
       id = 'recipient',
       info,
+      isValidSet,
       onChange: onChangeProp,
       overrideInputProps,
       title,
       value,
-      isValidSet,
       ...props
     },
     ref
@@ -155,8 +156,13 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             />
           </div>
 
-          {!address && (
-            <Button variant="utility" size="sm" onClick={onClick}>
+          {!address && !isHiddenPasteBtn && (
+            <Button
+              isDisabled={overrideInputProps?.isDisabled}
+              variant="utility"
+              size="sm"
+              onClick={onClick}
+            >
               Paste
             </Button>
           )}

@@ -1,20 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 
+type SupportTheme = 'light' | 'dark';
+
 /**
  * Function to toggle or change the theme mode (possible value: `light`, `dark`, `undefined`)
  */
 export type ToggleThemeModeFunc = (
-  nextThemeMode?: 'light' | 'dark' | undefined
+  nextThemeMode?: SupportTheme | undefined
 ) => void;
 
 /**
  * Hook to get the current theme mode and a function to toggle the theme mode
  * @returns `[isDarkMode, toggleThemeMode]`
  */
-export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
-  const [preferredTheme, setPreferredTheme] = useState<null | 'dark' | 'light'>(
-    null
-  );
+export function useDarkMode(
+  defaultTheme: SupportTheme = 'dark'
+): [boolean, ToggleThemeModeFunc] {
+  const [preferredTheme, setPreferredTheme] =
+    useState<SupportTheme>(defaultTheme);
 
   useEffect(() => {
     if (localStorage.getItem('theme') === null) {
@@ -37,8 +40,8 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
   }, []);
 
   const toggleThemeMode = useCallback<ToggleThemeModeFunc>(
-    (nextThemeMode?: 'light' | 'dark' | undefined) => {
-      let _nextThemeMode: 'light' | 'dark';
+    (nextThemeMode?: SupportTheme | undefined) => {
+      let _nextThemeMode: SupportTheme;
       if (!nextThemeMode) {
         _nextThemeMode = preferredTheme === 'dark' ? 'light' : 'dark';
       } else {
@@ -69,6 +72,11 @@ export function useDarkMode(): [boolean, ToggleThemeModeFunc] {
     },
     [preferredTheme]
   );
+
+  // Side effect to set the default theme mode
+  useEffect(() => {
+    toggleThemeMode(defaultTheme);
+  }, [defaultTheme]);
 
   return [preferredTheme === 'dark', toggleThemeMode];
 }
