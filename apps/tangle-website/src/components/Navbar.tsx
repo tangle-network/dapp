@@ -1,10 +1,5 @@
 import { AccordionTrigger } from '@radix-ui/react-accordion';
-import {
-  ArrowRight,
-  ChevronDown,
-  CloseCircleLineIcon,
-  Menu,
-} from '@webb-tools/icons';
+import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
   Button,
   Typography,
@@ -17,8 +12,8 @@ import {
   MenuItem,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { BRIDGE_URL, WEBB_DOCS_URL } from '../constants';
-import { InternalOrExternalLink, IInternalOrExternalLink } from '../components';
+import { TANGLE_NETWORK_DOCS_URL, STATS_DEV_URL } from '../constants';
+import { InternalOrExternalLink, IInternalOrExternalLink } from '.';
 
 type NavItem = IInternalOrExternalLink;
 
@@ -27,27 +22,29 @@ const isNavItem = (item: any): item is NavItem => {
 };
 
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
-  // {
-  //   protocols: [
-  //     {
-  //       label: 'Shielded Pool Protocols',
-  //       url: '#',
-  //     },
-  //     {
-  //       label: 'Shielded Identity Protocols',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
-  { label: 'community', url: '/community', isInternal: true },
-  { label: 'docs', url: WEBB_DOCS_URL },
-  { label: 'blog', url: '/blog', isInternal: true },
+  {
+    label: 'community',
+    url: '#',
+    onClick: (e) => {
+      e.preventDefault();
+    },
+    isInternal: true,
+  },
+  { label: 'docs', url: TANGLE_NETWORK_DOCS_URL },
+  {
+    label: 'ecosystem',
+    url: '#',
+    onClick: (e) => {
+      e.preventDefault();
+    },
+    isInternal: true,
+  }, // TODO: Add ecosystem page
 ];
 
 export const Navbar = () => {
   return (
     <nav>
-      <ul className="flex items-center space-x-6">
+      <ul className="flex items-center space-x-2 md:space-x-6">
         {navItems.map((item, idx) => (
           <li className="hidden md:block" key={idx}>
             {isNavItem(item) ? (
@@ -104,12 +101,12 @@ export const Navbar = () => {
 
         <li>
           <Button
-            href={BRIDGE_URL}
+            href={STATS_DEV_URL}
             target="_blank"
             rel="noreferrer"
             className="button-base button-primary"
           >
-            Bridge
+            View Network
           </Button>
         </li>
 
@@ -125,17 +122,12 @@ const MobileNav = () => {
   return (
     <Dropdown>
       <DropdownBasicButton className="flex items-center justify-center group">
-        <Menu className="block group-radix-state-open:hidden" size="lg" />
-
-        <CloseCircleLineIcon
-          className="hidden group-radix-state-open:block"
-          size="lg"
-        />
+        <Menu className="block" size="lg" />
       </DropdownBasicButton>
 
       <DropdownBody
         isPorttal={false}
-        className="mt-4 p-4 space-y-4 w-screen sm:w-[374px]"
+        className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
         size="sm"
         align="start"
       >
@@ -143,14 +135,12 @@ const MobileNav = () => {
           isNavItem(item) ? (
             <InternalOrExternalLink key={idx} {...item}>
               <MenuItem
-                className={cx('px-4 py-2 rounded-lg', {
-                  'hover:!bg-transparent': !isNavItem(item),
-                })}
-                icon={
-                  isNavItem(item) ? (
-                    <ArrowRight className="!fill-current" size="lg" />
-                  ) : undefined
-                }
+                className={cx(
+                  'px-2 py-4 rounded-none text-center text-mono-200 font-bold border-y border-mono-40',
+                  {
+                    'hover:!bg-transparent': !isNavItem(item),
+                  }
+                )}
               >
                 {item.label}
               </MenuItem>

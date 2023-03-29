@@ -1,8 +1,38 @@
-import { Logo } from '@webb-tools/webb-ui-components';
+import links from '@webb-tools/dapp-config/links';
 import cx from 'classnames';
+
+import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
+import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Navbar } from '../components';
+import { ComponentProps, useEffect, useState } from 'react';
+
+const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
+  // {
+  //   protocols: [
+  //     {
+  //       label: 'Shielded Pool Protocols',
+  //       url: '#',
+  //     },
+  //     {
+  //       label: 'Shielded Identity Protocols',
+  //       url: '#',
+  //     },
+  //   ],
+  // },
+  { label: 'community', url: '/community', isInternal: true },
+  { label: 'docs', url: links.WEBB_DOCS_URL },
+  { label: 'blog', url: '/blog', isInternal: true },
+];
+
+const buttonProps: Array<ComponentProps<typeof Button>> = [
+  {
+    href: links.BRIDGE_URL,
+    target: '_blank',
+    rel: 'noreferrer',
+    children: 'Bridge',
+    className: 'button-base button-primary',
+  },
+];
 
 export const Header = () => {
   // State for tracking whether the user has scrolled down the page
@@ -35,7 +65,7 @@ export const Header = () => {
           <Logo />
         </Link>
 
-        <Navbar />
+        <Navbar buttonProps={buttonProps} navItems={navItems} />
       </div>
     </header>
   );
