@@ -1,9 +1,5 @@
 import { AccordionTrigger } from '@radix-ui/react-accordion';
-import {
-  ArrowRight,
-  ChevronDown,
-  Menu,
-} from '@webb-tools/icons';
+import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
   Button,
   Typography,
