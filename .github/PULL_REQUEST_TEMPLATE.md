@@ -8,6 +8,8 @@ _Put an `x` in the boxes that apply._
 - [ ] `apps/bridge-dapp`
 - [ ] `apps/stats-dapp`
 - [ ] `apps/webbsite`
+- [ ] `apps/faucet`
+- [ ] `apps/tangle-website`
 - [ ] `libs/webb-ui-components`
 
 ### Reference issue to close (if applicable)
