@@ -10,8 +10,8 @@
 }
 
 .sub-heading-1 {
-  @apply text-[16px] leading-[21.6px] /** small screen */
-  md:text-[18px] md:leading-[27px] /** medium screen */
+  @apply text-[16px] leading-[1.8] /** small screen */
+  md:text-[24px] /** medium screen */
   font-medium;
 }
 
