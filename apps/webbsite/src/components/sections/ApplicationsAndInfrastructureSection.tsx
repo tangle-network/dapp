@@ -1,10 +1,13 @@
+import links from '@webb-tools/dapp-config/links';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import {
+
+const {
   CONNECTED_SHIELDED_IDENTITY_URL,
   CONNECTED_SHIELDED_POOLS_URL,
   TANGLE_NETWORK_URL,
-} from '../../constants';
+} = links;
+
 export const ApplicationsAndInfrastructureSection = () => {
   return (
     <section className="py-16 md:py-[156px] space-y-6">
