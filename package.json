@@ -55,12 +55,14 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
+    "@actions/core": "^1.10.0",
     "@apollo/client": "^3.6.9",
     "@johanaarstein/dotlottie-player": "^1.2.34",
     "@mui/material": "^5.8.7",
     "@mui/styled-engine": "5.10.8",
     "@mui/styles": "^5.8.7",
     "@notionhq/client": "^2.2.3",
+    "@octokit/request": "^6.2.3",
     "@polkadot/api": "9.2.4",
     "@polkadot/extension-dapp": "0.44.1",
     "@polkadot/extension-inject": "0.44.1",
@@ -237,6 +239,8 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-react": "7.31.11",
     "eslint-plugin-react-hooks": "4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
     "file-loader": "^6.2.0",
     "framer-motion": "^6.4.3",
     "html-loader": "^3.1.0",
