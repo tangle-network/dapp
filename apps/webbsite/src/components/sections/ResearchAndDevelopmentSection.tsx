@@ -1,6 +1,5 @@
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import React from 'react';
-import { Heading2, Heading3, SubHeading1, SubHeading2 } from '../../components';
 import { twMerge } from 'tailwind-merge';
 
 export type Section = {
@@ -42,12 +41,17 @@ export const ResearchAndDevelopmentSection = () => {
   return (
     <section className="py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px]">
-        <Heading2 className="px-4 text-center">Research & Development</Heading2>
+        <Typography variant="mkt-h2" className="px-4 text-center">
+          Research & Development
+        </Typography>
 
-        <SubHeading1 className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-180">
+        <Typography
+          variant="mkt-body"
+          className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-180"
+        >
           Building interoperable zero-knowledge applications to scale privacy
           for all users in the Web3 ecosystem.
-        </SubHeading1>
+        </Typography>
 
         <div className="space-y-4 mt-9">
           {sections.map((section, idx) => (
@@ -58,10 +62,15 @@ export const ResearchAndDevelopmentSection = () => {
               {section.icon}
 
               <div>
-                <Heading3 className="text-mono-200">{section.title}</Heading3>
-                <SubHeading2 className="mt-2 text-mono-160">
+                <Typography variant="mkt-h3" className="text-mono-200">
+                  {section.title}
+                </Typography>
+                <Typography
+                  variant="mkt-caption"
+                  className="mt-2 text-mono-160"
+                >
                   {section.description}
-                </SubHeading2>
+                </Typography>
 
                 <div className="flex flex-col mt-4 space-y-2 md:mt-6 xs:space-y-0 xs:flex-row xs:space-x-2">
                   <Button

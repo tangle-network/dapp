@@ -1,7 +1,6 @@
-import Link from 'next/link';
+import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
-import { Heading3 } from './Heading3';
-import { Chip } from '@webb-tools/webb-ui-components';
+import Link from 'next/link';
 import { getYouTubeThumbnailUri } from '../utils';
 
 type BlogCardProps = {
@@ -41,7 +40,7 @@ export const BlogCard = ({
           >
             {type === 'video' && (
               <Image
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
                 src={`/static/svgs/play-button.svg`}
                 alt="Play button"
                 width="100"
@@ -50,7 +49,7 @@ export const BlogCard = ({
             )}
           </div>
         </Link>
-        <div className="mt-4 mb-3 px-6">
+        <div className="px-6 mt-4 mb-3">
           {tags && (
             <div className="flex items-center gap-4 capitalize">
               {tags.map((tag) => (
@@ -61,14 +60,17 @@ export const BlogCard = ({
             </div>
           )}
           <Link href={link}>
-            <Heading3 className="card-title mt-2 text-mono-200">
+            <Typography
+              variant="mkt-h3"
+              className="mt-2 card-title text-mono-200"
+            >
               {title}
-            </Heading3>
+            </Typography>
           </Link>
         </div>
       </div>
       {type === 'post' && blogType && (
-        <div className="px-6 flex justify-end">
+        <div className="flex justify-end px-6">
           <Chip color="blue" className="w-fit">
             {blogType}
           </Chip>
