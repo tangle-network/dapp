@@ -4,8 +4,8 @@ import { ExtendedRecordMap } from 'notion-types';
 import { FC } from 'react';
 import { NotionRenderer } from 'react-notion-x';
 import { NextSeo } from 'next-seo';
-import { Heading2 } from '../components';
 import { Notion, PRIVACY_POLICY_PAGE_ID } from '../libs/notion';
+import { Typography } from '@webb-tools/webb-ui-components';
 
 const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
   return (
@@ -17,7 +17,7 @@ const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
         fullPage
         disableHeader
         components={{
-          Header: Heading2,
+          Header: () => <Typography variant="mkt-h2" />,
           nextImage: Image,
           nextLink: Link,
         }}
