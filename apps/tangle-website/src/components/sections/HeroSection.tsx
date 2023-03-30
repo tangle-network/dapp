@@ -1,6 +1,6 @@
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Socials } from '@webb-tools/webb-ui-components';
 
-import { Heading1, SubHeading1, Socials } from '..';
+import { Heading1, SubHeading1 } from '..';
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
 
 export const HeroSection = () => {
