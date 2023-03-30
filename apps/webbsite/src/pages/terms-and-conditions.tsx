@@ -3,9 +3,8 @@ import Link from 'next/link';
 import { ExtendedRecordMap } from 'notion-types';
 import { FC } from 'react';
 import { NotionRenderer } from 'react-notion-x';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import { Heading2 } from '../components';
 import { Notion, TERMS_AND_CONDITIONS_PAGE_ID } from '../libs/notion';
 
 const TermsAndConditions: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
@@ -21,7 +20,7 @@ const TermsAndConditions: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
         fullPage
         disableHeader
         components={{
-          Header: Heading2,
+          Header: () => <Typography variant="mkt-h2" />,
           Link: (props: any) => (
             <Button className="inline" variant="link" {...props} />
           ),
