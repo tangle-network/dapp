@@ -1,0 +1,88 @@
+# This action deploys a draft deployment using Netlify to view changes prior to being
+# merged. This does NOT deploy to production site and will only be triggered
+# on changes in the specified paths below.
+name: deploy-tangle-website 🌐
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [develop]
+    paths:
+      - 'apps/tangle-website/**'
+
+  workflow_dispatch:
+
+env:
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  NETLIFY_TANGLE_ID: ${{ secrets.NETLIFY_TANGLE_ID }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/develop' && github.event.pull_request.draft == false
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Copy deployment config to root
+        run: cp apps/tangle-website/netlify.toml netlify.toml
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Install netlify-cli
+        run: yarn add -D -W netlify-cli
+
+      - name: Build project
+        run: yarn nx build tangle-website
+
+      - name: Deploy site
+        id: deploy-netlify
+        shell: bash
+        run: |
+          COMMAND=$(echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_TANGLE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/tangle-website/.next" )
+          OUTPUT=$(sh -c "$COMMAND")
+          echo "response<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Set variables for GH bot
+        id: deploy-details
+        shell: bash
+        run: |
+          URL=$(echo "${{ steps.deploy-netlify.outputs.response }}" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*')
+          LOGS_URL=$(echo "${{ steps.deploy-netlify.outputs.response }}" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*')
+          echo "NETLIFY_URL=$URL" >> $GITHUB_OUTPUT
+          echo "NETLIFY_LOGS_URL=$LOGS_URL" >> $GITHUB_OUTPUT
+
+      - name: Netlify Preview URL
+        uses: unsplash/comment-on-pr@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MSG: |
+            <span aria-hidden="true">✅</span> Deploy Preview for *tangle website* is ready! Thanks for the contribution @${{ github.actor }}
+
+            |  Name | Link |
+            |---------------------------------|------------------------|
+            |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/webb-tools/webb-dapp/commit/${{ github.event.pull_request.head.sha }}) |
+            |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-details.outputs.NETLIFY_LOGS_URL }} |
+            |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-details.outputs.NETLIFY_URL }}](${{ steps.deploy-details.outputs.NETLIFY_URL }}) |
+            ---
+
+            _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/tangle-webbsite/settings/deploys#deploy-notifications)._
+
+        with:
+          msg: ${{ env.MSG }}
+          check_for_duplicate_msg: false # OPTIONAL
