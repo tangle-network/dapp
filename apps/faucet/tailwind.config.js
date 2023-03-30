@@ -21,7 +21,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'satoshi-var': ['Satoshi Variable', 'sans-serif'],
+        'satoshi-var': [
+          'Satoshi Variable',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Arial',
+          'sans-serif',
+        ],
       },
     },
   },

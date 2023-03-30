@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { Heading4, SubHeading2, PrivacyScaleIllustration } from '../components';
+import { PrivacyScaleIllustration } from '../components';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -122,13 +122,16 @@ export const PrivacyScaleSwiper = () => {
             <SwiperSlide key={index}>
               <div className="p-6 space-y-4 md:space-y-0">
                 <div className="space-y-4 min-h-[315px]">
-                  <Heading4 className="dark:text-mono-0">
+                  <Typography variant="mkt-h4" className="dark:text-mono-0">
                     {content.title}
-                  </Heading4>
+                  </Typography>
 
-                  <SubHeading2 className="dark:text-mono-80">
+                  <Typography
+                    variant="mkt-caption"
+                    className="dark:text-mono-80"
+                  >
                     {content.description}
-                  </SubHeading2>
+                  </Typography>
 
                   <div className="max-w-[402px] min-h-[66px] w-full h-full">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

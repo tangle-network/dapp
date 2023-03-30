@@ -21,12 +21,23 @@ export type LabelVariant = 'label' | 'utility';
 
 export type MonospaceVariant = 'mono1' | 'mono2';
 
+export type MarketingVariant =
+  | 'mkt-h1'
+  | 'mkt-h2'
+  | 'mkt-h3'
+  | 'mkt-h4'
+  | 'mkt-body'
+  | 'mkt-caption'
+  | 'mkt-quote'
+  | 'mkt-utility';
+
 export type WebbTypographyVariant =
   | HeadingVariant
   | BodyVariant
   | MonospaceVariant
   | ParagraphVariant
-  | LabelVariant;
+  | LabelVariant
+  | MarketingVariant;
 
 /**
  * Properties of typography component

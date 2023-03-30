@@ -1,8 +1,7 @@
 import { Post, Video } from '../../libs/notion';
-import { Heading3, SubHeading1 } from '../../components';
 import Link from 'next/link';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 
 type FeaturedPostSectionProps = {
   featuredPost: Post;
@@ -34,13 +33,19 @@ export const FeaturedPostSection = ({
         </Link>
         <div className="px-[24px] pt-[16px] pb-[20px]">
           <Link href={link ? link : `/blog/posts/${slug}`}>
-            <Heading3 className="featured-post-title text-mono-200">
+            <Typography
+              variant="mkt-h3"
+              className="featured-post-title text-mono-200"
+            >
               {title}
-            </Heading3>
+            </Typography>
           </Link>
-          <SubHeading1 className="mt-2 featured-post-text text-mono-120">
+          <Typography
+            variant="mkt-body"
+            className="mt-2 featured-post-text text-mono-120"
+          >
             {description}
-          </SubHeading1>
+          </Typography>
           <div className="flex justify-end">
             <Button
               variant="utility"
@@ -61,8 +66,8 @@ export const FeaturedPostSection = ({
 
             return (
               <Link key={id} href={link} target="_blank" rel="noreferrer">
-                <li className="border-b-2 border-mono-200 pb-6 mt-6">
-                  <span className="recent-video-title text-mono-200 capitalize flex items-center gap-2">
+                <li className="pb-6 mt-6 border-b-2 border-mono-200">
+                  <span className="flex items-center gap-2 capitalize recent-video-title text-mono-200">
                     {tags[0]}: {title}{' '}
                     <ExternalLinkIcon width={20} height={20} color="#1F1D2B" />
                   </span>

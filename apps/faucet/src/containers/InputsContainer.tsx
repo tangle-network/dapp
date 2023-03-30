@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { Chip } from '@webb-tools/webb-ui-components';
+import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import cx from 'classnames';
 import { useObservableState } from 'observable-hooks';
@@ -73,7 +73,7 @@ const Label = forwardRef<HTMLLabelElement, PropsOf<'label'>>(
         {...props}
         ref={ref}
         className={twMerge(
-          'link !font-bold !text-mono-200 mb-4 block',
+          'mkt-caption !font-bold !text-mono-200 mb-4 block',
           className
         )}
       >
@@ -94,7 +94,7 @@ const InputWrapper = ({
 }) => {
   return (
     <div>
-      <Label className="link !font-bold !text-mono-200 mb-4 block">
+      <Label className="mkt-caption !font-bold !text-mono-200 mb-4 block">
         {title}
       </Label>
 
@@ -126,10 +126,10 @@ const Info = () => {
       leaveFrom={cx('opacity-100 translate-y-0')}
       leaveTo={cx('opacity-0 -translate-y-[100%]')}
     >
-      <p className="mt-2 font-satoshi-var info">
-        *Please follow <TwitterLink className="info !text-blue-70" />{' '}
+      <Typography variant="mkt-utility" className="mt-2">
+        *Please follow <TwitterLink isInheritFont />{' '}
         {' on Twitter and login to get started.'}
-      </p>
+      </Typography>
     </Transition>
   );
 };
