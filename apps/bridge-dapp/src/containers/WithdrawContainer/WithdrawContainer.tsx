@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
+  useBalancesFromNotes,
   useBridge,
   useCurrencies,
   useCurrentResourceId,
@@ -137,6 +138,8 @@ export const WithdrawContainer = forwardRef<
 
   const addCurrency = useAddCurrency();
 
+  const balancesFromNotes = useBalancesFromNotes();
+
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
   const availableNotesFromManager = useMemo<Note[] | null>(() => {
@@ -228,7 +231,7 @@ export const WithdrawContainer = forwardRef<
         balance:
           selectedFungibleToken?.symbol === currency.view.symbol
             ? availableAmount
-            : 0,
+            : balancesFromNotes[currency.id] ?? 0,
         onTokenClick: () => addCurrency(currency),
       };
     });
@@ -236,6 +239,7 @@ export const WithdrawContainer = forwardRef<
     fungibleCurrencies,
     selectedFungibleToken?.symbol,
     availableAmount,
+    balancesFromNotes,
     addCurrency,
   ]);
 
