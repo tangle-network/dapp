@@ -1,0 +1,79 @@
+name: "Release"
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+jobs:
+  pre-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Build-Publish:
+    name: Build-Publish
+    needs: pre-ci
+    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]') && startsWith(github.event.head_commit.message, '[RELEASE]') && github.repository == 'webb-tools/webb-dapp'"
+    runs-on: ubuntu-latest
+    steps:
+      #Check out
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+    #Identify changes
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-hubble
+        with:
+          paths: apps/bridge-dapp
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-stats
+        with:
+          paths: apps/stats-dapp
+      
+      - name: create env file for webbsite
+        run: |
+          touch .env
+          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
+          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
+          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
+          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
+          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
+          echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
+          echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
+          echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
+        
+      - name: build
+        run: |
+          yarn install
+          yarn nx run-many --all --target=build
+
+      # Create github release
+      - name: Release hubble
+        if: steps.changed-hubble.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/bridge-dapp
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release stats
+        if: steps.changed-stats.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/stats-dapp
+          repo-token: ${{ secrets.REPO_TOKEN }}
