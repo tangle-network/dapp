@@ -104,7 +104,7 @@ export const Navbar = () => {
             href={STATS_DEV_URL}
             target="_blank"
             rel="noreferrer"
-            className="button-base button-primary"
+            className="button-base-2 button-primary"
           >
             View Network
           </Button>

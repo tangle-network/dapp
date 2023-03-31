@@ -21,6 +21,12 @@
   font-bold md:font-black;
 }
 
+.button-base-2 {
+  @apply text-[14px] leading-[27px] px-[24px] /** small screen */
+  py-[8px] md:px-[36px] rounded-[30px]
+  font-bold md:font-black;
+}
+
 .button-primary {
   @apply md:text-[18px] /** medium screen */
  text-mono-0 bg-mono-200 dark:text-mono-180 dark:bg-mono-20;
