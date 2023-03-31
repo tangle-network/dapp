@@ -3,6 +3,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, chainsPopulated } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
+  useBalancesFromNotes,
   useBridge,
   useCurrentResourceId,
   useNoteAccount,
@@ -101,6 +102,8 @@ export const TransferContainer = forwardRef<
       defaultDestinationChain
     );
 
+    const balancesFromNotes = useBalancesFromNotes();
+
     // State for amount input value
     const [amount, setAmount] = useState<number | undefined>(undefined);
 
@@ -187,57 +190,6 @@ export const TransferContainer = forwardRef<
         }, {} as CurrencyRecordWithChainsType);
       }, [allNotes, apiConfig.currencies]);
 
-    // Get balance record from notes
-    const balanceRecordFromNotes = useMemo<CurrencyBalanceRecordType>(() => {
-      if (!allNotes) {
-        return {};
-      }
-
-      return Array.from(allNotes.values()).reduce((acc, notes) => {
-        notes.forEach(
-          ({ note: { tokenSymbol, targetChainId, amount, denomination } }) => {
-            const tkSymbol = tokenSymbol;
-            const currency = Object.values(apiConfig.currencies).find(
-              (currency) => currency.symbol === tkSymbol
-            );
-
-            const destTypedChainId = Number(targetChainId);
-            const chain = Object.values(chainsPopulated).find(
-              (chain) =>
-                calculateTypedChainId(chain.chainType, chain.chainId) ===
-                destTypedChainId
-            );
-
-            if (!currency || !chain) {
-              return acc;
-            }
-
-            if (!acc[currency.id]) {
-              acc[currency.id] = {};
-
-              acc[currency.id][destTypedChainId] = Number(
-                ethers.utils.formatUnits(amount, denomination)
-              );
-              return;
-            }
-
-            const existedBalance = acc[currency.id][destTypedChainId];
-            if (existedBalance) {
-              acc[currency.id][destTypedChainId] =
-                existedBalance +
-                Number(ethers.utils.formatUnits(amount, denomination));
-            } else {
-              acc[currency.id][destTypedChainId] = Number(
-                ethers.utils.formatUnits(amount, denomination)
-              );
-            }
-          }
-        );
-
-        return acc;
-      }, {} as CurrencyBalanceRecordType);
-    }, [allNotes, apiConfig.currencies]);
-
     // Parse the available assets from currency record
     const bridgingAssets = useMemo((): AssetType[] => {
       return Object.values(currencyRecordFromNotes).reduce(
@@ -246,15 +198,7 @@ export const TransferContainer = forwardRef<
             return acc;
           }
 
-          let balance = undefined;
-
-          if (destChain) {
-            const destTypedChainId = calculateTypedChainId(
-              destChain.chainType,
-              destChain.chainId
-            );
-            balance = balanceRecordFromNotes[currency.id]?.[destTypedChainId];
-          }
+          const balance = balancesFromNotes[currency.id];
 
           acc.push({
             name: currency.view.name,
@@ -267,12 +211,7 @@ export const TransferContainer = forwardRef<
         },
         [] as AssetType[]
       );
-    }, [
-      addCurrency,
-      balanceRecordFromNotes,
-      currencyRecordFromNotes,
-      destChain,
-    ]);
+    }, [addCurrency, balancesFromNotes, currencyRecordFromNotes]);
 
     // Callback when a chain item is selected
     const handlebridgingAssetChange = useCallback(
@@ -293,15 +232,7 @@ export const TransferContainer = forwardRef<
         return undefined;
       }
 
-      let balance = undefined;
-      if (destChain) {
-        const destTypedChainId = calculateTypedChainId(
-          destChain.chainType,
-          destChain.chainId
-        );
-        balance =
-          balanceRecordFromNotes[fungibleCurrency.id]?.[destTypedChainId];
-      }
+      const balance = balancesFromNotes[fungibleCurrency.id];
 
       return {
         symbol: fungibleCurrency.view.symbol,
@@ -310,7 +241,7 @@ export const TransferContainer = forwardRef<
         onTokenClick: () => addCurrency(fungibleCurrency),
         balanceType: 'note',
       };
-    }, [addCurrency, balanceRecordFromNotes, destChain, fungibleCurrency]);
+    }, [addCurrency, balancesFromNotes, fungibleCurrency]);
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {

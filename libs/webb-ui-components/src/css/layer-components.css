@@ -79,6 +79,53 @@
   font-weight: 700;
 }
 
+/** Marketing site variant */
+
+.mkt-h1 {
+  @apply text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
+  md:text-[84px] md:leading-[113px] /** medium screen */
+  font-black;
+}
+
+.mkt-h2 {
+  @apply text-[24px] leading-[32.4px] tracking-[-0.011em] /** small screen */
+  md:text-[48px] md:leading-[64px] /** medium screen */
+  font-black;
+}
+
+.mkt-h3 {
+  @apply text-[24px] leading-[32.4px] /** small screen */
+  md:text-[36px] md:leading-[54px] /** medium screen */
+  font-black;
+}
+
+.mkt-h4 {
+  @apply text-[24px] leading-[36px] /** small screen */
+  font-bold;
+}
+
+.mkt-body {
+  @apply text-[16px] leading-[21.6px] /** small screen */
+  md:text-[18px] md:leading-[27px] /** medium screen */
+  font-medium;
+}
+
+.mkt-caption {
+  @apply text-[16px] leading-[21.6px] /** small screen */
+  md:leading-[24px] /** medium screen */
+  font-medium;
+}
+
+.mkt-quote {
+  @apply text-[14px] leading-[23.8px]
+  tracking-[0.8px] uppercase font-bold text-blue-70;
+}
+
+.mkt-utility {
+  @apply text-[12px] leading-[18px]
+  tracking-[0.01em] font-medium text-mono-160;
+}
+
 @media screen and (max-width: 800px) {
   .h1 {
     font-size: 46px;
@@ -128,6 +175,7 @@
     transform: translateX(100%);
   }
 }
+
 *[data-swipe='end'] {
   animation: 100ms ease-out;
 }

@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
-import { PostsOrVideos } from '../../libs/notion';
-import { BlogCard, Heading3 } from '../../components';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import { BlogCard } from '../../components';
+import { PostsOrVideos } from '../../libs/notion';
 
 type BlogSectionProps = {
   type: 'post' | 'video';
@@ -42,11 +42,14 @@ export const BlogSection = ({
 
   return (
     <div className="px-4 mt-[18px]">
-      <Heading3 className="mb-8 blog-section-title text-mono-200">
+      <Typography
+        variant="mkt-h3"
+        className="mb-8 blog-section-title text-mono-200"
+      >
         {type === 'post' ? 'Writings' : 'Media & Press'}
-      </Heading3>
+      </Typography>
 
-      <div className="mb-8 flex flex-wrap">
+      <div className="flex flex-wrap mb-8">
         {tags.map((tag) => (
           <span
             key={tag}

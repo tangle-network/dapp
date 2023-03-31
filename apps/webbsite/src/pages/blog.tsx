@@ -1,6 +1,7 @@
+import { Typography } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
 import { FC } from 'react';
-import { BlogSection, FeaturedPostSection, Heading2 } from '../components';
+import { BlogSection, FeaturedPostSection } from '../components';
 import { Notion, Post, Video } from '../libs/notion';
 
 type BlogProps = {
@@ -17,7 +18,9 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Heading2 className="text-center mb-[24px]">The Webb Blog</Heading2>
+      <Typography variant="mkt-h2" className="text-center mb-[24px]">
+        The Webb Blog
+      </Typography>
       {Object.keys(featuredPost).length > 0 && recentVideos.length > 0 && (
         <FeaturedPostSection
           featuredPost={featuredPost}
