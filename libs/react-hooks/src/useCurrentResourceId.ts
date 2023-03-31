@@ -34,7 +34,12 @@ export const useCurrentResourceId = (): ResourceId | null => {
 
       const { chainId, chainType } = parseTypedChainId(typedChainId);
 
-      resourceIdSubject.next(new ResourceId(address, chainType, chainId));
+      const currentReourceId = resourceIdSubject.getValue();
+      const nextReourceId = new ResourceId(address, chainType, chainId);
+
+      if (currentReourceId?.toString() !== nextReourceId.toString()) {
+        resourceIdSubject.next(nextReourceId);
+      }
     });
 
     return () => {

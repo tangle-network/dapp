@@ -602,6 +602,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     ChainType.EVM,
                     updatedChainId
                   );
+
+                  /// update the current typed chain id
+                  webbWeb3Provider.typedChainidSubject.next(newTypedChainId);
+
                   /// Alerting that the provider has changed via the extension
                   notificationApi({
                     message: 'Web3: Connected',

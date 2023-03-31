@@ -126,6 +126,10 @@ export const WithdrawContainer = forwardRef<
     useNoteAccount();
 
   const fungibleCurrencies = useMemo(() => {
+    if (!activeApi) {
+      return [];
+    }
+
     const tokenSymbolsSet = new Set<string>();
 
     Array.from(allNotes.values()).forEach((notes) => {
@@ -134,13 +138,20 @@ export const WithdrawContainer = forwardRef<
       });
     });
 
+    const supportedCurrencyIds = Object.keys(
+      activeApi.state.getBridgeOptions()
+    );
+
     return Array.from(tokenSymbolsSet)
       .map((symbol) => {
         return apiConfig.getCurrencyBySymbol(symbol);
       })
-      .filter((c): c is CurrencyConfig => Boolean(c))
+      .filter(
+        (c): c is CurrencyConfig =>
+          !!c && supportedCurrencyIds.includes(c.id.toString())
+      )
       .map((c) => new Currency(c));
-  }, [allNotes, apiConfig]);
+  }, [activeApi, allNotes, apiConfig]);
 
   const currentResourceId = useCurrentResourceId();
 

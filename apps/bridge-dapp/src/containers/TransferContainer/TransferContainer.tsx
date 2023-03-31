@@ -1,6 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain, chainsPopulated } from '@webb-tools/dapp-config';
+import {
+  Chain,
+  chainsPopulated,
+  CurrencyConfig,
+} from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
@@ -219,11 +223,22 @@ export const TransferContainer = forwardRef<
       };
     }, [addCurrency, balancesFromNotes, fungibleCurrency]);
 
-    // Callback for bridging asset input click
-    const handleBridgingAssetInputClick = useCallback(() => {
+    const selectableBridgingAssets = useMemo<AssetType[]>(() => {
+      if (!activeApi) {
+        return [];
+      }
+
       const currencies = Object.values(currencyRecordFromNotes);
-      const selectTokens = currencies.reduce((acc, { currency }) => {
+      const supportedCurrencyIds = Object.keys(
+        activeApi.state.getBridgeOptions()
+      );
+
+      return currencies.reduce((acc, { currency }) => {
         if (!currency) {
+          return acc;
+        }
+
+        if (!supportedCurrencyIds.includes(currency.id.toString())) {
           return acc;
         }
 
@@ -238,13 +253,16 @@ export const TransferContainer = forwardRef<
 
         return acc;
       }, [] as AssetType[]);
+    }, [activeApi, addCurrency, balancesFromNotes, currencyRecordFromNotes]);
+
+    // Callback for bridging asset input click
+    const handleBridgingAssetInputClick = useCallback(() => {
+      const currencies = selectableBridgingAssets
+        .map(({ symbol }) => apiConfig.getCurrencyBySymbol(symbol))
+        .filter((c): c is CurrencyConfig => !!c);
 
       const unavailableTokens = apiConfig
-        .getUnavailableCurrencies(
-          currencies.map(({ currency }) => {
-            return currency.getCurrencyConfig();
-          })
-        )
+        .getUnavailableCurrencies(currencies)
         .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType));
 
       setMainComponent(
@@ -252,7 +270,7 @@ export const TransferContainer = forwardRef<
           className="min-w-[550px] h-[700px]"
           title="Select Asset to Transfer"
           popularTokens={[]}
-          selectTokens={selectTokens}
+          selectTokens={selectableBridgingAssets}
           unavailableTokens={unavailableTokens}
           onChange={(newAsset) => {
             handlebridgingAssetChange(newAsset);
@@ -263,12 +281,10 @@ export const TransferContainer = forwardRef<
         />
       );
     }, [
-      addCurrency,
       apiConfig,
-      balancesFromNotes,
-      currencyRecordFromNotes,
       handlebridgingAssetChange,
       onTryAnotherWallet,
+      selectableBridgingAssets,
       setMainComponent,
     ]);
 
