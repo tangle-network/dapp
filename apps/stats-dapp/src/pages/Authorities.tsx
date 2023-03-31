@@ -30,7 +30,9 @@ import { Outlet } from 'react-router-dom';
 import { AuthoritiesTable } from '../containers';
 import {
   DiscreteList,
+  PublicKey,
   UpcomingThreshold,
+  useActiveKeys,
   useThresholds,
 } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
@@ -95,6 +97,23 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 const Authorities = () => {
   const thresholds = useThresholds();
 
+  const {
+    error,
+    isFailed,
+    isLoading: activeKeyDataIsLoading,
+    val: activeKeyData,
+  } = useActiveKeys();
+
+  const { currentKey } = useMemo<{
+    currentKey: PublicKey | null | undefined;
+  }>(() => {
+    return {
+      currentKey: activeKeyData ? activeKeyData[0] : null,
+    };
+  }, [activeKeyData]);
+
+  const { time } = useStatsContext();
+
   const [threshold, upComingThresholds] = useMemo(() => {
     if (thresholds.val) {
       return thresholds.val;
@@ -142,7 +161,6 @@ const Authorities = () => {
     keyGen === undefined ||
     signature === undefined ||
     publicKey === undefined;
-  const { time } = useStatsContext();
 
   return (
     <div className="flex flex-col space-y-4">
@@ -162,8 +180,8 @@ const Authorities = () => {
             <Stats items={statsItems} className="pb-0" />
 
             <TimeProgress
-              startTime={publicKey.start ?? null}
-              endTime={publicKey.end ?? null}
+              startTime={currentKey?.start ?? null}
+              endTime={currentKey?.end ?? null}
               now={time}
             />
 
