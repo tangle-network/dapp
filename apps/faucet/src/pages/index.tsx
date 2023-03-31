@@ -1,3 +1,4 @@
+import { Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { NextSeo, NextSeoProps } from 'next-seo';
 
@@ -37,23 +38,31 @@ const Page = () => {
           {/** Static content */}
           <div className="flex flex-col gap-4">
             <div>
-              <h5 className="text-center link-sm font-satoshi-var">
+              <Typography
+                component="h5"
+                variant="mkt-quote"
+                className="text-center"
+              >
                 Get tokens
-              </h5>
-              <h1 className="text-center title font-satoshi-var">
+              </Typography>
+              <Typography
+                component="h1"
+                variant="mkt-h2"
+                className="text-center"
+              >
                 Hubble Bridge Faucet
-              </h1>
+              </Typography>
             </div>
-            <p className="text-center font-satoshi-var body">
+            <Typography variant="mkt-caption" className="text-center">
               This faucet enables the transfer of Test Tokens (wtTNT) on
               networks supported by Hubble Bridge.
-            </p>
-            <p className="text-center font-satoshi-var body">
+            </Typography>
+            <Typography variant="mkt-caption" className="text-center">
               To receive tokens, follow <TwitterLink />
               {
                 " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."
               }
-            </p>
+            </Typography>
           </div>
 
           {/** Logic content */}

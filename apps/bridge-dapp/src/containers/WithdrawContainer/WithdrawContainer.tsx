@@ -1,6 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
+  useBalancesFromNotes,
   useBridge,
   useCurrencies,
   useCurrentResourceId,
@@ -152,6 +153,8 @@ export const WithdrawContainer = forwardRef<
   const { setEducationCardStep } = useEducationCardStep();
 
   const addCurrency = useAddCurrency();
+
+  const balancesFromNotes = useBalancesFromNotes();
 
   // Retrieve the notes from the note manager for the currently selected chain.
   // and filter out the notes that are not for the currently selected fungible currency.
@@ -735,7 +738,7 @@ export const WithdrawContainer = forwardRef<
           return;
         }
 
-        const selectTokens = Object.values(fungibleCurrencies).map(
+        const selectableTokens = Object.values(fungibleCurrencies).map(
           (currency) => {
             return {
               name: currency.view.name,
@@ -743,7 +746,7 @@ export const WithdrawContainer = forwardRef<
               balance:
                 selectedFungibleToken?.symbol === currency.view.symbol
                   ? availableAmount
-                  : 0,
+                  : balancesFromNotes[currency.id],
               onTokenClick: () => addCurrency(currency),
             };
           }
@@ -754,7 +757,7 @@ export const WithdrawContainer = forwardRef<
             className="min-w-[550px] h-[700px]"
             title={'Select Asset to Withdraw'}
             popularTokens={[]}
-            selectTokens={selectTokens}
+            selectTokens={selectableTokens}
             unavailableTokens={apiConfig
               .getUnavailableCurrencies(
                 fungibleCurrencies.map((c) => c.getCurrencyConfig())
@@ -776,6 +779,7 @@ export const WithdrawContainer = forwardRef<
       addCurrency,
       apiConfig,
       availableAmount,
+      balancesFromNotes,
       fungibleCurrencies,
       handleFungibleTokenChange,
       onTryAnotherWallet,
@@ -836,7 +840,7 @@ export const WithdrawContainer = forwardRef<
   const fixedAmountInputProps = useMemo(
     () => ({
       onChange: parseUserAmount,
-      values: [0.1, 0.25, 0.5, 1.0],
+      values: DEFAULT_FIXED_AMOUNTS,
       isDisabled: !selectedFungibleToken,
     }),
     [parseUserAmount, selectedFungibleToken]
