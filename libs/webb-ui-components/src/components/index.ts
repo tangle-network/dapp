@@ -42,6 +42,7 @@ export * from './Popover';
 export * from './Progress';
 export * from './Radio';
 export * from './Slider';
+export * from './Socials';
 export * from './Stats';
 export * from './Switcher';
 export * from './Table';

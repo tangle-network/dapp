@@ -18,4 +18,11 @@ module.exports = {
     ),
     ...createGlobPatternsForDependencies(__dirname),
   ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        hero_bg_image: "url('/static/assets/hero-image.png')",
+      },
+    },
+  },
 };
