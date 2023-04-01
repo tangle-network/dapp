@@ -4,10 +4,10 @@ import { SubHeading, IntroducingTangleSVG } from '..';
 
 export const IntroducingTangleNetworkSection = () => {
   return (
-    <section className="flex flex-col w-full gap-6">
+    <section className="flex flex-col w-full gap-6 md:gap-[72px]">
       <div className="flex flex-col gap-4 items-center px-5 justify-center pt-[60px]">
         <div className="flex flex-col items-center gap-2">
-          <h3 className="uppercase text-tangle_purple">Introducing</h3>
+          <h3 className="uppercase text-tangle_purple font-bold">Introducing</h3>
           <Typography variant="h2" fw="bold">
             Tangle Network
           </Typography>
@@ -17,7 +17,9 @@ export const IntroducingTangleNetworkSection = () => {
           threshold signature scheme (TSS) governance system.
         </SubHeading>
       </div>
-      <IntroducingTangleSVG />
+      <div className="flex justify-center">
+        <IntroducingTangleSVG />
+      </div>
     </section>
   );
 };
