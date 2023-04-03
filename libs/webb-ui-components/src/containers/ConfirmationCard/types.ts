@@ -1,7 +1,6 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
-
-import { Avatar, Button, CheckBox, TitleWithInfo } from '../../components';
+import { Avatar, Button, ChainType, CheckBox, TitleWithInfo } from '../../components';
 import { UseCopyableReturnType } from '../../hooks';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
@@ -35,7 +34,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The source chain symbol
    */
   sourceChain?: {
-    type: string;
+    type: ChainType;
     name: string;
   };
 
@@ -43,7 +42,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The destination chain symbol
    */
   destChain?: {
-    type: string;
+    type: ChainType;
     name: string;
   };
 

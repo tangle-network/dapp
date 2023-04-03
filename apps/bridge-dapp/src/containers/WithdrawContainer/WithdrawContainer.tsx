@@ -4,7 +4,7 @@ import {
   useBalancesFromNotes,
   useBridge,
   useCurrencies,
-  useCurrenciesBalances,
+  useCurrencyBalance,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
@@ -23,25 +23,20 @@ import {
   CheckBox,
   RelayerListCard,
   TokenListCard,
-  Typography,
   WithdrawCard,
   getRoundedAmountString,
   useWebbUI,
-  InfoItem,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
-  FC,
   forwardRef,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
 import {
@@ -56,8 +51,6 @@ import { getErrorMessage } from '../../utils';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
-import { VAnchor__factory } from '@webb-tools/contracts';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -105,12 +98,7 @@ export const WithdrawContainer = forwardRef<
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
 
-  const allTokens = useMemo(
-    () => fungibleCurrencies.concat(wrappableCurrencies),
-    [fungibleCurrencies, wrappableCurrencies]
-  );
-
-  const balances = useCurrenciesBalances(allTokens);
+  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -261,9 +249,9 @@ export const WithdrawContainer = forwardRef<
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
       balanceType: 'wallet',
-      balance: balances[wrappableCurrency.id] ?? 0,
+      balance: wrappableCurrencyBalance ?? 0,
     };
-  }, [addCurrency, wrappableCurrency, balances]);
+  }, [addCurrency, wrappableCurrency, wrappableCurrencyBalance]);
 
   const wrappableTokens = useMemo((): AssetType[] => {
     return wrappableCurrencies.map((currency) => {

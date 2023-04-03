@@ -2,11 +2,9 @@ import { ArrowRight, Close, Download } from '@webb-tools/icons';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-
 import {
   Button,
   ChainChip,
-  ChainType,
   CheckBox,
   Chip,
   CopyWithTooltip,
@@ -104,7 +102,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={(sourceChain?.type as ChainType) ?? 'webb-dev'}
+                    type={sourceChain?.type ?? 'webb-dev'}
                     name={sourceChain?.name ?? ''}
                   />
                   <TokenWithAmount
@@ -126,7 +124,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={(destChain?.type as ChainType) ?? 'webb-dev'}
+                    type={destChain?.type ?? 'webb-dev'}
                     name={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
