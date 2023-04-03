@@ -1,6 +1,12 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
-import { Avatar, Button, ChainType, CheckBox, TitleWithInfo } from '../../components';
+import {
+  Avatar,
+  Button,
+  ChainType,
+  CheckBox,
+  TitleWithInfo,
+} from '../../components';
 import { UseCopyableReturnType } from '../../hooks';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
