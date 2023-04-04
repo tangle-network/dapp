@@ -122,7 +122,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     />
 
                     <Typography
-                      variant="body1"
+                      variant="h5"
                       fw="bold"
                       className="capitalize cursor-default"
                     >

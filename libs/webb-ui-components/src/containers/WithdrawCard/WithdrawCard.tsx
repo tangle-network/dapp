@@ -66,8 +66,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     const unwrappingAssetProps = useMemo(
       () => ({
         ...unwrappingAssetInputProps,
-        title: 'Unwrapping Asset',
-        info: 'Unwrapping Asset',
+        title: 'Unwrap Token',
       }),
       [unwrappingAssetInputProps]
     );
@@ -88,7 +87,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col justify-between max-w-[518px] w-full',
+          'flex flex-col justify-between max-w-[518px] w-full pb-4',
           className
         )}
         ref={ref}
