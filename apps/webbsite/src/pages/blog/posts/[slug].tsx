@@ -1,5 +1,13 @@
 import React from 'react';
-import { TwitterFill, CopyLinkFill } from '@webb-tools/icons';
+import {
+  TwitterFill,
+  CopyLinkFill,
+  Common2Icon,
+  TelegramFill,
+  GithubFill,
+  DiscordFill,
+  LinkedIn,
+} from '@webb-tools/icons';
 import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
@@ -44,6 +52,31 @@ const Post: FC<{ post: Post }> = ({
       name: 'Twitter',
       Icon: TwitterFill,
       href: `https://twitter.com/share/?&url=${shareLink}&text=${shareMessage}`,
+    },
+    {
+      name: 'Telegram',
+      Icon: TelegramFill,
+      href: 'https://t.me/webbprotocol',
+    },
+    {
+      Icon: Common2Icon,
+      name: 'Commonwealth',
+      href: 'https://commonwealth.im/webb',
+    },
+    {
+      name: 'Discord',
+      Icon: DiscordFill,
+      href: 'https://discord.com/invite/cv8EfJu3Tn',
+    },
+    {
+      name: 'Github',
+      Icon: GithubFill,
+      href: 'https://github.com/webb-tools',
+    },
+    {
+      name: 'LinkedIn',
+      Icon: LinkedIn,
+      href: 'https://www.linkedin.com/company/webb-protocol/',
     },
     {
       name: 'Copy Link',
@@ -122,7 +155,7 @@ const Post: FC<{ post: Post }> = ({
           </div>
         </div>
         <div className="flex flex-col justify-between lg:flex-row-reverse lg:items-center">
-          <div className="flex items-center self-end justify-end gap-2 lg:flex-col lg:self-start">
+          <div className="flex items-center self-end justify-end gap-6 lg:flex-col lg:self-start">
             {links.map(({ Icon, name, href, onClick }) => (
               <a
                 key={name}
@@ -133,8 +166,9 @@ const Post: FC<{ post: Post }> = ({
                 className="dark:text-mono-0 dark:hover:text-mono-100"
               >
                 <Icon
+                  size='md'
                   key={name}
-                  className="w-8 h-8 !fill-current cursor-pointer"
+                  className="w-8 h-8 !fill-current cursor-pointer text-mono-120 hover:text-mono-200"
                 />
               </a>
             ))}
