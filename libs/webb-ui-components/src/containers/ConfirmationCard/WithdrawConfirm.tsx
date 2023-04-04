@@ -7,13 +7,10 @@ import {
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import {
   Avatar,
   Button,
   ChainChip,
-  ChainsRing,
-  ChainType,
   CheckBox,
   Chip,
   CopyWithTooltip,
@@ -133,7 +130,7 @@ export const WithdrawConfirm = forwardRef<
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={(destChain?.type as ChainType) ?? 'webb-dev'}
+                    type={destChain?.type ?? 'webb-dev'}
                     name={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
@@ -153,7 +150,7 @@ export const WithdrawConfirm = forwardRef<
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={(destChain?.type as ChainType) ?? 'webb-dev'}
+                    type={destChain?.type ?? 'webb-dev'}
                     name={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
