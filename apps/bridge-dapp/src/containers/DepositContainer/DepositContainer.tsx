@@ -747,6 +747,14 @@ export const DepositContainer = forwardRef<
         );
         setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
       }
+
+      // Reset the wrappable currency if it is not in the wrappable currencies
+      if (
+        wrappableCurrency &&
+        !wrappableCurrencies.find((c) => c.id === wrappableCurrency.id)
+      ) {
+        setWrappableCurrency(null);
+      }
     }, [
       balances,
       fungibleCurrency,

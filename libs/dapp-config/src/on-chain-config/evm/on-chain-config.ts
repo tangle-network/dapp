@@ -161,6 +161,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       this.fungibleCurrencyCache.set(typedChainId, fungibleCurrency);
       return fungibleCurrency;
     } catch (error) {
+      console.error('Unable to retrieve fungible token information', error);
       // Cache the error
       this.fungibleCurrencyCache.set(typedChainId, error as Error);
     }
@@ -237,6 +238,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       this.wrappableCurrenciesCache.set(typedChainId, wrappableCurrencies);
       return wrappableCurrencies;
     } catch (error) {
+      console.error('Unable to retrieve wrappable tokens information', error);
       // Cache the error
       this.wrappableCurrenciesCache.set(typedChainId, error as Error);
     }
@@ -396,7 +398,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
         (currency): currency is EVMCurrencyResponse =>
-          parseInt(currency?.wrappableCurrencies.length.toString() ?? '0') > 0
+          !!currency && Array.isArray(currency.wrappableCurrencies)
       );
 
     return this.addCurrenciesIntoConfig(
