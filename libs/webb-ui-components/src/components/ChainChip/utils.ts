@@ -1,4 +1,5 @@
-import { ChainChipClassNames, ChainType } from './types';
+import { ChainBase } from '@webb-tools/dapp-config';
+import { ChainChipClassNames } from './types';
 
 const classNames: ChainChipClassNames = {
   polygon: {
@@ -36,7 +37,7 @@ const classNames: ChainChipClassNames = {
   },
 };
 
-export function getChainChipClassName(chainType: ChainType) {
+export function getChainChipClassName(chainType: ChainBase) {
   const { default: className } = classNames[chainType];
   return className;
 }

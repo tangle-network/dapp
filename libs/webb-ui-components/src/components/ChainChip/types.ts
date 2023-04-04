@@ -1,27 +1,15 @@
 import { WebbComponentBase } from '../../types';
 import React from 'react';
-
-export type ChainType =
-  | 'polygon'
-  | 'ethereum'
-  | 'optimism'
-  | 'kusama'
-  | 'moonbeam'
-  | 'polkadot'
-  | 'arbitrum'
-  | 'avalanche'
-  | 'tangle'
-  | 'scroll'
-  | 'webb-dev';
+import { ChainBase } from '@webb-tools/dapp-config/chains';
 
 export type ChainChipClassNames = {
-  [key in ChainType]: {
+  [key in ChainBase]: {
     default: string;
   };
 };
 
 export interface ChainChipProps extends WebbComponentBase {
-  type: ChainType;
+  type: ChainBase;
   name: string;
   children?: React.ReactNode;
 }

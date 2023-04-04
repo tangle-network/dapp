@@ -3,10 +3,23 @@
 
 import { ChainType } from '@webb-tools/sdk-core';
 
+export type ChainBase =
+  | 'polygon'
+  | 'ethereum'
+  | 'optimism'
+  | 'kusama'
+  | 'moonbeam'
+  | 'polkadot'
+  | 'arbitrum'
+  | 'avalanche'
+  | 'tangle'
+  | 'scroll'
+  | 'webb-dev';
+
 export interface ChainConfig {
   chainType: ChainType;
   name: string;
-  base?: import('@webb-tools/webb-ui-components').ChainType;
+  base?: ChainBase;
   group: string;
   chainId: number;
   tag: 'dev' | 'test' | 'live';
