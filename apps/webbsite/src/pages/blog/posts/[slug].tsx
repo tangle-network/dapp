@@ -166,7 +166,7 @@ const Post: FC<{ post: Post }> = ({
                 className="dark:text-mono-0 dark:hover:text-mono-100"
               >
                 <Icon
-                  size='md'
+                  size="md"
                   key={name}
                   className="w-8 h-8 !fill-current cursor-pointer text-mono-120 hover:text-mono-200"
                 />
