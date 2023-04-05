@@ -42,11 +42,11 @@ import { ChainListCardWrapper } from '../../components';
 import {
   useAddCurrency,
   useConnectWallet,
+  useMaxFeeInfo,
   useShieldedAssets,
   WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
-import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
 import { getErrorMessage } from '../../utils';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
@@ -152,19 +152,12 @@ export const WithdrawContainer = forwardRef<
   }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
   const {
-    fetchRelayerFeeInfo,
+    fetchMaxFeeInfoFromRelayer: fetchRelayerFeeInfo,
+    fetchMaxFeeInfo,
     isLoading: isFetchingFeeInfo,
     error: fetchFeeInfoError,
     feeInfo: feeInfoOrBigNumber,
-  } = useWithdrawFee(
-    availableNotesFromManager,
-    amount,
-    recipient,
-    activeRelayer,
-    currentTypedChainId && isUnwrap
-      ? wrappableCurrency?.getAddress(currentTypedChainId)
-      : ''
-  );
+  } = useMaxFeeInfo();
 
   const feeInfo = useMemo(() => {
     if (!(feeInfoOrBigNumber instanceof BigNumber)) {
@@ -361,8 +354,10 @@ export const WithdrawContainer = forwardRef<
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
       amount >= totalFee,
+      Boolean(feeInfoOrBigNumber),
     ].some((value) => value === false);
   }, [
+    totalFeeInWei,
     fungibleCurrency,
     isUnwrap,
     wrappableCurrency,
@@ -370,7 +365,7 @@ export const WithdrawContainer = forwardRef<
     recipient,
     isValidRecipient,
     amount,
-    totalFeeInWei,
+    feeInfoOrBigNumber,
   ]);
 
   const buttonText = useMemo(() => {
@@ -581,10 +576,6 @@ export const WithdrawContainer = forwardRef<
       return await handleSwitchToOtherDestChains();
     }
 
-    if (activeRelayer && !feeInfo) {
-      return await fetchRelayerFeeInfo();
-    }
-
     if (
       !currentTypedChainId ||
       !fungibleCurrency ||
@@ -707,16 +698,13 @@ export const WithdrawContainer = forwardRef<
     );
   }, [
     activeApi?.state.activeBridge,
-    activeRelayer,
     amount,
     amountAfterFeeWei,
     availableAmount,
     availableNotesFromManager,
     currentNativeCurrency?.symbol,
     currentTypedChainId,
-    feeInfo,
     feeInfoOrBigNumber,
-    fetchRelayerFeeInfo,
     fungibleCurrency,
     handleResetState,
     handleSwitchToOtherDestChains,
@@ -895,8 +883,8 @@ export const WithdrawContainer = forwardRef<
       },
       {
         leftTextProps: {
-          title: 'Estimated fees',
-          info: transactionFeeInfo ?? 'Estimated fees',
+          title: 'Max fees',
+          info: transactionFeeInfo,
         },
         rightContent: txFeeContent,
       },
@@ -956,6 +944,31 @@ export const WithdrawContainer = forwardRef<
     amount,
     activeRelayer,
   ]);
+
+  const isReady = useMemo(() => {
+    if (!fungibleCurrency || !amount || !recipient) {
+      return false;
+    }
+
+    if (isUnwrap && !wrappableCurrency) {
+      return false;
+    }
+
+    return true;
+  }, [fungibleCurrency, amount, recipient, isUnwrap, wrappableCurrency]);
+
+  // Side effect to fetch fee info when all the inputs are valid
+  useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
+    if (activeRelayer) {
+      fetchRelayerFeeInfo(activeRelayer);
+    } else {
+      fetchMaxFeeInfo();
+    }
+  }, [activeRelayer, isReady, fetchRelayerFeeInfo, fetchMaxFeeInfo]);
 
   // Side effect to show notification when fetching fee info fails
   useEffect(() => {

@@ -375,19 +375,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx.txHash = '';
     tx.next(TransactionState.SendingTransaction, '');
 
-    const gasAmount = await this.getGasAmount(contractAddress, {
-      inputs,
-      outputs,
-      fee,
-      refund,
-      recipient,
-      relayer,
-      wrapUnwrapToken,
-      leavesMap,
-    });
-
-    console.log('gasAmount: ', gasAmount.toNumber());
-
     return vanchor.transact(
       inputs,
       outputs,

@@ -303,7 +303,7 @@ export const WithdrawConfirm = forwardRef<
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Estimated fees',
+                  title: 'Max fees',
                   info: feesInfo,
                 }}
                 rightContent={fee?.toString()}
