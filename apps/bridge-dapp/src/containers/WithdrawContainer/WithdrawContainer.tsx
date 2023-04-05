@@ -990,54 +990,124 @@ export const WithdrawContainer = forwardRef<
     }
   }, [feeInfo]);
 
+  // Callback to handle the change of the inputs
+  const handleTokenInputClick = useCallback(() => {
+    if (!activeApi) {
+      return;
+    }
+
+    setMainComponent(
+      <TokenListCard
+        className="min-w-[550px] h-[700px]"
+        title={'Select a token to Withdraw'}
+        popularTokens={[]}
+        selectTokens={fungibleTokens}
+        unavailableTokens={[]}
+        onChange={(newAsset) => {
+          handleFungibleTokenChange(newAsset);
+          setMainComponent(undefined);
+        }}
+        onClose={() => setMainComponent(undefined)}
+        onConnect={onTryAnotherWallet}
+      />
+    );
+  }, [
+    activeApi,
+    fungibleTokens,
+    handleFungibleTokenChange,
+    onTryAnotherWallet,
+    setMainComponent,
+  ]);
+
+  const handleUnwrapAssetInputClick = useCallback(() => {
+    if (activeApi) {
+      setMainComponent(
+        <TokenListCard
+          className="min-w-[550px] h-[700px]"
+          title={'Select a token to Unwrap'}
+          popularTokens={[]}
+          selectTokens={wrappableTokens}
+          unavailableTokens={[]}
+          onChange={(newAsset) => {
+            handleWrappableTokenChange(newAsset);
+            setMainComponent(undefined);
+          }}
+          onClose={() => setMainComponent(undefined)}
+          onConnect={onTryAnotherWallet}
+        />
+      );
+    }
+  }, [
+    activeApi,
+    handleWrappableTokenChange,
+    onTryAnotherWallet,
+    setMainComponent,
+    wrappableTokens,
+  ]);
+
+  const handleRelayerInputClick = useCallback(() => {
+    if (!activeApi || !activeChain) {
+      return;
+    }
+
+    if (activeRelayer) {
+      setRelayer(null);
+      return;
+    }
+
+    setMainComponent(
+      <RelayerListCard
+        className="min-w-[550px] h-[700px]"
+        relayers={relayers
+          .map((relayer) => {
+            const relayerData = relayer.capabilities.supportedChains[
+              activeChain.chainType === ChainType.EVM ? 'evm' : 'substrate'
+            ].get(
+              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+            );
+
+            const theme =
+              activeChain.chainType === ChainType.EVM
+                ? ('ethereum' as const)
+                : ('substrate' as const);
+
+            return {
+              address: relayerData?.beneficiary ?? '',
+              externalUrl: relayer.endpoint,
+              theme,
+            };
+          })
+          .filter((x) => x !== undefined)}
+        onClose={() => setMainComponent(undefined)}
+        onChange={(nextRelayer) => {
+          setRelayer(
+            relayers.find((relayer) => {
+              return relayer.endpoint === nextRelayer.externalUrl;
+            }) ?? null
+          );
+          setMainComponent(undefined);
+        }}
+      />
+    );
+  }, [
+    activeApi,
+    activeChain,
+    activeRelayer,
+    relayers,
+    setMainComponent,
+    setRelayer,
+  ]);
+
   return (
     <div ref={ref}>
       <WithdrawCard
         className="max-w-none h-[628px]"
         tokenInputProps={{
-          onClick: () => {
-            if (!activeApi) {
-              return;
-            }
-
-            setMainComponent(
-              <TokenListCard
-                className="min-w-[550px] h-[700px]"
-                title={'Select a token to Withdraw'}
-                popularTokens={[]}
-                selectTokens={fungibleTokens}
-                unavailableTokens={[]}
-                onChange={(newAsset) => {
-                  handleFungibleTokenChange(newAsset);
-                  setMainComponent(undefined);
-                }}
-                onClose={() => setMainComponent(undefined)}
-                onConnect={onTryAnotherWallet}
-              />
-            );
-          },
+          onClick: handleTokenInputClick,
           token: selectedFungibleToken,
         }}
         unwrappingAssetInputProps={{
-          onClick: () => {
-            if (activeApi) {
-              setMainComponent(
-                <TokenListCard
-                  className="min-w-[550px] h-[700px]"
-                  title={'Select a token to Unwrap'}
-                  popularTokens={[]}
-                  selectTokens={wrappableTokens}
-                  unavailableTokens={[]}
-                  onChange={(newAsset) => {
-                    handleWrappableTokenChange(newAsset);
-                    setMainComponent(undefined);
-                  }}
-                  onClose={() => setMainComponent(undefined)}
-                  onConnect={onTryAnotherWallet}
-                />
-              );
-            }
-          },
+          onClick: handleUnwrapAssetInputClick,
           token: selectedUnwrapToken,
         }}
         fixedAmountInputProps={{
@@ -1069,56 +1139,7 @@ export const WithdrawContainer = forwardRef<
               ? 'ethereum'
               : 'substrate'
             : undefined,
-          onClick: () => {
-            if (!activeApi || !activeChain) {
-              return;
-            }
-
-            if (activeRelayer) {
-              setRelayer(null);
-              return;
-            }
-
-            setMainComponent(
-              <RelayerListCard
-                className="min-w-[550px] h-[700px]"
-                relayers={relayers
-                  .map((relayer) => {
-                    const relayerData = relayer.capabilities.supportedChains[
-                      activeChain.chainType === ChainType.EVM
-                        ? 'evm'
-                        : 'substrate'
-                    ].get(
-                      calculateTypedChainId(
-                        activeChain.chainType,
-                        activeChain.chainId
-                      )
-                    );
-
-                    const theme =
-                      activeChain.chainType === ChainType.EVM
-                        ? ('ethereum' as const)
-                        : ('substrate' as const);
-
-                    return {
-                      address: relayerData?.beneficiary ?? '',
-                      externalUrl: relayer.endpoint,
-                      theme,
-                    };
-                  })
-                  .filter((x) => x !== undefined)}
-                onClose={() => setMainComponent(undefined)}
-                onChange={(nextRelayer) => {
-                  setRelayer(
-                    relayers.find((relayer) => {
-                      return relayer.endpoint === nextRelayer.externalUrl;
-                    }) ?? null
-                  );
-                  setMainComponent(undefined);
-                }}
-              />
-            );
-          },
+          onClick: handleRelayerInputClick,
         }}
         recipientInputProps={{
           value: recipient,

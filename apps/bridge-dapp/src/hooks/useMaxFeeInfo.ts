@@ -4,17 +4,11 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
-import { zeroAddress } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
-import { useCurrencies, useVAnchor } from '@webb-tools/react-hooks';
-import { calculateTypedChainId, CircomUtxo, Note } from '@webb-tools/sdk-core';
-import {
-  Web3Provider,
-  Web3VAnchorActions,
-} from '@webb-tools/web3-api-provider';
-import { BigNumber, utils } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
 import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { BigNumber } from 'ethers';
+import { useCallback, useState } from 'react';
 
 /**
  * Get the max fee info for the current active chain
