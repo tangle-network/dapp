@@ -52,6 +52,11 @@ export interface TransferCardProps extends PropsOf<'div'> {
   feeAmount?: number | string;
 
   /**
+   * The fee token symbol
+   */
+  feeToken?: string;
+
+  /**
    * The fee percentage to display
    */
   feePercentage?: number;

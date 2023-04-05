@@ -4,6 +4,7 @@ import {
   Chain,
   chainsPopulated,
   getLatestAnchorAddress,
+  getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
@@ -36,10 +37,15 @@ import {
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
-import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
+import {
+  WalletState,
+  useAddCurrency,
+  useConnectWallet,
+  useMaxFeeInfo,
+} from '../../hooks';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
@@ -79,8 +85,6 @@ export const TransferContainer = forwardRef<
     const txQueue = useTxQueue();
 
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
-
-    const currentResourceId = useCurrentResourceId();
 
     // Get the current preset type chain id from the active chain
     const currentTypedChainId = useMemo(() => {
@@ -123,6 +127,36 @@ export const TransferContainer = forwardRef<
     const { setEducationCardStep } = useEducationCardStep();
 
     const addCurrency = useAddCurrency();
+
+    const {
+      feeInfo,
+      fetchMaxFeeInfo,
+      isLoading: isFetchingMaxFeeInfo,
+    } = useMaxFeeInfo();
+
+    const feeValue = useMemo<string | undefined>(() => {
+      if (!feeInfo) {
+        return undefined;
+      }
+
+      if (!(feeInfo instanceof BigNumber)) {
+        console.error('Fee info is not a BigNumber instance');
+        return undefined;
+      }
+
+      return ethers.utils.formatEther(feeInfo);
+    }, [feeInfo]);
+
+    const currentNativeCurrency = useMemo(() => {
+      if (!currentTypedChainId) {
+        return undefined;
+      }
+
+      return getNativeCurrencyFromConfig(
+        apiConfig.currencies,
+        currentTypedChainId
+      );
+    }, [apiConfig.currencies, currentTypedChainId]);
 
     // Calculate recipient error message
     const recipientError = useMemo(() => {
@@ -702,6 +736,8 @@ export const TransferContainer = forwardRef<
           className="min-w-[550px]"
           inputNotes={inputNotes}
           amount={amount}
+          feeAmount={feeValue}
+          feeToken={currentNativeCurrency?.symbol}
           changeAmount={changeAmount}
           currency={fungibleCurrency}
           destChain={destChain}
@@ -729,6 +765,8 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       setMainComponent,
+      feeValue,
+      currentNativeCurrency?.symbol,
       activeRelayer,
       handleResetState,
       toggleModal,
@@ -796,6 +834,50 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
     ]);
 
+    const isReadyToFetchMaxFee = useMemo(() => {
+      if (!fungibleCurrency || !amount || !destChain || !activeChain) {
+        return false;
+      }
+
+      if (balancesFromNotes[fungibleCurrency.id] < amount) {
+        return false;
+      }
+
+      const destTypedChainId = calculateTypedChainId(
+        destChain.chainType,
+        destChain.chainId
+      );
+
+      const currentTypedChainId = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.chainId
+      );
+
+      if (destTypedChainId !== currentTypedChainId) {
+        return false;
+      }
+
+      if (!recipientPubKey || !isValidRecipient) {
+        return false;
+      }
+
+      return true;
+    }, [
+      activeChain,
+      amount,
+      balancesFromNotes,
+      destChain,
+      fungibleCurrency,
+      isValidRecipient,
+      recipientPubKey,
+    ]);
+
+    useEffect(() => {
+      if (isReadyToFetchMaxFee) {
+        fetchMaxFeeInfo();
+      }
+    }, [fetchMaxFeeInfo, isReadyToFetchMaxFee]);
+
     return (
       <TransferCard
         ref={ref}
@@ -844,11 +926,18 @@ export const TransferContainer = forwardRef<
         transferBtnProps={{
           isDisabled:
             isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
-          isLoading: loading || walletState === WalletState.CONNECTING,
-          loadingText: 'Connecting...',
+          isLoading:
+            isFetchingMaxFeeInfo ||
+            loading ||
+            walletState === WalletState.CONNECTING,
+          loadingText: isFetchingMaxFeeInfo
+            ? 'Calculating Fee...'
+            : 'Connecting...',
           children: buttonText,
           onClick: handleTransferClick,
         }}
+        feeAmount={feeValue}
+        feeToken={currentNativeCurrency?.symbol}
         transferAmount={infoCalculated.transferAmount}
         transferToken={infoCalculated.transferTokenSymbol}
         changeAmount={infoCalculated.changeAmount}

@@ -23,6 +23,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       destChainInputProps,
       feeAmount,
       feePercentage,
+      feeToken,
       recipientInputProps,
       relayerInputProps,
       transferAmount,
@@ -96,12 +97,11 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
 
             <InfoItem
               leftTextProps={{
-                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
+                title: feePercentage ? `Fees ${feePercentage}` : 'Max fees',
                 variant: 'utility',
-                info: 'Fees',
               }}
               rightContent={
-                feeAmount ? `${feeAmount} ${transferToken}` : undefined
+                feeAmount ? `${feeAmount} ${feeToken ?? ''}` : undefined
               }
             />
           </div>
