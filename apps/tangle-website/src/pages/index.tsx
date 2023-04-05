@@ -1,9 +1,11 @@
-import { HeroSection } from '../components';
+import { HeroSection, WhatMakesTangleUniqueSection } from '../components';
 
 export function Index() {
   return (
     <>
       <HeroSection />
+
+      <WhatMakesTangleUniqueSection />
     </>
   );
 }

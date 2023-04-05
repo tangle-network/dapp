@@ -23,6 +23,9 @@ module.exports = {
       backgroundImage: {
         hero_bg_image: "url('/static/assets/hero-image.png')",
       },
+      colors: {
+        tangle_purple: '#444BD3',
+      },
     },
   },
 };
