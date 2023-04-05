@@ -1,31 +1,31 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
   useBridge,
   useCurrencies,
-  useCurrencyBalance,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
   useTxQueue,
 } from '@webb-tools/react-hooks';
 import {
+  calculateTypedChainId,
   ChainType,
   CircomUtxo,
   Note,
-  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
   AmountInput,
   Button,
   CheckBox,
+  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
-  WithdrawCard,
-  getRoundedAmountString,
   useWebbUI,
+  WithdrawCard,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
@@ -37,20 +37,20 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+
 import { ChainListCardWrapper } from '../../components';
 import {
-  WalletState,
   useAddCurrency,
   useConnectWallet,
   useShieldedAssets,
+  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { useWithdrawFee } from '../../hooks/useWIthdrawFee';
 import { getErrorMessage } from '../../utils';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
-import { WithdrawContainerProps } from './types';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
+import { WithdrawContainerProps } from './types';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -97,8 +97,6 @@ export const WithdrawContainer = forwardRef<
   } = useBridge();
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
-
-  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -249,9 +247,8 @@ export const WithdrawContainer = forwardRef<
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
       balanceType: 'wallet',
-      balance: wrappableCurrencyBalance ?? 0,
     };
-  }, [addCurrency, wrappableCurrency, wrappableCurrencyBalance]);
+  }, [addCurrency, wrappableCurrency]);
 
   const wrappableTokens = useMemo((): AssetType[] => {
     return wrappableCurrencies.map((currency) => {

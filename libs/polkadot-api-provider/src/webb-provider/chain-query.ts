@@ -67,8 +67,12 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
   tokenBalanceByCurrencyId(
     typedChainId: number,
-    currencyId: number
+    currencyId: number,
+    accountAddressArg?: string
   ): Observable<string> {
+    if (accountAddressArg) {
+      console.error('accountAddressArg is not supported for Polkadot');
+    }
     const assetId =
       this.inner.config.currencies[currencyId].addresses.get(typedChainId);
     if (!assetId) {
@@ -78,7 +82,13 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  tokenBalanceByAddress(address: string): Observable<string> {
+  tokenBalanceByAddress(
+    address: string,
+    accountAddressArg?: string
+  ): Observable<string> {
+    if (accountAddressArg) {
+      console.error('accountAddressArg is not supported for Polkadot');
+    }
     return this.getTokenBalanceByAssetId(address);
   }
 }
