@@ -127,10 +127,10 @@ export const useWithdrawFee = (
       }
 
       const gasAmount = await vanchorApi.getGasAmount(vanchorAddr, {
-        input: inputUtxos,
-        output: [changeUtxo],
-        fee: 0,
-        refund: 0,
+        inputs: inputUtxos,
+        outputs: [changeUtxo],
+        fee: BigNumber.from(0),
+        refund: BigNumber.from(0),
         recipient: recipient,
         relayer: relayer?.beneficiary ?? zeroAddress,
         wrapUnwrapToken,

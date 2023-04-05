@@ -31,10 +31,14 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
-import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
+import {
+  ZERO_ADDRESS,
+  hexToU8a,
+  u8aToHex,
+  ZERO_BYTES32,
+} from '@webb-tools/utils';
 import {
   BigNumber,
-  BigNumberish,
   ContractReceipt,
   ContractTransaction,
   Overrides,
@@ -180,8 +184,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         payload.note.sourceIdentifyingData, // contractAddress
         [], // inputs
         [depositUtxo], // outputs
-        0, // fee
-        0, // refund
+        BigNumber.from(0), // fee
+        BigNumber.from(0), // refund
         ZERO_ADDRESS, // recipient
         ZERO_ADDRESS, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
@@ -221,8 +225,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
-        0, // fee
-        0, // refund
+        BigNumber.from(0), // fee
+        BigNumber.from(0), // refund
         ZERO_ADDRESS, // recipient
         relayer, // relayer
         '', // wrapUnwrapToken (not used for transfers)
@@ -350,8 +354,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     contractAddress: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BigNumberish,
-    refund: BigNumberish,
+    fee: BigNumber,
+    refund: BigNumber,
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
@@ -370,6 +374,19 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     tx.txHash = '';
     tx.next(TransactionState.SendingTransaction, '');
+
+    const gasAmount = await this.getGasAmount(contractAddress, {
+      inputs,
+      outputs,
+      fee,
+      refund,
+      recipient,
+      relayer,
+      wrapUnwrapToken,
+      leavesMap,
+    });
+
+    console.log('gasAmount: ', gasAmount.toNumber());
 
     return vanchor.transact(
       inputs,
@@ -470,10 +487,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async getGasAmount(
     vAnchorAddress: string,
     option: {
-      input: Utxo[];
-      output: Utxo[];
-      fee: number;
-      refund: number;
+      inputs: Utxo[];
+      outputs: Utxo[];
+      fee: BigNumber;
+      refund: BigNumber;
       recipient: string;
       relayer: string;
       wrapUnwrapToken: string;
@@ -482,9 +499,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<BigNumber> | never {
     const vanchor = await this.inner.getVariableAnchorByAddress(vAnchorAddress);
 
-    const { publicInputs, extData } = await vanchor.setupTransaction(
-      await vanchor.padUtxos(option.input, 16), // 16 is the max number of inputs
-      await vanchor.padUtxos(option.output, 2), // 2 is the max number of outputs
+    const { publicInputs, extData, extAmount } = await vanchor.setupTransaction(
+      await vanchor.padUtxos(option.inputs, 16), // 16 is the max number of inputs
+      await vanchor.padUtxos(option.outputs, 2), // 2 is the max number of outputs
       option.fee,
       option.refund,
       option.recipient,
@@ -493,12 +510,19 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       option.leavesMap
     );
 
+    const options = await vanchor.getWrapUnwrapOptions(
+      extAmount,
+      option.refund,
+      option.wrapUnwrapToken
+    );
+
     return vanchor.contract.estimateGas.transact(
       publicInputs.proof,
-      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      ZERO_BYTES32,
       extData,
       publicInputs,
-      extData
+      extData,
+      options
     );
   }
 
