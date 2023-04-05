@@ -4,6 +4,7 @@ import {
   useBalancesFromNotes,
   useBridge,
   useCurrencies,
+  useCurrencyBalance,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
@@ -22,25 +23,20 @@ import {
   CheckBox,
   RelayerListCard,
   TokenListCard,
-  Typography,
   WithdrawCard,
   getRoundedAmountString,
   useWebbUI,
-  InfoItem,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
-  FC,
   forwardRef,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { ChainListCardWrapper } from '../../components';
 import {
@@ -55,8 +51,6 @@ import { getErrorMessage } from '../../utils';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { WithdrawContainerProps } from './types';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
-import { VAnchor__factory } from '@webb-tools/contracts';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -103,6 +97,8 @@ export const WithdrawContainer = forwardRef<
   } = useBridge();
 
   const { fungibleCurrencies, wrappableCurrencies } = useCurrencies();
+
+  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -220,6 +216,7 @@ export const WithdrawContainer = forwardRef<
       name: fungibleCurrency.view.name,
       balance: availableAmount,
       onTokenClick: () => addCurrency(fungibleCurrency),
+      balanceType: 'note',
     };
   }, [addCurrency, availableAmount, fungibleCurrency]);
 
@@ -251,8 +248,10 @@ export const WithdrawContainer = forwardRef<
       symbol: wrappableCurrency.view.symbol,
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
+      balanceType: 'wallet',
+      balance: wrappableCurrencyBalance ?? 0,
     };
-  }, [addCurrency, wrappableCurrency]);
+  }, [addCurrency, wrappableCurrency, wrappableCurrencyBalance]);
 
   const wrappableTokens = useMemo((): AssetType[] => {
     return wrappableCurrencies.map((currency) => {
@@ -873,6 +872,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Receiving',
+          info: 'Receiving',
         },
         rightContent: receivingAmount
           ? `${receivingAmount} ${receivingTokenSymbol}`
@@ -882,7 +882,7 @@ export const WithdrawContainer = forwardRef<
         ? {
             leftTextProps: {
               title: 'Refund Amount',
-              info: refundInfo,
+              info: refundInfo ?? 'Refund Amount',
             },
             rightContent: refundAmountContent,
           }
@@ -890,6 +890,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Remaining balance',
+          info: 'Remaining balance',
         },
         rightContent: remainderAmount
           ? `${remainderAmount} ${remainderTokenSymbol}`
@@ -898,7 +899,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Estimated fees',
-          info: transactionFeeInfo,
+          info: transactionFeeInfo ?? 'Estimated fees',
         },
         rightContent: txFeeContent,
       },
@@ -982,7 +983,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
-        className="h-[615px] max-w-none"
+        className="max-w-none h-[628px]"
         tokenInputProps={{
           onClick: () => {
             if (!activeApi) {
@@ -992,7 +993,7 @@ export const WithdrawContainer = forwardRef<
             setMainComponent(
               <TokenListCard
                 className="min-w-[550px] h-[700px]"
-                title={'Select Asset to Withdraw'}
+                title={'Select a token to Withdraw'}
                 popularTokens={[]}
                 selectTokens={fungibleTokens}
                 unavailableTokens={[]}
@@ -1013,7 +1014,7 @@ export const WithdrawContainer = forwardRef<
               setMainComponent(
                 <TokenListCard
                   className="min-w-[550px] h-[700px]"
-                  title={'Select Asset to Unwrap'}
+                  title={'Select a token to Unwrap'}
                   popularTokens={[]}
                   selectTokens={wrappableTokens}
                   unavailableTokens={[]}
@@ -1050,6 +1051,8 @@ export const WithdrawContainer = forwardRef<
           onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
         }}
         relayerInputProps={{
+          title: 'Relayer',
+          info: 'Relayer',
           relayerAddress: activeRelayer?.beneficiary,
           iconTheme: activeChain
             ? activeChain.chainType === ChainType.EVM
@@ -1115,6 +1118,8 @@ export const WithdrawContainer = forwardRef<
           onChange: (recipient) => {
             setRecipient(recipient);
           },
+          title: 'Recipient Address',
+          info: "The recipient's wallet address",
         }}
         refundInputProps={{
           refundCheckboxProps,

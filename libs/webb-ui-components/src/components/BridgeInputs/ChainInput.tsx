@@ -40,7 +40,7 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
               info={info}
               variant="utility"
               className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+              titleClassName="capitalize !text-inherit"
             />
           </Label>
 
@@ -48,17 +48,16 @@ export const ChainInput = forwardRef<HTMLDivElement, ChainInputComponentProps>(
             <p className="flex items-center space-x-1">
               <ChainIcon name={chain.name} size="lg" />
 
-              <Typography
-                className="capitalize"
-                component="span"
-                variant="body1"
-                fw="bold"
-              >
+              <Typography component="span" variant="h5" fw="bold">
                 {chain.name}
               </Typography>
             </p>
           ) : (
-            <Typography variant="body1" fw="bold">
+            <Typography
+              variant="h5"
+              fw="bold"
+              className="text-black dark:text-white"
+            >
               Select chain
             </Typography>
           )}

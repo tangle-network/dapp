@@ -108,7 +108,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         ) {
           setRecipientError(undefined);
         } else {
-          setRecipientError('Invalid address ');
+          setRecipientError('Invalid wallet address ');
         }
       },
       [onChangeProp, setAddress, setRecipientError]
@@ -138,12 +138,12 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
           <div className="flex flex-col w-full space-y-1">
             <Label htmlFor={id}>
               <TitleWithInfo
-                title={(title ?? id).toLocaleUpperCase()}
+                title={title ?? id}
                 info={info}
                 variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"
-                titleClassName="uppercase !text-inherit"
+                titleClassName="capitalize !text-inherit"
               />
             </Label>
             <Input
@@ -156,22 +156,20 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             />
           </div>
 
-          {!address && !isHiddenPasteBtn && (
-            <Button
-              isDisabled={overrideInputProps?.isDisabled}
-              variant="utility"
-              size="sm"
-              onClick={onClick}
-            >
-              Paste
-            </Button>
-          )}
+          <Button
+            variant="utility"
+            size="sm"
+            onClick={onClick}
+            isDisabled={address ? true : false}
+          >
+            Paste
+          </Button>
         </InputWrapper>
 
         {error && (
-          <span className="flex text-red-70 dark:text-red-50">
+          <span className="flex text-red-70 dark:text-red-50 items-center">
             <InformationLine className="!fill-current mr-1" />
-            <Typography variant="body3" fw="bold" className="!text-current">
+            <Typography variant="body1" fw="bold" className="!text-current">
               {error}
             </Typography>
           </span>

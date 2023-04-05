@@ -19,7 +19,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       onConnect,
       popularTokens,
       selectTokens,
-      title = 'Select a token from Polygon Chain',
+      title = 'Select a Token',
       unavailableTokens,
       value: selectedAsset,
       ...props
@@ -57,7 +57,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         setAsset(nextItem);
         onChange?.(nextItem);
       },
-      [onChange, setAsset]
+      [onChange, setAsset, unavailableTokens]
     );
 
     const { filteredPopular, filteredSelect, filteredUnavailable } = useMemo(
@@ -105,7 +105,11 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
 
         {/** Select tokens */}
         <div className="flex flex-col p-2 space-y-2">
-          <Typography variant="utility" className="uppercase">
+          <Typography
+            variant="body4"
+            className="uppercase text-mono-200 dark:text-mono-0"
+            fw="bold"
+          >
             Select token
           </Typography>
 
@@ -120,8 +124,9 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 />
               ))}
               <Typography
-                variant="utility"
-                className="uppercase text-mono-100 dark:text-mono-80"
+                variant="body4"
+                fw="bold"
+                className="uppercase text-mono-100 dark:text-mono-80 my-2"
               >
                 Unavailable
               </Typography>
