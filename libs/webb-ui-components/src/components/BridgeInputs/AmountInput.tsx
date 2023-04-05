@@ -1,7 +1,8 @@
+import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChevronDown, InformationLine } from '@webb-tools/icons';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography/Typography';
+
 import {
   AmountMenu,
   Button,
@@ -10,9 +11,9 @@ import {
   Label,
   TitleWithInfo,
 } from '..';
-import { AmountInputComponentProps } from './types';
+import { Typography } from '../../typography/Typography';
 import { Dropdown, DropdownBody } from '../Dropdown';
-import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
+import { AmountInputComponentProps } from './types';
 
 export const AmountInput = forwardRef<
   HTMLDivElement,
@@ -107,6 +108,7 @@ export const AmountInput = forwardRef<
               name={id}
               value={amount}
               type="number"
+              inputMode="numeric"
               onChange={onAmountChange}
               placeholder="0"
               size="sm"
