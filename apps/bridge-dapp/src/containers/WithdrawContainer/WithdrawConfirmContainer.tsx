@@ -70,7 +70,9 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, noteManager } = useWebContext();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const {
       relayersState: { activeRelayer },
@@ -149,10 +151,15 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         default: {
-          status = 'In-Progress';
+          status = 'in Progress...';
           break;
         }
       }
+
+      if (!status)
+        return unwrapCurrency
+          ? 'Confirm Unwrap and Withdraw'
+          : 'Confirm Withdraw';
 
       return unwrapCurrency
         ? `Unwrap and Withdraw ${status}`
@@ -213,6 +220,8 @@ export const WithdrawConfirmContainer = forwardRef<
         token: tokenSymbol,
         tokenURI,
       });
+
+      setTxId(tx.id);
 
       try {
         txQueueApi.registerTransaction(tx);
@@ -291,6 +300,14 @@ export const WithdrawConfirmContainer = forwardRef<
       onResetState,
     ]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
     const formattedFees = useMemo(() => {
       const feesInEthers = ethers.utils.formatEther(fees);
 
@@ -328,14 +345,21 @@ export const WithdrawConfirmContainer = forwardRef<
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}
-        destChain={chainsPopulated[targetChainId]?.name}
+        destChain={{
+          name: chainsPopulated[targetChainId].name,
+          type: chainsPopulated[targetChainId].base ?? 'webb-dev',
+        }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress
             ? false
             : changeAmount
             ? !checked
             : false,
-          children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
+          children: withdrawTxInProgress
+            ? 'Make Another Transaction'
+            : unwrapCurrency
+            ? 'Unwrap And Withdraw'
+            : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
@@ -364,6 +388,7 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusMessage={txStatusMessage}
       />
     );
   }

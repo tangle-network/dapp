@@ -206,6 +206,7 @@ export const DepositContainer = forwardRef<
           symbol: bridgeWrappableCurrency.currency.view.symbol,
           balance: bridgeWrappableCurrency.balance,
           onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
+          balanceType: 'wallet',
         };
       }
 
@@ -218,6 +219,7 @@ export const DepositContainer = forwardRef<
         symbol: bridgeFungibleCurrency.currency.view.symbol,
         balance: bridgeFungibleCurrency.balance,
         onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
+        balanceType: 'wallet',
       };
     }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
 
@@ -400,8 +402,14 @@ export const DepositContainer = forwardRef<
         fungibleTokenId: fungibleCurrency.id,
         wrappableTokenId: wrappableCurrency?.id,
         amount,
-        sourceChain: selectedSourceChain,
-        destChain: destChainInputValue,
+        sourceChain: {
+          name: activeChain.name,
+          type: activeChain.base ?? 'webb-dev',
+        },
+        destChain: {
+          name: destChain.name,
+          type: destChain.base ?? 'webb-dev',
+        },
         note: newNote,
         resetMainComponent: resetMainComponent,
         onResetState: handleResetState,
@@ -421,8 +429,6 @@ export const DepositContainer = forwardRef<
       fungibleCurrency,
       apiConfig,
       wrappableCurrency?.id,
-      selectedSourceChain,
-      destChainInputValue,
       resetMainComponent,
       handleResetState,
       toggleModal,
@@ -472,6 +478,7 @@ export const DepositContainer = forwardRef<
           symbol: targetSymbol,
           balance: bridgeFungibleCurrency.balance,
           onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
+          balanceType: 'wallet',
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -554,7 +561,7 @@ export const DepositContainer = forwardRef<
         className: 'min-w-[550px] h-[700px]',
         selectTokens: tokens,
         value: destChainInputValue,
-        title: 'Select Asset to Deposit',
+        title: 'Select a token to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
         onChange: async (nextToken) => {
@@ -795,9 +802,9 @@ export const DepositContainer = forwardRef<
     ]);
 
     return (
-      <div {...props} ref={ref}>
+      <div {...props} ref={ref} className="h-[628px]">
         <DepositCard
-          className="h-[615px] max-w-none"
+          className="max-w-none"
           sourceChainProps={{
             chain: selectedSourceChain,
             onClick: sourceChainInputOnClick,

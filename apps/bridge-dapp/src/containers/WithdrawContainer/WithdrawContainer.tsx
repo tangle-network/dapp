@@ -4,6 +4,7 @@ import {
   useBalancesFromNotes,
   useBridge,
   useCurrencies,
+  useCurrencyBalance,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
@@ -27,7 +28,6 @@ import {
   WithdrawCard,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
@@ -102,6 +102,8 @@ export const WithdrawContainer = forwardRef<
   } = useBridge();
 
   const { wrappableCurrencies } = useCurrencies();
+
+  const wrappableCurrencyBalance = useCurrencyBalance(wrappableCurrency);
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -247,6 +249,7 @@ export const WithdrawContainer = forwardRef<
       name: fungibleCurrency.view.name,
       balance: availableAmount,
       onTokenClick: () => addCurrency(fungibleCurrency),
+      balanceType: 'note',
     };
   }, [addCurrency, availableAmount, fungibleCurrency]);
 
@@ -258,8 +261,10 @@ export const WithdrawContainer = forwardRef<
       symbol: wrappableCurrency.view.symbol,
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
+      balanceType: 'wallet',
+      balance: wrappableCurrencyBalance ?? 0,
     };
-  }, [addCurrency, wrappableCurrency]);
+  }, [addCurrency, wrappableCurrency, wrappableCurrencyBalance]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {
@@ -766,7 +771,7 @@ export const WithdrawContainer = forwardRef<
         setMainComponent(
           <TokenListCard
             className="min-w-[550px] h-[700px]"
-            title={'Select Asset to Withdraw'}
+            title={'Select a token to Withdraw'}
             popularTokens={[]}
             selectTokens={selectableTokens}
             unavailableTokens={apiConfig
@@ -817,7 +822,7 @@ export const WithdrawContainer = forwardRef<
         setMainComponent(
           <TokenListCard
             className="min-w-[550px] h-[700px]"
-            title={'Select Asset to Unwrap'}
+            title={'Select a toekn to Unwrap'}
             popularTokens={[]}
             selectTokens={selectTokens}
             unavailableTokens={apiConfig
@@ -888,6 +893,7 @@ export const WithdrawContainer = forwardRef<
     ComponentProps<typeof WithdrawCard>['relayerInputProps']
   >(
     () => ({
+      title: 'Relayer',
       relayerAddress: activeRelayer?.beneficiary,
       iconTheme: activeChain
         ? activeChain.chainType === ChainType.EVM
@@ -957,6 +963,8 @@ export const WithdrawContainer = forwardRef<
     ComponentProps<typeof WithdrawCard>['recipientInputProps']
   >(
     () => ({
+      title: 'Recipient Address',
+      info: "The recipient's wallet address",
       value: recipient,
       isValidSet(valid: boolean) {
         setIsValidRecipient(valid);
@@ -1098,6 +1106,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Receiving',
+          info: 'Receiving',
         },
         rightContent: receivingAmount
           ? `${receivingAmount} ${receivingTokenSymbol}`
@@ -1107,7 +1116,7 @@ export const WithdrawContainer = forwardRef<
         ? {
             leftTextProps: {
               title: 'Refund Amount',
-              info: refundInfo,
+              info: refundInfo ?? 'Refund Amount',
             },
             rightContent: refundAmountContent,
           }
@@ -1115,6 +1124,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Remaining balance',
+          info: 'Remaining balance',
         },
         rightContent: remainderAmount
           ? `${remainderAmount} ${remainderTokenSymbol}`
@@ -1123,7 +1133,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Estimated fees',
-          info: transactionFeeInfo,
+          info: transactionFeeInfo ?? 'Estimated fees',
         },
         rightContent: txFeeContent,
       },
@@ -1207,7 +1217,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <div ref={ref}>
       <WithdrawCard
-        className="h-[615px] max-w-none"
+        className="max-w-none h-[628px]"
         tokenInputProps={tokenInputProps}
         unwrappingAssetInputProps={unwrappingAssetInputProps}
         fixedAmountInputProps={fixedAmountInputProps}

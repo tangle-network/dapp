@@ -22,10 +22,13 @@ export const getCardTitle = (
     }
 
     default: {
-      status = 'In-Progress';
+      status = 'in Progress...';
       break;
     }
   }
+
+  if (!status)
+    return wrappingFlow ? 'Confirm Wrap and Deposit' : 'Confirm Deposit';
 
   return wrappingFlow ? `Wrap and Deposit ${status}` : `Deposit ${status}`;
 };

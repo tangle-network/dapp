@@ -40,7 +40,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
               info={info}
               titleComponent="span"
               className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+              titleClassName="capitalize !text-inherit"
             />
           </Label>
 
@@ -48,7 +48,7 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
             <div className="flex items-center space-x-1">
               <Avatar theme={iconTheme} value={relayerAddress} />
 
-              <Typography component="span" variant="body1" fw="bold">
+              <Typography component="span" variant="h5" fw="bold">
                 {shortenString(relayerAddress)}
               </Typography>
 
@@ -63,7 +63,11 @@ export const RelayerInput = forwardRef<HTMLDivElement, RelayerInputProps>(
               )}
             </div>
           ) : (
-            <Typography variant="body1" fw="bold">
+            <Typography
+              variant="h5"
+              fw="bold"
+              className="text-black dark:text-white"
+            >
               Add a relayer
             </Typography>
           )}

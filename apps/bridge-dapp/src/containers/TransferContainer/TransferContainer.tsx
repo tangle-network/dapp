@@ -220,6 +220,7 @@ export const TransferContainer = forwardRef<
         name: fungibleCurrency.view.name,
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
+        balanceType: 'note',
       };
     }, [addCurrency, balancesFromNotes, fungibleCurrency]);
 
@@ -268,7 +269,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <TokenListCard
           className="min-w-[550px] h-[700px]"
-          title="Select Asset to Transfer"
+          title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={selectableBridgingAssets}
           unavailableTokens={unavailableTokens}
@@ -800,7 +801,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="h-[615px] max-w-none"
+        className="max-w-none h-[628px]"
         bridgeAssetInputProps={{
           token: selectedBridgingAsset,
           onClick: handleBridgingAssetInputClick,
@@ -809,6 +810,7 @@ export const TransferContainer = forwardRef<
           chain: selectedDestChain,
           chainType: 'dest',
           onClick: handleDestChainClick,
+          info: 'Destination chain',
         }}
         amountInputProps={{
           amount: amount ? amount.toString() : undefined,
@@ -831,6 +833,7 @@ export const TransferContainer = forwardRef<
             setIsValidRecipient(valid);
           },
           title: 'Recipient Public Key',
+          info: 'Public key of the recipient',
           errorMessage: recipientError,
           value: recipientPubKey,
           onChange: (recipient) => {

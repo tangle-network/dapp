@@ -27,21 +27,25 @@
 .body1 {
   font-size: 16px;
   line-height: 24px;
+  letter-spacing: 0.01em;
 }
 
 .body2 {
   font-size: 14px;
   line-height: 21px;
+  letter-spacing: 0.01em;
 }
 
 .body3 {
   font-size: 12px;
   line-height: 18px;
+  letter-spacing: 0.01em;
 }
 
 .body4 {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 15px;
+  letter-spacing: 0.01em;
 }
 
 .mono1 {
@@ -71,10 +75,8 @@
 
 /* Small utility used for labels and warnings */
 .utility {
-  font-size: 12px;
-  line-height: 15px;
+  @apply body1;
   font-weight: 700;
-  text-transform: uppercase;
 }
 
 /** Marketing site variant */

@@ -14,6 +14,7 @@ export * from './CheckBoxMenu';
 export * from './Chip';
 export * from './Collapsible';
 export * from './CopyWithTooltip';
+export * from './ChainChip';
 export * from './Disclaimer';
 export * from './Divider';
 export * from './Drawer';
