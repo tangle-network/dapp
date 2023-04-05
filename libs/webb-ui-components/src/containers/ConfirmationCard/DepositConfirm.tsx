@@ -28,6 +28,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       className,
       destChain,
       fee,
+      feeToken,
       note,
       onClose,
       isCopied,
@@ -53,6 +54,14 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       return `${amount ?? '0'} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
+
+    const feeContent = useMemo(() => {
+      if (typeof fee === 'number' || typeof fee === 'string') {
+        return `${fee} ${feeToken ?? ''}`;
+      }
+
+      return '--';
+    }, [fee, feeToken]);
 
     return (
       <div
@@ -196,10 +205,9 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               <InfoItem
                 leftTextProps={{
                   variant: 'utility',
-                  title: 'Fees',
-                  info: 'Fees',
+                  title: 'Max fees',
                 }}
-                rightContent={fee?.toString()}
+                rightContent={feeContent}
               />
             </div>
           </div>

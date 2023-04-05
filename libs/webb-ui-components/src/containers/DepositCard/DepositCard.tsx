@@ -31,19 +31,21 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     ref
   ) => {
     const { amount, fee } = useMemo(() => {
-      return {
-        amount: !amountInputProps.amount
-          ? '--'
-          : `${amountInputProps.amount} ${token ?? ''}`,
-        fee: !feePercentage
-          ? feeValue && feeValue > 0
-            ? feeValue.toString()
-            : '--'
-          : `${
-              parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
-            } ${feeToken ?? ''}`,
-      };
-    }, [amountInputProps.amount, feePercentage, feeToken, token]);
+      const amount = !amountInputProps.amount
+        ? '--'
+        : `${amountInputProps.amount} ${token ?? ''}`;
+
+      let fee = '--';
+      if (feePercentage) {
+        fee = `${
+          parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
+        }`;
+      } else if (feeValue && feeValue > 0) {
+        fee = feeValue.toString();
+      }
+
+      return { amount, fee: `${fee} ${feeToken ?? ''}` };
+    }, [amountInputProps.amount, feePercentage, feeToken, feeValue, token]);
 
     return (
       <div
@@ -92,9 +94,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
 
             <InfoItem
               leftTextProps={{
-                title: `Fees ${feePercentage ? `(${feePercentage}%)` : ''}`,
+                title: feePercentage ? `Fees (${feePercentage}%)` : `Max fees`,
                 variant: 'utility',
-                info: 'Fees',
               }}
               rightContent={fee}
             />

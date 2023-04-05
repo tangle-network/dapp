@@ -58,10 +58,18 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   fee?: number | string;
 
   /**
+   * The fee token symbol
+   */
+  feeToken?: string;
+
+  /**
    * The note string
    */
   note?: string | null;
 
+  /**
+   * The copy props
+   */
   copyProps?: UseCopyableReturnType;
 
   /**
