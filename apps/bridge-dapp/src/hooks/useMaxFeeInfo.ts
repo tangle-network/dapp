@@ -7,8 +7,10 @@ import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
 import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { BigNumber } from 'ethers';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { getErrorMessage } from '../utils';
 
 /**
  * Get the max fee info for the current active chain
@@ -55,14 +57,29 @@ type UseMaxFeeInfoReturnType = {
 };
 
 /**
+ * The option to customize the hook
+ * @property {boolean} isHiddenNotiError Whether to hide the error notification
+ */
+export type MaxFeeInfoOption = {
+  /**
+   * Whether to hide the error notification
+   */
+  isHiddenNotiError?: boolean;
+};
+
+/**
  * Get the max fee info for the current active chain
+ * @param {MaxFeeInfoOption} opt The option to customize the hook
  * @returns an object with the following properties:
  * - feeInfo: RelayerFeeInfo | BigNumber | null
  * - fetchMaxFeeInfo: () => Promise<void> | never
  * - fetchMaxFeeInfoFromRelayer: (relayer: ActiveWebbRelayer) => Promise<void> | never
  * - resetMaxFeeInfo: () => void
  */
-export const useMaxFeeInfo = (): UseMaxFeeInfoReturnType => {
+export const useMaxFeeInfo = (
+  opt?: MaxFeeInfoOption
+): UseMaxFeeInfoReturnType => {
+  const { notificationApi } = useWebbUI();
   const { activeApi, activeChain } = useWebContext();
 
   // State to store the max fee info
@@ -178,6 +195,17 @@ export const useMaxFeeInfo = (): UseMaxFeeInfoReturnType => {
     setIsLoading(false);
     setFeeInfo(null);
   }, []);
+
+  // Side effect to show notification when fetching fee info fails
+  useEffect(() => {
+    if (error && !opt?.isHiddenNotiError) {
+      const message = getErrorMessage(error);
+      notificationApi.addToQueue({
+        variant: 'error',
+        message,
+      });
+    }
+  }, [error, notificationApi, opt?.isHiddenNotiError]);
 
   return {
     feeInfo,

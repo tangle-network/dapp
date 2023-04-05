@@ -47,7 +47,6 @@ import {
   WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
-import { getErrorMessage } from '../../utils';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
@@ -77,7 +76,7 @@ export const WithdrawContainer = forwardRef<
   // State for error message when the refund amount is invalid
   const [refundAmountError, setRefundAmountError] = useState<string>('');
 
-  const { setMainComponent, notificationApi } = useWebbUI();
+  const { setMainComponent } = useWebbUI();
 
   const {
     activeApi,
@@ -155,7 +154,6 @@ export const WithdrawContainer = forwardRef<
     fetchMaxFeeInfoFromRelayer: fetchRelayerFeeInfo,
     fetchMaxFeeInfo,
     isLoading: isFetchingFeeInfo,
-    error: fetchFeeInfoError,
     feeInfo: feeInfoOrBigNumber,
   } = useMaxFeeInfo();
 
@@ -969,17 +967,6 @@ export const WithdrawContainer = forwardRef<
       fetchMaxFeeInfo();
     }
   }, [activeRelayer, isReady, fetchRelayerFeeInfo, fetchMaxFeeInfo]);
-
-  // Side effect to show notification when fetching fee info fails
-  useEffect(() => {
-    if (fetchFeeInfoError) {
-      const message = getErrorMessage(fetchFeeInfoError);
-      notificationApi.addToQueue({
-        variant: 'error',
-        message,
-      });
-    }
-  }, [fetchFeeInfoError, notificationApi]);
 
   // Side effect to uncheck the refund checkbox when feeInfo is not available
   useEffect(() => {
