@@ -1,6 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { Chain, chainsPopulated } from '@webb-tools/dapp-config';
+import {
+  Chain,
+  chainsPopulated,
+  getLatestAnchorAddress,
+} from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
@@ -18,6 +22,7 @@ import {
   Note,
   calculateTypedChainId,
   toFixedHex,
+  ResourceId,
 } from '@webb-tools/sdk-core';
 import {
   RelayerListCard,
@@ -102,7 +107,7 @@ export const TransferContainer = forwardRef<
       defaultDestinationChain
     );
 
-    const balancesFromNotes = useBalancesFromNotes();
+    const balancesFromNotes = useBalancesFromNotes(destChain);
 
     // State for amount input value
     const [amount, setAmount] = useState<number | undefined>(undefined);
@@ -442,13 +447,28 @@ export const TransferContainer = forwardRef<
 
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
-      if (!destChain || !fungibleCurrency || !amount || !currentResourceId) {
+      if (!destChain || !fungibleCurrency || !amount) {
         return [];
       }
 
+      const typedChainId = calculateTypedChainId(
+        destChain.chainType,
+        destChain.chainId
+      );
+      const vanchorAddr = getLatestAnchorAddress(typedChainId);
+      if (!vanchorAddr) {
+        console.error('No anchor address found for chain', typedChainId);
+        return [];
+      }
+      const resourceId = new ResourceId(
+        vanchorAddr,
+        destChain.chainType,
+        destChain.chainId
+      );
+
       const avaiNotes =
         allNotes
-          .get(currentResourceId.toString())
+          .get(resourceId.toString())
           ?.filter(
             (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
           ) ?? [];
@@ -462,7 +482,7 @@ export const TransferContainer = forwardRef<
           )
         ) ?? []
       );
-    }, [allNotes, amount, currentResourceId, destChain, fungibleCurrency]);
+    }, [allNotes, amount, destChain, fungibleCurrency]);
 
     // Calculate the info for UI display
     const infoCalculated = useMemo(() => {
