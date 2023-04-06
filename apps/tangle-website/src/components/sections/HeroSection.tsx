@@ -37,7 +37,7 @@ export const HeroSection = () => {
           <Socials />
         </div>
       </div>
-      <div className="bg-hero_bg_image w-full flex-1 bg-cover bg-no-repeat bg-center object-fill min-h-[459.98px] md:min-h-[791px] lg:border" />
+      <div className="bg-hero_section w-full flex-1 bg-cover bg-no-repeat bg-center object-fill min-h-[459.98px] md:min-h-[791px] lg:border" />
     </section>
   );
 };
