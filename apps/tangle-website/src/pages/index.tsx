@@ -6,7 +6,7 @@ import {
 
 export function Index() {
   return (
-    <div className="bg-body_bg_image">
+    <div className="bg-body bg-top">
       <HeroSection />
 
       <IntroducingSection />

@@ -57,7 +57,7 @@ export const FeaturesSection = () => {
           <SectionHeader>Features</SectionHeader>
           <SectionTitle>What makes Tangle Unique?</SectionTitle>
         </div>
-        <SectionDescription className="lg:w-[65%]">
+        <SectionDescription className="text-center lg:w-[65%]">
           The Tangle network doubles as hub for routing cross chain messages and
           for anchoring itself as a bridge endpoint for cross chain
           zero-knowledge applications.

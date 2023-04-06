@@ -15,7 +15,7 @@ interface TangleFeatureCardProps {
 export const TangleFeatureCard: React.FC<TangleFeatureCardProps> = (props) => {
   const { img, index, title, description, link } = props;
   return (
-    <div className="rounded-lg overflow-hidden flex flex-col md:w-[300px] min-h-[647px] md:min-h-min md:h-full lg:h-auto flex-1">
+    <div className="bg-mono-0 rounded-lg overflow-hidden flex flex-col md:w-[300px] min-h-[647px] md:min-h-min md:h-full lg:h-auto flex-1">
       <div className="relative h-[150px] w-full object-contain">
         <Image src={img} alt={title} fill />
       </div>

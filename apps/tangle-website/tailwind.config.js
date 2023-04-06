@@ -23,7 +23,10 @@ module.exports = {
       backgroundImage: {
         body: "url('/static/assets/body-bg.jpg')",
         hero_section: "url('/static/assets/hero-section.jpg')",
-        introduction_section: 'linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("/static/assets/body-bg.jpg")'
+        introduction_section:
+          'linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("/static/assets/body-bg.jpg")',
+        features_section:
+          'linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0)), url("/static/assets/body-bg.jpg")',
       },
       colors: {
         tangle_purple: '#444BD3',
