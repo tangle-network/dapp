@@ -30,7 +30,7 @@ const tangleFeatures = [
   },
 ];
 
-export const WhatMakesTangleUniqueSection = () => {
+export const FeaturesSection = () => {
   const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {

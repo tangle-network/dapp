@@ -1,2 +1,2 @@
 export * from './HeroSection';
-export * from './WhatMakesTangleUniqueSection';
+export * from './FeaturesSection';
