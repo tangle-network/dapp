@@ -3,7 +3,7 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
 // 0xa1a2b7e08793b3033122b83cbee56726678588b5 - webbWETH - mocked backend
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
-// 0x9678647b9fcb0039652a16dba688bd067d6e5077 - webbStandalone - dkg backend
+// 0xaa4cd2df238be5c360d2031bac48dc17e6a187d8 - webbStandAlone - DKG backend
 // 0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4 - webbtTNT-standalone
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
@@ -11,44 +11,43 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 13062856,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 14922326,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 15309867,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 8703495,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 8648487,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 8768287,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 8784848,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 2920599,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3146553,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 3082467,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 3220705,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 3239056,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 5611883,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 6646308,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 32139400,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 33462722,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 33068289,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 33927921,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 34045996,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 3771120,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3996742,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 3932707,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 4074545,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 4092725,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 20151492,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 19810510,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 20573380,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
-    '0x9678647b9fcb0039652a16dba688bd067d6e5077': 387417,
     '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 995373,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 1079099,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
