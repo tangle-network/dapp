@@ -223,7 +223,10 @@ export const WithdrawConfirm = forwardRef<
                         fw="bold"
                         className="block break-words text-mono-140 dark:text-mono-0"
                       >
-                        {shortenString(recipientAddress, 17)}
+                        {shortenString(
+                          recipientAddress,
+                          relayerAddress ? 6 : 17
+                        )}
                       </Typography>
                       <CopyWithTooltip textToCopy={recipientAddress} />
                     </div>

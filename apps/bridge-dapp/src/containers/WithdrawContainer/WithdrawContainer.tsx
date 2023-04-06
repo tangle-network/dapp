@@ -28,6 +28,7 @@ import {
   WithdrawCard,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import cx from 'classnames';
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
@@ -984,6 +985,7 @@ export const WithdrawContainer = forwardRef<
           : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
       isLoading:
         loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
+      className: cx('mt-4'),
       loadingText: isFetchingFeeInfo ? 'Fetching fee info...' : 'Connecting...',
       children: buttonText,
       onClick: handleWithdrawButtonClick,
