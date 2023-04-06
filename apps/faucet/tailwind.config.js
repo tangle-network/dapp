@@ -14,15 +14,20 @@ module.exports = {
     join(
       __dirname,
       '../../libs/webb-ui-components',
-      'src/**/*!(*.stories|*.spec).{ts,tsx,html,css}'
+      'src/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
-    join(__dirname, 'src/styles/**/*.{css,scss,sass,less,styl}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
     extend: {
       fontFamily: {
-        'satoshi-var': ['Satoshi Variable', 'sans-serif'],
+        'satoshi-var': [
+          'Satoshi Variable',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Arial',
+          'sans-serif',
+        ],
       },
     },
   },

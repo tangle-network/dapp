@@ -49,6 +49,7 @@ export * from './HelpLineIcon';
 export * from './InformationLine';
 export * from './KeyIcon';
 export * from './Link';
+export * from './LinkedIn';
 export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';

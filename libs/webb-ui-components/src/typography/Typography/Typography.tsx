@@ -24,6 +24,16 @@ const defaultComponent = {
   para2: 'p' as const,
   label: 'span' as const,
   utility: 'span' as const,
+
+  // The marketing variant
+  'mkt-h1': 'h1' as const,
+  'mkt-h2': 'h2' as const,
+  'mkt-h3': 'h3' as const,
+  'mkt-h4': 'h4' as const,
+  'mkt-body': 'p' as const,
+  'mkt-caption': 'p' as const,
+  'mkt-quote': 'span' as const,
+  'mkt-utility': 'span' as const,
 };
 
 /**

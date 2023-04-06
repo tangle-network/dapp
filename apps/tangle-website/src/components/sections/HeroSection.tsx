@@ -1,6 +1,7 @@
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Socials } from '@webb-tools/webb-ui-components';
 
-import { Heading, SectionDescription, Socials } from '..';
+import { Heading, SectionDescription } from '..';
+
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
 
 export const HeroSection = () => {
@@ -13,6 +14,7 @@ export const HeroSection = () => {
             The next-generation TSS based blockchain powering cross-chain
             zero-knowledge messaging and applications.
           </SectionDescription>
+
           <div className="flex gap-4">
             <Button
               href={WEBB_DOCS_URL}

@@ -25,7 +25,7 @@ export const AmountInput = forwardRef<
       className,
       errorMessage,
       id = 'amount',
-      info,
+      info = 'Amount',
       isDisabled: isDisabledProp,
       onAmountChange,
       onMaxBtnClick,
@@ -68,14 +68,13 @@ export const AmountInput = forwardRef<
                     asChild
                     className="flex items-start space-x-1"
                   >
-                    <span className="cursor-pointer">
+                    <span className="flex items-center cursor-pointer">
                       <TitleWithInfo
                         title={title}
-                        info={info}
                         variant="utility"
                         titleComponent="span"
                         className="text-mono-100 dark:text-mono-80"
-                        titleClassName="uppercase !text-inherit"
+                        titleClassName="capitalize !text-inherit"
                       />
                       <ChevronDown />
                     </span>
@@ -94,11 +93,11 @@ export const AmountInput = forwardRef<
               ) : (
                 <TitleWithInfo
                   title={title}
-                  info={info}
                   variant="utility"
+                  info={info}
                   titleComponent="span"
                   className="text-mono-100 dark:text-mono-80"
-                  titleClassName="uppercase !text-inherit"
+                  titleClassName="capitalize !text-inherit"
                 />
               )}
             </Label>
@@ -129,9 +128,9 @@ export const AmountInput = forwardRef<
         </InputWrapper>
 
         {errorMessage && (
-          <span className="flex mt-2 text-red-70 dark:text-red-50">
+          <span className="flex items-center text-red-70 dark:text-red-50">
             <InformationLine className="!fill-current mr-1" />
-            <Typography variant="body3" fw="bold" className="!text-current">
+            <Typography variant="body1" fw="bold" className="!text-current">
               {errorMessage}
             </Typography>
           </span>

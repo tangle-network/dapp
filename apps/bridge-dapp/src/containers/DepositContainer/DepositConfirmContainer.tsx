@@ -45,9 +45,11 @@ export const DepositConfirmContainer = forwardRef<
     },
     ref
   ) => {
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, startNewTransaction } = useVAnchor();
+
+    const [txId, setTxId] = useState('');
 
     const stage = useLatestTransactionStage('Deposit');
 
@@ -157,6 +159,8 @@ export const DepositConfirmContainer = forwardRef<
         tokenURI,
       });
 
+      setTxId(tx.id);
+
       try {
         txQueueApi.registerTransaction(tx);
         const args = await api?.prepareTransaction(
@@ -247,6 +251,15 @@ export const DepositConfirmContainer = forwardRef<
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+
     return (
       <DepositConfirm
         title={cardTitle}
@@ -257,7 +270,7 @@ export const DepositConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
           children: depositTxInProgress
-            ? 'New Transaction'
+            ? 'Make Another Transaction'
             : wrappingFlow
             ? 'Wrap And Deposit'
             : 'Deposit',
@@ -274,10 +287,11 @@ export const DepositConfirmContainer = forwardRef<
         amount={amount}
         wrappingAmount={String(amount)}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceChain={sourceChain?.name}
-        destChain={destChain?.name}
+        sourceChain={sourceChain}
+        destChain={destChain}
         fee={0}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
+        txStatusMessage={txStatusMessage}
         onClose={() => resetMainComponent()}
       />
     );

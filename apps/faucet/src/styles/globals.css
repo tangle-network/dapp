@@ -1,17 +1,5 @@
 /* Font Family Satoshi Variable */
 
-@font-face {
-  font-family: 'Satoshi Variable';
-  src: url('/fonts/Satoshi-Variable.ttf') format('truetype');
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Satoshi Variable';
-  src: url('/fonts/Satoshi-VariableItalic.ttf') format('truetype');
-  font-style: italic;
-}
-
 .hero-bg {
   @apply bg-center bg-no-repeat object-fill bg-cover;
 
@@ -25,26 +13,6 @@
 }
 
 /** TODO: Consider moving this to tailwind-preset if these classes share with the tangle-website */
-
-.title {
-  @apply text-[44px] leading-[61.6px] font-black text-mono-200;
-}
-
-.body {
-  @apply text-[18px] leading-[32.4px] font-medium text-mono-140;
-}
-
-.link {
-  @apply text-[16px] leading-[24px] font-bold tracking-[0.01em] text-blue-70;
-}
-
-.link-sm {
-  @apply text-[14px] leading-[23.8px] tracking-[0.8px] uppercase font-bold text-blue-70;
-}
-
-.info {
-  @apply text-[12px] leading-[18px] tracking-[0.01em] font-medium text-mono-160;
-}
 
 .input-height {
   @apply h-[74px];

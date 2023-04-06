@@ -32,7 +32,7 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
 
     const baseClsx = useMemo(
       () =>
-        'box-border inline-flex items-center gap-2 px-3 py-1.5 rounded-full utility uppercase',
+        'box-border inline-flex items-center gap-2 px-3 py-1.5 rounded-full uppercase text-[12px] leading-[15px] font-bold',
       []
     );
 

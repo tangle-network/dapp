@@ -26,7 +26,7 @@ module.exports = {
       },
       colors: {
         tangle_purple: '#444BD3',
-        introduction_bg: 'rgba(255, 255, 255, 0.5)'
+        introduction_bg: 'rgba(255, 255, 255, 0.5)',
       },
     },
   },
