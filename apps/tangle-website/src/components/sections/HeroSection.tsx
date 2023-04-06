@@ -1,15 +1,15 @@
 import { Button, Socials } from '@webb-tools/webb-ui-components';
 
-import { Heading1, SectionDescription } from '..';
+import { Heading, SectionDescription } from '..';
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
 
 export const HeroSection = () => {
   return (
-    <section className="w-full flex flex-col lg:flex-row md:px-4 lg:px-6 items-stretch">
+    <section className="flex flex-col items-stretch w-full lg:flex-row md:px-4 lg:px-6">
       <div className="flex-1 bg-purple-10 flex justify-center items-center py-16 px-[25px] md:py-32 md:pl-4 md:pr-36 lg:p-0">
         <div className="flex flex-col gap-8 lg:w-[65%]">
-          <Heading1 className="text-mono-200 w-3/5">Tangle Network</Heading1>
-          <SectionDescription className="text-mono-140 text-left">
+          <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
+          <SectionDescription>
             The next-generation TSS based blockchain powering cross-chain
             zero-knowledge messaging and applications.
           </SectionDescription>

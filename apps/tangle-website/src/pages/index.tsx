@@ -1,12 +1,18 @@
-import { HeroSection, FeaturesSection } from '../components';
+import {
+  HeroSection,
+  IntroducingSection,
+  FeaturesSection,
+} from '../components';
 
 export function Index() {
   return (
-    <>
+    <div className="bg-body_bg_image">
       <HeroSection />
 
+      <IntroducingSection />
+
       <FeaturesSection />
-    </>
+    </div>
   );
 }
 

@@ -3,9 +3,9 @@
 }
 
 /* Headings, sub-headings, card texts */
-.heading-1 {
-  @apply text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
-  md:text-[84px] md:leading-[113px] /** medium screen */
+.heading {
+  @apply text-[44px] leading-[52.8px] tracking-[-0.011em] /** small screen */
+  md:text-[64px] md:leading-[80px] /** medium screen */
   font-black;
 }
 

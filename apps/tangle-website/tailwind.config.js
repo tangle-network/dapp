@@ -21,7 +21,12 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        hero_bg_image: "url('/static/assets/hero-image.png')",
+        body_bg_image: "url('/static/assets/body-bg.svg')",
+        hero_bg_image: "url('/static/assets/hero-image.jpg')",
+      },
+      colors: {
+        tangle_purple: '#444BD3',
+        introduction_bg: 'rgba(255, 255, 255, 0.5)',
       },
       colors: {
         tangle_purple: '#444BD3',
