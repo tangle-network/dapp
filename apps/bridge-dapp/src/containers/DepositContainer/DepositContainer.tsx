@@ -802,52 +802,52 @@ export const DepositContainer = forwardRef<
     ]);
 
     return (
-      <div {...props} ref={ref} className="h-[628px]">
-        <DepositCard
-          className="max-w-none"
-          sourceChainProps={{
-            chain: selectedSourceChain,
-            onClick: sourceChainInputOnClick,
-            chainType: 'source',
-            info: 'Source chain',
-          }}
-          bridgingTokenProps={bridgingTokenProps}
-          destChainProps={{
-            chain: destChainInputValue,
-            onClick: () => {
-              setMainComponentName('dest-chain-list-card');
-            },
-            chainType: 'dest',
-            info: 'Destination chain',
-          }}
-          tokenInputProps={{
-            onClick: () => {
-              if (selectedSourceChain) {
-                setMainComponentName('token-deposit-list-card');
-              }
-            },
-            token: selectedToken,
-          }}
-          amountInputProps={{
-            amount: amount ? amount.toString() : undefined,
-            onAmountChange,
-            onMaxBtnClick: handleMaxBtnClick,
-            isDisabled: !selectedToken || !destChain,
-            errorMessage: amountErrorMessage,
-          }}
-          buttonProps={{
-            onClick: handleDepositButtonClick,
-            isLoading:
-              loading ||
-              isGeneratingNote ||
-              walletState === WalletState.CONNECTING,
-            loadingText: loading ? 'Connecting...' : 'Generating Note...',
-            isDisabled,
-            children: buttonText,
-          }}
-          token={selectedToken?.symbol}
-        />
-      </div>
+      <DepositCard
+        ref={ref}
+        className="max-w-none"
+        {...props}
+        sourceChainProps={{
+          chain: selectedSourceChain,
+          onClick: sourceChainInputOnClick,
+          chainType: 'source',
+          info: 'Source chain',
+        }}
+        bridgingTokenProps={bridgingTokenProps}
+        destChainProps={{
+          chain: destChainInputValue,
+          onClick: () => {
+            setMainComponentName('dest-chain-list-card');
+          },
+          chainType: 'dest',
+          info: 'Destination chain',
+        }}
+        tokenInputProps={{
+          onClick: () => {
+            if (selectedSourceChain) {
+              setMainComponentName('token-deposit-list-card');
+            }
+          },
+          token: selectedToken,
+        }}
+        amountInputProps={{
+          amount: amount ? amount.toString() : undefined,
+          onAmountChange,
+          onMaxBtnClick: handleMaxBtnClick,
+          isDisabled: !selectedToken || !destChain,
+          errorMessage: amountErrorMessage,
+        }}
+        buttonProps={{
+          onClick: handleDepositButtonClick,
+          isLoading:
+            loading ||
+            isGeneratingNote ||
+            walletState === WalletState.CONNECTING,
+          loadingText: loading ? 'Connecting...' : 'Generating Note...',
+          isDisabled,
+          children: buttonText,
+        }}
+        token={selectedToken?.symbol}
+      />
     );
   }
 );

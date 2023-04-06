@@ -1215,25 +1215,24 @@ export const WithdrawContainer = forwardRef<
   }, [feeInfo]);
 
   return (
-    <div ref={ref}>
-      <WithdrawCard
-        className="max-w-none h-[628px]"
-        tokenInputProps={tokenInputProps}
-        unwrappingAssetInputProps={unwrappingAssetInputProps}
-        fixedAmountInputProps={fixedAmountInputProps}
-        customAmountInputProps={customAmountInputProps}
-        unwrapSwitcherProps={unwrapSwitcherProps}
-        relayerInputProps={relayerInputProps}
-        recipientInputProps={recipientInputProps}
-        refundInputProps={{
-          refundCheckboxProps,
-          refundAmountInputProps,
-        }}
-        withdrawBtnProps={withdrawButtonProps}
-        infoItemProps={infoItemProps}
-        buttonDesc={buttonDesc}
-        buttonDescVariant="error"
-      />
-    </div>
+    <WithdrawCard
+      ref={ref}
+      className="max-w-none"
+      tokenInputProps={tokenInputProps}
+      unwrappingAssetInputProps={unwrappingAssetInputProps}
+      fixedAmountInputProps={fixedAmountInputProps}
+      customAmountInputProps={customAmountInputProps}
+      unwrapSwitcherProps={unwrapSwitcherProps}
+      relayerInputProps={relayerInputProps}
+      recipientInputProps={recipientInputProps}
+      refundInputProps={{
+        refundCheckboxProps,
+        refundAmountInputProps,
+      }}
+      withdrawBtnProps={withdrawButtonProps}
+      infoItemProps={infoItemProps}
+      buttonDesc={buttonDesc}
+      buttonDescVariant="error"
+    />
   );
 });

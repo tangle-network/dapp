@@ -16,37 +16,36 @@ import {
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
+  calculateTypedChainId,
   ChainType as ChainTypeEnum,
   CircomUtxo,
   Keypair,
   Note,
-  calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import {
+  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
   TransferCard,
-  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
-import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
+import { useAddCurrency, useConnectWallet, WalletState } from '../../hooks';
+import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import {
   ChainRecord,
-  CurrencyBalanceRecordType,
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
-import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -801,7 +800,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="max-w-none h-[628px]"
+        className="max-w-none"
         bridgeAssetInputProps={{
           token: selectedBridgingAsset,
           onClick: handleBridgingAssetInputClick,

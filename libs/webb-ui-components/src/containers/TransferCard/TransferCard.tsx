@@ -45,7 +45,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col max-w-[518px] w-full pb-4 justify-between',
+          'flex flex-col max-w-[518px] w-full h-full justify-between',
           className
         )}
         ref={ref}
