@@ -1025,12 +1025,12 @@ export const WithdrawContainer = forwardRef<
         return;
       }
 
-      const maxRefundOnRelayer = Number(
+      const relayerMaxRefund = parseFloat(
         ethers.utils.formatEther(feeInfo?.maxRefund ?? '0')
       );
-      if (parsedValue > maxRefundOnRelayer) {
+      if (Number.isNaN(relayerMaxRefund) || parsedValue > relayerMaxRefund) {
         setRefundAmountError(
-          `Amount must be less than or equal to ${maxRefundOnRelayer}`
+          `Amount must be less than or equal to ${relayerMaxRefund}`
         );
         return;
       }
@@ -1051,8 +1051,7 @@ export const WithdrawContainer = forwardRef<
         if (!feeInfo) {
           return;
         }
-        const maxRefund = Number(ethers.utils.formatEther(feeInfo.maxRefund));
-        setRefundAmount(maxRefund);
+        parseRefundAmount(ethers.utils.formatEther(feeInfo.maxRefund));
       },
     }),
     [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
@@ -1202,7 +1201,8 @@ export const WithdrawContainer = forwardRef<
       const message = getErrorMessage(fetchFeeInfoError);
       notificationApi.addToQueue({
         variant: 'error',
-        message,
+        message: 'Relayer fee info error',
+        secondaryMessage: message,
       });
     }
   }, [fetchFeeInfoError, notificationApi]);
