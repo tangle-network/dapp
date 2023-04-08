@@ -42,21 +42,21 @@ export type StoreType = {
  * @returns a getter and setter for the store
  */
 const useStore = () => {
-  const [accessToken, setAccessToken] = useLocalStorageState<
-    StoreType[StoreKey.accessToken]
-  >(StoreKey.accessToken);
+  const [accessToken, setAccessToken, { removeItem: removeAccessToken }] =
+    useLocalStorageState<StoreType[StoreKey.accessToken]>(StoreKey.accessToken);
 
-  const [refreshToken, setRefreshToken] = useLocalStorageState<
-    StoreType[StoreKey.refreshToken]
-  >(StoreKey.refreshToken);
+  const [refreshToken, setRefreshToken, { removeItem: removeRefreshToken }] =
+    useLocalStorageState<StoreType[StoreKey.refreshToken]>(
+      StoreKey.refreshToken
+    );
 
-  const [expiresIn, setExpiresIn] = useLocalStorageState<
-    StoreType[StoreKey.expiresIn]
-  >(StoreKey.expiresIn);
+  const [expiresIn, setExpiresIn, { removeItem: removeExpiresIn }] =
+    useLocalStorageState<StoreType[StoreKey.expiresIn]>(StoreKey.expiresIn);
 
-  const [twitterHandle, setTwitterHandle] = useLocalStorageState<
-    StoreType[StoreKey.twitterHandle]
-  >(StoreKey.twitterHandle);
+  const [twitterHandle, setTwitterHandle, { removeItem: removeTwitterHandle }] =
+    useLocalStorageState<StoreType[StoreKey.twitterHandle]>(
+      StoreKey.twitterHandle
+    );
 
   const store = useMemo(
     () => ({
@@ -80,36 +80,87 @@ const useStore = () => {
     [store]
   );
 
+  const setStoreByKey = useCallback(
+    (key: StoreKey, value: StoreType[StoreKey]): void => {
+      switch (key) {
+        case StoreKey.accessToken:
+          setAccessToken(value);
+          break;
+        case StoreKey.refreshToken:
+          setRefreshToken(value);
+          break;
+        case StoreKey.expiresIn:
+          setExpiresIn(value);
+          break;
+        case StoreKey.twitterHandle:
+          setTwitterHandle(value);
+          break;
+        default:
+          throw new Error(`Invalid StoreKey: ${key}`);
+      }
+    },
+    [setAccessToken, setExpiresIn, setRefreshToken, setTwitterHandle]
+  );
+
+  const removeStore = useCallback(
+    (key: StoreKey): void => {
+      switch (key) {
+        case StoreKey.accessToken:
+          removeAccessToken();
+          break;
+        case StoreKey.refreshToken:
+          removeRefreshToken();
+          break;
+        case StoreKey.expiresIn:
+          removeExpiresIn();
+          break;
+        case StoreKey.twitterHandle:
+          removeTwitterHandle();
+          break;
+        default:
+          throw new Error(`Invalid StoreKey: ${key}`);
+      }
+    },
+    [removeAccessToken, removeExpiresIn, removeRefreshToken, removeTwitterHandle] // prettier-ignore
+  );
+
   const setStore = useCallback(
     (key: StoreType | StoreKey, value?: StoreType[StoreKey]): void => {
       if (isStoreKey(key)) {
         const storeKey = key as StoreKey;
         const setValue = value as StoreType[StoreKey];
-        switch (storeKey) {
-          case StoreKey.accessToken:
-            setAccessToken(setValue);
-            break;
-          case StoreKey.refreshToken:
-            setRefreshToken(setValue);
-            break;
-          case StoreKey.expiresIn:
-            setExpiresIn(setValue);
-            break;
-          case StoreKey.twitterHandle:
-            setTwitterHandle(setValue);
-            break;
-          default:
-            throw new Error(`Invalid StoreKey: ${storeKey}`);
-        }
+        setStoreByKey(storeKey, setValue);
       } else {
         const newStore = key as StoreType;
-        setAccessToken(newStore[StoreKey.accessToken]);
-        setRefreshToken(newStore[StoreKey.refreshToken]);
-        setExpiresIn(newStore[StoreKey.expiresIn]);
-        setTwitterHandle(newStore[StoreKey.twitterHandle]);
+        if (newStore[StoreKey.accessToken]) {
+          setStoreByKey(StoreKey.accessToken, newStore[StoreKey.accessToken]);
+        } else {
+          removeStore(StoreKey.accessToken);
+        }
+
+        if (newStore[StoreKey.refreshToken]) {
+          setStoreByKey(StoreKey.refreshToken, newStore[StoreKey.refreshToken]);
+        } else {
+          removeStore(StoreKey.refreshToken);
+        }
+
+        if (newStore[StoreKey.expiresIn]) {
+          setStoreByKey(StoreKey.expiresIn, newStore[StoreKey.expiresIn]);
+        } else {
+          removeStore(StoreKey.expiresIn);
+        }
+
+        if (newStore[StoreKey.twitterHandle]) {
+          setStoreByKey(
+            StoreKey.twitterHandle,
+            newStore[StoreKey.twitterHandle]
+          );
+        } else {
+          removeStore(StoreKey.twitterHandle);
+        }
       }
     },
-    [setAccessToken, setExpiresIn, setRefreshToken, setTwitterHandle]
+    [removeStore, setStoreByKey]
   );
 
   return [getStore, setStore] as const;
