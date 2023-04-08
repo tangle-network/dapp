@@ -5,7 +5,9 @@ import { TwitterLoginBody } from '../types';
  * @param body the body of the request
  * @returns the parsed body
  */
-export default function parseTwitterLoginBody(body: any): TwitterLoginBody {
+export default function parseTwitterLoginBody(
+  body: any
+): TwitterLoginBody | never {
   const { clientId, code, codeVerifier, grantType, redirectUri } = body;
   if (!clientId || !code || !codeVerifier || !grantType || !redirectUri) {
     throw new Error('Missing required fields');

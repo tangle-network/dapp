@@ -1,60 +1,13 @@
 import { CheckboxCircleLine } from '@webb-tools/icons';
 import { Button } from '@webb-tools/webb-ui-components';
 import { useRouter } from 'next/router';
-import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import clientConfig from '../config/client';
-import { useFaucetContext } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { TwitterLoginBody, TwitterLoginResponse } from '../types';
-
-// Parse and validate the tokens response from the server
-const parseTokensResponse = (json: any): TwitterLoginResponse | never => {
-  const { accessToken, expiresIn, refreshToken, twitterHandle } = json;
-
-  if (!accessToken || !expiresIn || !refreshToken || !twitterHandle) {
-    throw new Error('Invalid tokens response');
-  }
-
-  return {
-    accessToken,
-    expiresIn,
-    refreshToken,
-    twitterHandle,
-  };
-};
-
-// The mocked login with twitter function
-const loginWithTwitter = async (
-  code: string
-): Promise<TwitterLoginResponse> | never => {
-  const body: TwitterLoginBody = {
-    clientId: clientConfig.twitterClientId,
-    code,
-    codeVerifier: 'challenge',
-    grantType: 'authorization_code',
-    redirectUri: clientConfig.appUrl,
-  };
-
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  const resp = await fetch('/api/auth/signin/twitter', {
-    body: JSON.stringify(body),
-    headers,
-    method: 'POST',
-  });
-
-  if (!resp.ok) {
-    throw new Error(
-      `Error logging in with twitter: [${resp.status}] ${resp.statusText}`
-    );
-  }
-
-  return parseTokensResponse(await resp.json());
-};
+import { TwitterLoginResponse } from '../types';
+import loginWithTwitter from '../utils/loginWithTwitter';
+import refreshTwitterTokens from '../utils/refreshTwitterTokens';
 
 const LoginWithTwitter = () => {
   const [getStore, setStore] = useStore();
@@ -63,6 +16,16 @@ const LoginWithTwitter = () => {
     return getStore(StoreKey.twitterHandle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getStore(StoreKey.twitterHandle)]);
+
+  const expiresIn = useMemo(() => {
+    return getStore(StoreKey.expiresIn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.expiresIn)]);
+
+  const refreshToken = useMemo(() => {
+    return getStore(StoreKey.refreshToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.refreshToken)]);
 
   const router = useRouter();
 
@@ -81,26 +44,63 @@ const LoginWithTwitter = () => {
   // State for login error
   const [loginError, setLoginError] = useState('');
 
-  // TODO: REMOVE
-  useEffect(() => {
-    console.group('ERROR');
-    console.log('loginError', loginError);
-    console.log('error', error);
-    console.groupEnd();
-  }, [loginError, error]);
-
+  // Handle login button click
   const handleLoginButtonClick = useCallback(async () => {
     // Update the logging state for the UI
     setIsLoggingIn(true);
   }, []);
 
-  // TODO: ADD IMPLEMENTATION
+  // Handle logout
   const handleLogout = useCallback(() => {
-    // twitterHandle$.next('');
-  }, []);
+    setStore({});
+  }, [setStore]);
 
+  // Handle response from twitter
+  const handleResponse = useCallback(
+    (twLoginResp: TwitterLoginResponse) => {
+      const { accessToken, expiresIn, refreshToken, twitterHandle } =
+        twLoginResp;
+
+      // Calculate the expiration date
+      const expiresAt = new Date();
+      expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
+
+      // Update the store
+      setStore({
+        accessToken,
+        expiresIn: expiresAt.toISOString(),
+        refreshToken,
+        twitterHandle,
+      });
+    },
+    [setStore]
+  );
+
+  // Handle error
+  const handleError = useCallback(
+    (error: unknown, abortSignal?: AbortSignal) => {
+      if (abortSignal?.aborted) {
+        // Ignore the error if the request was aborted
+        return;
+      }
+
+      console.error(error);
+
+      if (error instanceof Error) {
+        setLoginError(error.message);
+      } else {
+        setLoginError('There was an error logging in');
+      }
+    },
+    []
+  );
+
+  // Effect for handling the login when the code and state are available
   useEffect(() => {
-    const handleLogin = async () => {
+    // The abort controller for the login request
+    const abortController = new AbortController();
+
+    const loginWithTw = async () => {
       try {
         if (!code || !state || error) {
           return;
@@ -109,37 +109,68 @@ const LoginWithTwitter = () => {
         setIsLoggingIn(true);
         setLoginError('');
 
-        const { accessToken, refreshToken, expiresIn, twitterHandle } =
-          await loginWithTwitter(code);
+        const resp = await loginWithTwitter(code, abortController.signal);
 
-        // Calculate the expiration date
-        const expiresAt = new Date();
-        expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
+        // Handle the response
+        handleResponse(resp);
 
-        // Update the store
-        setStore({
-          accessToken,
-          expiresIn: expiresAt.toISOString(),
-          refreshToken,
-          twitterHandle,
-        });
-
+        // Delete the query params
         router.replace(router.pathname, undefined, { shallow: true });
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          setLoginError(error.message);
-        } else {
-          setLoginError('There was an error logging in');
-        }
+        handleError(error, abortController.signal);
       } finally {
         setIsLoggingIn(false);
       }
     };
 
-    handleLogin();
-  }, [code, state, error, setStore, router]);
+    loginWithTw();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [code, state, error, router, handleResponse, handleError]);
+
+  // Effect for re-fetching the tokens when tokens are expired
+  useEffect(() => {
+    // The abort controller for the request
+    const abortContr = new AbortController();
+
+    const refreshTokens = async () => {
+      try {
+        if (!expiresIn || !refreshToken) {
+          return;
+        }
+
+        const expiresAt = new Date(expiresIn).getTime();
+        const current = new Date().getTime();
+
+        // If the tokens are not expired, return
+        if (expiresAt > current) {
+          return;
+        }
+
+        setLoginError('');
+        setIsLoggingIn(true);
+
+        const resp = await refreshTwitterTokens(
+          refreshToken,
+          abortContr.signal
+        );
+
+        handleResponse(resp);
+      } catch (error) {
+        handleError(error, abortContr.signal);
+      } finally {
+        setIsLoggingIn(false);
+      }
+    };
+
+    refreshTokens();
+
+    return () => {
+      abortContr.abort();
+    };
+  }, [expiresIn, handleError, handleResponse, refreshToken]);
 
   return (
     <div>
@@ -167,7 +198,7 @@ const LoginWithTwitter = () => {
           variant="link"
           size="sm"
         >
-          Logout {twitterHandle}
+          Logout @{twitterHandle}
         </Button>
       )}
     </div>
