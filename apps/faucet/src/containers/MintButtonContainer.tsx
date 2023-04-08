@@ -3,18 +3,23 @@ import { useObservableState } from 'observable-hooks';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useFaucetContext } from '../provider';
+import useStore, { StoreKey } from '../store';
 
 // Mocked implementation of minting tokens
 const mintTokens = () =>
   new Promise<boolean>((resolve) => setTimeout(() => resolve(true), 3000));
 
 const MintButtonContainer = () => {
-  const {
-    inputValues$,
-    twitterHandle$,
-    isMintingModalOpen$,
-    isMintingSuccess$,
-  } = useFaucetContext();
+  const { inputValues$, isMintingModalOpen$, isMintingSuccess$ } =
+    useFaucetContext();
+
+  const [getStore] = useStore();
+
+  const twitterHandle = useMemo(
+    () => getStore(StoreKey.twitterHandle),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getStore(StoreKey.twitterHandle)]
+  );
 
   const inputValues = useObservableState(inputValues$);
 
@@ -24,14 +29,14 @@ const MintButtonContainer = () => {
       !inputValues?.chain ||
       !inputValues?.contractAddress ||
       !inputValues?.recepient ||
-      !twitterHandle$
+      !twitterHandle
     );
   }, [
     inputValues?.chain,
     inputValues?.contractAddress,
     inputValues?.recepient,
     inputValues?.token,
-    twitterHandle$,
+    twitterHandle,
   ]);
 
   // Mocked implementation of minting tokens

@@ -4,6 +4,7 @@ import { ComponentProps, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
+import useStore, { StoreKey } from '../store';
 
 const overrideInputProps: ComponentProps<
   typeof RecipientInput
@@ -13,9 +14,15 @@ const overrideInputProps: ComponentProps<
 };
 
 const ContractAddressInput = () => {
-  const { config, inputValues$, twitterHandle$ } = useFaucetContext();
+  const { config, inputValues$ } = useFaucetContext();
 
-  const twitterHandle = useObservableState(twitterHandle$);
+  const [getStore] = useStore();
+
+  const twitterHandle = useMemo(
+    () => getStore(StoreKey.twitterHandle),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getStore(StoreKey.twitterHandle)]
+  );
 
   const selectedChain = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import clientConfig from '../config/client';
 import { useFaucetContext } from '../provider';
+import useStore, { StoreKey } from '../store';
 import { TwitterLoginBody, TwitterLoginResponse } from '../types';
 
 // Parse and validate the tokens response from the server
@@ -56,15 +57,22 @@ const loginWithTwitter = async (
 };
 
 const LoginWithTwitter = () => {
-  const { query } = useRouter();
+  const [getStore, setStore] = useStore();
+
+  const twitterHandle = useMemo(() => {
+    return getStore(StoreKey.twitterHandle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.twitterHandle)]);
+
+  const router = useRouter();
 
   const { code, state, error } = useMemo(() => {
     return {
-      code: query.code as string | undefined,
-      error: query.error as string | undefined,
-      state: query.state as string | undefined,
+      code: router.query.code as string | undefined,
+      error: router.query.error as string | undefined,
+      state: router.query.state as string | undefined,
     };
-  }, [query]);
+  }, [router.query]);
 
   const [isLoggingIn, setIsLoggingIn] = useState(() =>
     code && state ? true : false
@@ -73,6 +81,7 @@ const LoginWithTwitter = () => {
   // State for login error
   const [loginError, setLoginError] = useState('');
 
+  // TODO: REMOVE
   useEffect(() => {
     console.group('ERROR');
     console.log('loginError', loginError);
@@ -80,18 +89,15 @@ const LoginWithTwitter = () => {
     console.groupEnd();
   }, [loginError, error]);
 
-  const { twitterHandle$ } = useFaucetContext();
-
-  const twitterHandle = useObservableState(twitterHandle$);
-
   const handleLoginButtonClick = useCallback(async () => {
     // Update the logging state for the UI
     setIsLoggingIn(true);
   }, []);
 
+  // TODO: ADD IMPLEMENTATION
   const handleLogout = useCallback(() => {
-    twitterHandle$.next('');
-  }, [twitterHandle$]);
+    // twitterHandle$.next('');
+  }, []);
 
   useEffect(() => {
     const handleLogin = async () => {
@@ -105,12 +111,20 @@ const LoginWithTwitter = () => {
 
         const { accessToken, refreshToken, expiresIn, twitterHandle } =
           await loginWithTwitter(code);
-        console.group('LOGIN');
-        console.log('accessToken', accessToken);
-        console.log('refreshToken', refreshToken);
-        console.log('expiresIn', expiresIn);
-        console.log('twitterHandle', twitterHandle);
-        console.groupEnd();
+
+        // Calculate the expiration date
+        const expiresAt = new Date();
+        expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
+
+        // Update the store
+        setStore({
+          accessToken,
+          expiresIn: expiresAt.toISOString(),
+          refreshToken,
+          twitterHandle,
+        });
+
+        router.replace(router.pathname, undefined, { shallow: true });
       } catch (error) {
         console.error(error);
 
@@ -125,14 +139,13 @@ const LoginWithTwitter = () => {
     };
 
     handleLogin();
-  }, [code, state, error]);
+  }, [code, state, error, setStore, router]);
 
   return (
     <div>
       <Button
         isLoading={isLoggingIn}
         loadingText="Logging In"
-        // onClick={handleLoginWithTwitter}
         isFullWidth
         isDisabled={!!twitterHandle}
         onClick={handleLoginButtonClick}
