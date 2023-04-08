@@ -30469,6 +30469,11 @@ use-isomorphic-layout-effect@^1.1.1:
   resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz#497cefb13d863d687b08477d9e5a164ad8c1a6fb"
   integrity sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==
 
+use-local-storage-state@^18.3.0:
+  version "18.3.0"
+  resolved "https://registry.yarnpkg.com/use-local-storage-state/-/use-local-storage-state-18.3.0.tgz#497a6bf9407a0b66bb60c1037adf6f41d27d974d"
+  integrity sha512-SWInjtfTuptkw1S7ZmVxcXLpcNUlUIG3mvZahnXPWbltF4Kz/mOhnQ8cac681UxDHOEFqKdivxHMmeScMTeKZg==
+
 use-sidecar@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/use-sidecar/-/use-sidecar-1.1.2.tgz#2f43126ba2d7d7e117aa5855e5d8f0276dfe73c2"
