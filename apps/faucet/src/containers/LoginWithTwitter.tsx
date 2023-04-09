@@ -168,7 +168,8 @@ const LoginWithTwitter = () => {
         return;
       }
 
-      result.match(handleResponse, () => {
+      result.match(handleResponse, (_) => {
+        // Ignore the error and clear the store if the request was failed
         if (!abortContr.signal.aborted) {
           setStore({});
         }
