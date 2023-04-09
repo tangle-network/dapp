@@ -20,9 +20,9 @@ enum FaucetErrorCode {
   INVALID_RESPONSE,
 
   /**
-   * Invalid parameters
+   * Invalid request body
    */
-  INVALID_PARAMS,
+  INVALID_REQUEST_BODY,
 
   /**
    * Refresh tokens failed
@@ -33,6 +33,11 @@ enum FaucetErrorCode {
    * The user denied the login request to Twitter
    */
   TWITTER_LOGIN_DENIED,
+
+  /**
+   * The error when call `.json()` on the response
+   */
+  JSON_PARSE_ERROR,
 
   /**
    * Unknown error

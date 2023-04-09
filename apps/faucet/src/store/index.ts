@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+
 export enum StoreKey {
   accessToken = 'accessToken',
   refreshToken = 'refreshToken',
@@ -35,6 +38,14 @@ export type StoreType = {
    * The twitter username of the user
    */
   [StoreKey.twitterHandle]?: string;
+};
+
+const handleInvalidKey = (key: StoreKey): void => {
+  const err = FaucetError.from(FaucetErrorCode.INVALID_STORE_KEY, {
+    storeKey: key,
+  });
+
+  console.error(err);
 };
 
 /**
@@ -95,8 +106,9 @@ const useStore = () => {
         case StoreKey.twitterHandle:
           setTwitterHandle(value);
           break;
-        default:
-          throw new Error(`Invalid StoreKey: ${key}`);
+        default: {
+          handleInvalidKey(key);
+        }
       }
     },
     [setAccessToken, setExpiresIn, setRefreshToken, setTwitterHandle]
@@ -118,7 +130,7 @@ const useStore = () => {
           removeTwitterHandle();
           break;
         default:
-          throw new Error(`Invalid StoreKey: ${key}`);
+          handleInvalidKey(key);
       }
     },
     [removeAccessToken, removeExpiresIn, removeRefreshToken, removeTwitterHandle] // prettier-ignore

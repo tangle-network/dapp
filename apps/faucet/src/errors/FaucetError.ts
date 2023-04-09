@@ -8,11 +8,12 @@ const errorMessages: {
   [FaucetErrorCode.INVALID_STORE_KEY]: 'Invalid store key',
   [FaucetErrorCode.TWITTER_LOGIN_FAILED]: 'Twitter login failed',
   [FaucetErrorCode.INVALID_RESPONSE]: 'Invalid response',
-  [FaucetErrorCode.INVALID_PARAMS]: 'Invalid parameters',
+  [FaucetErrorCode.INVALID_REQUEST_BODY]: 'Invalid request body',
   [FaucetErrorCode.REFRESH_TOKENS_FAILED]: 'Refresh tokens failed',
   [FaucetErrorCode.TWITTER_LOGIN_DENIED]: 'Twitter login denied',
   [FaucetErrorCode.UNKNOWN]: 'Unknown error',
   [FaucetErrorCode.UNKNOWN_TWITTER_ERROR]: 'Unknown Twitter error',
+  [FaucetErrorCode.JSON_PARSE_ERROR]: 'JSON parse error',
 };
 
 /**
@@ -22,29 +23,24 @@ class FaucetError<Code extends FaucetErrorCode> extends Error {
   // Private prevent mutation
   private code: Code;
   private payload?: ErrorPayload[Code];
+  private displayMessage: string;
 
   /**
    * Private constructor to prevent direct instantiation
    * @param message Error message
    */
   private constructor(errorCode: Code, payload?: ErrorPayload[Code]) {
-    const message = errorMessages[errorCode];
+    const payloadString = payload ? JSON.stringify(payload, null, 2) : '';
+    const message = `${errorMessages[errorCode]} with payload: ${payloadString}`;
     super(message);
 
     this.code = errorCode;
     this.payload = payload;
+    this.displayMessage = errorMessages[errorCode] || 'Unknown error';
     this.name = 'FaucetError';
 
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, FaucetError.prototype);
-  }
-
-  /**
-   * Get the error message
-   * @returns The error message
-   */
-  getErrorMessage(): string {
-    return errorMessages[this.code];
   }
 
   /**
@@ -61,6 +57,13 @@ class FaucetError<Code extends FaucetErrorCode> extends Error {
    */
   getPayload(): ErrorPayload[Code] | undefined {
     return this.payload;
+  }
+
+  /**
+   * Get the display message
+   */
+  getDisplayMessage(): string {
+    return this.displayMessage;
   }
 
   /**

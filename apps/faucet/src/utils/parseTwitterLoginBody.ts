@@ -1,4 +1,16 @@
+import { err, ok, Result } from 'neverthrow';
+
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
 import { TwitterLoginBody } from '../types';
+
+const requiredFields = [
+  'clientId',
+  'code',
+  'codeVerifier',
+  'grantType',
+  'redirectUri',
+] as const;
 
 /**
  * Parses and validates the body of a Twitter login request
@@ -7,17 +19,24 @@ import { TwitterLoginBody } from '../types';
  */
 export default function parseTwitterLoginBody(
   body: any
-): TwitterLoginBody | never {
+): Result<TwitterLoginBody, FaucetError<FaucetErrorCode.INVALID_REQUEST_BODY>> {
   const { clientId, code, codeVerifier, grantType, redirectUri } = body;
+
   if (!clientId || !code || !codeVerifier || !grantType || !redirectUri) {
-    throw new Error('Missing required fields');
+    return err(
+      FaucetError.from(FaucetErrorCode.INVALID_REQUEST_BODY, {
+        extraInfo: `Missing fields: ${requiredFields
+          .filter((field) => !body[field])
+          .join(', ')}`,
+      })
+    );
   }
 
-  return {
+  return ok({
     clientId,
     code,
     codeVerifier,
     grantType,
     redirectUri,
-  };
+  });
 }

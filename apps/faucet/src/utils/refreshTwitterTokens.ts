@@ -1,11 +1,23 @@
+import { err, Result } from 'neverthrow';
+
 import clientConfig from '../config/client';
-import { TwitterRefreshTokensBody } from '../types';
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+import { TwitterLoginResponse, TwitterRefreshTokensBody } from '../types';
 import parseTokensResponse from './parseTokensResponse';
 
 const refreshTwitterTokens = async (
   refreshToken: string,
   abortSignal?: AbortSignal
-) => {
+): Promise<
+  | Result<
+      TwitterLoginResponse,
+      | FaucetError<FaucetErrorCode.INVALID_RESPONSE>
+      | FaucetError<FaucetErrorCode.REFRESH_TOKENS_FAILED>
+      | FaucetError<FaucetErrorCode.JSON_PARSE_ERROR>
+    >
+  | undefined
+> => {
   const body: TwitterRefreshTokensBody = {
     clientId: clientConfig.twitterClientId,
     refreshToken,
@@ -15,30 +27,48 @@ const refreshTwitterTokens = async (
     'Content-Type': 'application/json',
   };
 
-  const resp = await fetch('/api/auth/refresh/twitter', {
-    body: JSON.stringify(body),
-    headers,
-    method: 'POST',
-    signal: abortSignal,
-  });
+  try {
+    const resp = await fetch('/api/auth/refresh/twitter', {
+      body: JSON.stringify(body),
+      headers,
+      method: 'POST',
+      signal: abortSignal,
+    });
 
-  if (!resp.ok) {
-    let msg = '';
+    if (!resp.ok) {
+      let msg = '';
+
+      try {
+        const json = await resp.json();
+        console.group('ERROR JSON');
+        console.log(json);
+        console.groupEnd();
+        msg = json.message || resp.statusText;
+      } catch (error) {
+        msg = resp.statusText;
+      }
+
+      return err(
+        FaucetError.from(FaucetErrorCode.REFRESH_TOKENS_FAILED, {
+          message: msg,
+          status: resp.status,
+        })
+      );
+    }
 
     try {
       const json = await resp.json();
-      console.group('ERROR JSON');
-      console.log(json);
-      console.groupEnd();
-      msg = json.message || resp.statusText;
+      return parseTokensResponse(json);
     } catch (error) {
-      msg = resp.statusText;
+      return err(
+        FaucetError.from(FaucetErrorCode.JSON_PARSE_ERROR, {
+          context: 'refreshTwitterTokens()',
+        })
+      );
     }
-
-    throw new Error(`Error refreshing twitter tokens: [${resp.status}] ${msg}`);
+  } catch (error) {
+    // Ignore abort errors
   }
-
-  return parseTokensResponse(await resp.json());
 };
 
 export default refreshTwitterTokens;

@@ -18,8 +18,24 @@ type ErrorPayload = {
   /**
    * The parameters which are invalid
    */
-  [FaucetErrorCode.INVALID_PARAMS]: {
-    params: string[];
+  [FaucetErrorCode.INVALID_REQUEST_BODY]: {
+    extraInfo: string;
+  };
+
+  /**
+   * Extra info for the twitter login failed error
+   */
+  [FaucetErrorCode.TWITTER_LOGIN_FAILED]: {
+    status: number;
+    message: string;
+  };
+
+  /**
+   * Extra info for the refresh tokens failed error
+   */
+  [FaucetErrorCode.REFRESH_TOKENS_FAILED]: {
+    status: number;
+    message: string;
   };
 
   /**
@@ -37,10 +53,21 @@ type ErrorPayload = {
     error: string;
   };
 
+  /**
+   * Extra info for the JSON parse error
+   */
+  [FaucetErrorCode.JSON_PARSE_ERROR]: {
+    context: string;
+  };
+
+  /**
+   * Extra info for the invalid response error
+   */
+  [FaucetErrorCode.INVALID_RESPONSE]: {
+    context: string;
+  };
+
   // No payload for these errors
-  [FaucetErrorCode.INVALID_RESPONSE]: undefined;
-  [FaucetErrorCode.TWITTER_LOGIN_FAILED]: undefined;
-  [FaucetErrorCode.REFRESH_TOKENS_FAILED]: undefined;
   [FaucetErrorCode.TWITTER_LOGIN_DENIED]: undefined;
 };
 

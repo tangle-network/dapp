@@ -1,3 +1,7 @@
+import { err, ok, Result } from 'neverthrow';
+
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
 import { TwitterLoginResponse } from '../types';
 
 /**
@@ -5,19 +9,28 @@ import { TwitterLoginResponse } from '../types';
  * @param json the json response from the server
  * @returns the tokens response or throw an error
  */
-const parseTokensResponse = (json: any): TwitterLoginResponse | never => {
+const parseTokensResponse = (
+  json: any
+): Result<
+  TwitterLoginResponse,
+  FaucetError<FaucetErrorCode.INVALID_RESPONSE>
+> => {
   const { accessToken, expiresIn, refreshToken, twitterHandle } = json;
 
   if (!accessToken || !expiresIn || !refreshToken || !twitterHandle) {
-    throw new Error('Invalid tokens response');
+    return err(
+      FaucetError.from(FaucetErrorCode.INVALID_RESPONSE, {
+        context: 'parseTokensResponse()',
+      })
+    );
   }
 
-  return {
+  return ok({
     accessToken,
     expiresIn,
     refreshToken,
     twitterHandle,
-  };
+  });
 };
 
 export default parseTokensResponse;

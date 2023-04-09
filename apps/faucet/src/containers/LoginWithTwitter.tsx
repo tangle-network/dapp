@@ -1,9 +1,12 @@
+import { LoggerService } from '@webb-tools/browser-utils';
 import { CheckboxCircleLine } from '@webb-tools/icons';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import clientConfig from '../config/client';
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
 import useStore, { StoreKey } from '../store';
 import { TwitterLoginResponse } from '../types';
 import loginWithTwitter from '../utils/loginWithTwitter';
@@ -78,19 +81,16 @@ const LoginWithTwitter = () => {
 
   // Handle error
   const handleError = useCallback(
-    (error: unknown, abortSignal?: AbortSignal) => {
+    (error: FaucetError<FaucetErrorCode>, abortSignal: AbortSignal) => {
       if (abortSignal?.aborted) {
         // Ignore the error if the request was aborted
         return;
       }
 
-      console.error(error);
+      const logger = LoggerService.get(error.name);
+      logger.error(error.message);
 
-      if (error instanceof Error) {
-        setLoginError(error.message);
-      } else {
-        setLoginError('There was an error logging in');
-      }
+      setLoginError(error.getDisplayMessage());
     },
     []
   );
@@ -101,26 +101,34 @@ const LoginWithTwitter = () => {
     const abortController = new AbortController();
 
     const loginWithTw = async () => {
-      try {
-        if (!code || !state || error) {
-          return;
+      if (!code || !state || error) {
+        if (state && error) {
+          handleError(
+            FaucetError.fromTwitterError(error),
+            abortController.signal
+          );
+          router.replace(router.pathname, undefined, { shallow: true });
         }
-
-        setIsLoggingIn(true);
-        setLoginError('');
-
-        const resp = await loginWithTwitter(code, abortController.signal);
-
-        // Handle the response
-        handleResponse(resp);
-
-        // Delete the query params
-        router.replace(router.pathname, undefined, { shallow: true });
-      } catch (error) {
-        handleError(error, abortController.signal);
-      } finally {
-        setIsLoggingIn(false);
+        return;
       }
+
+      setIsLoggingIn(true);
+      setLoginError('');
+
+      const result = await loginWithTwitter(code, abortController.signal);
+      if (!result) {
+        setIsLoggingIn(false);
+        return;
+      }
+
+      result.match(handleResponse, (error) => {
+        handleError(error, abortController.signal);
+      });
+
+      setIsLoggingIn(false);
+
+      // Delete the query params
+      router.replace(router.pathname, undefined, { shallow: true });
     };
 
     loginWithTw();
@@ -136,33 +144,37 @@ const LoginWithTwitter = () => {
     const abortContr = new AbortController();
 
     const refreshTokens = async () => {
-      try {
-        if (!expiresIn || !refreshToken) {
-          return;
-        }
-
-        const expiresAt = new Date(expiresIn).getTime();
-        const current = new Date().getTime();
-
-        // If the tokens are not expired, return
-        if (expiresAt > current) {
-          return;
-        }
-
-        setLoginError('');
-        setIsLoggingIn(true);
-
-        const resp = await refreshTwitterTokens(
-          refreshToken,
-          abortContr.signal
-        );
-
-        handleResponse(resp);
-      } catch (error) {
-        handleError(error, abortContr.signal);
-      } finally {
-        setIsLoggingIn(false);
+      if (!expiresIn || !refreshToken) {
+        return;
       }
+
+      const expiresAt = new Date(expiresIn).getTime();
+      const current = new Date().getTime();
+
+      // If the tokens are not expired, return
+      if (expiresAt > current) {
+        return;
+      }
+
+      setLoginError('');
+      setIsLoggingIn(true);
+
+      const result = await refreshTwitterTokens(
+        refreshToken,
+        abortContr.signal
+      );
+      if (!result) {
+        setIsLoggingIn(false);
+        return;
+      }
+
+      result.match(handleResponse, () => {
+        if (!abortContr.signal.aborted) {
+          setStore({});
+        }
+      });
+
+      setIsLoggingIn(false);
     };
 
     refreshTokens();
@@ -170,7 +182,7 @@ const LoginWithTwitter = () => {
     return () => {
       abortContr.abort();
     };
-  }, [expiresIn, handleError, handleResponse, refreshToken]);
+  }, [expiresIn, handleResponse, refreshToken, setStore]);
 
   return (
     <div>
@@ -191,7 +203,7 @@ const LoginWithTwitter = () => {
         {twitterHandle ? 'Identity Verified' : 'Login with Twitter'}
       </Button>
 
-      {twitterHandle && (
+      {twitterHandle ? (
         <Button
           onClick={handleLogout}
           className="mt-2 ml-auto !normal-case"
@@ -200,6 +212,17 @@ const LoginWithTwitter = () => {
         >
           Logout @{twitterHandle}
         </Button>
+      ) : (
+        loginError && (
+          <Typography
+            component="p"
+            ta="center"
+            variant="mkt-utility"
+            className="!text-red-70 mt-2"
+          >
+            {loginError}
+          </Typography>
+        )
       )}
     </div>
   );
