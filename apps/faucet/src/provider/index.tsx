@@ -61,23 +61,23 @@ export type FaucetContextType = {
 // Note: This is a placeholder for now
 // chain name -> supported token symbol -> contract address
 const config: Record<string, Record<string, string>> = {
-  'Moonbase Alpha': {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  arbitrum: {
+  Arbitrum: {
     wTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
-  goerli: {
+  Goerli: {
     tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
     webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
-  mumbai: {
+  'Moonbase Alpha': {
     tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
-  optimism: {
+  Optimism: {
     tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
-  sepolia: {
+  'Polygon Mumbai': {
+    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  },
+  Sepolia: {
     tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
   },
 };
