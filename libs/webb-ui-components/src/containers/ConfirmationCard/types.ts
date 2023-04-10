@@ -112,7 +112,7 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   wrappableTokenSymbol?: string;
 
   /**
-   * Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+   * Due to wrapping fee, a wrapping amount would be larger than the bridged amount.
    */
   wrappingAmount?: string;
 }
@@ -163,7 +163,7 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
   /**
    * Transaction fee info
    */
-  feesInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+  feeInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
    * The relayer address

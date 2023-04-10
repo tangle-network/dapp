@@ -284,7 +284,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Max fees',
+                  title: 'Max fee',
                 }}
                 rightContent={feeContent}
               />

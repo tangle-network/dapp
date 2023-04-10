@@ -660,7 +660,7 @@ export const WithdrawContainer = forwardRef<
       });
     }
 
-    const fees =
+    const fee =
       feeInfoOrBigNumber instanceof BigNumber
         ? feeInfoOrBigNumber
         : totalFeeInWei ?? BigNumber.from(0);
@@ -674,8 +674,8 @@ export const WithdrawContainer = forwardRef<
         targetChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
-        fees={fees}
-        amountAfterFees={amountAfterFeeWei}
+        fee={fee}
+        amountAfterFee={amountAfterFeeWei}
         isRefund={isRefund}
         fungibleCurrency={{
           value: fungibleCurrency,
@@ -686,7 +686,7 @@ export const WithdrawContainer = forwardRef<
             ? { value: wrappableCurrency }
             : undefined
         }
-        feesInfo={transactionFeeInfo}
+        feeInfo={transactionFeeInfo}
         receivingInfo={refundInfo}
         refundAmount={ethers.utils.parseEther(refundAmount.toString())}
         refundToken={currentNativeCurrency?.symbol}
@@ -814,7 +814,7 @@ export const WithdrawContainer = forwardRef<
     const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
 
     if (amount < totalFee) {
-      return `Insufficient funds. You need more than ${formattedFee} to cover the fees`;
+      return `Insufficient funds. You need more than ${formattedFee} to cover the fee`;
     }
   }, [amount, totalFeeInWei]);
 
@@ -881,7 +881,7 @@ export const WithdrawContainer = forwardRef<
       },
       {
         leftTextProps: {
-          title: 'Max fees',
+          title: 'Max fee',
           info: transactionFeeInfo,
         },
         rightContent: txFeeContent,
