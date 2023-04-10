@@ -9,9 +9,15 @@ export abstract class ChainQuery<Provider> {
   constructor(protected inner: Provider) {}
 
   abstract currentBlock(): Promise<number>;
+
   abstract tokenBalanceByCurrencyId(
     typedChainId: number,
-    currency: number
+    currency: number,
+    accountAddress?: string
   ): Observable<string>;
-  abstract tokenBalanceByAddress(address: string): Observable<string>;
+
+  abstract tokenBalanceByAddress(
+    address: string,
+    accountAddress?: string
+  ): Observable<string>;
 }

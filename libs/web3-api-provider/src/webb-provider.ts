@@ -169,12 +169,17 @@ export class WebbWeb3Provider
   async getResourceId(): Promise<ResourceId | null> {
     const vanchors = await this.methods.bridgeApi.getVAnchors();
     if (vanchors.length === 0) {
+      console.error('No vanchors found for this chain.');
       return null;
     }
 
     const chainId = await this.getChainId();
     const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
     const address = vanchors[0].neighbours[typedChainId];
+    if (!address) {
+      console.error('No vanchor found for this chain.');
+      return null;
+    }
 
     return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }

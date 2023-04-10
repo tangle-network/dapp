@@ -5,7 +5,7 @@ import {
   ExternalLinkLine,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import {
   Avatar,
@@ -35,6 +35,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       className,
       destChain,
       fee,
+      feeToken,
       note,
       onClose,
       isCopied,
@@ -53,6 +54,14 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
     },
     ref
   ) => {
+    const feeContent = useMemo(() => {
+      if (typeof fee === 'number' || typeof fee === 'string') {
+        return `${fee} ${feeToken ?? ''}`;
+      }
+
+      return '--';
+    }, [fee, feeToken]);
+
     return (
       <div
         {...props}
@@ -275,10 +284,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Fees',
-                  info: 'Fees',
+                  title: 'Max fee',
                 }}
-                rightContent={fee?.toString()}
+                rightContent={feeContent}
               />
             </div>
           </div>
