@@ -812,11 +812,13 @@ export const WithdrawContainer = forwardRef<
 
     const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
     const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+    const tkSymbol = selectedFungibleToken?.symbol ?? '';
+    const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
     if (amount < totalFee) {
-      return `Insufficient funds. You need more than ${formattedFee} to cover the fee`;
+      return `Insufficient funds. You need more than ${feeText} to cover the fee`;
     }
-  }, [amount, totalFeeInWei]);
+  }, [amount, selectedFungibleToken?.symbol, totalFeeInWei]);
 
   const infoItemProps = useMemo<
     ComponentProps<typeof WithdrawCard>['infoItemProps']
