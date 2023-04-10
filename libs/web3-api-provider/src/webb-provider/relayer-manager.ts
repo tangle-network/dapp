@@ -32,52 +32,10 @@ export class Web3RelayerManager extends WebbRelayerManager {
       return null;
     }
 
-    return WebbRelayer.intoActiveWebRelayer(
-      relayer,
-      {
-        basedOn: 'evm',
-        typedChainId,
-      },
-      // Define the function for retrieving fee information for the relayer
-      async (note: string) => {
-        const depositNote = await Note.deserialize(note);
-        const evmNote = depositNote.note;
-        const typedChainId = Number(depositNote.note.targetChainId);
-        const contractAddress = depositNote.note.targetIdentifyingData;
-
-        // Given the note, iterate over the relayer's supported contracts and find the corresponding configuration
-        // for the contract.
-        const supportedContract = relayer.capabilities.supportedChains.evm
-          .get(typedChainId)
-          ?.contracts.find(({ address }) => {
-            // Match on the relayer configuration as well as note
-            return address.toLowerCase() === contractAddress.toLowerCase();
-          });
-
-        // The user somehow selected a relayer which does not support the functionality.
-        // This should not be possible as only supported functionalities should be selectable in the UI.
-        if (!supportedContract) {
-          throw WebbError.from(WebbErrorCodes.NoRelayerSupport);
-        }
-
-        const principleBig = ethers.utils.parseUnits(
-          supportedContract.size.toString(),
-          evmNote.denomination
-        );
-        const withdrawFeeMill =
-          supportedContract.withdrawFeePercentage * 1000000;
-
-        const withdrawFeeMillBig = ethers.BigNumber.from(withdrawFeeMill);
-        const feeBigMill = principleBig.mul(withdrawFeeMillBig);
-
-        const feeBig = feeBigMill.div(ethers.BigNumber.from(1000000));
-
-        return {
-          totalFees: feeBig.toString(),
-          withdrawFeePercentage: supportedContract.withdrawFeePercentage,
-        };
-      }
-    );
+    return WebbRelayer.intoActiveWebRelayer(relayer, {
+      basedOn: 'evm',
+      typedChainId,
+    });
   }
 
   /*

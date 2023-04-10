@@ -45,12 +45,12 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The fee number
    */
-  fees: BigNumber;
+  fee: BigNumber;
 
   /**
-   * The amount after fees
+   * The amount after fee
    */
-  amountAfterFees: BigNumber;
+  amountAfterFee: BigNumber;
 
   /**
    * Recipient address
@@ -88,9 +88,9 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   receivingInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
-   * The fees info
+   * The fee info
    */
-  feesInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+  feeInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
    * The boolean to check if the user selected refund

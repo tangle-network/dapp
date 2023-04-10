@@ -43,6 +43,8 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       inputNotes,
       onResetState,
+      feeAmount,
+      feeToken,
       ...props
     },
     ref
@@ -273,6 +275,8 @@ export const TransferConfirmContainer = forwardRef<
         relayerAvatarTheme={
           activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
         }
+        fee={feeAmount}
+        feeToken={feeToken}
         onClose={() => setMainComponent(undefined)}
         checkboxProps={{
           children: 'I have copied the change note',

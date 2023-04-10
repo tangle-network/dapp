@@ -10,12 +10,13 @@ const iconPlacements = {
   end: 'justify-end',
 };
 
-export const Socials = forwardRef<HTMLElement, SocialsProps>(
-  ({ className, ...props }) => {
+export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
+  ({ className, ...props }, ref) => {
     const { iconPlacement = 'start' } = props;
 
     return (
       <div
+        ref={ref}
         className={twMerge(
           'flex items-center space-x-4',
           iconPlacements[iconPlacement]
