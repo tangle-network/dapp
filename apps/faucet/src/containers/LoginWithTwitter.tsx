@@ -1,6 +1,7 @@
 import { LoggerService } from '@webb-tools/browser-utils';
 import { CheckboxCircleLine } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -32,17 +33,18 @@ const LoginWithTwitter = () => {
 
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+
   const { code, state, error } = useMemo(() => {
     return {
-      code: router.query.code as string | undefined,
-      error: router.query.error as string | undefined,
-      state: router.query.state as string | undefined,
+      code: searchParams.get('code'),
+      error: searchParams.get('error'),
+      state: searchParams.get('state'),
     };
-  }, [router.query]);
+  }, [searchParams]);
 
-  const [isLoggingIn, setIsLoggingIn] = useState(() =>
-    code && state ? true : false
-  );
+  // Loading by default and reset in the effect
+  const [isLoggingIn, setIsLoggingIn] = useState(true);
 
   // State for login error
   const [loginError, setLoginError] = useState('');
@@ -94,6 +96,13 @@ const LoginWithTwitter = () => {
     },
     []
   );
+
+  // Effect for checking the query params and reset the loading state
+  useEffect(() => {
+    if (!code) {
+      setIsLoggingIn(false);
+    }
+  }, [code]);
 
   // Effect for handling the login when the code and state are available
   useEffect(() => {

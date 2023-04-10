@@ -1,3 +1,4 @@
+import { LoggerService } from '@webb-tools/browser-utils';
 import { err, Result } from 'neverthrow';
 
 import clientConfig from '../config/client';
@@ -5,6 +6,8 @@ import FaucetError from '../errors/FaucetError';
 import FaucetErrorCode from '../errors/FaucetErrorCode';
 import { TwitterLoginResponse, TwitterRefreshTokensBody } from '../types';
 import parseTokensResponse from './parseTokensResponse';
+
+const logger = LoggerService.get('refreshTwitterTokens()');
 
 const refreshTwitterTokens = async (
   refreshToken: string,
@@ -40,9 +43,7 @@ const refreshTwitterTokens = async (
 
       try {
         const json = await resp.json();
-        console.group('ERROR JSON');
-        console.log(json);
-        console.groupEnd();
+        logger.error('JSON ERROR: ', JSON.stringify(json, null, 2));
         msg = json.message || resp.statusText;
       } catch (error) {
         msg = resp.statusText;
