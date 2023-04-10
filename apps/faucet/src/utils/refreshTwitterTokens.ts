@@ -6,6 +6,7 @@ import FaucetError from '../errors/FaucetError';
 import FaucetErrorCode from '../errors/FaucetErrorCode';
 import { TwitterLoginResponse, TwitterRefreshTokensBody } from '../types';
 import parseTokensResponse from './parseTokensResponse';
+import safeParseJSON from './safeParseJSON';
 
 const logger = LoggerService.get('refreshTwitterTokens()');
 
@@ -57,16 +58,12 @@ const refreshTwitterTokens = async (
       );
     }
 
-    try {
-      const json = await resp.json();
-      return parseTokensResponse(json);
-    } catch (error) {
-      return err(
-        FaucetError.from(FaucetErrorCode.JSON_PARSE_ERROR, {
-          context: 'refreshTwitterTokens()',
-        })
-      );
+    const jsonResult = await safeParseJSON(resp);
+    if (jsonResult.isErr()) {
+      return err(jsonResult.error);
     }
+
+    return parseTokensResponse(jsonResult.value);
   } catch (error) {
     // Ignore abort errors
   }
