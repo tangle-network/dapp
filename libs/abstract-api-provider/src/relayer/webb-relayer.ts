@@ -274,18 +274,12 @@ export class WebbRelayer {
 
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    getFees: (
-      note: string
-    ) => Promise<
-      { totalFees: string; withdrawFeePercentage: number } | undefined
-    >
+    query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(
       instance.endpoint,
       instance.capabilities,
-      query,
-      getFees
+      query
     );
   }
 }
@@ -294,12 +288,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    private getFees: (
-      note: string
-    ) => Promise<
-      { totalFees: string; withdrawFeePercentage: number } | undefined
-    >
+    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
   ) {
     super(endpoint, capabilities);
   }
@@ -320,8 +309,4 @@ export class ActiveWebbRelayer extends WebbRelayer {
   get beneficiary(): string | undefined {
     return this.config?.beneficiary;
   }
-
-  fees = async (note: string) => {
-    return this.getFees(note);
-  };
 }
