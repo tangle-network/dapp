@@ -67,6 +67,25 @@ type ErrorPayload = {
     context: string;
   };
 
+  /**
+   * Extra info for the mint tokens failed error
+   */
+  [FaucetErrorCode.MINT_TOKENS_FAILED]:
+    | {
+        status?: number;
+        extraInfo: string;
+      }
+    | undefined;
+
+  /**
+   * The selected chain is invalid
+   */
+  [FaucetErrorCode.INVALID_SELECTED_CHAIN]:
+    | {
+        selectedChain: string;
+      }
+    | undefined;
+
   // No payload for these errors
   [FaucetErrorCode.TWITTER_LOGIN_DENIED]: undefined;
 };

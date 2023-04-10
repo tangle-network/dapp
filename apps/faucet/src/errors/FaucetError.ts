@@ -14,6 +14,9 @@ const errorMessages: {
   [FaucetErrorCode.UNKNOWN]: 'Unknown error',
   [FaucetErrorCode.UNKNOWN_TWITTER_ERROR]: 'Unknown Twitter error',
   [FaucetErrorCode.JSON_PARSE_ERROR]: 'JSON parse error',
+  [FaucetErrorCode.MINT_TOKENS_FAILED]: 'Mint tokens failed',
+  [FaucetErrorCode.INVALID_SELECTED_CHAIN]:
+    'No chain selected or invalid chain selected',
 };
 
 /**

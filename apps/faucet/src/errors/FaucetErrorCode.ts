@@ -25,6 +25,11 @@ enum FaucetErrorCode {
   INVALID_REQUEST_BODY,
 
   /**
+   * Inavlid selected chain
+   */
+  INVALID_SELECTED_CHAIN,
+
+  /**
    * Refresh tokens failed
    */
   REFRESH_TOKENS_FAILED,
@@ -38,6 +43,11 @@ enum FaucetErrorCode {
    * The error when call `.json()` on the response
    */
   JSON_PARSE_ERROR,
+
+  /**
+   * Mint tokens failed
+   */
+  MINT_TOKENS_FAILED,
 
   /**
    * Unknown error
