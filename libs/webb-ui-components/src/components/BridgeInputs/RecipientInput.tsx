@@ -69,7 +69,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         setAddress(address.toString());
         onChangeProp?.(address);
 
-        if (address === '' || validate?.(address)) {
+        if (address === '' || (validate ? validate(address) : true)) {
           setRecipientError(undefined);
         } else {
           setRecipientError('Invalid wallet address ');
@@ -120,20 +120,22 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             />
           </div>
 
-          <Button
-            variant="utility"
-            size="sm"
-            onClick={onClick}
-            isDisabled={
-              overrideInputProps?.isDisabled || address ? true : false
-            }
-          >
-            Paste
-          </Button>
+          {!isHiddenPasteBtn && (
+            <Button
+              variant="utility"
+              size="sm"
+              onClick={onClick}
+              isDisabled={
+                overrideInputProps?.isDisabled || address ? true : false
+              }
+            >
+              Paste
+            </Button>
+          )}
         </InputWrapper>
 
         {error && (
-          <span className="flex items-center text-red-70 dark:text-red-50">
+          <span className="flex items-center mt-1 text-red-70 dark:text-red-50">
             <InformationLine className="!fill-current mr-1" />
             <Typography variant="body1" fw="bold" className="!text-current">
               {error}

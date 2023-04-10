@@ -38,10 +38,15 @@ const ContractAddressInput = () => {
       return undefined;
     }
 
-    if (!selectedChain || !selectedToken || !config[selectedChain]) {
+    if (!selectedChain || !selectedToken) {
       return undefined;
     }
-    return config[selectedChain][selectedToken];
+
+    if (!config[selectedChain]?.tokenAddresses) {
+      return;
+    }
+
+    return config[selectedChain].tokenAddresses[selectedToken];
   }, [config, selectedChain, selectedToken, twitterHandle]);
 
   const inputProps = useMemo(

@@ -1,3 +1,4 @@
+import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { Button } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useMemo, useState } from 'react';
@@ -23,19 +24,28 @@ const MintButtonContainer = () => {
 
   const inputValues = useObservableState(inputValues$);
 
+  const isValidRecipient = useMemo(() => {
+    return (
+      inputValues?.recepientAddressType === 'ethereum' ||
+      inputValues?.recepientAddressType === 'substrate' ||
+      !inputValues.recepient ||
+      !isValidAddress(inputValues.recepient)
+    );
+  }, [inputValues.recepient, inputValues?.recepientAddressType]);
+
   const isDisabled = useMemo(() => {
     return (
       !inputValues?.token ||
       !inputValues?.chain ||
       !inputValues?.contractAddress ||
-      !inputValues?.recepient ||
+      !isValidRecipient ||
       !twitterHandle
     );
   }, [
     inputValues?.chain,
     inputValues?.contractAddress,
-    inputValues?.recepient,
     inputValues?.token,
+    isValidRecipient,
     twitterHandle,
   ]);
 

@@ -1,3 +1,5 @@
+import EVMChainId from '@webb-tools/dapp-types/EVMChainId';
+import SubstrateChainId from '@webb-tools/dapp-types/SubstrateChainId';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
@@ -25,6 +27,37 @@ export type InputValuesType = {
    * Recipient address
    */
   recepient?: string;
+
+  /**
+   * The recipient address type
+   */
+  recepientAddressType?: 'ethereum' | 'substrate';
+};
+
+/**
+ * The chain data type
+ */
+export type FaucetChainDataType = {
+  /**
+   * The chain name (used for display and render the `ChainIcon`)
+   */
+  name: string;
+
+  /**
+   * The chain type (Evm or Substrate)
+   */
+  type: 'Evm' | 'Substrate';
+
+  /**
+   * The chain id
+   */
+  chainId: number;
+
+  /**
+   * The token address record
+   * (token symbol -> contract address)
+   */
+  tokenAddresses: Record<string, string>;
 };
 
 /**
@@ -40,7 +73,7 @@ export type FaucetContextType = {
    * The faucet config contains the supported chains and tokens
    * (chain name -> supported token symbol -> contract address)
    */
-  config: Record<string, Record<string, string>>;
+  config: Record<string, FaucetChainDataType>;
 
   /**
    * The observer to hold the all input values for the faucet form
@@ -59,26 +92,30 @@ export type FaucetContextType = {
 };
 
 // Note: This is a placeholder for now
-// chain name -> supported token symbol -> contract address
-const config: Record<string, Record<string, string>> = {
+const config: Record<string, FaucetChainDataType> = {
   Arbitrum: {
-    wTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    chainId: EVMChainId.ArbitrumTestnet,
+    name: 'Arbitrum',
+    tokenAddresses: {
+      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Evm',
   },
   Goerli: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    chainId: EVMChainId.Goerli,
+    name: 'Goerli',
+    tokenAddresses: {
+      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Evm',
   },
-  'Moonbase Alpha': {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  Optimism: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  'Polygon Mumbai': {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  Sepolia: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  Tangle: {
+    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
+    name: 'Tangle',
+    tokenAddresses: {
+      tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Substrate',
   },
 };
 

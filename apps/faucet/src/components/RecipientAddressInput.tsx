@@ -1,6 +1,8 @@
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { RecipientInput } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import React, { ComponentProps, useCallback, useEffect, useMemo } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
@@ -36,10 +38,13 @@ const RecipientAddressInput = () => {
 
   const updateRecipientAddress = useCallback(
     (address: string) => {
+      const addrType = isEthereumAddress(address) ? 'ethereum' : 'substrate';
+
       const inputValues = inputValues$.getValue();
       inputValues$.next({
         ...inputValues,
         recepient: address,
+        recepientAddressType: addrType,
       });
     },
     [inputValues$]
@@ -59,6 +64,7 @@ const RecipientAddressInput = () => {
         value={recipientAddress}
         onChange={updateRecipientAddress}
         overrideInputProps={inputProps}
+        validate={isValidAddress}
       />
     </div>
   );
