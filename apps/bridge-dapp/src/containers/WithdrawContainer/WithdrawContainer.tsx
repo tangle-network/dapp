@@ -57,6 +57,7 @@ import { getErrorMessage } from '../../utils';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+import { isValidAddress } from '@webb-tools/dapp-types';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -970,6 +971,7 @@ export const WithdrawContainer = forwardRef<
       isValidSet(valid: boolean) {
         setIsValidRecipient(valid);
       },
+      validate: (value) => isValidAddress(value),
       onChange: (recipient) => {
         setRecipient(recipient);
       },

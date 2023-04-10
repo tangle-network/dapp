@@ -2,8 +2,6 @@ import { InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Typography } from '../../typography/Typography';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -12,37 +10,6 @@ import { notificationApi } from '../Notification';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
 import { RecipientInputProps } from './types';
-
-function isValidPublicKey(maybePublicKey: string): boolean {
-  return maybePublicKey.startsWith('0x') && maybePublicKey.length === 130;
-}
-
-function isValidAddress(address: string) {
-  const maybeEvm = address.replace('0x', '').length === 40;
-  const maybeSS58 = !address.startsWith('0x');
-  const maybeDecodedAddress = address.replace('0x', '').length === 64;
-  // is valid evm address
-  if (maybeEvm) {
-    return isEthereumAddress(address);
-  }
-  if (maybeSS58) {
-    try {
-      encodeAddress(decodeAddress(address));
-      return true;
-    } catch {
-      return false;
-    }
-  }
-  if (maybeDecodedAddress) {
-    try {
-      encodeAddress(address);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  return false;
-}
 
 /**
  * The `RecipientInput` component
@@ -59,19 +26,19 @@ function isValidAddress(address: string) {
  *  <RecipientInput value={recipient} onChange={(nextVal) => setRecipient(nextVal.toString())} />
  * ```
  */
-
 export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
   (
     {
       className,
       errorMessage,
-      isHiddenPasteBtn,
       id = 'recipient',
       info,
+      isHiddenPasteBtn,
       isValidSet,
       onChange: onChangeProp,
       overrideInputProps,
       title,
+      validate,
       value,
       ...props
     },
@@ -101,17 +68,14 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
         const address = nextVal.trim();
         setAddress(address.toString());
         onChangeProp?.(address);
-        if (
-          isValidAddress(address) ||
-          address === '' ||
-          isValidPublicKey(address)
-        ) {
+
+        if (address === '' || validate?.(address)) {
           setRecipientError(undefined);
         } else {
           setRecipientError('Invalid wallet address ');
         }
       },
-      [onChangeProp, setAddress, setRecipientError]
+      [onChangeProp, validate]
     );
 
     useEffect(() => {
