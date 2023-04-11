@@ -1,4 +1,8 @@
-import { HeroSection, IntroducingSection } from '../components';
+import {
+  CommunitySection,
+  HeroSection,
+  IntroducingSection,
+} from '../components';
 
 export function Index() {
   return (
@@ -6,6 +10,8 @@ export function Index() {
       <HeroSection />
 
       <IntroducingSection />
+
+      <CommunitySection />
     </div>
   );
 }
