@@ -183,12 +183,19 @@ export const WithdrawContainer = forwardRef<
     return notes ?? null;
   }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
 
+  const maxFeeArgs = useMemo(
+    () => ({
+      fungibleCurrencyId: fungibleCurrency?.id,
+    }),
+    [fungibleCurrency?.id]
+  );
+
   const {
     fetchMaxFeeInfoFromRelayer: fetchRelayerFeeInfo,
     fetchMaxFeeInfo,
     isLoading: isFetchingFeeInfo,
     feeInfo: feeInfoOrBigNumber,
-  } = useMaxFeeInfo();
+  } = useMaxFeeInfo(maxFeeArgs);
 
   const feeInfo = useMemo(() => {
     if (!(feeInfoOrBigNumber instanceof BigNumber)) {

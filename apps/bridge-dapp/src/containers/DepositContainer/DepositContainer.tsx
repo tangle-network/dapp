@@ -103,11 +103,18 @@ export const DepositContainer = forwardRef<
 
     const addCurrency = useAddCurrency();
 
+    const maxFeeArgs = useMemo(
+      () => ({
+        fungibleCurrencyId: fungibleCurrency?.id,
+      }),
+      [fungibleCurrency?.id]
+    );
+
     const {
       feeInfo,
       fetchMaxFeeInfo,
       isLoading: isFetchingMaxFeeInfo,
-    } = useMaxFeeInfo();
+    } = useMaxFeeInfo(maxFeeArgs);
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
