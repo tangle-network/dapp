@@ -1,5 +1,6 @@
 import {
   PublicKeysQuery,
+  usePublicKeysQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
@@ -183,7 +184,8 @@ export function sessionFrame(
  * ```
  * */
 export function useKeys(
-  reqQuery: PageInfoQuery
+  reqQuery: PageInfoQuery,
+  currentKey: PublicKey | null | undefined
 ): Loadable<Page<PublicKeyListView>> {
   const [call, query] = usePublicKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
@@ -209,7 +211,7 @@ export function useKeys(
         error: e.message,
       });
     });
-  }, [reqQuery, call]);
+  }, [reqQuery, call, currentKey]);
   // Handle the GraphQl call response
 
   useEffect(() => {
@@ -297,7 +299,6 @@ export function useKeys(
 
   return page;
 }
-
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */

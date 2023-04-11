@@ -183,10 +183,12 @@ export const KeygenTable: FC = () => {
 
   const { error, isFailed, isLoading, val: activeKeyData } = useActiveKeys();
 
-  const { nextKey } = useMemo<{
+  const { currentKey, nextKey } = useMemo<{
+    currentKey: PublicKey | null | undefined;
     nextKey: PublicKey | null | undefined;
   }>(() => {
     return {
+      currentKey: activeKeyData ? activeKeyData[0] : null,
       nextKey: activeKeyData ? activeKeyData[1] : null,
     };
   }, [activeKeyData]);
@@ -220,7 +222,8 @@ export const KeygenTable: FC = () => {
     [pageSize, totalItems]
   );
 
-  const keysStats = useKeys(pageQuery);
+  const keysStats = useKeys(pageQuery, currentKey);
+
   const data = useMemo(() => {
     if (keysStats.val) {
       return keysStats.val.items
@@ -249,7 +252,7 @@ export const KeygenTable: FC = () => {
     if (keysStats.val) {
       setTotalItems(keysStats.val.pageInfo.count);
     }
-  }, [keysStats]);
+  }, [keysStats, currentKey]);
 
   const table = useReactTable<KeygenType>({
     data,
