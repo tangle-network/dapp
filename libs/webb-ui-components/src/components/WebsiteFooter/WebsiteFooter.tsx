@@ -9,11 +9,13 @@ import { IconBase } from '@webb-tools/icons/types';
 import {
   InternalOrExternalLink,
   Logo,
+  TangleLogo,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
+import { type } from 'os';
 import { ComponentProps, useState } from 'react';
-import { NewletterForm } from '../components';
+import { WebsiteNewletterForm } from '../WebsiteNewsLetterForm';
 
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -64,7 +66,11 @@ const links: Array<
   },
 ];
 
-export const Footer = () => {
+type WebsiteFooterPropsType = {
+  type: 'webbsite' | 'tangle';
+};
+
+export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
   // State for subscription success
   const [success, setSuccess] = useState(false);
 
@@ -88,7 +94,7 @@ export const Footer = () => {
                 Follow for Updates
               </Typography>
 
-              <NewletterForm onSuccess={() => setSuccess(true)} />
+              <WebsiteNewletterForm onSuccess={() => setSuccess(true)} />
 
               <Typography variant="mkt-caption" className="dark:text-mono-100">
                 By signing up you agree to{' '}
@@ -119,10 +125,11 @@ export const Footer = () => {
 
       {/** Links and socials */}
       <div className="w-full max-w-[900px] px-4 py-12 space-y-6 mx-auto">
+        {type === 'tangle' && (
+          <Typography variant="body2">Built by Webb Foundation</Typography>
+        )}
         <div className="flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-between">
-          <Link href="/">
-            <Logo />
-          </Link>
+          <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
           <div className="flex items-center space-x-4">
             {socials.map(({ Icon, name, href }) => (
               <a
