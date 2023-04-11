@@ -151,7 +151,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
             reserved.
           </Typography>
 
-          <div className="flex flex-col items-center space-y-1 xs:space-y-0 xs:flex-row xs:items-center xs:space-x-6">
+          <div className="flex items-center space-x-3 xs:space-y-0 xs:flex-row xs:items-center xs:space-x-6">
             {links.map(({ label, ...restProps }, idx) => (
               <Typography
                 key={`${label}-${idx}`}
