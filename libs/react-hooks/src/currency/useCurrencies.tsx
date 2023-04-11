@@ -2,6 +2,7 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import isEqual from 'lodash/isEqual';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useCurrencies = () => {
@@ -14,14 +15,26 @@ export const useCurrencies = () => {
     useState<Currency | null>(null);
 
   const fungibleCurrencies = useMemo(() => {
+    if (!activeChain) {
+      return [];
+    }
+
+    const currentTypedChainId = calculateTypedChainId(
+      activeChain.chainType,
+      activeChain.chainId
+    );
     const currencies = apiConfig.currencies ?? [];
 
     return Object.values(currencies)
       .filter(
-        (currencyConfig) => currencyConfig.role === CurrencyRole.Governable
+        (currencyConfig) =>
+          currencyConfig.role === CurrencyRole.Governable &&
+          Array.from(currencyConfig.addresses.keys()).includes(
+            currentTypedChainId
+          ) // filter out currencies that are not supported on the current chain
       )
       .map((currencyConfig) => new Currency(currencyConfig));
-  }, [apiConfig.currencies]);
+  }, [activeChain, apiConfig.currencies]);
 
   // Record where fungible currency id -> wrappable currencies
   const wrappableCurrenciesMap = useMemo(() => {
@@ -106,11 +119,31 @@ export const useCurrencies = () => {
     const sub: { unsubscribe(): void }[] = [];
 
     sub[0] = activeApi.state.$activeBridge.subscribe((bridge) => {
-      setFungibleCurrencyState(bridge?.currency ?? null);
+      setFungibleCurrencyState((prevCurrency) => {
+        if (!bridge) {
+          return prevCurrency;
+        }
+
+        if (!prevCurrency) {
+          return bridge.currency;
+        }
+
+        if (isEqual(prevCurrency, bridge.currency)) {
+          return prevCurrency;
+        }
+
+        return bridge.currency;
+      });
     });
 
     sub[1] = activeApi.state.$wrappableCurrency.subscribe((currency) => {
-      setWrappableCurrencyState(currency);
+      setWrappableCurrencyState((prevCurrency) => {
+        if (isEqual(prevCurrency, currency)) {
+          return prevCurrency;
+        }
+
+        return currency;
+      });
     });
 
     return () => {

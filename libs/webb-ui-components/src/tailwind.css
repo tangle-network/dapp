@@ -8,13 +8,20 @@
 
 @import './css/layer-components.css';
 
-/* Hidden the arrows in the input[type="number"] element */
 @layer base {
+  /* Hidden the arrows in the input[type="number"] element */
   input[type='number']::-webkit-outer-spin-button,
   input[type='number']::-webkit-inner-spin-button,
   input[type='number'] {
     -webkit-appearance: none;
     margin: 0;
     -moz-appearance: textfield !important;
+  }
+
+  /* Disabled bg when autofill */
+  /* https://stackoverflow.com/a/68240841 */
+  input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
   }
 }

@@ -3,7 +3,6 @@ import {
   RelayerFeeInfo,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
 import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
@@ -65,6 +64,11 @@ export type MaxFeeInfoOption = {
    * Whether to hide the error notification
    */
   isHiddenNotiError?: boolean;
+
+  /**
+   * Fungible currency id
+   */
+  fungibleCurrencyId?: number;
 };
 
 /**
@@ -80,7 +84,7 @@ export const useMaxFeeInfo = (
   opt?: MaxFeeInfoOption
 ): UseMaxFeeInfoReturnType => {
   const { notificationApi } = useWebbUI();
-  const { activeApi, activeChain } = useWebContext();
+  const { activeApi, activeChain, apiConfig } = useWebContext();
 
   // State to store the max fee info
   const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | BigNumber | null>(
@@ -104,6 +108,10 @@ export const useMaxFeeInfo = (
           throw new Error('No relayer selected');
         }
 
+        if (!opt?.fungibleCurrencyId) {
+          throw new Error('No fungible currency selected');
+        }
+
         setError(null);
         setIsLoading(true);
 
@@ -112,7 +120,10 @@ export const useMaxFeeInfo = (
           activeChain.chainId
         );
 
-        const vanchorAddr = getLatestAnchorAddress(currentTypedChainId);
+        const vanchorAddr = apiConfig.getAnchorAddress(
+          opt.fungibleCurrencyId,
+          currentTypedChainId
+        );
         if (!vanchorAddr) {
           console.error('No anchor address in current active chain');
           return;
@@ -138,7 +149,7 @@ export const useMaxFeeInfo = (
         setIsLoading(false);
       }
     },
-    [activeChain]
+    [activeChain, apiConfig, opt?.fungibleCurrencyId]
   );
 
   const fetchMaxFeeInfo = useCallback(async () => {

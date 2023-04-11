@@ -17,7 +17,7 @@ export const useCurrenciesBalances = (
   const [balances, setBalances] = useState<Record<number, number>>({});
 
   useEffect(() => {
-    const isSubscribe = true;
+    let isSubscribe = true;
 
     if (!activeApi || !activeChain) {
       return;
@@ -31,16 +31,24 @@ export const useCurrenciesBalances = (
         )
         .subscribe((currencyBalance) => {
           if (isSubscribe) {
-            setBalances((prev) => ({
-              ...prev,
-              [currency.id]: Number(currencyBalance),
-            }));
+            setBalances((prev) => {
+              if (prev[currency.id] === Number(currencyBalance)) {
+                return prev;
+              }
+
+              return {
+                ...prev,
+                [currency.id]: Number(currencyBalance),
+              };
+            });
           }
         });
     });
 
-    return () =>
+    return () => {
+      isSubscribe = false;
       subscriptions.forEach((subscription) => subscription.unsubscribe());
+    };
   }, [activeApi, activeChain, activeAccount, currencies]);
 
   return balances;

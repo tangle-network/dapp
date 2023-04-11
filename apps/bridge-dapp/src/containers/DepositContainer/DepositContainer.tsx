@@ -85,9 +85,11 @@ export const DepositContainer = forwardRef<
       activeWallet,
       loading,
       noteManager,
-      apiConfig: { currencies },
+      apiConfig,
       txQueue,
     } = useWebContext();
+
+    const { currencies } = apiConfig;
 
     const {
       fungibleCurrency,
@@ -101,11 +103,18 @@ export const DepositContainer = forwardRef<
 
     const addCurrency = useAddCurrency();
 
+    const maxFeeArgs = useMemo(
+      () => ({
+        fungibleCurrencyId: fungibleCurrency?.id,
+      }),
+      [fungibleCurrency?.id]
+    );
+
     const {
       feeInfo,
       fetchMaxFeeInfo,
       isLoading: isFetchingMaxFeeInfo,
-    } = useMaxFeeInfo();
+    } = useMaxFeeInfo(maxFeeArgs);
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
@@ -341,6 +350,11 @@ export const DepositContainer = forwardRef<
           const tokens = getPossibleFungibleCurrencies(
             selectedWrappableToken.id
           );
+          if (tokens.length === 0) {
+            console.error('No fungible currency found for the wrappable token');
+            return;
+          }
+
           await setFungibleCurrency(tokens[0]);
           await setWrappableCurrency(selectedWrappableToken);
           setMainComponentName(undefined);
@@ -411,9 +425,26 @@ export const DepositContainer = forwardRef<
         destChain.chainId
       );
 
+      const sourceAddress = apiConfig.getAnchorAddress(
+        fungibleCurrency.id,
+        sourceTypedChainId
+      );
+
+      const destAddress = apiConfig.getAnchorAddress(
+        fungibleCurrency.id,
+        destTypedChainId
+      );
+
+      if (!sourceAddress || !destAddress) {
+        console.error('Not found source or destination address');
+        return;
+      }
+
       const newNote = await noteManager.generateNote(
         sourceTypedChainId,
+        sourceAddress,
         destTypedChainId,
+        destAddress,
         fungibleCurrency.view.symbol,
         fungibleCurrency.getDecimals(),
         amount
@@ -452,6 +483,7 @@ export const DepositContainer = forwardRef<
       activeChain,
       noteManager,
       fungibleCurrency,
+      apiConfig,
       wrappableCurrency?.id,
       feeValue,
       currentNativeCurrency?.symbol,
@@ -590,12 +622,17 @@ export const DepositContainer = forwardRef<
         title: 'Select a token to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
-        onChange: (selectedChain) => {
-          const destChain = Object.values(chains).find(
-            (val) => val.name === selectedChain.name
+        onChange: async (nextToken) => {
+          const selectedToken = Object.values(fungibleCurrencies).find(
+            (token) =>
+              token.view.symbol === nextToken.symbol &&
+              token.view.name === nextToken.name
           );
-          setDestChain(destChain);
-          setMainComponentName(undefined);
+
+          if (selectedToken) {
+            await setFungibleCurrency(selectedToken);
+            setMainComponentName(undefined);
+          }
         },
         onClose: () => setMainComponentName(undefined),
       };
@@ -607,7 +644,8 @@ export const DepositContainer = forwardRef<
       populatedAllTokens,
       balances,
       addCurrency,
-      chains,
+      fungibleCurrencies,
+      setFungibleCurrency,
     ]);
 
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
@@ -774,6 +812,14 @@ export const DepositContainer = forwardRef<
         );
         setWrappableCurrency(native ?? wrappableCurrencies[0]); // Fallback to the first one if no native currency
       }
+
+      // Reset the wrappable currency if it is not in the wrappable currencies
+      if (
+        wrappableCurrency &&
+        !wrappableCurrencies.find((c) => c.id === wrappableCurrency.id)
+      ) {
+        setWrappableCurrency(null);
+      }
     }, [
       balances,
       fungibleCurrency,
@@ -846,59 +892,59 @@ export const DepositContainer = forwardRef<
     }, [fetchMaxFeeInfo, isReadyToFetchFee]);
 
     return (
-      <div {...props} ref={ref} className="h-[628px]">
-        <DepositCard
-          className="max-w-none"
-          sourceChainProps={{
-            chain: selectedSourceChain,
-            onClick: sourceChainInputOnClick,
-            chainType: 'source',
-            info: 'Source chain',
-          }}
-          bridgingTokenProps={bridgingTokenProps}
-          destChainProps={{
-            chain: destChainInputValue,
-            onClick: () => {
-              setMainComponentName('dest-chain-list-card');
-            },
-            chainType: 'dest',
-            info: 'Destination chain',
-          }}
-          tokenInputProps={{
-            onClick: () => {
-              if (selectedSourceChain) {
-                setMainComponentName('token-deposit-list-card');
-              }
-            },
-            token: selectedToken,
-          }}
-          amountInputProps={{
-            amount: amount ? amount.toString() : undefined,
-            onAmountChange,
-            onMaxBtnClick: handleMaxBtnClick,
-            isDisabled: !selectedToken || !destChain,
-            errorMessage: amountErrorMessage,
-          }}
-          buttonProps={{
-            onClick: handleDepositButtonClick,
-            isLoading:
-              loading ||
-              isGeneratingNote ||
-              walletState === WalletState.CONNECTING ||
-              isFetchingMaxFeeInfo,
-            loadingText: isFetchingMaxFeeInfo
-              ? 'Calculating Fee...'
-              : loading
-              ? 'Connecting...'
-              : 'Generating Note...',
-            isDisabled,
-            children: buttonText,
-          }}
-          token={selectedToken?.symbol}
-          feeValue={feeValue}
-          feeToken={currentNativeCurrency?.symbol}
-        />
-      </div>
+      <DepositCard
+        ref={ref}
+        className="max-w-none"
+        {...props}
+        sourceChainProps={{
+          chain: selectedSourceChain,
+          onClick: sourceChainInputOnClick,
+          chainType: 'source',
+          info: 'Source chain',
+        }}
+        bridgingTokenProps={bridgingTokenProps}
+        destChainProps={{
+          chain: destChainInputValue,
+          onClick: () => {
+            setMainComponentName('dest-chain-list-card');
+          },
+          chainType: 'dest',
+          info: 'Destination chain',
+        }}
+        tokenInputProps={{
+          onClick: () => {
+            if (selectedSourceChain) {
+              setMainComponentName('token-deposit-list-card');
+            }
+          },
+          token: selectedToken,
+        }}
+        amountInputProps={{
+          amount: amount ? amount.toString() : undefined,
+          onAmountChange,
+          onMaxBtnClick: handleMaxBtnClick,
+          isDisabled: !selectedToken || !destChain,
+          errorMessage: amountErrorMessage,
+        }}
+        buttonProps={{
+          onClick: handleDepositButtonClick,
+          isLoading:
+            loading ||
+            isGeneratingNote ||
+            walletState === WalletState.CONNECTING ||
+            isFetchingMaxFeeInfo,
+          loadingText: isFetchingMaxFeeInfo
+            ? 'Calculating Fee...'
+            : loading
+            ? 'Connecting...'
+            : 'Generating Note...',
+          isDisabled,
+          children: buttonText,
+        }}
+        token={selectedToken?.symbol}
+        feeValue={feeValue}
+        feeToken={currentNativeCurrency?.symbol}
+      />
     );
   }
 );

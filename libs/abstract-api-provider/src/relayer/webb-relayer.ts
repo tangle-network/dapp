@@ -262,6 +262,11 @@ export class WebbRelayer {
     }/api/v1/fee_info/${typedChainId}/${vanchor}/${gasAmount}`;
     const response = await fetch(endpoint, { signal: abortSignal });
     if (!response.ok) {
+      if (response.type === 'cors') {
+        throw new Error(
+          `CORS error, please check your relayer endpoint: ${this.endpoint}`
+        );
+      }
       throw new Error(`Failed to get fee info: ${response.statusText}`);
     }
     return parseRelayerFeeInfo(await response.json());
