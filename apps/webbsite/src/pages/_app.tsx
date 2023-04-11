@@ -7,7 +7,11 @@ import { AppProps } from 'next/app';
 import Script from 'next/script';
 import { useEffect } from 'react';
 import { Header } from '../components';
-import { useDarkMode, WebbUIProvider, WebsiteFooter } from '@webb-tools/webb-ui-components';
+import {
+  useDarkMode,
+  WebbUIProvider,
+  WebsiteFooter,
+} from '@webb-tools/webb-ui-components';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [, setIsDarkMode] = useDarkMode();
@@ -66,7 +70,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
       </main>
 
-      <WebsiteFooter type='webbsite' />
+      <WebsiteFooter type="webbsite" />
     </WebbUIProvider>
   );
 }

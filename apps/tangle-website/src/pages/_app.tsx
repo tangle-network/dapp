@@ -19,7 +19,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </main>
 
-      <WebsiteFooter type='tangle' />
+      <WebsiteFooter type="tangle" />
     </WebbUIProvider>
   );
 }

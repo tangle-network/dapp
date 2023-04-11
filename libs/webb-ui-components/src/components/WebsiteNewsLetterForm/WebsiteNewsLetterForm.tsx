@@ -2,9 +2,9 @@ import { InformationLine } from '@webb-tools/icons';
 import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 
-export const WebsiteNewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void }> = ({
-  onSuccess,
-}) => {
+export const WebsiteNewletterForm: FC<{
+  onSuccess: (isSuccess: boolean) => void;
+}> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -53,7 +53,7 @@ export const WebsiteNewletterForm: FC<{ onSuccess: (isSuccess: boolean) => void 
         setLoading(true);
         const response = await fetch(endpoint, options);
         console.log('response', response);
-        
+
         if (response.status === 200) {
           // Success then reset the form
           setName('');
