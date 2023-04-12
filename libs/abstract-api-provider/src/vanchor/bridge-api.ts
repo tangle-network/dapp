@@ -51,8 +51,6 @@ export abstract class BridgeApi<
     }
     this.inner.state.activeBridge =
       this.bridges.find((bridge) => {
-        console.log('bridge inspected: ', bridge);
-        console.log('currency set: ', currency);
         return bridge.currency.id === currency.id;
       }) ?? null;
   }

@@ -53,10 +53,13 @@ export const useAddCurrency = () => {
         return false;
       }
 
+      // A valid symbol is max 11 characters long
+      const validSymbol = currency.view.symbol.slice(0, 11);
+
       try {
         const wasAdded = await provider.addToken({
           address,
-          symbol: currency.view.symbol,
+          symbol: validSymbol,
           decimals: currency.view.decimals,
           image: await getCurrencyImageUrl(currency.view.symbol),
         });

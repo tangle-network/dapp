@@ -1,13 +1,13 @@
 import { CurrencyRole } from '@webb-tools/dapp-types';
 
-import { getAnchorConfig } from '../anchors/anchor-config';
 import { ApiConfig } from '../api-config';
 import { CurrencyConfig } from '../currencies';
 
 let bridgeConfigByAsset: ApiConfig['bridgeByAsset'];
 
 export const getBridgeConfigByAsset = async (
-  currencies: Record<number, CurrencyConfig>
+  currencies: Record<number, CurrencyConfig>,
+  anchors: ApiConfig['anchors']
 ): Promise<ApiConfig['bridgeByAsset']> => {
   // If the bridge config is already calculated, return it
   if (bridgeConfigByAsset) {
@@ -22,9 +22,10 @@ export const getBridgeConfigByAsset = async (
 
   await Promise.allSettled(
     fungibleCurrencies.map(async (currency) => {
-      const anchors = await getAnchorConfig(currencies);
-
-      if (!anchors[currency.id]) return;
+      if (!anchors[currency.id]) {
+        console.error(`No anchor config for currency ${currency.id}`);
+        return;
+      }
 
       bridgeByAsset[currency.id] = {
         asset: currency.id,

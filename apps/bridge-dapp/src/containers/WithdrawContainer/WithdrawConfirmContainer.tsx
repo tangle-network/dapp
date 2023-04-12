@@ -38,13 +38,13 @@ export const WithdrawConfirmContainer = forwardRef<
   (
     {
       amount,
-      amountAfterFees,
+      amountAfterFee,
       availableNotes,
       changeAmount,
       changeNote,
       changeUtxo,
-      fees,
-      feesInfo,
+      fee,
+      feeInfo,
       fungibleCurrency: fungibleCurrencyProp,
       isRefund,
       onResetState,
@@ -208,7 +208,7 @@ export const WithdrawConfirmContainer = forwardRef<
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
 
-      const amount = Number(ethers.utils.formatEther(amountAfterFees));
+      const amount = Number(ethers.utils.formatEther(amountAfterFee));
 
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
@@ -238,7 +238,7 @@ export const WithdrawConfirmContainer = forwardRef<
           changeUtxo,
           recipient,
           refundAmount: refund,
-          feeAmount: fees,
+          feeAmount: fee,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -288,13 +288,13 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       apiConfig,
-      amountAfterFees,
+      amountAfterFee,
       txQueueApi,
       setMainComponent,
       refundAmount,
       changeUtxo,
       recipient,
-      fees,
+      fee,
       activeRelayer,
       noteManager,
       onResetState,
@@ -308,20 +308,20 @@ export const WithdrawConfirmContainer = forwardRef<
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
     }, [txId, txPayloads]);
-    const formattedFees = useMemo(() => {
-      const feesInEthers = ethers.utils.formatEther(fees);
+    const formattedFee = useMemo(() => {
+      const feeInEthers = ethers.utils.formatEther(fee);
 
       if (activeRelayer) {
         const formattedRelayerFee = getRoundedAmountString(
-          Number(feesInEthers),
+          Number(feeInEthers),
           3,
           Math.round
         );
         return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
       }
 
-      return `${feesInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
-    }, [activeRelayer, fees, fungibleCurrency.view.symbol, refundToken]);
+      return `${feeInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
+    }, [activeRelayer, fee, fungibleCurrency.view.symbol, refundToken]);
 
     const formattedRefund = useMemo(() => {
       if (!refundAmount) {
@@ -334,10 +334,10 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [refundAmount]);
 
     const remainingAmount = useMemo(() => {
-      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFees));
+      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFee));
 
       return getRoundedAmountString(amountInEthers, 3, Math.round);
-    }, [amountAfterFees]);
+    }, [amountAfterFee]);
 
     return (
       <WithdrawConfirm
@@ -376,8 +376,8 @@ export const WithdrawConfirmContainer = forwardRef<
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         remainingAmount={remainingAmount}
-        feesInfo={feesInfo}
-        fee={formattedFees}
+        feeInfo={feeInfo}
+        fee={formattedFee}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}

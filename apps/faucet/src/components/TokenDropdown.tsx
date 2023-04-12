@@ -37,11 +37,11 @@ const TokenDropdown = () => {
   );
 
   const tokenNames = useMemo(() => {
-    if (!selectedChain || !config[selectedChain]) {
+    if (!selectedChain || !config[selectedChain]?.tokenAddresses) {
       return [];
     }
 
-    return Object.keys(config[selectedChain]);
+    return Object.keys(config[selectedChain].tokenAddresses);
   }, [config, selectedChain]);
 
   const tokenInputVal = useMemo(

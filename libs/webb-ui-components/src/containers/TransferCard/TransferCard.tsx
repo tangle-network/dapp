@@ -23,6 +23,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       destChainInputProps,
       feeAmount,
       feePercentage,
+      feeToken,
       recipientInputProps,
       relayerInputProps,
       transferAmount,
@@ -45,7 +46,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col max-w-[518px] w-full pb-4 justify-between',
+          'flex flex-col max-w-[518px] w-full h-full justify-between',
           className
         )}
         ref={ref}
@@ -96,12 +97,11 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
 
             <InfoItem
               leftTextProps={{
-                title: `Fees ${feePercentage ? `(${feePercentage})` : ''}`,
+                title: feePercentage ? `Fee ${feePercentage}` : 'Max fee',
                 variant: 'utility',
-                info: 'Fees',
               }}
               rightContent={
-                feeAmount ? `${feeAmount} ${transferToken}` : undefined
+                feeAmount ? `${feeAmount} ${feeToken ?? ''}` : undefined
               }
             />
           </div>

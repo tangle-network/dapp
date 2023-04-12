@@ -1,3 +1,5 @@
+import EVMChainId from '@webb-tools/dapp-types/EVMChainId';
+import SubstrateChainId from '@webb-tools/dapp-types/SubstrateChainId';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
@@ -25,6 +27,37 @@ export type InputValuesType = {
    * Recipient address
    */
   recepient?: string;
+
+  /**
+   * The recipient address type
+   */
+  recepientAddressType?: 'ethereum' | 'substrate';
+};
+
+/**
+ * The chain data type
+ */
+export type FaucetChainDataType = {
+  /**
+   * The chain name (used for display and render the `ChainIcon`)
+   */
+  name: string;
+
+  /**
+   * The chain type (Evm or Substrate)
+   */
+  type: 'Evm' | 'Substrate';
+
+  /**
+   * The chain id
+   */
+  chainId: number;
+
+  /**
+   * The token address record
+   * (token symbol -> contract address)
+   */
+  tokenAddresses: Record<string, string>;
 };
 
 /**
@@ -40,18 +73,12 @@ export type FaucetContextType = {
    * The faucet config contains the supported chains and tokens
    * (chain name -> supported token symbol -> contract address)
    */
-  config: Record<string, Record<string, string>>;
+  config: Record<string, FaucetChainDataType>;
 
   /**
    * The observer to hold the all input values for the faucet form
    */
   inputValues$: BehaviorSubject<InputValuesType>;
-
-  /**
-   * Current twitter handle observer (use for auth checking)
-   * empty string if not logged in
-   */
-  twitterHandle$: BehaviorSubject<string>;
 
   /**
    * Boolean to show the minting process modal
@@ -65,26 +92,30 @@ export type FaucetContextType = {
 };
 
 // Note: This is a placeholder for now
-// chain name -> supported token symbol -> contract address
-const config: Record<string, Record<string, string>> = {
-  'Moonbase Alpha': {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+const config: Record<string, FaucetChainDataType> = {
+  Arbitrum: {
+    chainId: EVMChainId.ArbitrumTestnet,
+    name: 'Arbitrum',
+    tokenAddresses: {
+      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Evm',
   },
-  arbitrum: {
-    wTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  Goerli: {
+    chainId: EVMChainId.Goerli,
+    name: 'Goerli',
+    tokenAddresses: {
+      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Evm',
   },
-  goerli: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  mumbai: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  optimism: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-  },
-  sepolia: {
-    tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+  Tangle: {
+    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
+    name: 'Tangle',
+    tokenAddresses: {
+      tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
+    },
+    type: 'Substrate',
   },
 };
 
@@ -97,7 +128,6 @@ const defaultContextValue = {
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
   isMintingSuccess$: new BehaviorSubject<boolean>(false),
-  twitterHandle$: new BehaviorSubject<string>(''),
 };
 
 const FaucetContext = createContext<FaucetContextType>(defaultContextValue);
