@@ -10,9 +10,10 @@
 }
 
 .section-description {
-  @apply text-[16px] leading-[25.6px] /** small screen */
+  @apply text-[16px] leading-[28.8px] /** small screen */
   md:text-[24px] md:leading-[40px] /** medium screen */
-  font-medium text-mono-140;
+  font-medium text-mono-140
+  dark:text-mono-80;
 }
 
 .button-base {

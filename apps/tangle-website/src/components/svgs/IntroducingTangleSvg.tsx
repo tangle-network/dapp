@@ -1299,4 +1299,4 @@ const SvgComponent = (
   );
 };
 
-export const IntroducingTangleSVG = forwardRef(SvgComponent);
+export const IntroducingTangleSvg = forwardRef(SvgComponent);
