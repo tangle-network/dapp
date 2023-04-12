@@ -48,6 +48,10 @@ export class Currency {
     return this.data.role;
   }
 
+  getCurrencyConfig(): CurrencyConfig {
+    return this.data;
+  }
+
   get view(): CurrencyView {
     return {
       id: this.data.id as any,

@@ -1,9 +1,12 @@
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { RecipientInput } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import React, { ComponentProps, useCallback, useEffect, useMemo } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { useFaucetContext } from '../provider';
+import useStore, { StoreKey } from '../store';
 
 const overrideInputProps: ComponentProps<
   typeof RecipientInput
@@ -12,13 +15,18 @@ const overrideInputProps: ComponentProps<
 };
 
 const RecipientAddressInput = () => {
-  const { inputValues$, twitterHandle$ } = useFaucetContext();
+  const { inputValues$ } = useFaucetContext();
+
+  const [getStore] = useStore();
 
   const recipientAddress = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.recepient))
   );
 
-  const twitterHandle = useObservableState(twitterHandle$);
+  const twitterHandle = useMemo(() => {
+    return getStore(StoreKey.twitterHandle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.twitterHandle)]);
 
   const inputProps = useMemo(
     () => ({
@@ -30,10 +38,13 @@ const RecipientAddressInput = () => {
 
   const updateRecipientAddress = useCallback(
     (address: string) => {
+      const addrType = isEthereumAddress(address) ? 'ethereum' : 'substrate';
+
       const inputValues = inputValues$.getValue();
       inputValues$.next({
         ...inputValues,
         recepient: address,
+        recepientAddressType: addrType,
       });
     },
     [inputValues$]
@@ -53,6 +64,7 @@ const RecipientAddressInput = () => {
         value={recipientAddress}
         onChange={updateRecipientAddress}
         overrideInputProps={inputProps}
+        validate={isValidAddress}
       />
     </div>
   );

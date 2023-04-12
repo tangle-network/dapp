@@ -1,3 +1,4 @@
+import { ChainBase } from '@webb-tools/dapp-config';
 import { Note } from '@webb-tools/sdk-core';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
 import {
@@ -25,12 +26,18 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
    * The source chain
    */
-  sourceChain?: ChainType;
+  sourceChain?: {
+    type: ChainBase;
+    name: string;
+  };
 
   /**
    * The destination chain
    */
-  destChain?: ChainType;
+  destChain?: {
+    type: ChainBase;
+    name: string;
+  };
 
   /**
    * The fungible token id
@@ -53,4 +60,14 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * @returns void
    */
   onResetState?: () => void;
+
+  /**
+   * The fee amount
+   */
+  feeValue?: number;
+
+  /**
+   * The fee token
+   */
+  feeToken?: string;
 }

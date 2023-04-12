@@ -20,19 +20,10 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
       return null;
     }
 
-    return WebbRelayer.intoActiveWebRelayer(
-      relayer,
-      {
-        basedOn: 'substrate',
-        typedChainId,
-      },
-      async () => {
-        return {
-          totalFees: '0',
-          withdrawFeePercentage: 0,
-        };
-      }
-    );
+    return WebbRelayer.intoActiveWebRelayer(relayer, {
+      basedOn: 'substrate',
+      typedChainId,
+    });
   }
 
   /*

@@ -3,7 +3,7 @@ import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import cx from 'classnames';
 import { useObservableState } from 'observable-hooks';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { map } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,6 +13,7 @@ import RecipientAddressInput from '../components/RecipientAddressInput';
 import TokenDropdown from '../components/TokenDropdown';
 import TwitterLink from '../components/TwitterLink';
 import { useFaucetContext } from '../provider';
+import useStore, { StoreKey } from '../store';
 import MintButtonContainer from './MintButtonContainer';
 
 const InputsContainer = () => {
@@ -51,13 +52,18 @@ const InputsContainer = () => {
 };
 
 const AmountChip = () => {
-  const { amount, inputValues$, twitterHandle$ } = useFaucetContext();
+  const { amount, inputValues$ } = useFaucetContext();
+
+  const [getStore] = useStore();
 
   const token = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.token))
   );
 
-  const twitterHandle = useObservableState(twitterHandle$);
+  const twitterHandle = useMemo(() => {
+    return getStore(StoreKey.twitterHandle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.twitterHandle)]);
 
   return (
     <Chip isDisabled={!twitterHandle} color="blue" className="rounded-lg">
@@ -104,9 +110,14 @@ const InputWrapper = ({
 };
 
 const Info = () => {
-  const { twitterHandle$, inputValues$ } = useFaucetContext();
+  const { inputValues$ } = useFaucetContext();
 
-  const twitterHandle = useObservableState(twitterHandle$);
+  const [getStore] = useStore();
+
+  const twitterHandle = useMemo(() => {
+    return getStore(StoreKey.twitterHandle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.twitterHandle)]);
   const selectedChain = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );

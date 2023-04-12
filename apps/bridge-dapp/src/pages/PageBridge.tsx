@@ -233,22 +233,23 @@ const PageBridge = () => {
                 // The customMainComponent alters the global mainComponent for display.
                 // Therfore, if the customMainComponent exists (input selected) then hide the base component.
                 className={cx(
-                  'min-w-[550px] bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
-                  customMainComponent ? 'hidden' : 'block'
+                  'min-w-[550px] min-h-[700px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                  customMainComponent ? 'hidden' : 'block',
+                  'flex flex-col'
                 )}
               >
-                <TabsList aria-label="bridge action" className="mb-4">
+                <TabsList aria-label="bridge action" className="">
                   <TabTrigger value="Deposit">Deposit</TabTrigger>
                   <TabTrigger value="Transfer">Transfer</TabTrigger>
                   <TabTrigger value="Withdraw">Withdraw</TabTrigger>
                 </TabsList>
-                <TabContent value="Deposit">
+                <TabContent className="grow" value="Deposit">
                   <DepositContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent value="Transfer">
+                <TabContent className="grow" value="Transfer">
                   <TransferContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent value="Withdraw">
+                <TabContent className="grow" value="Withdraw">
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>

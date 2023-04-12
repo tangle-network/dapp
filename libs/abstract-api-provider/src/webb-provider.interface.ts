@@ -1,25 +1,24 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ECDSAClaims } from './ecdsa-claims';
+import { EventBus } from '@webb-tools/app-util';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { EventBus } from '@webb-tools/app-util';
+import { ECDSAClaims } from './ecdsa-claims';
 
-import { AccountsAdapter } from './account/Accounts.adapter';
-import { VAnchorActions } from './vanchor/vanchor-actions';
-import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { BridgeApi } from './vanchor';
-import { ChainQuery } from './chain-query';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
-import { WebbState } from './state';
-import { ActionEvent } from './transaction';
-import { WrapUnwrap } from './wrap-unwrap';
-import { Observable } from 'rxjs';
 import { ZkComponents } from '@webb-tools/utils';
 import { providers } from 'ethers';
-import { ResourceId } from '@webb-tools/sdk-core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { AccountsAdapter } from './account/Accounts.adapter';
+import { ChainQuery } from './chain-query';
+import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
+import { WebbRelayerManager } from './relayer/webb-relayer-manager';
+import { WebbState } from './state';
+import { ActionEvent } from './transaction';
+import { BridgeApi } from './vanchor';
+import { VAnchorActions } from './vanchor/vanchor-actions';
+import { WrapUnwrap } from './wrap-unwrap';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -203,8 +202,10 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   state: WebbState;
   methods: WebbMethods<WebbApiProvider<T>>;
+
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
+  typedChainidSubject: BehaviorSubject<number>;
 
   type(): string;
 
@@ -243,7 +244,4 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
     vAnchorAddress: string,
     provider?: providers.Provider
   ) => Promise<number>;
-
-  // get the current resource id
-  getResourceId(): Promise<ResourceId | null>;
 }

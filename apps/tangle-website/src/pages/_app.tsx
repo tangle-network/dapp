@@ -8,7 +8,7 @@ import { Header } from '../components';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
-    <WebbUIProvider>
+    <WebbUIProvider defaultThemeMode="light">
       <Head>
         <title>Welcome to tangle-website!</title>
       </Head>

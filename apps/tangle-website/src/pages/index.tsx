@@ -1,7 +1,11 @@
+import { HeroSection, IntroducingSection } from '../components';
+
 export function Index() {
   return (
-    <div>
-      <h1>Welcome to tangle-website!</h1>
+    <div className="bg-body">
+      <HeroSection />
+
+      <IntroducingSection />
     </div>
   );
 }

@@ -1,27 +1,29 @@
-import { CurrencyRole, EVMChainId } from '@webb-tools/dapp-types';
-import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { EVMChainId } from '@webb-tools/dapp-types';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
-import { ApiConfig } from '../api-config';
-import { CurrencyConfig } from '../currencies';
+// 0xa1a2b7e08793b3033122b83cbee56726678588b5 - webbWETH - mocked backend
+// 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
+// 0xaa4cd2df238be5c360d2031bac48dc17e6a187d8 - webbStandAlone - DKG backend
+// 0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4 - webbtTNT-standalone
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8513284,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 13062856,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
-    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 20151492,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 14922326,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 15309867,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 8508326,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 8703495,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
-    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 8768287,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 8784848,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 2920599,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3146553,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 3220705,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 3239056,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 5611883,
@@ -29,10 +31,23 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 32139400,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 33462722,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 33927921,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 34045996,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
     '0xa1a2b7e08793b3033122b83cbee56726678588b5': 3771120,
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 3996742,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 4074545,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 4092725,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 20151492,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 20573380,
+  },
+  [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
+    '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
+    '0xf8c9d24e3bc3e2d3eddde507079b08e82f239fc4': 995373,
+    '0xaa4cd2df238be5c360d2031bac48dc17e6a187d8': 1079099,
   },
   [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
     '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
@@ -52,71 +67,4 @@ export const getAnchorDeploymentBlockNumber = (
   return Object.entries(anchorDeploymentBlock[chainIdType]).find(
     (entry) => entry[0].toLowerCase() === contractAddress.toLowerCase()
   )?.[1];
-};
-
-/**
- * Get the address of the latest anchor deployed on the chain
- * @param typedChainId the chainIdType of the chain
- * @returns the latest anchor address for the chain
- */
-export const getLatestAnchorAddress = (
-  typedChainId: number
-): string | undefined => {
-  const deploymentsBlock = anchorDeploymentBlock[typedChainId];
-  if (!deploymentsBlock) {
-    return undefined;
-  }
-
-  const [address] = Object.entries(deploymentsBlock).reduce(
-    ([prevAddress, prevBlockNumber], [address, blockNumber]) => {
-      if (blockNumber > prevBlockNumber) {
-        return [address, blockNumber];
-      }
-      return [prevAddress, prevBlockNumber];
-    }
-  );
-
-  return address;
-};
-
-// Cache the anchor config
-let anchorsConfig: ApiConfig['anchors'];
-
-/**
- * Get the anchor config for the currencies
- * @param currencies the currency config which is fetched on-chain
- * @returns the anchor config which is indexed by currencyId
- */
-export const getAnchorConfig = async (
-  currencies: Record<number, CurrencyConfig>
-): Promise<ApiConfig['anchors']> => {
-  // If the anchor config is already calculated, return it
-  if (anchorsConfig) {
-    return anchorsConfig;
-  }
-
-  const anchors: ApiConfig['anchors'] = {};
-
-  const fungibleCurrencies = Object.values(currencies).filter(
-    (currency) => currency.role === CurrencyRole.Governable
-  );
-
-  fungibleCurrencies.forEach((currency) => {
-    anchors[currency.id] = Array.from(currency.addresses.entries()).reduce(
-      (acc, [typedChainId]) => {
-        const address = getLatestAnchorAddress(typedChainId);
-        if (address) {
-          acc[typedChainId] = address;
-        } else {
-          console.error('No anchor address found for chain', typedChainId);
-        }
-        return acc;
-      },
-      {} as Record<number, string>
-    );
-  });
-
-  anchorsConfig = anchors;
-
-  return anchors;
 };

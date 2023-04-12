@@ -38,13 +38,13 @@ export const WithdrawConfirmContainer = forwardRef<
   (
     {
       amount,
-      amountAfterFees,
+      amountAfterFee,
       availableNotes,
       changeAmount,
       changeNote,
       changeUtxo,
-      fees,
-      feesInfo,
+      fee,
+      feeInfo,
       fungibleCurrency: fungibleCurrencyProp,
       isRefund,
       onResetState,
@@ -70,7 +70,9 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, noteManager } = useWebContext();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const {
       relayersState: { activeRelayer },
@@ -149,10 +151,15 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         default: {
-          status = 'In-Progress';
+          status = 'in Progress...';
           break;
         }
       }
+
+      if (!status)
+        return unwrapCurrency
+          ? 'Confirm Unwrap and Withdraw'
+          : 'Confirm Withdraw';
 
       return unwrapCurrency
         ? `Unwrap and Withdraw ${status}`
@@ -201,7 +208,7 @@ export const WithdrawConfirmContainer = forwardRef<
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
 
-      const amount = Number(ethers.utils.formatEther(amountAfterFees));
+      const amount = Number(ethers.utils.formatEther(amountAfterFee));
 
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
@@ -213,6 +220,8 @@ export const WithdrawConfirmContainer = forwardRef<
         token: tokenSymbol,
         tokenURI,
       });
+
+      setTxId(tx.id);
 
       try {
         txQueueApi.registerTransaction(tx);
@@ -229,7 +238,7 @@ export const WithdrawConfirmContainer = forwardRef<
           changeUtxo,
           recipient,
           refundAmount: refund,
-          feeAmount: fees,
+          feeAmount: fee,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -279,32 +288,40 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       apiConfig,
-      amountAfterFees,
+      amountAfterFee,
       txQueueApi,
       setMainComponent,
       refundAmount,
       changeUtxo,
       recipient,
-      fees,
+      fee,
       activeRelayer,
       noteManager,
       onResetState,
     ]);
 
-    const formattedFees = useMemo(() => {
-      const feesInEthers = ethers.utils.formatEther(fees);
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+    const formattedFee = useMemo(() => {
+      const feeInEthers = ethers.utils.formatEther(fee);
 
       if (activeRelayer) {
         const formattedRelayerFee = getRoundedAmountString(
-          Number(feesInEthers),
+          Number(feeInEthers),
           3,
           Math.round
         );
         return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
       }
 
-      return `${feesInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
-    }, [activeRelayer, fees, fungibleCurrency.view.symbol, refundToken]);
+      return `${feeInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
+    }, [activeRelayer, fee, fungibleCurrency.view.symbol, refundToken]);
 
     const formattedRefund = useMemo(() => {
       if (!refundAmount) {
@@ -317,10 +334,10 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [refundAmount]);
 
     const remainingAmount = useMemo(() => {
-      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFees));
+      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFee));
 
       return getRoundedAmountString(amountInEthers, 3, Math.round);
-    }, [amountAfterFees]);
+    }, [amountAfterFee]);
 
     return (
       <WithdrawConfirm
@@ -328,14 +345,21 @@ export const WithdrawConfirmContainer = forwardRef<
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}
-        destChain={chainsPopulated[targetChainId]?.name}
+        destChain={{
+          name: chainsPopulated[targetChainId].name,
+          type: chainsPopulated[targetChainId].base ?? 'webb-dev',
+        }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress
             ? false
             : changeAmount
             ? !checked
             : false,
-          children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
+          children: withdrawTxInProgress
+            ? 'Make Another Transaction'
+            : unwrapCurrency
+            ? 'Unwrap And Withdraw'
+            : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
@@ -352,8 +376,8 @@ export const WithdrawConfirmContainer = forwardRef<
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         remainingAmount={remainingAmount}
-        feesInfo={feesInfo}
-        fee={formattedFees}
+        feeInfo={feeInfo}
+        fee={formattedFee}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
@@ -364,6 +388,7 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusMessage={txStatusMessage}
       />
     );
   }

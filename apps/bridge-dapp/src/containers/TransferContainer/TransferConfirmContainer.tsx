@@ -43,6 +43,8 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       inputNotes,
       onResetState,
+      feeAmount,
+      feeToken,
       ...props
     },
     ref
@@ -60,7 +62,9 @@ export const TransferConfirmContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.chainId),
@@ -170,6 +174,8 @@ export const TransferConfirmContainer = forwardRef<
         tokenURI,
       });
 
+      setTxId(tx.id);
+
       try {
         txQueueApi.registerTransaction(tx);
 
@@ -235,16 +241,31 @@ export const TransferConfirmContainer = forwardRef<
       onResetState,
     ]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+
     return (
       <TransferConfirm
         {...props}
         ref={ref}
-        title={isTransfering ? 'Transfer in Progress' : undefined}
+        title={isTransfering ? 'Transfer in Progress...' : undefined}
         activeChains={activeChains}
         amount={amount}
         changeAmount={changeAmount}
-        sourceChain={activeChain?.name}
-        destChain={destChain.name}
+        sourceChain={{
+          name: activeChain?.name ?? '',
+          type: activeChain?.base ?? 'webb-dev',
+        }}
+        destChain={{
+          name: destChain.name,
+          type: destChain.base ?? 'webb-dev',
+        }}
         note={changeNote?.serialize()}
         progress={progress}
         recipientPublicKey={recipient}
@@ -254,6 +275,8 @@ export const TransferConfirmContainer = forwardRef<
         relayerAvatarTheme={
           activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
         }
+        fee={feeAmount}
+        feeToken={feeToken}
         onClose={() => setMainComponent(undefined)}
         checkboxProps={{
           children: 'I have copied the change note',
@@ -263,8 +286,9 @@ export const TransferConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: changeNote ? !isChecked : false,
           onClick: handleTransferExecute,
-          children: isTransfering ? 'New Transfer' : 'Transfer',
+          children: isTransfering ? 'Make Another Transaction' : 'Transfer',
         }}
+        txStatusMessage={txStatusMessage}
       />
     );
   }

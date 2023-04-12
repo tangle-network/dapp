@@ -27,23 +27,23 @@ import {
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
   ChainType,
   Keypair,
   Note,
-  ResourceId,
-  Utxo,
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { Signer, ethers, providers } from 'ethers';
+import { ethers, providers, Signer } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
 
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
@@ -56,7 +56,6 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import { VAnchor__factory } from '@webb-tools/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -69,6 +68,8 @@ export class WebbWeb3Provider
   state: WebbState;
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
+
+  readonly typedChainidSubject: BehaviorSubject<number>;
 
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
@@ -100,6 +101,10 @@ export class WebbWeb3Provider
     readonly wasmFactory: WasmFactory
   ) {
     super();
+
+    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+    this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
+
     this.ethersProvider = web3Provider.intoEthersProvider();
     this.ethersProvider.on('block', () => {
       this.ethersProvider.getBlockNumber().then((b) => {
@@ -140,6 +145,7 @@ export class WebbWeb3Provider
 
     // All supported bridges are supplied by the config, before passing to the state.
     const initialSupportedBridges: Record<number, Bridge> = {};
+
     for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (
         Object.keys(bridgeConfig.anchors).includes(
@@ -164,19 +170,6 @@ export class WebbWeb3Provider
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
-  }
-
-  async getResourceId(): Promise<ResourceId | null> {
-    const vanchors = await this.methods.bridgeApi.getVAnchors();
-    if (vanchors.length === 0) {
-      return null;
-    }
-
-    const chainId = await this.getChainId();
-    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
-    const address = vanchors[0].neighbours[typedChainId];
-
-    return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }
 
   getProvider(): Web3Provider {
