@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SocialsProps } from './types';
-import { socialConfigs } from '../../constants';
+import { defaultSocialConfigs } from '../../constants';
 
 const iconPlacements = {
   start: 'justify-start',
@@ -12,7 +12,8 @@ const iconPlacements = {
 
 export const Socials = forwardRef<HTMLElement, SocialsProps>(
   ({ className, ...props }) => {
-    const { iconPlacement = 'start' } = props;
+    const { iconPlacement = 'start', socialConfigs = defaultSocialConfigs } =
+      props;
 
     return (
       <div

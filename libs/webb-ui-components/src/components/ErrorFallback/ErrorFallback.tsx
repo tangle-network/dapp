@@ -6,10 +6,10 @@ import { Typography } from '../../typography';
 import { Button, ButtonProps } from '../Button';
 import { ErrorFallbackProps } from './types';
 
-const telegramInfo = constants.socialConfigs.find((c) => c.name === 'telegram');
+const telegramInfo = constants.defaultSocialConfigs.find((c) => c.name === 'telegram');
 const contactLink = telegramInfo?.href ?? '';
 
-const githubInfo = constants.socialConfigs.find((c) => c.name === 'github');
+const githubInfo = constants.defaultSocialConfigs.find((c) => c.name === 'github');
 const reportIssueLink = `${githubInfo?.href ?? ''}/webb-dapp/issues/new/choose`;
 
 /**
