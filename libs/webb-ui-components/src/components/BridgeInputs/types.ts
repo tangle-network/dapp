@@ -233,11 +233,17 @@ export interface RecipientInputProps
    * Override props of input element
    */
   overrideInputProps?: Omit<InputProps, 'id'>;
+
   /**
    *
    * set valid state of the input
    * */
   isValidSet?(valid: boolean): void;
+
+  /**
+   * Validate input address function
+   */
+  validate?(value: string): boolean;
 
   /**
    * If `true`, the patse button will be hidden

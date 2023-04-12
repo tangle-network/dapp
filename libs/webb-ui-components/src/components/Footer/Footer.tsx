@@ -8,6 +8,7 @@ import type { ExternalLink, Link as ILink } from '../../types';
 import { Typography } from '../../typography/Typography';
 import { Divider } from '../Divider';
 import { Logo } from '../Logo';
+import { Socials } from '../Socials';
 import { FooterProps } from './types';
 
 /**
@@ -49,17 +50,10 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         <Divider />
 
         {/** Social platforms */}
-        <div className="flex items-center justify-end space-x-8">
-          {constants.socialConfigs.map(({ Icon, name, ...linkProps }) => (
-            <a
-              key={name}
-              {...linkProps}
-              className="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
-            >
-              <Icon size="lg" className="!fill-current" />
-            </a>
-          ))}
-        </div>
+        <Socials
+          iconPlacement="end"
+          iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+        />
 
         <div className="flex justify-between">
           <Typography variant="body2" className="!text-mono-100">

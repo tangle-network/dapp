@@ -41,6 +41,7 @@ import {
 
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyConfig } from '@webb-tools/dapp-config';
+import { isValidAddress } from '@webb-tools/dapp-types';
 import { ChainListCardWrapper } from '../../components';
 import {
   useAddCurrency,
@@ -958,6 +959,7 @@ export const WithdrawContainer = forwardRef<
       isValidSet(valid: boolean) {
         setIsValidRecipient(valid);
       },
+      validate: (value) => isValidAddress(value),
       onChange: (recipient) => {
         setRecipient(recipient);
       },

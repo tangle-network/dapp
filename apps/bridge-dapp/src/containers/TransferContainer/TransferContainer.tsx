@@ -6,6 +6,7 @@ import {
   CurrencyConfig,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
+import { isValidPublicKey } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
@@ -942,6 +943,7 @@ export const TransferContainer = forwardRef<
           info: 'Public key of the recipient',
           errorMessage: recipientError,
           value: recipientPubKey,
+          validate: (value) => isValidPublicKey(value),
           onChange: (recipient) => {
             setRecipientPubKey(recipient);
           },

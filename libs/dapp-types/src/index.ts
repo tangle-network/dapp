@@ -5,6 +5,7 @@ export * from './ChainId';
 export * from './Currency';
 export * from './InteractiveFeedback';
 export * from './Props';
+export * from './utils';
 export * from './WalletId';
 export * from './WebbError';
 
