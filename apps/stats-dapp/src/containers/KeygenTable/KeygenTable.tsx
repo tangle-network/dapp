@@ -183,13 +183,11 @@ export const KeygenTable: FC = () => {
 
   const { error, isFailed, isLoading, val: activeKeyData } = useActiveKeys();
 
-  const { currentKey, nextKey } = useMemo<{
+  const { currentKey } = useMemo<{
     currentKey: PublicKey | null | undefined;
-    nextKey: PublicKey | null | undefined;
   }>(() => {
     return {
       currentKey: activeKeyData ? activeKeyData[0] : null,
-      nextKey: activeKeyData ? activeKeyData[1] : null,
     };
   }, [activeKeyData]);
 
@@ -226,33 +224,36 @@ export const KeygenTable: FC = () => {
 
   const data = useMemo(() => {
     if (keysStats.val) {
-      return keysStats.val.items
-        .filter((v) => {
-          return v.keyGenThreshold && v.signatureThreshold;
-        })
-        .map(
-          (item): KeygenType => ({
-            height: Number(item.height),
-            session: Number(item.session),
-            key: item.compressed,
-            authorities: new Set(item.keyGenAuthorities),
-            keygenThreshold: item.keyGenThreshold,
-            keyId: item.uncompressed,
-            totalAuthorities: item.keyGenAuthorities.length,
-            signatureThreshold: item.signatureThreshold,
-            previousKeyId: item.previousKeyId,
-            nextKeyId: item.nextKeyId,
-          })
-        );
+      return (
+        keysStats.val.items
+          // .filter((v) => {
+          //   console.log('v: ', v);
+          //   return v.keyGenThreshold && v.signatureThreshold;
+          // })
+          .map(
+            (item): KeygenType => ({
+              height: Number(item.height),
+              session: Number(item.session),
+              key: item.compressed,
+              authorities: new Set(item.keyGenAuthorities),
+              keygenThreshold: item.keyGenThreshold ?? 0,
+              keyId: item.uncompressed,
+              totalAuthorities: item.keyGenAuthorities.length,
+              signatureThreshold: item.signatureThreshold ?? 0,
+              previousKeyId: item.previousKeyId,
+              nextKeyId: item.nextKeyId,
+            })
+          )
+      );
     }
     return [] as KeygenType[];
-  }, [keysStats]);
+  }, [keysStats, totalItems]);
 
   useEffect(() => {
     if (keysStats.val) {
       setTotalItems(keysStats.val.pageInfo.count);
     }
-  }, [keysStats, currentKey]);
+  }, [keysStats]);
 
   const table = useReactTable<KeygenType>({
     data,

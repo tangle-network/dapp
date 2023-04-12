@@ -203,6 +203,7 @@ export function useKeys(
         offset: reqQuery.offset,
         PerPage: reqQuery.perPage,
       },
+      fetchPolicy: 'network-only',
     }).catch((e) => {
       setPage({
         val: null,
