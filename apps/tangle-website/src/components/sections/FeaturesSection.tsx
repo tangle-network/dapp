@@ -64,7 +64,7 @@ export const FeaturesSection = () => {
         </SectionDescription>
       </div>
       {!isTablet ? (
-        <div className="flex flex-col items-stretch justify-items-stretch gap-6 lg:flex-row lg:w-3/4 px-5">
+        <div className="flex flex-col items-stretch justify-items-stretch gap-6 lg:flex-row lg:w-[77.5%] px-5 lg:px-0">
           {tangleFeatures.map((feat, i) => {
             return (
               <TangleFeatureCard
