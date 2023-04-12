@@ -7,20 +7,20 @@ import {
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
-import { LoggerService } from '@webb-tools/app-util';
+import { LoggerService } from '@webb-tools/browser-utils';
 import {
-  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
+  NetworkStorage,
   noteStorageFactory,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
-  Wallet,
   chainsConfig,
   chainsPopulated,
+  Wallet,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -41,9 +41,9 @@ import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
+  calculateTypedChainId,
   ChainType,
   Keypair,
-  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
   Web3Provider,
@@ -55,7 +55,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ethers } from 'ethers';
 import { TAppEvent } from './app-event';
-import { unsupportedChain } from './error';
+import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
@@ -650,8 +650,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     }
                   }
 
-                  console.log('bridgeOptions', bridgeOptions);
-
                   // set the available bridges of the new chain
                   webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
                   webbWeb3Provider.state.activeBridge = defaultBridge;
@@ -688,7 +686,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   throw new Error('Native token not found');
                 }
 
-                await web3Provider.addChain({
+                // Switch to the chain
+                await web3Provider.switchAndAddChain({
                   chainId: `0x${chain.chainId.toString(16)}`,
                   chainName: chain.name,
                   rpcUrls: chain.evmRpcUrls ?? [],
@@ -701,6 +700,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     ? [chain.blockExplorerStub]
                     : undefined,
                 });
+
                 // add network will prompt the switch, check evmId again and throw if user rejected
                 const newChainId = await web3Provider.network;
 
@@ -741,19 +741,19 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         return localActiveApi;
       } catch (e) {
         setLoading(false);
+        logger.error(e);
+
         appEvent.send('walletConnectionState', 'failed');
         if (e instanceof WebbError) {
           /// Catch the errors for the switcher while switching
           catchWebbError(e);
-        }
-        logger.error(e);
-        LoggerService.get('App').error(e);
-
-        // Notify the error
-        if (typeof e === 'object' && e && 'toString' in e) {
+        } else {
+          // Parse and display error
+          const parsedError = parseError(e);
           notificationApi({
             variant: 'error',
-            message: e.toString(),
+            message: 'Web3: Switch Chain Error',
+            secondaryMessage: parsedError.message,
           });
         }
 

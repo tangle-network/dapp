@@ -191,6 +191,22 @@ export class Web3Provider<T = unknown> {
     });
   }
 
+  // Switch to the chain or add it if it doesn't exist
+  async switchAndAddChain(
+    chainInput: AddEthereumChainParameter
+  ): Promise<void> {
+    try {
+      await this.switchChain({ chainId: chainInput.chainId });
+    } catch (error) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if ((error as any)?.code === 4902) {
+        await this.addChain(chainInput);
+      } else {
+        throw error; // Otherwise, throw the error to be handled by the caller.
+      }
+    }
+  }
+
   addToken(addTokenInput: AddToken) {
     return (
       this._inner.currentProvider as unknown as AbstractProvider
