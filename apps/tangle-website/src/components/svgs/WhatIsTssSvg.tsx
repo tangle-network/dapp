@@ -1,10 +1,17 @@
-export const WhatIsTssSvg = (props) => {
+import React from 'react';
+import { SVGProps, Ref, forwardRef } from 'react';
+
+const WhatIsTssSvgComponent = (
+  props: SVGProps<SVGSVGElement>,
+  ref: Ref<SVGSVGElement>
+) => {
   return (
     <svg
       width={48}
       height={49}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      ref={ref}
       {...props}
     >
       <path
@@ -39,3 +46,5 @@ export const WhatIsTssSvg = (props) => {
     </svg>
   );
 };
+
+export const WhatIsTssSvg = forwardRef(WhatIsTssSvgComponent);
