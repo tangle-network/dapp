@@ -1,9 +1,18 @@
 import Image from 'next/image';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components';
 
-import { SectionDescription, SectionHeader, SectionTitle } from '..';
+import {
+  SectionDescription,
+  SectionHeader,
+  SectionTitle,
+  LinkButton,
+} from '..';
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
-import { WHAT_IS_TSS_URL, HOW_TSS_WORKS_URL } from '../../constants';
+import {
+  WHAT_IS_TSS_URL,
+  HOW_TSS_WORKS_URL,
+  STATS_DEV_URL,
+} from '../../constants';
 
 const governanceSystemQnAItems = [
   {
@@ -43,10 +52,10 @@ export const GovernanceSystemSection = () => {
             governance system
           </SectionTitle>
           <div className="flex gap-4 mt-6">
-            <Button variant="secondary" className="button-base-2">
+            <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
               Read Docs
-            </Button>
-            <Button className="button-base-2">View Network</Button>
+            </LinkButton>
+            <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
           </div>
           <div className="mt-[56px] flex flex-col gap-6">
             {governanceSystemQnAItems.map(

@@ -28,7 +28,7 @@ module.exports = {
       },
       colors: {
         tangle_purple: '#444BD3',
-        tangle_dark_purple: '#C6BBFA'
+        tangle_dark_purple: '#C6BBFA',
       },
     },
   },

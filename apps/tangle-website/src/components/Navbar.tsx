@@ -1,7 +1,6 @@
 import { AccordionTrigger } from '@radix-ui/react-accordion';
 import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
-  Button,
   Typography,
   Accordion,
   AccordionContent,
@@ -13,7 +12,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { TANGLE_NETWORK_DOCS_URL, STATS_DEV_URL } from '../constants';
-import { InternalOrExternalLink, IInternalOrExternalLink } from '.';
+import { InternalOrExternalLink, IInternalOrExternalLink, LinkButton } from '.';
 
 type NavItem = IInternalOrExternalLink;
 
@@ -100,14 +99,7 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <Button
-            href={STATS_DEV_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="button-base-2 button-primary"
-          >
-            View Network
-          </Button>
+          <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
         </li>
 
         <li className="flex items-center justify-center md:hidden">

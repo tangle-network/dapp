@@ -2,6 +2,7 @@
 export * from './Header';
 export * from './Heading';
 export * from './InternalOrExternalLink';
+export * from './LinkButton';
 export * from './Navbar';
 export * from './SectionDescription';
 export * from './SectionHeader';
