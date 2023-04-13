@@ -168,7 +168,7 @@ export const bottomLinks: ExternalLink[] = [
   },
 ];
 
-export const socialConfigs: Array<SocialConfigsType> = [
+export const defaultSocialConfigs: Array<SocialConfigsType> = [
   {
     name: 'commonwealth',
     Icon: Common2Icon,
