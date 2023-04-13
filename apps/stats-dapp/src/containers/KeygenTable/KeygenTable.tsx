@@ -183,11 +183,11 @@ export const KeygenTable: FC = () => {
 
   const { error, isFailed, isLoading, val: activeKeyData } = useActiveKeys();
 
-  const { nextKey } = useMemo<{
-    nextKey: PublicKey | null | undefined;
+  const { currentKey } = useMemo<{
+    currentKey: PublicKey | null | undefined;
   }>(() => {
     return {
-      nextKey: activeKeyData ? activeKeyData[1] : null,
+      currentKey: activeKeyData ? activeKeyData[0] : null,
     };
   }, [activeKeyData]);
 
@@ -220,30 +220,34 @@ export const KeygenTable: FC = () => {
     [pageSize, totalItems]
   );
 
-  const keysStats = useKeys(pageQuery);
+  const keysStats = useKeys(pageQuery, currentKey);
+
   const data = useMemo(() => {
     if (keysStats.val) {
-      return keysStats.val.items
-        .filter((v) => {
-          return v.keyGenThreshold && v.signatureThreshold;
-        })
-        .map(
-          (item): KeygenType => ({
-            height: Number(item.height),
-            session: Number(item.session),
-            key: item.compressed,
-            authorities: new Set(item.keyGenAuthorities),
-            keygenThreshold: item.keyGenThreshold,
-            keyId: item.uncompressed,
-            totalAuthorities: item.keyGenAuthorities.length,
-            signatureThreshold: item.signatureThreshold,
-            previousKeyId: item.previousKeyId,
-            nextKeyId: item.nextKeyId,
-          })
-        );
+      return (
+        keysStats.val.items
+          // .filter((v) => {
+          //   console.log('v: ', v);
+          //   return v.keyGenThreshold && v.signatureThreshold;
+          // })
+          .map(
+            (item): KeygenType => ({
+              height: Number(item.height),
+              session: Number(item.session),
+              key: item.compressed,
+              authorities: new Set(item.keyGenAuthorities),
+              keygenThreshold: item.keyGenThreshold ?? 0,
+              keyId: item.uncompressed,
+              totalAuthorities: item.keyGenAuthorities.length,
+              signatureThreshold: item.signatureThreshold ?? 0,
+              previousKeyId: item.previousKeyId,
+              nextKeyId: item.nextKeyId,
+            })
+          )
+      );
     }
     return [] as KeygenType[];
-  }, [keysStats]);
+  }, [keysStats, totalItems]);
 
   useEffect(() => {
     if (keysStats.val) {
