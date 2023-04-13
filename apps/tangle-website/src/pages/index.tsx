@@ -2,6 +2,7 @@ import {
   HeroSection,
   IntroducingSection,
   FeaturesSection,
+  ParticipationMechanicsSection,
 } from '../components';
 
 export function Index() {
@@ -12,6 +13,8 @@ export function Index() {
       <IntroducingSection />
 
       <FeaturesSection />
+
+      <ParticipationMechanicsSection />
     </div>
   );
 }
