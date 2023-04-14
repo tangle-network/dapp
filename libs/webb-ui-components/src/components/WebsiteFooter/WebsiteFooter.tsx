@@ -126,7 +126,9 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
       {/** Links and socials */}
       <div className="w-full max-w-[900px] px-4 py-12 space-y-6 mx-auto">
         {type === 'tangle' && (
-          <Typography variant="body2">Built by Webb Foundation</Typography>
+          <Typography variant="body1" className="text-center md:text-left">
+            Built by Webb Foundation
+          </Typography>
         )}
         <div className="flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
