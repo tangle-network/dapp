@@ -12,9 +12,9 @@ export function Index() {
 
       <IntroducingSection />
 
-      <CommunitySection />
-      
       <FeaturesSection />
+
+      <CommunitySection />
     </div>
   );
 }
