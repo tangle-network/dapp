@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { socialConfigs } from '../../constants';
+import { defaultSocialConfigs } from '../../constants';
 import { SocialsProps } from './types';
 
 const iconPlacements = {
@@ -16,6 +16,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
       className,
       iconClassName = 'text-mono-180 dark:text-mono-0 hover:text-mono-140 dark:hover:text-mono-100',
       iconPlacement = 'start',
+      socialConfigs = defaultSocialConfigs,
       ...props
     },
     ref
