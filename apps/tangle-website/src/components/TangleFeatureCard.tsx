@@ -1,8 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components';
 
-import { SectionDescription } from '.';
+import { SectionDescription, LinkButton } from '.';
 
 interface TangleFeatureCardProps {
   img: string;
@@ -30,9 +30,9 @@ export const TangleFeatureCard: React.FC<TangleFeatureCardProps> = (props) => {
             {description}
           </SectionDescription>
         </div>
-        <Button href={link} className="mt-4">
+        <LinkButton href={link} className="mt-4">
           Learn More
-        </Button>
+        </LinkButton>
       </div>
     </div>
   );
