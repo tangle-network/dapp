@@ -1,6 +1,6 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+import { WebbUIProvider, WebsiteFooter } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
@@ -18,6 +18,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <main className="app">
         <Component {...pageProps} />
       </main>
+
+      <WebsiteFooter type="tangle" />
     </WebbUIProvider>
   );
 }
