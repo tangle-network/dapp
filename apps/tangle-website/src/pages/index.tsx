@@ -2,6 +2,7 @@ import {
   CommunitySection,
   HeroSection,
   IntroducingSection,
+  GovernanceSystemSection,
   FeaturesSection,
 } from '../components';
 
@@ -14,6 +15,8 @@ export function Index() {
 
       <FeaturesSection />
 
+      <GovernanceSystemSection />
+ 
       <CommunitySection />
     </div>
   );

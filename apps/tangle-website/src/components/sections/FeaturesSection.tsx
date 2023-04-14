@@ -8,25 +8,26 @@ import {
   SectionDescription,
   TangleFeatureCard,
 } from '..';
+import { TANGLE_OVERVIEW_URL, WANT_TO_LEARN_MORE_URL } from '../../constants';
 
 const tangleFeatures = [
   {
     title: 'Proof-of-Stake Authority Selection',
     description:
       'The Tangle Network utilizes an advanced Proof-of-Stake authority selection system. This enables fully permissionless participation in securing cross chain zero knowledge applications.',
-    link: '#',
+    link: TANGLE_OVERVIEW_URL,
   },
   {
     title: 'Threshold ECDSA Signature',
     description:
       'The Tangle Network uses a multi-stage governance system to sign zero-knowledge payloads with threshold signatures.',
-    link: '#',
+    link: WANT_TO_LEARN_MORE_URL,
   },
   {
     title: 'Hybrid Light/ DKG based Governance',
     description:
       'The Tangle Network employs a light-client validation protocol, ensuring each TSS-signed message is cryptographically verified through trustless on-chain governance.',
-    link: '#',
+    link: WANT_TO_LEARN_MORE_URL,
   },
 ];
 

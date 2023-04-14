@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SVGProps, Ref, forwardRef } from 'react';
 
-const SvgComponent = (
+const IntroducingTangleSvgComponent = (
   props: SVGProps<SVGSVGElement>,
   ref: Ref<SVGSVGElement>
 ) => {
@@ -1299,4 +1299,4 @@ const SvgComponent = (
   );
 };
 
-export const IntroducingTangleSVG = forwardRef(SvgComponent);
+export const IntroducingTangleSvg = forwardRef(IntroducingTangleSvgComponent);
