@@ -194,6 +194,7 @@ export const WithdrawContainer = forwardRef<
     fetchMaxFeeInfo,
     isLoading: isFetchingFeeInfo,
     feeInfo: feeInfoOrBigNumber,
+    resetMaxFeeInfo,
   } = useMaxFeeInfo(maxFeeArgs);
 
   const feeInfo = useMemo(() => {
@@ -499,7 +500,8 @@ export const WithdrawContainer = forwardRef<
     setRelayer(null);
     setRefundAmount(0);
     setRefundAmountError('');
-  }, [setRelayer]);
+    resetMaxFeeInfo();
+  }, [resetMaxFeeInfo, setRelayer]);
 
   const handleSwitchToOtherDestChains = useCallback(async () => {
     if (otherAvailableChains.length === 0 || !activeWallet) {

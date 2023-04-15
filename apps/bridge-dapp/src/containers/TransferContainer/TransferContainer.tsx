@@ -138,6 +138,7 @@ export const TransferContainer = forwardRef<
       feeInfo,
       fetchMaxFeeInfo,
       isLoading: isFetchingMaxFeeInfo,
+      resetMaxFeeInfo,
     } = useMaxFeeInfo(maxFeeArgs);
 
     const feeValue = useMemo<string | undefined>(() => {
@@ -635,7 +636,8 @@ export const TransferContainer = forwardRef<
       setIsValidRecipient(false);
       setAmount(undefined);
       setRelayer(null);
-    }, [setRelayer]);
+      resetMaxFeeInfo();
+    }, [resetMaxFeeInfo, setRelayer]);
 
     // Callback for transfer button clicked
     const handleTransferClick = useCallback(async () => {

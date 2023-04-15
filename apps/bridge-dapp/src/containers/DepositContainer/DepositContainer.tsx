@@ -114,6 +114,7 @@ export const DepositContainer = forwardRef<
       feeInfo,
       fetchMaxFeeInfo,
       isLoading: isFetchingMaxFeeInfo,
+      resetMaxFeeInfo,
     } = useMaxFeeInfo(maxFeeArgs);
 
     const allTokens = useMemo(
@@ -374,7 +375,8 @@ export const DepositContainer = forwardRef<
       setAmount(0);
       setDestChain(undefined);
       setMainComponentName(undefined);
-    }, []);
+      resetMaxFeeInfo();
+    }, [resetMaxFeeInfo]);
 
     // Main action on click
     const handleDepositButtonClick = useCallback(async () => {
