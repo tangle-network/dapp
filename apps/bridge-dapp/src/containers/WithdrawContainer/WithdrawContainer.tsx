@@ -340,9 +340,8 @@ export const WithdrawContainer = forwardRef<
       const exchangeRate = Number(
         ethers.utils.formatEther(feeInfo.refundExchangeRate)
       );
-      const refundAmountWei = ethers.utils.parseEther(
-        (refundAmount * exchangeRate).toString()
-      );
+      const converted = refundAmount * exchangeRate;
+      const refundAmountWei = ethers.utils.parseEther(converted.toFixed(6));
 
       feeWei = feeWei.add(refundAmountWei);
     }
@@ -389,19 +388,12 @@ export const WithdrawContainer = forwardRef<
       return 'Switch chain to withdraw';
     }
 
-    // If user selects a relayer, require the fee info to be fetched
-    if (activeRelayer && !feeInfo) {
-      return 'Fetch fee info';
-    }
-
     if (selectedUnwrapToken && isUnwrap) {
       return 'Unwrap and Withdraw';
     }
 
     return 'Withdraw';
   }, [
-    activeRelayer,
-    feeInfo,
     hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
@@ -476,7 +468,7 @@ export const WithdrawContainer = forwardRef<
     const refundFee =
       feeInfo && refundAmount && isRefund
         ? getRoundedAmountString(
-            refundAmount /
+            refundAmount *
               Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
           )
         : undefined;
