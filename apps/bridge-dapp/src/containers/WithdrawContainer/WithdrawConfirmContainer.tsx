@@ -4,10 +4,10 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
-  WithdrawConfirm,
   getRoundedAmountString,
   useCopyable,
   useWebbUI,
+  WithdrawConfirm,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
@@ -17,6 +17,7 @@ import {
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
+import { BigNumber, ethers } from 'ethers';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -28,8 +29,6 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
-import { ExchangeRateInfo } from './shared';
-import { BigNumber, ethers } from 'ethers';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -52,7 +51,8 @@ export const WithdrawConfirmContainer = forwardRef<
       recipient,
       refundAmount,
       refundToken,
-      targetChainId,
+      sourceTypedChainId,
+      targetTypedChainId,
       unwrapCurrency: { value: unwrapCurrency } = {},
       ...props
     },
@@ -77,9 +77,9 @@ export const WithdrawConfirmContainer = forwardRef<
     const {
       relayersState: { activeRelayer },
     } = useRelayers({
-      typedChainId: targetChainId,
+      typedChainId: targetTypedChainId,
       target: activeApi?.state.activeBridge
-        ? activeApi.state.activeBridge.targets[targetChainId]
+        ? activeApi.state.activeBridge.targets[targetTypedChainId]
         : undefined,
     });
 
@@ -127,10 +127,10 @@ export const WithdrawConfirmContainer = forwardRef<
     }, []);
 
     const avatarTheme = useMemo(() => {
-      return chainsPopulated[targetChainId].chainType === ChainType.EVM
+      return chainsPopulated[targetTypedChainId].chainType === ChainType.EVM
         ? 'ethereum'
         : 'substrate';
-    }, [targetChainId]);
+    }, [targetTypedChainId]);
 
     const cardTitle = useMemo(() => {
       let status = '';
@@ -308,6 +308,7 @@ export const WithdrawConfirmContainer = forwardRef<
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
     }, [txId, txPayloads]);
+
     const formattedFee = useMemo(() => {
       const feeInEthers = ethers.utils.formatEther(fee);
 
@@ -345,9 +346,13 @@ export const WithdrawConfirmContainer = forwardRef<
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}
+        sourceChain={{
+          name: chainsPopulated[sourceTypedChainId].name,
+          type: chainsPopulated[sourceTypedChainId].base ?? 'webb-dev',
+        }}
         destChain={{
-          name: chainsPopulated[targetChainId].name,
-          type: chainsPopulated[targetChainId].base ?? 'webb-dev',
+          name: chainsPopulated[targetTypedChainId].name,
+          type: chainsPopulated[targetTypedChainId].base ?? 'webb-dev',
         }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress

@@ -21,8 +21,8 @@ import {
 } from '../../components';
 import { Typography } from '../../typography';
 import { formatTokenAmount, shortenString } from '../../utils';
-import { Section, WrapperSection } from './WrapperSection';
 import { WithdrawConfirmationProps } from './types';
+import { Section, WrapperSection } from './WrapperSection';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -120,18 +120,18 @@ export const WithdrawConfirm = forwardRef<
           <WrapperSection>
             {/** Unwrapping\Withdrawing info */}
             <Section>
-              <div className="flex items-end justify-between gap-6">
-                <div className="flex flex-col gap-3">
+              <div className="flex items-end justify-between">
+                <div className="flex flex-col max-w-[200px] gap-y-3">
                   <TitleWithInfo
-                    title="Souce Chain"
+                    title="Source Chain"
                     variant="utility"
                     info="Souce Chain"
                     titleClassName="text-mono-100 dark:text-mono-80"
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={destChain?.type ?? 'webb-dev'}
-                    name={destChain?.name ?? ''}
+                    type={sourceChain?.type ?? 'webb-dev'}
+                    name={sourceChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={token1Symbol}
@@ -139,9 +139,11 @@ export const WithdrawConfirm = forwardRef<
                   />
                 </div>
 
-                <ArrowRight size="lg" />
+                <div className="h-full">
+                  <ArrowRight size="lg" />
+                </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col max-w-[200px] gap-y-3">
                   <TitleWithInfo
                     title="Destination Chain"
                     variant="utility"

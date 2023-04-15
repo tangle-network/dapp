@@ -1,11 +1,10 @@
 import { TokenIcon } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
-import { TokenPair } from '../TokenPair';
-import { TokenWithAmountProps } from './types';
 import { TokenPairIcons } from '../TokenPairIcons';
+import { TokenWithAmountProps } from './types';
 
 export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
   ({ amount, className, token1Symbol, token2Symbol, ...props }, ref) => {
@@ -20,6 +19,7 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
           // Token pair
           <p className="flex items-center space-x-1">
             <TokenPairIcons
+              className="shrink-0"
               token1Symbol={token1Symbol}
               token2Symbol={token2Symbol}
             />
@@ -34,13 +34,13 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
               component="span"
               variant="h5"
               fw="bold"
-              className="capitalize"
+              className="capitalize truncate"
             >
               {token1Symbol.trim() + '/' + token2Symbol.trim()}
             </Typography>
           </p>
         ) : (
-          <TokenIcon size="lg" name={token1Symbol} /> // Only one token
+          <TokenIcon className="shrink-0" size="lg" name={token1Symbol} /> // Only one token
         )}
 
         {/** The amount */}
@@ -51,7 +51,7 @@ export const TokenWithAmount = forwardRef<HTMLDivElement, TokenWithAmountProps>(
         )}
 
         {!token2Symbol && (
-          <Typography variant="h5" fw="bold" className="capitalize">
+          <Typography variant="h5" fw="bold" className="capitalize truncate">
             {token1Symbol}
           </Typography>
         )}

@@ -11,7 +11,7 @@ export const ExchangeRateInfo: FC<{
       <Typography variant="body3" fw="bold">
         Exchange Rate:
       </Typography>
-      <Typography variant="body3">
+      <Typography variant="body3" className="truncate">
         1 {nativeTokenSymbol} = {exchangeRate} {fungibleTokenSymbol}
       </Typography>
 
@@ -30,7 +30,7 @@ export const TransactionFeeInfo: FC<{
 }> = ({ estimatedFee, refundFee, fungibleTokenSymbol }) => {
   return (
     <div className="break-normal">
-      <Typography variant="body3">
+      <Typography variant="body3" className="truncate">
         Transaction Fee:{' '}
         <b>
           {estimatedFee} {fungibleTokenSymbol ?? ''}
@@ -38,7 +38,7 @@ export const TransactionFeeInfo: FC<{
       </Typography>
 
       {refundFee && (
-        <Typography variant="body3" className="mt-2">
+        <Typography variant="body3" className="mt-2 truncate">
           Refund Fee:{' '}
           <b>
             {refundFee} {fungibleTokenSymbol ?? ''}

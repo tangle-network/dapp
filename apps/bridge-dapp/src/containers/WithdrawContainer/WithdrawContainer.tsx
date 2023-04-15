@@ -470,7 +470,11 @@ export const WithdrawContainer = forwardRef<
     () =>
       feeInfo ? (
         <ExchangeRateInfo
-          exchangeRate={+ethers.utils.formatEther(feeInfo.refundExchangeRate)}
+          exchangeRate={getRoundedAmountString(
+            +ethers.utils.formatEther(feeInfo.refundExchangeRate),
+            6,
+            Math.round
+          )}
           fungibleTokenSymbol={fungibleCurrency?.view.symbol}
           nativeTokenSymbol={currentNativeCurrency?.symbol}
         />
@@ -685,6 +689,9 @@ export const WithdrawContainer = forwardRef<
       });
     }
 
+    // Default source chain is the first source chain in the input notes
+    const sourceTypedChainId = Number(inputNotes[0].note.sourceChainId);
+
     const fee =
       feeInfoOrBigNumber instanceof BigNumber
         ? feeInfoOrBigNumber
@@ -696,7 +703,8 @@ export const WithdrawContainer = forwardRef<
         changeUtxo={changeUtxo}
         changeNote={changeNote}
         changeAmount={formattedChangeAmount}
-        targetChainId={currentTypedChainId}
+        sourceTypedChainId={sourceTypedChainId}
+        targetTypedChainId={currentTypedChainId}
         availableNotes={inputNotes}
         amount={amount}
         fee={fee}
