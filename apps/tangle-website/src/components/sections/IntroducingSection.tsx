@@ -2,7 +2,7 @@ import {
   SectionDescription,
   SectionHeader,
   SectionTitle,
-  IntroducingTangleSVG,
+  IntroducingTangleSvg,
 } from '..';
 
 export const IntroducingSection = () => {
@@ -19,7 +19,7 @@ export const IntroducingSection = () => {
         </SectionDescription>
       </div>
       <div className="flex justify-center">
-        <IntroducingTangleSVG />
+        <IntroducingTangleSvg />
       </div>
     </section>
   );

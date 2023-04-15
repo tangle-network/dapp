@@ -1,6 +1,7 @@
 import {
   HeroSection,
   IntroducingSection,
+  GovernanceSystemSection,
   FeaturesSection,
 } from '../components';
 
@@ -12,6 +13,8 @@ export function Index() {
       <IntroducingSection />
 
       <FeaturesSection />
+
+      <GovernanceSystemSection />
     </div>
   );
 }

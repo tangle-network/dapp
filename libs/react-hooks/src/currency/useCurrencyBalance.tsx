@@ -7,8 +7,7 @@ export const useCurrencyBalance = (
   currency: Currency | null | undefined,
   address?: string
 ): number | null => {
-  const { activeAccount, activeApi, activeChain, isConnecting, loading } =
-    useWebContext();
+  const { activeAccount, activeApi, activeChain, loading } = useWebContext();
   const [balance, setBalance] = useState<number | null>(null);
 
   useEffect(() => {

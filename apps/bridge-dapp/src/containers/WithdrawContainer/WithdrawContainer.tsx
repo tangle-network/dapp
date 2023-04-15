@@ -5,6 +5,7 @@ import {
   useBalancesFromNotes,
   useBridge,
   useCurrencies,
+  useCurrencyBalance,
   useCurrentResourceId,
   useNoteAccount,
   useRelayers,
@@ -122,6 +123,25 @@ export const WithdrawContainer = forwardRef<
 
   const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
     useNoteAccount();
+
+  // Current liquidity
+  const fungibleAddress = useMemo(() => {
+    if (!currentTypedChainId) {
+      return;
+    }
+
+    return fungibleCurrency?.getAddress(currentTypedChainId);
+  }, [currentTypedChainId, fungibleCurrency]);
+
+  const unwrap = useMemo(() => {
+    if (!isUnwrap) {
+      return null;
+    }
+
+    return wrappableCurrency;
+  }, [isUnwrap, wrappableCurrency]);
+
+  const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
 
   const fungibleCurrencies = useMemo(() => {
     if (!activeApi) {
@@ -330,15 +350,15 @@ export const WithdrawContainer = forwardRef<
   }, [availableAmount, fungibleCurrency, shieldedAssets]);
 
   const totalFeeInWei = useMemo(() => {
-    if (!feeInfo) {
-      return undefined;
+    if (!feeInfoOrBigNumber || feeInfoOrBigNumber instanceof BigNumber) {
+      return feeInfoOrBigNumber;
     }
 
-    let feeWei = feeInfo.estimatedFee;
+    let feeWei = feeInfoOrBigNumber.estimatedFee;
 
     if (refundAmount && isRefund) {
       const exchangeRate = Number(
-        ethers.utils.formatEther(feeInfo.refundExchangeRate)
+        ethers.utils.formatEther(feeInfoOrBigNumber.refundExchangeRate)
       );
       const converted = refundAmount * exchangeRate;
       const refundAmountWei = ethers.utils.parseEther(converted.toFixed(6));
@@ -347,7 +367,7 @@ export const WithdrawContainer = forwardRef<
     }
 
     return feeWei;
-  }, [feeInfo, isRefund, refundAmount]);
+  }, [feeInfoOrBigNumber, isRefund, refundAmount]);
 
   const isDisabledWithdraw = useMemo(() => {
     const totalFee = Number(
@@ -360,6 +380,7 @@ export const WithdrawContainer = forwardRef<
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
+      typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
       amount >= totalFee,
       Boolean(feeInfoOrBigNumber),
     ].some((value) => value === false);
@@ -371,6 +392,7 @@ export const WithdrawContainer = forwardRef<
     isValidAmount,
     recipient,
     isValidRecipient,
+    liquidity,
     amount,
     feeInfoOrBigNumber,
   ]);
@@ -1041,9 +1063,27 @@ export const WithdrawContainer = forwardRef<
     [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
 
+  const liquidityDesc = useMemo(() => {
+    if (typeof liquidity !== 'number' || !isUnwrap) {
+      return undefined;
+    }
+
+    const receivingAmount = +ethers.utils.formatEther(amountAfterFeeWei);
+    if (Number.isNaN(receivingAmount)) {
+      console.error('Invalid receiving amount');
+      return undefined;
+    }
+
+    const unwrapTkSym = selectedUnwrapToken?.symbol ?? '';
+
+    if (receivingAmount > liquidity) {
+      return `Insufficient liquidity. Available liquidity is ${liquidity} ${unwrapTkSym}`;
+    }
+  }, [amountAfterFeeWei, isUnwrap, liquidity, selectedUnwrapToken?.symbol]);
+
   const buttonDesc = useMemo(() => {
     if (!totalFeeInWei) {
-      return undefined;
+      return liquidityDesc;
     }
 
     const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
@@ -1054,7 +1094,9 @@ export const WithdrawContainer = forwardRef<
     if (amount < totalFee) {
       return `Insufficient funds. You need more than ${feeText} to cover the fee`;
     }
-  }, [amount, selectedFungibleToken?.symbol, totalFeeInWei]);
+
+    return liquidityDesc;
+  }, [amount, liquidityDesc, selectedFungibleToken?.symbol, totalFeeInWei]);
 
   const infoItemProps = useMemo<
     ComponentProps<typeof WithdrawCard>['infoItemProps']
