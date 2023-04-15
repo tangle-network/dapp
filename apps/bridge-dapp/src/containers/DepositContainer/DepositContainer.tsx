@@ -313,10 +313,6 @@ export const DepositContainer = forwardRef<
       return Number(ethers.utils.formatEther(feeInfo));
     }, [feeInfo]);
 
-    useEffect(() => {
-      console.log('feeValue', feeValue);
-    }, [feeValue]);
-
     const currentNativeCurrency = useMemo(() => {
       if (!activeChain) {
         return undefined;
