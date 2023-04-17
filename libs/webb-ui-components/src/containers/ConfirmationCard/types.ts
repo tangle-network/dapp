@@ -1,8 +1,8 @@
 import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
-
-import { Avatar, Button, CheckBox } from '../../components';
+import { Avatar, Button, CheckBox, TitleWithInfo } from '../../components';
 import { UseCopyableReturnType } from '../../hooks';
+import { ChainBase } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -34,12 +34,18 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
    * The source chain symbol
    */
-  sourceChain?: string;
+  sourceChain?: {
+    type: ChainBase;
+    name: string;
+  };
 
   /**
    * The destination chain symbol
    */
-  destChain?: string;
+  destChain?: {
+    type: ChainBase;
+    name: string;
+  };
 
   /**
    * The transaction progress
@@ -52,10 +58,18 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   fee?: number | string;
 
   /**
+   * The fee token symbol
+   */
+  feeToken?: string;
+
+  /**
    * The note string
    */
   note?: string | null;
 
+  /**
+   * The copy props
+   */
   copyProps?: UseCopyableReturnType;
 
   /**
@@ -79,6 +93,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The checkbox props
    */
   checkboxProps?: ComponentProps<typeof CheckBox>;
+
+  /**
+   * The transaction status message
+   */
+  txStatusMessage?: string;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {
@@ -93,7 +112,7 @@ export interface DepositConfirmProps extends ConfirmationCardProps {
   wrappableTokenSymbol?: string;
 
   /**
-   * Due to wrapping fees, a wrapping amount would be larger than the bridged amount.
+   * Due to wrapping fee, a wrapping amount would be larger than the bridged amount.
    */
   wrappingAmount?: string;
 }
@@ -120,6 +139,31 @@ export interface WithdrawConfirmationProps extends ConfirmationCardProps {
    * @default 'polkadot'
    */
   relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
+
+  /**
+   * The remaining amount (amount - refundAmount)
+   */
+  remainingAmount?: number | string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: number | string;
+
+  /**
+   * The refund token symbol
+   */
+  refundToken?: string;
+
+  /**
+   * The received info
+   */
+  receivingInfo?: ComponentProps<typeof TitleWithInfo>['info'];
+
+  /**
+   * Transaction fee info
+   */
+  feeInfo?: ComponentProps<typeof TitleWithInfo>['info'];
 
   /**
    * The relayer address

@@ -27,22 +27,23 @@ import {
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
   ChainType,
   Keypair,
   Note,
-  ResourceId,
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { Signer, ethers, providers } from 'ethers';
+import { ethers, providers, Signer } from 'ethers';
 import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
 
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
@@ -55,7 +56,6 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import { VAnchor__factory } from '@webb-tools/contracts';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -68,6 +68,8 @@ export class WebbWeb3Provider
   state: WebbState;
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
+
+  readonly typedChainidSubject: BehaviorSubject<number>;
 
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
@@ -99,6 +101,10 @@ export class WebbWeb3Provider
     readonly wasmFactory: WasmFactory
   ) {
     super();
+
+    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+    this.typedChainidSubject = new BehaviorSubject<number>(typedChainId);
+
     this.ethersProvider = web3Provider.intoEthersProvider();
     this.ethersProvider.on('block', () => {
       this.ethersProvider.getBlockNumber().then((b) => {
@@ -139,6 +145,7 @@ export class WebbWeb3Provider
 
     // All supported bridges are supplied by the config, before passing to the state.
     const initialSupportedBridges: Record<number, Bridge> = {};
+
     for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
       if (
         Object.keys(bridgeConfig.anchors).includes(
@@ -163,19 +170,6 @@ export class WebbWeb3Provider
 
     // Select a reasonable default bridge
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
-  }
-
-  async getResourceId(): Promise<ResourceId | null> {
-    const vanchors = await this.methods.bridgeApi.getVAnchors();
-    if (vanchors.length === 0) {
-      return null;
-    }
-
-    const chainId = await this.getChainId();
-    const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
-    const address = vanchors[0].neighbours[typedChainId];
-
-    return new ResourceId(address.toString(), ChainType.EVM, chainId);
   }
 
   getProvider(): Web3Provider {
@@ -274,13 +268,10 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal: AbortSignal
+    abortSignal?: AbortSignal
   ): Promise<string[]> {
-    console.group('getVariableAnchorLeaves()');
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
-    const chain = this.config.chains[typedChainId];
-    console.log('On chain: ', chain?.name);
 
     // First, try to fetch the leaves from the supported relayers
     const relayers = await this.relayerManager.getRelayersByChainAndAddress(
@@ -303,11 +294,12 @@ export class WebbWeb3Provider
 
       const storedContractInfo: BridgeStorage = {
         lastQueriedBlock:
-          lastQueriedBlock ||
-          getAnchorDeploymentBlockNumber(
-            typedChainId,
-            vanchor.contract.address
-          ),
+          (lastQueriedBlock ||
+            getAnchorDeploymentBlockNumber(
+              typedChainId,
+              vanchor.contract.address
+            )) ??
+          0,
         leaves: storedLeaves || [],
       };
 
@@ -334,8 +326,6 @@ export class WebbWeb3Provider
       console.log(`Got ${leaves.length} leaves from relayers.`);
     }
 
-    console.groupEnd();
-
     return leaves;
   }
 
@@ -347,6 +337,10 @@ export class WebbWeb3Provider
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
     const tokenSymbol = this.methods.bridgeApi.getCurrency();
+    if (!tokenSymbol) {
+      throw new Error('Currency not found'); // Development error
+    }
+
     const utxosFromChain = await vanchor.getSpendableUtxosFromChain(
       owner,
       getAnchorDeploymentBlockNumber(typedChainId, vanchor.contract.address) ||
@@ -371,14 +365,14 @@ export class WebbWeb3Provider
             vanchor.contract.address,
             provider.intoEthersProvider()
           );
-          const alreadySpent = await vAnchorContract.isSpent(
-            toFixedHex(`0x${utxo.nullifier}`, 32)
+          const alreadySpent = await retryPromise(() =>
+            vAnchorContract.isSpent(toFixedHex(`0x${utxo.nullifier}`, 32))
           );
 
           return alreadySpent ? null : utxo;
         })
       )
-    ).filter((utxo) => !!utxo && utxo.amount !== '0');
+    ).filter((utxo): utxo is Utxo => !!utxo && utxo.amount !== '0');
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
 
@@ -485,6 +479,9 @@ export class WebbWeb3Provider
       this.config.currencies,
       typedChainId
     );
+    if (!chain || !currency) {
+      throw new Error('Chain or currency not found'); // Development error
+    }
 
     return this.web3Provider.addChain({
       chainId: `0x${evmChainId.toString(16)}`,
@@ -494,7 +491,7 @@ export class WebbWeb3Provider
         name: currency.name,
         symbol: currency.symbol,
       },
-      rpcUrls: chain.evmRpcUrls,
+      rpcUrls: chain.evmRpcUrls ?? [],
     });
   }
 
@@ -516,7 +513,7 @@ export class WebbWeb3Provider
 
   async getZkFixtures(
     maxEdges: number,
-    isSmall?: boolean
+    isSmall = false
   ): Promise<ZkComponents> {
     const dummyAbortSignal = new AbortController().signal;
 
@@ -586,7 +583,7 @@ export class WebbWeb3Provider
       vAnchorAddress,
       provider ?? this.ethersProvider
     );
-    const maxEdges = await vAnchorContract.maxEdges();
+    const maxEdges = await retryPromise(vAnchorContract.maxEdges);
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;

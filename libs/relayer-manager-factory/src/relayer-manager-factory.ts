@@ -21,12 +21,20 @@ import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 
 export async function getRelayerManagerFactory() {
+  const env = process.env.NODE_ENV ?? 'development';
+
+  // Filter out the relayers which are not enabled for the current environment
+  const filteredRelayerConfigs = relayerConfig.filter(
+    (relayer) => Boolean(relayer.isProduction) === (env === 'production')
+  );
+
   if (!relayerManagerFactory) {
     relayerManagerFactory = await WebbRelayerManagerFactory.init(
-      relayerConfig,
+      filteredRelayerConfigs,
       chainNameAdapter
     );
   }
+
   return relayerManagerFactory;
 }
 
@@ -110,7 +118,7 @@ export class WebbRelayerManagerFactory {
   }
 
   // Examine the data for saved (already fetched) capabilities. For easier
-  // fetching of information (i.e. fees, beneficiary) and passing as props.
+  // fetching of information (i.e. fee, beneficiary) and passing as props.
   public readCapabilities(endpoint: string): Capabilities | null {
     return this.capabilities[endpoint];
   }

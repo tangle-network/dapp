@@ -1,18 +1,21 @@
-import React, { FC, forwardRef } from 'react';
+import Link from 'next/link';
+import { FC, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 import * as constants from '../../constants';
-import { ExternalLink, Link, PropsOf } from '../../types';
+import type { ExternalLink, Link as ILink } from '../../types';
 import { Typography } from '../../typography/Typography';
 import { Divider } from '../Divider';
 import { Logo } from '../Logo';
+import { Socials } from '../Socials';
+import { FooterProps } from './types';
 
 /**
  * The statistic `Footer` for `Layout` container
  */
-export const Footer = forwardRef<HTMLElement, PropsOf<'footer'>>(
-  ({ className, ...props }, ref) => {
+export const Footer = forwardRef<HTMLElement, FooterProps>(
+  ({ className, isNext, ...props }, ref) => {
     return (
       <footer
         {...props}
@@ -23,9 +26,15 @@ export const Footer = forwardRef<HTMLElement, PropsOf<'footer'>>(
         ref={ref}
       >
         <div className="flex justify-between">
-          <NavLink className="block" to={constants.logoConfig.path}>
-            <Logo />
-          </NavLink>
+          {isNext ? (
+            <Link className="block" href={constants.logoConfig.path}>
+              <Logo />
+            </Link>
+          ) : (
+            <NavLink className="block" to={constants.logoConfig.path}>
+              <Logo />
+            </NavLink>
+          )}
 
           {Object.keys(constants.footerNavs).map((key, idx) => {
             return (
@@ -41,17 +50,10 @@ export const Footer = forwardRef<HTMLElement, PropsOf<'footer'>>(
         <Divider />
 
         {/** Social platforms */}
-        <div className="flex items-center justify-end space-x-8">
-          {constants.socialConfigs.map(({ Icon, name, ...linkProps }) => (
-            <a
-              key={name}
-              {...linkProps}
-              className="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
-            >
-              <Icon size="lg" className="!fill-current" />
-            </a>
-          ))}
-        </div>
+        <Socials
+          iconPlacement="end"
+          iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+        />
 
         <div className="flex justify-between">
           <Typography variant="body2" className="!text-mono-100">
@@ -82,7 +84,7 @@ export const Footer = forwardRef<HTMLElement, PropsOf<'footer'>>(
 
 const FooterNavItem: FC<{
   header: string;
-  links: Array<Link | ExternalLink>;
+  links: Array<ILink | ExternalLink>;
 }> = ({ header, links }) => (
   <div className="flex flex-col space-y-4">
     <Typography

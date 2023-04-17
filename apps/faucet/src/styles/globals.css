@@ -1,0 +1,27 @@
+/* Font Family Satoshi Variable */
+
+.hero-bg {
+  @apply bg-center bg-no-repeat object-fill bg-cover;
+
+  background-image: linear-gradient(
+      142.11deg,
+      rgba(236, 243, 248, 0.2) 9.45%,
+      rgba(236, 243, 248, 0.2) 33.17%
+    ),
+    linear-gradient(336.19deg, #f7f8f7 20.32%, rgba(237, 244, 249, 0) 100.5%),
+    url('/static/assets/faucet-hero.png');
+}
+
+/** TODO: Consider moving this to tailwind-preset if these classes share with the tangle-website */
+
+.input-height {
+  @apply h-[74px];
+}
+
+.lottie-size {
+  @apply w-[200px] h-[200px];
+}
+
+.w-modal {
+  @apply w-[500px];
+}

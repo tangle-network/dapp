@@ -39,7 +39,7 @@ const classNames: ButtonClassNames = {
         'disabled:border-none disabled:bg-blue-10 disabled:text-blue-70 disabled:border-transparent dark:disabled:bg-blue-120 dark:disabled:text-blue-50 disabled:opacity-50',
     },
     md: 'body1',
-    sm: 'utility uppercase',
+    sm: 'body4 uppercase',
   },
   link: {
     base: {
@@ -52,7 +52,7 @@ const classNames: ButtonClassNames = {
       disabled: 'disabled:text-blue-40 disabled:dark:text-blue-90',
     },
     md: 'body1',
-    sm: 'utility uppercase',
+    sm: 'body4 uppercase',
   },
 };
 

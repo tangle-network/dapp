@@ -2,6 +2,9 @@ import cx from 'classnames';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { InformationLine } from '@webb-tools/icons';
+import { Button } from '../Button';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { CheckBoxProps } from './types';
 
 /**
@@ -30,22 +33,29 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const {
     children,
     className,
+    id,
+    info,
     inputProps = {},
     isChecked,
     isDisabled,
-    onChange,
-    spacingClassName = 'ml-4',
     labelClassName: labelClsxProp,
-    wrapperClassName,
     labelVariant = 'body1',
-    id,
+    onChange,
+    spacingClassName = 'ml-2',
+    wrapperClassName,
   } = props;
 
   const inputClsx =
     'form-checkbox peer transition-none bg-mono-0 w-[18px] h-[18px] rounded border border-mono-100 outline-none dark:bg-mono-180';
-  const inputHoverClsx =
-    'hover:bg-blue-10 hover:border-blue-40 hover:shadow-sm hover:shadow-blue-10 dark:hover:bg-blue-120 dark:hover:border-blue-90 dark:hover:shadow-none';
+
+  const inputHoverClsx = cx(
+    'enabled:hover:bg-blue-10 enabled:hover:border-blue-40',
+    'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none',
+    'enabled:dark:hover:bg-blue-120 enabled:dark:hover:border-blue-90'
+  );
+
   const inputCheckedClsx = 'checked:bg-blue-70 dark:checked:bg-blue-50';
+
   const inputDisabledClsx =
     'disabled:border-mono-60 disabled:cursor-not-allowed disabled:bg-mono-0 disabled:shadow-none dark:disabled:bg-mono-140 dark:disabled:border-mono-120';
 
@@ -58,8 +68,8 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   );
 
   const labelClsx = cx(
-    'inline-block peer-disabled:cursor-not-allowed',
-    isDisabled ? 'text-mono-120' : 'text-mono-140 dark:text-mono-20',
+    'inline-block peer-disabled:cursor-not-allowed peer-disabled:text-mono-100',
+    'text-mono-140 dark:text-mono-20',
     labelVariant,
     spacingClassName
   );
@@ -77,6 +87,27 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
         {...inputProps}
       />
       {children && <label className={mergedLabelClsx}>{children}</label>}
+
+      {info && (
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger className="ml-1 text-center" asChild>
+            <span className="cursor-pointer peer-disabled:text-mono-120">
+              <InformationLine className="!fill-current pointer-events-none" />
+            </span>
+          </TooltipTrigger>
+          <TooltipBody
+            title={info.title}
+            className="max-w-[185px] break-normal"
+            button={
+              <Button {...info.buttonProps} variant="utility" size="sm">
+                {info.buttonText ?? 'Learn more'}
+              </Button>
+            }
+          >
+            {info.content}
+          </TooltipBody>
+        </Tooltip>
+      )}
     </label>
   );
 };

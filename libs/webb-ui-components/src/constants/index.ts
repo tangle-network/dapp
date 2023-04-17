@@ -5,7 +5,7 @@ import {
   SocialConfigsType,
 } from '../types';
 import {
-  CommonWealth,
+  Common2Icon,
   DiscordFill,
   GithubFill,
   TelegramFill,
@@ -168,7 +168,13 @@ export const bottomLinks: ExternalLink[] = [
   },
 ];
 
-export const socialConfigs: Array<SocialConfigsType> = [
+export const defaultSocialConfigs: Array<SocialConfigsType> = [
+  {
+    name: 'commonwealth',
+    Icon: Common2Icon,
+    href: 'https://commonwealth.im/webb',
+    ...commonExternalProps,
+  },
   {
     name: 'telegram',
     Icon: TelegramFill,
@@ -191,12 +197,6 @@ export const socialConfigs: Array<SocialConfigsType> = [
     name: 'github',
     Icon: GithubFill,
     href: 'https://github.com/webb-tools',
-    ...commonExternalProps,
-  },
-  {
-    name: 'commonwealth',
-    Icon: CommonWealth,
-    href: 'https://commonwealth.im/webb',
     ...commonExternalProps,
   },
 ];

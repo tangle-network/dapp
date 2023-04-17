@@ -1,17 +1,21 @@
-import { ChevronRight, TokenIcon } from '@webb-tools/icons';
+import {
+  ChevronRight,
+  ShieldKeyholeIcon,
+  TokenIcon,
+  WalletLineIcon,
+} from '@webb-tools/icons';
 import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { MouseEventHandler, forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-
+import { MouseEvent } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
-import { ComponentProps } from 'react';
-import { MouseEvent } from 'react';
 
 /**
  * Token Input component, for selecting token on the bridge
@@ -24,7 +28,10 @@ import { MouseEvent } from 'react';
  * ```
  */
 export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
-  ({ className, id, info, title = 'Token', token, ...props }, ref) => {
+  (
+    { className, id, info = 'Token', title = 'Token', token, ...props },
+    ref
+  ) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;
       let balanceInUsd: string | undefined;
@@ -65,7 +72,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               info={info}
               titleComponent="span"
               className="text-mono-100 dark:text-mono-80"
-              titleClassName="uppercase !text-inherit"
+              titleClassName="capitalize !text-inherit"
             />
           </Label>
 
@@ -85,39 +92,58 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               )}
 
               {token.tokenComposition ? (
-                <Typography component="span" variant="body1" fw="bold">
+                <Typography
+                  component="span"
+                  variant="h5"
+                  fw="bold"
+                  className="capitalize"
+                >
                   {token.tokenComposition[0].trim() +
                     '/' +
                     token.tokenComposition[1].trim()}
                 </Typography>
               ) : (
-                <Typography component="span" variant="body1" fw="bold">
+                <Typography
+                  component="span"
+                  variant="h5"
+                  fw="bold"
+                  className="capitalize"
+                >
                   {token.symbol.trim()}
                 </Typography>
               )}
             </div>
           ) : (
-            <Typography variant="body1" fw="bold">
-              Select {title.toLowerCase()}
+            <Typography variant="h5" fw="bold">
+              Select token
             </Typography>
           )}
         </div>
 
         {balance ? (
-          <div className="flex flex-col items-end space-y-1">
-            <Typography
-              variant="body4"
-              fw="bold"
-              component="span"
-              className="uppercase text-mono-100 dark:text-mono-80 text-[12px] leading-[15px]"
-            >
-              Balance: {balance} {balanceInUsd ? `≈ $${balanceInUsd}` : ''}
-            </Typography>
+          <div className="flex flex-col items-end justify-between">
+            <div className="flex items-center gap-1.5">
+              {token?.balanceType === 'note' ? (
+                <ShieldKeyholeIcon size="md" />
+              ) : (
+                <WalletLineIcon size="md" />
+              )}
 
-            <ChevronRight className="inline-block grow" />
+              <TitleWithInfo
+                title={`${balance} ${balanceInUsd ? `≈ $${balanceInUsd}` : ''}`}
+                variant="utility"
+                titleComponent="span"
+                className="text-mono-100 dark:text-mono-80"
+                titleClassName="capitalize !text-inherit"
+              />
+            </div>
+
+            <div>
+              <AnimatedChevronRight className="inline-block grow" />
+            </div>
           </div>
         ) : (
-          <ChevronRight className="inline-block" />
+          <AnimatedChevronRight className="inline-block" />
         )}
       </InputWrapper>
     );

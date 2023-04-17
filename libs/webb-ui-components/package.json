@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/webb-ui-components",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Webb UI Component Library",
   "keywords": ["webb", "webb-tools", "webb-ui-components", "webb-ui", "webb-ui-library", "webb-ui-component-library", "dApp"],
   "homepage": "https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components#readme",

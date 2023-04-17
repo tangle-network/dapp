@@ -3,14 +3,10 @@
 
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
-import {
-  anchorDeploymentBlock,
-  getAnchorConfig,
-  getLatestAnchorAddress,
-} from './anchors';
+import { anchorDeploymentBlock } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -37,13 +33,13 @@ export type ApiConfigInput = {
 // For the fetching currency on chain effect
 const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
   (acc, typedChainId) => {
-    const address = getLatestAnchorAddress(+typedChainId);
-    if (address) {
-      acc[+typedChainId] = address;
+    const addresses = Object.keys(anchorDeploymentBlock[+typedChainId]);
+    if (addresses && addresses.length > 0) {
+      acc[+typedChainId] = addresses;
     }
     return acc;
   },
-  {} as Record<number, string>
+  {} as Record<number, string[]>
 );
 
 export class ApiConfig {
@@ -78,22 +74,28 @@ export class ApiConfig {
     const {
       currenciesConfig: onChainConfig,
       fungibleToWrappableMap: evmFungibleToWrappableMap,
+      anchorConfig: evmAnchorConfig,
     } = await evmOnChainConfig.fetchCurrenciesConfig(
       parsedAnchorConfig,
       providerFactory
     );
 
-    const { currenciesConfig, fungibleToWrappableMap: fungibleToWrappableMap } =
-      await substrateOnChainConfig.fetchCurrenciesConfig(
-        parsedAnchorConfig,
-        providerFactory as any, // Temporary providerFactory for substrate
-        onChainConfig,
-        evmFungibleToWrappableMap
-      );
+    const {
+      currenciesConfig,
+      fungibleToWrappableMap: fungibleToWrappableMap,
+      anchorConfig: anchors,
+    } = await substrateOnChainConfig.fetchCurrenciesConfig(
+      parsedAnchorConfig,
+      providerFactory as any, // Temporary providerFactory for substrate
+      onChainConfig,
+      evmFungibleToWrappableMap,
+      evmAnchorConfig
+    );
 
-    const anchors = await getAnchorConfig(currenciesConfig);
-
-    const bridgeByAsset = await getBridgeConfigByAsset(currenciesConfig);
+    const bridgeByAsset = await getBridgeConfigByAsset(
+      currenciesConfig,
+      anchors
+    );
 
     return new ApiConfig(
       config.wallets ?? {},
@@ -150,5 +152,22 @@ export class ApiConfig {
       return addresses.includes(address);
     });
     return this.currencies[currency as any] ?? undefined;
+  }
+
+  getAnchorAddress(fungibleCurrencyId: number, typedChainId: number) {
+    const anchor = this.anchors[fungibleCurrencyId];
+    if (!anchor) {
+      return undefined;
+    }
+    return anchor[typedChainId];
+  }
+
+  getUnavailableCurrencies(
+    avaialbleCurrencies: CurrencyConfig[]
+  ): CurrencyConfig[] {
+    const unavailableCurrencies = Object.values(this.currencies).filter(
+      (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id)
+    );
+    return unavailableCurrencies;
   }
 }

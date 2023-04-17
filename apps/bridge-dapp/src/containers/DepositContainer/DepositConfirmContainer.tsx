@@ -19,13 +19,14 @@ import {
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
+  captureSentryException,
 } from '../../utils';
-
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
 import { DepositConfirmContainerProps } from './types';
+import * as Sentry from '@sentry/react';
 
 export const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -33,20 +34,24 @@ export const DepositConfirmContainer = forwardRef<
 >(
   (
     {
-      note,
       amount,
-      sourceChain,
       destChain,
+      feeToken,
+      feeValue,
       fungibleTokenId,
-      wrappableTokenId,
-      resetMainComponent,
+      note,
       onResetState,
+      resetMainComponent,
+      sourceChain,
+      wrappableTokenId,
     },
     ref
   ) => {
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, startNewTransaction } = useVAnchor();
+
+    const [txId, setTxId] = useState('');
 
     const stage = useLatestTransactionStage('Deposit');
 
@@ -93,6 +98,11 @@ export const DepositConfirmContainer = forwardRef<
 
     const handleExecuteDeposit = useCallback(async () => {
       if (!api || !activeApi || !activeChain) {
+        captureSentryException(
+          new Error('No api or chain found'),
+          'transactionType',
+          'deposit'
+        );
         return;
       }
 
@@ -130,6 +140,11 @@ export const DepositConfirmContainer = forwardRef<
       const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
+        captureSentryException(
+          new Error(`Currency not found for symbol ${tokenSymbol}`),
+          'transactionType',
+          'deposit'
+        );
         return;
       }
 
@@ -145,6 +160,8 @@ export const DepositConfirmContainer = forwardRef<
         token: tokenSymbol,
         tokenURI,
       });
+
+      setTxId(tx.id);
 
       try {
         txQueueApi.registerTransaction(tx);
@@ -183,11 +200,12 @@ export const DepositConfirmContainer = forwardRef<
           txHash: receipt.transactionHash,
           outputNotes: [indexedNote],
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
         noteManager?.removeNote(note);
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
+        captureSentryException(error, 'transactionType', 'deposit');
       } finally {
         resetMainComponent();
         onResetState?.();
@@ -235,6 +253,15 @@ export const DepositConfirmContainer = forwardRef<
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+
     return (
       <DepositConfirm
         title={cardTitle}
@@ -245,7 +272,7 @@ export const DepositConfirmContainer = forwardRef<
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
           children: depositTxInProgress
-            ? 'New Transaction'
+            ? 'Make Another Transaction'
             : wrappingFlow
             ? 'Wrap And Deposit'
             : 'Deposit',
@@ -262,10 +289,12 @@ export const DepositConfirmContainer = forwardRef<
         amount={amount}
         wrappingAmount={String(amount)}
         fungibleTokenSymbol={fungibleToken.view.symbol}
-        sourceChain={sourceChain?.name}
-        destChain={destChain?.name}
-        fee={0}
+        sourceChain={sourceChain}
+        destChain={destChain}
+        fee={feeValue ?? 0}
+        feeToken={feeToken}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
+        txStatusMessage={txStatusMessage}
         onClose={() => resetMainComponent()}
       />
     );

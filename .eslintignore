@@ -1,2 +1,7 @@
 /**/tsconfig.base.json
 /**/node_modules
+/**/tailwind.config.js
+/**/postcss.config.js
+/**/next.config.js
+/**/.eslintrc.js
+/**/jest.config.ts
