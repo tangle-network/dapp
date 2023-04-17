@@ -61,8 +61,8 @@ export const ParticipationMechanicsSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('Crowdloan');
 
   return (
-    <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
-      <div className="flex flex-col items-center mb-9">
+    <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
+      <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
         <SectionHeader className="text-center pb-2">
           Participation Mechanics
         </SectionHeader>
@@ -79,7 +79,8 @@ export const ParticipationMechanicsSection = () => {
           value={activeTab}
           onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
         >
-          <TabsList aria-label="tabs">
+          {/* Desktop + Mobile Tab Triggers */}
+          <TabsList aria-label="tabs" className="lg:mx-0">
             <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
               {Object.keys(tabsContent).map((tabName, i) => (
                 <TabTrigger
@@ -92,12 +93,13 @@ export const ParticipationMechanicsSection = () => {
               ))}
             </div>
 
+            {/* Tablet Tab Triggers  */}
             <Swiper
               spaceBetween={16}
               slidesPerView="auto"
               freeMode={true}
               modules={[FreeMode]}
-              className="w-full hidden md:block lg:hidden !ml-0 mb-6"
+              className="w-full hidden md:block lg:hidden mb-6 !mx-0 !pl-5"
             >
               {Object.keys(tabsContent).map((tabName, i) => (
                 <SwiperSlide
@@ -119,8 +121,9 @@ export const ParticipationMechanicsSection = () => {
             </Swiper>
           </TabsList>
 
+          {/* Tab Contents */}
           {Object.entries(tabsContent).map(([key, value]) => (
-            <TabContent key={key} value={key}>
+            <TabContent key={key} value={key} className="md:px-5 lg:px-0">
               <Typography
                 variant="h5"
                 className="font-bold !text-[24px] !leading-[40px] mb-3"
