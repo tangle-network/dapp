@@ -1,4 +1,5 @@
 import {
+  CommunitySection,
   HeroSection,
   IntroducingSection,
   GovernanceSystemSection,
@@ -15,6 +16,8 @@ export function Index() {
       <FeaturesSection />
 
       <GovernanceSystemSection />
+
+      <CommunitySection />
     </div>
   );
 }
