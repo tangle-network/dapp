@@ -2,8 +2,6 @@ import {
   Common2Icon,
   DiscordFill,
   DocumentationIcon,
-  ExchangeFunds,
-  ForumIcon,
   GithubFill,
   TelegramFill,
   TwitterFill,
@@ -15,7 +13,7 @@ import {
   WebsiteCommunity,
 } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import { ResearchAndDevelopmentSection } from '../components';
+import { SectionDescription } from '../SectionDescription';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -25,12 +23,6 @@ type LinksType = {
 };
 
 const links: Array<LinksType> = [
-  {
-    Icon: ExchangeFunds,
-    name: 'Bridge',
-    href: 'https://app.webb.tools/#/bridge',
-    description: 'Private multi-asset bridging made easy',
-  },
   {
     name: 'Github',
     Icon: GithubFill,
@@ -44,22 +36,16 @@ const links: Array<LinksType> = [
     description: 'Learn how it works under the hood',
   },
   {
-    name: 'Telegram',
-    Icon: TelegramFill,
-    href: 'https://t.me/webbprotocol',
-    description: 'Have question, join us on Telegram',
-  },
-  {
     name: 'Discord',
     Icon: DiscordFill,
     href: 'https://discord.com/invite/cv8EfJu3Tn',
     description: 'Come chat about all things Webb',
   },
   {
-    name: 'Twitter',
-    Icon: TwitterFill,
-    href: 'https://twitter.com/webbprotocol',
-    description: 'Say hi on the Webb Twitter',
+    name: 'Telegram',
+    Icon: TelegramFill,
+    href: 'https://t.me/webbprotocol',
+    description: 'Have question, join us on Telegram',
   },
   {
     Icon: Common2Icon,
@@ -68,31 +54,43 @@ const links: Array<LinksType> = [
     description: 'Join the conversation on Commonwealth',
   },
   {
-    Icon: ForumIcon,
-    name: 'Feedback',
-    href: 'https://github.com/webb-tools/feedback/discussions',
-    description: 'Give feedback on how we can improve',
+    name: 'Twitter',
+    Icon: TwitterFill,
+    href: 'https://twitter.com/webbprotocol',
+    description: 'Say hi on the Webb Twitter',
   },
 ];
 
-const Community = () => {
+export const CommunitySection = () => {
   return (
     <>
       <NextSeo title="Community" />
 
-      <section className="py-[156px] flex items-center justify-center w-full bg-community_bg_texture bg-no-repeat bg-cover">
+      <section
+        className="py-[60px] w-full flex items-center justify-center"
+        id="community"
+      >
         <div className="max-w-[900px]">
-          <Typography variant="mkt-h2" className="px-4 text-center">
-            Get Started
+          <Typography
+            variant="label"
+            className="text-center text-purple-70 uppercase block"
+          >
+            Get involved
           </Typography>
+
+          <Typography variant="mkt-h2" className="text-center mt-1">
+            Tangle Community
+          </Typography>
+
+          <SectionDescription className="text-center mt-[16px] px-3 lg:px-0">
+            The Tangle network doubles as hub for routing cross chain messages
+            and for anchoring itself as a bridge endpoint for cross chain
+            zero-knowledge applications.
+          </SectionDescription>
 
           <WebsiteCommunity links={links} />
         </div>
       </section>
-
-      <ResearchAndDevelopmentSection />
     </>
   );
 };
-
-export default Community;

@@ -9,7 +9,10 @@ export const SectionHeader = forwardRef<HTMLHeadingElement, PropsOf<'h5'>>(
       <Typography
         variant="h5"
         {...props}
-        className={twMerge('uppercase text-tangle_purple font-bold', className)}
+        className={twMerge(
+          'uppercase font-bold text-tangle_purple dark:text-tangle_dark_purple',
+          className
+        )}
         ref={ref}
       />
     );
