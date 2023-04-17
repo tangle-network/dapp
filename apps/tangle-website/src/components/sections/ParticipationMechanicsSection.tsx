@@ -57,26 +57,26 @@ export const ParticipationMechanicsSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('Crowdloan');
 
   return (
-    <section className="bg-mono-0 py-20 px-5">
+    <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
       <div className="flex flex-col items-center mb-9">
         <SectionHeader className="text-center pb-2">
           Participation Mechanics
         </SectionHeader>
         <SectionTitle className="pb-4">Join the Tangle Ecosystem</SectionTitle>
-        <SectionDescription className="text-center lg:w-3/5">
+        <SectionDescription className="text-center lg:w-[70%]">
           With Tangle Network, we can create a more scalable, interoperable, and
           positive-sum web3 privacy ecosystem.
         </SectionDescription>
       </div>
 
-      <div>
+      <div className="lg:w-[70%]">
         <TabsRoot
           defaultValue={activeTab}
           value={activeTab}
           onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
         >
           <TabsList aria-label="tabs">
-            <div className="w-full grid grid-cols-2 gap-3 mb-6">
+            <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
               {Object.keys(tabsContent).map((tabName, index) => (
                 <TabTrigger
                   value={tabName}
