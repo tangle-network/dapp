@@ -7,7 +7,12 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 
-import { SectionDescription, SectionHeader, SectionTitle } from '..';
+import {
+  SectionDescription,
+  SectionHeader,
+  SectionTitle,
+  LinkButton,
+} from '..';
 
 import {
   CROWDLOAN_URL,
@@ -59,8 +64,8 @@ export const ParticipationMechanicsSection = () => {
         </SectionHeader>
         <SectionTitle className="pb-4">Join the Tangle Ecosystem</SectionTitle>
         <SectionDescription className="text-center lg:w-3/5">
-          With Tangle Network, we can create a more scalable and interoperable
-          web3 privacy ecosystem that is truly a positive-sum game.
+          With Tangle Network, we can create a more scalable, interoperable, and
+          positive-sum web3 privacy ecosystem.
         </SectionDescription>
       </div>
 
@@ -71,19 +76,24 @@ export const ParticipationMechanicsSection = () => {
           onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
         >
           <TabsList aria-label="tabs">
-            <div className="w-full grid grid-cols-2 gap-6 mb-6">
-              {Object.keys(tabsContent).map((tabName) => (
+            <div className="w-full grid grid-cols-2 gap-3 mb-6">
+              {Object.keys(tabsContent).map((tabName, index) => (
                 <TabTrigger
-                  key={tabName}
                   value={tabName}
-                  className="text-mono-200 aspect-square radix-state-active:bg-mono-200 radix-state-active:!text-mono-0"
+                  className="w-full flex flex-col items-center justify-center !bg-inherit p-0"
+                  key={index}
                 >
-                  <div className="participation-tab flex flex-col items-center gap-2 text-inherit">
-                    <div className="w-12 h-12 bg-mono-40 rounded-full" />
-                    <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
-                      {tabName}
-                    </p>
+                  <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
+                    <div className="w-full text-inherit">
+                      <div className="flex flex-col items-center gap-2 text-inherit">
+                        <div className="w-12 h-12 bg-mono-40 rounded-full" />
+                        <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
+                          {tabName}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                  <span className="participation-tab-polygon inline-block w-0 h-0 border-transparent border-solid border-x-[8px] border-t-[16px]" />
                 </TabTrigger>
               ))}
             </div>
@@ -100,7 +110,10 @@ export const ParticipationMechanicsSection = () => {
               <p className="text-mono-140 text-[20px] leading-[32px] mb-6">
                 {value.description}
               </p>
-              <a href={value.linkUrl} className="">
+              <a
+                href={value.linkUrl}
+                className="text-purple-70 underline font-bold capitalize"
+              >
                 {value.linkText}
               </a>
             </TabContent>
