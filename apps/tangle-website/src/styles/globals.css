@@ -2,6 +2,12 @@
   background-color: #fff;
 }
 
+.bg-body {
+  min-height: 100vh; /* Ensure the div takes up at least the full height of the viewport */
+  background-size: cover; /* Scale the background image to cover the entire element */
+  background-position: center center; /* Center the background image horizontally and vertically */
+}
+
 /* Headings, sub-headings, card texts */
 .heading {
   @apply text-[44px] leading-[52.8px] tracking-[-0.011em] /** small screen */

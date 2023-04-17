@@ -23,10 +23,7 @@ const isNavItem = (item: any): item is NavItem => {
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   {
     label: 'community',
-    url: '#',
-    onClick: (e) => {
-      e.preventDefault();
-    },
+    url: '#community',
     isInternal: true,
   },
   { label: 'docs', url: TANGLE_NETWORK_DOCS_URL },
