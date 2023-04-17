@@ -116,7 +116,7 @@ const MobileNav = () => {
 
       <DropdownBody
         isPorttal={false}
-        className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
+        className="mt-4 pt-4 w-screen border-0 rounded-none"
         size="sm"
         align="start"
       >
