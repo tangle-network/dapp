@@ -1,6 +1,6 @@
-import { Button, Socials } from '@webb-tools/webb-ui-components';
+import { Socials } from '@webb-tools/webb-ui-components';
 
-import { Heading, SectionDescription } from '..';
+import { Heading, SectionDescription, LinkButton } from '..';
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
 
 export const HeroSection = () => {
@@ -14,23 +14,14 @@ export const HeroSection = () => {
             zero-knowledge messaging and applications.
           </SectionDescription>
           <div className="flex gap-4">
-            <Button
+            <LinkButton
               href={WEBB_DOCS_URL}
-              target="_blank"
-              rel="noreferrer"
               variant="secondary"
-              className="button-base-2 bg-inherit"
+              className="bg-inherit"
             >
               Read Docs
-            </Button>
-            <Button
-              href={STATS_DEV_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="button-base-2"
-            >
-              View Network
-            </Button>
+            </LinkButton>
+            <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
           </div>
           <Socials />
         </div>
