@@ -24,7 +24,7 @@
 
 /* Override styling for Tab component from webb-ui-components */
 button[data-radix-collection-item] > span {
-  width: 100%;
+  @apply w-full flex flex-col items-center;
 }
 
 button[data-radix-collection-item][data-state='active'] .participation-tab {

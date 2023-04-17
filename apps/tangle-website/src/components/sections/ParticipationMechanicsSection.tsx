@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 import {
   TabContent,
   TabsList,
@@ -76,12 +80,12 @@ export const ParticipationMechanicsSection = () => {
           onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
         >
           <TabsList aria-label="tabs">
-            <div className="w-full grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-              {Object.keys(tabsContent).map((tabName, index) => (
+            <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+              {Object.keys(tabsContent).map((tabName, i) => (
                 <TabTrigger
                   value={tabName}
                   className="w-full flex flex-col items-center justify-center !bg-inherit p-0"
-                  key={index}
+                  key={i}
                 >
                   <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
                     <div className="w-full text-inherit">
@@ -97,6 +101,42 @@ export const ParticipationMechanicsSection = () => {
                 </TabTrigger>
               ))}
             </div>
+
+            <Swiper
+              spaceBetween={16}
+              slidesPerView="auto"
+              freeMode={true}
+              modules={[FreeMode]}
+              className="w-full hidden md:block lg:hidden !ml-0 mb-6"
+            >
+              {Object.keys(tabsContent).map((tabName, i) => (
+                <SwiperSlide
+                  key={i}
+                  style={{
+                    width: 225,
+                    height: 'auto',
+                  }}
+                >
+                  <TabTrigger
+                    value={tabName}
+                    className="w-full !bg-inherit p-0"
+                    key={i}
+                  >
+                    <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
+                      <div className="w-full text-inherit">
+                        <div className="flex flex-col items-center gap-2 text-inherit">
+                          <div className="w-12 h-12 bg-mono-40 rounded-full" />
+                          <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
+                            {tabName}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="participation-tab-polygon w-0 h-0 border-transparent border-solid border-x-[8px] border-t-[16px]" />
+                  </TabTrigger>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </TabsList>
 
           {Object.entries(tabsContent).map(([key, value]) => (
