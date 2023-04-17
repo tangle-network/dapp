@@ -5,6 +5,7 @@ import {
   GovernanceSystemSection,
   FeaturesSection,
   SupportedBySection,
+  UseCasesSection,
 } from '../components';
 
 export function Index() {
@@ -19,6 +20,8 @@ export function Index() {
       <SupportedBySection />
 
       <GovernanceSystemSection />
+
+      <UseCasesSection />
 
       <CommunitySection />
     </div>
