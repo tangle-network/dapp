@@ -60,5 +60,6 @@ export * from './TokensRing';
 export * from './TokenWithAmount';
 export * from './Tooltip';
 export * from './WalletConnectionCard';
+export * from './WebsiteCommunity';
 export * from './WebsiteFooter';
 export * from './WebsiteNewsLetterForm';
