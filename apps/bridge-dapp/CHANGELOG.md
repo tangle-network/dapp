@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Relayer filter by environment: https://github.com/webb-tools/webb-dapp/commit/5c2ef97cd7e7788b858c414f4b9546bdcfcfc2d8 
 - Relayer fee and refund support: https://github.com/webb-tools/webb-dapp/commit/32ac5b0c7494c7ca746c6e56bda65cbfd692118f
 - Added liquidity check on withdrawal: https://github.com/webb-tools/webb-dapp/commit/f9617e364f40b577f0a5bd4d9dc2bc2cea9f3168
-- Failed transaction monitoring: https://github.com/webb-tools/webb-dapp/commit/f9617e364f40b577f0a5bd4d9dc2bc2cea9f3168
+- Added failed transaction monitoring: https://github.com/webb-tools/webb-dapp/commit/f9617e364f40b577f0a5bd4d9dc2bc2cea9f3168
 - Added max fee calculation: https://github.com/webb-tools/webb-dapp/commit/6f3fa726513accda142dac87b03e2a06e7d094c3
 
 ### Changed

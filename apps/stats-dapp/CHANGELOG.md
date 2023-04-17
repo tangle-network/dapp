@@ -33,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.2] - 2023-04-17
 
 ### Fixed
-- Bug fix: https://github.com/webb-tools/webb-dapp/commit/82b8a3a120fb44fa87e4bf0e01c62f778649bdbd
-- Bug fix: https://github.com/webb-tools/webb-dapp/commit/86dd345497d7a5798be4a19b1a6e3fca80680d26
+- Bug fix for authorities progress bar: https://github.com/webb-tools/webb-dapp/commit/82b8a3a120fb44fa87e4bf0e01c62f778649bdbd
+- Bug fix for keygen table: https://github.com/webb-tools/webb-dapp/commit/86dd345497d7a5798be4a19b1a6e3fca80680d26
 
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
