@@ -46,7 +46,7 @@ jobs:
         with:
           paths: apps/stats-dapp
       
-      - name: create env file for webbsite
+      - name: create env file for webbsite, tangle-site and faucet
         run: |
           touch .env
           echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
