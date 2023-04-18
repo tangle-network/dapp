@@ -558,7 +558,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 });
               }
               /// get the current active chain from metamask
-              const chainId = await web3Provider.network; // storage based on network id
+              const network = await web3Provider.network;
+              const chainId = network.chainId;
 
               const relayerManager =
                 (await relayerManagerFactory.getRelayerManager(
@@ -702,7 +703,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 });
 
                 // add network will prompt the switch, check evmId again and throw if user rejected
-                const newChainId = await web3Provider.network;
+                const newNetwork = await web3Provider.network;
+                const newChainId = newNetwork.chainId;
 
                 if (newChainId != chain.chainId) {
                   appEvent.send('walletConnectionState', 'failed');
