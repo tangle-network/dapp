@@ -31,7 +31,7 @@ export const PrivacyConnectedSection = () => {
 
   return (
     <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
-      <ChainIcon name="tangle" className="mx-auto w-7 h-7" />
+      <ChainIcon name="webb" size="lg" className="mx-auto" />
       <Typography variant="mkt-h2" className="px-4 mt-6 text-center">
         The Future of privacy is Connected
       </Typography>
