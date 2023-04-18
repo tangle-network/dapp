@@ -3,19 +3,20 @@
 
 // The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
 
-import { EVMChainId } from '@webb-tools/dapp-types';
+import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
 import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
 import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
 import OptimismLogo from '@webb-tools/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-tools/logos/Eth';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@webb-tools/sdk-core';
 
 import { ChainConfig } from '../chain-config.interface';
 
 export const chainsConfig: Record<number, ChainConfig> = {
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Goerli)]: {
+  // Testnet
+  [PresetTypedChainId.Goerli]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.Goerli,
@@ -32,7 +33,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: EtherLogo,
     tag: 'test',
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.OptimismTestnet)]: {
+  [PresetTypedChainId.OptimismTestnet]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.OptimismTestnet,
@@ -49,7 +50,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: OptimismLogo,
     tag: 'test',
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.ArbitrumTestnet)]: {
+  [PresetTypedChainId.ArbitrumTestnet]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.ArbitrumTestnet,
@@ -65,7 +66,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     logo: ArbitrumLogo,
     tag: 'test',
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.PolygonTestnet)]: {
+  [PresetTypedChainId.PolygonTestnet]: {
     chainType: ChainType.EVM,
     group: 'matic',
     chainId: EVMChainId.PolygonTestnet,
@@ -81,40 +82,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://mumbai.polygonscan.com/',
     logo: PolygonLogo,
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.HermesLocalnet)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.HermesLocalnet,
-    name: 'Hermes',
-    base: 'webb-dev',
-    tag: 'dev',
-    url: 'http://127.0.0.1:5001',
-    evmRpcUrls: ['http://127.0.0.1:5001'],
-    logo: GanacheLogo,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.AthenaLocalnet)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.AthenaLocalnet,
-    name: 'Athena',
-    base: 'webb-dev',
-    tag: 'dev',
-    url: 'http://127.0.0.1:5002',
-    evmRpcUrls: ['http://127.0.0.1:5002'],
-    logo: GanacheLogo,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.DemeterLocalnet)]: {
-    chainType: ChainType.EVM,
-    group: 'eth',
-    chainId: EVMChainId.DemeterLocalnet,
-    name: 'Demeter',
-    base: 'webb-dev',
-    tag: 'dev',
-    url: 'http://127.0.0.1:5003',
-    evmRpcUrls: ['http://127.0.0.1:5003'],
-    logo: GanacheLogo,
-  },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.MoonbaseAlpha)]: {
+  [PresetTypedChainId.MoonbaseAlpha]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.MoonbaseAlpha,
@@ -130,7 +98,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://moonbase.moonscan.io/',
     logo: MoonbeamLogo,
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia)]: {
+  [PresetTypedChainId.Sepolia]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.Sepolia,
@@ -147,7 +115,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     logo: EtherLogo,
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.AvalancheFuji)]: {
+  [PresetTypedChainId.AvalancheFuji]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.AvalancheFuji,
@@ -163,7 +131,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ],
     logo: EtherLogo,
   },
-  [calculateTypedChainId(ChainType.EVM, EVMChainId.ScrollAlpha)]: {
+  [PresetTypedChainId.ScrollAlpha]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.ScrollAlpha,
@@ -174,5 +142,84 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://blockscout.scroll.io/',
     evmRpcUrls: ['https://alpha-rpc.scroll.io/l2'],
     logo: EtherLogo,
+  },
+
+  // Self hosted chains
+  [PresetTypedChainId.HermesOrbit]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.HermesOrbit,
+    name: 'Hermes Orbit',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'https://hermes-testnet.webb.tools',
+    evmRpcUrls: ['https://hermes-testnet.webb.tools'],
+    blockExplorerStub: 'https://hermes-explorer.webb.tools',
+    logo: GanacheLogo,
+    env: ['development', 'test'],
+  },
+  [PresetTypedChainId.AthenaOrbit]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.AthenaLocalnet,
+    name: 'Athena Orbit',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'https://athena-testnet.webb.tools',
+    evmRpcUrls: ['https://athena-testnet.webb.tools'],
+    blockExplorerStub: 'https://athena-explorer.webb.tools',
+    logo: GanacheLogo,
+    env: ['development', 'test'],
+  },
+  [PresetTypedChainId.DemeterOrbit]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.DemeterOrbit,
+    name: 'Demeter Orbit',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'https://demeter-testnet.webb.tools',
+    evmRpcUrls: ['https://demeter-testnet.webb.tools'],
+    blockExplorerStub: 'https://demeter-explorer.webb.tools',
+    logo: GanacheLogo,
+    env: ['development', 'test'],
+  },
+
+  // Localnet
+  [PresetTypedChainId.HermesLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.HermesLocalnet,
+    name: 'Hermes',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5004',
+    evmRpcUrls: ['http://127.0.0.1:5004'],
+    logo: GanacheLogo,
+    env: ['development'],
+  },
+  [PresetTypedChainId.AthenaLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.AthenaLocalnet,
+    name: 'Athena',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5005',
+    evmRpcUrls: ['http://127.0.0.1:5005'],
+    logo: GanacheLogo,
+    env: ['development'],
+  },
+  [PresetTypedChainId.DemeterLocalnet]: {
+    chainType: ChainType.EVM,
+    group: 'eth',
+    chainId: EVMChainId.DemeterLocalnet,
+    name: 'Demeter',
+    base: 'webb-dev',
+    tag: 'dev',
+    url: 'http://127.0.0.1:5006',
+    evmRpcUrls: ['http://127.0.0.1:5006'],
+    logo: GanacheLogo,
+    env: ['development'],
   },
 };

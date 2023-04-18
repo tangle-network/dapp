@@ -13,12 +13,19 @@ export enum EVMChainId {
   OptimismTestnet = 420,
   ArbitrumTestnet = 421613,
   PolygonTestnet = 80001,
-  HermesLocalnet = 5001,
-  AthenaLocalnet = 5002,
-  DemeterLocalnet = 5003,
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollAlpha = 534353,
+
+  /** Self hosted EVM */
+  HermesOrbit = 5001,
+  AthenaOrbit = 5002,
+  DemeterOrbit = 5003,
+
+  /** Local EVM */
+  HermesLocalnet = 5004,
+  AthenaLocalnet = 5005,
+  DemeterLocalnet = 5006,
 }
 
 export default EVMChainId;
