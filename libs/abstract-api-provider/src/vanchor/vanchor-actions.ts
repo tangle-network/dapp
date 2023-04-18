@@ -5,7 +5,7 @@ import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import { BigNumberish, ContractReceipt, Overrides } from 'ethers';
+import { BigNumber, BigNumberish, ContractReceipt, Overrides } from 'ethers';
 import { CancellationToken } from '../cancelation-token';
 import {
   ActionEvent,
@@ -90,8 +90,8 @@ export abstract class VAnchorActions<
     contractAddress: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BigNumberish,
-    refund: BigNumberish,
+    fee: BigNumber,
+    refund: BigNumber,
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
@@ -104,6 +104,8 @@ export type WithdrawTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   recipient: string;
+  refundAmount: BigNumber;
+  feeAmount: BigNumber;
 };
 
 export type TransferTransactionPayloadType = {

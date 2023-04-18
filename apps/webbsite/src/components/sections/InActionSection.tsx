@@ -1,14 +1,17 @@
+import links from '@webb-tools/dapp-config/links';
+import cx from 'classnames';
+
 import {
   Button,
   TabContent,
   TabsList,
   TabsRoot,
   TabTrigger,
+  Typography,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
 import Image from 'next/image';
-import { BRIDGE_URL, STATS_URL } from '../../constants';
-import { Heading2, Heading4, SubHeading1, SubHeading2 } from '../../components';
+
+const { BRIDGE_URL, STATS_URL } = links;
 
 export const InActionSection = () => {
   return (
@@ -18,13 +21,13 @@ export const InActionSection = () => {
         'pt-16 md:py-[156px] space-y-9'
       )}
     >
-      <Heading2 className="px-4 text-center">
+      <Typography variant="mkt-h2" className="px-4 text-center">
         Shielded Protocols in Action
-      </Heading2>
+      </Typography>
 
-      <SubHeading1 className="px-4 text-center text-mono-180">
+      <Typography variant="mkt-body" className="px-4 text-center text-mono-180">
         {"Try out the applications we're building."}
-      </SubHeading1>
+      </Typography>
 
       <TabsRoot
         className="rounded-lg bg-mono-0 max-w-[900px] mx-auto"
@@ -40,14 +43,14 @@ export const InActionSection = () => {
           className="md:bg-mock_bridge md:bg-top w-full h-[527px] md:h-[450px]"
         >
           <div className="pt-4 px-4 md:pt-9 md:px-9 space-y-4 md:max-w-[378px]">
-            <Heading4 className="text-mono-200">
+            <Typography variant="mkt-h4" className="text-mono-200">
               Zero-Knowledge Cross-Chain Bridging
-            </Heading4>
+            </Typography>
 
-            <SubHeading2 className="text-mono-160">
+            <Typography variant="mkt-caption" className="text-mono-160">
               A truly zero-knowledge cross-chain environment to deposit,
               transfer, and withdraw funds.
-            </SubHeading2>
+            </Typography>
 
             <Button href={BRIDGE_URL} target="_blank" rel="noreferrer">
               Make a Deposit
@@ -68,14 +71,14 @@ export const InActionSection = () => {
         <TabContent value="stats">
           <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
             <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
-              <Heading4 className="text-mono-200">
+              <Typography variant="mkt-h4" className="text-mono-200">
                 Explore the Tangle Network with the stats page
-              </Heading4>
+              </Typography>
 
-              <SubHeading2 className="text-mono-160">
+              <Typography variant="mkt-caption" className="text-mono-160">
                 Monitor the health of the Tangle Network, watch proposals and
                 more on the stats page.
-              </SubHeading2>
+              </Typography>
 
               <Button href={STATS_URL} target="_blank" rel="noreferrer">
                 Explore Tangle

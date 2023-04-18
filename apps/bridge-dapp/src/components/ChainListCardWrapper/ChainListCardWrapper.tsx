@@ -17,7 +17,6 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   currentActiveChain: currentActiveChainProps,
   onChange,
   onClose,
-  isConnectingToChain,
   ...props
 }) => {
   const { setMainComponent } = useWebbUI();

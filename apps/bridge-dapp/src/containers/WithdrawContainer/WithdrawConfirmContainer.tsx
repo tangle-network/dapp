@@ -5,6 +5,7 @@ import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
+  getRoundedAmountString,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -20,8 +21,15 @@ import {
   useLatestTransactionStage,
   useTransactionProgressValue,
 } from '../../hooks';
-import { getErrorMessage, getTokenURI, getTransactionHash } from '../../utils';
+import {
+  captureSentryException,
+  getErrorMessage,
+  getTokenURI,
+  getTransactionHash,
+} from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
+import { ExchangeRateInfo } from './shared';
+import { BigNumber, ethers } from 'ethers';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -29,17 +37,23 @@ export const WithdrawConfirmContainer = forwardRef<
 >(
   (
     {
-      changeUtxo,
-      changeNote,
-      availableNotes,
       amount,
+      amountAfterFee,
+      availableNotes,
       changeAmount,
-      fees,
-      targetChainId,
+      changeNote,
+      changeUtxo,
+      fee,
+      feeInfo,
       fungibleCurrency: fungibleCurrencyProp,
-      unwrapCurrency: { value: unwrapCurrency } = {},
+      isRefund,
       onResetState,
+      receivingInfo,
       recipient,
+      refundAmount,
+      refundToken,
+      targetChainId,
+      unwrapCurrency: { value: unwrapCurrency } = {},
       ...props
     },
     ref
@@ -56,7 +70,9 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, noteManager } = useWebContext();
 
-    const { api: txQueueApi } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxQueue();
+
+    const [txId, setTxId] = useState('');
 
     const {
       relayersState: { activeRelayer },
@@ -135,10 +151,15 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         default: {
-          status = 'In-Progress';
+          status = 'in Progress...';
           break;
         }
       }
+
+      if (!status)
+        return unwrapCurrency
+          ? 'Confirm Unwrap and Withdraw'
+          : 'Confirm Withdraw';
 
       return unwrapCurrency
         ? `Unwrap and Withdraw ${status}`
@@ -148,6 +169,13 @@ export const WithdrawConfirmContainer = forwardRef<
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(async () => {
       if (availableNotes.length === 0 || !vAnchorApi) {
+        captureSentryException(
+          new Error(
+            'No notes available to withdraw or vAnchorApi not available'
+          ),
+          'transactionType',
+          'withdraw'
+        );
         return;
       }
 
@@ -171,9 +199,16 @@ export const WithdrawConfirmContainer = forwardRef<
       const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
+        captureSentryException(
+          new Error(`Currency not found for symbol ${tokenSymbol}`),
+          'transactionType',
+          'withdraw'
+        );
         return;
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
+
+      const amount = Number(ethers.utils.formatEther(amountAfterFee));
 
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
@@ -186,6 +221,8 @@ export const WithdrawConfirmContainer = forwardRef<
         tokenURI,
       });
 
+      setTxId(tx.id);
+
       try {
         txQueueApi.registerTransaction(tx);
 
@@ -194,10 +231,14 @@ export const WithdrawConfirmContainer = forwardRef<
           noteManager?.addNote(changeNote);
         }
 
+        const refund = refundAmount ?? BigNumber.from(0);
+
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
           changeUtxo,
           recipient,
+          refundAmount: refund,
+          feeAmount: fee,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -231,11 +272,10 @@ export const WithdrawConfirmContainer = forwardRef<
         }
       } catch (error) {
         console.log('Error while executing withdraw', error);
-
         changeNote && (await noteManager?.removeNote(changeNote));
-
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
+        captureSentryException(error, 'transactionType', 'withdraw');
       } finally {
         setMainComponent(undefined);
         onResetState?.();
@@ -248,15 +288,56 @@ export const WithdrawConfirmContainer = forwardRef<
       downloadNote,
       unwrapCurrency,
       apiConfig,
-      amount,
+      amountAfterFee,
       txQueueApi,
       setMainComponent,
+      refundAmount,
       changeUtxo,
       recipient,
+      fee,
       activeRelayer,
       noteManager,
       onResetState,
     ]);
+
+    const txStatusMessage = useMemo(() => {
+      if (!txId) {
+        return '';
+      }
+
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+    }, [txId, txPayloads]);
+    const formattedFee = useMemo(() => {
+      const feeInEthers = ethers.utils.formatEther(fee);
+
+      if (activeRelayer) {
+        const formattedRelayerFee = getRoundedAmountString(
+          Number(feeInEthers),
+          3,
+          Math.round
+        );
+        return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
+      }
+
+      return `${feeInEthers} ${refundToken ?? ''}`; // Refund token here is the native token
+    }, [activeRelayer, fee, fungibleCurrency.view.symbol, refundToken]);
+
+    const formattedRefund = useMemo(() => {
+      if (!refundAmount) {
+        return undefined;
+      }
+
+      const refundInEthers = Number(ethers.utils.formatEther(refundAmount));
+
+      return getRoundedAmountString(refundInEthers, 3, Math.round);
+    }, [refundAmount]);
+
+    const remainingAmount = useMemo(() => {
+      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFee));
+
+      return getRoundedAmountString(amountInEthers, 3, Math.round);
+    }, [amountAfterFee]);
 
     return (
       <WithdrawConfirm
@@ -264,14 +345,21 @@ export const WithdrawConfirmContainer = forwardRef<
         ref={ref}
         title={cardTitle}
         activeChains={activeChains}
-        destChain={chainsPopulated[targetChainId]?.name}
+        destChain={{
+          name: chainsPopulated[targetChainId].name,
+          type: chainsPopulated[targetChainId].base ?? 'webb-dev',
+        }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress
             ? false
             : changeAmount
             ? !checked
             : false,
-          children: withdrawTxInProgress ? 'New Transaction' : 'Withdraw',
+          children: withdrawTxInProgress
+            ? 'Make Another Transaction'
+            : unwrapCurrency
+            ? 'Unwrap And Withdraw'
+            : 'Withdraw',
           onClick: handleExecuteWithdraw,
         }}
         checkboxProps={{
@@ -280,11 +368,16 @@ export const WithdrawConfirmContainer = forwardRef<
           children: 'I have copied the change note',
           onChange: () => setChecked((prev) => !prev),
         }}
+        refundAmount={isRefund ? formattedRefund : undefined}
+        refundToken={isRefund ? refundToken : undefined}
+        receivingInfo={receivingInfo}
         isCopied={isCopied}
         onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
-        fee={fees}
+        remainingAmount={remainingAmount}
+        feeInfo={feeInfo}
+        fee={formattedFee}
         onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
@@ -295,6 +388,7 @@ export const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusMessage={txStatusMessage}
       />
     );
   }

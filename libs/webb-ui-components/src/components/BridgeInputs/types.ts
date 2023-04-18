@@ -5,6 +5,8 @@ import { AmountMenu } from '../AmountMenu';
 import { InputProps } from '../Input/types';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { AvatarProps } from '../Avatar';
+import { CheckBox } from '../CheckBox';
+import { AmountInput } from './AmountInput';
 
 export interface InputWrapperProps extends IWebbComponentBase {
   /**
@@ -36,11 +38,6 @@ export type ChainType = {
    * The chain name
    */
   name: string;
-
-  /**
-   * The token symbol to display of the chain
-   */
-  symbol: string;
 };
 
 /**
@@ -71,6 +68,11 @@ export type TokenType = {
    * The callback when user clicks on the token
    */
   onTokenClick?: (symbol: string) => void;
+
+  /**
+   * Type of balance
+   */
+  balanceType?: 'wallet' | 'note';
 };
 
 /**
@@ -231,11 +233,22 @@ export interface RecipientInputProps
    * Override props of input element
    */
   overrideInputProps?: Omit<InputProps, 'id'>;
+
   /**
    *
    * set valid state of the input
    * */
   isValidSet?(valid: boolean): void;
+
+  /**
+   * Validate input address function
+   */
+  validate?(value: string): boolean;
+
+  /**
+   * If `true`, the patse button will be hidden
+   */
+  isHiddenPasteBtn?: boolean;
 }
 
 export interface ShieldedAssetInputProps extends InputWrapperProps {
@@ -267,6 +280,7 @@ export interface RelayerInputProps extends InputWrapperComponentProps {
 export interface InfoItemProps extends PropsOf<'div'> {
   /**
    * The left text props (props of TitleWithInfo component)
+   * @default { variant: 'utility' }
    */
   leftTextProps: ComponentProps<typeof TitleWithInfo>;
 
@@ -274,4 +288,16 @@ export interface InfoItemProps extends PropsOf<'div'> {
    * Right content
    */
   rightContent?: string | ReactElement;
+}
+
+export interface RefundInputProps {
+  /**
+   * The refund checkbox props
+   */
+  refundCheckboxProps?: ComponentProps<typeof CheckBox>;
+
+  /**
+   * The refund amount input props
+   */
+  refundAmountInputProps?: ComponentProps<typeof AmountInput>;
 }

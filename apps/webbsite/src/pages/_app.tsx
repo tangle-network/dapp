@@ -6,8 +6,12 @@ import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
 import Script from 'next/script';
 import { useEffect } from 'react';
-import { Header, Footer } from '../components';
-import { useDarkMode, WebbUIProvider } from '@webb-tools/webb-ui-components';
+import { Header } from '../components';
+import {
+  useDarkMode,
+  WebbUIProvider,
+  WebsiteFooter,
+} from '@webb-tools/webb-ui-components';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [, setIsDarkMode] = useDarkMode();
@@ -66,7 +70,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
       </main>
 
-      <Footer />
+      <WebsiteFooter type="webbsite" />
     </WebbUIProvider>
   );
 }

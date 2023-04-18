@@ -93,4 +93,14 @@ export interface TransferConfirmContainerProps
    * @returns void
    */
   onResetState?: () => void;
+
+  /**
+   * The fee amount
+   */
+  feeAmount?: number | string;
+
+  /**
+   * The fee token
+   */
+  feeToken?: string;
 }

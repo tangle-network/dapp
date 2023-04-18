@@ -5,14 +5,13 @@ import {
   NoteStorage,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
-import { getLatestAnchorAddress } from '@webb-tools/dapp-config';
 import {
   CircomUtxo,
   Keypair,
   Note,
   NoteGenInput,
-  ResourceId,
   parseTypedChainId,
+  ResourceId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
@@ -324,7 +323,9 @@ export class NoteManager {
    */
   async generateNote(
     sourceTypedChainId: number,
+    sourceAnchorAddress: string,
     destTypedChainId: number,
+    destAnchorAddress: string,
     tokenSymbol: string,
     tokenDecimals: number,
     amount: number
@@ -343,12 +344,6 @@ export class NoteManager {
       keypair: this.keypair,
     });
 
-    const srcAddress = getLatestAnchorAddress(sourceTypedChainId);
-    const destAddress = getLatestAnchorAddress(destTypedChainId);
-    if (!srcAddress || !destAddress) {
-      throw new Error('No anchor address found');
-    }
-
     const noteInput: NoteGenInput = {
       amount: amountBigNumber,
       backend: 'Circom',
@@ -364,9 +359,9 @@ export class NoteManager {
         toFixedHex(`0x${outputUtxo.blinding}`).substring(2),
       ].join(':'),
       sourceChain: sourceTypedChainId.toString(),
-      sourceIdentifyingData: srcAddress,
+      sourceIdentifyingData: sourceAnchorAddress,
       targetChain: destTypedChainId.toString(),
-      targetIdentifyingData: destAddress,
+      targetIdentifyingData: destAnchorAddress,
       tokenSymbol: tokenSymbol,
       version: 'v1',
       width: '5',

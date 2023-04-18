@@ -27,9 +27,10 @@ const appLogger = LoggerService.new('Stats App');
 
 export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   children,
+  defaultThemeMode = 'dark',
   hasErrorBoudary,
 }) => {
-  const [isDarkMode, toggleMode] = useDarkMode();
+  const [isDarkMode, toggleMode] = useDarkMode(defaultThemeMode);
 
   // The CustomMainComponent is a component that should be renderable inside of Pages -
   // But the contents of the component are defined outside of the Page.
@@ -37,6 +38,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   const [customMainComponent, setCustomMainComponent] = useState<
     React.ReactElement | undefined
   >(undefined);
+
   const setMainComponent = useCallback(
     (component: React.ReactElement | undefined) => {
       setCustomMainComponent(component);

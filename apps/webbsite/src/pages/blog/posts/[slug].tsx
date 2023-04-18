@@ -1,14 +1,21 @@
 import React from 'react';
-import { TwitterFill, CopyLinkFill } from '@webb-tools/icons';
+import {
+  TwitterFill,
+  CopyLinkFill,
+  Common2Icon,
+  TelegramFill,
+  GithubFill,
+  DiscordFill,
+  LinkedIn,
+} from '@webb-tools/icons';
 import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';
-import { Button, useWebbUI } from '@webb-tools/webb-ui-components';
+import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 import { NotionRenderer } from 'react-notion-x';
-import { Heading2, Heading3, SubHeading1 } from '../../../components';
 import { Notion, Post, StaticPropsParams } from '../../../libs/notion';
 
 type SharableLinkType = {
@@ -47,6 +54,31 @@ const Post: FC<{ post: Post }> = ({
       href: `https://twitter.com/share/?&url=${shareLink}&text=${shareMessage}`,
     },
     {
+      name: 'Telegram',
+      Icon: TelegramFill,
+      href: 'https://t.me/webbprotocol',
+    },
+    {
+      Icon: Common2Icon,
+      name: 'Commonwealth',
+      href: 'https://commonwealth.im/webb',
+    },
+    {
+      name: 'Discord',
+      Icon: DiscordFill,
+      href: 'https://discord.com/invite/cv8EfJu3Tn',
+    },
+    {
+      name: 'Github',
+      Icon: GithubFill,
+      href: 'https://github.com/webb-tools',
+    },
+    {
+      name: 'LinkedIn',
+      Icon: LinkedIn,
+      href: 'https://www.linkedin.com/company/webb-protocol/',
+    },
+    {
       name: 'Copy Link',
       Icon: CopyLinkFill,
       onClick: () => {
@@ -68,7 +100,7 @@ const Post: FC<{ post: Post }> = ({
       <div className="w-[358px] sm:w-[600px] md:w-[700px] lg:w-[900px] mx-auto z-10 mt-[-120px]">
         <div className="w-full mb-9 p-6 bg-mono-0 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           <div className="flex items-center justify-between">
-            <div className="hidden items-center gap-4 capitalize lg:flex">
+            <div className="items-center hidden gap-4 capitalize lg:flex">
               {tags &&
                 tags.map((tag) => (
                   <span
@@ -79,16 +111,22 @@ const Post: FC<{ post: Post }> = ({
                   </span>
                 ))}
             </div>
-            <span className="text-mono-120 hidden lg:inline-block single-post-card-date">
+            <span className="hidden text-mono-120 lg:inline-block single-post-card-date">
               {lastEditedDate}
             </span>
           </div>
-          <Heading3 className="mt-4 single-post-card-title text-mono-200">
+          <Typography
+            variant="mkt-h3"
+            className="mt-4 single-post-card-title text-mono-200"
+          >
             {title}
-          </Heading3>
-          <SubHeading1 className="mt-4 single-post-card-description text-mono-170">
+          </Typography>
+          <Typography
+            variant="mkt-body"
+            className="mt-4 single-post-card-description text-mono-170"
+          >
             {description}
-          </SubHeading1>
+          </Typography>
           <div className="flex items-center justify-between mt-7">
             <div className="flex items-baseline gap-4">
               {authors.map((author) => (
@@ -116,8 +154,8 @@ const Post: FC<{ post: Post }> = ({
             </span>
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row-reverse justify-between lg:items-center">
-          <div className="self-end flex lg:flex-col items-center justify-end lg:self-start gap-2">
+        <div className="flex flex-col justify-between lg:flex-row-reverse lg:items-center">
+          <div className="flex items-center self-end justify-end gap-6 lg:flex-col lg:self-start">
             {links.map(({ Icon, name, href, onClick }) => (
               <a
                 key={name}
@@ -128,8 +166,9 @@ const Post: FC<{ post: Post }> = ({
                 className="dark:text-mono-0 dark:hover:text-mono-100"
               >
                 <Icon
+                  size="md"
                   key={name}
-                  className="w-8 h-8 !fill-current cursor-pointer"
+                  className="w-8 h-8 !fill-current cursor-pointer text-mono-120 hover:text-mono-200"
                 />
               </a>
             ))}
@@ -139,7 +178,7 @@ const Post: FC<{ post: Post }> = ({
               bodyClassName="py-0 my-0 pb-[72px] px-0 lg:pl-6"
               disableHeader
               components={{
-                Header: Heading2,
+                Header: () => <Typography variant="mkt-h2" />,
                 nextImage: Image,
                 nextLink: Link,
                 Collection: () => null,

@@ -1,33 +1,51 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ResourceId } from '@webb-tools/sdk-core';
-import { useEffect, useState } from 'react';
+import { parseTypedChainId, ResourceId } from '@webb-tools/sdk-core';
+import { useObservableState } from 'observable-hooks';
+import { useEffect } from 'react';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+
+const resourceIdSubject = new BehaviorSubject<ResourceId | null>(null);
 
 /**
  * Hook to get the current resource id
  * @returns The current resource id
  */
-export const useCurrentResourceId = () => {
-  const [resourceId, setResourceId] = useState<ResourceId | null>(null);
-
+export const useCurrentResourceId = (): ResourceId | null => {
   const { activeApi } = useWebContext();
 
-  // Fetch the current resource id
   useEffect(() => {
-    if (!activeApi) {
-      return;
-    }
+    if (!activeApi) return;
 
-    const fetchResourceId = async () => {
-      try {
-        const resourceId = await activeApi.getResourceId();
-        setResourceId(resourceId);
-      } catch (error) {
-        console.error('Failed to fetch resource id', error);
+    const subscription = combineLatest([
+      activeApi.typedChainidSubject,
+      activeApi.state.$activeBridge,
+    ]).subscribe(([typedChainId, activeBridge]) => {
+      if (!activeBridge) {
+        resourceIdSubject.next(null);
+        return;
       }
-    };
 
-    fetchResourceId();
+      const address = activeBridge.targets[typedChainId];
+      if (!address) {
+        console.error('No anchor address found for the current chain');
+        resourceIdSubject.next(null);
+        return;
+      }
+
+      const { chainId, chainType } = parseTypedChainId(typedChainId);
+
+      const currentReourceId = resourceIdSubject.getValue();
+      const nextReourceId = new ResourceId(address, chainType, chainId);
+
+      if (currentReourceId?.toString() !== nextReourceId.toString()) {
+        resourceIdSubject.next(nextReourceId);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [activeApi]);
 
-  return resourceId;
+  return useObservableState(resourceIdSubject);
 };

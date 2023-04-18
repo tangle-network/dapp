@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
@@ -5,6 +6,8 @@ import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { chainsPopulated } from '@webb-tools/dapp-config';
+import { u8aToHex } from '@webb-tools/utils';
 import {
   Capabilities,
   CMDSwitcher,
@@ -13,7 +16,6 @@ import {
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
-import { u8aToHex } from '@webb-tools/utils';
 
 /**
  * Relayer withdraw status
@@ -42,6 +44,24 @@ export enum RelayedWithdrawResult {
 type RelayerLeaves = {
   leaves: string[];
   lastQueriedBlock: number;
+};
+
+export interface RelayerFeeInfo {
+  estimatedFee: BigNumber;
+  gasPrice: BigNumber;
+  refundExchangeRate: BigNumber;
+  maxRefund: BigNumber;
+  timestamp: Date;
+}
+
+export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
+  return {
+    estimatedFee: BigNumber.from(data.estimatedFee),
+    gasPrice: BigNumber.from(data.gasPrice),
+    refundExchangeRate: BigNumber.from(data.refundExchangeRate),
+    maxRefund: BigNumber.from(data.maxRefund),
+    timestamp: new Date(data.timestamp),
+  };
 };
 
 /**
@@ -189,6 +209,9 @@ export class WebbRelayer {
     contractAddress: string,
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
+    console.group(`getLeaves() for ${this.endpoint}`);
+    console.log('On chain: ', chainsPopulated[typedChainId]?.name);
+
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     let url = '';
     switch (chainType) {
@@ -217,29 +240,46 @@ export class WebbRelayer {
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
+      console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
         leaves: fetchedLeaves.map((leaf) => u8aToHex(leaf)),
       };
     } else {
+      console.groupEnd();
       throw new Error('network error');
     }
   }
 
+  public async getFeeInfo(
+    typedChainId: number,
+    vanchor: string,
+    gasAmount: BigNumber,
+    abortSignal?: AbortSignal
+  ): Promise<RelayerFeeInfo> | never {
+    const endpoint = `${
+      this.endpoint.endsWith('/') ? this.endpoint.slice(0, -1) : this.endpoint
+    }/api/v1/fee_info/${typedChainId}/${vanchor}/${gasAmount}`;
+    const response = await fetch(endpoint, { signal: abortSignal });
+    if (!response.ok) {
+      if (response.type === 'cors') {
+        throw new Error(
+          `CORS error, please check your relayer endpoint: ${this.endpoint}`
+        );
+      }
+      throw new Error(`Failed to get fee info: ${response.statusText}`);
+    }
+    return parseRelayerFeeInfo(await response.json());
+  }
+
   static intoActiveWebRelayer(
     instance: WebbRelayer,
-    query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    getFees: (
-      note: string
-    ) => Promise<
-      { totalFees: string; withdrawFeePercentage: number } | undefined
-    >
+    query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
   ): ActiveWebbRelayer {
     return new ActiveWebbRelayer(
       instance.endpoint,
       instance.capabilities,
-      query,
-      getFees
+      query
     );
   }
 }
@@ -248,12 +288,7 @@ export class ActiveWebbRelayer extends WebbRelayer {
   constructor(
     endpoint: string,
     capabilities: Capabilities,
-    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' },
-    private getFees: (
-      note: string
-    ) => Promise<
-      { totalFees: string; withdrawFeePercentage: number } | undefined
-    >
+    private query: { typedChainId: number; basedOn: 'evm' | 'substrate' }
   ) {
     super(endpoint, capabilities);
   }
@@ -274,8 +309,4 @@ export class ActiveWebbRelayer extends WebbRelayer {
   get beneficiary(): string | undefined {
     return this.config?.beneficiary;
   }
-
-  fees = async (note: string) => {
-    return this.getFees(note);
-  };
 }
