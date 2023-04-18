@@ -19,25 +19,25 @@ import {
 } from '..';
 
 import {
-  CROWDLOAN_URL,
+  WEBB_DOCS_URL,
   NODE_OPERATORS_URL,
   POLKADOT_TANGLE_URL,
 } from '../../constants';
 
 const tabsContent = {
-  Crowdloan: {
-    title: 'Participate Tangle’s Crowdloan',
-    description:
-      'A community-backed launch that allows people to contribute by locking up their KSM temporarily. Tangle’s native token (TNT) will be distributed based on the amount of KSM locked. Join waitlist, and be sure you’re eligible to participate with tokens on hand.',
-    linkText: 'Contribute Now',
-    linkUrl: CROWDLOAN_URL,
-  },
+  // Crowdloan: {
+  //   title: 'Participate Tangle’s Crowdloan',
+  //   description:
+  //     'A community-backed launch that allows people to contribute by locking up their KSM temporarily. Tangle’s native token (TNT) will be distributed based on the amount of KSM locked. Join waitlist, and be sure you’re eligible to participate with tokens on hand.',
+  //   linkText: 'Contribute Now',
+  //   linkUrl: WEBB_DOCS_URL,
+  // },
   'Claim Airdrop': {
     title: 'Claim Airdrop',
     description:
       "As part of Tangle's initial launch, the Tangle Network is distributing 5,000,000 TNT tokens to the community. Check eligibility below to see if you qualify for TNT Airdrop!",
     linkText: 'Check Eligibility',
-    linkUrl: CROWDLOAN_URL,
+    linkUrl: WEBB_DOCS_URL,
   },
   Collator: {
     title: 'Become a Collator',
@@ -55,10 +55,10 @@ const tabsContent = {
   },
 };
 
-type TabTypes = 'Crowdloan' | 'Claim Airdrop' | 'Collator' | 'Governance';
+type TabTypes = 'Claim Airdrop' | 'Collator' | 'Governance';
 
 export const ParticipationMechanicsSection = () => {
-  const [activeTab, setActiveTab] = useState<TabTypes>('Crowdloan');
+  const [activeTab, setActiveTab] = useState<TabTypes>('Claim Airdrop');
 
   return (
     <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">

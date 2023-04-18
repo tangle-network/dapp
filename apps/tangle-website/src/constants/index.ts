@@ -17,11 +17,8 @@ export const WHAT_IS_TSS_URL =
 export const HOW_TSS_WORKS_URL =
   'https://docs.webb.tools/docs/tangle-network/overview/#how-it-works';
 
-export const CROWDLOAN_URL =
-  'https://docs.webb.tools/docs/tangle-network/crowdloan/overview/';
-
 export const NODE_OPERATORS_URL =
   'https://docs.webb.tools/docs/tangle-network/node-operators/quickstart/#deploy-quickly';
 
 export const POLKADOT_TANGLE_URL =
-  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle1.webb.tools#/democracy';
+  'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/democracy';
