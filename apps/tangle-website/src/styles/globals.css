@@ -27,3 +27,16 @@
   md:text-[18px] md:leading-[28px] md:px-[36px]
   font-bold md:font-black;
 }
+
+/* Override styling for Tab component from webb-ui-components */
+button[data-radix-collection-item] > span {
+  @apply w-full flex flex-col items-center;
+}
+
+button[data-radix-collection-item][data-state='active'] .participation-tab {
+  @apply text-mono-0 bg-mono-200;
+}
+
+button[data-radix-collection-item][data-state='active'] .participation-tab-polygon {
+  @apply border-t-mono-200;
+}
