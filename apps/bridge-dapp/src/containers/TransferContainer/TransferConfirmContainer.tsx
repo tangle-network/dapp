@@ -201,12 +201,12 @@ export const TransferConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const receipt = await vAnchorApi.transact(...args);
+          const transactionHash = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
-          tx.txHash = receipt.transactionHash;
+          tx.txHash = transactionHash;
           tx.next(TransactionState.Done, {
-            txHash: receipt.transactionHash,
+            txHash: transactionHash,
             outputNotes,
           });
         }

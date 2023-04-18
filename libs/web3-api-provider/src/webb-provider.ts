@@ -41,6 +41,7 @@ import { Eth } from 'web3-eth';
 
 import { hexToU8a } from '@polkadot/util';
 
+import { ApiPromise } from '@polkadot/api';
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
@@ -572,8 +573,15 @@ export class WebbWeb3Provider
 
   async getVAnchorMaxEdges(
     vAnchorAddress: string,
-    provider?: providers.Provider
+    provider?: providers.Provider | ApiPromise
   ): Promise<number> {
+    if (provider instanceof ApiPromise) {
+      console.error(
+        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
+      );
+      provider = this.ethersProvider;
+    }
+
     const storedMaxEdges = this.vAnchorMaxEdges.get(vAnchorAddress);
     if (storedMaxEdges) {
       return Promise.resolve(storedMaxEdges);

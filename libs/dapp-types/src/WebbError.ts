@@ -3,6 +3,10 @@
 
 /// list of know error codes of the dApp
 export enum WebbErrorCodes {
+  /// Api is not ready
+  ApiNotReady,
+  /// No fungible token is available
+  NoFungibleTokenAvailable,
   /// Unsupported chain is switch via the extension
   UnsupportedChain,
   /// Unselected chain is a mismatch between provider and application
@@ -71,6 +75,18 @@ export class WebbError extends Error {
     }
 
     switch (code) {
+      case WebbErrorCodes.ApiNotReady:
+        return {
+          code,
+          message: 'Api is not ready',
+        };
+
+      case WebbErrorCodes.NoFungibleTokenAvailable:
+        return {
+          code,
+          message: 'No fungible token is available',
+        };
+
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,

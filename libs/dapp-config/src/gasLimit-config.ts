@@ -17,7 +17,7 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.ScrollAlpha]: BigNumber.from(2000000),
 
   // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000),
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
 };
 
 export default gasLimitConfig;

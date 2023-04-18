@@ -12,6 +12,9 @@ import {
   VAnchorActions,
   WithdrawTransactionPayloadType,
   padHexString,
+  isVAnchorDepositPayload,
+  isVAnchorWithdrawPayload,
+  isVAnchorTransferPayload,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
@@ -48,70 +51,6 @@ import { JsNote } from '@webb-tools/wasm-utils';
 import { poseidon } from 'circomlibjs';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
-
-const isVAnchorDepositPayload = (
-  payload: TransactionPayloadType
-): payload is Note => {
-  return payload instanceof Note;
-};
-
-const isVAnchorWithdrawPayload = (
-  payload: TransactionPayloadType
-): payload is WithdrawTransactionPayloadType => {
-  if (!('changeUtxo' in payload)) {
-    return false;
-  }
-
-  const changeUtxo: Utxo | undefined = payload['changeUtxo'];
-  if (!changeUtxo || !(changeUtxo instanceof Utxo)) {
-    return false;
-  }
-
-  const notes: Note[] | undefined = payload['notes'];
-  if (!notes) {
-    return false;
-  }
-
-  const isNotesValid = notes.every((note) => note instanceof Note);
-  if (!isNotesValid) {
-    return false;
-  }
-
-  return (
-    'recipient' in payload &&
-    typeof payload['recipient'] === 'string' &&
-    payload['recipient'].length > 0 &&
-    'feeAmount' in payload &&
-    payload['feeAmount'] instanceof BigNumber &&
-    'refundAmount' in payload &&
-    payload['refundAmount'] instanceof BigNumber
-  );
-};
-
-const isVAnchorTransferPayload = (
-  payload: TransactionPayloadType
-): payload is TransferTransactionPayloadType => {
-  if (!('notes' in payload)) {
-    return false;
-  }
-
-  const notes: Note[] | undefined = payload['notes'];
-  if (!notes) {
-    return false;
-  }
-
-  const isNotesValid = notes.every((note) => note instanceof Note);
-  if (!isNotesValid) {
-    return false;
-  }
-
-  return (
-    'changeUtxo' in payload &&
-    payload['changeUtxo'] instanceof Utxo &&
-    'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo
-  );
-};
 
 const generateCircomCommitment = (note: JsNote): string => {
   const noteSecretParts = note.secrets.split(':');
@@ -361,7 +300,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
     overridesTransaction?: Overrides
-  ): Promise<ContractReceipt> | never {
+  ): Promise<string> | never {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
@@ -375,7 +314,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx.txHash = '';
     tx.next(TransactionState.SendingTransaction, '');
 
-    return vanchor.transact(
+    const receipt = await vanchor.transact(
       inputs,
       outputs,
       fee,
@@ -386,6 +325,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       leavesMap,
       overridesTransaction
     );
+
+    return receipt.transactionHash;
   }
 
   // Check if the evm address and keyData pairing has already registered.

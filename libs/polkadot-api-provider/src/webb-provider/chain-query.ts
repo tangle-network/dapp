@@ -8,6 +8,7 @@ import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
 import { WebbPolkadot } from '../webb-provider';
 import { Observable, switchMap, throwError } from 'rxjs';
+import { BN } from 'bn.js';
 
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   constructor(protected inner: WebbPolkadot) {
@@ -23,6 +24,8 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
         const activeAccount = await this.inner.accounts.activeOrDefault;
+        const decimals = this.inner.state.defaultDecimalPlaces;
+
         if (activeAccount) {
           // If the assetId is not 0, query the orml tokens
           if (assetId !== '0') {
@@ -43,7 +46,9 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
             let tokenBalance: string = json.free.toString();
 
             tokenBalance = tokenBalance.replaceAll(',', '');
-            const denominatedTokenBalance = Number(tokenBalance) / 10 ** 12;
+            const denominatedTokenBalance = new BN(tokenBalance).div(
+              new BN(10).pow(new BN(decimals))
+            );
 
             return denominatedTokenBalance.toString();
           } else {
@@ -54,7 +59,9 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
             let tokenBalance: string = systemAccountData.data.free.toString();
 
             tokenBalance = tokenBalance.replaceAll(',', '');
-            const denominatedTokenBalance = Number(tokenBalance) / 10 ** 12;
+            const denominatedTokenBalance = new BN(tokenBalance).div(
+              new BN(10).pow(new BN(decimals))
+            );
 
             return denominatedTokenBalance.toString();
           }
@@ -85,12 +92,12 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tokenBalanceByAddress(
-    address: string,
+    assetId: string,
     accountAddressArg?: string
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
     }
-    return this.getTokenBalanceByAssetId(address);
+    return this.getTokenBalanceByAssetId(assetId);
   }
 }

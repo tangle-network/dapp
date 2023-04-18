@@ -114,7 +114,7 @@ export const DepositConfirmContainer = forwardRef<
         return;
       }
 
-      downloadNote(note);
+      // downloadNote(note); TODO: Uncomment this when we have the note manager
 
       const {
         amount,
@@ -124,6 +124,7 @@ export const DepositConfirmContainer = forwardRef<
         targetChainId: destTypedChainId,
         tokenSymbol,
       } = note.note;
+
       // Calculate the amount
       const formattedAmount = ethers.utils.formatUnits(amount, denomination);
 
@@ -180,7 +181,7 @@ export const DepositConfirmContainer = forwardRef<
           await noteManager.addNote(note);
         }
 
-        const receipt = await api.transact(...args);
+        const transactionHash = await api.transact(...args);
 
         const srcContract = VAnchor__factory.connect(
           sourceIdentifyingData,
@@ -195,9 +196,9 @@ export const DepositConfirmContainer = forwardRef<
         await noteManager?.removeNote(note);
 
         // Notification Success Transaction
-        tx.txHash = receipt.transactionHash;
+        tx.txHash = transactionHash;
         tx.next(TransactionState.Done, {
-          txHash: receipt.transactionHash,
+          txHash: transactionHash,
           outputNotes: [indexedNote],
         });
       } catch (error: any) {

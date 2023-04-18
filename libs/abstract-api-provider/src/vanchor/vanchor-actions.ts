@@ -1,19 +1,20 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import BN from 'bn.js';
 import type { WebbApiProvider } from '../webb-provider.interface';
 
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import { BigNumber, BigNumberish, ContractReceipt, Overrides } from 'ethers';
+import { BigNumber, ContractReceipt, Overrides } from 'ethers';
 import { CancellationToken } from '../cancelation-token';
+import { ActiveWebbRelayer } from '../relayer';
 import {
   ActionEvent,
   NewNotesTxResult,
   Transaction,
   TransactionState,
 } from '../transaction';
-import { ActiveWebbRelayer } from '../relayer';
 
 export type ParametersOfTransactMethod = Awaited<
   Parameters<VAnchorActions['transact']>
@@ -84,20 +85,23 @@ export abstract class VAnchorActions<
     changeNotes: Note[]
   ): Promise<void>;
 
-  // A function for transcting
+  /**
+   * The transact function
+   * @return {string} The transaction hash
+   */
   abstract transact(
     tx: Transaction<NewNotesTxResult>,
     contractAddress: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BigNumber,
-    refund: BigNumber,
+    fee: BigNumber | BN,
+    refund: BigNumber | BN,
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
     overridesTransaction?: Overrides
-  ): Promise<ContractReceipt>;
+  ): Promise<string>;
 }
 
 export type WithdrawTransactionPayloadType = {
@@ -119,3 +123,67 @@ export type TransactionPayloadType =
   | Note
   | WithdrawTransactionPayloadType
   | TransferTransactionPayloadType;
+
+export const isVAnchorDepositPayload = (
+  payload: TransactionPayloadType
+): payload is Note => {
+  return payload instanceof Note;
+};
+
+export const isVAnchorWithdrawPayload = (
+  payload: TransactionPayloadType
+): payload is WithdrawTransactionPayloadType => {
+  if (!('changeUtxo' in payload)) {
+    return false;
+  }
+
+  const changeUtxo: Utxo | undefined = payload['changeUtxo'];
+  if (!changeUtxo || !(changeUtxo instanceof Utxo)) {
+    return false;
+  }
+
+  const notes: Note[] | undefined = payload['notes'];
+  if (!notes) {
+    return false;
+  }
+
+  const isNotesValid = notes.every((note) => note instanceof Note);
+  if (!isNotesValid) {
+    return false;
+  }
+
+  return (
+    'recipient' in payload &&
+    typeof payload['recipient'] === 'string' &&
+    payload['recipient'].length > 0 &&
+    'feeAmount' in payload &&
+    payload['feeAmount'] instanceof BigNumber &&
+    'refundAmount' in payload &&
+    payload['refundAmount'] instanceof BigNumber
+  );
+};
+
+export const isVAnchorTransferPayload = (
+  payload: TransactionPayloadType
+): payload is TransferTransactionPayloadType => {
+  if (!('notes' in payload)) {
+    return false;
+  }
+
+  const notes: Note[] | undefined = payload['notes'];
+  if (!notes) {
+    return false;
+  }
+
+  const isNotesValid = notes.every((note) => note instanceof Note);
+  if (!isNotesValid) {
+    return false;
+  }
+
+  return (
+    'changeUtxo' in payload &&
+    payload['changeUtxo'] instanceof Utxo &&
+    'transferUtxo' in payload &&
+    payload['transferUtxo'] instanceof Utxo
+  );
+};

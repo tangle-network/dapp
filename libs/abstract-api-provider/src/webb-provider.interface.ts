@@ -19,6 +19,7 @@ import { ActionEvent } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import { ApiPromise } from '@polkadot/api';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -242,6 +243,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // get vanchor max edges
   getVAnchorMaxEdges: (
     vAnchorAddress: string,
-    provider?: providers.Provider
+    provider?: providers.Provider | ApiPromise
   ) => Promise<number>;
 }
