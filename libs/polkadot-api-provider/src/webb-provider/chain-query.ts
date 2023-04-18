@@ -73,11 +73,13 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
     }
+
     const assetId =
       this.inner.config.currencies[currencyId].addresses.get(typedChainId);
     if (!assetId) {
       return throwError(`unable to find asset`);
     }
+
     return this.getTokenBalanceByAssetId(assetId);
   }
 

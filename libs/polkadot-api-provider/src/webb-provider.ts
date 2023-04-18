@@ -45,6 +45,7 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
+import { VoidFn } from '@polkadot/api/types';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -61,6 +62,8 @@ export class WebbPolkadot
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
+
+  readonly newBlockSub = new Set<VoidFn>();
 
   private _newBlock = new BehaviorSubject<null | number>(null);
   readonly typedChainidSubject: BehaviorSubject<number>;
@@ -255,12 +258,11 @@ export class WebbPolkadot
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
+
     // await instance.ensureApiInterface();
     const unsub = await instance.listenerBlocks();
-    instance.destroy = async () => {
-      await instance.destroy();
-      unsub();
-    };
+    instance.newBlockSub.add(unsub);
+
     return instance;
   }
 
@@ -286,6 +288,7 @@ export class WebbPolkadot
       ChainType.Substrate,
       chainId.toNumber()
     );
+
     const instance = new WebbPolkadot(
       apiPromise,
       typedChainId,
@@ -302,16 +305,16 @@ export class WebbPolkadot
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
+
     const unsub = await instance.listenerBlocks();
-    instance.destroy = async () => {
-      await instance.destroy();
-      unsub();
-    };
+    instance.newBlockSub.add(unsub);
+
     return instance;
   }
 
   async destroy(): Promise<void> {
     await this.provider.destroy();
+    this.newBlockSub.forEach((unsub) => unsub());
   }
 
   private async listenerBlocks() {

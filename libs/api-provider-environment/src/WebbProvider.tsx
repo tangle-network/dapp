@@ -53,11 +53,12 @@ import {
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ethers } from 'ethers';
 import { TAppEvent } from './app-event';
+import constants from './constants';
 import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
+import { evmProviderFactory, substrateProviderFactory } from './utils';
 import { WebbContext } from './webb-context';
 
 interface WebbProviderProps extends BareProps {
@@ -147,16 +148,6 @@ function notificationHandler(notification: NotificationPayload) {
 
 notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
-};
-
-// For the fetching currency on chain effect
-const providerFactory = (typedChainId: number): ethers.providers.Provider => {
-  const chain = chains[typedChainId];
-  if (!chain) {
-    throw new Error(`Chain not found for ${typedChainId}`); // Development error
-  }
-
-  return Web3Provider.fromUri(chain.url).intoEthersProvider();
 };
 
 export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
@@ -451,6 +442,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
+
+        const apiConfig = await ApiConfig.initFromApi(
+          defaultApiConfig,
+          evmProviderFactory,
+          substrateProviderFactory
+        );
+
+        setApiConfig(apiConfig);
+
         switch (wallet.id) {
           case WalletId.Polkadot:
           case WalletId.Talisman:
@@ -466,10 +466,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
               // TODO: Should initialize the api config with the currencies config
               // fetched on-chain
-              const apiConfig = defaultApiConfig;
-
               const webbPolkadot = await WebbPolkadot.init(
-                'Webb DApp',
+                constants.APP_NAME,
                 [url],
                 {
                   onError: (feedback: InteractiveFeedback) => {
@@ -564,13 +562,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 (await relayerManagerFactory.getRelayerManager(
                   'evm'
                 )) as Web3RelayerManager;
-
-              const apiConfig = await ApiConfig.initFromApi(
-                defaultApiConfig,
-                providerFactory
-              );
-
-              setApiConfig(apiConfig);
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,

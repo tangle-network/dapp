@@ -6,6 +6,7 @@ export type GasLimitConfigType = {
 };
 
 const gasLimitConfig: GasLimitConfigType = {
+  // EVM
   [PresetTypedChainId.OptimismTestnet]: BigNumber.from(2000000),
   [PresetTypedChainId.PolygonTestnet]: BigNumber.from(2000000),
   [PresetTypedChainId.ArbitrumTestnet]: BigNumber.from(20000000),
@@ -14,6 +15,9 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.Goerli]: BigNumber.from(2000000),
   [PresetTypedChainId.AvalancheFuji]: BigNumber.from(2000000),
   [PresetTypedChainId.ScrollAlpha]: BigNumber.from(2000000),
+
+  // Substrate
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000),
 };
 
 export default gasLimitConfig;

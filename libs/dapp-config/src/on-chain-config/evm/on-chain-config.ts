@@ -5,18 +5,16 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import {
-  CurrencyRole,
-  CurrencyType,
-  EVMChainId,
-  zeroAddress,
-} from '@webb-tools/dapp-types';
+import { EVMChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import assert from 'assert';
 
 import { ChainAddressConfig } from '../../anchors';
 import { CurrencyConfig } from '../../currencies';
-import { ICurrency, OnChainConfigBase } from '../on-chain-config-base';
+import {
+  CurrencyResponse,
+  ICurrency,
+  OnChainConfigBase,
+} from '../on-chain-config-base';
 
 // The chain info is retrieved from https://github.com/ethereum-lists/chains
 const CHAIN_URL = 'https://chainid.network/chains.json';
@@ -35,14 +33,6 @@ const LOCALNET_CURRENCY: ICurrency = {
   symbol: 'ETH',
   decimals: 18,
   address: zeroAddress,
-};
-
-type EVMCurrencyResponse = {
-  typedChainId: number;
-  nativeCurrency: ICurrency;
-  anchorAddress: string;
-  fungibleCurrency: ICurrency;
-  wrappableCurrencies: ICurrency[];
 };
 
 // Cache the chain data
@@ -71,7 +61,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     return EVMOnChainConfigInstance;
   }
 
-  async fetchNativeCurrency(typedChainId: number): Promise<ICurrency | null> {
+  async fetchNativeCurrency(
+    typedChainId: number,
+    _?: Provider
+  ): Promise<ICurrency | null> {
     // First check if the native currency is already cached
     const cachedNativeCurrency = this.nativeCurrencyCache.get(typedChainId);
     if (cachedNativeCurrency) {
@@ -79,7 +72,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     }
 
     // Validate the chainType is EVM and get the chaindId
-    const { chainId } = this.validateChainType(typedChainId);
+    const { chainId } = this.assertChainType(typedChainId, ChainType.EVM);
 
     // Maybe evn localnet
     if (LOCALNET_CHAIN_IDS.includes(chainId)) {
@@ -135,7 +128,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     }
 
     // Validate the chainType is EVM and get the chaindId
-    this.validateChainType(typedChainId);
+    this.assertChainType(typedChainId, ChainType.EVM);
 
     try {
       const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
@@ -185,7 +178,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     }
 
     // Validate the chainType is EVM and get the chaindId
-    this.validateChainType(typedChainId);
+    this.assertChainType(typedChainId, ChainType.EVM);
 
     const fungibleTokenWrapperContract = FungibleTokenWrapper__factory.connect(
       fungibleCurrency.address,
@@ -248,7 +241,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
   async fetchCurrenciesConfig(
     anchorConfig: Record<number, string[]>,
-    providerFactory: (typedChainId: number) => Provider,
+    providerFactory: (typedChainId: number) => Promise<Provider>,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
     existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
@@ -270,7 +263,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     const typedChainIdBooleans = await Promise.all(
       evmTypedChainIds.map(async (typedChainId) => {
         try {
-          const provider = providerFactory(+typedChainId);
+          const provider = await providerFactory(+typedChainId);
           await provider.getNetwork();
           return true;
         } catch (error) {
@@ -302,7 +295,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       (
         currency
       ): currency is Pick<
-        EVMCurrencyResponse,
+        CurrencyResponse,
         'typedChainId' | 'nativeCurrency'
       > => Boolean(currency.nativeCurrency)
     );
@@ -311,7 +304,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     const fungibleCurrenciesWithNull = await Promise.allSettled(
       nativeCurrencies.map(
         async ({ typedChainId, nativeCurrency: nativeCurrency }) => {
-          const provider = providerFactory(typedChainId);
+          const provider = await providerFactory(typedChainId);
 
           // Support multiple anchor addresses for the same chain
           const anchorAddresses = anchorConfig[typedChainId];
@@ -333,7 +326,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
                 typedChainId,
                 nativeCurrency,
                 fungibleCurrency: fungible,
-                anchorAddress: address,
+                anchorAddressOrTreeId: address,
               };
             })
           );
@@ -349,7 +342,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         (
           currencies
         ): currencies is {
-          anchorAddress: string;
+          anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency | null;
           nativeCurrency: ICurrency;
           typedChainId: number;
@@ -360,7 +353,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         (
           currency
         ): currency is {
-          anchorAddress: string;
+          anchorAddressOrTreeId: string;
           fungibleCurrency: ICurrency;
           nativeCurrency: ICurrency;
           typedChainId: number;
@@ -374,9 +367,9 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           typedChainId,
           nativeCurrency,
           fungibleCurrency,
-          anchorAddress,
+          anchorAddressOrTreeId,
         }) => {
-          const provider = providerFactory(typedChainId);
+          const provider = await providerFactory(typedChainId);
           const wrappables = await this.fetchWrappableCurrencies(
             fungibleCurrency,
             typedChainId,
@@ -384,7 +377,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           );
 
           return {
-            anchorAddress,
+            anchorAddressOrTreeId,
             fungibleCurrency,
             nativeCurrency,
             typedChainId,
@@ -397,180 +390,17 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     const wrappableCurrencies = wrappableCurrenciesWithNull
       .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
       .filter(
-        (currency): currency is EVMCurrencyResponse =>
+        (currency): currency is CurrencyResponse =>
           !!currency && Array.isArray(currency.wrappableCurrencies)
       );
 
-    return this.addCurrenciesIntoConfig(
+    const config = this.addCurrenciesIntoConfig(
       wrappableCurrencies,
       existedCurreniciesConfig,
       existedFungibleToWrappableMap,
       existedAnchorConfig
     );
-  }
-
-  private validateChainType(typedChainId: number) {
-    const { chainType, chainId } = parseTypedChainId(typedChainId);
-    assert(chainType === ChainType.EVM, 'Invalid chain type for EVM');
-
-    return {
-      chainType,
-      chainId,
-    };
-  }
-
-  private addCurrenciesIntoConfig(
-    currenciesResponse: EVMCurrencyResponse[],
-    currenciesConfig: Record<number, CurrencyConfig>,
-    fungibleToWrappableMap: Map<number, Map<number, Set<number>>>,
-    anchorConfig: Record<string, ChainAddressConfig>
-  ) {
-    currenciesResponse.forEach(
-      ({
-        anchorAddress,
-        typedChainId,
-        nativeCurrency,
-        fungibleCurrency,
-        wrappableCurrencies,
-      }) => {
-        // Add native currency
-        const currentNative = Object.values(currenciesConfig).find(
-          (currency) =>
-            currency.name === nativeCurrency.name &&
-            currency.symbol === nativeCurrency.symbol
-        );
-
-        const { address: nativeAddr, ...restNative } = nativeCurrency;
-
-        if (!currentNative) {
-          const nextId = Object.keys(currenciesConfig).length + 1;
-          currenciesConfig[nextId] = {
-            ...restNative,
-            id: nextId,
-            type: CurrencyType.NATIVE,
-            role: CurrencyRole.Wrappable,
-            addresses: new Map([[typedChainId, nativeAddr]]),
-          };
-        } else {
-          if (
-            currentNative.addresses.has(typedChainId) &&
-            currentNative.addresses.get(typedChainId) !== nativeAddr
-          ) {
-            console.error(
-              `Native currency ${currentNative.name} already exists on chain ${typedChainId}`
-            );
-          }
-
-          currentNative.addresses.set(typedChainId, nativeAddr);
-        }
-
-        // Add fungible currency
-        let currentFungible = Object.values(currenciesConfig).find(
-          (currency) =>
-            currency.name === fungibleCurrency.name &&
-            currency.symbol === fungibleCurrency.symbol
-        );
-
-        const { address: fungbileAddr, ...restFungible } = fungibleCurrency;
-
-        if (!currentFungible) {
-          const nextId = Object.keys(currenciesConfig).length + 1;
-          currentFungible = {
-            ...restFungible,
-            id: nextId,
-            type: CurrencyType.ERC20,
-            role: CurrencyRole.Governable,
-            addresses: new Map([[typedChainId, fungbileAddr]]),
-          };
-          currenciesConfig[nextId] = currentFungible;
-        } else {
-          if (
-            currentFungible.addresses.has(typedChainId) &&
-            currentFungible.addresses.get(typedChainId) !== fungbileAddr
-          ) {
-            console.error(
-              `Fungible currency ${currentFungible.name} already exists on chain ${typedChainId}`
-            );
-          }
-
-          currentFungible.addresses.set(typedChainId, fungbileAddr);
-        }
-
-        // Add anchor
-        const anchor = anchorConfig[currentFungible.id];
-        if (!anchor) {
-          anchorConfig[currentFungible.id] = {
-            [typedChainId]: anchorAddress,
-          };
-        } else {
-          if (anchor[typedChainId] && anchor[typedChainId] !== anchorAddress) {
-            console.error(
-              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`,
-              `Current: ${anchor[typedChainId]}, new one: ${anchorAddress}`
-            );
-          }
-
-          anchor[typedChainId] = anchorAddress;
-        }
-
-        // Add wrappable currencies
-        const wrappableCurrencyConfigs: CurrencyConfig[] = [];
-        wrappableCurrencies.forEach(
-          ({ address: wrappableAddr, ...restWrappable }) => {
-            let currentWrappble = Object.values(currenciesConfig).find(
-              (currency) =>
-                currency.name === restWrappable.name &&
-                currency.symbol === restWrappable.symbol
-            );
-
-            if (!currentWrappble) {
-              const nextId = Object.keys(currenciesConfig).length + 1;
-              currentWrappble = {
-                ...restWrappable,
-                id: nextId,
-                type: CurrencyType.ERC20,
-                role: CurrencyRole.Wrappable,
-                addresses: new Map([[typedChainId, wrappableAddr]]),
-              };
-              currenciesConfig[nextId] = currentWrappble;
-            } else {
-              if (
-                currentWrappble.addresses.has(typedChainId) &&
-                currentWrappble.addresses.get(typedChainId) !== wrappableAddr
-              ) {
-                console.error(
-                  `Wrappable currency ${currentWrappble.name} already exists on chain ${typedChainId}`
-                );
-              }
-
-              currentWrappble.addresses.set(typedChainId, wrappableAddr);
-            }
-
-            wrappableCurrencyConfigs.push(currentWrappble);
-          }
-        );
-
-        // Add fungible to wrappable map
-        const wrappableIds = new Set(wrappableCurrencyConfigs.map((c) => c.id));
-        const wrappableMap = fungibleToWrappableMap.get(currentFungible.id);
-        if (!wrappableMap) {
-          fungibleToWrappableMap.set(
-            currentFungible.id,
-            new Map([[typedChainId, wrappableIds]])
-          );
-        } else {
-          wrappableMap.set(typedChainId, wrappableIds);
-        }
-      }
-    );
-
-    // Cache the config
-    cachedCurrenciesConfig = {
-      anchorConfig,
-      currenciesConfig,
-      fungibleToWrappableMap,
-    };
-
-    return cachedCurrenciesConfig;
+    cachedCurrenciesConfig = config;
+    return config;
   }
 }

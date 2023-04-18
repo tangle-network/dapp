@@ -13,7 +13,7 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import { options } from '@webb-tools/api';
-import { EventBus, LoggerService } from '@webb-tools/app-util';
+import { EventBus } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -22,6 +22,7 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { PolkaTXBuilder } from '../transaction';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
+import { LoggerService } from '@webb-tools/browser-utils';
 
 const { isNumber } = lodash;
 
@@ -35,6 +36,7 @@ type ExtensionProviderEvents = {
 
   accountsChange: PolkadotAccount[];
 };
+
 const logger = LoggerService.get('Polkadot-Provider');
 
 /**
