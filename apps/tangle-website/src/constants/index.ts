@@ -5,6 +5,8 @@ export const STATS_DEV_URL = 'https://www.stats-dev.webb.tools/';
 
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/docs/';
 
+export const WEBB_URL = 'https://webb.tools/';
+
 export const TANGLE_OVERVIEW_URL =
   'https://docs.webb.tools/docs/tangle-network/overview/';
 
@@ -16,3 +18,9 @@ export const WHAT_IS_TSS_URL =
 
 export const HOW_TSS_WORKS_URL =
   'https://docs.webb.tools/docs/tangle-network/overview/#how-it-works';
+
+export const NODE_OPERATORS_URL =
+  'https://docs.webb.tools/docs/tangle-network/node-operators/quickstart/#deploy-quickly';
+
+export const POLKADOT_TANGLE_URL =
+  'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/democracy';
