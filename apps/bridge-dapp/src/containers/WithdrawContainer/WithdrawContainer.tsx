@@ -780,7 +780,7 @@ export const WithdrawContainer = forwardRef<
 
     setMainComponent(
       <TokenListCard
-        className="min-w-[550px] h-[700px]"
+        className="min-w-[550px] h-[710px]"
         title={'Select a token to Withdraw'}
         popularTokens={[]}
         selectTokens={selectableTokens}
@@ -822,7 +822,7 @@ export const WithdrawContainer = forwardRef<
 
       setMainComponent(
         <TokenListCard
-          className="min-w-[550px] h-[700px]"
+          className="min-w-[550px] h-[710px]"
           title={'Select a token to Unwrap'}
           popularTokens={[]}
           selectTokens={selectTokens}
@@ -862,7 +862,7 @@ export const WithdrawContainer = forwardRef<
 
     setMainComponent(
       <RelayerListCard
-        className="min-w-[550px] h-[700px]"
+        className="min-w-[550px] h-[710px]"
         relayers={relayers
           .map((relayer) => {
             const relayerData = relayer.capabilities.supportedChains[
@@ -999,7 +999,6 @@ export const WithdrawContainer = forwardRef<
           : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
       isLoading:
         loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
-      className: cx('mt-4'),
       loadingText: isFetchingFeeInfo ? 'Fetching fee info...' : 'Connecting...',
       children: buttonText,
       onClick: handleWithdrawButtonClick,

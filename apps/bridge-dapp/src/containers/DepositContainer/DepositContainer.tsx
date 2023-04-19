@@ -579,7 +579,7 @@ export const DepositContainer = forwardRef<
 
     const tokenListDepositProps = useMemo<TokenListCardProps>(() => {
       return {
-        className: 'min-w-[550px] h-[700px]',
+        className: 'min-w-[550px] h-[710px]',
         title: `Select a token from ${selectedSourceChain?.name}`,
         popularTokens: [],
         selectTokens: populatedSelectableWebbTokens,
@@ -614,7 +614,7 @@ export const DepositContainer = forwardRef<
       );
 
       return {
-        className: 'min-w-[550px] h-[700px]',
+        className: 'min-w-[550px] h-[710px]',
         selectTokens: tokens,
         value: destChainInputValue,
         title: 'Select a token to Deposit',
