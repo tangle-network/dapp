@@ -5,6 +5,7 @@ import {
   GovernanceSystemSection,
   FeaturesSection,
   ParticipationMechanicsSection,
+  LaunchPhasesSection,
   SupportedBySection,
   UseCasesSection,
 } from '../components';
@@ -18,15 +19,18 @@ export function Index() {
 
       <FeaturesSection />
 
-      <SupportedBySection />
-
       <GovernanceSystemSection />
 
       <ParticipationMechanicsSection />
 
+      <LaunchPhasesSection />
+
       <UseCasesSection />
 
+      <SupportedBySection />
+
       <CommunitySection />
+
     </div>
   );
 }
