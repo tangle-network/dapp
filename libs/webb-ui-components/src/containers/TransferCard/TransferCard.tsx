@@ -1,3 +1,5 @@
+import { InformationLine } from '@webb-tools/icons';
+import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,24 +13,27 @@ import {
   RelayerInput,
   TokenInput,
 } from '../../components';
+import { Typography } from '../../typography';
 import { TransferCardProps } from './types';
+
+const buttonDescVariantClasses = {
+  info: cx('text-mono-100 dark:text-mono-80'),
+  error: cx('text-red-70 dark:text-red-50'),
+};
 
 export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
   (
     {
       amountInputProps,
       bridgeAssetInputProps,
-      changeAmount,
       className,
       destChainInputProps,
-      feeAmount,
-      feePercentage,
-      feeToken,
       recipientInputProps,
       relayerInputProps,
-      transferAmount,
+      infoItemProps,
+      buttonDesc,
+      buttonDescVariant = 'info',
       transferBtnProps,
-      transferToken,
       ...props
     },
     ref
@@ -69,50 +74,38 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
           </BridgeInputGroup>
 
           {/** Info */}
-          <div className="flex flex-col space-y-1">
-            <InfoItem
-              leftTextProps={{
-                title: 'Transfering',
-                variant: 'utility',
-                info: 'Transfering',
-              }}
-              rightContent={
-                transferAmount
-                  ? `${transferAmount} ${transferToken}`
-                  : undefined
-              }
-            />
-
-            <InfoItem
-              leftTextProps={{
-                title: 'Change Amount',
-                variant: 'utility',
-                info: 'Change Amount',
-              }}
-              rightContent={
-                changeAmount ? `${changeAmount} ${transferToken}` : undefined
-              }
-            />
-
-            <InfoItem
-              leftTextProps={{
-                title: feePercentage ? `Fee ${feePercentage}` : 'Max fee',
-                variant: 'utility',
-              }}
-              rightContent={
-                feeAmount ? `${feeAmount} ${feeToken ?? ''}` : undefined
-              }
-            />
-          </div>
+          {infoItemProps && (
+            <div className="flex flex-col space-y-1">
+              {infoItemProps.map((itemProps, index) => (
+                <InfoItem key={index} {...itemProps} />
+              ))}
+            </div>
+          )}
         </div>
 
-        <Button
-          {...transferBtnProps}
-          isFullWidth
-          className={twMerge('justify-center')}
-        >
-          {transferBtnProps?.children ?? 'Transfer'}
-        </Button>
+        <div className="mt-4 space-y-2">
+          <Button
+            {...transferBtnProps}
+            isFullWidth
+            className={twMerge('justify-center')}
+          >
+            {transferBtnProps?.children ?? 'Transfer'}
+          </Button>
+
+          {buttonDesc && (
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className={cx(
+                'flex items-center',
+                buttonDescVariantClasses[buttonDescVariant]
+              )}
+            >
+              <InformationLine className="!fill-current shrink-0 mr-1" />
+              {buttonDesc}
+            </Typography>
+          )}
+        </div>
       </div>
     );
   }

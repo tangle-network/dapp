@@ -37,6 +37,7 @@ import {
   AssetType,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
 import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
@@ -137,21 +138,17 @@ export const TransferContainer = forwardRef<
     const {
       feeInfo,
       fetchMaxFeeInfo,
+      fetchMaxFeeInfoFromRelayer,
       isLoading: isFetchingMaxFeeInfo,
       resetMaxFeeInfo,
     } = useMaxFeeInfo(maxFeeArgs);
 
-    const feeValue = useMemo<string | undefined>(() => {
-      if (!feeInfo) {
-        return undefined;
+    const feeInWei = useMemo(() => {
+      if (!feeInfo || feeInfo instanceof BigNumber) {
+        return feeInfo;
       }
 
-      if (!(feeInfo instanceof BigNumber)) {
-        console.error('Fee info is not a BigNumber instance');
-        return undefined;
-      }
-
-      return ethers.utils.formatEther(feeInfo);
+      return feeInfo.estimatedFee;
     }, [feeInfo]);
 
     const currentNativeCurrency = useMemo(() => {
@@ -310,7 +307,7 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TokenListCard
-          className="min-w-[550px] h-[700px]"
+          className="min-w-[550px] h-[710px]"
           title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={selectableBridgingAssets}
@@ -455,7 +452,7 @@ export const TransferContainer = forwardRef<
       setMainComponent(
         <RelayerListCard
           relayers={relayerList}
-          className="min-w-[550px] h-[700px]"
+          className="min-w-[550px] h-[710px]"
           onClose={() => setMainComponent(undefined)}
           onChange={(nextRelayer) => {
             setRelayer(
@@ -485,8 +482,24 @@ export const TransferContainer = forwardRef<
       );
     }, [amount, selectedBridgingAsset?.balance]);
 
-    // Boolean state for whether the transfer button is disabled
-    const isTransferButtonDisabled = useMemo<boolean>(() => {
+    // The actual amount to be transferred
+    const receivingAmount = useMemo(() => {
+      // If no relayer selected, return the amount
+      if (!activeRelayer) {
+        return amount;
+      }
+
+      if (!feeInWei || !amount) {
+        return amount;
+      }
+
+      // If relayer selected, return the amount minus the relayer fee
+      const fee = Number(ethers.utils.formatEther(feeInWei));
+      return amount - fee;
+    }, [activeRelayer, amount, feeInWei]);
+
+    // Boolean indicating whether inputs are valid to transfer
+    const isValidToTransfer = useMemo<boolean>(() => {
       return [
         Boolean(fungibleCurrency), // No fungible currency selected
         Boolean(destChain), // No destination chain selected
@@ -504,9 +517,9 @@ export const TransferContainer = forwardRef<
       isValidRecipient,
     ]);
 
-    // Calculate input notes for current amount
-    const inputNotes = useMemo(() => {
-      if (!destChain || !fungibleCurrency || !amount) {
+    // All available notes
+    const availableNotes = useMemo(() => {
+      if (!destChain || !fungibleCurrency) {
         return [];
       }
 
@@ -522,29 +535,38 @@ export const TransferContainer = forwardRef<
         console.error('No anchor address found for chain', typedChainId);
         return [];
       }
+
       const resourceId = new ResourceId(
         vanchorAddr,
         destChain.chainType,
         destChain.chainId
       );
 
-      const avaiNotes =
+      return (
         allNotes
           .get(resourceId.toString())
           ?.filter(
             (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
-          ) ?? [];
+          ) ?? []
+      );
+    }, [allNotes, apiConfig, destChain, fungibleCurrency]);
+
+    // Calculate input notes for current amount
+    const inputNotes = useMemo(() => {
+      if (!fungibleCurrency) {
+        return [];
+      }
 
       return (
         NoteManager.getNotesFifo(
-          avaiNotes,
+          availableNotes,
           ethers.utils.parseUnits(
-            amount.toString(),
+            amount?.toString() ?? '0',
             fungibleCurrency.view.decimals
           )
         ) ?? []
       );
-    }, [allNotes, amount, apiConfig, destChain, fungibleCurrency]);
+    }, [amount, availableNotes, fungibleCurrency]);
 
     // Calculate the info for UI display
     const infoCalculated = useMemo(() => {
@@ -563,7 +585,7 @@ export const TransferContainer = forwardRef<
         : ethers.BigNumber.from(0);
 
       const transferAmount = isValidAmount
-        ? getRoundedAmountString(amount)
+        ? getRoundedAmountString(receivingAmount)
         : undefined;
 
       const changeAmount =
@@ -581,7 +603,7 @@ export const TransferContainer = forwardRef<
       return {
         transferAmount,
         changeAmount,
-        transferTokenSymbol: selectedBridgingAsset?.symbol,
+        transferTokenSymbol: selectedBridgingAsset?.symbol ?? '',
         rawChangeAmount: fungibleCurrency
           ? +ethers.utils.formatUnits(
               changeAmountBigNumber,
@@ -594,6 +616,7 @@ export const TransferContainer = forwardRef<
       fungibleCurrency,
       inputNotes,
       isValidAmount,
+      receivingAmount,
       selectedBridgingAsset?.symbol,
     ]);
 
@@ -760,12 +783,16 @@ export const TransferContainer = forwardRef<
         });
       }
 
+      const feeAmount = feeInWei
+        ? ethers.utils.formatEther(feeInWei)
+        : undefined;
+
       setMainComponent(
         <TransferConfirmContainer
           className="min-w-[550px]"
           inputNotes={inputNotes}
           amount={amount}
-          feeAmount={feeValue}
+          feeAmount={feeAmount}
           feeToken={currentNativeCurrency?.symbol}
           changeAmount={changeAmount}
           currency={fungibleCurrency}
@@ -794,7 +821,7 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       setMainComponent,
-      feeValue,
+      feeInWei,
       currentNativeCurrency?.symbol,
       activeRelayer,
       handleResetState,
@@ -863,8 +890,12 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
     ]);
 
-    const isReadyToFetchMaxFee = useMemo(() => {
-      if (!fungibleCurrency || !amount || !destChain || !activeChain) {
+    const isReady = useMemo(() => {
+      if (!fungibleCurrency || !destChain || !activeChain) {
+        return false;
+      }
+
+      if (!amount || !isValidAmount) {
         return false;
       }
 
@@ -897,80 +928,207 @@ export const TransferContainer = forwardRef<
       balancesFromNotes,
       destChain,
       fungibleCurrency,
+      isValidAmount,
       isValidRecipient,
       recipientPubKey,
     ]);
 
     useEffect(() => {
-      if (isReadyToFetchMaxFee) {
-        fetchMaxFeeInfo();
+      if (isReady) {
+        if (activeRelayer) {
+          fetchMaxFeeInfoFromRelayer(activeRelayer);
+        } else {
+          fetchMaxFeeInfo();
+        }
       }
-    }, [fetchMaxFeeInfo, isReadyToFetchMaxFee]);
+    }, [activeRelayer, fetchMaxFeeInfo, fetchMaxFeeInfoFromRelayer, isReady]);
+
+    // Transfer card props
+    const bridgeAssetInputProps = useMemo(() => {
+      return {
+        token: selectedBridgingAsset,
+        onClick: handleBridgingAssetInputClick,
+      };
+    }, [handleBridgingAssetInputClick, selectedBridgingAsset]);
+
+    const destChainInputProps = useMemo(() => {
+      return {
+        chain: selectedDestChain,
+        chainType: 'dest' as const,
+        onClick: handleDestChainClick,
+        info: 'Destination chain',
+      };
+    }, [handleDestChainClick, selectedDestChain]);
+
+    const amountInputProps = useMemo(() => {
+      return {
+        amount: amount ? amount.toString() : undefined,
+        onAmountChange,
+        errorMessage: amountError,
+        isDisabled: !selectedBridgingAsset || !destChain,
+        onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
+      };
+    }, [amount, amountError, destChain, onAmountChange, selectedBridgingAsset]);
+
+    const relayerInputProps = useMemo(() => {
+      return {
+        relayerAddress: activeRelayer?.beneficiary,
+        iconTheme: activeChain
+          ? activeChain.chainType === ChainTypeEnum.EVM
+            ? ('ethereum' as const)
+            : ('substrate' as const)
+          : undefined,
+        onClick: handleRelayerClick,
+      };
+    }, [activeChain, activeRelayer?.beneficiary, handleRelayerClick]);
+
+    const recipientInputProps = useMemo<
+      TransferCardProps['recipientInputProps']
+    >(() => {
+      return {
+        isValidSet(valid: boolean) {
+          setIsValidRecipient(valid);
+        },
+        title: 'Recipient Public Key',
+        info: 'Public key of the recipient',
+        errorMessage: recipientError,
+        value: recipientPubKey,
+        validate: (value) => isValidPublicKey(value),
+        onChange: (recipient) => {
+          setRecipientPubKey(recipient);
+        },
+        overrideInputProps: {
+          placeholder: 'Enter recipient public key',
+        },
+      };
+    }, [recipientError, recipientPubKey]);
+
+    // If no relayer is selected, the fee token symbol should be native
+    // otherwise, it should be the transfer token symbol
+    const feeTokenSymbol = useMemo(() => {
+      if (!activeRelayer) {
+        return currentNativeCurrency?.symbol ?? '';
+      }
+
+      return infoCalculated?.transferTokenSymbol ?? '';
+    }, [
+      activeRelayer,
+      currentNativeCurrency?.symbol,
+      infoCalculated?.transferTokenSymbol,
+    ]);
+
+    const maxFeeText = useMemo(() => {
+      if (isFetchingMaxFeeInfo) {
+        return 'Calculating...';
+      }
+
+      if (!feeInWei) {
+        return '--';
+      }
+
+      return `${getRoundedAmountString(
+        Number(ethers.utils.formatEther(feeInWei)),
+        3,
+        Math.round
+      )} ${feeTokenSymbol}`;
+    }, [feeInWei, feeTokenSymbol, isFetchingMaxFeeInfo]);
+
+    const infoItemProps = useMemo(() => {
+      const total = availableNotes.reduce((acc, note) => {
+        const formated = Number(
+          ethers.utils.formatUnits(note.note.amount, note.note.denomination)
+        );
+
+        return acc + formated;
+      }, 0);
+
+      const { transferAmount, transferTokenSymbol } = infoCalculated;
+
+      return [
+        {
+          leftTextProps: {
+            title: 'Receiving',
+            info: 'Receiving',
+          },
+          rightContent: transferAmount
+            ? `${transferAmount} ${transferTokenSymbol}`
+            : '--',
+        },
+        {
+          leftTextProps: {
+            title: 'Remaining balance',
+            info: 'Remaining balance',
+          },
+          rightContent: amount
+            ? `${total - amount} ${transferTokenSymbol}`
+            : '--',
+        },
+        {
+          leftTextProps: {
+            title: 'Max fee',
+          },
+          rightContent: maxFeeText,
+        },
+      ];
+    }, [amount, availableNotes, infoCalculated, maxFeeText]);
+
+    // Transfer button props
+    const buttonDesc = useMemo(() => {
+      if (!feeInWei || !amount) {
+        return;
+      }
+
+      const totalFee = Number(ethers.utils.formatEther(feeInWei));
+      const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+      const tkSymbol = infoCalculated?.transferTokenSymbol ?? '';
+      const feeText = `${formattedFee} ${tkSymbol}`.trim();
+
+      if (amount < totalFee) {
+        return `Insufficient funds. You need more than ${feeText} to cover the fee`;
+      }
+
+      return;
+    }, [amount, feeInWei, infoCalculated?.transferTokenSymbol]);
+
+    const isDisabled = useMemo(() => {
+      return isWalletConnected && hasNoteAccount && isValidToTransfer;
+    }, [hasNoteAccount, isValidToTransfer, isWalletConnected]);
+
+    const isLoading = useMemo(() => {
+      return (
+        isFetchingMaxFeeInfo ||
+        loading ||
+        walletState === WalletState.CONNECTING
+      );
+    }, [isFetchingMaxFeeInfo, loading, walletState]);
+
+    const loadingText = useMemo(() => {
+      return isFetchingMaxFeeInfo ? 'Calculating Fee...' : 'Connecting...';
+    }, [isFetchingMaxFeeInfo]);
+
+    const transferBtnProps = useMemo(() => {
+      return {
+        isDisabled: isDisabled,
+        isLoading: isLoading,
+        loadingText: loadingText,
+        children: buttonText,
+        onClick: handleTransferClick,
+      };
+    }, [buttonText, handleTransferClick, isDisabled, isLoading, loadingText]);
 
     return (
       <TransferCard
         ref={ref}
         className="max-w-none"
-        bridgeAssetInputProps={{
-          token: selectedBridgingAsset,
-          onClick: handleBridgingAssetInputClick,
-        }}
-        destChainInputProps={{
-          chain: selectedDestChain,
-          chainType: 'dest',
-          onClick: handleDestChainClick,
-          info: 'Destination chain',
-        }}
-        amountInputProps={{
-          amount: amount ? amount.toString() : undefined,
-          onAmountChange,
-          errorMessage: amountError,
-          isDisabled: !selectedBridgingAsset || !destChain,
-          onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
-        }}
-        relayerInputProps={{
-          relayerAddress: activeRelayer?.beneficiary,
-          iconTheme: activeChain
-            ? activeChain.chainType === ChainTypeEnum.EVM
-              ? 'ethereum'
-              : 'substrate'
-            : undefined,
-          onClick: handleRelayerClick,
-        }}
-        recipientInputProps={{
-          isValidSet(valid: boolean) {
-            setIsValidRecipient(valid);
-          },
-          title: 'Recipient Public Key',
-          info: 'Public key of the recipient',
-          errorMessage: recipientError,
-          value: recipientPubKey,
-          validate: (value) => isValidPublicKey(value),
-          onChange: (recipient) => {
-            setRecipientPubKey(recipient);
-          },
-          overrideInputProps: {
-            placeholder: 'Enter recipient public key',
-          },
-        }}
-        transferBtnProps={{
-          isDisabled:
-            isWalletConnected && hasNoteAccount && isTransferButtonDisabled,
-          isLoading:
-            isFetchingMaxFeeInfo ||
-            loading ||
-            walletState === WalletState.CONNECTING,
-          loadingText: isFetchingMaxFeeInfo
-            ? 'Calculating Fee...'
-            : 'Connecting...',
-          children: buttonText,
-          onClick: handleTransferClick,
-        }}
-        feeAmount={feeValue}
-        feeToken={currentNativeCurrency?.symbol}
-        transferAmount={infoCalculated.transferAmount}
-        transferToken={infoCalculated.transferTokenSymbol}
-        changeAmount={infoCalculated.changeAmount}
+        bridgeAssetInputProps={bridgeAssetInputProps}
+        destChainInputProps={destChainInputProps}
+        amountInputProps={amountInputProps}
+        relayerInputProps={relayerInputProps}
+        recipientInputProps={recipientInputProps}
+        transferBtnProps={transferBtnProps}
+        infoItemProps={infoItemProps}
+        buttonDesc={buttonDesc}
+        buttonDescVariant="error"
       />
     );
   }
