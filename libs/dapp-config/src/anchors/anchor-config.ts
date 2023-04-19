@@ -1,7 +1,7 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
-// 0x6B0B2dFbf3c13ebF92364eAC95dbCA5C9eB8e0f1 - webbtTNT - mocked backend
+// 0x62247877A3195CCDb700012889D918E27E85fe76 - webbtTNT - DKG backend
 
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [PresetTypedChainId.ArbitrumTestnet]: {
@@ -26,13 +26,13 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
   },
   [PresetTypedChainId.HermesOrbit]: {
-    '0x6B0B2dFbf3c13ebF92364eAC95dbCA5C9eB8e0f1': 52,
+    '0x62247877A3195CCDb700012889D918E27E85fe76': 94,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x6B0B2dFbf3c13ebF92364eAC95dbCA5C9eB8e0f1': 52,
+    '0x62247877A3195CCDb700012889D918E27E85fe76': 99,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x6B0B2dFbf3c13ebF92364eAC95dbCA5C9eB8e0f1': 52,
+    '0x62247877A3195CCDb700012889D918E27E85fe76': 91,
   },
 };
 
