@@ -5,6 +5,7 @@ export * from './InternalOrExternalLink';
 export * from './LinkButton';
 export * from './Navbar';
 export * from './ParticipationTabTrigger';
+export * from './RoadMapItem';
 export * from './SectionDescription';
 export * from './SectionHeader';
 export * from './SectionTitle';
