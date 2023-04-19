@@ -18,10 +18,10 @@ export const RoadMapItem: React.FC<RoadMapItemProps> = (props) => {
       <hr className="w-full border-mono-100 relative" />
       <div className="flex">
         <div className="w-[30%] lg:w-[22.5%] flex flex-col items-center">
-          <div className="bg-purple-30 rounded-full p-1.5 my-[-6px]">
+          <div className="bg-purple-40 bg-opacity-25 rounded-full p-1.5 my-[-6px]">
             <div className="bg-tangle_dark_purple w-3 h-3 rounded-full" />
           </div>
-          <div className="bg-tangle_dark_purple w-[2px] flex-1" />
+          <div className="bg-tangle_dark_purple w-[2px] flex-1 z-10" />
           <div className="bg-mono-0 py-1 px-3 rounded-xl">
             <Typography
               variant="h5"
@@ -31,7 +31,7 @@ export const RoadMapItem: React.FC<RoadMapItemProps> = (props) => {
               {timeline}
             </Typography>
           </div>
-          <div className="bg-tangle_dark_purple w-[2px] flex-1" />
+          <div className="bg-tangle_dark_purple w-[2px] flex-1 z-10" />
         </div>
         <div className="w-[70%] lg:w-[77.5%] flex flex-col md:flex-row gap-6 py-5 pr-5 md:pr-0">
           <div className="md:flex md:flex-col md:justify-center md:flex-[1] lg:flex lg:items-center">
@@ -46,7 +46,7 @@ export const RoadMapItem: React.FC<RoadMapItemProps> = (props) => {
             {activities.map((activity, i) => (
               <div key={i} className="flex gap-4 items-center">
                 <div className="flex items-center justify-center rounded-full bg-blue-10 p-[2px]">
-                  <ChevronRight color="rgb(98 79 190)" />
+                  <ChevronRight className="fill-purple-70" />
                 </div>
                 <SectionDescription>{activity}</SectionDescription>
               </div>
