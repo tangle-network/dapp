@@ -26,6 +26,7 @@ jobs:
       - name: lint
         run: |
           yarn install
+          yarn format:check
           yarn nx run-many --all --target=lint
 
   format:
