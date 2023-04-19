@@ -33,14 +33,16 @@ export const RoadMapItem: React.FC<RoadMapItemProps> = (props) => {
           </div>
           <div className="bg-tangle_dark_purple w-[2px] flex-1" />
         </div>
-        <div className="w-[70%] py-5 pr-5">
-          <Typography variant="h4" fw="bold">
-            Phase {order}
-          </Typography>
-          <Typography variant="body1">{action}</Typography>
-          <div className="mt-6 space-y-3">
+        <div className="w-[70%] flex flex-col md:flex-row gap-6 py-5 pr-5 md:pr-0">
+          <div className="md:flex md:flex-col md:justify-center md:flex-[1]">
+            <Typography variant="h4" fw="bold">
+              Phase {order}
+            </Typography>
+            <Typography variant="body1">{action}</Typography>
+          </div>
+          <div className="space-y-3 md:flex-[2]">
             {activities.map((activity, i) => (
-              <div key={i} className="flex gap-3 items-center">
+              <div key={i} className="flex gap-4 items-center">
                 <div className="flex items-center justify-center rounded-full bg-blue-10 p-[2px]">
                   <ChevronRight color="rgb(98 79 190)" />
                 </div>

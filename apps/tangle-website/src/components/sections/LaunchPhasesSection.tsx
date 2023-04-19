@@ -46,20 +46,26 @@ export const LaunchPhasesSection = () => {
   return (
     <section className="py-[80px]">
       <div className="px-5 mb-12">
-        <SectionHeader className="mb-6">Launch Phases</SectionHeader>
-        <div className="mb-6">
-          <SectionTitle className="text-left">Tangle Network is </SectionTitle>
-          <SectionTitle className="text-left text-purple-70">
-            Open Source & Community Managed
-          </SectionTitle>
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="md:flex-[5.5]">
+            <SectionHeader className="mb-6">Launch Phases</SectionHeader>
+            <SectionTitle className="text-left">
+              Tangle Network is{' '}
+            </SectionTitle>
+            <SectionTitle className="text-left text-purple-70">
+              Open Source & Community Managed
+            </SectionTitle>
+          </div>
+          <div className="md:flex-[4.5] md:flex md:items-center">
+            <SectionDescription>
+              As the hub for routing cross-chain messages using ZKP, Tangle
+              enables the community to optimized for any use case.
+            </SectionDescription>
+          </div>
         </div>
-        <SectionDescription>
-          As the hub for routing cross-chain messages using ZKP, Tangle enables
-          the community to optimized for any use case.
-        </SectionDescription>
       </div>
 
-      <div>
+      <div className="md:px-5">
         {roadMapItems.map((phase, i) => (
           <RoadMapItem
             key={i}
