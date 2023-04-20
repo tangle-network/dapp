@@ -22,8 +22,8 @@ const UseCase3SvgComponent = (
         fill="#ECF4FF"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M14.818 30.8179C14.0037 31.6322 13.5 32.7572 13.5 33.9999C13.5 36.4851 15.5147 38.4999 18 38.4999C19.2426 38.4999 20.3676 37.9962 21.182 37.1818L14.818 30.8179Z"
         fill="#624FBE"
       />
@@ -32,8 +32,8 @@ const UseCase3SvgComponent = (
         fill="#ECF4FF"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M3.43934 19.4393C4.02513 18.8536 4.97487 18.8536 5.56066 19.4393L32.5607 46.4393C33.1464 47.0251 33.1464 47.9749 32.5607 48.5607C31.9749 49.1464 31.0251 49.1464 30.4393 48.5607L3.43934 21.5607C2.85355 20.9749 2.85355 20.0251 3.43934 19.4393Z"
         fill="#624FBE"
       />
@@ -46,8 +46,8 @@ const UseCase3SvgComponent = (
           y2="36"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" stop-opacity="0.12" />
-          <stop offset="1" stop-color="white" stop-opacity="0" />
+          <stop stopColor="white" stopOpacity="0.12" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>
