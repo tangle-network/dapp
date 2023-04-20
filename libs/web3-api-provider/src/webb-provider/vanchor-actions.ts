@@ -109,7 +109,9 @@ const isVAnchorTransferPayload = (
     'changeUtxo' in payload &&
     payload['changeUtxo'] instanceof Utxo &&
     'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo
+    payload['transferUtxo'] instanceof Utxo &&
+    'feeAmount' in payload &&
+    payload['feeAmount'] instanceof BigNumber
   );
 };
 
@@ -212,7 +214,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leavesMap, // leavesMap
       ]);
     } else if (isVAnchorTransferPayload(payload)) {
-      const { changeUtxo, transferUtxo, notes } = payload;
+      const { changeUtxo, transferUtxo, notes, feeAmount } = payload;
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
@@ -225,7 +227,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
-        BigNumber.from(0), // fee
+        feeAmount, // fee
         BigNumber.from(0), // refund
         ZERO_ADDRESS, // recipient
         relayer, // relayer
