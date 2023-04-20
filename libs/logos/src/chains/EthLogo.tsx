@@ -59,20 +59,20 @@ function EthLogo() {
           y2="35.5135"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#010101" stop-opacity="0" />
-          <stop stop-opacity="0.9" />
+          <stop stopColor="#010101" stopOpacity="0" />
+          <stop stopOpacity="0.9" />
           <stop
             offset="0.459707"
-            stop-color="#363636"
-            stop-opacity="0.971584"
+            stopColor="#363636"
+            stopOpacity="0.971584"
           />
           <stop
             offset="0.827067"
-            stop-color="#0A0A0A"
-            stop-opacity="0.995031"
+            stopColor="#0A0A0A"
+            stopOpacity="0.995031"
           />
-          <stop offset="1" stop-color="#010101" />
-          <stop offset="1" stop-color="white" stop-opacity="0" />
+          <stop offset="1" stopColor="#010101" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <radialGradient
           id="paint1_radial_358_582"
@@ -82,8 +82,8 @@ function EthLogo() {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(-10.9229 38.818) rotate(-22.7616) scale(35.804 28.0007)"
         >
-          <stop stop-color="#343434" />
-          <stop offset="1" stop-color="#A4A4A4" stop-opacity="0" />
+          <stop stopColor="#343434" />
+          <stop offset="1" stopColor="#A4A4A4" stopOpacity="0" />
         </radialGradient>
         <linearGradient
           id="paint2_linear_358_582"
@@ -93,8 +93,8 @@ function EthLogo() {
           y2="51.6178"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3D3F3E" />
-          <stop offset="1" stop-color="#606261" />
+          <stop stopColor="#3D3F3E" />
+          <stop offset="1" stopColor="#606261" />
         </linearGradient>
       </defs>
     </svg>

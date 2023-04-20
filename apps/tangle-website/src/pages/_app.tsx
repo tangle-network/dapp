@@ -47,7 +47,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       />
 
       <Head>
-        <title>Welcome to tangle-website!</title>
+        <title>Welcome to Tangle Website!</title>
       </Head>
 
       <Header />
@@ -55,11 +55,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <main className="app">
         <Component {...pageProps} />
 
-        <script
+        <Script
           defer
           data-domain="tangle.webb.tools"
           src="https://plausible.io/js/script.js"
-        ></script>
+        />
       </main>
 
       <WebsiteFooter type="tangle" />
