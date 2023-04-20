@@ -426,12 +426,14 @@ export const WithdrawContainer = forwardRef<
 
   const amountAfterFeeWei = useMemo(() => {
     const amountWei = ethers.utils.parseEther(amount.toString());
-    if (!totalFeeInWei) {
+    // If no fee or no active relayer, then return the original amount
+    // as the fee is not deducted from the amount
+    if (!totalFeeInWei || !activeRelayer) {
       return amountWei;
     }
 
     return amountWei.sub(totalFeeInWei);
-  }, [amount, totalFeeInWei]);
+  }, [activeRelayer, amount, totalFeeInWei]);
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
@@ -440,6 +442,7 @@ export const WithdrawContainer = forwardRef<
     const receivingAmount = isValidAmount
       ? getRoundedAmountString(amountAfterFee, 3, Math.round)
       : undefined;
+
     const remainderAmount = isValidAmount
       ? getRoundedAmountString(availableAmount - amount)
       : undefined;
@@ -1124,19 +1127,27 @@ export const WithdrawContainer = forwardRef<
         ? `${formattedRefundAmount} ${nativeCurrencySymbol}`
         : '--';
 
-    const txFeeContent = isFetchingFeeInfo
-      ? 'Calculating...'
-      : totalFeeInWei
-      ? `${getRoundedAmountString(
-          Number(ethers.utils.formatEther(totalFeeInWei)),
-          3,
-          Math.round
-        )} ${fungiCurrencySymbol}`
+    const feeBN = totalFeeInWei
+      ? totalFeeInWei
       : feeInfoOrBigNumber instanceof BigNumber
-      ? `${ethers.utils.formatEther(
-          feeInfoOrBigNumber
-        )} ${nativeCurrencySymbol}`
-      : '--';
+      ? feeInfoOrBigNumber
+      : undefined;
+
+    let feeText = '--';
+    if (feeBN) {
+      const fee = Number(ethers.utils.formatEther(feeBN));
+
+      // If feeInfo is instance of BigNumber, it means that the fee is in native currency
+      // otherwise it's in fungible token
+      const tokenSymbol =
+        feeInfoOrBigNumber instanceof BigNumber
+          ? nativeCurrencySymbol
+          : fungiCurrencySymbol;
+
+      feeText = `${getRoundedAmountString(fee, 3, Math.round)} ${tokenSymbol}`;
+    }
+
+    const txFeeContent = isFetchingFeeInfo ? 'Calculating...' : feeText;
 
     return [
       {
