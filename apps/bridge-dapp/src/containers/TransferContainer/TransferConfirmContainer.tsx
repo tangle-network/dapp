@@ -11,6 +11,7 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
@@ -43,7 +44,7 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       inputNotes,
       onResetState,
-      feeAmount,
+      feeInWei: feeAmount,
       feeToken,
       ...props
     },
@@ -250,6 +251,14 @@ export const TransferConfirmContainer = forwardRef<
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
     }, [txId, txPayloads]);
 
+    const formattedFee = useMemo(() => {
+      if (!feeAmount) {
+        return undefined;
+      }
+
+      return ethers.utils.formatEther(feeAmount);
+    }, [feeAmount]);
+
     return (
       <TransferConfirm
         {...props}
@@ -275,7 +284,7 @@ export const TransferConfirmContainer = forwardRef<
         relayerAvatarTheme={
           activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
         }
-        fee={feeAmount}
+        fee={formattedFee}
         feeToken={feeToken}
         onClose={() => setMainComponent(undefined)}
         checkboxProps={{

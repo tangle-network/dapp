@@ -236,6 +236,7 @@ export const WithdrawConfirm = forwardRef<
                 </Section>
               )}
             </div>
+
             {/** New spend note */}
             {note && (
               <Section>

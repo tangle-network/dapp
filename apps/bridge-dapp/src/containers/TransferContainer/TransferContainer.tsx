@@ -620,6 +620,20 @@ export const TransferContainer = forwardRef<
       selectedBridgingAsset?.symbol,
     ]);
 
+    // If no relayer is selected, the fee token symbol should be native
+    // otherwise, it should be the transfer token symbol
+    const feeTokenSymbol = useMemo(() => {
+      if (!activeRelayer) {
+        return currentNativeCurrency?.symbol ?? '';
+      }
+
+      return infoCalculated?.transferTokenSymbol ?? '';
+    }, [
+      activeRelayer,
+      currentNativeCurrency?.symbol,
+      infoCalculated?.transferTokenSymbol,
+    ]);
+
     const handleSwitchChain = useCallback(
       async (destChain: Chain) => {
         if (!activeChain) {
@@ -685,15 +699,11 @@ export const TransferContainer = forwardRef<
         return;
       }
 
-      if (
-        !fungibleCurrency ||
-        !destChain ||
-        !api ||
-        !noteManager ||
-        !activeApi?.state?.activeBridge ||
-        !amount ||
-        !currentTypedChainId
-      ) {
+      if (!noteManager || !activeApi?.state?.activeBridge || !api) {
+        throw new Error('No note manager or active bridge');
+      }
+
+      if (!fungibleCurrency || !destChain || !amount || !currentTypedChainId) {
         throw new Error(
           "Can't transfer without a fungible currency or dest chain"
         );
@@ -783,17 +793,13 @@ export const TransferContainer = forwardRef<
         });
       }
 
-      const feeAmount = feeInWei
-        ? ethers.utils.formatEther(feeInWei)
-        : undefined;
-
       setMainComponent(
         <TransferConfirmContainer
           className="min-w-[550px]"
           inputNotes={inputNotes}
           amount={amount}
-          feeAmount={feeAmount}
-          feeToken={currentNativeCurrency?.symbol}
+          feeInWei={feeInWei}
+          feeToken={feeTokenSymbol}
           changeAmount={changeAmount}
           currency={fungibleCurrency}
           destChain={destChain}
@@ -809,20 +815,20 @@ export const TransferContainer = forwardRef<
       txQueue.txPayloads,
       isWalletConnected,
       hasNoteAccount,
-      fungibleCurrency,
-      destChain,
-      api,
       noteManager,
       activeApi?.state.activeBridge,
+      api,
+      fungibleCurrency,
+      destChain,
       amount,
       currentTypedChainId,
       inputNotes,
       activeChain?.chainId,
       infoCalculated.rawChangeAmount,
       recipientPubKey,
-      setMainComponent,
       feeInWei,
-      currentNativeCurrency?.symbol,
+      setMainComponent,
+      feeTokenSymbol,
       activeRelayer,
       handleResetState,
       toggleModal,
@@ -1002,20 +1008,6 @@ export const TransferContainer = forwardRef<
         },
       };
     }, [recipientError, recipientPubKey]);
-
-    // If no relayer is selected, the fee token symbol should be native
-    // otherwise, it should be the transfer token symbol
-    const feeTokenSymbol = useMemo(() => {
-      if (!activeRelayer) {
-        return currentNativeCurrency?.symbol ?? '';
-      }
-
-      return infoCalculated?.transferTokenSymbol ?? '';
-    }, [
-      activeRelayer,
-      currentNativeCurrency?.symbol,
-      infoCalculated?.transferTokenSymbol,
-    ]);
 
     const maxFeeText = useMemo(() => {
       if (isFetchingMaxFeeInfo) {

@@ -54,6 +54,22 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
     },
     ref
   ) => {
+    const amountContent = useMemo(() => {
+      if (typeof amount !== 'number') {
+        return '--';
+      }
+
+      return `${amount} ${token1Symbol ?? ''}`;
+    }, [amount, token1Symbol]);
+
+    const changeAmountContent = useMemo(() => {
+      if (typeof changeAmount !== 'number') {
+        return '--';
+      }
+
+      return `${changeAmount} ${token1Symbol ?? ''}`;
+    }, [changeAmount, token1Symbol]);
+
     const feeContent = useMemo(() => {
       if (typeof fee === 'number' || typeof fee === 'string') {
         return `${fee} ${feeToken ?? ''}`;
@@ -203,7 +219,10 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                         fw="bold"
                         className="block break-words text-mono-140 dark:text-mono-0"
                       >
-                        {shortenString(recipientPublicKey, 19)}
+                        {shortenString(
+                          recipientPublicKey,
+                          relayerAddress ? 7 : 19
+                        )}
                       </Typography>
                       <CopyWithTooltip textToCopy={recipientPublicKey} />
                     </div>
@@ -271,7 +290,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   title: 'Transfering',
                   info: 'Transfering',
                 }}
-                rightContent={amount?.toString()}
+                rightContent={amountContent}
               />
               <InfoItem
                 leftTextProps={{
@@ -279,7 +298,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   title: 'Change Amount',
                   info: 'Change Amount',
                 }}
-                rightContent={changeAmount?.toString()}
+                rightContent={changeAmountContent}
               />
               <InfoItem
                 leftTextProps={{
