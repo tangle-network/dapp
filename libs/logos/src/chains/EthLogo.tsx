@@ -61,16 +61,8 @@ function EthLogo() {
         >
           <stop stopColor="#010101" stopOpacity="0" />
           <stop stopOpacity="0.9" />
-          <stop
-            offset="0.459707"
-            stopColor="#363636"
-            stopOpacity="0.971584"
-          />
-          <stop
-            offset="0.827067"
-            stopColor="#0A0A0A"
-            stopOpacity="0.995031"
-          />
+          <stop offset="0.459707" stopColor="#363636" stopOpacity="0.971584" />
+          <stop offset="0.827067" stopColor="#0A0A0A" stopOpacity="0.995031" />
           <stop offset="1" stopColor="#010101" />
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
