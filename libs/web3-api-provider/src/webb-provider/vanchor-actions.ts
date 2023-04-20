@@ -775,16 +775,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
     const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
 
-    const isRequiredApproval = isWrapOrUnwrap
-      ? await this.isWrappableTokenApprovalRequired(
+    const isRequiredApproval = !isWrapOrUnwrap
+      ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
+      : await srcVAnchor.isWrappableTokenApprovalRequired(
           wrapUnwrapToken,
-          spenderAddress,
           approvalValue
-        )
-      : await this.isWebbTokenApprovalRequired(
-          currentWebbToken,
-          spenderAddress,
-          amount
         );
 
     if (checkNativeAddress(wrapUnwrapToken)) {
@@ -826,54 +821,5 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         },
       });
     }
-  }
-
-  // Can remove this function once this PR is merged:
-  // https://github.com/webb-tools/protocol-solidity/pull/315
-  private async isWebbTokenApprovalRequired(
-    tokenInstance: ERC20,
-    spender: string,
-    depositAmount: BigNumberish
-  ) {
-    const userAddress = await this.inner
-      .getEthersProvider()
-      .getSigner()
-      .getAddress();
-    const tokenAllowance = await tokenInstance.allowance(userAddress, spender);
-
-    console.group('isWebbTokenApprovalRequired()');
-    console.log('depositAmount', depositAmount.toString());
-    console.log('tokenAllowance', tokenAllowance.toString());
-    console.groupEnd();
-
-    if (tokenAllowance.lt(depositAmount)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  // Can remove this function once this PR is merged:
-  // https://github.com/webb-tools/protocol-solidity/pull/315
-  private async isWrappableTokenApprovalRequired(
-    tokenAddress: string,
-    spender: string,
-    depositAmount: BigNumberish
-  ) {
-    const signer = this.inner.getEthersProvider().getSigner();
-    const userAddress = await signer.getAddress();
-    const tokenInstance = ERC20__factory.connect(tokenAddress, signer);
-    const tokenAllowance = await tokenInstance.allowance(userAddress, spender);
-
-    console.group('isWrappableTokenApprovalRequired()');
-    console.log('depositAmount', depositAmount.toString());
-    console.log('tokenAllowance', tokenAllowance.toString());
-    console.groupEnd();
-
-    if (tokenAllowance.lt(depositAmount)) {
-      return true;
-    }
-
-    return false;
   }
 }
