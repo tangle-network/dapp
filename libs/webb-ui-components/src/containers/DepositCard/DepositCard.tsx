@@ -1,6 +1,6 @@
-import { Typography } from '../../typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import {
   AmountInput,
@@ -10,6 +10,7 @@ import {
   InfoItem,
   TokenInput,
 } from '../../components';
+import { getRoundedAmountString } from '../../utils';
 import { DepositCardProps } from './types';
 
 export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
@@ -33,7 +34,11 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     const { amount, fee } = useMemo(() => {
       const amount = !amountInputProps.amount
         ? '--'
-        : `${amountInputProps.amount} ${token ?? ''}`;
+        : `${getRoundedAmountString(
+            Number(amountInputProps.amount),
+            3,
+            Math.round
+          )} ${token ?? ''}`;
 
       let fee = '--';
       const feeToken = feeTokenProp ?? '';
@@ -42,7 +47,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
         } ${feeToken}`;
       } else if (feeValue && feeValue > 0) {
-        fee = `${feeValue.toString()} ${feeToken}`;
+        const formatedFee = getRoundedAmountString(feeValue, 3, Math.round);
+        fee = `${formatedFee} ${feeToken}`;
       }
 
       return { amount, fee };

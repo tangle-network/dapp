@@ -1,7 +1,7 @@
 import { ArrowRight, Close, Download } from '@webb-tools/icons';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Typography } from '../../typography';
+
 import {
   Button,
   ChainChip,
@@ -13,9 +13,10 @@ import {
   TitleWithInfo,
   TokenWithAmount,
 } from '../../components';
+import { Typography } from '../../typography';
+import { formatTokenAmount, getRoundedAmountString } from '../../utils';
 import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
-import { formatTokenAmount } from '../../utils/formatTokenAmount';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
@@ -52,12 +53,21 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       symbolStr += fungibleTokenSymbol;
 
-      return `${amount ?? '0'} ${symbolStr}`;
+      const formatedAmount =
+        typeof amount === 'number'
+          ? getRoundedAmountString(amount, 3, Math.round)
+          : amount ?? '0';
+
+      return `${formatedAmount} ${symbolStr}`;
     }, [amount, fungibleTokenSymbol, wrappableTokenSymbol]);
 
     const feeContent = useMemo(() => {
       if (typeof fee === 'number' || typeof fee === 'string') {
-        return `${fee} ${feeToken ?? ''}`;
+        const formatedFee =
+          typeof fee === 'number'
+            ? getRoundedAmountString(fee, 3, Math.round)
+            : fee;
+        return `${formatedFee} ${feeToken ?? ''}`;
       }
 
       return '--';

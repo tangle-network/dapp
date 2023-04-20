@@ -18,7 +18,7 @@ import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20__factory } from '@webb-tools/contracts';
+import { ERC20, ERC20__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -39,6 +39,7 @@ import {
 } from '@webb-tools/utils';
 import {
   BigNumber,
+  BigNumberish,
   ContractReceipt,
   ContractTransaction,
   Overrides,
@@ -221,13 +222,16 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const relayer =
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
+      // If no relayer is set, then the fee is 0, otherwise it is the fee amount
+      const feeVal = relayer === ZERO_ADDRESS ? BigNumber.from(0) : feeAmount;
+
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
         tx, // tx
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
-        feeAmount, // fee
+        feeVal, // fee
         BigNumber.from(0), // refund
         ZERO_ADDRESS, // recipient
         relayer, // relayer
@@ -759,41 +763,50 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<void> | never {
     const { note } = payload;
     const { amount } = note;
+
     const srcVAnchor = await this.getVAnchor(payload);
+    const spenderAddress = srcVAnchor.contract.address;
     const currentWebbToken = await srcVAnchor.getWebbToken();
+
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
     let approvalTransaction: ContractTransaction | undefined;
 
+    // If the `wrapUnwrapToken` is different from the `currentWebbToken` address,
+    // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
+    const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
+
+    const isRequiredApproval = isWrapOrUnwrap
+      ? await this.isWrappableTokenApprovalRequired(
+          wrapUnwrapToken,
+          spenderAddress,
+          approvalValue
+        )
+      : await this.isWebbTokenApprovalRequired(
+          currentWebbToken,
+          spenderAddress,
+          amount
+        );
+
     if (checkNativeAddress(wrapUnwrapToken)) {
       /// native token no approval needed
-    } else if (
-      wrapUnwrapToken === currentWebbToken.address &&
-      (await srcVAnchor.isWebbTokenApprovalRequired(amount))
-    ) {
+    } else if (!isWrapOrUnwrap && isRequiredApproval) {
       // approve the token
       approvalTransaction = await currentWebbToken.approve(
-        srcVAnchor.contract.address,
+        spenderAddress,
         amount,
         {
           gasLimit: '0x5B8D80',
         }
       );
-    } else if (
-      await srcVAnchor.isWrappableTokenApprovalRequired(
-        wrapUnwrapToken,
-        approvalValue
-      )
-    ) {
+    } else if (isRequiredApproval) {
       // approve the wrappable asset
       const token = ERC20__factory.connect(
         wrapUnwrapToken,
         this.inner.getEthersProvider().getSigner()
       );
-      approvalTransaction = await token.approve(
-        currentWebbToken.address,
-        approvalValue,
-        { gasLimit: '0x5B8D80' }
-      );
+      approvalTransaction = await token.approve(spenderAddress, approvalValue, {
+        gasLimit: '0x5B8D80',
+      });
     }
 
     if (approvalTransaction) {
@@ -813,5 +826,54 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         },
       });
     }
+  }
+
+  // Can remove this function once this PR is merged:
+  // https://github.com/webb-tools/protocol-solidity/pull/315
+  private async isWebbTokenApprovalRequired(
+    tokenInstance: ERC20,
+    spender: string,
+    depositAmount: BigNumberish
+  ) {
+    const userAddress = await this.inner
+      .getEthersProvider()
+      .getSigner()
+      .getAddress();
+    const tokenAllowance = await tokenInstance.allowance(userAddress, spender);
+
+    console.group('isWebbTokenApprovalRequired()');
+    console.log('depositAmount', depositAmount.toString());
+    console.log('tokenAllowance', tokenAllowance.toString());
+    console.groupEnd();
+
+    if (tokenAllowance.lt(depositAmount)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Can remove this function once this PR is merged:
+  // https://github.com/webb-tools/protocol-solidity/pull/315
+  private async isWrappableTokenApprovalRequired(
+    tokenAddress: string,
+    spender: string,
+    depositAmount: BigNumberish
+  ) {
+    const signer = this.inner.getEthersProvider().getSigner();
+    const userAddress = await signer.getAddress();
+    const tokenInstance = ERC20__factory.connect(tokenAddress, signer);
+    const tokenAllowance = await tokenInstance.allowance(userAddress, spender);
+
+    console.group('isWrappableTokenApprovalRequired()');
+    console.log('depositAmount', depositAmount.toString());
+    console.log('tokenAllowance', tokenAllowance.toString());
+    console.groupEnd();
+
+    if (tokenAllowance.lt(depositAmount)) {
+      return true;
+    }
+
+    return false;
   }
 }
