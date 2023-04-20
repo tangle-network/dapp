@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import {
-  SectionDescription,
+  SectionDescription2,
   SectionHeader,
   SectionTitle,
   LinkButton,
@@ -68,9 +68,9 @@ export const GovernanceSystemSection = () => {
                   >
                     {title}
                   </Typography>
-                  <SectionDescription className="!md:text-[20px] !md:leading-[32px] mb-6">
+                  <SectionDescription2 className="mb-6">
                     {description}
-                  </SectionDescription>
+                  </SectionDescription2>
                   <a className="text-tangle_dark_purple" href={href}>
                     Learn more →
                   </a>

@@ -30,7 +30,6 @@ export function Index() {
       <SupportedBySection />
 
       <CommunitySection />
-
     </div>
   );
 }

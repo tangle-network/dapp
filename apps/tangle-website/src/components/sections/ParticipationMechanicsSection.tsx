@@ -11,7 +11,12 @@ import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 
-import { SectionDescription, SectionHeader, SectionTitle } from '..';
+import {
+  SectionDescription,
+  SectionDescription2,
+  SectionHeader,
+  SectionTitle,
+} from '..';
 import {
   WEBB_DOCS_URL,
   NODE_OPERATORS_URL,
@@ -70,7 +75,6 @@ export const ParticipationMechanicsSection = () => {
           value={activeTab}
           onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
         >
-
           {/* Desktop + Mobile Tab Triggers */}
           <TabsList aria-label="tabs" className="lg:mx-0">
             <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -122,9 +126,9 @@ export const ParticipationMechanicsSection = () => {
               >
                 {value.title}
               </Typography>
-              <p className="text-mono-140 text-[20px] leading-[32px] mb-6">
+              <SectionDescription2 className="mb-6">
                 {value.description}
-              </p>
+              </SectionDescription2>
               <a
                 href={value.linkUrl}
                 className="text-purple-70 underline font-bold capitalize"

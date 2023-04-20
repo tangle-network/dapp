@@ -34,9 +34,9 @@ const cardItems: Array<SupportedBySectionCardType> = [
 
 export const SupportedBySection = () => {
   return (
-    <section className="grid gap-[70px] px-3 pb-[80px] lg:grid-cols-2 lg:items-center lg:px-[40px] xl:px-[160px]">
+    <section className="grid gap-[70px] px-3 py-[80px] lg:grid-cols-2 lg:items-center lg:px-[40px] xl:px-[160px]">
       {/* DETAILS */}
-      <div className="flex flex-col items-start">
+      <div className="md:w-[75%] lg:w-full flex flex-col gap-6 items-start">
         <SectionTitle className="text-left">
           Tangle Network is supported by...
         </SectionTitle>

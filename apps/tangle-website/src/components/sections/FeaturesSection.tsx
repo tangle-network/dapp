@@ -10,7 +10,8 @@ import {
   SectionHeader,
   SectionTitle,
   SectionDescription,
-  LinkButton
+  SectionDescription2,
+  LinkButton,
 } from '..';
 import { TANGLE_OVERVIEW_URL, WANT_TO_LEARN_MORE_URL } from '../../constants';
 
@@ -117,9 +118,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
           <Typography variant="h4" fw="bold" className="mt-4 mb-6">
             {title}
           </Typography>
-          <SectionDescription className="text-left !text-xl !leading-8 md:!text-lg md:!leading-[32.4px] lg:!text-xl lg:!leading-8">
-            {description}
-          </SectionDescription>
+          <SectionDescription2>{description}</SectionDescription2>
         </div>
         <LinkButton href={link} className="mt-4">
           Learn More

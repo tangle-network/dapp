@@ -3,6 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { ChevronRight } from '@webb-tools/icons';
 import {
   SectionDescription,
+  SectionDescription2,
   SectionHeader,
   SectionTitle,
 } from '..';
@@ -127,7 +128,7 @@ const RoadMapItem: FC<RoadMapItemProps> = (props) => {
                 <div className="flex items-center justify-center rounded-full bg-blue-10 p-[2px]">
                   <ChevronRight className="fill-purple-70" />
                 </div>
-                <SectionDescription>{activity}</SectionDescription>
+                <SectionDescription2>{activity}</SectionDescription2>
               </div>
             ))}
           </div>
