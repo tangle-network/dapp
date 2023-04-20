@@ -741,10 +741,16 @@ export const TransferContainer = forwardRef<
       // Setup the recipient's keypair.
       const recipientKeypair = Keypair.fromString(recipientPubKey);
 
+      const fee = feeInWei ?? BigNumber.from(0);
+
+      const utxoAmount = activeRelayer
+        ? amountBigNumber.sub(fee)
+        : amountBigNumber;
+
       const transferUtxo = await CircomUtxo.generateUtxo({
         curve: 'Bn254',
         backend: 'Circom',
-        amount: amountBigNumber.toString(),
+        amount: utxoAmount.toString(),
         chainId: destTypedChainId.toString(),
         keypair: recipientKeypair,
         originChainId: currentTypedChainId.toString(),
@@ -797,7 +803,9 @@ export const TransferContainer = forwardRef<
         <TransferConfirmContainer
           className="min-w-[550px]"
           inputNotes={inputNotes}
-          amount={amount}
+          amount={Number(
+            ethers.utils.formatUnits(utxoAmount, fungibleCurrencyDecimals)
+          )}
           feeInWei={feeInWei}
           feeToken={feeTokenSymbol}
           changeAmount={changeAmount}
@@ -1025,7 +1033,7 @@ export const TransferContainer = forwardRef<
       )} ${feeTokenSymbol}`;
     }, [feeInWei, feeTokenSymbol, isFetchingMaxFeeInfo]);
 
-    const infoItemProps = useMemo(() => {
+    const infoItemProps = useMemo<TransferCardProps['infoItemProps']>(() => {
       const total = availableNotes.reduce((acc, note) => {
         const formated = Number(
           ethers.utils.formatUnits(note.note.amount, note.note.denomination)
@@ -1035,6 +1043,12 @@ export const TransferContainer = forwardRef<
       }, 0);
 
       const { transferAmount, transferTokenSymbol } = infoCalculated;
+
+      const formatedRemainingBalance = getRoundedAmountString(
+        total - (amount ?? 0),
+        3,
+        Math.round
+      );
 
       return [
         {
@@ -1052,7 +1066,7 @@ export const TransferContainer = forwardRef<
             info: 'Remaining balance',
           },
           rightContent: amount
-            ? `${total - amount} ${transferTokenSymbol}`
+            ? `${formatedRemainingBalance} ${transferTokenSymbol}`
             : '--',
         },
         {

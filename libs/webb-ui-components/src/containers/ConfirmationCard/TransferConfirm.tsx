@@ -20,7 +20,11 @@ import {
   TokenWithAmount,
 } from '../../components';
 import { Typography } from '../../typography';
-import { formatTokenAmount, shortenString } from '../../utils';
+import {
+  formatTokenAmount,
+  getRoundedAmountString,
+  shortenString,
+} from '../../utils';
 import { Section, WrapperSection } from './WrapperSection';
 import { TransferConfirmProps } from './types';
 
@@ -59,7 +63,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         return '--';
       }
 
-      return `${amount} ${token1Symbol ?? ''}`;
+      const formated = getRoundedAmountString(amount, 3, Math.round);
+      return `${formated} ${token1Symbol ?? ''}`;
     }, [amount, token1Symbol]);
 
     const changeAmountContent = useMemo(() => {
@@ -67,12 +72,18 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         return '--';
       }
 
-      return `${changeAmount} ${token1Symbol ?? ''}`;
+      const formated = getRoundedAmountString(changeAmount, 3, Math.round);
+      return `${formated} ${token1Symbol ?? ''}`;
     }, [changeAmount, token1Symbol]);
 
     const feeContent = useMemo(() => {
-      if (typeof fee === 'number' || typeof fee === 'string') {
+      if (typeof fee === 'string') {
         return `${fee} ${feeToken ?? ''}`;
+      }
+
+      if (typeof fee === 'number') {
+        const formatedFee = getRoundedAmountString(fee, 3, Math.round);
+        return `${formatedFee} ${feeToken ?? ''}`;
       }
 
       return '--';
