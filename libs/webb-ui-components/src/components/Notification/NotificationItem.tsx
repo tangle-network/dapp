@@ -61,7 +61,7 @@ export const NotificationItem: FC<NotificationItemProps> = ({
       <div className="flex space-x-3">
         <div>{opts.Icon ?? Icon}</div>
 
-        <div className="space-y-1 max-w-[313px]">
+        <div className="space-y-1 max-w-[313px] overflow-x-hidden">
           {typeof opts.message === 'string' ? (
             <Typography variant="h5" fw="bold">
               {opts.message}

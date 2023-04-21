@@ -153,7 +153,7 @@ export interface Errored {
 export type RelayerMessage = {
   withdraw?: Withdraw;
   error?: string;
-  network?: string;
+  network?: string | { failed: { reason: string } };
 };
 
 /**

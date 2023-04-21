@@ -16,6 +16,12 @@ export type ChainBase =
   | 'scroll'
   | 'webb-dev';
 
+export type ChainEnvironment =
+  | 'development'
+  | 'test'
+  | 'staging'
+  | 'production';
+
 export interface ChainConfig {
   chainType: ChainType;
   name: string;
@@ -27,4 +33,9 @@ export interface ChainConfig {
   evmRpcUrls?: string[];
   blockExplorerStub?: string;
   logo: React.ComponentType | React.ElementType;
+
+  /**
+   * The supported environments for this chain (defaults to all)
+   */
+  env?: ChainEnvironment[];
 }

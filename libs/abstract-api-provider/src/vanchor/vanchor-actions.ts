@@ -112,6 +112,7 @@ export type TransferTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   transferUtxo: Utxo;
+  feeAmount: BigNumber;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)

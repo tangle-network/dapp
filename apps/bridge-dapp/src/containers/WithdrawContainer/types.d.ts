@@ -58,9 +58,14 @@ export interface WithdrawConfirmContainerProps extends PropsOf<'div'> {
   recipient: string;
 
   /**
-   * The target chain id
+   * Source typed chain id
    */
-  targetChainId: number;
+  sourceTypedChainId: number;
+
+  /**
+   * The typed chain id
+   */
+  targetTypedChainId: number;
 
   /**
    * The token to withdraw

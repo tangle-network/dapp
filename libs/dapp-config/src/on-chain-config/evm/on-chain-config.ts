@@ -30,7 +30,13 @@ const LOCALNET_CHAIN_IDS = [
   EVMChainId.DemeterLocalnet,
 ];
 
-const LOCALNET_CURRENCY: ICurrency = {
+const SELF_HOSTED_CHAIN_IDS = [
+  EVMChainId.HermesOrbit,
+  EVMChainId.AthenaOrbit,
+  EVMChainId.DemeterOrbit,
+];
+
+const DEFAULT_CURRENCY: ICurrency = {
   name: 'Localnet Ether',
   symbol: 'ETH',
   decimals: 18,
@@ -75,16 +81,17 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     // First check if the native currency is already cached
     const cachedNativeCurrency = this.nativeCurrencyCache.get(typedChainId);
     if (cachedNativeCurrency) {
-      return Promise.resolve(cachedNativeCurrency);
+      return cachedNativeCurrency;
     }
 
     // Validate the chainType is EVM and get the chaindId
     const { chainId } = this.validateChainType(typedChainId);
 
-    // Maybe evn localnet
-    if (LOCALNET_CHAIN_IDS.includes(chainId)) {
-      this.nativeCurrencyCache.set(typedChainId, LOCALNET_CURRENCY);
-      return Promise.resolve(LOCALNET_CURRENCY);
+    // Maybe evn localnet or self hosted
+    const customChainIds = LOCALNET_CHAIN_IDS.concat(SELF_HOSTED_CHAIN_IDS);
+    if (customChainIds.includes(chainId)) {
+      this.nativeCurrencyCache.set(typedChainId, DEFAULT_CURRENCY);
+      return DEFAULT_CURRENCY;
     }
 
     if (!chainData.length) {
@@ -96,15 +103,20 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
         chainData = await resp.json();
       } catch (error) {
-        console.error('Unable to retrieve native token information', error);
-        return null;
+        console.error(
+          'Unable to retrieve native token information, fallback to default',
+          error
+        );
+        return DEFAULT_CURRENCY;
       }
     }
 
     const chain = chainData.find((chain) => chain.chainId === chainId);
     if (!chain) {
-      console.error(`Found unsupported chainId ${chainId} for EVM`);
-      return Promise.resolve(null);
+      console.error(
+        `Found unsupported chainId ${chainId} for EVM, fallback to default`
+      );
+      return DEFAULT_CURRENCY;
     }
 
     // Parse the native currency
@@ -116,7 +128,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     // Cache the native currency
     this.nativeCurrencyCache.set(typedChainId, nativeCurrency);
 
-    return Promise.resolve(nativeCurrency);
+    return nativeCurrency;
   }
 
   async fetchFungibleCurrency(
@@ -131,7 +143,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         return null;
       }
 
-      return Promise.resolve(cachedFungibleCurrency);
+      return cachedFungibleCurrency;
     }
 
     // Validate the chainType is EVM and get the chaindId
@@ -178,10 +190,10 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     const cachedCurrencies = this.wrappableCurrenciesCache.get(typedChainId);
     if (cachedCurrencies) {
       if (cachedCurrencies instanceof Error) {
-        return Promise.resolve([]);
+        return [];
       }
 
-      return Promise.resolve(cachedCurrencies);
+      return cachedCurrencies;
     }
 
     // Validate the chainType is EVM and get the chaindId

@@ -109,7 +109,7 @@ export const useMaxFeeInfo = (
         }
 
         if (!opt?.fungibleCurrencyId) {
-          throw new Error('No fungible currency selected');
+          throw new Error('No fungible currency id selected');
         }
 
         setError(null);
