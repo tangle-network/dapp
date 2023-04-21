@@ -39,3 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
+
+## [0.0.3] - 2023-04-21
+
+### Fixed
+- Bug fix for authorities table in authorities page: https://github.com/webb-tools/webb-dapp/pull/1125
