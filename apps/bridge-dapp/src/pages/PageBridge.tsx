@@ -233,7 +233,7 @@ const PageBridge = () => {
                 // The customMainComponent alters the global mainComponent for display.
                 // Therfore, if the customMainComponent exists (input selected) then hide the base component.
                 className={cx(
-                  'min-w-[550px] min-h-[700px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                  'min-w-[550px] min-h-[710px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
                   customMainComponent ? 'hidden' : 'block',
                   'flex flex-col'
                 )}
