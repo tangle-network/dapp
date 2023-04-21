@@ -1,3 +1,5 @@
+import '@webb-tools/protocol-substrate-types';
+
 import { ApiPromise } from '@polkadot/api';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
