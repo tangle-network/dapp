@@ -1,3 +1,4 @@
+import { NextSeo } from 'next-seo';
 import {
   CommunitySection,
   HeroSection,
@@ -10,29 +11,45 @@ import {
   UseCasesSection,
 } from '../components';
 
+const description =
+  'Webb builds infrastructure for connecting zero-knowledge applications empowering developers to unlock user privacy in the Web3 ecosystem.';
+
 export function Index() {
   return (
-    <div className="bg-body bg-top block">
-      <div className="mx-auto">
-        <HeroSection />
+    <>
+      <NextSeo
+        description={description}
+        canonical="https://tangle.webb.tools/"
+        openGraph={{
+          title:
+            'The next-generation TSS based blockchain powering cross-chain zero-knowledge messaging and applications',
+          description,
+          url: 'https://tangle.webb.tools/',
+        }}
+      />
 
-        <IntroducingSection />
+      <div className="bg-body bg-top block">
+        <div className="mx-auto">
+          <HeroSection />
 
-        <FeaturesSection />
+          <IntroducingSection />
 
-        <GovernanceSystemSection />
+          <FeaturesSection />
 
-        <ParticipationMechanicsSection />
+          <GovernanceSystemSection />
 
-        <LaunchPhasesSection />
+          <ParticipationMechanicsSection />
 
-        <UseCasesSection />
+          <LaunchPhasesSection />
 
-        <SupportedBySection />
+          <UseCasesSection />
 
-        <CommunitySection />
+          <SupportedBySection />
+
+          <CommunitySection />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

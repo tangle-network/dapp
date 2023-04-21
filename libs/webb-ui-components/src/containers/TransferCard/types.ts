@@ -5,6 +5,7 @@ import {
   AmountInput,
   Button,
   ChainInput,
+  InfoItem,
   RecipientInput,
   RelayerInput,
   TokenInput,
@@ -37,37 +38,23 @@ export interface TransferCardProps extends PropsOf<'div'> {
   recipientInputProps?: ComponentProps<typeof RecipientInput>;
 
   /**
-   * The transfer amount
+   * The info item props to pass to the info item component
    */
-  transferAmount?: number | string;
-
-  /**
-   * The transfer token symbol
-   */
-  transferToken?: string;
-
-  /**
-   * The fee amount
-   */
-  feeAmount?: number | string;
-
-  /**
-   * The fee token symbol
-   */
-  feeToken?: string;
-
-  /**
-   * The fee percentage to display
-   */
-  feePercentage?: number;
-
-  /**
-   * The remainder amount
-   */
-  changeAmount?: number | string;
+  infoItemProps?: Array<ComponentProps<typeof InfoItem>>;
 
   /**
    * The withdraw button props
    */
   transferBtnProps?: ComponentProps<typeof Button>;
+
+  /**
+   * The description message display below the withdraw button
+   */
+  buttonDesc?: string;
+
+  /**
+   * The variant of message display below the withdraw button
+   * @default 'info'
+   */
+  buttonDescVariant?: 'info' | 'error';
 }
