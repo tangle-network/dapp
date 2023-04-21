@@ -46,23 +46,15 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
   ) => {
     const [address, setAddress] = useState<string | undefined>(() => value);
 
-    const onClick = useCallback(async () => {
-      try {
-        const addr = await window.navigator.clipboard.readText();
-
-        setAddress(addr);
-      } catch (e) {
-        notificationApi({
-          message: 'Failed to read clipboard',
-          secondaryMessage:
-            'Please change your browser settings to allow clipboard access.',
-          variant: 'warning',
-        });
-      }
-    }, [setAddress]);
     const [recipientError, setRecipientError] = useState<string | undefined>(
       undefined
     );
+
+    const error = useMemo(
+      () => errorMessage || recipientError,
+      [recipientError, errorMessage]
+    );
+
     const onChange = useCallback(
       (nextVal: string) => {
         const address = nextVal.trim();
@@ -71,26 +63,34 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
 
         if (address === '' || (validate ? validate(address) : true)) {
           setRecipientError(undefined);
+          isValidSet?.(true);
         } else {
           setRecipientError('Invalid wallet address ');
+          isValidSet?.(false);
         }
       },
-      [onChangeProp, validate]
+      [isValidSet, onChangeProp, validate]
     );
 
+    const handlePasteButtonClick = useCallback(async () => {
+      try {
+        const addr = await window.navigator.clipboard.readText();
+
+        onChange(addr);
+      } catch (e) {
+        notificationApi({
+          message: 'Failed to read clipboard',
+          secondaryMessage:
+            'Please change your browser settings to allow clipboard access.',
+          variant: 'warning',
+        });
+      }
+    }, [onChange]);
+
+    // Effect ensure update the address when the value prop changes
     useEffect(() => {
       setAddress(value);
-    }, [value, setAddress]);
-
-    const error = useMemo(
-      () => errorMessage || recipientError,
-      [recipientError, errorMessage]
-    );
-
-    useEffect(() => {
-      const isValid = (error?.trim() ?? '') === '';
-      isValidSet?.(isValid);
-    }, [error, isValidSet]);
+    }, [value]);
 
     return (
       <>
@@ -124,7 +124,7 @@ export const RecipientInput = forwardRef<HTMLDivElement, RecipientInputProps>(
             <Button
               variant="utility"
               size="sm"
-              onClick={onClick}
+              onClick={handlePasteButtonClick}
               isDisabled={
                 overrideInputProps?.isDisabled || address ? true : false
               }

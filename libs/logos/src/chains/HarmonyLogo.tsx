@@ -20,8 +20,8 @@ function HarmonyLogo() {
           y2="2.01012"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00ADE8" />
-          <stop offset="1" stop-color="#69FABC" />
+          <stop stopColor="#00ADE8" />
+          <stop offset="1" stopColor="#69FABC" />
         </linearGradient>
       </defs>
     </svg>

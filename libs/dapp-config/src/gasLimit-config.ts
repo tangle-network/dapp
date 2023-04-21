@@ -18,6 +18,9 @@ const gasLimitConfig: GasLimitConfigType = {
 
   // Substrate
   [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
+  [PresetTypedChainId.HermesOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
+  [PresetTypedChainId.AthenaOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
+  [PresetTypedChainId.DemeterOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
 };
 
 export default gasLimitConfig;

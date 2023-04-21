@@ -6,6 +6,7 @@ import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { LoggerService } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { u8aToHex } from '@webb-tools/utils';
 import {
@@ -88,6 +89,8 @@ class RelayedWithdraw {
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> =
     new Subject();
 
+  private readonly logger = LoggerService.get('RelayedWithdraw');
+
   constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
 
@@ -104,14 +107,23 @@ class RelayedWithdraw {
     };
 
     ws.onerror = (e) => {
-      console.log(e);
+      this.logger.error('Relayer error: ', e);
     };
   }
 
   private handleMessage = (
     data: RelayerMessage
   ): [RelayedWithdrawResult, string | undefined] => {
-    if (data.error || data.withdraw?.errored) {
+    this.logger.info('Relayer message: ', data);
+
+    if (data.network && typeof data.network !== 'string') {
+      const { failed } = data.network;
+
+      return [
+        RelayedWithdrawResult.Errored,
+        failed?.reason || 'Relayer network error',
+      ];
+    } else if (data.error || data.withdraw?.errored) {
       return [
         RelayedWithdrawResult.Errored,
         data.error || data.withdraw?.errored?.reason,

@@ -5,6 +5,7 @@ import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/ty
 import { Chain } from '@webb-tools/dapp-config';
 import { Note } from '@webb-tools/sdk-core';
 import { TransactionPayload } from '@webb-tools/webb-ui-components';
+import { BigNumber } from 'ethers';
 
 export type CurrencyRecord = Record<Currency['id'], Currency>;
 
@@ -97,7 +98,7 @@ export interface TransferConfirmContainerProps
   /**
    * The fee amount
    */
-  feeAmount?: number | string;
+  feeInWei?: BigNumber | null;
 
   /**
    * The fee token

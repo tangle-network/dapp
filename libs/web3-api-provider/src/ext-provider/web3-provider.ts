@@ -136,7 +136,7 @@ export class Web3Provider<T = unknown> {
   }
 
   get network() {
-    return this._inner.eth.net.getId();
+    return this.intoEthersProvider().getNetwork();
   }
 
   get eth() {

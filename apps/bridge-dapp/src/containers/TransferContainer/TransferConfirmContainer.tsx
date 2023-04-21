@@ -10,7 +10,12 @@ import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { TransferConfirm, useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  getRoundedAmountString,
+  TransferConfirm,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
+import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
@@ -43,7 +48,7 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       inputNotes,
       onResetState,
-      feeAmount,
+      feeInWei: feeAmount,
       feeToken,
       ...props
     },
@@ -188,6 +193,7 @@ export const TransferConfirmContainer = forwardRef<
           notes: inputNotes,
           changeUtxo,
           transferUtxo,
+          feeAmount: feeAmount ?? BigNumber.from(0),
         };
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
@@ -236,6 +242,7 @@ export const TransferConfirmContainer = forwardRef<
       setMainComponent,
       changeUtxo,
       transferUtxo,
+      feeAmount,
       activeRelayer,
       noteManager,
       onResetState,
@@ -249,6 +256,16 @@ export const TransferConfirmContainer = forwardRef<
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
     }, [txId, txPayloads]);
+
+    const formattedFee = useMemo(() => {
+      if (!feeAmount) {
+        return undefined;
+      }
+
+      const amountNum = Number(ethers.utils.formatEther(feeAmount));
+
+      return getRoundedAmountString(amountNum, 3, Math.round);
+    }, [feeAmount]);
 
     return (
       <TransferConfirm
@@ -275,7 +292,7 @@ export const TransferConfirmContainer = forwardRef<
         relayerAvatarTheme={
           activeChain?.chainType === ChainType.EVM ? 'ethereum' : 'polkadot'
         }
-        fee={feeAmount}
+        fee={formattedFee}
         feeToken={feeToken}
         onClose={() => setMainComponent(undefined)}
         checkboxProps={{

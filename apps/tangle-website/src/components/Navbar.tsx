@@ -23,10 +23,7 @@ const isNavItem = (item: any): item is NavItem => {
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   {
     label: 'community',
-    url: '#',
-    onClick: (e) => {
-      e.preventDefault();
-    },
+    url: '#community',
     isInternal: true,
   },
   { label: 'docs', url: TANGLE_NETWORK_DOCS_URL },
@@ -119,7 +116,7 @@ const MobileNav = () => {
 
       <DropdownBody
         isPorttal={false}
-        className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
+        className="mt-4 pt-4 w-screen border-0 rounded-none"
         size="sm"
         align="start"
       >

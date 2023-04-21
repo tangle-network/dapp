@@ -86,7 +86,7 @@ export const WithdrawConfirm = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -236,6 +236,7 @@ export const WithdrawConfirm = forwardRef<
                 </Section>
               )}
             </div>
+
             {/** New spend note */}
             {note && (
               <Section>

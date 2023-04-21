@@ -9,7 +9,11 @@ import {
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Typography,
+  WebsiteCommunity,
+} from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
 import { ResearchAndDevelopmentSection } from '../components';
 
@@ -82,25 +86,7 @@ const Community = () => {
             Get Started
           </Typography>
 
-          <div className="mt-24 grid gap-4 md:grid-cols-2 w-[358px] md:w-[736px] lg:w-[900px]">
-            {links.map(({ Icon, name, href, description }) => (
-              <div
-                className="flex flex-col p-4 w-[358px] lg:w-[442px] bg-mono-0 rounded-lg space-y-2 shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]"
-                key={href}
-              >
-                <span className="flex items-center space-x-2.5">
-                  <Icon className="w-8 h-8 !fill-current" />
-                  <span className="card-title text-mono-200">{name}</span>
-                </span>
-
-                <span className="card-text text-mono-140">{description}</span>
-
-                <Button variant="link" href={href} target="_blank">
-                  {name}
-                </Button>
-              </div>
-            ))}
-          </div>
+          <WebsiteCommunity links={links} />
         </div>
       </section>
 

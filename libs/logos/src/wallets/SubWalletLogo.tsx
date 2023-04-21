@@ -62,11 +62,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="50.6648"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FFD4B2" />
-          <stop offset="0.36" stop-color="#9ACEB7" />
-          <stop offset="0.67" stop-color="#47C8BB" />
-          <stop offset="0.89" stop-color="#14C5BE" />
-          <stop offset="1" stop-color="#00C4BF" />
+          <stop stopColor="#FFD4B2" />
+          <stop offset="0.36" stopColor="#9ACEB7" />
+          <stop offset="0.67" stopColor="#47C8BB" />
+          <stop offset="0.89" stopColor="#14C5BE" />
+          <stop offset="1" stopColor="#00C4BF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_699_5101"
@@ -76,11 +76,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="21.2167"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00FECF" />
-          <stop offset="0.08" stop-color="#00E5D0" />
-          <stop offset="0.24" stop-color="#00A5D1" />
-          <stop offset="0.48" stop-color="#0040D4" />
-          <stop offset="0.54" stop-color="#0025D5" />
+          <stop stopColor="#00FECF" />
+          <stop offset="0.08" stopColor="#00E5D0" />
+          <stop offset="0.24" stopColor="#00A5D1" />
+          <stop offset="0.48" stopColor="#0040D4" />
+          <stop offset="0.54" stopColor="#0025D5" />
           <stop offset="1" />
         </linearGradient>
         <linearGradient
@@ -91,11 +91,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="76.8587"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FDEC9F" />
-          <stop offset="0.08" stop-color="#E4D8A4" />
-          <stop offset="0.24" stop-color="#A4A6B2" />
-          <stop offset="0.47" stop-color="#3F57C8" />
-          <stop offset="0.61" stop-color="#0025D5" />
+          <stop stopColor="#FDEC9F" />
+          <stop offset="0.08" stopColor="#E4D8A4" />
+          <stop offset="0.24" stopColor="#A4A6B2" />
+          <stop offset="0.47" stopColor="#3F57C8" />
+          <stop offset="0.61" stopColor="#0025D5" />
           <stop offset="1" />
         </linearGradient>
         <linearGradient
@@ -106,8 +106,8 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="103.18"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.05" stop-color="#62A5FF" />
-          <stop offset="0.45" stop-color="#1032D1" />
+          <stop offset="0.05" stopColor="#62A5FF" />
+          <stop offset="0.45" stopColor="#1032D1" />
           <stop offset="1" />
         </linearGradient>
         <linearGradient
@@ -118,11 +118,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="3247.12"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FFD4B2" />
-          <stop offset="0.36" stop-color="#9ACEB7" />
-          <stop offset="0.67" stop-color="#47C8BB" />
-          <stop offset="0.89" stop-color="#14C5BE" />
-          <stop offset="1" stop-color="#00C4BF" />
+          <stop stopColor="#FFD4B2" />
+          <stop offset="0.36" stopColor="#9ACEB7" />
+          <stop offset="0.67" stopColor="#47C8BB" />
+          <stop offset="0.89" stopColor="#14C5BE" />
+          <stop offset="1" stopColor="#00C4BF" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_699_5101"
@@ -132,11 +132,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="82.3783"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00FECF" />
-          <stop offset="0.08" stop-color="#00E5D0" />
-          <stop offset="0.25" stop-color="#00A5D1" />
-          <stop offset="0.49" stop-color="#0040D4" />
-          <stop offset="0.56" stop-color="#0025D5" />
+          <stop stopColor="#00FECF" />
+          <stop offset="0.08" stopColor="#00E5D0" />
+          <stop offset="0.25" stopColor="#00A5D1" />
+          <stop offset="0.49" stopColor="#0040D4" />
+          <stop offset="0.56" stopColor="#0025D5" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_699_5101"
@@ -146,11 +146,11 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="50.4576"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#00FECF" />
-          <stop offset="0.05" stop-color="#00E5D0" />
-          <stop offset="0.15" stop-color="#00A5D1" />
-          <stop offset="0.29" stop-color="#0040D4" />
-          <stop offset="0.33" stop-color="#0025D5" />
+          <stop stopColor="#00FECF" />
+          <stop offset="0.05" stopColor="#00E5D0" />
+          <stop offset="0.15" stopColor="#00A5D1" />
+          <stop offset="0.29" stopColor="#0040D4" />
+          <stop offset="0.33" stopColor="#0025D5" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_699_5101"
@@ -160,19 +160,19 @@ export const SubWalletLogo: React.FC<React.SVGProps<SVGSVGElement>> = () => {
           y2="27.8689"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FFD4AF" />
-          <stop offset="0.1" stop-color="#E6D5BA" />
-          <stop offset="0.31" stop-color="#A7D6D5" />
-          <stop offset="0.61" stop-color="#43D9FF" />
-          <stop offset="0.63" stop-color="#37B1D0" />
-          <stop offset="0.65" stop-color="#2B8CA5" />
-          <stop offset="0.67" stop-color="#216B7D" />
-          <stop offset="0.7" stop-color="#184E5B" />
-          <stop offset="0.72" stop-color="#10353F" />
-          <stop offset="0.75" stop-color="#0A2228" />
-          <stop offset="0.78" stop-color="#061316" />
-          <stop offset="0.82" stop-color="#020809" />
-          <stop offset="0.88" stop-color="#010202" />
+          <stop stopColor="#FFD4AF" />
+          <stop offset="0.1" stopColor="#E6D5BA" />
+          <stop offset="0.31" stopColor="#A7D6D5" />
+          <stop offset="0.61" stopColor="#43D9FF" />
+          <stop offset="0.63" stopColor="#37B1D0" />
+          <stop offset="0.65" stopColor="#2B8CA5" />
+          <stop offset="0.67" stopColor="#216B7D" />
+          <stop offset="0.7" stopColor="#184E5B" />
+          <stop offset="0.72" stopColor="#10353F" />
+          <stop offset="0.75" stopColor="#0A2228" />
+          <stop offset="0.78" stopColor="#061316" />
+          <stop offset="0.82" stopColor="#020809" />
+          <stop offset="0.88" stopColor="#010202" />
           <stop offset="1" />
         </linearGradient>
       </defs>

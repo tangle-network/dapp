@@ -186,9 +186,8 @@ export class WebbWeb3Provider
     this.ethersProvider = this.web3Provider.intoEthersProvider();
 
     const handler = async () => {
-      const chainId = await this.web3Provider.network;
-
-      this.emit('providerUpdate', [chainId]);
+      const network = await this.ethersProvider.getNetwork();
+      this.emit('providerUpdate', [network.chainId]);
     };
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
