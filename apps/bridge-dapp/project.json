@@ -75,6 +75,12 @@
         "jestConfig": "apps/bridge-dapp/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "run-local-substrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node apps/bridge-dapp/scripts/localSubstrate"
+      }
     }
   },
   "tags": []

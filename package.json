@@ -234,6 +234,7 @@
     "babel-loader": "8.1.0",
     "babel-plugin-preval": "^5.1.0",
     "classnames": "^2.3.1",
+    "commander": "^10.0.1",
     "copy-to-clipboard": "^3.3.2",
     "copy-webpack-plugin": "^10.2.4",
     "crypto-browserify": "^3.12.0",

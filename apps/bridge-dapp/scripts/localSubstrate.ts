@@ -5,10 +5,23 @@ import { Option, U32 } from '@polkadot/types';
 import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
 import { LocalProtocolSubstrate, polkadotTx } from '@webb-tools/test-utils';
 import { BN } from 'bn.js';
+import { Command } from 'commander';
 import { resolve } from 'path';
+
+// Define CLI options
+const program = new Command();
+
+program.option('-v --verbose', 'Enable node logging');
+
+program.parse(process.argv);
+
+const options = program.opts();
 
 const BOB_PHRASE =
   'asthma early danger glue satisfy spatial decade wing organ bean census announce';
+
+const NATIVE_ASSET_ID = '0';
+const NATIVE_ASSET = 'WEBB';
 
 const FUNGIBLE_ASSET = 'WEBB^2';
 
@@ -30,7 +43,7 @@ async function main() {
     authority: 'alice',
     usageMode,
     ports: 'auto',
-    enableLogging: true,
+    enableLogging: options.verbose,
   });
 
   const bobNode = await LocalProtocolSubstrate.start({
@@ -38,7 +51,7 @@ async function main() {
     authority: 'alice',
     usageMode,
     ports: 'auto',
-    enableLogging: true,
+    enableLogging: options.verbose,
   });
 
   logger.info('Nodes started');
@@ -70,10 +83,26 @@ async function main() {
 
   // Add assets to pool
   logger.info('Adding assets to pool');
-  await addAssetToPool(aliceApi, '0', poolShareAssetId.toString(), aliceKey);
+  await addAssetToPool(
+    aliceApi,
+    NATIVE_ASSET_ID,
+    poolShareAssetId.toString(),
+    aliceKey
+  );
   logger.info(`Assets ${FUNGIBLE_ASSET} added to pool`);
 
-  logger.info('Protocol substrate ready to use');
+  // Add assets metadata
+  logger.info('Adding assets metadata');
+  await addAssetMetadata(aliceApi, aliceKey, NATIVE_ASSET_ID, NATIVE_ASSET);
+  await addAssetMetadata(
+    aliceApi,
+    aliceKey,
+    poolShareAssetId.toString(),
+    FUNGIBLE_ASSET
+  );
+  logger.info(`Assets metadata added`);
+
+  logger.info('Protocol Substrate ready to use');
 }
 
 let keyring: {
@@ -114,7 +143,7 @@ async function createPoolShare(
       apiPromise.tx.assetRegistry.register(
         name,
         {
-          PoolShare: [0],
+          PoolShare: [+NATIVE_ASSET_ID],
         },
         existentialDeposit
       ),
@@ -127,7 +156,6 @@ async function createPoolShare(
     Option<U32>
   >(name);
   const nonce = tokenWrapperNonce.unwrapOr(new BN(0)).toNumber() + 1;
-  console.log(`Create pool share ${name} with nonce ${nonce}`);
   await polkadotTx(
     apiPromise,
     {
@@ -153,6 +181,24 @@ async function addAssetToPool(
       method: 'sudo',
     },
     [apiPromise.tx.assetRegistry.addAssetToPool(poolAssetId, Number(assetId))],
+    signer
+  );
+}
+
+async function addAssetMetadata(
+  apiPromise: ApiPromise,
+  signer: KeyringPair,
+  assetId: string,
+  assetSymbol: string,
+  decimals = 18
+) {
+  await polkadotTx(
+    apiPromise,
+    {
+      section: 'sudo',
+      method: 'sudo',
+    },
+    [apiPromise.tx.assetRegistry.setMetadata(assetId, assetSymbol, decimals)],
     signer
   );
 }
