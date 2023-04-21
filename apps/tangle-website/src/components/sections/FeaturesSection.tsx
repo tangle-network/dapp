@@ -46,60 +46,62 @@ const tangleFeatures = [
 
 export const FeaturesSection = () => {
   return (
-    <section className="flex flex-col items-center gap-[60px] py-[94px]">
-      <div className="flex flex-col items-center gap-4 px-5">
-        <div className="flex flex-col items-center gap-2">
-          <SectionHeader>Features</SectionHeader>
-          <SectionTitle>What makes Tangle Unique?</SectionTitle>
+    <section className="py-[94px]">
+      <div className="max-w-[1440px] mx-auto flex flex-col items-center gap-[60px]">
+        <div className="flex flex-col items-center gap-4 px-5">
+          <div className="flex flex-col items-center gap-2">
+            <SectionHeader>Features</SectionHeader>
+            <SectionTitle>What makes Tangle Unique?</SectionTitle>
+          </div>
+          <SectionDescription className="text-center lg:w-[65%]">
+            The Tangle network doubles as hub for routing cross chain messages
+            and for anchoring itself as a bridge endpoint for cross chain
+            zero-knowledge applications.
+          </SectionDescription>
         </div>
-        <SectionDescription className="text-center lg:w-[65%]">
-          The Tangle network doubles as hub for routing cross chain messages and
-          for anchoring itself as a bridge endpoint for cross chain
-          zero-knowledge applications.
-        </SectionDescription>
-      </div>
 
-      {/* Desktop + Mobile */}
-      <div className="md:hidden flex lg:flex flex-col items-stretch justify-items-stretch gap-6 lg:flex-row lg:w-[77.5%] px-5 lg:px-0">
-        {tangleFeatures.map((feat, i) => {
-          return (
-            <TangleFeatureCard
-              img={`/static/assets/tangle-features-${i + 1}.png`}
-              index={i + 1}
-              title={feat.title}
-              description={feat.description}
-              link={feat.link}
-              key={i}
-            />
-          );
-        })}
-      </div>
-
-      {/* Tablet */}
-      <Swiper
-        spaceBetween={16}
-        slidesPerView="auto"
-        freeMode={true}
-        modules={[FreeMode]}
-        className="hidden md:block lg:hidden w-full !pl-5"
-      >
-        {tangleFeatures.map((feat, i) => {
-          return (
-            <SwiperSlide
-              key={i}
-              style={{ width: 'auto', height: 'auto', alignSelf: 'stretch' }}
-            >
+        {/* Desktop + Mobile */}
+        <div className="md:hidden flex lg:flex flex-col items-stretch justify-items-stretch gap-6 lg:flex-row lg:w-[77.5%] px-5 lg:px-0">
+          {tangleFeatures.map((feat, i) => {
+            return (
               <TangleFeatureCard
                 img={`/static/assets/tangle-features-${i + 1}.png`}
                 index={i + 1}
                 title={feat.title}
                 description={feat.description}
                 link={feat.link}
+                key={i}
               />
-            </SwiperSlide>
-          );
-        })}
-      </Swiper>
+            );
+          })}
+        </div>
+
+        {/* Tablet */}
+        <Swiper
+          spaceBetween={16}
+          slidesPerView="auto"
+          freeMode={true}
+          modules={[FreeMode]}
+          className="hidden md:block lg:hidden w-full !pl-5"
+        >
+          {tangleFeatures.map((feat, i) => {
+            return (
+              <SwiperSlide
+                key={i}
+                style={{ width: 'auto', height: 'auto', alignSelf: 'stretch' }}
+              >
+                <TangleFeatureCard
+                  img={`/static/assets/tangle-features-${i + 1}.png`}
+                  index={i + 1}
+                  title={feat.title}
+                  description={feat.description}
+                  link={feat.link}
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
     </section>
   );
 };

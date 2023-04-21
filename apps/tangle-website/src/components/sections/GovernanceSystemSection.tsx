@@ -34,49 +34,51 @@ const governanceSystemQnAItems = [
 export const GovernanceSystemSection = () => {
   return (
     <section className="dark bg-mono-200">
-      <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[96px]">
-        <div className="lg:flex-1 flex items-center">
-          <div className="relative w-[340px] md:w-[600px] lg:w=[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
-            <Image
-              src="/static/assets/governance-system.png"
-              alt="Governance System"
-              fill
-            />
+      <div className="max-w-[1440px] mx-auto">
+        <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[96px]">
+          <div className="lg:flex-1 flex items-center">
+            <div className="relative w-[340px] md:w-[600px] lg:w=[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
+              <Image
+                src="/static/assets/governance-system.png"
+                alt="Governance System"
+                fill
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="lg:flex-1 px-5 lg:px-0">
-          <SectionHeader>Governance System</SectionHeader>
-          <SectionTitle className="text-left mt-2 md:w-[70%] lg:w-full">
-            The next-gen TSS based blockchain with powerful threshold signature
-            governance system
-          </SectionTitle>
-          <div className="flex gap-4 mt-6">
-            <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
-              Read Docs
-            </LinkButton>
-            <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
-          </div>
-          <div className="mt-[56px] flex flex-col gap-6">
-            {governanceSystemQnAItems.map(
-              ({ icon, title, description, href }, index) => (
-                <div key={index}>
-                  {icon}
-                  <Typography
-                    variant="h4"
-                    className="font-bold text-mono-0 mt-6 mb-4"
-                  >
-                    {title}
-                  </Typography>
-                  <SectionDescription2 className="mb-6">
-                    {description}
-                  </SectionDescription2>
-                  <a className="text-tangle_dark_purple" href={href}>
-                    Learn more →
-                  </a>
-                </div>
-              )
-            )}
+          <div className="lg:flex-1 px-5 lg:px-0">
+            <SectionHeader>Governance System</SectionHeader>
+            <SectionTitle className="text-left mt-2 md:w-[70%] lg:w-full">
+              The next-gen TSS based blockchain with powerful threshold
+              signature governance system
+            </SectionTitle>
+            <div className="flex gap-4 mt-6">
+              <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
+                Read Docs
+              </LinkButton>
+              <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+            </div>
+            <div className="mt-[56px] flex flex-col gap-6">
+              {governanceSystemQnAItems.map(
+                ({ icon, title, description, href }, index) => (
+                  <div key={index}>
+                    {icon}
+                    <Typography
+                      variant="h4"
+                      className="font-bold text-mono-0 mt-6 mb-4"
+                    >
+                      {title}
+                    </Typography>
+                    <SectionDescription2 className="mb-6">
+                      {description}
+                    </SectionDescription2>
+                    <a className="text-tangle_dark_purple" href={href}>
+                      Learn more →
+                    </a>
+                  </div>
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>

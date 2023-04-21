@@ -12,24 +12,26 @@ import {
 
 export function Index() {
   return (
-    <div className="bg-body bg-top block max-w-[1440px] mx-auto">
-      <HeroSection />
+    <div className="bg-body bg-top block">
+      <div className="mx-auto">
+        <HeroSection />
 
-      <IntroducingSection />
+        <IntroducingSection />
 
-      <FeaturesSection />
+        <FeaturesSection />
 
-      <GovernanceSystemSection />
+        <GovernanceSystemSection />
 
-      <ParticipationMechanicsSection />
+        <ParticipationMechanicsSection />
 
-      <LaunchPhasesSection />
+        <LaunchPhasesSection />
 
-      <UseCasesSection />
+        <UseCasesSection />
 
-      <SupportedBySection />
+        <SupportedBySection />
 
-      <CommunitySection />
+        <CommunitySection />
+      </div>
     </div>
   );
 }
