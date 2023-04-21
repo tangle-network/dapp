@@ -2,6 +2,7 @@ export * from './GovernanceSystemSection';
 export * from './HeroSection';
 export * from './FeaturesSection';
 export * from './IntroducingSection';
+export * from './LaunchPhasesSection';
 export * from './ParticipationMechanicsSection';
 export * from './SupportedBySection';
 export * from './CommunitySection';

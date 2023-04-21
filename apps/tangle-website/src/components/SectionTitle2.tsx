@@ -17,4 +17,4 @@ export const SectionTitle2 = forwardRef<HTMLHeadingElement, PropsOf<'h3'>>(
   }
 );
 
-SectionTitle2.displayName = 'SectionTitle';
+SectionTitle2.displayName = 'SectionTitle2';

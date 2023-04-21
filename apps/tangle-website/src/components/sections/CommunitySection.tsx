@@ -13,7 +13,7 @@ import {
   WebsiteCommunity,
 } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import { SectionDescription } from '../SectionDescription';
+import { SectionDescription, SectionDescription2 } from '..';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -82,11 +82,11 @@ export const CommunitySection = () => {
             Tangle Community
           </Typography>
 
-          <SectionDescription className="text-center mt-[16px] px-3 lg:px-0">
+          <SectionDescription2 className="text-center mt-[16px] px-3 lg:px-0">
             The Tangle network doubles as hub for routing cross chain messages
             and for anchoring itself as a bridge endpoint for cross chain
             zero-knowledge applications.
-          </SectionDescription>
+          </SectionDescription2>
 
           <WebsiteCommunity links={links} />
         </div>

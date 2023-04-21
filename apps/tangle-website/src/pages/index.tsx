@@ -6,6 +6,7 @@ import {
   GovernanceSystemSection,
   FeaturesSection,
   ParticipationMechanicsSection,
+  LaunchPhasesSection,
   SupportedBySection,
   UseCasesSection,
 } from '../components';
@@ -27,22 +28,26 @@ export function Index() {
         }}
       />
 
-      <div className="bg-body bg-top block max-w-[1440px] mx-auto">
-        <HeroSection />
+      <div className="bg-body bg-top block">
+        <div className="mx-auto">
+          <HeroSection />
 
-        <IntroducingSection />
+          <IntroducingSection />
 
-        <FeaturesSection />
+          <FeaturesSection />
 
-        <SupportedBySection />
+          <GovernanceSystemSection />
 
-        <GovernanceSystemSection />
+          <ParticipationMechanicsSection />
 
-        <ParticipationMechanicsSection />
+          <LaunchPhasesSection />
 
-        <UseCasesSection />
+          <UseCasesSection />
 
-        <CommunitySection />
+          <SupportedBySection />
+
+          <CommunitySection />
+        </div>
       </div>
     </>
   );
