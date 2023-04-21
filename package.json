@@ -2,6 +2,10 @@
   "name": "webb-monorepo",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "yarn": "^1.10.1",
+    "node": "18.x.x"
+  },
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
@@ -221,6 +225,7 @@
     "@webb-tools/interfaces": "0.5.35",
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "@webb-tools/sdk-core": "0.1.4-119",
+    "@webb-tools/test-utils": "0.1.4-123",
     "@webb-tools/tokens": "0.5.35",
     "@webb-tools/utils": "0.5.7",
     "@webb-tools/wasm-utils": "0.1.4-119",
