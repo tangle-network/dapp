@@ -5,28 +5,28 @@ import Keyring from '@polkadot/keyring';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { Option, U32 } from '@polkadot/types';
 import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
-import {
-  createApiPromise,
-  LocalProtocolSubstrate,
-  polkadotTx,
-} from '@webb-tools/test-utils';
+import { createApiPromise, polkadotTx } from '@webb-tools/test-utils';
 import { BN } from 'bn.js';
 import { Command } from 'commander';
 import { resolve } from 'path';
 
-const ALICE_KEY_URI = '//Alice';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const shell = require('shelljs');
+
+const ALICE_PORT = 9944;
+const BOB_PORT = 9945;
+
+const TANGLE_SUDO_URI = '//TangleStandaloneSudo';
 
 const NATIVE_ASSET_ID = '0';
 const NATIVE_ASSET = 'WEBB';
 
 const FUNGIBLE_ASSET = 'WEBB^2';
 
-const usageMode = {
-  mode: 'host',
-  nodePath: resolve(
-    '../protocol-substrate/target/release/webb-standalone-node'
-  ),
-} as const;
+const localStandaloneTangleScript = resolve(
+  workspaceRoot,
+  '../tangle/scripts/run-standalone-local.sh'
+);
 
 // Define CLI options
 const program = new Command();
@@ -37,40 +37,51 @@ program.parse(process.argv);
 
 const options = program.opts();
 
-const logger = LoggerService.get('LOCAL SUBSTRATE');
+const logger = LoggerService.get('LOCAL TANGLE');
 
 async function main() {
   // Start the nodes
-  logger.info('Starting local substrate protocol');
+  logger.info('Starting local tangle network');
 
-  const aliceNode = await LocalProtocolSubstrate.start({
-    name: 'substrate-alice',
-    authority: 'alice',
-    usageMode,
-    ports: 'auto',
-    enableLogging: options.verbose,
+  const proc = shell.exec(localStandaloneTangleScript + ' --clean', {
+    cwd: resolve(localStandaloneTangleScript, '../../'),
+    async: true,
+    silent: true,
   });
+  cleanup(() => proc.kill('SIGINT'));
 
-  const bobNode = await LocalProtocolSubstrate.start({
-    name: 'substrate-bob',
-    authority: 'bob',
-    usageMode,
-    ports: 'auto',
-    enableLogging: options.verbose,
-  });
+  if (options.verbose) {
+    logger.debug('Verbose mode enabled');
+    proc.stdout.on('data', (data: Buffer) => {
+      console.log(data.toString());
+    });
+    proc.stderr.on('data', (data: Buffer) => {
+      console.error(data.toString());
+    });
+  }
 
   // Wait until we are ready and connected
   logger.info('Waiting for APIs to be ready');
 
-  const aliceApi = await aliceNode.api();
+  const aliceApi = await createApiPromise(getEndpoint(ALICE_PORT));
   await aliceApi.isReady;
 
-  const bobApi = await bobNode.api();
+  const bobApi = await createApiPromise(getEndpoint(BOB_PORT));
   await bobApi.isReady;
 
   logger.info('APIs are ready');
 
-  await initPoolShare(aliceApi);
+  // Wait until the first block is produced
+  logger.info('Waiting for first block to be produced');
+
+  await aliceApi.rpc.chain.subscribeNewHeads(async (header) => {
+    const block = header.number.toNumber();
+    logger.debug(`New block produced: ${chalk.green(block.toString())}`);
+    // Init pool share after first block
+    if (block === 1) {
+      await initPoolShare(aliceApi);
+    }
+  });
 }
 
 async function initPoolShare(api: ApiPromise) {
@@ -80,7 +91,7 @@ async function initPoolShare(api: ApiPromise) {
   logger.info('Creating pool share asset');
   const poolShareAssetId = await createPoolShare(api, FUNGIBLE_ASSET, sudoKey);
   logger.info(
-    `Pool share asset ${FUNGIBLE_ASSET} created with id \`${poolShareAssetId}\``
+    `Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}`
   );
 
   // Add assets to pool
@@ -108,12 +119,44 @@ async function initPoolShare(api: ApiPromise) {
 
   logger.info(`VAnchor with id \`${vanchorId}\` created`);
 
-  logger.info('Protocol Substrate ready to use');
+  logger.info('Tangle network ready to use');
+}
+
+function getEndpoint(port: number) {
+  return `ws://127.0.0.1:${port}`;
 }
 
 function getKeyring() {
   const k = new Keyring({ type: 'sr25519' });
-  return k.addFromUri(ALICE_KEY_URI);
+  const sudoKey = k.addFromUri(TANGLE_SUDO_URI);
+  return sudoKey;
+}
+
+function cleanup(callback: () => any) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  function noOp() {}
+
+  // attach user callback to the process event emitter
+  // if no callback, it will still exit gracefully on Ctrl-C
+  callback = callback || noOp;
+
+  // do app specific cleaning before exiting
+  process.on('exit', function () {
+    callback();
+    process.exit(0);
+  });
+
+  // catch ctrl+c event and exit normally
+  process.on('SIGINT', function () {
+    callback();
+    process.exit(0);
+  });
+
+  //catch uncaught exceptions, trace, then exit normally
+  process.on('uncaughtException', function (e) {
+    callback();
+    process.exit(1);
+  });
 }
 
 async function createPoolShare(

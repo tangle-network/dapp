@@ -284,6 +284,7 @@
     "rollup-plugin-tailwind": "1.0.0",
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
+    "shelljs": "^0.8.5",
     "storybook-addon-react-router-v6": "^0.2.1",
     "storybook-tailwind-dark-mode": "^1.0.15",
     "stream-browserify": "^3.0.0",
