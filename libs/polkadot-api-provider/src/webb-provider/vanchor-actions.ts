@@ -29,6 +29,7 @@ import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
 import { lastValueFrom } from 'rxjs';
+import { getLeafIndex } from '../mt-utils';
 
 import { PolkadotTx } from '../transaction';
 import { WebbPolkadot } from '../webb-provider';
@@ -66,7 +67,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     relayer: string,
     wrapUnwrapAssetId: string,
     leavesMap: Record<string, Uint8Array[]>
-  ): Promise<string> {
+  ) {
     // Get active bridge and currency fungible asset
     const activeBridge = this.inner.state.activeBridge;
     if (!activeBridge) {
@@ -155,7 +156,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     const txHash: string = await polkadotTx.call(activeAccount.address);
 
-    return txHash;
+    return {
+      transactionHash: txHash,
+    };
   }
 
   async isPairRegistered(
@@ -179,6 +182,51 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     owner: Keypair
   ): Promise<Note[]> {
     throw new Error('Attempted to sync notes for keypair with Polkadot');
+  }
+
+  /**
+   * A function to get the leaf index of a leaf in the tree
+   * @param leaf the leaf to search for
+   * @param indexBeforeInsertion the tree index before insertion
+   * @param addressOrTreeId the address or tree id of the tree
+   */
+  async getLeafIndex(
+    leaf: Uint8Array,
+    indexBeforeInsertion: number,
+    addressOrTreeId: string
+  ): Promise<bigint> {
+    const treeId = Number(addressOrTreeId);
+    const idx = await getLeafIndex(
+      this.inner.api,
+      leaf,
+      indexBeforeInsertion,
+      treeId
+    );
+    return BigInt(idx);
+  }
+
+  async getNextIndex(
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = this.inner.config.chains[typedChainId];
+    const anchor = this.inner.config.getAnchorAddress(
+      fungibleCurrencyId,
+      typedChainId
+    );
+    if (!chain || !anchor) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const treeId = Number(anchor);
+    if (isNaN(treeId)) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const nextIdx = await this.inner.api.query.merkleTreeBn254.nextLeafIndex(
+      treeId
+    );
+    return nextIdx.toBigInt();
   }
 
   private async prepareDepositTransaction(

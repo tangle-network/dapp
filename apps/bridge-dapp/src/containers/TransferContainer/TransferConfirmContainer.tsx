@@ -207,7 +207,7 @@ export const TransferConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const transactionHash = await vAnchorApi.transact(...args);
+          const { transactionHash } = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
           tx.txHash = transactionHash;

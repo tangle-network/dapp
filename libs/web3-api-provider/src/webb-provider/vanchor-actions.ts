@@ -1,28 +1,30 @@
 import {
   ActiveWebbRelayer,
   CancellationToken,
+  isVAnchorDepositPayload,
+  isVAnchorTransferPayload,
+  isVAnchorWithdrawPayload,
   NewNotesTxResult,
+  padHexString,
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
-  TransferTransactionPayloadType,
   VAnchorActions,
-  WithdrawTransactionPayloadType,
-  padHexString,
-  isVAnchorDepositPayload,
-  isVAnchorWithdrawPayload,
-  isVAnchorTransferPayload,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20, ERC20__factory } from '@webb-tools/contracts';
-import { checkNativeAddress } from '@webb-tools/dapp-types';
+import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import {
+  checkNativeAddress,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import {
   ChainType,
   CircomUtxo,
@@ -30,19 +32,18 @@ import {
   MerkleTree,
   Note,
   ResourceId,
-  Utxo,
   toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import {
-  ZERO_ADDRESS,
   hexToU8a,
   u8aToHex,
+  ZERO_ADDRESS,
   ZERO_BYTES32,
 } from '@webb-tools/utils';
 import {
   BigNumber,
-  BigNumberish,
   ContractReceipt,
   ContractTransaction,
   Overrides,
@@ -304,7 +305,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
     overridesTransaction?: Overrides
-  ): Promise<string> | never {
+  ) {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
@@ -330,7 +331,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       overridesTransaction
     );
 
-    return receipt.transactionHash;
+    return {
+      transactionHash: receipt.transactionHash,
+      receipt: receipt,
+    };
   }
 
   // Check if the evm address and keyData pairing has already registered.
@@ -517,6 +521,87 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       inputUtxos,
       leavesMap,
     };
+  }
+
+  /**
+   * A function to get the leaf index of a leaf in the vanchor
+   * @param receipt the receipt of the transaction that created the note
+   * @param note the deposit note
+   * @param addressOrTreeId the address of the vanchor or the treeId of the vanchor
+   */
+  async getLeafIndex(
+    receipt: ContractReceipt,
+    note: Note,
+    addressOrTreeId: string
+  ): Promise<bigint> {
+    const typedChainId = this.inner.typedChainId;
+    const chain = this.inner.config.chains[typedChainId];
+    if (!chain) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+    }
+
+    const vanchor = VAnchor__factory.connect(
+      addressOrTreeId,
+      Web3Provider.fromUri(chain.url).intoEthersProvider()
+    );
+
+    // Get fragment and topic of the `NewCommitment` event.
+    const eventFragment = vanchor.interface.getEvent('NewCommitment');
+    const topic = vanchor.interface.getEventTopic(eventFragment);
+
+    // Filter the logs for the event
+    const filteredLogs = receipt.logs.filter((log) =>
+      log.topics.includes(topic)
+    );
+
+    // Parse the log data
+    const parsedEvents = filteredLogs
+      .map((log) => {
+        const decodedValues = vanchor.interface.decodeEventLog(
+          eventFragment,
+          log.data,
+          log.topics
+        );
+        return decodedValues;
+      })
+      .map((val) => ({
+        leafIndex: BigNumber.from(val.leafIndex),
+        commitment: BigNumber.from(val.commitment),
+      }));
+
+    // Get the leaf index of the note
+    const depositedCommitment = generateCircomCommitment(note.note);
+    const event = parsedEvents.find((value) =>
+      value.commitment.eq(depositedCommitment)
+    );
+
+    if (!event) {
+      console.error('Leaf index not found in logs, falling back `0`');
+      return BigInt(0);
+    }
+
+    return event.leafIndex.toBigInt();
+  }
+
+  async getNextIndex(
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = this.inner.config.chains[typedChainId];
+    const anchor = this.inner.config.getAnchorAddress(
+      fungibleCurrencyId,
+      typedChainId
+    );
+    if (!chain || !anchor) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const vanchor = VAnchor__factory.connect(anchor, provider);
+
+    const nextIdx = await vanchor.getNextIndex();
+
+    return BigInt(nextIdx);
   }
 
   private async fetchNoteLeaves(

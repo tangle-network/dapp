@@ -462,6 +462,10 @@ export class WebbWeb3Provider
     );
   }
 
+  get typedChainId(): number {
+    return this.typedChainidSubject.getValue();
+  }
+
   get capabilities() {
     return this.web3Provider.capabilities;
   }
