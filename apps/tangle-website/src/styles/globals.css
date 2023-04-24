@@ -48,3 +48,14 @@ button[data-radix-collection-item][data-state='active']
   .participation-tab-polygon {
   @apply border-t-mono-200;
 }
+
+/* Override styling for Accordion component from webb-ui-components */
+button[data-radix-collection-item] > span {
+  @apply text-[18px] leading-[28px]
+  md:text-[20px] md:leading-[32px]
+  items-start text-mono-200;
+}
+
+button[data-radix-collection-item] > svg {
+  @apply w-6 h-6
+}

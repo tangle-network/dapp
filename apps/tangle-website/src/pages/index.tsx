@@ -9,6 +9,7 @@ import {
   LaunchPhasesSection,
   SupportedBySection,
   UseCasesSection,
+  FAQSection,
 } from '../components';
 
 const description =
@@ -45,6 +46,8 @@ export function Index() {
           <UseCasesSection />
 
           <SupportedBySection />
+
+          <FAQSection />
 
           <CommunitySection />
         </div>
