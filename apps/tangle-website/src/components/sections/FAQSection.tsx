@@ -49,7 +49,10 @@ export const FAQSection = () => {
             with others in our community channels to learn more!
           </SectionDescription2>
         </div>
-        <Accordion defaultValue={faqItems[0].question} className="lg:w-[70%] lg:mx-auto">
+        <Accordion
+          defaultValue={faqItems[0].question}
+          className="lg:w-[70%] lg:mx-auto"
+        >
           {faqItems.map((item, index) => (
             <AccordionItem
               key={index}
