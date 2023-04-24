@@ -1,25 +1,38 @@
+/**
+ * Copyright 2022 Webb Technologies Inc.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * This script is used to start a local protocol substrate and create a pool share asset
+ * for the bridge dapp to use (mostly for testing purposes)
+ *
+ * Dependency:
+ * - @webb-tools/protocol-substrate: https://github.com/webb-tools/protocol-substrate
+ *   Please put the `protocol-substrate` repo in the same level as the `webb-dapp` repo
+ *   and follow the instructions in the `protocol-substrate` repo to build the node binary
+ *   and then run this script.
+ *
+ * Options:
+ * -v --verbose: Enable node logging
+ */
+
 import { ApiPromise } from '@polkadot/api';
-import chalk from 'chalk';
-import { workspaceRoot } from 'nx/src/utils/workspace-root';
-import Keyring from '@polkadot/keyring';
-import { KeyringPair } from '@polkadot/keyring/types';
-import { Option, U32 } from '@polkadot/types';
 import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
-import {
-  createApiPromise,
-  LocalProtocolSubstrate,
-  polkadotTx,
-} from '@webb-tools/test-utils';
-import { BN } from 'bn.js';
+import { LocalProtocolSubstrate } from '@webb-tools/test-utils';
 import { Command } from 'commander';
 import { resolve } from 'path';
+
+import addAssetMetadata from './utils/addAssetMetadata';
+import addAssetToPool from './utils/addAssetToPool';
+import createPoolShare from './utils/createPoolShare';
+import createVAnchor from './utils/createVAnchor';
+import getKeyring from './utils/getKeyRing';
 
 const ALICE_KEY_URI = '//Alice';
 
 const NATIVE_ASSET_ID = '0';
-const NATIVE_ASSET = 'WEBB';
+const NATIVE_ASSET = 'tTNT';
 
-const FUNGIBLE_ASSET = 'WEBB^2';
+const FUNGIBLE_ASSET = 'webbtTNT';
 
 const usageMode = {
   mode: 'host',
@@ -74,11 +87,16 @@ async function main() {
 }
 
 async function initPoolShare(api: ApiPromise) {
-  const sudoKey = getKeyring();
+  const sudoKey = getKeyring(ALICE_KEY_URI);
 
   // Create pool share asset
   logger.info('Creating pool share asset');
-  const poolShareAssetId = await createPoolShare(api, FUNGIBLE_ASSET, sudoKey);
+  const poolShareAssetId = await createPoolShare(
+    api,
+    FUNGIBLE_ASSET,
+    +NATIVE_ASSET_ID,
+    sudoKey
+  );
   logger.info(
     `Pool share asset ${FUNGIBLE_ASSET} created with id \`${poolShareAssetId}\``
   );
@@ -109,105 +127,6 @@ async function initPoolShare(api: ApiPromise) {
   logger.info(`VAnchor with id \`${vanchorId}\` created`);
 
   logger.info('Protocol Substrate ready to use');
-}
-
-function getKeyring() {
-  const k = new Keyring({ type: 'sr25519' });
-  return k.addFromUri(ALICE_KEY_URI);
-}
-
-async function createPoolShare(
-  apiPromise: ApiPromise,
-  name: string,
-  signer: KeyringPair,
-  existentialDeposit = 0
-) {
-  await polkadotTx(
-    apiPromise,
-    {
-      section: 'sudo',
-      method: 'sudo',
-    },
-    [
-      apiPromise.tx.assetRegistry.register(
-        name,
-        {
-          PoolShare: [+NATIVE_ASSET_ID],
-        },
-        existentialDeposit
-      ),
-    ],
-    signer
-  );
-  const nextAssetId = await apiPromise.query.assetRegistry.nextAssetId<U32>();
-  const id = nextAssetId.toNumber() - 1;
-  const tokenWrapperNonce = await apiPromise.query.tokenWrapper.proposalNonce<
-    Option<U32>
-  >(name);
-  const nonce = tokenWrapperNonce.unwrapOr(new BN(0)).toNumber() + 1;
-  await polkadotTx(
-    apiPromise,
-    {
-      section: 'sudo',
-      method: 'sudo',
-    },
-    [apiPromise.tx.tokenWrapper.setWrappingFee(1, id, nonce)],
-    signer
-  );
-  return id;
-}
-
-async function addAssetToPool(
-  apiPromise: ApiPromise,
-  assetId: string,
-  poolAssetId: string,
-  signer: KeyringPair
-) {
-  await polkadotTx(
-    apiPromise,
-    {
-      section: 'sudo',
-      method: 'sudo',
-    },
-    [apiPromise.tx.assetRegistry.addAssetToPool(poolAssetId, Number(assetId))],
-    signer
-  );
-}
-
-async function addAssetMetadata(
-  apiPromise: ApiPromise,
-  signer: KeyringPair,
-  assetId: string,
-  assetSymbol: string,
-  decimals = 18
-) {
-  await polkadotTx(
-    apiPromise,
-    {
-      section: 'sudo',
-      method: 'sudo',
-    },
-    [apiPromise.tx.assetRegistry.setMetadata(assetId, assetSymbol, decimals)],
-    signer
-  );
-}
-
-async function createVAnchor(
-  apiPromise: ApiPromise,
-  assetId: number,
-  signer: KeyringPair
-): Promise<number> {
-  await polkadotTx(
-    apiPromise,
-    {
-      section: 'sudo',
-      method: 'sudo',
-    },
-    [apiPromise.tx.vAnchorBn254.create(1, 30, assetId)],
-    signer
-  );
-  const nextTreeId = await apiPromise?.query.merkleTreeBn254.nextTreeId();
-  return nextTreeId.toNumber() - 1;
 }
 
 main().catch(console.error);

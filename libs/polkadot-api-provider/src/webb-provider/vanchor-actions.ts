@@ -249,7 +249,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const secrets = payload.note.secrets.split(':');
     const depositUtxo = await Utxo.generateUtxo({
       curve: payload.note.curve,
-      backend: 'Arkworks', // Upload this in the generateNote method in subsequent PR
+      backend: 'Arkworks', // Update this in the generateNote method in subsequent PR
       amount: payload.note.amount,
       originChainId: payload.note.sourceChainId.toString(),
       chainId: payload.note.targetChainId.toString(),
