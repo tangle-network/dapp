@@ -1,7 +1,5 @@
-import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { decodeAddress } from '@polkadot/util-crypto';
 import {
-  Account,
   ActiveWebbRelayer,
   FixturesStatus,
   isVAnchorDepositPayload,
@@ -28,7 +26,7 @@ import {
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { getLeafIndex } from '../mt-utils';
 
 import { PolkadotTx } from '../transaction';
@@ -210,15 +208,16 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
-    const anchor = this.inner.config.getAnchorAddress(
+    const treeIdStr = this.inner.config.getAnchorAddress(
       fungibleCurrencyId,
       typedChainId
     );
-    if (!chain || !anchor) {
+
+    if (!chain || !treeIdStr) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const treeId = Number(anchor);
+    const treeId = Number(treeIdStr);
     if (isNaN(treeId)) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }

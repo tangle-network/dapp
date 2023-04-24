@@ -464,8 +464,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 chain.chainId
               );
 
-              // TODO: Should initialize the api config with the currencies config
-              // fetched on-chain
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
                 [url],
@@ -484,7 +482,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 () =>
                   new Worker(
                     new URL(
-                      '@webb-tools/react-environment/arkworks-proving-manager.worker'
+                      '@webb-tools/react-environment/arkworks-proving-manager.worker',
+                      import.meta.url
                     )
                   ),
                 typedChainId,

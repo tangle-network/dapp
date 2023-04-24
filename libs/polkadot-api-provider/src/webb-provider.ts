@@ -241,7 +241,7 @@ export class WebbPolkadot
     endpoints: string[], // Endpoints of the substrate node
     errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
-    ApiConfig: ApiConfig, // The whole and current app configuration
+    apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
     wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
     typedChainId: number,
@@ -264,7 +264,7 @@ export class WebbPolkadot
       typedChainId,
       injectedExtension,
       relayerBuilder,
-      ApiConfig,
+      apiConfig,
       notification,
       provider,
       accounts,
@@ -371,7 +371,7 @@ export class WebbPolkadot
       const smallKey = await fetchVAnchorKeyFromAws(
         maxEdges,
         isSmall,
-        dummyAbortSignal
+        true // isSubstrate
       );
 
       const smallWasm = await fetchVAnchorWasmFromAws(
@@ -397,7 +397,7 @@ export class WebbPolkadot
     const largeKey = await fetchVAnchorKeyFromAws(
       maxEdges,
       isSmall,
-      dummyAbortSignal
+      true // isSubstrate
     );
 
     const largeWasm = await fetchVAnchorWasmFromAws(
@@ -423,8 +423,6 @@ export class WebbPolkadot
    * @returns zk proving key
    */
   async getZkVAnchorKey(maxEdges: number, isSmall?: boolean) {
-    const dummyAbortSignal = new AbortController().signal;
-
     if (isSmall) {
       if (this.smallFixtures) {
         return this.smallFixtures.zkey;
@@ -433,7 +431,7 @@ export class WebbPolkadot
       const smallKey = await fetchVAnchorKeyFromAws(
         maxEdges,
         isSmall,
-        dummyAbortSignal
+        true // isSubstrate
       );
 
       // Return the key without storing it in the cache
@@ -448,7 +446,7 @@ export class WebbPolkadot
     const largeKey = await fetchVAnchorKeyFromAws(
       maxEdges,
       isSmall,
-      dummyAbortSignal
+      true // isSubstrate
     );
 
     // Return the key without storing it in the cache

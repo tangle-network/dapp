@@ -526,11 +526,7 @@ export class WebbWeb3Provider
         return this.smallFixtures;
       }
 
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        isSmall,
-        dummyAbortSignal
-      );
+      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
       const smallWasm = await fetchVAnchorWasmFromAws(
         maxEdges,
@@ -552,11 +548,7 @@ export class WebbWeb3Provider
       return this.largeFixtures;
     }
 
-    const largeKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      isSmall,
-      dummyAbortSignal
-    );
+    const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
     const largeWasm = await fetchVAnchorWasmFromAws(
       maxEdges,

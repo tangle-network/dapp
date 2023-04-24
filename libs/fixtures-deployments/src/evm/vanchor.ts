@@ -9,38 +9,44 @@ import { cachedFetch } from '@webb-tools/browser-utils';
 export const fetchVAnchorKeyFromAws = async (
   maxEdges: number,
   small: boolean,
-  abortSignal: AbortSignal
+  isSubstrate?: boolean,
+  abortSignal?: AbortSignal
 ) => {
   let filePath: string;
   let cachedURI: string;
 
+  const filePathPrefix = isSubstrate ? 'substrate/vanchor/bn254/x5' : '';
+  const filePathSuffix = isSubstrate
+    ? 'proving_key_uncompressed.bin'
+    : 'circuit_final.zkey';
+
   switch (maxEdges) {
     case 1:
       if (small) {
-        filePath = 'vanchor_2/2/circuit_final.zkey';
+        filePath = isSubstrate ? '2-2-2' : 'vanchor_2/2';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
-        filePath = 'vanchor_16/2/circuit_final.zkey';
+        filePath = isSubstrate ? '2-16-2' : 'vanchor_16/2';
         cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     case 7:
       if (small) {
-        filePath = 'vanchor_2/8/circuit_final.zkey';
+        filePath = isSubstrate ? '32-2-2' : 'vanchor_2/8';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
-        filePath = 'vanchor_16/8/circuit_final.zkey';
+        filePath = isSubstrate ? '32-16-2' : 'vanchor_16/8';
         cachedURI = getCachedFixtureURI(filePath);
       }
 
       break;
     default:
       if (small) {
-        filePath = 'vanchor_2/2/circuit_final.zkey';
+        filePath = isSubstrate ? '2-2-2' : 'vanchor_2/2';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
-        filePath = 'vanchor_16/2/circuit_final.zkey';
+        filePath = isSubstrate ? '2-16-2' : 'vanchor_16/2';
         cachedURI = getCachedFixtureURI(filePath);
       }
 
@@ -53,9 +59,13 @@ export const fetchVAnchorKeyFromAws = async (
   }
 
   try {
+    const fullFilePath = `${
+      filePathPrefix ? `${filePathPrefix}/` : ''
+    }${filePath}/${filePathSuffix}`;
+
     const url = withLocalFixtures()
       ? cachedURI
-      : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${filePath}`;
+      : `https://dapp-fixtures.s3.amazonaws.com/${deployment}/${fullFilePath}`;
 
     const key = await cachedFetch(url, { signal: abortSignal });
 
