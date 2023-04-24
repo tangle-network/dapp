@@ -1,4 +1,4 @@
-import { decodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
   FixturesStatus,
@@ -345,9 +345,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       });
     }
 
+    const secret = randomAsU8a();
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
-      hexToU8a(outputs[0].encrypt()),
-      hexToU8a(outputs[1].encrypt()),
+      naclEncrypt(outputs[0].commitment, secret).encrypted,
+      naclEncrypt(outputs[1].commitment, secret).encrypted,
     ];
 
     const fixturesList = new Map<string, FixturesStatus>();
@@ -380,8 +381,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       token: assetIdBytes,
     };
 
-    const provingWorker = this.inner.wasmFactory();
-    const pm = new ArkworksProvingManager(provingWorker);
+    const pm = new ArkworksProvingManager(null); // No worker needed for now.
     const data: VAnchorProof = await pm.prove('vanchor', proofInput);
 
     const extData = {
