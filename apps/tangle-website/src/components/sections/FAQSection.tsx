@@ -50,7 +50,8 @@ export const FAQSection = () => {
           </SectionDescription2>
         </div>
         <Accordion
-          defaultValue={faqItems[0].question}
+          defaultValue={[faqItems[0].question]}
+          type="multiple"
           className="lg:w-[70%] lg:mx-auto"
         >
           {faqItems.map((item, index) => (
