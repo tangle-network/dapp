@@ -19,6 +19,7 @@ import { ApiPromise } from '@polkadot/api';
 import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
 import { LocalProtocolSubstrate } from '@webb-tools/test-utils';
 import { BN } from 'bn.js';
+import chalk from 'chalk';
 import { Command } from 'commander';
 import { resolve } from 'path';
 
@@ -146,7 +147,7 @@ async function initPoolShare(api: ApiPromise) {
     `Token transferred to test account with hash \`${hash.toHuman()}\``
   );
 
-  logger.info('Protocol Substrate ready to use');
+  logger.info(chalk.green.bold('Protocol Substrate ready to use'));
 }
 
 main().catch(console.error);

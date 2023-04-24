@@ -86,9 +86,17 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
     const assetDetail = asset.unwrap();
     const assetMetadata = metadata.unwrap();
 
+    const name = assetDetail.name.toHuman()?.toString();
+    const symbol = assetMetadata.symbol.toHuman()?.toString();
+
+    if (!name || !symbol) {
+      console.error('Empty name or symbol');
+      return null;
+    }
+
     const native: ICurrency = {
-      name: assetDetail.name.toString(),
-      symbol: assetMetadata.symbol.toString(),
+      name,
+      symbol,
       decimals: assetMetadata.decimals.toNumber(),
       address: index.toString(),
     };

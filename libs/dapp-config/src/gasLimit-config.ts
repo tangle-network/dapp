@@ -16,11 +16,13 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.AvalancheFuji]: BigNumber.from(2000000),
   [PresetTypedChainId.ScrollAlpha]: BigNumber.from(2000000),
 
-  // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
+  // Orbit
   [PresetTypedChainId.HermesOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
   [PresetTypedChainId.AthenaOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
   [PresetTypedChainId.DemeterOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
+
+  // Substrate
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
 };
 
 export default gasLimitConfig;
