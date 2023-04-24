@@ -7,3 +7,4 @@ export * from './ParticipationMechanicsSection';
 export * from './SupportedBySection';
 export * from './CommunitySection';
 export * from './UseCasesSection';
+export * from './FAQSection';
