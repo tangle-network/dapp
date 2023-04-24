@@ -1,8 +1,4 @@
 import { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/free-mode';
 import {
   TabContent,
   TabsList,
@@ -10,28 +6,28 @@ import {
   TabTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
 import {
   SectionDescription,
+  SectionDescription2,
   SectionHeader,
   SectionTitle,
-  ParticipationTabTrigger,
 } from '..';
-
 import {
   WEBB_DOCS_URL,
   NODE_OPERATORS_URL,
   POLKADOT_TANGLE_URL,
 } from '../../constants';
 
+interface TangleFeatureCardProps {
+  tabName: string;
+}
+
 const tabsContent = {
-  // Crowdloan: {
-  //   title: 'Participate Tangle’s Crowdloan',
-  //   description:
-  //     'A community-backed launch that allows people to contribute by locking up their KSM temporarily. Tangle’s native token (TNT) will be distributed based on the amount of KSM locked. Join waitlist, and be sure you’re eligible to participate with tokens on hand.',
-  //   linkText: 'Contribute Now',
-  //   linkUrl: WEBB_DOCS_URL,
-  // },
   'Claim Airdrop': {
     title: 'Claim Airdrop',
     description:
@@ -62,87 +58,110 @@ export const ParticipationMechanicsSection = () => {
 
   return (
     <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
-      <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
-        <SectionHeader className="text-center pb-2">
-          Participation Mechanics
-        </SectionHeader>
-        <SectionTitle className="pb-4">Join the Tangle Ecosystem</SectionTitle>
-        <SectionDescription className="text-center lg:w-[70%]">
-          With Tangle Network, we can create a more scalable, interoperable, and
-          positive-sum web3 privacy ecosystem.
-        </SectionDescription>
-      </div>
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
+          <SectionHeader className="text-center pb-2">
+            Participation Mechanics
+          </SectionHeader>
+          <SectionTitle className="pb-4">
+            Join the Tangle Ecosystem
+          </SectionTitle>
+          <SectionDescription className="text-center lg:w-[70%]">
+            With Tangle Network, we can create a more scalable, interoperable,
+            and positive-sum web3 privacy ecosystem.
+          </SectionDescription>
+        </div>
 
-      <div className="lg:w-[70%]">
-        <TabsRoot
-          defaultValue={activeTab}
-          value={activeTab}
-          onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
-        >
-          {/* Desktop + Mobile Tab Triggers */}
-          <TabsList aria-label="tabs" className="lg:mx-0">
-            <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-              {Object.keys(tabsContent).map((tabName, i) => (
-                <TabTrigger
-                  value={tabName}
-                  className="w-full flex flex-col items-center justify-center !bg-inherit p-0"
-                  key={i}
-                >
-                  <ParticipationTabTrigger tabName={tabName} />
-                </TabTrigger>
-              ))}
-            </div>
-
-            {/* Tablet Tab Triggers  */}
-            <Swiper
-              spaceBetween={16}
-              slidesPerView="auto"
-              freeMode={true}
-              modules={[FreeMode]}
-              className="w-full hidden md:block lg:hidden mb-6 !mx-0 !pl-5"
-            >
-              {Object.keys(tabsContent).map((tabName, i) => (
-                <SwiperSlide
-                  key={i}
-                  style={{
-                    width: 225,
-                    height: 'auto',
-                  }}
-                >
+        <div className="lg:w-[70%] mx-auto">
+          <TabsRoot
+            defaultValue={activeTab}
+            value={activeTab}
+            onValueChange={(nextTab) => setActiveTab(nextTab as TabTypes)}
+          >
+            {/* Desktop + Mobile Tab Triggers */}
+            <TabsList aria-label="tabs" className="lg:mx-0">
+              <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                {Object.keys(tabsContent).map((tabName, i) => (
                   <TabTrigger
                     value={tabName}
-                    className="w-full !bg-inherit p-0"
+                    className="w-full flex flex-col items-center justify-center !bg-inherit p-0"
                     key={i}
                   >
                     <ParticipationTabTrigger tabName={tabName} />
                   </TabTrigger>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </TabsList>
+                ))}
+              </div>
 
-          {/* Tab Contents */}
-          {Object.entries(tabsContent).map(([key, value]) => (
-            <TabContent key={key} value={key} className="md:px-5 lg:px-0">
-              <Typography
-                variant="h5"
-                className="font-bold !text-[24px] !leading-[40px] mb-3"
+              {/* Tablet Tab Triggers  */}
+              <Swiper
+                spaceBetween={16}
+                slidesPerView="auto"
+                freeMode={true}
+                modules={[FreeMode]}
+                className="w-full hidden md:block lg:hidden mb-6 !mx-0 !pl-5"
               >
-                {value.title}
-              </Typography>
-              <p className="text-mono-140 text-[20px] leading-[32px] mb-6">
-                {value.description}
-              </p>
-              <a
-                href={value.linkUrl}
-                className="text-purple-70 underline font-bold capitalize"
-              >
-                {value.linkText}
-              </a>
-            </TabContent>
-          ))}
-        </TabsRoot>
+                {Object.keys(tabsContent).map((tabName, i) => (
+                  <SwiperSlide
+                    key={i}
+                    style={{
+                      width: 225,
+                      height: 'auto',
+                    }}
+                  >
+                    <TabTrigger
+                      value={tabName}
+                      className="w-full !bg-inherit p-0"
+                      key={i}
+                    >
+                      <ParticipationTabTrigger tabName={tabName} />
+                    </TabTrigger>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </TabsList>
+
+            {/* Tab Contents */}
+            {Object.entries(tabsContent).map(([key, value]) => (
+              <TabContent key={key} value={key} className="md:px-5 lg:px-0">
+                <Typography
+                  variant="h5"
+                  className="font-bold !text-[24px] !leading-[40px] mb-3"
+                >
+                  {value.title}
+                </Typography>
+                <SectionDescription2 className="mb-6">
+                  {value.description}
+                </SectionDescription2>
+                <a
+                  href={value.linkUrl}
+                  className="text-purple-70 underline font-bold capitalize"
+                >
+                  {value.linkText}
+                </a>
+              </TabContent>
+            ))}
+          </TabsRoot>
+        </div>
       </div>
     </section>
+  );
+};
+
+const ParticipationTabTrigger: React.FC<TangleFeatureCardProps> = (props) => {
+  const { tabName } = props;
+  return (
+    <>
+      <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
+        <div className="w-full text-inherit">
+          <div className="flex flex-col items-center gap-2 text-inherit">
+            <div className="w-12 h-12 bg-mono-40 rounded-full" />
+            <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
+              {tabName}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="participation-tab-polygon w-0 h-0 border-transparent border-solid border-x-[8px] border-t-[16px]" />
+    </>
   );
 };

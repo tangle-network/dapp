@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import { SectionHeader, SectionTitle2 } from '..';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+
+import { SectionHeader, SectionTitle2 } from '..';
 import { UseCase1Svg, UseCase2Svg, UseCase3Svg, UseCase4Svg } from '../svgs';
 
-const tangleUsecases = [
+const tangleUseCases = [
   {
     icon: <UseCase1Svg />,
     title: 'General Messaging Passing & Public Bridges',
@@ -37,25 +39,6 @@ const tangleUsecases = [
 ];
 
 export const UseCasesSection = () => {
-  const [isTablet, setIsTablet] = useState(false);
-
-  useEffect(() => {
-    function handleResize() {
-      const width = window.innerWidth;
-      if (width <= 768) {
-        setIsTablet(true);
-      } else {
-        setIsTablet(false);
-      }
-    }
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <section className="bg-mono-200 px-[20px] py-[80px] xl:flex xl:items-center xl:justify-center">
       <div>
@@ -65,44 +48,51 @@ export const UseCasesSection = () => {
             Tangle Powers the Community to Optimized for Any Usecases.
           </SectionTitle2>
         </div>
-        {isTablet ? (
-          <div className="mt-8 flex flex-col gap-6">
-            {tangleUsecases.map((usecase, i) => {
-              return (
+
+        {/* Desktop + Mobile */}
+        <div className="mt-8 flex md:hidden lg:flex flex-col lg:flex-row gap-6">
+          {tangleUseCases.map((useCase, i) => {
+            return (
+              <UseCaseCard
+                icon={useCase.icon}
+                title={useCase.title}
+                description={useCase.description}
+                link={useCase.link}
+                key={i}
+              />
+            );
+          })}
+        </div>
+
+        {/* Tablet */}
+        <Swiper
+          spaceBetween={16}
+          slidesPerView="auto"
+          freeMode={true}
+          modules={[FreeMode]}
+          className="mt-8 hidden md:block lg:hidden"
+        >
+          {tangleUseCases.map((useCase, i) => {
+            return (
+              <SwiperSlide
+                key={i}
+                style={{
+                  width: '264px',
+                  height: 'auto',
+                  alignSelf: 'stretch',
+                }}
+              >
                 <UseCaseCard
-                  icon={usecase.icon}
-                  title={usecase.title}
-                  description={usecase.description}
-                  link={usecase.link}
+                  icon={useCase.icon}
+                  title={useCase.title}
+                  description={useCase.description}
+                  link={useCase.link}
                   key={i}
                 />
-              );
-            })}
-          </div>
-        ) : (
-          <Swiper spaceBetween={16} slidesPerView="auto" className="mt-8">
-            {tangleUsecases.map((usecase, i) => {
-              return (
-                <SwiperSlide
-                  key={i}
-                  style={{
-                    width: '264px',
-                    height: 'auto',
-                    alignSelf: 'stretch',
-                  }}
-                >
-                  <UseCaseCard
-                    icon={usecase.icon}
-                    title={usecase.title}
-                    description={usecase.description}
-                    link={usecase.link}
-                    key={i}
-                  />
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        )}
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       </div>
     </section>
   );
