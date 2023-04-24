@@ -1,6 +1,11 @@
 import '@webb-tools/protocol-substrate-types';
 
 import { ApiPromise } from '@polkadot/api';
+import { Option } from '@polkadot/types';
+import {
+  PalletAssetRegistryAssetDetails,
+  PalletAssetRegistryAssetMetadata,
+} from '@polkadot/types/lookup';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
 import { ChainAddressConfig } from '../../anchors';
@@ -14,7 +19,7 @@ import {
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;
 
-// api.registry.chainTokens[0] is the native currencya by default
+// The default native currency index in the asset registry pallet
 const DEFAULT_NATIVE_INDEX = 0;
 
 // the default decimals
@@ -62,22 +67,30 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       return Promise.resolve(cachedNativeCurrency);
     }
 
-    const chainTokens = provider.registry.chainTokens;
-    const decimals = provider.registry.chainDecimals;
-    const address = provider.registry.chainSS58?.toString() ?? '0';
+    const index = DEFAULT_NATIVE_INDEX;
+    const [asset, metadata] = await provider.queryMulti<
+      [
+        Option<PalletAssetRegistryAssetDetails>,
+        Option<PalletAssetRegistryAssetMetadata>
+      ]
+    >([
+      [provider.query.assetRegistry.assets, index],
+      [provider.query.assetRegistry.assetMetadataMap, index],
+    ]);
 
-    if (chainTokens.length === 0 || decimals.length === 0) {
-      console.error('Empty chain tokens or decimals');
+    if (asset.isNone || metadata.isNone) {
+      console.error('Empty asset or metadata');
       return null;
     }
 
-    const index = DEFAULT_NATIVE_INDEX;
+    const assetDetail = asset.unwrap();
+    const assetMetadata = metadata.unwrap();
 
     const native: ICurrency = {
-      name: chainTokens[index],
-      symbol: chainTokens[index],
-      decimals: decimals[index],
-      address,
+      name: assetDetail.name.toString(),
+      symbol: assetMetadata.symbol.toString(),
+      decimals: assetMetadata.decimals.toNumber(),
+      address: index.toString(),
     };
 
     // Cache the native currency

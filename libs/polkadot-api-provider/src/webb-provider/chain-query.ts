@@ -27,45 +27,70 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
         const decimals = this.inner.state.defaultDecimalPlaces;
 
         if (activeAccount) {
-          // If the assetId is not 0, query the orml tokens
-          if (assetId !== '0') {
-            let tokenAccountData: OrmlTokensAccountData;
+          let tokenAccountData: OrmlTokensAccountData;
 
-            try {
-              tokenAccountData = await this.inner.api.query.tokens.accounts(
-                activeAccount.address,
-                assetId
-              );
-            } catch (e) {
-              // It is possible that we have connected to a chain that is not setup with orml tokens.
-              return '';
-            }
-
-            const json = tokenAccountData;
-
-            let tokenBalance: string = json.free.toString();
-
-            tokenBalance = tokenBalance.replaceAll(',', '');
-            const denominatedTokenBalance = new BN(tokenBalance).div(
-              new BN(10).pow(new BN(decimals))
+          try {
+            tokenAccountData = await this.inner.api.query.tokens.accounts(
+              activeAccount.address,
+              assetId
             );
-
-            return denominatedTokenBalance.toString();
-          } else {
-            const systemAccountData = await this.inner.api.query.system.account(
-              activeAccount.address
-            );
-
-            let tokenBalance: string = systemAccountData.data.free.toString();
-
-            tokenBalance = tokenBalance.replaceAll(',', '');
-            const denominatedTokenBalance = new BN(tokenBalance).div(
-              new BN(10).pow(new BN(decimals))
-            );
-
-            return denominatedTokenBalance.toString();
+          } catch (e) {
+            // It is possible that we have connected to a chain that is not setup with orml tokens.
+            return '';
           }
+
+          const json = tokenAccountData;
+
+          let tokenBalance: string = json.free.toString();
+
+          tokenBalance = tokenBalance.replaceAll(',', '');
+          const denominatedTokenBalance = new BN(tokenBalance).div(
+            new BN(10).pow(new BN(decimals))
+          );
+
+          return denominatedTokenBalance.toString();
         }
+
+        // if (activeAccount) {
+        //   // If the assetId is not 0, query the orml tokens
+        //   if (assetId !== '0') {
+        //     let tokenAccountData: OrmlTokensAccountData;
+
+        //     try {
+        //       tokenAccountData = await this.inner.api.query.tokens.accounts(
+        //         activeAccount.address,
+        //         assetId
+        //       );
+        //     } catch (e) {
+        //       // It is possible that we have connected to a chain that is not setup with orml tokens.
+        //       return '';
+        //     }
+
+        //     const json = tokenAccountData;
+
+        //     let tokenBalance: string = json.free.toString();
+
+        //     tokenBalance = tokenBalance.replaceAll(',', '');
+        //     const denominatedTokenBalance = new BN(tokenBalance).div(
+        //       new BN(10).pow(new BN(decimals))
+        //     );
+
+        //     return denominatedTokenBalance.toString();
+        //   } else {
+        //     const systemAccountData = await this.inner.api.query.system.account(
+        //       activeAccount.address
+        //     );
+
+        //     let tokenBalance: string = systemAccountData.data.free.toString();
+
+        //     tokenBalance = tokenBalance.replaceAll(',', '');
+        //     const denominatedTokenBalance = new BN(tokenBalance).div(
+        //       new BN(10).pow(new BN(decimals))
+        //     );
+
+        //     return denominatedTokenBalance.toString();
+        //   }
+        // }
 
         return '';
       })

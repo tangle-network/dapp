@@ -51,6 +51,7 @@ export const substrateProviderFactory = async (
       constants.APP_NAME,
       [chain.url],
       (error) => {
+        error.cancel();
         rej(error);
       }
     );

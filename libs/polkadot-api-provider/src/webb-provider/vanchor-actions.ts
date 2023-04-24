@@ -28,7 +28,7 @@ import {
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
-import { lastValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { getLeafIndex } from '../mt-utils';
 
 import { PolkadotTx } from '../transaction';
@@ -241,8 +241,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     await this.checkHasBalance(payload, wrapUnwrapAssetId);
 
-    await this.checkHasAllowance(payload, wrapUnwrapAssetId, activeAccount);
-
     const address = activeAccount.address;
     const zeroBN = new BN(0);
 
@@ -274,7 +272,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
   private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {
     // Check if the user has enough balance
-    const balance = await lastValueFrom(
+    const balance = await firstValueFrom(
       this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId)
     );
 
@@ -285,18 +283,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       await this.inner.noteManager?.removeNote(payload);
       throw new Error('Not enough balance');
     }
-  }
-
-  // TODO: Finish the approval check
-  private async checkHasAllowance(
-    payload: Note,
-    wrapUnwrapAssetId: string,
-    account: Account<InjectedAccount>
-  ) {
-    // TODO: Finish this
-    /* const api = this.inner.api;
-    api.query.assets.approvals(wrapUnwrapAssetId, activeAccount.address);
-    api.tx.assets.approveTransfer(wrapUnwrapAssetId, activeAccount.address) */
   }
 
   /**
