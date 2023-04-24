@@ -37,9 +37,9 @@ const faqItems = [
 
 export const FAQSection = () => {
   return (
-    <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
+    <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[1440px] mx-auto">
-        <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
+        <div className="flex flex-col items-center mb-9">
           <SectionHeader className="text-center pb-2">Learn More</SectionHeader>
           <SectionTitle className="pb-4">
             Frequently asked questions
@@ -49,7 +49,7 @@ export const FAQSection = () => {
             with others in our community channels to learn more!
           </SectionDescription2>
         </div>
-        <Accordion defaultValue={faqItems[0].question}>
+        <Accordion defaultValue={faqItems[0].question} className="lg:w-[70%] lg:mx-auto">
           {faqItems.map((item, index) => (
             <AccordionItem
               key={index}
