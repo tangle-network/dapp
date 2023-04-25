@@ -123,11 +123,13 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               customAmountInputProps={customAmountInputProps}
             />
           </BridgeInputGroup>
+
           <BridgeInputGroup className="flex flex-col space-y-2">
             <RelayerInput {...relayerInputProps} />
             <RecipientInput {...recipientInputProps} />
             <RefundInput {...refundInputProps} />
           </BridgeInputGroup>
+
           {/** Info */}
           {infoItemProps && (
             <div className="flex flex-col space-y-1">
@@ -138,7 +140,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="mt-4 space-y-2">
           <Button
             {...withdrawBtnProps}
             isFullWidth

@@ -18,7 +18,7 @@ import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20__factory } from '@webb-tools/contracts';
+import { ERC20, ERC20__factory } from '@webb-tools/contracts';
 import { checkNativeAddress } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -39,6 +39,7 @@ import {
 } from '@webb-tools/utils';
 import {
   BigNumber,
+  BigNumberish,
   ContractReceipt,
   ContractTransaction,
   Overrides,
@@ -109,7 +110,9 @@ const isVAnchorTransferPayload = (
     'changeUtxo' in payload &&
     payload['changeUtxo'] instanceof Utxo &&
     'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo
+    payload['transferUtxo'] instanceof Utxo &&
+    'feeAmount' in payload &&
+    payload['feeAmount'] instanceof BigNumber
   );
 };
 
@@ -212,12 +215,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         leavesMap, // leavesMap
       ]);
     } else if (isVAnchorTransferPayload(payload)) {
-      const { changeUtxo, transferUtxo, notes } = payload;
+      const { changeUtxo, transferUtxo, notes, feeAmount } = payload;
 
       const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
       const relayer =
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+      // If no relayer is set, then the fee is 0, otherwise it is the fee amount
+      const feeVal = relayer === ZERO_ADDRESS ? BigNumber.from(0) : feeAmount;
 
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
@@ -225,7 +231,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
-        BigNumber.from(0), // fee
+        feeVal, // fee
         BigNumber.from(0), // refund
         ZERO_ADDRESS, // recipient
         relayer, // relayer
@@ -757,41 +763,45 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   ): Promise<void> | never {
     const { note } = payload;
     const { amount } = note;
+
     const srcVAnchor = await this.getVAnchor(payload);
+    const spenderAddress = srcVAnchor.contract.address;
     const currentWebbToken = await srcVAnchor.getWebbToken();
+
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
     let approvalTransaction: ContractTransaction | undefined;
 
+    // If the `wrapUnwrapToken` is different from the `currentWebbToken` address,
+    // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
+    const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
+
+    const isRequiredApproval = !isWrapOrUnwrap
+      ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
+      : await srcVAnchor.isWrappableTokenApprovalRequired(
+          wrapUnwrapToken,
+          approvalValue
+        );
+
     if (checkNativeAddress(wrapUnwrapToken)) {
       /// native token no approval needed
-    } else if (
-      wrapUnwrapToken === currentWebbToken.address &&
-      (await srcVAnchor.isWebbTokenApprovalRequired(amount))
-    ) {
+    } else if (!isWrapOrUnwrap && isRequiredApproval) {
       // approve the token
       approvalTransaction = await currentWebbToken.approve(
-        srcVAnchor.contract.address,
+        spenderAddress,
         amount,
         {
           gasLimit: '0x5B8D80',
         }
       );
-    } else if (
-      await srcVAnchor.isWrappableTokenApprovalRequired(
-        wrapUnwrapToken,
-        approvalValue
-      )
-    ) {
+    } else if (isRequiredApproval) {
       // approve the wrappable asset
       const token = ERC20__factory.connect(
         wrapUnwrapToken,
         this.inner.getEthersProvider().getSigner()
       );
-      approvalTransaction = await token.approve(
-        currentWebbToken.address,
-        approvalValue,
-        { gasLimit: '0x5B8D80' }
-      );
+      approvalTransaction = await token.approve(spenderAddress, approvalValue, {
+        gasLimit: '0x5B8D80',
+      });
     }
 
     if (approvalTransaction) {

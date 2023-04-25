@@ -34,48 +34,50 @@ const cardItems: Array<SupportedBySectionCardType> = [
 
 export const SupportedBySection = () => {
   return (
-    <section className="grid gap-[70px] px-3 pb-[80px] lg:grid-cols-2 lg:items-center lg:px-[40px] xl:px-[160px]">
+    <section className="py-[80px]">
       {/* DETAILS */}
-      <div className="flex flex-col items-start">
-        <SectionTitle className="text-left">
-          Tangle Network is supported by...
-        </SectionTitle>
-        <SectionDescription className="mt-3 text-left">
-          Tangle Network is built by Webb Foundation, with support from various
-          established industry programs and partners.
-        </SectionDescription>
-        <div className="flex gap-4 mt-3">
-          <Button
-            href={TANGLE_NETWORK_DOCS_URL}
-            target="_blank"
-            rel="noreferrer"
-            variant="secondary"
-            className="button-base-2 bg-inherit"
-          >
-            Learn More
-          </Button>
-          <Button
-            href={WEBB_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="button-base-2"
-          >
-            Visit Webb
-          </Button>
+      <div className="max-w-[1440px] mx-auto grid gap-[70px] px-3 lg:grid-cols-2 lg:items-center lg:px-[40px] xl:px-[160px]">
+        <div className="md:w-[75%] lg:w-full flex flex-col gap-6 items-start">
+          <SectionTitle className="text-left">
+            Tangle Network is supported by...
+          </SectionTitle>
+          <SectionDescription className="mt-3 text-left">
+            Tangle Network is built by Webb Foundation, with support from
+            various established industry programs and partners.
+          </SectionDescription>
+          <div className="flex gap-4 mt-3">
+            <Button
+              href={TANGLE_NETWORK_DOCS_URL}
+              target="_blank"
+              rel="noreferrer"
+              variant="secondary"
+              className="button-base-2 bg-inherit"
+            >
+              Learn More
+            </Button>
+            <Button
+              href={WEBB_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="button-base-2"
+            >
+              Visit Webb
+            </Button>
+          </div>
         </div>
-      </div>
-      {/* CARDS */}
-      <div className="grid gap-2 md:grid-cols-2">
-        {cardItems.map(({ logo, name, href }) => {
-          return (
-            <SupportedBySectionCard
-              key={name}
-              logo={logo}
-              name={name}
-              href={href}
-            />
-          );
-        })}
+        {/* CARDS */}
+        <div className="grid gap-2 md:grid-cols-2">
+          {cardItems.map(({ logo, name, href }) => {
+            return (
+              <SupportedBySectionCard
+                key={name}
+                logo={logo}
+                name={name}
+                href={href}
+              />
+            );
+          })}
+        </div>
       </div>
     </section>
   );

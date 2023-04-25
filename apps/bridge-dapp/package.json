@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/bridge-dapp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./src/index.js",
   "dependencies": {
     "@ngneat/falso": "^5.7.0",

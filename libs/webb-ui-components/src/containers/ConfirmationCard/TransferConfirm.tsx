@@ -20,7 +20,11 @@ import {
   TokenWithAmount,
 } from '../../components';
 import { Typography } from '../../typography';
-import { formatTokenAmount, shortenString } from '../../utils';
+import {
+  formatTokenAmount,
+  getRoundedAmountString,
+  shortenString,
+} from '../../utils';
 import { Section, WrapperSection } from './WrapperSection';
 import { TransferConfirmProps } from './types';
 
@@ -54,9 +58,32 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
     },
     ref
   ) => {
+    const amountContent = useMemo(() => {
+      if (typeof amount !== 'number') {
+        return '--';
+      }
+
+      const formated = getRoundedAmountString(amount, 3, Math.round);
+      return `${formated} ${token1Symbol ?? ''}`;
+    }, [amount, token1Symbol]);
+
+    const changeAmountContent = useMemo(() => {
+      if (typeof changeAmount !== 'number') {
+        return '--';
+      }
+
+      const formated = getRoundedAmountString(changeAmount, 3, Math.round);
+      return `${formated} ${token1Symbol ?? ''}`;
+    }, [changeAmount, token1Symbol]);
+
     const feeContent = useMemo(() => {
-      if (typeof fee === 'number' || typeof fee === 'string') {
+      if (typeof fee === 'string') {
         return `${fee} ${feeToken ?? ''}`;
+      }
+
+      if (typeof fee === 'number') {
+        const formatedFee = getRoundedAmountString(fee, 3, Math.round);
+        return `${formatedFee} ${feeToken ?? ''}`;
       }
 
       return '--';
@@ -66,7 +93,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[700px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -203,7 +230,10 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                         fw="bold"
                         className="block break-words text-mono-140 dark:text-mono-0"
                       >
-                        {shortenString(recipientPublicKey, 19)}
+                        {shortenString(
+                          recipientPublicKey,
+                          relayerAddress ? 7 : 19
+                        )}
                       </Typography>
                       <CopyWithTooltip textToCopy={recipientPublicKey} />
                     </div>
@@ -271,7 +301,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   title: 'Transfering',
                   info: 'Transfering',
                 }}
-                rightContent={amount?.toString()}
+                rightContent={amountContent}
               />
               <InfoItem
                 leftTextProps={{
@@ -279,7 +309,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   title: 'Change Amount',
                   info: 'Change Amount',
                 }}
-                rightContent={changeAmount?.toString()}
+                rightContent={changeAmountContent}
               />
               <InfoItem
                 leftTextProps={{

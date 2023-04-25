@@ -13,6 +13,8 @@ import { WalletConfig } from '.';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
+
+  // Testnet
   PresetTypedChainId.Goerli,
   PresetTypedChainId.Sepolia,
   PresetTypedChainId.HarmonyTestnet1,
@@ -21,12 +23,19 @@ const ANY_EVM = [
   PresetTypedChainId.OptimismTestnet,
   PresetTypedChainId.ArbitrumTestnet,
   PresetTypedChainId.PolygonTestnet,
-  PresetTypedChainId.HermesLocalnet,
-  PresetTypedChainId.AthenaLocalnet,
-  PresetTypedChainId.DemeterLocalnet,
   PresetTypedChainId.MoonbaseAlpha,
   PresetTypedChainId.AvalancheFuji,
   PresetTypedChainId.ScrollAlpha,
+
+  // Self hosted
+  PresetTypedChainId.HermesOrbit,
+  PresetTypedChainId.AthenaOrbit,
+  PresetTypedChainId.DemeterOrbit,
+
+  // Localnet
+  PresetTypedChainId.HermesLocalnet,
+  PresetTypedChainId.AthenaLocalnet,
+  PresetTypedChainId.DemeterLocalnet,
 ];
 
 const ANY_SUBSTRATE = [
