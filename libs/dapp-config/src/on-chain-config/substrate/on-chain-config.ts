@@ -67,38 +67,17 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       return Promise.resolve(cachedNativeCurrency);
     }
 
-    const index = DEFAULT_NATIVE_INDEX;
-    const [asset, metadata] = await provider.queryMulti<
-      [
-        Option<PalletAssetRegistryAssetDetails>,
-        Option<PalletAssetRegistryAssetMetadata>
-      ]
-    >([
-      [provider.query.assetRegistry.assets, index],
-      [provider.query.assetRegistry.assetMetadataMap, index],
-    ]);
-
-    if (asset.isNone || metadata.isNone) {
-      console.error('Empty asset or metadata');
-      return null;
-    }
-
-    const assetDetail = asset.unwrap();
-    const assetMetadata = metadata.unwrap();
-
-    const name = assetDetail.name.toHuman()?.toString();
-    const symbol = assetMetadata.symbol.toHuman()?.toString();
-
-    if (!name || !symbol) {
-      console.error('Empty name or symbol');
-      return null;
-    }
+    const name = provider.registry.chainTokens[DEFAULT_NATIVE_INDEX];
+    const decimals = provider.registry.chainDecimals[DEFAULT_NATIVE_INDEX];
+    const address = (
+      provider.registry.chainSS58 ?? DEFAULT_NATIVE_INDEX
+    ).toString();
 
     const native: ICurrency = {
       name,
-      symbol,
-      decimals: assetMetadata.decimals.toNumber(),
-      address: index.toString(),
+      symbol: name,
+      decimals,
+      address,
     };
 
     // Cache the native currency
@@ -129,28 +108,40 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
         throw new Error('VAnchor not found with tree id: ' + treeId);
       }
 
-      const metadata = vanchor.unwrap();
-      const assetId = metadata.asset.toString();
+      const vanchorDetail = vanchor.unwrap();
+      const assetId = vanchorDetail.asset.toString();
 
-      const asset = await provider.query.assetRegistry.assets(assetId);
-      if (asset.isNone) {
+      const [asset, metadata] = await provider.queryMulti<
+        [
+          Option<PalletAssetRegistryAssetDetails>,
+          Option<PalletAssetRegistryAssetMetadata>
+        ]
+      >([
+        [provider.query.assetRegistry.assets, assetId],
+        [provider.query.assetRegistry.assetMetadataMap, assetId],
+      ]);
+
+      if (asset.isNone || metadata.isNone) {
         throw new Error('Asset not found with id: ' + assetId);
       }
 
-      const assetMetadata = asset.unwrap();
-      if (!assetMetadata.assetType.isPoolShare) {
+      const assetDetail = asset.unwrap();
+      const assetMetadata = metadata.unwrap();
+      if (!assetDetail.assetType.isPoolShare) {
         throw new Error('Asset type is not PoolShare');
       }
 
-      const name = assetMetadata.name.toHuman()?.toString();
-      if (!name) {
+      const name = assetDetail.name.toHuman()?.toString();
+      const symbol = assetMetadata.symbol.toHuman()?.toString();
+      const decimals = assetMetadata.decimals.toNumber();
+      if (!name || !symbol || !decimals) {
         throw new Error('Asset name is empty');
       }
 
       const fungible: ICurrency = {
         name,
-        symbol: name,
-        decimals: DEFAULT_DECIMALS,
+        symbol,
+        decimals,
         address: assetId,
       };
 
@@ -200,6 +191,18 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       );
       const wrappable: ICurrency[] = await Promise.all(
         wrappableAssetIds.map(async (assetId) => {
+          if (assetId === '0') {
+            const native = await this.fetchNativeCurrency(
+              typedChainId,
+              provider
+            );
+
+            if (!native) {
+              throw new Error('Native currency not found');
+            }
+
+            return native;
+          }
           const asset = await provider.query.assetRegistry.assets(assetId);
           if (asset.isNone) {
             throw new Error('Asset not found with id: ' + assetId);

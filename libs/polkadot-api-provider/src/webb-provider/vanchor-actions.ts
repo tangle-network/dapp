@@ -19,7 +19,6 @@ import {
   Note,
   ProvingManagerSetupInput,
   randomBN,
-  toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
