@@ -6,18 +6,30 @@ import {
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
-  CircomUtxo,
   Keypair,
   Note,
   NoteGenInput,
   parseTypedChainId,
   ResourceId,
   toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
+import { Backend } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
+
+type DefaultNoteGenInput = Pick<
+  NoteGenInput,
+  | 'curve'
+  | 'denomination'
+  | 'exponentiation'
+  | 'hashFunction'
+  | 'protocol'
+  | 'version'
+  | 'width'
+>;
 
 // A NoteManager will manage the notes for a keypair.
 export class NoteManager {
@@ -27,6 +39,16 @@ export class NoteManager {
   private notesUpdatedSubject = new BehaviorSubject(false);
 
   private isSyncingNoteSubject = new BehaviorSubject(false);
+
+  static readonly defaultNoteGenInput: DefaultNoteGenInput = {
+    curve: 'Bn254',
+    denomination: '18',
+    exponentiation: '5',
+    hashFunction: 'Poseidon',
+    protocol: 'vanchor',
+    version: 'v1',
+    width: '5',
+  };
 
   private constructor(
     private noteStorage: Storage<NoteStorage>,
@@ -176,6 +198,10 @@ export class NoteManager {
     this.isSyncingNoteSubject.next(value);
   }
 
+  get defaultNoteGenInput(): DefaultNoteGenInput {
+    return NoteManager.defaultNoteGenInput;
+  }
+
   getKeypair() {
     return this.keypair;
   }
@@ -322,6 +348,7 @@ export class NoteManager {
    * @returns The generated note
    */
   async generateNote(
+    backend: Backend,
     sourceTypedChainId: number,
     sourceAnchorAddress: string,
     destTypedChainId: number,
@@ -335,9 +362,9 @@ export class NoteManager {
       .toString();
 
     // Convert the amount to units of wei
-    const outputUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
+    const outputUtxo = await Utxo.generateUtxo({
+      curve: this.defaultNoteGenInput.curve,
+      backend,
       amount: amountBigNumber,
       originChainId: sourceTypedChainId.toString(),
       chainId: destTypedChainId.toString(),
@@ -345,13 +372,9 @@ export class NoteManager {
     });
 
     const noteInput: NoteGenInput = {
+      ...this.defaultNoteGenInput,
       amount: amountBigNumber,
-      backend: 'Circom',
-      curve: 'Bn254',
-      denomination: '18',
-      exponentiation: '5',
-      hashFunction: 'Poseidon',
-      protocol: 'vanchor',
+      backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),
         toFixedHex(outputUtxo.amount, 16).substring(2),
@@ -363,8 +386,6 @@ export class NoteManager {
       targetChain: destTypedChainId.toString(),
       targetIdentifyingData: destAnchorAddress,
       tokenSymbol: tokenSymbol,
-      version: 'v1',
-      width: '5',
       index: outputUtxo.index,
     };
 

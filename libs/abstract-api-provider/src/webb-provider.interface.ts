@@ -4,22 +4,23 @@
 import { EventBus } from '@webb-tools/app-util';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { ECDSAClaims } from './ecdsa-claims';
-
+import { ApiPromise } from '@polkadot/api';
 import { ApiConfig } from '@webb-tools/dapp-config';
 import { ZkComponents } from '@webb-tools/utils';
+import { Backend } from '@webb-tools/wasm-utils';
 import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
+import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbState } from './state';
 import { ActionEvent } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-import { ApiPromise } from '@polkadot/api';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -188,21 +189,24 @@ export type WasmFactory = (name?: string) => Worker | null;
 /**
  * The representation of an api provider
  *
- * @param accounts - Accounts Adapter will have all methods related to the provider accounts.
- * @param methods - All of the available methods  of the API provider.
- * @param destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
- * @param capabilities - Manifesto of the supported actions of the provider.
- * @param endSession - Clean up for the provider that will remove the side effects.
- * @param relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
- * @param getProvider - A getter method for getting the underlying provider
- * @param notificationHandler - Function for emitting notification of the current provider process
- * @param wasmFactory - Provider of the wasm workers
+ * @param {AccountsAdapter} accounts - Accounts Adapter will have all methods related to the provider accounts.
+ * @param {WebbState} state - State of the provider
+ * @param {WebbMethods} methods - All of the available methods  of the API provider.
+ * @param {Backend} backend - Backend for the provider
+ * @param {() => Promise<void> | void} destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
+ * @param {ProvideCapabilities} capabilities - Manifesto of the supported actions of the provider.
+ * @param {() => Promise<void> | undefined} endSession - Clean up for the provider that will remove the side effects.
+ * @param {WebbRelayerManager} relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
+ * @param {any} getProvider - A getter method for getting the underlying provider
+ * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
+ * @param {WasmFactory} wasmFactory - Provider of the wasm workers
  *
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   state: WebbState;
   methods: WebbMethods<WebbApiProvider<T>>;
+  backend: Backend;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;

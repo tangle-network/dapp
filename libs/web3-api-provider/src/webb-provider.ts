@@ -70,8 +70,6 @@ export class WebbWeb3Provider
 
   private readonly _newBlock = new BehaviorSubject<null | number>(null);
 
-  readonly typedChainidSubject: BehaviorSubject<number>;
-
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
 
@@ -80,6 +78,10 @@ export class WebbWeb3Provider
   private largeFixtures: ZkComponents | null = null;
 
   private ethersProvider: providers.Web3Provider;
+
+  readonly typedChainidSubject: BehaviorSubject<number>;
+
+  readonly backend = 'Circom';
 
   readonly methods: WebbMethods<WebbWeb3Provider>;
 
@@ -389,23 +391,17 @@ export class WebbWeb3Provider
         ].join(':');
 
         const note: Note = await Note.generateNote({
+          ...NoteManager.defaultNoteGenInput,
           amount: utxo.amount,
-          backend: 'Circom',
-          curve: 'Bn254',
-          denomination: '18',
-          exponentiation: '5',
-          hashFunction: 'Poseidon',
+          backend: this.backend,
           index: utxo.index,
           privateKey: hexToU8a(utxo.secret_key),
-          protocol: 'vanchor',
           secrets,
           sourceChain: typedChainId.toString(),
           sourceIdentifyingData: vanchor.contract.address,
           targetChain: utxo.chainId,
           targetIdentifyingData: vanchor.contract.address,
           tokenSymbol: tokenSymbol.view.symbol,
-          version: 'v1',
-          width: '5',
         });
 
         return note;

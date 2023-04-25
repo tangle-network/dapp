@@ -73,8 +73,11 @@ export class WebbPolkadot
 
   readonly newBlockSub = new Set<VoidFn>();
 
-  private _newBlock = new BehaviorSubject<null | number>(null);
   readonly typedChainidSubject: BehaviorSubject<number>;
+
+  readonly backend = 'Arkworks';
+
+  private _newBlock = new BehaviorSubject<null | number>(null);
 
   // Map to store the max edges for each tree id
   private readonly vAnchorMaxEdges = new Map<string, number>();

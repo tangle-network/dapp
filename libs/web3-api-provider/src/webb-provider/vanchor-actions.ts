@@ -12,6 +12,7 @@ import {
   Transaction,
   TransactionPayloadType,
   TransactionState,
+  utxoFromVAnchorNote,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
@@ -27,7 +28,6 @@ import {
 } from '@webb-tools/dapp-types';
 import {
   ChainType,
-  CircomUtxo,
   Keypair,
   MerkleTree,
   Note,
@@ -49,49 +49,9 @@ import {
   Overrides,
 } from 'ethers';
 
-import { JsNote } from '@webb-tools/wasm-utils';
-import { poseidon } from 'circomlibjs';
+import { generateCircomCommitment } from '@webb-tools/abstract-api-provider';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
-
-const generateCircomCommitment = (note: JsNote): string => {
-  const noteSecretParts = note.secrets.split(':');
-  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
-  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
-  const secretKey = '0x' + noteSecretParts[2];
-  const blinding = '0x' + noteSecretParts[3];
-
-  const keypair = new Keypair(secretKey);
-
-  const hash = poseidon([chainId, amount, keypair.getPubKey(), blinding]);
-
-  return BigNumber.from(hash).toHexString();
-};
-
-export async function utxoFromVAnchorNote(
-  note: JsNote,
-  leafIndex: number
-): Promise<Utxo> {
-  const noteSecretParts = note.secrets.split(':');
-  const chainId = note.targetChainId;
-  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
-  const secretKey = '0x' + noteSecretParts[2];
-  const blinding = '0x' + noteSecretParts[3];
-  const originChainId = note.sourceChainId;
-
-  const keypair = new Keypair(secretKey);
-
-  return CircomUtxo.generateUtxo({
-    curve: note.curve,
-    backend: note.backend,
-    amount,
-    blinding: hexToU8a(blinding),
-    originChainId,
-    chainId,
-    index: leafIndex.toString(),
-    keypair,
-  });
-}
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -111,7 +71,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
 
       const secrets = payload.note.secrets.split(':');
-      const depositUtxo = await CircomUtxo.generateUtxo({
+      const depositUtxo = await Utxo.generateUtxo({
         curve: payload.note.curve,
         backend: payload.note.backend,
         amount: payload.note.amount,
@@ -570,7 +530,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       }));
 
     // Get the leaf index of the note
-    const depositedCommitment = generateCircomCommitment(note.note);
+    const depositedCommitment = generateCircomCommitment(note.note).toString();
     const event = parsedEvents.find((value) =>
       value.commitment.eq(depositedCommitment)
     );

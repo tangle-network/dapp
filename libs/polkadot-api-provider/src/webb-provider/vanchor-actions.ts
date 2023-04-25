@@ -245,7 +245,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const secrets = payload.note.secrets.split(':');
     const depositUtxo = await Utxo.generateUtxo({
       curve: payload.note.curve,
-      backend: 'Arkworks', // Update this in the generateNote method in subsequent PR
+      backend: payload.note.backend,
       amount: payload.note.amount,
       originChainId: payload.note.sourceChainId.toString(),
       chainId: payload.note.targetChainId.toString(),
@@ -433,7 +433,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       utxos.push(
         await Utxo.generateUtxo({
           curve: 'Bn254',
-          backend: 'Arkworks',
+          backend: this.inner.backend,
           chainId: typedChainId.toString(),
           originChainId: typedChainId.toString(),
           amount: '0',

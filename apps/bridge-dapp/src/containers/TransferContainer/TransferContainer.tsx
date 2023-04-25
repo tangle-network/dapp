@@ -1,4 +1,7 @@
-import { Currency } from '@webb-tools/abstract-api-provider';
+import {
+  Currency,
+  utxoFromVAnchorNote,
+} from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Chain,
@@ -19,11 +22,10 @@ import {
 import {
   calculateTypedChainId,
   ChainType as ChainTypeEnum,
-  CircomUtxo,
   Keypair,
   Note,
   ResourceId,
-  toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import {
   getRoundedAmountString,
@@ -747,9 +749,9 @@ export const TransferContainer = forwardRef<
         ? amountBigNumber.sub(fee)
         : amountBigNumber;
 
-      const transferUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
+      const transferUtxo = await Utxo.generateUtxo({
+        curve: noteManager.defaultNoteGenInput.curve,
+        backend: activeApi.backend,
         amount: utxoAmount.toString(),
         chainId: destTypedChainId.toString(),
         keypair: recipientKeypair,
@@ -761,43 +763,36 @@ export const TransferContainer = forwardRef<
         fungibleCurrencyDecimals
       );
 
-      const changeUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: changeAmountBigNumber.toString(),
-        chainId: currentTypedChainId.toString(),
-        keypair,
-        originChainId: currentTypedChainId.toString(),
-      });
-
       const srcAddress =
         activeApi.state.activeBridge.targets[currentTypedChainId];
 
       let changeNote: Note | undefined;
       if (changeAmountBigNumber.gt(0)) {
-        changeNote = await Note.generateNote({
-          amount: changeUtxo.amount,
-          backend: 'Circom',
-          curve: 'Bn254',
-          denomination: '18',
-          exponentiation: '5',
-          hashFunction: 'Poseidon',
-          protocol: 'vanchor',
-          secrets: [
-            toFixedHex(currentTypedChainId, 8).substring(2),
-            toFixedHex(changeUtxo.amount).substring(2),
-            toFixedHex(keypair.privkey).substring(2),
-            toFixedHex('0x' + changeUtxo.blinding).substring(2),
-          ].join(':'),
-          sourceChain: currentTypedChainId.toString(),
-          sourceIdentifyingData: srcAddress,
-          targetChain: currentTypedChainId.toString(),
-          targetIdentifyingData: srcAddress,
-          tokenSymbol: inputNotes[0].note.tokenSymbol,
-          version: 'v1',
-          width: '4',
-        });
+        changeNote = await noteManager.generateNote(
+          activeApi.backend,
+          currentTypedChainId,
+          srcAddress,
+          currentTypedChainId,
+          srcAddress,
+          fungibleCurrency.view.symbol,
+          fungibleCurrency.getDecimals(),
+          changeAmount
+        );
       }
+
+      const changeUtxo = changeNote
+        ? await utxoFromVAnchorNote(
+            changeNote.note,
+            changeNote.note.index ? +changeNote.note.index : undefined
+          )
+        : await Utxo.generateUtxo({
+            curve: noteManager.defaultNoteGenInput.curve,
+            backend: activeApi.backend,
+            amount: changeAmountBigNumber.toString(),
+            chainId: currentTypedChainId.toString(),
+            keypair,
+            originChainId: currentTypedChainId.toString(),
+          });
 
       setMainComponent(
         <TransferConfirmContainer
@@ -825,6 +820,7 @@ export const TransferContainer = forwardRef<
       hasNoteAccount,
       noteManager,
       activeApi?.state.activeBridge,
+      activeApi?.backend,
       api,
       fungibleCurrency,
       destChain,
@@ -835,9 +831,9 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       feeInWei,
+      activeRelayer,
       setMainComponent,
       feeTokenSymbol,
-      activeRelayer,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,

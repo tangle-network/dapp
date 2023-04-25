@@ -399,15 +399,11 @@ export const DepositContainer = forwardRef<
         return;
       }
 
-      if (
-        !sourceChain ||
-        !destChain ||
-        amount === 0 ||
-        !activeApi?.state?.activeBridge ||
-        !activeChain ||
-        !noteManager ||
-        !fungibleCurrency
-      ) {
+      if (!sourceChain || !destChain || !activeChain || !fungibleCurrency) {
+        return;
+      }
+
+      if (!activeApi?.state?.activeBridge || !noteManager || amount === 0) {
         return;
       }
 
@@ -439,6 +435,7 @@ export const DepositContainer = forwardRef<
       }
 
       const newNote = await noteManager.generateNote(
+        activeApi.backend,
         sourceTypedChainId,
         sourceAddress,
         destTypedChainId,
@@ -476,11 +473,12 @@ export const DepositContainer = forwardRef<
       hasNoteAccount,
       sourceChain,
       destChain,
-      amount,
-      activeApi?.state?.activeBridge,
       activeChain,
-      noteManager,
       fungibleCurrency,
+      activeApi?.state?.activeBridge,
+      activeApi?.backend,
+      noteManager,
+      amount,
       apiConfig,
       wrappableCurrency?.id,
       feeValue,
