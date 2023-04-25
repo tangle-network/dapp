@@ -5,6 +5,8 @@
 export enum WebbErrorCodes {
   /// Api is not ready
   ApiNotReady,
+  /// No currency is available
+  NoCurrencyAvailable,
   /// No fungible token is available
   NoFungibleTokenAvailable,
   /// Unsupported chain is switch via the extension
@@ -197,6 +199,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `No active bridge`,
+        };
+
+      case WebbErrorCodes.NoCurrencyAvailable:
+        return {
+          code,
+          message: `No currency is available`,
         };
 
       default:

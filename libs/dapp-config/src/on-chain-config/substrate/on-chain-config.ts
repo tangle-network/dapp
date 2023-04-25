@@ -69,9 +69,8 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
 
     const name = provider.registry.chainTokens[DEFAULT_NATIVE_INDEX];
     const decimals = provider.registry.chainDecimals[DEFAULT_NATIVE_INDEX];
-    const address = (
-      provider.registry.chainSS58 ?? DEFAULT_NATIVE_INDEX
-    ).toString();
+    // The native currency is always at index 0 in the asset registry pallet
+    const address = DEFAULT_NATIVE_INDEX.toString();
 
     const native: ICurrency = {
       name,
