@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/stats-dapp",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./src/index.js",
   "dependencies": {
     "@ngneat/falso": "^5.7.0",

@@ -44,3 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Bug fix for authorities table in authorities page: https://github.com/webb-tools/webb-dapp/pull/1125
+
+## [0.0.4] - 2023-04-25
+
+### Fixed
+- Bug fix to resolve displaying the next DKG key issue: https://github.com/webb-tools/webb-dapp/pull/1140
