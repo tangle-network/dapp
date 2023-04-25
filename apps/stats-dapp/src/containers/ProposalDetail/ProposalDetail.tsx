@@ -288,10 +288,6 @@ export const ProposalDetail = () => {
           <Typography variant="h4" fw="bold">
             Proposal Details
           </Typography>
-
-          <Button variant="utility" size="sm">
-            Open Governance
-          </Button>
         </div>
 
         <div className="flex items-center space-x-2">
