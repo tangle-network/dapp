@@ -30,30 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Security-related changes, such as vulnerability patches
 
-## [0.0.1] - 2023-03-27
-
-### Added
-- New feature or functionality
-- New file or resource
-
-### Changed
-- Updates to existing features
-- Changes to existing files or resources
-
-### Deprecated
-- Features or functionality that will be removed in future versions
-- Files or resources that will be removed in future versions
-
-### Removed
-- Features or functionality that have been removed
-- Files or resources that have been removed
+## [0.0.2] - 2023-04-17
 
 ### Fixed
-- Bug fixes
-- Corrections to existing files or resources
+- Bug fix for authorities progress bar: https://github.com/webb-tools/webb-dapp/commit/82b8a3a120fb44fa87e4bf0e01c62f778649bdbd
+- Bug fix for keygen table: https://github.com/webb-tools/webb-dapp/commit/86dd345497d7a5798be4a19b1a6e3fca80680d26
 
-### Security
-- Security-related changes, such as vulnerability patches
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
+[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
+
+## [0.0.3] - 2023-04-21
+
+### Fixed
+- Bug fix for authorities table in authorities page: https://github.com/webb-tools/webb-dapp/pull/1125
