@@ -13,6 +13,8 @@ export enum WebbErrorCodes {
   UnselectedChain,
   /// No accounts are available
   NoAccountAvailable,
+  /// No active bridge
+  NoActiveBridge,
   /// Failed to parse deposit note
   NoteParsingFailure,
   /// PolkaDot extension not installed
@@ -189,6 +191,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `There is a transaction in progress`,
+        };
+
+      case WebbErrorCodes.NoActiveBridge:
+        return {
+          code,
+          message: `No active bridge`,
         };
 
       default:

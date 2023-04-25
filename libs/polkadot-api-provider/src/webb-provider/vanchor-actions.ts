@@ -68,7 +68,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     // Get active bridge and currency fungible asset
     const activeBridge = this.inner.state.activeBridge;
     if (!activeBridge) {
-      throw WebbError.from(WebbErrorCodes.ApiNotReady);
+      throw WebbError.from(WebbErrorCodes.NoActiveBridge);
     }
 
     const fungibleAsset = activeBridge.currency;
@@ -334,14 +334,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
     const extAmount = this.getExtAmount(inputs, outputs, fee);
 
-    // calculate the sum of input notes (for calculating the public amount)
-    let sumInputUtxosAmount = new BN(0);
-
     // Pass the identifier for leaves alongside the proof input
     const leafIds: LeafIdentifier[] = [];
 
     for (const inputUtxo of inputs) {
-      sumInputUtxosAmount = sumInputUtxosAmount.add(new BN(inputUtxo.amount));
       leafIds.push({
         index: inputUtxo.index ?? this.inner.state.defaultUtxoIndex,
         typedChainId: Number(inputUtxo.originChainId),
@@ -363,9 +359,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
-    const fieldSize = new BN(FIELD_SIZE.toString());
     const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16));
+
+    const fieldSize = new BN(FIELD_SIZE.toString());
     const amount = extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString();
+
+    if (!leavesMap[sourceTypedChainId]) {
+      leavesMap[sourceTypedChainId] = [];
+    }
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputUtxos: inputs,
