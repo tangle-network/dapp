@@ -24,8 +24,8 @@ export type Metadata = {
  * */
 export function session(height: string, sessionHeight: number) {
   const blockNumber = Number(height);
-  const sessionNumber = Math.floor(blockNumber / sessionHeight);
-  return sessionNumber.toString();
+  const currentSessionNumber = Math.floor(blockNumber / sessionHeight);
+  return currentSessionNumber.toString();
 }
 
 /**
@@ -34,8 +34,8 @@ export function session(height: string, sessionHeight: number) {
  * */
 export function nextSession(height: string, sessionHeight: number): string {
   const blockNumber = Number(height);
-  const sessionNumber = Math.ceil(blockNumber / sessionHeight);
-  return sessionNumber.toString();
+  const currentSessionNumber = Math.ceil(blockNumber / sessionHeight);
+  return currentSessionNumber.toString();
 }
 
 type StatsProvidervalue = {
@@ -58,6 +58,13 @@ type StatsProvidervalue = {
   subqueryEndpoint: string;
   // polkadot endpoint
   polkadotEndpoint: string;
+  // dkg keys data from polkadot api
+  dkgDataFromPolkadotAPI: {
+    currentSessionNumber: number;
+    currentKey: string;
+    nextSessionNumber: number;
+    nextKey: string;
+  };
 };
 
 /**
@@ -107,6 +114,12 @@ const statsContext: React.Context<StatsProvidervalue> =
     isReady: false,
     subqueryEndpoint: '',
     polkadotEndpoint: '',
+    dkgDataFromPolkadotAPI: {
+      currentSessionNumber: 0,
+      currentKey: '',
+      nextSessionNumber: 0,
+      nextKey: '',
+    },
   });
 
 export function useStatsContext() {
@@ -160,6 +173,12 @@ export const StatsProvider: React.FC<
   const [api, setApi] = useState<ApiPromise | undefined>();
   const [sessionHeight, setSessionHeight] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [dkgDataFromPolkadotAPI, setDkgDataFromPolkadotAPI] = useState({
+    currentSessionNumber: 0,
+    currentKey: '',
+    nextSessionNumber: 0,
+    nextKey: '',
+  });
 
   useEffect(() => {
     function getCurrentTheme() {
@@ -191,8 +210,19 @@ export const StatsProvider: React.FC<
       isDarkMode,
       subqueryEndpoint: props.subqueryEndpoint,
       polkadotEndpoint: props.polkadotEndpoint,
+      dkgDataFromPolkadotAPI,
     };
-  }, [sessionHeight, metaData, isReady, time, api, isDarkMode]);
+  }, [
+    sessionHeight,
+    metaData,
+    isReady,
+    time,
+    api,
+    isDarkMode,
+    props,
+    blockTime,
+    dkgDataFromPolkadotAPI,
+  ]);
 
   const query = useLastBlockQuery();
 
@@ -201,12 +231,36 @@ export const StatsProvider: React.FC<
       const wsProvider = new WsProvider(props.polkadotEndpoint);
       const apiPromise = await ApiPromise.create({ provider: wsProvider });
       setApi(apiPromise);
+
+      // Get session height from Polkadot API
       const blockTime =
         (Number(await apiPromise.consts.timestamp.minimumPeriod) * 2) / 1000;
       setBlockTime(blockTime);
       const sessionPeriod = await apiPromise.consts.dkg.sessionPeriod;
       const sessionHeight = Number(sessionPeriod.toString()) * 12;
       setSessionHeight(sessionHeight);
+
+      // Get DKG data from Polkadot API
+      const currentDKGPublicKey = await apiPromise.query.dkg.dkgPublicKey();
+      const currentSessionNumber = currentDKGPublicKey[0].toNumber();
+      const currentKey = currentDKGPublicKey[1].toString();
+      let nextDKGPublicKey = await apiPromise.query.dkg.nextDKGPublicKey();
+      let nextSessionNumber = 0;
+      let nextKey = '';
+      if (nextDKGPublicKey.isEmpty) {
+        nextSessionNumber = currentSessionNumber + 1;
+        nextKey = '';
+      } else {
+        nextDKGPublicKey = JSON.parse(nextDKGPublicKey.toString());
+        nextSessionNumber = nextDKGPublicKey[0];
+        nextKey = nextDKGPublicKey[1];
+      }
+      setDkgDataFromPolkadotAPI({
+        currentSessionNumber,
+        currentKey,
+        nextSessionNumber,
+        nextKey,
+      });
     };
 
     getPromiseApi();
@@ -249,10 +303,16 @@ export const StatsProvider: React.FC<
             return null;
           }
 
+          const currentSessionIsCorrect =
+            Number(lastSession.id) ===
+            dkgDataFromPolkadotAPI.currentSessionNumber;
+
           return {
             currentBlock: String(data.targetHeight),
             lastProcessBlock: String(data.lastProcessedHeight),
-            activeSession: String(Number(lastSession.id)),
+            activeSession: currentSessionIsCorrect
+              ? lastSession.id
+              : String(dkgDataFromPolkadotAPI.currentSessionNumber),
             lastSession: lastSession.id,
             activeSessionBlock: lastSession.blockNumber,
           };
@@ -266,7 +326,7 @@ export const StatsProvider: React.FC<
         }
       });
     return () => unSub.unsubscribe();
-  }, [query, metaDataQuery, isReady, sessionHeight]);
+  }, [query, metaDataQuery, isReady, sessionHeight, dkgDataFromPolkadotAPI]);
 
   useEffect(() => {
     query.startPolling(blockTime * 1000 * 10);
