@@ -255,6 +255,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     });
     const inputUtxos: Utxo[] = [];
 
+    const leavesMap: Record<number, Uint8Array[]> = {};
+
+    leavesMap[+payload.note.sourceChainId] = [];
+
     return [
       tx,
       payload.note.sourceIdentifyingData,
@@ -265,7 +269,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       address,
       address,
       wrapUnwrapAssetId,
-      {},
+      leavesMap,
     ] satisfies ParametersOfTransactMethod;
   }
 
@@ -362,6 +366,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx.next(TransactionState.GeneratingZk, undefined);
     const fieldSize = new BN(FIELD_SIZE.toString());
     const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16));
+    const amount = extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString();
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputUtxos: inputs,
@@ -371,11 +376,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       chainId: sourceTypedChainId.toString(),
       output: [outputs[0], outputs[1]],
       encryptedCommitments,
-      publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
+      publicAmount: amount,
       provingKey: zkey,
       relayer: decodeAddress(relayer),
       recipient: decodeAddress(recipient),
-      extAmount: toFixedHex(extAmount.toString()),
+      extAmount: amount,
       fee: fee.toString(),
       refund: refund.toString(),
       token: assetIdBytes,
