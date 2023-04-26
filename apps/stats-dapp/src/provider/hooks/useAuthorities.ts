@@ -300,7 +300,7 @@ export function useAuthorities(
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
-          sessionId: String(Number(metaData.val.activeSession) - 1),
+          sessionId: metaData.val.activeSession,
           reputationFilter: reputation ?? undefined,
           uptimeFilter: uptime ?? undefined,
           validatorId: filter.search

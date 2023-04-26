@@ -347,24 +347,24 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                 const keyGenAuthorities = mapAuthorities(i?.sessionValidators)
                   .filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
-                const publicKey = i.publicKey;
+                const publicKey = i?.publicKey;
                 const session = i;
-                const sessionTimeStamp = session.block?.timestamp;
+                const sessionTimeStamp = session?.block?.timestamp;
                 const [start, end] = sessionFrame(
                   sessionTimeStamp,
                   sessionHeight
                 );
 
                 return {
-                  id: publicKey.id,
-                  session: session.id,
+                  id: publicKey?.id,
+                  session: session?.id,
                   end,
                   start,
-                  compressed: publicKey.compressed,
-                  uncompressed: publicKey.uncompressed,
+                  compressed: publicKey?.compressed,
+                  uncompressed: publicKey?.uncompressed,
                   keyGenAuthorities,
-                  isCurrent: activeSession === session.id,
-                  isDone: Number(activeSession) > Number(session.id),
+                  isCurrent: activeSession === session?.id,
+                  isDone: Number(activeSession) > Number(session?.id),
                 };
               }) || [];
 
@@ -401,7 +401,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       .subscribe(setKeys);
 
     return () => subscription.unsubscribe();
-  }, [query, activeSession, blockTime, sessionHeight]);
+  }, [query, activeSession, blockTime, sessionHeight, metaData]);
 
   return keys;
 }

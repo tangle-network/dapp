@@ -108,14 +108,32 @@ export const StackedAreaChartContainer = () => {
   const { val: proposalOvertimeData, isLoading } =
     useProposalsOvertimeTotalCount(timeRange);
 
+  const filteredProposalOvertimeData = useMemo(() => {
+    const firstDataPoint = proposalOvertimeData?.findIndex(
+      (item) => item.totalCount > 0
+    );
+
+    if (firstDataPoint && firstDataPoint !== -1) {
+      const firstDataPointMonth = proposalOvertimeData?.[firstDataPoint]?.month;
+      if (firstDataPointMonth) {
+        return proposalOvertimeData?.filter(
+          (item) => item.month >= firstDataPointMonth - 1
+        );
+      }
+    }
+    return proposalOvertimeData;
+  }, [proposalOvertimeData]);
+
   const chartData = useMemo<ChartData<'line'>>(() => {
     return {
-      labels: [...new Set(proposalOvertimeData?.map((data) => data.month))],
-      datasets: proposalOvertimeData
+      labels: [
+        ...new Set(filteredProposalOvertimeData?.map((data) => data.month)),
+      ],
+      datasets: filteredProposalOvertimeData
         ? allProposals.map((proposal) => {
             return {
               label: proposal.type,
-              data: proposalOvertimeData
+              data: filteredProposalOvertimeData
                 .filter(
                   (data) =>
                     data.proposalType.toLocaleLowerCase() ===
@@ -133,7 +151,7 @@ export const StackedAreaChartContainer = () => {
           })
         : [],
     };
-  }, [proposalOvertimeData]);
+  }, [filteredProposalOvertimeData]);
 
   const chartOptions = useMemo<ChartOptions<'line'>>(() => {
     return {
