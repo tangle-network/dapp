@@ -1,3 +1,4 @@
+import { WebbPrimitivesVanchorExtData } from '@polkadot/types/lookup';
 import { decodeAddress, naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
@@ -20,16 +21,17 @@ import {
   Note,
   ProvingManagerSetupInput,
   randomBN,
+  toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { ExtData } from '@webb-tools/wasm-utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 import { getLeafIndex } from '../mt-utils';
 
-import { PolkadotTx } from '../transaction';
 import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
@@ -108,51 +110,17 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     );
 
     // now we call the vanchor transact on substrate
-    let polkadotTx: PolkadotTx<any[]>;
-
-    if (wrapUnwrapAssetId !== fungibleAssetId) {
-      let method: string;
-      if (tx.name === 'Deposit') {
-        method = 'wrap';
-      } else if (tx.name === 'Withdraw') {
-        method = 'unwrap';
-      } else {
-        throw new Error(`${tx.name} is not supported wrap/unwrap`);
-      }
-
-      // Perform a wrap/unwrap
-      polkadotTx = this.inner.txBuilder.build(
-        [
-          {
-            method,
-            section: 'tokenWrapper',
-          },
-          {
-            method: 'transact',
-            section: 'vAnchorBn254',
-          },
-        ],
-        [
-          [
-            wrapUnwrapAssetId,
-            fungibleAssetId,
-            extAmount,
-            activeAccount.address,
-          ],
-          [treeId, vanchorProofData, extData],
-        ]
-      );
-    } else {
-      polkadotTx = this.inner.txBuilder.build(
+    const polkadotTx = this.inner.txBuilder.buildWithoutNotification(
+      [
         {
           method: 'transact',
           section: 'vAnchorBn254',
         },
-        [treeId, vanchorProofData, extData]
-      );
-    }
+      ],
+      [[treeId, vanchorProofData, extData]]
+    );
 
-    const txHash: string = await polkadotTx.call(activeAccount.address);
+    const txHash = await polkadotTx.call(activeAccount.address);
 
     return {
       transactionHash: txHash,
@@ -357,7 +325,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16));
 
     const fieldSize = new BN(FIELD_SIZE.toString());
-    const amount = extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString();
 
     if (!leavesMap[sourceTypedChainId]) {
       leavesMap[sourceTypedChainId] = [];
@@ -371,11 +338,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       chainId: sourceTypedChainId.toString(),
       output: [outputs[0], outputs[1]],
       encryptedCommitments,
-      publicAmount: amount,
+      publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
       provingKey: zkey,
       relayer: decodeAddress(relayer),
       recipient: decodeAddress(recipient),
-      extAmount: amount,
+      extAmount: extAmount.toString(),
       fee: fee.toString(),
       refund: refund.toString(),
       token: assetIdBytes,
@@ -386,12 +353,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const data: VAnchorProof = await pm.prove('vanchor', proofInput);
 
     const extData = {
-      relayer,
-      recipient,
-      fee: fee.toString(),
-      refund: refund.toString(),
+      relayer: decodeAddress(relayer),
+      recipient: decodeAddress(recipient),
+      fee: String(fee),
+      refund: String(refund),
       token: assetIdBytes,
-      extAmount: extAmount,
+      extAmount: proofInput.extAmount,
       encryptedOutput1: u8aToHex(encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(encryptedCommitments[1]),
     };
@@ -409,7 +376,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     return {
       extData,
-      extAmount,
+      extAmount: proofInput.extAmount,
       vanchorProofData,
     };
   }

@@ -84,7 +84,7 @@ export class PolkadotTx<
     super();
   }
 
-  async call(signAddress: AddressOrPair | null) {
+  async call(signAddress: AddressOrPair | null): Promise<string> {
     const api = this.apiPromise;
 
     for (let i = 0; i < this.paths.length; i++) {
