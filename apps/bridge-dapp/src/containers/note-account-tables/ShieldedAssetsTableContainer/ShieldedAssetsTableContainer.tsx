@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
 import {
   ChainIcon,
   ExternalLinkLine,
@@ -143,11 +144,28 @@ export const ShieldedAssetsTableContainer: FC<
 
   const { switchChain, activeChain, activeWallet } = useWebContext();
 
+  const promptChainSwitch = useCallback(
+    async (chain: Chain) => {
+      const isSupported =
+        activeWallet &&
+        activeWallet.supportedChainIds.includes(
+          calculateTypedChainId(chain.chainType, chain.chainId)
+        );
+
+      if (isSupported) {
+        await switchChain(chain, activeWallet);
+      }
+    },
+    [activeWallet, switchChain]
+  );
+
   const onTransfer = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
+    async (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Transfer');
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
+
+      await promptChainSwitch(rawChain);
 
       onDefaultDestinationChainChange?.(rawChain);
 
@@ -159,6 +177,7 @@ export const ShieldedAssetsTableContainer: FC<
       onActiveTabChange,
       onDefaultDestinationChainChange,
       onDefaultFungibleCurrencyChange,
+      promptChainSwitch,
     ]
   );
 
@@ -168,15 +187,7 @@ export const ShieldedAssetsTableContainer: FC<
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
-      const isSupported =
-        activeWallet &&
-        activeWallet.supportedChainIds.includes(
-          calculateTypedChainId(rawChain.chainType, rawChain.chainId)
-        );
-
-      if (isSupported) {
-        await switchChain(rawChain, activeWallet);
-      }
+      await promptChainSwitch(rawChain);
 
       onDefaultDestinationChainChange?.(rawChain);
 
@@ -185,11 +196,10 @@ export const ShieldedAssetsTableContainer: FC<
       }
     },
     [
-      activeWallet,
       onActiveTabChange,
       onDefaultDestinationChainChange,
       onDefaultFungibleCurrencyChange,
-      switchChain,
+      promptChainSwitch,
     ]
   );
 
