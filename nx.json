@@ -94,6 +94,5 @@
     "@nrwl/js": {
       "analyzeSourceFiles": true
     }
-  },
-  "defaultProject": "stats-dapp"
+  }
 }

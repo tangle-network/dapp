@@ -21,6 +21,7 @@ import { LocalProtocolSubstrate } from '@webb-tools/test-utils';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
+import { config } from 'dotenv';
 import { resolve } from 'path';
 
 import addAssetMetadata from './utils/addAssetMetadata';
@@ -30,6 +31,9 @@ import createVAnchor from './utils/createVAnchor';
 import getKeyring from './utils/getKeyRing';
 import transferAsset from './utils/transferAsset';
 
+// Load env variables
+config();
+
 const ALICE_KEY_URI = '//Alice';
 
 const NATIVE_ASSET_ID = '0';
@@ -37,7 +41,7 @@ const NATIVE_ASSET = 'tTNT';
 
 const FUNGIBLE_ASSET = 'webbtTNT';
 
-const TEST_ACCOUNT = '5DkHGdLaqqCn2CcCXTxUXnbvH1jq7oMp9HjZrWZBZimjXweW';
+const TEST_ACCOUNT = process.env.POLKADOT_TEST_ACCOUNT_ADDRESS;
 
 const AMOUNT = 1000;
 
@@ -134,18 +138,20 @@ async function initPoolShare(api: ApiPromise) {
   logger.info(`VAnchor with id \`${vanchorId}\` created`);
 
   // Transfer some tokens to the test account
-  logger.info(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`);
-  const hash = await transferAsset(
-    api,
-    sudoKey,
-    TEST_ACCOUNT,
-    0,
-    new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
-  );
+  if (TEST_ACCOUNT) {
+    logger.info(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`);
+    const hash = await transferAsset(
+      api,
+      sudoKey,
+      TEST_ACCOUNT,
+      0,
+      new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
+    );
 
-  logger.info(
-    `Token transferred to test account with hash \`${hash.toHuman()}\``
-  );
+    logger.info(
+      `Token transferred to test account with hash \`${hash.toHuman()}\``
+    );
+  }
 
   logger.info(chalk.green.bold('Protocol Substrate ready to use'));
 }

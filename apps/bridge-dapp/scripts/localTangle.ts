@@ -30,7 +30,7 @@ import createVAnchor from './utils/createVAnchor';
 import getKeyring from './utils/getKeyRing';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const shell = require('shelljs');
+const shelljs = require('shelljs');
 
 const ALICE_PORT = 9944;
 const BOB_PORT = 9945;
@@ -62,7 +62,7 @@ async function main() {
   // Start the nodes
   logger.info('Starting local tangle network');
 
-  const proc = shell.exec(localStandaloneTangleScript + ' --clean', {
+  const proc = shelljs.exec(localStandaloneTangleScript + ' --clean', {
     cwd: resolve(localStandaloneTangleScript, '../../'),
     async: true,
     silent: true,

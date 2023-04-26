@@ -18,6 +18,14 @@ async function transferAsset(
   assetId: number,
   amount: BN
 ) {
+  // If assetId is 0, then interact with balances pallet
+  if (assetId === 0) {
+    return apiPromise.tx.balances
+      .transfer(recipient, amount)
+      .signAndSend(sender);
+  }
+
+  // Otherwise, interact with tokens pallet
   return apiPromise.tx.tokens
     .transfer(recipient, assetId, amount)
     .signAndSend(sender);
