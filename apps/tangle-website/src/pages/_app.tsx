@@ -26,16 +26,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
           url: 'https://tangle.webb.tools/',
           images: [
             {
-              url: 'https://webb-assets.s3.amazonaws.com/og.png',
-              width: 2400,
-              height: 1800,
+              url: '/static/assets/seo.png',
+              width: 2000,
+              height: 1050,
               alt: 'Og Image Alt',
-            },
-            {
-              url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
-              width: 1200,
-              height: 630,
-              alt: 'Optimized Og Image Alt',
             },
           ],
         }}
