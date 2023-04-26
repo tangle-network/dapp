@@ -49,7 +49,7 @@ export * from './HelpLineIcon';
 export * from './InformationLine';
 export * from './KeyIcon';
 export * from './Link';
-export * from './LinkedIn';
+export * from './LinkedInFill';
 export * from './LoginBoxLineIcon';
 export * from './Mail';
 export * from './Memu';
@@ -75,6 +75,7 @@ export * from './UploadCloudIcon';
 export * from './UsageGuideIcon';
 export * from './UserStarFillIcon';
 export * from './WalletLineIcon';
+export * from './YouTubeFill';
 
 // Wallet icons
 export * from './wallets';

@@ -4,6 +4,8 @@ import {
   GithubFill,
   TelegramFill,
   TwitterFill,
+  LinkedInFill,
+  YouTubeFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
@@ -13,7 +15,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
-import { type } from 'os';
 import { ComponentProps, useState } from 'react';
 import { WebsiteNewletterForm } from '../WebsiteNewsLetterForm';
 
@@ -40,6 +41,11 @@ const socials: Array<SocialType> = [
     href: 'https://discord.com/invite/cv8EfJu3Tn',
   },
   {
+    name: 'LinkedIn',
+    Icon: LinkedInFill,
+    href: 'https://www.linkedin.com/company/webb-protocol/',
+  },
+  {
     name: 'Twitter',
     Icon: TwitterFill,
     href: 'https://twitter.com/webbprotocol',
@@ -47,6 +53,11 @@ const socials: Array<SocialType> = [
   {
     name: 'Github',
     Icon: GithubFill,
+    href: 'https://github.com/webb-tools',
+  },
+  {
+    name: 'YouTube',
+    Icon: YouTubeFill,
     href: 'https://github.com/webb-tools',
   },
 ];
@@ -141,14 +152,14 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
                 rel="noreferrer"
                 className="dark:text-mono-0 dark:hover:text-mono-100"
               >
-                <Icon className="w-8 h-8 !fill-current" />
+                <Icon className="w-8 h-8 !fill-mono-60" />
               </a>
             ))}
           </div>
         </div>
 
         <div className="flex flex-col items-center space-y-2 md:space-y-0 md:flex-row md:justify-between">
-          <Typography variant="body1">
+          <Typography variant="body1" className="text-center">
             © {new Date().getFullYear()} Webb Technologies, Inc. All rights
             reserved.
           </Typography>
