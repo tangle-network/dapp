@@ -6,6 +6,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   ChainIcon,
   ExternalLinkLine,
@@ -14,6 +15,7 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   fuzzyFilter,
   IconWithTooltip,
@@ -139,6 +141,8 @@ export const ShieldedAssetsTableContainer: FC<
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
+  const { switchChain, activeChain, activeWallet } = useWebContext();
+
   const onTransfer = useCallback(
     (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Transfer');
@@ -159,10 +163,20 @@ export const ShieldedAssetsTableContainer: FC<
   );
 
   const onWithdraw = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
+    async (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Withdraw');
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
+
+      const isSupported =
+        activeWallet &&
+        activeWallet.supportedChainIds.includes(
+          calculateTypedChainId(rawChain.chainType, rawChain.chainId)
+        );
+
+      if (isSupported) {
+        await switchChain(rawChain, activeWallet);
+      }
 
       onDefaultDestinationChainChange?.(rawChain);
 
@@ -171,9 +185,11 @@ export const ShieldedAssetsTableContainer: FC<
       }
     },
     [
+      activeWallet,
       onActiveTabChange,
       onDefaultDestinationChainChange,
       onDefaultFungibleCurrencyChange,
+      switchChain,
     ]
   );
 
