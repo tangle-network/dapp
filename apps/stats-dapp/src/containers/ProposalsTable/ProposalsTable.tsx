@@ -216,6 +216,8 @@ export const ProposalsTable = () => {
 
   const data = useMemo(() => {
     if (proposalsStats.val) {
+      const proposalIds = proposalsStats.val.items.map((item) => item.id);
+      localStorage.setItem('proposalIds', JSON.stringify(proposalIds));
       return proposalsStats.val.items;
     }
     return [] as ProposalListItem[];

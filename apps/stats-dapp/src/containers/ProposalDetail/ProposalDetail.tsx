@@ -1,4 +1,4 @@
-import { useProposal } from '../../provider/hooks';
+import { useProposal, useProposals } from '../../provider/hooks';
 import { useStatsContext } from '../../provider/stats-provider';
 import {
   Button,
@@ -14,22 +14,18 @@ import {
   ArrowRight,
   BlockIcon,
   Close,
-  ExchangeLine,
   Expand,
-  ExternalLinkLine,
   Spinner,
   ChainIcon,
 } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { mapChainIdToLogo } from '../../utils';
-
 import { ProposersTable } from '../ProposersTable';
-
 import { getProposalsData } from '../../utils';
+
 const ProposalData: FC<{ data: Record<string, any> }> = ({ data }) => {
   const knowProposal = useMemo(() => {
     const keys = Object.keys(data);
@@ -45,10 +41,13 @@ const ProposalData: FC<{ data: Record<string, any> }> = ({ data }) => {
 
 export const ProposalDetail = () => {
   const { pathname } = useLocation();
+
   const { proposalId = '' } = useParams<{ proposalId: string }>();
+
   const {
     metaData: { activeSession },
   } = useStatsContext();
+
   const query = useMemo<Parameters<typeof useProposal>>(() => {
     return [
       activeSession,
@@ -61,6 +60,7 @@ export const ProposalDetail = () => {
       },
     ];
   }, [activeSession, proposalId]);
+
   const proposalDetails = useProposal(...query);
 
   const isPage = useMemo(() => {
@@ -71,7 +71,6 @@ export const ProposalDetail = () => {
   const passThreshold = useMemo(() => {
     const proposal = proposalDetails.proposal.val;
     if (proposal) {
-      console.log(proposal, 'proposal');
       if (proposal.abstainPercentage === 100) {
         return proposal.abstainPercentage;
       }
@@ -79,9 +78,11 @@ export const ProposalDetail = () => {
     }
     return 0;
   }, [proposalDetails]);
+
   const status = useMemo(() => {
     return proposalDetails.proposal.val?.status ?? null;
   }, [proposalDetails]);
+
   const counters = useMemo(() => {
     if (proposalDetails.proposal.val) {
       const details = proposalDetails.proposal.val;
@@ -100,9 +101,12 @@ export const ProposalDetail = () => {
       all: 0,
     };
   }, [proposalDetails]);
+
   const nextProposalId = proposalDetails.nextAndPrevStatus.val?.nextProposalId;
+
   const previousProposalId =
     proposalDetails.nextAndPrevStatus.val?.previousProposalId;
+
   const navigate = useNavigate();
 
   const handleNextProposal = useCallback(() => {
@@ -132,7 +136,6 @@ export const ProposalDetail = () => {
         timeline,
         txHash,
       } = proposalDetails.proposal.val;
-
       return (
         <>
           {/** Height, tx hash and chain data */}
@@ -212,7 +215,7 @@ export const ProposalDetail = () => {
                 key={`${time.at.toString()}-${idx}`}
                 title={time.status}
                 time={time.at}
-                txHash=''
+                txHash=""
                 externalUrl="#"
               />
             ))}

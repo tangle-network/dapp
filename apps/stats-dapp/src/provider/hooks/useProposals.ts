@@ -398,29 +398,46 @@ export function useProposal(
     val: null,
     isFailed: false,
   });
-  const [ensureProposals, ensureProposalsQuery] = useEnsureProposalsLazyQuery();
 
   const [call, query] = useProposalDetailsLazyQuery();
   const { offset, perPage } = votesReqQuery;
   const proposalId = votesReqQuery.filter.proposalId;
   const votes = useVotes(votesReqQuery);
 
+  const [proposalIds, setProposalIds] = useState<string[]>([]);
+
   useEffect(() => {
-    ensureProposals({
-      variables: {
-        ids: [Number(proposalId) - 1, Number(proposalId) + 1].map((i) =>
-          String(i)
-        ),
-      },
-    }).catch((e) => {
+    const ids = localStorage.getItem('proposalIds');
+    if (ids) {
+      setProposalIds(JSON.parse(ids));
+    }
+  }, []);
+
+  useEffect(() => {
+    const index = proposalIds.indexOf(proposalId);
+
+    if (index !== -1) {
+      const itemBefore = proposalIds[index - 1];
+      const itemAfter = proposalIds[index + 1];
+
+      setNextAndPrevStatus({
+        val: {
+          nextProposalId: itemAfter ? String(itemAfter) : null,
+          previousProposalId: itemBefore ? String(itemBefore) : null,
+        },
+        isLoading: false,
+        isFailed: false,
+      });
+
+      return;
+    } else {
       setNextAndPrevStatus({
         val: null,
-        error: e.message,
-        isLoading: false,
-        isFailed: true,
+        isLoading: true,
+        isFailed: false,
       });
-    });
-  }, [proposalId, ensureProposals]);
+    }
+  }, [proposalId, proposalIds]);
 
   useEffect(() => {
     call({
@@ -437,38 +454,7 @@ export function useProposal(
       });
     });
   }, [proposalId, offset, perPage, targetSessionId, call]);
-  useEffect(() => {
-    const subscription = ensureProposalsQuery.observable
-      .map((res): Loadable<NextAndPrevStatus> => {
-        if (res.data && res.data.proposalItems) {
-          const proposals = res.data.proposalItems.nodes.filter(
-            (p) => p !== null
-          );
-          const nextProposalId =
-            proposals.find((p) => Number(p!.id) === Number(proposalId) + 1)
-              ?.id ?? null;
-          const previousProposalId =
-            proposals.find((p) => Number(p!.id) === Number(proposalId) - 1)
-              ?.id ?? null;
-          return {
-            val: {
-              nextProposalId,
-              previousProposalId,
-            },
-            isFailed: false,
-            isLoading: false,
-          };
-        }
-        return {
-          isLoading: res.loading,
-          isFailed: Boolean(res.error),
-          error: res.error?.message ?? undefined,
-          val: null,
-        };
-      })
-      .subscribe(setNextAndPrevStatus);
-    return () => subscription.unsubscribe();
-  }, [ensureProposalsQuery, setNextAndPrevStatus, proposalId]);
+
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalDetails> => {

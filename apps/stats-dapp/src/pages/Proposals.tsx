@@ -9,27 +9,22 @@ import { useStatsContext } from '../provider/stats-provider';
 import {
   Button,
   Card,
-  CardTable,
   LabelWithValue,
   Stats,
-  Table,
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
 import { BigNumber } from 'ethers';
 import React, { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-
-import { DonutChartContainer, ProposalsTable, TimeRange } from '../containers';
+import { ProposalsTable, TimeRange } from '../containers';
 import {
   ProposalListItem,
   ProposalStatus,
   useProposalsOverview,
-  useProposalsOvertimeTotalCount,
 } from '../provider/hooks';
 import { mapChainIdToLogo } from '../utils';
 import { StackedAreaChartContainer } from '../containers/StackedAreaChartContainer';
@@ -135,6 +130,7 @@ const Proposals = () => {
     }
     return [] as ProposalListItem[];
   }, [overview]);
+  
   const statsMap: Record<ProposalStatus, number> = useMemo(() => {
     if (overview.val) {
       const { accepted, open, rejected, signed } = overview.val.stats;
