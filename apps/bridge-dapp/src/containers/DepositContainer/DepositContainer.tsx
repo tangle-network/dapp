@@ -669,9 +669,7 @@ export const DepositContainer = forwardRef<
         onChange: async (selectedChain) => {
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
-            );
-            console.log('selectedChain', chain);
-
+          );
           if (!chain) {
             throw new Error('Detect unsupported chain is being selected');
           }
