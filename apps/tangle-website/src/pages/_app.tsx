@@ -26,7 +26,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
           url: 'https://tangle.webb.tools/',
           images: [
             {
-              url: '/static/assets/seo.png',
+              url: 'https://webb-cms.s3.amazonaws.com/tangle_seo.png',
               width: 2000,
               height: 1050,
               alt: 'Og Image Alt',
