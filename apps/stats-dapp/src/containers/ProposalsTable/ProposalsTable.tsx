@@ -64,24 +64,6 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     header: 'Type',
   }),
 
-  columnHelper.accessor('txHash', {
-    header: 'Tx Hash',
-    cell: (props) => (
-      <div className="flex items-center space-x-1">
-        <LabelWithValue
-          labelVariant="body3"
-          label="tx hash:"
-          isHiddenLabel
-          value={shortenHex(props.getValue<string>(), 3)}
-          valueTooltip={props.getValue<string>()}
-        />
-        <a href="#">
-          <ExternalLinkLine />
-        </a>
-      </div>
-    ),
-  }),
-
   columnHelper.accessor('proposers', {
     header: 'Proposers',
     cell: (props) => {
