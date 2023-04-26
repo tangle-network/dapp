@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
+[0.0.5]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.5
 
 ## [0.0.3] - 2023-04-21
 
@@ -49,3 +49,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Bug fix to resolve displaying the next DKG key issue: https://github.com/webb-tools/webb-dapp/pull/1140
+
+## [0.0.5] - 2023-04-26
+
+### Fixed
+- Removes tx hash from stats-dapp: https://github.com/webb-tools/webb-dapp/pull/1144
+- Fixes prev and next proposal buttons: https://github.com/webb-tools/webb-dapp/pull/1144
+- Removes open governance chip from details page: https://github.com/webb-tools/webb-dapp/pull/1144
+- Replaces Webb avatar logo with Tangle logo: https://github.com/webb-tools/webb-dapp/pull/1144
+- Fixes proposal chart to start at first data point: https://github.com/webb-tools/webb-dapp/pull/1145
