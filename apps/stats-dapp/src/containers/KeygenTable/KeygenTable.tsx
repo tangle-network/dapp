@@ -224,27 +224,24 @@ export const KeygenTable: FC = () => {
 
   const data = useMemo(() => {
     if (keysStats.val) {
-      return (
-        keysStats.val.items
-          // .filter((v) => {
-          //   console.log('v: ', v);
-          //   return v.keyGenThreshold && v.signatureThreshold;
-          // })
-          .map(
-            (item): KeygenType => ({
-              height: Number(item.height),
-              session: Number(item.session),
-              key: item.compressed,
-              authorities: new Set(item.keyGenAuthorities),
-              keygenThreshold: item.keyGenThreshold ?? 0,
-              keyId: item.uncompressed,
-              totalAuthorities: item.keyGenAuthorities.length,
-              signatureThreshold: item.signatureThreshold ?? 0,
-              previousKeyId: item.previousKeyId,
-              nextKeyId: item.nextKeyId,
-            })
-          )
-      );
+      return keysStats.val.items
+        .filter((v) => {
+          return v.keyGenThreshold && v.signatureThreshold;
+        })
+        .map(
+          (item): KeygenType => ({
+            height: Number(item.height),
+            session: Number(item.session),
+            key: item.compressed,
+            authorities: new Set(item.keyGenAuthorities),
+            keygenThreshold: item.keyGenThreshold ?? 0,
+            keyId: item.uncompressed,
+            totalAuthorities: item.keyGenAuthorities.length,
+            signatureThreshold: item.signatureThreshold ?? 0,
+            previousKeyId: item.previousKeyId,
+            nextKeyId: item.nextKeyId,
+          })
+        );
     }
     return [] as KeygenType[];
   }, [keysStats, totalItems]);

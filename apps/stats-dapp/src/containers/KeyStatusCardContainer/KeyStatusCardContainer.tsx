@@ -4,7 +4,7 @@ import { Spinner } from '@webb-tools/icons';
 import React, { FC, forwardRef, useMemo } from 'react';
 
 import { KeyStatusCardContainerProps } from './types';
-
+import { useStatsContext } from '../../provider/stats-provider';
 /**
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
  */
@@ -13,6 +13,8 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({
   keyType,
   now,
 }) => {
+  const { dkgDataFromPolkadotAPI } = useStatsContext();
+
   const { title, titleInfo } = useMemo(
     () => ({
       title: keyType === 'current' ? 'Active Key' : 'Next Key',
@@ -33,14 +35,28 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({
     [data]
   );
 
+  // Extra check to make sure the active key is the same as the one from polkadot API
+  const activeKeyData = useMemo(() => {
+    return {
+      key:
+        data?.compressed === dkgDataFromPolkadotAPI?.currentKey
+          ? data?.compressed
+          : dkgDataFromPolkadotAPI?.currentKey,
+      session:
+        Number(data?.session) === dkgDataFromPolkadotAPI?.currentSessionNumber
+          ? Number(data?.session)
+          : dkgDataFromPolkadotAPI?.currentSessionNumber,
+    };
+  }, [data, dkgDataFromPolkadotAPI]);
+
   return (
     <KeyStatusCard
       title={title}
       titleInfo={titleInfo}
       instance={now}
-      sessionNumber={Number(data?.session)}
+      sessionNumber={activeKeyData.session}
       keyType={keyType}
-      keyVal={data?.compressed ?? ''}
+      keyVal={activeKeyData.key ?? ''}
       startTime={data?.start ?? null}
       endTime={data?.end ?? null}
       authorities={authorities}
