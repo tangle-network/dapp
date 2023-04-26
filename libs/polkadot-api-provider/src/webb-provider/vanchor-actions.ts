@@ -8,6 +8,7 @@ import {
   Transaction,
   TransactionPayloadType,
   TransactionState,
+  utxoFromVAnchorNote,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
@@ -242,16 +243,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const address = activeAccount.address;
     const zeroBN = new BN(0);
 
-    const secrets = payload.note.secrets.split(':');
-    const depositUtxo = await Utxo.generateUtxo({
-      curve: payload.note.curve,
-      backend: payload.note.backend,
-      amount: payload.note.amount,
-      originChainId: payload.note.sourceChainId.toString(),
-      chainId: payload.note.targetChainId.toString(),
-      keypair: new Keypair(`0x${secrets[2]}`),
-      blinding: hexToU8a(`0x${secrets[3]}`),
-    });
+    const depositUtxo = await utxoFromVAnchorNote(
+      payload.note,
+      +payload.note.index
+    );
     const inputUtxos: Utxo[] = [];
 
     const leavesMap: Record<number, Uint8Array[]> = {};
@@ -386,7 +381,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       token: assetIdBytes,
     };
 
-    const pm = new ArkworksProvingManager(null); // No worker needed for now.
+    const worker = this.inner.wasmFactory();
+    const pm = new ArkworksProvingManager(worker);
     const data: VAnchorProof = await pm.prove('vanchor', proofInput);
 
     const extData = {
@@ -440,6 +436,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
           amount: '0',
           blinding: hexToU8a(randomBN(31).toHexString()),
           keypair: randomKeypair,
+          index: this.inner.state.defaultUtxoIndex.toString(),
         })
       );
     }

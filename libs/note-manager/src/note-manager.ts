@@ -29,6 +29,7 @@ type DefaultNoteGenInput = Pick<
   | 'protocol'
   | 'version'
   | 'width'
+  | 'index'
 >;
 
 // A NoteManager will manage the notes for a keypair.
@@ -48,6 +49,7 @@ export class NoteManager {
     protocol: 'vanchor',
     version: 'v1',
     width: '5',
+    index: 0,
   };
 
   private constructor(
@@ -362,13 +364,14 @@ export class NoteManager {
       .toString();
 
     // Convert the amount to units of wei
-    const outputUtxo = await Utxo.generateUtxo({
+    const utxo = await Utxo.generateUtxo({
       curve: this.defaultNoteGenInput.curve,
       backend,
       amount: amountBigNumber,
       originChainId: sourceTypedChainId.toString(),
       chainId: destTypedChainId.toString(),
       keypair: this.keypair,
+      index: this.defaultNoteGenInput.index.toString(),
     });
 
     const noteInput: NoteGenInput = {
@@ -377,16 +380,16 @@ export class NoteManager {
       backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),
-        toFixedHex(outputUtxo.amount, 16).substring(2),
+        toFixedHex(utxo.amount, 16).substring(2),
         toFixedHex(this.keypair.privkey).substring(2),
-        toFixedHex(`0x${outputUtxo.blinding}`).substring(2),
+        toFixedHex(`0x${utxo.blinding}`).substring(2),
       ].join(':'),
       sourceChain: sourceTypedChainId.toString(),
       sourceIdentifyingData: sourceAnchorAddress,
       targetChain: destTypedChainId.toString(),
       targetIdentifyingData: destAnchorAddress,
       tokenSymbol: tokenSymbol,
-      index: outputUtxo.index,
+      index: utxo.index,
     };
 
     return Note.generateNote(noteInput);

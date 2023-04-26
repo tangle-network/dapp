@@ -756,6 +756,7 @@ export const TransferContainer = forwardRef<
         chainId: destTypedChainId.toString(),
         keypair: recipientKeypair,
         originChainId: currentTypedChainId.toString(),
+        index: activeApi.state.defaultUtxoIndex.toString(),
       });
 
       const changeAmountBigNumber = ethers.utils.parseUnits(
@@ -792,6 +793,7 @@ export const TransferContainer = forwardRef<
             chainId: currentTypedChainId.toString(),
             keypair,
             originChainId: currentTypedChainId.toString(),
+            index: activeApi.state.defaultUtxoIndex.toString(),
           });
 
       setMainComponent(
@@ -820,6 +822,7 @@ export const TransferContainer = forwardRef<
       hasNoteAccount,
       noteManager,
       activeApi?.state.activeBridge,
+      activeApi?.state.defaultUtxoIndex,
       activeApi?.backend,
       api,
       fungibleCurrency,

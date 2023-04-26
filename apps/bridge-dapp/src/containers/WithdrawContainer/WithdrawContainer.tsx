@@ -684,6 +684,7 @@ export const WithdrawContainer = forwardRef<
           chainId: currentTypedChainId.toString(),
           keypair,
           originChainId: currentTypedChainId.toString(),
+          index: activeApi.state.defaultUtxoIndex.toString(),
         });
 
     // Default source chain is the first source chain in the input notes
@@ -727,6 +728,7 @@ export const WithdrawContainer = forwardRef<
   }, [
     activeApi?.backend,
     activeApi?.state.activeBridge,
+    activeApi?.state.defaultUtxoIndex,
     amount,
     amountAfterFeeWei,
     availableAmount,
