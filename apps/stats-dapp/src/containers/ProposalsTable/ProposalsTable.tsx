@@ -36,7 +36,7 @@ import {
   Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -86,7 +86,7 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     header: 'Chain',
     cell: (props) => {
       const name = mapChainIdToLogo(Number(props.getValue()));
-      return <TokenIcon name={name} size="lg" />;
+      return <ChainIcon name={name} size="lg" />;
     },
   }),
 
@@ -213,12 +213,14 @@ export const ProposalsTable = () => {
   );
 
   const proposalsStats = useProposals(pageQuery);
+
   const data = useMemo(() => {
     if (proposalsStats.val) {
       return proposalsStats.val.items;
     }
     return [] as ProposalListItem[];
   }, [proposalsStats]);
+
   useEffect(() => {
     if (proposalsStats.val) {
       setTotalItems(proposalsStats.val.pageInfo.count);

@@ -44,7 +44,7 @@ export function getIconSizeInPixel(size: IconSize) {
     }
 
     case 'lg': {
-      return '24px' as const;
+      return '32px' as const;
     }
 
     case 'md': {
