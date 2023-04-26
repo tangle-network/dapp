@@ -670,7 +670,6 @@ export const DepositContainer = forwardRef<
           const chain = Object.values(chains).find(
             (val) => val.name === selectedChain.name
           );
-
           if (!chain) {
             throw new Error('Detect unsupported chain is being selected');
           }
