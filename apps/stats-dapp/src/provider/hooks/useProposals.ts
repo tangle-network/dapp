@@ -417,8 +417,8 @@ export function useProposal(
     const index = proposalIds.indexOf(proposalId);
 
     if (index !== -1) {
-      const itemBefore = proposalIds[index - 1];
-      const itemAfter = proposalIds[index + 1];
+      const itemBefore = proposalIds[index + 1];
+      const itemAfter = proposalIds[index - 1];
 
       setNextAndPrevStatus({
         val: {
