@@ -139,7 +139,7 @@ export const ProposalDetail = () => {
           <div className="flex items-center">
             <LabelWithValue
               className="grow"
-              label="height:"
+              label="Height:"
               value={
                 <span className="flex items-center space-x-1">
                   <BlockIcon size="lg" />
@@ -147,31 +147,9 @@ export const ProposalDetail = () => {
                 </span>
               }
             />
-
-            <LabelWithValue
-              className="grow"
-              label="tx hash:"
-              value={
-                <span className="flex items-center space-x-1">
-                  <ExchangeLine size="lg" />
-                  <div className="flex items-center space-x-1">
-                    <LabelWithValue
-                      labelVariant="body3"
-                      label="tx hash:"
-                      isHiddenLabel
-                      value={shortenHex(txHash)}
-                      valueTooltip={txHash}
-                    />
-                    <a href="#">
-                      <ExternalLinkLine />
-                    </a>
-                  </div>
-                </span>
-              }
-            />
           </div>
           <LabelWithValue
-            label="chain:"
+            label="Chain:"
             value={
               <span className="flex items-center p-2 space-x-2">
                 <ChainIcon
@@ -234,7 +212,7 @@ export const ProposalDetail = () => {
                 key={`${time.at.toString()}-${idx}`}
                 title={time.status}
                 time={time.at}
-                txHash={time.hash}
+                txHash=''
                 externalUrl="#"
               />
             ))}
