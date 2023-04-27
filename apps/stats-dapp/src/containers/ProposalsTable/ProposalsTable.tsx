@@ -8,10 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
-import {
-  ProposalStatus,
-  ProposalType,
-} from '../../generated/graphql';
+import { ProposalStatus, ProposalType } from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,

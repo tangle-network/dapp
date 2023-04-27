@@ -11,7 +11,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { VoteType} from '../../generated/graphql';
+import { VoteType } from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
 import {
   Avatar,
@@ -81,9 +81,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [voteStatus, setVoteStatus] = useState<VoteType | undefined>(
-    undefined
-  );
+  const [voteStatus, setVoteStatus] = useState<VoteType | undefined>(undefined);
   const query = useMemo<VotesQuery>(() => {
     return {
       filter: {
