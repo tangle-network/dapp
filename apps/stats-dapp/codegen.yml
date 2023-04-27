@@ -1,0 +1,20 @@
+overwrite: true
+schema: "https://standalone-subql.webb.tools/graphql"
+documents:
+  - "apps/stats-dapp/src/**/*.graphql"
+generates:
+  apps/stats-dapp/src/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+
+  apps/stats-dapp/graphql.schema.json:
+    plugins:
+      - "introspection"
+    config:
+      withComponent: true
+      withHooks: true
+      withMutationFn: true
+      withRefetchFn: true
+      skipTypename: true

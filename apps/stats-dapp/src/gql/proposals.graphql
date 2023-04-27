@@ -118,18 +118,22 @@ query ProposalsOverview(
   }
 }
 
-# Query votes for a prooser
-query ProposalVotes(
+# Query votes for a proposer with vote type
+query ProposalVotesWithVotesType(
   # The number of votes to return
   $perPage: Int!
   # The number of votes to skip
   $offset: Int!
   # The proposal id
   $proposalId: String!
-  $for: AppEnumFe385C7221Filter
+  # The vote type "FOR", "AGAINST" OR "ABSTAIN"
+  $voteType: VoteType
 ) {
   proposalVotes(
-    filter: { proposalId: { equalTo: $proposalId }, voteStatus: $for }
+    filter: {
+      proposalId: { equalTo: $proposalId }
+      voteStatus: { equalTo: $voteType }
+    }
     orderBy: [BLOCK_NUMBER_DESC]
     first: $perPage
     offset: $offset
@@ -143,6 +147,32 @@ query ProposalVotes(
     }
   }
 }
+
+# Query votes for a proposer without vote type
+query ProposalVotesWithoutVotesType(
+  # The number of votes to return
+  $perPage: Int!
+  # The number of votes to skip
+  $offset: Int!
+  # The proposal id
+  $proposalId: String!
+) {
+  proposalVotes(
+    filter: { proposalId: { equalTo: $proposalId } }
+    orderBy: [BLOCK_NUMBER_DESC]
+    first: $perPage
+    offset: $offset
+  ) {
+    nodes {
+      ...ProposalsVoteListView
+    }
+    totalCount
+    pageInfo {
+      ...PageInfoMeta
+    }
+  }
+}
+
 # Proposals details query
 query ProposalDetails(
   # Proposal id
