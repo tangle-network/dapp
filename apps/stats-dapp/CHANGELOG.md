@@ -36,10 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bug fix for authorities progress bar: https://github.com/webb-tools/webb-dapp/commit/82b8a3a120fb44fa87e4bf0e01c62f778649bdbd
 - Bug fix for keygen table: https://github.com/webb-tools/webb-dapp/commit/86dd345497d7a5798be4a19b1a6e3fca80680d26
 
-
-[Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.5]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.5
-
 ## [0.0.3] - 2023-04-21
 
 ### Fixed
@@ -58,3 +54,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removes open governance chip from details page: https://github.com/webb-tools/webb-dapp/pull/1144
 - Replaces Webb avatar logo with Tangle logo: https://github.com/webb-tools/webb-dapp/pull/1144
 - Fixes proposal chart to start at first data point: https://github.com/webb-tools/webb-dapp/pull/1145
+
+## [0.0.6] - 2023-04-27
+
+### Fixed
+
+- Fixes proposers not being displayed in proposal drawer: https://github.com/webb-tools/webb-dapp/pull/1149
+- Updates stats-dapp build script to include codegen generation: https://github.com/webb-tools/webb-dapp/pull/1149
+
+[Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
+[0.0.5]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.6

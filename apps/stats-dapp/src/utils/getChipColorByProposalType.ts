@@ -1,6 +1,6 @@
 import { ChipProps } from '@webb-tools/webb-ui-components/components/Chip/types';
 
-import { AppEnum155D64Ff70 as ProposalStatus } from '../generated/graphql';
+import { ProposalStatus } from '../generated/graphql';
 
 export function getChipColorByProposalType(
   type: ProposalStatus

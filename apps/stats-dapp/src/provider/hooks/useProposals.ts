@@ -1,13 +1,13 @@
 import {
-  AppEnumB6165934C8 as ProposalType,
-  AppEnum790A3Fe4Ce as ThresholdVariant,
-  useEnsureProposalsLazyQuery,
+  ProposalType,
+  ThresholdVariant,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
-  useProposalVotesLazyQuery,
-  AppEnumFe385C7221 as VoteStatus,
-  AppEnum155D64Ff70 as ProposalStatus,
+  useProposalVotesWithVotesTypeLazyQuery,
+  useProposalVotesWithoutVotesTypeLazyQuery,
+  VoteType,
+  ProposalStatus,
   ProposalsOvertimeTotalCountDocument,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
@@ -111,7 +111,7 @@ type ProposalTimeLine = {
 export type VoteListItem = {
   id: string;
   voterId: string;
-  status: VoteStatus;
+  status: VoteType;
   timestamp: Date;
 };
 /**
@@ -126,7 +126,7 @@ type VotesPage = Loadable<Page<VoteListItem>>;
  * */
 export type VotesQuery = PageInfoQuery<{
   proposalId: string;
-  status?: VoteStatus;
+  status?: VoteType;
 }>;
 
 /**
@@ -527,31 +527,64 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
     isFailed: false,
     val: null,
   });
-  const [call, query] = useProposalVotesLazyQuery();
+
+  const [callWithVotesType, queryWithVotesType] =
+    useProposalVotesWithVotesTypeLazyQuery();
+
+  const [callWithoutVotesType, queryWithoutVotesType] =
+    useProposalVotesWithoutVotesTypeLazyQuery();
+
   const {
     filter: { proposalId, status },
     offset,
     perPage,
   } = votesReqQuery;
-  useEffect(() => {
-    call({
-      variables: {
-        proposalId,
-        offset,
-        perPage,
-        for: status ? { equalTo: status } : undefined,
-      },
-    }).catch((e) => {
-      setVotes({
-        isLoading: false,
-        isFailed: true,
-        val: null,
-        error: e.message,
-      });
-    });
-  }, [perPage, offset, status, call, proposalId]);
 
   useEffect(() => {
+    if (status) {
+      callWithVotesType({
+        variables: {
+          proposalId,
+          offset,
+          perPage,
+          voteType: status,
+        },
+      }).catch((e) => {
+        setVotes({
+          isLoading: false,
+          isFailed: true,
+          val: null,
+          error: e.message,
+        });
+      });
+    } else {
+      callWithoutVotesType({
+        variables: {
+          proposalId,
+          offset,
+          perPage,
+        },
+      }).catch((e) => {
+        setVotes({
+          isLoading: false,
+          isFailed: true,
+          val: null,
+          error: e.message,
+        });
+      });
+    }
+  }, [
+    perPage,
+    offset,
+    status,
+    callWithVotesType,
+    callWithoutVotesType,
+    proposalId,
+  ]);
+
+  useEffect(() => {
+    const query = status ? queryWithVotesType : queryWithoutVotesType;
+
     const subscription = query.observable
       .map((res): VotesPage => {
         if (res.data && res.data.proposalVotes) {
@@ -589,7 +622,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
       })
       .subscribe(setVotes);
     return () => subscription.unsubscribe();
-  }, [query, setVotes]);
+  }, [queryWithVotesType, queryWithoutVotesType, status, setVotes]);
 
   return votes;
 }

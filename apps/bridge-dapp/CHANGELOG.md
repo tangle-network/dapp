@@ -51,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 2 new chains - Avalanche & Scroll: https://github.com/webb-tools/webb-dapp/pull/1048
 - 8-sided Bridge with DKG Deployment: https://github.com/webb-tools/webb-dapp/pull/1048
 
+## [0.0.4] - 2023-04-27
+
+### Added
+- Fixes quick action prompts: https://github.com/webb-tools/webb-dapp/pull/1147
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
-[0.0.3]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.3
+[0.0.4]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.4

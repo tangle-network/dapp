@@ -6,6 +6,8 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { Chain } from '@webb-tools/dapp-config';
 import {
   ChainIcon,
   ExternalLinkLine,
@@ -14,6 +16,7 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   fuzzyFilter,
   IconWithTooltip,
@@ -139,12 +142,31 @@ export const ShieldedAssetsTableContainer: FC<
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
+  const { switchChain, activeChain, activeWallet } = useWebContext();
+
+  const promptChainSwitch = useCallback(
+    async (chain: Chain) => {
+      const isSupported =
+        activeWallet &&
+        activeWallet.supportedChainIds.includes(
+          calculateTypedChainId(chain.chainType, chain.chainId)
+        );
+
+      if (isSupported) {
+        await switchChain(chain, activeWallet);
+      }
+    },
+    [activeWallet, switchChain]
+  );
+
   const onTransfer = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
+    async (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Transfer');
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
 
+      await promptChainSwitch(rawChain);
+
       onDefaultDestinationChainChange?.(rawChain);
 
       if (rawFungibleCurrency) {
@@ -155,14 +177,17 @@ export const ShieldedAssetsTableContainer: FC<
       onActiveTabChange,
       onDefaultDestinationChainChange,
       onDefaultFungibleCurrencyChange,
+      promptChainSwitch,
     ]
   );
 
   const onWithdraw = useCallback(
-    (shieldedAsset: ShieldedAssetDataType) => {
+    async (shieldedAsset: ShieldedAssetDataType) => {
       onActiveTabChange?.('Withdraw');
 
       const { rawChain, rawFungibleCurrency } = shieldedAsset;
+
+      await promptChainSwitch(rawChain);
 
       onDefaultDestinationChainChange?.(rawChain);
 
@@ -174,6 +199,7 @@ export const ShieldedAssetsTableContainer: FC<
       onActiveTabChange,
       onDefaultDestinationChainChange,
       onDefaultFungibleCurrencyChange,
+      promptChainSwitch,
     ]
   );
 
