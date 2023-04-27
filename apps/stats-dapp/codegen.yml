@@ -1,16 +1,9 @@
 overwrite: true
 schema: "https://standalone-subql.webb.tools/graphql"
 documents:
-  - "./packages/page-statistics/**/*.graphql"
-  - "./apps/stats-dapp/src/**/*.graphql"
+  - "./src/**/*.graphql"
 generates:
-  ./packages/page-statistics/src/generated/graphql.tsx:
-    plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typescript-react-apollo"
-
-  ./apps/stats-dapp/src/generated/graphql.tsx:
+  ./src/generated/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
