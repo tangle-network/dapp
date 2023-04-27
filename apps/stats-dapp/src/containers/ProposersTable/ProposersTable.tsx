@@ -11,7 +11,7 @@ import {
   Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { AppEnumFe385C7221 as VoteStatus } from '../../generated/graphql';
+import { VoteType} from '../../generated/graphql';
 import { useVotes, VoteListItem, VotesQuery } from '../../provider/hooks';
 import {
   Avatar,
@@ -42,13 +42,13 @@ const columns: ColumnDef<VoteListItem, any>[] = [
   columnHelper.accessor('status', {
     header: 'Vote',
     cell: (props) => {
-      const vote = props.getValue<VoteStatus | undefined>();
+      const vote = props.getValue<VoteType | undefined>();
       switch (vote) {
-        case VoteStatus.Abstain:
+        case VoteType.Abstain:
           return <Chip color="blue">Abstain</Chip>;
-        case VoteStatus.Against:
+        case VoteType.Against:
           return <Chip color="red">Against</Chip>;
-        case VoteStatus.For:
+        case VoteType.For:
           return <Chip color="green">For</Chip>;
         default:
           return '-';
@@ -81,7 +81,7 @@ export const ProposersTable: FC<ProposersTableProps> = ({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [voteStatus, setVoteStatus] = useState<VoteStatus | undefined>(
+  const [voteStatus, setVoteStatus] = useState<VoteType | undefined>(
     undefined
   );
   const query = useMemo<VotesQuery>(() => {
@@ -94,14 +94,15 @@ export const ProposersTable: FC<ProposersTableProps> = ({
       perPage: pagination.pageSize,
     };
   }, [pagination, proposalId, voteStatus]);
+
   const votes = useVotes(query);
 
-  const tabsValue = useMemo<Array<[VoteStatus | undefined, string]>>(() => {
+  const tabsValue = useMemo<Array<[VoteType | undefined, string]>>(() => {
     return [
       [undefined, `All (${counters.all})`],
-      [VoteStatus.For, `For (${counters.for})`],
-      [VoteStatus.Against, `Against (${counters.against})`],
-      [VoteStatus.Abstain, `Abstain (${counters.abstain})`],
+      [VoteType.For, `For (${counters.for})`],
+      [VoteType.Against, `Against (${counters.against})`],
+      [VoteType.Abstain, `Abstain (${counters.abstain})`],
     ];
   }, [counters]);
 

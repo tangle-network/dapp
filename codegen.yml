@@ -1,6 +1,6 @@
 overwrite: true
-schema: "https://subquery-dev.webb.tools/graphql"
-documents: 
+schema: "https://standalone-subql.webb.tools/graphql"
+documents:
   - "./packages/page-statistics/**/*.graphql"
   - "./apps/stats-dapp/src/**/*.graphql"
 generates:
