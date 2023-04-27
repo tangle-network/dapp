@@ -41,10 +41,11 @@ jobs:
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
 
+      - name: Install deps
+        run: yarn install
+
       - name: Generate stats-dapp codegen
         run: yarn gql:codegen
 
       - name: build
-        run: |
-          yarn install
-          yarn nx run-many --all --target=build
+        run: yarn nx run-many --all --target=build
