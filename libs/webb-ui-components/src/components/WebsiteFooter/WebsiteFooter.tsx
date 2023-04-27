@@ -18,11 +18,106 @@ import Link from 'next/link';
 import { ComponentProps, useState } from 'react';
 import { WebsiteNewletterForm } from '../WebsiteNewsLetterForm';
 
+type NavLinkType = {
+  group: string;
+  links: Array<
+    ComponentProps<typeof InternalOrExternalLink> & { label: string }
+  >;
+};
+
 type SocialType = {
   Icon: (props: IconBase) => JSX.Element;
   name: string;
   href: string;
 };
+
+const navLinks: Array<NavLinkType> = [
+  {
+    group: 'Dapp',
+    links: [
+      {
+        label: 'Bridge',
+        url: 'https://app.webb.tools/',
+        isInternal: false,
+      },
+      // {
+      //   label: 'Wrap',
+      //   url: '#',
+      // },
+      // {
+      //   label: 'Crowdloan',
+      //   url: '#',
+      // },
+    ],
+  },
+  {
+    group: 'Network',
+    links: [
+      {
+        label: 'Statistics',
+        url: 'https://stats.webb.tools/',
+        isInternal: false,
+      },
+      // {
+      //   label: 'Governance',
+      //   url: '#',
+      // },
+    ],
+  },
+  {
+    group: 'Developer',
+    links: [
+      {
+        label: 'Documentation',
+        url: 'https://docs.webb.tools/',
+        isInternal: false,
+      },
+      {
+        label: 'Source Code',
+        url: 'https://github.com/webb-tools',
+        isInternal: false,
+      },
+      {
+        label: 'Whitepaper',
+        url: 'https://eprint.iacr.org/2023/260',
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Resources',
+    links: [
+      // {
+      //   label: 'Brand Kit',
+      //   url: '',
+      // },
+      {
+        label: 'Community',
+        url: 'https://webb.tools/community',
+        isInternal: false,
+      },
+      // {
+      //   label: 'FAQs',
+      //   url: '#',
+      // },
+    ],
+  },
+  {
+    group: 'Company',
+    links: [
+      {
+        label: 'About Us',
+        url: 'https://webb.tools',
+        isInternal: false,
+      },
+      {
+        label: 'Jobs',
+        url: 'https://angel.co/company/webb-4/jobs',
+        isInternal: false,
+      },
+    ],
+  },
+];
 
 const socials: Array<SocialType> = [
   {
@@ -134,28 +229,48 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         </div>
       </div>
 
-      {/** Links and socials */}
-      <div className="w-full max-w-[900px] px-4 py-12 space-y-6 mx-auto">
+      {/** Navigation Links */}
+      <div className="w-full max-w-[900px] flex flex-col gap-9 px-4 py-12 mx-auto">
         {type === 'tangle' && (
           <Typography variant="body1" className="text-center md:text-left">
             Built by Webb Foundation
           </Typography>
         )}
-        <div className="flex flex-col items-center space-y-4 md:space-y-0 md:flex-row md:justify-between">
+
+        {/** Logo and links */}
+        <div className="flex flex-col items-center md:items-start space-y-4 md:space-y-0 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
-          <div className="flex items-center space-x-4">
-            {socials.map(({ Icon, name, href }) => (
-              <a
-                key={name}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className="dark:text-mono-0 dark:hover:text-mono-100"
-              >
-                <Icon className="w-8 h-8 !fill-mono-60" />
-              </a>
-            ))}
-          </div>
+          {navLinks.map(({ group, links }) => (
+            <div className="hidden md:flex md:flex-col">
+              <Typography variant="body1" fw="bold" className="!text-lg mb-4">
+                {group}
+              </Typography>
+              <div className="flex flex-col gap-2">
+                {links.map(({ label, ...restProps }) => (
+                  <Typography variant="body1" className="hover:underline">
+                    <InternalOrExternalLink {...restProps}>
+                      {label}
+                    </InternalOrExternalLink>
+                  </Typography>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/** Socials */}
+        <div className="flex items-center space-x-4 justify-center md:justify-end">
+          {socials.map(({ Icon, name, href }) => (
+            <a
+              key={name}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="dark:text-mono-0 dark:hover:text-mono-100"
+            >
+              <Icon className="w-8 h-8 !fill-mono-60" />
+            </a>
+          ))}
         </div>
 
         <div className="flex flex-col items-center space-y-2 md:space-y-0 md:flex-row md:justify-between">
