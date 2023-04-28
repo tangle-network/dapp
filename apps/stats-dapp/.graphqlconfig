@@ -1,0 +1,10 @@
+{
+  "extensions": {
+    "endpoints": {
+      "url": "https://standalone-subql.webb.tools/graphql",
+      "subscription": "https://standalone-subql.webb.tools/graphql"
+    },
+    "schemaPath": "./schema.graphql"
+  }
+}
+

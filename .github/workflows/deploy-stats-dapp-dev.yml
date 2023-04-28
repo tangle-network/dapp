@@ -34,7 +34,7 @@ jobs:
         run: yarn install
 
       - name: Build project
-        run: yarn nx build stats-dapp
+        run: yarn build:stats
 
       - name: Deploy to Netlify
         id: deploy-netlify
