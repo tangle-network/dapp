@@ -3,11 +3,10 @@ import { isValidEmail } from '../../../utils';
 
 type BodyType = {
   email: string;
-  name: string;
 };
 
 const isBodyType = (body: any): body is BodyType => {
-  return typeof body.email === 'string' && typeof body.name === 'string';
+  return typeof body.email === 'string';
 };
 
 export default async function handler(
@@ -29,14 +28,15 @@ export default async function handler(
     return;
   }
 
-  const { email, name } = req.body;
+  const { email } = req.body;
 
-  if (!name || !isValidEmail(email)) {
-    res.status(400).send({ message: 'Invalid email or name' });
+  if (!isValidEmail(email)) {
+    res.status(400).send({ message: 'Invalid email' });
     return;
   }
 
   const url = 'https://api.sendinblue.com/v3/contacts';
+  const listId = 5;
   const options = {
     method: 'POST',
     headers: {
@@ -45,8 +45,7 @@ export default async function handler(
       'api-key': apiKey,
     },
     body: JSON.stringify({
-      attributes: { FIRSTNAME: name },
-      listIds: [5],
+      listIds: [listId],
       updateEnabled: false,
       email,
     }),

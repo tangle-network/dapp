@@ -16,7 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { ComponentProps, useState } from 'react';
-import { WebsiteNewletterForm } from '../WebsiteNewsLetterForm';
+import { WebsiteNewsletterForm } from '../WebsiteNewsLetterForm';
 
 type NavLinkType = {
   group: string;
@@ -200,7 +200,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
                 Follow for Updates
               </Typography>
 
-              <WebsiteNewletterForm onSuccess={() => setSuccess(true)} />
+              <WebsiteNewsletterForm onSuccess={() => setSuccess(true)} />
 
               <Typography variant="mkt-caption" className="dark:text-mono-100">
                 By signing up you agree to{' '}
