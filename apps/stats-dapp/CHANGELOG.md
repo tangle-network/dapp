@@ -49,3 +49,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Bug fix to resolve displaying the next DKG key issue: https://github.com/webb-tools/webb-dapp/pull/1140
+
+## [0.0.5] - 2023-04-28
+
+### Fix
+- Bug fix to display correct timeline of proposal events: https://github.com/webb-tools/webb-dapp/pull/1154
+
+### Changed
+- Timeline Item component's date & time format: https://github.com/webb-tools/webb-dapp/pull/1154
