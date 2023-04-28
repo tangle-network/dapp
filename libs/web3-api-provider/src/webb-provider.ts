@@ -62,8 +62,8 @@ export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
-  type(): string {
-    return 'Web3';
+  type() {
+    return 'web3' as const;
   }
 
   state: WebbState;

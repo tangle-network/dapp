@@ -157,6 +157,7 @@ export const DepositConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
+        providerType: activeApi.type(),
       });
 
       setTxId(tx.id);

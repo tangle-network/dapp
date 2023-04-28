@@ -59,9 +59,10 @@ export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
   implements WebbApiProvider<WebbPolkadot>
 {
-  type(): string {
-    return 'Polkadot';
+  type() {
+    return 'polkadot' as const;
   }
+
   state: WebbState;
   noteManager: NoteManager | null = null;
 

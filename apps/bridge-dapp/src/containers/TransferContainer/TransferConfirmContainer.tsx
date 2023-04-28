@@ -125,7 +125,7 @@ export const TransferConfirmContainer = forwardRef<
         return;
       }
 
-      if (!vAnchorApi) {
+      if (!vAnchorApi || !activeApi) {
         logger.error('No vAnchor API provided');
         captureSentryException(
           new Error('No vAnchor API provided'),
@@ -177,6 +177,7 @@ export const TransferConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
+        providerType: activeApi.type(),
       });
 
       setTxId(tx.id);
@@ -234,6 +235,7 @@ export const TransferConfirmContainer = forwardRef<
     }, [
       inputNotes,
       vAnchorApi,
+      activeApi,
       isTransfering,
       changeNote,
       apiConfig,

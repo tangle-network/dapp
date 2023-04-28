@@ -6,6 +6,17 @@ import { ChainType } from '@webb-tools/sdk-core';
 
 import { ChainConfig } from '../chain-config.interface';
 
+function populateBlockExplorerStub(connString: string): string {
+  const params = new URLSearchParams({
+    rpc: connString,
+  });
+  const url = new URL(
+    `?${params.toString()}`,
+    'https://polkadot.js.org/apps/'
+  ).toString();
+  return url + '#';
+}
+
 // All substrate chains temporary use in `development` environment now
 export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.ProtocolSubstrateStandalone]: {
@@ -15,6 +26,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: SubstrateChainId.ProtocolSubstrateStandalone,
     logo: WEBBLogo,
     url: 'ws://127.0.0.1:9944',
+    blockExplorerStub: populateBlockExplorerStub('ws://127.0.0.1:9944'),
     name: 'Substrate',
     env: ['development'],
   },
@@ -25,6 +37,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: SubstrateChainId.LocalTangleStandalone,
     logo: WEBBLogo,
     url: 'wss://standalone.webb.tools',
+    blockExplorerStub: populateBlockExplorerStub('wss://standalone.webb.tools'),
     name: 'Tangle',
     env: ['development'],
   },
@@ -35,6 +48,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: SubstrateChainId.Kusama,
     logo: KSMLogo,
     url: 'wss://kusama-rpc.polkadot.io',
+    blockExplorerStub: populateBlockExplorerStub(
+      'wss://kusama-rpc.polkadot.io'
+    ),
     name: 'Kusama',
     env: ['development'],
   },
@@ -45,6 +61,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: SubstrateChainId.Polkadot,
     logo: DOTLogo,
     url: 'wss://rpc.polkadot.io',
+    blockExplorerStub: populateBlockExplorerStub('wss://rpc.polkadot.io'),
     name: 'Polkadot',
     env: ['development'],
   },

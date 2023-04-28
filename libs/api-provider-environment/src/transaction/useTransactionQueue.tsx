@@ -30,6 +30,7 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
+
 function mapTxToPayload(
   tx: Transaction<any>,
   currencyConfig: Record<number, CurrencyConfig>,
@@ -50,13 +51,26 @@ function mapTxToPayload(
   const SrcWallet = chainConfig[wallets.src]?.logo;
   const DistWallet = chainConfig[wallets.dest]?.logo;
 
+  const txProviderType = tx.metaData.providerType;
+
   const getExplorerURI = (
     addOrTxHash: string,
     variant: 'tx' | 'address'
   ): string => {
-    return `${
-      explorerUri.endsWith('/') ? explorerUri : explorerUri + '/'
-    }${variant}/${addOrTxHash}`;
+    explorerUri = explorerUri.endsWith('/') ? explorerUri : explorerUri + '/';
+
+    switch (txProviderType) {
+      case 'web3':
+        return `${explorerUri}${variant}/${addOrTxHash}`;
+
+      case 'polkadot': {
+        const prefix = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+        return `${explorerUri}${prefix}`;
+      }
+
+      default:
+        return '';
+    }
   };
 
   return {

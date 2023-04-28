@@ -186,6 +186,8 @@ export type NotificationHandler = ((
  **/
 export type WasmFactory = (name?: string) => Worker | null;
 
+export type WebbProviderType = 'web3' | 'polkadot';
+
 /**
  * The representation of an api provider
  *
@@ -212,7 +214,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   noteManager: NoteManager | null;
   typedChainidSubject: BehaviorSubject<number>;
 
-  type(): string;
+  type(): WebbProviderType;
 
   destroy(): Promise<void> | void;
 
