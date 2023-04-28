@@ -5,7 +5,7 @@ import {
 } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { shortenHex } from '../../utils';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelative } from 'date-fns';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -107,8 +107,8 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
           >
             {title}
           </Typography>
-          <Typography variant="utility" className="inline-block uppercase">
-            {formatDistanceToNow(time, { addSuffix: true })}
+          <Typography variant="utility" className="inline-block capitalize">
+            {formatRelative(time, new Date()).replace('at', '-')}
           </Typography>
         </div>
 

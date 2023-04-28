@@ -210,15 +210,19 @@ export const ProposalDetail = () => {
             Timeline
           </Typography>
           <TimeLine className="translate-x-3">
-            {timeline.map((time, idx) => (
-              <TimeLineItem
-                key={`${time.at.toString()}-${idx}`}
-                title={time.status}
-                time={time.at}
-                txHash=""
-                externalUrl="#"
-              />
-            ))}
+            {timeline.map((time, idx) => {
+              const status = time.id.split('-')[1];
+
+              return (
+                <TimeLineItem
+                  key={`${time.at.toString()}-${idx}`}
+                  title={status === 'Open' ? 'Added' : status}
+                  time={time.at}
+                  txHash=""
+                  externalUrl="#"
+                />
+              );
+            })}
           </TimeLine>
           {/** Detail */}
           <Typography variant="h5" fw="bold">
