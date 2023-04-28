@@ -179,9 +179,10 @@ export const DepositConfirmContainer = forwardRef<
           await noteManager.addNote(note);
         }
 
-        const indexBeforeInsert =
-          Number(await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)) -
-          1;
+        const nextIdx = Number(
+          await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
+        );
+        const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
 
         const { transactionHash, receipt } = await api.transact(...args);
 

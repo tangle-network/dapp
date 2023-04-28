@@ -232,14 +232,9 @@ export class PolkadotTx<
               this.isWrapped = true;
               await this.emitWithPayload('failed', message);
               reject(message);
-            } else if (method === 'ExtrinsicSuccess') {
-              if (status.isInBlock) {
-                // Resolve with the block hash
-                resolve(status.asInBlock.toString());
-              } else {
-                // Resolve with the finalization hash
-                resolve(status.asFinalized.toString());
-              }
+            } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
+              // Resolve with the block hash
+              resolve(status.asFinalized.toString());
               await this.emitWithPayload('finalize', undefined);
               this.isWrapped = true;
             }
