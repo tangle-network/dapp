@@ -71,7 +71,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
 
       const secrets = payload.note.secrets.split(':');
-      const depositUtxo = await Utxo.generateUtxo({
+      const depositUtxo = await this.inner.generateUtxo({
         curve: payload.note.curve,
         backend: payload.note.backend,
         amount: payload.note.amount,

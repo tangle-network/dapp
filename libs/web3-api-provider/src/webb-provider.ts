@@ -30,10 +30,12 @@ import {
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   ChainType,
+  CircomUtxo,
   Keypair,
   Note,
   toFixedHex,
   Utxo,
+  UtxoGenInput,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { ethers, providers, Signer } from 'ethers';
@@ -586,5 +588,9 @@ export class WebbWeb3Provider
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
+  }
+
+  generateUtxo(input: UtxoGenInput): Promise<Utxo> {
+    return CircomUtxo.generateUtxo(input);
   }
 }

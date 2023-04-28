@@ -1,4 +1,4 @@
-import { Keypair, Utxo } from '@webb-tools/sdk-core';
+import { CircomUtxo, Keypair, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { JsNote } from '@webb-tools/wasm-utils';
 import { BigNumber } from 'ethers';
@@ -13,7 +13,7 @@ async function utxoFromVAnchorNote(note: JsNote, leafIndex = 0): Promise<Utxo> {
 
   const keypair = new Keypair(secretKey);
 
-  return Utxo.generateUtxo({
+  const input: UtxoGenInput = {
     curve: note.curve,
     backend: note.backend,
     amount,
@@ -22,7 +22,11 @@ async function utxoFromVAnchorNote(note: JsNote, leafIndex = 0): Promise<Utxo> {
     chainId,
     index: leafIndex.toString(),
     keypair,
-  });
+  };
+
+  return input.backend === 'Arkworks'
+    ? Utxo.generateUtxo(input)
+    : CircomUtxo.generateUtxo(input);
 }
 
 export default utxoFromVAnchorNote;

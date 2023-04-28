@@ -395,7 +395,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     while (utxos.length !== 2 && utxos.length < maxLen) {
       utxos.push(
-        await Utxo.generateUtxo({
+        await this.inner.generateUtxo({
           curve: 'Bn254',
           backend: this.inner.backend,
           chainId: typedChainId.toString(),

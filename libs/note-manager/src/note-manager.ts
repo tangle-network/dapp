@@ -6,6 +6,7 @@ import {
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
+  CircomUtxo,
   Keypair,
   Note,
   NoteGenInput,
@@ -13,6 +14,7 @@ import {
   ResourceId,
   toFixedHex,
   Utxo,
+  UtxoGenInput,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
@@ -363,8 +365,7 @@ export class NoteManager {
       .parseUnits(amount.toString(), tokenDecimals)
       .toString();
 
-    // Convert the amount to units of wei
-    const utxo = await Utxo.generateUtxo({
+    const input: UtxoGenInput = {
       curve: this.defaultNoteGenInput.curve,
       backend,
       amount: amountBigNumber,
@@ -372,7 +373,12 @@ export class NoteManager {
       chainId: destTypedChainId.toString(),
       keypair: this.keypair,
       index: this.defaultNoteGenInput.index.toString(),
-    });
+    };
+
+    // Convert the amount to units of wei
+    const utxo = await (backend == 'Arkworks'
+      ? Utxo.generateUtxo(input)
+      : CircomUtxo.generateUtxo(input));
 
     const noteInput: NoteGenInput = {
       ...this.defaultNoteGenInput,

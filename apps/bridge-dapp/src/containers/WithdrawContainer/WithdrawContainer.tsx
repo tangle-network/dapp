@@ -677,7 +677,7 @@ export const WithdrawContainer = forwardRef<
           changeNote.note,
           changeNote.note.index ? +changeNote.note.index : 0
         )
-      : await Utxo.generateUtxo({
+      : await activeApi.generateUtxo({
           curve: noteManager.defaultNoteGenInput.curve,
           backend: activeApi.backend,
           amount: changeAmountBigNumber.toString(),
@@ -726,9 +726,7 @@ export const WithdrawContainer = forwardRef<
       />
     );
   }, [
-    activeApi?.backend,
-    activeApi?.state.activeBridge,
-    activeApi?.state.defaultUtxoIndex,
+    activeApi,
     amount,
     amountAfterFeeWei,
     availableAmount,

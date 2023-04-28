@@ -749,7 +749,7 @@ export const TransferContainer = forwardRef<
         ? amountBigNumber.sub(fee)
         : amountBigNumber;
 
-      const transferUtxo = await Utxo.generateUtxo({
+      const transferUtxo = await activeApi.generateUtxo({
         curve: noteManager.defaultNoteGenInput.curve,
         backend: activeApi.backend,
         amount: utxoAmount.toString(),
@@ -786,7 +786,7 @@ export const TransferContainer = forwardRef<
             changeNote.note,
             changeNote.note.index ? +changeNote.note.index : undefined
           )
-        : await Utxo.generateUtxo({
+        : await activeApi.generateUtxo({
             curve: noteManager.defaultNoteGenInput.curve,
             backend: activeApi.backend,
             amount: changeAmountBigNumber.toString(),
@@ -821,9 +821,7 @@ export const TransferContainer = forwardRef<
       isWalletConnected,
       hasNoteAccount,
       noteManager,
-      activeApi?.state.activeBridge,
-      activeApi?.state.defaultUtxoIndex,
-      activeApi?.backend,
+      activeApi,
       api,
       fungibleCurrency,
       destChain,

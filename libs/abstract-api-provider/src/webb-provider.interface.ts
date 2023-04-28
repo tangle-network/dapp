@@ -21,6 +21,7 @@ import { ActionEvent } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -251,4 +252,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
     vAnchorAddress: string,
     provider?: providers.Provider | ApiPromise
   ) => Promise<number>;
+
+  // generate utxo
+  generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 }

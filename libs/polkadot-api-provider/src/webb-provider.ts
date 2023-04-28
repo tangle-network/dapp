@@ -29,6 +29,8 @@ import {
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   ChainType,
+  Utxo,
+  UtxoGenInput,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -483,5 +485,9 @@ export class WebbPolkadot
 
     this.vAnchorMaxEdges.set(treeId, maxEdges.toNumber());
     return maxEdges.toNumber();
+  }
+
+  generateUtxo(input: UtxoGenInput): Promise<Utxo> {
+    return Utxo.generateUtxo(input);
   }
 }
