@@ -16,7 +16,7 @@ module.exports = (env) => {
         logging: 'error',
         overlay: {
           errors: true,
-          warnings: false, // Hide overlay warnings as they present on the terminal
+          warnings: false,
         },
       },
     },
