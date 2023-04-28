@@ -4,13 +4,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { NotificationHandler } from '@webb-tools/abstract-api-provider/webb-provider.interface';
-import { EventBus, LoggerService } from '@webb-tools/app-util';
+import { EventBus } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/submittable/types';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { IKeyringPair } from '@polkadot/types/types';
+import { IKeyringPair, ISubmittableResult } from '@polkadot/types/types';
+import { LoggerService } from '@webb-tools/browser-utils';
 
 const { uniqueId } = lodash;
 
@@ -113,23 +114,24 @@ export class PolkadotTx<
       api.setSigner(injector.signer);
     }
 
-    let txResults: any;
+    let txResults: SubmittableExtrinsic<'promise', ISubmittableResult>;
+
     if (this.paths.length === 1) {
       const path = this.paths[0];
       const parms = this.parms[0];
+      const submittableExtrinsic = api.tx[path.section][path.method](...parms);
 
       txResults = signAddress
-        ? await api.tx[path.section]
-            [path.method](...parms)
-            .signAsync(signAddress, {
-              nonce: -1,
-            })
-        : api.tx[path.section][path.method](...parms);
+        ? await submittableExtrinsic.signAsync(signAddress, {
+            nonce: -1,
+          })
+        : submittableExtrinsic;
     } else {
       const parms = this.parms;
       const txs = this.paths.map((path, index) => {
         return api.tx[path.section][path.method](...parms[index]);
       });
+
       txResults = signAddress
         ? await api.tx.utility.batch(txs).signAsync(signAddress, {
             nonce: -1,
@@ -139,15 +141,14 @@ export class PolkadotTx<
 
     await this.emitWithPayload('beforeSend', undefined);
     await this.emitWithPayload('loading', '');
-    const hash = txResults.hash.toString();
 
-    await this.send(txResults);
+    const hash = await this.send(txResults);
 
     await this.emitWithPayload('afterSend', undefined);
     this.transactionAddress = null;
     this.paths.forEach((path) => {
       txLogger.info(
-        `Tx ${path.section} ${path.method} is Done: TX hash=`,
+        `Tx ${path.section} ${path.method} is done with tx hash = `,
         hash
       );
     });
@@ -194,60 +195,63 @@ export class PolkadotTx<
     return message;
   }
 
-  private async send(tx: SubmittableExtrinsic<any>) {
+  private async send(tx: SubmittableExtrinsic<'promise', ISubmittableResult>) {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-      try {
-        await tx.send(async (result) => {
-          const status = result.status;
-          const events = result.events.filter(
-            ({ event: { section } }) => section === 'system'
-          );
+    return new Promise<string>(async (resolve, reject) => {
+      tx.send(async (result) => {
+        const status = result.status;
+        const events = result.events.filter(
+          ({ event: { section } }) => section === 'system'
+        );
 
-          if (status.isInBlock || status.isFinalized) {
-            for (const event of events) {
-              const {
-                event: { data, method },
-              } = event;
-              const [dispatchError] = data as any;
+        if (status.isInBlock || status.isFinalized) {
+          for (const event of events) {
+            const {
+              event: { data, method },
+            } = event;
+            const [dispatchError] = data as any;
 
-              if (method === 'ExtrinsicFailed') {
-                let message = dispatchError.type;
+            if (method === 'ExtrinsicFailed') {
+              let message = dispatchError.type;
 
-                if (dispatchError.isModule) {
-                  try {
-                    const mod = dispatchError.asModule;
-                    const error = dispatchError.registry.findMetaError(mod);
+              if (dispatchError.isModule) {
+                try {
+                  const mod = dispatchError.asModule;
+                  const error = dispatchError.registry.findMetaError(mod);
 
-                    message = `${error.section}.${error.name}`;
-                  } catch (error) {
-                    const message = this.errorHandler(error as any);
+                  message = `${error.section}.${error.name}`;
+                } catch (error) {
+                  const message = this.errorHandler(error as any);
 
-                    reject(message);
-                  }
-                } else if (dispatchError.isToken) {
-                  message = `${dispatchError.type}.${dispatchError.asToken.type}`;
+                  reject(message);
                 }
-
-                this.isWrapped = true;
-                await this.emitWithPayload('failed', message);
-                reject(message);
-              } else if (method === 'ExtrinsicSuccess') {
-                // todo return the TX hash
-                resolve('okay');
-                await this.emitWithPayload('finalize', undefined);
-                this.isWrapped = true;
+              } else if (dispatchError.isToken) {
+                message = `${dispatchError.type}.${dispatchError.asToken.type}`;
               }
+
+              this.isWrapped = true;
+              await this.emitWithPayload('failed', message);
+              reject(message);
+            } else if (method === 'ExtrinsicSuccess') {
+              if (status.isInBlock) {
+                // Resolve with the block hash
+                resolve(status.asInBlock.toString());
+              } else {
+                // Resolve with the finalization hash
+                resolve(status.asFinalized.toString());
+              }
+              await this.emitWithPayload('finalize', undefined);
+              this.isWrapped = true;
             }
           }
-        });
-      } catch (e) {
+        }
+      }).catch(async (e) => {
         console.log(e);
         const errorMessage = this.errorHandler(e as any);
 
         await this.emitWithPayload('failed', errorMessage);
         reject(errorMessage);
-      }
+      });
     });
   }
 }
