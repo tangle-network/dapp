@@ -1,4 +1,3 @@
-import { WebbPrimitivesVanchorExtData } from '@polkadot/types/lookup';
 import { decodeAddress, naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
@@ -21,12 +20,10 @@ import {
   Note,
   ProvingManagerSetupInput,
   randomBN,
-  toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
-import { ExtData } from '@webb-tools/wasm-utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
@@ -316,13 +313,16 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const fixturesList = new Map<string, FixturesStatus>();
     tx.next(TransactionState.FetchingFixtures, { fixturesList });
 
-    fixturesList.set('vanchor key', 'Waiting');
     const maxEdges = await this.inner.getVAnchorMaxEdges(treeId);
-    const zkey = await this.inner.getZkVAnchorKey(maxEdges, inputs.length <= 2);
+
+    // Proving key
+    fixturesList.set('vanchor key', 'Waiting');
+    const pkey = await this.inner.getZkVAnchorKey(maxEdges, inputs.length <= 2);
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
-    const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16));
+    // Asset must be a 4 bytes array (32 bits)
+    const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16), 32);
 
     const fieldSize = new BN(FIELD_SIZE.toString());
 
@@ -339,7 +339,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       output: [outputs[0], outputs[1]],
       encryptedCommitments,
       publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
-      provingKey: zkey,
+      provingKey: pkey,
       relayer: decodeAddress(relayer),
       recipient: decodeAddress(recipient),
       extAmount: extAmount.toString(),
@@ -347,10 +347,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       refund: refund.toString(),
       token: assetIdBytes,
     };
-
-    const worker = this.inner.wasmFactory();
-    const pm = new ArkworksProvingManager(worker);
-    const data: VAnchorProof = await pm.prove('vanchor', proofInput);
 
     const extData = {
       relayer: decodeAddress(relayer),
@@ -362,6 +358,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       encryptedOutput1: u8aToHex(encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(encryptedCommitments[1]),
     };
+
+    const worker = this.inner.wasmFactory();
+    const pm = new ArkworksProvingManager(worker);
+    const data: VAnchorProof = await pm.prove('vanchor', proofInput);
 
     const vanchorProofData = {
       proof: `0x${data.proof}` as const,
@@ -376,7 +376,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     return {
       extData,
-      extAmount: proofInput.extAmount,
+      extAmount: extData.extAmount,
       vanchorProofData,
     };
   }

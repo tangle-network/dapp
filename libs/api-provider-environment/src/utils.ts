@@ -30,8 +30,7 @@ export const evmProviderFactory = async (
   return provider;
 };
 
-const substrateProviderCache: { [typedChainId: number]: Promise<ApiPromise> } =
-  {};
+const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
 
 export const substrateProviderFactory = async (
   typedChainId: number
@@ -47,17 +46,16 @@ export const substrateProviderFactory = async (
   }
 
   return new Promise((res, rej) => {
-    const apiPromise = PolkadotProvider.getApiPromise(
-      constants.APP_NAME,
-      [chain.url],
-      (error) => {
-        error.cancel();
-        rej(error);
-      }
-    );
+    PolkadotProvider.getApiPromise(constants.APP_NAME, [chain.url], (error) => {
+      console.error('Error in substrateProviderFactory', error);
+      error.cancel();
+      rej(error);
+    })
+      .then((apiPromise) => {
+        substrateProviderCache[typedChainId] = apiPromise;
 
-    substrateProviderCache[typedChainId] = apiPromise;
-
-    return res(apiPromise);
+        return res(apiPromise);
+      })
+      .catch(rej);
   });
 };

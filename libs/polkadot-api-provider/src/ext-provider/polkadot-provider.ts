@@ -151,8 +151,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             /// no need to call `.connect` the Promise api will handle this
             resolve(new WsProvider(endPoints));
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             if (typeof interActiveFeedback !== 'undefined') {
               /// cancel the feedback as  the connection is established
               interActiveFeedback.cancelWithoutHandler();

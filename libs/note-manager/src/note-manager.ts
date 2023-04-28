@@ -380,7 +380,7 @@ export class NoteManager {
       backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),
-        toFixedHex(utxo.amount, 16).substring(2),
+        toFixedHex(utxo.amount).substring(2),
         toFixedHex(this.keypair.privkey).substring(2),
         toFixedHex(`0x${utxo.blinding}`).substring(2),
       ].join(':'),

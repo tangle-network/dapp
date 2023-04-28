@@ -184,6 +184,8 @@ export const DepositConfirmContainer = forwardRef<
 
         const { transactionHash, receipt } = await api.transact(...args);
 
+        tx.txHash = transactionHash;
+
         const leaf = note.getLeaf();
 
         const noteIndex = await api.getLeafIndex(
@@ -198,7 +200,6 @@ export const DepositConfirmContainer = forwardRef<
         await noteManager?.removeNote(note);
 
         // Notification Success Transaction
-        tx.txHash = transactionHash;
         tx.next(TransactionState.Done, {
           txHash: transactionHash,
           outputNotes: [indexedNote],
