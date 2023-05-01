@@ -89,3 +89,4 @@ tmp
 /tools/scripts/protocol-solidity/
 /tools/scripts/relayer/
 /tools/scripts/webb-dapp/
+apps/stats-dapp/graphql.schema.json

@@ -1,13 +1,13 @@
 import {
-  AppEnumB6165934C8 as ProposalType,
-  AppEnum790A3Fe4Ce as ThresholdVariant,
-  useEnsureProposalsLazyQuery,
+  ProposalType,
+  ThresholdVariant,
   useProposalDetailsLazyQuery,
   useProposalsLazyQuery,
   useProposalsOverviewLazyQuery,
-  useProposalVotesLazyQuery,
-  AppEnumFe385C7221 as VoteStatus,
-  AppEnum155D64Ff70 as ProposalStatus,
+  useProposalVotesWithVotesTypeLazyQuery,
+  useProposalVotesWithoutVotesTypeLazyQuery,
+  VoteType,
+  ProposalStatus,
   ProposalsOvertimeTotalCountDocument,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
@@ -111,7 +111,7 @@ type ProposalTimeLine = {
 export type VoteListItem = {
   id: string;
   voterId: string;
-  status: VoteStatus;
+  status: VoteType;
   timestamp: Date;
 };
 /**
@@ -126,7 +126,7 @@ type VotesPage = Loadable<Page<VoteListItem>>;
  * */
 export type VotesQuery = PageInfoQuery<{
   proposalId: string;
-  status?: VoteStatus;
+  status?: VoteType;
 }>;
 
 /**
@@ -398,29 +398,46 @@ export function useProposal(
     val: null,
     isFailed: false,
   });
-  const [ensureProposals, ensureProposalsQuery] = useEnsureProposalsLazyQuery();
 
   const [call, query] = useProposalDetailsLazyQuery();
   const { offset, perPage } = votesReqQuery;
   const proposalId = votesReqQuery.filter.proposalId;
   const votes = useVotes(votesReqQuery);
 
+  const [proposalIds, setProposalIds] = useState<string[]>([]);
+
   useEffect(() => {
-    ensureProposals({
-      variables: {
-        ids: [Number(proposalId) - 1, Number(proposalId) + 1].map((i) =>
-          String(i)
-        ),
-      },
-    }).catch((e) => {
+    const ids = localStorage.getItem('proposalIds');
+    if (ids) {
+      setProposalIds(JSON.parse(ids));
+    }
+  }, []);
+
+  useEffect(() => {
+    const index = proposalIds.indexOf(proposalId);
+
+    if (index !== -1) {
+      const itemBefore = proposalIds[index + 1];
+      const itemAfter = proposalIds[index - 1];
+
+      setNextAndPrevStatus({
+        val: {
+          nextProposalId: itemAfter ? String(itemAfter) : null,
+          previousProposalId: itemBefore ? String(itemBefore) : null,
+        },
+        isLoading: false,
+        isFailed: false,
+      });
+
+      return;
+    } else {
       setNextAndPrevStatus({
         val: null,
-        error: e.message,
-        isLoading: false,
-        isFailed: true,
+        isLoading: true,
+        isFailed: false,
       });
-    });
-  }, [proposalId, ensureProposals]);
+    }
+  }, [proposalId, proposalIds]);
 
   useEffect(() => {
     call({
@@ -437,38 +454,7 @@ export function useProposal(
       });
     });
   }, [proposalId, offset, perPage, targetSessionId, call]);
-  useEffect(() => {
-    const subscription = ensureProposalsQuery.observable
-      .map((res): Loadable<NextAndPrevStatus> => {
-        if (res.data && res.data.proposalItems) {
-          const proposals = res.data.proposalItems.nodes.filter(
-            (p) => p !== null
-          );
-          const nextProposalId =
-            proposals.find((p) => Number(p!.id) === Number(proposalId) + 1)
-              ?.id ?? null;
-          const previousProposalId =
-            proposals.find((p) => Number(p!.id) === Number(proposalId) - 1)
-              ?.id ?? null;
-          return {
-            val: {
-              nextProposalId,
-              previousProposalId,
-            },
-            isFailed: false,
-            isLoading: false,
-          };
-        }
-        return {
-          isLoading: res.loading,
-          isFailed: Boolean(res.error),
-          error: res.error?.message ?? undefined,
-          val: null,
-        };
-      })
-      .subscribe(setNextAndPrevStatus);
-    return () => subscription.unsubscribe();
-  }, [ensureProposalsQuery, setNextAndPrevStatus, proposalId]);
+
   useEffect(() => {
     const subscription = query.observable
       .map((res): Loadable<ProposalDetails> => {
@@ -541,31 +527,64 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
     isFailed: false,
     val: null,
   });
-  const [call, query] = useProposalVotesLazyQuery();
+
+  const [callWithVotesType, queryWithVotesType] =
+    useProposalVotesWithVotesTypeLazyQuery();
+
+  const [callWithoutVotesType, queryWithoutVotesType] =
+    useProposalVotesWithoutVotesTypeLazyQuery();
+
   const {
     filter: { proposalId, status },
     offset,
     perPage,
   } = votesReqQuery;
-  useEffect(() => {
-    call({
-      variables: {
-        proposalId,
-        offset,
-        perPage,
-        for: status ? { equalTo: status } : undefined,
-      },
-    }).catch((e) => {
-      setVotes({
-        isLoading: false,
-        isFailed: true,
-        val: null,
-        error: e.message,
-      });
-    });
-  }, [perPage, offset, status, call, proposalId]);
 
   useEffect(() => {
+    if (status) {
+      callWithVotesType({
+        variables: {
+          proposalId,
+          offset,
+          perPage,
+          voteType: status,
+        },
+      }).catch((e) => {
+        setVotes({
+          isLoading: false,
+          isFailed: true,
+          val: null,
+          error: e.message,
+        });
+      });
+    } else {
+      callWithoutVotesType({
+        variables: {
+          proposalId,
+          offset,
+          perPage,
+        },
+      }).catch((e) => {
+        setVotes({
+          isLoading: false,
+          isFailed: true,
+          val: null,
+          error: e.message,
+        });
+      });
+    }
+  }, [
+    perPage,
+    offset,
+    status,
+    callWithVotesType,
+    callWithoutVotesType,
+    proposalId,
+  ]);
+
+  useEffect(() => {
+    const query = status ? queryWithVotesType : queryWithoutVotesType;
+
     const subscription = query.observable
       .map((res): VotesPage => {
         if (res.data && res.data.proposalVotes) {
@@ -603,7 +622,7 @@ export function useVotes(votesReqQuery: VotesQuery): VotesPage {
       })
       .subscribe(setVotes);
     return () => subscription.unsubscribe();
-  }, [query, setVotes]);
+  }, [queryWithVotesType, queryWithoutVotesType, status, setVotes]);
 
   return votes;
 }

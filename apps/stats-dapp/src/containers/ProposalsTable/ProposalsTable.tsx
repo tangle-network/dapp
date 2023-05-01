@@ -8,10 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config';
-import {
-  AppEnum155D64Ff70 as ProposalStatus,
-  AppEnumB6165934C8 as ProposalType,
-} from '../../generated/graphql';
+import { ProposalStatus, ProposalType } from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,
@@ -36,7 +33,7 @@ import {
   Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -64,24 +61,6 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     header: 'Type',
   }),
 
-  columnHelper.accessor('txHash', {
-    header: 'Tx Hash',
-    cell: (props) => (
-      <div className="flex items-center space-x-1">
-        <LabelWithValue
-          labelVariant="body3"
-          label="tx hash:"
-          isHiddenLabel
-          value={shortenHex(props.getValue<string>(), 3)}
-          valueTooltip={props.getValue<string>()}
-        />
-        <a href="#">
-          <ExternalLinkLine />
-        </a>
-      </div>
-    ),
-  }),
-
   columnHelper.accessor('proposers', {
     header: 'Proposers',
     cell: (props) => {
@@ -104,7 +83,7 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
     header: 'Chain',
     cell: (props) => {
       const name = mapChainIdToLogo(Number(props.getValue()));
-      return <TokenIcon name={name} size="lg" />;
+      return <ChainIcon name={name} size="lg" />;
     },
   }),
 
@@ -231,12 +210,16 @@ export const ProposalsTable = () => {
   );
 
   const proposalsStats = useProposals(pageQuery);
+
   const data = useMemo(() => {
     if (proposalsStats.val) {
+      const proposalIds = proposalsStats.val.items.map((item) => item.id);
+      localStorage.setItem('proposalIds', JSON.stringify(proposalIds));
       return proposalsStats.val.items;
     }
     return [] as ProposalListItem[];
   }, [proposalsStats]);
+
   useEffect(() => {
     if (proposalsStats.val) {
       setTotalItems(proposalsStats.val.pageInfo.count);
