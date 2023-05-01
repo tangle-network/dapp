@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 
-import { BrandKitHeroSection } from '../components';
+import { BrandKitHeroSection, WebbLogoSection } from '../components';
 
 const BrandKit = () => {
   return (
@@ -8,6 +8,8 @@ const BrandKit = () => {
       <NextSeo title="Brand Kit" />
 
       <BrandKitHeroSection />
+
+      <WebbLogoSection />
     </>
   );
 };
