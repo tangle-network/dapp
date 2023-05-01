@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Webb Technologies Inc.
+ * Copyright 2023 Webb Technologies Inc.
  * SPDX-License-Identifier: Apache-2.0
  *
  * This script is used to start a local protocol substrate and create a pool share asset
@@ -148,9 +148,7 @@ async function initPoolShare(api: ApiPromise) {
       new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
     );
 
-    logger.info(
-      `Token transferred to test account with hash \`${hash.toHuman()}\``
-    );
+    logger.info(`Token transferred to test account with hash \`${hash}\``);
   }
 
   logger.info(chalk.green.bold('Protocol Substrate ready to use'));

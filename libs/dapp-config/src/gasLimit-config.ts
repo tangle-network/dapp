@@ -23,6 +23,7 @@ const gasLimitConfig: GasLimitConfigType = {
 
   // Substrate
   [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
+  [PresetTypedChainId.LocalTangleStandalone]: BigNumber.from(2000000), // Temporary
 };
 
 export default gasLimitConfig;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Webb Technologies Inc.
+ * Copyright 2023 Webb Technologies Inc.
  * SPDX-License-Identifier: Apache-2.0
  *
  * This script is used to start a local tangle network and create a pool share asset
@@ -18,6 +18,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
 import { createApiPromise } from '@webb-tools/test-utils';
+import { BN } from 'bn.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
@@ -28,6 +29,7 @@ import addAssetToPool from './utils/addAssetToPool';
 import createPoolShare from './utils/createPoolShare';
 import createVAnchor from './utils/createVAnchor';
 import getKeyring from './utils/getKeyRing';
+import transferAsset from './utils/transferAsset';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shelljs = require('shelljs');
@@ -35,16 +37,20 @@ const shelljs = require('shelljs');
 const ALICE_PORT = 9944;
 const BOB_PORT = 9945;
 
-const TANGLE_SUDO_URI = '//TangleStandaloneSudo';
+const TANGLE_SUDO_URI = '//Alice';
 
 const NATIVE_ASSET_ID = '0';
 const NATIVE_ASSET = 'tTNT';
 
 const FUNGIBLE_ASSET = 'webbtTNT';
 
+const TEST_ACCOUNT = process.env.POLKADOT_TEST_ACCOUNT_ADDRESS;
+
+const AMOUNT = 1000;
+
 const localStandaloneTangleScript = resolve(
   workspaceRoot,
-  '../tangle/scripts/run-standalone-local.sh'
+  '../tangle/scripts/run-standalone.sh'
 );
 
 // Define CLI options
@@ -142,6 +148,20 @@ async function initPoolShare(api: ApiPromise) {
   const vanchorId = await createVAnchor(api, poolShareAssetId, sudoKey);
 
   logger.info(`VAnchor with id \`${vanchorId}\` created`);
+
+  // Transfer some tokens to the test account
+  if (TEST_ACCOUNT) {
+    logger.info(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`);
+    const hash = await transferAsset(
+      api,
+      sudoKey,
+      TEST_ACCOUNT,
+      0,
+      new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
+    );
+
+    logger.info(`Token transferred to test account with hash \`${hash}\``);
+  }
 
   logger.info('Tangle network ready to use');
 }

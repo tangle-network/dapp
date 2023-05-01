@@ -17,18 +17,34 @@ async function transferAsset(
   recipient: string,
   assetId: number,
   amount: BN
-) {
+): Promise<string> {
   // If assetId is 0, then interact with balances pallet
   if (assetId === 0) {
-    return apiPromise.tx.balances
+    const tx = await apiPromise.tx.balances
       .transfer(recipient, amount)
-      .signAndSend(sender);
+      .signAsync(sender);
+
+    return new Promise<string>((resolve, reject) => {
+      tx.send((result) => {
+        if (result.status.isFinalized) {
+          resolve(result.status.asFinalized.toString());
+        }
+      }).catch((e) => reject(e));
+    });
   }
 
   // Otherwise, interact with tokens pallet
-  return apiPromise.tx.tokens
+  const tx = await apiPromise.tx.tokens
     .transfer(recipient, assetId, amount)
-    .signAndSend(sender);
+    .signAsync(sender);
+
+  return new Promise<string>((resolve, reject) => {
+    tx.send((result) => {
+      if (result.status.isFinalized) {
+        resolve(result.status.asFinalized.toString());
+      }
+    }).catch((e) => reject(e));
+  });
 }
 
 export default transferAsset;

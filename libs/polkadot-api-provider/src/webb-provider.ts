@@ -29,6 +29,7 @@ import {
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   ChainType,
+  parseTypedChainId,
   Utxo,
   UtxoGenInput,
 } from '@webb-tools/sdk-core';
@@ -184,13 +185,15 @@ export class WebbPolkadot
     return this.provider;
   }
 
-  // Return the typedChainId of this provider
-  // TODO: Find out how to get this value from chain
-  //       Maybe the polkadot webb-provider does not interact with a 'linkableTreeBn254' pallet
-  //       (it is for the dkg)
-  getChainId() {
-    // const chainType = await this.provider.api.consts.linkableTreeBn254.chainType;
-    return this.typedChainId;
+  async getChainId(): Promise<number> {
+    const chainIdentifier =
+      this.provider.api.consts.linkableTreeBn254.chainIdentifier;
+    if (!chainIdentifier.isEmpty) {
+      return chainIdentifier.toNumber();
+    }
+
+    // If the chainId is not set, fallback to the typedChainId
+    return parseTypedChainId(this.typedChainId).chainId;
   }
 
   async awaitMetaDataCheck() {
