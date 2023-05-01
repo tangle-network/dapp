@@ -3,7 +3,7 @@ import { Typography, Button, Logo } from '@webb-tools/webb-ui-components';
 export const WebbLogoSection = () => {
   return (
     <section className="w-full px-4 md:px-0 py-[64px] md:py-[156px] bg-no-repeat bg-[50%_20%] bg-cover">
-      <div className="space-y-9">
+      <div className="max-w-[1440px] mx-auto space-y-9">
         <Typography variant="mkt-h2" className="text-center text-mono-200">
           The Webb Logo
         </Typography>
