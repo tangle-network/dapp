@@ -153,7 +153,7 @@ const socials: Array<SocialType> = [
   {
     name: 'YouTube',
     Icon: YouTubeFill,
-    href: 'https://github.com/webb-tools',
+    href: 'https://webb.tools/blog/videos',
   },
 ];
 
