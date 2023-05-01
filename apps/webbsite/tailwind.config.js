@@ -30,6 +30,8 @@ module.exports = {
         mock_bridge: "url('/static/assets/mock-bridge.png')",
         mock_stats: "url('/static/assets/mock-stats.png')",
         community_bg_texture: "url('/static/assets/community-texture.png')",
+        brandkit_hero:
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('/static/assets/brandkit-hero.png')",
       },
 
       fontFamily: {
