@@ -2,11 +2,10 @@ import { InformationLine } from '@webb-tools/icons';
 import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 
-export const WebsiteNewletterForm: FC<{
+export const WebsiteNewsletterForm: FC<{
   onSuccess: (isSuccess: boolean) => void;
 }> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
 
   // State for error handling
   const [error, setError] = useState<string | null>(null);
@@ -22,18 +21,15 @@ export const WebsiteNewletterForm: FC<{
 
       console.dir(formEl);
 
-      const nameInput = formEl.elements.namedItem('name');
       const emailInput = formEl.elements.namedItem('email');
 
-      if (!nameInput || !emailInput) {
-        console.warn("Can't find name or email input");
+      if (!emailInput) {
+        console.warn("Can't find email input");
         return;
       }
-
-      const name = (nameInput as HTMLInputElement).value;
       const email = (emailInput as HTMLInputElement).value;
 
-      if (!name || !email) {
+      if (!email) {
         setError('Please fill in all fields');
         return;
       }
@@ -44,7 +40,7 @@ export const WebsiteNewletterForm: FC<{
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ email }),
       };
 
       const endpoint = '/api/subscribers';
@@ -56,7 +52,6 @@ export const WebsiteNewletterForm: FC<{
 
         if (response.status === 200) {
           // Success then reset the form
-          setName('');
           setEmail('');
           setError(null);
           onSuccess(true);
@@ -83,16 +78,7 @@ export const WebsiteNewletterForm: FC<{
         onSubmit={handleSubmit}
       >
         <Input
-          className="grow shrink basis-0"
-          id="name"
-          isRequired
-          name="name"
-          placeholder="Name"
-          value={name}
-          onChange={(val) => setName(val)}
-        />
-        <Input
-          className="grow shrink basis-0"
+          className="w-full md:w-1/2"
           id="email"
           isRequired
           name="email"
@@ -101,7 +87,7 @@ export const WebsiteNewletterForm: FC<{
           value={email}
           onChange={(val) => setEmail(val)}
         />
-        <div className="grow shrink basis-0">
+        <div>
           <Button
             isLoading={loading}
             type="submit"
