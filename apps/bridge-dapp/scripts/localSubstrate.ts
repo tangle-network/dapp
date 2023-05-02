@@ -152,7 +152,7 @@ async function initPoolShare(api: ApiPromise) {
     );
   }
 
-  console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
+  console.log(chalk.green.bold('✅ Protocol Substrate ready to use!!!'));
 }
 
 main().catch(console.error);
