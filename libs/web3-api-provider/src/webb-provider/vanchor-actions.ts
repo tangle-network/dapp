@@ -719,7 +719,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     let hasBalance: boolean;
     // If the `wrapUnwrapToken` is the `ZERO_ADDRESS`, we are wrapping
     // the native token. Therefore, we must check the native balance.
-    if (wrapUnwrapToken === ZERO_ADDRESS) {
+    if (checkNativeAddress(wrapUnwrapToken)) {
       const nativeBalance = await provider.getBalance(signer);
       hasBalance = nativeBalance.gte(payload.note.amount);
     } else {
@@ -756,37 +756,46 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
     let approvalTransaction: ContractTransaction | undefined;
 
+    const isNative = checkNativeAddress(wrapUnwrapToken);
+
     // If the `wrapUnwrapToken` is different from the `currentWebbToken` address,
     // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
     const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
 
-    const isRequiredApproval = !isWrapOrUnwrap
-      ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
-      : await srcVAnchor.isWrappableTokenApprovalRequired(
-          wrapUnwrapToken,
-          approvalValue
-        );
+    // Only non-native tokens require approval
+    if (!isNative) {
+      const isRequiredApproval = !isWrapOrUnwrap
+        ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
+        : await srcVAnchor.isWrappableTokenApprovalRequired(
+            wrapUnwrapToken,
+            approvalValue
+          );
 
-    if (checkNativeAddress(wrapUnwrapToken)) {
-      /// native token no approval needed
-    } else if (!isWrapOrUnwrap && isRequiredApproval) {
-      // approve the token
-      approvalTransaction = await currentWebbToken.approve(
-        spenderAddress,
-        amount,
-        {
-          gasLimit: '0x5B8D80',
+      if (isRequiredApproval) {
+        if (isWrapOrUnwrap) {
+          // approve the wrappable asset
+          const token = ERC20__factory.connect(
+            wrapUnwrapToken,
+            this.inner.getEthersProvider().getSigner()
+          );
+          approvalTransaction = await token.approve(
+            spenderAddress,
+            approvalValue,
+            {
+              gasLimit: '0x5B8D80',
+            }
+          );
+        } else {
+          // approve the token
+          approvalTransaction = await currentWebbToken.approve(
+            spenderAddress,
+            amount,
+            {
+              gasLimit: '0x5B8D80',
+            }
+          );
         }
-      );
-    } else if (isRequiredApproval) {
-      // approve the wrappable asset
-      const token = ERC20__factory.connect(
-        wrapUnwrapToken,
-        this.inner.getEthersProvider().getSigner()
-      );
-      approvalTransaction = await token.approve(spenderAddress, approvalValue, {
-        gasLimit: '0x5B8D80',
-      });
+      }
     }
 
     if (approvalTransaction) {

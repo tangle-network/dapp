@@ -8,31 +8,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New feature or functionality
 - New file or resource
 
 ### Changed
+
 - Updates to existing features
 - Changes to existing files or resources
 
 ### Deprecated
+
 - Features or functionality that will be removed in future versions
 - Files or resources that will be removed in future versions
 
 ### Removed
+
 - Features or functionality that have been removed
 - Files or resources that have been removed
 
 ### Fixed
+
 - Bug fixes
 - Corrections to existing files or resources
 
 ### Security
+
 - Security-related changes, such as vulnerability patches
 
 ## [0.0.2] - 2023-04-17
 
 ### Added
+
 - Relayer filter by environment: https://github.com/webb-tools/webb-dapp/commit/5c2ef97cd7e7788b858c414f4b9546bdcfcfc2d8
 - Relayer fee and refund support: https://github.com/webb-tools/webb-dapp/commit/32ac5b0c7494c7ca746c6e56bda65cbfd692118f
 - Added liquidity check on withdrawal: https://github.com/webb-tools/webb-dapp/commit/f9617e364f40b577f0a5bd4d9dc2bc2cea9f3168
@@ -40,17 +47,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added max fee calculation: https://github.com/webb-tools/webb-dapp/commit/6f3fa726513accda142dac87b03e2a06e7d094c3
 
 ### Changed
+
 - Updated confirmation cards UI: https://github.com/webb-tools/webb-dapp/commit/094b85dbc469f1c8b2250e8030b9b02dcb30d9b1
 
 ### Fixed
+
 - Fixed balance calculation: https://github.com/webb-tools/webb-dapp/commit/dece224d7fa739a7b9a02ee3397c9591330e9e9b
 
 ## [0.0.3] - 2023-04-25
 
 ### Added
+
 - 2 new chains - Avalanche & Scroll: https://github.com/webb-tools/webb-dapp/pull/1048
 - 8-sided Bridge with DKG Deployment: https://github.com/webb-tools/webb-dapp/pull/1048
 
+## [0.0.4] - 2023-04-27
+
+### Added
+
+- Fixes quick action prompts: https://github.com/webb-tools/webb-dapp/pull/1147
+
+## [0.0.5] - 2023-04-29
+
+### Fixed
+
+- Only query approval for non-native tokens
+- Small UI nits
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
-[0.0.3]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.3
+[0.0.4]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.4

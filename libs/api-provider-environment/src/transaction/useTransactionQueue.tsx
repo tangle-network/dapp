@@ -9,6 +9,7 @@ import {
   ChainConfig,
   CurrencyConfig,
 } from '@webb-tools/dapp-config';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   getRoundedAmountString,
   TransactionItemStatus,
@@ -48,8 +49,8 @@ function mapTxToPayload(
     explorerUri = chainConfig[wallets.dest]?.blockExplorerStub ?? '';
   }
 
-  const SrcWallet = chainConfig[wallets.src]?.logo;
-  const DistWallet = chainConfig[wallets.dest]?.logo;
+  const srcChainName = chainConfig[wallets.src]?.name;
+  const destChainName = chainConfig[wallets.dest]?.name;
 
   const txProviderType = tx.metaData.providerType;
 
@@ -88,16 +89,8 @@ function mapTxToPayload(
     tokenURI,
     tokens: tokens,
     wallets: {
-      src: (
-        <div className={'w-4 h-4'}>
-          <SrcWallet />
-        </div>
-      ),
-      dist: (
-        <div className={'w-4 h-4'}>
-          <DistWallet />
-        </div>
-      ),
+      src: <ChainIcon name={srcChainName} />,
+      dist: <ChainIcon name={destChainName} />,
     },
     onDismiss(): void {
       return dismissTransaction(tx.id);
