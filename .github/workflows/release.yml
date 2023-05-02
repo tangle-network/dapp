@@ -1,4 +1,4 @@
-name: "Release"
+name: 'Release'
 on:
   push:
     branches:
@@ -33,9 +33,9 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
-    #Identify changes
+      #Identify changes
       - uses: marceloprado/has-changed-path@v1
         id: changed-hubble
         with:
@@ -45,7 +45,7 @@ jobs:
         id: changed-stats
         with:
           paths: apps/stats-dapp
-      
+
       - name: create env file for webbsite, tangle-site and faucet
         run: |
           touch .env
@@ -61,7 +61,7 @@ jobs:
           echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
-        
+
       - name: Install deps
         run: yarn install
 
