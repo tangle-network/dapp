@@ -67,7 +67,7 @@ const navLinks: Array<NavLinkType> = [
     links: [
       {
         label: 'Tangle',
-        url: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone1.webb.tools%2F#/explorer',
+        url: 'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer',
         isInternal: false,
       },
       {
