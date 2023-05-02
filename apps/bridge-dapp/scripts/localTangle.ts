@@ -15,9 +15,7 @@
  * -v --verbose: Enable node logging
  */
 
-import { ApiPromise } from '@polkadot/api';
-import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
-import { createApiPromise } from '@webb-tools/test-utils';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -25,9 +23,9 @@ import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import { resolve } from 'path';
 
 import addAssetMetadata from './utils/addAssetMetadata';
-import addAssetToPool from './utils/addAssetToPool';
 import createPoolShare from './utils/createPoolShare';
 import createVAnchor from './utils/createVAnchor';
+import getLocalApi from './utils/getLocalApi';
 import getKeyring from './utils/getKeyRing';
 import transferAsset from './utils/transferAsset';
 
@@ -35,7 +33,6 @@ import transferAsset from './utils/transferAsset';
 const shelljs = require('shelljs');
 
 const ALICE_PORT = 9944;
-const BOB_PORT = 9945;
 
 const TANGLE_SUDO_URI = '//Alice';
 
@@ -62,11 +59,15 @@ program.parse(process.argv);
 
 const options = program.opts();
 
-const logger = LoggerService.get('LOCAL TANGLE');
-
 async function main() {
+  console.log(
+    chalk.yellow.bold('⚠️ Warning: Local Tangle is not supported yet!')
+  );
+
+  process.exit(0);
+
   // Start the nodes
-  logger.info('Starting local tangle network');
+  console.log(chalk.blue.bold('Starting local tangle network'));
 
   const proc = shelljs.exec(localStandaloneTangleScript + ' --clean', {
     cwd: resolve(localStandaloneTangleScript, '../../'),
@@ -76,7 +77,7 @@ async function main() {
   cleanup(() => proc.kill('SIGINT'));
 
   if (options.verbose) {
-    logger.debug('Verbose mode enabled');
+    console.log(chalk.inverse(' - Verbose mode enabled'));
     proc.stdout.on('data', (data: Buffer) => {
       console.log(data.toString());
     });
@@ -86,24 +87,20 @@ async function main() {
   }
 
   // Wait until we are ready and connected
-  logger.info('Waiting for APIs to be ready');
+  console.log(chalk.blue.bold('Waiting for APIs to be ready'));
 
-  const aliceApi = await createApiPromise(getEndpoint(ALICE_PORT));
-  await aliceApi.isReady;
+  const aliceApi = await getLocalApi(ALICE_PORT);
 
-  const bobApi = await createApiPromise(getEndpoint(BOB_PORT));
-  await bobApi.isReady;
-
-  logger.info('APIs are ready');
+  console.log(chalk.green('APIs are ready'));
 
   // Wait until the first block is produced
-  logger.info('Waiting for first block to be produced');
+  console.log(chalk.blue('Waiting for first block to be produced'));
 
-  await aliceApi.rpc.chain.subscribeNewHeads(async (header) => {
+  aliceApi.rpc.chain.subscribeNewHeads(async (header) => {
     const block = header.number.toNumber();
-    logger.debug(`New block produced: ${chalk.green(block.toString())}`);
     // Init pool share after first block
     if (block === 1) {
+      console.log(chalk.green('First block produced'));
       await initPoolShare(aliceApi);
     }
   });
@@ -113,45 +110,40 @@ async function initPoolShare(api: ApiPromise) {
   const sudoKey = getKeyring(TANGLE_SUDO_URI);
 
   // Create pool share asset
-  logger.info('Creating pool share asset');
+  console.log(chalk.blue('Creating pool share asset'));
+  console.log(chalk`=> {blue Creating pool asset ${FUNGIBLE_ASSET}}`);
   const poolShareAssetId = await createPoolShare(
     api,
     FUNGIBLE_ASSET,
     +NATIVE_ASSET_ID,
     sudoKey
   );
-  logger.info(
-    `Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}`
+  console.log(
+    chalk`=> {green Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}}`
   );
-
-  // Add assets to pool
-  logger.info('Adding assets to pool');
-  await addAssetToPool(
-    api,
-    NATIVE_ASSET_ID,
-    poolShareAssetId.toString(),
-    sudoKey
-  );
-  logger.info(`Assets ${FUNGIBLE_ASSET} added to pool`);
 
   // Add assets metadata
-  logger.info('Adding assets metadata');
+  console.log(chalk`=> {blue Adding metadata for ${NATIVE_ASSET}}`);
   await addAssetMetadata(api, sudoKey, NATIVE_ASSET_ID, NATIVE_ASSET);
+
+  console.log(chalk`=> {blue Adding metadata for ${FUNGIBLE_ASSET}}`);
   await addAssetMetadata(
     api,
     sudoKey,
     poolShareAssetId.toString(),
     FUNGIBLE_ASSET
   );
-  logger.info(`Assets metadata added`);
+  console.log(chalk`=> {green Assets metadata added}`);
 
   const vanchorId = await createVAnchor(api, poolShareAssetId, sudoKey);
 
-  logger.info(`VAnchor with id \`${vanchorId}\` created`);
+  console.log(chalk`=> {green VAnchor with id ${vanchorId} created}`);
 
   // Transfer some tokens to the test account
   if (TEST_ACCOUNT) {
-    logger.info(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`);
+    console.log(
+      chalk.blue(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`)
+    );
     const hash = await transferAsset(
       api,
       sudoKey,
@@ -160,14 +152,12 @@ async function initPoolShare(api: ApiPromise) {
       new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
     );
 
-    logger.info(`Token transferred to test account with hash \`${hash}\``);
+    console.log(
+      chalk`=> {green Token transferred to test account with hash \`${hash}\``
+    );
   }
 
-  logger.info('Tangle network ready to use');
-}
-
-function getEndpoint(port: number) {
-  return `ws://127.0.0.1:${port}`;
+  console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
 }
 
 function cleanup(callback: () => any) {

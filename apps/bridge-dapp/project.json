@@ -79,13 +79,13 @@
     "run-local-tangle": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node apps/bridge-dapp/scripts/localTangle"
+        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings apps/bridge-dapp/scripts/localTangle"
       }
     },
     "run-local-substrate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node apps/bridge-dapp/scripts/localSubstrate"
+        "command": "node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings apps/bridge-dapp/scripts/localSubstrate"
       }
     }
   },

@@ -18,7 +18,7 @@ async function createPoolShare(
   name: string,
   nativeAssetId: number,
   signer: KeyringPair,
-  existentialDeposit = 0
+  existentialDeposit = new BN(10).mul(new BN(10).pow(new BN(18)))
 ) {
   await polkadotTx(
     apiPromise,

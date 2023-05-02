@@ -15,8 +15,7 @@
  * -v --verbose: Enable node logging
  */
 
-import { ApiPromise } from '@polkadot/api';
-import { LoggerService } from '@webb-tools/browser-utils/src/logger/logger-service';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { LocalProtocolSubstrate } from '@webb-tools/test-utils';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
@@ -28,12 +27,14 @@ import addAssetMetadata from './utils/addAssetMetadata';
 import addAssetToPool from './utils/addAssetToPool';
 import createPoolShare from './utils/createPoolShare';
 import createVAnchor from './utils/createVAnchor';
+import getLocalApi from './utils/getLocalApi';
 import getKeyring from './utils/getKeyRing';
 import transferAsset from './utils/transferAsset';
 
 // Load env variables
 config();
 
+const ALICE_PORT = 9944;
 const ALICE_KEY_URI = '//Alice';
 
 const NATIVE_ASSET_ID = '0';
@@ -61,11 +62,9 @@ program.parse(process.argv);
 
 const options = program.opts();
 
-const logger = LoggerService.get('LOCAL SUBSTRATE');
-
 async function main() {
   // Start the nodes
-  logger.info('Starting local substrate protocol');
+  console.log(chalk.blue('Starting local substrate protocol...'));
 
   const aliceNode = await LocalProtocolSubstrate.start({
     name: 'substrate-alice',
@@ -75,7 +74,7 @@ async function main() {
     enableLogging: options.verbose,
   });
 
-  const bobNode = await LocalProtocolSubstrate.start({
+  const _bobNode = await LocalProtocolSubstrate.start({
     name: 'substrate-bob',
     authority: 'bob',
     usageMode,
@@ -84,15 +83,11 @@ async function main() {
   });
 
   // Wait until we are ready and connected
-  logger.info('Waiting for APIs to be ready');
+  console.log(chalk.blue('Waiting for API to be ready...'));
 
-  const aliceApi = await aliceNode.api();
-  await aliceApi.isReady;
+  const aliceApi = await getLocalApi(ALICE_PORT);
 
-  const bobApi = await bobNode.api();
-  await bobApi.isReady;
-
-  logger.info('APIs are ready');
+  console.log(chalk`=> {green.bold API are ready!}`);
 
   await initPoolShare(aliceApi);
 }
@@ -101,29 +96,29 @@ async function initPoolShare(api: ApiPromise) {
   const sudoKey = getKeyring(ALICE_KEY_URI);
 
   // Create pool share asset
-  logger.info('Creating pool share asset');
+  console.log(chalk`[+] {blue Creating pool share asset...}`);
   const poolShareAssetId = await createPoolShare(
     api,
     FUNGIBLE_ASSET,
     +NATIVE_ASSET_ID,
     sudoKey
   );
-  logger.info(
-    `Pool share asset ${FUNGIBLE_ASSET} created with id \`${poolShareAssetId}\``
+  console.log(
+    chalk`  => {green Pool share asset ${FUNGIBLE_ASSET} created with id \`${poolShareAssetId}\`}`
   );
 
   // Add assets to pool
-  logger.info('Adding assets to pool');
+  console.log(chalk`[+] {blue Adding assets to pool...}`);
   await addAssetToPool(
     api,
     NATIVE_ASSET_ID,
     poolShareAssetId.toString(),
     sudoKey
   );
-  logger.info(`Assets ${FUNGIBLE_ASSET} added to pool`);
+  console.log(chalk`  => {green Assets ${FUNGIBLE_ASSET} added to pool}`);
 
   // Add assets metadata
-  logger.info('Adding assets metadata');
+  console.log(chalk`[+] {blue Adding assets metadata...}`);
   await addAssetMetadata(api, sudoKey, NATIVE_ASSET_ID, NATIVE_ASSET);
   await addAssetMetadata(
     api,
@@ -131,15 +126,19 @@ async function initPoolShare(api: ApiPromise) {
     poolShareAssetId.toString(),
     FUNGIBLE_ASSET
   );
-  logger.info(`Assets metadata added`);
+  console.log(chalk`  => {green Assets metadata added}`);
 
+  console.log(
+    chalk`[+] {blue Creating VAnchor for asset ${FUNGIBLE_ASSET}...}`
+  );
   const vanchorId = await createVAnchor(api, poolShareAssetId, sudoKey);
-
-  logger.info(`VAnchor with id \`${vanchorId}\` created`);
+  console.log(chalk`  => {green VAnchor with id \`${vanchorId}\` created}`);
 
   // Transfer some tokens to the test account
   if (TEST_ACCOUNT) {
-    logger.info(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`);
+    console.log(
+      chalk`[+] {blue Transferring ${AMOUNT} ${NATIVE_ASSET} to test account...}`
+    );
     const hash = await transferAsset(
       api,
       sudoKey,
@@ -148,10 +147,12 @@ async function initPoolShare(api: ApiPromise) {
       new BN(AMOUNT).mul(new BN(10).pow(new BN(18)))
     );
 
-    logger.info(`Token transferred to test account with hash \`${hash}\``);
+    console.log(
+      chalk`  => {green Token transferred to test account with hash \`${hash}\`}`
+    );
   }
 
-  logger.info(chalk.green.bold('Protocol Substrate ready to use'));
+  console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
 }
 
 main().catch(console.error);
