@@ -2,7 +2,6 @@
     "name": "@webb-tools/faucet",
     "version": "0.0.1",
     "license": "APACHE-2.0",
-    "description": "Official Webb Faucet",
-    "main": "./src/pages/_app.tsx"
+    "description": "Official Webb Faucet"
   }
   

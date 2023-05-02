@@ -36,4 +36,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial UI setup and build: https://github.com/webb-tools/webb-dapp/pull/1075
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
+[0.0.1]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
