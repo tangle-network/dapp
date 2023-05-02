@@ -33,35 +33,53 @@ type SocialType = {
 
 const navLinks: Array<NavLinkType> = [
   {
-    group: 'Dapp',
+    group: 'Community',
     links: [
       {
-        label: 'Bridge',
-        url: 'https://app.webb.tools/',
+        label: 'Github',
+        url: 'https://github.com/webb-tools',
         isInternal: false,
       },
-      // {
-      //   label: 'Wrap',
-      //   url: '#',
-      // },
-      // {
-      //   label: 'Crowdloan',
-      //   url: '#',
-      // },
+      {
+        label: 'Telegram',
+        url: 'https://t.me/webbprotocol',
+        isInternal: false,
+      },
+      {
+        label: 'Discord',
+        url: 'https://discord.com/invite/cv8EfJu3Tn',
+        isInternal: false,
+      },
+      {
+        label: 'Twitter',
+        url: 'https://twitter.com/webbprotocol',
+        isInternal: false,
+      },
+      {
+        label: 'Commonwealth',
+        url: 'https://commonwealth.im/webb',
+        isInternal: false,
+      },
     ],
   },
   {
-    group: 'Network',
+    group: 'Ecosystem',
     links: [
       {
-        label: 'Statistics',
+        label: 'Tangle',
+        url: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone1.webb.tools%2F#/explorer',
+        isInternal: false,
+      },
+      {
+        label: 'DKG Explorer',
         url: 'https://stats.webb.tools/',
         isInternal: false,
       },
-      // {
-      //   label: 'Governance',
-      //   url: '#',
-      // },
+      {
+        label: 'Hubble Bridge',
+        url: 'https://app.webb.tools/',
+        isInternal: false,
+      },
     ],
   },
   {
@@ -85,24 +103,6 @@ const navLinks: Array<NavLinkType> = [
     ],
   },
   {
-    group: 'Resources',
-    links: [
-      // {
-      //   label: 'Brand Kit',
-      //   url: '',
-      // },
-      {
-        label: 'Community',
-        url: 'https://webb.tools/community',
-        isInternal: false,
-      },
-      // {
-      //   label: 'FAQs',
-      //   url: '#',
-      // },
-    ],
-  },
-  {
     group: 'Company',
     links: [
       {
@@ -111,8 +111,23 @@ const navLinks: Array<NavLinkType> = [
         isInternal: false,
       },
       {
-        label: 'Jobs',
+        label: 'Careers',
         url: 'https://angel.co/company/webb-4/jobs',
+        isInternal: false,
+      },
+    ],
+  },
+  {
+    group: 'Legal',
+    links: [
+      {
+        label: 'Privacy Policy',
+        url: '/privacy-policy',
+        isInternal: false,
+      },
+      {
+        label: 'Terms of Service',
+        url: '/terms-and-conditions',
         isInternal: false,
       },
     ],
@@ -157,21 +172,6 @@ const socials: Array<SocialType> = [
   },
 ];
 
-const links: Array<
-  ComponentProps<typeof InternalOrExternalLink> & { label: string }
-> = [
-  {
-    label: 'Privacy Policy',
-    url: '/privacy-policy',
-    isInternal: false,
-  },
-  {
-    label: 'Terms & Conditions',
-    url: '/terms-and-conditions',
-    isInternal: false,
-  },
-];
-
 type WebsiteFooterPropsType = {
   type: 'webbsite' | 'tangle';
 };
@@ -205,7 +205,8 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
               <Typography variant="mkt-caption" className="dark:text-mono-100">
                 By signing up you agree to{' '}
                 <InternalOrExternalLink
-                  {...links[1]}
+                  url="/terms-and-conditions"
+                  isInternal={false}
                   className="inline-block dark:text-mono-0 hover:underline"
                 >
                   terms & conditions
@@ -238,10 +239,10 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         )}
 
         {/** Logo and links */}
-        <div className="flex flex-col items-center md:items-start space-y-4 md:space-y-0 md:flex-row md:justify-between">
+        <div className="flex flex-col items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
           {navLinks.map(({ group, links }) => (
-            <div className="hidden md:flex md:flex-col">
+            <div className="hidden md:flex md:flex-col flex-[1]">
               <Typography variant="body1" fw="bold" className="!text-lg mb-4">
                 {group}
               </Typography>
@@ -273,26 +274,10 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           ))}
         </div>
 
-        <div className="flex flex-col items-center space-y-2 md:space-y-0 md:flex-row md:justify-between">
-          <Typography variant="body1" className="text-center">
-            © {new Date().getFullYear()} Webb Technologies, Inc. All rights
-            reserved.
-          </Typography>
-
-          <div className="flex items-center space-x-3 xs:space-y-0 xs:flex-row xs:items-center xs:space-x-6">
-            {links.map(({ label, ...restProps }, idx) => (
-              <Typography
-                key={`${label}-${idx}`}
-                variant="body1"
-                className="hover:underline"
-              >
-                <InternalOrExternalLink {...restProps}>
-                  {label}
-                </InternalOrExternalLink>
-              </Typography>
-            ))}
-          </div>
-        </div>
+        <Typography variant="body1" className="text-center md:text-right">
+          © {new Date().getFullYear()} Webb Technologies, Inc. All rights
+          reserved.
+        </Typography>
       </div>
     </footer>
   );
