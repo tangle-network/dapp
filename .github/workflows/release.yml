@@ -45,6 +45,21 @@ jobs:
         id: changed-stats
         with:
           paths: apps/stats-dapp
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-faucet
+        with:
+          paths: apps/faucet
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-webbsite
+        with:
+          paths: apps/webbsite
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-tangle
+        with:
+          paths: apps/tangle-website
       
       - name: create env file for webbsite, tangle-site and faucet
         run: |
@@ -80,4 +95,25 @@ jobs:
         uses: ./.github/actions/create-release
         with:
           package-path: apps/stats-dapp
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release faucet
+        if: steps.changed-faucet.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/faucet
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release webbsite
+        if: steps.changed-webbsite.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/webbsite
+          repo-token: ${{ secrets.REPO_TOKEN }}
+      
+      - name: Release tangle
+        if: steps.changed-tangle.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/tangle-website
           repo-token: ${{ secrets.REPO_TOKEN }}
