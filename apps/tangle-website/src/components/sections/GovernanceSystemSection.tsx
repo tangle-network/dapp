@@ -37,7 +37,7 @@ export const GovernanceSystemSection = () => {
       <div className="max-w-[1440px] mx-auto">
         <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[96px]">
           <div className="lg:flex-1 flex items-center">
-            <div className="relative w-[340px] md:w-[600px] lg:w=[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
+            <div className="relative w-[340px] md:w-[600px] lg:w-[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
               <Image
                 src="/static/assets/governance-system.png"
                 alt="Governance System"
