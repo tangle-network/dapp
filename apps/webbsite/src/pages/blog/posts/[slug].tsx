@@ -12,10 +12,7 @@ import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { FC } from 'react';
-import { NotionRenderer } from 'react-notion-x';
 import { getPosts, getPostById, Post } from '../../../libs/webb-cms';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -35,11 +32,13 @@ const Post: FC<{ post: Post }> = ({
     author,
     tag,
     id,
-    markup,
+    markdown,
     dateAndTime: { lastUpdatedDate },
   },
 }) => {
   const { notificationApi } = useWebbUI();
+
+  console.log(markdown);
 
   const shareLink = `https://webb.tools/blog/posts/${id}`;
 
@@ -168,20 +167,9 @@ const Post: FC<{ post: Post }> = ({
               </a>
             ))}
           </div>
-          {/* <div>
-            <NotionRenderer
-              bodyClassName="py-0 my-0 pb-[72px] px-0 lg:pl-6"
-              disableHeader
-              components={{
-                Header: () => <Typography variant="mkt-h2" />,
-                nextImage: Image,
-                nextLink: Link,
-                Collection: () => null,
-              }}
-              recordMap={recordMap}
-            />
-          </div> */}
-          {/* <ReactMarkdown children={markup} remarkPlugins={[remarkGfm]} /> */}
+          <div className="pb-8 pr-8">
+            <ReactMarkdown children={markdown} remarkPlugins={[remarkGfm]} />
+          </div>
         </div>
       </div>
     </>
@@ -200,7 +188,6 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const { slug: id } = context.params as { slug: string };
   console.log(id);
-
 
   if (!id) throw new Error('ID is required');
 

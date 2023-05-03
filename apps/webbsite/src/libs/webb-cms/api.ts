@@ -75,7 +75,7 @@ export const getPosts = async (): Promise<Post[]> => {
         tag: _post.attributes.tag,
         linkToResearchPaper: _post.attributes.link,
         coverImage: _post.attributes.image.data[0].attributes.url,
-        markup: _post.attributes.content,
+        markdown: _post.attributes.content,
         author: {
           name: _post.attributes.author.data.attributes.name,
           twitter: _post.attributes.author.data.attributes.twitter,

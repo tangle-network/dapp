@@ -24,7 +24,7 @@ export type Post = {
   tag: string;
   linkToResearchPaper?: string;
   coverImage: string;
-  markup: string;
+  markdown: string;
   author: Author;
   dateAndTime: DateAndTime;
 };
