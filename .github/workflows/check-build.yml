@@ -41,7 +41,7 @@ jobs:
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
           echo WEBB_CMS_TOKEN=${{ secrets.WEBB_CMS_TOKEN }} >> .env
-
+          
       - name: Install deps
         run: yarn install
 
