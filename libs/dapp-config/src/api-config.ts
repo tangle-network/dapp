@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
@@ -66,7 +67,10 @@ export class ApiConfig {
 
   static initFromApi = async (
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
-    providerFactory: (typedChainId: number) => ethers.providers.Provider
+    evmProviderFactory: (
+      typedChainId: number
+    ) => Promise<ethers.providers.Provider>,
+    substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();
     const substrateOnChainConfig = SubstrateOnChainConfig.getInstance();
@@ -77,7 +81,7 @@ export class ApiConfig {
       anchorConfig: evmAnchorConfig,
     } = await evmOnChainConfig.fetchCurrenciesConfig(
       parsedAnchorConfig,
-      providerFactory
+      evmProviderFactory
     );
 
     const {
@@ -86,7 +90,7 @@ export class ApiConfig {
       anchorConfig: anchors,
     } = await substrateOnChainConfig.fetchCurrenciesConfig(
       parsedAnchorConfig,
-      providerFactory as any, // Temporary providerFactory for substrate
+      substrateProviderFactory,
       onChainConfig,
       evmFungibleToWrappableMap,
       evmAnchorConfig

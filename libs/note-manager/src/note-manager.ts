@@ -13,11 +13,26 @@ import {
   parseTypedChainId,
   ResourceId,
   toFixedHex,
+  Utxo,
+  UtxoGenInput,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
+import { Backend } from '@webb-tools/wasm-utils';
 import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
+
+type DefaultNoteGenInput = Pick<
+  NoteGenInput,
+  | 'curve'
+  | 'denomination'
+  | 'exponentiation'
+  | 'hashFunction'
+  | 'protocol'
+  | 'version'
+  | 'width'
+  | 'index'
+>;
 
 // A NoteManager will manage the notes for a keypair.
 export class NoteManager {
@@ -27,6 +42,17 @@ export class NoteManager {
   private notesUpdatedSubject = new BehaviorSubject(false);
 
   private isSyncingNoteSubject = new BehaviorSubject(false);
+
+  static readonly defaultNoteGenInput: DefaultNoteGenInput = {
+    curve: 'Bn254',
+    denomination: '18',
+    exponentiation: '5',
+    hashFunction: 'Poseidon',
+    protocol: 'vanchor',
+    version: 'v1',
+    width: '5',
+    index: 0,
+  };
 
   private constructor(
     private noteStorage: Storage<NoteStorage>,
@@ -176,6 +202,10 @@ export class NoteManager {
     this.isSyncingNoteSubject.next(value);
   }
 
+  get defaultNoteGenInput(): DefaultNoteGenInput {
+    return NoteManager.defaultNoteGenInput;
+  }
+
   getKeypair() {
     return this.keypair;
   }
@@ -322,6 +352,7 @@ export class NoteManager {
    * @returns The generated note
    */
   async generateNote(
+    backend: Backend,
     sourceTypedChainId: number,
     sourceAnchorAddress: string,
     destTypedChainId: number,
@@ -334,38 +365,37 @@ export class NoteManager {
       .parseUnits(amount.toString(), tokenDecimals)
       .toString();
 
-    // Convert the amount to units of wei
-    const outputUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
+    const input: UtxoGenInput = {
+      curve: this.defaultNoteGenInput.curve,
+      backend,
       amount: amountBigNumber,
       originChainId: sourceTypedChainId.toString(),
       chainId: destTypedChainId.toString(),
       keypair: this.keypair,
-    });
+      index: this.defaultNoteGenInput.index.toString(),
+    };
+
+    // Convert the amount to units of wei
+    const utxo = await (backend == 'Arkworks'
+      ? Utxo.generateUtxo(input)
+      : CircomUtxo.generateUtxo(input));
 
     const noteInput: NoteGenInput = {
+      ...this.defaultNoteGenInput,
       amount: amountBigNumber,
-      backend: 'Circom',
-      curve: 'Bn254',
-      denomination: '18',
-      exponentiation: '5',
-      hashFunction: 'Poseidon',
-      protocol: 'vanchor',
+      backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),
-        toFixedHex(outputUtxo.amount, 16).substring(2),
+        toFixedHex(utxo.amount).substring(2),
         toFixedHex(this.keypair.privkey).substring(2),
-        toFixedHex(`0x${outputUtxo.blinding}`).substring(2),
+        toFixedHex(`0x${utxo.blinding}`).substring(2),
       ].join(':'),
       sourceChain: sourceTypedChainId.toString(),
       sourceIdentifyingData: sourceAnchorAddress,
       targetChain: destTypedChainId.toString(),
       targetIdentifyingData: destAnchorAddress,
       tokenSymbol: tokenSymbol,
-      version: 'v1',
-      width: '5',
-      index: outputUtxo.index,
+      index: utxo.index,
     };
 
     return Note.generateNote(noteInput);

@@ -12,3 +12,6 @@ export * from './wrap-unwrap';
 export * from './cancelation-token';
 export * from './transaction';
 export * from './webb-provider.interface';
+
+export { default as generateCircomCommitment } from './utils/generateCircomCommitment';
+export { default as utxoFromVAnchorNote } from './utils/utxoFromVAnchorNote';

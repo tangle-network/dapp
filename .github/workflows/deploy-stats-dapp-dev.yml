@@ -1,14 +1,14 @@
 # This action deploys a draft deployment using Netlify to view changes prior to being
-# merged. This does NOT deploy to production site and will only be triggered 
+# merged. This does NOT deploy to production site and will only be triggered
 # on changes in the specified paths below.
 name: deploy-stats-dapp 🌐
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [ develop ]
+    branches: [develop]
     paths:
-      - 'apps/stats-dapp/**'    
+      - 'apps/stats-dapp/**'
 
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
     if: github.ref != 'refs/heads/develop' && github.event.pull_request.draft == false
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -60,8 +60,7 @@ jobs:
             ---
 
             _To edit notification comments on pull requests, go to your [Netlify site settings](https://app.netlify.com/sites/development-stats/settings/deploys#deploy-notifications)._
-            
+
         with:
           msg: ${{ env.OUTPUT }}
-          check_for_duplicate_msg: false  # OPTIONAL
-    
+          check_for_duplicate_msg: false # OPTIONAL
