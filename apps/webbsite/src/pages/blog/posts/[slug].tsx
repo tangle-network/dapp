@@ -1,4 +1,3 @@
-/* eslint-disable react/no-children-prop */
 import React from 'react';
 import {
   TwitterFill,
@@ -17,6 +16,7 @@ import { FC } from 'react';
 import { getPosts, getPostById, Post } from '../../../libs/webb-cms';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import 'github-markdown-css/github-markdown-light.css';
 
 type SharableLinkType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -166,8 +166,10 @@ const Post: FC<{ post: Post }> = ({
               </a>
             ))}
           </div>
-          <div className="pb-8 pr-8">
-            <ReactMarkdown children={markdown} remarkPlugins={[remarkGfm]} />
+          <div className="pb-8 pr-8 markdown-body">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {markdown}
+            </ReactMarkdown>
           </div>
         </div>
       </div>
