@@ -62,6 +62,10 @@ export const apiRequest = async (
   }
 };
 
+/**
+ * Gets all posts from the Webb CMS API
+ * @returns All posts as a Promise with the type Post[]
+ */
 export const getPosts = async (): Promise<Post[]> => {
   try {
     const response = await apiRequest(WEBB_CMS_URL, 'articles?populate=*');
@@ -91,12 +95,17 @@ export const getPosts = async (): Promise<Post[]> => {
       return post;
     });
 
-    return posts;
+    return posts ?? ([] as Post[]);
   } catch (error: any) {
     throw new Error('Failed to get posts from Webb CMS', error);
   }
 };
 
+/**
+ * Gets a post by its ID from the Webb CMS API
+ * @param id - The ID of the post to get
+ * @returns The post as a Promise with the type Post
+ */
 export const getPostById = async (id: number): Promise<Post> => {
   try {
     const posts = await getPosts();
@@ -107,12 +116,16 @@ export const getPostById = async (id: number): Promise<Post> => {
       throw new Error(`Post with ID ${id} not found`);
     }
 
-    return post;
+    return post ?? ({} as Post);
   } catch (error: any) {
     throw new Error(`Failed to get post with ID ${id} from Webb CMS`, error);
   }
 };
 
+/**
+ * Gets all videos from the Webb CMS API
+ * @returns All videos as a Promise with the type Video[]
+ */
 export const getVideos = async (): Promise<Video[]> => {
   try {
     const response = await apiRequest(WEBB_CMS_URL, 'videos?populate=*');
@@ -129,7 +142,7 @@ export const getVideos = async (): Promise<Video[]> => {
       return video;
     });
 
-    return videos;
+    return videos ?? ([] as Video[]);
   } catch (error: any) {
     throw new Error('Failed to get videos from Webb CMS', error);
   }

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 import React from 'react';
 import {
   TwitterFill,
@@ -147,7 +148,7 @@ const Post: FC<{ post: Post }> = ({
           </div>
         </div>
         <div className="flex flex-col justify-between lg:flex-row-reverse lg:items-center">
-          <div className="flex items-center self-end justify-end gap-6 lg:flex-col lg:self-start">
+          <div className="flex items-center self-end justify-end pb-8 gap-6 lg:flex-col lg:self-start">
             {links.map(({ Icon, name, href, onClick }) => (
               <a
                 key={name}
@@ -185,9 +186,8 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { slug: id } = context.params as { slug: string };
-  console.log(id);
 
-  if (!id) throw new Error('ID is required');
+  if (!id) throw new Error('Post ID is not provided');
 
   const post = await getPostById(Number(id));
 
