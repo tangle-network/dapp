@@ -38,13 +38,13 @@ const faqItems = [
 export const FAQSection = () => {
   return (
     <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
-      <div className="max-w-[1440px] mx-auto">
+      <div className="max-w-[1440px] mx-auto lg:px-[15%]">
         <div className="flex flex-col items-center mb-9">
           <SectionHeader className="text-center pb-2">Learn More</SectionHeader>
           <SectionTitle className="pb-4">
             Frequently asked questions
           </SectionTitle>
-          <SectionDescription2 className="text-center lg:w-[70%]">
+          <SectionDescription2 className="text-center">
             Need more information? Explore our documentation site or connect
             with others in our community channels to learn more!
           </SectionDescription2>
@@ -52,7 +52,7 @@ export const FAQSection = () => {
         <Accordion
           defaultValue={[faqItems[0].question]}
           type="multiple"
-          className="lg:w-[70%] lg:mx-auto"
+          className="lg:mx-auto"
         >
           {faqItems.map((item, index) => (
             <AccordionItem
