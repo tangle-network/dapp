@@ -1,5 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
+
 const path = require('path'),
   fs = require('fs'),
   webpack = require('webpack'),

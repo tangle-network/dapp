@@ -6,27 +6,24 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
+  useLatestTransactionStage,
+  useTransactionProgressValue,
+} from '../../hooks';
+import {
+  captureSentryException,
   getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
-  captureSentryException,
 } from '../../utils';
-import {
-  useLatestTransactionStage,
-  useTransactionProgressValue,
-} from '../../hooks';
 import { DepositConfirmContainerProps } from './types';
-import * as Sentry from '@sentry/react';
 
 export const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -120,10 +117,11 @@ export const DepositConfirmContainer = forwardRef<
         amount,
         denomination,
         sourceChainId: sourceTypedChainId,
-        sourceIdentifyingData,
         targetChainId: destTypedChainId,
+        sourceIdentifyingData,
         tokenSymbol,
       } = note.note;
+
       // Calculate the amount
       const formattedAmount = ethers.utils.formatUnits(amount, denomination);
 
@@ -159,6 +157,7 @@ export const DepositConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
+        providerType: activeApi.type(),
       });
 
       setTxId(tx.id);
@@ -180,24 +179,31 @@ export const DepositConfirmContainer = forwardRef<
           await noteManager.addNote(note);
         }
 
-        const receipt = await api.transact(...args);
+        const nextIdx = Number(
+          await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
+        );
+        const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
 
-        const srcContract = VAnchor__factory.connect(
-          sourceIdentifyingData,
-          Web3Provider.fromUri(activeChain.url).intoEthersProvider()
+        const { transactionHash, receipt } = await api.transact(...args);
+
+        tx.txHash = transactionHash;
+
+        const leaf = note.getLeaf();
+
+        const noteIndex = await api.getLeafIndex(
+          receipt ?? leaf,
+          receipt ? note : indexBeforeInsert,
+          sourceIdentifyingData
         );
 
-        // TODO: Make this parse the receipt for the index data
-        const noteIndex = (await srcContract.getNextIndex()) - 1;
         const indexedNote = await Note.deserialize(note.serialize());
         indexedNote.mutateIndex(noteIndex.toString());
         await noteManager?.addNote(indexedNote);
         await noteManager?.removeNote(note);
 
         // Notification Success Transaction
-        tx.txHash = receipt.transactionHash;
         tx.next(TransactionState.Done, {
-          txHash: receipt.transactionHash,
+          txHash: transactionHash,
           outputNotes: [indexedNote],
         });
       } catch (error: any) {
@@ -223,6 +229,7 @@ export const DepositConfirmContainer = forwardRef<
       resetMainComponent,
       txQueueApi,
       noteManager,
+      fungibleTokenId,
       onResetState,
     ]);
 

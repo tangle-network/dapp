@@ -136,6 +136,7 @@ export const TransactionProgressCard = forwardRef<
       () => ((label as NativeLabel).nativeValue ? 'native' : 'bridge'),
       [label]
     );
+
     const timeLabel = useMemo(() => {
       const timeGap = Date.now() - firedAt.getTime();
       if (timeGap < 60 * 1000) {
@@ -148,6 +149,7 @@ export const TransactionProgressCard = forwardRef<
         return `${Math.floor(timeGap / (1000 * 60 * 60))}h`;
       }
     }, [firedAt]);
+
     const chipColor = useMemo<ChipColors>((): ChipColors => {
       switch (method) {
         case 'Withdraw':
@@ -159,6 +161,7 @@ export const TransactionProgressCard = forwardRef<
       }
       return 'red';
     }, [method]);
+
     const [SourceIcon, DistIcon] = useMemo(() => {
       switch (method) {
         case 'Withdraw':
@@ -178,12 +181,14 @@ export const TransactionProgressCard = forwardRef<
           ];
       }
     }, [method]);
+
     const hasSyncNote = useMemo(() => {
       return method === 'Withdraw' && Boolean(onSyncNote);
-    }, [method]);
+    }, [method, onSyncNote]);
 
     // Fix lottie animation prevents the image form loading ?!
     const [showAnimation, setShowAnimation] = useState(false);
+
     useEffect(() => {
       let t: ReturnType<typeof setTimeout>;
       if (status === 'completed') {
@@ -193,6 +198,7 @@ export const TransactionProgressCard = forwardRef<
       }
       return () => clearTimeout(t);
     }, [status, setShowAnimation]);
+
     return (
       <div
         className={twMerge(
@@ -226,9 +232,7 @@ export const TransactionProgressCard = forwardRef<
           {/*Card Content*/}
           <div className={twMerge('my-0 flex items-center', sectionPadding)}>
             <div className="flex items-start">
-              <div className={'h-full pt-1.5'}>
-                <div className={'h-full w-8'}>{tokens}</div>
-              </div>
+              <div className={'h-full'}>{tokens}</div>
               <div className={'px-3'}>
                 <Typography
                   variant={'h4'}

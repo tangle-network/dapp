@@ -3,12 +3,20 @@
 
 /// list of know error codes of the dApp
 export enum WebbErrorCodes {
+  /// Api is not ready
+  ApiNotReady,
+  /// No currency is available
+  NoCurrencyAvailable,
+  /// No fungible token is available
+  NoFungibleTokenAvailable,
   /// Unsupported chain is switch via the extension
   UnsupportedChain,
   /// Unselected chain is a mismatch between provider and application
   UnselectedChain,
   /// No accounts are available
   NoAccountAvailable,
+  /// No active bridge
+  NoActiveBridge,
   /// Failed to parse deposit note
   NoteParsingFailure,
   /// PolkaDot extension not installed
@@ -71,6 +79,18 @@ export class WebbError extends Error {
     }
 
     switch (code) {
+      case WebbErrorCodes.ApiNotReady:
+        return {
+          code,
+          message: 'Api is not ready',
+        };
+
+      case WebbErrorCodes.NoFungibleTokenAvailable:
+        return {
+          code,
+          message: 'No fungible token is available',
+        };
+
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,
@@ -173,6 +193,18 @@ export class WebbError extends Error {
         return {
           code,
           message: `There is a transaction in progress`,
+        };
+
+      case WebbErrorCodes.NoActiveBridge:
+        return {
+          code,
+          message: `No active bridge`,
+        };
+
+      case WebbErrorCodes.NoCurrencyAvailable:
+        return {
+          code,
+          message: `No currency is available`,
         };
 
       default:

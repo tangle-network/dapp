@@ -25,7 +25,14 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import {
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  ChainType,
+  parseTypedChainId,
+  Utxo,
+  UtxoGenInput,
+} from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import {
@@ -33,8 +40,8 @@ import {
   InjectedExtension,
 } from '@polkadot/extension-inject/types';
 
+import { VoidFn } from '@polkadot/api/types';
 import { ZkComponents } from '@webb-tools/utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
@@ -45,14 +52,20 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
+import { providers } from 'ethers';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
   implements WebbApiProvider<WebbPolkadot>
 {
-  type(): string {
-    return 'Polkadot';
+  type() {
+    return 'polkadot' as const;
   }
+
   state: WebbState;
   noteManager: NoteManager | null = null;
 
@@ -62,12 +75,24 @@ export class WebbPolkadot
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
 
-  private _newBlock = new BehaviorSubject<null | number>(null);
+  readonly newBlockSub = new Set<VoidFn>();
+
   readonly typedChainidSubject: BehaviorSubject<number>;
+
+  readonly backend = 'Arkworks';
+
+  private _newBlock = new BehaviorSubject<null | number>(null);
+
+  // Map to store the max edges for each tree id
+  private readonly vAnchorMaxEdges = new Map<string, number>();
+
+  private smallFixtures: ZkComponents | null = null;
+
+  private largeFixtures: ZkComponents | null = null;
 
   private constructor(
     apiPromise: ApiPromise,
-    readonly typedChainId: number,
+    typedChainId: number,
     injectedExtension: InjectedExtension,
     readonly relayerManager: PolkadotRelayerManager,
     public readonly config: ApiConfig,
@@ -106,7 +131,7 @@ export class WebbPolkadot
       },
       variableAnchor: {
         actions: {
-          enabled: false,
+          enabled: true,
           inner: new PolkadotVAnchorActions(this),
         },
       },
@@ -160,13 +185,15 @@ export class WebbPolkadot
     return this.provider;
   }
 
-  // Return the typedChainId of this provider
-  // TODO: Find out how to get this value from chain
-  //       Maybe the polkadot webb-provider does not interact with a 'linkableTreeBn254' pallet
-  //       (it is for the dkg)
-  getChainId() {
-    // const chainType = await this.provider.api.consts.linkableTreeBn254.chainType;
-    return this.typedChainId;
+  async getChainId(): Promise<number> {
+    const chainIdentifier =
+      this.provider.api.consts.linkableTreeBn254.chainIdentifier;
+    if (!chainIdentifier.isEmpty) {
+      return chainIdentifier.toNumber();
+    }
+
+    // If the chainId is not set, fallback to the typedChainId
+    return parseTypedChainId(this.typedChainId).chainId;
   }
 
   async awaitMetaDataCheck() {
@@ -223,7 +250,7 @@ export class WebbPolkadot
     endpoints: string[], // Endpoints of the substrate node
     errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
-    ApiConfig: ApiConfig, // The whole and current app configuration
+    apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
     wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
     typedChainId: number,
@@ -246,7 +273,7 @@ export class WebbPolkadot
       typedChainId,
       injectedExtension,
       relayerBuilder,
-      ApiConfig,
+      apiConfig,
       notification,
       provider,
       accounts,
@@ -255,12 +282,11 @@ export class WebbPolkadot
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
+
     // await instance.ensureApiInterface();
     const unsub = await instance.listenerBlocks();
-    instance.destroy = async () => {
-      await instance.destroy();
-      unsub();
-    };
+    instance.newBlockSub.add(unsub);
+
     return instance;
   }
 
@@ -286,6 +312,7 @@ export class WebbPolkadot
       ChainType.Substrate,
       chainId.toNumber()
     );
+
     const instance = new WebbPolkadot(
       apiPromise,
       typedChainId,
@@ -302,16 +329,16 @@ export class WebbPolkadot
     /// check metadata update
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
+
     const unsub = await instance.listenerBlocks();
-    instance.destroy = async () => {
-      await instance.destroy();
-      unsub();
-    };
+    instance.newBlockSub.add(unsub);
+
     return instance;
   }
 
   async destroy(): Promise<void> {
     await this.provider.destroy();
+    this.newBlockSub.forEach((unsub) => unsub());
   }
 
   private async listenerBlocks() {
@@ -329,17 +356,141 @@ export class WebbPolkadot
     return this._newBlock.asObservable();
   }
 
+  get typedChainId(): number {
+    return this.typedChainidSubject.getValue();
+  }
+
+  /**
+   * Get the zero knowledge fixtures
+   * @param maxEdges the max number of edges in the merkle tree
+   * @param isSmall whether fixtures are for small inputs (less than or equal to 2 inputs)
+   * @returns zk components
+   */
   async getZkFixtures(
     maxEdges: number,
     isSmall?: boolean
   ): Promise<ZkComponents> {
-    throw new Error('Method not implemented.');
+    const dummyAbortSignal = new AbortController().signal;
+
+    if (isSmall) {
+      if (this.smallFixtures) {
+        return this.smallFixtures;
+      }
+
+      const smallKey = await fetchVAnchorKeyFromAws(
+        maxEdges,
+        isSmall,
+        true // isSubstrate
+      );
+
+      const smallWasm = await fetchVAnchorWasmFromAws(
+        maxEdges,
+        isSmall,
+        dummyAbortSignal
+      );
+
+      const smallFixtures = {
+        zkey: smallKey,
+        wasm: Buffer.from(smallWasm),
+        witnessCalculator: buildVariableWitnessCalculator,
+      };
+
+      this.smallFixtures = smallFixtures;
+      return smallFixtures;
+    }
+
+    if (this.largeFixtures) {
+      return this.largeFixtures;
+    }
+
+    const largeKey = await fetchVAnchorKeyFromAws(
+      maxEdges,
+      isSmall,
+      true // isSubstrate
+    );
+
+    const largeWasm = await fetchVAnchorWasmFromAws(
+      maxEdges,
+      isSmall,
+      dummyAbortSignal
+    );
+
+    const largeFixtures = {
+      zkey: largeKey,
+      wasm: Buffer.from(largeWasm),
+      witnessCalculator: buildVariableWitnessCalculator,
+    };
+
+    this.largeFixtures = largeFixtures;
+    return largeFixtures;
+  }
+
+  /**
+   * Get the zero knowledge vanchor proving key
+   * @param maxEdges the max number of edges in the merkle tree
+   * @param isSmall whether fixtures are for small inputs (less than or equal to 2 inputs)
+   * @returns zk proving key
+   */
+  async getZkVAnchorKey(maxEdges: number, isSmall?: boolean) {
+    if (isSmall) {
+      if (this.smallFixtures) {
+        return this.smallFixtures.zkey;
+      }
+
+      const smallKey = await fetchVAnchorKeyFromAws(
+        maxEdges,
+        isSmall,
+        true // isSubstrate
+      );
+
+      // Return the key without storing it in the cache
+      // because we cached the response already in browser cache
+      return smallKey;
+    }
+
+    if (this.largeFixtures) {
+      return this.largeFixtures.zkey;
+    }
+
+    const largeKey = await fetchVAnchorKeyFromAws(
+      maxEdges,
+      isSmall,
+      true // isSubstrate
+    );
+
+    // Return the key without storing it in the cache
+    // because we cached the response already in browser cache
+    return largeKey;
   }
 
   async getVAnchorMaxEdges(
-    vAnchorAddress: string,
-    provider?: providers.Provider
+    treeId: string,
+    provider?: providers.Provider | ApiPromise
   ): Promise<number> {
-    throw new Error('Method not implemented.');
+    if (provider instanceof providers.Provider) {
+      console.error(
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+      );
+      provider = this.api;
+    }
+
+    const storedMaxEdges = this.vAnchorMaxEdges.get(treeId);
+    if (storedMaxEdges) {
+      return storedMaxEdges;
+    }
+
+    const api = provider || this.api;
+    const maxEdges = await api.query.linkableTreeBn254.maxEdges(treeId);
+    if (maxEdges.isEmpty) {
+      console.error(`Max edges for tree ${treeId} is empty`);
+      return 0;
+    }
+
+    this.vAnchorMaxEdges.set(treeId, maxEdges.toNumber());
+    return maxEdges.toNumber();
+  }
+
+  generateUtxo(input: UtxoGenInput): Promise<Utxo> {
+    return Utxo.generateUtxo(input);
   }
 }

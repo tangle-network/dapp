@@ -9,6 +9,7 @@ import {
   ChainConfig,
   CurrencyConfig,
 } from '@webb-tools/dapp-config';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   getRoundedAmountString,
   TransactionItemStatus,
@@ -30,6 +31,7 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
+
 function mapTxToPayload(
   tx: Transaction<any>,
   currencyConfig: Record<number, CurrencyConfig>,
@@ -47,16 +49,29 @@ function mapTxToPayload(
     explorerUri = chainConfig[wallets.dest]?.blockExplorerStub ?? '';
   }
 
-  const SrcWallet = chainConfig[wallets.src]?.logo;
-  const DistWallet = chainConfig[wallets.dest]?.logo;
+  const srcChainName = chainConfig[wallets.src]?.name;
+  const destChainName = chainConfig[wallets.dest]?.name;
+
+  const txProviderType = tx.metaData.providerType;
 
   const getExplorerURI = (
     addOrTxHash: string,
     variant: 'tx' | 'address'
   ): string => {
-    return `${
-      explorerUri.endsWith('/') ? explorerUri : explorerUri + '/'
-    }${variant}/${addOrTxHash}`;
+    explorerUri = explorerUri.endsWith('/') ? explorerUri : explorerUri + '/';
+
+    switch (txProviderType) {
+      case 'web3':
+        return `${explorerUri}${variant}/${addOrTxHash}`;
+
+      case 'polkadot': {
+        const prefix = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+        return `${explorerUri}${prefix}`;
+      }
+
+      default:
+        return '';
+    }
   };
 
   return {
@@ -74,16 +89,8 @@ function mapTxToPayload(
     tokenURI,
     tokens: tokens,
     wallets: {
-      src: (
-        <div className={'w-4 h-4'}>
-          <SrcWallet />
-        </div>
-      ),
-      dist: (
-        <div className={'w-4 h-4'}>
-          <DistWallet />
-        </div>
-      ),
+      src: <ChainIcon name={srcChainName} />,
+      dist: <ChainIcon name={destChainName} />,
     },
     onDismiss(): void {
       return dismissTransaction(tx.id);

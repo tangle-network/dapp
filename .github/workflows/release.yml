@@ -1,4 +1,4 @@
-name: "Release"
+name: 'Release'
 on:
   push:
     branches:
@@ -33,9 +33,9 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
-    #Identify changes
+      #Identify changes
       - uses: marceloprado/has-changed-path@v1
         id: changed-hubble
         with:
@@ -60,7 +60,7 @@ jobs:
         id: changed-tangle
         with:
           paths: apps/tangle-website
-      
+
       - name: create env file for webbsite, tangle-site and faucet
         run: |
           touch .env
@@ -77,11 +77,15 @@ jobs:
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
           echo WEBB_CMS_TOKEN=${{ secrets.WEBB_CMS_TOKEN }} >> .env
-        
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Generate stats-dapp codegen
+        run: yarn gql:codegen
+
       - name: build
-        run: |
-          yarn install
-          yarn nx run-many --all --target=build
+        run: yarn nx run-many --all --target=build
 
       # Create github release
       - name: Release hubble
@@ -111,7 +115,7 @@ jobs:
         with:
           package-path: apps/webbsite
           repo-token: ${{ secrets.REPO_TOKEN }}
-      
+
       - name: Release tangle
         if: steps.changed-tangle.outputs.changed == 'true'
         uses: ./.github/actions/create-release
