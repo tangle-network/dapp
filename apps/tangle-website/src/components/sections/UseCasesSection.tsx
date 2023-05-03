@@ -100,7 +100,7 @@ export const UseCasesSection = () => {
 
 const UseCaseCard = ({ icon, title, description, link }) => {
   return (
-    <div className="flex flex-col items-start justify-start gap-10 bg-[#282633] rounded-xl py-[56px] px-[24px] md:w-[264px] md:h-[600px]">
+    <div className="flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px] md:w-[264px] md:h-[600px]">
       {icon}
       <div className="flex flex-col gap-4">
         <Typography variant="h4" className="font-bold text-mono-0">
