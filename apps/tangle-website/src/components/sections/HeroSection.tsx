@@ -8,7 +8,7 @@ export const HeroSection = () => {
     <section>
       <div className="max-w-[1440px] mx-auto flex flex-col items-stretch lg:flex-row md:px-4 lg:px-6">
         <div className="flex-1 flex items-center bg-purple-10 px-5 py-16 md:py-32 md:pl-4 md:pr-36 lg:p-0">
-          <div className="flex flex-col gap-8 lg:w-[65%] lg:ml-[calc(11.25vw_-_25px)]">
+          <div className="flex flex-col gap-8 lg:w-[65%] lg:ml-[132.5px]">
             <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
             <SectionDescription>
               The next-generation TSS based blockchain powering cross-chain
