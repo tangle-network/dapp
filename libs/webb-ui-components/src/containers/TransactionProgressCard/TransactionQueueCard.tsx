@@ -95,9 +95,11 @@ export const TransactionQueueCard = forwardRef<
       () => typeof collapsedParent === 'boolean',
       [collapsedParent]
     );
+
     const [collapsed, setCollapsed] = useState(
       controlled ? collapsedParent : false
     );
+
     // Sync the state of open to the parent component
     useEffect(() => {
       if (controlled) {
@@ -212,6 +214,7 @@ export const TransactionQueueCard = forwardRef<
         return <PartyFill maxWidth={18} />;
       }
     }, [transactionsCountSummery]);
+
     const transactionSummeryText = useMemo(() => {
       const { completedCount, failedCount, processingCount } =
         transactionsCountSummery;

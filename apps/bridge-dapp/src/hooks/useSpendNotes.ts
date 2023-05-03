@@ -2,7 +2,11 @@ import { randRecentDate } from '@ngneat/falso';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { VAnchorTree__factory } from '@webb-tools/contracts';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
+import {
+  useCurrencies,
+  useNoteAccount,
+  useVAnchor,
+} from '@webb-tools/react-hooks';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
@@ -11,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { hexToU8a } from '@webb-tools/utils';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 
 const createdTime = randRecentDate();
 
@@ -21,19 +26,34 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
   const { activeChain, apiConfig, chains } = useWebContext();
 
+  const { api: vAnchorApi } = useVAnchor();
+
   const [nextIndices, setNextIndices] = useState<
-    { address: string; typedChainId: number; nextIndex: number }[]
+    { fungibleCurrencyId: number; typedChainId: number; nextIndex: number }[]
   >([]);
 
   // Get no overlap sourceChainId and sourceIdentifyingData from allNotes
   const filterChainIdsAndAddresses = useMemo(() => {
+    if (!apiConfig) {
+      return [];
+    }
+
     return Array.from(allNotes.values()).reduce((acc, notes) => {
       notes.forEach((note) => {
-        const { sourceChainId, sourceIdentifyingData: address } = note.note;
+        const { sourceChainId, tokenSymbol } = note.note;
+
+        const fungible = Object.values(apiConfig.currencies)
+          .filter((c) => c.role === CurrencyRole.Governable)
+          .find(
+            (c) => c.symbol === tokenSymbol && c.addresses.has(+sourceChainId)
+          );
+        if (!fungible) {
+          return acc;
+        }
 
         const isExisted = acc.find(
           (val) =>
-            val.address === address &&
+            val.fungibleCurrencyId === fungible.id &&
             val.typedChainId === Number(sourceChainId)
         );
 
@@ -43,7 +63,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
         if (!isExisted && isCurrentTag) {
           acc.push({
-            address,
+            fungibleCurrencyId: fungible.id,
             typedChainId: Number(sourceChainId),
           });
         }
@@ -51,7 +71,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
       return acc;
     }, [] as Array<Omit<ArrayElement<typeof nextIndices>, 'nextIndex'>>);
-  }, [allNotes, activeChain?.tag, apiConfig.chains]);
+  }, [apiConfig, allNotes, activeChain?.tag]);
 
   const notes = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(
@@ -73,11 +93,21 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
         }
 
         notes.forEach((note) => {
-          const nextIndex = nextIndices.find(
-            (item) =>
-              item.address === note.note.sourceIdentifyingData &&
+          const nextIndex = nextIndices.find((item) => {
+            const fungible = apiConfig.currencies[item.fungibleCurrencyId];
+            if (!fungible) {
+              console.error(
+                'Fungible currency not found with id: ',
+                item.fungibleCurrencyId
+              );
+              return false;
+            }
+
+            return (
+              item.fungibleCurrencyId === fungible.id &&
               item.typedChainId === Number(note.note.sourceChainId)
-          )?.nextIndex;
+            );
+          })?.nextIndex;
 
           const subsequentDepositsNumber = nextIndex
             ? nextIndex - Number(note.note.index)
@@ -86,7 +116,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
           // Calculate the wrappable currencies
           let wrappableCurrencies: Currency[] = [];
           const fungibleCurrency = fungibleCurrencies.find(
-            (currency) => currency.view.symbol === note.note.tokenSymbol
+            (currency) =>
+              currency.view.symbol === note.note.tokenSymbol &&
+              currency.hasChain(+note.note.sourceChainId)
           );
           if (fungibleCurrency) {
             const foundCurrencies = getWrappableCurrencies(fungibleCurrency.id);
@@ -137,26 +169,33 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
     activeChain?.tag,
     nextIndices,
     fungibleCurrencies,
+    apiConfig.currencies,
     getWrappableCurrencies,
   ]);
 
   // Effect to get next indices asynchorously
   useEffect(() => {
     const getIndices = async () => {
+      if (!vAnchorApi) {
+        return;
+      }
+
       try {
         const indices = await Promise.all(
-          filterChainIdsAndAddresses.map(async ({ address, typedChainId }) => {
-            const provider = Web3Provider.fromUri(
-              chainsPopulated[typedChainId].url
-            ).intoEthersProvider();
-            const contract = VAnchorTree__factory.connect(address, provider);
-            const nextIndex = await contract.getNextIndex();
-            return {
-              address,
-              typedChainId,
-              nextIndex,
-            };
-          })
+          filterChainIdsAndAddresses.map(
+            async ({ fungibleCurrencyId, typedChainId }) => {
+              const idx = await vAnchorApi.getNextIndex(
+                typedChainId,
+                fungibleCurrencyId
+              );
+
+              return {
+                fungibleCurrencyId,
+                typedChainId,
+                nextIndex: Number(idx),
+              };
+            }
+          )
         );
 
         setNextIndices(indices);
@@ -166,7 +205,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
     };
 
     getIndices();
-  }, [filterChainIdsAndAddresses]);
+  }, [filterChainIdsAndAddresses, vAnchorApi]);
 
   return notes;
 };

@@ -1,159 +1,57 @@
 import {
   ActiveWebbRelayer,
   CancellationToken,
+  isVAnchorDepositPayload,
+  isVAnchorTransferPayload,
+  isVAnchorWithdrawPayload,
   NewNotesTxResult,
+  padHexString,
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
-  TransferTransactionPayloadType,
+  utxoFromVAnchorNote,
   VAnchorActions,
-  WithdrawTransactionPayloadType,
-  padHexString,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20, ERC20__factory } from '@webb-tools/contracts';
-import { checkNativeAddress } from '@webb-tools/dapp-types';
+import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import {
+  checkNativeAddress,
+  WebbError,
+  WebbErrorCodes,
+} from '@webb-tools/dapp-types';
 import {
   ChainType,
-  CircomUtxo,
   Keypair,
   MerkleTree,
   Note,
   ResourceId,
-  Utxo,
   toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import {
-  ZERO_ADDRESS,
   hexToU8a,
   u8aToHex,
+  ZERO_ADDRESS,
   ZERO_BYTES32,
 } from '@webb-tools/utils';
 import {
   BigNumber,
-  BigNumberish,
   ContractReceipt,
   ContractTransaction,
   Overrides,
 } from 'ethers';
 
-import { JsNote } from '@webb-tools/wasm-utils';
-import { poseidon } from 'circomlibjs';
+import { generateCircomCommitment } from '@webb-tools/abstract-api-provider';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
-
-const isVAnchorDepositPayload = (
-  payload: TransactionPayloadType
-): payload is Note => {
-  return payload instanceof Note;
-};
-
-const isVAnchorWithdrawPayload = (
-  payload: TransactionPayloadType
-): payload is WithdrawTransactionPayloadType => {
-  if (!('changeUtxo' in payload)) {
-    return false;
-  }
-
-  const changeUtxo: Utxo | undefined = payload['changeUtxo'];
-  if (!changeUtxo || !(changeUtxo instanceof Utxo)) {
-    return false;
-  }
-
-  const notes: Note[] | undefined = payload['notes'];
-  if (!notes) {
-    return false;
-  }
-
-  const isNotesValid = notes.every((note) => note instanceof Note);
-  if (!isNotesValid) {
-    return false;
-  }
-
-  return (
-    'recipient' in payload &&
-    typeof payload['recipient'] === 'string' &&
-    payload['recipient'].length > 0 &&
-    'feeAmount' in payload &&
-    payload['feeAmount'] instanceof BigNumber &&
-    'refundAmount' in payload &&
-    payload['refundAmount'] instanceof BigNumber
-  );
-};
-
-const isVAnchorTransferPayload = (
-  payload: TransactionPayloadType
-): payload is TransferTransactionPayloadType => {
-  if (!('notes' in payload)) {
-    return false;
-  }
-
-  const notes: Note[] | undefined = payload['notes'];
-  if (!notes) {
-    return false;
-  }
-
-  const isNotesValid = notes.every((note) => note instanceof Note);
-  if (!isNotesValid) {
-    return false;
-  }
-
-  return (
-    'changeUtxo' in payload &&
-    payload['changeUtxo'] instanceof Utxo &&
-    'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo &&
-    'feeAmount' in payload &&
-    payload['feeAmount'] instanceof BigNumber
-  );
-};
-
-const generateCircomCommitment = (note: JsNote): string => {
-  const noteSecretParts = note.secrets.split(':');
-  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
-  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
-  const secretKey = '0x' + noteSecretParts[2];
-  const blinding = '0x' + noteSecretParts[3];
-
-  const keypair = new Keypair(secretKey);
-
-  const hash = poseidon([chainId, amount, keypair.getPubKey(), blinding]);
-
-  return BigNumber.from(hash).toHexString();
-};
-
-export async function utxoFromVAnchorNote(
-  note: JsNote,
-  leafIndex: number
-): Promise<Utxo> {
-  const noteSecretParts = note.secrets.split(':');
-  const chainId = note.targetChainId;
-  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
-  const secretKey = '0x' + noteSecretParts[2];
-  const blinding = '0x' + noteSecretParts[3];
-  const originChainId = note.sourceChainId;
-
-  const keypair = new Keypair(secretKey);
-
-  return CircomUtxo.generateUtxo({
-    curve: note.curve,
-    backend: note.backend,
-    amount,
-    blinding: hexToU8a(blinding),
-    originChainId,
-    chainId,
-    index: leafIndex.toString(),
-    keypair,
-  });
-}
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -173,7 +71,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       await this.checkApproval(tx, payload, wrapUnwrapToken, tokenWrapper);
 
       const secrets = payload.note.secrets.split(':');
-      const depositUtxo = await CircomUtxo.generateUtxo({
+      const depositUtxo = await this.inner.generateUtxo({
         curve: payload.note.curve,
         backend: payload.note.backend,
         amount: payload.note.amount,
@@ -181,6 +79,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         chainId: payload.note.targetChainId.toString(),
         keypair: new Keypair(`0x${secrets[2]}`),
         blinding: hexToU8a(`0x${secrets[3]}`),
+        index: this.inner.state.defaultUtxoIndex.toString(),
       });
       return Promise.resolve([
         tx, // tx
@@ -367,7 +266,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
     overridesTransaction?: Overrides
-  ): Promise<ContractReceipt> | never {
+  ) {
     const signer = await this.inner.getProvider().getSigner();
     const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
 
@@ -381,7 +280,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx.txHash = '';
     tx.next(TransactionState.SendingTransaction, '');
 
-    return vanchor.transact(
+    const receipt = await vanchor.transact(
       inputs,
       outputs,
       fee,
@@ -392,6 +291,11 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       leavesMap,
       overridesTransaction
     );
+
+    return {
+      transactionHash: receipt.transactionHash,
+      receipt: receipt,
+    };
   }
 
   // Check if the evm address and keyData pairing has already registered.
@@ -580,6 +484,87 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     };
   }
 
+  /**
+   * A function to get the leaf index of a leaf in the vanchor
+   * @param receipt the receipt of the transaction that created the note
+   * @param note the deposit note
+   * @param addressOrTreeId the address of the vanchor or the treeId of the vanchor
+   */
+  async getLeafIndex(
+    receipt: ContractReceipt,
+    note: Note,
+    addressOrTreeId: string
+  ): Promise<bigint> {
+    const typedChainId = this.inner.typedChainId;
+    const chain = this.inner.config.chains[typedChainId];
+    if (!chain) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+    }
+
+    const vanchor = VAnchor__factory.connect(
+      addressOrTreeId,
+      Web3Provider.fromUri(chain.url).intoEthersProvider()
+    );
+
+    // Get fragment and topic of the `NewCommitment` event.
+    const eventFragment = vanchor.interface.getEvent('NewCommitment');
+    const topic = vanchor.interface.getEventTopic(eventFragment);
+
+    // Filter the logs for the event
+    const filteredLogs = receipt.logs.filter((log) =>
+      log.topics.includes(topic)
+    );
+
+    // Parse the log data
+    const parsedEvents = filteredLogs
+      .map((log) => {
+        const decodedValues = vanchor.interface.decodeEventLog(
+          eventFragment,
+          log.data,
+          log.topics
+        );
+        return decodedValues;
+      })
+      .map((val) => ({
+        leafIndex: BigNumber.from(val.leafIndex),
+        commitment: BigNumber.from(val.commitment),
+      }));
+
+    // Get the leaf index of the note
+    const depositedCommitment = generateCircomCommitment(note.note).toString();
+    const event = parsedEvents.find((value) =>
+      value.commitment.eq(depositedCommitment)
+    );
+
+    if (!event) {
+      console.error('Leaf index not found in logs, falling back `0`');
+      return BigInt(0);
+    }
+
+    return event.leafIndex.toBigInt();
+  }
+
+  async getNextIndex(
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = this.inner.config.chains[typedChainId];
+    const anchor = this.inner.config.getAnchorAddress(
+      fungibleCurrencyId,
+      typedChainId
+    );
+    if (!chain || !anchor) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const vanchor = VAnchor__factory.connect(anchor, provider);
+
+    const nextIdx = await vanchor.getNextIndex();
+
+    return BigInt(nextIdx);
+  }
+
   private async fetchNoteLeaves(
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
@@ -734,7 +719,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     let hasBalance: boolean;
     // If the `wrapUnwrapToken` is the `ZERO_ADDRESS`, we are wrapping
     // the native token. Therefore, we must check the native balance.
-    if (wrapUnwrapToken === ZERO_ADDRESS) {
+    if (checkNativeAddress(wrapUnwrapToken)) {
       const nativeBalance = await provider.getBalance(signer);
       hasBalance = nativeBalance.gte(payload.note.amount);
     } else {
@@ -771,37 +756,46 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
     let approvalTransaction: ContractTransaction | undefined;
 
+    const isNative = checkNativeAddress(wrapUnwrapToken);
+
     // If the `wrapUnwrapToken` is different from the `currentWebbToken` address,
     // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
     const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
 
-    const isRequiredApproval = !isWrapOrUnwrap
-      ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
-      : await srcVAnchor.isWrappableTokenApprovalRequired(
-          wrapUnwrapToken,
-          approvalValue
-        );
+    // Only non-native tokens require approval
+    if (!isNative) {
+      const isRequiredApproval = !isWrapOrUnwrap
+        ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
+        : await srcVAnchor.isWrappableTokenApprovalRequired(
+            wrapUnwrapToken,
+            approvalValue
+          );
 
-    if (checkNativeAddress(wrapUnwrapToken)) {
-      /// native token no approval needed
-    } else if (!isWrapOrUnwrap && isRequiredApproval) {
-      // approve the token
-      approvalTransaction = await currentWebbToken.approve(
-        spenderAddress,
-        amount,
-        {
-          gasLimit: '0x5B8D80',
+      if (isRequiredApproval) {
+        if (isWrapOrUnwrap) {
+          // approve the wrappable asset
+          const token = ERC20__factory.connect(
+            wrapUnwrapToken,
+            this.inner.getEthersProvider().getSigner()
+          );
+          approvalTransaction = await token.approve(
+            spenderAddress,
+            approvalValue,
+            {
+              gasLimit: '0x5B8D80',
+            }
+          );
+        } else {
+          // approve the token
+          approvalTransaction = await currentWebbToken.approve(
+            spenderAddress,
+            amount,
+            {
+              gasLimit: '0x5B8D80',
+            }
+          );
         }
-      );
-    } else if (isRequiredApproval) {
-      // approve the wrappable asset
-      const token = ERC20__factory.connect(
-        wrapUnwrapToken,
-        this.inner.getEthersProvider().getSigner()
-      );
-      approvalTransaction = await token.approve(spenderAddress, approvalValue, {
-        gasLimit: '0x5B8D80',
-      });
+      }
     }
 
     if (approvalTransaction) {

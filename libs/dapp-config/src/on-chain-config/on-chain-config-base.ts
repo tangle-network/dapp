@@ -1,4 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
+import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
+import assert from 'assert';
 import { ethers } from 'ethers';
 import { ChainAddressConfig } from '../anchors';
 
@@ -12,6 +15,14 @@ export interface ICurrency {
   symbol: string;
   name: string;
   address: string;
+}
+
+export interface CurrencyResponse {
+  typedChainId: number;
+  nativeCurrency: ICurrency;
+  anchorAddressOrTreeId: string;
+  fungibleCurrency: ICurrency;
+  wrappableCurrencies: ICurrency[];
 }
 
 export abstract class OnChainConfigBase {
@@ -37,9 +48,13 @@ export abstract class OnChainConfigBase {
   /**
    * Retrieves the native token info for the given chain id
    * @param typedChainId the typed chain id to get the native token info for
+   * @param provider the provider to use (optional on evm but required on substrate)
    * @returns the native token info for the given chain id
    */
-  abstract fetchNativeCurrency(typedChainId: number): Promise<ICurrency | null>;
+  abstract fetchNativeCurrency(
+    typedChainId: number,
+    provider?: ethers.providers.Provider | ApiPromise
+  ): Promise<ICurrency | null>;
 
   /**
    * Get the fungible currency config for a given typed chain id,
@@ -78,7 +93,7 @@ export abstract class OnChainConfigBase {
     anchorConfig: Record<number, string[]>,
     providerFactory: (
       typedChainId: number
-    ) => ethers.providers.Provider | ApiPromise,
+    ) => Promise<ethers.providers.Provider | ApiPromise>,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
     existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
     existedAnchorConfig?: Record<number, ChainAddressConfig>
@@ -87,4 +102,170 @@ export abstract class OnChainConfigBase {
     fungibleToWrappableMap: Map<number, Map<number, Set<number>>>;
     anchorConfig: Record<number, ChainAddressConfig>;
   }>;
+
+  protected assertChainType(typedChainId: number, chainType: ChainType) {
+    const { chainType: parsedChainType, chainId } =
+      parseTypedChainId(typedChainId);
+    assert(
+      chainType === parsedChainType,
+      `Invalid chain type for ${chainType}`
+    );
+
+    return {
+      chainType,
+      chainId,
+    };
+  }
+
+  protected addCurrenciesIntoConfig(
+    currenciesResponse: CurrencyResponse[],
+    currenciesConfig: Record<number, CurrencyConfig>,
+    fungibleToWrappableMap: Map<number, Map<number, Set<number>>>,
+    anchorConfig: Record<string, ChainAddressConfig>
+  ) {
+    currenciesResponse.forEach(
+      ({
+        anchorAddressOrTreeId: anchorAddress,
+        typedChainId,
+        nativeCurrency,
+        fungibleCurrency,
+        wrappableCurrencies,
+      }) => {
+        // Add native currency
+        const currentNative = Object.values(currenciesConfig).find(
+          (currency) =>
+            currency.name === nativeCurrency.name &&
+            currency.symbol === nativeCurrency.symbol
+        );
+
+        const { address: nativeAddr, ...restNative } = nativeCurrency;
+
+        if (!currentNative) {
+          const nextId = Object.keys(currenciesConfig).length + 1;
+          currenciesConfig[nextId] = {
+            ...restNative,
+            id: nextId,
+            type: CurrencyType.NATIVE,
+            role: CurrencyRole.Wrappable,
+            addresses: new Map([[typedChainId, nativeAddr]]),
+          };
+        } else {
+          if (
+            currentNative.addresses.has(typedChainId) &&
+            currentNative.addresses.get(typedChainId) !== nativeAddr
+          ) {
+            console.error(
+              `Native currency ${currentNative.name} already exists on chain ${typedChainId}`
+            );
+          }
+
+          currentNative.addresses.set(typedChainId, nativeAddr);
+        }
+
+        // Add fungible currency
+        let currentFungible = Object.values(currenciesConfig).find(
+          (currency) =>
+            currency.name === fungibleCurrency.name &&
+            currency.symbol === fungibleCurrency.symbol
+        );
+
+        const { address: fungbileAddr, ...restFungible } = fungibleCurrency;
+
+        if (!currentFungible) {
+          const nextId = Object.keys(currenciesConfig).length + 1;
+          currentFungible = {
+            ...restFungible,
+            id: nextId,
+            type: CurrencyType.ERC20,
+            role: CurrencyRole.Governable,
+            addresses: new Map([[typedChainId, fungbileAddr]]),
+          };
+          currenciesConfig[nextId] = currentFungible;
+        } else {
+          if (
+            currentFungible.addresses.has(typedChainId) &&
+            currentFungible.addresses.get(typedChainId) !== fungbileAddr
+          ) {
+            console.error(
+              `Fungible currency ${currentFungible.name} already exists on chain ${typedChainId}`
+            );
+          }
+
+          currentFungible.addresses.set(typedChainId, fungbileAddr);
+        }
+
+        // Add anchor
+        const anchor = anchorConfig[currentFungible.id];
+        if (!anchor) {
+          anchorConfig[currentFungible.id] = {
+            [typedChainId]: anchorAddress,
+          };
+        } else {
+          if (anchor[typedChainId] && anchor[typedChainId] !== anchorAddress) {
+            console.error(
+              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`,
+              `Current: ${anchor[typedChainId]}, new one: ${anchorAddress}`
+            );
+          }
+
+          anchor[typedChainId] = anchorAddress;
+        }
+
+        // Add wrappable currencies
+        const wrappableCurrencyConfigs: CurrencyConfig[] = [];
+        wrappableCurrencies.forEach(
+          ({ address: wrappableAddr, ...restWrappable }) => {
+            let currentWrappble = Object.values(currenciesConfig).find(
+              (currency) =>
+                currency.name === restWrappable.name &&
+                currency.symbol === restWrappable.symbol
+            );
+
+            if (!currentWrappble) {
+              const nextId = Object.keys(currenciesConfig).length + 1;
+              currentWrappble = {
+                ...restWrappable,
+                id: nextId,
+                type: CurrencyType.ERC20,
+                role: CurrencyRole.Wrappable,
+                addresses: new Map([[typedChainId, wrappableAddr]]),
+              };
+              currenciesConfig[nextId] = currentWrappble;
+            } else {
+              if (
+                currentWrappble.addresses.has(typedChainId) &&
+                currentWrappble.addresses.get(typedChainId) !== wrappableAddr
+              ) {
+                console.error(
+                  `Wrappable currency ${currentWrappble.name} already exists on chain ${typedChainId}`
+                );
+              }
+
+              currentWrappble.addresses.set(typedChainId, wrappableAddr);
+            }
+
+            wrappableCurrencyConfigs.push(currentWrappble);
+          }
+        );
+
+        // Add fungible to wrappable map
+        const wrappableIds = new Set(wrappableCurrencyConfigs.map((c) => c.id));
+        const wrappableMap = fungibleToWrappableMap.get(currentFungible.id);
+        if (!wrappableMap) {
+          fungibleToWrappableMap.set(
+            currentFungible.id,
+            new Map([[typedChainId, wrappableIds]])
+          );
+        } else {
+          wrappableMap.set(typedChainId, wrappableIds);
+        }
+      }
+    );
+
+    return {
+      anchorConfig,
+      currenciesConfig,
+      fungibleToWrappableMap,
+    };
+  }
 }

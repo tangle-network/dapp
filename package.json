@@ -2,6 +2,10 @@
   "name": "webb-monorepo",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "yarn": "^1.10.1",
+    "node": "18.x.x"
+  },
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
@@ -221,6 +225,7 @@
     "@webb-tools/interfaces": "0.5.35",
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "@webb-tools/sdk-core": "0.1.4-119",
+    "@webb-tools/test-utils": "0.1.4-123",
     "@webb-tools/tokens": "0.5.35",
     "@webb-tools/utils": "0.5.7",
     "@webb-tools/wasm-utils": "0.1.4-119",
@@ -229,6 +234,7 @@
     "babel-loader": "8.1.0",
     "babel-plugin-preval": "^5.1.0",
     "classnames": "^2.3.1",
+    "commander": "^10.0.1",
     "copy-to-clipboard": "^3.3.2",
     "copy-webpack-plugin": "^10.2.4",
     "crypto-browserify": "^3.12.0",
@@ -278,6 +284,7 @@
     "rollup-plugin-tailwind": "1.0.0",
     "sass": "^1.52.3",
     "sass-loader": "^13.0.0",
+    "shelljs": "^0.8.5",
     "storybook-addon-react-router-v6": "^0.2.1",
     "storybook-tailwind-dark-mode": "^1.0.15",
     "stream-browserify": "^3.0.0",

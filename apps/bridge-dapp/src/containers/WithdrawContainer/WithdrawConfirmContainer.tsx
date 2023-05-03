@@ -168,7 +168,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(async () => {
-      if (availableNotes.length === 0 || !vAnchorApi) {
+      if (availableNotes.length === 0 || !vAnchorApi || !activeApi) {
         captureSentryException(
           new Error(
             'No notes available to withdraw or vAnchorApi not available'
@@ -219,6 +219,7 @@ export const WithdrawConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
+        providerType: activeApi.type(),
       });
 
       setTxId(tx.id);
@@ -256,12 +257,12 @@ export const WithdrawConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const receipt = await vAnchorApi.transact(...args);
+          const { transactionHash } = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
-          tx.txHash = receipt.transactionHash;
+          tx.txHash = transactionHash;
           tx.next(TransactionState.Done, {
-            txHash: receipt.transactionHash,
+            txHash: transactionHash,
             outputNotes,
           });
         }
@@ -283,6 +284,7 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [
       availableNotes,
       vAnchorApi,
+      activeApi,
       withdrawTxInProgress,
       changeNote,
       downloadNote,
