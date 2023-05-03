@@ -7,7 +7,7 @@ import {
   TelegramFill,
   GithubFill,
   DiscordFill,
-  LinkedIn,
+  LinkedInFill,
 } from '@webb-tools/icons';
 import copyToClipboard from 'copy-to-clipboard';
 import { IconBase } from '@webb-tools/icons/types';
@@ -73,7 +73,7 @@ const Post: FC<{ post: Post }> = ({
     },
     {
       name: 'LinkedIn',
-      Icon: LinkedIn,
+      Icon: LinkedInFill,
       href: 'https://www.linkedin.com/company/webb-protocol/',
     },
     {
