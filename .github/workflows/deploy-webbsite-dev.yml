@@ -52,6 +52,7 @@ jobs:
           echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
           echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
           echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
+          echo WEBB_CMS_TOKEN=${{ secrets.WEBB_CMS_TOKEN }} >> .env
 
       - name: Install netlify-cli
         run: yarn add -D -W netlify-cli
