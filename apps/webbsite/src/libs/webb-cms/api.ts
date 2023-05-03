@@ -79,6 +79,7 @@ export const getPosts = async (): Promise<Post[]> => {
         tag: _post.attributes.tag,
         linkToResearchPaper: _post.attributes.link_to_research_paper,
         coverImage: _post.attributes.cover_image.data.attributes.url,
+        thumbnailImage: _post.attributes.thumbnail_image.data.attributes.url,
         markdown: _post.attributes.content,
         author: {
           name: _post.attributes.author.data.attributes.name,
@@ -136,7 +137,7 @@ export const getVideos = async (): Promise<Video[]> => {
         title: _video.attributes.title,
         tag: _video.attributes.tag,
         linkToVideo: _video.attributes.link_to_video,
-        coverImage: _video.attributes.cover_image.data.attributes.url,
+        thumbnailImage: _video.attributes.thumbnail_image.data.attributes.url,
       };
 
       return video;

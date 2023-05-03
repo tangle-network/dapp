@@ -66,7 +66,7 @@ export const BlogSection = ({
           ({
             id,
             title,
-            coverImage,
+            thumbnailImage,
             tag,
             postType,
             linkToResearchPaper,
@@ -77,7 +77,7 @@ export const BlogSection = ({
                 key={id}
                 title={title}
                 tag={tag}
-                cover={coverImage}
+                cover={thumbnailImage}
                 postType={postType}
                 type={type}
                 link={

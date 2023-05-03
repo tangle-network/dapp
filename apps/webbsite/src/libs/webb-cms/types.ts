@@ -24,6 +24,7 @@ export type Post = {
   tag: string;
   linkToResearchPaper?: string;
   coverImage: string;
+  thumbnailImage: string;
   markdown: string;
   author: Author;
   dateAndTime: DateAndTime;
@@ -34,14 +35,15 @@ export type Video = {
   title: string;
   tag: string;
   linkToVideo: string;
-  coverImage: string;
+  thumbnailImage: string;
 };
 
 export type PostsOrVideos = {
   id: number;
   title: string;
   tag: string;
-  coverImage: string;
+  coverImage?: string;
+  thumbnailImage: string;
   linkToResearchPaper?: string;
   linkToVideo?: string;
   postType?: string;

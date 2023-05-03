@@ -11,7 +11,7 @@ type FeaturedPostSectionProps = {
 export const FeaturedPostSection = ({
   featuredPost: {
     title,
-    coverImage,
+    thumbnailImage,
     id,
     description,
     linkToResearchPaper,
@@ -29,11 +29,11 @@ export const FeaturedPostSection = ({
         >
           <div
             style={{
-              backgroundImage: `url(${coverImage})`,
+              backgroundImage: `url(${thumbnailImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
-            className="w-full h-[220px] md:h-[250px] rounded-t-lg transition duration-500 transform hover:scale-110"
+            className="w-full h-[220px] md:h-[360px] rounded-t-lg transition duration-500 transform hover:scale-110"
           />
         </Link>
         <div className="px-[24px] pt-[16px] pb-[20px]">
