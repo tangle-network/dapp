@@ -36,6 +36,8 @@ const ALICE_PORT = 9944;
 
 const TANGLE_SUDO_URI = '//Alice';
 
+const BOB_URI = '//Bob';
+
 const NATIVE_ASSET_ID = '0';
 const NATIVE_ASSET = 'tTNT';
 
@@ -60,14 +62,8 @@ program.parse(process.argv);
 const options = program.opts();
 
 async function main() {
-  console.log(
-    chalk.yellow.bold('⚠️ Warning: Local Tangle is not supported yet!')
-  );
-
-  process.exit(0);
-
   // Start the nodes
-  console.log(chalk.blue.bold('Starting local tangle network'));
+  console.log(chalk.blue('Starting local tangle network...'));
 
   const proc = shelljs.exec(localStandaloneTangleScript + ' --clean', {
     cwd: resolve(localStandaloneTangleScript, '../../'),
@@ -87,31 +83,36 @@ async function main() {
   }
 
   // Wait until we are ready and connected
-  console.log(chalk.blue.bold('Waiting for APIs to be ready'));
+  console.log(chalk.blue('Waiting for API to be ready...'));
 
   const aliceApi = await getLocalApi(ALICE_PORT);
 
-  console.log(chalk.green('APIs are ready'));
+  console.log(chalk`=> {green.bold API is ready!}`);
 
   // Wait until the first block is produced
-  console.log(chalk.blue('Waiting for first block to be produced'));
+  console.log(chalk`{blue Waiting for first block to be produced...}`);
 
   aliceApi.rpc.chain.subscribeNewHeads(async (header) => {
     const block = header.number.toNumber();
     // Init pool share after first block
     if (block === 1) {
-      console.log(chalk.green('First block produced'));
+      console.log(chalk`=> {green.bold First block produced!}`);
       await initPoolShare(aliceApi);
     }
+  });
+
+  // Return the unresolved promise to keep the script running
+  return new Promise(() => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
   });
 }
 
 async function initPoolShare(api: ApiPromise) {
   const sudoKey = getKeyring(TANGLE_SUDO_URI);
+  const bobKey = getKeyring(BOB_URI);
 
   // Create pool share asset
-  console.log(chalk.blue('Creating pool share asset'));
-  console.log(chalk`=> {blue Creating pool asset ${FUNGIBLE_ASSET}}`);
+  console.log(chalk`[+] {blue Creating pool share asset ${FUNGIBLE_ASSET}...}`);
   const poolShareAssetId = await createPoolShare(
     api,
     FUNGIBLE_ASSET,
@@ -119,30 +120,34 @@ async function initPoolShare(api: ApiPromise) {
     sudoKey
   );
   console.log(
-    chalk`=> {green Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}}`
+    chalk`  => {green Pool share asset ${FUNGIBLE_ASSET} created with id ${poolShareAssetId}}`
   );
 
   // Add assets metadata
-  console.log(chalk`=> {blue Adding metadata for ${NATIVE_ASSET}}`);
+  console.log(chalk`[+] {blue Adding metadata for ${NATIVE_ASSET}...}`);
   await addAssetMetadata(api, sudoKey, NATIVE_ASSET_ID, NATIVE_ASSET);
 
-  console.log(chalk`=> {blue Adding metadata for ${FUNGIBLE_ASSET}}`);
+  console.log(chalk`[+] {blue Adding metadata for ${FUNGIBLE_ASSET}...}`);
   await addAssetMetadata(
     api,
     sudoKey,
     poolShareAssetId.toString(),
     FUNGIBLE_ASSET
   );
-  console.log(chalk`=> {green Assets metadata added}`);
+  console.log(chalk`  => {green Assets metadata added}`);
+
+  console.log(
+    chalk`[+] {blue Creating VAnchor for asset ${FUNGIBLE_ASSET}...}`
+  );
 
   const vanchorId = await createVAnchor(api, poolShareAssetId, sudoKey);
 
-  console.log(chalk`=> {green VAnchor with id ${vanchorId} created}`);
+  console.log(chalk`  => {green VAnchor with id ${vanchorId} created}`);
 
   // Transfer some tokens to the test account
   if (TEST_ACCOUNT) {
     console.log(
-      chalk.blue(`Transferring ${AMOUNT} ${NATIVE_ASSET} to test account`)
+      chalk`[+] {blue Transferring ${AMOUNT} ${NATIVE_ASSET} to test account...}`
     );
     const hash = await transferAsset(
       api,
@@ -153,36 +158,68 @@ async function initPoolShare(api: ApiPromise) {
     );
 
     console.log(
-      chalk`=> {green Token transferred to test account with hash \`${hash}\``
+      chalk`  => {green Token transferred to test account with hash \`${hash}\`}`
     );
   }
+
+  // Wrapping the token to initialize the fee recipient account
+  console.log(
+    chalk`[+] {blue Wrapping ${AMOUNT} ${NATIVE_ASSET} to initialize the fee recipient account...}`
+  );
+  const wrappingAmount = new BN(100).mul(new BN(10).pow(new BN(18)));
+
+  const wrappingTx = await api.tx.tokenWrapper
+    .wrap(NATIVE_ASSET_ID, poolShareAssetId, wrappingAmount, bobKey.address)
+    .signAsync(bobKey);
+
+  const wrappingHash = await new Promise<string>((resolve, reject) => {
+    wrappingTx
+      .send((result) => {
+        if (result.isInBlock) {
+          resolve(result.status.asInBlock.toString());
+        } else if (result.isFinalized) {
+          resolve(result.status.asFinalized.toString());
+        } else if (result.isError) {
+          reject(result);
+        }
+      })
+      .catch(reject);
+  });
+
+  console.log(chalk`  => {green Token wrapped with hash \`${wrappingHash}\`}`);
 
   console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
 }
 
-function cleanup(callback: () => any) {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  function noOp() {}
-
-  // attach user callback to the process event emitter
-  // if no callback, it will still exit gracefully on Ctrl-C
-  callback = callback || noOp;
-
-  // do app specific cleaning before exiting
+function cleanup(callback?: () => any) {
   process.on('exit', function () {
-    callback();
+    // Begin reading from stdin so the process does not exit imidiately
+    process.stdin.resume();
+    console.log(
+      chalk.red.bold('exit event received, handling graceful shutdown...')
+    );
+    callback?.();
     process.exit(0);
   });
 
-  // catch ctrl+c event and exit normally
   process.on('SIGINT', function () {
-    callback();
+    // Begin reading from stdin so the process does not exit imidiately
+    process.stdin.resume();
+    console.log(
+      chalk.red.bold('SIGINT received, handling graceful shutdown...')
+    );
+    callback?.();
     process.exit(0);
   });
 
-  //catch uncaught exceptions, trace, then exit normally
   process.on('uncaughtException', function (e) {
-    callback();
+    // Begin reading from stdin so the process does not exit imidiately
+    process.stdin.resume();
+    console.log(
+      chalk.red.bold('Uncaught Exception, handling graceful shutdown...')
+    );
+    console.log(e.stack);
+    callback?.();
     process.exit(1);
   });
 }

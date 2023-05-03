@@ -207,6 +207,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     const apiPromise = await ApiPromise.create(
       options({
         provider: wsProvider,
+        noInitWarn: true,
       })
     );
 

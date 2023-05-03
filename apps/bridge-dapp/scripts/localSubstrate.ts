@@ -66,7 +66,7 @@ async function main() {
   // Start the nodes
   console.log(chalk.blue('Starting local substrate protocol...'));
 
-  const aliceNode = await LocalProtocolSubstrate.start({
+  await LocalProtocolSubstrate.start({
     name: 'substrate-alice',
     authority: 'alice',
     usageMode,
@@ -74,7 +74,7 @@ async function main() {
     enableLogging: options.verbose,
   });
 
-  const _bobNode = await LocalProtocolSubstrate.start({
+  await LocalProtocolSubstrate.start({
     name: 'substrate-bob',
     authority: 'bob',
     usageMode,
@@ -87,7 +87,7 @@ async function main() {
 
   const aliceApi = await getLocalApi(ALICE_PORT);
 
-  console.log(chalk`=> {green.bold API are ready!}`);
+  console.log(chalk`=> {green.bold API is ready!}`);
 
   await initPoolShare(aliceApi);
 }
@@ -106,16 +106,6 @@ async function initPoolShare(api: ApiPromise) {
   console.log(
     chalk`  => {green Pool share asset ${FUNGIBLE_ASSET} created with id \`${poolShareAssetId}\`}`
   );
-
-  // Add assets to pool
-  console.log(chalk`[+] {blue Adding assets to pool...}`);
-  await addAssetToPool(
-    api,
-    NATIVE_ASSET_ID,
-    poolShareAssetId.toString(),
-    sudoKey
-  );
-  console.log(chalk`  => {green Assets ${FUNGIBLE_ASSET} added to pool}`);
 
   // Add assets metadata
   console.log(chalk`[+] {blue Adding assets metadata...}`);
