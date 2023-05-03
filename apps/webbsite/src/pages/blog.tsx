@@ -2,18 +2,18 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
 import { FC } from 'react';
 import { BlogSection, FeaturedPostSection } from '../components';
-import { Post, getPosts } from '../libs/webb-cms';
+import { Post, getPosts, Video, getVideos } from '../libs/webb-cms';
 
 type BlogProps = {
   posts: Post[];
-  // videos: Video[];
+  videos: Video[];
 };
 
-const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts } }) => {
+const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
   const featuredPost =
     posts.length > 0 ? posts[posts.length - 1] : ({} as Post);
 
-  // const recentVideos = videos.length > 0 ? videos.slice(-3) : ([] as Video[]);
+  const recentVideos = videos.length > 0 ? videos.slice(-3) : ([] as Video[]);
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
@@ -21,16 +21,16 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts } }) => {
         The Webb Blog
       </Typography>
 
-      {/* {Object.keys(featuredPost).length > 0 && recentVideos.length > 0 && (
+      {Object.keys(featuredPost).length > 0 && recentVideos.length > 0 && (
         <FeaturedPostSection
           featuredPost={featuredPost}
           recentVideos={recentVideos}
         />
-      )} */}
+      )}
 
       {posts.length > 0 && <BlogSection type="post" items={posts} />}
 
-      {/* {videos.length > 0 && <BlogSection type="video" items={videos} />} */}
+      {videos.length > 0 && <BlogSection type="video" items={videos} />}
     </div>
   );
 };
@@ -38,11 +38,13 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts } }) => {
 export const getStaticProps: GetStaticProps = async () => {
   const posts = await getPosts();
 
+  const videos = await getVideos();
+
   return {
     props: {
       blog: {
         posts,
-        // videos,
+        videos,
       },
     },
     revalidate: 60,

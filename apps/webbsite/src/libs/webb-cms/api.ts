@@ -1,6 +1,6 @@
 import { WEBB_CMS_URL, WEBB_CMS_TOKEN } from './constants';
 import { formatDate, formatTime } from '../../utils';
-import { APIResponse, Post } from './types';
+import { APIResponse, Post, Video } from './types';
 
 /**
  * Makes a request to the Webb CMS API
@@ -73,8 +73,8 @@ export const getPosts = async (): Promise<Post[]> => {
         description: _post.attributes.description,
         postType: _post.attributes.type,
         tag: _post.attributes.tag,
-        linkToResearchPaper: _post.attributes.link,
-        coverImage: _post.attributes.image.data[0].attributes.url,
+        linkToResearchPaper: _post.attributes.link_to_research_paper,
+        coverImage: _post.attributes.cover_image.data.attributes.url,
         markdown: _post.attributes.content,
         author: {
           name: _post.attributes.author.data.attributes.name,
@@ -113,19 +113,24 @@ export const getPostById = async (id: number): Promise<Post> => {
   }
 };
 
-export const getVideos = async (): Promise<APIResponse> => {
+export const getVideos = async (): Promise<Video[]> => {
   try {
     const response = await apiRequest(WEBB_CMS_URL, 'videos?populate=*');
 
-    return {
-      status: 'Videos retrieved successfully from Webb CMS',
-      data: response.data,
-    };
+    const videos: Video[] = response.data.data.map((_video: any) => {
+      const video: Video = {
+        id: _video.id,
+        title: _video.attributes.title,
+        tag: _video.attributes.tag,
+        linkToVideo: _video.attributes.link_to_video,
+        coverImage: _video.attributes.cover_image.data.attributes.url,
+      };
+
+      return video;
+    });
+
+    return videos;
   } catch (error: any) {
-    return {
-      status: 'Failed to retrieve videos from Webb CMS',
-      data: null,
-      error: error.message,
-    };
+    throw new Error('Failed to get videos from Webb CMS', error);
   }
 };

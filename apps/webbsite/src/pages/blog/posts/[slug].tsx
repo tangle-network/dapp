@@ -38,8 +38,6 @@ const Post: FC<{ post: Post }> = ({
 }) => {
   const { notificationApi } = useWebbUI();
 
-  console.log(markdown);
-
   const shareLink = `https://webb.tools/blog/posts/${id}`;
 
   const shareMessage = encodeURIComponent(
