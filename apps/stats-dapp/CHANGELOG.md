@@ -62,5 +62,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes proposers not being displayed in proposal drawer: https://github.com/webb-tools/webb-dapp/pull/1149
 - Updates stats-dapp build script to include codegen generation: https://github.com/webb-tools/webb-dapp/pull/1149
 
+## [0.0.7] - 2023-04-28
+
+### Fixed
+- Bug fix to display correct timeline of proposal events: https://github.com/webb-tools/webb-dapp/pull/1154
+
+### Changed
+- Timeline Item component's date & time format: https://github.com/webb-tools/webb-dapp/pull/1154
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.5]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.6
+[0.0.6]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.6
