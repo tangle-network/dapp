@@ -5,6 +5,7 @@ import {
   WebbLogoSection,
   ColorPalettesSection,
   IconographySection,
+  TypographySection,
 } from '../components';
 
 const BrandKit = () => {
@@ -19,6 +20,8 @@ const BrandKit = () => {
       <ColorPalettesSection />
 
       <IconographySection />
+
+      <TypographySection />
     </>
   );
 };
