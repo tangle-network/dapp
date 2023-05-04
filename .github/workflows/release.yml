@@ -1,4 +1,4 @@
-name: "Release"
+name: 'Release'
 on:
   push:
     branches:
@@ -33,9 +33,9 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
-    #Identify changes
+      #Identify changes
       - uses: marceloprado/has-changed-path@v1
         id: changed-hubble
         with:
@@ -45,7 +45,22 @@ jobs:
         id: changed-stats
         with:
           paths: apps/stats-dapp
-      
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-faucet
+        with:
+          paths: apps/faucet
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-webbsite
+        with:
+          paths: apps/webbsite
+
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-tangle
+        with:
+          paths: apps/tangle-website
+
       - name: create env file for webbsite, tangle-site and faucet
         run: |
           touch .env
@@ -61,11 +76,15 @@ jobs:
           echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
-        
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Generate stats-dapp codegen
+        run: yarn gql:codegen
+
       - name: build
-        run: |
-          yarn install
-          yarn nx run-many --all --target=build
+        run: yarn nx run-many --all --target=build
 
       # Create github release
       - name: Release hubble
@@ -80,4 +99,25 @@ jobs:
         uses: ./.github/actions/create-release
         with:
           package-path: apps/stats-dapp
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release faucet
+        if: steps.changed-faucet.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/faucet
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release webbsite
+        if: steps.changed-webbsite.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/webbsite
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release tangle
+        if: steps.changed-tangle.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/tangle-website
           repo-token: ${{ secrets.REPO_TOKEN }}

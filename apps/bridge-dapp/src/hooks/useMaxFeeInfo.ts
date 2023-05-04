@@ -173,7 +173,9 @@ export const useMaxFeeInfo = (
 
       const provider = activeApi.getProvider();
       if (!(provider instanceof Web3Provider)) {
-        throw new Error('Provider is not a Web3Provider');
+        setFeeInfo(BigNumber.from(0));
+        setIsLoading(false);
+        return;
       }
 
       const gasAmount = gasLimit[currentTypedChain];

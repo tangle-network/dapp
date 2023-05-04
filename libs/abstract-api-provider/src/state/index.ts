@@ -35,6 +35,7 @@ export class Bridge {
 export class WebbState implements WebbStateInterface {
   // A wrappableToken can be set on the bridge
   private wrappableToken = new BehaviorSubject<Currency | null>(null);
+
   // A list of available wrappableCurrencies that a user can
   private wrappableTokens = new BehaviorSubject<Record<number, Currency>>({});
   private activeBridgeSubject = new BehaviorSubject<Bridge | null>(null);
@@ -42,6 +43,10 @@ export class WebbState implements WebbStateInterface {
   //  CurrencyId => Currency
   private wrappedTokens = new BehaviorSubject<Record<any, Currency>>({});
   private wrappedToken = new BehaviorSubject<Currency | null>(null);
+
+  // Constants
+  readonly defaultDecimalPlaces = 18;
+  readonly defaultUtxoIndex = 0;
 
   constructor(
     // Currencies are indexed by their Currency IDs

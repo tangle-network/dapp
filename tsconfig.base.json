@@ -11,7 +11,7 @@
     "importHelpers": true,
     "target": "ES6",
     "module": "esnext",
-    "lib": ["dom.iterable", "dom", "esnext"],
+    "lib": ["WebWorker", "dom.iterable", "dom", "esnext"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,

@@ -14,9 +14,8 @@ import {
 import {
   calculateTypedChainId,
   ChainType,
-  CircomUtxo,
   Note,
-  toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import {
   AmountInput,
@@ -29,7 +28,6 @@ import {
   WithdrawCard,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import cx from 'classnames';
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
@@ -40,7 +38,10 @@ import {
   useState,
 } from 'react';
 
-import { Currency } from '@webb-tools/abstract-api-provider';
+import {
+  Currency,
+  utxoFromVAnchorNote,
+} from '@webb-tools/abstract-api-provider';
 import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { isValidAddress } from '@webb-tools/dapp-types';
 import { ChainListCardWrapper } from '../../components';
@@ -655,42 +656,36 @@ export const WithdrawContainer = forwardRef<
       ethers.utils.formatUnits(changeAmountBigNumber, fungibleDecimals)
     );
 
-    // Generate change utxo (or dummy utxo if the changeAmount is `0`)
-    const changeUtxo = await CircomUtxo.generateUtxo({
-      curve: 'Bn254',
-      backend: 'Circom',
-      amount: changeAmountBigNumber.toString(),
-      chainId: currentTypedChainId.toString(),
-      keypair,
-      originChainId: currentTypedChainId.toString(),
-    });
-
     // Generate the change note based on the change utxo
     let changeNote: Note | undefined;
     if (changeAmountBigNumber.gt(0)) {
-      changeNote = await Note.generateNote({
-        amount: changeUtxo.amount,
-        backend: 'Circom',
-        curve: 'Bn254',
-        denomination: '18',
-        exponentiation: '5',
-        hashFunction: 'Poseidon',
-        protocol: 'vanchor',
-        secrets: [
-          toFixedHex(currentTypedChainId, 8).substring(2),
-          toFixedHex(changeUtxo.amount).substring(2),
-          toFixedHex(keypair.privkey).substring(2),
-          toFixedHex(`0x${changeUtxo.blinding}`).substring(2),
-        ].join(':'),
-        sourceChain: currentTypedChainId.toString(),
-        sourceIdentifyingData: destAddress,
-        targetChain: currentTypedChainId.toString(),
-        targetIdentifyingData: destAddress,
-        tokenSymbol: inputNotes[0].note.tokenSymbol,
-        version: 'v1',
-        width: '4',
-      });
+      changeNote = await noteManager.generateNote(
+        activeApi.backend,
+        currentTypedChainId,
+        destAddress,
+        currentTypedChainId,
+        destAddress,
+        fungibleCurrency.view.symbol,
+        fungibleDecimals,
+        formattedChangeAmount
+      );
     }
+
+    // Generate change utxo (or dummy utxo if the changeAmount is `0`)
+    const changeUtxo = changeNote
+      ? await utxoFromVAnchorNote(
+          changeNote.note,
+          changeNote.note.index ? +changeNote.note.index : 0
+        )
+      : await activeApi.generateUtxo({
+          curve: noteManager.defaultNoteGenInput.curve,
+          backend: activeApi.backend,
+          amount: changeAmountBigNumber.toString(),
+          chainId: currentTypedChainId.toString(),
+          keypair,
+          originChainId: currentTypedChainId.toString(),
+          index: activeApi.state.defaultUtxoIndex.toString(),
+        });
 
     // Default source chain is the first source chain in the input notes
     const sourceTypedChainId = Number(inputNotes[0].note.sourceChainId);
@@ -731,7 +726,7 @@ export const WithdrawContainer = forwardRef<
       />
     );
   }, [
-    activeApi?.state.activeBridge,
+    activeApi,
     amount,
     amountAfterFeeWei,
     availableAmount,

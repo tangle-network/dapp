@@ -1,7 +1,9 @@
 import { Note } from '@webb-tools/sdk-core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { CancellationToken } from './cancelation-token';
 import { notificationApi } from '@webb-tools/webb-ui-components';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+import { CancellationToken } from './cancelation-token';
+import { WebbProviderType } from './webb-provider.interface';
 
 export interface TXresultBase {
   // method: MethodPath;
@@ -96,6 +98,9 @@ type ExecutorClosure<DonePayload> = (
   next: Transaction<DonePayload>['next']
 ) => void | Promise<DonePayload>;
 
+/**
+ * The metadata for the transaction
+ */
 type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
@@ -107,6 +112,12 @@ type TransactionMetaData = {
   recipient?: string;
   address?: string;
   tokenURI?: string;
+
+  /**
+   * The provider type to use for the transaction
+   * @default 'web3'
+   */
+  providerType: WebbProviderType;
 };
 
 type PromiseExec<T> = (
@@ -140,6 +151,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     const status = new BehaviorSubject<
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
     >([TransactionState.Ideal, undefined]);
+
     const exec: PromiseExec<T> = (resolve, reject) => {
       status
         .forEach(([state, data]) => {
@@ -162,6 +174,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
           });
         });
     };
+
     return new Transaction(exec, name, metadata, status);
   }
 

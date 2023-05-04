@@ -3,7 +3,10 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
 // 0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773 - webbtTNT - DKG backend
 
+// Substrate chains are only contain treeId
+
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
+  // EVM
   [PresetTypedChainId.ArbitrumTestnet]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 13062856,
   },
@@ -33,6 +36,14 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
   [PresetTypedChainId.DemeterOrbit]: {
     '0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773': 131,
+  },
+
+  // Substrate
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
+    '6': NaN,
+  },
+  [PresetTypedChainId.LocalTangleStandalone]: {
+    '4': NaN,
   },
 };
 
