@@ -45,6 +45,10 @@ export enum WebbErrorCodes {
   TransactionCancelled,
   // There is a transaction in progress
   TransactionInProgress,
+  // Not found tree for the given tree id
+  TreeNotFound,
+  // Not implemented
+  NotImplemented,
 }
 
 /// An Error message with error metadata
@@ -205,6 +209,18 @@ export class WebbError extends Error {
         return {
           code,
           message: `No currency is available`,
+        };
+
+      case WebbErrorCodes.TreeNotFound:
+        return {
+          code,
+          message: `Not found tree for the given tree id`,
+        };
+
+      case WebbErrorCodes.NotImplemented:
+        return {
+          code,
+          message: `Not implemented`,
         };
 
       default:

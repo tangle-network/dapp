@@ -17,7 +17,10 @@ import { EventBus } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
+import {
+  InjectedExtension,
+  MetadataDef,
+} from '@polkadot/extension-inject/types';
 
 import { PolkaTXBuilder } from '../transaction';
 import { isValidAddress } from './is-valid-address';
@@ -32,7 +35,7 @@ type ExtensionProviderEvents = {
   error: undefined;
   ready: undefined;
 
-  updateMetaData: Record<string, unknown>;
+  updateMetaData: MetadataDef;
 
   accountsChange: PolkadotAccount[];
 };
@@ -123,7 +126,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
          *  2- The user killed the connection, no other retires
          **/
         // global interActiveFeedback for access on multiple scopes
-        let interActiveFeedback: InteractiveFeedback;
+        let interActiveFeedback: InteractiveFeedback | undefined = undefined;
 
         logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
 
@@ -308,7 +311,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   }
 
   /// metaData:MetadataDef
-  updateMetaData(metaData) {
+  updateMetaData(metaData: MetadataDef) {
     return this.injectedExtension.metadata?.provide(metaData);
   }
 
@@ -320,7 +323,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       return;
     }
 
-    const metadataDef = {
+    const metadataDef: MetadataDef = {
       chain: this.apiPromise.runtimeChain.toString(),
       genesisHash: this.apiPromise.genesisHash.toHex(),
       icon: 'substrate',
@@ -335,7 +338,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         ? this.apiPromise.registry.chainDecimals
         : 12,
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
-      types: options({}).types,
+      types: (options({}).types ?? {}) as MetadataDef['types'],
     };
 
     logger.trace('Polkadot api metadata', metadataDef);

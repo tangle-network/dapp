@@ -238,8 +238,8 @@ export const WithdrawConfirmContainer = forwardRef<
           notes: availableNotes,
           changeUtxo,
           recipient,
-          refundAmount: refund,
-          feeAmount: fee,
+          refundAmount: refund.toBigInt(),
+          feeAmount: fee.toBigInt(),
         };
 
         const args = await vAnchorApi.prepareTransaction(

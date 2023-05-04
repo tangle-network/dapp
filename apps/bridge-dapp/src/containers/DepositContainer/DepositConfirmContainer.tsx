@@ -198,8 +198,8 @@ export const DepositConfirmContainer = forwardRef<
 
         const indexedNote = await Note.deserialize(note.serialize());
         indexedNote.mutateIndex(noteIndex.toString());
-        await noteManager?.addNote(indexedNote);
         await noteManager?.removeNote(note);
+        await noteManager?.addNote(indexedNote);
 
         // Notification Success Transaction
         tx.next(TransactionState.Done, {

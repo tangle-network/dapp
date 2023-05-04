@@ -106,8 +106,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo], // outputs
-        feeAmount, // fee
-        refundAmount, // refund
+        BigNumber.from(feeAmount), // fee
+        BigNumber.from(refundAmount), // refund
         recipient, // recipient
         relayer, // relayer
         wrapUnwrapToken, // wrapUnwrapToken

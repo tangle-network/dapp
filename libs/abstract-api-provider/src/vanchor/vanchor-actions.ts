@@ -25,8 +25,8 @@ export type WithdrawTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   recipient: string;
-  refundAmount: BigNumber;
-  feeAmount: BigNumber;
+  refundAmount: bigint;
+  feeAmount: bigint;
 };
 
 export type TransferTransactionPayloadType = {
@@ -75,9 +75,9 @@ export const isVAnchorWithdrawPayload = (
     typeof payload['recipient'] === 'string' &&
     payload['recipient'].length > 0 &&
     'feeAmount' in payload &&
-    payload['feeAmount'] instanceof BigNumber &&
+    typeof payload['feeAmount'] === 'bigint' &&
     'refundAmount' in payload &&
-    payload['refundAmount'] instanceof BigNumber
+    typeof payload['refundAmount'] === 'bigint'
   );
 };
 

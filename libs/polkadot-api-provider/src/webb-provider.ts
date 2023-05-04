@@ -1,5 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
+import '@webb-tools/api-derive';
 import '@webb-tools/protocol-substrate-types';
 
 import {
@@ -41,8 +42,8 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { ZkComponents } from '@webb-tools/utils';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { u8aToHex, ZkComponents } from '@webb-tools/utils';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
@@ -57,6 +58,12 @@ import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { Storage } from '@webb-tools/storage';
+import assert from 'assert';
+
+import { getLeaves } from './mt-utils';
+import { BN } from 'bn.js';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -360,6 +367,76 @@ export class WebbPolkadot
     return this.typedChainidSubject.getValue();
   }
 
+  async getApiPromise(endpoint: string): Promise<ApiPromise> {
+    return new Promise((resolve, reject) => {
+      resolve(
+        PolkadotProvider.getApiPromise('', [endpoint], (error) => reject(error))
+      );
+    });
+  }
+
+  async getVariableAnchorLeaves(
+    api: ApiPromise,
+    storage: Storage<BridgeStorage>,
+    payload: { treeId: number; palletId: number },
+    abortSignal?: AbortSignal
+  ): Promise<string[]> {
+    const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+
+    const relayers = this.relayerManager.getRelayers({
+      baseOn: 'substrate',
+      chainId,
+    });
+
+    const leavesOrNull = await this.relayerManager.fetchLeavesFromRelayers(
+      relayers,
+      api,
+      storage,
+      payload,
+      abortSignal
+    );
+
+    let leaves: string[];
+
+    // If unable to fetch leaves from the relayers, get them from chain
+    if (!leavesOrNull || leavesOrNull.length === 0) {
+      // check if we already cached some values.
+      const lastQueriedBlock = await storage.get('lastQueriedBlock');
+      const storedLeaves = await storage.get('leaves');
+      // The end block number is the current block number
+      const endBlock = await api.derive.chain.bestNumber();
+
+      console.log(
+        `Query leaves from chain of tree id ${payload.treeId} from block ${
+          lastQueriedBlock + 1
+        } to ${endBlock.toNumber()}`
+      );
+      const leavesFromChain = await getLeaves(
+        api,
+        payload.treeId,
+        lastQueriedBlock ? lastQueriedBlock + 1 : 0,
+        endBlock.toNumber()
+      );
+
+      const leavesFromChainHex = leavesFromChain
+        .map((leaf) => u8aToHex(leaf))
+        .filter((leaf) => !new BN(leaf).eq(new BN('0x0'))); // Filter out zero leaves
+
+      console.log('Leaves from chain: ', leavesFromChainHex);
+
+      leaves = [...storedLeaves, ...leavesFromChainHex];
+
+      // Cached the new leaves
+      await storage.set('lastQueriedBlock', endBlock.toNumber());
+      await storage.set('leaves', leaves);
+    } else {
+      console.log(`Got ${leavesOrNull.length} leaves from relayers.`);
+      leaves = leavesOrNull;
+    }
+
+    return leaves;
+  }
+
   /**
    * Get the zero knowledge fixtures
    * @param maxEdges the max number of edges in the merkle tree
@@ -405,13 +482,13 @@ export class WebbPolkadot
 
     const largeKey = await fetchVAnchorKeyFromAws(
       maxEdges,
-      isSmall,
+      !!isSmall,
       true // isSubstrate
     );
 
     const largeWasm = await fetchVAnchorWasmFromAws(
       maxEdges,
-      isSmall,
+      !!isSmall,
       dummyAbortSignal
     );
 
@@ -454,7 +531,7 @@ export class WebbPolkadot
 
     const largeKey = await fetchVAnchorKeyFromAws(
       maxEdges,
-      isSmall,
+      !!isSmall,
       true // isSubstrate
     );
 

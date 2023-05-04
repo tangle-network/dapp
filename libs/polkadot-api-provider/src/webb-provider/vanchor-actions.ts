@@ -1,8 +1,12 @@
+import { ApiPromise } from '@polkadot/api';
+import { Codec } from '@polkadot/types/types';
 import { decodeAddress, naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
   FixturesStatus,
+  generateCircomCommitment,
   isVAnchorDepositPayload,
+  isVAnchorWithdrawPayload,
   NewNotesTxResult,
   ParametersOfTransactMethod,
   Transaction,
@@ -10,24 +14,30 @@ import {
   TransactionState,
   utxoFromVAnchorNote,
   VAnchorActions,
+  WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
+import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ArkworksProvingManager,
   FIELD_SIZE,
   Keypair,
   LeafIdentifier,
+  MerkleTree,
   Note,
+  parseTypedChainId,
   ProvingManagerSetupInput,
   randomBN,
+  toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { hexToU8a, u8aToHex, ZERO_ADDRESS } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 import { getLeafIndex } from '../mt-utils';
+import createSubstrateResourceId from '../utils/createSubstrateResourceId';
 
 import { WebbPolkadot } from '../webb-provider';
 
@@ -40,6 +50,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx.next(TransactionState.PreparingTransaction, undefined);
     if (isVAnchorDepositPayload(payload)) {
       return this.prepareDepositTransaction(tx, payload, wrapUnwrapAssetId);
+    } else if (isVAnchorWithdrawPayload(payload)) {
+      return this.prepareWithdrawTransaction(tx, payload, wrapUnwrapAssetId);
     }
 
     throw new Error('Unsupported payload type');
@@ -232,6 +244,100 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     ] satisfies ParametersOfTransactMethod;
   }
 
+  private async prepareWithdrawTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: WithdrawTransactionPayloadType,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod> {
+    const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    return Promise.resolve([
+      tx, // tx
+      notes[0].note.targetIdentifyingData, // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo], // outputs
+      new BN(feeAmount.toString()), // fee
+      new BN(refundAmount.toString()), // refund
+      recipient, // recipient
+      relayer, // relayer
+      wrapUnwrapAssetId, // wrapUnwrapAssetId
+      leavesMap, // leavesMap
+    ]);
+  }
+
+  async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
+    if (notes.length === 0) {
+      throw new Error('No notes to deposit');
+    }
+
+    const payload = notes[0];
+    // In the withdraw/transfer flows, the destination chain is the current chain
+    const destApi = this.inner.api;
+
+    // Loop through the notes and populate the leaves map
+    const leavesMap: Record<string, Uint8Array[]> = {};
+
+    const notesLeaves = await Promise.all(
+      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi, tx))
+    );
+
+    // Keep track of the leafindices for each note
+    const leafIndices: number[] = [];
+
+    // Create input UTXOs for convenience calculations
+    const inputUtxos: Utxo[] = [];
+
+    // calculate the sum of input notes (for calculating the change utxo)
+    let sumInputNotes = new BN(0);
+
+    notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
+      sumInputNotes = sumInputNotes.add(amount);
+      leafIndices.push(leafIndex);
+      inputUtxos.push(utxo);
+    });
+
+    const destTypedChainId = payload.note.targetChainId;
+    // Populate the leaves for the destination if not already populated
+    if (!leavesMap[destTypedChainId]) {
+      const treeId = +payload.note.targetIdentifyingData;
+      const palletId = await this.getVAnchorPalletId(destApi);
+      const { chainId } = parseTypedChainId(+destTypedChainId);
+
+      const resourceId = createSubstrateResourceId(
+        chainId,
+        treeId,
+        String(palletId)
+      );
+
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
+      console.log('resourceId', resourceId.toString());
+      const leaves = await this.inner.getVariableAnchorLeaves(
+        destApi,
+        leafStorage,
+        {
+          treeId,
+          palletId,
+        },
+        tx?.cancelToken.abortSignal
+      );
+
+      leavesMap[destTypedChainId] = leaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+    }
+
+    return {
+      sumInputNotes,
+      inputUtxos,
+      leavesMap,
+    };
+  }
+
   private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {
     // Check if the user has enough balance
     const balance = await firstValueFrom(
@@ -289,7 +395,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     // @ts-ignore
     const neighborRoots: string[] = await api.rpc.lt
       .getNeighborRoots(treeId)
-      .then((roots) => roots.toHuman());
+      .then((roots: Codec) => roots.toHuman());
 
     const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
     const extAmount = this.getExtAmount(inputs, outputs, fee);
@@ -379,6 +485,131 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       extAmount: extData.extAmount,
       vanchorProofData,
     };
+  }
+
+  private async fetchNoteLeaves(
+    note: Note,
+    leavesMap: Record<string, Uint8Array[]>,
+    destApi: ApiPromise,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
+    if (tx) {
+      tx.next(TransactionState.FetchingLeaves, {
+        end: undefined,
+        currentRange: [0, 1],
+        start: 0,
+      });
+    }
+
+    const {
+      amount,
+      sourceChainId: sourceTypedChainId,
+      sourceIdentifyingData: sourceTreeId,
+      targetChainId: targetTypedChainId,
+      targetIdentifyingData: targetTreeId,
+    } = note.note;
+    const amountBN = new BN(amount);
+
+    // Fetch leaves of the source chain if not already fetched
+    if (leavesMap[sourceTypedChainId] === undefined) {
+      const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
+      const sourceChainEndpoint = sourceChainConfig.url;
+
+      const api =
+        String(this.inner.typedChainId) === sourceTypedChainId
+          ? this.inner.api
+          : await this.inner.getApiPromise(sourceChainEndpoint);
+
+      const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+      const palletId = await this.getVAnchorPalletId(api);
+
+      const payload = {
+        palletId,
+        treeId: +sourceTreeId,
+      };
+
+      const resourceId = createSubstrateResourceId(
+        chainId,
+        payload.treeId,
+        String(palletId)
+      );
+
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
+      console.log('resourceId', resourceId.toString());
+      const leaves = await this.inner.getVariableAnchorLeaves(
+        api,
+        leafStorage,
+        payload,
+        tx?.cancelToken.abortSignal
+      );
+      leavesMap[sourceTypedChainId] = leaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+    }
+
+    let destHistorySourceRoot: string;
+    let treeHeight: BN;
+
+    // Get the latest root that has been relayed from the source chain to the destination chain
+    if (sourceTypedChainId === targetTypedChainId) {
+      const destTree = (
+        await destApi.query.merkleTreeBn254.trees(+targetTreeId)
+      ).unwrapOr(null);
+
+      if (!destTree) {
+        throw WebbError.from(WebbErrorCodes.TreeNotFound);
+      }
+
+      destHistorySourceRoot = destTree.root.toHex();
+      treeHeight = destTree.depth.toBn();
+    } else {
+      // Not implemented cross chain substrate <> substrate transactions yet.
+      throw WebbError.from(WebbErrorCodes.NotImplemented);
+    }
+
+    // Fixed the root to be 32 bytes
+    destHistorySourceRoot = toFixedHex(destHistorySourceRoot);
+
+    // Remove leaves from the leaves map which have not yet been relayed
+    const provingTree = MerkleTree.createTreeWithRoot(
+      treeHeight.toNumber(),
+      leavesMap[sourceTypedChainId].map((leaf) => u8aToHex(leaf)),
+      destHistorySourceRoot
+    );
+
+    if (!provingTree) {
+      // Outer try/catch will handle this
+      throw new Error('Fetched leaves do not match bridged anchor state');
+    }
+
+    const provingLeaves = provingTree
+      .elements()
+      .map((el) => hexToU8a(el.toHexString()));
+    leavesMap[sourceTypedChainId] = provingLeaves;
+    const commitment = generateCircomCommitment(note.note);
+    const leafIndex = provingTree.getIndexByElement(commitment);
+    // Validate that the commitment is in the tree
+    if (leafIndex === -1) {
+      // Outer try/catch will handle this
+      throw new Error(
+        'Commitment not found in tree, maybe waiting for relaying'
+      );
+    }
+
+    const utxo = await utxoFromVAnchorNote(note.note, leafIndex);
+
+    return {
+      leafIndex,
+      utxo,
+      amount: amountBN,
+    };
+  }
+
+  private async getVAnchorPalletId(api: ApiPromise): Promise<number> {
+    const metadata = await api.rpc.state.getMetadata();
+    return metadata.asLatest.pallets.findIndex((pallet) => {
+      return pallet.name.toString() === 'VAnchorBn254';
+    });
   }
 
   // https://github.com/webb-tools/protocol-solidity/blob/65d8e7ca7b7ba227d8cd97f2773fefc378655944/packages/anchors/src/Common.ts#L194-L198
