@@ -59,7 +59,7 @@ type StatsProvidervalue = {
   // polkadot endpoint
   polkadotEndpoint: string;
   // dkg keys data from polkadot api
-  dkgDataFromPolkadotAPI: {
+  dkgDataFromPolkadotAPI?: {
     currentSessionNumber: number;
     currentKey: string;
     nextSessionNumber: number;

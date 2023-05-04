@@ -137,24 +137,26 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div className="min-w-full min-h-full">
-      <Header
-        selectedNetwork={selectedNetwork}
-        setUserSelectedNetwork={setUserSelectedNetwork}
-        selectedNetworkType={selectedNetworkType}
-        setSelectedNetworkType={setSelectedNetworkType}
-      />
+    <>
+      <div className="min-w-full min-h-full pb-8 bg-[url('assets/swirl-light.png')] dark:bg-[url('assets/swirl-dark.png')]">
+        <Header
+          selectedNetwork={selectedNetwork}
+          setUserSelectedNetwork={setUserSelectedNetwork}
+          selectedNetworkType={selectedNetworkType}
+          setSelectedNetworkType={setSelectedNetworkType}
+        />
 
-      <ApolloProvider client={apolloClient}>
-        <StatsProvider
-          subqueryEndpoint={subqueryEndpoint}
-          polkadotEndpoint={polkadotEndpoint}
-        >
-          <NavBoxInfoContainer />
-          <main className="max-w-[1160px] mx-auto">{children}</main>
-        </StatsProvider>
-      </ApolloProvider>
+        <ApolloProvider client={apolloClient}>
+          <StatsProvider
+            subqueryEndpoint={subqueryEndpoint}
+            polkadotEndpoint={polkadotEndpoint}
+          >
+            <NavBoxInfoContainer />
+            <main className="max-w-[1160px] mx-auto">{children}</main>
+          </StatsProvider>
+        </ApolloProvider>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
