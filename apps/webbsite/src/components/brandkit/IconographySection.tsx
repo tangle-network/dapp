@@ -10,14 +10,14 @@ export const IconographySection = () => {
 
         <Typography
           variant="mkt-body"
-          className="text-center text-mono-140 md:w-[70%] mx-auto"
+          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
         >
           Remix Icons is a popular, open-source icon library that offers a wide
           range of modern and versatile icons for web and mobile interfaces.
         </Typography>
 
-        <div className="md:w-[70%] md:mx-auto">
-          <div className="w-full h-[192px] bg-cover bg-brandkit_iconography_mobile md:bg-brandkit_iconography_desktop" />
+        <div className="lg:max-w-[900px] md:w-full md:px-4 lg:px-0 md:mx-auto">
+          <div className="w-full h-[192px] bg-contain bg-no-repeat bg-center bg-brandkit_iconography_mobile md:bg-brandkit_iconography_desktop" />
         </div>
 
         <Button

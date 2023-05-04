@@ -10,7 +10,7 @@ export const BrandKitHeroSection = () => {
 
         <Typography
           variant="mkt-body"
-          className="text-center text-mono-140 md:w-[70%] mx-auto"
+          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
         >
           {
             "In the spirit of scaling blockchain privacy, all aspects of Webb belong to the community. including Webb's logo and brand itself."

@@ -47,7 +47,7 @@ export const ColorPalettesSection = () => {
 
         <Typography
           variant="mkt-body"
-          className="text-center text-mono-140 md:w-[70%] mx-auto"
+          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
         >
           {
             "Below are the primary and secondary colors used in Webb's Ecosystem products. Download to view the entire spectrum of colors in Webb’s UI kit."
