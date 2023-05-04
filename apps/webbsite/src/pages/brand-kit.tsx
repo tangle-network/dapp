@@ -6,6 +6,7 @@ import {
   ColorPalettesSection,
   IconographySection,
   TypographySection,
+  PressInquiriesSection,
 } from '../components';
 
 const BrandKit = () => {
@@ -22,6 +23,8 @@ const BrandKit = () => {
       <IconographySection />
 
       <TypographySection />
+
+      <PressInquiriesSection />
     </>
   );
 };

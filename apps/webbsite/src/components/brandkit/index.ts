@@ -3,3 +3,4 @@ export * from './WebbLogoSection';
 export * from './ColorPalettesSection';
 export * from './IconographySection';
 export * from './TypographySection';
+export * from './PressInquiriesSection';
