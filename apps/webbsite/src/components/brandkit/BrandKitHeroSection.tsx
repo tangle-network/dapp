@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 
 export const BrandKitHeroSection = () => {
   return (
-    <section className="md:h-[430px] w-full px-4 py-[96px] md:py-[150px] bg-brandkit_hero bg-no-repeat bg-[50%_20%] bg-cover">
+    <section className="md:h-[430px] w-full px-4 py-[96px] md:py-[150px] bg-brandkit_hero bg-no-repeat bg-[50%_60%] bg-cover">
       <div className="max-w-[1440px] mx-auto space-y-6 md:space-y-8">
         <Typography variant="mkt-h2" className="text-center text-mono-200">
           Webb Brand Kit
