@@ -4,6 +4,7 @@ import {
   BrandKitHeroSection,
   WebbLogoSection,
   ColorPalettesSection,
+  IconographySection,
 } from '../components';
 
 const BrandKit = () => {
@@ -16,6 +17,8 @@ const BrandKit = () => {
       <WebbLogoSection />
 
       <ColorPalettesSection />
+
+      <IconographySection />
     </>
   );
 };
