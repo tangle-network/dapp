@@ -1,11 +1,13 @@
 import { FC } from 'react';
 import { Typography, Button } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
+import cx from 'classnames';
 
 interface CircleColorProps {
   colorTop: string;
   colorBottom: string;
   className?: string;
+  bordered?: boolean;
 }
 
 const circleColors = [
@@ -59,6 +61,9 @@ export const ColorPalettesSection = () => {
               colorTop={item.colorTop}
               colorBottom={item.colorBottom}
               className="flex-[1] md:flex-none md:w-[80px]"
+              bordered={
+                item.colorTop === '#1F1D2B' || item.colorBottom === '#1F1D2B'
+              }
             />
           ))}
         </div>
@@ -80,8 +85,13 @@ const ColorCircle: FC<CircleColorProps> = ({
   colorTop,
   colorBottom,
   className,
+  bordered = false,
 }) => {
-  const mergedClassName = twMerge('aspect-square rounded-full', className);
+  const mergedClassName = twMerge(
+    'aspect-square rounded-full',
+    cx({ 'border border-mono-140': bordered }),
+    className
+  );
 
   return (
     <div
