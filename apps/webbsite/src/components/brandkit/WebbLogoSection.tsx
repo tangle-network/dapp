@@ -26,14 +26,17 @@ export const WebbLogoSection = () => {
           </div>
         </div>
 
-        <Button
-          href="#"
+        <a
+          href="/download/Webb-Logo.zip"
+          download
           target="_blank"
           rel="noreferrer"
-          className="block mx-auto button-base button-primary"
+          className="block"
         >
-          Download
-        </Button>
+          <Button className="block mx-auto button-base button-primary">
+            Download
+          </Button>
+        </a>
       </div>
     </section>
   );

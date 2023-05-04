@@ -32,14 +32,17 @@ export const TypographySection = () => {
           </div>
         </div>
 
-        <Button
-          href="#"
+        <a
+          href="/download/Webb-Typography.zip"
+          download
           target="_blank"
           rel="noreferrer"
-          className="block mx-auto button-base button-primary"
+          className="block"
         >
-          Download
-        </Button>
+          <Button className="block mx-auto button-base button-primary">
+            Download
+          </Button>
+        </a>
       </div>
     </section>
   );

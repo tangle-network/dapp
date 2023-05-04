@@ -21,7 +21,7 @@ export const IconographySection = () => {
         </div>
 
         <Button
-          href="#"
+          href="https://github.com/Remix-Design/RemixIcon"
           target="_blank"
           rel="noreferrer"
           className="block mx-auto button-base button-primary"
