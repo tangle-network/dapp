@@ -42,7 +42,7 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { u8aToHex, ZkComponents } from '@webb-tools/utils';
+import { u8aToHex, ZERO_BYTES32, ZkComponents } from '@webb-tools/utils';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
@@ -406,21 +406,23 @@ export class WebbPolkadot
       // The end block number is the current block number
       const endBlock = await api.derive.chain.bestNumber();
 
+      const queryBlock = lastQueriedBlock ? lastQueriedBlock + 1 : 0;
+
       console.log(
-        `Query leaves from chain of tree id ${payload.treeId} from block ${
-          lastQueriedBlock + 1
-        } to ${endBlock.toNumber()}`
+        `Query leaves from chain of tree id ${
+          payload.treeId
+        } from block ${queryBlock} to ${endBlock.toNumber()}`
       );
       const leavesFromChain = await getLeaves(
         api,
         payload.treeId,
-        lastQueriedBlock ? lastQueriedBlock + 1 : 0,
+        queryBlock,
         endBlock.toNumber()
       );
 
       const leavesFromChainHex = leavesFromChain
         .map((leaf) => u8aToHex(leaf))
-        .filter((leaf) => !new BN(leaf).eq(new BN('0x0'))); // Filter out zero leaves
+        .filter((leaf) => leaf !== ZERO_BYTES32); // Filter out zero leaves
 
       console.log('Leaves from chain: ', leavesFromChainHex);
 

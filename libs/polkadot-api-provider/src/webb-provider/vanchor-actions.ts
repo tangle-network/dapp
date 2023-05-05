@@ -20,7 +20,6 @@ import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ArkworksProvingManager,
-  FIELD_SIZE,
   Keypair,
   LeafIdentifier,
   MerkleTree,
@@ -48,6 +47,24 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
+
+    // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
+    if (!wrapUnwrapAssetId) {
+      const activeBridge = this.inner.state.activeBridge;
+      if (!activeBridge) {
+        throw WebbError.from(WebbErrorCodes.NoActiveBridge);
+      }
+
+      const fungibleAsset = activeBridge.currency;
+      console.log('fungibleAsset', fungibleAsset);
+      const assetId = fungibleAsset.getAddress(this.inner.typedChainId);
+      if (!assetId) {
+        throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+      }
+
+      wrapUnwrapAssetId = assetId;
+    }
+
     if (isVAnchorDepositPayload(payload)) {
       return this.prepareDepositTransaction(tx, payload, wrapUnwrapAssetId);
     } else if (isVAnchorWithdrawPayload(payload)) {
@@ -427,10 +444,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
-    // Asset must be a 4 bytes array (32 bits)
-    const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16), 32);
 
-    const fieldSize = new BN(FIELD_SIZE.toString());
+    // Asset must be a 4 bytes array (32 bits)
+    const assetId4BytesHex = toFixedHex((+wrapUnwrapAssetId).toString(16), 4);
+    const assetIdBytes = hexToU8a(assetId4BytesHex);
+
+    // Relayer and recipient must be 32 bytes array (256 bits)
+    const relayerBytes = hexToU8a(u8aToHex(decodeAddress(relayer)), 256);
+    const recipientBytes = hexToU8a(u8aToHex(decodeAddress(recipient)), 256);
 
     if (!leavesMap[sourceTypedChainId]) {
       leavesMap[sourceTypedChainId] = [];
@@ -444,26 +465,30 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       chainId: sourceTypedChainId.toString(),
       output: [outputs[0], outputs[1]],
       encryptedCommitments,
-      publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
+      publicAmount: extAmount.toString(),
       provingKey: pkey,
-      relayer: decodeAddress(relayer),
-      recipient: decodeAddress(recipient),
+      relayer: relayerBytes,
+      recipient: recipientBytes,
       extAmount: extAmount.toString(),
       fee: fee.toString(),
       refund: refund.toString(),
       token: assetIdBytes,
     };
 
+    console.log('proofInput', proofInput);
+
     const extData = {
-      relayer: decodeAddress(relayer),
-      recipient: decodeAddress(recipient),
-      fee: String(fee),
-      refund: String(refund),
-      token: assetIdBytes,
+      relayer: proofInput.relayer,
+      recipient: proofInput.recipient,
+      fee: proofInput.fee,
+      refund: proofInput.refund,
+      token: proofInput.token,
       extAmount: proofInput.extAmount,
       encryptedOutput1: u8aToHex(encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(encryptedCommitments[1]),
     };
+
+    console.log('extData', extData);
 
     const worker = this.inner.wasmFactory();
     const pm = new ArkworksProvingManager(worker);
