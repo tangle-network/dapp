@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Card,
   TitleWithInfo,
@@ -172,7 +172,7 @@ export const StackedAreaChartContainer = () => {
               legendItem.datasetIndex ? legendItem.datasetIndex : 0
             )._parsed;
             const totalNumberOfProposals = datasetMeta
-              .map((data) => data.y)
+              .map((data: any) => data.y)
               .reduce((accumulator, value) => {
                 return accumulator + value;
               }, 0);
@@ -244,9 +244,13 @@ export const StackedAreaChartContainer = () => {
     };
   }, [isDarkMode]);
 
+  useEffect(() => {
+    setTimeRange('three-months');
+  }, []);
+
   return (
     <Card className="flex flex-col space-y-4 max-w-full">
-      <div className="flex items-center justify-between px-12">
+      <div className="flex items-center justify-between px-12 mb-8">
         <TitleWithInfo
           title="Proposal (Submission) History"
           variant="h5"
@@ -296,30 +300,28 @@ export const StackedAreaChartContainer = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-12 pt-4 pb-2">
+      <div className="flex pl-16 pr-24">
         <TitleWithInfo
           title="Proposal #"
-          variant="body2"
-          titleClassName="text-mono-200 dark:text-mono-0"
+          variant="body1"
+          titleClassName="text-mono-200 dark:text-mono-0 transform -rotate-90 origin-bottom-left writing-mode-vertical-rl w-24"
         />
+
+        {isLoading ? (
+          <Spinner className="block mx-auto" size="xl" />
+        ) : (
+          <Line
+            options={chartOptions}
+            data={chartData}
+            className="h-96 -ml-20"
+          />
+        )}
       </div>
 
-      <div className="px-12 max-w-full">
-        <div>
-          {isLoading ? (
-            <Spinner className="block mx-auto" size="xl" />
-          ) : (
-            <div>
-              <Line options={chartOptions} data={chartData} className="h-96" />
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex items-center pl-[438px]">
+      <div className="flex items-center pl-[474px] !mt-0">
         <TitleWithInfo
           title="Month"
-          variant="body2"
+          variant="body1"
           titleClassName="text-mono-200 dark:text-mono-0"
         />
       </div>
