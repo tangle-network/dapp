@@ -117,7 +117,7 @@ const navLinks: Array<NavLinkType> = [
       },
       {
         label: 'Brand Kit',
-        url: 'https://webb.tools/brand-kit',
+        url: '/brand-kit',
         isInternal: false,
       },
     ],
