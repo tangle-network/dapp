@@ -248,9 +248,9 @@ export const StackedAreaChartContainer = () => {
     <Card className="flex flex-col space-y-4 max-w-full">
       <div className="flex items-center justify-between px-12">
         <TitleWithInfo
-          title="Proposals Overtime"
+          title="Proposal (Submission) History"
           variant="h5"
-          info="Proposals Overtime"
+          info="Proposal (Submission) History"
         />
         <div className="flex items-center justify-between gap-5">
           <Chip
