@@ -446,8 +446,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx.next(TransactionState.GeneratingZk, undefined);
 
     // Asset must be a 4 bytes array (32 bits)
-    const assetId4BytesHex = toFixedHex((+wrapUnwrapAssetId).toString(16), 4);
-    const assetIdBytes = hexToU8a(assetId4BytesHex);
+    const assetIdUInt32 = new Uint32Array([+wrapUnwrapAssetId]);
+    const assetIdBytes = new Uint8Array(assetIdUInt32.buffer);
 
     // Relayer and recipient must be 32 bytes array (256 bits)
     const relayerBytes = hexToU8a(u8aToHex(decodeAddress(relayer)), 256);
