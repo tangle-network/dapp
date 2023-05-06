@@ -11,23 +11,21 @@ import {
   useRelayers,
   useTxQueue,
 } from '@webb-tools/react-hooks';
-import {
-  calculateTypedChainId,
-  ChainType,
-  Note,
-  Utxo,
-} from '@webb-tools/sdk-core';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   AmountInput,
   Button,
   CheckBox,
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
-  useWebbUI,
   WithdrawCard,
+  getRoundedAmountString,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  RelayerType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
@@ -44,18 +42,19 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { isValidAddress } from '@webb-tools/dapp-types';
+
 import { ChainListCardWrapper } from '../../components';
 import {
+  WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
   useShieldedAssets,
-  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -381,7 +380,7 @@ export const WithdrawContainer = forwardRef<
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
-      typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
+      typeof liquidity === 'number' && isUnwrap ? liquidity >= amount : true, // Insufficient liquidity
       amount >= totalFee,
       Boolean(feeInfoOrBigNumber),
     ].some((value) => value === false);
@@ -869,18 +868,24 @@ export const WithdrawContainer = forwardRef<
               calculateTypedChainId(activeChain.chainType, activeChain.chainId)
             );
 
-            const theme =
-              activeChain.chainType === ChainType.EVM
-                ? ('ethereum' as const)
-                : ('substrate' as const);
+            if (!relayerData?.beneficiary) {
+              return undefined;
+            }
 
-            return {
-              address: relayerData?.beneficiary ?? '',
+            const theme: RelayerType['theme'] =
+              activeChain.chainType === ChainType.EVM
+                ? 'ethereum'
+                : 'substrate';
+
+            const r: RelayerType = {
+              address: relayerData.beneficiary,
               externalUrl: relayer.endpoint,
               theme,
             };
+
+            return r;
           })
-          .filter((x) => x !== undefined)}
+          .filter((r): r is RelayerType => r !== undefined)}
         onClose={() => setMainComponent(undefined)}
         onChange={(nextRelayer) => {
           setRelayer(

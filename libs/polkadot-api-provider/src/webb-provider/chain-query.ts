@@ -7,7 +7,7 @@ import { SignedBlock } from '@polkadot/types/interfaces';
 import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
 import { WebbPolkadot } from '../webb-provider';
-import { Observable, switchMap, throwError } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { BN } from 'bn.js';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
@@ -85,6 +85,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
+      return of('');
     }
 
     const assetId =
@@ -103,7 +104,9 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
+      return of('');
     }
+
     return this.getTokenBalanceByAssetId(assetId);
   }
 }
