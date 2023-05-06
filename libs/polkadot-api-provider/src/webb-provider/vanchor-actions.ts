@@ -6,12 +6,14 @@ import {
   FixturesStatus,
   generateCircomCommitment,
   isVAnchorDepositPayload,
+  isVAnchorTransferPayload,
   isVAnchorWithdrawPayload,
   NewNotesTxResult,
   ParametersOfTransactMethod,
   Transaction,
   TransactionPayloadType,
   TransactionState,
+  TransferTransactionPayloadType,
   utxoFromVAnchorNote,
   VAnchorActions,
   WithdrawTransactionPayloadType,
@@ -69,6 +71,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       return this.prepareDepositTransaction(tx, payload, wrapUnwrapAssetId);
     } else if (isVAnchorWithdrawPayload(payload)) {
       return this.prepareWithdrawTransaction(tx, payload, wrapUnwrapAssetId);
+    } else if (isVAnchorTransferPayload(payload)) {
+      return this.prepareTransferTransaction(tx, payload, wrapUnwrapAssetId);
     }
 
     throw new Error('Unsupported payload type');
@@ -222,71 +226,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     return nextIdx.toBigInt();
   }
 
-  private async prepareDepositTransaction(
-    tx: Transaction<NewNotesTxResult>,
-    payload: Note,
-    wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
-    const activeAccount = await this.inner.accounts.activeOrDefault;
-    if (!activeAccount) {
-      throw new Error('No active account');
-    }
-
-    await this.checkHasBalance(payload, wrapUnwrapAssetId);
-
-    const address = activeAccount.address;
-    const zeroBN = new BN(0);
-
-    const depositUtxo = await utxoFromVAnchorNote(
-      payload.note,
-      +payload.note.index
-    );
-    const inputUtxos: Utxo[] = [];
-
-    const leavesMap: Record<number, Uint8Array[]> = {};
-
-    leavesMap[+payload.note.sourceChainId] = [];
-
-    return [
-      tx,
-      payload.note.sourceIdentifyingData,
-      inputUtxos,
-      [depositUtxo],
-      zeroBN,
-      zeroBN,
-      address,
-      address,
-      wrapUnwrapAssetId,
-      leavesMap,
-    ] satisfies ParametersOfTransactMethod;
-  }
-
-  private async prepareWithdrawTransaction(
-    tx: Transaction<NewNotesTxResult>,
-    payload: WithdrawTransactionPayloadType,
-    wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
-    const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
-
-    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
-
-    const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
-
-    return Promise.resolve([
-      tx, // tx
-      notes[0].note.targetIdentifyingData, // contractAddress
-      inputUtxos, // inputs
-      [changeUtxo], // outputs
-      new BN(feeAmount.toString()), // fee
-      new BN(refundAmount.toString()), // refund
-      recipient, // recipient
-      relayer, // relayer
-      wrapUnwrapAssetId, // wrapUnwrapAssetId
-      leavesMap, // leavesMap
-    ]);
-  }
-
   async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
@@ -353,6 +292,101 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       inputUtxos,
       leavesMap,
     };
+  }
+
+  private async prepareDepositTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: Note,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod> {
+    const activeAccount = await this.inner.accounts.activeOrDefault;
+    if (!activeAccount) {
+      throw new Error('No active account');
+    }
+
+    await this.checkHasBalance(payload, wrapUnwrapAssetId);
+
+    const address = activeAccount.address;
+    const zeroBN = new BN(0);
+
+    const depositUtxo = await utxoFromVAnchorNote(
+      payload.note,
+      +payload.note.index
+    );
+    const inputUtxos: Utxo[] = [];
+
+    const leavesMap: Record<number, Uint8Array[]> = {};
+
+    leavesMap[+payload.note.sourceChainId] = [];
+
+    return [
+      tx,
+      payload.note.sourceIdentifyingData,
+      inputUtxos,
+      [depositUtxo],
+      zeroBN,
+      zeroBN,
+      address,
+      address,
+      wrapUnwrapAssetId,
+      leavesMap,
+    ] satisfies ParametersOfTransactMethod;
+  }
+
+  private async prepareWithdrawTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: WithdrawTransactionPayloadType,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod> {
+    const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    return Promise.resolve([
+      tx, // tx
+      notes[0].note.targetIdentifyingData, // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo], // outputs
+      new BN(feeAmount.toString()), // fee
+      new BN(refundAmount.toString()), // refund
+      recipient, // recipient
+      relayer, // relayer
+      wrapUnwrapAssetId, // wrapUnwrapAssetId
+      leavesMap, // leavesMap
+    ]);
+  }
+
+  private async prepareTransferTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: TransferTransactionPayloadType,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod> {
+    const { notes, changeUtxo, transferUtxo, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    // If no relayer is set, the fee is 0, otherwise it's the feeAmount
+    const fee =
+      relayer === ZERO_ADDRESS ? new BN(0) : new BN(feeAmount.toString());
+
+    return Promise.resolve([
+      tx, // tx
+      notes[0].note.targetIdentifyingData, // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo, transferUtxo], // outputs
+      fee, // fee
+      new BN(0), // refund
+      ZERO_ADDRESS, // recipient
+      relayer, // relayer
+      wrapUnwrapAssetId, // wrapUnwrapAssetId
+      leavesMap, // leavesMap
+    ]);
   }
 
   private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {

@@ -38,6 +38,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import {
   AssetType,
   ChainType,
+  RelayerType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
 import { BigNumber, ethers } from 'ethers';
@@ -438,18 +439,24 @@ export const TransferContainer = forwardRef<
             calculateTypedChainId(activeChain.chainType, activeChain.chainId)
           );
 
-          const theme =
+          if (!relayerData?.beneficiary) {
+            return undefined;
+          }
+
+          const theme: RelayerType['theme'] =
             activeChain.chainType === ChainTypeEnum.EVM
               ? ('ethereum' as const)
               : ('substrate' as const);
 
-          return {
+          const r: RelayerType = {
             address: relayerData?.beneficiary ?? '',
             externalUrl: relayer.endpoint,
             theme,
           };
+
+          return r;
         })
-        .filter((x) => !!x);
+        .filter((r): r is RelayerType => !!r);
 
       setMainComponent(
         <RelayerListCard

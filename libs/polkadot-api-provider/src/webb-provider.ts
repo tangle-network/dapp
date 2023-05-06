@@ -42,8 +42,15 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
+import { Storage } from '@webb-tools/storage';
 import { u8aToHex, ZERO_BYTES32, ZkComponents } from '@webb-tools/utils';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import { providers } from 'ethers';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
@@ -53,17 +60,8 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-import { providers } from 'ethers';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { Storage } from '@webb-tools/storage';
-import assert from 'assert';
 
 import { getLeaves } from './mt-utils';
-import { BN } from 'bn.js';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -382,6 +380,8 @@ export class WebbPolkadot
     abortSignal?: AbortSignal
   ): Promise<string[]> {
     const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId);
+    const chain = this.config.chains[typedChainId];
 
     const relayers = this.relayerManager.getRelayers({
       baseOn: 'substrate',
@@ -409,7 +409,7 @@ export class WebbPolkadot
       const queryBlock = lastQueriedBlock ? lastQueriedBlock + 1 : 0;
 
       console.log(
-        `Query leaves from chain of tree id ${
+        `Query leaves from chain ${chain?.name ?? 'Unknown'} of tree id ${
           payload.treeId
         } from block ${queryBlock} to ${endBlock.toNumber()}`
       );
@@ -428,9 +428,11 @@ export class WebbPolkadot
 
       leaves = [...storedLeaves, ...leavesFromChainHex];
 
-      // Cached the new leaves
-      await storage.set('lastQueriedBlock', endBlock.toNumber());
-      await storage.set('leaves', leaves);
+      // Cached the new leaves if not local chain
+      if (chain?.tag !== 'dev') {
+        await storage.set('lastQueriedBlock', endBlock.toNumber());
+        await storage.set('leaves', leaves);
+      }
     } else {
       console.log(`Got ${leavesOrNull.length} leaves from relayers.`);
       leaves = leavesOrNull;
