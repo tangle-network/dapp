@@ -10,7 +10,7 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
-import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
+import { BridgeStorage } from '@webb-tools/browser-utils';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
@@ -22,8 +22,6 @@ import {
 import { Storage } from '@webb-tools/storage';
 
 export class PolkadotRelayerManager extends WebbRelayerManager {
-  private readonly logger = LoggerService.get('PolkadotRelayerManager');
-
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
@@ -106,9 +104,21 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
     relayers: WebbRelayer[],
     api: ApiPromise,
     storage: Storage<BridgeStorage>,
-    payload: { treeId: number; palletId: number },
-    abortSignal?: AbortSignal
+    options: {
+      treeId?: number;
+      palletId?: number;
+      abortSignal?: AbortSignal;
+    }
   ): Promise<string[] | null> {
+    const { treeId, palletId, abortSignal } = options;
+
+    if (!treeId || !palletId) {
+      this.logger.error(
+        WebbError.getErrorMessage(WebbErrorCodes.TreeNotFound).message
+      );
+      return null;
+    }
+
     let leaves: string[] = [];
     const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
     const typedChainId = calculateTypedChainId(chainId, ChainType.Substrate);
@@ -119,14 +129,14 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
       try {
         relayerLeaves = await relayer.getLeaves(
           typedChainId,
-          payload,
+          { treeId, palletId },
           abortSignal
         );
       } catch (e) {
         continue;
       }
 
-      const treeData = await api.query.merkleTreeBn254.trees(payload.treeId);
+      const treeData = await api.query.merkleTreeBn254.trees(treeId);
       if (treeData.isNone) {
         this.logger.error(
           WebbError.getErrorMessage(WebbErrorCodes.TreeNotFound).message

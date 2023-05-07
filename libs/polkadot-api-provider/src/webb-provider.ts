@@ -392,8 +392,7 @@ export class WebbPolkadot
       relayers,
       api,
       storage,
-      payload,
-      abortSignal
+      { ...payload, abortSignal }
     );
 
     let leaves: string[];

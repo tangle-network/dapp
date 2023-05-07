@@ -9,9 +9,8 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
+import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { Storage } from '@webb-tools/storage';
 import {
   calculateTypedChainId,
   ChainType,
@@ -20,8 +19,7 @@ import {
   parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
-import { VAnchor } from '@webb-tools/anchors';
+import { Storage } from '@webb-tools/storage';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -132,8 +130,12 @@ export class Web3RelayerManager extends WebbRelayerManager {
     relayers: WebbRelayer[],
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal?: AbortSignal
+    options: {
+      abortSignal?: AbortSignal;
+    }
   ): Promise<string[] | null> {
+    const { abortSignal } = options;
+
     let leaves: string[] = [];
     const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);

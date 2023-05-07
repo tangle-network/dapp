@@ -4,15 +4,22 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
+import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
+import { VAnchor } from '@webb-tools/anchors';
+import { ApiPromise } from '@polkadot/api';
+import { Storage } from '@webb-tools/storage';
 
 export abstract class WebbRelayerManager {
+  protected readonly logger = LoggerService.get('RelayerManager');
+
   private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(
     null
   );
   readonly activeRelayerWatcher: Observable<OptionalActiveRelayer>;
   private _listUpdated = new Subject<void>();
+
   public readonly listUpdated: Observable<void>;
   protected relayers: WebbRelayer[];
   public activeRelayer: OptionalActiveRelayer = null;
@@ -54,4 +61,22 @@ export abstract class WebbRelayerManager {
     typedChainId: number,
     address: string
   ): Promise<WebbRelayer[]>;
+
+  /**
+   * Fetch leaves from relayers
+   * @param relayers the relayers to fetch leaves from
+   * @param api the api to use to fetch leaves (either polkadot api or vanchor api)
+   * @param storage the storage to use to cache leaves
+   * @param options options for fetching leaves
+   */
+  abstract fetchLeavesFromRelayers(
+    relayers: WebbRelayer[],
+    api: ApiPromise | VAnchor,
+    storage: Storage<BridgeStorage>,
+    options: {
+      treeId?: number;
+      palletId?: number;
+      abortSignal?: AbortSignal;
+    }
+  ): Promise<string[] | null>;
 }

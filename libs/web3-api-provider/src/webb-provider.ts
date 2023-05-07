@@ -287,7 +287,7 @@ export class WebbWeb3Provider
       relayers,
       vanchor,
       storage,
-      abortSignal
+      { abortSignal }
     );
 
     // If unable to fetch leaves from the relayers, get them from chain
