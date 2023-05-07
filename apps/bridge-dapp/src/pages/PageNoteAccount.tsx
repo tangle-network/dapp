@@ -237,7 +237,7 @@ const ConnectedNoteAccountView: React.FC = () => {
         return new Map();
       }
 
-      chainGroupedNotes.map((note) => {
+      chainGroupedNotes.forEach((note) => {
         const assetBalance = chainBalances.get(note.note.tokenSymbol);
         if (!assetBalance) {
           chainBalances.set(

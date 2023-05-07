@@ -40,9 +40,11 @@ export const useBalancesFromNotes = (
           }
 
           notes.forEach(({ note }) => {
-            const fungibleCurrency = apiConfig.getCurrencyBySymbol(
-              note.tokenSymbol
-            );
+            const fungibleCurrency =
+              apiConfig.getCurrencyBySymbolAndTypedChainId(
+                note.tokenSymbol,
+                +note.targetChainId
+              );
 
             if (!fungibleCurrency) {
               return;

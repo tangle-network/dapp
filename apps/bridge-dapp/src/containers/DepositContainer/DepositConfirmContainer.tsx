@@ -135,7 +135,10 @@ export const DepositConfirmContainer = forwardRef<
       // Get the destination token symbol
       const destToken = tokenSymbol;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(

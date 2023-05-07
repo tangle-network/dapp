@@ -140,11 +140,14 @@ export class ApiConfig {
     return currency?.symbol ?? 'Unknown';
   };
 
-  getCurrencyBySymbol(symbol: string): CurrencyConfig | undefined {
-    const currency = Object.keys(this.currencies).find(
-      (key) => this.currencies[key as any].symbol === symbol
+  getCurrencyBySymbolAndTypedChainId(
+    symbol: string,
+    typedChainId: number
+  ): CurrencyConfig | undefined {
+    return Object.values(this.currencies).find(
+      (currencyCfg) =>
+        currencyCfg.symbol === symbol && currencyCfg.addresses.has(typedChainId)
     );
-    return this.currencies[currency as any] ?? undefined;
   }
 
   getCurrencyByAddress(rawAddress: string): CurrencyConfig | undefined {

@@ -186,8 +186,9 @@ export const TransferContainer = forwardRef<
         return Array.from(allNotes.values()).reduce((acc, notes) => {
           notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
             const tkSymbol = tokenSymbol;
-            const currency = Object.values(apiConfig.currencies).find(
-              (currency) => currency.symbol === tkSymbol
+            const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+              tkSymbol,
+              +targetChainId
             );
 
             if (!currency) {
@@ -234,7 +235,7 @@ export const TransferContainer = forwardRef<
 
           return acc;
         }, {} as CurrencyRecordWithChainsType);
-      }, [allNotes, apiConfig.currencies]);
+      }, [allNotes, apiConfig]);
 
     // Callback when a chain item is selected
     const handlebridgingAssetChange = useCallback(
@@ -300,12 +301,12 @@ export const TransferContainer = forwardRef<
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
-      const currencies = selectableBridgingAssets
-        .map(({ symbol }) => apiConfig.getCurrencyBySymbol(symbol))
-        .filter((c): c is CurrencyConfig => !!c);
-
       const unavailableTokens = apiConfig
-        .getUnavailableCurrencies(currencies)
+        .getUnavailableCurrencies(
+          Object.values(currencyRecordFromNotes).map((c) =>
+            c.currency.getCurrencyConfig()
+          )
+        )
         .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType));
 
       setMainComponent(
@@ -325,6 +326,7 @@ export const TransferContainer = forwardRef<
       );
     }, [
       apiConfig,
+      currencyRecordFromNotes,
       handlebridgingAssetChange,
       onTryAnotherWallet,
       selectableBridgingAssets,
@@ -555,7 +557,9 @@ export const TransferContainer = forwardRef<
         allNotes
           .get(resourceId.toString())
           ?.filter(
-            (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
+            (note) =>
+              note.note.tokenSymbol === fungibleCurrency.view.symbol &&
+              fungibleCurrency?.hasChain(+note.note.targetChainId)
           ) ?? []
       );
     }, [allNotes, apiConfig, destChain, fungibleCurrency]);

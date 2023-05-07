@@ -148,11 +148,20 @@ export const WithdrawContainer = forwardRef<
       return [];
     }
 
-    const tokenSymbolsSet = new Set<string>();
+    const avaiCurrenciesSet = new Set<CurrencyConfig>();
 
     Array.from(allNotes.values()).forEach((notes) => {
       notes.forEach((note) => {
-        tokenSymbolsSet.add(note.note.tokenSymbol);
+        // Available currencies are the ones that have the same symbol as the note
+        // and have the same chain as the target chain of the note.
+        const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+          note.note.tokenSymbol,
+          +note.note.targetChainId
+        );
+
+        if (currency) {
+          avaiCurrenciesSet.add(currency);
+        }
       });
     });
 
@@ -160,10 +169,7 @@ export const WithdrawContainer = forwardRef<
       activeApi.state.getBridgeOptions()
     );
 
-    return Array.from(tokenSymbolsSet)
-      .map((symbol) => {
-        return apiConfig.getCurrencyBySymbol(symbol);
-      })
+    return Array.from(avaiCurrenciesSet)
       .filter(
         (c): c is CurrencyConfig =>
           !!c && supportedCurrencyIds.includes(c.id.toString())
@@ -196,11 +202,13 @@ export const WithdrawContainer = forwardRef<
     const notes = allNotes
       .get(currentResourceId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
+        (note) =>
+          note.note.tokenSymbol === fungibleCurrency?.view?.symbol &&
+          fungibleCurrency?.hasChain(+note.note.targetChainId)
       );
 
     return notes ?? null;
-  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
+  }, [allNotes, currentResourceId, fungibleCurrency]);
 
   const maxFeeArgs = useMemo(
     () => ({

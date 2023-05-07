@@ -196,7 +196,10 @@ export const WithdrawConfirmContainer = forwardRef<
 
       const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(
