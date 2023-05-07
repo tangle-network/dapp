@@ -9,6 +9,7 @@ import { EVMChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
 import { ChainAddressConfig } from '../../anchors';
+import { chainsConfig } from '../../chains';
 import { CurrencyConfig } from '../../currencies';
 import {
   CurrencyResponse,
@@ -166,7 +167,11 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       this.fungibleCurrencyCache.set(typedChainId, fungibleCurrency);
       return fungibleCurrency;
     } catch (error) {
-      console.error('Unable to retrieve fungible token information', error);
+      const chain = chainsConfig[typedChainId]?.name ?? 'Unknown';
+      console.error(
+        `Unable to retrieve fungible token information on ${chain}`,
+        error
+      );
       // Cache the error
       this.fungibleCurrencyCache.set(typedChainId, error as Error);
     }

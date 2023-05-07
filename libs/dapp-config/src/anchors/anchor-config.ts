@@ -1,7 +1,7 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
-// 0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773 - webbtTNT - DKG backend
+// 0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD - webbtTNT - DKG backend
 
 // Substrate chains are only contain treeId
 
@@ -29,13 +29,13 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
   },
   [PresetTypedChainId.HermesOrbit]: {
-    '0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773': 134,
+    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773': 150,
+    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x64Ba293E654992a94f304b00e3cEb8FD0f7AA773': 131,
+    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
   },
 
   // Substrate
