@@ -58,7 +58,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       }
 
       const fungibleAsset = activeBridge.currency;
-      console.log('fungibleAsset', fungibleAsset);
       const assetId = fungibleAsset.getAddress(this.inner.typedChainId);
       if (!assetId) {
         throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
@@ -271,7 +270,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      console.log('resourceId', resourceId.toString());
       const leaves = await this.inner.getVariableAnchorLeaves(
         destApi,
         leafStorage,
@@ -594,7 +592,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      console.log('resourceId', resourceId.toString());
       const leaves = await this.inner.getVariableAnchorLeaves(
         api,
         leafStorage,
@@ -643,7 +640,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     const provingLeaves = provingTree
       .elements()
-      .map((el) => hexToU8a(el.toHexString()));
+      .map((el) => hexToU8a(toFixedHex(el.toHexString())));
     leavesMap[sourceTypedChainId] = provingLeaves;
     const commitment = generateCircomCommitment(note.note);
     const leafIndex = provingTree.getIndexByElement(commitment);
