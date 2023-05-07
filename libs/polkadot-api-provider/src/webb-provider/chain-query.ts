@@ -6,10 +6,10 @@ import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { SignedBlock } from '@polkadot/types/interfaces';
 import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
-import { WebbPolkadot } from '../webb-provider';
-import { Observable, of, switchMap } from 'rxjs';
-import { BN } from 'bn.js';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { BN } from 'bn.js';
+import { Observable, of, switchMap } from 'rxjs';
+import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   constructor(protected inner: WebbPolkadot) {
@@ -106,7 +106,6 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
       console.error('accountAddressArg is not supported for Polkadot');
       return of('');
     }
-
     return this.getTokenBalanceByAssetId(assetId);
   }
 }

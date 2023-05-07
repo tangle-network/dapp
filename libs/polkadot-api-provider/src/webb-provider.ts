@@ -27,12 +27,12 @@ import {
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   ChainType,
-  parseTypedChainId,
   Utxo,
   UtxoGenInput,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  parseTypedChainId,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -48,7 +48,7 @@ import {
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
 import { Storage } from '@webb-tools/storage';
-import { u8aToHex, ZERO_BYTES32, ZkComponents } from '@webb-tools/utils';
+import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PolkadotProvider } from './ext-provider';

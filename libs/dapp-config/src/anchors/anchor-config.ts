@@ -5,6 +5,8 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 // Substrate chains are only contain treeId
 
+// Substrate chains are only contain treeId
+
 export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   // EVM
   [PresetTypedChainId.ArbitrumTestnet]: {
@@ -36,6 +38,14 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
   [PresetTypedChainId.DemeterOrbit]: {
     '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
+  },
+
+  // Substrate
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
+    '6': NaN,
+  },
+  [PresetTypedChainId.LocalTangleStandalone]: {
+    '4': NaN,
   },
 
   // Substrate
