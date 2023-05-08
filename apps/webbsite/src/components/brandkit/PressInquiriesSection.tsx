@@ -3,7 +3,7 @@ import { ChainIcon } from '@webb-tools/icons';
 
 export const PressInquiriesSection = () => {
   return (
-    <section className="w-full px-4 md:px-0 py-[64px] md:py-[156px] bg-no-repeat bg-[50%_20%] bg-cover">
+    <section className="w-full px-4 lg:px-0 py-[64px] md:py-[156px] bg-no-repeat bg-[50%_20%] bg-cover">
       <div className="max-w-[1440px] mx-auto space-y-9">
         <ChainIcon name="webb" size="lg" className="mx-auto" />
 

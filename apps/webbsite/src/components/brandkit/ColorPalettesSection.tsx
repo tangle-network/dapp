@@ -73,7 +73,7 @@ export const ColorPalettesSection = () => {
           download
           target="_blank"
           rel="noreferrer"
-          className="block"
+          className="block w-fit mx-auto"
         >
           <Button className="block mx-auto button-base button-primary">
             Download
