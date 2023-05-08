@@ -6,3 +6,6 @@ export * from './BlogCard';
 
 // Section components
 export * from './sections';
+
+// Brandkit components
+export * from './brandkit';
