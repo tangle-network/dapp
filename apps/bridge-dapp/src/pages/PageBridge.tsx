@@ -216,7 +216,7 @@ const PageBridge = () => {
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
           <div
             className={cx(
-              ' p-9',
+              'p-9',
               "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
               'bg-center object-fill bg-no-repeat bg-cover'
             )}

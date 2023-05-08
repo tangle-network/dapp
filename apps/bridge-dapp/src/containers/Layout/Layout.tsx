@@ -1,9 +1,5 @@
 import { Transition } from '@headlessui/react';
-import {
-  Banner,
-  Button,
-  Footer,
-} from '@webb-tools/webb-ui-components/components';
+import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
