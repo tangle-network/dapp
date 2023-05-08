@@ -15,12 +15,11 @@ Reading and following these guidelines will help us make the contribution proces
     - [Pull Requests](#pull-requests)
   - [Getting Help](#getting-help)
 
-
 ## Getting Started
 
 Contributions are made to this repo via Issues and Pull Requests (PRs). A few general guidelines that cover both:
 
-- To report security vulnerabilities, please direct message <a href="mailto:drew@webb.tools">code maintainers</a> which will promptly be answered.
+- To report security vulnerabilities, please direct message <a href="mailto:drew@commonwealth.im">code maintainers</a> which will promptly be answered.
 - Search for existing Issues and PRs before creating your own.
 - We work hard to makes sure issues are handled in a timely manner but, depending on the impact, it could take a while to investigate the root cause. A friendly ping in the comment thread to the submitter or a contributor can help draw attention if your issue is blocking.
 
