@@ -35,5 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial UI setup and build: https://github.com/webb-tools/webb-dapp/pull/1075
 
+## [0.0.2] - 2023-05-03
+
+### Added
+- .env.example template: https://github.com/webb-tools/webb-dapp/pull/1139
+
+### Changed
+- Node version upgraded to v18.x: https://github.com/webb-tools/webb-dapp/pull/1139
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
+[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
