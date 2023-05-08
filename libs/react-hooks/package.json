@@ -10,7 +10,6 @@
     "@umijs/use-request": "1.4.3",
     "@webb-tools/protocol-substrate-types": "0.0.3",
     "axios": "^0.21.0",
-    "copy-to-clipboard": "^3.3.1",
     "csv": "^5.3.2"
   }
 }

@@ -6,8 +6,7 @@
   "author": "Webb Developers <drew@webb.tools>",
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
-    "@influxdata/influxdb-client-browser": "^1.8.0",
-    "framer-motion": "^6.4.3"
+    "@influxdata/influxdb-client-browser": "^1.8.0"
   },
   "devDependencies": {
     "@types/url-parse": "^1.4.3"
