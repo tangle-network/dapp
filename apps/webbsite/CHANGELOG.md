@@ -35,5 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial Webb webbsite release: https://github.com/webb-tools/webb-dapp/pull/1157
 
+## [0.0.2] - 2023-05-03
+
+### Changed
+- Replaces Notion with Webb CMS API (Strapi) to fetch blog posts: https://github.com/webb-tools/webb-dapp/pull/1159
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
+[0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2

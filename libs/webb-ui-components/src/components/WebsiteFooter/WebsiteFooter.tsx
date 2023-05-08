@@ -115,6 +115,11 @@ const navLinks: Array<NavLinkType> = [
         url: 'https://angel.co/company/webb-4/jobs',
         isInternal: false,
       },
+      {
+        label: 'Brand Kit',
+        url: '/brand-kit',
+        isInternal: false,
+      },
     ],
   },
   {
