@@ -113,6 +113,7 @@ function createWebpackBase() {
           use: {
             loader: 'babel-loader',
             options: {
+              compact: false,
               presets: [
                 '@nrwl/web/babel',
                 [
