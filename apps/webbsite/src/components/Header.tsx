@@ -56,7 +56,7 @@ export const Header = () => {
 
   return (
     <header
-      className={cx('fixed z-50 w-full bg-mono-0 min-h-[72px]', {
+      className={cx('sticky top-0 z-50 w-full bg-mono-0 min-h-[72px]', {
         'webb-shadow-sm': scrolled,
       })}
     >
