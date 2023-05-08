@@ -9,7 +9,6 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
-const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
@@ -137,7 +136,6 @@ function createWebpack(env, mode = 'production') {
                   ],
                 ],
                 plugins: [
-                  ...(polkadotBabelWebpackConfig.plugins ?? []),
                   isDevelopment && require.resolve('react-refresh/babel'),
                   ['@babel/plugin-transform-runtime', { loose: false }],
                   ['@babel/plugin-proposal-class-properties', { loose: true }],

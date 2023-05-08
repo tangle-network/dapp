@@ -7,8 +7,6 @@
   "homepage": "https://github.com/webb-tools/webb-dapp#readme",
   "dependencies": {
     "@influxdata/influxdb-client-browser": "^1.8.0",
-    "@polkadot/api": "9.2.4",
-    "@polkadot/extension-dapp": "0.44.1",
     "framer-motion": "^6.4.3"
   },
   "devDependencies": {
