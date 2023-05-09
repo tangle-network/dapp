@@ -24,9 +24,7 @@ async function utxoFromVAnchorNote(note: JsNote, leafIndex = 0): Promise<Utxo> {
     keypair,
   };
 
-  return input.backend === 'Arkworks'
-    ? Utxo.generateUtxo(input)
-    : CircomUtxo.generateUtxo(input);
+  return CircomUtxo.generateUtxo(input);
 }
 
 export default utxoFromVAnchorNote;

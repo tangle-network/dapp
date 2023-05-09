@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
+import { hexToU8a } from '@polkadot/util';
 import {
   AccountsAdapter,
   Bridge,
@@ -13,8 +15,11 @@ import {
   WebbProviderEvents,
   WebbState,
 } from '@webb-tools/abstract-api-provider';
+import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
+import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
   getAnchorDeploymentBlockNumber,
@@ -25,6 +30,10 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   buildVariableWitnessCalculator,
@@ -38,21 +47,12 @@ import {
   UtxoGenInput,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
+import { ZkComponents } from '@webb-tools/utils';
+import type { Backend } from '@webb-tools/wasm-utils';
 import { ethers, providers, Signer } from 'ethers';
+import { BehaviorSubject } from 'rxjs';
 import { Eth } from 'web3-eth';
 
-import { hexToU8a } from '@polkadot/util';
-
-import { ApiPromise } from '@polkadot/api';
-import { VAnchor } from '@webb-tools/anchors';
-import { retryPromise } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
-import { ZkComponents } from '@webb-tools/utils';
-import { BehaviorSubject } from 'rxjs';
 import { Web3Accounts, Web3Provider } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
@@ -83,7 +83,7 @@ export class WebbWeb3Provider
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend = 'Circom';
+  readonly backend: Backend = 'Circom';
 
   readonly methods: WebbMethods<WebbWeb3Provider>;
 

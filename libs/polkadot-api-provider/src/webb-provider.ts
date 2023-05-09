@@ -29,6 +29,7 @@ import {
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   ChainType,
+  CircomUtxo,
   parseTypedChainId,
   Utxo,
   UtxoGenInput,
@@ -41,8 +42,15 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 import { ZkComponents } from '@webb-tools/utils';
+import type { Backend } from '@webb-tools/wasm-utils';
+import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
@@ -52,11 +60,6 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-import { providers } from 'ethers';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -79,7 +82,7 @@ export class WebbPolkadot
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend = 'Arkworks';
+  readonly backend: Backend = 'Circom';
 
   private _newBlock = new BehaviorSubject<null | number>(null);
 
@@ -491,6 +494,6 @@ export class WebbPolkadot
   }
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {
-    return Utxo.generateUtxo(input);
+    return CircomUtxo.generateUtxo(input);
   }
 }
