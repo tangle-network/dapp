@@ -3,6 +3,8 @@
 
 import { ChainType } from '@webb-tools/sdk-core';
 
+import { AppEnvironment } from '../types';
+
 export type ChainBase =
   | 'polygon'
   | 'ethereum'
@@ -15,12 +17,6 @@ export type ChainBase =
   | 'tangle'
   | 'scroll'
   | 'webb-dev';
-
-export type ChainEnvironment =
-  | 'development'
-  | 'test'
-  | 'staging'
-  | 'production';
 
 export interface ChainConfig {
   chainType: ChainType;
@@ -37,5 +33,5 @@ export interface ChainConfig {
   /**
    * The supported environments for this chain (defaults to all)
    */
-  env?: ChainEnvironment[];
+  env?: AppEnvironment[];
 }

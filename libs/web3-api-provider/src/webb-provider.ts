@@ -272,7 +272,13 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
+    onFetchingLeavesOnChain?: (
+      startingBlock: number,
+      currentBlock: number,
+      step: number,
+      finalBlock: number
+    ) => void // Callback to be called when fetching leaves on chain
   ): Promise<string[]> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
@@ -292,6 +298,8 @@ export class WebbWeb3Provider
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leaves) {
+      onFetchingLeavesOnChain?.(0, 0, 0, 0); // Call the callback with dummy values
+
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
       const storedLeaves = await storage.get('leaves');
