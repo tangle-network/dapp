@@ -96,17 +96,22 @@ export const TransferContainer = forwardRef<
       return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
     }, [activeChain]);
 
+    const useRelayerArgs = useMemo(
+      () => ({
+        typedChainId: currentTypedChainId,
+        target:
+          activeApi?.state.activeBridge && currentTypedChainId
+            ? activeApi.state.activeBridge.targets[currentTypedChainId]
+            : undefined,
+      }),
+      [activeApi?.state.activeBridge, currentTypedChainId]
+    );
+
     // Given the user inputs above, fetch relayers state
     const {
       relayersState: { activeRelayer, relayers },
       setRelayer,
-    } = useRelayers({
-      typedChainId: currentTypedChainId,
-      target:
-        activeApi?.state.activeBridge && currentTypedChainId
-          ? activeApi.state.activeBridge.targets[currentTypedChainId]
-          : undefined,
-    });
+    } = useRelayers(useRelayerArgs);
 
     // The destination chains
     const [destChain, setDestChain] = useState<Chain | undefined>(
@@ -502,6 +507,12 @@ export const TransferContainer = forwardRef<
 
     // Boolean indicating whether inputs are valid to transfer
     const isValidToTransfer = useMemo<boolean>(() => {
+      const totalFee = Number(
+        ethers.utils.formatEther(feeInWei ?? ethers.constants.Zero)
+      );
+
+      const amountOrZero = amount ?? 0;
+
       return [
         Boolean(fungibleCurrency), // No fungible currency selected
         Boolean(destChain), // No destination chain selected
@@ -509,14 +520,18 @@ export const TransferContainer = forwardRef<
         isValidAmount, // Is valid amount
         Boolean(recipientPubKey), // No recipient address
         isValidRecipient, // Valid recipient address
+        activeRelayer ? amountOrZero >= totalFee : true, // Insufficient balance
       ].some((value) => value === false);
     }, [
-      destChain,
+      feeInWei,
       fungibleCurrency,
+      destChain,
+      recipientError,
       isValidAmount,
       recipientPubKey,
-      recipientError,
       isValidRecipient,
+      activeRelayer,
+      amount,
     ]);
 
     // All available notes
@@ -1086,12 +1101,12 @@ export const TransferContainer = forwardRef<
       const tkSymbol = infoCalculated?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
-      if (amount < totalFee) {
+      if (activeRelayer && amount < totalFee) {
         return `Insufficient funds. You need more than ${feeText} to cover the fee`;
       }
 
       return;
-    }, [amount, feeInWei, infoCalculated?.transferTokenSymbol]);
+    }, [activeRelayer, amount, feeInWei, infoCalculated?.transferTokenSymbol]);
 
     const isDisabled = useMemo(() => {
       return isWalletConnected && hasNoteAccount && isValidToTransfer;

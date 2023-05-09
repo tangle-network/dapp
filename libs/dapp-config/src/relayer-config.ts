@@ -1,15 +1,17 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 
+import { AppEnvironment } from './types';
+
 /**
  * Relayer configuration
  * it's now the endpoint and info/metada ..etc is fetched via http
  * @param endpoint - relayer http endpoint
- * @param isProduction - is this a production relayer
+ * @param env - the supported environments of this relayer (defaults to all)
  **/
 export type RelayerConfig = {
   endpoint: string;
-  isProduction?: boolean;
+  env?: AppEnvironment[];
 };
 
 /**
@@ -25,21 +27,17 @@ export const relayerConfig: RelayerConfig[] = [
   },
   {
     endpoint: 'https://relayer1.webb.tools',
-    isProduction: true,
   },
   {
     endpoint: 'https://relayer2.webb.tools',
-    isProduction: true,
   },
   {
     endpoint: 'https://relayer3.webb.tools',
-    isProduction: true,
+    env: ['development', 'staging', 'test'],
   },
   {
     endpoint: 'https://relayer4.webb.tools',
-  },
-  {
-    endpoint: 'https://relayer5.webb.tools',
+    env: ['development', 'staging', 'test'],
   },
 ];
 
