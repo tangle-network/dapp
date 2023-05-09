@@ -9,7 +9,6 @@ export const Header = () => {
 
   return (
     <header className="sticky flex flex-col top-0 z-50 bg-mono-0 min-h-[72px] webb-shadow-sm">
-
       {/* Banner */}
       {showBanner && (
         <div className="bg-[#624FBE] p-2 lg:order-2 relative">
