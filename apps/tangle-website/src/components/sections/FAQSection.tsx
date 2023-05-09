@@ -9,11 +9,6 @@ import { SectionDescription2, SectionHeader, SectionTitle } from '..';
 
 const faqItems = [
   {
-    question: 'Why host a crowdloan and how does it work?',
-    answer:
-      'Crowdloans are an excellent opportunity for people to support a project they are passionate about and earn tokens in that network.',
-  },
-  {
     question: 'What is the Tangle Token (TNT) and what is it used for?',
     answer:
       'Amet duo ipsum sanctus sanctus aliquyam lorem ipsum voluptua. Dolor erat aliquyam aliquyam ipsum duo amet amet ea. Vero invidunt.',
@@ -25,11 +20,6 @@ const faqItems = [
   },
   {
     question: 'How are collators rewards calculated?',
-    answer:
-      'Amet duo ipsum sanctus sanctus aliquyam lorem ipsum voluptua. Dolor erat aliquyam aliquyam ipsum duo amet amet ea. Vero invidunt.',
-  },
-  {
-    question: 'Why is Tangle Network launched on Kusama Network?',
     answer:
       'Amet duo ipsum sanctus sanctus aliquyam lorem ipsum voluptua. Dolor erat aliquyam aliquyam ipsum duo amet amet ea. Vero invidunt.',
   },

@@ -27,19 +27,19 @@ const tangleFeatures = [
   {
     title: 'Proof-of-Stake Authority Selection',
     description:
-      'The Tangle Network utilizes an advanced Proof-of-Stake authority selection system. This enables fully permissionless participation in securing cross chain zero knowledge applications.',
+      'The Tangle Network uses a cutting-edge selection system based on Proof-of-Stake, allowing anyone to participate in securing private cross-chain applications.',
     link: TANGLE_OVERVIEW_URL,
   },
   {
-    title: 'Threshold ECDSA Signature',
+    title: 'Multi-Stage Governance for Signing',
     description:
-      'The Tangle Network uses a multi-stage governance system to sign zero-knowledge payloads with threshold signatures.',
+      "Tangle Network's governance system signs private data using a collaborative approach, ensuring both privacy and security.",
     link: WANT_TO_LEARN_MORE_URL,
   },
   {
-    title: 'Hybrid Light/ DKG based Governance',
+    title: 'Efficient and Trustless Validation',
     description:
-      'The Tangle Network employs a light-client validation protocol, ensuring each TSS-signed message is cryptographically verified through trustless on-chain governance.',
+      'The Tangle Network relies on a lightweight validation protocol that guarantees every message is securely verified without the need for trust between participants.',
     link: WANT_TO_LEARN_MORE_URL,
   },
 ];
@@ -54,9 +54,8 @@ export const FeaturesSection = () => {
             <SectionTitle>What makes Tangle Unique?</SectionTitle>
           </div>
           <SectionDescription className="text-center lg:w-[65%]">
-            The Tangle network doubles as hub for routing cross chain messages
-            and for anchoring itself as a bridge endpoint for cross chain
-            zero-knowledge applications.
+            The Tangle network serves as a hub for secure communication and
+            private interactions across different blockchains.
           </SectionDescription>
         </div>
 

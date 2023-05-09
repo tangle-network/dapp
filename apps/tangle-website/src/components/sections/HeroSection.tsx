@@ -11,8 +11,8 @@ export const HeroSection = () => {
           <div className="flex flex-col gap-8 lg:w-[65%] lg:ml-[132.5px]">
             <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
             <SectionDescription>
-              The next-generation TSS based blockchain powering cross-chain
-              zero-knowledge messaging and applications.
+              The next-generation blockchain for seamless and private
+              cross-chain messaging and applications.
             </SectionDescription>
             <div className="flex gap-4">
               <LinkButton
