@@ -41,10 +41,12 @@ export enum WebbErrorCodes {
   ChainIdTypeUnformatted,
   /// Invalid amount to withdraw,
   AmountToWithdrawExceedsTheDepositedAmount,
-  // Transaction is cancelled
+  /// Transaction is cancelled
   TransactionCancelled,
-  // There is a transaction in progress
+  /// There is a transaction in progress
   TransactionInProgress,
+  /// The tree not found
+  TreeNotFound,
 }
 
 /// An Error message with error metadata
@@ -205,6 +207,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `No currency is available`,
+        };
+
+      case WebbErrorCodes.TreeNotFound:
+        return {
+          code,
+          message: `The tree not found`,
         };
 
       default:

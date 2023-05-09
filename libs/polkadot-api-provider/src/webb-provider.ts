@@ -89,6 +89,9 @@ export class WebbPolkadot
   // Map to store the max edges for each tree id
   private readonly vAnchorMaxEdges = new Map<string, number>();
 
+  // Map to store the vAnchor levels for each tree id
+  private readonly vAnchorLevels = new Map<string, number>();
+
   private smallFixtures: ZkComponents | null = null;
 
   private largeFixtures: ZkComponents | null = null;
@@ -428,44 +431,6 @@ export class WebbPolkadot
     return largeFixtures;
   }
 
-  /**
-   * Get the zero knowledge vanchor proving key
-   * @param maxEdges the max number of edges in the merkle tree
-   * @param isSmall whether fixtures are for small inputs (less than or equal to 2 inputs)
-   * @returns zk proving key
-   */
-  async getZkVAnchorKey(maxEdges: number, isSmall?: boolean) {
-    if (isSmall) {
-      if (this.smallFixtures) {
-        return this.smallFixtures.zkey;
-      }
-
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        isSmall,
-        true // isSubstrate
-      );
-
-      // Return the key without storing it in the cache
-      // because we cached the response already in browser cache
-      return smallKey;
-    }
-
-    if (this.largeFixtures) {
-      return this.largeFixtures.zkey;
-    }
-
-    const largeKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      isSmall,
-      true // isSubstrate
-    );
-
-    // Return the key without storing it in the cache
-    // because we cached the response already in browser cache
-    return largeKey;
-  }
-
   async getVAnchorMaxEdges(
     treeId: string,
     provider?: providers.Provider | ApiPromise
@@ -491,6 +456,36 @@ export class WebbPolkadot
 
     this.vAnchorMaxEdges.set(treeId, maxEdges.toNumber());
     return maxEdges.toNumber();
+  }
+
+  async getVAnchorLevels(
+    treeId: string,
+    provider?: providers.Provider | ApiPromise
+  ): Promise<number> {
+    if (provider instanceof providers.Provider) {
+      console.error(
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+      );
+      provider = this.api;
+    }
+
+    const storedLevels = this.vAnchorLevels.get(treeId);
+    if (storedLevels) {
+      return storedLevels;
+    }
+
+    const api = provider || this.api;
+    const treeData = await api.query.merkleTreeBn254.trees(treeId);
+    if (treeData.isNone) {
+      throw WebbError.from(WebbErrorCodes.TreeNotFound);
+    }
+
+    const treeMedata = treeData.unwrap();
+    const levels = treeMedata.depth.toNumber();
+
+    this.vAnchorLevels.set(treeId, levels);
+
+    return levels;
   }
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {

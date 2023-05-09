@@ -13,18 +13,24 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
-  ArkworksProvingManager,
+  IVariableAnchorExtData,
+  IVariableAnchorPublicInputs,
+} from '@webb-tools/interfaces';
+import {
+  CircomProvingManager,
   FIELD_SIZE,
   Keypair,
   LeafIdentifier,
   Note,
   ProvingManagerSetupInput,
   randomBN,
+  toFixedHex,
   Utxo,
   VAnchorProof,
 } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
+import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 import { getLeafIndex } from '../mt-utils';
@@ -317,18 +323,20 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     // Proving key
     fixturesList.set('vanchor key', 'Waiting');
-    const pkey = await this.inner.getZkVAnchorKey(maxEdges, inputs.length <= 2);
+    const { zkey, wasm } = await this.inner.getZkFixtures(
+      maxEdges,
+      inputs.length <= 2
+    );
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
     // Asset must be a 4 bytes array (32 bits)
     const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16), 32);
 
-    const fieldSize = new BN(FIELD_SIZE.toString());
+    const relayerAddressBytes = decodeAddress(relayer);
+    const recipientAddressBytes = decodeAddress(recipient);
 
-    if (!leavesMap[sourceTypedChainId]) {
-      leavesMap[sourceTypedChainId] = [];
-    }
+    const fieldSize = new BN(FIELD_SIZE.toString());
 
     const proofInput: ProvingManagerSetupInput<'vanchor'> = {
       inputUtxos: inputs,
@@ -339,39 +347,46 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       output: [outputs[0], outputs[1]],
       encryptedCommitments,
       publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
-      provingKey: pkey,
-      relayer: decodeAddress(relayer),
-      recipient: decodeAddress(recipient),
+      provingKey: zkey,
+      relayer: relayerAddressBytes,
+      recipient: recipientAddressBytes,
       extAmount: extAmount.toString(),
       fee: fee.toString(),
       refund: refund.toString(),
       token: assetIdBytes,
     };
 
-    const extData = {
-      relayer: decodeAddress(relayer),
-      recipient: decodeAddress(recipient),
-      fee: String(fee),
-      refund: String(refund),
-      token: assetIdBytes,
-      extAmount: proofInput.extAmount,
-      encryptedOutput1: u8aToHex(encryptedCommitments[0]),
-      encryptedOutput2: u8aToHex(encryptedCommitments[1]),
+    const levels = await this.inner.getVAnchorLevels(treeId);
+
+    const pm = new CircomProvingManager(wasm, levels, null);
+    const proofData: VAnchorProof = await pm.prove('vanchor', proofInput);
+
+    const vanchorProofData: IVariableAnchorPublicInputs = {
+      proof: `0x${proofData.proof}`,
+      roots: `0x${proofInput.roots
+        .map((r) => toFixedHex(u8aToHex(r)).slice(2))
+        .join('')}`,
+      extensionRoots: '0x',
+      inputNullifiers: inputs.map((x) =>
+        BigNumber.from(toFixedHex('0x' + x.nullifier))
+      ),
+      outputCommitments: [
+        BigNumber.from(toFixedHex(u8aToHex(outputs[0].commitment))),
+        BigNumber.from(toFixedHex(u8aToHex(outputs[1].commitment))),
+      ],
+      publicAmount: toFixedHex(proofInput.publicAmount),
+      extDataHash: BigNumber.from(u8aToHex(proofData.extDataHash)),
     };
 
-    const worker = this.inner.wasmFactory();
-    const pm = new ArkworksProvingManager(worker);
-    const data: VAnchorProof = await pm.prove('vanchor', proofInput);
-
-    const vanchorProofData = {
-      proof: `0x${data.proof}` as const,
-      publicAmount: data.publicAmount,
-      roots: rootsSet,
-      inputNullifiers: data.inputUtxos.map(
-        (input) => `0x${input.nullifier}` as const
-      ),
-      outputCommitments: data.outputUtxos.map((utxo) => utxo.commitment),
-      extDataHash: data.extDataHash,
+    const extData: IVariableAnchorExtData = {
+      recipient: toFixedHex(proofInput.recipient, 20),
+      extAmount: toFixedHex(proofInput.extAmount),
+      relayer: toFixedHex(proofInput.relayer, 20),
+      fee: toFixedHex(proofInput.fee),
+      refund: toFixedHex(proofInput.refund),
+      token: toFixedHex(proofInput.token, 20),
+      encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
+      encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
     };
 
     return {

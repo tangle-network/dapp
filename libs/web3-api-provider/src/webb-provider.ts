@@ -75,6 +75,9 @@ export class WebbWeb3Provider
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
 
+  // Map to store the vAnchor levels for each tree id
+  private readonly vAnchorLevels = new Map<string, number>();
+
   private smallFixtures: ZkComponents | null = null;
 
   private largeFixtures: ZkComponents | null = null;
@@ -596,6 +599,32 @@ export class WebbWeb3Provider
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
+  }
+
+  async getVAnchorLevels(
+    vAnchorAddressOrTreeId: string,
+    providerOrApi?: ethers.providers.Provider | ApiPromise | undefined
+  ): Promise<number> {
+    if (providerOrApi instanceof ApiPromise) {
+      console.error(
+        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
+      );
+      providerOrApi = this.ethersProvider;
+    }
+
+    const storedLevels = this.vAnchorLevels.get(vAnchorAddressOrTreeId);
+    if (storedLevels) {
+      return Promise.resolve(storedLevels);
+    }
+
+    const vAnchorContract = VAnchor__factory.connect(
+      vAnchorAddressOrTreeId,
+      providerOrApi ?? this.ethersProvider
+    );
+    const levels = await retryPromise(vAnchorContract.getLevels);
+
+    this.vAnchorLevels.set(vAnchorAddressOrTreeId, levels);
+    return levels;
   }
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {
