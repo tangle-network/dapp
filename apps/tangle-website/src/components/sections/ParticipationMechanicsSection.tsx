@@ -28,33 +28,40 @@ interface TangleFeatureCardProps {
 }
 
 const tabsContent = {
-  'Claim Airdrop': {
-    title: 'Claim Airdrop',
+  Validator: {
+    title: 'Become a Validator',
     description:
-      "As part of Tangle's initial launch, the Tangle Network is distributing 5,000,000 TNT tokens to the community. Check eligibility below to see if you qualify for TNT Airdrop!",
-    linkText: 'Check Eligibility',
+      'Running a Validator node on the Tangle Network allows you to connect to the network, sync with a bootnode, obtain local access to RPC endpoints, and author blocks. The network rewards validators by paying a set amount of TNT tokens as rewards.',
+    linkText: 'Learn More',
     linkUrl: WEBB_DOCS_URL,
   },
-  Collator: {
-    title: 'Become a Collator',
+  Relayer: {
+    title: 'Run a Relayer',
     description:
-      'Running a collator node on the Tangle Network allows you to connect to the network, sync with a bootnode, obtain local access to PC endpoints, and author blocks. The network rewards collators by paying a set amount of TNT tokens as rewards.',
-    linkText: 'Earn Now',
+      "By participating as a Relayer, you'll play a crucial role in maintaining the efficiency and security of our system while earning commissions on each relayed Private Transaction.",
+    linkText: 'Learn More',
     linkUrl: NODE_OPERATORS_URL,
   },
   Governance: {
     title: 'Participate in Governance',
     description:
       "Through Tangle's on-chain governance system, you can create proposals for updating cross-chain applications. Tangle token holders can propose changes to the Tangle network.",
-    linkText: 'Get Tokens',
+    linkText: 'Participate Now',
+    linkUrl: POLKADOT_TANGLE_URL,
+  },
+  Develop: {
+    title: 'Develop Applications & Research',
+    description:
+      'Become a part of the Tangle community by developing cutting-edge applications and conducting pioneering research. Together, we can create a more scalable, interoperable, and privacy-focused web3 ecosystem.',
+    linkText: 'Get Started',
     linkUrl: POLKADOT_TANGLE_URL,
   },
 };
 
-type TabTypes = 'Claim Airdrop' | 'Collator' | 'Governance';
+type TabTypes = 'Validator' | 'Relayer' | 'Governance' | 'Develop';
 
 export const ParticipationMechanicsSection = () => {
-  const [activeTab, setActiveTab] = useState<TabTypes>('Claim Airdrop');
+  const [activeTab, setActiveTab] = useState<TabTypes>('Validator');
 
   return (
     <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
@@ -83,7 +90,7 @@ export const ParticipationMechanicsSection = () => {
               {Object.keys(tabsContent).map((tabName, i) => (
                 <TabTrigger
                   value={tabName}
-                  className="w-full flex flex-col items-center justify-center !bg-inherit p-0"
+                  className="w-full !bg-inherit p-0"
                   key={i}
                 >
                   <ParticipationTabTrigger tabName={tabName} />
@@ -148,7 +155,7 @@ export const ParticipationMechanicsSection = () => {
 const ParticipationTabTrigger: React.FC<TangleFeatureCardProps> = (props) => {
   const { tabName } = props;
   return (
-    <>
+    <div className="w-full flex flex-col items-center justify-center">
       <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
         <div className="w-full text-inherit">
           <div className="flex flex-col items-center gap-2 text-inherit">
@@ -160,6 +167,6 @@ const ParticipationTabTrigger: React.FC<TangleFeatureCardProps> = (props) => {
         </div>
       </div>
       <div className="participation-tab-polygon w-0 h-0 border-transparent border-solid border-x-[8px] border-t-[16px]" />
-    </>
+    </div>
   );
 };
