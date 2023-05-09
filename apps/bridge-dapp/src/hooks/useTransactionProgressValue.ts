@@ -23,6 +23,11 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
         break;
       }
 
+      case TransactionState.FetchingLeavesFromRelayer: {
+        setProgress(15);
+        break;
+      }
+
       case TransactionState.FetchingFixtures: {
         setProgress(25);
         break;
@@ -57,7 +62,7 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
 
       default: {
         console.error(
-          'Unknown transaction state in DepositConfirmContainer component'
+          'Unknown transaction state in `useTransactionProgressValue` hook'
         );
         break;
       }
