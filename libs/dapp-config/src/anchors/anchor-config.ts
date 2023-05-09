@@ -47,12 +47,7 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [PresetTypedChainId.LocalTangleStandalone]: {
     '4': NaN,
   },
-
-  // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
-    '6': NaN,
-  },
-  [PresetTypedChainId.LocalTangleStandalone]: {
+  [PresetTypedChainId.TangleStandaloneTestnet]: {
     '4': NaN,
   },
 };

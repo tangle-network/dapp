@@ -41,6 +41,19 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Tangle',
     env: ['development'],
   },
+  [PresetTypedChainId.TangleStandaloneTestnet]: {
+    chainType: ChainType.Substrate,
+    group: 'webb',
+    tag: 'test',
+    chainId: SubstrateChainId.TangleStandaloneTestnet,
+    logo: WEBBLogo,
+    url: 'wss://tangle-standalone-archive.webb.tools',
+    blockExplorerStub: populateBlockExplorerStub(
+      'wss://tangle-standalone-archive.webb.tools'
+    ),
+    name: 'Tangle Standalone Testnet',
+    env: ['development'],
+  },
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
     group: 'webb',

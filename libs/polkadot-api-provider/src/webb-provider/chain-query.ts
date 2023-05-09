@@ -38,7 +38,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
           try {
             tokenAccountData = await this.inner.api.query.tokens.accounts(
               activeAccount.address,
-              assetId
+              +assetId
             );
 
             if (tokenAccountData.isEmpty) {
