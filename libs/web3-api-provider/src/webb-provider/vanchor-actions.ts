@@ -52,8 +52,28 @@ import {
 import { generateCircomCommitment } from '@webb-tools/abstract-api-provider';
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
+import { ApiConfig } from '@webb-tools/dapp-config';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
+  static async getNextIndex(
+    apiConfig: ApiConfig,
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = apiConfig.chains[typedChainId];
+    const anchor = apiConfig.getAnchorAddress(fungibleCurrencyId, typedChainId);
+    if (!chain || !anchor) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const vanchor = VAnchor__factory.connect(anchor, provider);
+
+    const nextIdx = await vanchor.getNextIndex();
+
+    return BigInt(nextIdx);
+  }
+
   async prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,

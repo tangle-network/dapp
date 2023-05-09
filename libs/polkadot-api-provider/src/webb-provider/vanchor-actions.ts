@@ -19,6 +19,7 @@ import {
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
+import { ApiConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ArkworksProvingManager,
@@ -43,6 +44,32 @@ import createSubstrateResourceId from '../utils/createSubstrateResourceId';
 import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
+  static async getNextIndex(
+    apiConfig: ApiConfig,
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = apiConfig.chains[typedChainId];
+    const treeIdStr = apiConfig.getAnchorAddress(
+      fungibleCurrencyId,
+      typedChainId
+    );
+
+    if (!chain || !treeIdStr) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const api = await WebbPolkadot.getApiPromise(chain.url);
+    const treeId = Number(treeIdStr);
+    if (isNaN(treeId)) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const nextIdx = await api.query.merkleTreeBn254.nextLeafIndex(treeId);
+
+    return nextIdx.toBigInt();
+  }
+
   prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
@@ -446,7 +473,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       .getNeighborRoots(treeId)
       .then((roots: Codec) => roots.toHuman());
 
-    const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
+    const rootsSet = [hexToU8a(root), ...neighborRoots.map(hexToU8a)];
     const extAmount = this.getExtAmount(inputs, outputs, fee);
 
     // Pass the identifier for leaves alongside the proof input
@@ -575,7 +602,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       const api =
         String(this.inner.typedChainId) === sourceTypedChainId
           ? this.inner.api
-          : await this.inner.getApiPromise(sourceChainEndpoint);
+          : await WebbPolkadot.getApiPromise(sourceChainEndpoint);
 
       const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
       const palletId = await this.getVAnchorPalletId(api);

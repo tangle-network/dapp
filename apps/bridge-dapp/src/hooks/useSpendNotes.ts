@@ -7,7 +7,11 @@ import {
   useNoteAccount,
   useVAnchor,
 } from '@webb-tools/react-hooks';
-import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ResourceId,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
@@ -16,6 +20,7 @@ import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesT
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { hexToU8a } from '@webb-tools/utils';
 import { CurrencyRole } from '@webb-tools/dapp-types';
+import { getVAnchorActionClass } from '../utils';
 
 const createdTime = randRecentDate();
 
@@ -184,7 +189,11 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
         const indices = await Promise.all(
           filterChainIdsAndAddresses.map(
             async ({ fungibleCurrencyId, typedChainId }) => {
-              const idx = await vAnchorApi.getNextIndex(
+              const { chainType } = parseTypedChainId(typedChainId);
+              const VAnchorAction = getVAnchorActionClass(chainType);
+
+              const idx = await VAnchorAction.getNextIndex(
+                apiConfig,
                 typedChainId,
                 fungibleCurrencyId
               );
@@ -205,7 +214,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
     };
 
     getIndices();
-  }, [filterChainIdsAndAddresses, vAnchorApi]);
+  }, [apiConfig, filterChainIdsAndAddresses, vAnchorApi]);
 
   return notes;
 };

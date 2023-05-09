@@ -341,6 +341,14 @@ export class WebbPolkadot
     return instance;
   }
 
+  static async getApiPromise(endpoint: string): Promise<ApiPromise> {
+    return new Promise((resolve, reject) => {
+      resolve(
+        PolkadotProvider.getApiPromise('', [endpoint], (error) => reject(error))
+      );
+    });
+  }
+
   async destroy(): Promise<void> {
     await this.provider.destroy();
     this.newBlockSub.forEach((unsub) => unsub());
@@ -363,14 +371,6 @@ export class WebbPolkadot
 
   get typedChainId(): number {
     return this.typedChainidSubject.getValue();
-  }
-
-  async getApiPromise(endpoint: string): Promise<ApiPromise> {
-    return new Promise((resolve, reject) => {
-      resolve(
-        PolkadotProvider.getApiPromise('', [endpoint], (error) => reject(error))
-      );
-    });
   }
 
   async getVariableAnchorLeaves(
