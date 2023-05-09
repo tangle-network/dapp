@@ -28,7 +28,7 @@ const faqItems = [
 export const FAQSection = () => {
   return (
     <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
-      <div className="max-w-[1440px] mx-auto lg:px-[15%]">
+      <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9">
           <SectionHeader className="text-center pb-2">Learn More</SectionHeader>
           <SectionTitle className="pb-4">

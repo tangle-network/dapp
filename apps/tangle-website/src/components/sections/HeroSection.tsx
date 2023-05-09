@@ -8,9 +8,9 @@ export const HeroSection = () => {
   return (
     <section>
       <div className="mx-auto flex flex-col items-stretch lg:flex-row md:px-0">
-        <div className="flex-1 flex items-center justify-end bg-purple-10 px-5 py-16 md:py-32 md:pl-4 lg:p-0">
+        <div className="flex-1 flex items-center justify-end bg-purple-10 px-5 py-16 md:py-32 lg:px-0">
           <div className="lg:w-[716px]">
-            <div className="flex flex-col gap-8 lg:w-[65%] lg:ml-[22.5%]">
+            <div className="flex flex-col gap-8 md:w-[80%] lg:w-[65%] lg:ml-[22.5%]">
               <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
               <SectionDescription>
                 The next-generation blockchain for seamless and private
