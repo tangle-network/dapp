@@ -863,6 +863,7 @@ export const WithdrawContainer = forwardRef<
     onTryAnotherWallet,
     setMainComponent,
     wrappableCurrencies,
+    activeChain,
   ]);
 
   const handleRelayerInputClick = useCallback(() => {

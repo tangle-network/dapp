@@ -226,6 +226,10 @@ export const DepositContainer = forwardRef<
           balance: bridgeWrappableCurrency.balance,
           onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
           balanceType: 'wallet',
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            bridgeWrappableCurrency.currency,
+            activeChain
+          ),
         };
       }
 
@@ -239,8 +243,17 @@ export const DepositContainer = forwardRef<
         balance: bridgeFungibleCurrency.balance,
         onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
         balanceType: 'wallet',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          bridgeFungibleCurrency.currency,
+          activeChain
+        ),
       };
-    }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
+    }, [
+      bridgeFungibleCurrency,
+      bridgeWrappableCurrency,
+      addCurrency,
+      activeChain,
+    ]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
       return Object.values(fungibleCurrencies.concat(wrappableCurrencies)).map(
@@ -542,6 +555,10 @@ export const DepositContainer = forwardRef<
           balance: bridgeFungibleCurrency.balance,
           onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
           balanceType: 'wallet',
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            bridgeFungibleCurrency.currency,
+            activeChain
+          ),
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -554,6 +571,7 @@ export const DepositContainer = forwardRef<
       bridgeFungibleCurrency,
       addCurrency,
       selectedSourceChain,
+      activeChain,
     ]);
 
     const handleMaxBtnClick = useCallback(() => {
@@ -617,6 +635,7 @@ export const DepositContainer = forwardRef<
           balance: balances[currency.id] ?? 0,
           symbol: currency.view.symbol,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(currency, activeChain),
         })
       );
 
@@ -651,6 +670,7 @@ export const DepositContainer = forwardRef<
       addCurrency,
       fungibleCurrencies,
       setFungibleCurrency,
+      activeChain,
     ]);
 
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
