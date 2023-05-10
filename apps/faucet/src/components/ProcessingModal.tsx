@@ -20,7 +20,7 @@ import addTokenToMetamask from '../utils/addTokenToMetamask';
 const ProcessingModal = () => {
   const { isMintingModalOpen$, isMintingSuccess$, inputValues$ } =
     useFaucetContext();
-    
+
   const inputValues = useObservableState(inputValues$);
 
   const isModalOpen = useObservableState(isMintingModalOpen$);
