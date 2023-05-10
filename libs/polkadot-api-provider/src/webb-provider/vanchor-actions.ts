@@ -356,6 +356,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       token: assetIdBytes,
     };
 
+    console.log('Proof input', proofInput);
+
     const levels = await this.inner.getVAnchorLevels(treeId);
 
     const pm = new CircomProvingManager(wasm, levels, null);
@@ -388,6 +390,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
       encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
     };
+
+    console.log('Extdata', extData);
 
     return {
       extData,
