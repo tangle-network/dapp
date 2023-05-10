@@ -21,6 +21,9 @@ import {
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
 import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import gasLimitConfig, {
+  DEFAULT_GAS_LIMIT,
+} from '@webb-tools/dapp-config/gasLimit-config';
 import {
   checkNativeAddress,
   WebbError,
@@ -60,6 +63,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     wrapUnwrapToken: string
   ): Promise<ParametersOfTransactMethod> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
+
+    const typedChainId = this.inner.typedChainId;
+    const gasLimit = gasLimitConfig[typedChainId] ?? DEFAULT_GAS_LIMIT;
+
+    const sharedOverride: Overrides = { gasLimit };
+
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
       const tokenWrapper = await this.getTokenWrapper(payload);
@@ -92,6 +101,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         ZERO_ADDRESS, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
         {}, // leavesMap,
+        sharedOverride, // Overrides tx options
       ]);
     } else if (isVAnchorWithdrawPayload(payload)) {
       const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
@@ -112,6 +122,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         relayer, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
         leavesMap, // leavesMap
+        sharedOverride, // Overrides tx options
       ]);
     } else if (isVAnchorTransferPayload(payload)) {
       const { changeUtxo, transferUtxo, notes, feeAmount } = payload;
@@ -135,7 +146,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         ZERO_ADDRESS, // recipient
         relayer, // relayer
         '', // wrapUnwrapToken (not used for transfers)
-        leavesMap, // leavesMap
+        leavesMap, // leavesMap,
+        sharedOverride, // Overrides tx options
       ]);
     } else {
       // Handle by outer try/catch
@@ -573,11 +585,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx?: Transaction<NewNotesTxResult>
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> | never {
     if (tx) {
-      tx.next(TransactionState.FetchingLeaves, {
-        end: undefined,
-        currentRange: [0, 1],
-        start: 0,
-      });
+      // Fetching leaves from relayer initially
+      tx.next(TransactionState.FetchingLeavesFromRelayer, undefined);
     }
 
     const parsedNote = note.note;
@@ -608,7 +617,16 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const leaves = await this.inner.getVariableAnchorLeaves(
         sourceVAnchor,
         leafStorage,
-        tx?.cancelToken.abortSignal
+        tx?.cancelToken.abortSignal,
+        (startingBlock, currentBlock, step, finalBlock) => {
+          if (tx) {
+            tx.next(TransactionState.FetchingLeaves, {
+              start: startingBlock,
+              currentRange: [currentBlock, currentBlock + step],
+              end: finalBlock,
+            });
+          }
+        }
       );
       leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
         return hexToU8a(leaf);
@@ -654,7 +672,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     if (leafIndex === -1) {
       // Outer try/catch will handle this
       throw new Error(
-        'Commitment not found in tree, maybe waiting for relaying'
+        'Relayer has not yet relayed the commitment to the destination chain'
       );
     }
 
