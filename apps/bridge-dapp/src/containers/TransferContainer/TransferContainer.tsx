@@ -56,6 +56,7 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -267,8 +268,12 @@ export const TransferContainer = forwardRef<
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
         balanceType: 'note',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          fungibleCurrency,
+          activeChain
+        ),
       };
-    }, [addCurrency, balancesFromNotes, fungibleCurrency]);
+    }, [addCurrency, balancesFromNotes, fungibleCurrency, activeChain]);
 
     const selectableBridgingAssets = useMemo<AssetType[]>(() => {
       if (!activeApi) {
@@ -296,11 +301,18 @@ export const TransferContainer = forwardRef<
           symbol: currency.view.symbol,
           balance,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(currency, activeChain),
         });
 
         return acc;
       }, [] as AssetType[]);
-    }, [activeApi, addCurrency, balancesFromNotes, currencyRecordFromNotes]);
+    }, [
+      activeApi,
+      addCurrency,
+      balancesFromNotes,
+      currencyRecordFromNotes,
+      activeChain,
+    ]);
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {

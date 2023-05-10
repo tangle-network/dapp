@@ -37,7 +37,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-
 import {
   Currency,
   utxoFromVAnchorNote,
@@ -56,6 +55,7 @@ import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -272,8 +272,12 @@ export const WithdrawContainer = forwardRef<
       balance: availableAmount,
       onTokenClick: () => addCurrency(fungibleCurrency),
       balanceType: 'note',
+      isTokenAddedToMetamask: isTokenAddedToMetamask(
+        fungibleCurrency,
+        activeChain
+      ),
     };
-  }, [addCurrency, availableAmount, fungibleCurrency]);
+  }, [addCurrency, availableAmount, fungibleCurrency, activeChain]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -284,8 +288,12 @@ export const WithdrawContainer = forwardRef<
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
       balanceType: 'wallet',
+      isTokenAddedToMetamask: isTokenAddedToMetamask(
+        wrappableCurrency,
+        activeChain
+      ),
     };
-  }, [addCurrency, wrappableCurrency]);
+  }, [addCurrency, wrappableCurrency, activeChain]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {
@@ -778,6 +786,7 @@ export const WithdrawContainer = forwardRef<
               ? availableAmount
               : balancesFromNotes[currency.id],
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(currency, activeChain),
         };
       }
     );
@@ -812,6 +821,7 @@ export const WithdrawContainer = forwardRef<
     onTryAnotherWallet,
     selectedFungibleToken?.symbol,
     setMainComponent,
+    activeChain,
   ]);
 
   const handleUnwrapAssetInputClick = useCallback(() => {
@@ -821,6 +831,7 @@ export const WithdrawContainer = forwardRef<
           name: currency.view.name,
           symbol: currency.view.symbol,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(currency, activeChain),
         };
       });
 

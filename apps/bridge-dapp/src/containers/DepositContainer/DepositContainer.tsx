@@ -26,7 +26,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
 import {
@@ -40,7 +39,7 @@ import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { BigNumber, ethers } from 'ethers';
-
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 interface MainComponentProposVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
   ['dest-chain-list-card']: ChainListCardWrapperProps;
@@ -251,10 +250,20 @@ export const DepositContainer = forwardRef<
             symbol: currency.view.symbol,
             balance: balances[currency.id],
             onTokenClick: () => addCurrency(currency),
+            isTokenAddedToMetamask: isTokenAddedToMetamask(
+              currency,
+              activeChain
+            ),
           };
         }
       );
-    }, [addCurrency, balances, fungibleCurrencies, wrappableCurrencies]);
+    }, [
+      addCurrency,
+      balances,
+      fungibleCurrencies,
+      wrappableCurrencies,
+      activeChain,
+    ]);
 
     const populatedAllTokens = useMemo((): AssetType[] => {
       // Filter currencies that are not in the populated selectable tokens
