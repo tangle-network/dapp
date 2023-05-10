@@ -15,7 +15,7 @@ import { FooterProps } from './types';
  * The statistic `Footer` for `Layout` container
  */
 export const Footer = forwardRef<HTMLElement, FooterProps>(
-  ({ className, isNext, ...props }, ref) => {
+  ({ className, isNext, isMinimal, ...props }, ref) => {
     return (
       <footer
         {...props}
@@ -25,54 +25,84 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         )}
         ref={ref}
       >
-        <div className="flex justify-between">
-          {isNext ? (
-            <Link className="block" href={constants.logoConfig.path}>
-              <Logo />
-            </Link>
-          ) : (
-            <NavLink className="block" to={constants.logoConfig.path}>
-              <Logo />
-            </NavLink>
-          )}
+        {isMinimal ? (
+          // Minimal Footer
+          <>
+            <Typography variant="body2" className="!text-mono-100 text-center">
+              Apache 2.0
+            </Typography>
 
-          {Object.keys(constants.footerNavs).map((key, idx) => {
-            return (
-              <FooterNavItem
-                key={`${key}-${idx}`}
-                header={key}
-                links={constants.footerNavs[key]}
-              />
-            );
-          })}
-        </div>
+            <Socials
+              iconPlacement="center"
+              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+            />
 
-        <Divider />
+            <div className="flex items-center justify-center space-x-8">
+              {constants.bottomLinks.map(({ name, ...link }) => (
+                <a key={name} {...link} className="group">
+                  <Typography
+                    variant="body2"
+                    className="!text-mono-100 group-hover:underline"
+                  >
+                    {name}
+                  </Typography>
+                </a>
+              ))}
+            </div>
+          </>
+        ) : (
+          // Normal Footer
+          <>
+            <div className="flex justify-between">
+              {isNext ? (
+                <Link className="block" href={constants.logoConfig.path}>
+                  <Logo />
+                </Link>
+              ) : (
+                <NavLink className="block" to={constants.logoConfig.path}>
+                  <Logo />
+                </NavLink>
+              )}
 
-        {/** Social platforms */}
-        <Socials
-          iconPlacement="end"
-          iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
-        />
+              {Object.keys(constants.footerNavs).map((key, idx) => {
+                return (
+                  <FooterNavItem
+                    key={`${key}-${idx}`}
+                    header={key}
+                    links={constants.footerNavs[key]}
+                  />
+                );
+              })}
+            </div>
 
-        <div className="flex justify-between">
-          <Typography variant="body2" className="!text-mono-100">
-            Apache 2.0
-          </Typography>
+            <Divider />
 
-          <div className="flex items-center space-x-12">
-            {constants.bottomLinks.map(({ name, ...link }) => (
-              <a key={name} {...link} className="group">
-                <Typography
-                  variant="body2"
-                  className="!text-mono-100 group-hover:underline"
-                >
-                  {name}
-                </Typography>
-              </a>
-            ))}
-          </div>
-        </div>
+            {/** Social platforms */}
+            <Socials
+              iconPlacement="end"
+              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+            />
+
+            <div className="flex justify-between">
+              <Typography variant="body2" className="!text-mono-100">
+                Apache 2.0
+              </Typography>
+
+              <div className="flex items-center space-x-12">
+                {constants.bottomLinks.map(({ name, ...link }) => (
+                  <a key={name} {...link} className="group">
+                    <Typography
+                      variant="body2"
+                      className="!text-mono-100 group-hover:underline"
+                    >
+                      {name}
+                    </Typography>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </footer>
     );
   }

@@ -40,7 +40,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
         <main className="w-full mx-auto">{children}</main>
       </div>
 
-      <Footer className="max-w-[1160px] w-full" />
+      <Footer isMinimal className="max-w-[1160px] w-full" />
     </div>
   );
 };
