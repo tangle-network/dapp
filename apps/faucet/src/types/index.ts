@@ -71,3 +71,28 @@ export type TwitterRefreshTokensBody = {
    */
   refreshToken: string;
 };
+
+/**
+ * The token input type used in the addTokenToMetamask function
+ */
+export type TokenInput = {
+  /**
+   * The token address
+   */
+  address: string;
+
+  /**
+   * The token decimals
+   */
+  decimals: number;
+
+  /**
+   * The token image url
+   */
+  image: string;
+
+  /**
+   * The token symbol
+   */
+  symbol: string;
+};
