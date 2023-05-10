@@ -1,9 +1,17 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import { ComponentProps, MouseEvent, forwardRef, useMemo, useRef } from 'react';
+import {
+  ComponentProps,
+  MouseEvent,
+  forwardRef,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
+import { Button } from '../Button';
 
 export const AssetListItem = forwardRef<
   HTMLLIElement,
@@ -14,6 +22,8 @@ export const AssetListItem = forwardRef<
     ref
   ) => {
     const onTokenClickRef = useRef(onTokenClick);
+
+    const [isHovered, setIsHovered] = useState(false);
 
     const handleTokenIconClick = useMemo(() => {
       if (typeof onTokenClick === 'function') {
@@ -29,6 +39,8 @@ export const AssetListItem = forwardRef<
         {...props}
         className="flex items-center justify-between"
         ref={ref}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div className="flex items-center">
           <TokenIcon
@@ -63,6 +75,14 @@ export const AssetListItem = forwardRef<
           <Typography className="cursor-default" variant="h5" fw="bold">
             {getRoundedAmountString(balance ?? 0)}
           </Typography>
+        ) : isHovered ? (
+          <Button
+            variant="link"
+            onClick={handleTokenIconClick}
+            className="uppercase text-[12px]"
+          >
+            Add to Wallet
+          </Button>
         ) : (
           <Typography className="cursor-default" variant="h5" fw="bold">
             --
