@@ -212,11 +212,11 @@ const PageBridge = () => {
 
   return (
     <>
-      <div className="w-full">
+      <div className="w-full h-full">
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
           <div
             className={cx(
-              'p-9',
+              'h-full p-9',
               "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
               'bg-center object-fill bg-no-repeat bg-cover'
             )}

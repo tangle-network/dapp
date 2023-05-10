@@ -13,7 +13,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="h-screen min-w-full min-h-full flex flex-col justify-between">
-      <div>
+      <div className="flex-[1] flex flex-col">
         <Header />
 
         <Transition
@@ -37,7 +37,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           />
         </Transition>
 
-        <main className="w-full mx-auto">{children}</main>
+        <main className="w-full mx-auto flex-1">{children}</main>
       </div>
 
       <Footer isMinimal className="max-w-[1160px] w-full" />
