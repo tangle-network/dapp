@@ -15,9 +15,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import processingAnimation from '../lottie/processing.json';
 import sucessAnimation from '../lottie/success.json';
 import { useFaucetContext } from '../provider';
+import addTokenToMetamask from '../utils/addTokenToMetamask';
 
 const ProcessingModal = () => {
-  const { isMintingModalOpen$, isMintingSuccess$ } = useFaucetContext();
+  const { isMintingModalOpen$, isMintingSuccess$, inputValues$ } =
+    useFaucetContext();
+
+  const inputValues = useObservableState(inputValues$);
 
   const isModalOpen = useObservableState(isMintingModalOpen$);
   const isSuccess = useObservableState(isMintingSuccess$);
@@ -43,6 +47,17 @@ const ProcessingModal = () => {
     () => isMintingSuccess$.next(false),
     [isMintingSuccess$]
   );
+
+  const handleAddTokenToMetamask = useCallback(() => {
+    const input = {
+      address: inputValues.contractAddress ?? '',
+      decimals: 18,
+      image: '',
+      symbol: inputValues.token ?? '',
+    };
+
+    addTokenToMetamask(input);
+  }, [inputValues]);
 
   return (
     <Modal open={isModalOpen}>
@@ -75,6 +90,7 @@ const ProcessingModal = () => {
         <ModalFooter className={cx({ hidden: !isSuccess })}>
           <Button
             rightIcon={<MetaMaskIcon size="lg" />}
+            onClick={handleAddTokenToMetamask}
             isFullWidth
             variant="secondary"
           >
