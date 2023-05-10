@@ -12,31 +12,33 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="min-w-full min-h-full">
-      <Header />
+    <div className="h-screen min-w-full min-h-full flex flex-col justify-between">
+      <div>
+        <Header />
 
-      <Transition
-        show={showBanner}
-        className={cx(
-          '[transform-style:preserve-3d] origin-top duration-300 h-[60px]'
-        )}
-        leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
-        leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}
-      >
-        <Banner
-          className="[backface-visibility:hidden] h-full"
-          onClose={onCloseHandler}
-          dappName="stats"
-          buttonText="Report Bug"
-          bannerText="Hubble Bridge is in beta version."
-          buttonProps={{
-            href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
-            target: '_blank',
-          }}
-        />
-      </Transition>
+        <Transition
+          show={showBanner}
+          className={cx(
+            '[transform-style:preserve-3d] origin-top duration-300 h-[60px]'
+          )}
+          leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
+          leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}
+        >
+          <Banner
+            className="[backface-visibility:hidden] h-full"
+            onClose={onCloseHandler}
+            dappName="stats"
+            buttonText="Report Bug"
+            bannerText="Hubble Bridge is in beta version."
+            buttonProps={{
+              href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
+              target: '_blank',
+            }}
+          />
+        </Transition>
 
-      <main className="w-full mx-auto">{children}</main>
+        <main className="w-full mx-auto">{children}</main>
+      </div>
 
       <Footer className="max-w-[1160px] w-full" />
     </div>
