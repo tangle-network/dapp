@@ -34,6 +34,7 @@ export * from './ExchangeFunds';
 export * from './ExchangeLine';
 export * from './Expand';
 export * from './ExternalLinkLine';
+export * from './FaucetIcon';
 export * from './FileCodeLineIcon';
 export * from './FileCopyLine';
 export * from './FileUploadLine';

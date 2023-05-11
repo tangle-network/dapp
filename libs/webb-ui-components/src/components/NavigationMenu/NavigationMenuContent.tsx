@@ -3,6 +3,7 @@ import {
   FlaskLineIcon,
   HelpLineIcon,
   InformationLine,
+  FaucetIcon,
 } from '@webb-tools/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -58,9 +59,23 @@ export const NavigationMenuContent = forwardRef<
           </CollapsibleContent>
         </Collapsible>
 
+        <NavigationMenuDivider />
+
+        {/* TODO: Update Actions when click on Faucet */}
+        <MenuItem
+          icon={<FaucetIcon size="lg" />}
+          onClick={() => {
+            return;
+          }}
+        >
+          Faucet
+        </MenuItem>
+
         <MenuItem icon={<HelpLineIcon size="lg" />} onClick={onHelpCenterClick}>
           Help Center
         </MenuItem>
+
+        <NavigationMenuDivider />
 
         <MenuItem
           icon={<FlaskLineIcon size="lg" />}
@@ -84,7 +99,7 @@ export const NavigationMenuContent = forwardRef<
 
         {/** Bottom version */}
         {version && (
-          <div className="px-4 pt-1 pb-2">
+          <div className="px-4 pt-1.5 pb-2">
             <Typography
               variant="body4"
               ta="right"
@@ -98,3 +113,7 @@ export const NavigationMenuContent = forwardRef<
     );
   }
 );
+
+const NavigationMenuDivider = () => {
+  return <div className="border-b border-mono-80 dark:border-mono-120" />;
+};
