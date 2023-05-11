@@ -22,7 +22,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
       <Transition
         show={showBanner}
         className={cx(
-          '[transform-style:preserve-3d] origin-top duration-300 h-[60px]'
+          'hidden lg:block [transform-style:preserve-3d] origin-top duration-300 h-[60px]'
         )}
         leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
         leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}
