@@ -1,7 +1,6 @@
 {
-    "name": "@webb-tools/tangle-website",
-    "version": "0.0.1",
-    "license": "APACHE-2.0",
-    "description": "Official Tangle Network website"
-  }
-  
+  "name": "@webb-tools/tangle-website",
+  "version": "0.0.1",
+  "license": "APACHE-2.0",
+  "description": "Official Tangle Network website"
+}

@@ -4,11 +4,5 @@
   "description": "react environment",
   "main": "./src/index.js",
   "author": "Webb Developers <drew@webb.tools>",
-  "homepage": "https://github.com/webb-tools/webb-dapp#readme",
-  "dependencies": {
-    "@influxdata/influxdb-client-browser": "^1.8.0"
-  },
-  "devDependencies": {
-    "@types/url-parse": "^1.4.3"
-  }
+  "homepage": "https://github.com/webb-tools/webb-dapp#readme"
 }

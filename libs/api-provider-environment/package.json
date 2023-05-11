@@ -1,11 +1,5 @@
 {
   "name": "@webb-tools/api-provider-environment",
   "version": "0.0.1",
-  "main": "./src/index.js",
-  "dependencies": {
-    "@influxdata/influxdb-client-browser": "^1.8.0"
-  },
-  "devDependencies": {
-    "@types/url-parse": "^1.4.3"
-  }
+  "main": "./src/index.js"
 }
