@@ -1285,7 +1285,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <WithdrawCard
       ref={ref}
-      className="max-w-none"
+      className="max-w-none flex-[1]"
       tokenInputProps={tokenInputProps}
       unwrappingAssetInputProps={unwrappingAssetInputProps}
       fixedAmountInputProps={fixedAmountInputProps}

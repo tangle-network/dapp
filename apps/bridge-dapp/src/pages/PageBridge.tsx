@@ -216,12 +216,12 @@ const PageBridge = () => {
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
           <div
             className={cx(
-              ' p-9',
+              'px-4 lg:px-9 py-9',
               "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
               'bg-center object-fill bg-no-repeat bg-cover'
             )}
           >
-            <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
+            <div className="lg:max-w-[1160px] mx-auto lg:grid lg:grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
               {customMainComponent}
 
               {/** Bridge tabs */}
@@ -231,9 +231,9 @@ const PageBridge = () => {
                   setActiveTab(nextTab as typeof activeTab)
                 }
                 // The customMainComponent alters the global mainComponent for display.
-                // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+                // Therefore, if the customMainComponent exists (input selected) then hide the base component.
                 className={cx(
-                  'min-w-[550px] min-h-[710px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                  'w-full lg:min-w-[550px] min-h-[710px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
                   customMainComponent ? 'hidden' : 'block',
                   'flex flex-col'
                 )}
@@ -243,18 +243,18 @@ const PageBridge = () => {
                   <TabTrigger value="Transfer">Transfer</TabTrigger>
                   <TabTrigger value="Withdraw">Withdraw</TabTrigger>
                 </TabsList>
-                <TabContent className="grow" value="Deposit">
+                <TabContent className="grow flex flex-col" value="Deposit">
                   <DepositContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow" value="Transfer">
+                <TabContent className="grow flex flex-col" value="Transfer">
                   <TransferContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow" value="Withdraw">
+                <TabContent className="grow flex flex-col" value="Withdraw">
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>
 
-              <div>
+              <div className="hidden lg:!block">
                 {/** Transaction Queue Card */}
                 {isDisplayTxQueueCard && (
                   <TransactionQueueCard

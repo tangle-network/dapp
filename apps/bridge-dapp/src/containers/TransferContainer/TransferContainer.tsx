@@ -1137,7 +1137,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         bridgeAssetInputProps={bridgeAssetInputProps}
         destChainInputProps={destChainInputProps}
         amountInputProps={amountInputProps}

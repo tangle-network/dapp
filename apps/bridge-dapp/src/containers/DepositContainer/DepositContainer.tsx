@@ -889,7 +889,7 @@ export const DepositContainer = forwardRef<
     return (
       <DepositCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         {...props}
         sourceChainProps={{
           chain: selectedSourceChain,
