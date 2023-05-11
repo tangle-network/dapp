@@ -15,16 +15,3 @@ export const useScroll = () => {
   } = useContext(dimensionContext);
   return scroll;
 };
-
-export const useScrollActions = () => {
-  const smoothScrollToTop = useCallback(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }, []);
-
-  return {
-    smoothScrollToTop,
-  };
-};
