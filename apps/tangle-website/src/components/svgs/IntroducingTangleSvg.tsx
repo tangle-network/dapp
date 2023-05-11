@@ -12,12 +12,12 @@ type LayerTooltipProps = {
 
 const layerTooltipItems: Array<LayerTooltipProps> = [
   {
-    yCoordinate: 1.5,
+    yCoordinate: -2.5,
     description:
       'Powering cross-chain zero-knowledge messaging & applications.',
   },
   {
-    yCoordinate: 280,
+    yCoordinate: 276,
     description:
       'Cross-chain zk messages support for EVM & Substrate chains, utilizing light-client protocol to verify the state of any network.',
   },
