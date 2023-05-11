@@ -39,7 +39,6 @@ import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
   calculateTypedChainId,
   ChainType,
@@ -940,9 +939,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }}
     >
       <StoreProvider>
-        <SettingProvider>
-          <DimensionsProvider>{children}</DimensionsProvider>
-        </SettingProvider>
+        <SettingProvider>{children}</SettingProvider>
       </StoreProvider>
     </WebbContext.Provider>
   );

@@ -57,7 +57,6 @@
     "@polkadot/util": "^12.1.1",
     "@polkadot/util-crypto": "^12.1.1",
     "@polkadot/wasm-crypto": "^7.1.2",
-    "styled-components": "^5.3.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
@@ -127,7 +126,6 @@
     "rollup-plugin-dts": "^5.0.0",
     "rxjs": "7.5.2",
     "snarkjs": "0.4.22",
-    "styled-components": "^5.3.5",
     "swiper": "^8.4.5",
     "tinycolor2": "^1.4.2",
     "twitter-api-v2": "^1.14.2",
@@ -206,7 +204,6 @@
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
     "@types/react-router-dom": "5.3.3",
-    "@types/styled-components": "^5.0.1",
     "@types/tailwindcss": "3.0.10",
     "@types/tinycolor2": "^1.4.2",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
