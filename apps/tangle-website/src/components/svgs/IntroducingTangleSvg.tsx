@@ -1301,12 +1301,12 @@ const LayerTooltip = (props: { description: string }) => {
     <Tooltip>
       <TooltipTrigger>
         <svg
-          width={36}
-          height={36}
-          viewBox={`-2 0 40 40`}
+          width={layerTooltipItemsSize}
+          height={layerTooltipItemsSize}
+          viewBox={`0 0 36 28`}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="m-auto"
+          className="hover:rotate-45 duration-300"
         >
           <g filter="url(#prefix__filter0_d_2018_233476)">
             <rect x={12} y={8} width={12} height={12} rx={6} fill="#624FBE" />
@@ -1337,35 +1337,6 @@ const LayerTooltip = (props: { description: string }) => {
               <stop stopColor="#B5A9F2" />
               <stop offset={1} stopColor="#B5A9F2" stopOpacity={0.3} />
             </radialGradient>
-            <filter
-              id="prefix__filter0_d_2018_233476"
-              x={0}
-              y={0}
-              width={36}
-              height={36}
-              filterUnits="userSpaceOnUse"
-              colorInterpolationFilters="sRGB"
-            >
-              <feFlood floodOpacity={0} result="BackgroundImageFix" />
-              <feColorMatrix
-                in="SourceAlpha"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                result="hardAlpha"
-              />
-              <feOffset dy={4} />
-              <feGaussianBlur stdDeviation={2} />
-              <feComposite in2="hardAlpha" operator="out" />
-              <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
-              <feBlend
-                in2="BackgroundImageFix"
-                result="effect1_dropShadow_2018_233476"
-              />
-              <feBlend
-                in="SourceGraphic"
-                in2="effect1_dropShadow_2018_233476"
-                result="shape"
-              />
-            </filter>
           </defs>
         </svg>
       </TooltipTrigger>
