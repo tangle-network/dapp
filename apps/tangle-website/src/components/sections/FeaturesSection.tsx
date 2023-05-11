@@ -109,7 +109,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
   const { img, index, title, description, link } = props;
   return (
     <div className="bg-mono-0 hover:shadow-[0_8px_20px_rgba(18,17,39,0.08)] rounded-lg overflow-hidden flex flex-col md:w-[300px] min-h-[647px] md:min-h-min md:h-full lg:h-auto flex-1">
-      <div className="relative h-[150px] w-full object-contain">
+      <div className="relative aspect-[12/5] w-full object-contain">
         <Image src={img} alt={title} fill />
       </div>
       <div className="py-[42px] px-6 flex flex-col justify-between flex-1">
