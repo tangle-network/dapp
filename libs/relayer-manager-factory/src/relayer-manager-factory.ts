@@ -10,22 +10,25 @@ import {
 } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
+  chainNameAdapter,
   RelayerCMDBase,
   RelayerConfig,
-  chainNameAdapter,
   relayerConfig,
 } from '@webb-tools/dapp-config/relayer-config';
+import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
 import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
 
 export async function getRelayerManagerFactory() {
-  const env = process.env.NODE_ENV ?? 'development';
+  const env = process.env.NODE_ENV;
+
+  const appEnv = isAppEnvironmentType(env) ? env : 'development'; // Fallback to `development`
 
   // Filter out the relayers which are not enabled for the current environment
-  const filteredRelayerConfigs = relayerConfig.filter(
-    (relayer) => Boolean(relayer.isProduction) === (env === 'production')
+  const filteredRelayerConfigs = relayerConfig.filter((relayer) =>
+    relayer.env ? relayer.env.includes(appEnv) : true
   );
 
   if (!relayerManagerFactory) {

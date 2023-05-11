@@ -17,27 +17,35 @@ interface RoadMapItemProps {
 
 const roadMapItems = [
   {
-    timeline: 'Early 2023',
+    timeline: 'Mid 2023',
     action: 'Initial ⚡️',
-    activities: ['Test Runtime Upgrade', 'Finalize Tangle Token Distribution'],
+    activities: [
+      'Test Runtime Upgrade',
+      'Finalize Tangle Token Distribution',
+      'Launch Incentivized testnet',
+    ],
   },
   {
     timeline: 'Late 2023',
     action: 'Growth 🌕',
-    activities: ['Update Tangle Genesis for Launch', 'Distribute TNT Tokens'],
-  },
-  {
-    timeline: '2024',
-    action: 'Scale 🪐',
     activities: [
-      'Launch Cross-chain Transfers',
+      'Update Tangle Genesis for Launch',
+      'Distribute TNT Tokens',
       'Launch Democracy Governance',
-      'Launch VAnchor Bridges',
-      'Collator Staking Upgrades',
+      'Launch OFAC VAnchor Bridges',
     ],
   },
   {
-    timeline: 'Tbd',
+    timeline: 'Early 2024',
+    action: 'Scale 🪐',
+    activities: [
+      'Launch Cross-chain Transfers',
+      'Validator Staking Upgrades',
+      'Launch Semaphore VAnchor bridges',
+    ],
+  },
+  {
+    timeline: 'Mid 2024',
     action: 'Expand 🌌',
     activities: ['Remove Sudo', 'Improve Relayer & Proposer Security'],
   },

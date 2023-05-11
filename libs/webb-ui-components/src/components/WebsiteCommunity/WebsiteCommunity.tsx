@@ -44,7 +44,7 @@ export const WebsiteCommunity = ({
   const cardContainerClsx = useMemo(
     () =>
       twMerge(
-        'mt-[24px] grid gap-4 justify-center md:grid-cols-2 px-4',
+        'mt-[24px] grid gap-4 justify-center md:grid-cols-2 px-4 lg:px-0',
         cardContainerClassName
       ),
     [cardContainerClassName]

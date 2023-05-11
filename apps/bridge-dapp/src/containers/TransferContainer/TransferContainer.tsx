@@ -1,4 +1,7 @@
-import { Currency } from '@webb-tools/abstract-api-provider';
+import {
+  Currency,
+  utxoFromVAnchorNote,
+} from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Chain,
@@ -19,11 +22,10 @@ import {
 import {
   calculateTypedChainId,
   ChainType as ChainTypeEnum,
-  CircomUtxo,
   Keypair,
   Note,
   ResourceId,
-  toFixedHex,
+  Utxo,
 } from '@webb-tools/sdk-core';
 import {
   getRoundedAmountString,
@@ -94,17 +96,22 @@ export const TransferContainer = forwardRef<
       return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
     }, [activeChain]);
 
+    const useRelayerArgs = useMemo(
+      () => ({
+        typedChainId: currentTypedChainId,
+        target:
+          activeApi?.state.activeBridge && currentTypedChainId
+            ? activeApi.state.activeBridge.targets[currentTypedChainId]
+            : undefined,
+      }),
+      [activeApi?.state.activeBridge, currentTypedChainId]
+    );
+
     // Given the user inputs above, fetch relayers state
     const {
       relayersState: { activeRelayer, relayers },
       setRelayer,
-    } = useRelayers({
-      typedChainId: currentTypedChainId,
-      target:
-        activeApi?.state.activeBridge && currentTypedChainId
-          ? activeApi.state.activeBridge.targets[currentTypedChainId]
-          : undefined,
-    });
+    } = useRelayers(useRelayerArgs);
 
     // The destination chains
     const [destChain, setDestChain] = useState<Chain | undefined>(
@@ -500,6 +507,12 @@ export const TransferContainer = forwardRef<
 
     // Boolean indicating whether inputs are valid to transfer
     const isValidToTransfer = useMemo<boolean>(() => {
+      const totalFee = Number(
+        ethers.utils.formatEther(feeInWei ?? ethers.constants.Zero)
+      );
+
+      const amountOrZero = amount ?? 0;
+
       return [
         Boolean(fungibleCurrency), // No fungible currency selected
         Boolean(destChain), // No destination chain selected
@@ -507,14 +520,18 @@ export const TransferContainer = forwardRef<
         isValidAmount, // Is valid amount
         Boolean(recipientPubKey), // No recipient address
         isValidRecipient, // Valid recipient address
+        activeRelayer ? amountOrZero >= totalFee : true, // Insufficient balance
       ].some((value) => value === false);
     }, [
-      destChain,
+      feeInWei,
       fungibleCurrency,
+      destChain,
+      recipientError,
       isValidAmount,
       recipientPubKey,
-      recipientError,
       isValidRecipient,
+      activeRelayer,
+      amount,
     ]);
 
     // All available notes
@@ -747,13 +764,14 @@ export const TransferContainer = forwardRef<
         ? amountBigNumber.sub(fee)
         : amountBigNumber;
 
-      const transferUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
+      const transferUtxo = await activeApi.generateUtxo({
+        curve: noteManager.defaultNoteGenInput.curve,
+        backend: activeApi.backend,
         amount: utxoAmount.toString(),
         chainId: destTypedChainId.toString(),
         keypair: recipientKeypair,
         originChainId: currentTypedChainId.toString(),
+        index: activeApi.state.defaultUtxoIndex.toString(),
       });
 
       const changeAmountBigNumber = ethers.utils.parseUnits(
@@ -761,43 +779,37 @@ export const TransferContainer = forwardRef<
         fungibleCurrencyDecimals
       );
 
-      const changeUtxo = await CircomUtxo.generateUtxo({
-        curve: 'Bn254',
-        backend: 'Circom',
-        amount: changeAmountBigNumber.toString(),
-        chainId: currentTypedChainId.toString(),
-        keypair,
-        originChainId: currentTypedChainId.toString(),
-      });
-
       const srcAddress =
         activeApi.state.activeBridge.targets[currentTypedChainId];
 
       let changeNote: Note | undefined;
       if (changeAmountBigNumber.gt(0)) {
-        changeNote = await Note.generateNote({
-          amount: changeUtxo.amount,
-          backend: 'Circom',
-          curve: 'Bn254',
-          denomination: '18',
-          exponentiation: '5',
-          hashFunction: 'Poseidon',
-          protocol: 'vanchor',
-          secrets: [
-            toFixedHex(currentTypedChainId, 8).substring(2),
-            toFixedHex(changeUtxo.amount).substring(2),
-            toFixedHex(keypair.privkey).substring(2),
-            toFixedHex('0x' + changeUtxo.blinding).substring(2),
-          ].join(':'),
-          sourceChain: currentTypedChainId.toString(),
-          sourceIdentifyingData: srcAddress,
-          targetChain: currentTypedChainId.toString(),
-          targetIdentifyingData: srcAddress,
-          tokenSymbol: inputNotes[0].note.tokenSymbol,
-          version: 'v1',
-          width: '4',
-        });
+        changeNote = await noteManager.generateNote(
+          activeApi.backend,
+          currentTypedChainId,
+          srcAddress,
+          currentTypedChainId,
+          srcAddress,
+          fungibleCurrency.view.symbol,
+          fungibleCurrency.getDecimals(),
+          changeAmount
+        );
       }
+
+      const changeUtxo = changeNote
+        ? await utxoFromVAnchorNote(
+            changeNote.note,
+            changeNote.note.index ? +changeNote.note.index : undefined
+          )
+        : await activeApi.generateUtxo({
+            curve: noteManager.defaultNoteGenInput.curve,
+            backend: activeApi.backend,
+            amount: changeAmountBigNumber.toString(),
+            chainId: currentTypedChainId.toString(),
+            keypair,
+            originChainId: currentTypedChainId.toString(),
+            index: activeApi.state.defaultUtxoIndex.toString(),
+          });
 
       setMainComponent(
         <TransferConfirmContainer
@@ -824,7 +836,7 @@ export const TransferContainer = forwardRef<
       isWalletConnected,
       hasNoteAccount,
       noteManager,
-      activeApi?.state.activeBridge,
+      activeApi,
       api,
       fungibleCurrency,
       destChain,
@@ -835,9 +847,9 @@ export const TransferContainer = forwardRef<
       infoCalculated.rawChangeAmount,
       recipientPubKey,
       feeInWei,
+      activeRelayer,
       setMainComponent,
       feeTokenSymbol,
-      activeRelayer,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
@@ -1089,12 +1101,12 @@ export const TransferContainer = forwardRef<
       const tkSymbol = infoCalculated?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
-      if (amount < totalFee) {
+      if (activeRelayer && amount < totalFee) {
         return `Insufficient funds. You need more than ${feeText} to cover the fee`;
       }
 
       return;
-    }, [amount, feeInWei, infoCalculated?.transferTokenSymbol]);
+    }, [activeRelayer, amount, feeInWei, infoCalculated?.transferTokenSymbol]);
 
     const isDisabled = useMemo(() => {
       return isWalletConnected && hasNoteAccount && isValidToTransfer;

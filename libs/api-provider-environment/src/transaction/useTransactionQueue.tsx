@@ -31,6 +31,7 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
       return 'in-progress';
   }
 }
+
 function mapTxToPayload(
   tx: Transaction<any>,
   currencyConfig: Record<number, CurrencyConfig>,
@@ -51,13 +52,26 @@ function mapTxToPayload(
   const srcChainName = chainConfig[wallets.src]?.name;
   const destChainName = chainConfig[wallets.dest]?.name;
 
+  const txProviderType = tx.metaData.providerType;
+
   const getExplorerURI = (
     addOrTxHash: string,
     variant: 'tx' | 'address'
   ): string => {
-    return `${
-      explorerUri.endsWith('/') ? explorerUri : explorerUri + '/'
-    }${variant}/${addOrTxHash}`;
+    explorerUri = explorerUri.endsWith('/') ? explorerUri : explorerUri + '/';
+
+    switch (txProviderType) {
+      case 'web3':
+        return `${explorerUri}${variant}/${addOrTxHash}`;
+
+      case 'polkadot': {
+        const prefix = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+        return `${explorerUri}${prefix}`;
+      }
+
+      default:
+        return '';
+    }
   };
 
   return {
@@ -84,6 +98,7 @@ function mapTxToPayload(
     method: tx.name as any,
   };
 }
+
 function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
@@ -97,8 +112,10 @@ function getTxMessageFromStatus<Key extends TransactionState>(
       return 'Preparing transaction';
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
+    case TransactionState.FetchingLeavesFromRelayer:
+      return 'Fetching transaction leaves from the relayer...';
     case TransactionState.FetchingLeaves:
-      return 'Fetching transaction leaves...';
+      return 'Fetching transaction leaves on chain...';
     case TransactionState.GeneratingZk:
       return 'Generating zero knowledge proof...';
     case TransactionState.SendingTransaction:
@@ -112,6 +129,7 @@ function getTxMessageFromStatus<Key extends TransactionState>(
   }
   return '';
 }
+
 export type TransactionQueueApi = {
   txPayloads: TransactionPayload[];
   txQueue: Transaction<any>[];
@@ -132,6 +150,7 @@ export type TransactionQueueApi = {
     ): Transaction<NewNotesTxResult> | null;
   };
 };
+
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(

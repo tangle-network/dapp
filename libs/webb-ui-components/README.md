@@ -24,13 +24,13 @@ To view the available components, check out the official documentation [here](ht
 
 ## Prerequisites
 
-This library makes use of yarn, nodejs, and requires version node v16. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [`yarn`](https://classic.yarnpkg.com/en/docs/install):
+This library makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [`yarn`](https://classic.yarnpkg.com/en/docs/install):
 
 ```bash
 npm install --global yarn
 ```
 
-This component library also makes use of [tailwindcss](https://tailwindcss.com/). For installation guides please refer to official documentation [here](https://tailwindcss.com/docs/installation/framework-guides). 
+This component library also makes use of [tailwindcss](https://tailwindcss.com/). For installation guides please refer to official documentation [here](https://tailwindcss.com/docs/installation/framework-guides).
 
 Great! Now your environment is ready! 🚀🚀
 
@@ -40,14 +40,16 @@ This component library can be used by external dApp developers for their own pro
 
 ### External Usage
 
-To make use of the library in your own project install `@webb-tools/webb-ui-components` with your package manager of choice: 
+To make use of the library in your own project install `@webb-tools/webb-ui-components` with your package manager of choice:
 
 > NPM
+
 ```bash
 npm install @webb-tools/webb-ui-components
 ```
 
 > Yarn
+
 ```bash
 yarn add @webb-tools/webb-ui-components
 ```
@@ -61,7 +63,7 @@ import '@webb-tools/webb-ui-components/index.css';
 const App: FC = () => {
   return (
     <WebbUIProvider hasErrorBoudary>
-        <div>Hello dApp</div>
+      <div>Hello dApp</div>
     </WebbUIProvider>
   );
 };
@@ -71,7 +73,7 @@ export default App;
 
 #### Customizing Component Styles
 
-The component library make use of [tailwindcss](https://tailwindcss.com/) for styling components. If you would like to customize a component just use the tailwind classes provided. 
+The component library make use of [tailwindcss](https://tailwindcss.com/) for styling components. If you would like to customize a component just use the tailwind classes provided.
 
 To make use of the tailwind classes for Webb's design system (e.g. colors, typos, …) in your dApp you just need to install Webb's tailwind preset and include it in the tailwind config file. See the below example:
 
@@ -91,7 +93,7 @@ module.exports = {
 };
 ```
 
-You will now be able to make use of all of the components included in Webb's design system and Webb's preferred colors, typography and styles! 
+You will now be able to make use of all of the components included in Webb's design system and Webb's preferred colors, typography and styles!
 
 ### Internal Usage
 
@@ -154,4 +156,3 @@ yarn build
 Licensed under <a href="https://github.com/webb-tools/webb-dapp/blob/develop/LICENSE">Apache 2.0 license</a>.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, as defined in the Apache 2.0 license, shall be licensed as above, without any additional terms or conditions.
-

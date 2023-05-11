@@ -26,7 +26,7 @@ const governanceSystemQnAItems = [
     icon: <HowTssWorksSvg />,
     title: 'How it works',
     description:
-      'Relayers propose payloads to the governance system by providing merkle trie proofs of inclusion of state and events agains their respective blockchains. Payloads are verified on-chain and added to an unsigned proposal queue for the Tangle Network DKG Authorities to read.',
+      "Relayers suggest changes to the network via the governance system by providing proof that the updates are based on accurate information from their corresponding blockchains. These updates are verified and placed in a queue, waiting for Tangle Network's private and decentralized authorities to review and approve them.",
     href: HOW_TSS_WORKS_URL,
   },
 ];
@@ -37,7 +37,7 @@ export const GovernanceSystemSection = () => {
       <div className="max-w-[1440px] mx-auto">
         <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[96px]">
           <div className="lg:flex-1 flex items-center">
-            <div className="relative w-[340px] md:w-[600px] lg:w=[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
+            <div className="relative w-[340px] md:w-[600px] lg:w-[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
               <Image
                 src="/static/assets/governance-system.png"
                 alt="Governance System"
