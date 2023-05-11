@@ -26,7 +26,7 @@ const governanceSystemQnAItems = [
     icon: <HowTssWorksSvg />,
     title: 'How it works',
     description:
-      'Relayers propose payloads to the governance system by providing merkle trie proofs of inclusion of state and events agains their respective blockchains. Payloads are verified on-chain and added to an unsigned proposal queue for the Tangle Network DKG Authorities to read.',
+      "Relayers suggest changes to the network via the governance system by providing proof that the updates are based on accurate information from their corresponding blockchains. These updates are verified and placed in a queue, waiting for Tangle Network's private and decentralized authorities to review and approve them.",
     href: HOW_TSS_WORKS_URL,
   },
 ];

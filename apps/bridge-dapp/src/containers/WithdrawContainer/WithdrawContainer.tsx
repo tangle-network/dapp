@@ -110,17 +110,22 @@ export const WithdrawContainer = forwardRef<
     return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
   }, [activeChain]);
 
+  const useRelayersArgs = useMemo(
+    () => ({
+      typedChainId: currentTypedChainId ?? undefined,
+      target:
+        activeApi?.state.activeBridge && currentTypedChainId
+          ? activeApi.state.activeBridge.targets[currentTypedChainId]
+          : undefined,
+    }),
+    [activeApi, currentTypedChainId]
+  );
+
   // Given the user inputs above, fetch relayers state
   const {
     relayersState: { activeRelayer, relayers },
     setRelayer,
-  } = useRelayers({
-    typedChainId: currentTypedChainId ?? undefined,
-    target:
-      activeApi?.state.activeBridge && currentTypedChainId
-        ? activeApi.state.activeBridge.targets[currentTypedChainId]
-        : undefined,
-  });
+  } = useRelayers(useRelayersArgs);
 
   const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
     useNoteAccount();
@@ -382,7 +387,7 @@ export const WithdrawContainer = forwardRef<
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
       typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
-      amount >= totalFee,
+      activeRelayer ? amount >= totalFee : true, // When relayer is selected, amount should be greater than fee
       Boolean(feeInfoOrBigNumber),
     ].some((value) => value === false);
   }, [
@@ -395,6 +400,7 @@ export const WithdrawContainer = forwardRef<
     isValidRecipient,
     liquidity,
     amount,
+    activeRelayer,
     feeInfoOrBigNumber,
   ]);
 
@@ -1096,12 +1102,18 @@ export const WithdrawContainer = forwardRef<
     const tkSymbol = selectedFungibleToken?.symbol ?? '';
     const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
-    if (amount < totalFee) {
+    if (activeRelayer && amount < totalFee) {
       return `Insufficient funds. You need more than ${feeText} to cover the fee`;
     }
 
     return liquidityDesc;
-  }, [amount, liquidityDesc, selectedFungibleToken?.symbol, totalFeeInWei]);
+  }, [
+    activeRelayer,
+    amount,
+    liquidityDesc,
+    selectedFungibleToken?.symbol,
+    totalFeeInWei,
+  ]);
 
   const infoItemProps = useMemo<
     ComponentProps<typeof WithdrawCard>['infoItemProps']
