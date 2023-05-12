@@ -45,7 +45,7 @@ export const substrateProviderFactory = async (
     throw new Error(`Chain not found for ${typedChainId}`); // Development error
   }
 
-  return new Promise((res, rej) => {
+  const api = new Promise<ApiPromise>((res, rej) => {
     PolkadotProvider.getApiPromise(constants.APP_NAME, [chain.url], (error) => {
       console.error('Error in substrateProviderFactory', error);
       error.cancel();
@@ -58,4 +58,14 @@ export const substrateProviderFactory = async (
       })
       .catch(rej);
   });
+
+  // The apiPromise sometimes hangs, so we add a timeout to reject it
+  // after 5 seconds
+  const timeout = new Promise<ApiPromise>((res, rej) => {
+    setTimeout(() => {
+      rej(new Error('Timed out while initializing apiPromise'));
+    }, 5000);
+  });
+
+  return Promise.race([api, timeout]);
 };
