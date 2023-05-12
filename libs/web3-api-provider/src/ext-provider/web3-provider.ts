@@ -3,9 +3,9 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
+import detectEthereumProvider from '@metamask/detect-provider';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ProvideCapabilities } from '@webb-tools/abstract-api-provider';
-import { executorWithTimeout } from '@webb-tools/browser-utils';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ethers, Signer } from 'ethers';
 import Web3 from 'web3';
@@ -61,51 +61,31 @@ export class Web3Provider<T = unknown> {
   ) {}
 
   /**
-   * Getter for the web3 provider inject by MetaMask
-   **/
-  static get currentProvider() {
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
-      // @ts-ignore
-      const provider = window.ethereum || window.web3.currentProvider;
-
-      if (provider) {
-        return provider;
-      }
-    }
-
-    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
-  }
-
-  /**
    * Initialize web3 provider from extension
    **/
   static async fromExtension() {
-    // @ts-ignore
-    if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
-      // @ts-ignore
-      const provider = Web3Provider.currentProvider;
-
-      await provider.request({ method: 'eth_requestAccounts' });
-
-      const web3Provider = new Web3Provider(new Web3(provider), {
-        description: 'MetaMask',
-        icons: [],
-        name: 'MetaMask',
-        url: 'https://https://metamask.io',
-      });
-
-      web3Provider._capabilities = {
-        addNetworkRpc: true,
-        hasSessions: false,
-        listenForAccountChange: true,
-        listenForChainChane: true,
-      };
-
-      return web3Provider;
+    const provider = await detectEthereumProvider<AbstractProvider>();
+    if (!provider) {
+      throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
     }
 
-    throw WebbError.from(WebbErrorCodes.MetaMaskExtensionNotInstalled);
+    await provider.request?.({ method: 'eth_requestAccounts' });
+
+    const web3Provider = new Web3Provider(new Web3(provider as any), {
+      description: 'MetaMask',
+      icons: [],
+      name: 'MetaMask',
+      url: 'https://https://metamask.io',
+    });
+
+    web3Provider._capabilities = {
+      addNetworkRpc: true,
+      hasSessions: false,
+      listenForAccountChange: true,
+      listenForChainChane: true,
+    };
+
+    return web3Provider;
   }
 
   /**
