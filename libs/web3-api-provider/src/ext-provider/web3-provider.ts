@@ -5,6 +5,7 @@
 
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ProvideCapabilities } from '@webb-tools/abstract-api-provider';
+import { executorWithTimeout } from '@webb-tools/browser-utils';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ethers, Signer } from 'ethers';
 import Web3 from 'web3';
@@ -85,7 +86,10 @@ export class Web3Provider<T = unknown> {
       // @ts-ignore
       const provider = Web3Provider.currentProvider;
 
-      await provider.request({ method: 'eth_requestAccounts' });
+      await executorWithTimeout(
+        provider.request({ method: 'eth_requestAccounts' })
+      );
+
       const web3Provider = new Web3Provider(new Web3(provider), {
         description: 'MetaMask',
         icons: [],

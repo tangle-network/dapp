@@ -35,7 +35,10 @@ import {
 } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+import {
+  substrateProviderFactory,
+  WebbPolkadot,
+} from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
@@ -46,6 +49,7 @@ import {
   Keypair,
 } from '@webb-tools/sdk-core';
 import {
+  evmProviderFactory,
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
@@ -58,7 +62,6 @@ import constants from './constants';
 import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
-import { evmProviderFactory, substrateProviderFactory } from './utils';
 import { WebbContext } from './webb-context';
 
 interface WebbProviderProps extends BareProps {
@@ -426,8 +429,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       _wallet: Wallet,
       _networkStorage?: NetworkStorage | undefined
     ) => {
-      const relayerManagerFactory = await getRelayerManagerFactory();
-
       const wallet = _wallet || activeWallet;
 
       const nextTypedChainId = calculateTypedChainId(
@@ -453,16 +454,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           status: 'loading',
         });
 
+        const relayerManagerFactory = await getRelayerManagerFactory();
+
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
-
-        const apiConfig = await ApiConfig.initFromApi(
-          defaultApiConfig,
-          evmProviderFactory,
-          substrateProviderFactory
-        );
-
-        setApiConfig(apiConfig);
 
         switch (wallet.id) {
           case WalletId.Polkadot:
@@ -472,6 +467,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
               const url = chain.url;
+
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
+                evmProviderFactory,
+                substrateProviderFactory
+              );
+
+              setApiConfig(apiConfig);
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
@@ -577,6 +580,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 (await relayerManagerFactory.getRelayerManager(
                   'evm'
                 )) as Web3RelayerManager;
+
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
+                evmProviderFactory,
+                substrateProviderFactory
+              );
+
+              setApiConfig(apiConfig);
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,
@@ -748,15 +759,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setLoading(false);
         logger.error(e);
 
+        let err: WebbError | undefined = undefined;
+
         if (e instanceof WebbError) {
           /// Catch the errors for the switcher while switching
           catchWebbError(e);
-
-          appEvent.send('walletConnectionState', {
-            ...sharedWalletConnectionPayload,
-            status: 'failed',
-            error: e,
-          });
+          err = e;
         } else {
           // Parse and display error
           const parsedError = parseError(e);
@@ -764,6 +772,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             variant: 'error',
             message: 'Web3: Switch Chain Error',
             secondaryMessage: parsedError.message,
+          });
+
+          appEvent.send('walletConnectionState', {
+            ...sharedWalletConnectionPayload,
+            status: 'failed',
+            error: err,
           });
         }
 
