@@ -773,13 +773,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             message: 'Web3: Switch Chain Error',
             secondaryMessage: parsedError.message,
           });
-
-          appEvent.send('walletConnectionState', {
-            ...sharedWalletConnectionPayload,
-            status: 'failed',
-            error: err,
-          });
         }
+
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'failed',
+          error: err,
+        });
 
         return null;
       }

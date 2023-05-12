@@ -86,9 +86,7 @@ export class Web3Provider<T = unknown> {
       // @ts-ignore
       const provider = Web3Provider.currentProvider;
 
-      await executorWithTimeout(
-        provider.request({ method: 'eth_requestAccounts' })
-      );
+      await provider.request({ method: 'eth_requestAccounts' });
 
       const web3Provider = new Web3Provider(new Web3(provider), {
         description: 'MetaMask',
