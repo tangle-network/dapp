@@ -80,6 +80,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - VAnchor Substrate Implementation (Missing Withdraw/Transfer Flows): https://github.com/webb-tools/webb-dapp/pull/1139
 
+### [0.0.7] - 2023-05-12
+
+- Hox fix: Fee only subtracted when relayer is selected
+- Hot fix: Fee should be 0 when no relayer is selected
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.5]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.5
 [0.0.6]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.6
