@@ -33,7 +33,7 @@ const ProposalData: FC<{ data: Record<string, any> }> = ({ data }) => {
   }, [data]);
 
   return (
-    <div className={'whitespace-pre-wrap'}>
+    <div className="whitespace-pre-wrap !text-mono-80">
       {JSON.stringify(knowProposal ? data.data : data, null, 2)}
     </div>
   );
@@ -229,11 +229,11 @@ export const ProposalDetail = () => {
             Details
           </Typography>
           <div className="p-4 break-all rounded-lg bg-mono-20 dark:bg-mono-160">
-            <Typography variant="mono2" component="p">
+            <Typography variant="mono1" component="p">
               Type: {proposalData.type}
             </Typography>
             <br />
-            <Typography variant="mono2" component="p">
+            <Typography variant="mono1" component="p">
               <ProposalData
                 data={getProposalsData(proposalData.type, proposalData.data)}
               />
