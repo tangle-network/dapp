@@ -430,6 +430,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       const wallet = _wallet || activeWallet;
 
+      const nextTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.chainId
+      );
+
+      const sharedWalletConnectionPayload = {
+        walletId: wallet.id,
+        typedChainId: { chainId: chain.chainId, chainType: chain.chainType },
+      };
+
       // wallet cleanup
       /// if new wallet id isn't the same of the current then the dApp is dealing with api change
       if (activeApi) {
@@ -438,7 +448,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       try {
         setLoading(true);
-        appEvent.send('walletConnectionState', 'loading');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'loading',
+        });
 
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
@@ -459,10 +472,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
               const url = chain.url;
-              const typedChainId = calculateTypedChainId(
-                chain.chainType,
-                chain.chainId
-              );
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
@@ -473,7 +482,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       setInteractiveFeedbacks,
                       feedback
                     );
-                    appEvent.send('walletConnectionState', 'failed');
+                    appEvent.send('walletConnectionState', {
+                      ...sharedWalletConnectionPayload,
+                      status: 'failed',
+                    });
                   },
                 },
                 relayerManager,
@@ -486,7 +498,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       import.meta.url
                     )
                   ),
-                typedChainId,
+                nextTypedChainId,
                 wallet
               );
 
@@ -502,7 +514,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 localActiveApi.noteManager = noteManager;
               }
 
-              appEvent.send('walletConnectionState', 'sucess');
+              appEvent.send('walletConnectionState', {
+                ...sharedWalletConnectionPayload,
+                status: 'sucess',
+              });
               setLoading(false);
             }
             break;
@@ -664,14 +679,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                const typedChainId = calculateTypedChainId(
-                  ChainType.EVM,
-                  chain.chainId
-                );
                 const currency = Object.values(apiConfig.currencies).find(
                   (c) =>
                     c.type === CurrencyType.NATIVE &&
-                    Array.from(c.addresses.keys()).includes(typedChainId)
+                    Array.from(c.addresses.keys()).includes(nextTypedChainId)
                 );
                 if (!currency) {
                   throw new Error('Native token not found');
@@ -697,7 +708,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 const newChainId = newNetwork.chainId;
 
                 if (newChainId != chain.chainId) {
-                  appEvent.send('walletConnectionState', 'failed');
                   throw new Error('User rejected network switch');
                 }
 
@@ -728,17 +738,25 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setActiveChain(chain);
         setActiveWallet(wallet);
         setLoading(false);
-        appEvent.send('walletConnectionState', 'sucess');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'sucess',
+        });
 
         return localActiveApi;
       } catch (e) {
         setLoading(false);
         logger.error(e);
 
-        appEvent.send('walletConnectionState', 'failed');
         if (e instanceof WebbError) {
           /// Catch the errors for the switcher while switching
           catchWebbError(e);
+
+          appEvent.send('walletConnectionState', {
+            ...sharedWalletConnectionPayload,
+            status: 'failed',
+            error: e,
+          });
         } else {
           // Parse and display error
           const parsedError = parseError(e);

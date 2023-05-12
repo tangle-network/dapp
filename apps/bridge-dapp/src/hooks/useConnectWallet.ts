@@ -147,7 +147,7 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     let isSubscribed = true;
 
     appEvent.on('walletConnectionState', (state) => {
-      switch (state) {
+      switch (state.status) {
         case 'failed': {
           isSubscribed && setWalletState(WalletState.FAILED);
           break;
