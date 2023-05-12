@@ -258,10 +258,7 @@ export const ProposalDetail = () => {
           <Link to={isPage ? '/proposals' : `/proposals/${proposalId}`}>
             {isPage ? (
               <div className={'flex flex-row items-center'}>
-                <ArrowLeft size="lg" />{' '}
-                <Typography variant={'body2'} fw={'bold'}>
-                  Back to proposals
-                </Typography>
+                <ArrowLeft size="lg" />
               </div>
             ) : (
               <Expand size="lg" />
