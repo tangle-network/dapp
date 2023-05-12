@@ -157,6 +157,7 @@
     "@babel/preset-react": "7.18.6",
     "@babel/preset-typescript": "7.18.6",
     "@babel/runtime": "7.18.6",
+    "@eslint-community/eslint-utils": "^4.4.0",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@graphql-codegen/cli": "2.16.5",

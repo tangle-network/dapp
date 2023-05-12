@@ -1,7 +1,8 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, WalletConfig } from '@webb-tools/dapp-config';
-import { WalletId } from '@webb-tools/dapp-types';
+import { WalletId, WebbError } from '@webb-tools/dapp-types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
@@ -62,6 +63,11 @@ export type UseConnectWalletReturnType = {
   isWalletConnected: boolean;
 
   /**
+   * Connect wallet error
+   */
+  connectError?: WebbError;
+
+  /**
    * Function to reset the wallet connection state
    * and selected wallet state
    * @returns void
@@ -74,28 +80,44 @@ export type UseConnectWalletReturnType = {
   setChain: (chain?: Chain) => void;
 };
 
-let isWalletModalOpenSubject: BehaviorSubject<boolean>;
+const isWalletModalOpenSubject = new BehaviorSubject<boolean>(false);
 
-let walletStateSubject: BehaviorSubject<WalletState>;
+const setWalletModalOpen = (isOpen: boolean) =>
+  isWalletModalOpenSubject.next(isOpen);
 
-let selectedWalletSubject: BehaviorSubject<WalletConfig | undefined>;
+const walletStateSubject = new BehaviorSubject<WalletState>(WalletState.IDLE);
 
-let chainSubject: BehaviorSubject<Chain | undefined>;
+const setWalletState = (state: WalletState) => walletStateSubject.next(state);
+
+const selectedWalletSubject = new BehaviorSubject<WalletConfig | undefined>(
+  undefined
+);
+
+const setSelectedWallet = (wallet: WalletConfig | undefined) =>
+  selectedWalletSubject.next(wallet);
+
+const chainSubject = new BehaviorSubject<Chain | undefined>(undefined);
+
+const setCurrentChain = (chain: Chain | undefined) => chainSubject.next(chain);
+
+const connectErrorSubject = new BehaviorSubject<WebbError | undefined>(
+  undefined
+);
+
+const setConnectError = (error: WebbError | undefined) =>
+  connectErrorSubject.next(error);
 
 /**
  * Hook contains the logic to connect open the wallet modal
  * and connect to a wallet
  */
 export const useConnectWallet = (): UseConnectWalletReturnType => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [walletState, setWalletState] = useState(WalletState.IDLE);
-
-  const [selectedWallet, setSelectedWallet] = useState<
-    WalletConfig | undefined
-  >(undefined);
-
-  const [currentChain, setCurrentChain] = useState<Chain | undefined>();
+  // Get the states from the subjects
+  const isModalOpen = useObservableState(isWalletModalOpenSubject);
+  const walletState = useObservableState(walletStateSubject);
+  const selectedWallet = useObservableState(selectedWalletSubject);
+  const currentChain = useObservableState(chainSubject);
+  const connectError = useObservableState(connectErrorSubject);
 
   const { setMainComponent } = useWebbUI();
 
@@ -107,24 +129,6 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     activeAccount,
     loading,
   } = useWebContext();
-
-  if (!isWalletModalOpenSubject) {
-    isWalletModalOpenSubject = new BehaviorSubject<boolean>(false);
-  }
-
-  if (!selectedWalletSubject) {
-    selectedWalletSubject = new BehaviorSubject<WalletConfig | undefined>(
-      undefined
-    );
-  }
-
-  if (!walletStateSubject) {
-    walletStateSubject = new BehaviorSubject<WalletState>(WalletState.IDLE);
-  }
-
-  if (!chainSubject) {
-    chainSubject = new BehaviorSubject<Chain | undefined>(undefined);
-  }
 
   const connectingWalletId = useMemo<number | undefined>(
     () =>
@@ -149,7 +153,10 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     appEvent.on('walletConnectionState', (state) => {
       switch (state.status) {
         case 'failed': {
-          isSubscribed && setWalletState(WalletState.FAILED);
+          if (isSubscribed) {
+            setWalletState(WalletState.FAILED);
+            setConnectError(state.error);
+          }
           break;
         }
 
@@ -181,52 +188,18 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
     };
   }, [appEvent]);
 
-  // Subscribe to subjects to update states
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const isWalletModalOpenSubscription = isWalletModalOpenSubject.subscribe(
-      (isOpen) => {
-        isSubscribed && setIsModalOpen(() => isOpen);
-      }
-    );
-
-    const selectedWalletSubscription = selectedWalletSubject.subscribe(
-      (wallet) => {
-        isSubscribed && setSelectedWallet(() => wallet);
-      }
-    );
-
-    const walletStateSubscription = walletStateSubject.subscribe((state) => {
-      isSubscribed && setWalletState(() => state);
-    });
-
-    const chainSubscription = chainSubject.subscribe((chain) => {
-      isSubscribed && setCurrentChain(() => chain);
-    });
-
-    return () => {
-      isSubscribed = false;
-
-      isWalletModalOpenSubscription.unsubscribe();
-      selectedWalletSubscription.unsubscribe();
-      walletStateSubscription.unsubscribe();
-      chainSubscription.unsubscribe();
-    };
-  }, []);
-
   /**
    * Toggle or set state of the wallet modal
    * and set the next chain
    */
   const toggleModal = useCallback((isOpenArg?: boolean, nextChain?: Chain) => {
-    const isOpen = isOpenArg ?? !isWalletModalOpenSubject.value;
+    const isOpen = isOpenArg ?? !isWalletModalOpenSubject.getValue();
 
     if (isOpen && nextChain) {
-      chainSubject.next(nextChain);
+      setCurrentChain(nextChain);
     }
 
-    isWalletModalOpenSubject.next(isOpen);
+    setWalletModalOpen(isOpen);
   }, []);
 
   /**
@@ -241,7 +214,7 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
 
       // If the promise resolved without null, switchWallet was successful.
       if (retVal) {
-        isWalletModalOpenSubject.next(false);
+        setWalletModalOpen(false);
       }
 
       setMainComponent(undefined);
@@ -253,27 +226,21 @@ export const useConnectWallet = (): UseConnectWalletReturnType => {
    * Function to reset the wallet state to idle
    */
   const resetState = useCallback(() => {
-    chainSubject.next(undefined);
-    walletStateSubject.next(WalletState.IDLE);
-    selectedWalletSubject.next(undefined);
-  }, []);
-
-  /**
-   * The set chain function to be used by the wallet modal
-   */
-  const setChain = useCallback((chain?: Chain) => {
-    chainSubject.next(chain);
+    setCurrentChain(undefined);
+    setWalletState(WalletState.IDLE);
+    setSelectedWallet(undefined);
   }, []);
 
   return {
     chain: currentChain,
     connectingWalletId,
+    connectError,
     failedWalletId,
     isModalOpen,
     isWalletConnected,
     resetState,
     selectedWallet,
-    setChain,
+    setChain: setCurrentChain,
     switchWallet,
     toggleModal,
     walletState,

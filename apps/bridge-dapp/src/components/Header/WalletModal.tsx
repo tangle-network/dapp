@@ -1,12 +1,14 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
-import { walletsConfig } from '@webb-tools/dapp-config';
-import { WalletId } from '@webb-tools/dapp-types';
+import { WalletConfig, walletsConfig } from '@webb-tools/dapp-config';
+import { WalletId, WebbError } from '@webb-tools/dapp-types';
 import {
   Modal,
   ModalContent,
+  useWebbUI,
   WalletConnectionCard,
 } from '@webb-tools/webb-ui-components';
+import { is } from 'date-fns/locale';
 import { FC, useCallback, useMemo } from 'react';
 
 import { useConnectWallet } from '../../hooks';
@@ -22,7 +24,10 @@ export const WalletModal: FC = () => {
     selectedWallet,
     switchWallet,
     toggleModal,
+    connectError,
   } = useConnectWallet();
+
+  const { notificationApi } = useWebbUI();
 
   const { chains } = useWebContext();
 
@@ -33,6 +38,48 @@ export const WalletModal: FC = () => {
 
     return selectedChain;
   }, [chains, selectedChain]);
+
+  // Get the current failed or connecting wallet
+  const getCurrentWallet = useCallback(() => {
+    const walletId = failedWalletId ?? connectingWalletId;
+    if (!walletId) {
+      return undefined;
+    }
+
+    return chain.wallets[walletId];
+  }, [chain, failedWalletId, connectingWalletId]);
+
+  const isNotInstalledError = useMemo(() => {
+    if (!connectError) {
+      return false;
+    }
+
+    return WebbError.isWalletNotInstalledError(connectError);
+  }, [connectError]);
+
+  const errorMessage = useMemo(() => {
+    if (!connectError) {
+      return undefined;
+    }
+
+    return WebbError.getErrorMessage(connectError.code).message;
+  }, [connectError]);
+
+  // If the error about not installed wallet is shown,
+  // we should show download button text
+  const errorBtnText = useMemo(() => {
+    if (!connectError || !isNotInstalledError) {
+      return undefined;
+    }
+
+    const wallet = getCurrentWallet();
+    if (!wallet) {
+      return undefined;
+    }
+
+    const walletName = wallet?.name ?? 'Wallet';
+    return `Download ${walletName}`;
+  }, [connectError, getCurrentWallet, isNotInstalledError]);
 
   const handleOpenChange = useCallback(
     (isOpen: boolean) => {
@@ -45,6 +92,47 @@ export const WalletModal: FC = () => {
     resetState();
   }, [resetState]);
 
+  const handleWalletSelect = useCallback(
+    (wallet: WalletConfig) => {
+      switchWallet(chain, wallet);
+    },
+    [chain, switchWallet]
+  );
+
+  const handleDownloadBtnClick = useCallback(() => {
+    const { id } = getPlatformMetaData();
+    const wallet = getCurrentWallet();
+
+    if (wallet?.installLinks?.[id]) {
+      window.open(wallet.installLinks[id], '_blank');
+    }
+  }, [getCurrentWallet]);
+
+  const handleTryAgainBtnClick = useCallback(async () => {
+    if (!selectedWallet) {
+      notificationApi.addToQueue({
+        variant: 'warning',
+        message: 'Switch wallet failed',
+        secondaryMessage: 'No wallet selected. Please try again.',
+      });
+      return;
+    }
+
+    if (isNotInstalledError) {
+      handleDownloadBtnClick();
+      return;
+    }
+
+    await switchWallet(chain, selectedWallet);
+  }, [
+    selectedWallet,
+    isNotInstalledError,
+    switchWallet,
+    chain,
+    notificationApi,
+    handleDownloadBtnClick,
+  ]);
+
   return (
     <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
       <ModalContent
@@ -54,26 +142,14 @@ export const WalletModal: FC = () => {
       >
         <WalletConnectionCard
           wallets={Object.values(chain.wallets)}
-          onWalletSelect={async (wallet) => {
-            await switchWallet(chain, wallet);
-          }}
+          onWalletSelect={handleWalletSelect}
           onClose={() => toggleModal(false)}
           connectingWalletId={connectingWalletId}
+          errorBtnText={errorBtnText}
+          errorMessage={errorMessage}
           failedWalletId={failedWalletId}
-          onTryAgainBtnClick={async () => {
-            if (!selectedWallet) {
-              throw new Error('No wallet selected. Please try again.');
-            }
-            await switchWallet(chain, selectedWallet);
-          }}
-          onDownloadBtnClick={() => {
-            const { id } = getPlatformMetaData();
-
-            window.open(
-              walletsConfig[WalletId.MetaMask].installLinks?.[id],
-              '_blank'
-            );
-          }}
+          onTryAgainBtnClick={handleTryAgainBtnClick}
+          onDownloadBtnClick={handleDownloadBtnClick}
         />
       </ModalContent>
     </Modal>
