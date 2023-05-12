@@ -40,7 +40,7 @@ export const DropdownButton = forwardRef<
         <div className="flex items-center space-x-1">
           {icon && <span className="text-inherit">{icon}</span>}
           <span
-            className={cx('text-inherit', size === 'md' ? 'body1' : 'utility')}
+            className={cx('text-inherit', size === 'md' ? 'body1' : 'body2')}
           >
             {label}
           </span>
