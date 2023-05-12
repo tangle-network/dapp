@@ -112,7 +112,7 @@ export const WalletModal: FC = () => {
     if (!selectedWallet) {
       notificationApi.addToQueue({
         variant: 'warning',
-        message: 'Switch wallet failed',
+        message: 'Failed to switch wallet',
         secondaryMessage: 'No wallet selected. Please try again.',
       });
       return;
