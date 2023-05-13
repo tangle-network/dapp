@@ -25,6 +25,18 @@ export interface WalletConnectionCardProps extends PropsOf<'div'> {
   failedWalletId?: WalletId;
 
   /**
+   * Error message to display when the wallet connection failed
+   * @default 'Connection Failed! Please try again.'
+   */
+  errorMessage?: string;
+
+  /**
+   * The error button text to display when the wallet connection failed
+   * @default 'Try Again'
+   */
+  errorBtnText?: string;
+
+  /**
    * The callback which is invoked when the user selects a wallet
    * @example - the bridge-dapp will pass a 'switchChain' call with the wallet selection.
    */
