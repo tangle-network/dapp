@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
@@ -53,6 +52,7 @@ import {
   Web3RelayerManager,
   WebbWeb3Provider,
 } from '@webb-tools/web3-api-provider';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -98,7 +98,7 @@ function notificationHandler(notification: NotificationPayload) {
       const description = notification.data ? (
         <div>
           {Object.keys(notification.data).map((i, idx) => (
-            <Typography variant={'h6'} key={`${i}${idx}`}>
+            <Typography variant="body1" key={`${i}${idx}`}>
               {notification.data?.[i]}
             </Typography>
           ))}

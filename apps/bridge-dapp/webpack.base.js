@@ -58,7 +58,7 @@ function createWebpack(env, mode = 'production') {
       asyncWebAssembly: true,
     },
     context: env.context,
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src', 'index.tsx')],
+    entry: [path.resolve(__dirname, 'src', 'index.tsx')],
     mode,
     module: {
       rules: [
@@ -118,17 +118,7 @@ function createWebpack(env, mode = 'production') {
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      useBuiltIns: 'entry',
-                      corejs: '3',
-                      targets: {
-                        browsers: ['last 2 versions', 'not ie <= 8'],
-                        node: '14',
-                      },
-                    },
-                  ],
+                  '@babel/preset-env',
                   '@babel/preset-typescript',
                   [
                     '@babel/preset-react',

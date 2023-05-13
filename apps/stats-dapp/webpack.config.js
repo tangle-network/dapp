@@ -11,8 +11,8 @@ const path = require('path'),
     require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin'),
-  TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+  CopyWebpackPlugin = require('copy-webpack-plugin');
+// TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
 
@@ -62,7 +62,7 @@ function createWebpackBase() {
       ignored: ['**/node_modules'],
     },
 
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src', 'index.tsx')],
+    entry: [path.resolve(__dirname, 'src', 'index.tsx')],
 
     output: {
       chunkFilename: '[name].[chunkhash:8].js',
@@ -83,10 +83,10 @@ function createWebpackBase() {
       modules: ['node_modules'],
 
       plugins: [
-        new TsconfigPathsPlugin({
+        /*         new TsconfigPathsPlugin({
           extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
           configFile: path.resolve(__dirname, './tsconfig.app.json'),
-        }),
+        }), */
       ],
 
       fallback: {
@@ -115,18 +115,8 @@ function createWebpackBase() {
             options: {
               compact: false,
               presets: [
-                '@nrwl/web/babel',
-                [
-                  '@babel/preset-env',
-                  {
-                    useBuiltIns: 'entry',
-                    corejs: '3',
-                    targets: {
-                      browsers: ['last 2 versions', 'not ie <= 8'],
-                      node: 'current',
-                    },
-                  },
-                ],
+                '@nrwl/js/babel',
+                '@babel/preset-env',
                 '@babel/preset-typescript',
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
@@ -140,7 +130,6 @@ function createWebpackBase() {
                   { useESModules: false, loose: false },
                 ],
                 '@babel/plugin-transform-react-jsx',
-                '@babel/plugin-syntax-bigint',
                 '@babel/plugin-syntax-dynamic-import',
                 '@babel/plugin-syntax-import-meta',
                 '@babel/plugin-syntax-top-level-await',
@@ -359,6 +348,7 @@ function createWebpackBase() {
 
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
+      hot: true,
       port: 3001,
       host: '0.0.0.0',
       compress: true,
@@ -372,7 +362,6 @@ function createWebpackBase() {
         const port = devServer.server.address().port;
         console.log('Listening on port:', port);
       },
-      hot: true,
       ...(isDevelopment
         ? {
             client: {

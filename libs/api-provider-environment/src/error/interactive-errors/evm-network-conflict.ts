@@ -1,8 +1,8 @@
-import { Button } from '@mui/material';
 import { InteractiveFeedback, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { TAppEvent } from '../../app-event';
 import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
 import React from 'react';
+import { Button } from '@webb-tools/webb-ui-components';
 
 type EvmNetworkConflictParams = {
   intendedChain: string;
@@ -36,8 +36,6 @@ export function evmChainConflict(
             clicked = true;
           },
           children: `Switch to ${params.intendedChain}`,
-          variant: 'contained',
-          color: 'primary',
         });
       },
     },
