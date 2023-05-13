@@ -53,6 +53,13 @@ type WebbErrorMessage = {
   code: WebbErrorCodes;
 };
 
+const NOT_INSTALLED_WALLET_ERROR_CODES = [
+  WebbErrorCodes.PolkaDotExtensionNotInstalled,
+  WebbErrorCodes.TalismanExtensionNotInstalled,
+  WebbErrorCodes.SubWalletExtensionNotInstalled,
+  WebbErrorCodes.MetaMaskExtensionNotInstalled,
+];
+
 /// WebbError an Error class to throw errors and catch them with type
 export class WebbError extends Error {
   /// Static `Map` for error messages that will be instilled lazily
@@ -213,6 +220,10 @@ export class WebbError extends Error {
           message: 'Unknown error',
         };
     }
+  }
+
+  static isWalletNotInstalledError(error: WebbError) {
+    return NOT_INSTALLED_WALLET_ERROR_CODES.includes(error.code);
   }
 
   /// Coercion to sting

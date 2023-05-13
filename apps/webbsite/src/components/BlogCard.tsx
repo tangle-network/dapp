@@ -6,19 +6,19 @@ import { getYouTubeThumbnailUri } from '../utils';
 type BlogCardProps = {
   title: string;
   cover: string;
-  tags: string[];
+  tag: string;
   link: string;
-  blogType?: string;
+  postType?: string;
   type: 'post' | 'video';
 };
 
 export const BlogCard = ({
   title,
-  tags,
+  tag,
   cover,
   type,
   link,
-  blogType,
+  postType,
 }: BlogCardProps) => {
   const coverURI =
     type === 'video' ? getYouTubeThumbnailUri(link) ?? cover : cover;
@@ -50,13 +50,11 @@ export const BlogCard = ({
           </div>
         </Link>
         <div className="px-6 mt-4 mb-3">
-          {tags && (
+          {tag && (
             <div className="flex items-center gap-4 capitalize">
-              {tags.map((tag) => (
-                <span key={tag} className="card-tag text-mono-120">
-                  {tag}
-                </span>
-              ))}
+              <span key={tag} className="card-tag text-mono-120">
+                {tag}
+              </span>
             </div>
           )}
           <Link href={link}>
@@ -69,10 +67,10 @@ export const BlogCard = ({
           </Link>
         </div>
       </div>
-      {type === 'post' && blogType && (
+      {type === 'post' && postType && (
         <div className="flex justify-end px-6">
           <Chip color="blue" className="w-fit">
-            {blogType}
+            {postType}
           </Chip>
         </div>
       )}

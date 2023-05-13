@@ -98,6 +98,7 @@ function mapTxToPayload(
     method: tx.name as any,
   };
 }
+
 function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
@@ -111,8 +112,10 @@ function getTxMessageFromStatus<Key extends TransactionState>(
       return 'Preparing transaction';
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
+    case TransactionState.FetchingLeavesFromRelayer:
+      return 'Fetching transaction leaves from the relayer...';
     case TransactionState.FetchingLeaves:
-      return 'Fetching transaction leaves...';
+      return 'Fetching transaction leaves on chain...';
     case TransactionState.GeneratingZk:
       return 'Generating zero knowledge proof...';
     case TransactionState.SendingTransaction:
@@ -126,6 +129,7 @@ function getTxMessageFromStatus<Key extends TransactionState>(
   }
   return '';
 }
+
 export type TransactionQueueApi = {
   txPayloads: TransactionPayload[];
   txQueue: Transaction<any>[];
@@ -146,6 +150,7 @@ export type TransactionQueueApi = {
     ): Transaction<NewNotesTxResult> | null;
   };
 };
+
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
   const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(

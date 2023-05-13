@@ -21,6 +21,7 @@ export enum TransactionState {
   PreparingTransaction, // Preparing the arguments for a transaction
 
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
+  FetchingLeavesFromRelayer, // The leaves of the merkle tree need to be obtained from the relayer
   FetchingLeaves, // To create a merkle proof, the elements of the merkle tree must be fetched.
   GeneratingZk, // There is a withdraw in progress, and it's on the step of generating the Zero-knowledge proof
   SendingTransaction, // There is a withdraw in progress, and it's on the step Sending the Transaction whether directly or through relayers
@@ -78,6 +79,7 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.PreparingTransaction]: undefined;
 
   [TransactionState.FetchingFixtures]: FixturesProgress;
+  [TransactionState.FetchingLeavesFromRelayer]: undefined;
   [TransactionState.FetchingLeaves]: LeavesProgress;
   [TransactionState.GeneratingZk]: undefined;
   [TransactionState.Intermediate]: IntermediateProgress;
@@ -185,6 +187,8 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
       case TransactionState.Ideal:
         break;
       case TransactionState.FetchingFixtures:
+        break;
+      case TransactionState.FetchingLeavesFromRelayer:
         break;
       case TransactionState.FetchingLeaves:
         break;

@@ -35,7 +35,10 @@ import {
 } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+import {
+  substrateProviderFactory,
+  WebbPolkadot,
+} from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
@@ -45,6 +48,7 @@ import {
   Keypair,
 } from '@webb-tools/sdk-core';
 import {
+  evmProviderFactory,
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
@@ -57,7 +61,6 @@ import constants from './constants';
 import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
-import { evmProviderFactory, substrateProviderFactory } from './utils';
 import { WebbContext } from './webb-context';
 
 interface WebbProviderProps extends BareProps {
@@ -425,9 +428,17 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       _wallet: Wallet,
       _networkStorage?: NetworkStorage | undefined
     ) => {
-      const relayerManagerFactory = await getRelayerManagerFactory();
-
       const wallet = _wallet || activeWallet;
+
+      const nextTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.chainId
+      );
+
+      const sharedWalletConnectionPayload = {
+        walletId: wallet.id,
+        typedChainId: { chainId: chain.chainId, chainType: chain.chainType },
+      };
 
       // wallet cleanup
       /// if new wallet id isn't the same of the current then the dApp is dealing with api change
@@ -437,18 +448,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       try {
         setLoading(true);
-        appEvent.send('walletConnectionState', 'loading');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'loading',
+        });
+
+        const relayerManagerFactory = await getRelayerManagerFactory();
 
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
-
-        const apiConfig = await ApiConfig.initFromApi(
-          defaultApiConfig,
-          evmProviderFactory,
-          substrateProviderFactory
-        );
-
-        setApiConfig(apiConfig);
 
         switch (wallet.id) {
           case WalletId.Polkadot:
@@ -458,10 +466,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
               const url = chain.url;
-              const typedChainId = calculateTypedChainId(
-                chain.chainType,
-                chain.chainId
+
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
+                evmProviderFactory,
+                substrateProviderFactory
               );
+
+              setApiConfig(apiConfig);
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
@@ -472,7 +484,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       setInteractiveFeedbacks,
                       feedback
                     );
-                    appEvent.send('walletConnectionState', 'failed');
+                    appEvent.send('walletConnectionState', {
+                      ...sharedWalletConnectionPayload,
+                      status: 'failed',
+                    });
                   },
                 },
                 relayerManager,
@@ -485,7 +500,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       import.meta.url
                     )
                   ),
-                typedChainId,
+                nextTypedChainId,
                 wallet
               );
 
@@ -501,7 +516,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 localActiveApi.noteManager = noteManager;
               }
 
-              appEvent.send('walletConnectionState', 'sucess');
+              appEvent.send('walletConnectionState', {
+                ...sharedWalletConnectionPayload,
+                status: 'sucess',
+              });
               setLoading(false);
             }
             break;
@@ -561,6 +579,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 (await relayerManagerFactory.getRelayerManager(
                   'evm'
                 )) as Web3RelayerManager;
+
+              const apiConfig = await ApiConfig.initFromApi(
+                defaultApiConfig,
+                evmProviderFactory,
+                substrateProviderFactory
+              );
+
+              setApiConfig(apiConfig);
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,
@@ -663,14 +689,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                const typedChainId = calculateTypedChainId(
-                  ChainType.EVM,
-                  chain.chainId
-                );
                 const currency = Object.values(apiConfig.currencies).find(
                   (c) =>
                     c.type === CurrencyType.NATIVE &&
-                    Array.from(c.addresses.keys()).includes(typedChainId)
+                    Array.from(c.addresses.keys()).includes(nextTypedChainId)
                 );
                 if (!currency) {
                   throw new Error('Native token not found');
@@ -696,7 +718,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 const newChainId = newNetwork.chainId;
 
                 if (newChainId != chain.chainId) {
-                  appEvent.send('walletConnectionState', 'failed');
                   throw new Error('User rejected network switch');
                 }
 
@@ -727,17 +748,22 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setActiveChain(chain);
         setActiveWallet(wallet);
         setLoading(false);
-        appEvent.send('walletConnectionState', 'sucess');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'sucess',
+        });
 
         return localActiveApi;
       } catch (e) {
         setLoading(false);
         logger.error(e);
 
-        appEvent.send('walletConnectionState', 'failed');
+        let err: WebbError | undefined = undefined;
+
         if (e instanceof WebbError) {
           /// Catch the errors for the switcher while switching
           catchWebbError(e);
+          err = e;
         } else {
           // Parse and display error
           const parsedError = parseError(e);
@@ -747,6 +773,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             secondaryMessage: parsedError.message,
           });
         }
+
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'failed',
+          error: err,
+        });
 
         return null;
       }

@@ -12,7 +12,7 @@ const tangleUseCases = [
     icon: <UseCase1Svg />,
     title: 'General Messaging Passing & Public Bridges',
     description:
-      'Capable of enabling public/plaintext cross-chain use cases. Providing efficiency, and security through the use of a TSS MPC that rotates frequently.',
+      'General Messaging Passing & Public Bridges: Enables public and transparent cross-chain interactions, ensuring efficiency and security by using a frequently rotating TSS-based system that involves multiple participants working together.',
     link: 'https://docs.webb.tools/docs/anchor-system/overview/',
   },
   {
@@ -40,9 +40,9 @@ const tangleUseCases = [
 
 export const UseCasesSection = () => {
   return (
-    <section className="bg-mono-200 px-[20px] py-[80px] xl:flex xl:items-center xl:justify-center">
-      <div>
-        <div className="flex flex-col gap-4">
+    <section className="bg-mono-200 px-[20px] lg:px-0 py-[80px]">
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex flex-col gap-4 lg:px-[11.25%]">
           <SectionHeader className="text-purple-40">Usecases</SectionHeader>
           <SectionTitle2 className="text-left text-mono-0 md:max-w-[604px]">
             Tangle Powers the Community to Optimized for Any Usecases.
@@ -50,7 +50,7 @@ export const UseCasesSection = () => {
         </div>
 
         {/* Desktop + Mobile */}
-        <div className="mt-8 flex md:hidden lg:flex flex-col lg:flex-row gap-6">
+        <div className="lg:px-[11.25%] mt-8 flex flex-col items-stretch justify-items-stretch md:hidden lg:flex lg:flex-row gap-6">
           {tangleUseCases.map((useCase, i) => {
             return (
               <UseCaseCard
@@ -100,7 +100,7 @@ export const UseCasesSection = () => {
 
 const UseCaseCard = ({ icon, title, description, link }) => {
   return (
-    <div className="flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px] md:w-[264px] md:h-[600px]">
+    <div className="min-h-[600px] md:min-h-min md:h-full lg:h-auto flex-[1] flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px]">
       {icon}
       <div className="flex flex-col gap-4">
         <Typography variant="h4" className="font-bold text-mono-0">
