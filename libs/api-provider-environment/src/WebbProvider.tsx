@@ -8,18 +8,18 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
+  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
-  NetworkStorage,
   noteStorageFactory,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
+  Wallet,
   chainsConfig,
   chainsPopulated,
-  Wallet,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -35,25 +35,24 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  substrateProviderFactory,
   WebbPolkadot,
+  substrateProviderFactory,
 } from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  evmProviderFactory,
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
+  evmProviderFactory,
 } from '@webb-tools/web3-api-provider';
-import { Typography } from '@webb-tools/webb-ui-components';
-import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
+import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TAppEvent } from './app-event';
