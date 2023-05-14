@@ -10,7 +10,7 @@ module.exports = {
   ],
   addons: [
     ...rootMain.addons,
-    '@nrwl/react/plugins/storybook',
+    '@nx/react/plugins/storybook',
     {
       name: '@storybook/addon-docs',
       options: {

@@ -91,65 +91,65 @@
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/cypress with @nx/cypress",
+      "description": "Replace @nx/cypress with @nx/cypress",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/cypress",
+      "package": "@nx/cypress",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/rollup with @nx/rollup",
+      "description": "Replace @nx/rollup with @nx/rollup",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/rollup",
+      "package": "@nx/rollup",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/react with @nx/react",
+      "description": "Replace @nx/react with @nx/react",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/react",
+      "package": "@nx/react",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/next with @nx/next",
+      "description": "Replace @nx/next with @nx/next",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/next",
+      "package": "@nx/next",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/jest with @nx/jest",
+      "description": "Replace @nx/jest with @nx/jest",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/jest",
+      "package": "@nx/jest",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/webpack with @nx/webpack",
+      "description": "Replace @nx/webpack with @nx/webpack",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/webpack",
+      "package": "@nx/webpack",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.1",
-      "description": "Replace @nrwl/web with @nx/web",
+      "description": "Replace @nx/web with @nx/web",
       "implementation": "./src/migrations/update-16-0-0-add-nx-packages/update-16-0-0-add-nx-packages",
-      "package": "@nrwl/web",
+      "package": "@nx/web",
       "name": "update-16-0-0-add-nx-packages"
     },
     {
       "cli": "nx",
       "version": "16.0.0-beta.4",
-      "description": "Replace @nrwl/web executors with @nx/webpack and @nx/rollup",
+      "description": "Replace @nx/web executors with @nx/webpack and @nx/rollup",
       "implementation": "./src/migrations/update-16-0-0-update-executors/update-16-0-0-update-executors",
-      "package": "@nrwl/web",
+      "package": "@nx/web",
       "name": "update-16-0-0-update-executors"
     }
   ]

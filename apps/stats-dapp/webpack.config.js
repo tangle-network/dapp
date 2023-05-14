@@ -115,7 +115,7 @@ function createWebpackBase() {
             options: {
               compact: false,
               presets: [
-                '@nrwl/js/babel',
+                '@nx/js/babel',
                 '@babel/preset-env',
                 '@babel/preset-typescript',
                 ['@babel/preset-react', { development: isDevelopment }],
