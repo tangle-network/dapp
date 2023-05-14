@@ -25,7 +25,7 @@
       "dependsOn": ["build"]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/webb-ui-components/**/*.ts"]
@@ -40,13 +40,10 @@
       }
     },
     "storybook": {
-      "executor": "@nrwl/storybook:storybook",
+      "executor": "@nx/storybook:storybook",
       "options": {
-        "uiFramework": "@storybook/react",
-        "port": 4400,
-        "config": {
-          "configFolder": "libs/webb-ui-components/.storybook"
-        }
+        "configDir": "libs/webb-ui-components/.storybook",
+        "port": 4400
       },
       "configurations": {
         "ci": {
@@ -55,14 +52,11 @@
       }
     },
     "build-storybook": {
-      "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
       "options": {
-        "uiFramework": "@storybook/react",
-        "outputPath": "dist/storybook/webb-ui-components",
-        "config": {
-          "configFolder": "libs/webb-ui-components/.storybook"
-        }
+        "configDir": "libs/webb-ui-components/.storybook",
+        "outputDir": "dist/storybook/webb-ui-components"
       },
       "configurations": {
         "ci": {

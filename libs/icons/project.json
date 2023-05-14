@@ -13,16 +13,12 @@
         "entryFile": "libs/icons/src/index.ts",
         "tsConfig": "libs/icons/tsconfig.lib.json",
         "format": ["esm", "cjs"],
-        "rollupConfig": [
-          "libs/icons/rollup.config.js"
-        ],
-        "external": [
-          "react", "react-dom"
-        ]
+        "rollupConfig": ["libs/icons/rollup.config.js"],
+        "external": ["react", "react-dom"]
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/icons/**/*.ts"]
