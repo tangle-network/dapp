@@ -1,7 +1,7 @@
-import { Post, Video } from '../../libs/notion';
 import Link from 'next/link';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { Post, Video } from '../../libs/webb-cms';
 
 type FeaturedPostSectionProps = {
   featuredPost: Post;
@@ -10,7 +10,12 @@ type FeaturedPostSectionProps = {
 
 export const FeaturedPostSection = ({
   featuredPost: {
-    metadata: { title, cover, slug, description, link, type },
+    title,
+    thumbnailImage,
+    id,
+    description,
+    linkToResearchPaper,
+    postType,
   },
   recentVideos,
 }: FeaturedPostSectionProps) => {
@@ -19,20 +24,24 @@ export const FeaturedPostSection = ({
       {/* Featured Post */}
       <div className="break-words rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)] overflow-hidden">
         <Link
-          href={link ? link : `/blog/posts/${slug}`}
+          href={linkToResearchPaper ? linkToResearchPaper : `/blog/posts/${id}`}
           className="w-full h-[220px] md:h-[250px] overflow-hidden block"
         >
           <div
             style={{
-              backgroundImage: `url(${cover})`,
+              backgroundImage: `url(${thumbnailImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
-            className="w-full h-[220px] md:h-[250px] rounded-t-lg transition duration-500 transform hover:scale-110"
+            className="w-full h-[220px] md:h-[360px] rounded-t-lg transition duration-500 transform hover:scale-110"
           />
         </Link>
         <div className="px-[24px] pt-[16px] pb-[20px]">
-          <Link href={link ? link : `/blog/posts/${slug}`}>
+          <Link
+            href={
+              linkToResearchPaper ? linkToResearchPaper : `/blog/posts/${id}`
+            }
+          >
             <Typography
               variant="mkt-h3"
               className="featured-post-title text-mono-200"
@@ -49,10 +58,12 @@ export const FeaturedPostSection = ({
           <div className="flex justify-end">
             <Button
               variant="utility"
-              href={link ? link : `/blog/posts/${slug}`}
+              href={
+                linkToResearchPaper ? linkToResearchPaper : `/blog/posts/${id}`
+              }
               size="sm"
             >
-              {type === 'post' ? 'Read More' : 'Read Paper'}
+              {postType === 'Post' ? 'Read More' : 'Read Paper'}
             </Button>
           </div>
         </div>
@@ -61,14 +72,17 @@ export const FeaturedPostSection = ({
       <div>
         <span className="card-tag text-mono-120">Featured</span>
         <ul>
-          {recentVideos.map((video) => {
-            const { id, title, link, tags } = video.metadata;
-
+          {recentVideos.map(({ id, title, linkToVideo, tag }) => {
             return (
-              <Link key={id} href={link} target="_blank" rel="noreferrer">
+              <Link
+                key={id}
+                href={linkToVideo}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <li className="pb-6 mt-6 border-b-2 border-mono-200">
                   <span className="flex items-center gap-2 capitalize recent-video-title text-mono-200">
-                    {tags[0]}: {title}{' '}
+                    {tag}: {title}{' '}
                     <ExternalLinkIcon width={20} height={20} color="#1F1D2B" />
                   </span>
                 </li>

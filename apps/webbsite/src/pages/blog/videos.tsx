@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
 import { FC } from 'react';
 import { BlogSection } from '../../components';
-import { Notion, Video } from '../../libs/notion';
+import { Video, getVideos } from '../../libs/webb-cms';
 
 const Videos: FC<{ videos: Video[] }> = ({ videos }) => {
   return (
@@ -16,9 +16,7 @@ const Videos: FC<{ videos: Video[] }> = ({ videos }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const notion = new Notion();
-
-  const videos = await notion.getVideos();
+  const videos = await getVideos();
 
   return {
     props: {

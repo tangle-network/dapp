@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { GetStaticProps } from 'next';
 import { FC } from 'react';
 import { BlogSection } from '../../../components';
-import { Notion, Post } from '../../../libs/notion';
+import { Post, getPosts } from '../../../libs/webb-cms';
 
 const Posts: FC<{ posts: Post[] }> = ({ posts }) => {
   return (
@@ -16,9 +16,7 @@ const Posts: FC<{ posts: Post[] }> = ({ posts }) => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const notion = new Notion();
-
-  const posts = await notion.getPosts();
+  const posts = await getPosts();
 
   return {
     props: {

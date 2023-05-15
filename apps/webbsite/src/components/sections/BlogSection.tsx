@@ -2,7 +2,7 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { BlogCard } from '../../components';
-import { PostsOrVideos } from '../../libs/notion';
+import { PostsOrVideos } from '../../libs/webb-cms';
 
 type BlogSectionProps = {
   type: 'post' | 'video';
@@ -21,12 +21,10 @@ export const BlogSection = ({
 
   const tags = useMemo(() => {
     const tags = allItems.reduce(
-      (accumulator, { metadata: { tags } }) => {
-        tags.forEach((tag) => {
-          if (!accumulator.includes(tag)) {
-            accumulator.push(tag);
-          }
-        });
+      (accumulator, { tag }) => {
+        if (!accumulator.includes(tag)) {
+          accumulator.push(tag);
+        }
         return accumulator;
       },
       ['All']
@@ -37,7 +35,7 @@ export const BlogSection = ({
   const filteredItems = useMemo(() => {
     return filter === 'All'
       ? allItems
-      : allItems.filter((item) => item.metadata.tags.includes(filter));
+      : allItems.filter((item) => item.tag === filter);
   }, [filter, allItems]);
 
   return (
@@ -66,25 +64,40 @@ export const BlogSection = ({
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mb-[72px]">
         {filteredItems.map(
           ({
-            metadata: { id, title, slug, tags, cover, link, type: blogType },
-          }) => (
-            <BlogCard
-              key={id}
-              title={title}
-              tags={tags}
-              cover={cover}
-              blogType={blogType}
-              type={type}
-              link={
-                (type === 'post' && blogType === 'research' && link) ||
-                (type === 'video' && !blogType && link)
-                  ? link
-                  : type === 'post' && blogType === 'post'
-                  ? `/blog/posts/${slug}`
-                  : ''
-              }
-            />
-          )
+            id,
+            title,
+            thumbnailImage,
+            tag,
+            postType,
+            linkToResearchPaper,
+            linkToVideo,
+          }) => {
+            return (
+              <BlogCard
+                key={id}
+                title={title}
+                tag={tag}
+                cover={thumbnailImage}
+                postType={postType}
+                type={type}
+                link={
+                  type === 'post' &&
+                  postType === 'Research' &&
+                  linkToResearchPaper
+                    ? linkToResearchPaper
+                    : type === 'post' &&
+                      postType === 'Research' &&
+                      !linkToResearchPaper
+                    ? `/blog/posts/${id}`
+                    : type === 'video' && !postType && linkToVideo
+                    ? linkToVideo
+                    : type === 'post' && postType === 'Post'
+                    ? `/blog/posts/${id}`
+                    : ''
+                }
+              />
+            );
+          }
         )}
       </div>
 

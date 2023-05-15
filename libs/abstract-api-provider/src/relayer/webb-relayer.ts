@@ -65,6 +65,19 @@ export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   };
 };
 
+const parseRelayerFeeErrorMessage = async (
+  response: Response
+): Promise<string> => {
+  try {
+    const text = await response.text();
+    return `Relayer fee error: \`${text}\``;
+  } catch (e) {
+    // ignore error
+  }
+
+  return `Relayer fee error: [${response.status}] \`${response.statusText}\``;
+};
+
 /**
  * Relayed withdraw is a class meant to encapsulate the communication between client (WebbRelayer instance)
  * and relayer during a withdraw.
@@ -274,12 +287,8 @@ export class WebbRelayer {
     }/api/v1/fee_info/${typedChainId}/${vanchor}/${gasAmount}`;
     const response = await fetch(endpoint, { signal: abortSignal });
     if (!response.ok) {
-      if (response.type === 'cors') {
-        throw new Error(
-          `CORS error, please check your relayer endpoint: ${this.endpoint}`
-        );
-      }
-      throw new Error(`Failed to get fee info: ${response.statusText}`);
+      const errorMessage = await parseRelayerFeeErrorMessage(response);
+      throw new Error(errorMessage);
     }
     return parseRelayerFeeInfo(await response.json());
   }
