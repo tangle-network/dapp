@@ -99,9 +99,11 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
             title={info.title}
             className="max-w-[185px] break-normal"
             button={
-              <Button {...info.buttonProps} variant="utility" size="sm">
-                {info.buttonText ?? 'Learn more'}
-              </Button>
+              info.buttonProps && (
+                <Button {...info.buttonProps} variant="utility" size="sm">
+                  {info.buttonText ?? 'Learn more'}
+                </Button>
+              )
             }
           >
             {info.content}

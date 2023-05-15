@@ -11,10 +11,11 @@ const defaultInfo: ComponentProps<typeof CheckBox>['info'] = {
   title: 'Refund Support',
   content:
     'Once a relayer is added, enable refund to receive native tokens on the destination chain for future transactions to preserve privacy. Refunds will be sent to the recipient address.',
-  buttonProps: {
-    href: 'https://docs.webb.tools/bridge/faq#what-is-refund', // TODO: update this link
-    target: '_blank',
-  },
+  // TODO: update this link
+  // buttonProps: {
+  //   href: 'https://docs.webb.tools/bridge/faq#what-is-refund',
+  //   target: '_blank',
+  // },
 };
 
 export const RefundInput: FC<RefundInputProps> = ({
