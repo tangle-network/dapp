@@ -155,7 +155,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           </ul>
         </ScrollArea>
 
-        <div className="mt-auto">
+        <div className="mt-7">
           {/** Disclamer */}
           <div
             className={cx(

@@ -265,7 +265,7 @@ const PageBridge = () => {
                 target="_blank"
                 rel="noreferrer"
                 className={cx(
-                  'lg:hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
+                  'lg:!hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
                   'flex justify-end items-center',
                   'bg-[#ECF4FF] dark:bg-[#181F2B]'
                 )}
