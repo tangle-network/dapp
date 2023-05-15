@@ -80,12 +80,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - VAnchor Substrate Implementation (Missing Withdraw/Transfer Flows): https://github.com/webb-tools/webb-dapp/pull/1139
 
-## [0.0.7] - 2023-05-15
+### [0.0.7] - 2023-05-12
+
+- Hot fix: Fee only subtracted when relayer is selected
+- Hot fix: Fee should be 0 when no relayer is selected
+
+### [0.0.8] - 2023-05-12
+
+### Fixed
+
+- Add executorWithTimeout to execute a promise with timeout to prevent handling on the bridge
+
+### Changed
+
+- walletConnectionState payload to pass more info
+- Handle Metamask connect wallet error more gracefully
+- Parse the relayer error message and display on the bridge dApp
+- Initialize the API config with on-chain data after Metamask pop-up
+
+### Added
+
+- Use newer library to detect Metamask extension
+
+### Removed
+
+- eventsWatcher check when filtering the relayer: https://github.com/webb-tools/webb-dapp/pull/1205
+
+## [0.0.9] - 2023-05-15
 
 ### Fixed
 
 - Dark/Light theme switching issue: https://github.com/webb-tools/webb-dapp/pull/1222
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.6]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.6
-[0.0.7]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.7
+[0.0.8]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.8
+[0.0.9]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.9
