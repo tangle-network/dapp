@@ -75,12 +75,16 @@ const AuthoritiesHistory = () => {
   );
 
   const isLatest = useMemo(() => selectedIdx === 0, [selectedIdx]);
+
   const thresholdHistory = useSessionThreshold(isLatest);
 
   const data = useMemo<ChartData<'line'>>(() => {
-    const labels = thresholdHistory.val?.map((i) => i.sessionId) ?? [];
-    const sig = thresholdHistory.val?.map((i) => i.signatureThreshold) ?? [];
-    const keygen = thresholdHistory.val?.map((i) => i.keygenThreshold) ?? [];
+    const labels =
+      thresholdHistory.val?.map((i) => i.sessionId).reverse() ?? [];
+    const sig =
+      thresholdHistory.val?.map((i) => i.signatureThreshold).reverse() ?? [];
+    const keygen =
+      thresholdHistory.val?.map((i) => i.keygenThreshold).reverse() ?? [];
 
     return {
       labels,
@@ -99,13 +103,12 @@ const AuthoritiesHistory = () => {
         },
       ],
     };
-  }, [thresholdHistory]);
+  }, [thresholdHistory, isLatest]);
 
   const options = useMemo<ChartOptions<'line'>>(
     () => ({
       scales: {
         x: {
-          stacked: !!selectedIdx,
           grid: {
             display: false,
             borderColor: webbColors.mono['80'],
@@ -115,14 +118,22 @@ const AuthoritiesHistory = () => {
           },
         },
         y: {
-          stacked: !!selectedIdx,
+          type: 'linear',
           grid: {
             display: false,
             borderColor: webbColors.mono['80'],
           },
           ticks: {
             color: isDarkMode ? webbColors.mono['60'] : webbColors.mono['200'],
+            callback: (value: any) => {
+              if (value % 1 === 0) {
+                return value;
+              }
+            },
           },
+          min: 0,
+          max: 5,
+          stepSize: 1,
         },
       },
       responsive: true,
