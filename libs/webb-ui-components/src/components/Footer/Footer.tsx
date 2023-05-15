@@ -28,26 +28,27 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         {isMinimal ? (
           // Minimal Footer
           <>
-            <Typography variant="body2" className="!text-mono-100 text-center">
-              Apache 2.0
-            </Typography>
-
             <Socials
-              iconPlacement="center"
+              iconPlacement="end"
               iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
             />
 
-            <div className="flex items-center justify-center space-x-8">
-              {constants.bottomLinks.map(({ name, ...link }) => (
-                <a key={name} {...link} className="group">
-                  <Typography
-                    variant="body2"
-                    className="!text-mono-100 group-hover:underline"
-                  >
-                    {name}
-                  </Typography>
-                </a>
-              ))}
+            <div className="flex flex-col md:flex-row items-end gap-3 justify-between">
+              <Typography variant="body2" className="!text-mono-100">
+                © 2023 Webb Technologies, Inc. All rights reserved.
+              </Typography>
+              <div className="flex flex-[1] align-items justify-end gap-6">
+                {constants.bottomLinks.map(({ name, ...link }) => (
+                  <a key={name} {...link} className="group">
+                    <Typography
+                      variant="body2"
+                      className="!text-mono-100 underline"
+                    >
+                      {name}
+                    </Typography>
+                  </a>
+                ))}
+              </div>
             </div>
           </>
         ) : (
