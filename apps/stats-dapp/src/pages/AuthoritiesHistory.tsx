@@ -56,6 +56,8 @@ const AuthoritiesHistory = () => {
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const [isDarkMode, _] = useDarkMode();
+  // console.log('isDarkMode', isDarkMode);
+
 
   const menuOptions = useMemo<
     ComponentProps<typeof DropdownMenu>['menuOptions']

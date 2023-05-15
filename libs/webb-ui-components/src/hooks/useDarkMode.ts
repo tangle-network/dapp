@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type SupportTheme = 'light' | 'dark';
 
@@ -18,6 +18,11 @@ export function useDarkMode(
 ): [boolean, ToggleThemeModeFunc] {
   const [preferredTheme, setPreferredTheme] =
     useState<SupportTheme>(defaultTheme);
+
+  const isDarkMode =
+    localStorage.getItem('theme') !== null
+      ? localStorage.getItem('theme') === 'dark'
+      : preferredTheme === 'dark';
 
   useEffect(() => {
     if (localStorage.getItem('theme') === null) {
@@ -73,10 +78,5 @@ export function useDarkMode(
     [preferredTheme]
   );
 
-  // Side effect to set the default theme mode
-  useEffect(() => {
-    toggleThemeMode(defaultTheme);
-  }, [defaultTheme]);
-
-  return [preferredTheme === 'dark', toggleThemeMode];
+  return [isDarkMode, toggleThemeMode];
 }
