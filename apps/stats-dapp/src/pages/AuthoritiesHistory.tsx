@@ -56,8 +56,6 @@ const AuthoritiesHistory = () => {
   const [selectedIdx, setSelectedIdx] = useState(0);
 
   const [isDarkMode, _] = useDarkMode();
-  // console.log('isDarkMode', isDarkMode);
-
 
   const menuOptions = useMemo<
     ComponentProps<typeof DropdownMenu>['menuOptions']
@@ -117,6 +115,9 @@ const AuthoritiesHistory = () => {
           },
           ticks: {
             color: isDarkMode ? webbColors.mono['60'] : webbColors.mono['200'],
+            callback: function (value, index, values) {
+              return index === 0 ? '' : value;
+            },
           },
         },
         y: {
