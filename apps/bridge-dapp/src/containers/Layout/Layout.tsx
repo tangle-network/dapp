@@ -37,11 +37,18 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           />
         </Transition>
 
-        <main className="w-full mx-auto flex-1">{children}</main>
-      </div>
-
-      <div className="px-4 lg:px-0 bg-mono-20 dark:bg-mono-200">
-        <Footer isMinimal className="max-w-[1160px] w-full" />
+        <div
+          className={cx(
+            'w-full mx-auto flex-1',
+            "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
+            'bg-top object-fill bg-no-repeat bg-cover'
+          )}
+        >
+          <main>{children}</main>
+          <div className="px-4 lg:px-0 !bg-inherit">
+            <Footer isMinimal className="max-w-[1160px] w-full !bg-inherit" />
+          </div>
+        </div>
       </div>
     </div>
   );
