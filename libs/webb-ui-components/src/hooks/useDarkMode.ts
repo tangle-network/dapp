@@ -73,10 +73,5 @@ export function useDarkMode(
     [preferredTheme]
   );
 
-  // Side effect to set the default theme mode
-  useEffect(() => {
-    toggleThemeMode(defaultTheme);
-  }, [defaultTheme]);
-
   return [preferredTheme === 'dark', toggleThemeMode];
 }
