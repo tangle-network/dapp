@@ -106,6 +106,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - eventsWatcher check when filtering the relayer: https://github.com/webb-tools/webb-dapp/pull/1205
 
+## [0.0.9] - 2023-05-15
+
+### Fixed
+
+- Dark/Light theme switching issue: https://github.com/webb-tools/webb-dapp/pull/1222
+
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
-[0.0.7]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.7
 [0.0.8]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.8
+[0.0.9]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.9
