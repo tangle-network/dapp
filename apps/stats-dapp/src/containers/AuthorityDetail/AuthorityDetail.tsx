@@ -321,9 +321,6 @@ const DetailsView: FC<{
               >
                 <div className="flex flex-row items-center">
                   <ArrowLeft size="lg" />
-                  <Typography variant={'body2'} fw={'bold'}>
-                    Back to authorities
-                  </Typography>
                 </div>
               </Link>
               <div className="flex items-center space-x-2">
