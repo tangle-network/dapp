@@ -9,8 +9,10 @@ import {
   TabsList,
   TabsRoot,
   TransactionQueueCard,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { ArrowRightUp } from '@webb-tools/icons';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -42,6 +44,8 @@ import {
 } from '../hooks';
 import { downloadNotes } from '../utils';
 import { ErrorBoundary } from '@sentry/react';
+
+const STATS_DEV_URL = 'https://www.stats-dev.webb.tools/';
 
 const PageBridge = () => {
   // State for the tabs
@@ -255,6 +259,22 @@ const PageBridge = () => {
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>
+
+              <a
+                href={STATS_DEV_URL}
+                target="_blank"
+                rel="noreferrer"
+                className={cx(
+                  'lg:hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
+                  'flex justify-end items-center',
+                  'bg-[#ECF4FF] dark:bg-[#181F2B]'
+                )}
+              >
+                <Typography variant="utility" className="!text-blue-50">
+                  Explore Stats
+                </Typography>
+                <ArrowRightUp size="lg" className="!fill-blue-50" />
+              </a>
 
               <div className="hidden lg:!block">
                 {/** Transaction Queue Card */}

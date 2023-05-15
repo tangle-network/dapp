@@ -3,6 +3,7 @@ export * from './ArrowDropDownFill';
 export * from './ArrowDropUpFill';
 export * from './ArrowLeft';
 export * from './ArrowRight';
+export * from './ArrowRightUp';
 export * from './AuctionLine';
 export * from './BankLine';
 export * from './BellIcon';
