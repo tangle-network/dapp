@@ -2,20 +2,19 @@ import {
   Common2Icon,
   DiscordFill,
   GithubFill,
+  LinkedInFill,
   TelegramFill,
   TwitterFill,
-  LinkedInFill,
   YouTubeFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-import {
-  InternalOrExternalLink,
-  Logo,
-  TangleLogo,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
 import { ComponentProps, useState } from 'react';
+
+import { Typography } from '../../typography';
+import { Logo } from '../Logo';
+import { InternalOrExternalLink } from '../Navbar/InternalOrExternalLink';
+import { TangleLogo } from '../TangleLogo';
 import { WebsiteNewsletterForm } from '../WebsiteNewsLetterForm';
 
 type NavLinkType = {
@@ -244,7 +243,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         )}
 
         {/** Logo and links */}
-        <div className="flex flex-col items-center md:items-start space-y-4 md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
+        <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
           {navLinks.map(({ group, links }) => (
             <div className="hidden md:flex md:flex-col flex-[1]">
@@ -265,7 +264,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         </div>
 
         {/** Socials */}
-        <div className="flex items-center space-x-4 justify-center md:justify-end">
+        <div className="flex items-center justify-center space-x-4 md:justify-end">
           {socials.map(({ Icon, name, href }) => (
             <a
               key={name}

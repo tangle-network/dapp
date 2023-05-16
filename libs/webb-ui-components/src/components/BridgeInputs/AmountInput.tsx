@@ -3,16 +3,14 @@ import { ChevronDown, InformationLine } from '@webb-tools/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  AmountMenu,
-  Button,
-  Input,
-  InputWrapper,
-  Label,
-  TitleWithInfo,
-} from '..';
 import { Typography } from '../../typography/Typography';
+import { AmountMenu } from '../AmountMenu';
+import { InputWrapper } from '../BridgeInputs/InputWrapper';
+import { Button } from '../Button';
 import { Dropdown, DropdownBody } from '../Dropdown';
+import { Input } from '../Input/Input';
+import { Label } from '../Label';
+import { TitleWithInfo } from '../TitleWithInfo';
 import { AmountInputComponentProps } from './types';
 
 export const AmountInput = forwardRef<

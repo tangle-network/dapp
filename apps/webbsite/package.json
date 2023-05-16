@@ -1,7 +1,6 @@
 {
-    "name": "@webb-tools/webbsite",
-    "version": "0.0.2",
-    "license": "APACHE-2.0",
-    "description": "Official Webb webbsite"
+  "name": "@webb-tools/webbsite",
+  "version": "0.0.2",
+  "license": "APACHE-2.0",
+  "description": "Official Webb webbsite"
 }
-  

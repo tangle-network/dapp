@@ -5,7 +5,8 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../tailwind.config.js';
 import { DonutDataType } from '../containers/DonutChartContainer/types';
 
-const fullConfig = resolveConfig(tailwindConfig);
+const fullConfig: ReturnType<typeof resolveConfig> =
+  resolveConfig(tailwindConfig);
 
 /**
  * Get the color for donut chart
