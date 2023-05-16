@@ -214,11 +214,7 @@ function createWebpackBase() {
         // icon
         {
           test: /\.(ico)$/,
-          loader: 'file-loader',
-          options: {
-            name: '[name][ext]',
-            esModule: false,
-          },
+          type: 'asset',
         },
 
         // assets
