@@ -137,30 +137,35 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div className="min-w-full min-h-full">
-      <Header
-        selectedNetwork={selectedNetwork}
-        setUserSelectedNetwork={setUserSelectedNetwork}
-        selectedNetworkType={selectedNetworkType}
-        setSelectedNetworkType={setSelectedNetworkType}
-      />
+    <>
+      <div className="min-w-full min-h-full">
+        <Header
+          selectedNetwork={selectedNetwork}
+          setUserSelectedNetwork={setUserSelectedNetwork}
+          selectedNetworkType={selectedNetworkType}
+          setSelectedNetworkType={setSelectedNetworkType}
+        />
 
-      <ApolloProvider client={apolloClient}>
-        <StatsProvider
-          subqueryEndpoint={subqueryEndpoint}
-          polkadotEndpoint={polkadotEndpoint}
-          dkgDataFromPolkadotAPI={{
-            currentKey: '',
-            currentSessionNumber: 0,
-            nextKey: '',
-            nextSessionNumber: 0,
-          }}
-        >
-          <NavBoxInfoContainer />
-          <main className="max-w-[1160px] mx-auto">{children}</main>
-        </StatsProvider>
-      </ApolloProvider>
-      <Footer />
-    </div>
+        <ApolloProvider client={apolloClient}>
+          <StatsProvider
+            subqueryEndpoint={subqueryEndpoint}
+            polkadotEndpoint={polkadotEndpoint}
+            dkgDataFromPolkadotAPI={{
+              currentKey: '',
+              currentSessionNumber: 0,
+              nextKey: '',
+              nextSessionNumber: 0,
+            }}
+          >
+            <NavBoxInfoContainer />
+            <main className="max-w-[1160px] mx-auto">{children}</main>
+          </StatsProvider>
+        </ApolloProvider>
+      </div>
+
+      <div className="max-w-[1160px] mx-auto">
+        <Footer />
+      </div>
+    </>
   );
 };
