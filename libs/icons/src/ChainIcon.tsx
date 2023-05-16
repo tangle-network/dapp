@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
+import React, { cloneElement, useMemo } from 'react';
 import { Spinner } from './Spinner';
+import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
@@ -22,7 +22,7 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
     [nameProp]
   );
 
-  const { SvgIcon, error, loading } = useDynamicSVGImport(name, {
+  const { svgElement, error, loading } = useDynamicSVGImport(name, {
     onCompleted,
     onError,
     type: 'chain',
@@ -36,25 +36,22 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
     return <Spinner {...props} />;
   }
 
-  if (SvgIcon) {
+  if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
+    const props: React.SVGProps<SVGSVGElement> = {
+      className,
+      width: parseInt(sizeInPx),
+      height: parseInt(sizeInPx),
+      ...restProps,
+    };
+
     return isActive ? (
       <div className="relative">
-        <SvgIcon
-          className={className}
-          width={parseInt(sizeInPx)}
-          height={parseInt(sizeInPx)}
-          {...restProps}
-        />
+        {cloneElement(svgElement, props)}
         <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
       </div>
     ) : (
-      <SvgIcon
-        className={className}
-        width={parseInt(sizeInPx)}
-        height={parseInt(sizeInPx)}
-        {...restProps}
-      />
+      cloneElement(svgElement, props)
     );
   }
 

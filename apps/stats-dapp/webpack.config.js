@@ -240,19 +240,10 @@ function createWebpackBase() {
         // svg react generator
         {
           test: /\.svg$/,
-          oneOf: [
+          resourceQuery: /svgr/,
+          use: [
             {
-              issuer: /\.[jt]sx?$/,
-              resourceQuery: /react/, // *.svg?react
-              use: ['@svgr/webpack'],
-            },
-            {
-              type: 'asset',
-              parser: {
-                dataUrlCondition: {
-                  maxSize: 200, // 200kb
-                },
-              },
+              loader: '@svgr/webpack',
             },
           ],
         },

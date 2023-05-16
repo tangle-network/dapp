@@ -34,7 +34,7 @@ export function useDynamicSVGImport(
   options: DynamicSVGImportOptions = {}
 ) {
   const [importedIcon, setImportedIcon] = useState<
-    React.FC<React.SVGProps<SVGSVGElement>> | undefined
+    React.ReactElement<React.SVGProps<SVGSVGElement>, 'svg'> | undefined
   >();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
@@ -48,13 +48,15 @@ export function useDynamicSVGImport(
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const Icon = (await import(`../${type}s/${_name}.svg?react`)).default;
-        setImportedIcon(Icon);
+        const module = await import(`../${type}s/${_name}.svg?svgr`);
+        const Icon = module.default;
+        setImportedIcon(Icon());
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const Icon = (await import(`../${type}s/default.svg?react`)).default;
-          setImportedIcon(Icon);
+          const module = await import(`../${type}s/default.svg?svgr`);
+          const Icon = module.default;
+          setImportedIcon(Icon());
           onCompleted?.(_name, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
@@ -68,5 +70,5 @@ export function useDynamicSVGImport(
     importIcon();
   }, [_name, onCompleted, onError]);
 
-  return { error, loading, SvgIcon: importedIcon };
+  return { error, loading, svgElement: importedIcon };
 }
