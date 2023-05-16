@@ -12,7 +12,6 @@ const path = require('path'),
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
   CopyWebpackPlugin = require('copy-webpack-plugin');
-// TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
 
@@ -81,13 +80,6 @@ function createWebpackBase() {
 
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
       modules: ['node_modules'],
-
-      plugins: [
-        /*         new TsconfigPathsPlugin({
-          extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
-          configFile: path.resolve(__dirname, './tsconfig.app.json'),
-        }), */
-      ],
 
       fallback: {
         assert: require.resolve('assert/'),
