@@ -2,6 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type SupportTheme = 'light' | 'dark';
 
+function isBrowser(): boolean {
+  return (
+    typeof window !== 'undefined' && typeof window.document !== 'undefined'
+  );
+}
+
 /**
  * Function to toggle or change the theme mode (possible value: `light`, `dark`, `undefined`)
  */
@@ -20,11 +26,15 @@ export function useDarkMode(
     useState<SupportTheme>(defaultTheme);
 
   const isDarkMode =
-    localStorage.getItem('theme') !== null
+    isBrowser() && localStorage.getItem('theme') !== null
       ? localStorage.getItem('theme') === 'dark'
       : preferredTheme === 'dark';
 
   useEffect(() => {
+    if (!isBrowser()) {
+      return;
+    }
+
     if (localStorage.getItem('theme') === null) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -46,7 +56,12 @@ export function useDarkMode(
 
   const toggleThemeMode = useCallback<ToggleThemeModeFunc>(
     (nextThemeMode?: SupportTheme | undefined) => {
+      if (!isBrowser()) {
+        return;
+      }
+
       let _nextThemeMode: SupportTheme;
+
       if (!nextThemeMode) {
         _nextThemeMode = preferredTheme === 'dark' ? 'light' : 'dark';
       } else {
