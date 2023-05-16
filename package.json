@@ -252,7 +252,7 @@
     "prettier": "^2.8.8",
     "process": "^0.11.10",
     "react-refresh": "0.14.0",
-    "rollup": "^3.2.3",
+    "rollup": "^3.21.8",
     "rollup-plugin-copy": "3.4.0",
     "rollup-plugin-modify": "^3.0.0",
     "rollup-plugin-postcss": "4.0.2",
