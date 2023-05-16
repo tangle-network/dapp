@@ -122,7 +122,9 @@ export const TransferContainer = forwardRef<
     const balancesFromNotes = useBalancesFromNotes(destChain);
 
     // State for amount input value
-    const [amount, setAmount] = useState<number | undefined>(undefined);
+    const [transferAmount, setTransferAmount] = useState<number | undefined>(
+      undefined
+    );
 
     // State for error message when user input amount is invalid
     const [amountError, setAmountError] = useState<string>('');
@@ -430,7 +432,7 @@ export const TransferContainer = forwardRef<
           return;
         }
 
-        setAmount(parsedAmount);
+        setTransferAmount(parsedAmount);
         setAmountError('');
       },
       [selectedBridgingAsset?.balance]
@@ -495,27 +497,27 @@ export const TransferContainer = forwardRef<
     // Boolean indicating whether the amount value is valid or not
     const isValidAmount = useMemo(() => {
       return (
-        typeof amount === 'number' &&
-        amount > 0 &&
-        amount <= (selectedBridgingAsset?.balance ?? 0)
+        typeof transferAmount === 'number' &&
+        transferAmount > 0 &&
+        transferAmount <= (selectedBridgingAsset?.balance ?? 0)
       );
-    }, [amount, selectedBridgingAsset?.balance]);
+    }, [transferAmount, selectedBridgingAsset?.balance]);
 
     // The actual amount to be transferred
     const receivingAmount = useMemo(() => {
       // If no relayer selected, return the amount
       if (!activeRelayer) {
-        return amount;
+        return transferAmount;
       }
 
-      if (!feeInWei || !amount) {
-        return amount;
+      if (!feeInWei || !transferAmount) {
+        return transferAmount;
       }
 
       // If relayer selected, return the amount minus the relayer fee
       const fee = Number(ethers.utils.formatEther(feeInWei));
-      return amount - fee;
-    }, [activeRelayer, amount, feeInWei]);
+      return transferAmount - fee;
+    }, [activeRelayer, transferAmount, feeInWei]);
 
     // Boolean indicating whether inputs are valid to transfer
     const isValidToTransfer = useMemo<boolean>(() => {
@@ -523,7 +525,7 @@ export const TransferContainer = forwardRef<
         ethers.utils.formatEther(feeInWei ?? ethers.constants.Zero)
       );
 
-      const amountOrZero = amount ?? 0;
+      const amountOrZero = transferAmount ?? 0;
 
       return [
         Boolean(fungibleCurrency), // No fungible currency selected
@@ -543,7 +545,7 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
       isValidRecipient,
       activeRelayer,
-      amount,
+      transferAmount,
     ]);
 
     // All available notes
@@ -590,15 +592,15 @@ export const TransferContainer = forwardRef<
         NoteManager.getNotesFifo(
           availableNotes,
           ethers.utils.parseUnits(
-            amount?.toString() ?? '0',
+            transferAmount?.toString() ?? '0',
             fungibleCurrency.view.decimals
           )
         ) ?? []
       );
-    }, [amount, availableNotes, fungibleCurrency]);
+    }, [transferAmount, availableNotes, fungibleCurrency]);
 
     // Calculate the info for UI display
-    const infoCalculated = useMemo(() => {
+    const infoFormatted = useMemo(() => {
       const spentValue = inputNotes.reduce<ethers.BigNumber>(
         (acc, note) => acc.add(ethers.BigNumber.from(note.note.amount)),
         ethers.BigNumber.from(0)
@@ -607,13 +609,13 @@ export const TransferContainer = forwardRef<
       const changeAmountBigNumber = fungibleCurrency
         ? spentValue.sub(
             ethers.utils.parseUnits(
-              amount?.toString() ?? '0',
+              transferAmount?.toString() ?? '0',
               fungibleCurrency.view.decimals
             )
           )
         : ethers.BigNumber.from(0);
 
-      const transferAmount = isValidAmount
+      const formattedTransferAmount = isValidAmount
         ? getRoundedAmountString(receivingAmount)
         : undefined;
 
@@ -630,7 +632,7 @@ export const TransferContainer = forwardRef<
           : undefined;
 
       return {
-        transferAmount,
+        transferAmount: formattedTransferAmount,
         changeAmount,
         transferTokenSymbol: selectedBridgingAsset?.symbol ?? '',
         rawChangeAmount: fungibleCurrency
@@ -641,7 +643,7 @@ export const TransferContainer = forwardRef<
           : 0,
       };
     }, [
-      amount,
+      transferAmount,
       fungibleCurrency,
       inputNotes,
       isValidAmount,
@@ -656,11 +658,11 @@ export const TransferContainer = forwardRef<
         return currentNativeCurrency?.symbol ?? '';
       }
 
-      return infoCalculated?.transferTokenSymbol ?? '';
+      return infoFormatted?.transferTokenSymbol ?? '';
     }, [
       activeRelayer,
       currentNativeCurrency?.symbol,
-      infoCalculated?.transferTokenSymbol,
+      infoFormatted?.transferTokenSymbol,
     ]);
 
     const handleSwitchChain = useCallback(
@@ -700,7 +702,7 @@ export const TransferContainer = forwardRef<
       setAmountError('');
       setRecipientPubKey('');
       setIsValidRecipient(false);
-      setAmount(undefined);
+      setTransferAmount(undefined);
       setRelayer(null);
       resetMaxFeeInfo();
     }, [resetMaxFeeInfo, setRelayer]);
@@ -732,7 +734,12 @@ export const TransferContainer = forwardRef<
         throw new Error('No note manager or active bridge');
       }
 
-      if (!fungibleCurrency || !destChain || !amount || !currentTypedChainId) {
+      if (
+        !fungibleCurrency ||
+        !destChain ||
+        !transferAmount ||
+        !currentTypedChainId
+      ) {
         throw new Error(
           "Can't transfer without a fungible currency or dest chain"
         );
@@ -747,11 +754,11 @@ export const TransferContainer = forwardRef<
         return;
       }
 
-      const changeAmount = infoCalculated.rawChangeAmount;
+      const changeAmount = infoFormatted.rawChangeAmount;
       const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
 
-      const amountBigNumber = ethers.utils.parseUnits(
-        amount.toString(),
+      const transferAmountBN = ethers.utils.parseUnits(
+        transferAmount.toString(),
         fungibleCurrencyDecimals
       );
 
@@ -773,8 +780,8 @@ export const TransferContainer = forwardRef<
       const fee = feeInWei ?? BigNumber.from(0);
 
       const utxoAmount = activeRelayer
-        ? amountBigNumber.sub(fee)
-        : amountBigNumber;
+        ? transferAmountBN.sub(fee)
+        : transferAmountBN;
 
       const transferUtxo = await activeApi.generateUtxo({
         curve: noteManager.defaultNoteGenInput.curve,
@@ -852,11 +859,11 @@ export const TransferContainer = forwardRef<
       api,
       fungibleCurrency,
       destChain,
-      amount,
+      transferAmount,
       currentTypedChainId,
       inputNotes,
       activeChain?.chainId,
-      infoCalculated.rawChangeAmount,
+      infoFormatted.rawChangeAmount,
       recipientPubKey,
       feeInWei,
       activeRelayer,
@@ -909,7 +916,7 @@ export const TransferContainer = forwardRef<
         return;
       }
 
-      if (!fungibleCurrency || !amount) {
+      if (!fungibleCurrency || !transferAmount) {
         setEducationCardStep(2);
         return;
       }
@@ -924,7 +931,7 @@ export const TransferContainer = forwardRef<
       destChain,
       setEducationCardStep,
       fungibleCurrency,
-      amount,
+      transferAmount,
       recipientPubKey,
     ]);
 
@@ -933,11 +940,11 @@ export const TransferContainer = forwardRef<
         return false;
       }
 
-      if (!amount || !isValidAmount) {
+      if (!transferAmount || !isValidAmount) {
         return false;
       }
 
-      if (balancesFromNotes[fungibleCurrency.id] < amount) {
+      if (balancesFromNotes[fungibleCurrency.id] < transferAmount) {
         return false;
       }
 
@@ -962,7 +969,7 @@ export const TransferContainer = forwardRef<
       return true;
     }, [
       activeChain,
-      amount,
+      transferAmount,
       balancesFromNotes,
       destChain,
       fungibleCurrency,
@@ -1000,13 +1007,20 @@ export const TransferContainer = forwardRef<
 
     const amountInputProps = useMemo(() => {
       return {
-        amount: amount ? amount.toString() : undefined,
+        amount: transferAmount ? transferAmount.toString() : undefined,
         onAmountChange,
         errorMessage: amountError,
         isDisabled: !selectedBridgingAsset || !destChain,
-        onMaxBtnClick: () => setAmount(selectedBridgingAsset?.balance ?? 0),
+        onMaxBtnClick: () =>
+          setTransferAmount(selectedBridgingAsset?.balance ?? 0),
       };
-    }, [amount, amountError, destChain, onAmountChange, selectedBridgingAsset]);
+    }, [
+      transferAmount,
+      amountError,
+      destChain,
+      onAmountChange,
+      selectedBridgingAsset,
+    ]);
 
     const relayerInputProps = useMemo(() => {
       return {
@@ -1066,10 +1080,10 @@ export const TransferContainer = forwardRef<
         return acc + formated;
       }, 0);
 
-      const { transferAmount, transferTokenSymbol } = infoCalculated;
+      const { transferTokenSymbol } = infoFormatted;
 
       const formatedRemainingBalance = getRoundedAmountString(
-        total - (amount ?? 0),
+        total - (transferAmount ?? 0),
         3,
         Math.round
       );
@@ -1080,8 +1094,8 @@ export const TransferContainer = forwardRef<
             title: 'Receiving',
             info: 'Receiving',
           },
-          rightContent: transferAmount
-            ? `${transferAmount} ${transferTokenSymbol}`
+          rightContent: infoFormatted.transferAmount
+            ? `${infoFormatted.transferAmount} ${transferTokenSymbol}`
             : '--',
         },
         {
@@ -1089,7 +1103,7 @@ export const TransferContainer = forwardRef<
             title: 'Remaining balance',
             info: 'Remaining balance',
           },
-          rightContent: amount
+          rightContent: transferAmount
             ? `${formatedRemainingBalance} ${transferTokenSymbol}`
             : '--',
         },
@@ -1100,25 +1114,30 @@ export const TransferContainer = forwardRef<
           rightContent: maxFeeText,
         },
       ];
-    }, [amount, availableNotes, infoCalculated, maxFeeText]);
+    }, [transferAmount, availableNotes, infoFormatted, maxFeeText]);
 
     // Transfer button props
     const buttonDesc = useMemo(() => {
-      if (!feeInWei || !amount) {
+      if (!feeInWei || !transferAmount) {
         return;
       }
 
       const totalFee = Number(ethers.utils.formatEther(feeInWei));
       const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
-      const tkSymbol = infoCalculated?.transferTokenSymbol ?? '';
+      const tkSymbol = infoFormatted?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
-      if (activeRelayer && amount < totalFee) {
+      if (activeRelayer && transferAmount < totalFee) {
         return `Insufficient funds. You need more than ${feeText} to cover the fee`;
       }
 
       return;
-    }, [activeRelayer, amount, feeInWei, infoCalculated?.transferTokenSymbol]);
+    }, [
+      activeRelayer,
+      transferAmount,
+      feeInWei,
+      infoFormatted?.transferTokenSymbol,
+    ]);
 
     const isDisabled = useMemo(() => {
       return isWalletConnected && hasNoteAccount && isValidToTransfer;
