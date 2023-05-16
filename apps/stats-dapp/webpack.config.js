@@ -121,24 +121,13 @@ function createWebpackBase() {
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
               plugins: [
-                '@babel/plugin-proposal-nullish-coalescing-operator',
-                '@babel/plugin-proposal-numeric-separator',
-                '@babel/plugin-proposal-optional-chaining',
                 isDevelopment && require.resolve('react-refresh/babel'),
-                [
-                  '@babel/plugin-transform-runtime',
-                  { useESModules: false, loose: false },
-                ],
-                '@babel/plugin-transform-react-jsx',
-                '@babel/plugin-syntax-dynamic-import',
-                '@babel/plugin-syntax-import-meta',
-                '@babel/plugin-syntax-top-level-await',
-                '@babel/plugin-proposal-class-properties',
                 [
                   '@babel/plugin-proposal-private-property-in-object',
                   { loose: false },
                 ],
                 ['@babel/plugin-proposal-private-methods', { loose: false }],
+                ['@babel/plugin-proposal-class-properties', { loose: false }],
                 'preval',
               ].filter(Boolean),
             },
@@ -254,9 +243,22 @@ function createWebpackBase() {
 
         // svg react generator
         {
-          test: /\.svg$/i,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack', 'file-loader'],
+          test: /\.svg$/,
+          oneOf: [
+            {
+              issuer: /\.[jt]sx?$/,
+              resourceQuery: /react/, // *.svg?react
+              use: ['@svgr/webpack'],
+            },
+            {
+              type: 'asset',
+              parser: {
+                dataUrlCondition: {
+                  maxSize: 200, // 200kb
+                },
+              },
+            },
+          ],
         },
       ],
     },

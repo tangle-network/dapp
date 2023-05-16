@@ -181,9 +181,22 @@ function createWebpack(env, mode = 'production') {
           ],
         },
         {
-          test: /\.svg$/i,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack', 'file-loader'],
+          test: /\.svg$/,
+          oneOf: [
+            {
+              issuer: /\.[jt]sx?$/,
+              resourceQuery: /react/, // *.svg?react
+              use: ['@svgr/webpack'],
+            },
+            {
+              type: 'asset',
+              parser: {
+                dataUrlCondition: {
+                  maxSize: 200, // 200kb
+                },
+              },
+            },
+          ],
         },
       ],
     },

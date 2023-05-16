@@ -48,22 +48,12 @@ export function useDynamicSVGImport(
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const Icon = (
-          await import(
-            `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/${_name}.svg`
-          )
-        ).default;
+        const Icon = (await import(`../${type}s/${_name}.svg?react`)).default;
         setImportedIcon(Icon);
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const Icon = (
-            await import(
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              `!!@svgr/webpack?+svgo,+titleProp,+ref!../${type}s/default.svg`
-            )
-          ).default;
+          const Icon = (await import(`../${type}s/default.svg?react`)).default;
           setImportedIcon(Icon);
           onCompleted?.(_name, Icon);
         } else {
