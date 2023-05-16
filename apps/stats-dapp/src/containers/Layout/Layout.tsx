@@ -149,6 +149,12 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         <StatsProvider
           subqueryEndpoint={subqueryEndpoint}
           polkadotEndpoint={polkadotEndpoint}
+          dkgDataFromPolkadotAPI={{
+            currentKey: '',
+            currentSessionNumber: 0,
+            nextKey: '',
+            nextSessionNumber: 0,
+          }}
         >
           <NavBoxInfoContainer />
           <main className="max-w-[1160px] mx-auto">{children}</main>
