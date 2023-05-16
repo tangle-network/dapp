@@ -1,21 +1,25 @@
+import { ErrorBoundary } from '@sentry/react';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
-import { useScrollActions } from '@webb-tools/responsive-utils';
+import {
+  useNoteAccount,
+  useScrollActions,
+  useTxQueue,
+} from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
 import {
   ErrorFallback,
   TabContent,
-  TabTrigger,
   TabsList,
   TabsRoot,
+  TabTrigger,
   TransactionQueueCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
-import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
 import {
   EducationCard,
   InteractiveFeedbackView,
@@ -28,20 +32,19 @@ import {
   UploadSpendNoteModal,
 } from '../containers';
 import { DepositContainer } from '../containers/DepositContainer';
-import { TransferContainer } from '../containers/TransferContainer';
-import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
 } from '../containers/note-account-tables';
 import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
+import { TransferContainer } from '../containers/TransferContainer';
+import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
 import { downloadNotes } from '../utils';
-import { ErrorBoundary } from '@sentry/react';
 
 const PageBridge = () => {
   // State for the tabs

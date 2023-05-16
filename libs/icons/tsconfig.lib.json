@@ -10,7 +10,6 @@
     "jsx": "react-jsx",
     "downlevelIteration": true,
     "sourceMap": true,
-    "noImplicitReturns": false,
     "strict": true,
     "emitDeclarationOnly": true,
     "module": "esnext"

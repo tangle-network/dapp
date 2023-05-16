@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Chip } from '@webb-tools/webb-ui-components';
-import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { BreadcrumbsItemPropsType } from './types';
+
+import { Typography } from '../../typography';
+import { Chip } from '../Chip';
 
 /**
  * The `BreadcrumbsItem` component

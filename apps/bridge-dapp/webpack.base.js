@@ -9,7 +9,6 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
-const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
@@ -59,7 +58,7 @@ function createWebpack(env, mode = 'production') {
       asyncWebAssembly: true,
     },
     context: env.context,
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src', 'index.tsx')],
+    entry: [path.resolve(__dirname, 'src', 'index.tsx')],
     mode,
     module: {
       rules: [
@@ -119,17 +118,7 @@ function createWebpack(env, mode = 'production') {
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      useBuiltIns: 'entry',
-                      corejs: '3',
-                      targets: {
-                        browsers: ['last 2 versions', 'not ie <= 8'],
-                        node: '14',
-                      },
-                    },
-                  ],
+                  '@babel/preset-env',
                   '@babel/preset-typescript',
                   [
                     '@babel/preset-react',
@@ -137,7 +126,6 @@ function createWebpack(env, mode = 'production') {
                   ],
                 ],
                 plugins: [
-                  ...(polkadotBabelWebpackConfig.plugins ?? []),
                   isDevelopment && require.resolve('react-refresh/babel'),
                   ['@babel/plugin-transform-runtime', { loose: false }],
                   ['@babel/plugin-proposal-class-properties', { loose: true }],
@@ -193,9 +181,13 @@ function createWebpack(env, mode = 'production') {
           ],
         },
         {
-          test: /\.svg$/i,
-          issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack', 'file-loader'],
+          test: /\.svg$/,
+          resourceQuery: /svgr/,
+          use: [
+            {
+              loader: '@svgr/webpack',
+            },
+          ],
         },
       ],
     },
