@@ -15,64 +15,95 @@ import { FooterProps } from './types';
  * The statistic `Footer` for `Layout` container
  */
 export const Footer = forwardRef<HTMLElement, FooterProps>(
-  ({ className, isNext, ...props }, ref) => {
+  ({ className, isNext, isMinimal, ...props }, ref) => {
     return (
       <footer
         {...props}
         className={twMerge(
-          'flex flex-col max-w-[1160px] mx-auto mt-6 pt-8 pb-16 space-y-4 bg-mono-20 dark:bg-mono-200',
+          'flex flex-col mx-auto mt-6 pt-8 pb-16 space-y-4 bg-mono-20 dark:bg-mono-200',
           className
         )}
         ref={ref}
       >
-        <div className="flex justify-between">
-          {isNext ? (
-            <Link className="block" href={constants.logoConfig.path}>
-              <Logo />
-            </Link>
-          ) : (
-            <NavLink className="block" to={constants.logoConfig.path}>
-              <Logo />
-            </NavLink>
-          )}
+        {isMinimal ? (
+          // Minimal Footer
+          <>
+            <Socials
+              iconPlacement="end"
+              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+            />
 
-          {Object.keys(constants.footerNavs).map((key, idx) => {
-            return (
-              <FooterNavItem
-                key={`${key}-${idx}`}
-                header={key}
-                links={constants.footerNavs[key]}
-              />
-            );
-          })}
-        </div>
+            <div className="flex flex-col md:flex-row items-end gap-3 justify-between">
+              <Typography variant="body2" className="!text-mono-100">
+                © 2023 Webb Technologies, Inc. All rights reserved.
+              </Typography>
+              <div className="flex flex-[1] align-items justify-end gap-6">
+                {constants.bottomLinks.map(({ name, ...link }) => (
+                  <a key={name} {...link} className="group">
+                    <Typography
+                      variant="body2"
+                      className="!text-mono-100 underline"
+                    >
+                      {name}
+                    </Typography>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          // Normal Footer
+          <>
+            <div className="flex justify-between">
+              {isNext ? (
+                <Link className="block" href={constants.logoConfig.path}>
+                  <Logo />
+                </Link>
+              ) : (
+                <NavLink className="block" to={constants.logoConfig.path}>
+                  <Logo />
+                </NavLink>
+              )}
 
-        <Divider />
+              {Object.keys(constants.footerNavs).map((key, idx) => {
+                return (
+                  <FooterNavItem
+                    key={`${key}-${idx}`}
+                    header={key}
+                    links={constants.footerNavs[key]}
+                  />
+                );
+              })}
+            </div>
 
-        {/** Social platforms */}
-        <Socials
-          iconPlacement="end"
-          iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
-        />
+            <Divider />
 
-        <div className="flex justify-between">
-          <Typography variant="body2" className="!text-mono-100">
-            Apache 2.0
-          </Typography>
+            {/** Social platforms */}
+            <Socials
+              iconPlacement="end"
+              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40"
+            />
 
-          <div className="flex items-center space-x-12">
-            {constants.bottomLinks.map(({ name, ...link }) => (
-              <a key={name} {...link} className="group">
-                <Typography
-                  variant="body2"
-                  className="!text-mono-100 group-hover:underline"
-                >
-                  {name}
-                </Typography>
-              </a>
-            ))}
-          </div>
-        </div>
+            <div className="flex justify-between">
+              <Typography variant="body2" className="!text-mono-100">
+                Apache 2.0
+              </Typography>
+
+              <div className="flex items-center space-x-12">
+                {constants.bottomLinks.map(({ name, ...link }) => (
+                  <a key={name} {...link} className="group">
+                    <Typography
+                      variant="body2"
+                      className="!text-mono-100 group-hover:underline"
+                    >
+                      {name}
+                    </Typography>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </footer>
     );
   }
