@@ -19,7 +19,7 @@
     "build:storybook": "nx build-storybook webb-ui-components",
     "build:faucet": "nx build faucet",
     "export:faucet": "nx export faucet",
-    "start:bridge": "nx server bridge-dapp",
+    "start:bridge": "nx serve bridge-dapp",
     "start:stats": "yarn gql:codegen && yarn nx serve stats-dapp",
     "start:webbsite": "nx serve webbsite",
     "start:tangle-website": "nx serve tangle-website",
