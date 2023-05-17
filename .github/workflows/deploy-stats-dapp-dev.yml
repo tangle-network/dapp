@@ -43,7 +43,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         with:
-          args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./apps/stats-dapp/build/
+          args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./dist/apps/stats-dapp/
 
       - name: Netlify Preview URL
         uses: unsplash/comment-on-pr@v1.3.0

@@ -235,7 +235,7 @@ function createWebpack(env, mode = 'production') {
       filename: '[name].[contenthash:8].js',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       hashFunction: 'xxhash64',
-      path: path.join(env.context, 'build'),
+      path: path.join(env.context, '../../dist/apps/bridge-dapp'),
       publicPath: '',
     },
     performance: {

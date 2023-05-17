@@ -68,7 +68,7 @@ function createWebpackBase() {
       filename: '[name].[contenthash:8].js',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build'),
+      path: path.join(__dirname, '../../dist/apps/stats-dapp'),
       publicPath: '',
     },
 
