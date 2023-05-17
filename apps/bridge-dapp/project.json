@@ -9,11 +9,11 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
       "options": {
-        "outputPath": "apps/bridge-dapp/build",
+        "outputPath": "dist/apps/bridge-dapp",
         "compiler": "babel",
         "index": "apps/bridge-dapp/src/public/index.html",
         "baseHref": "/",
-        "main": "apps/bridge-dapp/src/main.tsx",
+        "main": "apps/bridge-dapp/src/index.tsx",
         "tsConfig": "apps/bridge-dapp/tsconfig.app.json",
         "assets": [
           "apps/bridge-dapp/src/public/favicon.png",
@@ -21,7 +21,7 @@
         ],
         "generateIndexHtml": false,
         "scripts": [],
-        "postcssConfig": "./postcss.config.js",
+        "postcssConfig": "apps/bridge-dapp/postcss.config.js",
         "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
       },
       "configurations": {
