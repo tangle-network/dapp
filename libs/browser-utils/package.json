@@ -1,8 +1,5 @@
 {
   "name": "@webb-tools/browser-utils",
   "version": "0.0.1",
-  "main": "./src/index.js",
-  "dependencies": {
-    "@webb-tools/storage": "0.0.1"
-  }
+  "main": "./src/index.js"
 }

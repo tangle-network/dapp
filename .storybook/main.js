@@ -1,6 +1,7 @@
 module.exports = {
   stories: [],
   addons: [
+    '@storybook/addon-actions',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     'storybook-addon-react-router-v6',
@@ -16,4 +17,11 @@ module.exports = {
   //
   //   return config;
   // },
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
+  },
+  docs: {
+    autodocs: true,
+  },
 };
