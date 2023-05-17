@@ -81,7 +81,7 @@ export const FeaturesSection = () => {
           slidesPerView="auto"
           freeMode={true}
           modules={[FreeMode]}
-          className="hidden md:block lg:hidden w-full !pl-5"
+          className="!hidden md:!block lg:!hidden w-full !pl-5"
         >
           {tangleFeatures.map((feat, i) => {
             return (

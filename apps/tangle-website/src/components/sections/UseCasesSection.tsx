@@ -67,7 +67,7 @@ export const UseCasesSection = () => {
           slidesPerView="auto"
           freeMode={true}
           modules={[FreeMode]}
-          className="mt-8 hidden md:block lg:hidden"
+          className="mt-8 !hidden md:!block lg:!hidden"
         >
           {tangleUseCases.map((useCase, i) => {
             return (

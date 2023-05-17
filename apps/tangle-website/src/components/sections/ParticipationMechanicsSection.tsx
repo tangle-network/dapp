@@ -104,7 +104,7 @@ export const ParticipationMechanicsSection = () => {
               slidesPerView="auto"
               freeMode={true}
               modules={[FreeMode]}
-              className="w-full hidden md:block lg:hidden mb-6 !mx-0 !pl-5"
+              className="w-full !hidden md:!block lg:!hidden mb-6 !mx-0 !pl-5"
             >
               {Object.keys(tabsContent).map((tabName, i) => (
                 <SwiperSlide
