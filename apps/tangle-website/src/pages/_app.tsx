@@ -44,7 +44,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <title>Welcome to Tangle Website!</title>
       </Head>
 
-      <Header />
+      <Header hideBanner />
 
       <main className="app">
         <Component {...pageProps} />

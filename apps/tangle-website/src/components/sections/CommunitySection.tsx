@@ -13,7 +13,6 @@ import {
   WebsiteCommunity,
 } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import { SectionDescription, SectionDescription2 } from '..';
 
 type LinksType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -23,12 +22,6 @@ type LinksType = {
 };
 
 const links: Array<LinksType> = [
-  {
-    name: 'Github',
-    Icon: GithubFill,
-    href: 'https://github.com/webb-tools',
-    description: 'Explore the source code and get involved',
-  },
   {
     name: 'Documentation',
     Icon: DocumentationIcon,
@@ -81,12 +74,6 @@ export const CommunitySection = () => {
           <Typography variant="mkt-h2" className="text-center mt-1">
             Tangle Community
           </Typography>
-
-          <SectionDescription2 className="text-center mt-[16px] px-3 lg:px-0">
-            The Tangle network doubles as hub for routing cross chain messages
-            and for anchoring itself as a bridge endpoint for cross chain
-            zero-knowledge applications.
-          </SectionDescription2>
 
           <WebsiteCommunity links={links} />
         </div>

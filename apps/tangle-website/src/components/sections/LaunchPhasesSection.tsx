@@ -1,12 +1,7 @@
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { ChevronRight } from '@webb-tools/icons';
-import {
-  SectionDescription,
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-} from '..';
+import { SectionDescription2, SectionHeader, SectionTitle } from '..';
 
 interface RoadMapItemProps {
   timeline: string;
@@ -57,7 +52,7 @@ export const LaunchPhasesSection = () => {
       <div className="max-w-[1440px] mx-auto">
         <div className="px-5 mb-12 lg:px-[11.25%]">
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="md:flex-[5.5] lg:flex-[4.5]">
+            <div className="md:w-[55%] lg:w-[45%]">
               <SectionHeader className="mb-6">Launch Phases</SectionHeader>
               <SectionTitle className="text-left">
                 Tangle Network is{' '}
@@ -65,12 +60,6 @@ export const LaunchPhasesSection = () => {
               <SectionTitle className="text-left text-purple-70">
                 Open Source & Community Managed
               </SectionTitle>
-            </div>
-            <div className="md:flex-[4.5] lg:flex-[5.5] md:flex md:items-center">
-              <SectionDescription>
-                As the hub for routing cross-chain messages using ZKP, Tangle
-                enables the community to optimized for any use case.
-              </SectionDescription>
             </div>
           </div>
         </div>

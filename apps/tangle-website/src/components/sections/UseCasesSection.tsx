@@ -4,7 +4,7 @@ import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 
-import { SectionHeader, SectionTitle2 } from '..';
+import { SectionHeader } from '..';
 import { UseCase1Svg, UseCase2Svg, UseCase3Svg, UseCase4Svg } from '../svgs';
 
 const tangleUseCases = [
@@ -12,28 +12,28 @@ const tangleUseCases = [
     icon: <UseCase1Svg />,
     title: 'General Messaging Passing & Public Bridges',
     description:
-      'General Messaging Passing & Public Bridges: Enables public and transparent cross-chain interactions, ensuring efficiency and security by using a frequently rotating TSS-based system that involves multiple participants working together.',
+      'Seamlessly facilitate public and transparent cross-chain interactions. Experience unparalleled efficiency and security through a dynamic TSS-based system, where multiple participants collaborate harmoniously.',
     link: 'https://docs.webb.tools/docs/anchor-system/overview/',
   },
   {
     icon: <UseCase2Svg />,
     title: 'Connected Shielded Pool Protocols',
     description:
-      'The Tangle Network powers the ability to privately move and transfer assets between blockchains.',
+      'Unleash the true potential of interconnected ecosystems to empower private movement and the seamless transfer of assets between blockchains. Unleash the true potential of interconnected ecosystems.',
     link: 'https://docs.webb.tools/docs/protocols/asset-transfer/overview/',
   },
   {
     icon: <UseCase3Svg />,
     title: 'Connected Shielded Identity Protocols',
     description:
-      'The Tangle Network creates identities and connect groups between blockchains.',
+      'Harness the revolutionary privacy of the Network to forge identities and establish meaningful connections between diverse blockchains. Bridge the gaps and unite digital realms like never before.',
     link: 'https://docs.webb.tools/docs/protocols/identity/',
   },
   {
     icon: <UseCase4Svg />,
     title: 'Oracle System and Data Feeds',
     description:
-      'The Tangle Network leverages the Webb TSS DKG to sign payloads from data feeds for financial, identity, and other applications.',
+      'Empower financial, identity, and other applications with trustworthy information through the next-gen Webb DKG (Distributed Key Generation) to securely sign payloads from data feeds.',
     link: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
   },
 ];
@@ -44,9 +44,6 @@ export const UseCasesSection = () => {
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col gap-4 lg:px-[11.25%]">
           <SectionHeader className="text-purple-40">Usecases</SectionHeader>
-          <SectionTitle2 className="text-left text-mono-0 md:max-w-[604px]">
-            Tangle Powers the Community to Optimized for Any Usecases.
-          </SectionTitle2>
         </div>
 
         {/* Desktop + Mobile */}
