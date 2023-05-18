@@ -63,7 +63,6 @@
     "@actions/core": "^1.10.0",
     "@apollo/client": "^3.6.9",
     "@headlessui/react": "^1.7.3",
-    "@johanaarstein/dotlottie-player": "^1.5.11",
     "@metamask/detect-provider": "^2.0.0",
     "@ngneat/falso": "^6.1.0",
     "@notionhq/client": "^2.2.3",

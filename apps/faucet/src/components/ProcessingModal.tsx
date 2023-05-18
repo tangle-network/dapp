@@ -10,7 +10,7 @@ import {
 import cx from 'classnames';
 import Lottie from 'lottie-react';
 import { useObservableState } from 'observable-hooks';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import processingAnimation from '../lottie/processing.json';
 import sucessAnimation from '../lottie/success.json';
