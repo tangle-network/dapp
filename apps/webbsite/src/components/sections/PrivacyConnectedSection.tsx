@@ -32,12 +32,17 @@ export const PrivacyConnectedSection = () => {
   return (
     <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="webb" size="lg" className="mx-auto" />
-      <Typography variant="mkt-h2" className="px-4 mt-6 text-center">
+
+      <Typography
+        variant="mkt-h3"
+        className="px-4 mt-6 text-center text-mono-200 font-black"
+      >
         The Future of privacy is Connected
       </Typography>
+
       <Typography
-        variant="mkt-body"
-        className="px-4 mt-6 text-center md:mt-9 text-mono-180"
+        variant="mkt-body1"
+        className="px-4 mt-6 text-center md:mt-9 text-mono-140 font-medium"
       >
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our

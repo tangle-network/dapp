@@ -37,7 +37,7 @@ export function Index() {
         <HeroSection />
       </div>
 
-      {/* <PrivacyConnectedSection /> */}
+      <PrivacyConnectedSection />
 
       {/* <PrivacyScaleSection /> */}
 
