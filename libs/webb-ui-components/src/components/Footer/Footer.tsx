@@ -53,8 +53,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           </>
         ) : (
           // Normal Footer
-          <>
-            <div className="flex justify-between pb-2">
+          <div className="mx-auto w-[360px] md:w-[768px] lg:w-[1160px] px-2">
+            <div className="flex justify-between pb-6 flex-wrap gap-6 md:gap-0">
               {isNext ? (
                 <Link className="block" href={constants.logoConfig.path}>
                   <Logo />
@@ -81,10 +81,10 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
             {/** Social platforms */}
             <Socials
               iconPlacement="end"
-              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40 pt-4"
+              iconClassName="text-mono-100 hover:text-mono-200 dark:hover:text-mono-40 pt-4 px-2 mb-6"
             />
 
-            <div className="flex justify-between">
+            <div className="flex justify-between px-2">
               <Typography variant="body2" className="!text-mono-100">
                 Apache 2.0
               </Typography>
@@ -102,7 +102,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 ))}
               </div>
             </div>
-          </>
+          </div>
         )}
       </footer>
     );

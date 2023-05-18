@@ -1,7 +1,7 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 
-import { Footer } from '@webb-tools/webb-ui-components';
+import { Footer, useDarkMode } from '@webb-tools/webb-ui-components';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
 import { useEffect } from 'react';
@@ -49,10 +49,13 @@ export const metadata: DefaultSeoProps = {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
+  const [, setIsDarkMode] = useDarkMode();
+
   // Dynamic loading the lottie player in client side
   useEffect(() => {
     import('@johanaarstein/dotlottie-player');
-  }, []);
+    setIsDarkMode('light');
+  }, [setIsDarkMode]);
 
   return (
     <Provider>
