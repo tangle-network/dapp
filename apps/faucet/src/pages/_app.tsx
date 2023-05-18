@@ -53,7 +53,6 @@ const App = ({ Component, pageProps }: AppProps) => {
 
   // Dynamic loading the lottie player in client side
   useEffect(() => {
-    import('@johanaarstein/dotlottie-player');
     setIsDarkMode('light');
   }, [setIsDarkMode]);
 

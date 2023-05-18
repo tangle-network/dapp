@@ -6,7 +6,5 @@ declare module '*.svg' {
 }
 
 declare namespace JSX {
-  interface IntrinsicElements {
-    'dotlottie-player': any;
-  }
+  interface IntrinsicElements {}
 }
