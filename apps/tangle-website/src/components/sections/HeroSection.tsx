@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { Socials } from '@webb-tools/webb-ui-components';
-
 import { Heading, SectionDescription, LinkButton } from '..';
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
+import { Typography } from '@webb-tools/webb-ui-components';
 
 export const HeroSection = () => {
   return (

@@ -18,12 +18,9 @@ export const Header = () => {
           >
             TANGLE NETWORK CROWDLOAN IS HAPPENING SOON ✨ |{' '}
             <InternalOrExternalLink url="#" className="inline-block">
-              <Typography
-                variant="mkt-body2"
-                className="!text-mono-0 capitalize underline"
-              >
+              <span className="!text-mono-0 capitalize underline">
                 Join Waitlist!
-              </Typography>
+              </span>
             </InternalOrExternalLink>
           </Typography>
           <Close
