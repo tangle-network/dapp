@@ -71,6 +71,18 @@
  text-mono-200 bg-mono-0 border-[2px] hover:text-mono-200 hover:bg-mono-20 border-mono-200;
 }
 
+.tag {
+  @apply text-[16px] leading-[24px] tracking-[0.01em] /** small screen */
+  md:text-[18px] /** medium screen */
+  text-mono-120 py-[8px] px-[12px] capitalize cursor-pointer rounded-lg font-black font-satoshi;
+}
+
+.tag-selected {
+  @apply text-[16px] leading-[24px] tracking-[0.01em] /** small screen */
+  md:text-[18px] /** medium screen */
+  text-blue-70 bg-blue-10 py-[8px] px-[12px] capitalize cursor-pointer rounded-lg font-black font-satoshi;
+}
+
 /** Override the notion styles */
 .notion-h-title {
   @apply heading-3;
