@@ -10,13 +10,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-
-import {
-  SectionDescription,
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-} from '..';
 import {
   WEBB_DOCS_URL,
   NODE_OPERATORS_URL,

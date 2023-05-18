@@ -6,8 +6,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 
-import { SectionDescription2, SectionHeader, SectionTitle } from '..';
-
 const faqItems = [
   {
     question: 'What is the Tangle Token (TNT) and what is it used for?',
@@ -83,14 +81,12 @@ export const FAQSection = () => {
                 </Typography>
               </AccordionButton>
               <AccordionContent className="px-0 pr-[52.5px]">
-                <SectionDescription2 className="whitespace-pre-line">
-                  <Typography
-                    variant="mkt-body1"
-                    className="font-medium text-mono-160"
-                  >
-                    {item.answer}
-                  </Typography>
-                </SectionDescription2>
+                <Typography
+                  variant="mkt-body1"
+                  className="font-medium text-mono-160 whitespace-pre-line"
+                >
+                  {item.answer}
+                </Typography>
               </AccordionContent>
             </AccordionItem>
           ))}

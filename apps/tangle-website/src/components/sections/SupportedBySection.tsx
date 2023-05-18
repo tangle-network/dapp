@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import { Button, Logo, Typography } from '@webb-tools/webb-ui-components';
-import { SectionTitle, SectionDescription } from '..';
 import { WEBB_URL, TANGLE_NETWORK_DOCS_URL } from '../../constants';
 
 type SupportedBySectionCardType = {

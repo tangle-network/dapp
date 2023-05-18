@@ -1,12 +1,6 @@
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { ChevronRight } from '@webb-tools/icons';
-import {
-  SectionDescription,
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-} from '..';
 
 interface RoadMapItemProps {
   timeline: string;

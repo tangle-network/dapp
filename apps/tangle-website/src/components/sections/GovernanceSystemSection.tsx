@@ -1,12 +1,6 @@
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
-
-import {
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-  LinkButton,
-} from '..';
+import { LinkButton } from '..';
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
 import {
   WHAT_IS_TSS_URL,

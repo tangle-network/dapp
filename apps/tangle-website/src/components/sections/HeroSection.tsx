@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Socials } from '@webb-tools/webb-ui-components';
-import { Heading, SectionDescription, LinkButton } from '..';
+import { LinkButton } from '..';
 import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
 import { Typography } from '@webb-tools/webb-ui-components';
 
@@ -17,7 +17,10 @@ export const HeroSection = () => {
               >
                 Tangle Network
               </Typography>
-              <Typography variant="mkt-subheading" className="font-medium text-mono-140">
+              <Typography
+                variant="mkt-subheading"
+                className="font-medium text-mono-140"
+              >
                 The next-generation blockchain for seamless and private
                 cross-chain messaging and applications.
               </Typography>

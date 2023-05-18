@@ -1,9 +1,4 @@
-import {
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-  IntroducingTangleSvg,
-} from '..';
+import { IntroducingTangleSvg } from '..';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 export const IntroducingSection = () => {

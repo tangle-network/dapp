@@ -3,8 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-
-import { SectionHeader } from '..';
 import { UseCase1Svg, UseCase2Svg, UseCase3Svg, UseCase4Svg } from '../svgs';
 
 const tangleUseCases = [

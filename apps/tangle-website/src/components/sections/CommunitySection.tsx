@@ -2,16 +2,11 @@ import {
   Common2Icon,
   DiscordFill,
   DocumentationIcon,
-  GithubFill,
   TelegramFill,
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-import {
-  Button,
-  Typography,
-  WebsiteCommunity,
-} from '@webb-tools/webb-ui-components';
+import { Typography, WebsiteCommunity } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
 
 type LinksType = {
