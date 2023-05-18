@@ -43,7 +43,7 @@ export function Index() {
 
       <ApplicationsAndInfrastructureSection />
 
-      {/* <InActionSection /> */}
+      <InActionSection />
 
       {/* <ResearchAndDevelopmentSection /> */}
     </>

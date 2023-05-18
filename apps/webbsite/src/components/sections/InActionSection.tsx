@@ -21,11 +21,17 @@ export const InActionSection = () => {
         'pt-16 md:py-[156px] space-y-9'
       )}
     >
-      <Typography variant="mkt-h2" className="px-4 text-center">
+      <Typography
+        variant="mkt-h3"
+        className="px-4 text-center font-black text-mono-200"
+      >
         Shielded Protocols in Action
       </Typography>
 
-      <Typography variant="mkt-body" className="px-4 text-center text-mono-180">
+      <Typography
+        variant="mkt-subheading"
+        className="px-4 text-center text-mono-180 font-medium"
+      >
         {"Try out the applications we're building."}
       </Typography>
 
@@ -43,11 +49,17 @@ export const InActionSection = () => {
           className="md:bg-mock_bridge md:bg-top w-full h-[527px] md:h-[450px]"
         >
           <div className="pt-4 px-4 md:pt-9 md:px-9 space-y-4 md:max-w-[378px]">
-            <Typography variant="mkt-h4" className="text-mono-200">
+            <Typography
+              variant="mkt-subheading"
+              className="text-mono-200 font-black"
+            >
               Zero-Knowledge Cross-Chain Bridging
             </Typography>
 
-            <Typography variant="mkt-caption" className="text-mono-160">
+            <Typography
+              variant="mkt-body2"
+              className="text-mono-160 font-medium"
+            >
               A truly zero-knowledge cross-chain environment to deposit,
               transfer, and withdraw funds.
             </Typography>
@@ -71,11 +83,17 @@ export const InActionSection = () => {
         <TabContent value="stats">
           <div className="flex flex-col md:flex-row justify-between h-[527px] md:h-[450px]">
             <div className="space-y-4 md:max-w-[378px] pt-4 px-4 sm:pt-9 sm:px-9">
-              <Typography variant="mkt-h4" className="text-mono-200">
+              <Typography
+                variant="mkt-subheading"
+                className="text-mono-200 font-black"
+              >
                 Explore the Tangle Network with the stats page
               </Typography>
 
-              <Typography variant="mkt-caption" className="text-mono-160">
+              <Typography
+                variant="mkt-body2"
+                className="text-mono-160 font-medium"
+              >
                 Monitor the health of the Tangle Network, watch proposals and
                 more on the stats page.
               </Typography>
