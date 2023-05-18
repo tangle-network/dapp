@@ -59,7 +59,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         }}
       />
 
-      <Header />
+      {/* <Header /> */}
 
       <main className="app">
         <Component {...pageProps} />
@@ -70,7 +70,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
       </main>
 
-      <WebsiteFooter type="webbsite" />
+      {/* <WebsiteFooter type="webbsite" /> */}
     </WebbUIProvider>
   );
 }
