@@ -59,7 +59,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         }}
       />
 
-      {/* <Header /> */}
+      <Header />
 
       <main className="app">
         <Component {...pageProps} />
