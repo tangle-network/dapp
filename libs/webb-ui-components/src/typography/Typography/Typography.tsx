@@ -30,10 +30,12 @@ const defaultComponent = {
   'mkt-h2': 'h2' as const,
   'mkt-h3': 'h3' as const,
   'mkt-h4': 'h4' as const,
-  'mkt-body': 'p' as const,
+  'mkt-subheading': 'p' as const,
+  'mkt-body1': 'p' as const,
+  'mkt-body2': 'p' as const,
+  'mkt-small-caps': 'p' as const,
   'mkt-caption': 'p' as const,
-  'mkt-quote': 'span' as const,
-  'mkt-utility': 'span' as const,
+  'mkt-monospace': 'p' as const,
 };
 
 /**
@@ -69,17 +71,15 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
     [component, variant]
   );
 
-  const _className = useMemo(
-    () =>
-      twMerge(
-        `${variant}` as const,
-        getTextAlignClassName(ta),
-        getFontWeightClassName(variant, fw),
-        getDefaultTextColor(variant),
-        className
-      ),
-    [className, fw, ta, variant]
-  );
+  const _className = useMemo(() => {
+    return twMerge(
+      `${variant}` as const,
+      getTextAlignClassName(ta),
+      getFontWeightClassName(variant, fw),
+      getDefaultTextColor(variant),
+      className
+    );
+  }, [className, fw, ta, variant]);
 
   return createElement(
     _component,

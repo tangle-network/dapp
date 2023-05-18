@@ -9,7 +9,12 @@ export type TypographyBaseProps = React.DetailedHTMLProps<
 
 export type TypographyAlignValues = 'center' | 'justify' | 'right' | 'left';
 
-export type TypographyFontWeightValues = 'normal' | 'semibold' | 'bold';
+export type TypographyFontWeightValues =
+  | 'normal'
+  | 'medium'
+  | 'semibold'
+  | 'bold'
+  | 'black';
 
 export type HeadingVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 
@@ -19,17 +24,19 @@ export type ParagraphVariant = 'para1' | 'para2';
 
 export type LabelVariant = 'label' | 'utility';
 
-export type MonospaceVariant = 'mono1' | 'mono2';
+export type MonospaceVariant = 'mono1' | 'mono2' | 'mkt-monospace';
 
 export type MarketingVariant =
   | 'mkt-h1'
   | 'mkt-h2'
   | 'mkt-h3'
   | 'mkt-h4'
-  | 'mkt-body'
+  | 'mkt-subheading'
+  | 'mkt-body1'
+  | 'mkt-body2'
+  | 'mkt-small-caps'
   | 'mkt-caption'
-  | 'mkt-quote'
-  | 'mkt-utility';
+  | 'mkt-monospace';
 
 export type WebbTypographyVariant =
   | HeadingVariant

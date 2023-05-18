@@ -13,25 +13,16 @@ import {
  */
 export function getTextAlignClassName(textAlign: TypographyAlignValues) {
   switch (textAlign) {
-    case 'center': {
+    case 'center':
       return 'text-center';
-    }
-
-    case 'justify': {
+    case 'justify':
       return 'text-justify';
-    }
-
-    case 'left': {
+    case 'left':
       return 'text-left';
-    }
-
-    case 'right': {
+    case 'right':
       return 'text-right';
-    }
-
-    default: {
-      throw new Error('Unknown text align value');
-    }
+    default:
+      return 'text-left';
   }
 }
 
@@ -46,11 +37,24 @@ export function getFontWeightClassName(
 ) {
   // Monospace variant do not have `semibold` for font weight, so cast it to `bold`
   if (isMonospaceVariant(variant) && fontWeight === 'semibold') {
-    return `font-bold`;
+    return 'font-bold';
   } else if (variant === 'label' || variant === 'utility') {
     return '';
   } else {
-    return `font-${fontWeight}` as const;
+    switch (fontWeight) {
+      case 'normal':
+        return 'font-normal';
+      case 'medium':
+        return 'font-medium';
+      case 'semibold':
+        return 'font-semibold';
+      case 'bold':
+        return 'font-bold';
+      case 'black':
+        return 'font-black';
+      default:
+        return 'font-normal';
+    }
   }
 }
 
@@ -74,12 +78,12 @@ export function isHeadingVariant(
 export function isMonospaceVariant(
   variant: WebbTypographyVariant
 ): variant is MonospaceVariant {
-  const monoKeys = ['mono1', 'mono2'];
+  const monoKeys = ['mono1', 'mono2', 'mkt-monospace'];
   return monoKeys.indexOf(variant) !== -1;
 }
 
 export function getDefaultTextColor(variant: WebbTypographyVariant) {
-  return variant.startsWith('h')
+  return variant.startsWith('h' || 'mkt-h')
     ? 'text-mono-200 dark:text-mono-00'
     : 'text-mono-160 dark:text-mono-80';
 }
