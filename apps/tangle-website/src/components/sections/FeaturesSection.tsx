@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-
 import {
   SectionHeader,
   SectionTitle,
@@ -50,13 +49,23 @@ export const FeaturesSection = () => {
       <div className="max-w-[1440px] mx-auto flex flex-col items-center gap-[60px]">
         <div className="flex flex-col items-center gap-4 px-5">
           <div className="flex flex-col items-center gap-2">
-            <SectionHeader>Features</SectionHeader>
-            <SectionTitle>What makes Tangle Unique?</SectionTitle>
+            <Typography
+              variant="mkt-small-caps"
+              className="text-purple-70 font-black"
+            >
+              Features
+            </Typography>
+            <Typography variant="mkt-h3" className="text-mono-200 font-black">
+              What makes Tangle Unique?
+            </Typography>
           </div>
-          <SectionDescription className="text-center lg:w-[65%]">
+          <Typography
+            variant="mkt-body1"
+            className="text-center lg:w-[65%] text-mono-140 font-medium"
+          >
             The Tangle network serves as a hub for secure communication and
             private interactions across different blockchains.
-          </SectionDescription>
+          </Typography>
         </div>
 
         {/* Desktop + Mobile */}
@@ -81,7 +90,7 @@ export const FeaturesSection = () => {
           slidesPerView="auto"
           freeMode={true}
           modules={[FreeMode]}
-          className="hidden md:block lg:hidden w-full !pl-5"
+          className="hidden md:block lg:!hidden w-full !pl-5"
         >
           {tangleFeatures.map((feat, i) => {
             return (
@@ -116,10 +125,12 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
         <div>
           <p className="mono1 mb-4">0{index}</p>
           <hr />
-          <Typography variant="h4" fw="bold" className="mt-4 mb-6">
+          <Typography variant="mkt-subheading" className="mt-4 mb-6 font-black">
             {title}
           </Typography>
-          <SectionDescription2>{description}</SectionDescription2>
+          <Typography variant="mkt-body1" className="font-medium text-mono-140">
+            {description}
+          </Typography>
         </div>
         <LinkButton href={link} className="mt-4">
           Learn More
