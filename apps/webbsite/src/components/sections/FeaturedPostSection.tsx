@@ -43,19 +43,19 @@ export const FeaturedPostSection = ({
             }
           >
             <Typography
-              variant="mkt-h3"
-              className="featured-post-title text-mono-200"
+              variant="mkt-subheading"
+              className=" text-mono-200 font-black"
             >
               {title}
             </Typography>
           </Link>
           <Typography
-            variant="mkt-body"
-            className="mt-2 featured-post-text text-mono-120"
+            variant="mkt-body1"
+            className="mt-2  text-mono-120 font-medium"
           >
             {description}
           </Typography>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-6">
             <Button
               variant="utility"
               href={
@@ -81,10 +81,13 @@ export const FeaturedPostSection = ({
                 rel="noreferrer"
               >
                 <li className="pb-6 mt-6 border-b-2 border-mono-200">
-                  <span className="flex items-center gap-2 capitalize recent-video-title text-mono-200">
+                  <Typography
+                    variant="mkt-subheading"
+                    className="flex items-center gap-2 capitalize text-mono-200 font-black"
+                  >
                     {tag}: {title}{' '}
                     <ExternalLinkIcon width={20} height={20} color="#1F1D2B" />
-                  </span>
+                  </Typography>
                 </li>
               </Link>
             );

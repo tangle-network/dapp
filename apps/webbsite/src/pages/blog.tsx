@@ -17,7 +17,7 @@ const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Typography variant="mkt-h2" className="text-center mb-[24px]">
+      <Typography variant="mkt-h3" className="text-center mb-[24px] font-black text-mono-200">
         The Webb Blog
       </Typography>
 
