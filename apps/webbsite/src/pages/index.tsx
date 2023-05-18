@@ -1,3 +1,5 @@
+import '@johanaarstein/dotlottie-player';
+
 import { NextSeo } from 'next-seo';
 import {
   ApplicationsAndInfrastructureSection,
@@ -28,8 +30,8 @@ export function Index() {
         <div className="absolute top-0 left-0 w-full h-full">
           <dotlottie-player
             src="/animations/hero-loop.lottie"
-            autoplay
-            loop
+            autoplay=""
+            loop=""
             style={{ height: '100%', width: '100%' }}
             preserveAspectRatio="xMidYMid slice"
           />

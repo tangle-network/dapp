@@ -4,7 +4,6 @@ import '../styles/globals.css';
 import { Footer } from '@webb-tools/webb-ui-components';
 import { AppProps } from 'next/app';
 import { DefaultSeo, DefaultSeoProps } from 'next-seo';
-import { useEffect } from 'react';
 
 import Header from '../components/Header';
 import Provider from '../provider';
@@ -49,11 +48,6 @@ export const metadata: DefaultSeoProps = {
 };
 
 const App = ({ Component, pageProps }: AppProps) => {
-  // Dynamic loading the lottie player in client side
-  useEffect(() => {
-    import('@johanaarstein/dotlottie-player');
-  }, []);
-
   return (
     <Provider>
       <DefaultSeo {...metadata} />

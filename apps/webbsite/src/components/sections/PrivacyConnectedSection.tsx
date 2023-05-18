@@ -1,3 +1,5 @@
+import '@johanaarstein/dotlottie-player';
+
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TabContent,
@@ -77,9 +79,9 @@ const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
     <dotlottie-player
       src={animationUrl}
-      autoplay
+      autoplay=""
       speed={0.8}
-      loop
+      loop=""
       style={{ height: '100%', width: '100%' }}
     />
   );

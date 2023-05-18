@@ -2668,10 +2668,10 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@johanaarstein/dotlottie-player@^1.2.34":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@johanaarstein/dotlottie-player/-/dotlottie-player-1.5.10.tgz#1e8a2a936148fa5e7577737eb04a886b2b816a24"
-  integrity sha512-CYHZhhbj1Af2rDiY8H3AXyHewPsS4NAWwIU/IJ6K/G4QiTCslbldS03INuksJ7Vp1IBXZRLa79fnLyzzFPtYpw==
+"@johanaarstein/dotlottie-player@^1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@johanaarstein/dotlottie-player/-/dotlottie-player-1.5.11.tgz#a13d74d9f17f2f774236c2088df0bf84d55f5afc"
+  integrity sha512-/04ypRS5SnnT1ws7EAJR/LFoR6ylS5hfH8odF1b5RDJjfZl1Mb45XvH2xjL+dswDCaPwkv8kI2d7EqxwasjoOg==
   dependencies:
     buffer "^6.0.3"
     fflate "^0.7.4"
