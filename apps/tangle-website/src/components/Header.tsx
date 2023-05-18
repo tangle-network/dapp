@@ -13,13 +13,13 @@ export const Header = () => {
       {showBanner && (
         <div className="bg-[#624FBE] p-2 lg:order-2 relative">
           <Typography
-            variant="mkt-utility"
-            className="block text-center max-w-[80%] mx-auto !text-mono-0 !font-bold uppercase leading-[24px]"
+            variant="mkt-body2"
+            className="block text-center max-w-[80%] mx-auto !text-mono-0 !font-bold leading-[24px]"
           >
             TANGLE NETWORK CROWDLOAN IS HAPPENING SOON ✨ |{' '}
             <InternalOrExternalLink url="#" className="inline-block">
               <Typography
-                variant="body1"
+                variant="mkt-body2"
                 className="!text-mono-0 capitalize underline"
               >
                 Join Waitlist!
