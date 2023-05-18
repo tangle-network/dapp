@@ -11,11 +11,16 @@ export const HeroSection = () => {
         <div className="flex-1 flex items-center justify-end bg-purple-10 px-5 py-16 md:py-32 lg:px-0">
           <div className="lg:w-full lg:max-w-[716px]">
             <div className="flex flex-col gap-8 md:w-[80%] lg:w-[65%] lg:ml-[22.5%]">
-              <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
-              <SectionDescription>
+              <Typography
+                variant="mkt-h2"
+                className="w-3/5 text-mono-200 font-black"
+              >
+                Tangle Network
+              </Typography>
+              <Typography variant="mkt-subheading" className="font-medium text-mono-140">
                 The next-generation blockchain for seamless and private
                 cross-chain messaging and applications.
-              </SectionDescription>
+              </Typography>
               <div className="flex gap-4">
                 <LinkButton
                   href={WEBB_DOCS_URL}
