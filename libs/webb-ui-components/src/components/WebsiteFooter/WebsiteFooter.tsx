@@ -239,14 +239,21 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
-          {navLinks.map(({ group, links }) => (
-            <div className="hidden md:flex md:flex-col flex-[1]">
+          {navLinks.map(({ group, links }, idx) => (
+            <div
+              key={`${group}-${idx}`}
+              className="hidden md:flex md:flex-col flex-[1]"
+            >
               <Typography variant="body1" fw="bold" className="!text-lg mb-4">
                 {group}
               </Typography>
               <div className="flex flex-col gap-2">
-                {links.map(({ label, ...restProps }) => (
-                  <Typography variant="body1" className="hover:underline">
+                {links.map(({ label, ...restProps }, idx) => (
+                  <Typography
+                    key={`${label}-${idx}`}
+                    variant="body1"
+                    className="hover:underline"
+                  >
                     <InternalOrExternalLink {...restProps}>
                       {label}
                     </InternalOrExternalLink>
