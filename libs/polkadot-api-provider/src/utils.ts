@@ -1,7 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { executorWithTimeout } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
+import { FIELD_SIZE } from '@webb-tools/sdk-core';
+import { ethers } from 'ethers';
 import { PolkadotProvider } from './ext-provider';
+import { HexString } from '@polkadot/util/types';
 
 const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
 
@@ -33,4 +37,30 @@ export const substrateProviderFactory = async (
         .catch(rej);
     })
   );
+};
+
+export const ensureHex = (maybeHex: string): HexString => {
+  if (maybeHex.startsWith('0x')) {
+    return maybeHex as `0x${string}`;
+  }
+
+  return `0x${maybeHex}`;
+};
+
+export const getVAnchorExtDataHash = (
+  extData: IVariableAnchorExtData
+): bigint => {
+  const abi = new ethers.utils.AbiCoder();
+  const encodedData = abi.encode(
+    [
+      'tuple(bytes recipient,bytes extAmount,bytes relayer,bytes fee,bytes refund,bytes token,bytes encryptedOutput1,bytes encryptedOutput2)',
+    ],
+    [extData]
+  );
+
+  const hash = ethers.utils.keccak256(encodedData);
+
+  const hashBigInt = BigInt(ensureHex(hash));
+
+  return hashBigInt % FIELD_SIZE.toBigInt();
 };

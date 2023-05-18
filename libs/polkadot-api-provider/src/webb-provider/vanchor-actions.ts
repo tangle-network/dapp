@@ -1,41 +1,55 @@
 import { decodeAddress, naclEncrypt, randomAsU8a } from '@polkadot/util-crypto';
+import { HexString } from '@polkadot/util/types';
 import {
   ActiveWebbRelayer,
   FixturesStatus,
-  isVAnchorDepositPayload,
   NewNotesTxResult,
   ParametersOfTransactMethod,
   Transaction,
   TransactionPayloadType,
   TransactionState,
-  utxoFromVAnchorNote,
   VAnchorActions,
+  isVAnchorDepositPayload,
+  utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import {
-  IVariableAnchorExtData,
-  IVariableAnchorPublicInputs,
-} from '@webb-tools/interfaces';
-import {
-  CircomProvingManager,
   FIELD_SIZE,
   Keypair,
   LeafIdentifier,
+  MerkleProof,
+  MerkleTree,
   Note,
-  ProvingManagerSetupInput,
+  Utxo,
+  buildVariableWitnessCalculator,
+  generateVariableWitnessInput,
+  generateWithdrawProofCallData,
   randomBN,
   toFixedHex,
-  Utxo,
-  VAnchorProof,
 } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
-import { getLeafIndex } from '../mt-utils';
 
+import * as snarkjs from 'snarkjs';
+
+import assert from 'assert';
+import { getLeafIndex } from '../mt-utils';
+import { ensureHex, getVAnchorExtDataHash } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
+
+export interface IVAnchorPublicInputs {
+  proof: HexString;
+  roots: Uint8Array[];
+  extensionRoots: HexString;
+  inputNullifiers: HexString[];
+  outputCommitments: [HexString, HexString];
+  publicAmount: HexString;
+  extDataHash: HexString;
+}
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   prepareTransaction(
@@ -93,19 +107,18 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     inputs = await this.padUtxos(inputs, 16);
     outputs = await this.padUtxos(outputs, 2);
 
-    const { extAmount, extData, vanchorProofData } =
-      await this.setupTransaction(
-        tx,
-        inputs,
-        outputs,
-        fee,
-        refund,
-        recipient,
-        relayer,
-        wrapUnwrapAssetId,
-        leavesMap,
-        treeId
-      );
+    const { extData, vanchorProofData } = await this.setupTransaction(
+      tx,
+      inputs,
+      outputs,
+      fee,
+      refund,
+      recipient,
+      relayer,
+      wrapUnwrapAssetId,
+      leavesMap,
+      treeId
+    );
 
     tx.next(
       TransactionState.SendingTransaction,
@@ -198,6 +211,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     );
     return nextIdx.toBigInt();
   }
+
+  // ------------------ Private ------------------
 
   private async prepareDepositTransaction(
     tx: Transaction<NewNotesTxResult>,
@@ -298,17 +313,18 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       .then((roots) => roots.toHuman());
 
     const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
-    const extAmount = this.getExtAmount(inputs, outputs, fee);
+    const feeBigInt = BigInt(fee.toString());
+    const extAmount = this.getExtAmount(inputs, outputs, feeBigInt);
 
     // Pass the identifier for leaves alongside the proof input
-    const leafIds: LeafIdentifier[] = [];
+    const leafIds: LeafIdentifier[] = inputs.map((input) => {
+      const index = input.index ?? this.inner.state.defaultUtxoIndex;
+      if (!input.index) {
+        input.setIndex(index);
+      }
 
-    for (const inputUtxo of inputs) {
-      leafIds.push({
-        index: inputUtxo.index ?? this.inner.state.defaultUtxoIndex,
-        typedChainId: Number(inputUtxo.originChainId),
-      });
-    }
+      return { index, typedChainId: Number(input.originChainId) };
+    });
 
     const secret = randomAsU8a();
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
@@ -330,68 +346,66 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
-    // Asset must be a 4 bytes array (32 bits)
-    const assetIdBytes = hexToU8a(Number(wrapUnwrapAssetId).toString(16), 32);
 
-    const relayerAddressBytes = decodeAddress(relayer);
-    const recipientAddressBytes = decodeAddress(recipient);
-
-    const fieldSize = new BN(FIELD_SIZE.toString());
-
-    const proofInput: ProvingManagerSetupInput<'vanchor'> = {
-      inputUtxos: inputs,
-      leavesMap,
-      leafIds,
-      roots: rootsSet,
-      chainId: sourceTypedChainId.toString(),
-      output: [outputs[0], outputs[1]],
-      encryptedCommitments,
-      publicAmount: extAmount.sub(fee).add(fieldSize).mod(fieldSize).toString(),
-      provingKey: zkey,
-      relayer: relayerAddressBytes,
-      recipient: recipientAddressBytes,
-      extAmount: extAmount.toString(),
-      fee: fee.toString(),
-      refund: refund.toString(),
-      token: assetIdBytes,
-    };
-
-    console.log('Proof input', proofInput);
+    const fieldSize = FIELD_SIZE.toBigInt();
+    const publicAmount = (extAmount - feeBigInt + fieldSize) % fieldSize;
 
     const levels = await this.inner.getVAnchorLevels(treeId);
 
-    const pm = new CircomProvingManager(wasm, levels, null);
-    const proofData: VAnchorProof = await pm.prove('vanchor', proofInput);
+    const { extData, extDataHash } = this.generateExtData(
+      recipient,
+      relayer,
+      extAmount,
+      feeBigInt,
+      BigInt(refund.toString()),
+      wrapUnwrapAssetId,
+      u8aToHex(encryptedCommitments[0]),
+      u8aToHex(encryptedCommitments[1])
+    );
 
-    const vanchorProofData: IVariableAnchorPublicInputs = {
-      proof: `0x${proofData.proof}`,
-      roots: `0x${proofInput.roots
-        .map((r) => toFixedHex(u8aToHex(r)).slice(2))
-        .join('')}`,
-      extensionRoots: '0x',
-      inputNullifiers: inputs.map((x) =>
-        BigNumber.from(toFixedHex('0x' + x.nullifier))
-      ),
-      outputCommitments: [
-        BigNumber.from(toFixedHex(u8aToHex(outputs[0].commitment))),
-        BigNumber.from(toFixedHex(u8aToHex(outputs[1].commitment))),
-      ],
-      publicAmount: toFixedHex(proofInput.publicAmount),
-      extDataHash: BigNumber.from(u8aToHex(proofData.extDataHash)),
-    };
+    console.log('extData', extData);
 
-    const extData: IVariableAnchorExtData = {
-      recipient: toFixedHex(proofInput.recipient, 20),
-      extAmount: toFixedHex(proofInput.extAmount),
-      relayer: toFixedHex(proofInput.relayer, 20),
-      fee: toFixedHex(proofInput.fee),
-      refund: toFixedHex(proofInput.refund),
-      token: toFixedHex(proofInput.token, 20),
-      encryptedOutput1: u8aToHex(proofInput.encryptedCommitments[0]),
-      encryptedOutput2: u8aToHex(proofInput.encryptedCommitments[1]),
-    };
+    const merkleProofs = inputs.map((input, idx) => {
+      if (input.amount === '0') {
+        return {
+          element: BigNumber.from(0), // Temporary use of `BigNumber`, need to change to `BigInt`
+          merkleRoot: BigNumber.from(u8aToHex(rootsSet[0])), // Temporary use of `BigNumber`, need to change to `BigInt`
+          pathElements: new Array(levels).fill(0),
+          pathIndices: new Array(levels).fill(0),
+        } satisfies MerkleProof;
+      } else {
+        const mt = new MerkleTree(
+          levels,
+          leavesMap[leafIds[idx].typedChainId]?.map((u8a) => u8aToHex(u8a))
+        );
+        merkleProofs.push(mt.path(input.index));
+      }
+    });
 
-    console.log('Extdata', extData);
+    const witness = await this.getSnarkJsWitness(
+      rootsSet.map((root) => BigInt(u8aToHex(root))),
+      BigInt(sourceTypedChainId),
+      inputs,
+      outputs,
+      extAmount,
+      feeBigInt,
+      extDataHash,
+      merkleProofs,
+      wasm
+    );
+
+    const proof = await this.getSnarkJsProof(zkey, witness);
+
+    const vanchorProofData = this.generatePublicInputs(
+      proof,
+      rootsSet,
+      inputs,
+      outputs,
+      publicAmount,
+      extDataHash
+    );
+
+    console.log('vanchorProofData', vanchorProofData);
 
     return {
       extData,
@@ -400,11 +414,130 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     };
   }
 
-  // https://github.com/webb-tools/protocol-solidity/blob/65d8e7ca7b7ba227d8cd97f2773fefc378655944/packages/anchors/src/Common.ts#L194-L198
-  private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: BN) {
-    return new BN(fee)
-      .add(outputs.reduce((sum, x) => sum.add(new BN(x.amount)), new BN(0)))
-      .sub(inputs.reduce((sum, x) => sum.add(new BN(x.amount)), new BN(0)));
+  private generatePublicInputs(
+    proof: string,
+    roots: Uint8Array[],
+    inputUtxos: Utxo[],
+    outputUtxos: Utxo[],
+    publicAmount: bigint,
+    extDataHash: bigint
+  ): IVAnchorPublicInputs {
+    // For publicAmount, it should be 32 bytes, so we use toFixedHex to pad it to 32 bytes.
+    const publicAmount32Bytes = toFixedHex(
+      ensureHex(publicAmount.toString(16))
+    );
+
+    const extDataHash32Bytes = toFixedHex(ensureHex(extDataHash.toString(16)));
+
+    return {
+      proof: ensureHex(proof),
+      roots,
+      extensionRoots: '0x',
+      inputNullifiers: inputUtxos.map((utxo) =>
+        ensureHex(toFixedHex(`0x${utxo.nullifier}`))
+      ),
+      outputCommitments: [
+        ensureHex(toFixedHex(u8aToHex(outputUtxos[0].commitment))),
+        ensureHex(toFixedHex(u8aToHex(outputUtxos[1].commitment))),
+      ],
+      publicAmount: ensureHex(publicAmount32Bytes),
+      extDataHash: ensureHex(extDataHash32Bytes),
+    };
+  }
+
+  private generateExtData(
+    recipient: string,
+    relayer: string,
+    extAmount: bigint,
+    fee: bigint,
+    refund: bigint,
+    wrapUnwrapToken: string,
+    encryptedOutput1: string,
+    encryptedOutput2: string
+  ): {
+    extData: IVariableAnchorExtData;
+    extDataHash: bigint;
+  } {
+    const extData: IVariableAnchorExtData = {
+      // For recipient, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
+      recipient: toFixedHex(u8aToHex(decodeAddress(recipient))),
+      // For relayer, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
+      relayer: toFixedHex(u8aToHex(decodeAddress(relayer))),
+      // For extAmount, since it is an Amount (i128) it should be 16 bytes
+      extAmount: toFixedHex(extAmount, 16),
+      // For fee, since it is a Balance (u128) it should be 16 bytes
+      fee: toFixedHex(fee, 16),
+      // For refund, since it is a Balance (u128) it should be 16 bytes
+      refund: toFixedHex(refund, 16),
+      // For token, since it is an AssetId (u32) it should be 4 bytes
+      token: toFixedHex(wrapUnwrapToken, 4),
+      encryptedOutput1,
+      encryptedOutput2,
+    };
+
+    const extDataHash = getVAnchorExtDataHash(extData);
+
+    return { extData, extDataHash };
+  }
+
+  private async getSnarkJsWitness(
+    roots: bigint[],
+    typedChainId: bigint,
+    inputUtxos: Utxo[],
+    outputUtxos: Utxo[],
+    extAmount: bigint,
+    fee: bigint,
+    extDataHash: bigint,
+    externalMerkleProofs: MerkleProof[],
+    circuitWasm: Buffer
+  ): Promise<Uint8Array> {
+    const witnessCalculator = await buildVariableWitnessCalculator(
+      circuitWasm,
+      0
+    );
+    const witnessInput = generateVariableWitnessInput(
+      roots.map((r) => BigNumber.from(r)), // Temporary use of `BigNumber`, need to change to `BigInt`
+      typedChainId,
+      inputUtxos,
+      outputUtxos,
+      extAmount,
+      fee,
+      BigNumber.from(extDataHash), // Temporary use of `BigNumber`, need to change to `BigInt`
+      externalMerkleProofs
+    );
+
+    return witnessCalculator.calculateWTNSBin(witnessInput, 0);
+  }
+
+  private async getSnarkJsProof(
+    zkey: Uint8Array,
+    witness: Uint8Array
+  ): Promise<string> {
+    const proofOutput = await snarkjs.groth16.prove(zkey, witness);
+
+    const proof = proofOutput.proof;
+    const publicSignals = proofOutput.publicSignals;
+
+    const vKey = await snarkjs.zKey.exportVerificationKey(zkey);
+
+    const isValid = await snarkjs.groth16.verify(vKey, publicSignals, proof);
+
+    assert.strictEqual(isValid, true, 'Invalid proof');
+
+    return generateWithdrawProofCallData(proof, publicSignals);
+  }
+
+  private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
+    const outAmount = outputs.reduce(
+      (sum, x) => sum + BigInt(x.amount),
+      BigInt(0)
+    );
+    const inAmount = inputs.reduce(
+      (sum, x) => sum + BigInt(x.amount),
+      BigInt(0)
+    );
+
+    return fee + outAmount - inAmount;
   }
 
   // https://github.com/webb-tools/protocol-solidity/blob/65d8e7ca7b7ba227d8cd97f2773fefc378655944/packages/anchors/src/Common.ts#L247-L269

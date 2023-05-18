@@ -383,11 +383,7 @@ export class WebbPolkadot
         return this.smallFixtures;
       }
 
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        isSmall,
-        true // isSubstrate
-      );
+      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
       const smallWasm = await fetchVAnchorWasmFromAws(
         maxEdges,
@@ -409,11 +405,7 @@ export class WebbPolkadot
       return this.largeFixtures;
     }
 
-    const largeKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      isSmall,
-      true // isSubstrate
-    );
+    const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
     const largeWasm = await fetchVAnchorWasmFromAws(
       maxEdges,
