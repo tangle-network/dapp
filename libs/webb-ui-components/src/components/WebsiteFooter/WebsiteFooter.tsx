@@ -253,14 +253,17 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
           {navLinks.map(({ group, links }) => (
             <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
-              <Typography variant="body1" fw="bold" className="!text-lg mb-4">
+              <Typography
+                variant="mkt-body2"
+                className="!text-lg mb-4 font-black"
+              >
                 {group}
               </Typography>
               <div className="flex flex-col gap-2">
                 {links.map(({ label, ...restProps }) => (
                   <Typography
-                    variant="body1"
-                    className="hover:underline"
+                    variant="mkt-body2"
+                    className="hover:underline font-medium"
                     key={label}
                   >
                     <InternalOrExternalLink {...restProps}>
@@ -288,7 +291,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           ))}
         </div>
 
-        <Typography variant="body1" className="text-center md:text-right">
+        <Typography variant="mkt-body1" className="text-center md:text-right">
           © {new Date().getFullYear()} Webb Technologies, Inc. All rights
           reserved.
         </Typography>

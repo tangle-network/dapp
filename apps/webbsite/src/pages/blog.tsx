@@ -10,9 +10,11 @@ type BlogProps = {
 };
 
 const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
+  // Featured Post
   const featuredPost =
     posts.length > 0 ? posts[posts.length - 1] : ({} as Post);
 
+  // Recent Videos
   const recentVideos = videos.length > 0 ? videos.slice(-3) : ([] as Video[]);
 
   return (

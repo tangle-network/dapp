@@ -180,14 +180,11 @@ function createWebpack(env, mode = 'production') {
             },
           ],
         },
+        // svg react generator
         {
-          test: /\.svg$/,
-          resourceQuery: /svgr/,
-          use: [
-            {
-              loader: '@svgr/webpack',
-            },
-          ],
+          test: /\.svg$/i,
+          issuer: /\.[jt]sx?$/,
+          use: ['@svgr/webpack'],
         },
       ],
     },
