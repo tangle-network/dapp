@@ -70,7 +70,10 @@ export const FeaturedPostSection = ({
       </div>
       {/* Recent videos */}
       <div>
-        <Typography variant="mkt-small-caps" className="text-mono-120 font-black">
+        <Typography
+          variant="mkt-small-caps"
+          className="text-mono-120 font-black"
+        >
           Featured
         </Typography>
         <ul>
