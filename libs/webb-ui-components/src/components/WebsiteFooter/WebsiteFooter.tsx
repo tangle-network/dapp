@@ -252,10 +252,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
           {navLinks.map(({ group, links }) => (
-            <div
-              className="hidden md:flex md:flex-col flex-[1]"
-              key={group}
-            >
+            <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
               <Typography variant="body1" fw="bold" className="!text-lg mb-4">
                 {group}
               </Typography>
