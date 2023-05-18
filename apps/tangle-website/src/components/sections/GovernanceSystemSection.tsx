@@ -47,11 +47,19 @@ export const GovernanceSystemSection = () => {
           </div>
 
           <div className="lg:flex-1 px-5 lg:px-0">
-            <SectionHeader>Governance System</SectionHeader>
-            <SectionTitle className="text-left mt-2 md:w-[70%] lg:w-full">
+            <Typography
+              variant="mkt-small-caps"
+              className="font-black dark:text-purple-50"
+            >
+              Governance System
+            </Typography>
+            <Typography
+              variant="mkt-h4"
+              className="text-left mt-2 md:w-[70%] lg:w-full font-black dark:text-mono-0"
+            >
               The next-gen TSS based blockchain with powerful threshold
               signature governance system
-            </SectionTitle>
+            </Typography>
             <div className="flex gap-4 mt-6">
               <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
                 Read Docs
@@ -64,14 +72,17 @@ export const GovernanceSystemSection = () => {
                   <div key={index}>
                     {icon}
                     <Typography
-                      variant="h4"
-                      className="font-bold text-mono-0 mt-6 mb-4"
+                      variant="mkt-subheading"
+                      className="font-bold dark:text-mono-0 mt-6 mb-4"
                     >
                       {title}
                     </Typography>
-                    <SectionDescription2 className="mb-6">
+                    <Typography
+                      variant="mkt-body1"
+                      className="mb-6 font-medium dark:text-mono-80"
+                    >
                       {description}
-                    </SectionDescription2>
+                    </Typography>
                     <a className="text-tangle_dark_purple" href={href}>
                       Learn more →
                     </a>
