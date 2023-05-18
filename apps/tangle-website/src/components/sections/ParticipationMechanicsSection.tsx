@@ -67,16 +67,25 @@ export const ParticipationMechanicsSection = () => {
     <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
-          <SectionHeader className="text-center pb-2">
+          <Typography
+            variant="mkt-small-caps"
+            className="text-center pb-2 font-black text-purple-70"
+          >
             Participation Mechanics
-          </SectionHeader>
-          <SectionTitle className="pb-4">
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="pb-4 font-black text-mono-200"
+          >
             Join the Tangle Ecosystem
-          </SectionTitle>
-          <SectionDescription className="text-center">
+          </Typography>
+          <Typography
+            variant="mkt-body1"
+            className="text-center font-medium text-mono-140"
+          >
             With Tangle Network, we can create a more scalable, interoperable,
             and positive-sum web3 privacy ecosystem.
-          </SectionDescription>
+          </Typography>
         </div>
 
         <TabsRoot
@@ -130,17 +139,20 @@ export const ParticipationMechanicsSection = () => {
           {Object.entries(tabsContent).map(([key, value]) => (
             <TabContent key={key} value={key} className="md:px-5 lg:px-0">
               <Typography
-                variant="h5"
-                className="font-bold !text-[24px] !leading-[40px] mb-3"
+                variant="mkt-subheading"
+                className="font-bold mb-3 text-mono-200"
               >
                 {value.title}
               </Typography>
-              <SectionDescription2 className="mb-6">
+              <Typography
+                variant="mkt-body1"
+                className="mb-6 font-medium text-mono-140"
+              >
                 {value.description}
-              </SectionDescription2>
+              </Typography>
               <a
                 href={value.linkUrl}
-                className="text-purple-70 underline font-bold capitalize"
+                className="text-purple-70 font-bold capitalize text-[20px]"
               >
                 {value.linkText}
               </a>
