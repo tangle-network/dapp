@@ -66,7 +66,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         <Component {...pageProps} />
       </main>
 
-      {/* <Footer isNext /> */}
+      <Footer isNext />
     </Provider>
   );
 };
