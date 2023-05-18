@@ -103,24 +103,31 @@ const Post: FC<{ post: Post }> = ({
           <div className="flex items-center justify-between">
             <div className="items-center hidden gap-4 capitalize lg:flex">
               {tag && (
-                <span key={tag} className="single-post-card-tag text-mono-120">
+                <Typography
+                  variant="mkt-small-caps"
+                  key={tag}
+                  className="text-mono-120 font-black"
+                >
                   {tag}
-                </span>
+                </Typography>
               )}
             </div>
-            <span className="hidden text-mono-120 lg:inline-block single-post-card-date">
+            <Typography
+              variant="mkt-small-caps"
+              className="hidden text-mono-120 lg:inline-block font-black"
+            >
               {lastUpdatedDate}
-            </span>
+            </Typography>
           </div>
           <Typography
             variant="mkt-h3"
-            className="mt-4 single-post-card-title text-mono-200"
+            className="mt-4 text-mono-200 font-black"
           >
             {title}
           </Typography>
           <Typography
-            variant="mkt-body"
-            className="mt-4 single-post-card-description text-mono-170"
+            variant="mkt-body1"
+            className="mt-4 text-mono-120 font-bold"
           >
             {description}
           </Typography>
