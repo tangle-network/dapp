@@ -39,7 +39,7 @@ export function Index() {
 
       <PrivacyConnectedSection />
 
-      {/* <PrivacyScaleSection /> */}
+      <PrivacyScaleSection />
 
       {/* <ApplicationsAndInfrastructureSection /> */}
 
