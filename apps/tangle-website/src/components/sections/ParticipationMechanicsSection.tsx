@@ -67,25 +67,16 @@ export const ParticipationMechanicsSection = () => {
     <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
-          <Typography
-            variant="mkt-small-caps"
-            className="text-center pb-2 font-black text-purple-70"
-          >
+          <SectionHeader className="text-center pb-2">
             Participation Mechanics
-          </Typography>
-          <Typography
-            variant="mkt-h3"
-            className="pb-4 font-black text-mono-200"
-          >
+          </SectionHeader>
+          <SectionTitle className="pb-4">
             Join the Tangle Ecosystem
-          </Typography>
-          <Typography
-            variant="mkt-body1"
-            className="text-center font-medium text-mono-140"
-          >
+          </SectionTitle>
+          <SectionDescription className="text-center">
             With Tangle Network, we can create a more scalable, interoperable,
             and positive-sum web3 privacy ecosystem.
-          </Typography>
+          </SectionDescription>
         </div>
 
         <TabsRoot
@@ -113,7 +104,7 @@ export const ParticipationMechanicsSection = () => {
               slidesPerView="auto"
               freeMode={true}
               modules={[FreeMode]}
-              className="w-full hidden md:block lg:hidden mb-6 !mx-0 !pl-5"
+              className="w-full !hidden md:!block lg:!hidden mb-6 !mx-0 !pl-5"
             >
               {Object.keys(tabsContent).map((tabName, i) => (
                 <SwiperSlide
@@ -139,17 +130,17 @@ export const ParticipationMechanicsSection = () => {
           {Object.entries(tabsContent).map(([key, value]) => (
             <TabContent key={key} value={key} className="md:px-5 lg:px-0">
               <Typography
-                variant="mkt-subheading"
-                className="font-bold !text-[24px] !leading-[40px] mb-3 text-mono-200"
+                variant="h5"
+                className="font-bold !text-[24px] !leading-[40px] mb-3"
               >
                 {value.title}
               </Typography>
-              <Typography variant="mkt-body1" className="mb-6 font-medium">
+              <SectionDescription2 className="mb-6">
                 {value.description}
-              </Typography>
+              </SectionDescription2>
               <a
                 href={value.linkUrl}
-                className="text-purple-70 font-bold capitalize text-[20px]"
+                className="text-purple-70 underline font-bold capitalize"
               >
                 {value.linkText}
               </a>
