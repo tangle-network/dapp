@@ -70,7 +70,9 @@ export const FeaturedPostSection = ({
       </div>
       {/* Recent videos */}
       <div>
-        <span className="card-tag text-mono-120">Featured</span>
+        <Typography variant="mkt-small-caps" className="text-mono-120 font-black">
+          Featured
+        </Typography>
         <ul>
           {recentVideos.map(({ id, title, linkToVideo, tag }) => {
             return (
