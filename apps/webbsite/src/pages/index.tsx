@@ -1,6 +1,6 @@
-import '@johanaarstein/dotlottie-player';
-
 import { NextSeo } from 'next-seo';
+import Lottie from 'react-lottie-player';
+
 import {
   ApplicationsAndInfrastructureSection,
   HeroSection,
@@ -28,12 +28,12 @@ export function Index() {
 
       <div className="relative w-full h-screen min-h-[900px] xl:min-h-[1500px]">
         <div className="absolute top-0 left-0 w-full h-full">
-          <dotlottie-player
-            src="/animations/hero-loop.lottie"
-            autoplay=""
-            loop=""
-            style={{ height: '100%', width: '100%' }}
-            preserveAspectRatio="xMidYMid slice"
+          <Lottie
+            path="/animations/hero-loop.json"
+            play
+            loop
+            className="w-full h-full"
+            rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
           />
         </div>
         <HeroSection />

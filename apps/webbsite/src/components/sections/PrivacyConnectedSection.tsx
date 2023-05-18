@@ -1,26 +1,31 @@
-import '@johanaarstein/dotlottie-player';
-
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TabContent,
+  TabTrigger,
   TabsList,
   TabsRoot,
-  TabTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
+import Lottie from 'react-lottie-player';
 
-const tabsContent = {
+const tabsContent: Record<
+  string,
+  {
+    animationUrl: string;
+    title: string;
+  }
+> = {
   ownership: {
-    animationUrl: '/animations/deposit.lottie',
+    animationUrl: '/animations/deposit.json',
     title: 'Proof of Ownership',
   },
   identity: {
-    animationUrl: '/animations/kyc.lottie',
+    animationUrl: '/animations/kyc.json',
     title: 'Proof of Identity',
   },
   privacy: {
-    animationUrl: '/animations/ecosystem.lottie',
+    animationUrl: '/animations/ecosystem.json',
     title: 'Privacy Ecosystems',
   },
 };
@@ -77,12 +82,12 @@ export const PrivacyConnectedSection = () => {
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
-    <dotlottie-player
-      src={animationUrl}
-      autoplay=""
+    <Lottie
+      path={animationUrl}
+      play
       speed={0.8}
-      loop=""
-      style={{ height: '100%', width: '100%' }}
+      loop
+      className="w-full h-full"
     />
   );
 };

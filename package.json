@@ -122,6 +122,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-intersection-observer": "^9.4.1",
+    "react-lottie-player": "^1.5.4",
     "react-markdown": "^8.0.7",
     "react-notion-x": "^6.15.7",
     "react-router": "6.11.1",
