@@ -43,7 +43,12 @@ export const UseCasesSection = () => {
     <section className="bg-mono-200 px-[20px] lg:px-0 py-[80px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col gap-4 lg:px-[11.25%]">
-          <SectionHeader className="text-purple-40">Usecases</SectionHeader>
+          <Typography
+            variant="mkt-small-caps"
+            className="text-purple-40 font-black"
+          >
+            Usecases
+          </Typography>
         </div>
 
         {/* Desktop + Mobile */}
@@ -100,10 +105,13 @@ const UseCaseCard = ({ icon, title, description, link }) => {
     <div className="min-h-[600px] md:min-h-min md:h-full lg:h-auto flex-[1] flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px]">
       {icon}
       <div className="flex flex-col gap-4">
-        <Typography variant="h4" className="font-bold text-mono-0">
+        <Typography variant="mkt-subheading" className="font-black text-mono-0">
           {title}
         </Typography>
-        <Typography variant="body1" className="!text-mono-80 !leading-7">
+        <Typography
+          variant="mkt-body1"
+          className="!text-mono-80 !leading-7 font-medium"
+        >
           {description}
         </Typography>
       </div>
