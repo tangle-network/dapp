@@ -45,7 +45,7 @@ export function Index() {
 
       <InActionSection />
 
-      {/* <ResearchAndDevelopmentSection /> */}
+      <ResearchAndDevelopmentSection />
     </>
   );
 }
