@@ -190,7 +190,10 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
         <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
-          <Typography variant="mkt-h2" className="text-[34px] leading-[46px]">
+          <Typography
+            variant="mkt-h3"
+            className="text-[34px] leading-[46px] dark:text-mono-0 font-black"
+          >
             Scaling Privacy for <br />
             Everyone, Everything, Everywhere.
           </Typography>
@@ -198,15 +201,18 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           {!success && (
             <div className="space-y-6">
               <Typography
-                variant="mkt-h3"
-                className="text-lg leading-6 dark:text-mono-80"
+                variant="mkt-subheading"
+                className="text-lg leading-6 dark:text-mono-80 font-black"
               >
                 Follow for Updates
               </Typography>
 
               <WebsiteNewsletterForm onSuccess={() => setSuccess(true)} />
 
-              <Typography variant="mkt-caption" className="dark:text-mono-100">
+              <Typography
+                variant="mkt-body2"
+                className="dark:text-mono-100 font-medium"
+              >
                 By signing up you agree to{' '}
                 <InternalOrExternalLink
                   url="/terms-and-conditions"
