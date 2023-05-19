@@ -16,6 +16,7 @@
       }
     }
   },
+  "neverConnectToCloud": true,
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
