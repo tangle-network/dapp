@@ -1,13 +1,24 @@
 import { DefaultSeo } from 'next-seo';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { WebbUIProvider, WebsiteFooter } from '@webb-tools/webb-ui-components';
+import {
+  WebbUIProvider,
+  WebsiteFooter,
+  useDarkMode,
+} from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
 import { Header } from '../components';
 import Script from 'next/script';
+import { useEffect } from 'react';
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  const [, setIsDarkMode] = useDarkMode();
+
+  useEffect(() => {
+    setIsDarkMode('light');
+  }, [setIsDarkMode]);
+
   return (
     <WebbUIProvider defaultThemeMode="light">
       <DefaultSeo
