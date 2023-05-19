@@ -41,13 +41,16 @@ export const ResearchAndDevelopmentSection = () => {
   return (
     <section className="py-16 md:py-[156px] flex items-center justify-center w-full">
       <div className="max-w-[900px]">
-        <Typography variant="mkt-h2" className="px-4 text-center">
+        <Typography
+          variant="mkt-h3"
+          className="px-4 text-center font-black text-mono-200"
+        >
           Research & Development
         </Typography>
 
         <Typography
-          variant="mkt-body"
-          className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-180"
+          variant="mkt-body1"
+          className="mt-6 px-4 text-center mx-auto max-w-[773px] text-mono-140 font-medium"
         >
           Building interoperable zero-knowledge applications to scale privacy
           for all users in the Web3 ecosystem.
@@ -62,12 +65,15 @@ export const ResearchAndDevelopmentSection = () => {
               {section.icon}
 
               <div>
-                <Typography variant="mkt-h3" className="text-mono-200">
+                <Typography
+                  variant="mkt-h4"
+                  className="text-mono-200 font-black"
+                >
                   {section.title}
                 </Typography>
                 <Typography
-                  variant="mkt-caption"
-                  className="mt-2 text-mono-160"
+                  variant="mkt-body1"
+                  className="mt-2 text-mono-160 font-medium"
                 >
                   {section.description}
                 </Typography>

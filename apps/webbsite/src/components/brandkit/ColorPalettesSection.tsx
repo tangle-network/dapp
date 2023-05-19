@@ -41,13 +41,16 @@ export const ColorPalettesSection = () => {
   return (
     <section className="dark bg-mono-200 w-full px-4 py-[96px] md:py-[150px]">
       <div className="max-w-[1440px] mx-auto space-y-6 md:space-y-8">
-        <Typography variant="mkt-h2" className="text-center !text-mono-0">
+        <Typography
+          variant="mkt-h3"
+          className="text-center dark:text-mono-0 font-black"
+        >
           Color Palettes
         </Typography>
 
         <Typography
-          variant="mkt-body"
-          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
+          variant="mkt-subheading"
+          className="text-center dark:text-mono-60 md:max-w-[900px] mx-auto font-medium"
         >
           {
             "Below are the primary and secondary colors used in Webb's Ecosystem products. Download to view the entire spectrum of colors in Webb’s UI kit."

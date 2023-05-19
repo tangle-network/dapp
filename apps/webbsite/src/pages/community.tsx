@@ -82,7 +82,10 @@ const Community = () => {
 
       <section className="py-[156px] flex items-center justify-center w-full bg-community_bg_texture bg-no-repeat bg-cover">
         <div className="max-w-[900px]">
-          <Typography variant="mkt-h2" className="px-4 text-center">
+          <Typography
+            variant="mkt-h3"
+            className="px-4 text-center font-black text-mono-200"
+          >
             Get Started
           </Typography>
 

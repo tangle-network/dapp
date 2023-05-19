@@ -12,12 +12,16 @@ export const ApplicationsAndInfrastructureSection = () => {
   return (
     <section className="py-16 md:py-[156px] space-y-6">
       <div className="pb-9 space-y-9 px-4 max-w-[900px] mx-auto">
-        <Typography variant="mkt-h2" className="text-center">
+        <Typography
+          variant="mkt-h3"
+          className="text-center font-black text-mono-200"
+        >
           Applications & Infrastructure
         </Typography>
+
         <Typography
-          variant="mkt-body"
-          className="text-center text-mono-180 md:px-24"
+          variant="mkt-body1"
+          className="text-center text-mono-140 md:px-24 font-medium"
         >
           Webb Builds private cross-chain applications and infrastructure that
           enable web3 privacy ecosystems to scale
@@ -27,10 +31,13 @@ export const ApplicationsAndInfrastructureSection = () => {
       <div className="px-4 space-y-[72px]">
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Typography variant="mkt-h3" className="text-mono-200">
+            <Typography variant="mkt-h4" className="text-mono-200 font-black">
               Tangle Network
             </Typography>
-            <Typography variant="mkt-caption" className="mt-2 text-mono-180">
+            <Typography
+              variant="mkt-body1"
+              className="mt-2 text-mono-140 font-medium"
+            >
               Cross-chain private applications require governance and trustless
               proof of events. Tangle provides that using threshold multi-party
               computation.
@@ -63,10 +70,13 @@ export const ApplicationsAndInfrastructureSection = () => {
           />
 
           <div className="self-start md:w-[calc(50%-12.5px)] md:!my-auto">
-            <Typography variant="mkt-h3" className="text-mono-200">
+            <Typography variant="mkt-h4" className="text-mono-200 font-black">
               Connected Shielded Pool Protocols
             </Typography>
-            <Typography variant="mkt-caption" className="mt-2 text-mono-180">
+            <Typography
+              variant="mkt-body1"
+              className="mt-2 text-mono-140 font-medium"
+            >
               A cross-chain private transaction system for privately moving and
               privately transferring assets between blockchains.
             </Typography>
@@ -83,10 +93,13 @@ export const ApplicationsAndInfrastructureSection = () => {
 
         <div className="flex flex-col-reverse md:flex-row md:justify-between max-w-[900px] mx-auto">
           <div className="mt-6 md:w-[calc(50%-12.5px)] md:my-auto">
-            <Typography variant="mkt-h3" className="text-mono-200">
+            <Typography variant="mkt-h4" className="text-mono-200 font-black">
               Connected Shielded Identity Protocols
             </Typography>
-            <Typography variant="mkt-caption" className="mt-2 text-mono-180">
+            <Typography
+              variant="mkt-body1"
+              className="mt-2 text-mono-140 font-medium"
+            >
               A cross-chain system for creating identities and connecting groups
               between blockchains.
             </Typography>
