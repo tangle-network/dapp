@@ -2,16 +2,11 @@ import {
   Common2Icon,
   DiscordFill,
   DocumentationIcon,
-  GithubFill,
   TelegramFill,
   TwitterFill,
 } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
-import {
-  Button,
-  Typography,
-  WebsiteCommunity,
-} from '@webb-tools/webb-ui-components';
+import { Typography, WebsiteCommunity } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
 
 type LinksType = {
@@ -65,13 +60,16 @@ export const CommunitySection = () => {
       >
         <div className="max-w-[900px]">
           <Typography
-            variant="label"
-            className="text-center text-purple-70 uppercase block"
+            variant="mkt-small-caps"
+            className="text-center text-purple-70 block font-black"
           >
             Get involved
           </Typography>
 
-          <Typography variant="mkt-h2" className="text-center mt-1">
+          <Typography
+            variant="mkt-h3"
+            className="text-center mt-1 font-black text-mono-200"
+          >
             Tangle Community
           </Typography>
 

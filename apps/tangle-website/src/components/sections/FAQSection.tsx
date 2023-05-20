@@ -3,9 +3,8 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionContent,
+  Typography,
 } from '@webb-tools/webb-ui-components';
-
-import { SectionDescription2, SectionHeader, SectionTitle } from '..';
 
 const faqItems = [
   {
@@ -42,14 +41,25 @@ export const FAQSection = () => {
     <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9">
-          <SectionHeader className="text-center pb-2">Learn More</SectionHeader>
-          <SectionTitle className="pb-4">
+          <Typography
+            variant="mkt-small-caps"
+            className="text-center pb-2 text-purple-70 font-black"
+          >
+            Learn More
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="pb-4 font-black text-mono-200"
+          >
             Frequently asked questions
-          </SectionTitle>
-          <SectionDescription2 className="text-center">
+          </Typography>
+          <Typography
+            variant="mkt-body1"
+            className="text-center font-medium text-mono-140"
+          >
             Need more information? Explore our documentation site or connect
             with others in our community channels to learn more!
-          </SectionDescription2>
+          </Typography>
         </div>
         <Accordion
           defaultValue={[faqItems[0].question]}
@@ -63,12 +73,20 @@ export const FAQSection = () => {
               className="border-b border-mono-40 px-0"
             >
               <AccordionButton className="px-0 gap-8 items-start">
-                {item.question}
+                <Typography
+                  variant="mkt-body1"
+                  className="font-black text-mono-200"
+                >
+                  {item.question}
+                </Typography>
               </AccordionButton>
               <AccordionContent className="px-0 pr-[52.5px]">
-                <SectionDescription2 className="whitespace-pre-line">
+                <Typography
+                  variant="mkt-body1"
+                  className="font-medium text-mono-160 whitespace-pre-line"
+                >
                   {item.answer}
-                </SectionDescription2>
+                </Typography>
               </AccordionContent>
             </AccordionItem>
           ))}

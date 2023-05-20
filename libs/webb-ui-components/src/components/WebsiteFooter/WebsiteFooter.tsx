@@ -190,7 +190,10 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}
         <div className="md:pb-9 max-w-[900px] mx-auto space-y-6">
-          <Typography variant="mkt-h2" className="text-[34px] leading-[46px]">
+          <Typography
+            variant="mkt-h3"
+            className="text-[34px] leading-[46px] dark:text-mono-0 font-black"
+          >
             Scaling Privacy for <br />
             Everyone, Everything, Everywhere.
           </Typography>
@@ -198,15 +201,18 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           {!success && (
             <div className="space-y-6">
               <Typography
-                variant="mkt-h3"
-                className="text-lg leading-6 dark:text-mono-80"
+                variant="mkt-subheading"
+                className="text-lg leading-6 dark:text-mono-80 font-black"
               >
                 Follow for Updates
               </Typography>
 
               <WebsiteNewsletterForm onSuccess={() => setSuccess(true)} />
 
-              <Typography variant="mkt-caption" className="dark:text-mono-100">
+              <Typography
+                variant="mkt-body2"
+                className="dark:text-mono-100 font-medium"
+              >
                 By signing up you agree to{' '}
                 <InternalOrExternalLink
                   url="/terms-and-conditions"
@@ -239,20 +245,20 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
           <Link href="/">{type === 'tangle' ? <TangleLogo /> : <Logo />}</Link>
-          {navLinks.map(({ group, links }, idx) => (
-            <div
-              key={`${group}-${idx}`}
-              className="hidden md:flex md:flex-col flex-[1]"
-            >
-              <Typography variant="body1" fw="bold" className="!text-lg mb-4">
+          {navLinks.map(({ group, links }) => (
+            <div className="hidden md:flex md:flex-col flex-[1]" key={group}>
+              <Typography
+                variant="mkt-body2"
+                className="!text-lg mb-4 font-black"
+              >
                 {group}
               </Typography>
               <div className="flex flex-col gap-2">
-                {links.map(({ label, ...restProps }, idx) => (
+                {links.map(({ label, ...restProps }) => (
                   <Typography
-                    key={`${label}-${idx}`}
-                    variant="body1"
-                    className="hover:underline"
+                    variant="mkt-body2"
+                    className="hover:underline font-medium"
+                    key={label}
                   >
                     <InternalOrExternalLink {...restProps}>
                       {label}
@@ -279,7 +285,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
           ))}
         </div>
 
-        <Typography variant="body1" className="text-center md:text-right">
+        <Typography variant="mkt-body1" className="text-center md:text-right">
           © {new Date().getFullYear()} Webb Technologies, Inc. All rights
           reserved.
         </Typography>
