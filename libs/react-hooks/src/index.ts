@@ -12,3 +12,5 @@ export * from './useNoteAccount';
 export * from './useSetting';
 export * from './useWallets';
 export * from './vanchor/useVAnchor';
+
+export { default as useScrollActions } from './useScrollActions';

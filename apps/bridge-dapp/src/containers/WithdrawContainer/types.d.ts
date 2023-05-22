@@ -1,9 +1,11 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { Note, Utxo } from '@webb-tools/sdk-core';
+import { TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { BigNumber } from 'ethers';
+import { ComponentProps } from 'react';
 import { BridgeTabContainerProps } from '../types';
 
 export interface WithdrawContainerProps

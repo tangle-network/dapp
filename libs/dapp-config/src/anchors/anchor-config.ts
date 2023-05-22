@@ -38,6 +38,16 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
   },
 
+  [PresetTypedChainId.HermesLocalnet]: {
+    '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
+  },
+  [PresetTypedChainId.AthenaLocalnet]: {
+    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
+  },
+  [PresetTypedChainId.DemeterLocalnet]: {
+    '0x6595b34ED0a270B10a586FC1EA22030A95386f1e': 0,
+  },
+
   // Substrate
   [PresetTypedChainId.ProtocolSubstrateStandalone]: {
     '6': NaN,

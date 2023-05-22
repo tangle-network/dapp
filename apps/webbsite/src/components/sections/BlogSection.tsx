@@ -40,10 +40,7 @@ export const BlogSection = ({
 
   return (
     <div className="px-4 mt-[18px]">
-      <Typography
-        variant="mkt-h3"
-        className="mb-8 blog-section-title text-mono-200"
-      >
+      <Typography variant="mkt-h4" className="mb-8 text-mono-200 font-black">
         {type === 'post' ? 'Writings' : 'Media & Press'}
       </Typography>
 

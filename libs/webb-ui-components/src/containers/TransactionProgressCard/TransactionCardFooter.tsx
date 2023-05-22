@@ -1,10 +1,12 @@
-import React, { FC, useCallback } from 'react';
-import { TransactionCardItemProps, TransactionCardFooterProps } from './types';
-import cx from 'classnames';
-import { twMerge } from 'tailwind-merge';
-import { ExternalLinkLine, Spinner } from '@webb-tools/icons';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
+import { Spinner } from '@webb-tools/icons';
+import cx from 'classnames';
+import { FC, useCallback } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { Button } from '../../components/Button';
+import { Typography } from '../../typography';
+import { TransactionCardFooterProps, TransactionCardItemProps } from './types';
 
 /**
  *  Transaction card footer

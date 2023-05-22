@@ -1,17 +1,20 @@
-import { Button, Chip, ChipColors, Disclaimer } from '../../components';
-import { Typography } from '../../typography';
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
-import success from './success-tx.json';
-import Lottie from 'lottie-react';
-import { TransactionCardFooter } from './TransactionCardFooter';
 import {
   ArrowRight,
   ExternalLinkLine,
   ShieldKeyholeIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import Lottie from 'lottie-react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { Button } from '../../components/Button';
+import { Chip, ChipColors } from '../../components/Chip';
+import { Disclaimer } from '../../components/Disclaimer';
+import { Typography } from '../../typography';
+import { TransactionCardFooter } from './TransactionCardFooter';
+import success from './success-tx.json';
+import { BridgeLabel, NativeLabel, TransactionCardItemProps } from './types';
 
 type Variant = 'bridge' | 'native';
 const sectionPadding = 'py-2  px-4 m-0 mt-0';

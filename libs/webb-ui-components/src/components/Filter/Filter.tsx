@@ -17,7 +17,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
       children,
       clearAllFilters,
       onSearchChange,
-      searchPlaceholder = 'Search Authority, or Key',
+      searchPlaceholder = 'Search Authority or Key',
       searchText,
       ...props
     },
@@ -25,7 +25,12 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
   ) => {
     return (
       <Dropdown {...props} ref={ref}>
-        <DropdownButton label="Filters" icon={<FilterIcon />} size="sm" />
+        <DropdownButton
+          label="Filters"
+          icon={<FilterIcon />}
+          size="sm"
+          className="font-bold"
+        />
 
         <DropdownBody className="py-2 min-w-[300px]" size="sm">
           {/** Title */}

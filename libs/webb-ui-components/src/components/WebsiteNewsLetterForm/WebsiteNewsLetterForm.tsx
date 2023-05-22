@@ -1,6 +1,9 @@
 import { InformationLine } from '@webb-tools/icons';
-import { Typography, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
+
+import { Typography } from '../../typography';
+import { Button } from '../Button';
+import { Input } from '../Input';
 
 export const WebsiteNewsletterForm: FC<{
   onSuccess: (isSuccess: boolean) => void;

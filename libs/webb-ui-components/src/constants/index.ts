@@ -7,9 +7,11 @@ import {
 import {
   Common2Icon,
   DiscordFill,
+  LinkedInFill,
   GithubFill,
   TelegramFill,
   TwitterFill,
+  YouTubeFill,
 } from '@webb-tools/icons';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
@@ -166,6 +168,11 @@ export const bottomLinks: ExternalLink[] = [
     href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
+  {
+    name: 'Security',
+    href: '#',
+    ...commonExternalProps,
+  },
 ];
 
 export const defaultSocialConfigs: Array<SocialConfigsType> = [
@@ -188,6 +195,12 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
     ...commonExternalProps,
   },
   {
+    name: 'linkedin',
+    Icon: LinkedInFill,
+    href: 'https://www.linkedin.com/company/webb-protocol/',
+    ...commonExternalProps,
+  },
+  {
     name: 'twitter',
     Icon: TwitterFill,
     href: 'https://twitter.com/webbprotocol',
@@ -197,6 +210,12 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
     name: 'github',
     Icon: GithubFill,
     href: 'https://github.com/webb-tools',
+    ...commonExternalProps,
+  },
+  {
+    name: 'youTube',
+    Icon: YouTubeFill,
+    href: 'https://webb.tools/blog/videos',
     ...commonExternalProps,
   },
 ];

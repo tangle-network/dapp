@@ -1,12 +1,6 @@
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
-
-import {
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-  LinkButton,
-} from '..';
+import { LinkButton } from '..';
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
 import {
   WHAT_IS_TSS_URL,
@@ -26,7 +20,7 @@ const governanceSystemQnAItems = [
     icon: <HowTssWorksSvg />,
     title: 'How it works',
     description:
-      'Relayers propose payloads to the governance system by providing merkle trie proofs of inclusion of state and events agains their respective blockchains. Payloads are verified on-chain and added to an unsigned proposal queue for the Tangle Network DKG Authorities to read.',
+      "Relayers suggest changes to the network via the governance system by providing proof that the updates are based on accurate information from their corresponding blockchains. These updates are verified and placed in a queue, waiting for Tangle Network's private and decentralized authorities to review and approve them.",
     href: HOW_TSS_WORKS_URL,
   },
 ];
@@ -47,11 +41,19 @@ export const GovernanceSystemSection = () => {
           </div>
 
           <div className="lg:flex-1 px-5 lg:px-0">
-            <SectionHeader>Governance System</SectionHeader>
-            <SectionTitle className="text-left mt-2 md:w-[70%] lg:w-full">
+            <Typography
+              variant="mkt-small-caps"
+              className="font-black dark:text-purple-50"
+            >
+              Governance System
+            </Typography>
+            <Typography
+              variant="mkt-h4"
+              className="text-left mt-2 md:w-[70%] lg:w-full font-black dark:text-mono-0"
+            >
               The next-gen TSS based blockchain with powerful threshold
               signature governance system
-            </SectionTitle>
+            </Typography>
             <div className="flex gap-4 mt-6">
               <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
                 Read Docs
@@ -64,14 +66,17 @@ export const GovernanceSystemSection = () => {
                   <div key={index}>
                     {icon}
                     <Typography
-                      variant="h4"
-                      className="font-bold text-mono-0 mt-6 mb-4"
+                      variant="mkt-subheading"
+                      className="font-bold dark:text-mono-0 mt-6 mb-4"
                     >
                       {title}
                     </Typography>
-                    <SectionDescription2 className="mb-6">
+                    <Typography
+                      variant="mkt-body1"
+                      className="mb-6 font-medium dark:text-mono-80"
+                    >
                       {description}
-                    </SectionDescription2>
+                    </Typography>
                     <a className="text-tangle_dark_purple" href={href}>
                       Learn more →
                     </a>

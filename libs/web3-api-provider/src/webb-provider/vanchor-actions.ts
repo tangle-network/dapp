@@ -111,12 +111,15 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const relayer =
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
+      // If no relayer is set, then the fee is 0, otherwise it is the fee amount
+      const feeVal = relayer === ZERO_ADDRESS ? BigNumber.from(0) : feeAmount;
+
       return Promise.resolve([
         tx, // tx
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo], // outputs
-        feeAmount, // fee
+        feeVal, // fee
         refundAmount, // refund
         recipient, // recipient
         relayer, // relayer

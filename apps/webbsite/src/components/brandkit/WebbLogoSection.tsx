@@ -4,13 +4,16 @@ export const WebbLogoSection = () => {
   return (
     <section className="w-full px-4 py-[64px] md:py-[156px] bg-no-repeat bg-[50%_20%] bg-cover">
       <div className="max-w-[1440px] mx-auto space-y-9">
-        <Typography variant="mkt-h2" className="text-center text-mono-200">
+        <Typography
+          variant="mkt-h3"
+          className="text-center text-mono-200 font-black"
+        >
           The Webb Logo
         </Typography>
 
         <Typography
-          variant="mkt-body"
-          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
+          variant="mkt-subheading"
+          className="text-center text-mono-140 md:max-w-[900px] mx-auto font-medium"
         >
           The Webb logo embodies the spirit of decentralization and should be
           used consistently across all Webb-related communications to ensure

@@ -1,18 +1,17 @@
 import {
-  ChevronRight,
   ShieldKeyholeIcon,
   TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { forwardRef, useMemo } from 'react';
+import { MouseEvent, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import { MouseEvent } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { TokenPairIcons } from '../TokenPairIcons';
 import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';

@@ -215,7 +215,8 @@ export const useMaxFeeInfo = (
       const message = getErrorMessage(error);
       notificationApi.addToQueue({
         variant: 'error',
-        message,
+        message: 'Failed to fetch max fee info',
+        secondaryMessage: message,
       });
     }
   }, [error, notificationApi, opt?.isHiddenNotiError]);

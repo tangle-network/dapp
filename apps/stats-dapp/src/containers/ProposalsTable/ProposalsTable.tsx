@@ -12,6 +12,7 @@ import { ProposalStatus, ProposalType } from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,
+  useProposal,
   useProposals,
 } from '../../provider/hooks';
 import { getChipColorByProposalType, mapChainIdToLogo } from '../../utils';
@@ -37,6 +38,7 @@ import { ChainIcon, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useStatsContext } from '../../provider/stats-provider';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -44,11 +46,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (props) => (
-      <Chip
-        color={getChipColorByProposalType(props.getValue<ProposalStatus>())}
-      >
-        {props.getValue<string>()}
-      </Chip>
+      <StatusChip
+        proposalId={props.row.original.id}
+        status={props.getValue<ProposalStatus>()}
+      />
     ),
   }),
 
@@ -352,5 +353,45 @@ export const ProposalsTable = () => {
         title="Proposals"
       />
     </CardTable>
+  );
+};
+
+interface StatusChipProps {
+  proposalId: string;
+  status: ProposalStatus;
+}
+
+const StatusChip: React.FC<StatusChipProps> = ({ proposalId, status }) => {
+  const {
+    metaData: { activeSession },
+  } = useStatsContext();
+
+  const query = useMemo<Parameters<typeof useProposal>>(() => {
+    return [
+      activeSession,
+      {
+        filter: {
+          proposalId,
+        },
+        perPage: 10,
+        offset: 0,
+      },
+    ];
+  }, [activeSession, proposalId]);
+
+  const proposalDetails = useProposal(...query);
+
+  const proposalStatus = useMemo(() => {
+    return (
+      (proposalDetails.proposal.val?.timeline[
+        proposalDetails.proposal.val?.timeline.length - 1
+      ].id.split('-')[1] as ProposalStatus) ?? (status as ProposalStatus)
+    );
+  }, [proposalDetails]);
+
+  return (
+    <Chip color={getChipColorByProposalType(proposalStatus)}>
+      {proposalStatus === 'Open' ? 'Added' : proposalStatus}
+    </Chip>
   );
 };

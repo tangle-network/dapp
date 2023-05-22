@@ -44,7 +44,7 @@ export const WebsiteCommunity = ({
   const cardContainerClsx = useMemo(
     () =>
       twMerge(
-        'mt-[24px] grid gap-4 justify-center md:grid-cols-2 px-4',
+        'mt-[24px] grid gap-4 justify-center md:grid-cols-2 px-4 lg:px-0',
         cardContainerClassName
       ),
     [cardContainerClassName]
@@ -65,12 +65,15 @@ export const WebsiteCommunity = ({
         <div className={cardClsx} key={href}>
           <span className="flex items-center space-x-2.5">
             <Icon className="w-8 h-8 !fill-current" />
-            <Typography variant="h5" className="text-mono-200" fw="bold">
+            <Typography
+              variant="mkt-subheading"
+              className="text-mono-200 font-black"
+            >
               {name}
             </Typography>
           </span>
 
-          <Typography variant="body1" className="text-mono-140">
+          <Typography variant="mkt-body1" className="text-mono-140 font-medium">
             {description}
           </Typography>
 
