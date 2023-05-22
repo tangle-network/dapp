@@ -5,30 +5,28 @@ import React, { FC, forwardRef, useMemo } from 'react';
 
 import { KeyStatusCardContainerProps } from './types';
 import { useStatsContext } from '../../provider/stats-provider';
+import { PublicKey, useActiveKeys } from '../../provider/hooks';
 /**
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
  */
-export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({
-  data,
-  keyType,
-  now,
-}) => {
+export const KeyStatusCardContainer = () => {
   const { dkgDataFromPolkadotAPI } = useStatsContext();
 
-  const { title, titleInfo } = useMemo(
-    () => ({
-      title: keyType === 'current' ? 'Active Key' : 'Next Key',
-      titleInfo:
-        keyType === 'current'
-          ? 'The public key of the DKG protocol that is currently active.'
-          : 'The public key of the DKG protocol that will be active after the next authority set change.',
-    }),
-    [keyType]
-  );
+  const { error, isFailed, isLoading, val: data } = useActiveKeys();
+
+  const { currentKey } = useMemo<{
+    currentKey: PublicKey | null | undefined;
+  }>(() => {
+    return {
+      currentKey: data ? data[0] : null,
+    };
+  }, [data]);
+
+  const { time } = useStatsContext();
 
   const authorities = useMemo(
     () =>
-      (data?.keyGenAuthorities ?? []).reduce((acc, cur) => {
+      (currentKey?.keyGenAuthorities ?? []).reduce((acc, cur) => {
         acc.add(cur);
         return acc;
       }, new Set() as KeyStatusCardProps['authorities']) ?? new Set<string>(),
@@ -39,29 +37,32 @@ export const KeyStatusCardContainer: FC<KeyStatusCardContainerProps> = ({
   const activeKeyData = useMemo(() => {
     return {
       key:
-        data?.compressed === dkgDataFromPolkadotAPI?.currentKey
-          ? data?.compressed
+        currentKey?.compressed === dkgDataFromPolkadotAPI?.currentKey
+          ? currentKey?.compressed
           : dkgDataFromPolkadotAPI?.currentKey,
       session:
-        Number(data?.session) === dkgDataFromPolkadotAPI?.currentSessionNumber
-          ? Number(data?.session)
+        Number(currentKey?.session) ===
+        dkgDataFromPolkadotAPI?.currentSessionNumber
+          ? Number(currentKey?.session)
           : dkgDataFromPolkadotAPI?.currentSessionNumber,
     };
   }, [data, dkgDataFromPolkadotAPI]);
 
   return (
     <KeyStatusCard
-      title={title}
-      titleInfo={titleInfo}
-      instance={now}
+      title="Active Key"
+      titleInfo="The public key of the DKG protocol that is currently active."
+      instance={time}
       sessionNumber={activeKeyData.session}
-      keyType={keyType}
+      keyType="current"
       keyVal={activeKeyData.key ?? ''}
-      startTime={data?.start ?? null}
-      endTime={data?.end ?? null}
-      authorities={authorities}
-      totalAuthorities={authorities.size}
-      fullDetailUrl={data ? `drawer/${data.id}` : ''}
+      startTime={currentKey?.start ?? new Date()}
+      endTime={
+        currentKey?.end ?? new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
+      }
+      authorities={authorities ?? new Set<string>()}
+      totalAuthorities={authorities.size ?? 0}
+      fullDetailUrl={data ? `drawer/${currentKey?.id}` : ''}
     />
   );
 };
