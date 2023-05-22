@@ -5,14 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-
-import {
-  SectionHeader,
-  SectionTitle,
-  SectionDescription,
-  SectionDescription2,
-  LinkButton,
-} from '..';
+import { LinkButton } from '..';
 import { TANGLE_OVERVIEW_URL, WANT_TO_LEARN_MORE_URL } from '../../constants';
 
 interface TangleFeatureCardProps {
@@ -50,13 +43,23 @@ export const FeaturesSection = () => {
       <div className="max-w-[1440px] mx-auto flex flex-col items-center gap-[60px]">
         <div className="flex flex-col items-center gap-4 px-5">
           <div className="flex flex-col items-center gap-2">
-            <SectionHeader>Features</SectionHeader>
-            <SectionTitle>What makes Tangle Unique?</SectionTitle>
+            <Typography
+              variant="mkt-small-caps"
+              className="font-black text-purple-70"
+            >
+              Features
+            </Typography>
+            <Typography variant="mkt-h3" className="font-black text-mono-200">
+              What makes Tangle Unique?
+            </Typography>
           </div>
-          <SectionDescription className="text-center lg:w-[65%]">
+          <Typography
+            variant="mkt-body1"
+            className="text-center lg:w-[65%] font-medium text-mono-140"
+          >
             The Tangle network serves as a hub for secure communication and
             private interactions across different blockchains.
-          </SectionDescription>
+          </Typography>
         </div>
 
         {/* Desktop + Mobile */}
@@ -81,7 +84,7 @@ export const FeaturesSection = () => {
           slidesPerView="auto"
           freeMode={true}
           modules={[FreeMode]}
-          className="hidden md:block lg:hidden w-full !pl-5"
+          className="!hidden md:!block lg:!hidden w-full !pl-5"
         >
           {tangleFeatures.map((feat, i) => {
             return (
@@ -116,10 +119,15 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
         <div>
           <p className="mono1 mb-4">0{index}</p>
           <hr />
-          <Typography variant="h4" fw="bold" className="mt-4 mb-6">
+          <Typography
+            variant="mkt-subheading"
+            className="mt-4 mb-6 font-black text-mono-200"
+          >
             {title}
           </Typography>
-          <SectionDescription2>{description}</SectionDescription2>
+          <Typography variant="mkt-body1" className="text-mono-140 font-medium">
+            {description}
+          </Typography>
         </div>
         <LinkButton href={link} className="mt-4">
           Learn More

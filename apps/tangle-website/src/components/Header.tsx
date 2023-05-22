@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import Link from 'next/link';
 import { TangleLogo, Typography } from '@webb-tools/webb-ui-components';
 import { Close } from '@webb-tools/icons';
 import { Navbar, InternalOrExternalLink } from '.';
 
-export const Header = () => {
-  const [showBanner, setShowBanner] = useState(true);
+interface HeaderProps {
+  hideBanner?: boolean;
+}
+
+export const Header: FC<HeaderProps> = (props) => {
+  const { hideBanner = false } = props;
+
+  const [showBanner, setShowBanner] = useState(!hideBanner);
 
   return (
     <header className="sticky flex flex-col top-0 z-50 bg-mono-0 min-h-[72px] webb-shadow-sm">
@@ -13,17 +19,14 @@ export const Header = () => {
       {showBanner && (
         <div className="bg-[#624FBE] p-2 lg:order-2 relative">
           <Typography
-            variant="mkt-utility"
-            className="block text-center max-w-[80%] mx-auto !text-mono-0 !font-bold uppercase leading-[24px]"
+            variant="mkt-body2"
+            className="block text-center max-w-[80%] mx-auto !text-mono-0 !font-bold leading-[24px]"
           >
             TANGLE NETWORK CROWDLOAN IS HAPPENING SOON ✨ |{' '}
             <InternalOrExternalLink url="#" className="inline-block">
-              <Typography
-                variant="body1"
-                className="!text-mono-0 capitalize underline"
-              >
+              <span className="!text-mono-0 capitalize underline">
                 Join Waitlist!
-              </Typography>
+              </span>
             </InternalOrExternalLink>
           </Typography>
           <Close

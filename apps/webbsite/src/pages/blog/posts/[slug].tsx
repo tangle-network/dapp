@@ -17,6 +17,7 @@ import { getPosts, getPostById, Post } from '../../../libs/webb-cms';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import 'github-markdown-css/github-markdown-light.css';
+import { NextSeo } from 'next-seo';
 
 type SharableLinkType = {
   Icon: (props: IconBase) => JSX.Element;
@@ -28,6 +29,7 @@ type SharableLinkType = {
 const Post: FC<{ post: Post }> = ({
   post: {
     title,
+    thumbnailImage,
     coverImage,
     description,
     author,
@@ -91,6 +93,31 @@ const Post: FC<{ post: Post }> = ({
 
   return (
     <>
+      <NextSeo
+        title={title}
+        description={description}
+        openGraph={{
+          type: 'website',
+          url: `https://webb.tools/blog/posts/${id}`,
+          title,
+          description,
+          images: [
+            {
+              url: thumbnailImage,
+              width: 800,
+              height: 600,
+              alt: title,
+            },
+          ],
+        }}
+        twitter={{
+          handle: '@webbprotocol',
+          site: '@webbprotocol',
+          cardType: 'summary_large_image',
+        }}
+      />
+
+      {/* COVER IMAGE */}
       <div
         style={{
           backgroundImage: `url(${coverImage})`,
@@ -98,29 +125,38 @@ const Post: FC<{ post: Post }> = ({
         }}
         className="h-[400px] z-0"
       ></div>
+
+      {/* CONTENT */}
       <div className="w-[358px] sm:w-[600px] md:w-[700px] lg:w-[900px] mx-auto z-10 mt-[-120px]">
         <div className="w-full mb-9 p-6 bg-mono-0 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
           <div className="flex items-center justify-between">
             <div className="items-center hidden gap-4 capitalize lg:flex">
               {tag && (
-                <span key={tag} className="single-post-card-tag text-mono-120">
+                <Typography
+                  variant="mkt-small-caps"
+                  key={tag}
+                  className="text-mono-120 font-black"
+                >
                   {tag}
-                </span>
+                </Typography>
               )}
             </div>
-            <span className="hidden text-mono-120 lg:inline-block single-post-card-date">
+            <Typography
+              variant="mkt-small-caps"
+              className="hidden text-mono-120 lg:inline-block font-black"
+            >
               {lastUpdatedDate}
-            </span>
+            </Typography>
           </div>
           <Typography
             variant="mkt-h3"
-            className="mt-4 single-post-card-title text-mono-200"
+            className="mt-4 text-mono-200 font-black"
           >
             {title}
           </Typography>
           <Typography
-            variant="mkt-body"
-            className="mt-4 single-post-card-description text-mono-170"
+            variant="mkt-body1"
+            className="mt-4 text-mono-120 font-bold"
           >
             {description}
           </Typography>

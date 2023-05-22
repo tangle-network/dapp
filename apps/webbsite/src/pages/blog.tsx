@@ -10,14 +10,19 @@ type BlogProps = {
 };
 
 const Blog: FC<{ blog: BlogProps }> = ({ blog: { posts, videos } }) => {
+  // Featured Post
   const featuredPost =
     posts.length > 0 ? posts[posts.length - 1] : ({} as Post);
 
+  // Recent Videos
   const recentVideos = videos.length > 0 ? videos.slice(-3) : ([] as Video[]);
 
   return (
     <div className="pt-[168px] mx-auto max-w-[1200px] pb-[86px]">
-      <Typography variant="mkt-h2" className="text-center mb-[24px]">
+      <Typography
+        variant="mkt-h3"
+        className="text-center mb-[24px] font-black text-mono-200"
+      >
         The Webb Blog
       </Typography>
 

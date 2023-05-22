@@ -52,15 +52,19 @@ export const BlogCard = ({
         <div className="px-6 mt-4 mb-3">
           {tag && (
             <div className="flex items-center gap-4 capitalize">
-              <span key={tag} className="card-tag text-mono-120">
+              <Typography
+                variant="mkt-small-caps"
+                key={tag}
+                className="text-mono-120 font-black"
+              >
                 {tag}
-              </span>
+              </Typography>
             </div>
           )}
           <Link href={link}>
             <Typography
-              variant="mkt-h3"
-              className="mt-2 card-title text-mono-200"
+              variant="mkt-body1"
+              className="mt-2 text-mono-200 font-black"
             >
               {title}
             </Typography>
@@ -69,7 +73,7 @@ export const BlogCard = ({
       </div>
       {type === 'post' && postType && (
         <div className="flex justify-end px-6">
-          <Chip color="blue" className="w-fit">
+          <Chip color="blue" className="w-fit font-black">
             {postType}
           </Chip>
         </div>
