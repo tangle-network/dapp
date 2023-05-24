@@ -48,15 +48,13 @@ export function useDynamicSVGImport(
     setLoading(true);
     const importIcon = async (): Promise<void> => {
       try {
-        const module = await import(`!!@svgr/webpack!../${type}s/${_name}.svg`);
+        const module = await import(`../${type}s/${_name}.svg?svgr`);
         const Icon = module.default;
         setImportedIcon(Icon());
         onCompleted?.(_name, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
-          const module = await import(
-            `!!@svgr/webpack!../${type}s/default.svg`
-          );
+          const module = await import(`../${type}s/default.svg?svgr`);
           const Icon = module.default;
           setImportedIcon(Icon());
           onCompleted?.(_name, Icon);
