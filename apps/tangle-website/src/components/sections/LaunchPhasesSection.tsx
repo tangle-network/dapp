@@ -47,7 +47,7 @@ const roadMapItems = [
 
 export const LaunchPhasesSection = () => {
   return (
-    <section className="py-[80px] lg:py-[96px]">
+    <section className="py-[60px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="px-5 mb-12 lg:px-[11.25%]">
           <Typography

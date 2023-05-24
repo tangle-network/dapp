@@ -57,7 +57,7 @@ export const ParticipationMechanicsSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('Validator');
 
   return (
-    <section className="bg-mono-0 py-20 px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
+    <section className="bg-mono-0 py-[60px] px-5 md:px-0 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
           <Typography

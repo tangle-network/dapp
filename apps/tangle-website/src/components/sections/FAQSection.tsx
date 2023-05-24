@@ -38,7 +38,7 @@ const faqItems = [
 
 export const FAQSection = () => {
   return (
-    <section className="bg-mono-0 py-20 px-5 lg:flex lg:flex-col lg:items-center">
+    <section className="bg-mono-0 py-[60px] px-5 lg:flex lg:flex-col lg:items-center">
       <div className="max-w-[900px] mx-auto">
         <div className="flex flex-col items-center mb-9">
           <Typography
