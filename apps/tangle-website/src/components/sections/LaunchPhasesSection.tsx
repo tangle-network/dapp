@@ -50,37 +50,24 @@ export const LaunchPhasesSection = () => {
     <section className="py-[80px] lg:py-[96px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="px-5 mb-12 lg:px-[11.25%]">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="md:flex-[5.5] lg:flex-[4.5]">
-              <Typography
-                variant="mkt-small-caps"
-                className="mb-6 font-black text-purple-70"
-              >
-                Launch Phases
-              </Typography>
-              <Typography
-                variant="mkt-h3"
-                className="text-left font-black text-mono-200"
-              >
-                Tangle Network is{' '}
-              </Typography>
-              <Typography
-                variant="mkt-h3"
-                className="text-left font-black text-purple-70"
-              >
-                Open Source & Community Managed
-              </Typography>
-            </div>
-            <div className="md:flex-[4.5] lg:flex-[5.5] md:flex md:items-center">
-              <Typography
-                variant="mkt-body1"
-                className="font-medium text-mono-140"
-              >
-                As the hub for routing cross-chain messages using ZKP, Tangle
-                enables the community to optimized for any use case.
-              </Typography>
-            </div>
-          </div>
+          <Typography
+            variant="mkt-small-caps"
+            className="mb-6 font-black text-purple-70"
+          >
+            Launch Phases
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="text-left font-black text-mono-200"
+          >
+            Tangle Network is{' '}
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="text-left font-black text-purple-70"
+          >
+            Open Source & Community Managed
+          </Typography>
         </div>
 
         <div className="md:px-5 lg:px-[11.25%]">
