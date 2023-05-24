@@ -12,9 +12,9 @@ const faqItems = [
     answer:
       'The TNT token refers to the native cryptocurrency of the Tangle network. The TNT token serves several key purposes within the Tangle ecosystem:' +
       '\n\n' +
-      '• Governance: TNT token holders can participate in the governance of the Tangle network by proposing or voting on changes to the protocol, system upgrades, and other improvements. This ensures that decision-making power is decentralized and distributed among stakeholders.' +
+      '\t• Governance: TNT token holders can participate in the governance of the Tangle network by proposing or voting on changes to the protocol, system upgrades, and other improvements. This ensures that decision-making power is decentralized and distributed among stakeholders.' +
       '\n\n' +
-      '• Staking: TNT tokens can be staked by validators and nominators to help secure the network. Validators are responsible for validating and producing new blocks, while nominators support validators by selecting them and staking their TNT tokens as a form of backing. Staking helps maintain network security and integrity, and those who participate in staking are rewarded with additional TNT tokens as an incentive.',
+      '\t• Staking: TNT tokens can be staked by validators and nominators to help secure the network. Validators are responsible for validating and producing new blocks, while nominators support validators by selecting them and staking their TNT tokens as a form of backing. Staking helps maintain network security and integrity, and those who participate in staking are rewarded with additional TNT tokens as an incentive.',
   },
   {
     question: 'How are validator rewards calculated',
@@ -62,8 +62,8 @@ export const FAQSection = () => {
           </Typography>
         </div>
         <Accordion
-          defaultValue={[faqItems[0].question]}
-          type="multiple"
+          defaultValue={faqItems[0].question}
+          type="single"
           className="lg:mx-auto"
         >
           {faqItems.map((item, index) => (
@@ -80,10 +80,10 @@ export const FAQSection = () => {
                   {item.question}
                 </Typography>
               </AccordionButton>
-              <AccordionContent className="px-0 pr-[52.5px]">
+              <AccordionContent className="px-0">
                 <Typography
                   variant="mkt-body1"
-                  className="font-medium text-mono-160 whitespace-pre-line"
+                  className="font-medium text-mono-160 whitespace-pre-wrap"
                 >
                   {item.answer}
                 </Typography>
