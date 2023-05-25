@@ -29,7 +29,7 @@ export function Index() {
         }}
       />
 
-      <div className="bg-body bg-top block">
+      <div className="bg-body bg-repeat-y bg-top block">
         <div className="mx-auto">
           <HeroSection />
 

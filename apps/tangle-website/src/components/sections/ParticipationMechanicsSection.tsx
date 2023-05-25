@@ -145,7 +145,7 @@ export const ParticipationMechanicsSection = () => {
               </Typography>
               <a
                 href={value.linkUrl}
-                className="text-purple-70 font-bold capitalize text-[20px]"
+                className="text-purple-70 font-bold capitalize"
               >
                 {value.linkText}
               </a>
