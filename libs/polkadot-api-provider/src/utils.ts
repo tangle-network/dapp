@@ -1,11 +1,13 @@
 import { ApiPromise } from '@polkadot/api';
+import { HexString } from '@polkadot/util/types';
 import { executorWithTimeout } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { FIELD_SIZE } from '@webb-tools/sdk-core';
+import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 import { PolkadotProvider } from './ext-provider';
-import { HexString } from '@polkadot/util/types';
+import { ExtData } from '@webb-tools/wasm-utils';
 
 const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
 
@@ -50,17 +52,18 @@ export const ensureHex = (maybeHex: string): HexString => {
 export const getVAnchorExtDataHash = (
   extData: IVariableAnchorExtData
 ): bigint => {
-  const abi = new ethers.utils.AbiCoder();
-  const encodedData = abi.encode(
-    [
-      'tuple(bytes recipient,bytes extAmount,bytes relayer,bytes fee,bytes refund,bytes token,bytes encryptedOutput1,bytes encryptedOutput2)',
-    ],
-    [extData]
+  const extDataFromWasm = new ExtData(
+    hexToU8a(extData.recipient),
+    hexToU8a(extData.recipient),
+    BigInt(ensureHex(extData.extAmount)).toString(),
+    BigInt(ensureHex(extData.fee)).toString(),
+    BigInt(ensureHex(extData.refund)).toString(),
+    hexToU8a(extData.token),
+    hexToU8a(extData.encryptedOutput1),
+    hexToU8a(extData.encryptedOutput2)
   );
 
-  const hash = ethers.utils.keccak256(encodedData);
+  const hash = extDataFromWasm.get_encode();
 
-  const hashBigInt = BigInt(ensureHex(hash));
-
-  return hashBigInt % FIELD_SIZE.toBigInt();
+  return BigInt(u8aToHex(hash));
 };

@@ -66,7 +66,7 @@ async function main() {
   // Start the nodes
   console.log(chalk.blue('Starting local substrate protocol...'));
 
-  await LocalProtocolSubstrate.start({
+  /* await LocalProtocolSubstrate.start({
     name: 'substrate-alice',
     authority: 'alice',
     usageMode,
@@ -80,7 +80,7 @@ async function main() {
     usageMode,
     ports: 'auto',
     enableLogging: options.verbose,
-  });
+  }); */
 
   // Wait until we are ready and connected
   console.log(chalk.blue('Waiting for API to be ready...'));

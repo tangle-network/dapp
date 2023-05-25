@@ -7,7 +7,6 @@ const path = require('path');
 const { merge } = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.js');
-const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = (env, config) => {
   env.context = __dirname;
@@ -32,7 +31,7 @@ module.exports = (env, config) => {
         inject: true,
         template: './src/public/index.html',
       }),
-      isDevelopment && new ReactRefreshWebpackPlugin(),
+      new ReactRefreshWebpackPlugin(),
     ],
     watchOptions: {
       // 5.66.0 work-around (was reduced to 20, then started failing)

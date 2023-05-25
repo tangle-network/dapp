@@ -89,23 +89,13 @@ function createWebpack(env, mode = 'production') {
               },
             },
             {
-              // process tailwind stuff
-              // https://webpack.js.org/loaders/postcss-loader/
-              loader: 'postcss-loader',
-              options: {
-                sourceMap: isDevelopment,
-                postcssOptions: {
-                  plugins: [require('tailwindcss')],
-                },
-              },
-            },
-            {
               // load sass files into css files
               loader: 'sass-loader',
               options: {
                 sourceMap: isDevelopment,
               },
             },
+            'postcss-loader',
           ],
         },
         {
