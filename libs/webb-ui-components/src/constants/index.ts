@@ -108,7 +108,7 @@ export const footerNavs: FooterNavsType = {
   dapp: [
     {
       name: 'bridge',
-      href: 'https://apps.webb.tools/',
+      href: 'https://app.webb.tools/',
       ...commonExternalProps,
     },
   ],

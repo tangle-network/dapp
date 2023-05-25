@@ -177,6 +177,8 @@ const columns: ColumnDef<KeygenType, any>[] = [
 ];
 
 export const KeygenTable: FC = () => {
+  const [loading, setLoading] = useState(true);
+
   // Filters
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -249,6 +251,7 @@ export const KeygenTable: FC = () => {
   useEffect(() => {
     if (keysStats.val) {
       setTotalItems(keysStats.val.pageInfo.count);
+      setLoading(false);
     }
   }, [keysStats]);
 
@@ -359,7 +362,7 @@ export const KeygenTable: FC = () => {
         </Filter>
       }
     >
-      {totalItems <= 0 ? (
+      {loading ? (
         <div className="flex items-center justify-center min-w-full min-h-[700px]">
           <Spinner size="xl" />
         </div>

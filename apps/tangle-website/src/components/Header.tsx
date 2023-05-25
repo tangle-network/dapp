@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import Link from 'next/link';
 import { TangleLogo, Typography } from '@webb-tools/webb-ui-components';
 import { Close } from '@webb-tools/icons';
 import { Navbar, InternalOrExternalLink } from '.';
 
-export const Header = () => {
-  const [showBanner, setShowBanner] = useState(true);
+interface HeaderProps {
+  hideBanner?: boolean;
+}
+
+export const Header: FC<HeaderProps> = (props) => {
+  const { hideBanner = false } = props;
+
+  const [showBanner, setShowBanner] = useState(!hideBanner);
 
   return (
     <header className="sticky flex flex-col top-0 z-50 bg-mono-0 min-h-[72px] webb-shadow-sm">
