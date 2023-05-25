@@ -15,6 +15,7 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import {
+  formatTokenAmount,
   fuzzyFilter,
   IconWithTooltip,
   KeyValueWithButton,
@@ -23,7 +24,6 @@ import {
   TitleWithInfo,
   TokenPairIcons,
   Typography,
-  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -80,7 +80,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
       const numOfHiddenTokens = composition.length - 2;
 
       return (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 w-[220px]">
           {firstTwoTokens.length === 1 ? (
             <IconWithTooltip
               icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}

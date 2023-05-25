@@ -18,12 +18,12 @@ import {
 import { useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
+  formatTokenAmount,
   fuzzyFilter,
   IconWithTooltip,
   Table,
   TokenPairIcons,
   Typography,
-  formatTokenAmount,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
@@ -83,7 +83,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
       const numOfHiddenTokens = composition.length - 2;
 
       return (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 w-[220px]">
           {!secondToken ? (
             <IconWithTooltip
               icon={<TokenIcon size="lg" name={firstToken} />}
