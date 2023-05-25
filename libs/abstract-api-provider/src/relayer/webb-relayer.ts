@@ -303,8 +303,6 @@ export class WebbRelayer {
         throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
 
-    console.log('getFeeInfo() endpoint: ', endpoint);
-
     const response = await fetch(endpoint, { signal: abortSignal });
 
     if (!response.ok) {

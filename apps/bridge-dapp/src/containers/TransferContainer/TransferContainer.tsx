@@ -5,8 +5,8 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Chain,
-  chainsPopulated,
   CurrencyConfig,
+  chainsPopulated,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
 import { isValidPublicKey } from '@webb-tools/dapp-types';
@@ -20,18 +20,17 @@ import {
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
-  calculateTypedChainId,
   ChainType as ChainTypeEnum,
   Keypair,
   Note,
   ResourceId,
-  Utxo,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
   TransferCard,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -44,10 +43,10 @@ import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
 import {
+  WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
-  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
@@ -56,6 +55,7 @@ import {
   CurrencyRecordWithChainsType,
   TransferContainerProps,
 } from './types';
+import { RecipientPublicKeyTooltipContent } from './shared';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -1030,7 +1030,7 @@ export const TransferContainer = forwardRef<
           setIsValidRecipient(valid);
         },
         title: 'Recipient Public Key',
-        info: 'Public key of the recipient',
+        info: <RecipientPublicKeyTooltipContent />,
         errorMessage: recipientError,
         value: recipientPubKey,
         validate: (value) => isValidPublicKey(value),
