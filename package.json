@@ -126,6 +126,7 @@
     "react-notion-x": "^6.15.7",
     "react-router": "6.11.1",
     "react-router-dom": "6.11.1",
+    "recharts": "^2.6.2",
     "remark-gfm": "^3.0.1",
     "rxjs": "7.8.1",
     "snarkjs": "0.6.11",

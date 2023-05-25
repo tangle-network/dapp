@@ -9,6 +9,7 @@ import {
   VoteType,
   ProposalStatus,
   ProposalsOvertimeTotalCountDocument,
+  AllProposalsTimestampsDocument,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
@@ -734,4 +735,62 @@ export function useProposalsOvertimeTotalCount(
   }, [timeRange]);
 
   return proposalsOvertimeCount;
+}
+
+export type AllProposalsTimestamps = {
+  [K: string]: {
+    nodes: {
+      block: {
+        timestamp: string;
+      };
+    }[];
+  };
+};
+
+export function useAllProposalsTimestamps(): Loadable<AllProposalsTimestamps> {
+  const [allProposalsTimestamps, setAllProposalsTimestamps] = useState<
+    Loadable<AllProposalsTimestamps>
+  >({
+    isLoading: true,
+    val: null,
+    isFailed: false,
+  });
+
+  const client = useApolloClient();
+
+  const {
+    metaData: { lastProcessBlock },
+  } = useStatsContext();
+
+  useEffect(() => {
+    setAllProposalsTimestamps({
+      isLoading: true,
+      isFailed: false,
+      val: null,
+    });
+
+    client
+      .query({
+        query: AllProposalsTimestampsDocument,
+      })
+      .then((data) => {
+        if (data) {
+          setAllProposalsTimestamps({
+            isLoading: false,
+            isFailed: false,
+            val: data.data,
+          });
+        }
+      })
+      .catch((e: any) => {
+        setAllProposalsTimestamps({
+          isLoading: false,
+          isFailed: true,
+          error: e.message,
+          val: null,
+        });
+      });
+  }, [lastProcessBlock]);
+
+  return allProposalsTimestamps;
 }
