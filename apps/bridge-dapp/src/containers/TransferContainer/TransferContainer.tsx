@@ -277,9 +277,12 @@ export const TransferContainer = forwardRef<
               setDestChain(undefined);
             }
           }
+
+          // Reset fee info
+          resetMaxFeeInfo();
         }
       },
-      [currencyRecordFromNotes, destChain]
+      [currencyRecordFromNotes, destChain, resetMaxFeeInfo]
     );
 
     // The selected asset to display in the transfer card
@@ -980,11 +983,19 @@ export const TransferContainer = forwardRef<
               setDestChain(undefined);
             }
           }
+
+          // Reset fee info
+          resetMaxFeeInfo();
         }
       };
 
       updateDefaultValues();
-    }, [defaultDestinationChain, defaultFungibleCurrency, destChain]);
+    }, [
+      defaultDestinationChain,
+      defaultFungibleCurrency,
+      destChain,
+      resetMaxFeeInfo,
+    ]);
 
     // Side effect to set the education card step
     useEffect(() => {
