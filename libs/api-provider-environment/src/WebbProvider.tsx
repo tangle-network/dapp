@@ -425,7 +425,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     async (
       chain: Chain,
       _wallet: Wallet,
-      _networkStorage?: NetworkStorage | undefined
+      _networkStorage?: NetworkStorage | undefined,
+      _bridge?: Bridge | undefined
     ) => {
       const wallet = _wallet || activeWallet;
 
@@ -752,6 +753,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           status: 'sucess',
         });
 
+        // If the _bridge is passed in, set it as the active bridge
+        if (localActiveApi?.state && _bridge) {
+          localActiveApi.state.activeBridge = _bridge;
+        }
+
         return localActiveApi;
       } catch (e) {
         setLoading(false);
@@ -795,11 +801,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = useCallback(
-    async (chain: Chain, wallet: Wallet) => {
+    async (chain: Chain, wallet: Wallet, bridge?: Bridge) => {
       setIsConnecting(true);
 
       try {
-        const provider = await switchChain(chain, wallet);
+        const provider = await switchChain(chain, wallet, undefined, bridge);
         /** TODO: `networkStorage` can be `null` here.
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous

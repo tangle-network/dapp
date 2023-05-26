@@ -1,5 +1,6 @@
 import {
   Account,
+  Bridge,
   Transaction,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
@@ -34,7 +35,11 @@ export interface WebbContextState<T = unknown> {
 
   inactivateApi(): Promise<void>;
 
-  switchChain(chain: Chain, wallet: Wallet): Promise<WebbApiProvider<T> | null>;
+  switchChain(
+    chain: Chain,
+    wallet: Wallet,
+    bridge?: Bridge
+  ): Promise<WebbApiProvider<T> | null>;
 
   activeFeedback: InteractiveFeedback | null;
   registerInteractiveFeedback: (
