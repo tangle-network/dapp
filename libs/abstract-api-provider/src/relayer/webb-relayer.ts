@@ -70,12 +70,16 @@ const parseRelayerFeeErrorMessage = async (
 ): Promise<string> => {
   try {
     const text = await response.text();
-    return `Relayer fee error: \`${text}\``;
+    if (text) {
+      return `Relayer fee error: \`${text}\``;
+    }
   } catch (e) {
     // ignore error
   }
 
-  return `Relayer fee error: [${response.status}] \`${response.statusText}\``;
+  const errorText = response.statusText || 'Unknown error';
+
+  return `Relayer fee error: [${response.status}] \`${errorText}\``;
 };
 
 /**
