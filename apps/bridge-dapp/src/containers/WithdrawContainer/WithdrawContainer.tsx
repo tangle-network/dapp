@@ -149,7 +149,7 @@ export const WithdrawContainer = forwardRef<
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
 
-  const fungibleCurrencies = useMemo(() => {
+  const fungibleCurrencies = useMemo<Currency[]>(() => {
     const avaiFungibleIdSet = Array.from(allNotes.keys()).reduce(
       (acc, resourceIdHex) => {
         const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdHex));
@@ -179,10 +179,19 @@ export const WithdrawContainer = forwardRef<
       new Set<number>()
     );
 
-    return Array.from(avaiFungibleIdSet)
-      .map((id) => apiConfig.currencies[id])
-      .map((c) => new Currency(c));
-  }, [allNotes, allFungibleCurrencies, apiConfig]);
+    const res = Currency.fromArray(
+      Array.from(avaiFungibleIdSet).map((id) => apiConfig.currencies[id])
+    );
+
+    const defaultFungible =
+      currentTypedChainId && res.find((c) => c.hasChain(currentTypedChainId));
+
+    if (defaultFungible) {
+      setFungibleCurrency(defaultFungible);
+    }
+
+    return res;
+  }, [allNotes, currentTypedChainId, allFungibleCurrencies, apiConfig]);
 
   const currentResourceId = useCurrentResourceId();
 

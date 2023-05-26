@@ -14,6 +14,7 @@ import { CurrencyRole, isValidPublicKey } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
+  useCurrencies,
   useNoteAccount,
   useRelayers,
   useTxQueue,
@@ -197,7 +198,7 @@ export const TransferContainer = forwardRef<
           })
         );
 
-        return Array.from(allNotes.values()).reduce((acc, notes) => {
+        const res = Array.from(allNotes.values()).reduce((acc, notes) => {
           notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
             const tkSymbol = tokenSymbol;
             const currency = fungibles.find(
@@ -250,6 +251,12 @@ export const TransferContainer = forwardRef<
 
           return acc;
         }, {} as CurrencyRecordWithChainsType);
+
+        if (Object.values(res).length > 0) {
+          setFungibleCurrency(Object.values(res)[0].currency);
+        }
+
+        return res;
       }, [allNotes, apiConfig]);
 
     // Callback when a chain item is selected
