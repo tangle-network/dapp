@@ -39,8 +39,8 @@ const tangleFeatures = [
 
 export const FeaturesSection = () => {
   return (
-    <section className="py-[94px]">
-      <div className="max-w-[1440px] mx-auto flex flex-col items-center gap-[60px]">
+    <section className="py-[60px]">
+      <div className="max-w-[1440px] mx-auto flex flex-col items-center gap-6">
         <div className="flex flex-col items-center gap-4 px-5">
           <div className="flex flex-col items-center gap-2">
             <Typography

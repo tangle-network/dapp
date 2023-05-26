@@ -38,7 +38,7 @@ const tangleUseCases = [
 
 export const UseCasesSection = () => {
   return (
-    <section className="bg-mono-200 px-[20px] lg:px-0 py-[80px]">
+    <section className="bg-mono-200 px-[20px] lg:px-0 py-[60px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col gap-4 lg:px-[11.25%]">
           <Typography
