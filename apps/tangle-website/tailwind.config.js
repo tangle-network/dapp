@@ -22,7 +22,6 @@ module.exports = {
     extend: {
       backgroundImage: {
         body: "url('/static/assets/body-bg.jpg')",
-        hero_section: "url('/static/assets/hero-section.jpg')",
         introduction_section:
           'linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,.5)), url("/static/assets/body-bg.jpg")',
       },
