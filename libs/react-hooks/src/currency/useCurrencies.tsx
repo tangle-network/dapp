@@ -38,11 +38,11 @@ export const useCurrencies = () => {
   }, [activeChain, apiConfig.currencies]);
 
   // All the fungible currencies
-  const allFungibleCurrencies = useMemo(() => {
-    return Object.values(apiConfig.currencies)
-      .filter((c) => c.role === CurrencyRole.Governable)
+  const allFungibleCurrencies = useMemo<Currency[]>(() => {
+    return apiConfig
+      .getCurrenciesBy({ role: CurrencyRole.Governable })
       .map((c) => new Currency(c));
-  }, [apiConfig.currencies]);
+  }, [apiConfig]);
 
   // Record where fungible currency id -> wrappable currencies of the current chain
   const wrappableCurrenciesMap = useMemo(() => {

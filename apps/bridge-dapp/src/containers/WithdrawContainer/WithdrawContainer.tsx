@@ -12,20 +12,20 @@ import {
   useTxQueue,
 } from '@webb-tools/react-hooks';
 import {
-  calculateTypedChainId,
   ChainType,
   Note,
-  Utxo,
+  ResourceId,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
   AmountInput,
   Button,
   CheckBox,
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
-  useWebbUI,
   WithdrawCard,
+  getRoundedAmountString,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
@@ -42,20 +42,20 @@ import {
   Currency,
   utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
-import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { isValidAddress } from '@webb-tools/dapp-types';
+import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import { ChainListCardWrapper } from '../../components';
 import {
+  WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
   useShieldedAssets,
-  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -101,7 +101,7 @@ export const WithdrawContainer = forwardRef<
     setWrappableCurrency,
   } = useBridge();
 
-  const { wrappableCurrencies } = useCurrencies();
+  const { allFungibleCurrencies, wrappableCurrencies } = useCurrencies();
 
   const currentTypedChainId = useMemo(() => {
     if (!activeChain) {
@@ -150,32 +150,39 @@ export const WithdrawContainer = forwardRef<
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
 
   const fungibleCurrencies = useMemo(() => {
-    if (!activeApi) {
-      return [];
-    }
+    const avaiFungibleIdSet = Array.from(allNotes.keys()).reduce(
+      (acc, resourceIdHex) => {
+        const resourceId = ResourceId.fromBytes(hexToU8a(resourceIdHex));
+        const typedChainId = calculateTypedChainId(
+          resourceId.chainType,
+          resourceId.chainId
+        );
 
-    const tokenSymbolsSet = new Set<string>();
+        const fungible = allFungibleCurrencies.find((c) => {
+          const anchorAddress = apiConfig.getAnchorAddress(c.id, typedChainId);
 
-    Array.from(allNotes.values()).forEach((notes) => {
-      notes.forEach((note) => {
-        tokenSymbolsSet.add(note.note.tokenSymbol);
-      });
-    });
+          if (!anchorAddress) {
+            return false;
+          }
 
-    const supportedCurrencyIds = Object.keys(
-      activeApi.state.getBridgeOptions()
+          return (
+            BigInt(anchorAddress) === BigInt(u8aToHex(resourceId.targetSystem))
+          );
+        });
+
+        if (fungible) {
+          acc.add(fungible.id);
+        }
+
+        return acc;
+      },
+      new Set<number>()
     );
 
-    return Array.from(tokenSymbolsSet)
-      .map((symbol) => {
-        return apiConfig.getCurrencyBySymbol(symbol);
-      })
-      .filter(
-        (c): c is CurrencyConfig =>
-          !!c && supportedCurrencyIds.includes(c.id.toString())
-      )
+    return Array.from(avaiFungibleIdSet)
+      .map((id) => apiConfig.currencies[id])
       .map((c) => new Currency(c));
-  }, [activeApi, allNotes, apiConfig]);
+  }, [allNotes, allFungibleCurrencies, apiConfig]);
 
   const currentResourceId = useCurrentResourceId();
 
@@ -770,13 +777,26 @@ export const WithdrawContainer = forwardRef<
 
     const selectableTokens = Object.values(fungibleCurrencies).map(
       (currency) => {
+        let balance: number | undefined;
+        if (
+          currentTypedChainId &&
+          balancesFromNotes[currency.id]?.[currentTypedChainId]
+        ) {
+          balance = balancesFromNotes[currency.id][currentTypedChainId];
+        } else {
+          // Get the first available balance or fallback to `0`
+          balance =
+            balancesFromNotes[currency.id] &&
+            Object.values(balancesFromNotes[currency.id])[0];
+        }
+
         return {
           name: currency.view.name,
           symbol: currency.view.symbol,
           balance:
             selectedFungibleToken?.symbol === currency.view.symbol
               ? availableAmount
-              : balancesFromNotes[currency.id],
+              : balance,
           onTokenClick: () => addCurrency(currency),
         };
       }
@@ -807,6 +827,7 @@ export const WithdrawContainer = forwardRef<
     apiConfig,
     availableAmount,
     balancesFromNotes,
+    currentTypedChainId,
     fungibleCurrencies,
     handleFungibleTokenChange,
     onTryAnotherWallet,
