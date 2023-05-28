@@ -73,7 +73,16 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
     cell: (props) => {
       const composition = props.getValue<string[]>();
       if (!composition.length) {
-        return null;
+        return (
+          <Typography
+            className="inline-block"
+            variant="body1"
+            fw="semibold"
+            ta="center"
+          >
+            No composition
+          </Typography>
+        );
       }
 
       const firstTwoTokens = composition.slice(0, 2);
