@@ -1079,7 +1079,7 @@ export const WithdrawContainer = forwardRef<
       },
       {
         leftTextProps: {
-          title: 'Max fee',
+          title: 'Est. transaction fee',
           info: transactionFeeInfo,
         },
         rightContent: txFeeContent,

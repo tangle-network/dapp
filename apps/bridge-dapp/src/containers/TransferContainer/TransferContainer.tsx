@@ -980,7 +980,7 @@ export const TransferContainer = forwardRef<
         },
         {
           leftTextProps: {
-            title: 'Max fee',
+            title: 'Est. transaction fee',
           },
           rightContent: maxFeeText,
         },
