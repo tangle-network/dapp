@@ -43,7 +43,8 @@ const links = [
   {
     name: 'Incentivized Testnet',
     Icon: SparklingIcon,
-    href: 'https://twitter.com/webbprotocol',
+    // TODO: update href
+    href: '#',
     description: 'Explore the Tangle testnet and get involved',
     linkText: 'Leaderboard',
   },
