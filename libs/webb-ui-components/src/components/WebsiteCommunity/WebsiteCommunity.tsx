@@ -61,7 +61,7 @@ export const WebsiteCommunity = ({
 
   return (
     <div className={cardContainerClsx}>
-      {links.map(({ Icon, name, href, description }) => (
+      {links.map(({ Icon, name, href, description, linkText }) => (
         <div className={cardClsx} key={href}>
           <span className="flex items-center space-x-2.5">
             <Icon className="w-8 h-8 !fill-current" />
@@ -78,7 +78,7 @@ export const WebsiteCommunity = ({
           </Typography>
 
           <Button variant="link" href={href} target="_blank">
-            {name}
+            {linkText ?? name}
           </Button>
         </div>
       ))}
