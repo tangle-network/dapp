@@ -81,7 +81,7 @@ const allProposals = [
   },
 ];
 
-const timeRanges = ['30 Min', '1 Hr', '1 Day'];
+const timeRanges = ['2 Hr', '10 Hr', '1 Day'];
 
 export const StackedAreaChartContainer = () => {
   const { isDarkMode } = useStatsContext();
@@ -155,11 +155,11 @@ export const StackedAreaChartContainer = () => {
   }));
 
   const thirtyMinData = useMemo(() => {
-    return filterDatesByMinutes(convertedData, 30);
+    return filterDatesByMinutes(convertedData, 120);
   }, [convertedData]);
 
   const oneHourData = useMemo(() => {
-    return filterDatesByMinutes(convertedData, 60);
+    return filterDatesByMinutes(convertedData, 600);
   }, [convertedData]);
 
   const oneDayData = useMemo(() => {
@@ -169,7 +169,7 @@ export const StackedAreaChartContainer = () => {
   const finalConvertedData = useMemo(() => {
     let filteredData;
 
-    if (timeRange === '30 Min') {
+    if (timeRange === '2 Hr') {
       filteredData = thirtyMinData;
 
       if (filteredData.length < 2) {
@@ -183,7 +183,7 @@ export const StackedAreaChartContainer = () => {
           }
         }
       }
-    } else if (timeRange === '1 Hr') {
+    } else if (timeRange === '10 Hr') {
       filteredData = oneHourData;
 
       if (filteredData.length < 2) {
