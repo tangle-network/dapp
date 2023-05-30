@@ -86,7 +86,7 @@ const timeRanges = ['2 Hr', '10 Hr', '1 Day'];
 export const StackedAreaChartContainer = () => {
   const { isDarkMode } = useStatsContext();
 
-  const [timeRange, setTimeRange] = useState('30 Min');
+  const [timeRange, setTimeRange] = useState('2 Hr');
 
   const { val: allProposalsTimestamps, isLoading } =
     useAllProposalsTimestamps();
