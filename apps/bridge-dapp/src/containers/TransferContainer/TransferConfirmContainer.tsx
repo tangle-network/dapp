@@ -4,10 +4,7 @@ import {
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
-import {
-  useTxApiQueue,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
@@ -67,11 +64,12 @@ export const TransferConfirmContainer = forwardRef<
 
     const progress = useTransactionProgressValue(stage);
 
-    const { activeApi, activeChain, apiConfig, noteManager } = useWebContext();
+    const { activeApi, activeChain, apiConfig, noteManager, txQueue } =
+      useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
-    const { api: txQueueApi, txPayloads } = useTxApiQueue(apiConfig);
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
 

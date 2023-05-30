@@ -155,6 +155,8 @@ export type TransactionQueueApi = {
 // The global transaction queue for the bridge dApp
 const txQueue$ = new BehaviorSubject<Transaction<NewNotesTxResult>[]>([]);
 
+const txPayloads$ = new BehaviorSubject<TransactionPayload[]>([]);
+
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   const { chains } = apiConfig;
 
@@ -164,9 +166,9 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
 
   const txQueue = useObservableState(txQueue$);
 
-  const [mainTxId, setMainTxId] = useState<null | string>(null);
+  const txPayloads = useObservableState(txPayloads$);
 
-  const [txPayloads, setTxPayloads] = useState<Array<TransactionPayload>>([]);
+  const [mainTxId, setMainTxId] = useState<null | string>(null);
 
   /**
    * Action by the user to remove the transaction or Dismiss it
@@ -200,58 +202,77 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
 
       // Subscribe to the transaction status
       const statusSub = tx.$currentStatus.subscribe(
-        async ([txState, txData]) => {
-          console.group('$currentStatus');
-          console.log('$currentStatus', txState, txData);
-          if (txState === TransactionState.Done) {
+        async ([nextTxState, nextTxData]) => {
+          if (nextTxState === TransactionState.Done) {
             // Update the tx hash
-            const { txHash } = txData as NewNotesTxResult;
+            const { txHash } = nextTxData as NewNotesTxResult;
             tx.txHash = txHash;
           }
 
-          setTxPayloads((prevPayloads) => {
-            console.log('prevPayloads', prevPayloads);
-            return prevPayloads.map((payload) => {
-              if (payload.id === tx.id) {
-                return {
-                  ...payload,
-                  txStatus: {
-                    ...payload.txStatus,
-                    status: transactionItemStatusFromTxStatus(txState),
-                    message: getTxMessageFromStatus(txState, txData),
-                  },
-                };
-              }
-              return payload;
-            });
-          });
+          const payloads = txPayloads$.getValue();
 
-          console.groupEnd();
-        }
-      );
+          const currentPayload = payloads.find(
+            (payload) => payload.id === tx.id
+          );
+          if (!currentPayload) {
+            return;
+          }
 
-      // Substart to the transaction hash
-      const hashSub = tx.$txHash.subscribe(async (txHash) => {
-        console.group('$txHash');
-        console.log('$txHash', txHash);
+          const nextStatus = transactionItemStatusFromTxStatus(nextTxState);
+          const nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
 
-        setTxPayloads((prevPayloads) => {
-          console.log('prevPayloads', prevPayloads);
-          return prevPayloads.map((payload) => {
+          if (
+            nextStatus === currentPayload.txStatus.status &&
+            nextMessage === currentPayload.txStatus.message
+          ) {
+            return;
+          }
+
+          const nextPayloads = payloads.map((payload) => {
             if (payload.id === tx.id) {
               return {
                 ...payload,
                 txStatus: {
                   ...payload.txStatus,
-                  txHash,
+                  status: nextStatus,
+                  message: nextMessage,
                 },
               };
             }
             return payload;
           });
+
+          txPayloads$.next(nextPayloads);
+        }
+      );
+
+      // Substart to the transaction hash
+      const hashSub = tx.$txHash.subscribe((nextTxHash) => {
+        const payloads = txPayloads$.getValue();
+        const currentPayload = payloads.find((payload) => payload.id === tx.id);
+
+        if (!currentPayload) {
+          return;
+        }
+
+        if (nextTxHash === currentPayload.txStatus.txHash) {
+          return;
+        }
+
+        const nextPayloads = payloads.map((payload) => {
+          if (payload.id === tx.id) {
+            return {
+              ...payload,
+              txStatus: {
+                ...payload.txStatus,
+                txHash: nextTxHash,
+              },
+            };
+          }
+          return payload;
         });
 
-        console.groupEnd();
+        txPayloads$.next(nextPayloads);
       });
 
       // Update the subscriptions ref
@@ -285,11 +306,11 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   // Effect to subscribe to the txQueue and update the txPayloads
   useEffect(() => {
     const sub = txQueue$.subscribe((txQueue) => {
-      setTxPayloads(
-        txQueue.map((tx) => {
-          return mapTxToPayload(tx, chains, dismissTransaction);
-        })
-      );
+      const nextPayloads = txQueue.map((tx) => {
+        return mapTxToPayload(tx, chains, dismissTransaction);
+      });
+
+      txPayloads$.next(nextPayloads);
     });
 
     return () => {
@@ -297,28 +318,16 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
     };
   }, [chains, dismissTransaction]);
 
-  return useMemo(
-    () => ({
-      txQueue,
-      txPayloads,
-      currentTxId: mainTxId,
-      api: {
-        cancelTransaction,
-        dismissTransaction,
-        registerTransaction,
-        startNewTransaction,
-        getLatestTransaction,
-      },
-    }),
-    [
-      txQueue,
-      txPayloads,
-      mainTxId,
+  return {
+    txQueue,
+    txPayloads,
+    currentTxId: mainTxId,
+    api: {
       cancelTransaction,
       dismissTransaction,
       registerTransaction,
       startNewTransaction,
       getLatestTransaction,
-    ]
-  );
+    },
+  };
 }

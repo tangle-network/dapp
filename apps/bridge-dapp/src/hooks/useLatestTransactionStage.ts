@@ -1,8 +1,5 @@
 import { TransactionState } from '@webb-tools/abstract-api-provider';
-import {
-  useTxApiQueue,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useEffect, useState } from 'react';
 
 export const useLatestTransactionStage = (
@@ -10,11 +7,11 @@ export const useLatestTransactionStage = (
 ) => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
 
-  const { apiConfig } = useWebContext();
+  const { txQueue } = useWebContext();
 
   const {
     api: { getLatestTransaction },
-  } = useTxApiQueue(apiConfig);
+  } = txQueue;
 
   // Effect to subscribe to the latest tx and update the stage
   useEffect(() => {

@@ -4,10 +4,7 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import {
-  useTxApiQueue,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useVAnchor } from '@webb-tools/react-hooks';
@@ -58,9 +55,10 @@ export const DepositConfirmContainer = forwardRef<
       [stage]
     );
 
-    const { activeApi, activeChain, noteManager, apiConfig } = useWebContext();
+    const { activeApi, activeChain, noteManager, apiConfig, txQueue } =
+      useWebContext();
 
-    const { api: txQueueApi, txPayloads } = useTxApiQueue(apiConfig);
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {

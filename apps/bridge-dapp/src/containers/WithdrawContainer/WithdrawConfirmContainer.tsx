@@ -1,7 +1,4 @@
-import {
-  useWebContext,
-  useTxApiQueue,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
@@ -71,9 +68,9 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi, apiConfig, noteManager } = useWebContext();
+    const { activeApi, apiConfig, noteManager, txQueue } = useWebContext();
 
-    const { api: txQueueApi, txPayloads } = useTxApiQueue(apiConfig);
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
 

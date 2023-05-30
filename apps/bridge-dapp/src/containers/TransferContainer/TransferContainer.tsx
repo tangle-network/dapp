@@ -1,8 +1,5 @@
 import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
-import {
-  useTxApiQueue,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Chain,
   CurrencyConfig,
@@ -62,12 +59,11 @@ export const TransferContainer = forwardRef<
     const {
       activeApi,
       activeChain,
-      activeWallet,
       apiConfig,
       chains,
       loading,
       noteManager,
-      switchChain,
+      txQueue,
     } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
@@ -75,8 +71,6 @@ export const TransferContainer = forwardRef<
     const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
     const { api } = useVAnchor();
-
-    const txQueue = useTxApiQueue(apiConfig);
 
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 

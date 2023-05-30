@@ -1,7 +1,4 @@
-import {
-  useWebContext,
-  useTxApiQueue,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
@@ -77,15 +74,8 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const {
-    activeApi,
-    activeChain,
-    activeWallet,
-    apiConfig,
-    loading,
-    noteManager,
-    switchChain,
-  } = useWebContext();
+  const { activeApi, activeChain, apiConfig, loading, noteManager, txQueue } =
+    useWebContext();
 
   const { wrappableCurrency, setWrappableCurrency } = useBridge();
 
@@ -142,8 +132,6 @@ export const WithdrawContainer = forwardRef<
   }, [isUnwrap, wrappableCurrency]);
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
-
-  const txQueue = useTxApiQueue(apiConfig);
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 

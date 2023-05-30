@@ -1,5 +1,5 @@
 import { Button, TransactionQueueCard } from '@webb-tools/webb-ui-components';
-import { FC, memo, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
 import {
   FixturesProgress,
@@ -8,10 +8,7 @@ import {
   TransactionMetaData,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import {
-  useTxApiQueue,
-  useWebContext,
-} from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { EducationCard } from '../../components/EducationCard';
 import { EduCardWithTxQueueProps, TxQueueContainerProps } from './types';
@@ -29,8 +26,8 @@ const sharedMetadata: TransactionMetaData = {
 };
 
 const EduCardWithTxQueue: FC<EduCardWithTxQueueProps> = ({ activeTab }) => {
-  const { apiConfig } = useWebContext();
-  const { api, txPayloads } = useTxApiQueue(apiConfig);
+  const { txQueue } = useWebContext();
+  const { api, txPayloads } = txQueue;
 
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
@@ -95,17 +92,18 @@ const EduCardWithTxQueue: FC<EduCardWithTxQueueProps> = ({ activeTab }) => {
 
 export default EduCardWithTxQueue;
 
-const TxQueueContainer = memo<TxQueueContainerProps>(
-  ({ isDisplay, transactionPayloads }) => {
-    if (!isDisplay) {
-      return null;
-    }
-
-    return (
-      <TransactionQueueCard
-        className="w-full mb-4 max-w-none"
-        transactions={transactionPayloads}
-      />
-    );
+const TxQueueContainer: FC<TxQueueContainerProps> = ({
+  isDisplay,
+  transactionPayloads,
+}) => {
+  if (!isDisplay) {
+    return null;
   }
-);
+
+  return (
+    <TransactionQueueCard
+      className="w-full mb-4 max-w-none"
+      transactions={transactionPayloads}
+    />
+  );
+};
