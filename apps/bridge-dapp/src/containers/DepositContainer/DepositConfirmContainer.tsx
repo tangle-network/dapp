@@ -46,7 +46,7 @@ export const DepositConfirmContainer = forwardRef<
 
     const [txId, setTxId] = useState('');
 
-    const stage = useLatestTransactionStage('Deposit');
+    const stage = useLatestTransactionStage(txId);
 
     const progress = useTransactionProgressValue(stage);
 

@@ -60,11 +60,7 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const stage = useLatestTransactionStage('Withdraw');
-
     const { api: vAnchorApi } = useVAnchor();
-
-    const progressValue = useTransactionProgressValue(stage);
 
     const { setMainComponent } = useWebbUI();
 
@@ -73,6 +69,10 @@ export const WithdrawConfirmContainer = forwardRef<
     const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+
+    const stage = useLatestTransactionStage(txId);
+
+    const progressValue = useTransactionProgressValue(stage);
 
     const {
       relayersState: { activeRelayer },

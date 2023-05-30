@@ -58,11 +58,7 @@ export const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const stage = useLatestTransactionStage('Transfer');
-
     const { api: vAnchorApi } = useVAnchor();
-
-    const progress = useTransactionProgressValue(stage);
 
     const { activeApi, activeChain, apiConfig, noteManager, txQueue } =
       useWebContext();
@@ -72,6 +68,10 @@ export const TransferConfirmContainer = forwardRef<
     const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+
+    const stage = useLatestTransactionStage(txId);
+
+    const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.chainId),
