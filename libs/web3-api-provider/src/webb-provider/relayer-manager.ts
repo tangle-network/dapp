@@ -59,12 +59,15 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
       if (contractAddress && baseOn && typedChainId) {
         if (baseOn === 'evm') {
-          return Boolean(
-            capabilities.supportedChains[baseOn]
-              .get(typedChainId)
-              ?.contracts?.find(
-                (contract) => contract.address === contractAddress.toLowerCase()
-              )
+          return (
+            Boolean(
+              capabilities.supportedChains[baseOn]
+                .get(typedChainId)
+                ?.contracts?.find(
+                  (contract) =>
+                    contract.address === contractAddress.toLowerCase()
+                )
+            ) && capabilities.features.dataQuery
           );
         }
       }
@@ -154,6 +157,8 @@ export class Web3RelayerManager extends WebbRelayerManager {
         relayerLeaves.lastQueriedBlock
       );
 
+      console.log('validLatestLeaf', validLatestLeaf);
+
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
         // Assume the destination anchor has the same levels as source anchor
@@ -167,6 +172,8 @@ export class Web3RelayerManager extends WebbRelayerManager {
           relayerLeaves.leaves,
           lastRoot
         );
+
+        console.log('Valid tree', tree);
 
         // If we were able to build the tree, set local storage and break out of the loop
         if (tree) {

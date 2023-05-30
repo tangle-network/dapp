@@ -98,14 +98,6 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
               }}
               rightContent={amount}
             />
-
-            <InfoItem
-              leftTextProps={{
-                title: feePercentage ? `Fee (${feePercentage}%)` : `Max fee`,
-                variant: 'utility',
-              }}
-              rightContent={fee}
-            />
           </div>
         </div>
 
