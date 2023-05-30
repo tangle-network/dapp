@@ -9,19 +9,15 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
+import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { Storage } from '@webb-tools/storage';
 import {
   calculateTypedChainId,
   ChainType,
-  MerkleTree,
   Note,
   parseTypedChainId,
-  toFixedHex,
 } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
-import { VAnchor } from '@webb-tools/anchors';
+import { Storage } from '@webb-tools/storage';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -161,29 +157,12 @@ export class Web3RelayerManager extends WebbRelayerManager {
 
       // leaves from relayer somewhat validated, attempt to build the tree
       if (validLatestLeaf) {
-        // Assume the destination anchor has the same levels as source anchor
-        const levels = await vanchor.contract.getLevels();
-        const lastRootBigNumber = await vanchor.contract.getLastRoot();
+        leaves = relayerLeaves.leaves;
 
-        // Fixed the last root to be 32 bytes
-        const lastRoot = toFixedHex(lastRootBigNumber.toHexString());
-        const tree = MerkleTree.createTreeWithRoot(
-          levels,
-          relayerLeaves.leaves,
-          lastRoot
-        );
+        await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
+        await storage.set('leaves', relayerLeaves.leaves);
 
-        console.log('Valid tree', tree);
-
-        // If we were able to build the tree, set local storage and break out of the loop
-        if (tree) {
-          leaves = relayerLeaves.leaves;
-
-          await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
-          await storage.set('leaves', relayerLeaves.leaves);
-
-          return leaves;
-        }
+        return leaves;
       }
     }
 

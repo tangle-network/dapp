@@ -7344,10 +7344,8 @@
     "@webassemblyjs/ast" "1.11.6"
     "@xtuc/long" "4.2.2"
 
-"@webb-tools/anchors@0.5.43":
+"@webb-tools/anchors@file:../../../../Volumes/tins_ssd/webb/protocol-solidity/packages/anchors":
   version "0.5.43"
-  resolved "https://registry.yarnpkg.com/@webb-tools/anchors/-/anchors-0.5.43.tgz#543f59f367ad6357382723ba3c537f8142abe10a"
-  integrity sha512-TRM71D64BtuCWg4XAR0CxyPOHOs+BuBYpetRcAEnfteh75rCEojHdiSg/1EsVHWqb1n++UE0Kx9yCgZAmuWcuQ==
   dependencies:
     "@webb-tools/contracts" "^0.5.43"
     "@webb-tools/create2-utils" "^0.5.43"
