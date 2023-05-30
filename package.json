@@ -208,6 +208,7 @@
     "babel-jest": "29.5.0",
     "babel-loader": "9.1.2",
     "babel-plugin-preval": "^5.1.0",
+    "browserify-zlib": "^0.2.0",
     "classnames": "^2.3.1",
     "commander": "^10.0.1",
     "copy-to-clipboard": "^3.3.2",
