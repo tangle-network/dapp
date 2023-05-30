@@ -33,8 +33,6 @@ export const DepositConfirmContainer = forwardRef<
     {
       amount,
       destChain,
-      feeToken,
-      feeValue,
       fungibleTokenId,
       note,
       onResetState,
@@ -298,8 +296,6 @@ export const DepositConfirmContainer = forwardRef<
         fungibleTokenSymbol={fungibleToken.view.symbol}
         sourceChain={sourceChain}
         destChain={destChain}
-        fee={feeValue ?? 0}
-        feeToken={feeToken}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusMessage={txStatusMessage}
         onClose={() => resetMainComponent()}

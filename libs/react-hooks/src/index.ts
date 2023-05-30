@@ -14,3 +14,4 @@ export * from './useWallets';
 export * from './vanchor/useVAnchor';
 
 export { default as useScrollActions } from './useScrollActions';
+export { default as useCurrentTypedChainId } from './useCurrentTypedChainId';
