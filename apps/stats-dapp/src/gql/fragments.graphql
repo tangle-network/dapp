@@ -86,3 +86,9 @@ fragment ProposalsVoteListView on ProposalVote {
     number
   }
 }
+
+fragment ProposalTimestamp on ProposalItem {
+  block {
+    timestamp
+  }
+}
