@@ -81,6 +81,8 @@ const allProposals = [
   },
 ];
 
+const timeRanges = ['30 Min', '1 Hr', '1 Day'];
+
 export const StackedAreaChartContainer = () => {
   const { isDarkMode } = useStatsContext();
 
@@ -143,6 +145,7 @@ export const StackedAreaChartContainer = () => {
 
   const convertedData = countDataSorted.map(([date, counts]) => ({
     date,
+    rawTimestamp: counts.rawTimestamp,
     ...allProposals.reduce((acc: { [key: string]: any }, type) => {
       if (counts[type.type]) {
         acc[type.type] = counts[type.type];
@@ -151,31 +154,55 @@ export const StackedAreaChartContainer = () => {
     }, {}),
   }));
 
-  const timeRanges = ['30 Min', '1 Hr', '1 Day'];
+  const thirtyMinData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 30);
+  }, [convertedData]);
 
-  const timeRangeToMinutes = {
-    '30 Min': 30,
-    '1 Hr': 60,
-    '1 Day': 1440,
-  };
+  const oneHourData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 60);
+  }, [convertedData]);
+
+  const oneDayData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 60 * 24);
+  }, [convertedData]);
 
   const finalConvertedData = useMemo(() => {
-    const ranges =
-      timeRange in timeRangeToMinutes
-        ? [
-            timeRangeToMinutes[timeRange as keyof typeof timeRangeToMinutes],
-            60,
-            30,
-          ]
-        : [30];
+    let filteredData;
 
-    for (const interval of ranges) {
-      const data = filterDatesByInterval(convertedData, interval);
-      if (data.length > 2) return data;
+    if (timeRange === '30 Min') {
+      filteredData = thirtyMinData;
+
+      if (filteredData.length < 2) {
+        filteredData = oneHourData;
+
+        if (filteredData.length < 2) {
+          filteredData = oneDayData;
+
+          if (filteredData.length < 2) {
+            filteredData = convertedData;
+          }
+        }
+      }
+    } else if (timeRange === '1 Hr') {
+      filteredData = oneHourData;
+
+      if (filteredData.length < 2) {
+        filteredData = oneDayData;
+
+        if (filteredData.length < 2) {
+          filteredData = convertedData;
+        }
+      }
+    } else if (timeRange === '1 Day') {
+      filteredData = oneDayData;
+
+      if (filteredData.length < 2) {
+        filteredData = convertedData;
+      }
     }
 
-    return convertedData;
-  }, [timeRange, convertedData]);
+    return filteredData;
+  }, [timeRange, convertedData, thirtyMinData, oneHourData, oneDayData]);
 
   return (
     <Card>
@@ -194,6 +221,7 @@ export const StackedAreaChartContainer = () => {
             <div className="flex items-center justify-between gap-5">
               {timeRanges.map((range) => (
                 <Chip
+                  key={range}
                   color="blue"
                   className="px-3 py-1 cursor-pointer capitalize text-sm"
                   isSelected={timeRange === range ? true : false}
@@ -210,7 +238,7 @@ export const StackedAreaChartContainer = () => {
               width={1000}
               height={500}
               data={finalConvertedData}
-              margin={{ bottom: 60, left: -10, top: 20 }}
+              margin={{ bottom: 60, left: 10, top: 20 }}
             >
               <YAxis
                 axisLine={false}
@@ -228,6 +256,7 @@ export const StackedAreaChartContainer = () => {
                 label={{
                   value: 'Number of Proposals',
                   angle: -90,
+                  position: 'insideLeft',
                 }}
               />
 
@@ -247,6 +276,7 @@ export const StackedAreaChartContainer = () => {
               />
 
               <CartesianGrid
+                horizontal={false}
                 opacity={isDarkMode ? 0.1 : 0.2}
                 stroke={
                   isDarkMode ? webbColors.mono['0'] : webbColors.mono['200']
@@ -317,7 +347,14 @@ export const StackedAreaChartContainer = () => {
               <defs>
                 {allProposals.map((type) => {
                   return (
-                    <linearGradient id={type.type} x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id={type.type}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                      key={type.type}
+                    >
                       <stop
                         offset="50%"
                         stopColor={type.backgroundColor}
@@ -417,31 +454,15 @@ const CustomizedLegend = ({ payload }: { payload?: any }) => {
   );
 };
 
-function filterDatesByInterval(dates: string | any[], interval: number) {
-  if (dates.length === 0) return [];
+function filterDatesByMinutes(data: any, minutes: number) {
+  const now = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
 
-  // tolerance in minutes
-  const tolerance = 5;
+  return data.filter((item: any) => {
+    const itemDate = new Date(item.rawTimestamp);
 
-  const result = [];
+    const minutesDifference =
+      (new Date(now).getTime() - itemDate.getTime()) / 60000;
 
-  let lastDate = new Date(dates[0].date);
-
-  result.push(dates[0]);
-
-  for (let i = 1; i < dates.length; i++) {
-    const currentDate = new Date(dates[i].date);
-    const differenceInMinutes =
-      (currentDate.getTime() - lastDate.getTime()) / 60000;
-
-    if (
-      differenceInMinutes >= interval &&
-      differenceInMinutes < interval + tolerance
-    ) {
-      result.push(dates[i]);
-      lastDate = currentDate;
-    }
-  }
-
-  return result;
+    return minutesDifference <= minutes;
+  });
 }
