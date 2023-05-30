@@ -4,15 +4,18 @@ import {
   TransactionState,
   TransferTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useTxApiQueue,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  getRoundedAmountString,
   TransferConfirm,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { BigNumber, ethers } from 'ethers';
@@ -27,8 +30,8 @@ import {
   getTokenURI,
   getTransactionHash,
 } from '../../utils';
-import { TransferConfirmContainerProps } from './types';
 import { RecipientPublicKeyTooltipContent } from './shared';
+import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -68,7 +71,7 @@ export const TransferConfirmContainer = forwardRef<
 
     const { setMainComponent } = useWebbUI();
 
-    const { api: txQueueApi, txPayloads } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = useTxApiQueue(apiConfig);
 
     const [txId, setTxId] = useState('');
 

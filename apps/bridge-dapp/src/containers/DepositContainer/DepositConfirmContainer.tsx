@@ -4,10 +4,13 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useTxApiQueue,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
@@ -41,7 +44,6 @@ export const DepositConfirmContainer = forwardRef<
     },
     ref
   ) => {
-    const { api: txQueueApi, txPayloads } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, startNewTransaction } = useVAnchor();
 
@@ -55,7 +57,10 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
+
     const { activeApi, activeChain, noteManager, apiConfig } = useWebContext();
+
+    const { api: txQueueApi, txPayloads } = useTxApiQueue(apiConfig);
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {

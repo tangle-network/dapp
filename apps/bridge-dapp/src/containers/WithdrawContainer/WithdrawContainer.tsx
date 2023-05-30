@@ -1,4 +1,7 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  useWebContext,
+  useTxApiQueue,
+} from '@webb-tools/api-provider-environment';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
@@ -10,7 +13,6 @@ import {
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
 } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
@@ -141,7 +143,7 @@ export const WithdrawContainer = forwardRef<
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
 
-  const txQueue = useTxQueue();
+  const txQueue = useTxApiQueue(apiConfig);
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 

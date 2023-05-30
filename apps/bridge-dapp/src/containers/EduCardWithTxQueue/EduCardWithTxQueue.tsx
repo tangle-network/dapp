@@ -1,9 +1,6 @@
-import { useTxQueue } from '@webb-tools/react-hooks';
 import { Button, TransactionQueueCard } from '@webb-tools/webb-ui-components';
-import { FC, useMemo, memo, useCallback } from 'react';
+import { FC, memo, useCallback, useMemo } from 'react';
 
-import { EducationCard } from '../../components/EducationCard';
-import { EduCardWithTxQueueProps, TxQueueContainerProps } from './types';
 import {
   FixturesProgress,
   NewNotesTxResult,
@@ -11,7 +8,13 @@ import {
   TransactionMetaData,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
+import {
+  useTxApiQueue,
+  useWebContext,
+} from '@webb-tools/api-provider-environment';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { EducationCard } from '../../components/EducationCard';
+import { EduCardWithTxQueueProps, TxQueueContainerProps } from './types';
 
 const sharedMetadata: TransactionMetaData = {
   amount: 10,
@@ -26,7 +29,8 @@ const sharedMetadata: TransactionMetaData = {
 };
 
 const EduCardWithTxQueue: FC<EduCardWithTxQueueProps> = ({ activeTab }) => {
-  const { api, txPayloads } = useTxQueue();
+  const { apiConfig } = useWebContext();
+  const { api, txPayloads } = useTxApiQueue(apiConfig);
 
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
