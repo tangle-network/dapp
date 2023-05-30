@@ -2,62 +2,51 @@ import { ErrorBoundary } from '@sentry/react';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
-import {
-  useNoteAccount,
-  useScrollActions,
-  useTxQueue,
-} from '@webb-tools/react-hooks';
+import { useNoteAccount, useScrollActions } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import {
   ErrorFallback,
   TabContent,
+  TabTrigger,
   TabsList,
   TabsRoot,
-  TabTrigger,
-  TransactionQueueCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
-import {
-  EducationCard,
-  InteractiveFeedbackView,
-  WalletModal,
-} from '../components';
+import { InteractiveFeedbackView, WalletModal } from '../components';
 import { FilterButton, ManageButton } from '../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
+  DepositContainer,
+  EduCardWithTxQueue,
+  TransferContainer,
   UploadSpendNoteModal,
+  WithdrawContainer,
 } from '../containers';
-import { DepositContainer } from '../containers/DepositContainer';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
 } from '../containers/note-account-tables';
 import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
-import { TransferContainer } from '../containers/TransferContainer';
-import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
+import { BridgeTabType } from '../types';
 import { downloadNotes } from '../utils';
 
 const PageBridge = () => {
   // State for the tabs
-  const [activeTab, setActiveTab] = useState<
-    'Deposit' | 'Withdraw' | 'Transfer'
-  >('Deposit');
+  const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
   const { customMainComponent } = useWebbUI();
   const { activeFeedback, noteManager } = useWebContext();
 
   const { smoothScrollToTop } = useScrollActions();
-
-  const { txPayloads } = useTxQueue();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -199,11 +188,6 @@ const PageBridge = () => {
   const { TryAnotherWalletModal, onTryAnotherWallet } =
     useTryAnotherWalletWithView();
 
-  const isDisplayTxQueueCard = useMemo(
-    () => txPayloads.length > 0,
-    [txPayloads]
-  );
-
   const sharedBridgeTabContainerProps = useMemo(
     () => ({
       defaultDestinationChain: defaultDestinationChain,
@@ -251,21 +235,7 @@ const PageBridge = () => {
                 </TabContent>
               </TabsRoot>
 
-              <div>
-                {/** Transaction Queue Card */}
-                {isDisplayTxQueueCard && (
-                  <TransactionQueueCard
-                    className="w-full mb-4 max-w-none"
-                    transactions={txPayloads}
-                  />
-                )}
-
-                {/** Education cards */}
-                <EducationCard
-                  defaultOpen={!isDisplayTxQueueCard} // If there is a tx queue card, then don't open the education card by default
-                  currentTab={activeTab}
-                />
-              </div>
+              <EduCardWithTxQueue activeTab={activeTab} />
             </div>
           </div>
         </ErrorBoundary>

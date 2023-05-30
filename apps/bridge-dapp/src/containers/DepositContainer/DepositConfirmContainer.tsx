@@ -36,7 +36,6 @@ export const DepositConfirmContainer = forwardRef<
       fungibleTokenId,
       note,
       onResetState,
-      resetMainComponent,
       sourceChain,
       wrappableTokenId,
     },
@@ -105,7 +104,7 @@ export const DepositConfirmContainer = forwardRef<
       // Start a new transaction
       if (depositTxInProgress) {
         startNewTransaction();
-        resetMainComponent();
+        onResetState?.();
         return;
       }
 
@@ -211,7 +210,6 @@ export const DepositConfirmContainer = forwardRef<
         tx.fail(getErrorMessage(error));
         captureSentryException(error, 'transactionType', 'deposit');
       } finally {
-        resetMainComponent();
         onResetState?.();
       }
     }, [
@@ -224,7 +222,6 @@ export const DepositConfirmContainer = forwardRef<
       wrappableToken,
       apiConfig,
       startNewTransaction,
-      resetMainComponent,
       txQueueApi,
       noteManager,
       fungibleTokenId,
@@ -298,7 +295,7 @@ export const DepositConfirmContainer = forwardRef<
         destChain={destChain}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusMessage={txStatusMessage}
-        onClose={() => resetMainComponent()}
+        onClose={onResetState}
       />
     );
   }

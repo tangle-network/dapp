@@ -51,7 +51,7 @@ export type ActionEvent = {
 
 export type FixturesStatus = 'Done' | 'Waiting' | 'Failed' | number;
 
-type FixturesProgress = {
+export type FixturesProgress = {
   // Fixture name -> status
   fixturesList: Map<string, FixturesStatus>;
 };
@@ -103,7 +103,7 @@ type ExecutorClosure<DonePayload> = (
 /**
  * The metadata for the transaction
  */
-type TransactionMetaData = {
+export type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
   wallets: {
