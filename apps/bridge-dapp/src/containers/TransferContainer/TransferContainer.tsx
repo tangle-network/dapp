@@ -316,7 +316,7 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TokenListCard
-          className="min-w-[550px] h-[710px]"
+          className="h-[710px]"
           title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={selectableBridgingAssets}

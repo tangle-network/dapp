@@ -41,7 +41,7 @@ import { CurrencyType } from '@webb-tools/dapp-types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { BigNumber, ethers } from 'ethers';
 
-interface MainComponentProposVariants {
+interface MainComponentPropsVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
   ['dest-chain-list-card']: ChainListCardWrapperProps;
   ['token-deposit-list-card']: TokenListCardProps;
@@ -50,7 +50,7 @@ interface MainComponentProposVariants {
   ['deposit-confirm-container']: DepositConfirmContainerProps;
 }
 
-type MainComponentVariants = keyof MainComponentProposVariants;
+type MainComponentVariants = keyof MainComponentPropsVariants;
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -703,7 +703,7 @@ export const DepositContainer = forwardRef<
     >(undefined);
 
     const setMainComponentArgs = useMemo<
-      [ElementType, Partial<MainComponentProposVariants>] | undefined
+      [ElementType, Partial<MainComponentPropsVariants>] | undefined
     >(() => {
       switch (mainComponentName) {
         case 'token-wrap-and-deposit-list-card':
