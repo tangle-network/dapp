@@ -26,4 +26,4 @@ export const evmProviderFactory = async (
   return provider;
 };
 
-export * from './calculateProvingLeavesAndCommitmentIndex';
+export { default as calculateProvingLeavesAndCommitmentIndex } from './calculateProvingLeavesAndCommitmentIndex';

@@ -5,7 +5,7 @@ import assert from 'assert';
  * Constructs the merkle tree is a heavy operation,
  * so we use a web worker to do it to prevent blocking the UI
  */
-export function calculateProvingLeavesAndCommitmentIndex(
+function calculateProvingLeavesAndCommitmentIndex(
   levels: number,
   leaves: string[],
   targetRoot: string,
@@ -56,3 +56,5 @@ export function calculateProvingLeavesAndCommitmentIndex(
     });
   });
 }
+
+export default calculateProvingLeavesAndCommitmentIndex;
