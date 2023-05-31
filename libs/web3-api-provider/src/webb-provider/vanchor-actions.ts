@@ -55,7 +55,10 @@ import {
 
 import { Web3Provider } from '../ext-provider';
 import { WebbWeb3Provider } from '../webb-provider';
-import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
+import {
+  calculateProvingLeavesAndCommitmentIndex,
+  handleVAnchorTxState,
+} from '../utils';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -305,7 +308,13 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       relayer,
       wrapUnwrapToken,
       leavesMap,
-      overridesTransaction
+      {
+        ...overridesTransaction,
+        // Uncomment this when the `split` function in `protocol-solidity` is fixed.
+        /* onTransactionState(state, payload) {
+          handleVAnchorTxState(tx, state, payload);
+        }, */
+      }
     );
 
     return {

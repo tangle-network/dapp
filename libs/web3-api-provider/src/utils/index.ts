@@ -27,3 +27,4 @@ export const evmProviderFactory = async (
 };
 
 export { default as calculateProvingLeavesAndCommitmentIndex } from './calculateProvingLeavesAndCommitmentIndex';
+export { default as handleVAnchorTxState } from './handleVAnchorTxState';

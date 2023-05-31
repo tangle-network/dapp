@@ -107,14 +107,19 @@ function getTxMessageFromStatus<Key extends TransactionState>(
   switch (txStatus) {
     case TransactionState.Cancelling:
       return 'Canceling transaction';
+
     case TransactionState.Ideal:
       return 'Transaction in-progress';
+
     case TransactionState.PreparingTransaction:
       return 'Preparing transaction';
+
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
+
     case TransactionState.FetchingLeavesFromRelayer:
       return 'Fetching transaction leaves from the relayer...';
+
     case TransactionState.ValidatingLeaves: {
       const isValid = transactionStatusValue as undefined | boolean;
       return isValid === undefined
@@ -123,16 +128,25 @@ function getTxMessageFromStatus<Key extends TransactionState>(
         ? 'Transaction leaves are valid'
         : 'Transaction leaves are invalid';
     }
+
     case TransactionState.FetchingLeaves:
       return 'Fetching transaction leaves on chain...';
+
     case TransactionState.GeneratingZk:
       return 'Generating zero knowledge proof...';
+
+    case TransactionState.InitializingTransaction:
+      return 'Initializing transaction...';
+
     case TransactionState.SendingTransaction:
       return 'Sending transaction...';
+
     case TransactionState.Intermediate:
       return `${transactionStatusValue.name}`;
+
     case TransactionState.Done:
       return 'Transaction completed';
+
     case TransactionState.Failed:
       return 'Transaction failed';
   }
@@ -215,6 +229,11 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
             // Update the tx hash
             const { txHash } = nextTxData as NewNotesTxResult;
             tx.txHash = txHash;
+          }
+
+          if (nextTxState === TransactionState.SendingTransaction) {
+            // Update the tx hash
+            tx.txHash = nextTxData as string;
           }
 
           const payloads = txPayloads$.getValue();
