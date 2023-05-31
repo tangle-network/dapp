@@ -166,27 +166,13 @@ export class Web3RelayerManager extends WebbRelayerManager {
           continue;
         }
 
-        /*         const { leafIndex, provingLeaves } =
+        const { leafIndex, provingLeaves } =
           await calculateProvingLeavesAndCommitmentIndex(
             treeHeight,
             leaves,
             targetRoot,
             commitment.toString()
-          ); */
-
-        const tree = MerkleTree.createTreeWithRoot(
-          treeHeight,
-          leaves,
-          targetRoot
-        );
-
-        if (!tree) {
-          console.error('Failed to create tree');
-          continue;
-        }
-
-        const provingLeaves = tree.elements().map((leaf) => leaf.toHexString());
-        const leafIndex = tree.getIndexByElement(BigInt(commitment));
+          );
 
         // Cached all the leaves returned from the relayer to re-use later
         await storage.set('lastQueriedBlock', lastQueriedBlock);
