@@ -21,7 +21,7 @@ const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
   // },
   { label: 'community', url: '/community', isInternal: true },
   { label: 'docs', url: links.WEBB_DOCS_URL },
-  { label: 'blog', url: '/blog', isInternal: true },
+  { label: 'blog', url: links.WEBB_BLOG_URL, isInternal: true },
 ];
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [

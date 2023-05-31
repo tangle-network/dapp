@@ -8,14 +8,13 @@ import {
   useProposalVotesWithoutVotesTypeLazyQuery,
   VoteType,
   ProposalStatus,
-  ProposalsOvertimeTotalCountDocument,
+  AllProposalsTimestampsDocument,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
 import { Loadable, Page, PageInfoQuery } from './types';
 import { useEffect, useMemo, useState } from 'react';
 import { useStatsContext } from '../stats-provider';
-import { BlockRanges, getBlockRanges } from '../../utils/getBlockRanges';
 import { useApolloClient } from '@apollo/client';
 
 /**
@@ -634,21 +633,19 @@ export type TimeRange =
   | 'three-months'
   | 'year-to-date';
 
-export type ProposalsOvertimeTotalCount = {
-  month: number;
-  proposalType: ProposalType | string;
-  totalCount: number;
-}[];
+export type AllProposalsTimestamps = {
+  [K: string]: {
+    nodes: {
+      block: {
+        timestamp: string;
+      };
+    }[];
+  };
+};
 
-/**
- * Proposals Overtime Count
- * @return ProposalsOvertimeTotalCount - Proposal overtime total count data
- * */
-export function useProposalsOvertimeTotalCount(
-  timeRange: TimeRange
-): Loadable<ProposalsOvertimeTotalCount> {
-  const [proposalsOvertimeCount, setProposalsOvertimeCount] = useState<
-    Loadable<ProposalsOvertimeTotalCount>
+export function useAllProposalsTimestamps(): Loadable<AllProposalsTimestamps> {
+  const [allProposalsTimestamps, setAllProposalsTimestamps] = useState<
+    Loadable<AllProposalsTimestamps>
   >({
     isLoading: true,
     val: null,
@@ -658,80 +655,38 @@ export function useProposalsOvertimeTotalCount(
   const client = useApolloClient();
 
   const {
-    blockTime,
     metaData: { lastProcessBlock },
   } = useStatsContext();
 
-  const blockRanges: BlockRanges = useMemo(() => {
-    let ranges: BlockRanges = [];
-
-    switch (timeRange) {
-      case 'all':
-        ranges = getBlockRanges(12, lastProcessBlock);
-        break;
-      case 'three-months':
-        ranges = getBlockRanges(3, lastProcessBlock);
-        break;
-      case 'six-months':
-        ranges = getBlockRanges(6, lastProcessBlock);
-        break;
-      case 'one-year':
-        ranges = getBlockRanges(12, lastProcessBlock);
-        break;
-      default:
-        ranges = getBlockRanges(12, lastProcessBlock);
-    }
-
-    return ranges;
-  }, [timeRange, lastProcessBlock, blockTime]);
-
   useEffect(() => {
-    setProposalsOvertimeCount({
+    setAllProposalsTimestamps({
       isLoading: true,
       isFailed: false,
       val: null,
     });
 
-    Promise.all(
-      blockRanges.map((parameter) => {
-        return client.query({
-          query: ProposalsOvertimeTotalCountDocument,
-          variables: parameter,
-        });
+    client
+      .query({
+        query: AllProposalsTimestampsDocument,
       })
-    )
       .then((data) => {
         if (data) {
-          let arr: ProposalsOvertimeTotalCount = [];
-
-          data.map((data, index) => {
-            for (const key in data.data) {
-              const finalData = {
-                month: index + 1,
-                proposalType: key,
-                totalCount: data.data[key].totalCount,
-              };
-
-              arr = [...arr, finalData];
-            }
-          });
-
-          setProposalsOvertimeCount({
+          setAllProposalsTimestamps({
             isLoading: false,
             isFailed: false,
-            val: arr,
+            val: data.data,
           });
         }
       })
-      .catch((e) => {
-        setProposalsOvertimeCount({
+      .catch((e: any) => {
+        setAllProposalsTimestamps({
           isLoading: false,
           isFailed: true,
           error: e.message,
           val: null,
         });
       });
-  }, [timeRange]);
+  }, [lastProcessBlock]);
 
-  return proposalsOvertimeCount;
+  return allProposalsTimestamps;
 }

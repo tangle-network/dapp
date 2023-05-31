@@ -1,5 +1,7 @@
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 
+const DISCORD_LINK = 'https://discord.com/invite/cv8EfJu3Tn';
+
 const NotFoundPage = () => {
   return (
     <>
@@ -15,9 +17,9 @@ const NotFoundPage = () => {
             variant="mkt-subheading"
             className="text-center text-mono-140 font-medium"
           >
-            It looks like this page doesn&apos;t exist.
+            Lost in Cosmic Privacy? We&apos;re Retrieving Your Page.
           </Typography>
-          <div className="flex gap-4">
+          <div className="flex gap-4 justify-center">
             <Button
               href="/"
               className="!text-[12px] !leading-[18px] md:!text-[16px] md:!leading-[24px]"
@@ -26,10 +28,12 @@ const NotFoundPage = () => {
             </Button>
             <Button
               variant="secondary"
-              href="/blog"
+              href={DISCORD_LINK}
+              target="_blank"
+              rel="noreferrer"
               className="!text-[12px] !leading-[18px] md:!text-[16px] md:!leading-[24px]"
             >
-              Explore the Blog
+              Get Help
             </Button>
           </div>
         </div>

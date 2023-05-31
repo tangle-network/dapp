@@ -289,7 +289,7 @@ export const StatsProvider: React.FC<
   }, [query]);
 
   const metaDataQuery = useMetaDataQuery({
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
