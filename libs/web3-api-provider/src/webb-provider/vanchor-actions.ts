@@ -472,27 +472,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       inputUtxos.push(utxo);
     });
 
-    /*     const destTypedChainId = payload.note.targetChainId;
-    // Populate the leaves for the destination if not already populated
-    if (!leavesMap[destTypedChainId.toString()]) {
-      const chainId = await destVAnchor.contract.getChainId();
-      const resourceId = ResourceId.newFromContractAddress(
-        destVAnchor.contract.address,
-        ChainType.EVM,
-        chainId.toNumber()
-      );
-      const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      const leaves = await this.inner.getVariableAnchorLeaves(
-        destVAnchor,
-        leafStorage,
-        tx?.cancelToken.abortSignal
-      );
-
-      leavesMap[destTypedChainId.toString()] = leaves.map((leaf) => {
-        return hexToU8a(leaf);
-      });
-    } */
-
     return {
       sumInputNotes,
       inputUtxos,
@@ -618,31 +597,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     let commitmentIndex: number;
 
-    // If we have the leaves, we can just get the leaf index
-    if (leavesMap[parsedNote.sourceChainId]) {
-      const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
-        u8aToHex(leaf)
-      );
-
-      const { provingLeaves, leafIndex } =
-        await calculateProvingLeavesAndCommitmentIndex(
-          treeHeight,
-          leaves,
-          destRelayedRoot,
-          commitment.toString()
-        );
-
-      commitmentIndex = leafIndex;
-
-      // If the proving leaves are more than the leaves we have,
-      // that means the commitment is not in the leaves we have
-      // so we need to reset the leaves
-      if (provingLeaves.length > leaves.length) {
-        leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) =>
-          hexToU8a(leaf)
-        );
-      }
-    } else {
+    // If we haven't had any leaves from this chain yet, we need to fetch them
+    if (!leavesMap[parsedNote.sourceChainId]) {
       // Set up a provider for the source chain
       const sourceChainConfig =
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
@@ -671,16 +627,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
           treeHeight,
           destRelayedRoot,
           commitment,
-          tx?.cancelToken.abortSignal,
-          (startingBlock, currentBlock, step, finalBlock) => {
-            if (tx) {
-              tx.next(TransactionState.FetchingLeaves, {
-                start: startingBlock,
-                currentRange: [currentBlock, currentBlock + step],
-                end: finalBlock,
-              });
-            }
-          }
+          tx
         );
 
       leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) => {
@@ -688,6 +635,31 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       });
 
       commitmentIndex = leafIndex;
+    } else {
+      const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
+        u8aToHex(leaf)
+      );
+
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      const { provingLeaves, leafIndex } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          destRelayedRoot,
+          commitment.toString()
+        );
+      tx?.next(TransactionState.ValidatingLeaves, true);
+
+      commitmentIndex = leafIndex;
+
+      // If the proving leaves are more than the leaves we have,
+      // that means the commitment is not in the leaves we have
+      // so we need to reset the leaves
+      if (provingLeaves.length > leaves.length) {
+        leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) =>
+          hexToU8a(leaf)
+        );
+      }
     }
 
     // Validate that the commitment is in the tree

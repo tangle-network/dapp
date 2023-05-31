@@ -5,8 +5,11 @@ import {
   AccountsAdapter,
   Bridge,
   Currency,
+  NewNotesTxResult,
   NotificationHandler,
   RelayChainMethods,
+  Transaction,
+  TransactionState,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
@@ -59,6 +62,10 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+
+type GetVariableAnchorLeavesOptions = {
+  abortSignal?: AbortSignal;
+};
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -275,13 +282,7 @@ export class WebbWeb3Provider
     treeHeight: number,
     targetRoot: string,
     commitment: bigint,
-    abortSignal?: AbortSignal,
-    onFetchingLeavesOnChain?: (
-      startingBlock: number,
-      currentBlock: number,
-      step: number,
-      finalBlock: number
-    ) => void // Callback to be called when fetching leaves on chain
+    tx?: Transaction<NewNotesTxResult>
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -303,12 +304,15 @@ export class WebbWeb3Provider
         treeHeight,
         targetRoot,
         commitment,
-        abortSignal
+        tx
       );
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leavesFromRelayers) {
-      onFetchingLeavesOnChain?.(0, 0, 0, 0); // Call the callback with dummy values
+      tx?.next(TransactionState.FetchingLeaves, {
+        start: 0, // Dummy values
+        currentRange: [0, 0], // Dummy values
+      });
 
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
@@ -331,7 +335,7 @@ export class WebbWeb3Provider
         storedContractInfo.lastQueriedBlock + 1,
         0,
         retryPromise,
-        abortSignal
+        tx?.cancelToken.abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
@@ -345,6 +349,7 @@ export class WebbWeb3Provider
 
       console.log(`Got ${leaves.length} leaves from chain`);
 
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
       // Validate the leaves
       const { leafIndex, provingLeaves } =
         await calculateProvingLeavesAndCommitmentIndex(
@@ -353,6 +358,7 @@ export class WebbWeb3Provider
           targetRoot,
           commitment.toString()
         );
+      tx?.next(TransactionState.ValidatingLeaves, true);
 
       // Cached all the leaves to re-use them later
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);

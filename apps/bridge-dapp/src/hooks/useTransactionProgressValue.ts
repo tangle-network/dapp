@@ -61,9 +61,7 @@ export const useTransactionProgressValue = (stage: TransactionState) => {
       }
 
       default: {
-        console.error(
-          'Unknown transaction state in `useTransactionProgressValue` hook'
-        );
+        // For the other states, we don't want to update the progress bar
         break;
       }
     }

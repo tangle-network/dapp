@@ -21,6 +21,11 @@ import {
 import { Storage } from '@webb-tools/storage';
 
 import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
+import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '@webb-tools/abstract-api-provider';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -138,7 +143,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
     treeHeight: number,
     targetRoot: string,
     commitment: bigint,
-    abortSignal?: AbortSignal
+    tx?: Transaction<NewNotesTxResult>
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
@@ -152,7 +157,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
           vanchor.contract.address,
-          abortSignal
+          tx?.cancelToken.abortSignal
         );
         const validLatestLeaf = await vanchor.leafCreatedAtBlock(
           leaves[leaves.length - 1],
@@ -166,6 +171,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
           continue;
         }
 
+        tx?.next(TransactionState.ValidatingLeaves, undefined);
         const { leafIndex, provingLeaves } =
           await calculateProvingLeavesAndCommitmentIndex(
             treeHeight,
@@ -173,6 +179,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
             targetRoot,
             commitment.toString()
           );
+        tx?.next(TransactionState.ValidatingLeaves, true);
 
         // Cached all the leaves returned from the relayer to re-use later
         await storage.set('lastQueriedBlock', lastQueriedBlock);
@@ -184,6 +191,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
           commitmentIndex: leafIndex,
         };
       } catch (e) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }
     }

@@ -115,6 +115,14 @@ function getTxMessageFromStatus<Key extends TransactionState>(
       return 'Fetching transaction fixtures';
     case TransactionState.FetchingLeavesFromRelayer:
       return 'Fetching transaction leaves from the relayer...';
+    case TransactionState.ValidatingLeaves: {
+      const isValid = transactionStatusValue as undefined | boolean;
+      return isValid === undefined
+        ? 'Validating transaction leaves...'
+        : isValid
+        ? 'Transaction leaves are valid'
+        : 'Transaction leaves are invalid';
+    }
     case TransactionState.FetchingLeaves:
       return 'Fetching transaction leaves on chain...';
     case TransactionState.GeneratingZk:
