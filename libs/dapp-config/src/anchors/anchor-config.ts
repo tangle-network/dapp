@@ -30,13 +30,13 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 572,
+    '0x943c908008a61e5b881def14ac8c96f09ac65c8a': 572,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 679,
+    '0x943c908008a61e5b881def14ac8c96f09ac65c8a': 679,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 514,
+    '0x943c908008a61e5b881def14ac8c96f09ac65c8a': 514,
   },
 
   [PresetTypedChainId.HermesLocalnet]: {

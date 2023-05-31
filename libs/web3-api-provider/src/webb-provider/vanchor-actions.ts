@@ -643,11 +643,22 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const destRoot = await destVAnchor.contract.getLastRoot();
       destHistorySourceRoot = destRoot.toHexString();
     } else {
-      const edgeIndex = await destVAnchor.contract.edgeIndex(
+      const latestIndex = await destVAnchor.contract.currentNeighborRootIndex(
         parsedNote.sourceChainId
       );
-      const edge = await destVAnchor.contract.edgeList(edgeIndex);
-      destHistorySourceRoot = edge[1].toHexString();
+      const destHistorySrcRoot = await destVAnchor.contract.neighborRoots(
+        parsedNote.sourceChainId,
+        latestIndex
+      );
+      // Merkle tree root should never be zero unless the chain has never been relayed to before
+      // which should not be the case for any chain we support (even during the testing)
+      if (destHistorySrcRoot.isZero()) {
+        throw new Error(
+          `Neighbor root for ${parsedNote.sourceChainId} is zero, this should not happen`
+        );
+      }
+      destHistorySourceRoot = destHistorySrcRoot.toHexString();
+      console.log({ latestIndex, destHistorySourceRoot });
     }
 
     // Fixed the root to be 32 bytes
@@ -662,7 +673,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     if (!provingTree) {
       // Outer try/catch will handle this
-      throw new Error('Fetched leaves do not match bridged anchor state');
+      throw new Error(
+        `Invalid Proving Tree:
+        Relayer has not yet relayed the commitment to the destination chain (destination root is old)`
+      );
     }
 
     const provingLeaves = provingTree
@@ -788,9 +802,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const isRequiredApproval = !isWrapOrUnwrap
         ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
         : await srcVAnchor.isWrappableTokenApprovalRequired(
-            wrapUnwrapToken,
-            approvalValue
-          );
+          wrapUnwrapToken,
+          approvalValue
+        );
 
       if (isRequiredApproval) {
         if (isWrapOrUnwrap) {
