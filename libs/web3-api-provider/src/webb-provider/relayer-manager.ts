@@ -14,10 +14,13 @@ import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import {
   calculateTypedChainId,
   ChainType,
+  MerkleTree,
   Note,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
+
+import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -123,46 +126,79 @@ export class Web3RelayerManager extends WebbRelayerManager {
    * @param relayers - A list of relayers that support the passed contract
    * @param contract - A VAnchorContract wrapper for EVM chains.
    * @param storage - A storage to save the fetched leaves.
+   * @param treeHeight - The height of the merkle tree.
+   * @param targetRoot - The target root of the merkle tree.
+   * @param commitment - The commitment to find the index in the tree.
    * param abortSignal - A signal to abort the fetching process.
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
+    treeHeight: number,
+    targetRoot: string,
+    commitment: bigint,
     abortSignal?: AbortSignal
-  ): Promise<string[] | null> {
-    let leaves: string[] = [];
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  } | null> {
     const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      let relayerLeaves: Awaited<ReturnType<WebbRelayer['getLeaves']>>;
       try {
-        relayerLeaves = await relayers[i].getLeaves(
+        const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
           vanchor.contract.address,
           abortSignal
         );
+        const validLatestLeaf = await vanchor.leafCreatedAtBlock(
+          leaves[leaves.length - 1],
+          lastQueriedBlock
+        );
+
+        console.log('validLatestLeaf', validLatestLeaf);
+
+        // leaves from relayer somewhat validated, attempt to build the tree
+        if (!validLatestLeaf) {
+          continue;
+        }
+
+        /*         const { leafIndex, provingLeaves } =
+          await calculateProvingLeavesAndCommitmentIndex(
+            treeHeight,
+            leaves,
+            targetRoot,
+            commitment.toString()
+          ); */
+
+        const tree = MerkleTree.createTreeWithRoot(
+          treeHeight,
+          leaves,
+          targetRoot
+        );
+
+        if (!tree) {
+          console.error('Failed to create tree');
+          continue;
+        }
+
+        const provingLeaves = tree.elements().map((leaf) => leaf.toHexString());
+        const leafIndex = tree.getIndexByElement(BigInt(commitment));
+
+        // Cached all the leaves returned from the relayer to re-use later
+        await storage.set('lastQueriedBlock', lastQueriedBlock);
+        await storage.set('leaves', leaves);
+
+        // Return the leaves for proving
+        return {
+          provingLeaves,
+          commitmentIndex: leafIndex,
+        };
       } catch (e) {
         continue;
-      }
-
-      const validLatestLeaf = await vanchor.leafCreatedAtBlock(
-        relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
-        relayerLeaves.lastQueriedBlock
-      );
-
-      console.log('validLatestLeaf', validLatestLeaf);
-
-      // leaves from relayer somewhat validated, attempt to build the tree
-      if (validLatestLeaf) {
-        leaves = relayerLeaves.leaves;
-
-        await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
-        await storage.set('leaves', relayerLeaves.leaves);
-
-        return leaves;
       }
     }
 

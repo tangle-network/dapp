@@ -1,12 +1,11 @@
 // Worker to create a merkle tree
 
-import { MerkleTree, toFixedHex } from '@webb-tools/sdk-core';
-import { hexToU8a } from '@webb-tools/utils';
+import { MerkleTree } from '@webb-tools/sdk-core';
 
 self.onmessage = async (e) => {
   const { levels, leaves, targetRoot, commitment } = e.data;
 
-  const tree = new MerkleTree(levels, leaves, targetRoot);
+  const tree = MerkleTree.createTreeWithRoot(levels, leaves, targetRoot);
 
   if (!tree) {
     self.postMessage({

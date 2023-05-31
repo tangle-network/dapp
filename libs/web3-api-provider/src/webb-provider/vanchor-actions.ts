@@ -33,6 +33,7 @@ import {
 import {
   ChainType,
   Keypair,
+  MerkleTree,
   Note,
   ResourceId,
   toFixedHex,
@@ -53,8 +54,8 @@ import {
 } from 'ethers';
 
 import { Web3Provider } from '../ext-provider';
-import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
+import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -595,8 +596,53 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const parsedNote = note.note;
     const amount = BigNumber.from(parsedNote.amount);
 
-    // fetch leaves if we don't have them
-    if (leavesMap[parsedNote.sourceChainId] === undefined) {
+    let destRelayedRoot: string;
+
+    // Get the latest root that has been relayed from the source chain to the destination chain
+    if (parsedNote.sourceChainId === parsedNote.targetChainId) {
+      const destRoot = await destVAnchor.contract.getLastRoot();
+      destRelayedRoot = destRoot.toHexString();
+    } else {
+      const edgeIndex = await destVAnchor.contract.edgeIndex(
+        parsedNote.sourceChainId
+      );
+      const edge = await destVAnchor.contract.edgeList(edgeIndex);
+      destRelayedRoot = edge[1].toHexString();
+    }
+
+    // Fixed the root to be 32 bytes
+    destRelayedRoot = toFixedHex(destRelayedRoot);
+
+    // The commitment of the note
+    const commitment = generateCircomCommitment(parsedNote);
+
+    let commitmentIndex: number;
+
+    // If we have the leaves, we can just get the leaf index
+    if (leavesMap[parsedNote.sourceChainId]) {
+      const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
+        u8aToHex(leaf)
+      );
+
+      const { provingLeaves, leafIndex } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          destRelayedRoot,
+          commitment.toString()
+        );
+
+      commitmentIndex = leafIndex;
+
+      // If the proving leaves are more than the leaves we have,
+      // that means the commitment is not in the leaves we have
+      // so we need to reset the leaves
+      if (provingLeaves.length > leaves.length) {
+        leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) =>
+          hexToU8a(leaf)
+        );
+      }
+    } else {
       // Set up a provider for the source chain
       const sourceChainConfig =
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
@@ -618,70 +664,44 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      const leaves = await this.inner.getVariableAnchorLeaves(
-        sourceVAnchor,
-        leafStorage,
-        tx?.cancelToken.abortSignal,
-        (startingBlock, currentBlock, step, finalBlock) => {
-          if (tx) {
-            tx.next(TransactionState.FetchingLeaves, {
-              start: startingBlock,
-              currentRange: [currentBlock, currentBlock + step],
-              end: finalBlock,
-            });
+      const { provingLeaves, commitmentIndex: leafIndex } =
+        await this.inner.getVariableAnchorLeaves(
+          sourceVAnchor,
+          leafStorage,
+          treeHeight,
+          destRelayedRoot,
+          commitment,
+          tx?.cancelToken.abortSignal,
+          (startingBlock, currentBlock, step, finalBlock) => {
+            if (tx) {
+              tx.next(TransactionState.FetchingLeaves, {
+                start: startingBlock,
+                currentRange: [currentBlock, currentBlock + step],
+                end: finalBlock,
+              });
+            }
           }
-        }
-      );
+        );
 
-      leavesMap[parsedNote.sourceChainId] = leaves.map((leaf) => {
+      leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) => {
         return hexToU8a(leaf);
       });
+
+      commitmentIndex = leafIndex;
     }
-
-    let destHistorySourceRoot: string;
-
-    // Get the latest root that has been relayed from the source chain to the destination chain
-    if (parsedNote.sourceChainId === parsedNote.targetChainId) {
-      const destRoot = await destVAnchor.contract.getLastRoot();
-      destHistorySourceRoot = destRoot.toHexString();
-    } else {
-      const edgeIndex = await destVAnchor.contract.edgeIndex(
-        parsedNote.sourceChainId
-      );
-      const edge = await destVAnchor.contract.edgeList(edgeIndex);
-      destHistorySourceRoot = edge[1].toHexString();
-    }
-
-    // Fixed the root to be 32 bytes
-    destHistorySourceRoot = toFixedHex(destHistorySourceRoot);
-
-    const commitment = generateCircomCommitment(parsedNote);
-
-    const { provingLeaves, leafIndex } =
-      await calculateProvingLeavesAndCommitmentIndex(
-        treeHeight,
-        leavesMap[parsedNote.sourceChainId].map((leaf) => u8aToHex(leaf)),
-        destHistorySourceRoot,
-        commitment.toString()
-      );
-
-    // Reset the leaves map to ignore non-relayed leaves
-    leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) =>
-      hexToU8a(leaf)
-    );
 
     // Validate that the commitment is in the tree
-    if (leafIndex === -1) {
+    if (commitmentIndex === -1) {
       // Outer try/catch will handle this
       throw new Error(
         'Relayer has not yet relayed the commitment to the destination chain'
       );
     }
 
-    const utxo = await utxoFromVAnchorNote(parsedNote, leafIndex);
+    const utxo = await utxoFromVAnchorNote(parsedNote, commitmentIndex);
 
     return {
-      leafIndex,
+      leafIndex: commitmentIndex,
       utxo,
       amount,
     };

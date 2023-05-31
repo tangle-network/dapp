@@ -27,22 +27,20 @@ import {
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   ChainType,
   CircomUtxo,
   Keypair,
   Note,
-  toFixedHex,
   Utxo,
   UtxoGenInput,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { ethers, providers, Signer } from 'ethers';
+import { Signer, ethers, providers } from 'ethers';
 import { Eth } from 'web3-eth';
-
 import { hexToU8a } from '@polkadot/util';
-
 import { ApiPromise } from '@polkadot/api';
 import { VAnchor } from '@webb-tools/anchors';
 import { retryPromise } from '@webb-tools/browser-utils';
@@ -53,7 +51,9 @@ import {
 } from '@webb-tools/fixtures-deployments';
 import { ZkComponents } from '@webb-tools/utils';
 import { BehaviorSubject } from 'rxjs';
+
 import { Web3Accounts, Web3Provider } from './ext-provider';
+import { calculateProvingLeavesAndCommitmentIndex } from './utils';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
@@ -272,6 +272,9 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
+    treeHeight: number,
+    targetRoot: string,
+    commitment: bigint,
     abortSignal?: AbortSignal,
     onFetchingLeavesOnChain?: (
       startingBlock: number,
@@ -279,7 +282,10 @@ export class WebbWeb3Provider
       step: number,
       finalBlock: number
     ) => void // Callback to be called when fetching leaves on chain
-  ): Promise<string[]> {
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
@@ -289,15 +295,19 @@ export class WebbWeb3Provider
       vanchor.contract.address
     );
 
-    let leaves = await this.relayerManager.fetchLeavesFromRelayers(
-      relayers,
-      vanchor,
-      storage,
-      abortSignal
-    );
+    const leavesFromRelayers =
+      await this.relayerManager.fetchLeavesFromRelayers(
+        relayers,
+        vanchor,
+        storage,
+        treeHeight,
+        targetRoot,
+        commitment,
+        abortSignal
+      );
 
     // If unable to fetch leaves from the relayers, get them from chain
-    if (!leaves) {
+    if (!leavesFromRelayers) {
       onFetchingLeavesOnChain?.(0, 0, 0, 0); // Call the callback with dummy values
 
       // check if we already cached some values.
@@ -326,19 +336,36 @@ export class WebbWeb3Provider
 
       console.log('Leaves from chain: ', leavesFromChain);
 
-      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+      // Merge the leaves from chain with the stored leaves
+      // and fixed them to 32 bytes
+      const leaves = [
+        ...storedContractInfo.leaves,
+        ...leavesFromChain.newLeaves,
+      ].map((leaf) => toFixedHex(leaf));
 
-      // Fixed all the leaves to be 32 bytes
-      leaves = leaves.map((leaf) => toFixedHex(leaf));
+      console.log(`Got ${leaves.length} leaves from chain`);
 
-      // Cached the new leaves
+      // Validate the leaves
+      const { leafIndex, provingLeaves } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment.toString()
+        );
+
+      // Cached all the leaves to re-use them later
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
-    } else {
-      console.log(`Got ${leaves.length} leaves from relayers.`);
+
+      // Return the leaves for proving and the commitment index
+      return {
+        provingLeaves,
+        commitmentIndex: leafIndex,
+      };
     }
 
-    return leaves;
+    return leavesFromRelayers;
   }
 
   async getVAnchorNotesFromChain(

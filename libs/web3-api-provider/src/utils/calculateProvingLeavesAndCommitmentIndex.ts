@@ -1,4 +1,5 @@
 import { HexString } from '@polkadot/util/types';
+import assert from 'assert';
 
 /**
  * Constructs the merkle tree is a heavy operation,
@@ -10,6 +11,21 @@ export function calculateProvingLeavesAndCommitmentIndex(
   targetRoot: string,
   commitment: string
 ): Promise<{ provingLeaves: HexString[]; leafIndex: number }> {
+  // Validate inputs
+  leaves.forEach((leaf) => {
+    assert.strictEqual(
+      leaf.length,
+      66,
+      'Invalid leaf size, expected 32 bytes or 64 hex chars with 0x prefix'
+    );
+  });
+
+  assert.strictEqual(
+    targetRoot.length,
+    66,
+    'Invalid target root size, expected 32 bytes or 64 hex chars with 0x prefix'
+  );
+
   return new Promise((resolve, reject) => {
     const worker = new Worker(
       new URL(
