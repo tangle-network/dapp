@@ -1,5 +1,5 @@
-import { TransactionQueueCard } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { Button, TransactionQueueCard } from '@webb-tools/webb-ui-components';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { EducationCard } from '../../components/EducationCard';
@@ -14,8 +14,27 @@ const EduCardWithTxQueue: FC<EduCardWithTxQueueProps> = ({ activeTab }) => {
     [txPayloads]
   );
 
+  const [loading, setLoading] = useState(false);
+
+  const handleLoading = useCallback(() => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+  }, []);
+
   return (
     <div>
+      <div>
+        <Button
+          loadingText="Loading..."
+          isLoading={loading}
+          onClick={handleLoading}
+        >
+          Click me
+        </Button>
+      </div>
       {/** Transaction Queue Card */}
       <TxQueueContainer
         isDisplay={isDisplayTxQueueCard}
