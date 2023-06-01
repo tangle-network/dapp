@@ -1,5 +1,13 @@
 {
   "extends": "./tsconfig.json",
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "esModuleInterop": true
+    }
+  },
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "types": ["node"],

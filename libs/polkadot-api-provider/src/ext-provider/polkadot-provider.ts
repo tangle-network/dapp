@@ -17,7 +17,10 @@ import { EventBus } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { InjectedExtension } from '@polkadot/extension-inject/types';
+import {
+  InjectedExtension,
+  MetadataDef,
+} from '@polkadot/extension-inject/types';
 
 import { PolkaTXBuilder } from '../transaction';
 import { isValidAddress } from './is-valid-address';
@@ -122,7 +125,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
          *  2- The user killed the connection, no other retires
          **/
         // global interActiveFeedback for access on multiple scopes
-        let interActiveFeedback: InteractiveFeedback;
+        let interActiveFeedback: InteractiveFeedback | undefined = undefined;
 
         logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
 
@@ -306,7 +309,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   }
 
   /// metaData:MetadataDef
-  updateMetaData(metaData) {
+  updateMetaData(metaData: MetadataDef) {
     return this.injectedExtension.metadata?.provide(metaData);
   }
 
