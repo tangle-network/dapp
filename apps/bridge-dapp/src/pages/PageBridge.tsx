@@ -251,10 +251,12 @@ const PageBridge = () => {
 
               <div>
                 {/** Transaction Queue Card */}
-                <TransactionQueueCard
-                  className="w-full mb-4 max-w-none"
-                  transactions={txPayloads}
-                />
+                {isDisplayTxQueueCard && (
+                  <TransactionQueueCard
+                    className="w-full mb-4 max-w-none"
+                    transactions={txPayloads}
+                  />
+                )}
 
                 {/** Education cards */}
                 <EducationCard

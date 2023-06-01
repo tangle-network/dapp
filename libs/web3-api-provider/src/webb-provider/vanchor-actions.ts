@@ -310,10 +310,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       leavesMap,
       {
         ...overridesTransaction,
-        // Uncomment this when the `split` function in `protocol-solidity` is fixed.
-        /* onTransactionState(state, payload) {
+        onTransactionState(state, payload) {
           handleVAnchorTxState(tx, state, payload);
-        }, */
+        },
       }
     );
 
