@@ -12,7 +12,6 @@ import {
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
@@ -60,12 +59,11 @@ export const TransferContainer = forwardRef<
     const {
       activeApi,
       activeChain,
-      activeWallet,
       apiConfig,
       chains,
       loading,
       noteManager,
-      switchChain,
+      txQueue,
     } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
@@ -73,8 +71,6 @@ export const TransferContainer = forwardRef<
     const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
     const { api } = useVAnchor();
-
-    const txQueue = useTxQueue();
 
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
