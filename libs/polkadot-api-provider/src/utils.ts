@@ -21,7 +21,6 @@ export const substrateProviderFactory = async (
   return executorWithTimeout(
     new Promise<ApiPromise>((res, rej) => {
       PolkadotProvider.getApiPromise('', [chain.url], (error) => {
-        console.error('Error in substrateProviderFactory', error);
         error.cancel();
         rej(error);
       })
