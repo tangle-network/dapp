@@ -68,7 +68,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <ChainInput {...sourceChainProps} chainType="source" />
 
-            <div className="flex space-x-2">
+            <div className="hidden lg:flex space-x-2">
               <TokenInput
                 {...tokenInputProps}
                 className="grow shrink-0 basis-1"
@@ -81,6 +81,14 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
                   className="grow shrink-0 basis-1"
                 />
               )}
+            </div>
+
+            <div className="flex lg:hidden gap-2">
+              <TokenInput title="Deposit" className="grow shrink-0 basis-1" />
+              <TokenInput
+                title="Bridging Token"
+                className="lg:hidden grow shrink-0 basis-1"
+              />
             </div>
           </BridgeInputGroup>
 

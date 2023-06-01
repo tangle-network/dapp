@@ -9,5 +9,5 @@ const Template = (args) => <ConnectWalletMobileButton {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  className: 'lg:flex'
+  className: 'lg:flex',
 };
