@@ -358,7 +358,14 @@ export class WebbWeb3Provider
           targetRoot,
           commitment.toString()
         );
-      tx?.next(TransactionState.ValidatingLeaves, true);
+
+      // If the leafIndex is -1, it means the commitment is not in the tree
+      // and we should continue to the next relayer
+      if (leafIndex === -1) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+      } else {
+        tx?.next(TransactionState.ValidatingLeaves, true);
+      }
 
       // Cached all the leaves to re-use them later
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
