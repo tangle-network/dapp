@@ -61,7 +61,7 @@ async function fetchSubstrateFungibleCurrency(
 
 async function fetchEVMFungibleCurrency(
   anchorAddress: string,
-  provider: ethers.providers.Provider
+  provider: ethers.providers.Web3Provider
 ): Promise<ICurrency> {
   const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
   const fungibleCurrencyAddress = await retryPromise(vAcnhorContract.token);
@@ -88,13 +88,13 @@ async function fetchEVMFungibleCurrency(
 
 async function fetchFungibleCurrency(
   anchorAddress: string,
-  provider: ethers.providers.Provider | ApiPromise
+  provider: ethers.providers.Web3Provider | ApiPromise
 ): Promise<ICurrency> {
   if (provider instanceof ApiPromise) {
     return fetchSubstrateFungibleCurrency(anchorAddress, provider);
   }
 
-  if (provider instanceof ethers.providers.Provider) {
+  if (provider instanceof ethers.providers.Web3Provider) {
     return fetchEVMFungibleCurrency(anchorAddress, provider);
   }
 

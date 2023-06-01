@@ -70,7 +70,7 @@ export class ApiConfig {
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
     evmProviderFactory: (
       typedChainId: number
-    ) => Promise<ethers.providers.Provider>,
+    ) => Promise<ethers.providers.Web3Provider>,
     substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();

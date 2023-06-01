@@ -1,35 +1,16 @@
 import { ApiPromise } from '@polkadot/api';
 import { ICurrency } from '@webb-tools/dapp-config/src/on-chain-config/on-chain-config-base';
 import { zeroAddress } from '@webb-tools/dapp-types';
-import EVMChainId from '@webb-tools/dapp-types/src/EVMChainId';
 import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 import chainData from './fixtures/native.json';
-
-// Constants
-
-const LOCALNET_CHAIN_IDS = [
-  EVMChainId.HermesLocalnet,
-  EVMChainId.AthenaLocalnet,
-  EVMChainId.DemeterLocalnet,
-];
-
-const SELF_HOSTED_CHAIN_IDS = [
-  EVMChainId.HermesOrbit,
-  EVMChainId.AthenaOrbit,
-  EVMChainId.DemeterOrbit,
-];
-
-const DEFAULT_EVM_CURRENCY: ICurrency = {
-  name: 'Localnet Ether',
-  symbol: 'ETH',
-  decimals: 18,
-  address: zeroAddress,
-};
-
-// The default native currency index in the asset registry pallet
-const DEFAULT_NATIVE_INDEX = 0;
+import {
+  DEFAULT_EVM_CURRENCY,
+  LOCALNET_CHAIN_IDS,
+  SELF_HOSTED_CHAIN_IDS,
+} from './shared';
+import { DEFAULT_NATIVE_INDEX } from './shared';
 
 /// Private Methods
 
@@ -77,13 +58,13 @@ async function fetchSubstrateNativeCurrency(
 
 async function fetchNativeCurrency(
   typedChainId: number,
-  provider?: ethers.providers.Provider | ApiPromise
+  provider?: ethers.providers.Web3Provider | ApiPromise
 ): Promise<ICurrency> {
   if (provider instanceof ApiPromise) {
     return fetchSubstrateNativeCurrency(provider);
   }
 
-  if (!provider || provider instanceof ethers.providers.Provider) {
+  if (!provider || provider instanceof ethers.providers.Web3Provider) {
     return fetchEVMNativeCurrency(typedChainId);
   }
 

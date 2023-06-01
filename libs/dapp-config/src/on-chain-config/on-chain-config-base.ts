@@ -53,7 +53,7 @@ export abstract class OnChainConfigBase {
    */
   abstract fetchNativeCurrency(
     typedChainId: number,
-    provider?: ethers.providers.Provider | ApiPromise
+    provider?: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency | null>;
 
   /**
@@ -64,7 +64,7 @@ export abstract class OnChainConfigBase {
   abstract fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: ethers.providers.Provider | ApiPromise
+    provider: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency | null>;
 
   /**
@@ -77,7 +77,7 @@ export abstract class OnChainConfigBase {
   abstract fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: ethers.providers.Provider | ApiPromise
+    provider: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency[]>;
 
   /**
@@ -93,7 +93,7 @@ export abstract class OnChainConfigBase {
     anchorConfig: Record<number, string[]>,
     providerFactory: (
       typedChainId: number
-    ) => Promise<ethers.providers.Provider | ApiPromise>,
+    ) => Promise<ethers.providers.Web3Provider | ApiPromise>,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
     existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
     existedAnchorConfig?: Record<number, ChainAddressConfig>

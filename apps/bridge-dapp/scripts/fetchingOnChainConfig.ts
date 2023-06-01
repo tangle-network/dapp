@@ -53,7 +53,7 @@ async function filterActiveEVMChains(
 
 async function fetchNativeTask(
   typedChainIds: number[],
-  providersRecord: Record<number, ethers.providers.Provider>
+  providersRecord: Record<number, ethers.providers.Web3Provider>
 ) {
   console.log(chalk`[+] {cyan Fetching native currencies...}`);
   const nativeCurrencies = await typedChainIds.reduce(
@@ -85,7 +85,7 @@ async function fetchNativeTask(
 
 async function fetchFungibleTask(
   typedChainIds: number[],
-  providersRecord: Record<number, ethers.providers.Provider>
+  providersRecord: Record<number, ethers.providers.Web3Provider>
 ) {
   console.log(chalk`[+] {cyan Fetching fungible currencies...}`);
   const fungibleCurrencies = await typedChainIds.reduce(
@@ -159,7 +159,7 @@ async function main() {
       providers[typedChainId] = provider;
       return providers;
     },
-    {} as Promise<Record<number, ethers.providers.Provider>>
+    {} as Promise<Record<number, ethers.providers.Web3Provider>>
   );
 
   const [nativeRecord, fungibleRecord] = await Promise.all([

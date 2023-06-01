@@ -2,13 +2,14 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { ethers } from 'ethers';
 import { Web3Provider } from './ext-provider';
 
-const evmProviderCache: { [typedChainId: number]: ethers.providers.Provider } =
-  {};
+const evmProviderCache: {
+  [typedChainId: number]: ethers.providers.Web3Provider;
+} = {};
 
 // For the fetching currency on chain effect
 export const evmProviderFactory = async (
   typedChainId: number
-): Promise<ethers.providers.Provider> => {
+): Promise<ethers.providers.Web3Provider> => {
   const cached = evmProviderCache[typedChainId];
   if (cached) {
     return cached;
