@@ -301,6 +301,8 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
               }
             : undefined,
       },
+      pollInterval: 10000,
+      fetchPolicy: 'network-only',
     }).catch((e) => {
       setProposalsPage({
         isLoading: false,
@@ -444,6 +446,8 @@ export function useProposal(
         id: proposalId,
         targetSessionId,
       },
+      pollInterval: 10000,
+      fetchPolicy: 'network-only',
     }).catch((e) => {
       setProposalDetails({
         isLoading: false,
