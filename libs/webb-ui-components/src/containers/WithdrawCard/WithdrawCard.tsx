@@ -19,6 +19,7 @@ import {
   RelayerInput,
   Switcher,
   TokenInput,
+  ConnectWalletMobileButton,
 } from '../../components';
 import { Typography } from '../../typography';
 import { WithdrawCardProps } from './types';
@@ -144,7 +145,10 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
           <Button
             {...withdrawBtnProps}
             isFullWidth
-            className={twMerge('justify-center', withdrawBtnProps?.className)}
+            className={twMerge(
+              'hidden lg:flex justify-center',
+              withdrawBtnProps?.className
+            )}
           >
             {withdrawBtnProps?.children ?? 'Withdraw'}
           </Button>
@@ -162,6 +166,8 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               {buttonDesc}
             </Typography>
           )}
+
+          <ConnectWalletMobileButton />
         </div>
       </div>
     );

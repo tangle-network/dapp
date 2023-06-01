@@ -12,6 +12,7 @@ import {
   RecipientInput,
   RelayerInput,
   TokenInput,
+  ConnectWalletMobileButton,
 } from '../../components';
 import { Typography } from '../../typography';
 import { TransferCardProps } from './types';
@@ -87,7 +88,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
           <Button
             {...transferBtnProps}
             isFullWidth
-            className={twMerge('justify-center')}
+            className={twMerge('hidden lg:flex justify-center')}
           >
             {transferBtnProps?.children ?? 'Transfer'}
           </Button>
@@ -105,6 +106,8 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
               {buttonDesc}
             </Typography>
           )}
+
+          <ConnectWalletMobileButton />
         </div>
       </div>
     );

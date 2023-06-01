@@ -9,6 +9,7 @@ import {
   ChainInput,
   InfoItem,
   TokenInput,
+  ConnectWalletMobileButton,
 } from '../../components';
 import { getRoundedAmountString } from '../../utils';
 import { DepositCardProps } from './types';
@@ -112,7 +113,10 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         <Button
           {...buttonProps}
           isFullWidth
-          className={twMerge('justify-center', buttonProps.className)}
+          className={twMerge(
+            'hidden lg:flex justify-center',
+            buttonProps.className
+          )}
         >
           {typeof buttonProps.children === 'string' ? (
             <Typography variant="body1" fw="bold" className="!text-inherit">
@@ -122,6 +126,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
             buttonProps.children ?? 'Deposit'
           )}
         </Button>
+
+        <ConnectWalletMobileButton />
       </div>
     );
   }
