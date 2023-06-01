@@ -344,41 +344,15 @@ export const StackedAreaChartContainer = () => {
                 }}
               />
 
-              <defs>
-                {allProposals.map((type) => {
-                  return (
-                    <linearGradient
-                      id={type.type}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                      key={type.type}
-                    >
-                      <stop
-                        offset="50%"
-                        stopColor={type.backgroundColor}
-                        stopOpacity={1}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={type.backgroundColor}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  );
-                })}
-              </defs>
-
               {allProposals.map((type) => {
                 return (
                   <Area
                     key={type.type}
-                    type="monotone"
+                    type="linear"
                     dataKey={type.type}
                     stackId={1}
                     stroke="none"
-                    fill={`url(#${type.type})`}
+                    fill={type.backgroundColor}
                   />
                 );
               })}
