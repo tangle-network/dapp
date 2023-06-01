@@ -204,6 +204,25 @@ export const StackedAreaChartContainer = () => {
     return filteredData;
   }, [timeRange, convertedData, thirtyMinData, oneHourData, oneDayData]);
 
+  const nonZeroProposalTypes = finalConvertedData.reduce(
+    (types: any, proposal: any) => {
+      Object.entries(proposal).forEach(([key, value]) => {
+        if (
+          key !== 'date' &&
+          key !== 'rawTimestamp' &&
+          typeof value === 'string' &&
+          value > '0'
+        ) {
+          types.add(key);
+        }
+      });
+      return types;
+    },
+    new Set()
+  );
+
+  const nonZeroProposalTypesArray = Array.from(nonZeroProposalTypes);
+
   return (
     <Card>
       {isLoading ? (
@@ -364,12 +383,17 @@ export const StackedAreaChartContainer = () => {
                 wrapperStyle={{
                   paddingLeft: '20px',
                 }}
-                payload={allProposals.map((type) => ({
-                  id: type.type,
-                  value: type.type.charAt(0).toUpperCase() + type.type.slice(1),
-                  type: 'circle',
-                  color: type.backgroundColor,
-                }))}
+                payload={allProposals
+                  .filter((type) =>
+                    nonZeroProposalTypesArray.includes(type.type)
+                  )
+                  .map((type) => ({
+                    id: type.type,
+                    value:
+                      type.type.charAt(0).toUpperCase() + type.type.slice(1),
+                    type: 'circle',
+                    color: type.backgroundColor,
+                  }))}
                 content={<CustomizedLegend />}
               />
             </AreaChart>
