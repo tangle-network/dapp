@@ -17,6 +17,11 @@
   dependencies:
     tunnel "^0.0.6"
 
+"@adraffy/ens-normalize@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.9.0.tgz#223572538f6bea336750039bb43a4016dcc8182d"
+  integrity sha512-iowxq3U30sghZotgl4s/oJRci6WPBfNO5YYgk2cIOMCHr3LeGPcsZjCEr+33Q4N+oV3OABDAtA+pyvWjbvBifQ==
+
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
@@ -1777,7 +1782,7 @@
     bech32 "1.1.4"
     ws "7.4.6"
 
-"@ethersproject/providers@5.7.2":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.7.2":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -3095,14 +3100,14 @@
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/chokidar-2/-/chokidar-2-2.1.8-no-fsevents.3.tgz#323d72dd25103d0c4fbdce89dadf574a787b1f9b"
   integrity sha512-s88O1aVtXftvp5bCPB7WnmXc5IwOZZ7YPuwNPt+GtOOXpPvad1LfbmjYv+qII7zP6RU2QGnqve27dnLycEnyEQ==
 
-"@noble/curves@1.0.0":
+"@noble/curves@1.0.0", "@noble/curves@~1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.0.0.tgz#e40be8c7daf088aaf291887cbc73f43464a92932"
   integrity sha512-2upgEu0iLiDVDZkNLeFV2+ht0BAVgQnEmCk6JsOch9Rp8xfkMCbvbAZlA2pBHQc73dbl+vFOXfqkf4uemdn0bw==
   dependencies:
     "@noble/hashes" "1.3.0"
 
-"@noble/hashes@1.3.0", "@noble/hashes@^1.2.0":
+"@noble/hashes@1.3.0", "@noble/hashes@^1.2.0", "@noble/hashes@~1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.0.tgz#085fd70f6d7d9d109671090ccae1d3bec62554a1"
   integrity sha512-ilHEACi9DwqJB0pw7kv+Apvh50jiiSyR/cQ3y4W7lOR5mhvn/50FLUfsnfJz0BDZtl/RR16kXvptiv6q1msYZg==
@@ -5118,10 +5123,27 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.2.0.tgz#8be36a1f66f3265389e90b5f9c9962146758f728"
   integrity sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==
 
-"@scure/base@1.1.1", "@scure/base@^1.1.1":
+"@scure/base@1.1.1", "@scure/base@^1.1.1", "@scure/base@~1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.1.tgz#ebb651ee52ff84f420097055f4bf46cfba403938"
   integrity sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==
+
+"@scure/bip32@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.3.0.tgz#6c8d980ef3f290987736acd0ee2e0f0d50068d87"
+  integrity sha512-bcKpo1oj54hGholplGLpqPHRbIsnbixFtc06nwuNM5/dwSXOq/AAYoIBRsBmnZJSdfeNW5rnff7NTAz3ZCqR9Q==
+  dependencies:
+    "@noble/curves" "~1.0.0"
+    "@noble/hashes" "~1.3.0"
+    "@scure/base" "~1.1.0"
+
+"@scure/bip39@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@scure/bip39/-/bip39-1.2.0.tgz#a207e2ef96de354de7d0002292ba1503538fc77b"
+  integrity sha512-SX/uKq52cuxm4YFXWFaVByaSHJh2w3BnokVSeUJVCv6K7WulT9u2BuNRBhuFl8vAuYnzx9bEu9WgpcNYTrYieg==
+  dependencies:
+    "@noble/hashes" "~1.3.0"
+    "@scure/base" "~1.1.0"
 
 "@sentry-internal/tracing@7.52.1":
   version "7.52.1"
@@ -7489,6 +7511,11 @@
   optionalDependencies:
     prettier "^1.18.2 || ^2.0.0"
 
+"@wagmi/chains@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/chains/-/chains-0.3.1.tgz#5d8e8ef1bcd8637c9f3ead8626595b12a01c35e4"
+  integrity sha512-NN5qziBLFeXnx0+3ywdiKKXUSW4H73Wc1jRrygl9GKXVPawU0GBMudwXUfV7VOu6E9vmG7Arj0pVsEwq63b2Ew==
+
 "@walletconnect/browser-utils@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@walletconnect/browser-utils/-/browser-utils-1.8.0.tgz#33c10e777aa6be86c713095b5206d63d32df0951"
@@ -7905,7 +7932,14 @@
     "@webb-tools/utils" "^0.5.32"
     ethers "5.7.0"
 
-"@webb-tools/contracts@0.5.40", "@webb-tools/contracts@^0.5.13", "@webb-tools/contracts@^0.5.32", "@webb-tools/contracts@^0.5.40":
+"@webb-tools/contracts@^0.2.6", "@webb-tools/contracts@^0.2.7", "@webb-tools/contracts@^0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.2.9.tgz#e3b1d1cd2f2bbf2d46ee2f19beb4c899c22d1b10"
+  integrity sha512-ILFyq9Dde2DsIhQs5zP2j1rdJNgFB2L/xWMjoFs5rdMknf2BWbUu5nl5XJffM66SK+hoZ5ajnA4qcRLiSFkgxw==
+  dependencies:
+    ethers "5.7.0"
+
+"@webb-tools/contracts@^0.5.13", "@webb-tools/contracts@^0.5.32", "@webb-tools/contracts@^0.5.40":
   version "0.5.40"
   resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.5.40.tgz#957fefacfd3328b1b52012bbc206704ca72a23e2"
   integrity sha512-a0CzSKK2UXX/rxtv6oLnbqzTMtakKfFNomUDRh2A9nhUOqoUb9qrwSI3BFao7IJNeCZf++TN9kAipzq5a4nWWg==
@@ -7940,12 +7974,13 @@
     typechain "^5.1.2"
     typescript "4.7.2"
 
-"@webb-tools/contracts@^0.2.6", "@webb-tools/contracts@^0.2.7", "@webb-tools/contracts@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-0.2.9.tgz#e3b1d1cd2f2bbf2d46ee2f19beb4c899c22d1b10"
-  integrity sha512-ILFyq9Dde2DsIhQs5zP2j1rdJNgFB2L/xWMjoFs5rdMknf2BWbUu5nl5XJffM66SK+hoZ5ajnA4qcRLiSFkgxw==
+"@webb-tools/contracts@file:../../../../Volumes/tins_ssd/webb/protocol-solidity/packages/contracts":
+  version "0.5.45"
   dependencies:
-    ethers "5.7.0"
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    ethers "^5.7.0"
+    typescript "^5.0.4"
 
 "@webb-tools/create2-utils@^0.5.7":
   version "0.5.7"
@@ -8816,6 +8851,11 @@ abab@^2.0.5, abab@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz#41b80f2c871d19686216b82309231cfd3cb3d291"
   integrity sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==
+
+abitype@0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/abitype/-/abitype-0.8.2.tgz#cacd330d07488a4020d84f54fc361361234b9c83"
+  integrity sha512-B1ViNMGpfx/qjVQi0RTc2HEFHuR9uoCoTEkwELT5Y7pBPtBbctYijz9BK6+Kd0hQ3S70FhYTO2dWWk0QNUEXMA==
 
 abortcontroller-polyfill@^1.7.3:
   version "1.7.5"
@@ -27649,6 +27689,21 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
+viem@^0.3.41:
+  version "0.3.41"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-0.3.41.tgz#ca89f17ff5d4ef3dcd8f73b2f01e4b288188327c"
+  integrity sha512-QC9nSyqrhVv4CRVS58CgVS3rilikG8EAVPlkP+R6u8FDx6kLVe0Bz6bYrxzrcmR/lASko6Pz6N7xA7jngGkqvw==
+  dependencies:
+    "@adraffy/ens-normalize" "1.9.0"
+    "@noble/curves" "1.0.0"
+    "@noble/hashes" "1.3.0"
+    "@scure/bip32" "1.3.0"
+    "@scure/bip39" "1.2.0"
+    "@wagmi/chains" "0.3.1"
+    abitype "0.8.2"
+    isomorphic-ws "5.0.0"
+    ws "8.12.0"
+
 vscode-oniguruma@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/vscode-oniguruma/-/vscode-oniguruma-1.7.0.tgz#439bfad8fe71abd7798338d1cd3dc53a8beea94b"
@@ -28720,6 +28775,11 @@ ws@7.5.3:
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.3.tgz#160835b63c7d97bfab418fc1b8a9fced2ac01a74"
   integrity sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg==
+
+ws@8.12.0:
+  version "8.12.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.12.0.tgz#485074cc392689da78e1828a9ff23585e06cddd8"
+  integrity sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==
 
 ws@8.13.0, ws@^8.11.0, ws@^8.12.0, ws@^8.13.0, ws@^8.2.3, ws@^8.8.1:
   version "8.13.0"

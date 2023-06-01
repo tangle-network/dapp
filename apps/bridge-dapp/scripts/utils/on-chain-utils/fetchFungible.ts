@@ -4,13 +4,62 @@ import {
   PalletAssetRegistryAssetDetails,
   PalletAssetRegistryAssetMetadata,
 } from '@polkadot/types/lookup';
-import { retryPromise } from '@webb-tools/browser-utils/src/retry-promise';
-import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  FungibleTokenWrapper__factory,
+  VAnchor__factory,
+} from '@webb-tools/contracts';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config';
 import '@webb-tools/protocol-substrate-types';
 import { ethers } from 'ethers';
+import getViemClient from './getViemClient';
+import { ChainType, calculateTypedChainId } from '@webb-tools/sdk-core';
 
 // Private methods
+
+async function testViem(
+  typedChainId: number,
+  fungibleAddr: string,
+  vAnchorAddr: string
+) {
+  const client = getViemClient(typedChainId);
+
+  const address = (
+    fungibleAddr.startsWith('0x') ? fungibleAddr : `0x${fungibleAddr}`
+  ) as `0x${string}`;
+
+  const sharedFungibleProps = {
+    address,
+    abi: FungibleTokenWrapper__factory.abi,
+  } as const;
+
+  const result = await client.multicall({
+    contracts: [
+      {
+        ...sharedFungibleProps,
+        functionName: 'name',
+      },
+      {
+        ...sharedFungibleProps,
+        functionName: 'symbol',
+      },
+      {
+        ...sharedFungibleProps,
+        functionName: 'decimals',
+      },
+      {
+        ...sharedFungibleProps,
+        functionName: 'getTokens',
+      },
+      {
+        ...sharedFungibleProps,
+        functionName: 'isNativeAllowed',
+      },
+    ],
+  });
+
+  console.log('Result: ', result);
+}
 
 async function fetchSubstrateFungibleCurrency(
   treeId: string,
@@ -63,9 +112,15 @@ async function fetchEVMFungibleCurrency(
   anchorAddress: string,
   provider: ethers.providers.Web3Provider
 ): Promise<ICurrency> {
+  const network = await provider.getNetwork();
+  const typedChainId = calculateTypedChainId(ChainType.EVM, network.chainId);
+
   const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
   const fungibleCurrencyAddress = await retryPromise(vAcnhorContract.token);
-  const fungibleCurrencyContract = ERC20__factory.connect(
+
+  await testViem(typedChainId, fungibleCurrencyAddress, anchorAddress);
+
+  const fungibleCurrencyContract = FungibleTokenWrapper__factory.connect(
     fungibleCurrencyAddress,
     provider
   );

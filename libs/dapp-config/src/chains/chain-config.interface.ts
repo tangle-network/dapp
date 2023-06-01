@@ -34,4 +34,9 @@ export interface ChainConfig {
    * The supported environments for this chain (defaults to all)
    */
   env?: AppEnvironment[];
+
+  multicall3?: {
+    address: `0x${string}`;
+    deployedAt: number;
+  };
 }
