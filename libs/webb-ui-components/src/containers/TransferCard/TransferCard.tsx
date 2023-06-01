@@ -93,6 +93,8 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
             {transferBtnProps?.children ?? 'Transfer'}
           </Button>
 
+          <ConnectWalletMobileButton isFullWidth />
+
           {buttonDesc && (
             <Typography
               variant="body1"
@@ -106,8 +108,6 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
               {buttonDesc}
             </Typography>
           )}
-
-          <ConnectWalletMobileButton />
         </div>
       </div>
     );

@@ -1,36 +1,47 @@
+import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
+
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button, ButtonProps } from '../Button';
 import {
   BottomDialog,
   BottomDialogTrigger,
   BottomDialogPortal,
 } from '../BottomDialog';
+import { ConnectWalletMobileButtonProps } from './types';
 
 const BRIDGE_LINK = 'webb.tools/hubble_bridge';
+const actionButtonsProps: Array<ButtonProps> = [
+  {
+    children: 'Continue on Desktop',
+    isFullWidth: true,
+    // TODO: replace with real link
+    href: '#',
+  },
+  {
+    children: 'Learn more',
+    variant: 'secondary',
+    isFullWidth: true,
+    // TODO: replace with real link
+    href: '#',
+  },
+];
 
-export const ConnectWalletMobileButton = () => {
+export const ConnectWalletMobileButton = forwardRef<
+  HTMLDivElement,
+  ConnectWalletMobileButtonProps
+>(({ className, ...props }, ref) => {
   return (
-    <BottomDialog>
+    <BottomDialog ref={ref}>
       <BottomDialogTrigger className="block lg:hidden">
-        <Button isFullWidth>Connect Wallet</Button>
+        <Button {...props} className={twMerge('block lg:hidden', className)}>
+          Connect Wallet
+        </Button>
       </BottomDialogTrigger>
       <BottomDialogPortal
         title="Try Hubble on Desktop"
-        actionButtonsProps={[
-          {
-            children: 'Continue on Desktop',
-            isFullWidth: true,
-            // TODO: replace with real link
-            href: '#',
-          },
-          {
-            children: 'Learn more',
-            variant: 'secondary',
-            isFullWidth: true,
-            // TODO: replace with real link
-            href: '#',
-          },
-        ]}
+        actionButtonsProps={actionButtonsProps}
+        className="w-full"
       >
         <div className="flex flex-col gap-4">
           <Typography variant="body1">
@@ -50,4 +61,4 @@ export const ConnectWalletMobileButton = () => {
       </BottomDialogPortal>
     </BottomDialog>
   );
-};
+});

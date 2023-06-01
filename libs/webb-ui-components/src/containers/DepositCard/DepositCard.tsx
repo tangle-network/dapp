@@ -127,7 +127,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           )}
         </Button>
 
-        <ConnectWalletMobileButton />
+        <ConnectWalletMobileButton isFullWidth />
       </div>
     );
   }

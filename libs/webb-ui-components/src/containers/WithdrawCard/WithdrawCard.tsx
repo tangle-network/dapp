@@ -153,6 +153,8 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
             {withdrawBtnProps?.children ?? 'Withdraw'}
           </Button>
 
+          <ConnectWalletMobileButton isFullWidth />
+
           {buttonDesc && (
             <Typography
               variant="body1"
@@ -166,8 +168,6 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
               {buttonDesc}
             </Typography>
           )}
-
-          <ConnectWalletMobileButton />
         </div>
       </div>
     );
