@@ -36,6 +36,8 @@ module.exports = {
           "url('/static/assets/brandkit-iconography-desktop.png')",
         brandkit_iconography_mobile:
           "url('/static/assets/brandkit-iconography-mobile.png')",
+        not_found: "url('/static/assets/404.png')",
+        not_found_mobile: "url('/static/assets/404-mobile.png')",
       },
 
       fontFamily: {

@@ -28,6 +28,7 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { TransferConfirmContainerProps } from './types';
+import { RecipientPublicKeyTooltipContent } from './shared';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -287,6 +288,9 @@ export const TransferConfirmContainer = forwardRef<
         }}
         note={changeNote?.serialize()}
         progress={progress}
+        recipientTitleProps={{
+          info: <RecipientPublicKeyTooltipContent />,
+        }}
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}
         relayerExternalUrl={relayer?.endpoint}

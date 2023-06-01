@@ -65,6 +65,7 @@ export * from './SendPlanLineIcon';
 export * from './ShieldKeyholeIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
+export * from './SparklingIcon';
 export * from './Spinner';
 export * from './SunLine';
 export * from './TeamFillIcon';

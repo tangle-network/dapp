@@ -7,25 +7,21 @@ import {
   useCurrencies,
   useCurrencyBalance,
   useCurrentResourceId,
+  useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
   useTxQueue,
 } from '@webb-tools/react-hooks';
-import {
-  calculateTypedChainId,
-  ChainType,
-  Note,
-  Utxo,
-} from '@webb-tools/sdk-core';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   AmountInput,
   Button,
   CheckBox,
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
-  useWebbUI,
   WithdrawCard,
+  getRoundedAmountString,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
@@ -38,24 +34,19 @@ import {
   useState,
 } from 'react';
 
-import {
-  Currency,
-  utxoFromVAnchorNote,
-} from '@webb-tools/abstract-api-provider';
-import { CurrencyConfig } from '@webb-tools/dapp-config';
+import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { isValidAddress } from '@webb-tools/dapp-types';
-import { ChainListCardWrapper } from '../../components';
 import {
+  WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
-  useShieldedAssets,
-  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import useStatesFromNotes from '../../hooks/useStatesFromNotes';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -94,21 +85,22 @@ export const WithdrawContainer = forwardRef<
     switchChain,
   } = useWebContext();
 
-  const {
-    fungibleCurrency,
-    wrappableCurrency,
-    setFungibleCurrency,
-    setWrappableCurrency,
-  } = useBridge();
+  const { wrappableCurrency, setWrappableCurrency } = useBridge();
 
   const { wrappableCurrencies } = useCurrencies();
 
-  const currentTypedChainId = useMemo(() => {
-    if (!activeChain) {
-      return null;
-    }
-    return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
-  }, [activeChain]);
+  const currentResourceId = useCurrentResourceId();
+
+  const currentTypedChainId = useCurrentTypedChainId();
+
+  const {
+    availableAmountFromNotes,
+    fungibleCurrency,
+    fungiblesFromNotes,
+    handleSwitchToOtherChains,
+    needSwitchChain,
+    setFungibleCurrency,
+  } = useStatesFromNotes();
 
   const useRelayersArgs = useMemo(
     () => ({
@@ -149,38 +141,6 @@ export const WithdrawContainer = forwardRef<
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
 
-  const fungibleCurrencies = useMemo(() => {
-    if (!activeApi) {
-      return [];
-    }
-
-    const tokenSymbolsSet = new Set<string>();
-
-    Array.from(allNotes.values()).forEach((notes) => {
-      notes.forEach((note) => {
-        tokenSymbolsSet.add(note.note.tokenSymbol);
-      });
-    });
-
-    const supportedCurrencyIds = Object.keys(
-      activeApi.state.getBridgeOptions()
-    );
-
-    return Array.from(tokenSymbolsSet)
-      .map((symbol) => {
-        return apiConfig.getCurrencyBySymbol(symbol);
-      })
-      .filter(
-        (c): c is CurrencyConfig =>
-          !!c && supportedCurrencyIds.includes(c.id.toString())
-      )
-      .map((c) => new Currency(c));
-  }, [activeApi, allNotes, apiConfig]);
-
-  const currentResourceId = useCurrentResourceId();
-
-  const shieldedAssets = useShieldedAssets();
-
   const txQueue = useTxQueue();
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
@@ -216,10 +176,9 @@ export const WithdrawContainer = forwardRef<
   );
 
   const {
-    fetchMaxFeeInfoFromRelayer: fetchRelayerFeeInfo,
-    fetchMaxFeeInfo,
     isLoading: isFetchingFeeInfo,
     feeInfo: feeInfoOrBigNumber,
+    fetchFeeInfo,
     resetMaxFeeInfo,
   } = useMaxFeeInfo(maxFeeArgs);
 
@@ -242,38 +201,29 @@ export const WithdrawContainer = forwardRef<
     );
   }, [apiConfig.currencies, currentTypedChainId]);
 
-  const availableAmount: number = useMemo(() => {
-    if (!availableNotesFromManager?.length) {
-      return 0;
-    }
-
-    let tokenDecimals: number | undefined;
-    const amountBN = availableNotesFromManager.reduce<BigNumber>(
-      (accumulatedBalance, newNote) => {
-        if (!tokenDecimals) {
-          tokenDecimals = Number(newNote.note.denomination);
-        }
-
-        return accumulatedBalance.add(newNote.note.amount);
-      },
-      BigNumber.from(0)
-    );
-
-    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
-  }, [availableNotesFromManager]);
-
   const selectedFungibleToken = useMemo<AssetType | undefined>(() => {
     if (!fungibleCurrency) {
       return undefined;
     }
+
+    let balance: number | undefined;
+    const balancesRecord = balancesFromNotes[fungibleCurrency.id];
+    if (balancesRecord && currentTypedChainId) {
+      balance = balancesRecord?.[currentTypedChainId];
+    }
+
+    if (balancesRecord && !balance) {
+      balance = Object.values(balancesRecord)[0];
+    }
+
     return {
       symbol: fungibleCurrency.view.symbol,
       name: fungibleCurrency.view.name,
-      balance: availableAmount,
+      balance,
       onTokenClick: () => addCurrency(fungibleCurrency),
       balanceType: 'note',
     };
-  }, [addCurrency, availableAmount, fungibleCurrency]);
+  }, [addCurrency, balancesFromNotes, currentTypedChainId, fungibleCurrency]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -295,7 +245,7 @@ export const WithdrawContainer = forwardRef<
         return;
       }
 
-      if (parsedAmount > availableAmount) {
+      if (parsedAmount > availableAmountFromNotes) {
         setAmountError('Insufficient balance, maybe incorrect chain?');
         return;
       }
@@ -303,19 +253,30 @@ export const WithdrawContainer = forwardRef<
       setAmount(parsedAmount);
       setAmountError('');
     },
-    [availableAmount]
+    [availableAmountFromNotes]
   );
 
   const handleFungibleTokenChange = useCallback(
     async (newToken: AssetType) => {
-      const selectedToken = Object.values(fungibleCurrencies).find(
+      const selectedToken = Object.values(fungiblesFromNotes).find(
         (currency) => currency.view.symbol === newToken.symbol
       );
-      if (selectedToken) {
-        setFungibleCurrency(selectedToken);
+      if (!selectedToken) {
+        return;
       }
+
+      setFungibleCurrency(selectedToken);
+
+      // Reset the amount
+      setAmount(0);
+
+      // Reset the unwrap switcher
+      setIsUnwrap(false);
+
+      // Reset fee info
+      resetMaxFeeInfo();
     },
-    [fungibleCurrencies, setFungibleCurrency]
+    [fungiblesFromNotes, resetMaxFeeInfo, setFungibleCurrency]
   );
 
   const handleWrappableTokenChange = useCallback(
@@ -331,29 +292,10 @@ export const WithdrawContainer = forwardRef<
   );
 
   const isValidAmount = useMemo(() => {
-    return amount > 0 && amount <= availableAmount;
-  }, [amount, availableAmount]);
+    return amount > 0 && amount <= availableAmountFromNotes;
+  }, [amount, availableAmountFromNotes]);
 
   const [isValidRecipient, setIsValidRecipient] = useState(false);
-
-  // Calculate other destination chains from the shielded assets data
-  // which suggest user to switch to if the current chain has no balance
-  const otherAvailableChains = useMemo(() => {
-    // If current chain has balance, then no need to show other chains
-    if (availableAmount > 0) {
-      return [];
-    }
-
-    // If current chain has no balance, then show other chains
-    // which has balance
-    return shieldedAssets
-      .filter((asset) =>
-        fungibleCurrency
-          ? asset.fungibleTokenSymbol === fungibleCurrency.view.symbol
-          : true
-      )
-      .map((asset) => asset.rawChain);
-  }, [availableAmount, fungibleCurrency, shieldedAssets]);
 
   const totalFeeInWei = useMemo(() => {
     if (!feeInfoOrBigNumber || feeInfoOrBigNumber instanceof BigNumber) {
@@ -413,7 +355,7 @@ export const WithdrawContainer = forwardRef<
       return 'Create note account';
     }
 
-    if (isDisabledWithdraw && otherAvailableChains.length > 0) {
+    if (isDisabledWithdraw && needSwitchChain) {
       return 'Switch chain to withdraw';
     }
 
@@ -423,11 +365,11 @@ export const WithdrawContainer = forwardRef<
 
     return 'Withdraw';
   }, [
+    needSwitchChain,
     hasNoteAccount,
     isDisabledWithdraw,
     isUnwrap,
     isWalletConnected,
-    otherAvailableChains.length,
     selectedUnwrapToken,
   ]);
 
@@ -451,7 +393,7 @@ export const WithdrawContainer = forwardRef<
       : undefined;
 
     const remainderAmount = isValidAmount
-      ? getRoundedAmountString(availableAmount - amount)
+      ? getRoundedAmountString(availableAmountFromNotes - amount)
       : undefined;
 
     const receivingTokenSymbol = isUnwrap
@@ -469,7 +411,7 @@ export const WithdrawContainer = forwardRef<
   }, [
     amount,
     amountAfterFeeWei,
-    availableAmount,
+    availableAmountFromNotes,
     fungibleCurrency?.view.symbol,
     isUnwrap,
     isValidAmount,
@@ -531,63 +473,6 @@ export const WithdrawContainer = forwardRef<
     resetMaxFeeInfo();
   }, [resetMaxFeeInfo, setRelayer]);
 
-  const handleSwitchToOtherDestChains = useCallback(async () => {
-    if (otherAvailableChains.length === 0 || !activeWallet) {
-      return;
-    }
-
-    if (otherAvailableChains.length === 1) {
-      const chain = otherAvailableChains[0];
-      await switchChain(chain, activeWallet);
-      setMainComponent(undefined);
-      return;
-    }
-
-    if (!activeChain) {
-      return;
-    }
-
-    const activeChainType = {
-      name: activeChain.name,
-      tag: activeChain.tag,
-      symbol:
-        getNativeCurrencyFromConfig(
-          apiConfig.currencies,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-        )?.symbol ?? 'Unknown',
-    };
-
-    setMainComponent(
-      <ChainListCardWrapper
-        chainType="dest"
-        onlyCategory={activeChain?.tag}
-        chains={otherAvailableChains.map((chain) => {
-          const currency = getNativeCurrencyFromConfig(
-            apiConfig.currencies,
-            calculateTypedChainId(chain.chainType, chain.chainId)
-          );
-          if (!currency) {
-            console.error('No currency found for chain', chain.name);
-          }
-
-          return {
-            name: chain.name,
-            tag: chain.tag,
-            symbol: currency?.symbol ?? 'Unknown',
-          };
-        })}
-        value={activeChainType}
-      />
-    );
-  }, [
-    activeChain,
-    activeWallet,
-    apiConfig,
-    otherAvailableChains,
-    setMainComponent,
-    switchChain,
-  ]);
-
   const handleWithdrawButtonClick = useCallback(async () => {
     // Dismiss all the completed and failed txns in the queue before starting a new txn
     txQueue.txPayloads
@@ -609,8 +494,8 @@ export const WithdrawContainer = forwardRef<
       return;
     }
 
-    if (isDisabledWithdraw && otherAvailableChains.length > 0) {
-      return await handleSwitchToOtherDestChains();
+    if (isDisabledWithdraw && needSwitchChain) {
+      return await handleSwitchToOtherChains();
     }
 
     if (
@@ -716,7 +601,7 @@ export const WithdrawContainer = forwardRef<
         isRefund={isRefund}
         fungibleCurrency={{
           value: fungibleCurrency,
-          balance: availableAmount,
+          balance: availableAmountFromNotes,
         }}
         unwrapCurrency={
           isUnwrap && wrappableCurrency
@@ -732,34 +617,34 @@ export const WithdrawContainer = forwardRef<
       />
     );
   }, [
-    activeApi,
-    amount,
-    amountAfterFeeWei,
-    availableAmount,
-    availableNotesFromManager,
-    currentNativeCurrency?.symbol,
-    currentTypedChainId,
-    feeInfoOrBigNumber,
-    fungibleCurrency,
-    handleResetState,
-    handleSwitchToOtherDestChains,
+    txQueue.txPayloads,
+    isWalletConnected,
     hasNoteAccount,
     isDisabledWithdraw,
-    isRefund,
-    isUnwrap,
-    isWalletConnected,
+    needSwitchChain,
+    currentTypedChainId,
+    fungibleCurrency,
     noteManager,
-    otherAvailableChains.length,
+    activeApi,
     recipient,
-    refundAmount,
-    refundInfo,
-    setMainComponent,
-    setOpenNoteAccountModal,
-    toggleModal,
+    availableNotesFromManager,
+    amount,
+    feeInfoOrBigNumber,
     totalFeeInWei,
-    transactionFeeInfo,
-    txQueue.txPayloads,
+    setMainComponent,
+    amountAfterFeeWei,
+    isRefund,
+    availableAmountFromNotes,
+    isUnwrap,
     wrappableCurrency,
+    transactionFeeInfo,
+    refundInfo,
+    refundAmount,
+    currentNativeCurrency?.symbol,
+    handleResetState,
+    toggleModal,
+    setOpenNoteAccountModal,
+    handleSwitchToOtherChains,
   ]);
 
   // Callback to handle the change of the inputs
@@ -768,15 +653,24 @@ export const WithdrawContainer = forwardRef<
       return;
     }
 
-    const selectableTokens = Object.values(fungibleCurrencies).map(
+    const selectableTokens = Object.values(fungiblesFromNotes).map(
       (currency) => {
+        let balance: number | undefined;
+
+        const balancesRecord = balancesFromNotes[currency.id];
+
+        if (balancesRecord && currentTypedChainId) {
+          balance = balancesRecord[currentTypedChainId];
+        }
+
+        if (balancesRecord && !balance) {
+          balance = Object.values(balancesRecord)[0];
+        }
+
         return {
           name: currency.view.name,
           symbol: currency.view.symbol,
-          balance:
-            selectedFungibleToken?.symbol === currency.view.symbol
-              ? availableAmount
-              : balancesFromNotes[currency.id],
+          balance,
           onTokenClick: () => addCurrency(currency),
         };
       }
@@ -790,7 +684,7 @@ export const WithdrawContainer = forwardRef<
         selectTokens={selectableTokens}
         unavailableTokens={apiConfig
           .getUnavailableCurrencies(
-            fungibleCurrencies.map((c) => c.getCurrencyConfig())
+            fungiblesFromNotes.map((c) => c.getCurrencyConfig())
           )
           .map((c) => ({ name: c.name, symbol: c.symbol } as AssetType))}
         onChange={(newAsset) => {
@@ -805,12 +699,11 @@ export const WithdrawContainer = forwardRef<
     activeApi,
     addCurrency,
     apiConfig,
-    availableAmount,
     balancesFromNotes,
-    fungibleCurrencies,
+    currentTypedChainId,
+    fungiblesFromNotes,
     handleFungibleTokenChange,
     onTryAnotherWallet,
-    selectedFungibleToken?.symbol,
     setMainComponent,
   ]);
 
@@ -908,7 +801,6 @@ export const WithdrawContainer = forwardRef<
   ]);
 
   // WithdrawCard props
-
   const tokenInputProps = useMemo(
     () => ({
       onClick: handleTokenInputClick,
@@ -929,23 +821,24 @@ export const WithdrawContainer = forwardRef<
     () => ({
       onChange: parseUserAmount,
       values: DEFAULT_FIXED_AMOUNTS,
-      isDisabled: !selectedFungibleToken,
+      isDisabled: !selectedFungibleToken || needSwitchChain,
     }),
-    [parseUserAmount, selectedFungibleToken]
+    [needSwitchChain, parseUserAmount, selectedFungibleToken]
   );
 
   const customAmountInputProps = useMemo(
     () => ({
       onAmountChange: parseUserAmount,
       amount: amount ? amount.toString() : undefined,
-      onMaxBtnClick: () => parseUserAmount(availableAmount),
+      onMaxBtnClick: () => parseUserAmount(availableAmountFromNotes),
       errorMessage: amountError,
-      isDisabled: !selectedFungibleToken,
+      isDisabled: !selectedFungibleToken || needSwitchChain,
     }),
     [
       amount,
       amountError,
-      availableAmount,
+      availableAmountFromNotes,
+      needSwitchChain,
       parseUserAmount,
       selectedFungibleToken,
     ]
@@ -956,9 +849,10 @@ export const WithdrawContainer = forwardRef<
   >(
     () => ({
       checked: isUnwrap,
+      disabled: needSwitchChain,
       onCheckedChange: (nextVal) => setIsUnwrap(nextVal),
     }),
-    [isUnwrap]
+    [needSwitchChain, isUnwrap]
   );
 
   const relayerInputProps = useMemo<
@@ -997,10 +891,9 @@ export const WithdrawContainer = forwardRef<
 
   const withdrawButtonProps = useMemo<ComponentProps<typeof Button>>(
     () => ({
-      isDisabled:
-        otherAvailableChains.length > 0
-          ? false
-          : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
+      isDisabled: needSwitchChain
+        ? false // Not disabled because we want to switch chain
+        : isWalletConnected && hasNoteAccount && isDisabledWithdraw,
       isLoading:
         loading || walletState === WalletState.CONNECTING || isFetchingFeeInfo,
       loadingText: isFetchingFeeInfo ? 'Fetching fee info...' : 'Connecting...',
@@ -1009,13 +902,13 @@ export const WithdrawContainer = forwardRef<
     }),
     [
       buttonText,
+      needSwitchChain,
       handleWithdrawButtonClick,
       hasNoteAccount,
       isDisabledWithdraw,
       isFetchingFeeInfo,
       isWalletConnected,
       loading,
-      otherAvailableChains.length,
       walletState,
     ]
   );
@@ -1186,7 +1079,7 @@ export const WithdrawContainer = forwardRef<
       },
       {
         leftTextProps: {
-          title: 'Max fee',
+          title: 'Est. transaction fee',
           info: transactionFeeInfo,
         },
         rightContent: txFeeContent,
@@ -1211,14 +1104,23 @@ export const WithdrawContainer = forwardRef<
   useEffect(() => {
     if (defaultFungibleCurrency) {
       setFungibleCurrency(defaultFungibleCurrency);
+
+      // Reset the amount
+      setAmount(0);
+
+      // Reset the unwrap switcher
+      setIsUnwrap(false);
+
+      // Reset max fee info
+      resetMaxFeeInfo();
     }
-  }, [defaultFungibleCurrency, setFungibleCurrency]);
+  }, [defaultFungibleCurrency, resetMaxFeeInfo, setFungibleCurrency]);
 
   // Side effect to set the education card step
   useEffect(() => {
     // If the user has no available amount,
     // show the first step to switch to other chains
-    if (availableAmount === 0) {
+    if (availableAmountFromNotes === 0) {
       setEducationCardStep(1);
       return;
     }
@@ -1239,7 +1141,7 @@ export const WithdrawContainer = forwardRef<
 
     setEducationCardStep(4);
   }, [
-    availableAmount,
+    availableAmountFromNotes,
     setEducationCardStep,
     isUnwrap,
     fungibleCurrency,
@@ -1266,12 +1168,8 @@ export const WithdrawContainer = forwardRef<
       return;
     }
 
-    if (activeRelayer) {
-      fetchRelayerFeeInfo(activeRelayer);
-    } else {
-      fetchMaxFeeInfo();
-    }
-  }, [activeRelayer, isReady, fetchRelayerFeeInfo, fetchMaxFeeInfo]);
+    fetchFeeInfo(activeRelayer);
+  }, [activeRelayer, isReady, fetchFeeInfo]);
 
   // Side effect to uncheck the refund checkbox when feeInfo is not available
   useEffect(() => {

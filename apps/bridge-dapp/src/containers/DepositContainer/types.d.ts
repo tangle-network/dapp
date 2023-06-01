@@ -60,14 +60,4 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * @returns void
    */
   onResetState?: () => void;
-
-  /**
-   * The fee amount
-   */
-  feeValue?: number;
-
-  /**
-   * The fee token
-   */
-  feeToken?: string;
 }

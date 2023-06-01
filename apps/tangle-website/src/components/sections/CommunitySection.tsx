@@ -4,25 +4,12 @@ import {
   DocumentationIcon,
   TelegramFill,
   TwitterFill,
+  SparklingIcon,
 } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
 import { Typography, WebsiteCommunity } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
 
-type LinksType = {
-  Icon: (props: IconBase) => JSX.Element;
-  name: string;
-  href: string;
-  description: string;
-};
-
-const links: Array<LinksType> = [
-  {
-    name: 'Documentation',
-    Icon: DocumentationIcon,
-    href: 'https://docs.webb.tools/docs',
-    description: 'Learn how it works under the hood',
-  },
+const links = [
   {
     name: 'Discord',
     Icon: DiscordFill,
@@ -36,8 +23,8 @@ const links: Array<LinksType> = [
     description: 'Have question, join us on Telegram',
   },
   {
-    Icon: Common2Icon,
     name: 'Commonwealth',
+    Icon: Common2Icon,
     href: 'https://commonwealth.im/webb',
     description: 'Join the conversation on Commonwealth',
   },
@@ -46,6 +33,20 @@ const links: Array<LinksType> = [
     Icon: TwitterFill,
     href: 'https://twitter.com/webbprotocol',
     description: 'Say hi on the Webb Twitter',
+  },
+  {
+    name: 'Documentation',
+    Icon: DocumentationIcon,
+    href: 'https://docs.webb.tools/docs',
+    description: 'Learn how it works under the hood',
+  },
+  {
+    name: 'Incentivized Testnet',
+    Icon: SparklingIcon,
+    // TODO: update href
+    href: '#',
+    description: 'Explore the Tangle testnet and get involved',
+    linkText: 'Leaderboard',
   },
 ];
 

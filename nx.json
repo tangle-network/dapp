@@ -16,14 +16,16 @@
       }
     }
   },
-  "neverConnectToCloud": true,
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "outputs": [
         "{workspaceRoot}/dist/apps/bridge-dapp",
-        "{workspaceRoot}/dist/apps/stats-dapp"
+        "{workspaceRoot}/dist/apps/stats-dapp",
+        "{workspaceRoot}/dist/apps/faucet/.next",
+        "{workspaceRoot}/dist/apps/tangle-website/.next",
+        "{workspaceRoot}/dist/apps/webbsite/.next"
       ]
     },
     "lint": {

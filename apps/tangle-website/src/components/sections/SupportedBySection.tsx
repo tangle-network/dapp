@@ -33,7 +33,7 @@ const cardItems: Array<SupportedBySectionCardType> = [
 
 export const SupportedBySection = () => {
   return (
-    <section className="py-[80px]">
+    <section className="py-[60px]">
       {/* DETAILS */}
       <div className="max-w-[1440px] mx-auto grid gap-[70px] px-3 lg:grid-cols-2 lg:items-center lg:px-[40px] xl:px-[160px]">
         <div className="md:w-[75%] lg:w-full flex flex-col gap-6 items-start">

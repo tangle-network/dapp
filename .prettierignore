@@ -9,3 +9,5 @@
 /node_modules
 /.vscode
 /**/.next
+apps/stats-dapp/graphql.schema.json
+/**/generated

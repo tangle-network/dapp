@@ -19,7 +19,7 @@ export const IntroducingSection = () => {
           </div>
           <Typography
             variant="mkt-body1"
-            className="text-center lg:w-[60%] font-medium text-mono-140 mb-12"
+            className="text-center lg:w-[60%] font-medium text-mono-140 md:mb-12"
           >
             The next-generation blockchain connecting cross-chain dApps with
             threshold signature scheme (TSS) governance system.
