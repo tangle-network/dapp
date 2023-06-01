@@ -87,6 +87,17 @@ export const TransferContainer = forwardRef<
       [activeApi?.state.activeBridge, currentTypedChainId]
     );
 
+    const useRelayerArgs = useMemo(
+      () => ({
+        typedChainId: currentTypedChainId,
+        target:
+          activeApi?.state.activeBridge && currentTypedChainId
+            ? activeApi.state.activeBridge.targets[currentTypedChainId]
+            : undefined,
+      }),
+      [activeApi?.state.activeBridge, currentTypedChainId]
+    );
+
     // Given the user inputs above, fetch relayers state
     const {
       relayersState: { activeRelayer, relayers },

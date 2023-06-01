@@ -204,6 +204,10 @@ export const StackedAreaChartContainer = () => {
     return filteredData;
   }, [timeRange, convertedData, thirtyMinData, oneHourData, oneDayData]);
 
+  useEffect(() => {
+    setTimeRange('three-months');
+  }, []);
+
   return (
     <Card>
       {isLoading ? (

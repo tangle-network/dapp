@@ -47,6 +47,7 @@ import {
   calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
+  evmProviderFactory,
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
