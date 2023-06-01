@@ -5,4 +5,3 @@ export * from './Layout';
 export * from './TransferContainer';
 export * from './UploadSpendNoteModal';
 export * from './WithdrawContainer';
-export * from './EduCardWithTxQueue';

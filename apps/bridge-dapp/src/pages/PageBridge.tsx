@@ -10,18 +10,22 @@ import {
   TabTrigger,
   TabsList,
   TabsRoot,
+  TransactionQueueCard,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
-import { InteractiveFeedbackView, WalletModal } from '../components';
+import {
+  EducationCard,
+  InteractiveFeedbackView,
+  WalletModal,
+} from '../components';
 import { FilterButton, ManageButton } from '../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
   DepositContainer,
-  EduCardWithTxQueue,
   TransferContainer,
   UploadSpendNoteModal,
   WithdrawContainer,
@@ -44,7 +48,11 @@ const PageBridge = () => {
   const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { activeFeedback, noteManager } = useWebContext();
+  const {
+    activeFeedback,
+    noteManager,
+    txQueue: { txPayloads },
+  } = useWebContext();
 
   const { smoothScrollToTop } = useScrollActions();
 
@@ -93,6 +101,7 @@ const PageBridge = () => {
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
   } = useNoteAccount();
+
   const { notificationApi } = useWebbUI();
 
   const [deleteNotes, setDeleteNotes] = useState<Note[] | undefined>(undefined);
@@ -197,6 +206,11 @@ const PageBridge = () => {
     [defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet]
   );
 
+  const isDisplayTxQueueCard = useMemo(
+    () => txPayloads.length > 0,
+    [txPayloads]
+  );
+
   return (
     <>
       <div className="w-full h-full">
@@ -235,7 +249,19 @@ const PageBridge = () => {
                 </TabContent>
               </TabsRoot>
 
-              <EduCardWithTxQueue activeTab={activeTab} />
+              <div>
+                {/** Transaction Queue Card */}
+                <TransactionQueueCard
+                  className="w-full mb-4 max-w-none"
+                  transactions={txPayloads}
+                />
+
+                {/** Education cards */}
+                <EducationCard
+                  defaultOpen={!isDisplayTxQueueCard} // If there is a tx queue card, then don't open the education card by default
+                  currentTab={activeTab}
+                />
+              </div>
             </div>
           </div>
         </ErrorBoundary>
