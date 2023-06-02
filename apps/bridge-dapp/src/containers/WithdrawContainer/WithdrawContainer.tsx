@@ -105,17 +105,6 @@ export const WithdrawContainer = forwardRef<
     [activeApi, currentTypedChainId]
   );
 
-  const useRelayersArgs = useMemo(
-    () => ({
-      typedChainId: currentTypedChainId ?? undefined,
-      target:
-        activeApi?.state.activeBridge && currentTypedChainId
-          ? activeApi.state.activeBridge.targets[currentTypedChainId]
-          : undefined,
-    }),
-    [activeApi, currentTypedChainId]
-  );
-
   // Given the user inputs above, fetch relayers state
   const {
     relayersState: { activeRelayer, relayers },
