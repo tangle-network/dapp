@@ -43,7 +43,7 @@ export const ColorPalettesSection = () => {
       <div className="max-w-[1440px] mx-auto space-y-6 md:space-y-8">
         <Typography
           variant="mkt-h3"
-          className="text-center dark:text-mono-0 font-black"
+          className="font-black text-center dark:text-mono-0"
         >
           Color Palettes
         </Typography>
@@ -57,7 +57,7 @@ export const ColorPalettesSection = () => {
           }
         </Typography>
 
-        <div className="flex justify-center py-6 md:px-6 gap-3 md:gap-6">
+        <div className="flex justify-center gap-3 py-6 md:px-6 md:gap-6">
           {circleColors.map((item, i) => (
             <ColorCircle
               key={i}
@@ -76,7 +76,7 @@ export const ColorPalettesSection = () => {
           download
           target="_blank"
           rel="noreferrer"
-          className="block w-fit mx-auto"
+          className="block mx-auto w-fit"
         >
           <Button className="block mx-auto button-base button-primary">
             Download

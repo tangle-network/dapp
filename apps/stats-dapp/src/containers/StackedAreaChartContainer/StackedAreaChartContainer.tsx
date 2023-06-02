@@ -1,24 +1,24 @@
-import { useAllProposalsTimestamps } from '../../provider/hooks';
-import { useStatsContext } from '../../provider/stats-provider';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  Surface,
-  Symbols,
-} from 'recharts';
 import { Spinner } from '@webb-tools/icons';
 import { Card, Chip, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
+import { useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Surface,
+  Symbols,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Config } from 'tailwindcss';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
-import { Config } from 'tailwindcss';
-import { useMemo, useState } from 'react';
+import { useAllProposalsTimestamps } from '../../provider/hooks';
+import { useStatsContext } from '../../provider/stats-provider';
 const fullConfig = resolveConfig(tailwindConfig as Config);
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
@@ -226,12 +226,12 @@ export const StackedAreaChartContainer = () => {
   return (
     <Card>
       {isLoading ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex items-center justify-center h-full">
           <Spinner className="w-10 h-10 animate-spin" />
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between pr-14 pt-2">
+          <div className="flex items-center justify-between pt-2 pr-14">
             <TitleWithInfo
               title="Proposal (Submission) History"
               variant="h5"
@@ -242,7 +242,7 @@ export const StackedAreaChartContainer = () => {
                 <Chip
                   key={range}
                   color="blue"
-                  className="px-3 py-1 cursor-pointer capitalize text-sm"
+                  className="px-3 py-1 text-sm capitalize cursor-pointer"
                   isSelected={timeRange === range ? true : false}
                   onClick={() => setTimeRange(range)}
                 >
