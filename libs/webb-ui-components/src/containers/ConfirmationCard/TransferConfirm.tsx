@@ -28,6 +28,16 @@ import {
 import { Section, WrapperSection } from './WrapperSection';
 import { TransferConfirmProps } from './types';
 
+const defaultRecipientTitleProps: NonNullable<
+  TransferConfirmProps['recipientTitleProps']
+> = {
+  titleComponent: 'h6',
+  title: 'Recipient',
+  variant: 'utility',
+  titleClassName: 'text-mono-100 dark:text-mono-80',
+  className: 'text-mono-100 dark:text-mono-80',
+};
+
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
     {
@@ -46,6 +56,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       onCopy,
       onDownload,
       progress,
+      recipientTitleProps,
       recipientPublicKey,
       relayerAddress,
       relayerExternalUrl,
@@ -181,7 +192,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                     <TitleWithInfo
                       titleComponent="h6"
                       title="Relayer"
-                      info="Relayer"
                       variant="utility"
                       titleClassName="text-mono-100 dark:text-mono-80"
                       className="text-mono-100 dark:text-mono-80"
@@ -216,12 +226,17 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 <Section>
                   <div className="space-y-1">
                     <TitleWithInfo
-                      titleComponent="h6"
                       title="Recipient"
-                      info="Recipient"
-                      variant="utility"
-                      titleClassName="text-mono-100 dark:text-mono-80"
-                      className="text-mono-100 dark:text-mono-80"
+                      {...defaultRecipientTitleProps}
+                      {...recipientTitleProps}
+                      titleClassName={twMerge(
+                        defaultRecipientTitleProps.titleClassName,
+                        recipientTitleProps?.titleClassName
+                      )}
+                      className={twMerge(
+                        defaultRecipientTitleProps.className,
+                        recipientTitleProps?.className
+                      )}
                     />
 
                     <div className="flex items-center justify-between">
@@ -314,7 +329,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Max fee',
+                  title: 'Est. transaction fee',
                 }}
                 rightContent={feeContent}
               />

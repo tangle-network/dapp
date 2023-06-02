@@ -1,24 +1,31 @@
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TabContent,
+  TabTrigger,
   TabsList,
   TabsRoot,
-  TabTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
+import Lottie from 'react-lottie-player';
 
-const tabsContent = {
+const tabsContent: Record<
+  string,
+  {
+    animationUrl: string;
+    title: string;
+  }
+> = {
   ownership: {
-    animationUrl: '/animations/deposit.lottie',
+    animationUrl: '/animations/deposit.json',
     title: 'Proof of Ownership',
   },
   identity: {
-    animationUrl: '/animations/kyc.lottie',
+    animationUrl: '/animations/kyc.json',
     title: 'Proof of Identity',
   },
   privacy: {
-    animationUrl: '/animations/ecosystem.lottie',
+    animationUrl: '/animations/ecosystem.json',
     title: 'Privacy Ecosystems',
   },
 };
@@ -32,12 +39,17 @@ export const PrivacyConnectedSection = () => {
   return (
     <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="webb" size="lg" className="mx-auto" />
-      <Typography variant="mkt-h2" className="px-4 mt-6 text-center">
+
+      <Typography
+        variant="mkt-h3"
+        className="px-4 mt-6 text-center text-mono-200 font-black"
+      >
         The Future of privacy is Connected
       </Typography>
+
       <Typography
-        variant="mkt-body"
-        className="px-4 mt-6 text-center md:mt-9 text-mono-180"
+        variant="mkt-body1"
+        className="px-4 mt-6 text-center md:mt-9 text-mono-140 font-medium"
       >
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our
@@ -75,12 +87,12 @@ export const PrivacyConnectedSection = () => {
 
 const LottiePlayer: FC<{ animationUrl: string }> = ({ animationUrl }) => {
   return (
-    <dotlottie-player
-      src={animationUrl}
-      autoplay
+    <Lottie
+      path={animationUrl}
+      play
       speed={0.8}
       loop
-      style={{ height: '100%', width: '100%' }}
+      className="w-full h-full"
     />
   );
 };

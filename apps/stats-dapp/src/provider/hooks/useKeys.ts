@@ -190,32 +190,42 @@ export function useKeys(
   const [call, query] = usePublicKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
   const { blockTime } = useStatsContext();
+  const [isLoading, setLoading] = useState(false);
+  const [fetched, setFetched] = useState(false);
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
-    isLoading: true,
+    isLoading: false,
   });
 
-  // fetch the data once the filter has changed
   useEffect(() => {
-    call({
-      variables: {
-        offset: reqQuery.offset,
-        PerPage: reqQuery.perPage,
-      },
-      fetchPolicy: 'network-only',
-    }).catch((e) => {
-      setPage({
-        val: null,
-        isFailed: true,
-        isLoading: false,
-        error: e.message,
-      });
-    });
-  }, [reqQuery, call, currentKey]);
-  // Handle the GraphQl call response
+    if (!fetched) {
+      setLoading(true);
+      call({
+        variables: {
+          offset: reqQuery.offset,
+          PerPage: reqQuery.perPage,
+        },
+        fetchPolicy: 'network-only',
+      })
+        .then(() => {
+          setFetched(true);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setPage({
+            val: null,
+            isFailed: true,
+            isLoading: false,
+            error: e.message,
+          });
+        });
+    }
+  }, [reqQuery, call, currentKey, fetched]);
 
   useEffect(() => {
+    if (!fetched) return;
+
     const subscription = query.observable
       .map((res): Loadable<Page<PublicKeyListView>> => {
         if (res.loading) {
@@ -235,7 +245,6 @@ export function useKeys(
         }
         if (res.data.publicKeys) {
           const data = res.data.publicKeys;
-
           const filteredData = data.nodes.filter((n) => !!n);
 
           return {
@@ -279,6 +288,7 @@ export function useKeys(
                   nextKeyId,
                 };
               }),
+
               pageInfo: {
                 count: data.totalCount,
                 hasNext: data.pageInfo.hasNextPage,
@@ -296,10 +306,11 @@ export function useKeys(
       .subscribe(setPage);
 
     return () => subscription.unsubscribe();
-  }, [query, blockTime, sessionHeight]);
+  }, [query, blockTime, sessionHeight, fetched]);
 
-  return page;
+  return isLoading ? { isLoading, isFailed: false, val: null } : page;
 }
+
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */

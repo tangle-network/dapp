@@ -3,7 +3,7 @@
   "npmScope": "webb-frontends",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
@@ -11,14 +11,22 @@
           "test",
           "e2e",
           "build-storybook"
-        ]
+        ],
+        "accessToken": "YWVmYTlhNjUtYzgwZS00MjkzLTgyODEtNGY5ZTc3N2QyMTczfHJlYWQtd3JpdGU="
       }
     }
   },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/bridge-dapp",
+        "{workspaceRoot}/dist/apps/stats-dapp",
+        "{workspaceRoot}/dist/apps/faucet/.next",
+        "{workspaceRoot}/dist/apps/tangle-website/.next",
+        "{workspaceRoot}/dist/apps/webbsite/.next"
+      ]
     },
     "lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
@@ -54,7 +62,18 @@
     "sharedGlobals": ["{workspaceRoot}/babel.config.json"]
   },
   "generators": {
-    "@nrwl/react": {
+    "@nx/web:application": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nx/web:library": {
+      "style": "css",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nx/react": {
       "application": {
         "style": "scss",
         "linter": "eslint",
@@ -68,18 +87,7 @@
         "linter": "eslint"
       }
     },
-    "@nrwl/web:application": {
-      "style": "css",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
-    },
-    "@nrwl/web:library": {
-      "style": "css",
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nrwl/next": {
+    "@nx/next": {
       "application": {
         "style": "css",
         "linter": "eslint"
@@ -91,7 +99,7 @@
     "libsDir": "libs"
   },
   "pluginsConfig": {
-    "@nrwl/js": {
+    "@nx/js": {
       "analyzeSourceFiles": true
     }
   }

@@ -1,10 +1,12 @@
-import React, { FC, useCallback } from 'react';
-import { TransactionCardItemProps, TransactionCardFooterProps } from './types';
-import cx from 'classnames';
-import { twMerge } from 'tailwind-merge';
-import { ExternalLinkLine, Spinner } from '@webb-tools/icons';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
+import { Spinner } from '@webb-tools/icons';
+import cx from 'classnames';
+import { FC, useCallback, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { Button } from '../../components/Button';
+import { Typography } from '../../typography';
+import { TransactionCardFooterProps, TransactionCardItemProps } from './types';
 
 /**
  *  Transaction card footer
@@ -50,16 +52,25 @@ export const TransactionCardFooter: FC<
   TransactionCardFooterProps &
     Pick<TransactionCardItemProps, 'onDismiss' | 'onDetails'>
 > = ({ isLoading, message, link, hasWarning, onDetails, onDismiss }) => {
-  const textClass = cx(
-    'py-0 align-middle',
-    { 'text-yellow-100 dark:text-yellow-50': hasWarning },
-    { 'text-mono-100': !hasWarning }
+  const textClass = useMemo(
+    () =>
+      cx(
+        'py-0 align-middle',
+        { 'text-yellow-100 dark:text-yellow-50': hasWarning },
+        { 'text-mono-100': !hasWarning }
+      ),
+    [hasWarning]
   );
 
-  const showDetails = Boolean(onDetails) && (isLoading || hasWarning);
+  const showDetails = useMemo(
+    () => Boolean(onDetails) && (isLoading || hasWarning),
+    [hasWarning, isLoading, onDetails]
+  );
+
   const buttonHandler = useCallback(() => {
     return showDetails ? onDetails?.() : onDismiss();
-  }, [showDetails]);
+  }, [onDetails, onDismiss, showDetails]);
+
   return (
     <div
       className={cx('my-0 flex items-center px-4 py-3', {

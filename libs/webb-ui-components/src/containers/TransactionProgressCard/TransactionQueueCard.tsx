@@ -1,4 +1,12 @@
-import React, {
+import {
+  AlertFill,
+  ChevronUp,
+  ExternalLinkLine,
+  PartyFill,
+  Spinner,
+  TokenIcon,
+} from '@webb-tools/icons';
+import {
   FC,
   forwardRef,
   useCallback,
@@ -6,27 +14,18 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { IconWithTooltip } from '../../components/IconWithTooltip';
+import { TokenPairIcons } from '../../components/TokenPairIcons';
+import { Typography } from '../../typography';
+import { shortenHex } from '../../utils';
+import { TransactionProgressCard } from './TransactionProgressCard';
 import {
   TransactionCardItemProps,
   TransactionItemVariant,
   TransactionQueueProps,
 } from './types';
-import { TransactionProgressCard } from './TransactionProgressCard';
-import {
-  shortenHex,
-  Typography,
-  IconWithTooltip,
-  TokenPairIcons,
-} from '@webb-tools/webb-ui-components';
-import {
-  ChevronUp,
-  ExternalLinkLine,
-  Spinner,
-  TokenIcon,
-  AlertFill,
-  PartyFill,
-} from '@webb-tools/icons';
-import { twMerge } from 'tailwind-merge';
 
 const CompletedFooter: FC<{ method: TransactionItemVariant }> = ({
   method,
@@ -113,7 +112,7 @@ export const TransactionQueueCard = forwardRef<
         onCollapseChange?.(!collapsed);
       }
       setCollapsed(!collapsed);
-    }, [onCollapseChange, setCollapsed, collapsed, controlled]);
+    }, [onCollapseChange, setCollapsed, collapsed]);
 
     const txCardProps = useMemo(() => {
       return transactions.map(
@@ -218,7 +217,7 @@ export const TransactionQueueCard = forwardRef<
     const transactionSummeryText = useMemo(() => {
       const { completedCount, failedCount, processingCount } =
         transactionsCountSummery;
-      let messages = [];
+      const messages = [];
 
       if (processingCount) {
         messages.push(

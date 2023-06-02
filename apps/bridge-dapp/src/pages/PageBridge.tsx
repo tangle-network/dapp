@@ -1,7 +1,9 @@
+import { ErrorBoundary } from '@sentry/react';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
-import { useScrollActions } from '@webb-tools/responsive-utils';
+import { useNoteAccount, useScrollActions } from '@webb-tools/react-hooks';
+import { Note } from '@webb-tools/sdk-core';
 import {
   ErrorFallback,
   TabContent,
@@ -14,8 +16,6 @@ import {
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
 
-import { useNoteAccount, useTxQueue } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
 import {
   EducationCard,
   InteractiveFeedbackView,
@@ -25,11 +25,11 @@ import { FilterButton, ManageButton } from '../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
+  DepositContainer,
+  TransferContainer,
   UploadSpendNoteModal,
+  WithdrawContainer,
 } from '../containers';
-import { DepositContainer } from '../containers/DepositContainer';
-import { TransferContainer } from '../containers/TransferContainer';
-import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
@@ -40,21 +40,21 @@ import {
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
+import { BridgeTabType } from '../types';
 import { downloadNotes } from '../utils';
-import { ErrorBoundary } from '@sentry/react';
 
 const PageBridge = () => {
   // State for the tabs
-  const [activeTab, setActiveTab] = useState<
-    'Deposit' | 'Withdraw' | 'Transfer'
-  >('Deposit');
+  const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { activeFeedback, noteManager } = useWebContext();
+  const {
+    activeFeedback,
+    noteManager,
+    txQueue: { txPayloads },
+  } = useWebContext();
 
   const { smoothScrollToTop } = useScrollActions();
-
-  const { txPayloads } = useTxQueue();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -101,6 +101,7 @@ const PageBridge = () => {
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
   } = useNoteAccount();
+
   const { notificationApi } = useWebbUI();
 
   const [deleteNotes, setDeleteNotes] = useState<Note[] | undefined>(undefined);
@@ -196,11 +197,6 @@ const PageBridge = () => {
   const { TryAnotherWalletModal, onTryAnotherWallet } =
     useTryAnotherWalletWithView();
 
-  const isDisplayTxQueueCard = useMemo(
-    () => txPayloads.length > 0,
-    [txPayloads]
-  );
-
   const sharedBridgeTabContainerProps = useMemo(
     () => ({
       defaultDestinationChain: defaultDestinationChain,
@@ -210,17 +206,16 @@ const PageBridge = () => {
     [defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet]
   );
 
+  const isDisplayTxQueueCard = useMemo(
+    () => txPayloads.length > 0,
+    [txPayloads]
+  );
+
   return (
     <>
-      <div className="w-full">
+      <div className="w-full h-full">
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
-          <div
-            className={cx(
-              ' p-9',
-              "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
-              'bg-center object-fill bg-no-repeat bg-cover'
-            )}
-          >
+          <div className="h-full p-9">
             <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
               {customMainComponent}
 

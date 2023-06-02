@@ -24,7 +24,6 @@ function useSetting<T>(
       window.localStorage.setItem(key, value as any as string);
       _setValue(value);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [_setValue, key]
   );
 
@@ -36,7 +35,6 @@ function useSetting<T>(
     } else if (defaultValue) {
       _setValue(defaultValue);
     }
-    /* eslint-disable-next-line  react-hooks/exhaustive-deps */
   }, [_setValue, defaultValue]);
 
   return { setValue, value: value as any as T };

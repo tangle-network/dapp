@@ -115,3 +115,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.8]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.8
 [0.0.9]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.9
+
+## [0.0.10] - 2023-06-02
+
+### Fixed, Changed and Added
+
+- Footer is now bottom bound
+- Upgrade and remove unused/deprecated dependencies
+- Unifying `dist` Dirs for all Apps
+- Fix Next App Builds
+- Disable NX Caching in the CI
+- Fix bridge link
+- Bridge Improvements ([#1264](https://github.com/webb-tools/webb-dapp/pull/1264))
+- Update new deployments
+- Add Nix flake devenv
+- Fix Bridge Hanging Issue

@@ -5,21 +5,16 @@ import {
   CloseCircleLineIcon,
   Menu,
 } from '@webb-tools/icons';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  Button,
-  Dropdown,
-  DropdownBasicButton,
-  DropdownBody,
-  MenuItem,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { FC, forwardRef, useMemo } from 'react';
+
+import { Typography } from '../../typography';
+import { Accordion, AccordionContent, AccordionItem } from '../Accordion';
+import { Button } from '../Button';
+import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
+import { MenuItem } from '../MenuItem';
 import { InternalOrExternalLink } from './InternalOrExternalLink';
-import { MobileNavProps, NavbarProps, NavItemType } from './types';
+import { MobileNavProps, NavItemType, NavbarProps } from './types';
 
 const isNavItem = (item: any): item is NavItemType => {
   return 'label' in item && 'url' in item;

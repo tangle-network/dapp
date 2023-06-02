@@ -28,14 +28,15 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [PresetTypedChainId.ScrollAlpha]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': 666098,
   },
+
   [PresetTypedChainId.HermesOrbit]: {
-    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
+    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 572,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
+    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 679,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD': 20,
+    '0x7dA8a372e3236dEe794D88776F6657B5B2AfB832': 514,
   },
 
   [PresetTypedChainId.HermesLocalnet]: {

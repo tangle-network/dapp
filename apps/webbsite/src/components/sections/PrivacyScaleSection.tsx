@@ -11,13 +11,16 @@ export const PrivacyScaleSection = () => {
       )}
     >
       <div className="space-y-4 md:space-y-9">
-        <Typography variant="mkt-h2" className="px-4 text-center">
+        <Typography
+          variant="mkt-h3"
+          className="px-4 text-center dark:text-mono-0 font-black"
+        >
           How the Future of Privacy Scales
         </Typography>
 
         <Typography
-          variant="mkt-body"
-          className="text-center max-w-[900px] px-4 mx-auto dark:text-mono-60"
+          variant="mkt-body1"
+          className="text-center max-w-[900px] px-4 mx-auto dark:text-mono-80 !font-medium"
         >
           Webb connects cryptographic accumulators used in zero-knowledge
           applications so users can leverage the power of cross-chain

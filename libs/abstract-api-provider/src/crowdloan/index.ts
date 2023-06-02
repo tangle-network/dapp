@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { EventBus } from '@webb-tools/app-util';
-import { FixedPointNumber } from '@webb-tools/sdk-core';
 import { BehaviorSubject } from 'rxjs';
 
 export type CrowdloanEvent = {
@@ -10,7 +9,7 @@ export type CrowdloanEvent = {
 };
 
 export type ContributePayload = {
-  amount: FixedPointNumber;
+  amount: number;
   parachainId: number;
 };
 
