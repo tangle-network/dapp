@@ -1,24 +1,24 @@
-import { useAllProposalsTimestamps } from '../../provider/hooks';
-import { useStatsContext } from '../../provider/stats-provider';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  Surface,
-  Symbols,
-} from 'recharts';
 import { Spinner } from '@webb-tools/icons';
 import { Card, Chip, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
+import { useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Surface,
+  Symbols,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Config } from 'tailwindcss';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
-import { Config } from 'tailwindcss';
-import { useEffect, useMemo, useState } from 'react';
+import { useAllProposalsTimestamps } from '../../provider/hooks';
+import { useStatsContext } from '../../provider/stats-provider';
 const fullConfig = resolveConfig(tailwindConfig as Config);
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
@@ -222,10 +222,6 @@ export const StackedAreaChartContainer = () => {
   );
 
   const nonZeroProposalTypesArray = Array.from(nonZeroProposalTypes);
-
-  useEffect(() => {
-    setTimeRange('three-months');
-  }, []);
 
   return (
     <Card>
