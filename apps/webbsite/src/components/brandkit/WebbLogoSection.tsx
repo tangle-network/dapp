@@ -6,7 +6,7 @@ export const WebbLogoSection = () => {
       <div className="max-w-[1440px] mx-auto space-y-9">
         <Typography
           variant="mkt-h3"
-          className="text-center text-mono-200 font-black"
+          className="font-black text-center text-mono-200"
         >
           The Webb Logo
         </Typography>
@@ -21,10 +21,10 @@ export const WebbLogoSection = () => {
         </Typography>
 
         <div className="w-fit mx-auto p-4 flex flex-col md:flex-row gap-9 justify-center shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
-          <div className="bg-mono-20 rounded-lg flex items-center justify-center py-6 px-20">
+          <div className="flex items-center justify-center px-20 py-6 rounded-lg bg-mono-20">
             <Logo size="lg" />
           </div>
-          <div className="bg-mono-200 rounded-lg flex items-center justify-center py-6 px-20">
+          <div className="flex items-center justify-center px-20 py-6 rounded-lg bg-mono-200">
             <Logo size="lg" darkMode />
           </div>
         </div>
@@ -34,7 +34,7 @@ export const WebbLogoSection = () => {
           download
           target="_blank"
           rel="noreferrer"
-          className="block w-fit mx-auto"
+          className="block mx-auto w-fit"
         >
           <Button className="block mx-auto button-base button-primary">
             Download

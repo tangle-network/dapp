@@ -18,7 +18,7 @@ import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
 import { Config } from 'tailwindcss';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 const fullConfig = resolveConfig(tailwindConfig as Config);
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
@@ -223,15 +223,19 @@ export const StackedAreaChartContainer = () => {
 
   const nonZeroProposalTypesArray = Array.from(nonZeroProposalTypes);
 
+  useEffect(() => {
+    setTimeRange('three-months');
+  }, []);
+
   return (
     <Card>
       {isLoading ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex items-center justify-center h-full">
           <Spinner className="w-10 h-10 animate-spin" />
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between pr-14 pt-2">
+          <div className="flex items-center justify-between pt-2 pr-14">
             <TitleWithInfo
               title="Proposal (Submission) History"
               variant="h5"
@@ -242,7 +246,7 @@ export const StackedAreaChartContainer = () => {
                 <Chip
                   key={range}
                   color="blue"
-                  className="px-3 py-1 cursor-pointer capitalize text-sm"
+                  className="px-3 py-1 text-sm capitalize cursor-pointer"
                   isSelected={timeRange === range ? true : false}
                   onClick={() => setTimeRange(range)}
                 >

@@ -82,7 +82,6 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.PreparingTransaction]: undefined;
 
   [TransactionState.FetchingFixtures]: FixturesProgress;
-
   [TransactionState.FetchingLeavesFromRelayer]: undefined;
   [TransactionState.FetchingLeaves]: LeavesProgress;
   // undefined -> start validating, boolean -> true if valid, false if not valid

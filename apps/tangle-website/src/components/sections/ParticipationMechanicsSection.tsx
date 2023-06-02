@@ -62,7 +62,7 @@ export const ParticipationMechanicsSection = () => {
         <div className="flex flex-col items-center mb-9 md:px-5 lg:px-0">
           <Typography
             variant="mkt-small-caps"
-            className="text-center pb-2 font-black text-purple-70"
+            className="pb-2 font-black text-center text-purple-70"
           >
             Participation Mechanics
           </Typography>
@@ -74,7 +74,7 @@ export const ParticipationMechanicsSection = () => {
           </Typography>
           <Typography
             variant="mkt-body1"
-            className="text-center font-medium text-mono-140"
+            className="font-medium text-center text-mono-140"
           >
             With Tangle Network, we can create a more scalable, interoperable,
             and positive-sum web3 privacy ecosystem.
@@ -88,7 +88,7 @@ export const ParticipationMechanicsSection = () => {
         >
           {/* Desktop + Mobile Tab Triggers */}
           <TabsList aria-label="tabs" className="lg:mx-0">
-            <div className="grid md:hidden lg:grid w-full grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div className="grid w-full grid-cols-2 gap-3 mb-6 md:hidden lg:grid lg:grid-cols-4">
               {Object.keys(tabsContent).map((tabName, i) => (
                 <TabTrigger
                   value={tabName}
@@ -133,7 +133,7 @@ export const ParticipationMechanicsSection = () => {
             <TabContent key={key} value={key} className="md:px-5 lg:px-0">
               <Typography
                 variant="mkt-subheading"
-                className="font-bold mb-3 text-mono-200"
+                className="mb-3 font-bold text-mono-200"
               >
                 {value.title}
               </Typography>
@@ -145,7 +145,7 @@ export const ParticipationMechanicsSection = () => {
               </Typography>
               <a
                 href={value.linkUrl}
-                className="text-purple-70 font-bold capitalize"
+                className="font-bold capitalize text-purple-70"
               >
                 {value.linkText}
               </a>
@@ -160,11 +160,11 @@ export const ParticipationMechanicsSection = () => {
 const ParticipationTabTrigger: React.FC<TangleFeatureCardProps> = (props) => {
   const { tabName } = props;
   return (
-    <div className="w-full flex flex-col items-center justify-center">
-      <div className="participation-tab w-full aspect-square flex justify-center items-center rounded-lg">
+    <div className="flex flex-col items-center justify-center w-full">
+      <div className="flex items-center justify-center w-full rounded-lg participation-tab aspect-square">
         <div className="w-full text-inherit">
           <div className="flex flex-col items-center gap-2 text-inherit">
-            <div className="w-12 h-12 bg-mono-40 rounded-full" />
+            <div className="w-12 h-12 rounded-full bg-mono-40" />
             <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
               {tabName}
             </p>

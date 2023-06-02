@@ -117,7 +117,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
       </div>
       <div className="py-[42px] px-6 flex flex-col justify-between flex-1">
         <div>
-          <p className="mono1 mb-4">0{index}</p>
+          <p className="mb-4 mono1">0{index}</p>
           <hr />
           <Typography
             variant="mkt-subheading"
@@ -125,7 +125,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
           >
             {title}
           </Typography>
-          <Typography variant="mkt-body1" className="text-mono-140 font-medium">
+          <Typography variant="mkt-body1" className="font-medium text-mono-140">
             {description}
           </Typography>
         </div>
