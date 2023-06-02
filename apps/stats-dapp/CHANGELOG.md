@@ -91,3 +91,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.7]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.7
 [0.0.8]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.8
+
+## [0.0.9] - 2023-06-02
+
+### Fixed, Changed and Added
+
+- Fix stats-dapp Netlify build fail
+- Fixes Network Thresholds History Chart
+- Adds swirl BG image to stats dapp
+- Fixes stats keys page refresh issue
+- Fixes cumulative proposals graph
+- Adds a check for proposal data on proposal detail page to prevent from crashing
+- Updates proposals query's fetch policy to always fetch latest data
