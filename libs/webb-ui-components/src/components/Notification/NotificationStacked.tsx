@@ -30,17 +30,20 @@ export const NotificationStacked: React.FC<{
       });
       return snackKey;
     },
-    [enqueueSnackbar]
+    [closeSnackbar, enqueueSnackbar, setOptions]
   );
 
-  const remove = useCallback((key: SnackbarKey) => closeSnackbar(key), []);
+  const remove = useCallback(
+    (key: SnackbarKey) => closeSnackbar(key),
+    [closeSnackbar]
+  );
 
   useEffect(() => {
     _notificationApi = {
       addToQueue,
       remove,
     };
-  }, []);
+  }, [addToQueue, remove]);
 
   return (
     <NotificationContext.Provider

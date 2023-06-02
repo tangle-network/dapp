@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
@@ -9,18 +8,18 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
+  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
-  NetworkStorage,
   noteStorageFactory,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
+  Wallet,
   chainsConfig,
   chainsPopulated,
-  Wallet,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -36,25 +35,24 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  substrateProviderFactory,
   WebbPolkadot,
+  substrateProviderFactory,
 } from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  evmProviderFactory,
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
+  evmProviderFactory,
 } from '@webb-tools/web3-api-provider';
-import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
+import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TAppEvent } from './app-event';
@@ -99,7 +97,7 @@ function notificationHandler(notification: NotificationPayload) {
       const description = notification.data ? (
         <div>
           {Object.keys(notification.data).map((i, idx) => (
-            <Typography variant={'h6'} key={`${i}${idx}`}>
+            <Typography variant="body1" key={`${i}${idx}`}>
               {notification.data?.[i]}
             </Typography>
           ))}
@@ -427,7 +425,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     async (
       chain: Chain,
       _wallet: Wallet,
-      _networkStorage?: NetworkStorage | undefined
+      _networkStorage?: NetworkStorage | undefined,
+      _bridge?: Bridge | undefined
     ) => {
       const wallet = _wallet || activeWallet;
 
@@ -754,6 +753,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           status: 'sucess',
         });
 
+        // If the _bridge is passed in, set it as the active bridge
+        if (localActiveApi?.state && _bridge) {
+          localActiveApi.state.activeBridge = _bridge;
+        }
+
         return localActiveApi;
       } catch (e) {
         setLoading(false);
@@ -797,11 +801,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = useCallback(
-    async (chain: Chain, wallet: Wallet) => {
+    async (chain: Chain, wallet: Wallet, bridge?: Bridge) => {
       setIsConnecting(true);
 
       try {
-        const provider = await switchChain(chain, wallet);
+        const provider = await switchChain(chain, wallet, undefined, bridge);
         /** TODO: `networkStorage` can be `null` here.
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous
@@ -972,9 +976,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }}
     >
       <StoreProvider>
-        <SettingProvider>
-          <DimensionsProvider>{children}</DimensionsProvider>
-        </SettingProvider>
+        <SettingProvider>{children}</SettingProvider>
       </StoreProvider>
     </WebbContext.Provider>
   );

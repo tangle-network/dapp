@@ -25,7 +25,7 @@ const TwitterLink = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'text-blue-70 hover:underline',
+          'text-blue-70 hover:underline !text-[20px] font-bold',
           cx({ 'mkt-caption': !isInheritFont }),
           className
         )}

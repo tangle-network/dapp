@@ -11,8 +11,7 @@ const path = require('path'),
     require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin'),
-  TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+  CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
 
@@ -62,14 +61,14 @@ function createWebpackBase() {
       ignored: ['**/node_modules'],
     },
 
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src', 'index.tsx')],
+    entry: [path.resolve(__dirname, 'src', 'index.tsx')],
 
     output: {
       chunkFilename: '[name].[chunkhash:8].js',
       filename: '[name].[contenthash:8].js',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       hashFunction: 'xxhash64',
-      path: path.join(__dirname, 'build'),
+      path: path.join(__dirname, '../../dist/apps/stats-dapp'),
       publicPath: '',
     },
 
@@ -82,13 +81,6 @@ function createWebpackBase() {
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
       modules: ['node_modules'],
 
-      plugins: [
-        new TsconfigPathsPlugin({
-          extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.css'],
-          configFile: path.resolve(__dirname, './tsconfig.app.json'),
-        }),
-      ],
-
       fallback: {
         assert: require.resolve('assert/'),
         crypto: require.resolve('crypto-browserify'),
@@ -97,6 +89,7 @@ function createWebpackBase() {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
         constants: false,
         fs: false,
         url: false,
@@ -113,42 +106,21 @@ function createWebpackBase() {
           use: {
             loader: 'babel-loader',
             options: {
+              compact: false,
               presets: [
-                '@nrwl/web/babel',
-                [
-                  '@babel/preset-env',
-                  {
-                    useBuiltIns: 'entry',
-                    corejs: '3',
-                    targets: {
-                      browsers: ['last 2 versions', 'not ie <= 8'],
-                      node: 'current',
-                    },
-                  },
-                ],
+                '@nx/js/babel',
+                '@babel/preset-env',
                 '@babel/preset-typescript',
                 ['@babel/preset-react', { development: isDevelopment }],
               ],
               plugins: [
-                '@babel/plugin-proposal-nullish-coalescing-operator',
-                '@babel/plugin-proposal-numeric-separator',
-                '@babel/plugin-proposal-optional-chaining',
                 isDevelopment && require.resolve('react-refresh/babel'),
-                [
-                  '@babel/plugin-transform-runtime',
-                  { useESModules: false, loose: false },
-                ],
-                '@babel/plugin-transform-react-jsx',
-                '@babel/plugin-syntax-bigint',
-                '@babel/plugin-syntax-dynamic-import',
-                '@babel/plugin-syntax-import-meta',
-                '@babel/plugin-syntax-top-level-await',
-                '@babel/plugin-proposal-class-properties',
                 [
                   '@babel/plugin-proposal-private-property-in-object',
                   { loose: false },
                 ],
                 ['@babel/plugin-proposal-private-methods', { loose: false }],
+                ['@babel/plugin-proposal-class-properties', { loose: false }],
                 'preval',
               ].filter(Boolean),
             },
@@ -235,11 +207,7 @@ function createWebpackBase() {
         // icon
         {
           test: /\.(ico)$/,
-          loader: 'file-loader',
-          options: {
-            name: '[name][ext]',
-            esModule: false,
-          },
+          type: 'asset',
         },
 
         // assets
@@ -266,7 +234,7 @@ function createWebpackBase() {
         {
           test: /\.svg$/i,
           issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack', 'file-loader'],
+          use: ['@svgr/webpack'],
         },
       ],
     },
@@ -358,6 +326,7 @@ function createWebpackBase() {
 
     // https://webpack.js.org/configuration/dev-server/
     devServer: {
+      hot: true,
       port: 3001,
       host: '0.0.0.0',
       compress: true,
@@ -371,7 +340,6 @@ function createWebpackBase() {
         const port = devServer.server.address().port;
         console.log('Listening on port:', port);
       },
-      hot: true,
       ...(isDevelopment
         ? {
             client: {

@@ -1,15 +1,14 @@
 import { arrayShuffle } from '@polkadot/util';
 import { ChainIcon } from '@webb-tools/icons';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks';
-import {
-  IconWithTooltip,
-  formatTokenAmount,
-} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { ComponentProps, FC, forwardRef, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+
+import { useWebbUI } from '../../hooks/useWebbUI';
 import { Typography } from '../../typography/Typography';
+import { formatTokenAmount } from '../../utils';
 import { Chip } from '../Chip';
+import { IconWithTooltip } from '../IconWithTooltip';
 import { ChainsRingProps } from './types';
 
 export const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(

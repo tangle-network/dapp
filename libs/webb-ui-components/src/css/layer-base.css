@@ -42,4 +42,4 @@ div,
 main {
   @apply scrollbar-thin scrollbar-thumb-mono-60 dark:scrollbar-thumb-mono-120;
   @apply overflow-visible;
-}
+} 

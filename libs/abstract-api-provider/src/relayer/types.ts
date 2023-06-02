@@ -27,6 +27,7 @@ export type RelayedChainConfig = {
  **/
 export type Capabilities = {
   hasIpService: boolean;
+  features: RelayerFeatures;
   supportedChains: {
     substrate: Map<number, RelayedChainConfig>;
     evm: Map<number, RelayedChainConfig>;
@@ -109,9 +110,20 @@ export type ChainNameIntoChainId = (
   basedOn: RelayerCMDBase
 ) => number | null;
 
+export interface RelayerFeatures {
+  dataQuery?: boolean;
+  governanceRelay?: boolean;
+  privateTxRelay?: boolean;
+}
+
+/**
+ * The relayer info object returned
+ * from the query /api/v1/info
+ */
 export interface RelayerInfo {
   substrate: Record<string, RelayedChainConfig | null>;
   evm: Record<string, RelayedChainConfig | null>;
+  features: RelayerFeatures;
 }
 
 /**

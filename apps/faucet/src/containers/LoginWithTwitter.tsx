@@ -227,8 +227,8 @@ const LoginWithTwitter = () => {
           <Typography
             component="p"
             ta="center"
-            variant="mkt-utility"
-            className="!text-red-70 mt-2"
+            variant="mkt-caption"
+            className="!text-red-70 mt-2 font-medium"
           >
             {loginError}
           </Typography>

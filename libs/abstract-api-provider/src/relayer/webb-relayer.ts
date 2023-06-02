@@ -8,7 +8,6 @@ import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { u8aToHex } from '@webb-tools/utils';
 import {
   Capabilities,
   CMDSwitcher,
@@ -17,6 +16,7 @@ import {
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Relayer withdraw status
@@ -70,12 +70,16 @@ const parseRelayerFeeErrorMessage = async (
 ): Promise<string> => {
   try {
     const text = await response.text();
-    return `Relayer fee error: \`${text}\``;
+    if (text) {
+      return `Relayer fee error: \`${text}\``;
+    }
   } catch (e) {
     // ignore error
   }
 
-  return `Relayer fee error: [${response.status}] \`${response.statusText}\``;
+  const errorText = response.statusText || 'Unknown error';
+
+  return `Relayer fee error: [${response.status}] \`${errorText}\``;
 };
 
 /**
@@ -261,14 +265,14 @@ export class WebbRelayer {
     if (req.ok) {
       const jsonResponse = await req.json();
       console.log('response: ', jsonResponse);
-      const fetchedLeaves: Uint8Array[] = jsonResponse.leaves;
+      const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
       console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
-        leaves: fetchedLeaves.map((leaf) => u8aToHex(leaf)),
+        leaves: fetchedLeaves,
       };
     } else {
       console.groupEnd();
@@ -282,10 +286,29 @@ export class WebbRelayer {
     gasAmount: BigNumber,
     abortSignal?: AbortSignal
   ): Promise<RelayerFeeInfo> | never {
-    const endpoint = `${
+    const { chainId, chainType } = parseTypedChainId(typedChainId);
+
+    let endpoint = `${
       this.endpoint.endsWith('/') ? this.endpoint.slice(0, -1) : this.endpoint
-    }/api/v1/fee_info/${typedChainId}/${vanchor}/${gasAmount}`;
+    }/api/v1/fee_info`;
+
+    switch (chainType) {
+      case ChainType.EVM:
+        endpoint = endpoint.concat(
+          `/evm/${chainId.toString()}/${vanchor}/${gasAmount.toString()}`
+        );
+        break;
+      case ChainType.Substrate:
+        endpoint = endpoint.concat(
+          `/substrate/${chainId.toString()}/${gasAmount.toString()}`
+        );
+        break;
+      default:
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+    }
+
     const response = await fetch(endpoint, { signal: abortSignal });
+
     if (!response.ok) {
       const errorMessage = await parseRelayerFeeErrorMessage(response);
       throw new Error(errorMessage);

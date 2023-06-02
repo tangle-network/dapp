@@ -50,24 +50,8 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   wrappableTokenId?: number;
 
   /**
-   * Function to reset the main component
-   * @returns void
-   */
-  resetMainComponent: () => void;
-
-  /**
    * The callback to reset the parent state
    * @returns void
    */
   onResetState?: () => void;
-
-  /**
-   * The fee amount
-   */
-  feeValue?: number;
-
-  /**
-   * The fee token
-   */
-  feeToken?: string;
 }

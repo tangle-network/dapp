@@ -1,7 +1,8 @@
-import React, { FC, forwardRef, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { InformationLine } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components/typography';
+import { FC, forwardRef, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { Typography } from '../../typography';
 import { DisclaimerProps, DisclaimerVariant } from './types';
 
 function getColors(variant: DisclaimerVariant) {

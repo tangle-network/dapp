@@ -16,6 +16,7 @@ import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
 import { getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
@@ -173,5 +174,18 @@ export class ApiConfig {
       (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id)
     );
     return unavailableCurrencies;
+  }
+
+  getCurrenciesBy(opts: { role?: CurrencyRole; type?: CurrencyType }) {
+    const currencies = Object.values(this.currencies).filter((currency) => {
+      if (opts.role && currency.role !== opts.role) {
+        return false;
+      }
+      if (opts.type && currency.type !== opts.type) {
+        return false;
+      }
+      return true;
+    });
+    return currencies;
   }
 }

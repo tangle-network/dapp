@@ -1,12 +1,6 @@
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { ChevronRight } from '@webb-tools/icons';
-import {
-  SectionDescription,
-  SectionDescription2,
-  SectionHeader,
-  SectionTitle,
-} from '..';
 
 interface RoadMapItemProps {
   timeline: string;
@@ -53,26 +47,27 @@ const roadMapItems = [
 
 export const LaunchPhasesSection = () => {
   return (
-    <section className="py-[80px] lg:py-[96px]">
+    <section className="py-[60px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="px-5 mb-12 lg:px-[11.25%]">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="md:flex-[5.5] lg:flex-[4.5]">
-              <SectionHeader className="mb-6">Launch Phases</SectionHeader>
-              <SectionTitle className="text-left">
-                Tangle Network is{' '}
-              </SectionTitle>
-              <SectionTitle className="text-left text-purple-70">
-                Open Source & Community Managed
-              </SectionTitle>
-            </div>
-            <div className="md:flex-[4.5] lg:flex-[5.5] md:flex md:items-center">
-              <SectionDescription>
-                As the hub for routing cross-chain messages using ZKP, Tangle
-                enables the community to optimized for any use case.
-              </SectionDescription>
-            </div>
-          </div>
+          <Typography
+            variant="mkt-small-caps"
+            className="mb-6 font-black text-purple-70"
+          >
+            Launch Phases
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="text-left font-black text-mono-200"
+          >
+            Tangle Network is{' '}
+          </Typography>
+          <Typography
+            variant="mkt-h3"
+            className="text-left font-black text-purple-70"
+          >
+            Open Source & Community Managed
+          </Typography>
         </div>
 
         <div className="md:px-5 lg:px-[11.25%]">
@@ -105,9 +100,8 @@ const RoadMapItem: FC<RoadMapItemProps> = (props) => {
           <div className="bg-tangle_dark_purple w-[2px] flex-1 z-10" />
           <div className="bg-mono-0 py-1 px-3 rounded-xl">
             <Typography
-              variant="h5"
-              fw="bold"
-              className="!text-xs text-purple-70 uppercase"
+              variant="mkt-small-caps"
+              className="!text-xs text-purple-90 font-black"
             >
               {timeline}
             </Typography>
@@ -117,10 +111,12 @@ const RoadMapItem: FC<RoadMapItemProps> = (props) => {
         <div className="w-[70%] lg:w-[77.5%] flex flex-col md:flex-row gap-6 py-5 pr-5 md:pr-0">
           <div className="md:flex md:flex-col md:justify-center md:flex-[1] lg:flex lg:items-center">
             <div className="lg:w-fit">
-              <Typography variant="h4" fw="bold">
+              <Typography variant="mkt-subheading" className="font-black">
                 Phase {order}
               </Typography>
-              <Typography variant="body1">{action}</Typography>
+              <Typography variant="mkt-body1" className="font-medium">
+                {action}
+              </Typography>
             </div>
           </div>
           <div className="space-y-3 md:flex-[2] lg:flex-[2.5]">
@@ -129,7 +125,12 @@ const RoadMapItem: FC<RoadMapItemProps> = (props) => {
                 <div className="flex items-center justify-center rounded-full bg-blue-10 p-[2px]">
                   <ChevronRight className="fill-purple-70" />
                 </div>
-                <SectionDescription2>{activity}</SectionDescription2>
+                <Typography
+                  variant="mkt-body1"
+                  className="font-medium text-mono-140"
+                >
+                  {activity}
+                </Typography>
               </div>
             ))}
           </div>

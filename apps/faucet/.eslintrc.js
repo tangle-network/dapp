@@ -1,7 +1,7 @@
 module.exports = {
   plugins: ['simple-import-sort', 'sort-keys-fix', 'neverthrow'],
   extends: [
-    'plugin:@nrwl/nx/react-typescript',
+    'plugin:@nx/react-typescript',
     'next',
     'next/core-web-vitals',
     '../../.eslintrc.json',

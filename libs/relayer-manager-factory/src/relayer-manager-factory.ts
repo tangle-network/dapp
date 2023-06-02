@@ -68,6 +68,7 @@ export class WebbRelayerManagerFactory {
   ): Capabilities {
     return {
       hasIpService: true,
+      features: info.features,
       supportedChains: {
         evm: info.evm
           ? Object.keys(info.evm)

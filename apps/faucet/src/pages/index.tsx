@@ -42,25 +42,29 @@ const Page = () => {
           <div className="flex flex-col gap-4">
             <div>
               <Typography
-                component="h5"
-                variant="mkt-quote"
-                className="text-center"
+                variant="mkt-small-caps"
+                className="text-center font-black text-blue-70"
               >
                 Get tokens
               </Typography>
               <Typography
-                component="h1"
-                variant="mkt-h2"
-                className="text-center"
+                variant="mkt-h3"
+                className="text-center font-black text-mono-200"
               >
                 Hubble Bridge Faucet
               </Typography>
             </div>
-            <Typography variant="mkt-caption" className="text-center">
+            <Typography
+              variant="mkt-body1"
+              className="text-center font-medium text-mono-140"
+            >
               This faucet enables the transfer of Test Tokens (wtTNT) on
               networks supported by Hubble Bridge.
             </Typography>
-            <Typography variant="mkt-caption" className="text-center">
+            <Typography
+              variant="mkt-body1"
+              className="text-center font-medium text-mono-140"
+            >
               To receive tokens, follow <TwitterLink />
               {
                 " on Twitter and authenticate yourself by clicking the 'Login with Twitter' below to start the process. *You can claim faucet every 24 hours on each network."

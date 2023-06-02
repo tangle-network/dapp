@@ -63,7 +63,6 @@
       "@webb-tools/relayer-manager-factory/*": [
         "libs/relayer-manager-factory/src/*"
       ],
-      "@webb-tools/responsive-utils": ["libs/responsive-utils/src/index.ts"],
       "@webb-tools/stats-dapp/*": ["apps/stats-dapp/src/*"],
       "@webb-tools/storage": ["libs/storage/src/index.ts"],
       "@webb-tools/storage/*": ["libs/storage/src/*"],

@@ -1,6 +1,6 @@
 import React, { ErrorInfo } from 'react';
 
-import { ErrorFallback } from '../../components';
+import { ErrorFallback } from '../../components/ErrorFallback';
 import { WebbUIErrorBoudaryProps, WebbUIErrorBoudaryState } from './types';
 
 export class WebbUIErrorBoudary extends React.Component<

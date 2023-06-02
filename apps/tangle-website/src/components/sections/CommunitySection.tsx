@@ -2,39 +2,14 @@ import {
   Common2Icon,
   DiscordFill,
   DocumentationIcon,
-  GithubFill,
   TelegramFill,
   TwitterFill,
+  SparklingIcon,
 } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
-import {
-  Button,
-  Typography,
-  WebsiteCommunity,
-} from '@webb-tools/webb-ui-components';
+import { Typography, WebsiteCommunity } from '@webb-tools/webb-ui-components';
 import { NextSeo } from 'next-seo';
-import { SectionDescription, SectionDescription2 } from '..';
 
-type LinksType = {
-  Icon: (props: IconBase) => JSX.Element;
-  name: string;
-  href: string;
-  description: string;
-};
-
-const links: Array<LinksType> = [
-  {
-    name: 'Github',
-    Icon: GithubFill,
-    href: 'https://github.com/webb-tools',
-    description: 'Explore the source code and get involved',
-  },
-  {
-    name: 'Documentation',
-    Icon: DocumentationIcon,
-    href: 'https://docs.webb.tools/docs',
-    description: 'Learn how it works under the hood',
-  },
+const links = [
   {
     name: 'Discord',
     Icon: DiscordFill,
@@ -48,8 +23,8 @@ const links: Array<LinksType> = [
     description: 'Have question, join us on Telegram',
   },
   {
-    Icon: Common2Icon,
     name: 'Commonwealth',
+    Icon: Common2Icon,
     href: 'https://commonwealth.im/webb',
     description: 'Join the conversation on Commonwealth',
   },
@@ -58,6 +33,20 @@ const links: Array<LinksType> = [
     Icon: TwitterFill,
     href: 'https://twitter.com/webbprotocol',
     description: 'Say hi on the Webb Twitter',
+  },
+  {
+    name: 'Documentation',
+    Icon: DocumentationIcon,
+    href: 'https://docs.webb.tools/docs',
+    description: 'Learn how it works under the hood',
+  },
+  {
+    name: 'Incentivized Testnet',
+    Icon: SparklingIcon,
+    // TODO: update href
+    href: '#',
+    description: 'Explore the Tangle testnet and get involved',
+    linkText: 'Leaderboard',
   },
 ];
 
@@ -72,21 +61,18 @@ export const CommunitySection = () => {
       >
         <div className="max-w-[900px]">
           <Typography
-            variant="label"
-            className="text-center text-purple-70 uppercase block"
+            variant="mkt-small-caps"
+            className="text-center text-purple-70 block font-black"
           >
             Get involved
           </Typography>
 
-          <Typography variant="mkt-h2" className="text-center mt-1">
+          <Typography
+            variant="mkt-h3"
+            className="text-center mt-1 font-black text-mono-200"
+          >
             Tangle Community
           </Typography>
-
-          <SectionDescription2 className="text-center mt-[16px] px-3 lg:px-0">
-            The Tangle network doubles as hub for routing cross chain messages
-            and for anchoring itself as a bridge endpoint for cross chain
-            zero-knowledge applications.
-          </SectionDescription2>
 
           <WebsiteCommunity links={links} />
         </div>

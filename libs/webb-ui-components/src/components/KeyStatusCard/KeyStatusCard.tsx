@@ -36,6 +36,15 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   totalAuthorities,
   ...props
 }) => {
+  const randomAddress =
+    '0x03856d8db4bf0e3d52a72c447ba8003f9a2c2268fd4ac4db95b890869ec842f3c7';
+
+  const PlaceholderAvatarList = Array(5)
+    .fill(null)
+    .map((_, idx) => (
+      <Avatar sourceVariant="address" key={idx} value={randomAddress} />
+    ));
+
   return (
     <Card {...props}>
       {/** Top */}
@@ -60,10 +69,16 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
 
       {/** Bottom */}
       <div className="flex items-center justify-between">
-        <AvatarGroup total={totalAuthorities}>
-          {Array.from(authorities).map((aut, idx) => (
-            <Avatar sourceVariant="address" key={`${aut}${idx}`} value={aut} />
-          ))}
+        <AvatarGroup total={totalAuthorities === 0 ? 5 : totalAuthorities}>
+          {totalAuthorities === 0
+            ? PlaceholderAvatarList
+            : Array.from(authorities).map((aut, idx) => (
+                <Avatar
+                  sourceVariant="address"
+                  key={`${aut}${idx}`}
+                  value={aut}
+                />
+              ))}
         </AvatarGroup>
         <Link to={fullDetailUrl}>
           <Button variant="link" as="span" size="sm">

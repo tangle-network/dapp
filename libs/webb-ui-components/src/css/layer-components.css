@@ -80,50 +80,44 @@
 }
 
 /** Marketing site variant */
-
 .mkt-h1 {
-  @apply text-[34px] leading-[45.9px] tracking-[-0.011em] /** small screen */
-  md:text-[84px] md:leading-[113px] /** medium screen */
-  font-black;
+  @apply text-[36px] leading-[48px] md:text-[84px] md:leading-[100px];
 }
 
 .mkt-h2 {
-  @apply text-[24px] leading-[32.4px] tracking-[-0.011em] /** small screen */
-  md:text-[48px] md:leading-[64px] /** medium screen */
-  font-black;
+  @apply text-[28px] leading-[36px] tracking-[2px] md:text-[64px] md:leading-[80px] md:tracking-[4px];
 }
 
 .mkt-h3 {
-  @apply text-[24px] leading-[32.4px] /** small screen */
-  md:text-[36px] md:leading-[54px] /** medium screen */
-  font-black;
+  @apply text-[24px] leading-[32px] md:text-[48px] md:leading-[60px];
 }
 
 .mkt-h4 {
-  @apply text-[24px] leading-[36px] /** small screen */
-  font-bold;
+  @apply text-[20px] leading-[28px] md:text-[36px] md:leading-[46px];
 }
 
-.mkt-body {
-  @apply text-[16px] leading-[21.6px] /** small screen */
-  md:text-[18px] md:leading-[27px] /** medium screen */
-  font-medium;
+.mkt-subheading {
+  @apply text-[18px] leading-[24px] md:text-[24px] md:leading-[40px];
+}
+
+.mkt-body1 {
+  @apply text-[16px] leading-[24px] md:text-[20px] md:leading-[32px];
+}
+
+.mkt-body2 {
+  @apply text-[14px] leading-[20px] tracking-[0.01em] md:text-[18px] md:leading-[28px];
+}
+
+.mkt-small-caps {
+  @apply text-[12px] leading-[20px] tracking-[0.4px] uppercase md:text-[14px] md:leading-[24px] md:tracking-[0.8px];
 }
 
 .mkt-caption {
-  @apply text-[16px] leading-[21.6px] /** small screen */
-  md:leading-[24px] /** medium screen */
-  font-medium;
+  @apply text-[10px] leading-[14px] tracking-[0.01em] md:text-[12px] md:leading-[18px];
 }
 
-.mkt-quote {
-  @apply text-[14px] leading-[23.8px]
-  tracking-[0.8px] uppercase font-bold text-blue-70;
-}
-
-.mkt-utility {
-  @apply text-[12px] leading-[18px]
-  tracking-[0.01em] font-medium text-mono-160;
+.mkt-monospace {
+  @apply text-[14px] leading-[20px] md:text-[16px] md:leading-[24px] font-satoshi-var;
 }
 
 @media screen and (max-width: 800px) {
@@ -187,4 +181,4 @@
 *[data-swipe='cancel'] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
-}
+} 
