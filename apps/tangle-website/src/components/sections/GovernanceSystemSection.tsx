@@ -1,12 +1,10 @@
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { LinkButton } from '..';
+import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
+
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
-import {
-  WHAT_IS_TSS_URL,
-  HOW_TSS_WORKS_URL,
-  STATS_DEV_URL,
-} from '../../constants';
+import { LinkButton } from '..';
+import { WHAT_IS_TSS_URL, HOW_TSS_WORKS_URL } from '../../constants';
 
 const governanceSystemQnAItems = [
   {
@@ -58,7 +56,7 @@ export const GovernanceSystemSection = () => {
               <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
                 Read Docs
               </LinkButton>
-              <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+              <LinkButton href={STATS_URL}>View Network</LinkButton>
             </div>
             <div className="mt-[56px] flex flex-col gap-6">
               {governanceSystemQnAItems.map(

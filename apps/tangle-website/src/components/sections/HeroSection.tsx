@@ -1,8 +1,11 @@
 import Image from 'next/image';
-import { Socials } from '@webb-tools/webb-ui-components';
+import { Socials, Typography } from '@webb-tools/webb-ui-components';
+import {
+  WEBB_DOCS_URL,
+  STATS_URL,
+} from '@webb-tools/webb-ui-components/constants';
+
 import { LinkButton } from '..';
-import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
-import { Typography } from '@webb-tools/webb-ui-components';
 
 export const HeroSection = () => {
   return (
@@ -32,7 +35,7 @@ export const HeroSection = () => {
                 >
                   Read Docs
                 </LinkButton>
-                <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+                <LinkButton href={STATS_URL}>View Network</LinkButton>
               </div>
               <Socials />
             </div>

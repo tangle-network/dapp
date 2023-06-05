@@ -1,4 +1,6 @@
+import { useCallback, useMemo, useState } from 'react';
 import { ErrorBoundary } from '@sentry/react';
+import cx from 'classnames';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
@@ -19,8 +21,7 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ArrowRightUp } from '@webb-tools/icons';
-import cx from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
+import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
 
 import {
   EducationCard,
@@ -47,8 +48,6 @@ import {
   useTryAnotherWalletWithView,
 } from '../hooks';
 import { downloadNotes } from '../utils';
-
-const STATS_DEV_URL = 'https://www.stats-dev.webb.tools/';
 
 const PageBridge = () => {
   // State for the tabs
@@ -264,7 +263,7 @@ const PageBridge = () => {
               </TabsRoot>
 
               <a
-                href={STATS_DEV_URL}
+                href={STATS_URL}
                 target="_blank"
                 rel="noreferrer"
                 className={cx(

@@ -9,8 +9,8 @@ import {
   BottomDialogPortal,
 } from '../BottomDialog';
 import { ConnectWalletMobileButtonProps } from './types';
+import { BRIDGE_URL } from '../../constants';
 
-const BRIDGE_LINK = 'webb.tools/hubble_bridge';
 const actionButtonsProps: Array<ButtonProps> = [
   {
     children: 'Continue on Desktop',
@@ -55,7 +55,7 @@ export const ConnectWalletMobileButton = forwardRef<
             variant="body1"
             className="text-[#3D7BCE] dark:text-[#81B3F6]"
           >
-            {BRIDGE_LINK}
+            {BRIDGE_URL}
           </Typography>
         </div>
       </BottomDialogPortal>
