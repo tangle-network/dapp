@@ -9,7 +9,7 @@ import {
   BottomDialogPortal,
 } from '../BottomDialog';
 import { ConnectWalletMobileButtonProps } from './types';
-import { BRIDGE_URL } from '../../constants';
+import { BRIDGE_URL, BRIDGE_DOCS_URL } from '../../constants';
 
 const actionButtonsProps: Array<ButtonProps> = [
   {
@@ -22,8 +22,7 @@ const actionButtonsProps: Array<ButtonProps> = [
     children: 'Learn more',
     variant: 'secondary',
     isFullWidth: true,
-    // TODO: replace with real link
-    href: '#',
+    href: BRIDGE_DOCS_URL,
   },
 ];
 

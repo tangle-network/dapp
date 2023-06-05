@@ -48,8 +48,10 @@ export type webbNetworksType = {
 
 export const BRIDGE_URL = 'https://app.webb.tools/';
 export const STATS_URL = 'https://stats.webb.tools/';
-export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools/';
+export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
+export const BRIDGE_DOCS_URL =
+  'https://docs.webb.tools/docs/dapps/hubble-bridge/overview';
 export const TANGLE_DOCS_URL =
   'https://docs.webb.tools/docs/tangle-network/overview/';
 
