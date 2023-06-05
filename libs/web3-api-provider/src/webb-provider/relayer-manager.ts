@@ -9,19 +9,23 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
+import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { Storage } from '@webb-tools/storage';
 import {
   calculateTypedChainId,
   ChainType,
   MerkleTree,
   Note,
   parseTypedChainId,
-  toFixedHex,
 } from '@webb-tools/sdk-core';
-import { ethers } from 'ethers';
-import { VAnchor } from '@webb-tools/anchors';
+import { Storage } from '@webb-tools/storage';
+
+import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
+import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '@webb-tools/abstract-api-provider';
 
 export class Web3RelayerManager extends WebbRelayerManager {
   async mapRelayerIntoActive(
@@ -127,63 +131,76 @@ export class Web3RelayerManager extends WebbRelayerManager {
    * @param relayers - A list of relayers that support the passed contract
    * @param contract - A VAnchorContract wrapper for EVM chains.
    * @param storage - A storage to save the fetched leaves.
+   * @param treeHeight - The height of the merkle tree.
+   * @param targetRoot - The target root of the merkle tree.
+   * @param commitment - The commitment to find the index in the tree.
    * param abortSignal - A signal to abort the fetching process.
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal?: AbortSignal
-  ): Promise<string[] | null> {
-    let leaves: string[] = [];
+    treeHeight: number,
+    targetRoot: string,
+    commitment: bigint,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  } | null> {
     const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
-      let relayerLeaves: Awaited<ReturnType<WebbRelayer['getLeaves']>>;
       try {
-        relayerLeaves = await relayers[i].getLeaves(
+        const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
           vanchor.contract.address,
-          abortSignal
+          tx?.cancelToken.abortSignal
         );
-      } catch (e) {
-        continue;
-      }
-
-      const validLatestLeaf = await vanchor.leafCreatedAtBlock(
-        relayerLeaves.leaves[relayerLeaves.leaves.length - 1],
-        relayerLeaves.lastQueriedBlock
-      );
-
-      console.log('validLatestLeaf', validLatestLeaf);
-
-      // leaves from relayer somewhat validated, attempt to build the tree
-      if (validLatestLeaf) {
-        // Assume the destination anchor has the same levels as source anchor
-        const levels = await vanchor.contract.getLevels();
-        const lastRootBigNumber = await vanchor.contract.getLastRoot();
-
-        // Fixed the last root to be 32 bytes
-        const lastRoot = toFixedHex(lastRootBigNumber.toHexString());
-        const tree = MerkleTree.createTreeWithRoot(
-          levels,
-          relayerLeaves.leaves,
-          lastRoot
+        const validLatestLeaf = await vanchor.leafCreatedAtBlock(
+          leaves[leaves.length - 1],
+          lastQueriedBlock
         );
 
-        console.log('Valid tree', tree);
+        console.log('validLatestLeaf', validLatestLeaf);
 
-        // If we were able to build the tree, set local storage and break out of the loop
-        if (tree) {
-          leaves = relayerLeaves.leaves;
-
-          await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
-          await storage.set('leaves', relayerLeaves.leaves);
-
-          return leaves;
+        // leaves from relayer somewhat validated, attempt to build the tree
+        if (!validLatestLeaf) {
+          continue;
         }
+
+        tx?.next(TransactionState.ValidatingLeaves, undefined);
+        const { leafIndex, provingLeaves } =
+          await calculateProvingLeavesAndCommitmentIndex(
+            treeHeight,
+            leaves,
+            targetRoot,
+            commitment.toString()
+          );
+
+        // If the leafIndex is -1, it means the commitment is not in the tree
+        // and we should continue to the next relayer
+        if (leafIndex === -1) {
+          tx?.next(TransactionState.ValidatingLeaves, false);
+          continue;
+        } else {
+          tx?.next(TransactionState.ValidatingLeaves, true);
+        }
+
+        // Cached all the leaves returned from the relayer to re-use later
+        await storage.set('lastQueriedBlock', lastQueriedBlock);
+        await storage.set('leaves', leaves);
+
+        // Return the leaves for proving
+        return {
+          provingLeaves,
+          commitmentIndex: leafIndex,
+        };
+      } catch (e) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+        continue;
       }
     }
 

@@ -9,7 +9,7 @@ export const PressInquiriesSection = () => {
 
         <Typography
           variant="mkt-h3"
-          className="text-center text-mono-200 font-black"
+          className="font-black text-center text-mono-200"
         >
           Press Inquiries
         </Typography>

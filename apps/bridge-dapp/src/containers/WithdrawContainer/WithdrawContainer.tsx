@@ -10,7 +10,6 @@ import {
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
 } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
@@ -75,15 +74,8 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const {
-    activeApi,
-    activeChain,
-    activeWallet,
-    apiConfig,
-    loading,
-    noteManager,
-    switchChain,
-  } = useWebContext();
+  const { activeApi, activeChain, apiConfig, loading, noteManager, txQueue } =
+    useWebContext();
 
   const { wrappableCurrency, setWrappableCurrency } = useBridge();
 
@@ -140,8 +132,6 @@ export const WithdrawContainer = forwardRef<
   }, [isUnwrap, wrappableCurrency]);
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
-
-  const txQueue = useTxQueue();
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
