@@ -189,11 +189,8 @@ const Proposals = () => {
     },
   });
 
-  const noOpenProposals = useMemo(() => data.length === 0, [data]);
-
   return (
     <div className="flex flex-col space-y-4">
-      {/** Proposals Status */}
       <Card>
         <TitleWithInfo
           title="Proposals Status"
@@ -206,7 +203,6 @@ const Proposals = () => {
 
       <StackedAreaChartContainer />
 
-      {/** All Proposals */}
       <ProposalsTable />
 
       <Outlet />
