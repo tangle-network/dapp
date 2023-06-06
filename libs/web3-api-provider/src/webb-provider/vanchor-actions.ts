@@ -661,7 +661,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       destHistorySourceRoot = destHistorySrcRoot.toHexString();
       console.log({ latestIndex, destHistorySourceRoot });
     }
-     if (!provingLeaves) {
+    if (!provingLeaves) {
       // Outer try/catch will handle this
       throw new Error(
         `Invalid Proving Tree:
@@ -809,9 +809,9 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       const isRequiredApproval = !isWrapOrUnwrap
         ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
         : await srcVAnchor.isWrappableTokenApprovalRequired(
-          wrapUnwrapToken,
-          approvalValue
-        );
+            wrapUnwrapToken,
+            approvalValue
+          );
 
       if (isRequiredApproval) {
         if (isWrapOrUnwrap) {
