@@ -87,7 +87,7 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          {isMobile ? (
+          {!isMobile ? (
             <Button
               {...transferBtnProps}
               isFullWidth

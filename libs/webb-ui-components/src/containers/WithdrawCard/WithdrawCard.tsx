@@ -144,7 +144,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          {isMobile ? (
+          {!isMobile ? (
             <Button
               {...withdrawBtnProps}
               isFullWidth
