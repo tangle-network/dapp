@@ -1070,7 +1070,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Est. transaction fee',
-          info: transactionFeeInfo,
+          info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
         },
         rightContent: txFeeContent,
       },
@@ -1087,7 +1087,6 @@ export const WithdrawContainer = forwardRef<
     refundInfo,
     selectedFungibleToken?.symbol,
     totalFeeInWei,
-    transactionFeeInfo,
   ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.

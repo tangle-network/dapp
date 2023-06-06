@@ -977,13 +977,14 @@ export const TransferContainer = forwardRef<
         {
           leftTextProps: {
             title: 'Est. transaction fee',
+            info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
           },
           rightContent: maxFeeText,
         },
       ];
     }, [transferAmount, availableAmountFromNotes, infoFormatted, maxFeeText]);
 
-    // Transfer button props
+    // Transfer button props 
     const buttonDesc = useMemo(() => {
       if (!feeInWei || !transferAmount) {
         return;
