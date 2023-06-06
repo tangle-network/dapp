@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { Button, Logo, Typography } from '@webb-tools/webb-ui-components';
-import { WEBB_URL, TANGLE_NETWORK_DOCS_URL } from '../../constants';
+import {
+  WEBB_MKT_URL,
+  TANGLE_DOCS_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
 type SupportedBySectionCardType = {
   logo: string | (() => JSX.Element);
@@ -52,7 +55,7 @@ export const SupportedBySection = () => {
           </Typography>
           <div className="flex gap-4 mt-3">
             <Button
-              href={TANGLE_NETWORK_DOCS_URL}
+              href={TANGLE_DOCS_URL}
               target="_blank"
               rel="noreferrer"
               variant="secondary"
@@ -61,7 +64,7 @@ export const SupportedBySection = () => {
               Learn More
             </Button>
             <Button
-              href={WEBB_URL}
+              href={WEBB_MKT_URL}
               target="_blank"
               rel="noreferrer"
               className="button-base-2"
