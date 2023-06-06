@@ -65,7 +65,7 @@ export const Header: FC<HeaderProps> = () => {
             <NavigationMenuTrigger />
             {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
             <NavigationMenuContent
-              version="2.0.7"
+              version={process.env.BRIDGE_VERSION}
               onTestnetClick={() =>
                 window.open(
                   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',

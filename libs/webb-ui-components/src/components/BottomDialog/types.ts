@@ -10,7 +10,7 @@ import { PropsOf, IWebbComponentBase } from '../../types';
 import { ButtonProps } from '../Button/types';
 
 export interface BottomDialogProps extends PropsOf<'div'>, IWebbComponentBase {
-  radixRootProps: RdxDialogProps;
+  radixRootProps?: RdxDialogProps;
 }
 
 export interface BottomDialogTriggerProps
