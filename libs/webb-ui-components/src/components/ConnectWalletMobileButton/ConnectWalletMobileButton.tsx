@@ -14,8 +14,6 @@ const actionButtonsProps: Array<ButtonProps> = [
   {
     children: 'Continue on Desktop',
     isFullWidth: true,
-    // TODO: replace with real link
-    href: '#',
   },
   {
     children: 'Learn more',

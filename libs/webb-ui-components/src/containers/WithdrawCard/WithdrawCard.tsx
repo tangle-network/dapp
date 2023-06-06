@@ -21,6 +21,7 @@ import {
   TokenInput,
   ConnectWalletMobileButton,
 } from '../../components';
+import { useCheckMobile } from '../../hooks';
 import { Typography } from '../../typography';
 import { WithdrawCardProps } from './types';
 
@@ -44,6 +45,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     },
     ref
   ) => {
+    const { isMobile } = useCheckMobile();
     // Internal switcher state
     const [switcherChecked, setSwitcherChecked] = useState(
       () => unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked
@@ -142,18 +144,20 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          <Button
-            {...withdrawBtnProps}
-            isFullWidth
-            className={twMerge(
-              'hidden lg:flex justify-center',
-              withdrawBtnProps?.className
-            )}
-          >
-            {withdrawBtnProps?.children ?? 'Withdraw'}
-          </Button>
-
-          <ConnectWalletMobileButton isFullWidth />
+          {isMobile ? (
+            <Button
+              {...withdrawBtnProps}
+              isFullWidth
+              className={twMerge(
+                'flex justify-center',
+                withdrawBtnProps?.className
+              )}
+            >
+              {withdrawBtnProps?.children ?? 'Withdraw'}
+            </Button>
+          ) : (
+            <ConnectWalletMobileButton isFullWidth />
+          )}
 
           {buttonDesc && (
             <Typography

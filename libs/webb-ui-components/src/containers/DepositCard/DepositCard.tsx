@@ -11,6 +11,7 @@ import {
   TokenInput,
   ConnectWalletMobileButton,
 } from '../../components';
+import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';
 import { DepositCardProps } from './types';
 
@@ -32,6 +33,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     },
     ref
   ) => {
+    const { isMobile } = useCheckMobile();
     const { amount, fee } = useMemo(() => {
       const amount = !amountInputProps.amount
         ? '--'
@@ -110,24 +112,23 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           </div>
         </div>
 
-        <Button
-          {...buttonProps}
-          isFullWidth
-          className={twMerge(
-            'hidden lg:flex justify-center',
-            buttonProps.className
-          )}
-        >
-          {typeof buttonProps.children === 'string' ? (
-            <Typography variant="body1" fw="bold" className="!text-inherit">
-              {buttonProps.children}
-            </Typography>
-          ) : (
-            buttonProps.children ?? 'Deposit'
-          )}
-        </Button>
-
-        <ConnectWalletMobileButton isFullWidth />
+        {!isMobile ? (
+          <Button
+            {...buttonProps}
+            isFullWidth
+            className={twMerge('flex justify-center', buttonProps.className)}
+          >
+            {typeof buttonProps.children === 'string' ? (
+              <Typography variant="body1" fw="bold" className="!text-inherit">
+                {buttonProps.children}
+              </Typography>
+            ) : (
+              buttonProps.children ?? 'Deposit'
+            )}
+          </Button>
+        ) : (
+          <ConnectWalletMobileButton isFullWidth />
+        )}
       </div>
     );
   }
