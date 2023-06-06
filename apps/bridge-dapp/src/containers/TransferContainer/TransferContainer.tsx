@@ -977,6 +977,7 @@ export const TransferContainer = forwardRef<
         {
           leftTextProps: {
             title: 'Est. transaction fee',
+            info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
           },
           rightContent: maxFeeText,
         },
