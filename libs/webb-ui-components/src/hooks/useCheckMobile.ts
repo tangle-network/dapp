@@ -9,7 +9,6 @@ export const useCheckMobile = (): UseCheckMobileReturnType => {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      console.log('device: ', navigator.userAgent);
       const isMobile =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent

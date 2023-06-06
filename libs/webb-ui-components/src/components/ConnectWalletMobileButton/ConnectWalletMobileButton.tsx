@@ -28,7 +28,7 @@ export const ConnectWalletMobileButton = forwardRef<
   ConnectWalletMobileButtonProps
 >(({ className, ...props }, ref) => {
   return (
-    <BottomDialog className="lg:hidden" ref={ref}>
+    <BottomDialog ref={ref}>
       <BottomDialogTrigger>
         <Button {...props} className={className}>
           Connect Wallet
