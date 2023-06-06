@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography';
 import { Button, ButtonProps } from '../Button';
@@ -31,9 +30,9 @@ export const ConnectWalletMobileButton = forwardRef<
   ConnectWalletMobileButtonProps
 >(({ className, ...props }, ref) => {
   return (
-    <BottomDialog ref={ref}>
-      <BottomDialogTrigger className="block lg:hidden">
-        <Button {...props} className={twMerge('block lg:hidden', className)}>
+    <BottomDialog className="lg:hidden" ref={ref}>
+      <BottomDialogTrigger>
+        <Button {...props} className={className}>
           Connect Wallet
         </Button>
       </BottomDialogTrigger>

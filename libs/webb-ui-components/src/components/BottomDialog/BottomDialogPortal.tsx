@@ -50,8 +50,8 @@ export const BottomDialogPortal = forwardRef<
             <div className="p-9">{children}</div>
             {actionButtonsProps && (
               <div className="flex flex-col gap-2 py-6 px-9 border-t border-[#D3D8E2] dark:border-[#4E5463]">
-                {actionButtonsProps.map((buttonProps) => (
-                  <Dialog.Close>
+                {actionButtonsProps.map((buttonProps, idx) => (
+                  <Dialog.Close key={idx}>
                     <Button {...buttonProps} />
                   </Dialog.Close>
                 ))}

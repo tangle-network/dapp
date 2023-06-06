@@ -7,7 +7,7 @@ export const BottomDialog = forwardRef<HTMLDivElement, BottomDialogProps>(
   ({ children, className, radixRootProps, ...props }, ref) => {
     return (
       <div {...props} className={className} ref={ref}>
-        <Dialog.Root {...radixRootProps}>{children}</Dialog.Root>;
+        <Dialog.Root {...radixRootProps}>{children}</Dialog.Root>
       </div>
     );
   }
