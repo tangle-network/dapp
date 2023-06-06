@@ -984,7 +984,7 @@ export const TransferContainer = forwardRef<
       ];
     }, [transferAmount, availableAmountFromNotes, infoFormatted, maxFeeText]);
 
-    // Transfer button props 
+    // Transfer button props
     const buttonDesc = useMemo(() => {
       if (!feeInWei || !transferAmount) {
         return;
