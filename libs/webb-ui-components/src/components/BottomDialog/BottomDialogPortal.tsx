@@ -38,25 +38,29 @@ export const BottomDialogPortal = forwardRef<
           )}
           ref={ref}
         >
-          <Dialog.Title className="flex items-center justify-between pt-9 px-9">
-            <Typography variant="h4" fw="bold">
-              {title}
-            </Typography>
-            <Dialog.Close>
-              <Close />
-            </Dialog.Close>
+          <Dialog.Title asChild>
+            <div className="flex items-center justify-between pt-9 px-9">
+              <Typography variant="h4" fw="bold">
+                {title}
+              </Typography>
+              <Dialog.Close>
+                <Close />
+              </Dialog.Close>
+            </div>
           </Dialog.Title>
-          <Dialog.Description>
-            <div className="p-9">{children}</div>
-            {actionButtonsProps && (
-              <div className="flex flex-col gap-2 py-6 px-9 border-t border-[#D3D8E2] dark:border-[#4E5463]">
-                {actionButtonsProps.map((buttonProps, idx) => (
-                  <Dialog.Close key={idx}>
-                    <Button {...buttonProps} />
-                  </Dialog.Close>
-                ))}
-              </div>
-            )}
+          <Dialog.Description asChild>
+            <div>
+              <div className="p-9">{children}</div>
+              {actionButtonsProps && (
+                <div className="flex flex-col gap-2 py-6 px-9 border-t border-[#D3D8E2] dark:border-[#4E5463]">
+                  {actionButtonsProps.map((buttonProps, idx) => (
+                    <Dialog.Close key={idx}>
+                      <Button {...buttonProps} />
+                    </Dialog.Close>
+                  ))}
+                </div>
+              )}
+            </div>
           </Dialog.Description>
         </Dialog.Content>
       </Dialog.Portal>
