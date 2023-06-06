@@ -644,29 +644,6 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       commitmentIndex = leafIndex;
     } else {
-      const latestIndex = await destVAnchor.contract.currentNeighborRootIndex(
-        parsedNote.sourceChainId
-      );
-      const destHistorySrcRoot = await destVAnchor.contract.neighborRoots(
-        parsedNote.sourceChainId,
-        latestIndex
-      );
-      // Merkle tree root should never be zero unless the chain has never been relayed to before
-      // which should not be the case for any chain we support (even during the testing)
-      if (destHistorySrcRoot.isZero()) {
-        throw new Error(
-          `Neighbor root for ${parsedNote.sourceChainId} is zero, this should not happen`
-        );
-      }
-      destHistorySourceRoot = destHistorySrcRoot.toHexString();
-      console.log({ latestIndex, destHistorySourceRoot });
-    }
-    if (!provingLeaves) {
-      // Outer try/catch will handle this
-      throw new Error(
-        `Invalid Proving Tree:
-        Relayer has not yet relayed the commitment to the destination chain (destination root is old)`
-      );
       const leaves = leavesMap[parsedNote.sourceChainId].map((leaf) =>
         u8aToHex(leaf)
       );
@@ -682,6 +659,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
       tx?.next(TransactionState.ValidatingLeaves, true);
 
       commitmentIndex = leafIndex;
+
       // If the proving leaves are more than the leaves we have,
       // that means the commitment is not in the leaves we have
       // so we need to reset the leaves
