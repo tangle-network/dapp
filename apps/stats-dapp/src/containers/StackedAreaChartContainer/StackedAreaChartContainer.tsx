@@ -1,24 +1,24 @@
-import { useAllProposalsTimestamps } from '../../provider/hooks';
-import { useStatsContext } from '../../provider/stats-provider';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  Surface,
-  Symbols,
-} from 'recharts';
 import { Spinner } from '@webb-tools/icons';
 import { Card, Chip, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
+import { useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Surface,
+  Symbols,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Config } from 'tailwindcss';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
-import { Config } from 'tailwindcss';
-import { useMemo, useState } from 'react';
+import { useAllProposalsTimestamps } from '../../provider/hooks';
+import { useStatsContext } from '../../provider/stats-provider';
 const fullConfig = resolveConfig(tailwindConfig as Config);
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
@@ -204,15 +204,34 @@ export const StackedAreaChartContainer = () => {
     return filteredData;
   }, [timeRange, convertedData, thirtyMinData, oneHourData, oneDayData]);
 
+  const nonZeroProposalTypes = finalConvertedData.reduce(
+    (types: any, proposal: any) => {
+      Object.entries(proposal).forEach(([key, value]) => {
+        if (
+          key !== 'date' &&
+          key !== 'rawTimestamp' &&
+          typeof value === 'string' &&
+          value > '0'
+        ) {
+          types.add(key);
+        }
+      });
+      return types;
+    },
+    new Set()
+  );
+
+  const nonZeroProposalTypesArray = Array.from(nonZeroProposalTypes);
+
   return (
     <Card>
       {isLoading ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex items-center justify-center h-full">
           <Spinner className="w-10 h-10 animate-spin" />
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between pr-14 pt-2">
+          <div className="flex items-center justify-between pt-2 pr-14">
             <TitleWithInfo
               title="Proposal (Submission) History"
               variant="h5"
@@ -223,7 +242,7 @@ export const StackedAreaChartContainer = () => {
                 <Chip
                   key={range}
                   color="blue"
-                  className="px-3 py-1 cursor-pointer capitalize text-sm"
+                  className="px-3 py-1 text-sm capitalize cursor-pointer"
                   isSelected={timeRange === range ? true : false}
                   onClick={() => setTimeRange(range)}
                 >
@@ -344,41 +363,15 @@ export const StackedAreaChartContainer = () => {
                 }}
               />
 
-              <defs>
-                {allProposals.map((type) => {
-                  return (
-                    <linearGradient
-                      id={type.type}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                      key={type.type}
-                    >
-                      <stop
-                        offset="50%"
-                        stopColor={type.backgroundColor}
-                        stopOpacity={1}
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor={type.backgroundColor}
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  );
-                })}
-              </defs>
-
               {allProposals.map((type) => {
                 return (
                   <Area
                     key={type.type}
-                    type="monotone"
+                    type="linear"
                     dataKey={type.type}
                     stackId={1}
                     stroke="none"
-                    fill={`url(#${type.type})`}
+                    fill={type.backgroundColor}
                   />
                 );
               })}
@@ -390,12 +383,17 @@ export const StackedAreaChartContainer = () => {
                 wrapperStyle={{
                   paddingLeft: '20px',
                 }}
-                payload={allProposals.map((type) => ({
-                  id: type.type,
-                  value: type.type.charAt(0).toUpperCase() + type.type.slice(1),
-                  type: 'circle',
-                  color: type.backgroundColor,
-                }))}
+                payload={allProposals
+                  .filter((type) =>
+                    nonZeroProposalTypesArray.includes(type.type)
+                  )
+                  .map((type) => ({
+                    id: type.type,
+                    value:
+                      type.type.charAt(0).toUpperCase() + type.type.slice(1),
+                    type: 'circle',
+                    color: type.backgroundColor,
+                  }))}
                 content={<CustomizedLegend />}
               />
             </AreaChart>

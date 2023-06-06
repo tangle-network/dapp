@@ -43,7 +43,7 @@ export const FAQSection = () => {
         <div className="flex flex-col items-center mb-9">
           <Typography
             variant="mkt-small-caps"
-            className="text-center pb-2 text-purple-70 font-black"
+            className="pb-2 font-black text-center text-purple-70"
           >
             Learn More
           </Typography>
@@ -55,24 +55,20 @@ export const FAQSection = () => {
           </Typography>
           <Typography
             variant="mkt-body1"
-            className="text-center font-medium text-mono-140"
+            className="font-medium text-center text-mono-140"
           >
             Need more information? Explore our documentation site or connect
             with others in our community channels to learn more!
           </Typography>
         </div>
-        <Accordion
-          defaultValue={faqItems[0].question}
-          type="single"
-          className="lg:mx-auto"
-        >
+        <Accordion type="single" collapsible className="lg:mx-auto">
           {faqItems.map((item, index) => (
             <AccordionItem
               key={index}
               value={item.question}
-              className="border-b border-mono-40 px-0"
+              className="p-0 border-b border-mono-40"
             >
-              <AccordionButton className="px-0 gap-8 items-start">
+              <AccordionButton className="items-start gap-8 px-0 py-6">
                 <Typography
                   variant="mkt-body1"
                   className="font-black text-mono-200"
@@ -83,7 +79,7 @@ export const FAQSection = () => {
               <AccordionContent className="px-0">
                 <Typography
                   variant="mkt-body1"
-                  className="font-medium text-mono-160 whitespace-pre-wrap"
+                  className="font-medium whitespace-pre-wrap text-mono-160"
                 >
                   {item.answer}
                 </Typography>

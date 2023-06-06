@@ -67,10 +67,6 @@ export const DepositContainer = forwardRef<
       MainComponentVariants | undefined
     >(undefined);
 
-    const resetMainComponent = useCallback(() => {
-      setMainComponentName(undefined);
-    }, [setMainComponentName]);
-
     const {
       activeApi,
       chains,
@@ -419,7 +415,6 @@ export const DepositContainer = forwardRef<
           type: destChain.base ?? 'webb-dev',
         },
         note: newNote,
-        resetMainComponent: resetMainComponent,
         onResetState: handleResetState,
       });
 
@@ -438,7 +433,6 @@ export const DepositContainer = forwardRef<
       amount,
       apiConfig,
       wrappableCurrency?.id,
-      resetMainComponent,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,

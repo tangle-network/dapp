@@ -29,13 +29,11 @@ import {
   Chip,
   ChipColors,
   Filter,
-  LabelWithValue,
   Table,
   Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ChainIcon, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
+import { ChainIcon, Spinner } from '@webb-tools/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStatsContext } from '../../provider/stats-provider';
@@ -149,7 +147,6 @@ export const ProposalsTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [totalItems, setTotalItems] = useState(0);
 
   const pagination = useMemo(
     () => ({
@@ -205,12 +202,20 @@ export const ProposalsTable = () => {
       selectedChains,
     ]
   );
+
+  const proposalsStats = useProposals(pageQuery);
+
+  const totalItems = useMemo(() => {
+    if (proposalsStats.val) {
+      return proposalsStats.val.pageInfo.count;
+    }
+    return 0;
+  }, [proposalsStats]);
+
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
     [pageSize, totalItems]
   );
-
-  const proposalsStats = useProposals(pageQuery);
 
   const data = useMemo(() => {
     if (proposalsStats.val) {
@@ -219,12 +224,6 @@ export const ProposalsTable = () => {
       return proposalsStats.val.items;
     }
     return [] as ProposalListItem[];
-  }, [proposalsStats]);
-
-  useEffect(() => {
-    if (proposalsStats.val) {
-      setTotalItems(proposalsStats.val.pageInfo.count);
-    }
   }, [proposalsStats]);
 
   const table = useReactTable<ProposalListItem>({
@@ -345,13 +344,20 @@ export const ProposalsTable = () => {
           </Accordion>
         </Filter>
       }
+      className="h-[850px]"
     >
-      <Table
-        tableProps={table as RTTable<unknown>}
-        isPaginated
-        totalRecords={totalItems}
-        title="Proposals"
-      />
+      {data.length > 0 ? (
+        <Table
+          tableProps={table as RTTable<unknown>}
+          isPaginated
+          totalRecords={totalItems}
+          title="Proposals"
+        />
+      ) : (
+        <div className="h-[850px] flex items-center flex-col justify-center">
+          <Spinner size="xl" />
+        </div>
+      )}
     </CardTable>
   );
 };

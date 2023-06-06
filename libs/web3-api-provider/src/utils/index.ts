@@ -1,6 +1,6 @@
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { ethers } from 'ethers';
-import { Web3Provider } from './ext-provider';
+import { Web3Provider } from '../ext-provider';
 
 const evmProviderCache: { [typedChainId: number]: ethers.providers.Provider } =
   {};
@@ -25,3 +25,6 @@ export const evmProviderFactory = async (
 
   return provider;
 };
+
+export { default as calculateProvingLeavesAndCommitmentIndex } from './calculateProvingLeavesAndCommitmentIndex';
+export { default as handleVAnchorTxState } from './handleVAnchorTxState';
