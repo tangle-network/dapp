@@ -61,18 +61,14 @@ export const FAQSection = () => {
             with others in our community channels to learn more!
           </Typography>
         </div>
-        <Accordion
-          defaultValue={faqItems[0].question}
-          type="single"
-          className="lg:mx-auto"
-        >
+        <Accordion type="single" collapsible className="lg:mx-auto">
           {faqItems.map((item, index) => (
             <AccordionItem
               key={index}
               value={item.question}
-              className="px-0 border-b border-mono-40"
+              className="p-0 border-b border-mono-40"
             >
-              <AccordionButton className="items-start gap-8 px-0">
+              <AccordionButton className="items-start gap-8 px-0 py-6">
                 <Typography
                   variant="mkt-body1"
                   className="font-black text-mono-200"
