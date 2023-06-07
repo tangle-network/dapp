@@ -5,15 +5,15 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
       "options": {
-        "outputPath": "apps/bridge-dapp/build",
+        "outputPath": "dist/apps/bridge-dapp",
         "compiler": "babel",
         "index": "apps/bridge-dapp/src/public/index.html",
         "baseHref": "/",
-        "main": "apps/bridge-dapp/src/main.tsx",
+        "main": "apps/bridge-dapp/src/index.tsx",
         "tsConfig": "apps/bridge-dapp/tsconfig.app.json",
         "assets": [
           "apps/bridge-dapp/src/public/favicon.png",
@@ -21,7 +21,7 @@
         ],
         "generateIndexHtml": false,
         "scripts": [],
-        "postcssConfig": "./postcss.config.js",
+        "postcssConfig": "apps/bridge-dapp/postcss.config.js",
         "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
       },
       "configurations": {
@@ -49,7 +49,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "bridge-dapp:build",
         "webpackConfig": "apps/bridge-dapp/webpack.dev.js"
@@ -62,14 +62,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/bridge-dapp/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/bridge-dapp/jest.config.ts",

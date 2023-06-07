@@ -2,11 +2,10 @@
   "name": "tailwind-preset",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "libs/tailwind-preset",
   "sourceRoot": "libs/tailwind-preset",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "project": "libs/tailwind-preset/package.json",

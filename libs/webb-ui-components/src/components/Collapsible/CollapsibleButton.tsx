@@ -25,10 +25,13 @@ export const CollapsibleButton = forwardRef<
       )}
       ref={ref}
     >
-      <Typography variant="body1" component="span" fw="bold" className="block">
+      <Typography variant="body1" component="span" className="block">
         {children}
       </Typography>
-      <ChevronDown className="block duration-300 ease-in-out transform group-radix-state-open:rotate-180" />
+      <ChevronDown
+        size="lg"
+        className="block duration-300 ease-in-out transform group-radix-state-open:rotate-180"
+      />
     </CollapsiblePrimitive.Trigger>
   );
 });

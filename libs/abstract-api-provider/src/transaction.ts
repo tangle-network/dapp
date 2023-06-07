@@ -22,8 +22,11 @@ export enum TransactionState {
 
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
   FetchingLeavesFromRelayer, // The leaves of the merkle tree need to be obtained from the relayer
+  ValidatingLeaves, // The leaves of the merkle tree need to be validated
+
   FetchingLeaves, // To create a merkle proof, the elements of the merkle tree must be fetched.
   GeneratingZk, // There is a withdraw in progress, and it's on the step of generating the Zero-knowledge proof
+  InitializingTransaction, // There is a withdraw in progress, and it's on the step of initializing the transaction
   SendingTransaction, // There is a withdraw in progress, and it's on the step Sending the Transaction whether directly or through relayers
 
   Intermediate,
@@ -51,7 +54,7 @@ export type ActionEvent = {
 
 export type FixturesStatus = 'Done' | 'Waiting' | 'Failed' | number;
 
-type FixturesProgress = {
+export type FixturesProgress = {
   // Fixture name -> status
   fixturesList: Map<string, FixturesStatus>;
 };
@@ -79,10 +82,15 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.PreparingTransaction]: undefined;
 
   [TransactionState.FetchingFixtures]: FixturesProgress;
+
   [TransactionState.FetchingLeavesFromRelayer]: undefined;
   [TransactionState.FetchingLeaves]: LeavesProgress;
+  // undefined -> start validating, boolean -> true if valid, false if not valid
+  [TransactionState.ValidatingLeaves]: undefined | boolean;
+
   [TransactionState.GeneratingZk]: undefined;
   [TransactionState.Intermediate]: IntermediateProgress;
+  [TransactionState.InitializingTransaction]: undefined;
   [TransactionState.SendingTransaction]: string;
 
   [TransactionState.Done]: DonePayload;
@@ -103,7 +111,7 @@ type ExecutorClosure<DonePayload> = (
 /**
  * The metadata for the transaction
  */
-type TransactionMetaData = {
+export type TransactionMetaData = {
   amount: number;
   tokens: [string, string];
   wallets: {
@@ -180,40 +188,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     return new Transaction(exec, name, metadata, status);
   }
 
-  private isValidProgress<T extends TransactionState>(next: T): boolean {
-    switch (this._status.value[0]) {
-      case TransactionState.Cancelling:
-        break;
-      case TransactionState.Ideal:
-        break;
-      case TransactionState.FetchingFixtures:
-        break;
-      case TransactionState.FetchingLeavesFromRelayer:
-        break;
-      case TransactionState.FetchingLeaves:
-        break;
-      case TransactionState.GeneratingZk:
-        break;
-      case TransactionState.SendingTransaction:
-        break;
-      case TransactionState.Done:
-        break;
-      case TransactionState.Failed:
-        break;
-      case TransactionState.Intermediate:
-    }
-    return true;
-  }
-
   next<Status extends keyof TransactionStatusMap<DonePayload>>(
     status: Status,
     data: TransactionStatusMap<DonePayload>[Status]
   ) {
-    if (!this.isValidProgress(status)) {
-      throw new Error(
-        `Invalid progress for ${this.name}: from ${this._status.value[0]} to ${status}`
-      );
-    }
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
   }
@@ -226,11 +204,6 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   }
 
   cancel() {
-    if (!this.isValidProgress(TransactionState.Cancelling)) {
-      throw new Error(
-        `Invalid progress for ${this.name}: from ${this._status.value[0]} to ${TransactionState.Cancelling}`
-      );
-    }
     this.cancelToken.cancel();
   }
 

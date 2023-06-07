@@ -54,7 +54,9 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
             </TooltipTrigger>
             <TooltipBody>
               {typeof info === 'string' ? (
-                <Typography variant={'body3'}>{info}</Typography>
+                <Typography variant={'body1'} className="break-normal">
+                  {info}
+                </Typography>
               ) : (
                 info
               )}

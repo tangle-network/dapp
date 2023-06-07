@@ -21,6 +21,8 @@ const WEBB_TWITTER_URL = 'https://twitter.com/webbprotocol';
 const FOLLOW_WEBB_TWITTER_URL =
   'https://twitter.com/intent/follow?screen_name=webbprotocol';
 
+const WEBB_BLOG_URL = 'https://www.blog.webb.tools/';
+
 // Export default here to avoid import other files
 export default {
   BRIDGE_URL,
@@ -31,4 +33,5 @@ export default {
   TANGLE_NETWORK_URL,
   WEBB_DOCS_URL,
   WEBB_TWITTER_URL,
+  WEBB_BLOG_URL,
 };

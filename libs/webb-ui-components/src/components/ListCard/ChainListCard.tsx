@@ -71,6 +71,28 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       [chains, searchText, networkCategory]
     );
 
+    // Move the current active chain to the top of the list
+    const sortedChains = useMemo(() => {
+      if (!currentActiveChain) {
+        return filteredChains;
+      }
+
+      const currentActiveChainIndex = filteredChains.findIndex(
+        (chain) => chain.name === currentActiveChain
+      );
+
+      if (currentActiveChainIndex === -1) {
+        return filteredChains;
+      }
+
+      const activeChain = filteredChains[currentActiveChainIndex];
+
+      return [
+        activeChain,
+        ...filteredChains.filter((chain) => chain.name !== activeChain.name),
+      ];
+    }, [currentActiveChain, filteredChains]);
+
     return (
       <ListCardWrapper
         {...props}
@@ -96,12 +118,12 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         <ScrollArea
           {...overrideScrollAreaProps}
           className={twMerge(
-            'min-w-[350px] h-[376px]',
+            'lg:min-w-[350px] h-[376px]',
             overrideScrollAreaProps?.className
           )}
         >
           <ul className="py-2">
-            {filteredChains.map((currentChain, idx) => {
+            {sortedChains.map((currentChain, idx) => {
               const isConnected =
                 chainType === 'source' &&
                 currentChain.name === currentActiveChain;
@@ -155,7 +177,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           </ul>
         </ScrollArea>
 
-        <div className="mt-auto">
+        <div className="mt-7">
           {/** Disclamer */}
           <div
             className={cx(

@@ -1,5 +1,6 @@
-import cx from 'classnames';
 import React, { useMemo } from 'react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
 import { MenuItemProps } from './types';
@@ -42,16 +43,16 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         textTransform,
         clsxProp
       );
-    }, [clsxProp]);
+    }, [clsxProp, textTransform]);
 
     return (
-      <div className={className} {...props} ref={ref}>
+      <DropdownMenu.Item className={className} {...props} ref={ref}>
         {startIcon && <div className="mr-4 shrink-0">{startIcon}</div>}
         <span className="flex-grow text-inherit dark:text-inherit">
           {children}
         </span>
         {icon && <div className="shrink-0">{icon}</div>}
-      </div>
+      </DropdownMenu.Item>
     );
   }
 );

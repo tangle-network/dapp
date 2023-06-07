@@ -1,15 +1,3 @@
-export const TANGLE_NETWORK_DOCS_URL =
-  'https://docs.webb.tools/docs/tangle-network/overview/';
-
-export const STATS_DEV_URL = 'https://www.stats-dev.webb.tools/';
-
-export const WEBB_DOCS_URL = 'https://docs.webb.tools/docs/';
-
-export const WEBB_URL = 'https://webb.tools/';
-
-export const TANGLE_OVERVIEW_URL =
-  'https://docs.webb.tools/docs/tangle-network/overview/';
-
 export const WANT_TO_LEARN_MORE_URL =
   'https://docs.webb.tools/docs/protocols/dkg/overview/#want-to-learn-more';
 

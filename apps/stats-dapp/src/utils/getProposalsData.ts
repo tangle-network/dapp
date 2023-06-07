@@ -22,6 +22,8 @@ export function getProposalsData(
   propType: ProposalType,
   data: string
 ): Record<string, string | Record<string, any>> {
+  if (!data) return { data: '' };
+
   const bytes = hexToU8a(data);
   switch (propType) {
     case ProposalType.AnchorCreateProposal: {

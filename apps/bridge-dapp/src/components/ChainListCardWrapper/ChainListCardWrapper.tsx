@@ -6,6 +6,7 @@ import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { getAcitveSourceChains } from '../../utils/getAcitveSourceChains';
+import { Bridge } from '@webb-tools/abstract-api-provider';
 
 /**
  * The wrapper component for the ChainListCard component
@@ -15,6 +16,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   chains: chainsProps,
   chainType = 'source',
   currentActiveChain: currentActiveChainProps,
+  fungibleCurrency,
   onChange,
   onClose,
   ...props
@@ -85,6 +87,13 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
           calculateTypedChainId(chain.chainType, chain.chainId)
         );
 
+      let bridge: Bridge | undefined;
+      const bridgeConfig =
+        fungibleCurrency && apiConfig.bridgeByAsset[fungibleCurrency.id];
+      if (bridgeConfig) {
+        bridge = new Bridge(fungibleCurrency, bridgeConfig.anchors);
+      }
+
       // If the selected chain is supported by the active wallet
       if (isSupported) {
         await switchChain(chain, activeWallet);
@@ -96,7 +105,9 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     },
     [
       activeWallet,
+      apiConfig.bridgeByAsset,
       chainsConfig,
+      fungibleCurrency,
       onChange,
       setMainComponent,
       switchChain,
@@ -108,7 +119,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     <ChainListCard
       chainType={chainType}
       chains={chains}
-      className="min-w-[550px] w-full h-[710px]"
+      className="w-full h-[710px]"
       currentActiveChain={currentActiveChain}
       defaultCategory={activeChain?.tag}
       onChange={handleChainChange}

@@ -6,7 +6,7 @@ import { ButtonSpinnerProps } from './types';
 
 export const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
   const {
-    children = <Spinner darkMode={props.darkMode} size="lg" />,
+    children = <Spinner darkMode={props.darkMode} className="w-5 h-5" />,
     className,
     label,
     placement = 'start',

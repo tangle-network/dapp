@@ -1,19 +1,21 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { BigNumber, ethers } from 'ethers';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const { allNotes } = useNoteAccount();
 
   const { activeChain } = useWebContext();
 
-  const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
+  const { allFungibleCurrencies: fungibleCurrencies, getWrappableCurrencies } =
+    useCurrencies();
 
   // Group notes by destination chain and symbol
   const groupedNotes = React.useMemo(() => {
@@ -22,7 +24,12 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const { targetChainId, tokenSymbol, amount, denomination } = note.note;
 
         const chain = chainsPopulated[Number(targetChainId)];
-
+        // This could happen in the case of a chain being removed from the
+        // config, but the user still has notes from that chain.
+        if (!chain) {
+          console.warn(`Typed Chain (${targetChainId}) not supported anymore!`);
+          return;
+        }
         if (chain.tag !== activeChain?.tag) {
           return;
         }
@@ -59,7 +66,10 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (fungibleCurrency) {
-          const foundCurrencies = getWrappableCurrencies(fungibleCurrency.id);
+          const foundCurrencies = getWrappableCurrencies(
+            fungibleCurrency.id,
+            false
+          );
 
           wrappableCurrencies = foundCurrencies;
         }

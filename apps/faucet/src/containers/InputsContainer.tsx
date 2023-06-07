@@ -137,7 +137,7 @@ const Info = () => {
       leaveFrom={cx('opacity-100 translate-y-0')}
       leaveTo={cx('opacity-0 -translate-y-[100%]')}
     >
-      <Typography variant="mkt-utility" className="mt-2">
+      <Typography variant="mkt-caption" className="mt-2 font-medium">
         *Please follow <TwitterLink isInheritFont />{' '}
         {' on Twitter and login to get started.'}
       </Typography>

@@ -1,18 +1,17 @@
 import {
-  ChevronRight,
   ShieldKeyholeIcon,
   TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { TokenPairIcons } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { forwardRef, useMemo } from 'react';
+import { MouseEvent, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import { MouseEvent } from 'react';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { TokenPairIcons } from '../TokenPairIcons';
 import { AnimatedChevronRight } from './AnimatedChevronRight';
 import { InputWrapper } from './InputWrapper';
 import { TokenInputComponentProps } from './types';
@@ -28,10 +27,7 @@ import { TokenInputComponentProps } from './types';
  * ```
  */
 export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
-  (
-    { className, id, info = 'Token', title = 'Token', token, ...props },
-    ref
-  ) => {
+  ({ className, id, info, title = 'Token', token, ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;
       let balanceInUsd: string | undefined;

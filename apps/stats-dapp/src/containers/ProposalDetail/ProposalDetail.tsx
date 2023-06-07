@@ -235,7 +235,11 @@ export const ProposalDetail = () => {
             <br />
             <Typography variant="mono1" component="p">
               <ProposalData
-                data={getProposalsData(proposalData.type, proposalData.data)}
+                data={
+                  proposalData.data != '0x00'
+                    ? getProposalsData(proposalData.type, proposalData.data)
+                    : { data: { expired: true } }
+                }
               />
             </Typography>
           </div>
