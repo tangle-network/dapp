@@ -221,7 +221,13 @@ export const WithdrawContainer = forwardRef<
         activeChain
       ),
     };
-  }, [addCurrency, balancesFromNotes, activeChain, currentTypedChainId, fungibleCurrency]);
+  }, [
+    addCurrency,
+    balancesFromNotes,
+    activeChain,
+    currentTypedChainId,
+    fungibleCurrency,
+  ]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
