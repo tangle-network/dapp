@@ -123,21 +123,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                   onClick={() => onItemChange(current)}
                 />
               ))}
-              <Typography
-                variant="body4"
-                fw="bold"
-                className="uppercase text-mono-100 dark:text-mono-80 my-2"
-              >
-                Unavailable
-              </Typography>
-              {filteredUnavailable.map((current, idx) => (
-                <AssetListItem
-                  key={`${current.name}-${idx}`}
-                  {...current}
-                  isDisabled
-                  onClick={() => onItemChange(current)}
-                />
-              ))}
             </ul>
           </ScrollArea>
         </div>
