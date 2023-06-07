@@ -76,7 +76,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           <Input
             id="token"
             rightIcon={<Search />}
-            placeholder="Search token or enter token address"
+            placeholder="Search pool or enter token address"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
           />
@@ -123,47 +123,11 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                   onClick={() => onItemChange(current)}
                 />
               ))}
-              <Typography
-                variant="body4"
-                fw="bold"
-                className="uppercase text-mono-100 dark:text-mono-80 my-2"
-              >
-                Unavailable
-              </Typography>
-              {filteredUnavailable.map((current, idx) => (
-                <AssetListItem
-                  key={`${current.name}-${idx}`}
-                  {...current}
-                  isDisabled
-                  onClick={() => onItemChange(current)}
-                />
-              ))}
             </ul>
           </ScrollArea>
         </div>
 
-        <div
-          className={cx(
-            'flex flex-col items-center justify-center px-2 py-1 mt-9'
-          )}
-        >
-          <Typography
-            variant="utility"
-            className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
-            ta="center"
-          >
-            Don't see your asset?
-          </Typography>
-
-          <Button
-            variant="link"
-            size="sm"
-            className="mt-1 text-center"
-            onClick={onConnect}
-          >
-            Try another account or wallet
-          </Button>
-        </div>
+        {/* Alert Component */}
       </ListCardWrapper>
     );
   }
