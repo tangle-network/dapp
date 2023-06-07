@@ -1,12 +1,14 @@
 import { FC } from 'react';
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
+
 import { LinkButton } from '..';
-import { TANGLE_OVERVIEW_URL, WANT_TO_LEARN_MORE_URL } from '../../constants';
+import { WANT_TO_LEARN_MORE_URL } from '../../constants';
 
 interface TangleFeatureCardProps {
   img: string;
@@ -21,7 +23,7 @@ const tangleFeatures = [
     title: 'Proof-of-Stake Authority Selection',
     description:
       'The Tangle Network uses a cutting-edge selection system based on Proof-of-Stake, allowing anyone to participate in securing private cross-chain applications.',
-    link: TANGLE_OVERVIEW_URL,
+    link: TANGLE_DOCS_URL,
   },
   {
     title: 'Multi-Stage Governance for Signing',
@@ -117,7 +119,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
       </div>
       <div className="py-[42px] px-6 flex flex-col justify-between flex-1">
         <div>
-          <p className="mono1 mb-4">0{index}</p>
+          <p className="mb-4 mono1">0{index}</p>
           <hr />
           <Typography
             variant="mkt-subheading"
@@ -125,7 +127,7 @@ const TangleFeatureCard: FC<TangleFeatureCardProps> = (props) => {
           >
             {title}
           </Typography>
-          <Typography variant="mkt-body1" className="text-mono-140 font-medium">
+          <Typography variant="mkt-body1" className="font-medium text-mono-140">
             {description}
           </Typography>
         </div>

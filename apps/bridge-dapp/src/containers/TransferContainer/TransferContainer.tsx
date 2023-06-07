@@ -12,7 +12,6 @@ import {
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
@@ -60,12 +59,11 @@ export const TransferContainer = forwardRef<
     const {
       activeApi,
       activeChain,
-      activeWallet,
       apiConfig,
       chains,
       loading,
       noteManager,
-      switchChain,
+      txQueue,
     } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
@@ -73,8 +71,6 @@ export const TransferContainer = forwardRef<
     const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
     const { api } = useVAnchor();
-
-    const txQueue = useTxQueue();
 
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
@@ -279,7 +275,7 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TokenListCard
-          className="min-w-[550px] h-[710px]"
+          className="h-[710px]"
           title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={selectableBridgingAssets}
@@ -981,6 +977,7 @@ export const TransferContainer = forwardRef<
         {
           leftTextProps: {
             title: 'Est. transaction fee',
+            info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
           },
           rightContent: maxFeeText,
         },
@@ -1044,7 +1041,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         bridgeAssetInputProps={bridgeAssetInputProps}
         destChainInputProps={destChainInputProps}
         amountInputProps={amountInputProps}

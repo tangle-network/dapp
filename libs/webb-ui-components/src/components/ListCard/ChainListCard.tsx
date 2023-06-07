@@ -118,7 +118,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
         <ScrollArea
           {...overrideScrollAreaProps}
           className={twMerge(
-            'min-w-[350px] h-[376px]',
+            'lg:min-w-[350px] h-[376px]',
             overrideScrollAreaProps?.className
           )}
         >
@@ -177,7 +177,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           </ul>
         </ScrollArea>
 
-        <div className="mt-auto">
+        <div className="mt-7">
           {/** Disclamer */}
           <div
             className={cx(

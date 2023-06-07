@@ -43,7 +43,7 @@ export const UseCasesSection = () => {
         <div className="flex flex-col gap-4 lg:px-[11.25%]">
           <Typography
             variant="mkt-small-caps"
-            className="text-purple-40 font-black"
+            className="font-black text-purple-40"
           >
             Usecases
           </Typography>

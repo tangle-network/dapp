@@ -89,6 +89,7 @@ function createWebpackBase() {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
         constants: false,
         fs: false,
         url: false,

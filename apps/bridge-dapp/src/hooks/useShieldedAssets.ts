@@ -24,7 +24,12 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         const { targetChainId, tokenSymbol, amount, denomination } = note.note;
 
         const chain = chainsPopulated[Number(targetChainId)];
-
+        // This could happen in the case of a chain being removed from the
+        // config, but the user still has notes from that chain.
+        if (!chain) {
+          console.warn(`Typed Chain (${targetChainId}) not supported anymore!`);
+          return;
+        }
         if (chain.tag !== activeChain?.tag) {
           return;
         }

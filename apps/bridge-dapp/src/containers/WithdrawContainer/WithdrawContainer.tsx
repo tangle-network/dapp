@@ -10,7 +10,6 @@ import {
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
 } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
@@ -75,15 +74,8 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const {
-    activeApi,
-    activeChain,
-    activeWallet,
-    apiConfig,
-    loading,
-    noteManager,
-    switchChain,
-  } = useWebContext();
+  const { activeApi, activeChain, apiConfig, loading, noteManager, txQueue } =
+    useWebContext();
 
   const { wrappableCurrency, setWrappableCurrency } = useBridge();
 
@@ -140,8 +132,6 @@ export const WithdrawContainer = forwardRef<
   }, [isUnwrap, wrappableCurrency]);
 
   const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
-
-  const txQueue = useTxQueue();
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
@@ -1080,7 +1070,7 @@ export const WithdrawContainer = forwardRef<
       {
         leftTextProps: {
           title: 'Est. transaction fee',
-          info: transactionFeeInfo,
+          info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
         },
         rightContent: txFeeContent,
       },
@@ -1097,7 +1087,6 @@ export const WithdrawContainer = forwardRef<
     refundInfo,
     selectedFungibleToken?.symbol,
     totalFeeInWei,
-    transactionFeeInfo,
   ]);
 
   // Effect to update the fungible currency when the default fungible currency changes.
@@ -1183,7 +1172,7 @@ export const WithdrawContainer = forwardRef<
   return (
     <WithdrawCard
       ref={ref}
-      className="max-w-none"
+      className="max-w-none flex-[1]"
       tokenInputProps={tokenInputProps}
       unwrappingAssetInputProps={unwrappingAssetInputProps}
       fixedAmountInputProps={fixedAmountInputProps}

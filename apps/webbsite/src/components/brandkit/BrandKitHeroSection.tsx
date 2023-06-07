@@ -6,7 +6,7 @@ export const BrandKitHeroSection = () => {
       <div className="max-w-[1440px] mx-auto space-y-6 md:space-y-8">
         <Typography
           variant="mkt-h3"
-          className="text-center text-mono-200 font-black"
+          className="font-black text-center text-mono-200"
         >
           Webb Brand Kit
         </Typography>

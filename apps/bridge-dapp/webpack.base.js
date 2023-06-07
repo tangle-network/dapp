@@ -12,6 +12,8 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const findPackages = require('../../tools/scripts/findPackages');
+const packageJson = require(path.resolve(__dirname, 'package.json'));
+const packageVersion = packageJson.version;
 
 function mapChunks(name, regs, inc) {
   return regs.reduce(
@@ -259,6 +261,7 @@ function createWebpack(env, mode = 'production') {
         'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
           process.env.NX_BRIDGE_APP_DOMAIN
         ),
+        'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -279,6 +282,7 @@ function createWebpack(env, mode = 'production') {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
         constants: false,
         fs: false,
         url: false,

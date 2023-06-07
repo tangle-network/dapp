@@ -35,7 +35,7 @@ import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 
-interface MainComponentProposVariants {
+interface MainComponentPropsVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
   ['dest-chain-list-card']: ChainListCardWrapperProps;
   ['token-deposit-list-card']: TokenListCardProps;
@@ -44,7 +44,7 @@ interface MainComponentProposVariants {
   ['deposit-confirm-container']: DepositConfirmContainerProps;
 }
 
-type MainComponentVariants = keyof MainComponentProposVariants;
+type MainComponentVariants = keyof MainComponentPropsVariants;
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -66,10 +66,6 @@ export const DepositContainer = forwardRef<
     const [mainComponentName, setMainComponentName] = useState<
       MainComponentVariants | undefined
     >(undefined);
-
-    const resetMainComponent = useCallback(() => {
-      setMainComponentName(undefined);
-    }, [setMainComponentName]);
 
     const {
       activeApi,
@@ -419,7 +415,6 @@ export const DepositContainer = forwardRef<
           type: destChain.base ?? 'webb-dev',
         },
         note: newNote,
-        resetMainComponent: resetMainComponent,
         onResetState: handleResetState,
       });
 
@@ -438,7 +433,6 @@ export const DepositContainer = forwardRef<
       amount,
       apiConfig,
       wrappableCurrency?.id,
-      resetMainComponent,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
@@ -658,7 +652,7 @@ export const DepositContainer = forwardRef<
     >(undefined);
 
     const setMainComponentArgs = useMemo<
-      [ElementType, Partial<MainComponentProposVariants>] | undefined
+      [ElementType, Partial<MainComponentPropsVariants>] | undefined
     >(() => {
       switch (mainComponentName) {
         case 'token-wrap-and-deposit-list-card':
@@ -812,7 +806,7 @@ export const DepositContainer = forwardRef<
     return (
       <DepositCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         {...props}
         sourceChainProps={{
           chain: selectedSourceChain,
