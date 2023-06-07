@@ -45,7 +45,9 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
       () => ({
         ...bridgeAssetInputProps,
         title: bridgeAssetInputProps?.title ?? 'Shielded Pool',
-        info: bridgeAssetInputProps?.info ?? 'Shielded Pool',
+        info:
+          bridgeAssetInputProps?.info ??
+          'Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction.',
       }),
       [bridgeAssetInputProps]
     );
