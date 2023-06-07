@@ -1,6 +1,7 @@
 import {
   ShieldedPoolHeroSection,
   ShieldedPoolUseCasesSection,
+  ShieldedPoolExtensionsSection,
 } from '../components/shielded-pool';
 
 const ShieldedPoolProtocolsPage = () => {
@@ -9,7 +10,7 @@ const ShieldedPoolProtocolsPage = () => {
       <ShieldedPoolHeroSection />
       <ShieldedPoolUseCasesSection />
       <div></div>
-      <div></div>
+      <ShieldedPoolExtensionsSection />
     </div>
   );
 };

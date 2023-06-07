@@ -37,7 +37,7 @@ const useCases: Array<UseCaseProps> = [
 
 export const ShieldedPoolUseCasesSection = () => {
   return (
-    <section className="pt-[64px] pb-4 md:py-[156px] px-4 lg:px-0">
+    <section className="py-[64px] md:py-[156px] px-4 lg:px-0">
       <div className="max-w-[900px] mx-auto flex flex-col gap-6 md:gap-[70px]">
         <Typography
           variant="mkt-h3"
