@@ -1,7 +1,14 @@
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { ShieldedPoolHeroSection } from '../components/shielded-pool';
 
 const ShieldedPoolProtocolsPage = () => {
-  return <>ShieldedPoolProtocolsPage</>;
+  return (
+    <>
+      <ShieldedPoolHeroSection />
+      <div></div>
+      <div></div>
+      <div></div>
+    </>
+  );
 };
 
 export default ShieldedPoolProtocolsPage;
