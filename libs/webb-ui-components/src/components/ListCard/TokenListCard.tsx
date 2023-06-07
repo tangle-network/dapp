@@ -76,7 +76,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           <Input
             id="token"
             rightIcon={<Search />}
-            placeholder="Search token or enter token address"
+            placeholder="Search pool or enter token address"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
           />
