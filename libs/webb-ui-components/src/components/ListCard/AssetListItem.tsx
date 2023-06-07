@@ -27,7 +27,7 @@ export const AssetListItem = forwardRef<
 
     const handleTokenIconClick = useMemo(() => {
       if (typeof onTokenClick === 'function') {
-        return (event: MouseEvent<SVGSVGElement>) => {
+        return (event: any) => {
           event.stopPropagation();
           onTokenClickRef.current?.(symbol);
         };
