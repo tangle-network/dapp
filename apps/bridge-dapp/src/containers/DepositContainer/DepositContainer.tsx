@@ -29,7 +29,6 @@ import {
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
 import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
-import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
@@ -37,7 +36,7 @@ import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { BigNumber, ethers } from 'ethers';
 import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
-interface MainComponentProposVariants {
+interface MainComponentPropsVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
   ['dest-chain-list-card']: ChainListCardWrapperProps;
   ['token-deposit-list-card']: TokenListCardProps;

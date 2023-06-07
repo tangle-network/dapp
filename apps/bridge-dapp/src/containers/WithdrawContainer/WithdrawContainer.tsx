@@ -37,7 +37,6 @@ import {
   utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
 import { CurrencyConfig } from '@webb-tools/dapp-config';
-import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { isValidAddress } from '@webb-tools/dapp-types';
 import {
   WalletState,
@@ -47,7 +46,6 @@ import {
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
 import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
@@ -223,7 +221,7 @@ export const WithdrawContainer = forwardRef<
         activeChain
       ),
     };
-  }, [addCurrency, availableAmount, balancesFromNotes, activeChain, currentTypedChainId, fungibleCurrency]);
+  }, [addCurrency, balancesFromNotes, activeChain, currentTypedChainId, fungibleCurrency]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
