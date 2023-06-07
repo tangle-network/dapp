@@ -4,12 +4,12 @@ const RECIPIENT_PUBLIC_KEY_DOCS_URL =
   'https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/transfer/#6-input-recipient-shielded-address';
 
 export const RecipientPublicKeyTooltipContent = () => (
-  <div>
-    <Typography variant="body3" fw="bold">
+  <div className="py-2">
+    <Typography variant="body1" fw="bold">
       Recipient public key
     </Typography>
 
-    <Typography variant="body3" className="mt-2 break-normal max-w-[185px]">
+    <Typography variant="body1" className="mt-2 break-normal max-w-[280px]">
       {
         "The recipient public key\nrepresents the shielded address linked to the intended recipient's account for the transfer."
       }

@@ -6,15 +6,13 @@ import {
   TabTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-import {
-  WEBB_DOCS_URL,
-  NODE_OPERATORS_URL,
-  POLKADOT_TANGLE_URL,
-} from '../../constants';
+
+import { NODE_OPERATORS_URL, POLKADOT_TANGLE_URL } from '../../constants';
 
 interface TangleFeatureCardProps {
   tabName: string;

@@ -27,10 +27,7 @@ import { TokenInputComponentProps } from './types';
  * ```
  */
 export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
-  (
-    { className, id, info = 'Token', title = 'Token', token, ...props },
-    ref
-  ) => {
+  ({ className, id, info, title = 'Token', token, ...props }, ref) => {
     const [balance, balanceInUsd] = useMemo(() => {
       let balance: string | undefined;
       let balanceInUsd: string | undefined;

@@ -6,7 +6,7 @@ import {
   NavigationMenuContent,
   NavigationMenuTrigger,
 } from '@webb-tools/webb-ui-components';
-import * as constants from '@webb-tools/webb-ui-components/constants';
+import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -35,12 +35,9 @@ export const Header: FC<HeaderProps> = () => {
   );
 
   return (
-    <header className="py-4 bg-mono-0 dark:bg-mono-180">
-      <div className="flex justify-between px-2 max-w-[1160px] h-[40px] mx-auto">
-        <NavLink
-          to={constants.logoConfig.path}
-          className="flex flex-col justify-center"
-        >
+    <header className="p-4 bg-mono-0 dark:bg-mono-180">
+      <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
+        <NavLink to={WEBB_MKT_URL} className="flex flex-col justify-center">
           <Logo />
         </NavLink>
 
@@ -49,15 +46,16 @@ export const Header: FC<HeaderProps> = () => {
           {isDisplayNetworkSwitcherAndWalletButton &&
           activeAccount &&
           activeWallet ? (
-            <>
+            <div className="hidden lg:!flex items-center space-x-2">
               <ChainSwitcherButton />
               <WalletButton account={activeAccount} wallet={activeWallet} />
-            </>
+            </div>
           ) : (
             <Button
               isLoading={loading}
               loadingText="Connecting..."
               onClick={handleConnectWalletClick}
+              className="hidden lg:!block"
             >
               Connect wallet
             </Button>
@@ -67,6 +65,7 @@ export const Header: FC<HeaderProps> = () => {
             <NavigationMenuTrigger />
             {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
             <NavigationMenuContent
+              version={process.env.BRIDGE_VERSION}
               onTestnetClick={() =>
                 window.open(
                   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
