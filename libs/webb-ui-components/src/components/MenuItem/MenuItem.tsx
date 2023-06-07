@@ -42,7 +42,7 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         textTransform,
         clsxProp
       );
-    }, [clsxProp]);
+    }, [textTransform, clsxProp]);
 
     return (
       <div className={className} {...props} ref={ref}>

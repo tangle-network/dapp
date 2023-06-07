@@ -11,7 +11,8 @@ const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
     protocols: [
       {
         label: 'Shielded Pool Protocols',
-        url: '#',
+        url: '/shielded-pool-protocols',
+        isInternal: true,
       },
       {
         label: 'Shielded Identity Protocols',
