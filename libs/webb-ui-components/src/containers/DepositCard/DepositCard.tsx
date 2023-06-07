@@ -79,7 +79,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
               {bridgingTokenProps && (
                 <TokenInput
                   {...bridgingTokenProps}
-                  title="Bridging Token"
+                  title="Shielded Pool"
+                  info="Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction."
                   className="grow shrink-0 basis-1"
                 />
               )}
@@ -88,7 +89,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
             <div className="flex lg:hidden gap-2">
               <TokenInput title="Deposit" className="grow shrink-0 basis-1" />
               <TokenInput
-                title="Bridging Token"
+                title="Shielded Pool"
                 className="lg:hidden grow shrink-0 basis-1"
               />
             </div>
