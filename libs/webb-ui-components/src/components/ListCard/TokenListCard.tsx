@@ -127,28 +127,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           </ScrollArea>
         </div>
 
-        <div
-          className={cx(
-            'flex flex-col items-center justify-center px-2 py-1 mt-9'
-          )}
-        >
-          <Typography
-            variant="utility"
-            className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
-            ta="center"
-          >
-            Don't see your asset?
-          </Typography>
-
-          <Button
-            variant="link"
-            size="sm"
-            className="mt-1 text-center"
-            onClick={onConnect}
-          >
-            Try another account or wallet
-          </Button>
-        </div>
+        {/* Alert Component */}
       </ListCardWrapper>
     );
   }
