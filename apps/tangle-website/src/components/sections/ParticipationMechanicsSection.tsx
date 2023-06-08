@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   TabContent,
   TabsList,
@@ -14,8 +15,9 @@ import 'swiper/css/free-mode';
 
 import { NODE_OPERATORS_URL, POLKADOT_TANGLE_URL } from '../../constants';
 
-interface TangleFeatureCardProps {
+interface TabTriggerProps {
   tabName: string;
+  img: string;
 }
 
 const tabsContent = {
@@ -25,6 +27,7 @@ const tabsContent = {
       'Running a Validator node on the Tangle Network allows you to connect to the network, sync with a bootnode, obtain local access to RPC endpoints, and author blocks. The network rewards validators by paying a set amount of TNT tokens as rewards.',
     linkText: 'Learn More',
     linkUrl: WEBB_DOCS_URL,
+    img: '/static/assets/validator.png',
   },
   Relayer: {
     title: 'Run a Relayer',
@@ -32,6 +35,7 @@ const tabsContent = {
       "By participating as a Relayer, you'll play a crucial role in maintaining the efficiency and security of our system while earning commissions on each relayed Private Transaction.",
     linkText: 'Learn More',
     linkUrl: NODE_OPERATORS_URL,
+    img: '/static/assets/relayer.png',
   },
   Governance: {
     title: 'Participate in Governance',
@@ -39,6 +43,7 @@ const tabsContent = {
       "Through Tangle's on-chain governance system, you can create proposals for updating cross-chain applications. Tangle token holders can propose changes to the Tangle network.",
     linkText: 'Participate Now',
     linkUrl: POLKADOT_TANGLE_URL,
+    img: '/static/assets/governance.png',
   },
   Develop: {
     title: 'Develop Applications & Research',
@@ -46,6 +51,7 @@ const tabsContent = {
       'Become a part of the Tangle community by developing cutting-edge applications and conducting pioneering research. Together, we can create a more scalable, interoperable, and privacy-focused web3 ecosystem.',
     linkText: 'Get Started',
     linkUrl: POLKADOT_TANGLE_URL,
+    img: '/static/assets/develop.png',
   },
 };
 
@@ -93,7 +99,10 @@ export const ParticipationMechanicsSection = () => {
                   className="w-full !bg-inherit p-0"
                   key={i}
                 >
-                  <ParticipationTabTrigger tabName={tabName} />
+                  <ParticipationTabTrigger
+                    tabName={tabName}
+                    img={tabsContent[tabName].img}
+                  />
                 </TabTrigger>
               ))}
             </div>
@@ -119,7 +128,10 @@ export const ParticipationMechanicsSection = () => {
                     className="w-full !bg-inherit p-0"
                     key={i}
                   >
-                    <ParticipationTabTrigger tabName={tabName} />
+                    <ParticipationTabTrigger
+                      tabName={tabName}
+                      img={tabsContent[tabName].img}
+                    />
                   </TabTrigger>
                 </SwiperSlide>
               ))}
@@ -155,14 +167,22 @@ export const ParticipationMechanicsSection = () => {
   );
 };
 
-const ParticipationTabTrigger: React.FC<TangleFeatureCardProps> = (props) => {
-  const { tabName } = props;
+const ParticipationTabTrigger: React.FC<TabTriggerProps> = ({
+  tabName,
+  img,
+}) => {
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <div className="flex items-center justify-center w-full rounded-lg participation-tab aspect-square">
         <div className="w-full text-inherit">
           <div className="flex flex-col items-center gap-2 text-inherit">
-            <div className="w-12 h-12 rounded-full bg-mono-40" />
+            <Image
+              src={img}
+              alt={tabName}
+              width={48}
+              height={48}
+              className="participation-tab-img rounded-full bg-mono-40"
+            />
             <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
               {tabName}
             </p>
