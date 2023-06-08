@@ -1,6 +1,7 @@
 import {
   ShieldedPoolHeroSection,
   ShieldedPoolUseCasesSection,
+  HowShieldedPoolWorksSection,
   ShieldedPoolExtensionsSection,
 } from '../components/shielded-pool';
 
@@ -9,7 +10,7 @@ const ShieldedPoolProtocolsPage = () => {
     <div className="bg-mono-20">
       <ShieldedPoolHeroSection />
       <ShieldedPoolUseCasesSection />
-      <div></div>
+      <HowShieldedPoolWorksSection />
       <ShieldedPoolExtensionsSection />
     </div>
   );

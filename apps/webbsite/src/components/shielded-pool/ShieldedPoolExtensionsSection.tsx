@@ -97,6 +97,7 @@ export const ShieldedPoolExtensionsSection = () => {
               ))}
             </TabsList>
           </div>
+
           <div className="flex-[1]">
             {extensions.map((extension, idx) => (
               <TabContent
