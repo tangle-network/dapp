@@ -5,7 +5,7 @@ import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
 import tokens from '../config/tokens';
-import { AddressType, FaucetChainDataType } from '../types';
+import { AddressType, FaucetChainDataType, MintTokenResult } from '../types';
 
 /**
  * An object to hold the all input values for the faucet form
@@ -66,6 +66,11 @@ export type FaucetContextType = {
    * Boolean to show the minting success modal
    */
   isMintingSuccess$: BehaviorSubject<boolean>;
+
+  /**
+   * The mint token result observable
+   */
+  mintTokenResult$: BehaviorSubject<MintTokenResult | null>;
 };
 
 // The default amount to send
@@ -101,6 +106,7 @@ const defaultContextValue = {
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
   isMintingSuccess$: new BehaviorSubject<boolean>(false),
+  mintTokenResult$: new BehaviorSubject<MintTokenResult | null>(null),
 };
 
 const FaucetContext = createContext<FaucetContextType>(defaultContextValue);

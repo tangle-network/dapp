@@ -139,7 +139,7 @@ export type FaucetChainDataType = {
 /**
  * The mint token body response type
  */
-export type MintTokenBody = {
+export type EvmMintTokenBody = {
   /**
    * The wallet requested to mint the token
    */
@@ -171,3 +171,9 @@ export type MintTokenBody = {
    */
   tx_result: TransactionReceipt;
 };
+
+/**
+ * The mint token result type
+ * (can be a tx hash or an EvmMintTokenBody)
+ */
+export type MintTokenResult = EvmMintTokenBody | string;

@@ -14,7 +14,7 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { MintTokenBody } from '../types';
+import { EvmMintTokenBody } from '../types';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
@@ -26,7 +26,7 @@ const mintTokens = async (
   abortSignal?: AbortSignal
 ): Promise<
   Result<
-    MintTokenBody,
+    EvmMintTokenBody,
     FaucetError<
       | FaucetErrorCode.INVALID_SELECTED_CHAIN
       | FaucetErrorCode.MINT_TOKENS_FAILED
@@ -91,7 +91,7 @@ const mintTokens = async (
       }
     }
 
-    const result = await safeParseJSON<MintTokenBody>(response);
+    const result = await safeParseJSON<EvmMintTokenBody>(response);
     if (result.isErr()) {
       return err(result.error);
     }
@@ -107,8 +107,13 @@ const mintTokens = async (
 };
 
 const MintButtonContainer = () => {
-  const { config, inputValues$, isMintingModalOpen$, isMintingSuccess$ } =
-    useFaucetContext();
+  const {
+    config,
+    inputValues$,
+    isMintingModalOpen$,
+    isMintingSuccess$,
+    mintTokenResult$,
+  } = useFaucetContext();
 
   const [getStore] = useStore();
 
@@ -166,7 +171,7 @@ const MintButtonContainer = () => {
       const result = await mintTokens(accessToken, inputValues, config);
       result.match(
         (res) => {
-          window.alert('Minting tokens succeeded with payload: ' + JSON.stringify(res, null, 2));
+          mintTokenResult$.next(res);
           isMintingSuccess$.next(true)
         },
         (err) => { // TODO: Handle returned error here
@@ -174,7 +179,7 @@ const MintButtonContainer = () => {
           isMintingModalOpen$.next(false)
         },
       )
-  }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$]); // prettier-ignore
+  }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]); // prettier-ignore
 
   return (
     <>

@@ -1,4 +1,9 @@
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { MetaMaskIcon } from '@webb-tools/icons';
+import {
+  calculateTypedChainId,
+  ChainType,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   Modal,
@@ -18,18 +23,64 @@ import { useFaucetContext } from '../provider';
 import addTokenToMetamask from '../utils/addTokenToMetamask';
 
 const ProcessingModal = () => {
-  const { isMintingModalOpen$, isMintingSuccess$, inputValues$ } =
-    useFaucetContext();
+  const {
+    isMintingModalOpen$,
+    isMintingSuccess$,
+    inputValues$,
+    mintTokenResult$,
+  } = useFaucetContext();
 
   const inputValues = useObservableState(inputValues$);
 
   const isModalOpen = useObservableState(isMintingModalOpen$);
   const isSuccess = useObservableState(isMintingSuccess$);
 
+  const mintTokenRes = useObservableState(mintTokenResult$);
+
   const animationData = useMemo(
     () => (isSuccess ? sucessAnimation : processingAnimation),
     [isSuccess]
   );
+
+  const mintTxLink = useMemo(() => {
+    if (!mintTokenRes) return '';
+
+    if (typeof mintTokenRes === 'string') return mintTokenRes;
+
+    const {
+      tx_result: { transactionHash },
+      typed_chain_id: { id, type },
+    } = mintTokenRes;
+
+    let typedChainId: number;
+
+    switch (type) {
+      case 'Substrate': {
+        typedChainId = calculateTypedChainId(ChainType.Substrate, id);
+        break;
+      }
+
+      default: {
+        // Default to EVM
+        typedChainId = calculateTypedChainId(ChainType.EVM, id);
+        break;
+      }
+    }
+
+    const chain = chainsConfig[typedChainId];
+
+    if (!chain) {
+      alert(`Typed chain id ${typedChainId} is not in the chains config`);
+      return '';
+    }
+
+    if (!chain.blockExplorerStub) {
+      alert(`Chain ${chain.name} does not have a block explorer url`);
+      return '';
+    }
+
+    return `${chain.blockExplorerStub}/tx/${transactionHash}`;
+  }, [mintTokenRes]);
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
@@ -82,7 +133,13 @@ const ProcessingModal = () => {
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 
-          <Button className={cx({ hidden: !isSuccess })} variant="link">
+          <Button
+            href={mintTxLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cx({ hidden: !isSuccess })}
+            variant="link"
+          >
             View on Explorer
           </Button>
         </div>
