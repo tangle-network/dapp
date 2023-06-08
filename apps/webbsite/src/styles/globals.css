@@ -11,11 +11,11 @@
 }
 
 .swiper-pagination-bullet {
-  @apply !bg-mono-120;
+  @apply !bg-mono-80;
 }
 
 .swiper-pagination-bullet-active {
-  @apply !bg-mono-200;
+  @apply !bg-mono-20;
 }
 
 /* Headings, sub-headings, card texts */
