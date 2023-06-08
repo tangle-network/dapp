@@ -5,6 +5,8 @@ const BRIDGE_URL = 'https://app.webb.tools/';
 
 const STATS_URL = 'https://stats.webb.tools/';
 
+const TANGLE_MARKETING_SITE = 'https://tangle.webb.tools';
+
 const TANGLE_NETWORK_URL =
   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-archive.webb.tools#/explorer';
 
@@ -30,6 +32,7 @@ export default {
   CONNECTED_SHIELDED_POOLS_URL,
   FOLLOW_WEBB_TWITTER_URL,
   STATS_URL,
+  TANGLE_MARKETING_SITE,
   TANGLE_NETWORK_URL,
   WEBB_DOCS_URL,
   WEBB_TWITTER_URL,
