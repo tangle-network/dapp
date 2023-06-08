@@ -55,7 +55,7 @@ export const Header: FC<HeaderProps> = () => {
               isLoading={loading}
               loadingText="Connecting..."
               onClick={handleConnectWalletClick}
-              className="hidden lg:!block"
+              className="hidden lg:!flex"
             >
               Connect wallet
             </Button>

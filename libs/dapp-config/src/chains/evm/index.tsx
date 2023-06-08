@@ -22,9 +22,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.Goerli,
     name: 'Goerli',
     base: 'ethereum',
-    url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    url: 'https://ethereum-goerli.publicnode.com',
     evmRpcUrls: [
-      'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+      'https://ethereum-goerli.publicnode.com',
       'https://goerli.infura.io/v3',
       'https://rpc.ankr.com/eth_goerli',
       'https://eth-goerli.g.alchemy.com/v2',
