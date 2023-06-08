@@ -44,27 +44,24 @@ export const Header: FC<HeaderProps> = () => {
         </NavLink>
 
         <div className="flex items-center space-x-2">
+          {/** Wallet is actived */}
           {!isMobile &&
-            {
-              /** Wallet is actived */
-            }(
-              isDisplayNetworkSwitcherAndWalletButton &&
-                activeAccount &&
-                activeWallet ? (
-                <div className="items-center space-x-2">
-                  <ChainSwitcherButton />
-                  <WalletButton account={activeAccount} wallet={activeWallet} />
-                </div>
-              ) : (
-                <Button
-                  isLoading={loading}
-                  loadingText="Connecting..."
-                  onClick={handleConnectWalletClick}
-                >
-                  Connect wallet
-                </Button>
-              )
-            )}
+            (isDisplayNetworkSwitcherAndWalletButton &&
+            activeAccount &&
+            activeWallet ? (
+              <div className="items-center space-x-2">
+                <ChainSwitcherButton />
+                <WalletButton account={activeAccount} wallet={activeWallet} />
+              </div>
+            ) : (
+              <Button
+                isLoading={loading}
+                loadingText="Connecting..."
+                onClick={handleConnectWalletClick}
+              >
+                Connect wallet
+              </Button>
+            ))}
 
           <NavigationMenu>
             <NavigationMenuTrigger />
