@@ -2,7 +2,7 @@ import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-conf
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { evmProviderFactory } from '@webb-tools/web3-api-provider/src/utils';
+import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import chalk from 'chalk';
 import { ethers } from 'ethers';
 

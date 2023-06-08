@@ -1,8 +1,13 @@
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
+import { EVMChainId } from '@webb-tools/dapp-types/src/EVMChainId';
 import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { Chain } from 'viem';
 import { createPublicClient, http } from 'viem';
+
 import * as chains from 'viem/chains';
+
+// At the time of writing, Viem does not support multicall for these chains.
+const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha];
 
 /**
  * Gets the chain object for the given chain id.
@@ -23,6 +28,7 @@ function getViemChain(chainId: number) {
  */
 function defineViemChain(typedChainId: number) {
   const chain = chainsConfig[typedChainId];
+  console.log(`Defining viem chain ${chain.name}`);
   if (!chain) {
     throw new Error('Chain not found in the chainsConfig');
   }
@@ -63,7 +69,7 @@ function getViemClient(typedChainId: number) {
   const { chainId } = parseTypedChainId(typedChainId);
 
   let chain = getViemChain(chainId);
-  if (!chain) {
+  if (!chain || VIEM_NOT_SUPPORTED_MULTICALL_CHAINS.includes(chainId)) {
     chain = defineViemChain(typedChainId);
   }
 
