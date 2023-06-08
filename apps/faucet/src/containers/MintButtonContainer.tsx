@@ -157,13 +157,7 @@ const MintButtonContainer = () => {
 
   // Mocked implementation of minting tokens
   const handleMintTokens = useCallback(async () => {
-    const confirmMessage = `Mint tokens with the following values\n${JSON.stringify(
-      inputValues,
-      null,
-      2
-    )}`;
-    const isConfirm = confirm(confirmMessage);
-    if (!isConfirm || !accessToken) {
+    if (!accessToken) {
       return;
     }
 

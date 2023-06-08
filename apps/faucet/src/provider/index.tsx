@@ -74,7 +74,7 @@ export type FaucetContextType = {
 };
 
 // The default amount to send
-const AMOUNT = 1000;
+const AMOUNT = 10;
 
 // Serialize the tokens config to the FaucetChainDataType
 const config = Object.entries(tokens).reduce(
@@ -82,9 +82,7 @@ const config = Object.entries(tokens).reduce(
     const chain = chainsConfig[+typedChainId];
 
     if (!chain) {
-      console.error(
-        `Typed chain id ${typedChainId} is not in the chains config`
-      );
+      alert(`Typed chain id ${typedChainId} is not in the chains config`);
       return acc;
     }
 
