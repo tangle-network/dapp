@@ -58,8 +58,7 @@ const Page = () => {
               variant="mkt-body1"
               className="text-center font-medium text-mono-140"
             >
-              This faucet enables the transfer of Test Tokens (wtTNT) on
-              networks supported by Hubble Bridge.
+              This faucet sends various test tokens on networks supported by the Hubble Bridge.
             </Typography>
             <Typography
               variant="mkt-body1"
