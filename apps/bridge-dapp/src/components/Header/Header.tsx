@@ -6,6 +6,7 @@ import {
   NavigationMenuContent,
   NavigationMenuTrigger,
 } from '@webb-tools/webb-ui-components';
+import { useCheckMobile } from '@webb-tools/webb-ui-components/hooks';
 import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -20,6 +21,7 @@ import { HeaderProps } from './types';
  */
 export const Header: FC<HeaderProps> = () => {
   const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
+  const { isMobile } = useCheckMobile();
 
   const { toggleModal } = useConnectWallet();
 
@@ -42,24 +44,27 @@ export const Header: FC<HeaderProps> = () => {
         </NavLink>
 
         <div className="flex items-center space-x-2">
-          {/** Wallet is actived */}
-          {isDisplayNetworkSwitcherAndWalletButton &&
-          activeAccount &&
-          activeWallet ? (
-            <div className="hidden lg:!flex items-center space-x-2">
-              <ChainSwitcherButton />
-              <WalletButton account={activeAccount} wallet={activeWallet} />
-            </div>
-          ) : (
-            <Button
-              isLoading={loading}
-              loadingText="Connecting..."
-              onClick={handleConnectWalletClick}
-              className="hidden lg:!block"
-            >
-              Connect wallet
-            </Button>
-          )}
+          {!isMobile &&
+            {
+              /** Wallet is actived */
+            }(
+              isDisplayNetworkSwitcherAndWalletButton &&
+                activeAccount &&
+                activeWallet ? (
+                <div className="items-center space-x-2">
+                  <ChainSwitcherButton />
+                  <WalletButton account={activeAccount} wallet={activeWallet} />
+                </div>
+              ) : (
+                <Button
+                  isLoading={loading}
+                  loadingText="Connecting..."
+                  onClick={handleConnectWalletClick}
+                >
+                  Connect wallet
+                </Button>
+              )
+            )}
 
           <NavigationMenu>
             <NavigationMenuTrigger />
