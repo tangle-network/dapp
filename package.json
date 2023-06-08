@@ -200,7 +200,7 @@
     "@webb-tools/contracts": "0.5.46",
     "@webb-tools/interfaces": "0.5.46",
     "@webb-tools/protocol-substrate-types": "0.0.10",
-    "@webb-tools/sdk-core": "0.1.4-125",
+    "@webb-tools/sdk-core": "file:/Volumes/tins_ssd/webb/webb.js/packages/sdk-core/build",
     "@webb-tools/test-utils": "0.1.4-125",
     "@webb-tools/tokens": "0.5.46",
     "@webb-tools/utils": "0.5.38",
