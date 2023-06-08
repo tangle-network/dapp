@@ -10,6 +10,7 @@ import {
   InfoItem,
   TokenInput,
   ConnectWalletMobileButton,
+  Alert,
 } from '../../components';
 import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';
@@ -130,6 +131,8 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         ) : (
           <ConnectWalletMobileButton isFullWidth />
         )}
+
+        <Alert title="title" description="Some description" />
       </div>
     );
   }
