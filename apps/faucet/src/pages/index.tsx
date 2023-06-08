@@ -58,7 +58,8 @@ const Page = () => {
               variant="mkt-body1"
               className="text-center font-medium text-mono-140"
             >
-              This faucet sends various test tokens on networks supported by the Hubble Bridge.
+              This faucet sends various test tokens on networks supported by the
+              Hubble Bridge.
             </Typography>
             <Typography
               variant="mkt-body1"
