@@ -5,7 +5,7 @@ import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
 import tokens from '../config/tokens';
-import { FaucetChainDataType } from '../types';
+import { AddressType, FaucetChainDataType } from '../types';
 
 /**
  * An object to hold the all input values for the faucet form
@@ -34,7 +34,7 @@ export type InputValuesType = {
   /**
    * The recipient address type
    */
-  recepientAddressType?: 'ethereum' | 'substrate';
+  recepientAddressType?: AddressType;
 };
 
 /**

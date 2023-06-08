@@ -14,11 +14,11 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
+import { MintTokenBody } from '../types';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
 
-// Mocked implementation of minting tokens
 const mintTokens = async (
   accessToken: string,
   { chain: chainName, recepient, recepientAddressType }: InputValuesType,
@@ -26,7 +26,7 @@ const mintTokens = async (
   abortSignal?: AbortSignal
 ): Promise<
   Result<
-    void,
+    MintTokenBody,
     FaucetError<
       | FaucetErrorCode.INVALID_SELECTED_CHAIN
       | FaucetErrorCode.MINT_TOKENS_FAILED
@@ -91,12 +91,12 @@ const mintTokens = async (
       }
     }
 
-    const result = await safeParseJSON(response);
+    const result = await safeParseJSON<MintTokenBody>(response);
     if (result.isErr()) {
       return err(result.error);
     }
 
-    return ok(result.value as any); // TODO: Determine the type of the response
+    return ok(result.value); // TODO: Determine the type of the response
   } catch (error) {
     return err(
       FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {

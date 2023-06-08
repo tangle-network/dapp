@@ -1,5 +1,18 @@
 // File contains all shared types used in the app
 
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { UserV2 } from 'twitter-api-v2';
+
+/**
+ * Supported wallet address types
+ */
+export type AddressType = 'ethereum' | 'substrate';
+
+/**
+ * The chain type
+ */
+export type ChainType = 'Evm' | 'Substrate';
+
 /**
  * The twitter login response type
  */
@@ -109,7 +122,7 @@ export type FaucetChainDataType = {
   /**
    * The chain type (Evm or Substrate)
    */
-  type: 'Evm' | 'Substrate';
+  type: ChainType;
 
   /**
    * The chain id
@@ -121,4 +134,40 @@ export type FaucetChainDataType = {
    * (token symbol -> contract address)
    */
   tokenAddresses: Record<string, string>;
+};
+
+/**
+ * The mint token body response type
+ */
+export type MintTokenBody = {
+  /**
+   * The wallet requested to mint the token
+   */
+  wallet: {
+    type: AddressType;
+    value: string;
+  };
+
+  /**
+   * The typed chain id
+   */
+  typed_chain_id: {
+    id: number;
+    type: ChainType;
+  };
+
+  /**
+   * The last claimed date
+   */
+  last_claimed_date: string;
+
+  /**
+   * The twitter user data
+   */
+  user: UserV2;
+
+  /**
+   * The transaction receipt
+   */
+  tx_result: TransactionReceipt;
 };
