@@ -10,7 +10,7 @@ import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
 import OptimismLogo from '@webb-tools/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-tools/logos/Eth';
-import { ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 
 import { ChainConfig } from '../chain-config.interface';
 

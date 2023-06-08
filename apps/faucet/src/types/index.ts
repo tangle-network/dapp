@@ -96,3 +96,29 @@ export type TokenInput = {
    */
   symbol: string;
 };
+
+/**
+ * The chain data type
+ */
+export type FaucetChainDataType = {
+  /**
+   * The chain name (used for display and render the `ChainIcon`)
+   */
+  name: string;
+
+  /**
+   * The chain type (Evm or Substrate)
+   */
+  type: 'Evm' | 'Substrate';
+
+  /**
+   * The chain id
+   */
+  chainId: number;
+
+  /**
+   * The token address record
+   * (token symbol -> contract address)
+   */
+  tokenAddresses: Record<string, string>;
+};
