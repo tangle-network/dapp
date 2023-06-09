@@ -107,6 +107,13 @@ class FaucetError<Code extends FaucetErrorCode> extends Error {
   static getErrorMessage(code: FaucetErrorCode): string {
     return errorMessages[code];
   }
+
+  /**
+   * Static helper to check if an error is a FaucetError
+   */
+  static isFaucetError(error: unknown): error is FaucetError<FaucetErrorCode> {
+    return error instanceof FaucetError;
+  }
 }
 
 export default FaucetError;
