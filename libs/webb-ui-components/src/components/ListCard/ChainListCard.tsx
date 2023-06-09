@@ -182,7 +182,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
           {/** Disclamer */}
           <Alert
             title="The selection of source chain will determine tokens and
-              destination chains availability"
+              destination chains availability."
           />
 
           {/** Network categories */}
