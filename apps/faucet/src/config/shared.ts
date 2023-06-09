@@ -6,6 +6,13 @@ const faucetBackendUrl =
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:4200';
 
+/**
+ * The amount of tokens to send to the user. Defaults to 20.
+ */
+const amount = process.env.NEXT_PUBLIC_AMOUNT
+  ? +process.env.NEXT_PUBLIC_AMOUNT
+  : 20;
+
 const twitterClientId = process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID || '';
 if (!twitterClientId) {
   throw FaucetError.from(FaucetErrorCode.MISSING_ENV_VAR, {
@@ -14,6 +21,7 @@ if (!twitterClientId) {
 }
 
 const config = {
+  amount,
   appUrl,
   faucetBackendUrl,
   twitterClientId,

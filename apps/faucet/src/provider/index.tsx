@@ -4,6 +4,7 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
+import sharedConfig from '../config/shared';
 import tokens from '../config/tokens';
 import { AddressType, FaucetChainDataType, MintTokenResult } from '../types';
 
@@ -73,9 +74,6 @@ export type FaucetContextType = {
   mintTokenResult$: BehaviorSubject<MintTokenResult | null>;
 };
 
-// The default amount to send
-const AMOUNT = 10;
-
 // Serialize the tokens config to the FaucetChainDataType
 const config = Object.entries(tokens).reduce(
   (acc, [typedChainId, tokensRecord]) => {
@@ -99,7 +97,7 @@ const config = Object.entries(tokens).reduce(
 );
 
 const defaultContextValue = {
-  amount: AMOUNT,
+  amount: sharedConfig.amount,
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
