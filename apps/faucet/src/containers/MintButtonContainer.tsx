@@ -56,8 +56,7 @@ const mintTokens = async (
   const body = {
     faucet: {
       typedChainId: {
-        id: chain.chainId,
-        type: chain.type,
+        [chain.type]: chain.chainId,
       },
       walletAddress: {
         type: recepientAddressType,
