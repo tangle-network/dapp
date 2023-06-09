@@ -49,6 +49,11 @@ button[data-radix-collection-item][data-state='active']
   @apply border-t-mono-200;
 }
 
+button[data-radix-collection-item][data-state='active']
+  .participation-tab-img {
+  @apply bg-mono-180;
+}
+
 /* Override styling for Accordion component from webb-ui-components */
 button[data-radix-collection-item] > span {
   @apply text-[18px] leading-[28px]
