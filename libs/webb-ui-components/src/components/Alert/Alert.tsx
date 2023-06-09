@@ -84,7 +84,7 @@ export const Alert: React.FC<AlertProps> = ({
         />
       )}
 
-      <div className="flex flex-col justify-start items-start gap-1">
+      <div className="flex flex-col gap-1">
         <Typography variant="body1" className={titleClassName}>
           {title}
         </Typography>

@@ -131,8 +131,6 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
         ) : (
           <ConnectWalletMobileButton isFullWidth />
         )}
-
-        <Alert title="Transaction Status" description="Your transaction was successful!" type='success' />
       </div>
     );
   }
