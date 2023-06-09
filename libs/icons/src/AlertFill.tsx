@@ -1,20 +1,10 @@
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
-import { IconSize } from '@webb-tools/icons/types';
+import { createIcon } from './create-icon';
+import { IconBase } from './types';
 
-export const AlertFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
-  size = 'md',
-  ...props
-}) => {
-  const imageSize = getIconSizeInPixel(size);
-  return (
-    <img
-      style={{
-        maxWidth: imageSize,
-        ...props,
-      }}
-      src={
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAZCAYAAAArK+5dAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAKwSURBVHgB1VRLSFRhFP7+ue/J0uhBSQtfkeIilMwskh70WERtgsJFtmwRPWwRlIugTUIFQRtxV8vaRkhRiDYOGgVFGZiJpUQPkKLuTDN37un8d2Ycp8mZO9Mmz+XwH/7/fOf7z+P+wP8kFG5dRs/PVBSDEX4daaipEonZJxBqEKKiTWx/+s4PLgC/QvZlLLeqUKGthql2+4X5yoBGdrdAmQ7DUpMXsuPAD7Vd7Hg9WAjrLwP3Ux8MJeNrqaz6NaJLBfEFHWh4y3EYzsbvERe9d2Y9tX8RoEdbELrbgX8RenNwKQ3XTtKrRvoSbiCuJ8ntz8P1JPdotHGGZnqDKDmD2enzCOpVslNlloCiCKis0va6p7uVmOzpLomAHq+pgvLzJFJ9NXQBXQM0TcDUUzCNV9PsohcdNUUTwFx5BVagPD1nQpEEAY9I2nNi8Bd52VMUAY3s2gotegReIEoquV5w05DlcTP7Ci9q9DCF9+30RUDEvaSPNyEDkZNR1+HgwBJTeHbWmS73Jq76IsBgdSdUuwlCguMZdeOwOLglG5yIZ58JViPWTKGG03kJaGhbJRR+ElQJjGWrG4PBGUiVds65lmAi+yI9rF8xP6aaRedOnEBZYh1fke2c3HDskA7H4bq7UfxVdKyCgwtsnUtvzY0D9ZdXc/BxBF3F/xv7h8i+R7heZut60fxoKjsDS1yHbivp4cgRJh14BsS4ens25yHR+PsW6mVrfwrG8Qbq9iLwth/WwrjRMaCtM2mHbwObNuQhicqpqjsg2sfvBXgsFTgf+PZI1n0BNfkvVnjm5Zvq/ch5fKFxCZypHgqdtQTdt06hLHKDEysoM1/5clyi2rWFfcF+SNR0CXqgjyEYqy+5sfnENt6r0Ixb3NSjEAGN13k0hOIl/XAxmPht0aw+LHr5DfR8D+Q6ayZDAAAAAElFTkSuQmCC'
-      }
-    />
-  );
+export const AlertFill = (props: IconBase) => {
+  return createIcon({
+    ...props,
+    d: 'M12.865 3.00017L22.3912 19.5002C22.6674 19.9785 22.5035 20.5901 22.0252 20.8662C21.8732 20.954 21.7008 21.0002 21.5252 21.0002H2.47266C1.92037 21.0002 1.47266 20.5525 1.47266 20.0002C1.47266 19.8246 1.51886 19.6522 1.60663 19.5002L11.1329 3.00017C11.4091 2.52187 12.0206 2.358 12.4989 2.63414C12.651 2.72191 12.7772 2.84815 12.865 3.00017ZM10.9989 16.0002V18.0002H12.9989V16.0002H10.9989ZM10.9989 9.00017V14.0002H12.9989V9.00017H10.9989Z',
+    displayName: 'AlertFill',
+  });
 };

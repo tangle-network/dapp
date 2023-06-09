@@ -5,60 +5,91 @@ import { twMerge } from 'tailwind-merge';
 import { AlertProps } from './types';
 import {
   AlertFill,
-  CheckboxCircleLine,
-  CheckboxFill,
-  InformationLine,
+  CheckboxCircleFill,
+  InformationLineFill,
 } from '@webb-tools/icons';
+import {
+  getClassNamesByType,
+  getTypographyClassNamesByType,
+  getTitleClassNamesBySize,
+  getDescriptionClassNamesBySize,
+} from './utils';
 
 /**
  * Webb Alert component
  *
  * Props:
  *
- * - `size`: Size of avatar - `md`: 24px, `lg`: 48px (default: `md`)
- * - `darkMode`: Control darkMode using `js`, leave it's empty to control dark mode using `css`
- * - `src`: Image source for avatar
- * - `alt`: Alternative text if source is unavailable
- * - `fallback`: Optional fallback text if source image is unavailable
+ * - `size`: Alert size - `md` (default), `lg`
+ * - `type`: Alert type - `info` (default), `success`, `error`
+ * - `title`: Alert title
+ * - `description`: Alert description
  * - `className`: Outer class name
  *
  * @example
  *
- * <Avatar alt="Webb Logo" src="webblogo.png" />
+ * <Alert title="Transaction Status" description="Your transaction was successful!" type='success' />
  */
 export const Alert: React.FC<AlertProps> = ({
-  className,
+  className: _className,
   size = 'md',
   type = 'info',
   description,
   title,
 }) => {
-  const iconSize = useMemo(() => (size === 'md' ? 'lg' : 'md'), [size]);
+  const iconSize = useMemo(() => (size === 'md' ? '20px' : '14px'), [size]);
+
+  const className = useMemo(() => {
+    return twMerge(
+      _className,
+      'flex w-full p-3 pl-4 space-x-1 rounded-lg gap-2.5',
+      getClassNamesByType(type)
+    );
+  }, [_className, type]);
+
+  const titleClassName = useMemo(() => {
+    return cx(
+      'capitalize',
+      getTypographyClassNamesByType(type),
+      getTitleClassNamesBySize(size)
+    );
+  }, [type, size]);
+
+  const descriptionlassName = useMemo(() => {
+    return cx(
+      getTypographyClassNamesByType(type),
+      getDescriptionClassNamesBySize(size)
+    );
+  }, [type, size]);
 
   return (
-    <div
-      className={cx(
-        'flex w-full px-4 py-2 space-x-1 border rounded-lg',
-        'text-blue-70 dark:text-blue-50',
-        'bg-blue-10/50 dark:bg-blue-120 border-blue-10 dark:border-blue-90'
-      )}
-    >
+    <div className={className}>
       {type === 'success' ? (
-        <CheckboxCircleLine size={iconSize} className="!fill-current" />
+        <CheckboxCircleFill
+          width={iconSize}
+          height={iconSize}
+          className="!fill-current"
+        />
+      ) : type === 'error' ? (
+        <AlertFill
+          width={iconSize}
+          height={iconSize}
+          className="!fill-current"
+        />
       ) : (
-        <InformationLine size={iconSize} className="!fill-current" />
+        <InformationLineFill
+          width={iconSize}
+          height={iconSize}
+          className="!fill-current"
+        />
       )}
 
-      <div className="flex flex-col justify-start items-start gap-1 dark:text-blue-70">
-        <Typography
-          variant="body1"
-          fw="semibold"
-          className="capitalize !text-current"
-        >
+      <div className="flex flex-col justify-start items-start gap-1">
+        <Typography variant="body1" className={titleClassName}>
           {title}
         </Typography>
         {description && (
-          <Typography variant="body2" fw="normal" className="!text-current">
+          <Typography variant="body1" className={descriptionlassName}>
             {description}
           </Typography>
         )}
