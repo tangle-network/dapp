@@ -249,13 +249,13 @@ const PageBridge = () => {
                   <TabTrigger value="Transfer">Transfer</TabTrigger>
                   <TabTrigger value="Withdraw">Withdraw</TabTrigger>
                 </TabsList>
-                <TabContent className="grow flex flex-col" value="Deposit">
+                <TabContent className="flex flex-col grow" value="Deposit">
                   <DepositContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow flex flex-col" value="Transfer">
+                <TabContent className="flex flex-col grow" value="Transfer">
                   <TransferContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow flex flex-col" value="Withdraw">
+                <TabContent className="flex flex-col grow" value="Withdraw">
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>

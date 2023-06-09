@@ -43,27 +43,27 @@ const Page = () => {
             <div>
               <Typography
                 variant="mkt-small-caps"
-                className="text-center font-black text-blue-70"
+                className="font-black text-center text-blue-70"
               >
                 Get tokens
               </Typography>
               <Typography
                 variant="mkt-h3"
-                className="text-center font-black text-mono-200"
+                className="font-black text-center text-mono-200"
               >
                 Hubble Bridge Faucet
               </Typography>
             </div>
             <Typography
               variant="mkt-body1"
-              className="text-center font-medium text-mono-140"
+              className="font-medium text-center text-mono-140"
             >
               This faucet sends various test tokens on networks supported by the
               Hubble Bridge.
             </Typography>
             <Typography
               variant="mkt-body1"
-              className="text-center font-medium text-mono-140"
+              className="font-medium text-center text-mono-140"
             >
               To receive tokens, follow <TwitterLink />
               {

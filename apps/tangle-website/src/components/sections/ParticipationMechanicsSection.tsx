@@ -181,7 +181,7 @@ const ParticipationTabTrigger: React.FC<TabTriggerProps> = ({
               alt={tabName}
               width={48}
               height={48}
-              className="participation-tab-img rounded-full bg-mono-40"
+              className="rounded-full participation-tab-img bg-mono-40"
             />
             <p className="text-[16px] leading-[25.6px] md:text-[24px] md:leading-[40px] font-bold text-inherit">
               {tabName}

@@ -42,13 +42,13 @@ export const SupportedBySection = () => {
         <div className="md:w-[75%] lg:w-full flex flex-col gap-6 items-start">
           <Typography
             variant="mkt-h3"
-            className="text-left font-black text-mono-200"
+            className="font-black text-left text-mono-200"
           >
             Tangle Network is supported by...
           </Typography>
           <Typography
             variant="mkt-body1"
-            className="mt-3 text-left text-mono-140 font-medium"
+            className="mt-3 font-medium text-left text-mono-140"
           >
             Tangle Network is built by Webb Foundation, with support from
             various established industry programs and partners.
