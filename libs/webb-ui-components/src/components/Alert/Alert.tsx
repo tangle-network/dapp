@@ -1,6 +1,6 @@
 import { Typography } from '../../typography';
 import cx from 'classnames';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { AlertProps } from './types';
 import {
@@ -13,6 +13,7 @@ import {
   getTypographyClassNamesByType,
   getTitleClassNamesBySize,
   getDescriptionClassNamesBySize,
+  getIconClassNamesByType,
 } from './utils';
 
 /**
@@ -39,6 +40,8 @@ export const Alert: React.FC<AlertProps> = ({
 }) => {
   const iconSize = useMemo(() => (size === 'md' ? '20px' : '14px'), [size]);
 
+  const iconClassName = useMemo(() => getIconClassNamesByType(type), [type]);
+
   const className = useMemo(() => {
     return twMerge(
       _className,
@@ -64,25 +67,27 @@ export const Alert: React.FC<AlertProps> = ({
 
   return (
     <div className={className}>
-      {type === 'success' ? (
-        <CheckboxCircleFill
-          width={iconSize}
-          height={iconSize}
-          className="!fill-current"
-        />
-      ) : type === 'error' ? (
-        <AlertFill
-          width={iconSize}
-          height={iconSize}
-          className="!fill-current"
-        />
-      ) : (
-        <InformationLineFill
-          width={iconSize}
-          height={iconSize}
-          className="!fill-current"
-        />
-      )}
+      <div className={iconClassName}>
+        {type === 'success' ? (
+          <CheckboxCircleFill
+            width={iconSize}
+            height={iconSize}
+            className="!fill-current"
+          />
+        ) : type === 'error' ? (
+          <AlertFill
+            width={iconSize}
+            height={iconSize}
+            className="!fill-current"
+          />
+        ) : (
+          <InformationLineFill
+            width={iconSize}
+            height={iconSize}
+            className="!fill-current"
+          />
+        )}
+      </div>
 
       <div className="flex flex-col gap-1">
         <Typography variant="body1" className={titleClassName}>
