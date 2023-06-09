@@ -52,7 +52,6 @@ export const Alert: React.FC<AlertProps> = ({
 
   const titleClassName = useMemo(() => {
     return cx(
-      'capitalize',
       getTypographyClassNamesByType(type),
       getTitleClassNamesBySize(size)
     );

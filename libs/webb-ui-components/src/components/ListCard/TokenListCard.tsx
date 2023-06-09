@@ -10,6 +10,7 @@ import { TokenSelector } from '../TokenSelector';
 import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
+import { Alert } from '../Alert';
 
 export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   (
@@ -22,11 +23,14 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       title = 'Select a Token',
       unavailableTokens,
       value: selectedAsset,
+      txnType,
       ...props
     },
     ref
   ) => {
     const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
+
+    console.log(txnType);
 
     // Search text
     const [searchText, setSearchText] = useState('');
@@ -128,6 +132,11 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         </div>
 
         {/* Alert Component */}
+        {txnType === 'deposit' ? (
+          <Alert title="The availability of shielded pools is determined by your selected source chain and token." />
+        ) : (
+          <Alert title="The availability of shielded pools is subject to the balance in your account." />
+        )}
       </ListCardWrapper>
     );
   }

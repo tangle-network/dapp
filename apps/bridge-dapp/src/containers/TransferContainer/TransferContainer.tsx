@@ -286,6 +286,7 @@ export const TransferContainer = forwardRef<
           }}
           onClose={() => setMainComponent(undefined)}
           onConnect={onTryAnotherWallet}
+          txnType='transfer'
         />
       );
     }, [
