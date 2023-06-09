@@ -109,7 +109,7 @@ export const EducationCard = forwardRef<HTMLDivElement, EducationCardProps>(
     }, [defaultOpen]);
 
     return (
-      <div className="">
+      <div className="hidden mob:!block">
         <div
           {...props}
           className={twMerge(

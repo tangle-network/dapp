@@ -1,5 +1,21 @@
 // File contains all shared types used in the app
 
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { UserV2 } from 'twitter-api-v2';
+
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+
+/**
+ * Supported wallet address types
+ */
+export type AddressType = 'ethereum' | 'substrate';
+
+/**
+ * The chain type
+ */
+export type ChainType = 'Evm' | 'Substrate';
+
 /**
  * The twitter login response type
  */
@@ -96,3 +112,78 @@ export type TokenInput = {
    */
   symbol: string;
 };
+
+/**
+ * The chain data type
+ */
+export type FaucetChainDataType = {
+  /**
+   * The chain name (used for display and render the `ChainIcon`)
+   */
+  name: string;
+
+  /**
+   * The chain type (Evm or Substrate)
+   */
+  type: ChainType;
+
+  /**
+   * The chain id
+   */
+  chainId: number;
+
+  /**
+   * The token address record
+   * (token symbol -> contract address)
+   */
+  tokenAddresses: Record<string, string>;
+};
+
+/**
+ * The mint token body response type
+ */
+export type MintTokenBody = {
+  /**
+   * The wallet requested to mint the token
+   */
+  wallet: {
+    type: AddressType;
+    value: string;
+  };
+
+  /**
+   * The typed chain id
+   */
+  typed_chain_id: {
+    [type in ChainType]: number;
+  };
+
+  /**
+   * The last claimed date
+   */
+  last_claimed_date: string;
+
+  /**
+   * The twitter user data
+   */
+  user: UserV2;
+
+  /**
+   * The transaction receipt
+   */
+  tx_result: {
+    Evm?: TransactionReceipt;
+    Substrate?: string;
+  };
+};
+
+export type MintTokenErrorCodes =
+  | FaucetErrorCode.INVALID_SELECTED_CHAIN
+  | FaucetErrorCode.MINT_TOKENS_FAILED
+  | FaucetErrorCode.JSON_PARSE_ERROR;
+
+/**
+ * The mint token result type
+ * (can be a tx hash or an EvmMintTokenBody)
+ */
+export type MintTokenResult = MintTokenBody | FaucetError<MintTokenErrorCodes>;

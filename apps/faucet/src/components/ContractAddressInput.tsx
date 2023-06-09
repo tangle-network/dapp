@@ -67,7 +67,7 @@ const ContractAddressInput = () => {
     <div className="space-x-2">
       <RecipientInput
         isHiddenPasteBtn
-        className="max-w-none input-height"
+        className="!max-w-none input-height"
         value={contractAddress}
         title="Address"
         overrideInputProps={inputProps}
