@@ -142,7 +142,7 @@ export type FaucetChainDataType = {
 /**
  * The mint token body response type
  */
-export type EvmMintTokenBody = {
+export type MintTokenBody = {
   /**
    * The wallet requested to mint the token
    */
@@ -155,8 +155,7 @@ export type EvmMintTokenBody = {
    * The typed chain id
    */
   typed_chain_id: {
-    id: number;
-    type: ChainType;
+    [type in ChainType]: number;
   };
 
   /**
@@ -172,7 +171,10 @@ export type EvmMintTokenBody = {
   /**
    * The transaction receipt
    */
-  tx_result: TransactionReceipt;
+  tx_result: {
+    Evm?: TransactionReceipt;
+    Substrate?: string;
+  };
 };
 
 export type MintTokenErrorCodes =
@@ -184,7 +186,4 @@ export type MintTokenErrorCodes =
  * The mint token result type
  * (can be a tx hash or an EvmMintTokenBody)
  */
-export type MintTokenResult =
-  | EvmMintTokenBody
-  | string
-  | FaucetError<MintTokenErrorCodes>;
+export type MintTokenResult = MintTokenBody | FaucetError<MintTokenErrorCodes>;

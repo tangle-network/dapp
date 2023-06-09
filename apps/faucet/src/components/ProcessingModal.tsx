@@ -60,26 +60,23 @@ const ProcessingModal = () => {
 
     if (FaucetError.isFaucetError(mintTokenRes)) return '';
 
-    if (typeof mintTokenRes === 'string') return mintTokenRes;
-
     const {
-      tx_result: { transactionHash },
-      typed_chain_id: { id, type },
+      tx_result: { Evm: txReceipt, Substrate: txHash },
+      typed_chain_id: { Evm: evmChainId, Substrate: substrateChainId },
     } = mintTokenRes;
 
     let typedChainId: number;
 
-    switch (type) {
-      case 'Substrate': {
-        typedChainId = calculateTypedChainId(ChainType.Substrate, id);
-        break;
-      }
-
-      default: {
-        // Default to EVM
-        typedChainId = calculateTypedChainId(ChainType.EVM, id);
-        break;
-      }
+    if (substrateChainId) {
+      typedChainId = calculateTypedChainId(
+        ChainType.Substrate,
+        substrateChainId
+      );
+    } else if (evmChainId) {
+      typedChainId = calculateTypedChainId(ChainType.EVM, evmChainId);
+    } else {
+      alert('No chain id found in the mint token result');
+      return '';
     }
 
     const chain = chainsConfig[typedChainId];
@@ -94,7 +91,15 @@ const ProcessingModal = () => {
       return '';
     }
 
-    return `${chain.blockExplorerStub}/tx/${transactionHash}`;
+    if (txReceipt) {
+      return `${chain.blockExplorerStub}/tx/${txReceipt.transactionHash}`;
+    } else if (txHash) {
+      alert(`Substrate tx hash ${txHash} is not supported yet`);
+      return '';
+    } else {
+      alert('No tx hash found in the mint token result');
+      return '';
+    }
   }, [mintTokenRes]);
 
   const handleOpenChange = useCallback(

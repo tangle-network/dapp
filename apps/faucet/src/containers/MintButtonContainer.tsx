@@ -14,7 +14,7 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { EvmMintTokenBody, MintTokenErrorCodes } from '../types';
+import { MintTokenBody, MintTokenErrorCodes } from '../types';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
@@ -24,7 +24,7 @@ const mintTokens = async (
   { chain: chainName, recepient, recepientAddressType }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
-): Promise<Result<EvmMintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
+): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
   if (!chainName) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
@@ -81,7 +81,7 @@ const mintTokens = async (
       }
     }
 
-    const result = await safeParseJSON<EvmMintTokenBody>(response);
+    const result = await safeParseJSON<MintTokenBody>(response);
     if (result.isErr()) {
       return err(result.error);
     }
