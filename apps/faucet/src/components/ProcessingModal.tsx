@@ -141,7 +141,10 @@ const ProcessingModal = () => {
         <ModalHeader onClose={() => handleOpenChange(false)} />
 
         <div className="flex flex-col items-center space-y-4 p-9">
-          <Lottie className="lottie-size" animationData={animationData} />
+          <Lottie
+            className={cx(txErrorMessage ? 'lottie-size-sm' : 'lottie-size')}
+            animationData={animationData}
+          />
 
           <Typography fw="bold" ta="center" variant="h5">
             {isSuccess
