@@ -1,5 +1,4 @@
 import { Typography } from '../../typography';
-import cx from 'classnames';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { AlertProps } from './types';
@@ -51,14 +50,14 @@ export const Alert: React.FC<AlertProps> = ({
   }, [_className, type]);
 
   const titleClassName = useMemo(() => {
-    return cx(
+    return twMerge(
       getTypographyClassNamesByType(type),
       getTitleClassNamesBySize(size)
     );
   }, [type, size]);
 
   const descriptionlassName = useMemo(() => {
-    return cx(
+    return twMerge(
       getTypographyClassNamesByType(type),
       getDescriptionClassNamesBySize(size)
     );

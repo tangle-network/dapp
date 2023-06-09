@@ -1,5 +1,4 @@
 import { ChainIcon, InformationLine, Search } from '@webb-tools/icons';
-import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';

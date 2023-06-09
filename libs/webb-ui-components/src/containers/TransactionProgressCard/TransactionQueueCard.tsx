@@ -54,7 +54,7 @@ const FailedFooter = () => {
   return (
     <>
       <span className={'inline-block pr-2'}>
-        <AlertFill maxWidth={16} />
+        <AlertFill size='md' />
       </span>
       <span className={'text-inherit dark:text-inherit'}>
         Transaction failed &nbsp;
@@ -204,7 +204,7 @@ export const TransactionQueueCard = forwardRef<
       const { completedCount, failedCount, processingCount } =
         transactionsCountSummery;
       if (failedCount > 0) {
-        return <AlertFill maxWidth={18} />;
+        return <AlertFill size='md' />;
       }
       if (processingCount > 0) {
         return <Spinner width={18} />;

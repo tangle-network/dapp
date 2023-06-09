@@ -1,6 +1,5 @@
 import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
-import cx from 'classnames';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
 import { Button } from '../Button';
@@ -76,7 +75,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     return (
       <ListCardWrapper {...props} title={title} onClose={onClose} ref={ref}>
         {/** The search input */}
-        <div className={cx('px-2 py-4')}>
+        <div className="px-2 py-4">
           <Input
             id="token"
             rightIcon={<Search />}
@@ -118,7 +117,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           </Typography>
 
           {/** Token list */}
-          <ScrollArea className={cx('min-w-[350px] h-[376px]')}>
+          <ScrollArea className="min-w-[350px] h-[376px]">
             <ul>
               {filteredSelect.map((current, idx) => (
                 <AssetListItem
