@@ -39,20 +39,20 @@ const ProcessingModal = () => {
 
   const mintTokenRes = useObservableState(mintTokenResult$);
 
-  const txErrorMessage = useMemo(() => {
-    if (!FaucetError.isFaucetError(mintTokenRes)) return '';
+  const isFailed = useMemo(() => {
+    if (!FaucetError.isFaucetError(mintTokenRes)) return false;
 
-    return mintTokenRes.message;
+    return true;
   }, [mintTokenRes]);
 
   const animationData = useMemo(
     () =>
       isSuccess
         ? sucessAnimation
-        : txErrorMessage // If there is an error, use the failed animation
+        : isFailed // If there is an error, use the failed animation
         ? failedAnimation
         : processingAnimation,
-    [isSuccess, txErrorMessage]
+    [isSuccess, isFailed]
   );
 
   const mintTxLink = useMemo(() => {
@@ -105,13 +105,13 @@ const ProcessingModal = () => {
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       // Only close the modal when the minting is successful or failed
-      if ((isSuccess || txErrorMessage) && !nextOpen) {
+      if ((isSuccess || isFailed) && !nextOpen) {
         isMintingModalOpen$.next(nextOpen);
       } else {
         isMintingModalOpen$.next(true);
       }
     },
-    [isMintingModalOpen$, isSuccess, txErrorMessage]
+    [isMintingModalOpen$, isSuccess, isFailed]
   );
 
   const handleCloseAutoFocus = useCallback(() => {
@@ -142,14 +142,14 @@ const ProcessingModal = () => {
 
         <div className="flex flex-col items-center space-y-4 p-9">
           <Lottie
-            className={cx(txErrorMessage ? 'lottie-size-sm' : 'lottie-size')}
+            className={cx(isFailed ? 'lottie-size-sm' : 'lottie-size')}
             animationData={animationData}
           />
 
           <Typography fw="bold" ta="center" variant="h5">
             {isSuccess
               ? 'Transfer Successful'
-              : txErrorMessage
+              : isFailed
               ? 'Transfer Failed'
               : 'Request in Progress'}
           </Typography>
@@ -157,8 +157,8 @@ const ProcessingModal = () => {
           <Typography fw="semibold" ta="center" variant="body1">
             {isSuccess
               ? 'This transfer has been made to your wallet address.'
-              : txErrorMessage
-              ? txErrorMessage
+              : isFailed
+              ? 'Oops, the transfer could not be completed.'
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 
@@ -174,7 +174,7 @@ const ProcessingModal = () => {
         </div>
 
         {/* Hide the footer while transaction is in-progress */}
-        <ModalFooter className={cx({ hidden: !isSuccess && !txErrorMessage })}>
+        <ModalFooter className={cx({ hidden: !isSuccess && !isFailed })}>
           {isSuccess ? (
             <Button
               rightIcon={<MetaMaskIcon size="lg" />}
