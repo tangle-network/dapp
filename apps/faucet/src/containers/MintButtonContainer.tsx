@@ -14,7 +14,7 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { EvmMintTokenBody } from '../types';
+import { EvmMintTokenBody, MintTokenErrorCodes } from '../types';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
@@ -24,16 +24,7 @@ const mintTokens = async (
   { chain: chainName, recepient, recepientAddressType }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
-): Promise<
-  Result<
-    EvmMintTokenBody,
-    FaucetError<
-      | FaucetErrorCode.INVALID_SELECTED_CHAIN
-      | FaucetErrorCode.MINT_TOKENS_FAILED
-      | FaucetErrorCode.JSON_PARSE_ERROR
-    >
-  >
-> => {
+): Promise<Result<EvmMintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
   if (!chainName) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
@@ -51,7 +42,7 @@ const mintTokens = async (
     'Access-Control-Allow-Origin': '*',
     Authorization: `Bearer ${accessToken}`,
     'Content-Type': 'application/x-www-form-urlencoded',
-  };
+  } as const satisfies HeadersInit;
 
   const body = {
     faucet: {
@@ -167,9 +158,9 @@ const MintButtonContainer = () => {
           mintTokenResult$.next(res);
           isMintingSuccess$.next(true)
         },
-        (err) => { // TODO: Handle returned error here
+        (err) => {
           logger.error('Minting tokens failed', err.message);
-          isMintingModalOpen$.next(false)
+          mintTokenResult$.next(err);
         },
       )
   }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]); // prettier-ignore

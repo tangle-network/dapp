@@ -1,14 +1,13 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { getPlatformMetaData } from '@webb-tools/browser-utils';
-import { WalletConfig, walletsConfig } from '@webb-tools/dapp-config';
-import { WalletId, WebbError } from '@webb-tools/dapp-types';
+import { WalletConfig } from '@webb-tools/dapp-config';
+import { WebbError } from '@webb-tools/dapp-types';
 import {
   Modal,
   ModalContent,
-  useWebbUI,
   WalletConnectionCard,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { is } from 'date-fns/locale';
 import { FC, useCallback, useMemo } from 'react';
 
 import { useConnectWallet } from '../../hooks';

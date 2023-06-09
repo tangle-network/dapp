@@ -3,6 +3,9 @@
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { UserV2 } from 'twitter-api-v2';
 
+import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+
 /**
  * Supported wallet address types
  */
@@ -172,8 +175,16 @@ export type EvmMintTokenBody = {
   tx_result: TransactionReceipt;
 };
 
+export type MintTokenErrorCodes =
+  | FaucetErrorCode.INVALID_SELECTED_CHAIN
+  | FaucetErrorCode.MINT_TOKENS_FAILED
+  | FaucetErrorCode.JSON_PARSE_ERROR;
+
 /**
  * The mint token result type
  * (can be a tx hash or an EvmMintTokenBody)
  */
-export type MintTokenResult = EvmMintTokenBody | string;
+export type MintTokenResult =
+  | EvmMintTokenBody
+  | string
+  | FaucetError<MintTokenErrorCodes>;
