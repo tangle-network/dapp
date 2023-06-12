@@ -12,9 +12,11 @@ import {
 } from '@webb-tools/contracts';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import '@webb-tools/protocol-substrate-types';
+import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
+import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import assert from 'assert';
 import getViemClient from './getViemClient';
 import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
-import assert from 'assert';
 
 export interface AnchorMetadata {
   /**
@@ -33,9 +35,9 @@ export interface AnchorMetadata {
   isNativeAllowed?: boolean;
 
   /**
-   * Linked typed chain ids of the anchor (parsed from the neighbor edges)
+   * Record of linkable typed chain -> anchor address
    */
-  linkedTypedChainIds: bigint[];
+  linkableAnchor: Record<string, string>;
 }
 
 async function fetchEVMAnchorMetadata(
@@ -163,15 +165,27 @@ async function fetchEVMAnchorMetadata(
     wrappableCurrencies.push(wrappable);
   }
 
-  const linkedTypedChainIds = neighborEdges
-    .map((edge) => edge.chainID)
-    .filter((id) => id !== BigInt(0)); // filter out empty edges
+  const linkableAnchor = neighborEdges
+    .filter((edge) => edge.chainID !== BigInt(0))
+    .reduce((acc, edge) => {
+      const chainId = edge.chainID.toString();
+      const resourceIdHex = edge.srcResourceID;
+
+      const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceIdHex));
+
+      const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
+
+      return {
+        ...acc,
+        [chainId]: anchorAddr.startsWith('0x') ? anchorAddr : `0x${anchorAddr}`,
+      };
+    }, {} as Record<string, string>);
 
   return {
     fungibleCurrency,
     wrappableCurrencies,
     isNativeAllowed,
-    linkedTypedChainIds,
+    linkableAnchor,
   };
 }
 
@@ -223,9 +237,18 @@ async function fetchSubstrateAnchorMetadata(
     PalletLinkableTreeEdgeMetadata[]
   >(treeId);
 
-  const linkedTypedChainIds = edgeList.map((edge) =>
-    edge.srcChainId.toBigInt()
-  );
+  const linkableAnchor = edgeList.reduce((acc, edge) => {
+    const chainId = edge.srcChainId.toString();
+    const resourceId = edge.srcResourceId.toHex();
+
+    const { targetSystem } = ResourceId.fromBytes(hexToU8a(resourceId));
+    const anchorAddr = BigInt(u8aToHex(targetSystem)).toString(16); // Convert to big int to remove leading zeros and convert back to hex
+
+    return {
+      ...acc,
+      [chainId]: anchorAddr.startsWith('0x') ? anchorAddr : `0x${anchorAddr}`,
+    };
+  }, {} as Record<string, string>);
 
   const wrappableAssetIds = assetDetail.assetType.asPoolShare.map((a) =>
     a.toString()
@@ -263,7 +286,7 @@ async function fetchSubstrateAnchorMetadata(
     fungibleCurrency: fungible,
     wrappableCurrencies,
     isNativeAllowed,
-    linkedTypedChainIds,
+    linkableAnchor,
   } satisfies AnchorMetadata;
 }
 
