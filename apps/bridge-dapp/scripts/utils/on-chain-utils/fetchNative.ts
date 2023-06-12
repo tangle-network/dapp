@@ -58,17 +58,13 @@ async function fetchSubstrateNativeCurrency(
 
 async function fetchNativeCurrency(
   typedChainId: number,
-  provider?: ethers.providers.Web3Provider | ApiPromise
+  provider?: ApiPromise
 ): Promise<ICurrency> {
   if (provider instanceof ApiPromise) {
     return fetchSubstrateNativeCurrency(provider);
   }
 
-  if (!provider || provider instanceof ethers.providers.Web3Provider) {
-    return fetchEVMNativeCurrency(typedChainId);
-  }
-
-  throw new Error('Invalid provider');
+  return fetchEVMNativeCurrency(typedChainId);
 }
 
 export default fetchNativeCurrency;

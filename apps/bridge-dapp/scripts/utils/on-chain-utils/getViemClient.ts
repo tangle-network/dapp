@@ -28,7 +28,6 @@ function getViemChain(chainId: number) {
  */
 function defineViemChain(typedChainId: number) {
   const chain = chainsConfig[typedChainId];
-  console.log(`Defining viem chain ${chain.name}`);
   if (!chain) {
     throw new Error('Chain not found in the chainsConfig');
   }

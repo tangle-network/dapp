@@ -6,7 +6,9 @@ import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProvi
 import chalk from 'chalk';
 import { ethers } from 'ethers';
 
-import fetchFungibleCurrency from './utils/on-chain-utils/fetchFungible';
+import fetchAnchorMetadata, {
+  AnchorMetadata,
+} from './utils/on-chain-utils/fetchAnchorMetadata';
 import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
 
 interface WrappableRecord {
@@ -59,8 +61,7 @@ async function fetchNativeTask(
   const nativeCurrencies = await typedChainIds.reduce(
     async (acc, typedChainId) => {
       const native = await acc;
-      const provider = providersRecord[typedChainId];
-      const nativeCurrency = await fetchNativeCurrency(typedChainId, provider);
+      const nativeCurrency = await fetchNativeCurrency(typedChainId);
       native[typedChainId] = {
         native: nativeCurrency,
       };
@@ -83,36 +84,34 @@ async function fetchNativeTask(
   return nativeCurrencies;
 }
 
-async function fetchFungibleTask(
-  typedChainIds: number[],
-  providersRecord: Record<number, ethers.providers.Web3Provider>
-) {
-  console.log(chalk`[+] {cyan Fetching fungible currencies...}`);
-  const fungibleCurrencies = await typedChainIds.reduce(
+async function fetchAnchorMetadataTask(
+  typedChainIds: number[]
+): Promise<Record<number, AnchorMetadata[]>> {
+  console.log(chalk`[+] {cyan Fetching anchor metadata...}`);
+
+  const metadataRecord = await typedChainIds.reduce(
     async (acc, typedChainId) => {
-      const fungibles = await acc;
-      const provider = providersRecord[typedChainId];
+      const anchorMetadata = await acc;
 
       const addresses = anchorConfig[typedChainId];
-      const fungibleCurrencies = await Promise.all(
-        addresses.map((address) => fetchFungibleCurrency(address, provider))
+      const metadata = await Promise.all(
+        addresses.map((address) => fetchAnchorMetadata(address, typedChainId))
       );
-      fungibles[typedChainId] = {
-        fungibles: fungibleCurrencies,
-      };
-      return fungibles;
+
+      anchorMetadata[typedChainId] = metadata;
+      return anchorMetadata;
     },
-    {} as Promise<Record<number, Pick<CurrenciesRecord, 'fungibles'>>>
+    {} as Promise<Record<number, AnchorMetadata[]>> // typedChainId => AnchorMetadata[] mapping
   );
 
   // For logging
-  const fungibleCount = Object.values(fungibleCurrencies).reduce(
-    (acc, { fungibles }) => acc + fungibles.length,
+  const fungibleCount = Object.values(metadataRecord).reduce(
+    (acc, metadata) => acc + metadata.length,
     0
   );
 
-  const symbolsSet = Object.values(fungibleCurrencies).reduce((acc, cur) => {
-    const names = cur.fungibles.map((f) => f.symbol);
+  const symbolsSet = Object.values(metadataRecord).reduce((acc, cur) => {
+    const names = cur.map((f) => f.fungibleCurrency.symbol);
     names.forEach((name) => acc.add(name));
     return acc;
   }, new Set<string>());
@@ -123,7 +122,7 @@ async function fetchFungibleTask(
     } symbols: ${Array.from(symbolsSet).join(', ')}}`
   );
 
-  return fungibleCurrencies;
+  return metadataRecord;
 }
 
 // Main function
@@ -162,9 +161,9 @@ async function main() {
     {} as Promise<Record<number, ethers.providers.Web3Provider>>
   );
 
-  const [nativeRecord, fungibleRecord] = await Promise.all([
+  const [nativeRecord, anchorMetadata] = await Promise.all([
     fetchNativeTask(evmTypedChainIds, providersRecord),
-    fetchFungibleTask(evmTypedChainIds, providersRecord),
+    fetchAnchorMetadataTask(evmTypedChainIds),
   ]);
 }
 
