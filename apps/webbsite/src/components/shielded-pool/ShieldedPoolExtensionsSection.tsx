@@ -61,8 +61,8 @@ export const ShieldedPoolExtensionsSection = () => {
           className="md:text-[24px] md:leading-[40px] text-center text-mono-140"
         >
           We’re building out extensions to expand the capacity of shielded pool
-          protocols. Collaborate with us to help build extensions. To get started
-          building with them,
+          protocols. Collaborate with us to help build extensions. To get
+          started building with them,
         </Typography>
 
         <TabsRoot
