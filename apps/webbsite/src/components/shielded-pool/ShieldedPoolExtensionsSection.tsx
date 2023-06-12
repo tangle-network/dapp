@@ -60,7 +60,7 @@ export const ShieldedPoolExtensionsSection = () => {
           fw="medium"
           className="md:text-[24px] md:leading-[40px] text-center text-mono-140"
         >
-          We’re building out extension to expand the capacity of shielded pool
+          We’re building out extensions to expand the capacity of shielded pool
           protocols. Collaborate wih us to help build extensions, ro get started
           building with them,
         </Typography>
