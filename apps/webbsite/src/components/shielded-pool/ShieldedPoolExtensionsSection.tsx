@@ -30,7 +30,7 @@ const extensions: Array<Extension> = [
     description:
       ' A shielded pool protocol where transactors must prove the existence of an identity in a shielded identity protocol in order to transact.',
     bgClass:
-      "bg-[linear-gradient(171.8deg,#FEC6C1_38.29%,rgba(254,198,193,0)_70.41%),url('/static/assets/cool.png')]",
+      "bg-[linear-gradient(108.64deg,#FEC6C1_38.29%,rgba(254,198,193,0)_61.97%),url('/static/assets/cool.png'),linear-gradient(0deg,#FFEEDF,#FFEEDF),linear-gradient(171.8deg,#FBEEF7_44.92%,rgba(251,238,247,0)_70.41%),url('/static/assets/good-pink.png')]",
   },
   {
     value: 'chainalysisSanctioned',
@@ -45,43 +45,44 @@ const extensions: Array<Extension> = [
 export const ShieldedPoolExtensionsSection = () => {
   return (
     <section className="py-[64px] md:py-[156px] px-4 lg:px-0">
-      <div className="max-w-[900px] mx-auto flex flex-col gap-6 md:gap-[70px]">
+      <div className="max-w-[900px] mx-auto flex flex-col">
         <Typography
           variant="mkt-h3"
           className={cx(
-            'text-center text-mono-200 font-black',
+            'text-center text-mono-200 font-black mb-6',
             '!text-[36px] !leading-[48px] md:!text-[48px] md:!leading-[60px]'
           )}
         >
           Extensions
         </Typography>
 
+        <Typography
+          variant="mkt-body1"
+          fw="medium"
+          className="md:text-[24px] md:leading-[40px] text-center text-mono-140"
+        >
+          We’re building out extension to expand the capacity of shielded pool
+          protocols. Collaborate wih us to help build extensions, ro get started
+          building with them,
+        </Typography>
+
         <TabsRoot
           defaultValue={extensions[0].value}
           className={cx(
-            'max-w-[900px] mx-auto',
+            'max-w-[900px] mx-auto mt-9',
             'flex flex-col md:flex-row gap-6 items-center'
           )}
         >
-          <div className="flex-[1]">
-            <Typography
-              variant="mkt-body1"
-              className="text-center md:text-left text-mono-140 font-semibold mb-9"
-            >
-              We&apos;re revolutionizing shielded pool protocols by developing
-              powerful extensions. Partner with us to create cutting-edge
-              solutions & begin building with our innovative extensions.
-            </Typography>
-
+          <div className="w-full md:w-auto flex-[1]">
             <TabsList className="flex-col space-x-0 gap-2">
               {extensions.map((extension, idx) => (
                 <TabTrigger
                   key={idx}
                   isDisableStyle
                   className={cx(
-                    'w-full flex py-2 px-4 justify-between items-center rounded-lg bg-mono-0',
-                    'disabled:bg-blue-0 disabled:text-blue-70',
-                    'radix-state-active:bg-blue-0 radix-state-active:text-blue-70'
+                    'w-full bg-inherit py-2 px-4 rounded-lg',
+                    'flex justify-between items-center',
+                    'radix-state-active:bg-[#ECF4FF] radix-state-active:text-blue-70'
                   )}
                   value={extension.value}
                 >
@@ -96,6 +97,16 @@ export const ShieldedPoolExtensionsSection = () => {
                 </TabTrigger>
               ))}
             </TabsList>
+
+            <Typography
+              variant="mkt-body1"
+              fw="medium"
+              className="hidden md:block text-mono-140 mt-9"
+            >
+              We&apos;re revolutionizing shielded pool protocols by developing
+              powerful extensions. Partner with us to create cutting-edge
+              solutions & begin building with our innovative extensions.
+            </Typography>
           </div>
 
           <div className="flex-[1]">
@@ -106,14 +117,14 @@ export const ShieldedPoolExtensionsSection = () => {
                 className={cx(
                   'w-full aspect-square rounded-lg overflow-hidden relative isolate',
                   'bg-center bg-cover',
-                  'p-9',
+                  'p-4 md:p-9',
                   extension.bgClass
                 )}
               >
                 <Typography variant="mkt-body2" fw="black" className="mb-6">
                   {extension.title}
                 </Typography>
-                <Typography variant="mkt-body1">
+                <Typography variant="mkt-body1" fw="medium">
                   {extension.description}
                 </Typography>
               </TabContent>

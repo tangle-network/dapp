@@ -6,7 +6,7 @@ import { ShieldedPoolSwiper } from '../../components';
 export const HowShieldedPoolWorksSection = () => {
   return (
     <section className="dark bg-mono-200 py-[64px] md:py-[156px]">
-      <div className="max-w-[1000px] mx-auto">
+      <div className="max-w-[1000px] mx-auto px-4 lg:px-0">
         <Typography
           variant="mkt-h3"
           className={cx(

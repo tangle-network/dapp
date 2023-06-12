@@ -38,7 +38,10 @@ export const SwiperTemplate: FC<SwiperProps> = ({ swiperItems }) => {
 
   const illustrationItems = swiperItems.map((item, idx) => (
     <Transition
-      className="absolute top-0 left-0 flex items-start justify-center w-full h-full md:items-center"
+      className={cx(
+        'absolute top-0 left-0 w-full h-full',
+        'flex items-start justify-center md:items-center'
+      )}
       appear={idx === activeIndex}
       key={idx}
       show={idx === activeIndex}
@@ -66,7 +69,7 @@ export const SwiperTemplate: FC<SwiperProps> = ({ swiperItems }) => {
     <div
       ref={ref}
       className={cx(
-        'bg-mono-180 rounded-lg mx-auto px-4 py-6 lg:p-12',
+        'bg-mono-180 rounded-lg mx-auto px-4 py-9 lg:p-12',
         'flex flex-col md:flex-row justify-between gap-6'
       )}
     >
@@ -140,7 +143,7 @@ export const SwiperTemplate: FC<SwiperProps> = ({ swiperItems }) => {
                   </div>
                 </div>
 
-                <div className="w-full h-[386px] relative md:hidden">
+                <div className="w-full aspect-square relative md:hidden">
                   {illustrationItems}
                 </div>
               </div>
@@ -158,6 +161,7 @@ export const SwiperTemplate: FC<SwiperProps> = ({ swiperItems }) => {
               variant="utility"
               ref={navigationPrevRef}
               isDisabled={activeIndex === 0}
+              className="disabled:!bg-inherit"
             >
               prev
             </Button>
@@ -165,6 +169,7 @@ export const SwiperTemplate: FC<SwiperProps> = ({ swiperItems }) => {
               variant="utility"
               ref={navigationNextRef}
               isDisabled={activeIndex === swiperItems.length - 1}
+              className="disabled:!bg-inherit"
             >
               next
             </Button>

@@ -38,17 +38,28 @@ const useCases: Array<UseCaseProps> = [
 export const ShieldedPoolUseCasesSection = () => {
   return (
     <section className="py-[64px] md:py-[156px] px-4 lg:px-0">
-      <div className="max-w-[900px] mx-auto flex flex-col gap-6 md:gap-[70px]">
+      <div className="max-w-[900px] mx-auto flex flex-col">
         <Typography
           variant="mkt-h3"
           className={cx(
-            'text-center text-mono-200 font-black',
+            'text-center text-mono-200 font-black mb-6',
             '!text-[36px] !leading-[48px] md:!text-[48px] md:!leading-[60px]'
           )}
         >
           Use Cases
         </Typography>
-        <div className="flex flex-col md:flex-row gap-6">
+
+        <Typography
+          variant="mkt-body1"
+          fw="medium"
+          className="md:text-[24px] md:leading-[40px] text-center text-mono-140"
+        >
+          Webb connects the cryptographic accumulators used in zero-knowledge
+          applications so people can leverage the power of cross-chain
+          zero-knowledge proofs.
+        </Typography>
+
+        <div className="flex flex-col md:flex-row gap-6 mt-9">
           {useCases.map((useCase, idx) => (
             <UseCaseItem
               key={idx}
@@ -75,7 +86,7 @@ const UseCaseItem: FC<UseCaseProps> = ({ icon, title, description }) => {
       {icon}
       <Typography
         variant="mkt-body1"
-        className="font-black !text-[24px] !leading-[40px]"
+        className="font-black md:!text-[24px] md:!leading-[40px]"
       >
         {title}
       </Typography>
