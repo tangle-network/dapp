@@ -18,7 +18,6 @@ function LeaderBoard() {
         <div
           className={cx(
             'lg:w-[77.5%] lg:mx-auto py-[48px] px-4 lg:px-[192px]',
-            // 'drop-shadow-[0px_4px_4px_rgba(0,0,0,0.25)]',
             'border-2 border-mono-0 rounded-2xl',
             'flex flex-col gap-[64px]',
             'bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,rgba(255,255,255,0)_100%)]'

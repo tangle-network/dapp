@@ -1,10 +1,6 @@
-import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionContent,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components';
+
+import { FAQAccordion } from '..';
 
 const faqItems = [
   {
@@ -61,32 +57,11 @@ export const FAQSection = () => {
             with others in our community channels to learn more!
           </Typography>
         </div>
-        <Accordion type="single" collapsible className="lg:mx-auto">
-          {faqItems.map((item, index) => (
-            <AccordionItem
-              key={index}
-              value={item.question}
-              className="p-0 border-b border-mono-40"
-            >
-              <AccordionButton className="items-start gap-8 px-0 py-6">
-                <Typography
-                  variant="mkt-body1"
-                  className="font-black text-mono-200"
-                >
-                  {item.question}
-                </Typography>
-              </AccordionButton>
-              <AccordionContent className="px-0">
-                <Typography
-                  variant="mkt-body1"
-                  className="font-medium whitespace-pre-wrap text-mono-160"
-                >
-                  {item.answer}
-                </Typography>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <FAQAccordion
+          items={faqItems}
+          className="lg:mx-auto"
+          itemClassName="border-b border-mono-40"
+        />
       </div>
     </section>
   );
