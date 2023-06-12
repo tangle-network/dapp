@@ -1,5 +1,8 @@
 import cx from 'classnames';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import links from '@webb-tools/dapp-config/links';
+
+const { SHIELDED_POOL_DOC_URL, WEBB_GITHUB_URL } = links;
 
 export const ShieldedPoolHeroSection = () => {
   return (
@@ -22,16 +25,16 @@ export const ShieldedPoolHeroSection = () => {
         </Typography>
         <div className="flex gap-2">
           <Button
-            // TODO: update href
-            href="#"
+            href={WEBB_GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
             className="button-base button-primary"
           >
             Source Code
           </Button>
           <Button
             variant="secondary"
-            // TODO: update href
-            href="#"
+            href={SHIELDED_POOL_DOC_URL}
             target="_blank"
             rel="noreferrer"
             className="button-base button-secondary"

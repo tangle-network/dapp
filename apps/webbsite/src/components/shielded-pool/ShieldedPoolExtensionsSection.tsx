@@ -29,8 +29,7 @@ const extensions: Array<Extension> = [
     title: 'Multi-Asset VAnchor',
     description:
       ' A shielded pool protocol where transactors must prove the existence of an identity in a shielded identity protocol in order to transact.',
-    bgClass:
-      "bg-[linear-gradient(108.64deg,#FEC6C1_38.29%,rgba(254,198,193,0)_61.97%),url('/static/assets/cool.png'),linear-gradient(0deg,#FFEEDF,#FFEEDF),linear-gradient(171.8deg,#FBEEF7_44.92%,rgba(251,238,247,0)_70.41%),url('/static/assets/good-pink.png')]",
+    bgClass: "bg-[url('/static/assets/multiasset-vanchor.png')]",
   },
   {
     value: 'chainalysisSanctioned',
