@@ -100,10 +100,13 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
             <div className="flex space-x-2">
               <TokenInput
                 {...tokenInputProps}
+                title="Shielded Pool"
+                info="Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction."
                 className="grow shrink-0 basis-1"
               />
               <TokenInput
                 {...unwrappingAssetProps}
+                title="Token"
                 className={cx('grow shrink-0 basis-1', {
                   hidden: !switcherChecked,
                 })}

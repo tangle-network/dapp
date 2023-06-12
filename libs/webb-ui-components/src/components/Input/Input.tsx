@@ -117,7 +117,6 @@ export const Input: React.FC<InputProps> = (props) => {
     () =>
       cx(
         'form-input w-full transition-none text-[16px] leading-[30px] bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
-        'placeholder:text-black dark:placeholder:text-white placeholder:text-[16px]',
         paddingX,
         isInvalid
           ? ('border-red-40' as const)
@@ -142,17 +141,20 @@ export const Input: React.FC<InputProps> = (props) => {
 
   const mergedInputClsx = useMemo(
     () =>
-      size === 'md'
-        ? twMerge(
-            inputClsxBase,
-            inputClsxHover,
-            inputClsxFocus,
-            inputClsxDisabled
-          )
-        : cx(
-            `border-none w-full bg-transparent focus:ring-0 p-0 text-[20px] leading-[30px] font-bold`,
-            'placeholder:text-black dark:placeholder:text-white text-mono-200 dark:text-mono-0 placeholder:text-[16px]'
-          ),
+      twMerge(
+        'placeholder:text-mono-100 dark:placeholder:text-mono-80 placeholder:text-[16px]',
+        size === 'md'
+          ? twMerge(
+              inputClsxBase,
+              inputClsxHover,
+              inputClsxFocus,
+              inputClsxDisabled
+            )
+          : cx(
+              `border-none w-full bg-transparent focus:ring-0 p-0 text-[20px] leading-[30px] font-bold`,
+              'text-mono-200 dark:text-mono-0'
+            )
+      ),
     [inputClsxBase, inputClsxDisabled, inputClsxFocus, inputClsxHover, size]
   );
 

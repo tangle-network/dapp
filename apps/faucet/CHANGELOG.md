@@ -62,3 +62,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Replaces swirl BG image in faucet app to include tangle token.
 - Typography system to unify Webbsite/Tangle Site/Faucet.
+
+## [0.0.4] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Update copy - closes #1323 ([#1324](https://github.com/webb-tools/webb-dapp/pull/1324))
+- Integrates Faucet App with Faucet Backend ([#1327](https://github.com/webb-tools/webb-dapp/pull/1327))

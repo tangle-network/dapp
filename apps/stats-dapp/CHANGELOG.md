@@ -103,3 +103,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes cumulative proposals graph
 - Adds a check for proposal data on proposal detail page to prevent from crashing
 - Updates proposals query's fetch policy to always fetch latest data
+
+## [0.0.10] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Fixes proposal table buggy pagination ([#1310](https://github.com/webb-tools/webb-dapp/pull/1310))

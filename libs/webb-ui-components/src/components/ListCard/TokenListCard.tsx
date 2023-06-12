@@ -1,6 +1,5 @@
 import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
-import cx from 'classnames';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
 import { Button } from '../Button';
@@ -10,6 +9,7 @@ import { TokenSelector } from '../TokenSelector';
 import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
+import { Alert } from '../Alert';
 
 export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   (
@@ -22,11 +22,14 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       title = 'Select a Token',
       unavailableTokens,
       value: selectedAsset,
+      txnType,
       ...props
     },
     ref
   ) => {
     const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
+
+    console.log(txnType);
 
     // Search text
     const [searchText, setSearchText] = useState('');
@@ -72,11 +75,11 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     return (
       <ListCardWrapper {...props} title={title} onClose={onClose} ref={ref}>
         {/** The search input */}
-        <div className={cx('px-2 py-4')}>
+        <div className="px-2 py-4">
           <Input
             id="token"
             rightIcon={<Search />}
-            placeholder="Search token or enter token address"
+            placeholder="Search pool or enter token address"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
           />
@@ -114,7 +117,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           </Typography>
 
           {/** Token list */}
-          <ScrollArea className={cx('min-w-[350px] h-[376px]')}>
+          <ScrollArea className="min-w-[350px] h-[376px]">
             <ul>
               {filteredSelect.map((current, idx) => (
                 <AssetListItem
@@ -123,47 +126,16 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                   onClick={() => onItemChange(current)}
                 />
               ))}
-              <Typography
-                variant="body4"
-                fw="bold"
-                className="uppercase text-mono-100 dark:text-mono-80 my-2"
-              >
-                Unavailable
-              </Typography>
-              {filteredUnavailable.map((current, idx) => (
-                <AssetListItem
-                  key={`${current.name}-${idx}`}
-                  {...current}
-                  isDisabled
-                  onClick={() => onItemChange(current)}
-                />
-              ))}
             </ul>
           </ScrollArea>
         </div>
 
-        <div
-          className={cx(
-            'flex flex-col items-center justify-center px-2 py-1 mt-9'
-          )}
-        >
-          <Typography
-            variant="utility"
-            className="uppercase text-mono-100 dark:text-mono-80  max-w-[334px]"
-            ta="center"
-          >
-            Don't see your asset?
-          </Typography>
-
-          <Button
-            variant="link"
-            size="sm"
-            className="mt-1 text-center"
-            onClick={onConnect}
-          >
-            Try another account or wallet
-          </Button>
-        </div>
+        {/* Alert Component */}
+        {txnType === 'deposit' ? (
+          <Alert title="The availability of shielded pools is determined by your selected source chain and token." />
+        ) : (
+          <Alert title="The availability of shielded pools is subject to the balance in your account." />
+        )}
       </ListCardWrapper>
     );
   }

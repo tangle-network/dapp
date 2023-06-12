@@ -1,5 +1,4 @@
 import { ChainIcon, InformationLine, Search } from '@webb-tools/icons';
-import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
@@ -11,6 +10,7 @@ import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
 import { ChainListCardProps, ChainType } from './types';
 import { RadioGroup, RadioItem } from '../Radio';
+import { Alert } from '../Alert';
 
 export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
@@ -179,25 +179,10 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
         <div className="mt-7">
           {/** Disclamer */}
-          <div
-            className={cx(
-              'flex w-full px-4 py-2 space-x-1 border rounded-lg',
-              'text-blue-70 dark:text-blue-50',
-              'bg-blue-10/50 dark:bg-blue-120 border-blue-10 dark:border-blue-90'
-            )}
-          >
-            <InformationLine size="lg" className="!fill-current" />
-
-            <Typography
-              variant="body1"
-              fw="semibold"
-              component="p"
-              className="!text-current"
-            >
-              The selection of source chain will determine tokens and
-              destination chains availability.
-            </Typography>
-          </div>
+          <Alert
+            title="The selection of source chain will determine tokens and
+              destination chains availability."
+          />
 
           {/** Network categories */}
           <RadioGroup

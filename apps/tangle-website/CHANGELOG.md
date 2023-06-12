@@ -59,3 +59,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Typography system to unify Webbsite/Tangle Site/Faucet
 - Fix content and minor UI as requested
 - Add Incentivized Testnet item in Community Section
+
+## [0.0.4] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Make accordion item in FAQ easier to open and collapsible ([#1311](https://github.com/webb-tools/webb-dapp/pull/1311))
+- Remove bottom padding in footer ([#1314](https://github.com/webb-tools/webb-dapp/pull/1314))
+- Bridge Mobile UI ([#1285](https://github.com/webb-tools/webb-dapp/pull/1285))
+- Add image to Participation Mechanic items ([#1320](https://github.com/webb-tools/webb-dapp/pull/1320))

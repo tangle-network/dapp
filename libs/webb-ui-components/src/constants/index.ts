@@ -177,6 +177,11 @@ export const bottomLinks: ExternalLink[] = [
     href: 'https://webb.tools/privacy-policy',
     ...commonExternalProps,
   },
+  {
+    name: 'Security',
+    href: '#',
+    ...commonExternalProps,
+  },
 ];
 
 export const defaultSocialConfigs: Array<SocialConfigsType> = [

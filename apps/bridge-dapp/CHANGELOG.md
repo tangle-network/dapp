@@ -130,3 +130,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update new deployments
 - Add Nix flake devenv
 - Fix Bridge Hanging Issue
+
+## [0.0.11] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Update Orbit Network 06/06/2023 ([#1313](https://github.com/webb-tools/webb-dapp/pull/1313))
+- Adds estimated transaction fee tooltip ([#1315](https://github.com/webb-tools/webb-dapp/pull/1315))
+- Bridge Mobile UI ([#1285](https://github.com/webb-tools/webb-dapp/pull/1285))
+- UI updates for improved transaction flow on bridge ([#1316](https://github.com/webb-tools/webb-dapp/pull/1316))
+- Add breakpoint 480px to show one column layout ([#1321](https://github.com/webb-tools/webb-dapp/pull/1321))

@@ -60,3 +60,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Typography system to unify Webbsite/Tangle Site/Faucet
 - Add 404 page in webbsite
 - Deprecates Strapi blog Implementation and updates blog link to Ghost
+
+## [0.0.4] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Remove bottom padding in footer ([#1314](https://github.com/webb-tools/webb-dapp/pull/1314))
