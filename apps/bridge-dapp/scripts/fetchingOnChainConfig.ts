@@ -122,13 +122,25 @@ async function fetchAnchorMetadataTask(
 
       const addresses = anchorConfig[typedChainId];
       const provider = substrateProviderRecord?.[typedChainId];
-      const metadata = await Promise.all(
+
+      // Fetch metadata in parallel and ignore the rejected ones
+      const metadataSettled = await Promise.allSettled(
         addresses.map((address) =>
           fetchAnchorMetadata(address, typedChainId, provider)
         )
       );
 
-      anchorMetadata[typedChainId] = metadata;
+      const metadata = metadataSettled
+        .filter(
+          (result): result is PromiseFulfilledResult<AnchorMetadata> =>
+            result.status === 'fulfilled'
+        )
+        .map((result) => result.value);
+
+      if (metadata.length) {
+        anchorMetadata[typedChainId] = metadata;
+      }
+
       return anchorMetadata;
     },
     {} as Promise<Record<number, AnchorMetadata[]>> // typedChainId => AnchorMetadata[] mapping
@@ -187,13 +199,17 @@ async function main() {
     fetchAnchorMetadataTask(activeTypedChainIds, substrateProviderRecord),
   ]);
 
+  console.log(chalk`[+] {cyan Writing config to ${configPath}...}`);
+
   const writableConfig = activeTypedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
     const anchorMetadatas = anchorMetadataRecord[typedChainId];
 
     if (!native || !anchorMetadatas) {
       console.log(
-        chalk`{yellow Skipping chain ${typedChainId} because native or anchor metadata is missing}`
+        chalk`{yellow Skipping chain ${
+          chainsConfig[typedChainId]?.name ?? 'Unknown'
+        } because native or anchor metadata is missing}`
       );
       return acc;
     }
@@ -205,8 +221,6 @@ async function main() {
 
     return acc;
   }, {} as Record<number, { nativeCurrency: ICurrency; anchorMetadatas: AnchorMetadata[] }>);
-
-  console.log(chalk`[+] {cyan Writing config to ${configPath}...}`);
 
   // Ensure directories are created
   const dir = path.dirname(configPath);

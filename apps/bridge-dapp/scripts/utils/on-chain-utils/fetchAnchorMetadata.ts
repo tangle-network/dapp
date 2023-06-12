@@ -233,9 +233,19 @@ async function fetchSubstrateAnchorMetadata(
     address: assetId,
   } satisfies ICurrency;
 
-  const edgeList = await provider.query.linkableTreeBn254.edgeList<
-    PalletLinkableTreeEdgeMetadata[]
-  >(treeId);
+  const maxEdgesRes = await provider.query.linkableTreeBn254.maxEdges(treeId);
+  const maxEdges = maxEdgesRes.toNumber();
+
+  const edgeList = (
+    await Promise.all(
+      Array.from({ length: maxEdges }).map((_, idx) =>
+        provider.query.linkableTreeBn254.edgeList<PalletLinkableTreeEdgeMetadata>(
+          treeId,
+          idx
+        )
+      )
+    )
+  ).filter((edge) => !edge.srcChainId.eq(0));
 
   const linkableAnchor = edgeList.reduce((acc, edge) => {
     const chainId = edge.srcChainId.toString();
