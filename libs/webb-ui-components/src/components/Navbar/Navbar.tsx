@@ -70,7 +70,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                         isInternal={subItem.isInternal}
                       >
                         <MenuItem
-                          className="px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
+                          className="navbar-item px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
                           icon={
                             <ArrowRight className="!fill-current" size="lg" />
                           }
