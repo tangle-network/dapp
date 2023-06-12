@@ -12,7 +12,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { options } from '@webb-tools/api';
+import { options as apiOptions } from '@webb-tools/api';
 import { EventBus } from '@webb-tools/app-util';
 import lodash from 'lodash';
 
@@ -93,7 +93,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async getApiPromise(
     appName: string,
     endPoints: string[],
-    onError: ApiInitHandler['onError']
+    onError: ApiInitHandler['onError'],
+    options?: { ignoreLog?: boolean }
   ) {
     const wsProvider = await new Promise<WsProvider>(
       // eslint-disable-next-line no-async-promise-executor
@@ -113,7 +114,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
               resolve(wsProvider);
             });
             wsProvider.on('error', (e) => {
-              console.log(e);
+              if (!options?.ignoreLog) {
+                console.log(e);
+              }
               reject(new Error('WS Error '));
             });
           });
@@ -127,7 +130,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         // global interActiveFeedback for access on multiple scopes
         let interActiveFeedback: InteractiveFeedback | undefined = undefined;
 
-        logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
+        if (!options?.ignoreLog) {
+          logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
+        }
 
         while (keepRetrying) {
           wsProvider = new WsProvider(endPoints, false);
@@ -140,14 +145,20 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
           try {
             /// wait for ping connection
-            logger.trace('Performing the ping connection');
+            if (!options?.ignoreLog) {
+              logger.trace('Performing the ping connection');
+            }
             await connectWs(wsProvider);
             /// disconnect the pin connection
-            logger.info(`Ping connection Ok try: ${tryNumber}  for `, [
-              endPoints,
-            ]);
+            if (!options?.ignoreLog) {
+              logger.info(`Ping connection Ok try: ${tryNumber}  for `, [
+                endPoints,
+              ]);
+            }
             await wsProvider.disconnect();
-            logger.trace('Killed the ping connection');
+            if (!options?.ignoreLog) {
+              logger.trace('Killed the ping connection');
+            }
 
             /// create a new WS Provider that is failure friendly and will retry to connect
             /// no need to call `.connect` the Promise api will handle this
@@ -207,7 +218,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     );
 
     const apiPromise = await ApiPromise.create(
-      options({
+      apiOptions({
         provider: wsProvider,
       })
     );
@@ -336,7 +347,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         ? this.apiPromise.registry.chainDecimals
         : 12,
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
-      types: options({}).types,
+      types: apiOptions({}).types,
     };
 
     logger.trace('Polkadot api metadata', metadataDef);
