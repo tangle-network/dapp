@@ -534,6 +534,7 @@ export const DepositContainer = forwardRef<
         onChange: handleTokenChange,
         onClose: () => setMainComponentName(undefined),
         onConnect: onTryAnotherWallet,
+        txnType: 'deposit',
       };
     }, [
       populatedSelectableWebbTokens,
@@ -580,6 +581,7 @@ export const DepositContainer = forwardRef<
           }
         },
         onClose: () => setMainComponentName(undefined),
+        txnType: 'deposit',
       };
     }, [
       wrappableCurrency,

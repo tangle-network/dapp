@@ -683,6 +683,7 @@ export const WithdrawContainer = forwardRef<
         }}
         onClose={() => setMainComponent(undefined)}
         onConnect={onTryAnotherWallet}
+        txnType="withdraw"
       />
     );
   }, [
@@ -724,6 +725,7 @@ export const WithdrawContainer = forwardRef<
           }}
           onClose={() => setMainComponent(undefined)}
           onConnect={onTryAnotherWallet}
+          txnType="withdraw"
         />
       );
     }

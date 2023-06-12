@@ -227,7 +227,7 @@ const PageBridge = () => {
               'bg-center object-fill bg-no-repeat bg-cover'
             )}
           >
-            <div className="lg:max-w-[1160px] mx-auto lg:grid lg:grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
+            <div className="lg:max-w-[1160px] mx-auto mob:grid mob:grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
               {customMainComponent}
 
               {/** Bridge tabs */}
@@ -249,13 +249,13 @@ const PageBridge = () => {
                   <TabTrigger value="Transfer">Transfer</TabTrigger>
                   <TabTrigger value="Withdraw">Withdraw</TabTrigger>
                 </TabsList>
-                <TabContent className="grow flex flex-col" value="Deposit">
+                <TabContent className="flex flex-col grow" value="Deposit">
                   <DepositContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow flex flex-col" value="Transfer">
+                <TabContent className="flex flex-col grow" value="Transfer">
                   <TransferContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow flex flex-col" value="Withdraw">
+                <TabContent className="flex flex-col grow" value="Withdraw">
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>
@@ -265,7 +265,7 @@ const PageBridge = () => {
                 target="_blank"
                 rel="noreferrer"
                 className={cx(
-                  'lg:!hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
+                  'mob:!hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
                   'flex justify-end items-center',
                   'bg-[#ECF4FF] dark:bg-[#181F2B]'
                 )}
@@ -276,7 +276,7 @@ const PageBridge = () => {
                 <ArrowRightUp size="lg" className="!fill-blue-50" />
               </a>
 
-              <div className="hidden lg:!block">
+              <div>
                 {/** Transaction Queue Card */}
                 {isDisplayTxQueueCard && (
                   <TransactionQueueCard

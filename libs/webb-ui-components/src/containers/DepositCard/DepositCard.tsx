@@ -10,6 +10,7 @@ import {
   InfoItem,
   TokenInput,
   ConnectWalletMobileButton,
+  Alert,
 } from '../../components';
 import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';

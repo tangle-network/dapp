@@ -14,26 +14,17 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
+import { MintTokenBody, MintTokenErrorCodes } from '../types';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
 
-// Mocked implementation of minting tokens
 const mintTokens = async (
   accessToken: string,
   { chain: chainName, recepient, recepientAddressType }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
-): Promise<
-  Result<
-    void,
-    FaucetError<
-      | FaucetErrorCode.INVALID_SELECTED_CHAIN
-      | FaucetErrorCode.MINT_TOKENS_FAILED
-      | FaucetErrorCode.JSON_PARSE_ERROR
-    >
-  >
-> => {
+): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
   if (!chainName) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
@@ -51,13 +42,12 @@ const mintTokens = async (
     'Access-Control-Allow-Origin': '*',
     Authorization: `Bearer ${accessToken}`,
     'Content-Type': 'application/x-www-form-urlencoded',
-  };
+  } as const satisfies HeadersInit;
 
   const body = {
     faucet: {
       typedChainId: {
-        id: chain.chainId,
-        type: chain.type,
+        [chain.type]: chain.chainId,
       },
       walletAddress: {
         type: recepientAddressType,
@@ -91,12 +81,12 @@ const mintTokens = async (
       }
     }
 
-    const result = await safeParseJSON(response);
+    const result = await safeParseJSON<MintTokenBody>(response);
     if (result.isErr()) {
       return err(result.error);
     }
 
-    return ok(result.value as any); // TODO: Determine the type of the response
+    return ok(result.value); // TODO: Determine the type of the response
   } catch (error) {
     return err(
       FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
@@ -107,8 +97,13 @@ const mintTokens = async (
 };
 
 const MintButtonContainer = () => {
-  const { config, inputValues$, isMintingModalOpen$, isMintingSuccess$ } =
-    useFaucetContext();
+  const {
+    config,
+    inputValues$,
+    isMintingModalOpen$,
+    isMintingSuccess$,
+    mintTokenResult$,
+  } = useFaucetContext();
 
   const [getStore] = useStore();
 
@@ -152,13 +147,7 @@ const MintButtonContainer = () => {
 
   // Mocked implementation of minting tokens
   const handleMintTokens = useCallback(async () => {
-    const confirmMessage = `Mint tokens with the following values\n${JSON.stringify(
-      inputValues,
-      null,
-      2
-    )}`;
-    const isConfirm = confirm(confirmMessage);
-    if (!isConfirm || !accessToken) {
+    if (!accessToken) {
       return;
     }
 
@@ -166,15 +155,15 @@ const MintButtonContainer = () => {
       const result = await mintTokens(accessToken, inputValues, config);
       result.match(
         (res) => {
-          window.alert('Minting tokens succeeded with payload: ' + JSON.stringify(res, null, 2));
+          mintTokenResult$.next(res);
           isMintingSuccess$.next(true)
         },
-        (err) => { // TODO: Handle returned error here
+        (err) => {
           logger.error('Minting tokens failed', err.message);
-          isMintingModalOpen$.next(false)
+          mintTokenResult$.next(err);
         },
       )
-  }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$]); // prettier-ignore
+  }, [accessToken, config, inputValues, isMintingModalOpen$, isMintingSuccess$, mintTokenResult$]); // prettier-ignore
 
   return (
     <>
