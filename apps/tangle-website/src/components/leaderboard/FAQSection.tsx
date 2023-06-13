@@ -27,9 +27,9 @@ const faqItems = [
 
 export const FAQSection = () => {
   return (
-    <div className="space-y-[32px]">
+    <div className="space-y-[16px]">
       <Typography
-        variant="mkt-h2"
+        variant="mkt-h3"
         fw="black"
         className="text-center text-mono-200"
       >
