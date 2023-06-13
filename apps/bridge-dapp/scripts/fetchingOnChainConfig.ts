@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { DefaultRenderer, Listr, ListrTaskWrapper, color } from 'listr2';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
@@ -8,7 +9,6 @@ import {
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
-import chalk from 'chalk';
 import fs from 'fs';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
@@ -31,6 +31,19 @@ const anchorConfig = Object.keys(anchorDeploymentBlock).reduce(
   },
   {} as Record<number, string[]>
 );
+
+interface Ctx {
+  typedChainIds: number[];
+  nativeRecord: Record<number, ICurrency>;
+  anchorMetadataRecord: Record<number, AnchorMetadata[]>;
+  substrateProviderRecord?: Record<number, ApiPromise>;
+}
+
+const ctx: Ctx = {
+  typedChainIds: Object.keys(anchorDeploymentBlock).map((id) => +id),
+  nativeRecord: {},
+  anchorMetadataRecord: {},
+};
 
 // Private methods
 
@@ -87,8 +100,6 @@ async function fetchNativeTask(
   typedChainIds: number[],
   substrateProviderRecord?: Record<number, ApiPromise>
 ) {
-  console.log(chalk`{cyan Fetching native currencies...}`);
-
   const nativeCurrencies = await typedChainIds.reduce(
     async (acc, typedChainId) => {
       const native = await acc;
@@ -100,19 +111,6 @@ async function fetchNativeTask(
     {} as Promise<Record<number, ICurrency>>
   );
 
-  const symbolsSet = Object.values(nativeCurrencies).reduce((acc, cur) => {
-    acc.add(cur.symbol);
-    return acc;
-  }, new Set<string>());
-
-  console.log(
-    chalk`{green Found ${
-      Object.keys(nativeCurrencies).length
-    } native currencies with ${symbolsSet.size} symbols: ${Array.from(
-      symbolsSet
-    ).join(', ')}}`
-  );
-
   return nativeCurrencies;
 }
 
@@ -120,8 +118,6 @@ async function fetchAnchorMetadataTask(
   typedChainIds: number[],
   substrateProviderRecord?: Record<number, ApiPromise>
 ): Promise<Record<number, AnchorMetadata[]>> {
-  console.log(chalk`{cyan Fetching anchor metadata...}`);
-
   // Fetch anchor metadata in parallel
   const metadataWithTypedChainId = await Promise.all(
     typedChainIds.map(async (typedChainId) => {
@@ -157,16 +153,6 @@ async function fetchAnchorMetadataTask(
     {} as Record<number, AnchorMetadata[]>
   );
 
-  // For logging
-  const anchorsCount = Object.values(metadataRecord).reduce(
-    (acc, cur) => acc + cur.length,
-    0
-  );
-
-  console.log(
-    chalk`{green Found ${anchorsCount} anchors on ${typedChainIds.length} chains}`
-  );
-
   return metadataRecord;
 }
 
@@ -175,20 +161,11 @@ async function writeFileTask(
   nativeRecord: Record<number, ICurrency>,
   metadataRecord: Record<number, AnchorMetadata[]>
 ): Promise<void> {
-  const writeFileSpinner = console.log(
-    chalk`{cyan Writing config to ${configPath}...}`
-  );
-
   const writableConfig = typedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
     const anchorMetadatas = metadataRecord[typedChainId];
 
     if (!native || !anchorMetadatas) {
-      console.log(
-        chalk`{yellow Skipping chain ${
-          chainsConfig[typedChainId]?.name ?? 'Unknown'
-        } because native or anchor metadata is missing}`
-      );
       return acc;
     }
 
@@ -209,62 +186,139 @@ async function writeFileTask(
   }
 
   // Write data to the JSON file
-  try {
-    await fs.promises.writeFile(
-      configPath,
-      JSON.stringify(writableConfig, null, 2)
-    );
-    console.log(
-      chalk`{green Config successfully written to ${chalk.bold.underline(
-        configPath
-      )}}`
-    );
-  } catch (error) {
-    console.log(chalk`{red Failed to write config to ${configPath}: ${error}}`);
+  await fs.promises.writeFile(
+    configPath,
+    JSON.stringify(writableConfig, null, 2)
+  );
+}
+
+const tasks = new Listr<Ctx>(
+  [
+    {
+      title: color.cyan('Filtering active chains...'),
+      options: { persistentOutput: true },
+      task: async (ctx, task) => {
+        // Filter out the active chains
+        const evmTypedChainIds = await filterActiveEVMChains(ctx.typedChainIds);
+
+        const substrateProviderRecord = await filterActiveSubstrateChains(
+          ctx.typedChainIds
+        );
+
+        const substrateTypedChainIds = Object.keys(substrateProviderRecord).map(
+          (id) => +id
+        );
+
+        const activeTypedChainIds = evmTypedChainIds.concat(
+          substrateTypedChainIds
+        );
+
+        const activeChainNames = activeTypedChainIds.map(
+          (typedChainId) => chainsConfig[typedChainId].name
+        );
+
+        task.output = color.green(
+          `Found ${
+            activeTypedChainIds.length
+          } active chains: ${activeChainNames.join(', ')}`
+        );
+
+        ctx.typedChainIds = activeTypedChainIds;
+        ctx.substrateProviderRecord = substrateProviderRecord;
+      },
+    },
+    {
+      title: color.cyan('Fetching on chain config...'),
+      options: { persistentOutput: true },
+      task: async (ctx, task) =>
+        task.newListr<Ctx>(
+          [
+            {
+              title: color.cyan(`Fetching native currencies...`),
+              options: { persistentOutput: true },
+              task: async (ctx, task) => {
+                ctx.nativeRecord = await fetchNativeTask(
+                  ctx.typedChainIds,
+                  ctx.substrateProviderRecord
+                );
+
+                const symbolsSet = Object.values(ctx.nativeRecord).reduce(
+                  (acc, cur) => {
+                    acc.add(cur.symbol);
+                    return acc;
+                  },
+                  new Set<string>()
+                );
+
+                task.output = color.green(
+                  `Found ${
+                    Object.keys(ctx.nativeRecord).length
+                  } native currencies with ${
+                    symbolsSet.size
+                  } symbols: ${Array.from(symbolsSet).join(', ')}`
+                );
+              },
+            },
+            {
+              title: color.cyan(`Fetching anchor metadata...`),
+              options: { persistentOutput: true },
+              task: async (ctx, task) => {
+                ctx.anchorMetadataRecord = await fetchAnchorMetadataTask(
+                  ctx.typedChainIds,
+                  ctx.substrateProviderRecord
+                );
+
+                // For logging
+                const anchorsCount = Object.values(
+                  ctx.anchorMetadataRecord
+                ).reduce((acc, cur) => acc + cur.length, 0);
+
+                task.output = color.green(
+                  `Found ${anchorsCount} anchors on ${ctx.typedChainIds.length} chains`
+                );
+              },
+            },
+          ],
+          {
+            ctx,
+            exitOnError: true,
+            concurrent: true,
+            rendererOptions: { collapseSubtasks: false },
+          }
+        ),
+    },
+    {
+      title: color.cyan(`Writing config to ${configPath}...`),
+      options: { persistentOutput: true },
+      task: async (ctx, task) => {
+        try {
+          await writeFileTask(
+            ctx.typedChainIds,
+            ctx.nativeRecord,
+            ctx.anchorMetadataRecord
+          );
+
+          task.output = color.green(
+            `Config successfully written to ${color.bold(
+              color.underline(configPath)
+            )}`
+          );
+        } catch (error) {
+          task.output = color.red(
+            `Failed to write config to ${configPath}: ${error}`
+          );
+        }
+      },
+    },
+  ],
+  {
+    ctx,
+    exitOnError: true,
+    concurrent: false,
   }
-}
+);
 
-// Main function
-
-async function main() {
-  const onChainConfigSpinner = console.log(
-    chalk.cyan.bold('Fetching on chain config on evm...')
-  );
-
-  const typedChainIds = Object.keys(anchorDeploymentBlock).map((id) => +id);
-
-  // Filter out the active chains
-  const evmTypedChainIds = await filterActiveEVMChains(typedChainIds);
-
-  const substrateProviderRecord = await filterActiveSubstrateChains(
-    typedChainIds
-  );
-  const substrateTypedChainIds = Object.keys(substrateProviderRecord).map(
-    (id) => +id
-  );
-  const activeTypedChainIds = evmTypedChainIds.concat(substrateTypedChainIds);
-
-  const activeChainNames = activeTypedChainIds.map(
-    (typedChainId) => chainsConfig[typedChainId].name
-  );
-
-  console.log(
-    chalk`{green Found ${
-      activeTypedChainIds.length
-    } active chains: ${activeChainNames.join(', ')}}`
-  );
-
-  const [nativeRecord, anchorMetadataRecord] = await Promise.all([
-    fetchNativeTask(activeTypedChainIds, substrateProviderRecord),
-    fetchAnchorMetadataTask(activeTypedChainIds, substrateProviderRecord),
-  ]);
-
-  await writeFileTask(activeTypedChainIds, nativeRecord, anchorMetadataRecord);
-}
-
-main()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(() => process.exit(0));
+tasks.run().catch((error) => {
+  console.log(color.red(color.bold(`Error while running tasks: ${error}`)));
+  process.exit(1);
+});
