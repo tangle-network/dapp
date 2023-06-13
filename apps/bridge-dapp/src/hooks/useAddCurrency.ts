@@ -2,7 +2,7 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
-import { ApiConfig, Chain } from '@webb-tools/dapp-config';
+import { Chain } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
 
 const IMAGE_URL_TEMPLATE =

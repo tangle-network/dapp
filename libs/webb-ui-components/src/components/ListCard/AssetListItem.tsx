@@ -23,6 +23,8 @@ export const AssetListItem = forwardRef<
   ) => {
     const onTokenClickRef = useRef(onTokenClick);
 
+    console.log(isTokenAddedToMetamask)
+
     const [isHovered, setIsHovered] = useState(false);
 
     const handleTokenIconClick = useMemo(() => {
