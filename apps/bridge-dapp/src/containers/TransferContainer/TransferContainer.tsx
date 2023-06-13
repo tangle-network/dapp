@@ -46,7 +46,12 @@ import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import { RecipientPublicKeyTooltipContent } from './shared';
-import { TransferContainerProps } from './types';
+import {
+  ChainRecord,
+  CurrencyRecordWithChainsType,
+  TransferContainerProps,
+} from './types';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -60,6 +65,7 @@ export const TransferContainer = forwardRef<
       activeApi,
       activeChain,
       apiConfig,
+      activeAccount,
       chains,
       loading,
       noteManager,
@@ -194,8 +200,22 @@ export const TransferContainer = forwardRef<
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
         balanceType: 'note',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          fungibleCurrency,
+          activeChain,
+          activeApi,
+          activeAccount?.address
+        ),
       };
-    }, [addCurrency, balancesFromNotes, currentTypedChainId, fungibleCurrency]);
+    }, [
+      addCurrency,
+      balancesFromNotes,
+      currentTypedChainId,
+      fungibleCurrency,
+      activeChain,
+      activeApi,
+      activeAccount?.address,
+    ]);
 
     const selectableBridgingAssets = useMemo<AssetType[]>(() => {
       return fungiblesFromNotes.reduce((acc, currency) => {
@@ -220,6 +240,12 @@ export const TransferContainer = forwardRef<
           symbol: currency.view.symbol,
           balance,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeApi,
+            activeAccount?.address
+          ),
         });
 
         return acc;
@@ -229,6 +255,9 @@ export const TransferContainer = forwardRef<
       balancesFromNotes,
       fungiblesFromNotes,
       currentTypedChainId,
+      activeChain,
+      activeApi,
+      activeAccount,
     ]);
 
     // Callback when a chain item is selected
