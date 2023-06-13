@@ -10,11 +10,13 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
+import chalk from 'chalk';
 import getViemClient from './getViemClient';
 import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
 
@@ -305,11 +307,36 @@ async function fetchAnchorMetadata(
   typedChainId: number,
   provider?: ApiPromise
 ): Promise<AnchorMetadata> {
+  const chain = chainsConfig[typedChainId]?.name ?? 'Unknown';
+  console.log(chalk.cyan`Fetching anchor metadata on chain ${chain}`);
+
+  let metadata: AnchorMetadata;
+
   if (provider instanceof ApiPromise) {
-    return fetchSubstrateAnchorMetadata(anchorAddress, typedChainId, provider);
+    metadata = await fetchSubstrateAnchorMetadata(
+      anchorAddress,
+      typedChainId,
+      provider
+    );
   }
 
-  return fetchEVMAnchorMetadata(anchorAddress, typedChainId);
+  metadata = await fetchEVMAnchorMetadata(anchorAddress, typedChainId);
+
+  console.log(
+    chalk.cyan(
+      `Anchor on ${chalk.bold(chain)} has fungible currency is ${chalk.bold(
+        metadata.fungibleCurrency.name
+      )}, ${chalk.bold(
+        Object.keys(metadata.linkableAnchor).length
+      )} linkable anchors, ${chalk.bold(
+        metadata.wrappableCurrencies.length
+      )} wrappable currencies, and ${chalk.bold(
+        metadata.isNativeAllowed ? 'allows' : 'does not allow'
+      )} native currency.`
+    )
+  );
+
+  return metadata;
 }
 
 export default fetchAnchorMetadata;

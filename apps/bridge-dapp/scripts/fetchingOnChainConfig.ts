@@ -3,7 +3,10 @@ import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-conf
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { substrateProviderFactory } from '@webb-tools/polkadot-api-provider/src/utils';
-import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import chalk from 'chalk';
 import fs from 'fs';
@@ -84,7 +87,8 @@ async function fetchNativeTask(
   typedChainIds: number[],
   substrateProviderRecord?: Record<number, ApiPromise>
 ) {
-  console.log(chalk`[+] {cyan Fetching native currencies...}`);
+  console.log(chalk`{cyan Fetching native currencies...}`);
+
   const nativeCurrencies = await typedChainIds.reduce(
     async (acc, typedChainId) => {
       const native = await acc;
@@ -95,18 +99,20 @@ async function fetchNativeTask(
     },
     {} as Promise<Record<number, ICurrency>>
   );
+
   const symbolsSet = Object.values(nativeCurrencies).reduce((acc, cur) => {
     acc.add(cur.symbol);
     return acc;
   }, new Set<string>());
 
   console.log(
-    chalk`\t=> {green Found ${
+    chalk`{green Found ${
       Object.keys(nativeCurrencies).length
     } native currencies with ${symbolsSet.size} symbols: ${Array.from(
       symbolsSet
     ).join(', ')}}`
   );
+
   return nativeCurrencies;
 }
 
@@ -114,12 +120,11 @@ async function fetchAnchorMetadataTask(
   typedChainIds: number[],
   substrateProviderRecord?: Record<number, ApiPromise>
 ): Promise<Record<number, AnchorMetadata[]>> {
-  console.log(chalk`[+] {cyan Fetching anchor metadata...}`);
+  console.log(chalk`{cyan Fetching anchor metadata...}`);
 
-  const metadataRecord = await typedChainIds.reduce(
-    async (acc, typedChainId) => {
-      const anchorMetadata = await acc;
-
+  // Fetch anchor metadata in parallel
+  const metadataWithTypedChainId = await Promise.all(
+    typedChainIds.map(async (typedChainId) => {
       const addresses = anchorConfig[typedChainId];
       const provider = substrateProviderRecord?.[typedChainId];
 
@@ -137,73 +142,46 @@ async function fetchAnchorMetadataTask(
         )
         .map((result) => result.value);
 
-      if (metadata.length) {
-        anchorMetadata[typedChainId] = metadata;
-      }
+      return {
+        typedChainId,
+        metadata,
+      };
+    })
+  );
 
-      return anchorMetadata;
+  const metadataRecord = metadataWithTypedChainId.reduce(
+    (acc, { typedChainId, metadata }) => {
+      acc[typedChainId] = metadata;
+      return acc;
     },
-    {} as Promise<Record<number, AnchorMetadata[]>> // typedChainId => AnchorMetadata[] mapping
+    {} as Record<number, AnchorMetadata[]>
   );
 
   // For logging
-  const fungibleCount = Object.values(metadataRecord).reduce(
-    (acc, metadata) => acc + metadata.length,
+  const anchorsCount = Object.values(metadataRecord).reduce(
+    (acc, cur) => acc + cur.length,
     0
   );
 
-  const symbolsSet = Object.values(metadataRecord).reduce((acc, cur) => {
-    const names = cur.map((f) => f.fungibleCurrency.symbol);
-    names.forEach((name) => acc.add(name));
-    return acc;
-  }, new Set<string>());
-
   console.log(
-    chalk`\t=> {green Found ${fungibleCount} fungible currencies with ${
-      symbolsSet.size
-    } symbols: ${Array.from(symbolsSet).join(', ')}}`
+    chalk`{green Found ${anchorsCount} anchors on ${typedChainIds.length} chains}`
   );
 
   return metadataRecord;
 }
 
-// Main function
-
-async function main() {
-  const typedChainIds = Object.keys(anchorDeploymentBlock).map((id) => +id);
-
-  console.log(chalk.cyan.bold('Fetching on chain config on evm...'));
-
-  // Filter out the active chains
-  const evmTypedChainIds = await filterActiveEVMChains(typedChainIds);
-
-  const substrateProviderRecord = await filterActiveSubstrateChains(
-    typedChainIds
-  );
-  const substrateTypedChainIds = Object.keys(substrateProviderRecord).map(
-    (id) => +id
-  );
-  const activeTypedChainIds = evmTypedChainIds.concat(substrateTypedChainIds);
-
-  const activeChainNames = activeTypedChainIds.map(
-    (typedChainId) => chainsConfig[typedChainId].name
-  );
-  console.log(
-    chalk`\t=> {green Found ${
-      activeTypedChainIds.length
-    } active chains: ${activeChainNames.join(', ')}}`
+async function writeFileTask(
+  typedChainIds: number[],
+  nativeRecord: Record<number, ICurrency>,
+  metadataRecord: Record<number, AnchorMetadata[]>
+): Promise<void> {
+  const writeFileSpinner = console.log(
+    chalk`{cyan Writing config to ${configPath}...}`
   );
 
-  const [nativeRecord, anchorMetadataRecord] = await Promise.all([
-    fetchNativeTask(activeTypedChainIds, substrateProviderRecord),
-    fetchAnchorMetadataTask(activeTypedChainIds, substrateProviderRecord),
-  ]);
-
-  console.log(chalk`[+] {cyan Writing config to ${configPath}...}`);
-
-  const writableConfig = activeTypedChainIds.reduce((acc, typedChainId) => {
+  const writableConfig = typedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
-    const anchorMetadatas = anchorMetadataRecord[typedChainId];
+    const anchorMetadatas = metadataRecord[typedChainId];
 
     if (!native || !anchorMetadatas) {
       console.log(
@@ -236,14 +214,57 @@ async function main() {
       configPath,
       JSON.stringify(writableConfig, null, 2)
     );
-    console.log(chalk`\t=> {green ✅ Done!}`);
-  } catch (error) {
     console.log(
-      chalk`{red ❌ Failed to write config to ${configPath}: ${error}}`
+      chalk`{green Config successfully written to ${chalk.bold.underline(
+        configPath
+      )}}`
     );
+  } catch (error) {
+    console.log(chalk`{red Failed to write config to ${configPath}: ${error}}`);
   }
 }
 
+// Main function
+
+async function main() {
+  const onChainConfigSpinner = console.log(
+    chalk.cyan.bold('Fetching on chain config on evm...')
+  );
+
+  const typedChainIds = Object.keys(anchorDeploymentBlock).map((id) => +id);
+
+  // Filter out the active chains
+  const evmTypedChainIds = await filterActiveEVMChains(typedChainIds);
+
+  const substrateProviderRecord = await filterActiveSubstrateChains(
+    typedChainIds
+  );
+  const substrateTypedChainIds = Object.keys(substrateProviderRecord).map(
+    (id) => +id
+  );
+  const activeTypedChainIds = evmTypedChainIds.concat(substrateTypedChainIds);
+
+  const activeChainNames = activeTypedChainIds.map(
+    (typedChainId) => chainsConfig[typedChainId].name
+  );
+
+  console.log(
+    chalk`{green Found ${
+      activeTypedChainIds.length
+    } active chains: ${activeChainNames.join(', ')}}`
+  );
+
+  const [nativeRecord, anchorMetadataRecord] = await Promise.all([
+    fetchNativeTask(activeTypedChainIds, substrateProviderRecord),
+    fetchAnchorMetadataTask(activeTypedChainIds, substrateProviderRecord),
+  ]);
+
+  await writeFileTask(activeTypedChainIds, nativeRecord, anchorMetadataRecord);
+}
+
 main()
-  .catch(console.error)
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
   .finally(() => process.exit(0));
