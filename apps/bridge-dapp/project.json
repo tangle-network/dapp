@@ -87,12 +87,6 @@
       "options": {
         "command": "node --loader ts-node/esm --experimental-specifier-resolution=node --no-warnings apps/bridge-dapp/scripts/localSubstrate"
       }
-    },
-    "run-fetching-config": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "TS_NODE_PROJECT=\"apps/bridge-dapp/tsconfig.app.json\" ts-node-esm apps/bridge-dapp/scripts/fetchingOnChainConfig.ts"
-      }
     }
   },
   "tags": []

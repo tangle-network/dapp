@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
-import { DefaultRenderer, Listr, ListrTaskWrapper, color } from 'listr2';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
+import { ON_CHAIN_CONFIG_PATH } from '@webb-tools/dapp-config/src/constants';
 import { substrateProviderFactory } from '@webb-tools/polkadot-api-provider/src/utils';
 import {
   ChainType,
@@ -10,9 +10,9 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import fs from 'fs';
+import { Listr, color } from 'listr2';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
-import { ON_CHAIN_CONFIG_PATH } from '../src/constants';
 import fetchAnchorMetadata, {
   AnchorMetadata,
 } from './utils/on-chain-utils/fetchAnchorMetadata';

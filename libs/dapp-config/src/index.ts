@@ -38,6 +38,7 @@ export * from './anchors';
 export * from './api-config';
 export * from './bridges';
 export * from './chains';
+export * from './constants';
 export * from './currencies';
 export * from './utils';
 export * from './wallets';
