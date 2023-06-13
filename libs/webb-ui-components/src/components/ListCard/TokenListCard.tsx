@@ -29,8 +29,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   ) => {
     const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
 
-    console.log(txnType);
-
     // Search text
     const [searchText, setSearchText] = useState('');
 

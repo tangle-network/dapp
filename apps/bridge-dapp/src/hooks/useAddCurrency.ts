@@ -2,6 +2,7 @@ import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { Chain } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
 
 const IMAGE_URL_TEMPLATE =
@@ -20,6 +21,44 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
     return url;
   } catch (error) {
     return '';
+  }
+};
+
+export const addTokenAddedToMetamaskInLocalStorage = (
+  address: string,
+  symbol: string
+) => {
+  const addedTokens = JSON.parse(localStorage.getItem('addedTokens') || '[]');
+
+  const tokenExists = addedTokens.some(
+    (token: any) => token.address === address && token.symbol === symbol
+  );
+
+  if (!tokenExists) {
+    addedTokens.push({ address, symbol });
+    localStorage.setItem('addedTokens', JSON.stringify(addedTokens));
+  }
+};
+
+export const isTokenAddedToMetamask = (
+  currency?: Currency,
+  activeChain?: Chain
+): boolean => {
+  if (currency && activeChain) {
+    const typedChainId = calculateTypedChainId(
+      activeChain.chainType,
+      activeChain.chainId
+    );
+    const address = currency.getAddressOfChain(typedChainId);
+    const validSymbol = currency.view.symbol.slice(0, 11);
+
+    const addedTokens = JSON.parse(localStorage.getItem('addedTokens') || '[]');
+
+    return addedTokens.some(
+      (token: any) => token.address === address && token.symbol === validSymbol
+    );
+  } else {
+    return false;
   }
 };
 
@@ -63,6 +102,8 @@ export const useAddCurrency = () => {
           decimals: currency.view.decimals,
           image: await getCurrencyImageUrl(currency.view.symbol),
         });
+
+        addTokenAddedToMetamaskInLocalStorage(address, validSymbol);
 
         return Boolean(wasAdded);
       } catch (error) {
