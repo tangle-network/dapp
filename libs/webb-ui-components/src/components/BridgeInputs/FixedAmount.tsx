@@ -86,7 +86,7 @@ export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
                   </span>
                 </DropdownTrigger>
                 <DropdownBody
-                  isPorttal={false}
+                  isPortal={false}
                   align="start"
                   className="z-10 mt-1"
                 >

@@ -7,18 +7,19 @@ import Link from 'next/link';
 import { ComponentProps, useEffect, useState } from 'react';
 
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
-  // {
-  //   protocols: [
-  //     {
-  //       label: 'Shielded Pool Protocols',
-  //       url: '#',
-  //     },
-  //     {
-  //       label: 'Shielded Identity Protocols',
-  //       url: '#',
-  //     },
-  //   ],
-  // },
+  {
+    protocols: [
+      {
+        label: 'Shielded Pool Protocols',
+        url: '/shielded-pool-protocols',
+        isInternal: true,
+      },
+      {
+        label: 'Shielded Identity Protocols',
+        url: '#',
+      },
+    ],
+  },
   { label: 'community', url: '/community', isInternal: true },
   { label: 'docs', url: links.WEBB_DOCS_URL },
   { label: 'blog', url: links.WEBB_BLOG_URL, isInternal: true },
