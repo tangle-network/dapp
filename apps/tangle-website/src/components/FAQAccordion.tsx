@@ -28,7 +28,7 @@ export const FAQAccordion: FC<FAQAccordionProps> = ({
           value={item.question}
           className={cx('p-0', itemClassName)}
         >
-          <AccordionButton className="gap-2 px-0 py-6">
+          <AccordionButton className="gap-2 px-0 py-4">
             <Typography
               variant="mkt-body2"
               className="font-black text-mono-200"
