@@ -142,7 +142,7 @@ export abstract class OnChainConfigBase {
         const { address: nativeAddr, ...restNative } = nativeCurrency;
 
         if (!existedNative) {
-          const nextId = Object.keys(currenciesConfig).length + 1;
+          const nextId = Object.keys(currenciesConfig).length;
           currenciesConfig[nextId] = {
             ...restNative,
             id: nextId,

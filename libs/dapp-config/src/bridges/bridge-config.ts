@@ -5,10 +5,10 @@ import { CurrencyConfig } from '../currencies';
 
 let bridgeConfigByAsset: ApiConfig['bridgeByAsset'];
 
-export const getBridgeConfigByAsset = async (
+export const getBridgeConfigByAsset = (
   currencies: Record<number, CurrencyConfig>,
   anchors: ApiConfig['anchors']
-): Promise<ApiConfig['bridgeByAsset']> => {
+): ApiConfig['bridgeByAsset'] => {
   // If the bridge config is already calculated, return it
   if (bridgeConfigByAsset) {
     return bridgeConfigByAsset;
@@ -20,19 +20,17 @@ export const getBridgeConfigByAsset = async (
     (currency) => currency.role === CurrencyRole.Governable
   );
 
-  await Promise.allSettled(
-    fungibleCurrencies.map(async (currency) => {
-      if (!anchors[currency.id]) {
-        console.error(`No anchor config for currency ${currency.id}`);
-        return;
-      }
+  fungibleCurrencies.forEach((currency) => {
+    if (!anchors[currency.id]) {
+      console.error(`No anchor config for currency ${currency.id}`);
+      return;
+    }
 
-      bridgeByAsset[currency.id] = {
-        asset: currency.id,
-        anchors: anchors[currency.id],
-      };
-    })
-  );
+    bridgeByAsset[currency.id] = {
+      asset: currency.id,
+      anchors: anchors[currency.id],
+    };
+  });
 
   bridgeConfigByAsset = bridgeByAsset;
 

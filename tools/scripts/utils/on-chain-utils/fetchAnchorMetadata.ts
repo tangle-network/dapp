@@ -20,6 +20,11 @@ import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
 
 export interface AnchorMetadata {
   /**
+   * The address of the anchor
+   */
+  address: string;
+
+  /**
    * The fungible currency of the anchor
    */
   fungibleCurrency: ICurrency;
@@ -182,6 +187,7 @@ async function fetchEVMAnchorMetadata(
     }, {} as Record<string, string>);
 
   return {
+    address: anchorAddress,
     fungibleCurrency,
     wrappableCurrencies,
     isNativeAllowed,
@@ -293,6 +299,7 @@ async function fetchSubstrateAnchorMetadata(
   );
 
   return {
+    address: treeId,
     fungibleCurrency: fungible,
     wrappableCurrencies,
     isNativeAllowed,
