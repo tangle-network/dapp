@@ -58,7 +58,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                   </DropdownBasicButton>
 
                   <DropdownBody
-                    isPorttal={false}
+                    isPortal={false}
                     className="p-4 mt-4 space-y-4 w-[374px]"
                     size="sm"
                     align="start"
@@ -70,7 +70,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                         isInternal={subItem.isInternal}
                       >
                         <MenuItem
-                          className="px-4 py-2 rounded-lg hover:text-blue-70"
+                          className="navbar-item px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
                           icon={
                             <ArrowRight className="!fill-current" size="lg" />
                           }
@@ -117,7 +117,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
       </DropdownBasicButton>
 
       <DropdownBody
-        isPorttal={false}
+        isPortal={false}
         className="mt-4 p-4 space-y-4 w-screen sm:w-[374px]"
         size="sm"
         align="start"
