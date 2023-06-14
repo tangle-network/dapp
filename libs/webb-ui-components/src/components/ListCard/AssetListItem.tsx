@@ -1,13 +1,7 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import {
-  ComponentProps,
-  forwardRef,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ComponentProps, forwardRef, useMemo, useRef, useState } from 'react';
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
 import { Button } from '../Button';
