@@ -43,7 +43,7 @@ const columns = [
     header: () => <HeaderCell title="Points" />,
     cell: (points) => (
       <Typography variant="mkt-small-caps" fw="bold" ta="center">
-        {points.getValue()}
+        {points.renderValue()}
       </Typography>
     ),
   }),
@@ -52,7 +52,6 @@ const columns = [
 export const RankingTableSection = () => {
   const [rankingData, setRankingData] = useState<RankingItemType[]>([]);
 
-  // ? Error here but everything works fine
   const {
     getHeaderGroups,
     getRowModel,
@@ -69,6 +68,11 @@ export const RankingTableSection = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    filterFns: {
+      fuzzy: () => {
+        return true;
+      },
+    },
   });
 
   const pageIndex = getState().pagination.pageIndex;
