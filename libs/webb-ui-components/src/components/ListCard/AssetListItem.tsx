@@ -3,7 +3,6 @@ import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 import {
   ComponentProps,
-  MouseEvent,
   forwardRef,
   useMemo,
   useRef,

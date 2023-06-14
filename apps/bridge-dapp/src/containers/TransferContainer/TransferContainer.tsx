@@ -46,11 +46,7 @@ import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import { RecipientPublicKeyTooltipContent } from './shared';
-import {
-  ChainRecord,
-  CurrencyRecordWithChainsType,
-  TransferContainerProps,
-} from './types';
+import { TransferContainerProps } from './types';
 import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<

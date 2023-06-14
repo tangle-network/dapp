@@ -1,8 +1,6 @@
 import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-
-import { Button } from '../Button';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
 import { TokenSelector } from '../TokenSelector';
