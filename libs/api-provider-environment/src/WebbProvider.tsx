@@ -34,10 +34,7 @@ import {
 } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
-import {
-  WebbPolkadot,
-  substrateProviderFactory,
-} from '@webb-tools/polkadot-api-provider';
+import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
@@ -50,7 +47,6 @@ import {
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
-  evmProviderFactory,
 } from '@webb-tools/web3-api-provider';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
@@ -84,7 +80,7 @@ const registerInteractiveFeedback = (
   });
 };
 
-const defaultApiConfig = ApiConfig.init({
+const apiConfig = ApiConfig.init({
   chains: chainsConfig,
   wallets: walletsConfig,
 });
@@ -182,8 +178,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
     InteractiveFeedback[]
   >([]);
-
-  const [apiConfig, setApiConfig] = useState<ApiConfig>(defaultApiConfig);
 
   /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
@@ -357,7 +351,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           alert(code);
       }
     },
-    [apiConfig, appEvent]
+    [appEvent]
   );
 
   const loginNoteAccount = useCallback(
@@ -467,14 +461,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 await relayerManagerFactory.getRelayerManager('substrate');
               const url = chain.url;
 
-              const apiConfig = await ApiConfig.initFromApi(
-                defaultApiConfig,
-                evmProviderFactory,
-                substrateProviderFactory
-              );
-
-              setApiConfig(apiConfig);
-
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
                 [url],
@@ -579,14 +565,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 (await relayerManagerFactory.getRelayerManager(
                   'evm'
                 )) as Web3RelayerManager;
-
-              const apiConfig = await ApiConfig.initFromApi(
-                defaultApiConfig,
-                evmProviderFactory,
-                substrateProviderFactory
-              );
-
-              setApiConfig(apiConfig);
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 web3Provider,

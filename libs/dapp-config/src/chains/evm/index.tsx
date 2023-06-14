@@ -73,9 +73,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Polygon Mumbai',
     base: 'polygon',
     tag: 'test',
-    url: 'https://matic-mumbai.chainstacklabs.com/',
+    url: 'https://endpoints.omniatech.io/v1/matic/mumbai/public	',
     evmRpcUrls: [
-      'https://matic-mumbai.chainstacklabs.com/',
+      'https://endpoints.omniatech.io/v1/matic/mumbai/public	',
       'https://polygon-mumbai.infura.io/v3',
       'https://polygon-mumbai.g.alchemy.com/v2',
     ],
