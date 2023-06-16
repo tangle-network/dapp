@@ -25,7 +25,7 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
   }
 };
 
-export const addTokenAddedToMetamaskInLocalStorage = (
+export const recordAddedToken = (
   accountAddress: string,
   resourceId: ResourceId,
   tokenAddress: string
@@ -128,11 +128,7 @@ export const useAddCurrency = () => {
         });
 
         if (wasAdded && accountAddress && currentResourceId && address) {
-          addTokenAddedToMetamaskInLocalStorage(
-            accountAddress,
-            currentResourceId,
-            address
-          );
+          recordAddedToken(accountAddress, currentResourceId, address);
         }
 
         return Boolean(wasAdded);
