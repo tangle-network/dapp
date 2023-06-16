@@ -222,8 +222,8 @@ export const WithdrawContainer = forwardRef<
       isTokenAddedToMetamask: isTokenAddedToMetamask(
         fungibleCurrency,
         activeChain,
-        activeApi,
-        activeAccount?.address
+        activeAccount?.address,
+        currentResourceId
       ),
     };
   }, [
@@ -232,8 +232,8 @@ export const WithdrawContainer = forwardRef<
     currentTypedChainId,
     fungibleCurrency,
     activeChain,
-    activeApi,
     activeAccount,
+    currentResourceId,
   ]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
@@ -248,11 +248,17 @@ export const WithdrawContainer = forwardRef<
       isTokenAddedToMetamask: isTokenAddedToMetamask(
         wrappableCurrency,
         activeChain,
-        activeApi,
-        activeAccount?.address
+        activeAccount?.address,
+        currentResourceId
       ),
     };
-  }, [addCurrency, wrappableCurrency, activeChain, activeApi, activeAccount]);
+  }, [
+    addCurrency,
+    wrappableCurrency,
+    activeChain,
+    activeAccount,
+    currentResourceId,
+  ]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {
@@ -692,8 +698,8 @@ export const WithdrawContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         };
       }
@@ -721,16 +727,17 @@ export const WithdrawContainer = forwardRef<
     );
   }, [
     activeApi,
-    addCurrency,
+    fungiblesFromNotes,
+    setMainComponent,
     apiConfig,
+    onTryAnotherWallet,
     balancesFromNotes,
     currentTypedChainId,
-    fungiblesFromNotes,
-    handleFungibleTokenChange,
-    onTryAnotherWallet,
-    setMainComponent,
     activeChain,
-    activeAccount,
+    activeAccount?.address,
+    currentResourceId,
+    addCurrency,
+    handleFungibleTokenChange,
   ]);
 
   const handleUnwrapAssetInputClick = useCallback(() => {
@@ -743,8 +750,8 @@ export const WithdrawContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         };
       });
@@ -772,14 +779,15 @@ export const WithdrawContainer = forwardRef<
     }
   }, [
     activeApi,
-    addCurrency,
-    apiConfig,
-    handleWrappableTokenChange,
-    onTryAnotherWallet,
-    setMainComponent,
     wrappableCurrencies,
+    setMainComponent,
+    apiConfig,
+    onTryAnotherWallet,
     activeChain,
-    activeAccount,
+    activeAccount?.address,
+    currentResourceId,
+    addCurrency,
+    handleWrappableTokenChange,
   ]);
 
   const handleRelayerInputClick = useCallback(() => {

@@ -9,6 +9,7 @@ import { isValidPublicKey } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
+  useCurrentResourceId,
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
@@ -129,6 +130,8 @@ export const TransferContainer = forwardRef<
 
     const addCurrency = useAddCurrency();
 
+    const currentResourceId = useCurrentResourceId();
+
     const maxFeeArgs = useMemo(
       () => ({
         fungibleCurrencyId: fungibleCurrency?.id,
@@ -199,18 +202,18 @@ export const TransferContainer = forwardRef<
         isTokenAddedToMetamask: isTokenAddedToMetamask(
           fungibleCurrency,
           activeChain,
-          activeApi,
-          activeAccount?.address
+          activeAccount?.address,
+          currentResourceId
         ),
       };
     }, [
-      addCurrency,
-      balancesFromNotes,
-      currentTypedChainId,
       fungibleCurrency,
+      balancesFromNotes,
       activeChain,
-      activeApi,
       activeAccount?.address,
+      currentResourceId,
+      currentTypedChainId,
+      addCurrency,
     ]);
 
     const selectableBridgingAssets = useMemo<AssetType[]>(() => {
@@ -239,21 +242,21 @@ export const TransferContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         });
 
         return acc;
       }, [] as AssetType[]);
     }, [
-      addCurrency,
-      balancesFromNotes,
       fungiblesFromNotes,
       currentTypedChainId,
+      balancesFromNotes,
       activeChain,
-      activeApi,
-      activeAccount,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
     ]);
 
     // Callback when a chain item is selected

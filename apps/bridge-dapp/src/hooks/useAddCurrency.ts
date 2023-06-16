@@ -1,9 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { Chain } from '@webb-tools/dapp-config';
 import { useCallback } from 'react';
+import { useCurrentResourceId } from '@webb-tools/react-hooks';
 
 const IMAGE_URL_TEMPLATE =
   'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/{symbol}.png';
@@ -26,7 +27,7 @@ const getCurrencyImageUrl = async (symbol: string): Promise<string> => {
 
 export const addTokenAddedToMetamaskInLocalStorage = (
   accountAddress: string,
-  resourceId: string,
+  resourceId: ResourceId,
   tokenAddress: string
 ) => {
   // Retrieve existing token storage
@@ -38,13 +39,13 @@ export const addTokenAddedToMetamaskInLocalStorage = (
   }
 
   // Check if resourceId exists for the account
-  if (!storedTokens[accountAddress][resourceId]) {
-    storedTokens[accountAddress][resourceId] = {};
+  if (!storedTokens[accountAddress][resourceId.toString()]) {
+    storedTokens[accountAddress][resourceId.toString()] = {};
   }
 
   // Check if the token is already marked as added for the account and resourceId
-  if (!storedTokens[accountAddress][resourceId][tokenAddress]) {
-    storedTokens[accountAddress][resourceId][tokenAddress] = true;
+  if (!storedTokens[accountAddress][resourceId.toString()][tokenAddress]) {
+    storedTokens[accountAddress][resourceId.toString()][tokenAddress] = true;
     localStorage.setItem('addedTokens', JSON.stringify(storedTokens));
   }
 };
@@ -52,11 +53,11 @@ export const addTokenAddedToMetamaskInLocalStorage = (
 export const isTokenAddedToMetamask = (
   currency: Currency,
   activeChain?: Chain,
-  activeApi?: any,
-  accountAddress?: string
+  accountAddress?: string,
+  resourceId?: ResourceId | null
 ): boolean => {
   // Validate required parameters.
-  if (!currency || !activeChain || !activeApi || !accountAddress) {
+  if (!currency || !activeChain || !accountAddress || !resourceId) {
     return false;
   }
 
@@ -67,11 +68,6 @@ export const isTokenAddedToMetamask = (
 
   const tokenAddress = currency.getAddressOfChain(typedChainId);
 
-  // Get resourceId from config if it exists, otherwise return false.
-  const resourceId =
-    activeApi?.config?.currencies[currency.view.id]?.addresses?.get(
-      typedChainId
-    );
   if (!resourceId || !tokenAddress) {
     return false;
   }
@@ -79,7 +75,9 @@ export const isTokenAddedToMetamask = (
   const storedTokens = JSON.parse(localStorage.getItem('addedTokens') || '{}');
 
   // Check if the token is marked as added for the account and resourceId
-  return Boolean(storedTokens[accountAddress]?.[resourceId]?.[tokenAddress]);
+  return Boolean(
+    storedTokens[accountAddress]?.[resourceId.toString()]?.[tokenAddress]
+  );
 };
 
 /**
@@ -88,6 +86,8 @@ export const isTokenAddedToMetamask = (
  */
 export const useAddCurrency = () => {
   const { activeApi, activeChain, activeAccount } = useWebContext();
+
+  const currentResourceId = useCurrentResourceId();
 
   return useCallback(
     async (currency: Currency): Promise<boolean> => {
@@ -111,11 +111,6 @@ export const useAddCurrency = () => {
 
       const address = currency.getAddressOfChain(typedChainId);
 
-      const resourceId =
-        activeApi?.config?.currencies[currency.view.id].addresses.get(
-          typedChainId
-        );
-
       if (!address) {
         console.warn('Not found address on the current chain ', currency);
         return false;
@@ -132,10 +127,10 @@ export const useAddCurrency = () => {
           image: await getCurrencyImageUrl(currency.view.symbol),
         });
 
-        if (wasAdded && accountAddress && resourceId && address) {
+        if (wasAdded && accountAddress && currentResourceId && address) {
           addTokenAddedToMetamaskInLocalStorage(
             accountAddress,
-            resourceId,
+            currentResourceId,
             address
           );
         }
@@ -146,6 +141,6 @@ export const useAddCurrency = () => {
         return false;
       }
     },
-    [activeApi, activeChain, activeAccount]
+    [activeApi, activeChain, activeAccount, currentResourceId]
   );
 };

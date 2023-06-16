@@ -3,6 +3,7 @@ import { Chain, getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import {
   useCurrencies,
   useCurrenciesBalances,
+  useCurrentResourceId,
   useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -93,6 +94,8 @@ export const DepositContainer = forwardRef<
     } = useCurrencies();
 
     const addCurrency = useAddCurrency();
+
+    const currentResourceId = useCurrentResourceId();
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
@@ -207,8 +210,8 @@ export const DepositContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             bridgeWrappableCurrency.currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         };
       }
@@ -226,17 +229,17 @@ export const DepositContainer = forwardRef<
         isTokenAddedToMetamask: isTokenAddedToMetamask(
           bridgeFungibleCurrency.currency,
           activeChain,
-          activeApi,
-          activeAccount?.address
+          activeAccount?.address,
+          currentResourceId
         ),
       };
     }, [
-      bridgeFungibleCurrency,
       bridgeWrappableCurrency,
-      addCurrency,
+      bridgeFungibleCurrency,
       activeChain,
-      activeApi,
-      activeAccount,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
     ]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
@@ -250,20 +253,20 @@ export const DepositContainer = forwardRef<
             isTokenAddedToMetamask: isTokenAddedToMetamask(
               currency,
               activeChain,
-              activeApi,
-              activeAccount?.address
+              activeAccount?.address,
+              currentResourceId
             ),
           };
         }
       );
     }, [
-      addCurrency,
-      balances,
       fungibleCurrencies,
       wrappableCurrencies,
+      balances,
       activeChain,
-      activeApi,
-      activeAccount,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
     ]);
 
     const populatedAllTokens = useMemo((): AssetType[] => {
@@ -519,8 +522,8 @@ export const DepositContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             bridgeFungibleCurrency.currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         },
         onClick: () => {
@@ -532,11 +535,11 @@ export const DepositContainer = forwardRef<
     }, [
       wrappableCurrency,
       bridgeFungibleCurrency,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
       addCurrency,
       selectedSourceChain,
-      activeChain,
-      activeApi,
-      activeAccount,
     ]);
 
     const handleMaxBtnClick = useCallback(() => {
@@ -604,8 +607,8 @@ export const DepositContainer = forwardRef<
           isTokenAddedToMetamask: isTokenAddedToMetamask(
             currency,
             activeChain,
-            activeApi,
-            activeAccount?.address
+            activeAccount?.address,
+            currentResourceId
           ),
         })
       );
