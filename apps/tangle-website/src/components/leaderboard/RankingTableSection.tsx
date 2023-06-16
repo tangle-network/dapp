@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import cx from 'classnames';
 import {
   useReactTable,
@@ -7,16 +7,16 @@ import {
   getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { Input, Typography } from '@webb-tools/webb-ui-components';
+import { Input, Typography, Pagination } from '@webb-tools/webb-ui-components';
 import { Search } from '@webb-tools/icons';
 
 import {
   AddressCell,
   BadgesCell,
   HeaderCell,
-  Pagination,
   RankingItemType,
 } from './tableComponents';
+import { defaultData } from './data';
 
 const pageSize = 20;
 
@@ -50,12 +50,12 @@ const columns = [
 ];
 
 export const RankingTableSection = () => {
-  const [rankingData, setRankingData] = useState<RankingItemType[]>([]);
+  const [rankingData, setRankingData] =
+    useState<RankingItemType[]>(defaultData);
 
   const {
     getHeaderGroups,
     getRowModel,
-    setPageSize,
     getPageCount,
     getState,
     setPageIndex,
@@ -66,6 +66,11 @@ export const RankingTableSection = () => {
   } = useReactTable({
     data: rankingData,
     columns,
+    initialState: {
+      pagination: {
+        pageSize,
+      },
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     filterFns: {
@@ -76,10 +81,6 @@ export const RankingTableSection = () => {
   });
 
   const pageIndex = getState().pagination.pageIndex;
-
-  useEffect(() => {
-    setPageSize(pageSize);
-  }, [setPageSize]);
 
   return (
     <div className="space-y-4">
@@ -138,17 +139,18 @@ export const RankingTableSection = () => {
       </div>
 
       <Pagination
-        pageIndex={pageIndex}
-        pageCount={getPageCount()}
-        itemsLength={rankingData.length}
-        pageSize={pageSize}
-        previousPageFn={() => {
-          if (getCanPreviousPage()) previousPage();
-        }}
-        nextPageFn={() => {
-          if (getCanNextPage()) nextPage();
-        }}
+        canNextPage={getCanNextPage()}
+        canPreviousPage={getCanPreviousPage()}
+        itemsPerPage={pageSize}
+        totalItems={rankingData.length}
+        totalPages={getPageCount()}
+        previousPage={previousPage}
+        nextPage={nextPage}
+        page={pageIndex + 1}
         setPageIndex={setPageIndex}
+        title="participants"
+        className="p-0 gap-3 border-0"
+        iconSize="md"
       />
     </div>
   );

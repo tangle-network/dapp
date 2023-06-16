@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import cx from 'classnames';
+import { Typography } from '@webb-tools/webb-ui-components';
 
 import { BadgeType } from './types';
 
@@ -20,12 +21,12 @@ export const BadgesCell: FC<{ badges: BadgeType[] }> = ({ badges }) => {
         <div
           key={idx}
           className={cx(
-            'w-[24px] md:w-[30px] aspect-square rounded-full',
+            'w-6 md:w-[30px] aspect-square rounded-full',
             'flex items-center justify-center',
             'bg-[rgba(31,29,43,0.1)]'
           )}
         >
-          {badgeIcons[badge]}
+          <Typography variant="mkt-body2">{badgeIcons[badge]}</Typography>
         </div>
       ))}
     </div>

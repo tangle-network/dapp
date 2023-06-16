@@ -2,7 +2,7 @@ import { FC } from 'react';
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
 
-import { shortenAddress } from '../../../utils';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 
 export const AddressCell: FC<{ address: string }> = ({ address }) => {
   return (
@@ -14,7 +14,7 @@ export const AddressCell: FC<{ address: string }> = ({ address }) => {
         alt={address}
       />
       <Typography variant="mkt-body2" fw="bold">
-        {shortenAddress(address)}
+        {shortenHex(address, 3)}
       </Typography>
     </div>
   );
