@@ -16,7 +16,6 @@ import {
   HeaderCell,
   RankingItemType,
 } from './tableComponents';
-import { defaultData } from './data';
 
 const pageSize = 20;
 
@@ -50,8 +49,7 @@ const columns = [
 ];
 
 export const RankingTableSection = () => {
-  const [rankingData, setRankingData] =
-    useState<RankingItemType[]>(defaultData);
+  const [rankingData, setRankingData] = useState<RankingItemType[]>([]);
 
   const {
     getHeaderGroups,
