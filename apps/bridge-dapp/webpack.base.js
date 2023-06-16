@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
@@ -37,7 +38,9 @@ function mapChunks(name, regs, inc) {
 function createWebpack(env, mode = 'production') {
   if (!fs.existsSync(onChainCfgPath)) {
     throw new Error(
-      `Missing on-chain config at ${onChainCfgPath}. Please run \`yarn fetch:onChainConfig\` first.`
+      `Please run \`${chalk.cyan.bold.underline(
+        'yarn fetch:onChainConfig'
+      )}\` first. Missing on-chain config at ${onChainCfgPath}.`
     );
   } else {
     console.log(
