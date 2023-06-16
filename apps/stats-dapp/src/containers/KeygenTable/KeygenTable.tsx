@@ -361,12 +361,9 @@ export const KeygenTable: FC = () => {
           </Accordion>
         </Filter>
       }
+      className="h-[780px]"
     >
-      {loading ? (
-        <div className="flex items-center justify-center min-w-full min-h-[700px]">
-          <Spinner size="xl" />
-        </div>
-      ) : (
+      {data.length > 0 ? (
         <Table
           tableProps={table as RTTable<unknown>}
           totalRecords={totalItems}
@@ -374,6 +371,10 @@ export const KeygenTable: FC = () => {
           tdClassName="text-center"
           title="Keys"
         />
+      ) : (
+        <div className="h-[780px] flex items-center flex-col justify-center">
+          <Spinner size="xl" />
+        </div>
       )}
     </CardTable>
   );
