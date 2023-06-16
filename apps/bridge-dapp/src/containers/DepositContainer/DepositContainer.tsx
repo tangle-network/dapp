@@ -642,12 +642,12 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       populatedAllTokens,
       balances,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
       addCurrency,
       fungibleCurrencies,
       setFungibleCurrency,
-      activeChain,
-      activeApi,
-      activeAccount,
     ]);
 
     const destChainListCardProps = useMemo<ChainListCardWrapperProps>(() => {
