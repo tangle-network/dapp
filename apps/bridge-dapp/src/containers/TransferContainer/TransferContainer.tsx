@@ -9,6 +9,7 @@ import { isValidPublicKey } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
+  useCurrentResourceId,
   useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
@@ -47,6 +48,7 @@ import useStatesFromNotes from '../../hooks/useStatesFromNotes';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferContainerProps } from './types';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -60,6 +62,7 @@ export const TransferContainer = forwardRef<
       activeApi,
       activeChain,
       apiConfig,
+      activeAccount,
       chains,
       loading,
       noteManager,
@@ -126,6 +129,8 @@ export const TransferContainer = forwardRef<
     const { setEducationCardStep } = useEducationCardStep();
 
     const addCurrency = useAddCurrency();
+
+    const currentResourceId = useCurrentResourceId();
 
     const maxFeeArgs = useMemo(
       () => ({
@@ -194,8 +199,22 @@ export const TransferContainer = forwardRef<
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
         balanceType: 'note',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          fungibleCurrency,
+          activeChain,
+          activeAccount?.address,
+          currentResourceId
+        ),
       };
-    }, [addCurrency, balancesFromNotes, currentTypedChainId, fungibleCurrency]);
+    }, [
+      fungibleCurrency,
+      balancesFromNotes,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      currentTypedChainId,
+      addCurrency,
+    ]);
 
     const selectableBridgingAssets = useMemo<AssetType[]>(() => {
       return fungiblesFromNotes.reduce((acc, currency) => {
@@ -220,15 +239,24 @@ export const TransferContainer = forwardRef<
           symbol: currency.view.symbol,
           balance,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         });
 
         return acc;
       }, [] as AssetType[]);
     }, [
-      addCurrency,
-      balancesFromNotes,
       fungiblesFromNotes,
       currentTypedChainId,
+      balancesFromNotes,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
     ]);
 
     // Callback when a chain item is selected

@@ -32,7 +32,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-
 import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { isValidAddress } from '@webb-tools/dapp-types';
 import {
@@ -43,9 +42,10 @@ import {
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -74,8 +74,15 @@ export const WithdrawContainer = forwardRef<
 
   const { setMainComponent } = useWebbUI();
 
-  const { activeApi, activeChain, apiConfig, loading, noteManager, txQueue } =
-    useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    apiConfig,
+    activeAccount,
+    loading,
+    noteManager,
+    txQueue,
+  } = useWebContext();
 
   const { wrappableCurrency, setWrappableCurrency } = useBridge();
 
@@ -212,8 +219,22 @@ export const WithdrawContainer = forwardRef<
       balance,
       onTokenClick: () => addCurrency(fungibleCurrency),
       balanceType: 'note',
+      isTokenAddedToMetamask: isTokenAddedToMetamask(
+        fungibleCurrency,
+        activeChain,
+        activeAccount?.address,
+        currentResourceId
+      ),
     };
-  }, [addCurrency, balancesFromNotes, currentTypedChainId, fungibleCurrency]);
+  }, [
+    addCurrency,
+    balancesFromNotes,
+    currentTypedChainId,
+    fungibleCurrency,
+    activeChain,
+    activeAccount,
+    currentResourceId,
+  ]);
 
   const selectedUnwrapToken = useMemo<AssetType | undefined>(() => {
     if (!wrappableCurrency) {
@@ -224,8 +245,20 @@ export const WithdrawContainer = forwardRef<
       name: wrappableCurrency.view.name,
       onTokenClick: () => addCurrency(wrappableCurrency),
       balanceType: 'wallet',
+      isTokenAddedToMetamask: isTokenAddedToMetamask(
+        wrappableCurrency,
+        activeChain,
+        activeAccount?.address,
+        currentResourceId
+      ),
     };
-  }, [addCurrency, wrappableCurrency]);
+  }, [
+    addCurrency,
+    wrappableCurrency,
+    activeChain,
+    activeAccount,
+    currentResourceId,
+  ]);
 
   const parseUserAmount = useCallback(
     (amount: string | number): void => {
@@ -662,6 +695,12 @@ export const WithdrawContainer = forwardRef<
           symbol: currency.view.symbol,
           balance,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         };
       }
     );
@@ -688,14 +727,17 @@ export const WithdrawContainer = forwardRef<
     );
   }, [
     activeApi,
-    addCurrency,
+    fungiblesFromNotes,
+    setMainComponent,
     apiConfig,
+    onTryAnotherWallet,
     balancesFromNotes,
     currentTypedChainId,
-    fungiblesFromNotes,
+    activeChain,
+    activeAccount?.address,
+    currentResourceId,
+    addCurrency,
     handleFungibleTokenChange,
-    onTryAnotherWallet,
-    setMainComponent,
   ]);
 
   const handleUnwrapAssetInputClick = useCallback(() => {
@@ -705,6 +747,12 @@ export const WithdrawContainer = forwardRef<
           name: currency.view.name,
           symbol: currency.view.symbol,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         };
       });
 
@@ -731,12 +779,15 @@ export const WithdrawContainer = forwardRef<
     }
   }, [
     activeApi,
-    addCurrency,
-    apiConfig,
-    handleWrappableTokenChange,
-    onTryAnotherWallet,
-    setMainComponent,
     wrappableCurrencies,
+    setMainComponent,
+    apiConfig,
+    onTryAnotherWallet,
+    activeChain,
+    activeAccount?.address,
+    currentResourceId,
+    addCurrency,
+    handleWrappableTokenChange,
   ]);
 
   const handleRelayerInputClick = useCallback(() => {
