@@ -5,7 +5,6 @@ import {
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { ON_CHAIN_CONFIG_PATH } from '@webb-tools/dapp-config/src/constants';
 import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
 import { substrateProviderFactory } from '@webb-tools/polkadot-api-provider/src/utils';
 import {
@@ -19,6 +18,8 @@ import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
+
+import { ON_CHAIN_CONFIG_PATH } from './constants';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 

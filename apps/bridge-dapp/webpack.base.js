@@ -10,10 +10,14 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const { workspaceRoot } = require('nx/src/utils/workspace-root');
 
 const findPackages = require('../../tools/scripts/findPackages');
+const { ON_CHAIN_CONFIG_PATH } = require('../../tools/scripts/constants');
 const packageJson = require(path.resolve(__dirname, 'package.json'));
 const packageVersion = packageJson.version;
+
+const onChainCfgPath = path.resolve(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
 function mapChunks(name, regs, inc) {
   return regs.reduce(
@@ -31,6 +35,16 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
+  if (!fs.existsSync(onChainCfgPath)) {
+    throw new Error(
+      `Missing on-chain config at ${onChainCfgPath}. Please run \`yarn fetch:onChainConfig\` first.`
+    );
+  } else {
+    console.log(
+      `Found on-chain config at ${onChainCfgPath}. Using it to generate the on-chain config.`
+    );
+  }
+
   console.log('Running webpack in: ', mode);
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {

@@ -348,8 +348,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         ? this.apiPromise.registry.chainDecimals
         : 12,
       tokenSymbol: this.apiPromise.registry.chainTokens[0] || 'Unit',
-      types: apiOptions({}).types,
-    };
+      types: {},
+    } satisfies MetadataDef;
 
     logger.trace('Polkadot api metadata', metadataDef);
 
