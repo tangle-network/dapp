@@ -20,6 +20,7 @@ import {
   Wallet,
   chainsConfig,
   chainsPopulated,
+  parseOnChainData,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -57,6 +58,7 @@ import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
+import onChainDataJson from './generated/on-chain-config.json';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -80,8 +82,14 @@ const registerInteractiveFeedback = (
   });
 };
 
+const { currencies, anchors, fungibleToWrappableMap } =
+  parseOnChainData(onChainDataJson);
+
 const apiConfig = ApiConfig.init({
+  anchors,
   chains: chainsConfig,
+  currencies,
+  fungibleToWrappableMap,
   wallets: walletsConfig,
 });
 

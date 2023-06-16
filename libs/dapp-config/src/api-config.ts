@@ -17,13 +17,8 @@ import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
 import { getNativeCurrencyFromConfig } from './utils';
-import {
-  anchors,
-  currencies,
-  fungibleToWrappableMap,
-  parsedAnchorConfig,
-} from './utils/parsedData';
 import { WalletConfig } from './wallets/wallet-config.interface';
+import { parsedAnchorConfig } from './anchors';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
@@ -52,15 +47,19 @@ export class ApiConfig {
   ) {}
 
   static init = (config: ApiConfigInput) => {
+    const currencies = config.currencies ?? {};
+    const anchors = config.anchors ?? {};
+    const fungibleToWrappableMap = config.fungibleToWrappableMap ?? new Map();
+
     const bridgeByAsset = getBridgeConfigByAsset(currencies, anchors);
 
     return new ApiConfig(
       config.wallets ?? {},
       config.chains ?? {},
-      config.currencies ?? currencies,
-      config.bridgeByAsset ?? bridgeByAsset,
-      config.anchors ?? anchors,
-      config.fungibleToWrappableMap ?? fungibleToWrappableMap
+      currencies,
+      bridgeByAsset,
+      anchors,
+      fungibleToWrappableMap
     );
   };
 

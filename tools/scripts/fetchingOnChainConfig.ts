@@ -1,8 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
-import { anchorDeploymentBlock } from '@webb-tools/dapp-config/src/anchors/anchor-config';
+import {
+  anchorDeploymentBlock,
+  parsedAnchorConfig,
+} from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { ON_CHAIN_CONFIG_PATH } from '@webb-tools/dapp-config/src/constants';
+import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
 import { substrateProviderFactory } from '@webb-tools/polkadot-api-provider/src/utils';
 import {
   ChainType,
@@ -13,24 +17,10 @@ import fs from 'fs';
 import { Listr, color } from 'listr2';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
-import fetchAnchorMetadata, {
-  AnchorMetadata,
-} from './utils/on-chain-utils/fetchAnchorMetadata';
+import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
-
-// For the fetching currency on chain effect
-const anchorConfig = Object.keys(anchorDeploymentBlock).reduce(
-  (acc, typedChainId) => {
-    const addresses = Object.keys(anchorDeploymentBlock[+typedChainId]);
-    if (addresses && addresses.length > 0) {
-      acc[+typedChainId] = addresses;
-    }
-    return acc;
-  },
-  {} as Record<number, string[]>
-);
 
 interface Ctx {
   typedChainIds: number[];
@@ -121,7 +111,7 @@ async function fetchAnchorMetadataTask(
   // Fetch anchor metadata in parallel
   const metadataWithTypedChainId = await Promise.all(
     typedChainIds.map(async (typedChainId) => {
-      const addresses = anchorConfig[typedChainId];
+      const addresses = parsedAnchorConfig[typedChainId];
       const provider = substrateProviderRecord?.[typedChainId];
 
       // Fetch metadata in parallel and ignore the rejected ones

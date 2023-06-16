@@ -11,39 +11,13 @@ import {
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
+import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
 import getViemClient from './getViemClient';
 import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
-
-export interface AnchorMetadata {
-  /**
-   * The address of the anchor
-   */
-  address: string;
-
-  /**
-   * The fungible currency of the anchor
-   */
-  fungibleCurrency: ICurrency;
-
-  /**
-   * The wrappable currencies of the anchor (excluding native currency)
-   */
-  wrappableCurrencies: ICurrency[];
-
-  /**
-   * Boolean indicating whether native currency is allowed
-   */
-  isNativeAllowed?: boolean;
-
-  /**
-   * Record of linkable typed chain -> anchor address
-   */
-  linkableAnchor: Record<string, string>;
-}
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,

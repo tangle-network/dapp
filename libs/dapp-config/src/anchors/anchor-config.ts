@@ -58,6 +58,17 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 };
 
+export const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
+  (acc, typedChainId) => {
+    const addresses = Object.keys(anchorDeploymentBlock[+typedChainId]);
+    if (addresses && addresses.length > 0) {
+      acc[+typedChainId] = addresses;
+    }
+    return acc;
+  },
+  {} as Record<number, string[]>
+);
+
 export const getAnchorDeploymentBlockNumber = (
   chainIdType: number,
   contractAddress: string
