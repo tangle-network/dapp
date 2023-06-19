@@ -1,4 +1,3 @@
-import { Provider } from '@ethersproject/abstract-provider';
 import { retryPromise } from '@webb-tools/browser-utils';
 import {
   ERC20__factory,
@@ -8,6 +7,7 @@ import {
 import { EVMChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
+import { providers } from 'ethers';
 import { ChainAddressConfig } from '../../anchors';
 import { CurrencyConfig } from '../../currencies';
 import {
@@ -69,7 +69,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
   async fetchNativeCurrency(
     typedChainId: number,
-    _?: Provider
+    _?: providers.Web3Provider
   ): Promise<ICurrency | null> {
     // First check if the native currency is already cached
     const cachedNativeCurrency = this.nativeCurrencyCache.get(typedChainId);
@@ -127,7 +127,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: Provider
+    provider: providers.Web3Provider
   ): Promise<ICurrency | null> {
     // First check if the fungible currency is already cached
     const cachedFungibleCurrency = this.fungibleCurrencyCache.get(typedChainId);
@@ -177,7 +177,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: Provider
+    provider: providers.Web3Provider
   ): Promise<ICurrency[]> {
     // First check if the wrappable currencies are already cached
     const cachedCurrencies = this.wrappableCurrenciesCache.get(typedChainId);
@@ -253,7 +253,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
   async fetchCurrenciesConfig(
     anchorConfig: Record<number, string[]>,
-    providerFactory: (typedChainId: number) => Promise<Provider>,
+    providerFactory: (typedChainId: number) => Promise<providers.Web3Provider>,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
     existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
