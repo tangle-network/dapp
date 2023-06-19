@@ -128,7 +128,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
          *  2- The user killed the connection, no other retires
          **/
         // global interActiveFeedback for access on multiple scopes
-        let interActiveFeedback: InteractiveFeedback | undefined = undefined;
+        let interactiveFeedback: InteractiveFeedback | undefined = undefined;
 
         if (!options?.ignoreLog) {
           logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
@@ -164,9 +164,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             /// no need to call `.connect` the Promise api will handle this
             resolve(new WsProvider(endPoints));
 
-            if (typeof interActiveFeedback !== 'undefined') {
+            if (typeof interactiveFeedback !== 'undefined') {
               /// cancel the feedback as  the connection is established
-              interActiveFeedback.cancelWithoutHandler();
+              interactiveFeedback.cancelWithoutHandler();
             }
 
             break;
@@ -188,7 +188,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
 
             const actions = InteractiveFeedback.actionsBuilder()
               .action('Wait for connection', () => {
-                interActiveFeedback?.cancelWithoutHandler();
+                interactiveFeedback?.cancelWithoutHandler();
                 reportNewInteractiveError = false;
               })
               .actions();
@@ -196,12 +196,12 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             /// if the connection is established from the first time then there's no interActiveFeedback instance
-            if (typeof interActiveFeedback !== 'undefined') {
+            if (typeof interactiveFeedback !== 'undefined') {
               /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
-              interActiveFeedback.cancelWithoutHandler();
+              interactiveFeedback.cancelWithoutHandler();
             }
 
-            interActiveFeedback = new InteractiveFeedback(
+            interactiveFeedback = new InteractiveFeedback(
               'error',
               actions,
               () => {
@@ -211,7 +211,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
               body
             );
 
-            onError(interActiveFeedback);
+            onError(interactiveFeedback);
           }
         }
       }
