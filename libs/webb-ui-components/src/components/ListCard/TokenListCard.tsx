@@ -1,8 +1,6 @@
 import { Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
-
-import { Button } from '../Button';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
 import { TokenSelector } from '../TokenSelector';
@@ -28,8 +26,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     ref
   ) => {
     const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
-
-    console.log(txnType);
 
     // Search text
     const [searchText, setSearchText] = useState('');

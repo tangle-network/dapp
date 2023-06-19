@@ -68,6 +68,11 @@ export type AssetType = {
    * The callback when user clicks on the token
    */
   onTokenClick?: (symbol: string) => void;
+
+  /**
+   * Check if the token is added to metamask
+   */
+  isTokenAddedToMetamask?: boolean;
 };
 
 export interface ListCardWrapperProps
