@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import cx from 'classnames';
 
 import {
@@ -10,7 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 
 interface FAQAccordionProps {
-  items: Array<{ question: string; answer: string }>;
+  items: Array<{ question: string; answer: string | ReactNode }>;
   className?: string;
   itemClassName?: string;
 }
