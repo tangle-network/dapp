@@ -72,6 +72,9 @@ export const Header: FC<HeaderProps> = () => {
                   '_blank'
                 )
               }
+              onFaucetClick={() => {
+                window.open('https://faucet.webb.tools/', '_blank');
+              }}
               onHelpCenterClick={() =>
                 window.open('https://t.me/webbprotocol', '_blank')
               }
