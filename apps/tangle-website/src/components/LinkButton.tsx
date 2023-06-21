@@ -1,5 +1,4 @@
 import { Button, ButtonProps } from '@webb-tools/webb-ui-components';
-import { twMerge } from 'tailwind-merge';
 
 export const LinkButton = (props: ButtonProps) => {
   const { href, className, children, ...restProps } = props;
@@ -8,7 +7,7 @@ export const LinkButton = (props: ButtonProps) => {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={twMerge('button-base', className)}
+      className={className}
       {...restProps}
     >
       {children}

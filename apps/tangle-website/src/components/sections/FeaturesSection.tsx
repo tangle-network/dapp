@@ -51,7 +51,10 @@ export const FeaturesSection = () => {
             >
               Features
             </Typography>
-            <Typography variant="mkt-h3" className="font-black text-mono-200">
+            <Typography
+              variant="mkt-h3"
+              className="text-center font-black text-mono-200"
+            >
               What makes Tangle Unique?
             </Typography>
           </div>
