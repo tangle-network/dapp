@@ -39,7 +39,7 @@ function createWebpack(env, mode = 'production') {
     stdio: 'inherit',
   });
 
-  console.log('Running webpack in: ', mode);
+  console.log(chalk.cyan('Running webpack in: ', mode));
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(__dirname, `../../libs/${dir}/src`);
