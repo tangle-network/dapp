@@ -237,6 +237,7 @@ export const StatsProvider: React.FC<
         (Number(await apiPromise.consts.timestamp.minimumPeriod) * 2) / 1000;
       setBlockTime(blockTime);
       const sessionPeriod = await apiPromise.consts.dkg.sessionPeriod;
+      console.log('✅', Number(sessionPeriod.toString()))
       const sessionHeight = Number(sessionPeriod.toString()) * 12;
       setSessionHeight(sessionHeight);
 

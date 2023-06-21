@@ -45,6 +45,11 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       <Avatar sourceVariant="address" key={idx} value={randomAddress} />
     ));
 
+  console.log('Instance', instance);
+  console.log('startTime', startTime);
+  console.log('endTime', endTime);
+  console.log('end - start', (endTime.getTime() - startTime.getTime()) / 1000 / 60);
+
   return (
     <Card {...props}>
       {/** Top */}
