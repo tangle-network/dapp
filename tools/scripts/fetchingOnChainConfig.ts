@@ -5,7 +5,7 @@ import {
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
+import { AnchorMetadata, ConfigType } from '@webb-tools/dapp-config/src/types';
 import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/utils/substrateProviderFactory';
 import {
   ChainType,
@@ -16,10 +16,10 @@ import fs from 'fs';
 import { Listr, color } from 'listr2';
 import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
+import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
-
-import { ON_CHAIN_CONFIG_PATH } from './constants';
+import mergeConfig from './utils/on-chain-utils/mergeConfig';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
@@ -152,7 +152,7 @@ async function writeFileTask(
   nativeRecord: Record<number, ICurrency>,
   metadataRecord: Record<number, AnchorMetadata[]>
 ): Promise<void> {
-  const writableConfig = typedChainIds.reduce((acc, typedChainId) => {
+  const fetchedCfg = typedChainIds.reduce((acc, typedChainId) => {
     const native = nativeRecord[typedChainId];
     const anchorMetadatas = metadataRecord[typedChainId];
 
@@ -166,7 +166,9 @@ async function writeFileTask(
     };
 
     return acc;
-  }, {} as Record<number, { nativeCurrency: ICurrency; anchorMetadatas: AnchorMetadata[] }>);
+  }, {} as ConfigType);
+
+  const writableConfig = mergeConfig(configPath, fetchedCfg);
 
   // Ensure directories are created
   const dir = path.dirname(configPath);
