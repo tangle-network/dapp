@@ -100,7 +100,9 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <LinkButton href={STATS_URL}>View Network</LinkButton>
+          <LinkButton href={STATS_URL} className="px-5 md:px-9">
+            View Network
+          </LinkButton>
         </li>
 
         <li className="flex items-center justify-center md:hidden">
