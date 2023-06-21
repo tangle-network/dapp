@@ -12,8 +12,6 @@ import { PublicKey, useActiveKeys } from '../../provider/hooks';
 export const KeyStatusCardContainer = () => {
   const { dkgDataFromPolkadotAPI, sessionHeight } = useStatsContext();
 
-  console.log('Session height', sessionHeight / 60);
-
   const { error, isFailed, isLoading, val: data } = useActiveKeys();
 
   const { currentKey } = useMemo<{
@@ -60,7 +58,7 @@ export const KeyStatusCardContainer = () => {
       keyVal={activeKeyData.key ?? ''}
       startTime={currentKey?.start ?? new Date()}
       endTime={
-        currentKey?.end ?? new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
+        currentKey?.end ?? new Date(new Date().getTime() + sessionHeight * 1000)
       }
       authorities={authorities ?? new Set<string>()}
       totalAuthorities={authorities.size ?? 0}
