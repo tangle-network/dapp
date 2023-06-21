@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
-import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/substrateProviderFactory';
+import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/utils/substrateProviderFactory';
 import {
   ChainType,
   parseTypedChainId,
@@ -309,7 +309,15 @@ const tasks = new Listr<Ctx>(
   }
 );
 
-tasks.run().catch((error) => {
-  console.log(color.red(color.bold(`Error while running tasks: ${error}`)));
-  process.exit(1);
-});
+tasks
+  .run()
+  .then(() => {
+    console.log(color.green(color.bold('✅ Done!')));
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.log(
+      color.red(color.bold(`❌ Error while running tasks: ${error}`))
+    );
+    process.exit(1);
+  });
