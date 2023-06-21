@@ -1222,6 +1222,17 @@ export const WithdrawContainer = forwardRef<
     }
   }, [feeInfo]);
 
+  const isProcessingTxn = useMemo(
+    () => txQueue.txPayloads.length > 0,
+    [txQueue]
+  );
+
+  useEffect(() => {
+    if (!isProcessingTxn) {
+      setMainComponent(undefined);
+    }
+  }, [isProcessingTxn, setMainComponent]);
+
   return (
     <WithdrawCard
       ref={ref}
