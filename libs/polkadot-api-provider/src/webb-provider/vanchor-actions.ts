@@ -1,5 +1,4 @@
 import { decodeAddress } from '@polkadot/util-crypto';
-import { HexString } from '@polkadot/util/types';
 import {
   ActiveWebbRelayer,
   FixturesStatus,
@@ -37,49 +36,13 @@ import * as snarkjs from 'snarkjs';
 
 import assert from 'assert';
 import { getLeafIndex } from '../mt-utils';
-import { getVAnchorExtDataHash } from '../utils';
+import { Groth16Proof, IVAnchorPublicInputs } from '../types';
+import {
+  ensureHex,
+  getVAnchorExtDataHash,
+  groth16ProofToBytes,
+} from '../utils';
 import { WebbPolkadot } from '../webb-provider';
-
-export interface IVAnchorPublicInputs {
-  proof: HexString;
-  roots: Uint8Array[];
-  inputNullifiers: Uint8Array[];
-  outputCommitments: [Uint8Array, Uint8Array];
-  publicAmount: Uint8Array;
-  extDataHash: Uint8Array;
-}
-
-export interface Groth16Proof {
-  proof: {
-    pi_a: string[];
-    pi_b: string[][];
-    pi_c: string[];
-    curve: string;
-    prococol: 'groth16';
-  };
-  publicSignals: string[];
-}
-
-export interface VAnchorGroth16ProofInput {
-  roots: bigint[];
-  chainID: bigint;
-  inputNullifier: bigint[];
-  outputCommitment: bigint[];
-  publicAmount: bigint;
-  extDataHash: bigint;
-
-  inAmount: bigint[];
-  inPrivateKey: bigint[];
-  inBlinding: bigint[];
-  inPathIndices: bigint[];
-  inPathElements: bigint[][];
-
-  // data for 2 transaction outputs
-  outChainID: bigint[];
-  outAmount: bigint[];
-  outPubkey: bigint[];
-  outBlinding: bigint[];
-}
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   prepareTransaction(
@@ -346,6 +309,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const feeBigInt = BigInt(fee.toString());
     const extAmount = this.getExtAmount(inputs, outputs, feeBigInt);
 
+    const extAmountAbs = extAmount < 0 ? -extAmount : extAmount;
+    if (extAmountAbs <= feeBigInt) {
+      throw new Error('The amount must be greater than the fee');
+    }
+
     // Pass the identifier for leaves alongside the proof input
     const leafIds: LeafIdentifier[] = inputs.map((input) => {
       const index = input.index ?? this.inner.state.defaultUtxoIndex;
@@ -357,8 +325,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     });
 
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
-      outputs[0].commitment,
-      outputs[1].commitment,
+      hexToU8a(outputs[0].encrypt()),
+      hexToU8a(outputs[1].encrypt()),
     ];
 
     const fixturesList = new Map<string, FixturesStatus>();
@@ -390,8 +358,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       u8aToHex(encryptedCommitments[1])
     );
 
-    console.log('extData', extData);
-
     const proofInputs = await this.generateProofInputs(
       treeId,
       rootsSet.map((r) => BigInt(u8aToHex(r))),
@@ -412,12 +378,21 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
     const publicInputs = await this.generatePublicInputs(
       proof,
-      inputs.length,
-      outputs.length,
-      rootsSet.length
+      rootsSet,
+      inputs,
+      outputs,
+      publicAmount,
+      extDataHash
     );
 
     console.log('publicInputs', publicInputs);
+
+    // For Substrate, specifically, we need the extAmount to not be in hex value,
+    // since substrate does not understand -ve hex values.
+    // Hence, we convert it to a string.
+    extData.extAmount = extAmount.toString();
+
+    console.log('extData', extData);
 
     return {
       extData,
@@ -426,137 +401,36 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     };
   }
 
-  private hexToLittleEndian(hexStr: HexString) {
-    const hexStrWithout0x = hexStr.replace('0x', '');
-    let result = '';
-
-    for (let i = 0; i < hexStrWithout0x.length; i += 2) {
-      result = hexStrWithout0x[i] + hexStrWithout0x[i + 1] + result;
-    }
-
-    return result;
-  }
-
-  private encodeSolidityProof(calldata: any): string {
-    const parsedCalldata = JSON.parse('[' + calldata + ']');
-    const pi_a = parsedCalldata[0];
-    const pi_b = parsedCalldata[1];
-    const pi_c = parsedCalldata[2];
-
-    const proofByte = [
-      this.hexToLittleEndian(pi_a[0]),
-      this.hexToLittleEndian(pi_a[1]),
-      this.hexToLittleEndian(pi_b[0][0]),
-      this.hexToLittleEndian(pi_b[0][1]),
-      this.hexToLittleEndian(pi_b[1][0]),
-      this.hexToLittleEndian(pi_b[1][1]),
-      this.hexToLittleEndian(pi_c[0]),
-      this.hexToLittleEndian(pi_c[1]),
-    ]
-      .map((elt) => elt.replace('0x', ''))
-      .join('');
-
-    console.log('proofByte', hexToU8a(`0x${proofByte}`));
-
-    return proofByte;
-  }
-
   private async generatePublicInputs(
     proof: Groth16Proof,
-    numInputs: number,
-    numOutputs: number,
-    numRoots: number
+    roots: Uint8Array[],
+    inputs: Utxo[],
+    outputs: Utxo[],
+    publicAmount: bigint,
+    extDataHash: bigint
   ): Promise<IVAnchorPublicInputs> {
-    const callDataBytes = await snarkjs.groth16.exportSolidityCallData(
-      proof.proof,
-      proof.publicSignals
-    );
-    // Public amount + extDataHash + inputNullifiers + outputCommitments + typedChainId + roots
-    const publicInputs: HexString[] = JSON.parse('[' + callDataBytes + ']')[3];
-    let index = 0;
+    const proofBytes = await groth16ProofToBytes(proof);
+    const publicAmountHex = ensureHex(toFixedHex(publicAmount, 32));
+    const extDataHashHex = ensureHex(toFixedHex(extDataHash));
 
-    // First element is the public amount
-    const publicAmount = publicInputs[index++];
-    const publicAmountBytes = hexToU8a(publicAmount);
-
-    // Second element is the extDataHash
-    const extDataHash = publicInputs[index++];
-    const extDataHashBytes = hexToU8a(extDataHash);
-
-    // Next are the input nullifiers
-    const inputNullifiers = publicInputs.slice(index, index + numInputs);
-    const inputNullifiersBytes = inputNullifiers.map((inputNullifier) =>
-      hexToU8a(inputNullifier)
-    );
-    index += numInputs;
-
-    // Next are the output commitments
-    const outputCommitments = publicInputs.slice(index, index + numOutputs);
-    const outputCommitmentsBytes = outputCommitments.map((outputCommitment) =>
-      hexToU8a(outputCommitment)
-    );
-    index += numOutputs;
-
-    // Next is the typedChainId
-    const typedChainId = publicInputs[index++]; // Ignore typedChainId
-    const typedChainIdBytes = hexToU8a(typedChainId);
-
-    // Next are the roots
-    const roots = publicInputs.slice(index, index + numRoots);
-    const rootsBytes = roots.map((root) => hexToU8a(root));
-
-    // Calculate proof bytes
-    const proofBytes = new Uint8Array(
-      publicAmountBytes.length +
-        extDataHashBytes.length +
-        inputNullifiersBytes.reduce(
-          (acc, inputNullifier) => acc + inputNullifier.length,
-          0
-        ) +
-        outputCommitmentsBytes.reduce(
-          (acc, outputCommitment) => acc + outputCommitment.length,
-          0
-        ) +
-        typedChainIdBytes.length +
-        rootsBytes.reduce((acc, root) => acc + root.length, 0)
+    const inputNullifiers = inputs.map((x) =>
+      ensureHex(toFixedHex('0x' + x.nullifier))
     );
 
-    let offset = 0;
-    proofBytes.set(publicAmountBytes, offset);
-    offset += publicAmountBytes.length;
+    const outputCommitments = [
+      ensureHex(toFixedHex(u8aToHex(outputs[0].commitment))),
+      ensureHex(toFixedHex(u8aToHex(outputs[1].commitment))),
+    ];
 
-    proofBytes.set(extDataHashBytes, offset);
-    offset += extDataHashBytes.length;
-
-    inputNullifiersBytes.forEach((inputNullifier) => {
-      proofBytes.set(inputNullifier, offset);
-      offset += inputNullifier.length;
-    });
-
-    outputCommitmentsBytes.forEach((outputCommitment) => {
-      proofBytes.set(outputCommitment, offset);
-      offset += outputCommitment.length;
-    });
-
-    proofBytes.set(typedChainIdBytes, offset);
-    offset += typedChainIdBytes.length;
-
-    rootsBytes.forEach((root) => {
-      proofBytes.set(root, offset);
-      offset += root.length;
-    });
-
-    const proofBytesHex = u8aToHex(proofBytes);
-
-    const proofStr = `0x${this.encodeSolidityProof(callDataBytes)}` as const;
+    const rootsHex = roots.map((r) => ensureHex(toFixedHex(u8aToHex(r))));
 
     return {
-      proof: proofStr,
-      roots: rootsBytes,
-      inputNullifiers: inputNullifiersBytes,
-      outputCommitments: [outputCommitmentsBytes[0], outputCommitmentsBytes[1]],
-      publicAmount: publicAmountBytes,
-      extDataHash: extDataHashBytes,
+      proof: ensureHex(u8aToHex(proofBytes)),
+      roots: rootsHex,
+      inputNullifiers,
+      outputCommitments: [outputCommitments[0], outputCommitments[1]],
+      publicAmount: publicAmountHex,
+      extDataHash: extDataHashHex,
     };
   }
 
@@ -573,17 +447,22 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     extData: IVariableAnchorExtData;
     extDataHash: bigint;
   } {
+    // i128 is a signed 128-bit integer
+    const extAmountBN = new BN(extAmount.toString()).toTwos(128).toString();
+    const feeBN = new BN(fee.toString()).toTwos(128).toString();
+    const refundBN = new BN(refund.toString()).toTwos(128).toString();
+
     const extData: IVariableAnchorExtData = {
       // For recipient, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
       recipient: toFixedHex(u8aToHex(decodeAddress(recipient))),
       // For relayer, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
       relayer: toFixedHex(u8aToHex(decodeAddress(relayer))),
       // For extAmount, since it is an Amount (i128) it should be 16 bytes
-      extAmount: toFixedHex(extAmount, 16),
+      extAmount: toFixedHex(extAmountBN, 16),
       // For fee, since it is a Balance (u128) it should be 16 bytes
-      fee: toFixedHex(fee, 16),
+      fee: toFixedHex(feeBN, 16),
       // For refund, since it is a Balance (u128) it should be 16 bytes
-      refund: toFixedHex(refund, 16),
+      refund: toFixedHex(refundBN, 16),
       // For token, since it is an AssetId (u32) it should be 4 bytes
       token: toFixedHex(wrapUnwrapToken, 4),
       encryptedOutput1,
@@ -675,7 +554,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       vanchorMerkleProof
     );
 
-    witnessInput['inputNullifier'] = witnessInput['inputNullifier'].map(
+    /*     witnessInput['inputNullifier'] = witnessInput['inputNullifier'].map(
       (el: HexString) => BigInt(el).toString()
     );
 
@@ -688,7 +567,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     ).reduce((prev, current) => {
       prev.push(...current.map((el) => el.toString()));
       return prev;
-    }, [] as string[]);
+    }, [] as string[]); */
 
     return witnessInput;
   }

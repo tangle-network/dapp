@@ -10,4 +10,3 @@ export * from './webb-provider/chain-query';
 export * from './webb-provider/relayer-manager';
 export * from './webb-provider/vanchor-actions';
 export * from './webb-provider/wrap-unwrap';
-export { default as substrateProviderFactory } from './substrateProviderFactory';
