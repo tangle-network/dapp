@@ -236,6 +236,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-storybook": "^0.6.12",
+    "execa": "5.1.1",
     "framer-motion": "^10.12.11",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",

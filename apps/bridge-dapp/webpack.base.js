@@ -11,14 +11,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const { commandSync } = require('execa');
 const { workspaceRoot } = require('nx/src/utils/workspace-root');
 
 const findPackages = require('../../tools/scripts/findPackages');
-const { ON_CHAIN_CONFIG_PATH } = require('../../tools/scripts/constants');
 const packageJson = require(path.resolve(__dirname, 'package.json'));
 const packageVersion = packageJson.version;
-
-const onChainCfgPath = path.resolve(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
 function mapChunks(name, regs, inc) {
   return regs.reduce(
@@ -36,17 +34,10 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
-  if (!fs.existsSync(onChainCfgPath)) {
-    throw new Error(
-      `Please run \`${chalk.cyan.bold.underline(
-        'yarn fetch:onChainConfig'
-      )}\` first. Missing on-chain config at ${onChainCfgPath}.`
-    );
-  } else {
-    console.log(
-      `Found on-chain config at ${onChainCfgPath}. Using it to generate the on-chain config.`
-    );
-  }
+  commandSync('yarn fetch:onChainConfig', {
+    cwd: workspaceRoot,
+    stdio: 'inherit',
+  });
 
   console.log('Running webpack in: ', mode);
   const isDevelopment = mode === 'development';
