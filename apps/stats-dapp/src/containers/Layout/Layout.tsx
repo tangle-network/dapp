@@ -143,7 +143,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
         className={cx(
           'w-full mx-auto flex-1 pb-10 h-[1900px]',
           "bg-[url('assets/stats-bg.png')] dark:bg-[url('assets/stats-dark-bg.png')]",
-          'bg-no-repeat bg-cover',
+          'bg-no-repeat bg-cover'
         )}
       >
         <Header
