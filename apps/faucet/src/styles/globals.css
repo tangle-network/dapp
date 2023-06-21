@@ -15,6 +15,10 @@
   @apply w-[200px] h-[200px];
 }
 
+.lottie-size-sm {
+  @apply w-[120px] h-[120px];
+}
+
 .w-modal {
   @apply w-[500px];
 }

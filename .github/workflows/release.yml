@@ -72,17 +72,18 @@ jobs:
           echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
           echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
           echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
-          echo NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }} >> .env
           echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
-          echo WEBB_CMS_TOKEN=${{ secrets.WEBB_CMS_TOKEN }} >> .env
 
       - name: Install deps
         run: yarn install
 
       - name: Generate stats-dapp codegen
         run: yarn gql:codegen
+
+      - name: Fetch the on-chain anchors data
+        run: yarn fetch:onChainConfig
 
       - name: build
         run: yarn nx run-many --all --target=build

@@ -6,12 +6,19 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const { workspaceRoot } = require('nx/src/utils/workspace-root');
 
 const findPackages = require('../../tools/scripts/findPackages');
+const { ON_CHAIN_CONFIG_PATH } = require('../../tools/scripts/constants');
+const packageJson = require(path.resolve(__dirname, 'package.json'));
+const packageVersion = packageJson.version;
+
+const onChainCfgPath = path.resolve(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
 function mapChunks(name, regs, inc) {
   return regs.reduce(
@@ -29,6 +36,18 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
+  if (!fs.existsSync(onChainCfgPath)) {
+    throw new Error(
+      `Please run \`${chalk.cyan.bold.underline(
+        'yarn fetch:onChainConfig'
+      )}\` first. Missing on-chain config at ${onChainCfgPath}.`
+    );
+  } else {
+    console.log(
+      `Found on-chain config at ${onChainCfgPath}. Using it to generate the on-chain config.`
+    );
+  }
+
   console.log('Running webpack in: ', mode);
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
@@ -249,6 +268,7 @@ function createWebpack(env, mode = 'production') {
         'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
           process.env.NX_BRIDGE_APP_DOMAIN
         ),
+        'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -269,6 +289,7 @@ function createWebpack(env, mode = 'production') {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
         constants: false,
         fs: false,
         url: false,

@@ -10,11 +10,11 @@ import {
   Keypair,
   Note,
   NoteGenInput,
-  parseTypedChainId,
   ResourceId,
-  toFixedHex,
   Utxo,
   UtxoGenInput,
+  parseTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';

@@ -1,8 +1,12 @@
-import EVMChainId from '@webb-tools/dapp-types/EVMChainId';
-import SubstrateChainId from '@webb-tools/dapp-types/SubstrateChainId';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 import { BehaviorSubject } from 'rxjs';
+
+import sharedConfig from '../config/shared';
+import tokens from '../config/tokens';
+import { AddressType, FaucetChainDataType, MintTokenResult } from '../types';
 
 /**
  * An object to hold the all input values for the faucet form
@@ -31,33 +35,7 @@ export type InputValuesType = {
   /**
    * The recipient address type
    */
-  recepientAddressType?: 'ethereum' | 'substrate';
-};
-
-/**
- * The chain data type
- */
-export type FaucetChainDataType = {
-  /**
-   * The chain name (used for display and render the `ChainIcon`)
-   */
-  name: string;
-
-  /**
-   * The chain type (Evm or Substrate)
-   */
-  type: 'Evm' | 'Substrate';
-
-  /**
-   * The chain id
-   */
-  chainId: number;
-
-  /**
-   * The token address record
-   * (token symbol -> contract address)
-   */
-  tokenAddresses: Record<string, string>;
+  recepientAddressType?: AddressType;
 };
 
 /**
@@ -89,45 +67,42 @@ export type FaucetContextType = {
    * Boolean to show the minting success modal
    */
   isMintingSuccess$: BehaviorSubject<boolean>;
+
+  /**
+   * The mint token result observable
+   */
+  mintTokenResult$: BehaviorSubject<MintTokenResult | null>;
 };
 
-// Note: This is a placeholder for now
-const config: Record<string, FaucetChainDataType> = {
-  Arbitrum: {
-    chainId: EVMChainId.ArbitrumTestnet,
-    name: 'Arbitrum',
-    tokenAddresses: {
-      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    },
-    type: 'Evm',
-  },
-  Goerli: {
-    chainId: EVMChainId.Goerli,
-    name: 'Goerli',
-    tokenAddresses: {
-      webbtTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    },
-    type: 'Evm',
-  },
-  Tangle: {
-    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
-    name: 'Tangle',
-    tokenAddresses: {
-      tTNT: '0x32307adfFE088e383AFAa721b06436aDaBA47DBE',
-    },
-    type: 'Substrate',
-  },
-};
+// Serialize the tokens config to the FaucetChainDataType
+const config = Object.entries(tokens).reduce(
+  (acc, [typedChainId, tokensRecord]) => {
+    const chain = chainsConfig[+typedChainId];
 
-// The default amount to send
-const AMOUNT = 1000;
+    if (!chain) {
+      alert(`Typed chain id ${typedChainId} is not in the chains config`);
+      return acc;
+    }
+
+    acc[chain.name] = {
+      chainId: chain.chainId,
+      name: chain.name,
+      tokenAddresses: tokensRecord,
+      type: chain.chainType === ChainType.Substrate ? 'Substrate' : 'Evm',
+    } as const satisfies FaucetChainDataType;
+
+    return acc;
+  },
+  {} as Record<string, FaucetChainDataType>
+);
 
 const defaultContextValue = {
-  amount: AMOUNT,
+  amount: sharedConfig.amount,
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
   isMintingSuccess$: new BehaviorSubject<boolean>(false),
+  mintTokenResult$: new BehaviorSubject<MintTokenResult | null>(null),
 };
 
 const FaucetContext = createContext<FaucetContextType>(defaultContextValue);

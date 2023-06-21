@@ -170,6 +170,33 @@
   }
 }
 
+@keyframes showDialogOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bottomDialogSlideUp {
+  from {
+    bottom: -400px;
+  }
+  to {
+    bottom: 0;
+  }
+}
+
+@keyframes bottomDialogSlideDown {
+  from {
+    bottom: 0;
+  }
+  to {
+    bottom: -400px;
+  }
+}
+
 *[data-swipe='end'] {
   animation: 100ms ease-out;
 }
@@ -181,4 +208,9 @@
 *[data-swipe='cancel'] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
-} 
+}
+
+.navbar-item:hover svg,
+.navbar-item.hover svg {
+  @apply !fill-blue-70;
+}

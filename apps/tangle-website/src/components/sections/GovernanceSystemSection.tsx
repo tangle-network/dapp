@@ -1,12 +1,10 @@
 import Image from 'next/image';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { LinkButton } from '..';
+import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
+
 import { WhatIsTssSvg, HowTssWorksSvg } from '../svgs';
-import {
-  WHAT_IS_TSS_URL,
-  HOW_TSS_WORKS_URL,
-  STATS_DEV_URL,
-} from '../../constants';
+import { LinkButton } from '..';
+import { WHAT_IS_TSS_URL, HOW_TSS_WORKS_URL } from '../../constants';
 
 const governanceSystemQnAItems = [
   {
@@ -29,8 +27,8 @@ export const GovernanceSystemSection = () => {
   return (
     <section className="dark bg-mono-200">
       <div className="max-w-[1440px] mx-auto">
-        <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[96px]">
-          <div className="lg:flex-1 flex items-center">
+        <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[60px]">
+          <div className="flex items-center lg:flex-1">
             <div className="relative w-[340px] md:w-[600px] lg:w-[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
               <Image
                 src="/static/assets/governance-system.png"
@@ -40,7 +38,7 @@ export const GovernanceSystemSection = () => {
             </div>
           </div>
 
-          <div className="lg:flex-1 px-5 lg:px-0">
+          <div className="px-5 lg:flex-1 lg:px-0">
             <Typography
               variant="mkt-small-caps"
               className="font-black dark:text-purple-50"
@@ -58,7 +56,7 @@ export const GovernanceSystemSection = () => {
               <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
                 Read Docs
               </LinkButton>
-              <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+              <LinkButton href={STATS_URL}>View Network</LinkButton>
             </div>
             <div className="mt-[56px] flex flex-col gap-6">
               {governanceSystemQnAItems.map(
@@ -67,7 +65,7 @@ export const GovernanceSystemSection = () => {
                     {icon}
                     <Typography
                       variant="mkt-subheading"
-                      className="font-bold dark:text-mono-0 mt-6 mb-4"
+                      className="mt-6 mb-4 font-bold dark:text-mono-0"
                     >
                       {title}
                     </Typography>

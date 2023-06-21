@@ -5,6 +5,7 @@ type LinksType = {
   name: string;
   href: string;
   description: string;
+  linkText?: string;
 };
 
 export type WebsiteCommunityProps = {

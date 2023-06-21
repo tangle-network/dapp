@@ -1,24 +1,23 @@
+import { useCallback, useMemo, useState } from 'react';
 import { ErrorBoundary } from '@sentry/react';
+import cx from 'classnames';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Chain, ChainConfig } from '@webb-tools/dapp-config';
-import {
-  useNoteAccount,
-  useScrollActions,
-  useTxQueue,
-} from '@webb-tools/react-hooks';
+import { useNoteAccount, useScrollActions } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import {
   ErrorFallback,
   TabContent,
+  TabTrigger,
   TabsList,
   TabsRoot,
-  TabTrigger,
   TransactionQueueCard,
+  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
+import { ArrowRightUp } from '@webb-tools/icons';
+import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
 
 import {
   EducationCard,
@@ -29,35 +28,36 @@ import { FilterButton, ManageButton } from '../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
+  DepositContainer,
+  TransferContainer,
   UploadSpendNoteModal,
+  WithdrawContainer,
 } from '../containers';
-import { DepositContainer } from '../containers/DepositContainer';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
 } from '../containers/note-account-tables';
 import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
-import { TransferContainer } from '../containers/TransferContainer';
-import { WithdrawContainer } from '../containers/WithdrawContainer';
 import {
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
 } from '../hooks';
+import { BridgeTabType } from '../types';
 import { downloadNotes } from '../utils';
 
 const PageBridge = () => {
   // State for the tabs
-  const [activeTab, setActiveTab] = useState<
-    'Deposit' | 'Withdraw' | 'Transfer'
-  >('Deposit');
+  const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const { activeFeedback, noteManager } = useWebContext();
+  const {
+    activeFeedback,
+    noteManager,
+    txQueue: { txPayloads },
+  } = useWebContext();
 
   const { smoothScrollToTop } = useScrollActions();
-
-  const { txPayloads } = useTxQueue();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -104,6 +104,7 @@ const PageBridge = () => {
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
   } = useNoteAccount();
+
   const { notificationApi } = useWebbUI();
 
   const [deleteNotes, setDeleteNotes] = useState<Note[] | undefined>(undefined);
@@ -199,11 +200,6 @@ const PageBridge = () => {
   const { TryAnotherWalletModal, onTryAnotherWallet } =
     useTryAnotherWalletWithView();
 
-  const isDisplayTxQueueCard = useMemo(
-    () => txPayloads.length > 0,
-    [txPayloads]
-  );
-
   const sharedBridgeTabContainerProps = useMemo(
     () => ({
       defaultDestinationChain: defaultDestinationChain,
@@ -213,12 +209,25 @@ const PageBridge = () => {
     [defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet]
   );
 
+  const isDisplayTxQueueCard = useMemo(
+    () => txPayloads.length > 0,
+    [txPayloads]
+  );
+
   return (
     <>
       <div className="w-full h-full">
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
-          <div className="h-full p-9">
-            <div className="max-w-[1160px] mx-auto grid grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
+          <div
+            className={cx(
+              'min-h-[1100px] lg:min-h-fit',
+              'p-4 lg:p-9',
+              "bg-[url('assets/bridge-bg-mobile.png')] dark:bg-none dark:bg-mono-200",
+              "lg:bg-[url('assets/bridge-bg.png')] lg:dark:bg-[url('assets/bridge-dark-bg.png')]",
+              'bg-center object-fill bg-no-repeat bg-cover'
+            )}
+          >
+            <div className="lg:max-w-[1160px] mx-auto mob:grid mob:grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
               {customMainComponent}
 
               {/** Bridge tabs */}
@@ -228,9 +237,9 @@ const PageBridge = () => {
                   setActiveTab(nextTab as typeof activeTab)
                 }
                 // The customMainComponent alters the global mainComponent for display.
-                // Therfore, if the customMainComponent exists (input selected) then hide the base component.
+                // Therefore, if the customMainComponent exists (input selected) then hide the base component.
                 className={cx(
-                  'min-w-[550px] min-h-[710px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
+                  'w-full lg:min-w-[550px] min-h-[710px] h-full bg-mono-0 dark:bg-mono-180 p-4 rounded-lg space-y-4 grow',
                   customMainComponent ? 'hidden' : 'block',
                   'flex flex-col'
                 )}
@@ -240,16 +249,32 @@ const PageBridge = () => {
                   <TabTrigger value="Transfer">Transfer</TabTrigger>
                   <TabTrigger value="Withdraw">Withdraw</TabTrigger>
                 </TabsList>
-                <TabContent className="grow" value="Deposit">
+                <TabContent className="flex flex-col grow" value="Deposit">
                   <DepositContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow" value="Transfer">
+                <TabContent className="flex flex-col grow" value="Transfer">
                   <TransferContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
-                <TabContent className="grow" value="Withdraw">
+                <TabContent className="flex flex-col grow" value="Withdraw">
                   <WithdrawContainer {...sharedBridgeTabContainerProps} />
                 </TabContent>
               </TabsRoot>
+
+              <a
+                href={STATS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className={cx(
+                  'mob:!hidden mt-9 ml-auto py-2 px-4 w-fit rounded-2xl',
+                  'flex justify-end items-center',
+                  'bg-[#ECF4FF] dark:bg-[#181F2B]'
+                )}
+              >
+                <Typography variant="utility" className="!text-blue-50">
+                  Explore Stats
+                </Typography>
+                <ArrowRightUp size="lg" className="!fill-blue-50" />
+              </a>
 
               <div>
                 {/** Transaction Queue Card */}

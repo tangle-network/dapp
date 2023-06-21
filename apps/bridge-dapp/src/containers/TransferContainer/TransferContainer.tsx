@@ -1,11 +1,7 @@
-import {
-  Currency,
-  utxoFromVAnchorNote,
-} from '@webb-tools/abstract-api-provider';
+import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Chain,
-  chainsPopulated,
   CurrencyConfig,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
@@ -13,25 +9,23 @@ import { isValidPublicKey } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
-  useBridge,
+  useCurrentResourceId,
+  useCurrentTypedChainId,
   useNoteAccount,
   useRelayers,
-  useTxQueue,
   useVAnchor,
 } from '@webb-tools/react-hooks';
 import {
-  calculateTypedChainId,
   ChainType as ChainTypeEnum,
   Keypair,
   Note,
-  ResourceId,
-  Utxo,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  getRoundedAmountString,
   RelayerListCard,
   TokenListCard,
   TransferCard,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -44,18 +38,17 @@ import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
 import {
+  WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
-  WalletState,
 } from '../../hooks';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
+import useStatesFromNotes from '../../hooks/useStatesFromNotes';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
-import {
-  ChainRecord,
-  CurrencyRecordWithChainsType,
-  TransferContainerProps,
-} from './types';
+import { RecipientPublicKeyTooltipContent } from './shared';
+import { TransferContainerProps } from './types';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -65,36 +58,26 @@ export const TransferContainer = forwardRef<
     { defaultDestinationChain, defaultFungibleCurrency, onTryAnotherWallet },
     ref
   ) => {
-    const { fungibleCurrency, setFungibleCurrency } = useBridge();
-
     const {
       activeApi,
       activeChain,
-      activeWallet,
       apiConfig,
+      activeAccount,
+      chains,
       loading,
       noteManager,
-      switchChain,
+      txQueue,
     } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
-    const { allNotes, hasNoteAccount, setOpenNoteAccountModal } =
-      useNoteAccount();
+    const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
     const { api } = useVAnchor();
 
-    const txQueue = useTxQueue();
-
     const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
-    // Get the current preset type chain id from the active chain
-    const currentTypedChainId = useMemo(() => {
-      if (!activeChain) {
-        return undefined;
-      }
-      return calculateTypedChainId(activeChain.chainType, activeChain.chainId);
-    }, [activeChain]);
+    const currentTypedChainId = useCurrentTypedChainId();
 
     const useRelayerArgs = useMemo(
       () => ({
@@ -118,7 +101,17 @@ export const TransferContainer = forwardRef<
       defaultDestinationChain
     );
 
-    const balancesFromNotes = useBalancesFromNotes(destChain);
+    const {
+      availableAmountFromNotes,
+      availableNotes,
+      fungibleCurrency,
+      fungiblesFromNotes,
+      handleSwitchToOtherChains,
+      needSwitchChain,
+      setFungibleCurrency,
+    } = useStatesFromNotes();
+
+    const balancesFromNotes = useBalancesFromNotes();
 
     // State for amount input value
     const [transferAmount, setTransferAmount] = useState<number | undefined>(
@@ -137,6 +130,8 @@ export const TransferContainer = forwardRef<
 
     const addCurrency = useAddCurrency();
 
+    const currentResourceId = useCurrentResourceId();
+
     const maxFeeArgs = useMemo(
       () => ({
         fungibleCurrencyId: fungibleCurrency?.id,
@@ -146,8 +141,7 @@ export const TransferContainer = forwardRef<
 
     const {
       feeInfo,
-      fetchMaxFeeInfo,
-      fetchMaxFeeInfoFromRelayer,
+      fetchFeeInfo,
       isLoading: isFetchingMaxFeeInfo,
       resetMaxFeeInfo,
     } = useMaxFeeInfo(maxFeeArgs);
@@ -182,86 +176,22 @@ export const TransferContainer = forwardRef<
         : 'The public key must be 130 characters long and start with 0x';
     }, [recipientPubKey]);
 
-    // Get the available currencies from notes
-    const currencyRecordFromNotes =
-      useMemo<CurrencyRecordWithChainsType>(() => {
-        if (!allNotes) {
-          return {};
-        }
-
-        return Array.from(allNotes.values()).reduce((acc, notes) => {
-          notes.forEach(({ note: { tokenSymbol, targetChainId } }) => {
-            const tkSymbol = tokenSymbol;
-            const currency = Object.values(apiConfig.currencies).find(
-              (currency) => currency.symbol === tkSymbol
-            );
-
-            if (!currency) {
-              return;
-            }
-
-            // Calculate destination chain
-            const destTypedChainId = Number(targetChainId);
-            const detsChain = Object.values(chainsPopulated).find(
-              (chain) =>
-                calculateTypedChainId(chain.chainType, chain.chainId) ===
-                destTypedChainId
-            );
-
-            if (!detsChain) {
-              throw new Error('Detect unsupoorted chain parsed from note');
-            }
-
-            const existedCurrency = acc[currency.id];
-
-            if (!existedCurrency) {
-              const destChainRecord: ChainRecord = {};
-
-              if (detsChain) {
-                destChainRecord[destTypedChainId] = detsChain;
-              }
-
-              acc[currency.id] = {
-                currency: new Currency(currency),
-                destChainRecord,
-              };
-
-              return;
-            }
-
-            const existedDestChain =
-              existedCurrency.destChainRecord[destTypedChainId];
-            if (!existedDestChain) {
-              acc[existedCurrency.currency.id].destChainRecord[
-                destTypedChainId
-              ] = detsChain;
-            }
-          });
-
-          return acc;
-        }, {} as CurrencyRecordWithChainsType);
-      }, [allNotes, apiConfig.currencies]);
-
-    // Callback when a chain item is selected
-    const handlebridgingAssetChange = useCallback(
-      async (newToken: AssetType) => {
-        const selecteCurrency = Object.values(currencyRecordFromNotes).find(
-          ({ currency }) => currency.view.symbol === newToken.symbol
-        );
-        if (selecteCurrency) {
-          setFungibleCurrency(selecteCurrency.currency);
-        }
-      },
-      [currencyRecordFromNotes, setFungibleCurrency]
-    );
-
     // The selected asset to display in the transfer card
     const selectedBridgingAsset = useMemo<AssetType | undefined>(() => {
       if (!fungibleCurrency) {
         return undefined;
       }
 
-      const balance = balancesFromNotes[fungibleCurrency.id];
+      let balance: number | undefined;
+      const balancesRecord = balancesFromNotes[fungibleCurrency.id];
+
+      if (balancesRecord) {
+        balance = currentTypedChainId && balancesRecord[currentTypedChainId];
+
+        if (typeof balance === 'undefined') {
+          balance = Object.values(balancesRecord)[0];
+        }
+      }
 
       return {
         symbol: fungibleCurrency.view.symbol,
@@ -269,40 +199,97 @@ export const TransferContainer = forwardRef<
         balance,
         onTokenClick: () => addCurrency(fungibleCurrency),
         balanceType: 'note',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          fungibleCurrency,
+          activeChain,
+          activeAccount?.address,
+          currentResourceId
+        ),
       };
-    }, [addCurrency, balancesFromNotes, fungibleCurrency]);
+    }, [
+      fungibleCurrency,
+      balancesFromNotes,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      currentTypedChainId,
+      addCurrency,
+    ]);
 
     const selectableBridgingAssets = useMemo<AssetType[]>(() => {
-      if (!activeApi) {
-        return [];
-      }
-
-      const currencies = Object.values(currencyRecordFromNotes);
-      const supportedCurrencyIds = Object.keys(
-        activeApi.state.getBridgeOptions()
-      );
-
-      return currencies.reduce((acc, { currency }) => {
+      return fungiblesFromNotes.reduce((acc, currency) => {
         if (!currency) {
           return acc;
         }
 
-        if (!supportedCurrencyIds.includes(currency.id.toString())) {
-          return acc;
+        let balance: number | undefined;
+        if (
+          currentTypedChainId &&
+          balancesFromNotes[currency.id]?.[currentTypedChainId]
+        ) {
+          balance = balancesFromNotes[currency.id][currentTypedChainId];
+        } else {
+          balance = balancesFromNotes[currency.id]
+            ? Object.values(balancesFromNotes[currency.id])?.[0]
+            : undefined;
         }
-
-        const balance = balancesFromNotes[currency.id];
 
         acc.push({
           name: currency.view.name,
           symbol: currency.view.symbol,
           balance,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         });
 
         return acc;
       }, [] as AssetType[]);
-    }, [activeApi, addCurrency, balancesFromNotes, currencyRecordFromNotes]);
+    }, [
+      fungiblesFromNotes,
+      currentTypedChainId,
+      balancesFromNotes,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
+    ]);
+
+    // Callback when a chain item is selected
+    const handleBridgingAssetChange = useCallback(
+      async (newToken: AssetType) => {
+        const selectedCurrency = fungiblesFromNotes.find(
+          (currency) => currency.view.symbol === newToken.symbol
+        );
+        if (selectedCurrency) {
+          setFungibleCurrency(selectedCurrency);
+
+          // Reset the amount
+          setTransferAmount(undefined);
+
+          // Reset the destination chain if needed
+          if (destChain) {
+            const typedChainId = calculateTypedChainId(
+              destChain.chainType,
+              destChain.chainId
+            );
+
+            // If the selected currency does not support the selected chain, reset the selected chain
+            if (!selectedCurrency.hasChain(typedChainId)) {
+              setDestChain(undefined);
+            }
+          }
+
+          // Reset fee info
+          resetMaxFeeInfo();
+        }
+      },
+      [destChain, fungiblesFromNotes, resetMaxFeeInfo, setFungibleCurrency]
+    );
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
@@ -316,53 +303,42 @@ export const TransferContainer = forwardRef<
 
       setMainComponent(
         <TokenListCard
-          className="min-w-[550px] h-[710px]"
+          className="h-[710px]"
           title="Select a token to Transfer"
           popularTokens={[]}
           selectTokens={selectableBridgingAssets}
           unavailableTokens={unavailableTokens}
           onChange={(newAsset) => {
-            handlebridgingAssetChange(newAsset);
+            handleBridgingAssetChange(newAsset);
             setMainComponent(undefined);
           }}
           onClose={() => setMainComponent(undefined)}
           onConnect={onTryAnotherWallet}
+          txnType="transfer"
         />
       );
     }, [
       apiConfig,
-      handlebridgingAssetChange,
+      handleBridgingAssetChange,
       onTryAnotherWallet,
       selectableBridgingAssets,
       setMainComponent,
     ]);
 
-    // Get all destination chains
-    const allDestChains = useMemo<ChainRecord>(() => {
-      return Object.values(currencyRecordFromNotes).reduce((acc, currency) => {
-        return {
-          ...acc,
-          ...currency.destChainRecord,
-        };
-      }, {} as ChainRecord);
-    }, [currencyRecordFromNotes]);
-
-    // Get available destination chains from selected bridge asset
-    const availableDestChains = useMemo<Chain[]>(() => {
-      if (!selectedBridgingAsset) {
-        return Object.values(allDestChains);
+    const selectableDestChains = useMemo<Chain[]>(() => {
+      if (
+        !fungibleCurrency ||
+        !apiConfig.bridgeByAsset[fungibleCurrency.id]?.anchors
+      ) {
+        return [];
       }
 
-      const currency = Object.values(currencyRecordFromNotes).find(
-        ({ currency }) =>
-          currency.view.symbol === selectedBridgingAsset.symbol &&
-          currency.view.name === selectedBridgingAsset.name
-      );
-
-      return currency
-        ? Object.values(currency.destChainRecord)
-        : Object.values(allDestChains);
-    }, [selectedBridgingAsset, currencyRecordFromNotes, allDestChains]);
+      return Object.keys(apiConfig.bridgeByAsset[fungibleCurrency.id].anchors)
+        .map((val) => {
+          return chains[Number(val)];
+        })
+        .filter((chain): chain is Chain => !!chain);
+    }, [apiConfig.bridgeByAsset, chains, fungibleCurrency]);
 
     // Selected destination chain
     const selectedDestChain = useMemo<InputChainType | undefined>(() => {
@@ -382,7 +358,7 @@ export const TransferContainer = forwardRef<
         <ChainListCardWrapper
           chainType="dest"
           onlyCategory={activeChain?.tag}
-          chains={availableDestChains.map(
+          chains={selectableDestChains.map(
             (chain) =>
               ({
                 name: chain.name,
@@ -391,7 +367,7 @@ export const TransferContainer = forwardRef<
               } as ChainType)
           )}
           onChange={(newChain) => {
-            const chain = availableDestChains.find(
+            const chain = selectableDestChains.find(
               (chain) => chain.name === newChain.name
             );
 
@@ -402,7 +378,7 @@ export const TransferContainer = forwardRef<
           }}
         />
       );
-    }, [activeChain?.tag, availableDestChains, setMainComponent]);
+    }, [activeChain?.tag, selectableDestChains, setMainComponent]);
 
     // Callback for amount input changed
     const onAmountChange = useCallback(
@@ -536,40 +512,6 @@ export const TransferContainer = forwardRef<
       transferAmount,
     ]);
 
-    // All available notes
-    const availableNotes = useMemo(() => {
-      if (!destChain || !fungibleCurrency) {
-        return [];
-      }
-
-      const typedChainId = calculateTypedChainId(
-        destChain.chainType,
-        destChain.chainId
-      );
-      const vanchorAddr = apiConfig.getAnchorAddress(
-        fungibleCurrency.id,
-        typedChainId
-      );
-      if (!vanchorAddr) {
-        console.error('No anchor address found for chain', typedChainId);
-        return [];
-      }
-
-      const resourceId = new ResourceId(
-        vanchorAddr,
-        destChain.chainType,
-        destChain.chainId
-      );
-
-      return (
-        allNotes
-          .get(resourceId.toString())
-          ?.filter(
-            (note) => note.note.tokenSymbol === fungibleCurrency.view.symbol
-          ) ?? []
-      );
-    }, [allNotes, apiConfig, destChain, fungibleCurrency]);
-
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
       if (!fungibleCurrency) {
@@ -653,38 +595,6 @@ export const TransferContainer = forwardRef<
       infoFormatted?.transferTokenSymbol,
     ]);
 
-    const handleSwitchChain = useCallback(
-      async (destChain: Chain) => {
-        if (!activeChain) {
-          console.error('No active chain when handleSwitchChain called');
-          return;
-        }
-
-        if (destChain.chainId === activeChain.chainId) {
-          console.error('Same chain when handleSwitchChain called');
-          return;
-        }
-
-        const isSupported =
-          activeWallet &&
-          activeWallet.supportedChainIds.includes(
-            calculateTypedChainId(destChain.chainType, destChain.chainId)
-          );
-
-        try {
-          if (isSupported) {
-            await switchChain(destChain, activeWallet);
-            return;
-          }
-
-          toggleModal(true, destChain);
-        } catch (error) {
-          console.error('Failed to switch chain', error);
-        }
-      },
-      [activeChain, activeWallet, switchChain, toggleModal]
-    );
-
     const handleResetState = useCallback(() => {
       setDestChain(undefined);
       setAmountError('');
@@ -718,8 +628,14 @@ export const TransferContainer = forwardRef<
         return;
       }
 
+      if (needSwitchChain) {
+        await handleSwitchToOtherChains();
+        return;
+      }
+
       if (!noteManager || !activeApi?.state?.activeBridge || !api) {
-        throw new Error('No note manager or active bridge');
+        console.error('No note manager or active bridge');
+        return;
       }
 
       if (
@@ -728,17 +644,14 @@ export const TransferContainer = forwardRef<
         !transferAmount ||
         !currentTypedChainId
       ) {
-        throw new Error(
+        console.error(
           "Can't transfer without a fungible currency or dest chain"
         );
+        return;
       }
 
       if (inputNotes.length === 0) {
-        throw new Error('No input notes');
-      }
-
-      if (destChain.chainId !== activeChain?.chainId) {
-        await handleSwitchChain(destChain);
+        console.error('No input notes');
         return;
       }
 
@@ -842,6 +755,7 @@ export const TransferContainer = forwardRef<
       txQueue.txPayloads,
       isWalletConnected,
       hasNoteAccount,
+      needSwitchChain,
       noteManager,
       activeApi,
       api,
@@ -850,7 +764,6 @@ export const TransferContainer = forwardRef<
       transferAmount,
       currentTypedChainId,
       inputNotes,
-      activeChain?.chainId,
       infoFormatted.rawChangeAmount,
       recipientPubKey,
       feeInWei,
@@ -860,7 +773,7 @@ export const TransferContainer = forwardRef<
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
-      handleSwitchChain,
+      handleSwitchToOtherChains,
     ]);
 
     const buttonText = useMemo(() => {
@@ -872,16 +785,12 @@ export const TransferContainer = forwardRef<
         return 'Create note account';
       }
 
-      if (
-        activeChain &&
-        destChain &&
-        activeChain.chainId !== destChain.chainId
-      ) {
+      if (needSwitchChain) {
         return 'Switch chain to transfer';
       }
 
       return 'Transfer';
-    }, [activeChain, destChain, hasNoteAccount, isWalletConnected]);
+    }, [needSwitchChain, hasNoteAccount, isWalletConnected]);
 
     useEffect(() => {
       const updateDefaultValues = () => {
@@ -891,11 +800,36 @@ export const TransferContainer = forwardRef<
 
         if (defaultFungibleCurrency) {
           setFungibleCurrency(defaultFungibleCurrency);
+
+          // Reset the amount
+          setTransferAmount(undefined);
+
+          // Reset the dest chain if needed
+          if (destChain) {
+            const typedChainId = calculateTypedChainId(
+              destChain.chainType,
+              destChain.chainId
+            );
+
+            // If the default fungible currency doesn't have the chain, reset the dest chain
+            if (!defaultFungibleCurrency.hasChain(typedChainId)) {
+              setDestChain(undefined);
+            }
+          }
+
+          // Reset fee info
+          resetMaxFeeInfo();
         }
       };
 
       updateDefaultValues();
-    }, [defaultDestinationChain, defaultFungibleCurrency, setFungibleCurrency]);
+    }, [
+      defaultDestinationChain,
+      defaultFungibleCurrency,
+      destChain,
+      resetMaxFeeInfo,
+      setFungibleCurrency,
+    ]);
 
     // Side effect to set the education card step
     useEffect(() => {
@@ -932,21 +866,7 @@ export const TransferContainer = forwardRef<
         return false;
       }
 
-      if (balancesFromNotes[fungibleCurrency.id] < transferAmount) {
-        return false;
-      }
-
-      const destTypedChainId = calculateTypedChainId(
-        destChain.chainType,
-        destChain.chainId
-      );
-
-      const currentTypedChainId = calculateTypedChainId(
-        activeChain.chainType,
-        activeChain.chainId
-      );
-
-      if (destTypedChainId !== currentTypedChainId) {
+      if (availableAmountFromNotes < transferAmount) {
         return false;
       }
 
@@ -956,25 +876,21 @@ export const TransferContainer = forwardRef<
 
       return true;
     }, [
+      fungibleCurrency,
+      destChain,
       activeChain,
       transferAmount,
-      balancesFromNotes,
-      destChain,
-      fungibleCurrency,
       isValidAmount,
-      isValidRecipient,
+      availableAmountFromNotes,
       recipientPubKey,
+      isValidRecipient,
     ]);
 
     useEffect(() => {
       if (isReady) {
-        if (activeRelayer) {
-          fetchMaxFeeInfoFromRelayer(activeRelayer);
-        } else {
-          fetchMaxFeeInfo();
-        }
+        fetchFeeInfo(activeRelayer);
       }
-    }, [activeRelayer, fetchMaxFeeInfo, fetchMaxFeeInfoFromRelayer, isReady]);
+    }, [activeRelayer, fetchFeeInfo, isReady]);
 
     // Transfer card props
     const bridgeAssetInputProps = useMemo(() => {
@@ -998,16 +914,16 @@ export const TransferContainer = forwardRef<
         amount: transferAmount ? transferAmount.toString() : undefined,
         onAmountChange,
         errorMessage: amountError,
-        isDisabled: !selectedBridgingAsset || !destChain,
+        isDisabled: !selectedBridgingAsset || needSwitchChain,
         onMaxBtnClick: () =>
           setTransferAmount(selectedBridgingAsset?.balance ?? 0),
       };
     }, [
       transferAmount,
-      amountError,
-      destChain,
       onAmountChange,
+      amountError,
       selectedBridgingAsset,
+      needSwitchChain,
     ]);
 
     const relayerInputProps = useMemo(() => {
@@ -1030,7 +946,7 @@ export const TransferContainer = forwardRef<
           setIsValidRecipient(valid);
         },
         title: 'Recipient Public Key',
-        info: 'Public key of the recipient',
+        info: <RecipientPublicKeyTooltipContent />,
         errorMessage: recipientError,
         value: recipientPubKey,
         validate: (value) => isValidPublicKey(value),
@@ -1060,18 +976,10 @@ export const TransferContainer = forwardRef<
     }, [feeInWei, feeTokenSymbol, isFetchingMaxFeeInfo]);
 
     const infoItemProps = useMemo<TransferCardProps['infoItemProps']>(() => {
-      const total = availableNotes.reduce((acc, note) => {
-        const formated = Number(
-          ethers.utils.formatUnits(note.note.amount, note.note.denomination)
-        );
-
-        return acc + formated;
-      }, 0);
-
       const { transferTokenSymbol } = infoFormatted;
 
       const formatedRemainingBalance = getRoundedAmountString(
-        total - (transferAmount ?? 0),
+        availableAmountFromNotes - (transferAmount ?? 0),
         3,
         Math.round
       );
@@ -1097,12 +1005,13 @@ export const TransferContainer = forwardRef<
         },
         {
           leftTextProps: {
-            title: 'Max fee',
+            title: 'Est. transaction fee',
+            info: 'When your transaction gets included in the block, any difference between your max base fee and the actual base fee will be refunded. Total amount is calculated as max base fee (in GWEI) * gas limit.',
           },
           rightContent: maxFeeText,
         },
       ];
-    }, [transferAmount, availableNotes, infoFormatted, maxFeeText]);
+    }, [transferAmount, availableAmountFromNotes, infoFormatted, maxFeeText]);
 
     // Transfer button props
     const buttonDesc = useMemo(() => {
@@ -1128,8 +1037,13 @@ export const TransferContainer = forwardRef<
     ]);
 
     const isDisabled = useMemo(() => {
-      return isWalletConnected && hasNoteAccount && isValidToTransfer;
-    }, [hasNoteAccount, isValidToTransfer, isWalletConnected]);
+      return (
+        isWalletConnected &&
+        hasNoteAccount &&
+        !needSwitchChain &&
+        isValidToTransfer
+      );
+    }, [hasNoteAccount, isValidToTransfer, isWalletConnected, needSwitchChain]);
 
     const isLoading = useMemo(() => {
       return (
@@ -1156,7 +1070,7 @@ export const TransferContainer = forwardRef<
     return (
       <TransferCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         bridgeAssetInputProps={bridgeAssetInputProps}
         destChainInputProps={destChainInputProps}
         amountInputProps={amountInputProps}

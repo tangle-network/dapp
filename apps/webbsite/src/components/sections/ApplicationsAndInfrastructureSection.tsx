@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 const {
   CONNECTED_SHIELDED_IDENTITY_URL,
-  CONNECTED_SHIELDED_POOLS_URL,
+  SHIELDED_POOL_DOC_URL,
   TANGLE_NETWORK_URL,
 } = links;
 
@@ -81,7 +81,7 @@ export const ApplicationsAndInfrastructureSection = () => {
               privately transferring assets between blockchains.
             </Typography>
             <Button
-              href={CONNECTED_SHIELDED_POOLS_URL}
+              href={SHIELDED_POOL_DOC_URL}
               target="_blank"
               rel="noreferrer"
               className="mt-6 button-base button-primary"

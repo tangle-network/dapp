@@ -68,6 +68,11 @@ export type AssetType = {
    * The callback when user clicks on the token
    */
   onTokenClick?: (symbol: string) => void;
+
+  /**
+   * Check if the token is added to metamask
+   */
+  isTokenAddedToMetamask?: boolean;
 };
 
 export interface ListCardWrapperProps
@@ -239,6 +244,11 @@ export interface TokenListCardProps
    * The callback when the user hit connect account or wallet
    */
   onConnect?: PropsOf<'button'>['onClick'];
+
+  /**
+   * The type of transaction this token list card is used for
+   */
+  txnType?: 'deposit' | 'transfer' | 'withdraw';
 }
 
 export interface WithDrawListCardProps

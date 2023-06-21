@@ -185,7 +185,7 @@ export const WebsiteFooter = ({ type }: WebsiteFooterPropsType) => {
   const [success, setSuccess] = useState(false);
 
   return (
-    <footer className="dark pb-4 md:pb-[156px] bg-mono-200 space-y-6">
+    <footer className="dark pb-4 bg-mono-200 space-y-6">
       {/** Newsletter */}
       <div className="px-4 py-16 space-y-12 md:pt-24 bg-mono-180 md:pb-9">
         {/** Title and subtitle */}

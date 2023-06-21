@@ -1,13 +1,15 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2023 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { ethers } from 'ethers';
-
-import { anchorDeploymentBlock } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -16,10 +18,12 @@ import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
 import { getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
+import { parsedAnchorConfig } from './anchors';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
 };
+
 export type Wallet = WalletConfig;
 
 export type ApiConfigInput = {
@@ -30,18 +34,6 @@ export type ApiConfigInput = {
   anchors?: Record<number, AnchorConfigEntry>;
   fungibleToWrappableMap?: Map<number, Map<number, Set<number>>>;
 };
-
-// For the fetching currency on chain effect
-const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
-  (acc, typedChainId) => {
-    const addresses = Object.keys(anchorDeploymentBlock[+typedChainId]);
-    if (addresses && addresses.length > 0) {
-      acc[+typedChainId] = addresses;
-    }
-    return acc;
-  },
-  {} as Record<number, string[]>
-);
 
 export class ApiConfig {
   constructor(
@@ -55,13 +47,19 @@ export class ApiConfig {
   ) {}
 
   static init = (config: ApiConfigInput) => {
+    const currencies = config.currencies ?? {};
+    const anchors = config.anchors ?? {};
+    const fungibleToWrappableMap = config.fungibleToWrappableMap ?? new Map();
+
+    const bridgeByAsset = getBridgeConfigByAsset(currencies, anchors);
+
     return new ApiConfig(
       config.wallets ?? {},
       config.chains ?? {},
-      config.currencies ?? {},
-      config.bridgeByAsset ?? {},
-      config.anchors ?? {},
-      config.fungibleToWrappableMap ?? new Map()
+      currencies,
+      bridgeByAsset,
+      anchors,
+      fungibleToWrappableMap
     );
   };
 
@@ -69,7 +67,7 @@ export class ApiConfig {
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
     evmProviderFactory: (
       typedChainId: number
-    ) => Promise<ethers.providers.Provider>,
+    ) => Promise<ethers.providers.Web3Provider>,
     substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();
@@ -96,10 +94,7 @@ export class ApiConfig {
       evmAnchorConfig
     );
 
-    const bridgeByAsset = await getBridgeConfigByAsset(
-      currenciesConfig,
-      anchors
-    );
+    const bridgeByAsset = getBridgeConfigByAsset(currenciesConfig, anchors);
 
     return new ApiConfig(
       config.wallets ?? {},
@@ -173,5 +168,18 @@ export class ApiConfig {
       (currency) => !avaialbleCurrencies.find((c) => c.id === currency.id)
     );
     return unavailableCurrencies;
+  }
+
+  getCurrenciesBy(opts: { role?: CurrencyRole; type?: CurrencyType }) {
+    const currencies = Object.values(this.currencies).filter((currency) => {
+      if (opts.role && currency.role !== opts.role) {
+        return false;
+      }
+      if (opts.type && currency.type !== opts.type) {
+        return false;
+      }
+      return true;
+    });
+    return currencies;
   }
 }

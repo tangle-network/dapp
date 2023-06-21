@@ -209,6 +209,11 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
   relayerAvatarTheme?: ComponentProps<typeof Avatar>['theme'];
 
   /**
+   * The recipient title props
+   */
+  recipientTitleProps?: Partial<ComponentProps<typeof TitleWithInfo>>;
+
+  /**
    * Recipient public key
    */
   recipientPublicKey?: string;

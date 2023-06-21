@@ -1,4 +1,5 @@
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
+import { WebbError } from '@webb-tools/dapp-types';
 import { SnackBarOpts } from '@webb-tools/webb-ui-components';
 import { Transaction } from 'ethers';
 
@@ -44,6 +45,10 @@ const hasReason = (error: unknown): error is { reason: string } => {
 export const getErrorMessage = (error: unknown) => {
   if (hasReason(error)) {
     return error.reason;
+  }
+
+  if (error instanceof WebbError) {
+    return error.errorMessage.message;
   }
 
   if (error instanceof Error) {

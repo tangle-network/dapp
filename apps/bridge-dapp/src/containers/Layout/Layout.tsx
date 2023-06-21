@@ -12,14 +12,14 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="h-screen min-w-full min-h-full flex flex-col justify-between">
+    <div className="flex flex-col justify-between h-screen min-w-full min-h-full">
       <div className="flex-[1] flex flex-col">
         <Header />
 
         <Transition
           show={showBanner}
           className={cx(
-            '[transform-style:preserve-3d] origin-top duration-300 h-[60px]'
+            'hidden lg:block [transform-style:preserve-3d] origin-top duration-300 h-[60px]'
           )}
           leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
           leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}

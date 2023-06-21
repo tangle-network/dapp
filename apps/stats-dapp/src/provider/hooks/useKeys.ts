@@ -224,6 +224,10 @@ export function useKeys(
   }, [reqQuery, call, currentKey, fetched]);
 
   useEffect(() => {
+    setFetched(false);
+  }, [reqQuery]);
+
+  useEffect(() => {
     if (!fetched) return;
 
     const subscription = query.observable
@@ -252,14 +256,14 @@ export function useKeys(
             isFailed: false,
             val: {
               items: filteredData.map((node, idx) => {
-                const session = node.sessions?.nodes[0];
+                const session = node?.sessions?.nodes[0];
                 const thresholds = thresholdMap(
                   session ? session.thresholds : { nodes: [] }
                 );
                 const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
-                const authorities = mapAuthorities(session.sessionValidators)
-                  .filter((auth) => auth.isBest)
+                const authorities = mapAuthorities(session?.sessionValidators)
+                  ?.filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
 
                 const previousKeyId = idx
@@ -270,20 +274,20 @@ export function useKeys(
                     ? filteredData[idx + 1]?.id
                     : undefined;
                 const [start, end] = sessionFrame(
-                  session.block?.timestamp,
+                  session?.block?.timestamp,
                   sessionHeight
                 );
                 return {
-                  height: String(node.block?.number),
-                  session: session.id,
+                  height: String(node?.block?.number),
+                  session: session?.id,
                   keyGenThreshold: keyGen?.current ?? null,
                   signatureThreshold: signature?.current ?? null,
-                  compressed: node.compressed,
-                  uncompressed: node.uncompressed,
+                  compressed: node?.compressed,
+                  uncompressed: node?.uncompressed,
                   keyGenAuthorities: authorities,
                   end,
                   start,
-                  id: node.id,
+                  id: node?.id,
                   previousKeyId,
                   nextKeyId,
                 };

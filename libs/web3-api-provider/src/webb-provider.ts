@@ -7,8 +7,11 @@ import {
   AccountsAdapter,
   Bridge,
   Currency,
+  NewNotesTxResult,
   NotificationHandler,
   RelayChainMethods,
+  Transaction,
+  TransactionState,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
@@ -36,24 +39,25 @@ import {
 } from '@webb-tools/fixtures-deployments';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   ChainType,
   CircomUtxo,
   Keypair,
   Note,
-  toFixedHex,
   Utxo,
   UtxoGenInput,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { ZkComponents } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
-import { ethers, providers, Signer } from 'ethers';
+import { Signer, ethers, providers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Eth } from 'web3-eth';
 
 import { Web3Accounts, Web3Provider } from './ext-provider';
+import { calculateProvingLeavesAndCommitmentIndex } from './utils';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
@@ -275,14 +279,14 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal?: AbortSignal,
-    onFetchingLeavesOnChain?: (
-      startingBlock: number,
-      currentBlock: number,
-      step: number,
-      finalBlock: number
-    ) => void // Callback to be called when fetching leaves on chain
-  ): Promise<string[]> {
+    treeHeight: number,
+    targetRoot: string,
+    commitment: bigint,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
@@ -292,16 +296,23 @@ export class WebbWeb3Provider
       vanchor.contract.address
     );
 
-    let leaves = await this.relayerManager.fetchLeavesFromRelayers(
-      relayers,
-      vanchor,
-      storage,
-      abortSignal
-    );
+    const leavesFromRelayers =
+      await this.relayerManager.fetchLeavesFromRelayers(
+        relayers,
+        vanchor,
+        storage,
+        treeHeight,
+        targetRoot,
+        commitment,
+        tx
+      );
 
     // If unable to fetch leaves from the relayers, get them from chain
-    if (!leaves) {
-      onFetchingLeavesOnChain?.(0, 0, 0, 0); // Call the callback with dummy values
+    if (!leavesFromRelayers) {
+      tx?.next(TransactionState.FetchingLeaves, {
+        start: 0, // Dummy values
+        currentRange: [0, 0], // Dummy values
+      });
 
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
@@ -324,24 +335,50 @@ export class WebbWeb3Provider
         storedContractInfo.lastQueriedBlock + 1,
         0,
         retryPromise,
-        abortSignal
+        tx?.cancelToken.abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
 
-      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+      // Merge the leaves from chain with the stored leaves
+      // and fixed them to 32 bytes
+      const leaves = [
+        ...storedContractInfo.leaves,
+        ...leavesFromChain.newLeaves,
+      ].map((leaf) => toFixedHex(leaf));
 
-      // Fixed all the leaves to be 32 bytes
-      leaves = leaves.map((leaf) => toFixedHex(leaf));
+      console.log(`Got ${leaves.length} leaves from chain`);
 
-      // Cached the new leaves
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      // Validate the leaves
+      const { leafIndex, provingLeaves } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment.toString()
+        );
+
+      // If the leafIndex is -1, it means the commitment is not in the tree
+      // and we should continue to the next relayer
+      if (leafIndex === -1) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+      } else {
+        tx?.next(TransactionState.ValidatingLeaves, true);
+      }
+
+      // Cached all the leaves to re-use them later
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
-    } else {
-      console.log(`Got ${leaves.length} leaves from relayers.`);
+
+      // Return the leaves for proving and the commitment index
+      return {
+        provingLeaves,
+        commitmentIndex: leafIndex,
+      };
     }
 
-    return leaves;
+    return leavesFromRelayers;
   }
 
   async getVAnchorNotesFromChain(

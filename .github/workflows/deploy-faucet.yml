@@ -45,7 +45,6 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }} >> .env
           echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env

@@ -18,9 +18,9 @@ export enum EVMChainId {
   ScrollAlpha = 534353,
 
   /** Self hosted EVM */
-  AthenaOrbit = 5001,
-  HermesOrbit = 5002,
-  DemeterOrbit = 5003,
+  AthenaOrbit = 3884533461,
+  HermesOrbit = 3884533462,
+  DemeterOrbit = 3884533463,
 
   /** Local EVM */
   HermesLocalnet = 5004,

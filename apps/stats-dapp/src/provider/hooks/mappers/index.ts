@@ -41,7 +41,7 @@ export function mapSessionAuthValidatorNode(
 export function mapAuthorities(
   data: SessionAuthValidatorFragment
 ): Authority[] {
-  return data.edges.map((item) => mapSessionAuthValidatorNode(item.node!));
+  return data?.edges.map((item) => mapSessionAuthValidatorNode(item.node!));
 }
 
 export function mapProposalListItem(

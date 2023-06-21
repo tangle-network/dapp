@@ -1,4 +1,5 @@
 // General components
+export * from './FAQAccordion';
 export * from './Header';
 export * from './Heading';
 export * from './InternalOrExternalLink';

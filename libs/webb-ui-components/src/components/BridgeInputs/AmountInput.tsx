@@ -79,7 +79,7 @@ export const AmountInput = forwardRef<
                     </span>
                   </DropdownTrigger>
                   <DropdownBody
-                    isPorttal={false}
+                    isPortal={false}
                     align="start"
                     className="z-10 mt-1"
                   >

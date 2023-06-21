@@ -10,7 +10,7 @@ import { MoonbeamLogo } from '@webb-tools/logos/chains/MoonbeamLogo';
 import OptimismLogo from '@webb-tools/logos/chains/OptimismLogo';
 import PolygonLogo from '@webb-tools/logos/chains/PolygonLogo';
 import EtherLogo from '@webb-tools/logos/Eth';
-import { ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 
 import { ChainConfig } from '../chain-config.interface';
 
@@ -22,9 +22,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     chainId: EVMChainId.Goerli,
     name: 'Goerli',
     base: 'ethereum',
-    url: 'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+    url: 'https://ethereum-goerli.publicnode.com',
     evmRpcUrls: [
-      'https://goerli.infura.io/v3/e54b7176271840f9ba62e842ff5d6db4',
+      'https://ethereum-goerli.publicnode.com',
       'https://goerli.infura.io/v3',
       'https://rpc.ankr.com/eth_goerli',
       'https://eth-goerli.g.alchemy.com/v2',
@@ -73,9 +73,9 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Polygon Mumbai',
     base: 'polygon',
     tag: 'test',
-    url: 'https://matic-mumbai.chainstacklabs.com/',
+    url: 'https://endpoints.omniatech.io/v1/matic/mumbai/public	',
     evmRpcUrls: [
-      'https://matic-mumbai.chainstacklabs.com/',
+      'https://endpoints.omniatech.io/v1/matic/mumbai/public	',
       'https://polygon-mumbai.infura.io/v3',
       'https://polygon-mumbai.g.alchemy.com/v2',
     ],
@@ -142,6 +142,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://blockscout.scroll.io/',
     evmRpcUrls: ['https://alpha-rpc.scroll.io/l2'],
     logo: EtherLogo,
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      deployedAt: 2745641,
+    },
   },
 
   // Self hosted chains
@@ -157,6 +161,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://hermes-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
+    multicall3: {
+      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
+      deployedAt: 102,
+    },
   },
   [PresetTypedChainId.AthenaOrbit]: {
     chainType: ChainType.EVM,
@@ -170,6 +178,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://athena-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
+    multicall3: {
+      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
+      deployedAt: 100,
+    },
   },
   [PresetTypedChainId.DemeterOrbit]: {
     chainType: ChainType.EVM,
@@ -183,6 +195,10 @@ export const chainsConfig: Record<number, ChainConfig> = {
     blockExplorerStub: 'https://demeter-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
+    multicall3: {
+      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
+      deployedAt: 102,
+    },
   },
 
   // Localnet

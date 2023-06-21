@@ -1,45 +1,45 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-/// list of know error codes of the dApp
+// list of know error codes of the dApp
 export enum WebbErrorCodes {
-  /// Api is not ready
+  // Api is not ready
   ApiNotReady,
-  /// No currency is available
+  // No currency is available
   NoCurrencyAvailable,
-  /// No fungible token is available
+  // No fungible token is available
   NoFungibleTokenAvailable,
-  /// Unsupported chain is switch via the extension
+  // Unsupported chain is switch via the extension
   UnsupportedChain,
-  /// Unselected chain is a mismatch between provider and application
+  // Unselected chain is a mismatch between provider and application
   UnselectedChain,
-  /// No accounts are available
+  // No accounts are available
   NoAccountAvailable,
-  /// No active bridge
+  // No active bridge
   NoActiveBridge,
-  /// Failed to parse deposit note
+  // Failed to parse deposit note
   NoteParsingFailure,
-  /// PolkaDot extension not installed
+  // PolkaDot extension not installed
   PolkaDotExtensionNotInstalled,
-  /// Talisman extension not installed
+  // Talisman extension not installed
   TalismanExtensionNotInstalled,
-  /// SubWallet extension not installed
+  // SubWallet extension not installed
   SubWalletExtensionNotInstalled,
-  /// MetaMasK extension not installed
+  // MetaMasK extension not installed
   MetaMaskExtensionNotInstalled,
-  /// Unknown wallet
+  // Unknown wallet
   UnknownWallet,
-  /// Runtime Error on the provider
+  // Runtime Error on the provider
   InsufficientProviderInterface,
-  /// EVM session already ended
+  // EVM session already ended
   EVMSessionAlreadyEnded,
-  /// Relayer does not support the functionality
+  // Relayer does not support the functionality
   NoRelayerSupport,
-  /// Relayer is not operating properly (sending bad leaves, etc.)
+  // Relayer is not operating properly (sending bad leaves, etc.)
   RelayerMisbehaving,
-  /// Failed to parse the chainId
+  // Failed to parse the chainId
   ChainIdTypeUnformatted,
-  /// Invalid amount to withdraw,
+  // Invalid amount to withdraw,
   AmountToWithdrawExceedsTheDepositedAmount,
   /// Transaction is cancelled
   TransactionCancelled,
@@ -47,9 +47,11 @@ export enum WebbErrorCodes {
   TransactionInProgress,
   /// The tree not found
   TreeNotFound,
+  // Insufficient disk space
+  InsufficientDiskSpace,
 }
 
-/// An Error message with error metadata
+// An Error message with error metadata
 type WebbErrorMessage = {
   message: string;
   code: WebbErrorCodes;
@@ -62,11 +64,11 @@ const NOT_INSTALLED_WALLET_ERROR_CODES = [
   WebbErrorCodes.MetaMaskExtensionNotInstalled,
 ];
 
-/// WebbError an Error class to throw errors and catch them with type
+// WebbError an Error class to throw errors and catch them with type
 export class WebbError extends Error {
-  /// Static `Map` for error messages that will be instilled lazily
+  // Static `Map` for error messages that will be instilled lazily
   static errorMessageMap: Map<WebbErrorCodes, WebbErrorMessage> = new Map();
-  /// error message for this error
+  // error message for this error
   readonly errorMessage: WebbErrorMessage;
 
   constructor(readonly code: WebbErrorCodes) {
@@ -74,12 +76,12 @@ export class WebbError extends Error {
     this.errorMessage = WebbError.getErrorMessage(code);
   }
 
-  /// create a `WebbError` from the error code
+  // create a `WebbError` from the error code
   static from(code: WebbErrorCodes) {
     return new WebbError(code);
   }
 
-  /// Static method to ge the error of the map if it's there, or create it and append the map
+  // Static method to ge the error of the map if it's there, or create it and append the map
   static getErrorMessage(code: WebbErrorCodes): WebbErrorMessage {
     const errorMessage = WebbError.errorMessageMap.get(code);
 
@@ -222,6 +224,12 @@ export class WebbError extends Error {
           message: `The tree not found`,
         };
 
+      case WebbErrorCodes.InsufficientDiskSpace:
+        return {
+          code,
+          message: `Insufficient disk space, please make sure you have at least 500MB of free space`,
+        };
+
       default:
         return {
           code,
@@ -234,7 +242,7 @@ export class WebbError extends Error {
     return NOT_INSTALLED_WALLET_ERROR_CODES.includes(error.code);
   }
 
-  /// Coercion to sting
+  // Coercion to sting
   toString() {
     return this.message;
   }

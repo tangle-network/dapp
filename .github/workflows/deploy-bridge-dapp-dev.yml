@@ -39,7 +39,7 @@ jobs:
           echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
 
       - name: Build project
-        run: yarn nx build bridge-dapp
+        run: yarn build:bridge
 
       - name: Deploy to Netlify
         id: deploy-netlify

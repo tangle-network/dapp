@@ -16,7 +16,7 @@ module.exports = (env, config) => {
       hot: true,
       open: false,
       port: 3000,
-      static: path.resolve(__dirname, 'build'),
+      static: path.resolve(__dirname, '../../dist/apps/bridge-dapp'),
       client: {
         logging: 'error',
         overlay: {

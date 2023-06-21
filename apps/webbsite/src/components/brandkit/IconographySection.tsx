@@ -6,7 +6,7 @@ export const IconographySection = () => {
       <div className="max-w-[1440px] mx-auto space-y-9">
         <Typography
           variant="mkt-h3"
-          className="text-center text-mono-200 font-black"
+          className="font-black text-center text-mono-200"
         >
           Iconography
         </Typography>

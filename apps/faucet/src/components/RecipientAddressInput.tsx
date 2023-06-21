@@ -59,7 +59,7 @@ const RecipientAddressInput = () => {
   return (
     <div className="space-y-2">
       <RecipientInput
-        className="max-w-none input-height"
+        className="!max-w-none input-height"
         title="Address"
         value={recipientAddress}
         onChange={updateRecipientAddress}

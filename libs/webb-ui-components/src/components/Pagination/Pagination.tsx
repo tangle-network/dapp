@@ -22,6 +22,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       totalItems,
       totalPages,
       title,
+      iconSize = 'lg',
       ...props
     },
     ref
@@ -61,7 +62,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         </p>
 
         {/** Right buttons */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <ChevronLeft
             className={cx('cursor-pointer')}
             onClick={() => {
@@ -69,7 +70,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 previousPage();
               }
             }}
-            size="lg"
+            size={iconSize}
           />
 
           {paginationDisplayItems.map((page, idx) =>
@@ -103,7 +104,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
                 nextPage();
               }
             }}
-            size="lg"
+            size={iconSize}
           />
         </div>
       </div>

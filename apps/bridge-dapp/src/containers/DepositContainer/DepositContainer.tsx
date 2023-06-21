@@ -3,6 +3,7 @@ import { Chain, getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import {
   useCurrencies,
   useCurrenciesBalances,
+  useCurrentResourceId,
   useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -26,22 +27,16 @@ import {
   useMemo,
   useState,
 } from 'react';
-
 import { ChainListCardWrapper } from '../../components';
 import { ChainListCardWrapperProps } from '../../components/ChainListCardWrapper/types';
-import {
-  WalletState,
-  useAddCurrency,
-  useConnectWallet,
-  useMaxFeeInfo,
-} from '../../hooks';
+import { WalletState, useAddCurrency, useConnectWallet } from '../../hooks';
 import { DepositConfirmContainer } from './DepositConfirmContainer';
 import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
-import { BigNumber, ethers } from 'ethers';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
-interface MainComponentProposVariants {
+interface MainComponentPropsVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
   ['dest-chain-list-card']: ChainListCardWrapperProps;
   ['token-deposit-list-card']: TokenListCardProps;
@@ -50,7 +45,7 @@ interface MainComponentProposVariants {
   ['deposit-confirm-container']: DepositConfirmContainerProps;
 }
 
-type MainComponentVariants = keyof MainComponentProposVariants;
+type MainComponentVariants = keyof MainComponentPropsVariants;
 
 export const DepositContainer = forwardRef<
   HTMLDivElement,
@@ -73,16 +68,13 @@ export const DepositContainer = forwardRef<
       MainComponentVariants | undefined
     >(undefined);
 
-    const resetMainComponent = useCallback(() => {
-      setMainComponentName(undefined);
-    }, [setMainComponentName]);
-
     const {
       activeApi,
       chains,
       switchChain,
       activeChain,
       activeWallet,
+      activeAccount,
       loading,
       noteManager,
       apiConfig,
@@ -103,19 +95,7 @@ export const DepositContainer = forwardRef<
 
     const addCurrency = useAddCurrency();
 
-    const maxFeeArgs = useMemo(
-      () => ({
-        fungibleCurrencyId: fungibleCurrency?.id,
-      }),
-      [fungibleCurrency?.id]
-    );
-
-    const {
-      feeInfo,
-      fetchMaxFeeInfo,
-      isLoading: isFetchingMaxFeeInfo,
-      resetMaxFeeInfo,
-    } = useMaxFeeInfo(maxFeeArgs);
+    const currentResourceId = useCurrentResourceId();
 
     const allTokens = useMemo(
       () => fungibleCurrencies.concat(wrappableCurrencies),
@@ -227,6 +207,12 @@ export const DepositContainer = forwardRef<
           balance: bridgeWrappableCurrency.balance,
           onTokenClick: () => addCurrency(bridgeWrappableCurrency.currency),
           balanceType: 'wallet',
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            bridgeWrappableCurrency.currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         };
       }
 
@@ -240,8 +226,21 @@ export const DepositContainer = forwardRef<
         balance: bridgeFungibleCurrency.balance,
         onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
         balanceType: 'wallet',
+        isTokenAddedToMetamask: isTokenAddedToMetamask(
+          bridgeFungibleCurrency.currency,
+          activeChain,
+          activeAccount?.address,
+          currentResourceId
+        ),
       };
-    }, [bridgeFungibleCurrency, bridgeWrappableCurrency, addCurrency]);
+    }, [
+      bridgeWrappableCurrency,
+      bridgeFungibleCurrency,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
+    ]);
 
     const populatedSelectableWebbTokens = useMemo((): AssetType[] => {
       return Object.values(fungibleCurrencies.concat(wrappableCurrencies)).map(
@@ -251,10 +250,24 @@ export const DepositContainer = forwardRef<
             symbol: currency.view.symbol,
             balance: balances[currency.id],
             onTokenClick: () => addCurrency(currency),
+            isTokenAddedToMetamask: isTokenAddedToMetamask(
+              currency,
+              activeChain,
+              activeAccount?.address,
+              currentResourceId
+            ),
           };
         }
       );
-    }, [addCurrency, balances, fungibleCurrencies, wrappableCurrencies]);
+    }, [
+      fungibleCurrencies,
+      wrappableCurrencies,
+      balances,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
+      addCurrency,
+    ]);
 
     const populatedAllTokens = useMemo((): AssetType[] => {
       // Filter currencies that are not in the populated selectable tokens
@@ -291,28 +304,8 @@ export const DepositContainer = forwardRef<
         destChainInputValue,
         amount,
         selectedTokenBalance >= amount,
-        feeInfo,
       ].some((val) => !val);
-    }, [
-      amount,
-      destChainInputValue,
-      feeInfo,
-      selectedSourceChain,
-      selectedToken,
-    ]);
-
-    const feeValue = useMemo<number | undefined>(() => {
-      if (!feeInfo) {
-        return undefined;
-      }
-
-      if (!(feeInfo instanceof BigNumber)) {
-        console.error('Fee info is not a BigNumber');
-        return undefined;
-      }
-
-      return Number(ethers.utils.formatEther(feeInfo));
-    }, [feeInfo]);
+    }, [amount, destChainInputValue, selectedSourceChain, selectedToken]);
 
     const currentNativeCurrency = useMemo(() => {
       if (!activeChain) {
@@ -375,8 +368,7 @@ export const DepositContainer = forwardRef<
       setAmount(0);
       setDestChain(undefined);
       setMainComponentName(undefined);
-      resetMaxFeeInfo();
-    }, [resetMaxFeeInfo]);
+    }, []);
 
     // Main action on click
     const handleDepositButtonClick = useCallback(async () => {
@@ -451,8 +443,6 @@ export const DepositContainer = forwardRef<
         fungibleTokenId: fungibleCurrency.id,
         wrappableTokenId: wrappableCurrency?.id,
         amount,
-        feeValue,
-        feeToken: currentNativeCurrency?.symbol,
         sourceChain: {
           name: activeChain.name,
           type: activeChain.base ?? 'webb-dev',
@@ -462,7 +452,6 @@ export const DepositContainer = forwardRef<
           type: destChain.base ?? 'webb-dev',
         },
         note: newNote,
-        resetMainComponent: resetMainComponent,
         onResetState: handleResetState,
       });
 
@@ -481,9 +470,6 @@ export const DepositContainer = forwardRef<
       amount,
       apiConfig,
       wrappableCurrency?.id,
-      feeValue,
-      currentNativeCurrency?.symbol,
-      resetMainComponent,
       handleResetState,
       toggleModal,
       setOpenNoteAccountModal,
@@ -533,6 +519,12 @@ export const DepositContainer = forwardRef<
           balance: bridgeFungibleCurrency.balance,
           onTokenClick: () => addCurrency(bridgeFungibleCurrency.currency),
           balanceType: 'wallet',
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            bridgeFungibleCurrency.currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         },
         onClick: () => {
           if (selectedSourceChain) {
@@ -543,6 +535,9 @@ export const DepositContainer = forwardRef<
     }, [
       wrappableCurrency,
       bridgeFungibleCurrency,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
       addCurrency,
       selectedSourceChain,
     ]);
@@ -585,6 +580,7 @@ export const DepositContainer = forwardRef<
         onChange: handleTokenChange,
         onClose: () => setMainComponentName(undefined),
         onConnect: onTryAnotherWallet,
+        txnType: 'deposit',
       };
     }, [
       populatedSelectableWebbTokens,
@@ -608,6 +604,12 @@ export const DepositContainer = forwardRef<
           balance: balances[currency.id] ?? 0,
           symbol: currency.view.symbol,
           onTokenClick: () => addCurrency(currency),
+          isTokenAddedToMetamask: isTokenAddedToMetamask(
+            currency,
+            activeChain,
+            activeAccount?.address,
+            currentResourceId
+          ),
         })
       );
 
@@ -631,6 +633,7 @@ export const DepositContainer = forwardRef<
           }
         },
         onClose: () => setMainComponentName(undefined),
+        txnType: 'deposit',
       };
     }, [
       wrappableCurrency,
@@ -639,6 +642,9 @@ export const DepositContainer = forwardRef<
       destChainInputValue,
       populatedAllTokens,
       balances,
+      activeChain,
+      activeAccount?.address,
+      currentResourceId,
       addCurrency,
       fungibleCurrencies,
       setFungibleCurrency,
@@ -703,7 +709,7 @@ export const DepositContainer = forwardRef<
     >(undefined);
 
     const setMainComponentArgs = useMemo<
-      [ElementType, Partial<MainComponentProposVariants>] | undefined
+      [ElementType, Partial<MainComponentPropsVariants>] | undefined
     >(() => {
       switch (mainComponentName) {
         case 'token-wrap-and-deposit-list-card':
@@ -854,42 +860,10 @@ export const DepositContainer = forwardRef<
       amount,
     ]);
 
-    const isReadyToFetchFee = useMemo(() => {
-      if (!sourceChain || !destChain || !amount) {
-        return false;
-      }
-
-      const isWrappableValid =
-        bridgeWrappableCurrency &&
-        bridgeFungibleCurrency &&
-        bridgeWrappableCurrency.balance >= amount;
-
-      if (isWrappableValid) {
-        return true;
-      }
-
-      const isFungibleValid =
-        bridgeFungibleCurrency && bridgeFungibleCurrency.balance >= amount;
-
-      return isFungibleValid;
-    }, [
-      amount,
-      bridgeFungibleCurrency,
-      bridgeWrappableCurrency,
-      destChain,
-      sourceChain,
-    ]);
-
-    useEffect(() => {
-      if (isReadyToFetchFee) {
-        fetchMaxFeeInfo();
-      }
-    }, [fetchMaxFeeInfo, isReadyToFetchFee]);
-
     return (
       <DepositCard
         ref={ref}
-        className="max-w-none"
+        className="max-w-none flex-[1]"
         {...props}
         sourceChainProps={{
           chain: selectedSourceChain,
@@ -926,19 +900,12 @@ export const DepositContainer = forwardRef<
           isLoading:
             loading ||
             isGeneratingNote ||
-            walletState === WalletState.CONNECTING ||
-            isFetchingMaxFeeInfo,
-          loadingText: isFetchingMaxFeeInfo
-            ? 'Calculating Fee...'
-            : loading
-            ? 'Connecting...'
-            : 'Generating Note...',
+            walletState === WalletState.CONNECTING,
+          loadingText: loading ? 'Connecting...' : 'Generating Note...',
           isDisabled,
           children: buttonText,
         }}
         token={selectedToken?.symbol}
-        feeValue={feeValue}
-        feeToken={currentNativeCurrency?.symbol}
       />
     );
   }

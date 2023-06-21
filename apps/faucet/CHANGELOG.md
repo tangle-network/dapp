@@ -8,41 +8,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New feature or functionality
 - New file or resource
 
 ### Changed
+
 - Updates to existing features
 - Changes to existing files or resources
 
 ### Deprecated
+
 - Features or functionality that will be removed in future versions
 - Files or resources that will be removed in future versions
 
 ### Removed
+
 - Features or functionality that have been removed
 - Files or resources that have been removed
 
 ### Fixed
+
 - Bug fixes
 - Corrections to existing files or resources
 
 ### Security
+
 - Security-related changes, such as vulnerability patches
 
 ## [0.0.1] - 2023-05-02
 
 ### Added
+
 - Initial UI setup and build: https://github.com/webb-tools/webb-dapp/pull/1075
 
 ## [0.0.2] - 2023-05-03
 
 ### Added
+
 - .env.example template: https://github.com/webb-tools/webb-dapp/pull/1139
 
 ### Changed
+
 - Node version upgraded to v18.x: https://github.com/webb-tools/webb-dapp/pull/1139
 
 [Unreleased]: https://github.com/webb-tools/webb-dapp/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.1
 [0.0.2]: https://github.com/webb-tools/webb-dapp/releases/tag/v0.0.2
+
+## [0.0.3] - 2023-06-02
+
+### Fixed, Changed and Added
+
+- Replaces swirl BG image in faucet app to include tangle token.
+- Typography system to unify Webbsite/Tangle Site/Faucet.
+
+## [0.0.4] - 2023-06-09
+
+### Fixed, Changed and Added
+
+- Update copy - closes #1323 ([#1324](https://github.com/webb-tools/webb-dapp/pull/1324))
+- Integrates Faucet App with Faucet Backend ([#1327](https://github.com/webb-tools/webb-dapp/pull/1327))

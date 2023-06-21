@@ -22,6 +22,7 @@ type LoginReturnType = Result<
  */
 const loginWithTwitter = async (
   code: string,
+  redirectUri: string,
   abortSignal?: AbortSignal
 ): Promise<LoginReturnType | undefined> => {
   const body: TwitterLoginBody = {
@@ -29,7 +30,7 @@ const loginWithTwitter = async (
     code,
     codeVerifier: 'challenge',
     grantType: 'authorization_code',
-    redirectUri: clientConfig.appUrl,
+    redirectUri: redirectUri,
   };
 
   const headers = {
