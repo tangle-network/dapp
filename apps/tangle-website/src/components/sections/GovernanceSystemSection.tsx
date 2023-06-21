@@ -53,10 +53,16 @@ export const GovernanceSystemSection = () => {
               signature governance system
             </Typography>
             <div className="flex gap-4 mt-6">
-              <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
+              <LinkButton
+                href={WHAT_IS_TSS_URL}
+                variant="secondary"
+                className="px-5 md:px-9"
+              >
                 Read Docs
               </LinkButton>
-              <LinkButton href={STATS_URL}>View Network</LinkButton>
+              <LinkButton href={STATS_URL} className="px-5 md:px-9">
+                View Network
+              </LinkButton>
             </div>
             <div className="mt-[56px] flex flex-col gap-6">
               {governanceSystemQnAItems.map(

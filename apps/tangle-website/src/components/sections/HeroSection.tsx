@@ -13,7 +13,7 @@ export const HeroSection = () => {
       <div className="flex flex-col items-stretch mx-auto lg:flex-row md:px-0">
         <div className="flex items-center justify-end flex-1 px-5 py-16 bg-purple-10 md:py-32 lg:py-0 lg:px-0">
           <div className="lg:w-full lg:max-w-[716px]">
-            <div className="flex flex-col gap-8 md:w-[80%] lg:w-[65%] lg:ml-[22.5%]">
+            <div className="flex flex-col gap-8 md:w-[80%] lg:w-[70%] lg:ml-[22.5%] lg:py-6">
               <Typography
                 variant="mkt-h2"
                 className="w-3/5 font-black text-mono-200"
@@ -31,11 +31,13 @@ export const HeroSection = () => {
                 <LinkButton
                   href={WEBB_DOCS_URL}
                   variant="secondary"
-                  className="bg-inherit"
+                  className="bg-inherit px-5 md:px-9"
                 >
                   Read Docs
                 </LinkButton>
-                <LinkButton href={STATS_URL}>View Network</LinkButton>
+                <LinkButton href={STATS_URL} className="px-5 md:px-9">
+                  View Network
+                </LinkButton>
               </div>
               <Socials />
             </div>

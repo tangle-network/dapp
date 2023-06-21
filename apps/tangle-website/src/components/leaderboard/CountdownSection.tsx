@@ -56,14 +56,10 @@ export const CountdownSection = () => {
           the guidelines or request points now!
         </Typography>
         <div className="flex justify-center items-center gap-4">
-          <Button
-            variant="secondary"
-            href="#"
-            className="button-base button-secondary"
-          >
+          <Button variant="secondary" href="#" className="px-5 md:px-9">
             View Guidelines
           </Button>
-          <Button href="#" className="button-base button-primary">
+          <Button href="#" className="px-5 md:px-9">
             Request Points
           </Button>
         </div>
