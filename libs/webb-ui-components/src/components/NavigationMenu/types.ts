@@ -18,6 +18,11 @@ export interface NavigationMenuContentProps
   onDevelopmentClick?: ComponentProps<typeof MenuItem>['onClick'];
 
   /**
+   * The callback when user hits faucet menu item
+   */
+  onFaucetClick?: ComponentProps<typeof MenuItem>['onClick'];
+
+  /**
    * The callback when user hits help center menu item
    */
   onHelpCenterClick?: ComponentProps<typeof MenuItem>['onClick'];
