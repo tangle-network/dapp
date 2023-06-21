@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
 import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
-import { substrateProviderFactory } from '@webb-tools/polkadot-api-provider/src/utils';
+import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/substrateProviderFactory';
 import {
   ChainType,
   parseTypedChainId,

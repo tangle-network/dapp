@@ -20179,6 +20179,13 @@ portfinder@^1.0.28:
     debug "^3.2.7"
     mkdirp "^0.5.6"
 
+postcss-attribute-case-insensitive@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/postcss-attribute-case-insensitive/-/postcss-attribute-case-insensitive-6.0.2.tgz#e843091859323342e461878d201ee70278809e01"
+  integrity sha512-IRuCwwAAQbgaLhxQdQcIIK0dCVXg3XDUnzgKD8iwdiYdwU4rMWRWyl/W9/0nA4ihVpq5pyALiHB2veBJ0292pw==
+  dependencies:
+    postcss-selector-parser "^6.0.10"
+
 postcss-calc@^8.2.3:
   version "8.2.4"
   resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-8.2.4.tgz#77b9c29bfcbe8a07ff6693dc87050828889739a5"
