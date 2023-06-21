@@ -10,7 +10,7 @@ import { PublicKey, useActiveKeys } from '../../provider/hooks';
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
  */
 export const KeyStatusCardContainer = () => {
-  const { dkgDataFromPolkadotAPI } = useStatsContext();
+  const { dkgDataFromPolkadotAPI, sessionHeight } = useStatsContext();
 
   const { error, isFailed, isLoading, val: data } = useActiveKeys();
 
@@ -58,7 +58,7 @@ export const KeyStatusCardContainer = () => {
       keyVal={activeKeyData.key ?? ''}
       startTime={currentKey?.start ?? new Date()}
       endTime={
-        currentKey?.end ?? new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
+        currentKey?.end ?? new Date(new Date().getTime() + sessionHeight * 1000)
       }
       authorities={authorities ?? new Set<string>()}
       totalAuthorities={authorities.size ?? 0}

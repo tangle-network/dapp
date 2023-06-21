@@ -138,12 +138,12 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <>
+    <div>
       <div
         className={cx(
-          'w-full mx-auto flex-1 pb-10',
+          'w-full mx-auto flex-1 pb-10 h-[1900px]',
           "bg-[url('assets/stats-bg.png')] dark:bg-[url('assets/stats-dark-bg.png')]",
-          'bg-top object-fill bg-no-repeat bg-cover'
+          'bg-no-repeat bg-cover'
         )}
       >
         <Header
@@ -173,6 +173,6 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
       <div className="max-w-[1160px] mx-auto">
         <Footer />
       </div>
-    </>
+    </div>
   );
 };
