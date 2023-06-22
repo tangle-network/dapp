@@ -218,15 +218,7 @@ const PageBridge = () => {
     <>
       <div className="w-full h-full">
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto mt-4" />}>
-          <div
-            className={cx(
-              'min-h-[1100px] lg:min-h-fit',
-              'p-4 lg:p-9',
-              "bg-[url('assets/bridge-bg-mobile.png')] dark:bg-none dark:bg-mono-200",
-              "lg:bg-[url('assets/bridge-bg.png')] lg:dark:bg-[url('assets/bridge-dark-bg.png')]",
-              'bg-center object-fill bg-no-repeat bg-cover'
-            )}
-          >
+          <div className={cx('min-h-[1100px] lg:min-h-fit', 'p-4 lg:p-9')}>
             <div className="lg:max-w-[1160px] mx-auto mob:grid mob:grid-cols-[minmax(550px,_562px)_1fr] items-start gap-9">
               {customMainComponent}
 
