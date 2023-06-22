@@ -385,14 +385,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       extDataHash
     );
 
-    console.log('publicInputs', publicInputs);
-
     // For Substrate, specifically, we need the extAmount to not be in hex value,
     // since substrate does not understand -ve hex values.
     // Hence, we convert it to a string.
     extData.extAmount = extAmount.toString();
-
-    console.log('extData', extData);
 
     return {
       extData,
