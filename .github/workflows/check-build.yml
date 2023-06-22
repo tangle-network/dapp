@@ -46,8 +46,5 @@ jobs:
       - name: Generate stats-dapp codegen
         run: yarn gql:codegen
 
-      - name: Fetch the on-chain anchors data
-        run: yarn fetch:onChainConfig
-
       - name: build
         run: yarn nx run-many --all --target=build

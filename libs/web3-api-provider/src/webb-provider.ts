@@ -1,6 +1,8 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
+import { hexToU8a } from '@polkadot/util';
 import {
   AccountsAdapter,
   Bridge,
@@ -16,8 +18,11 @@ import {
   WebbProviderEvents,
   WebbState,
 } from '@webb-tools/abstract-api-provider';
+import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
+import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
   getAnchorDeploymentBlockNumber,
@@ -28,6 +33,10 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/fixtures-deployments';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
@@ -41,19 +50,11 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { Signer, ethers, providers } from 'ethers';
-import { Eth } from 'web3-eth';
-import { hexToU8a } from '@polkadot/util';
-import { ApiPromise } from '@polkadot/api';
-import { VAnchor } from '@webb-tools/anchors';
-import { retryPromise } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 import { ZkComponents } from '@webb-tools/utils';
+import type { Backend } from '@webb-tools/wasm-utils';
+import { Signer, ethers, providers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
+import { Eth } from 'web3-eth';
 
 import { Web3Accounts, Web3Provider } from './ext-provider';
 import { calculateProvingLeavesAndCommitmentIndex } from './utils';
@@ -62,10 +63,6 @@ import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-
-type GetVariableAnchorLeavesOptions = {
-  abortSignal?: AbortSignal;
-};
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -82,6 +79,9 @@ export class WebbWeb3Provider
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
 
+  // Map to store the vAnchor levels for each tree id
+  private readonly vAnchorLevels = new Map<string, number>();
+
   private smallFixtures: ZkComponents | null = null;
 
   private largeFixtures: ZkComponents | null = null;
@@ -90,7 +90,7 @@ export class WebbWeb3Provider
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend = 'Circom';
+  readonly backend: Backend = 'Circom';
 
   readonly methods: WebbMethods<WebbWeb3Provider>;
 
@@ -636,6 +636,32 @@ export class WebbWeb3Provider
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
+  }
+
+  async getVAnchorLevels(
+    vAnchorAddressOrTreeId: string,
+    providerOrApi?: ethers.providers.Provider | ApiPromise | undefined
+  ): Promise<number> {
+    if (providerOrApi instanceof ApiPromise) {
+      console.error(
+        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
+      );
+      providerOrApi = this.ethersProvider;
+    }
+
+    const storedLevels = this.vAnchorLevels.get(vAnchorAddressOrTreeId);
+    if (storedLevels) {
+      return Promise.resolve(storedLevels);
+    }
+
+    const vAnchorContract = VAnchor__factory.connect(
+      vAnchorAddressOrTreeId,
+      providerOrApi ?? this.ethersProvider
+    );
+    const levels = await retryPromise(vAnchorContract.getLevels);
+
+    this.vAnchorLevels.set(vAnchorAddressOrTreeId, levels);
+    return levels;
   }
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {

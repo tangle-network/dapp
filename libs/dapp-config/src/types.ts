@@ -42,3 +42,8 @@ export interface AnchorMetadata {
    */
   linkableAnchor: Record<string, string>;
 }
+
+export type ConfigType = Record<
+  number,
+  { nativeCurrency: ICurrency; anchorMetadatas: AnchorMetadata[] }
+>;
