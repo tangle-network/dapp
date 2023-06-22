@@ -1,5 +1,4 @@
-[[plugins]]
-package = "@netlify/plugin-nextjs"
+extends = "../../netlify.base.toml"
 
 [build]
 command = "yarn nx build tangle-website"

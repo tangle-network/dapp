@@ -1,0 +1,26 @@
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Enforce HTTPS connections
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # Protect against XSS attacks
+    X-XSS-Protection = "1; mode=block"
+
+    # Prevent clickjacking
+    X-Frame-Options = "SAMEORIGIN"
+
+    # Define which browser features and APIs can be used in its context.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+
+    # Prevent MIME-sniffing
+    X-Content-Type-Options = "nosniff"
+
+    # Controls how much referrer information should be included with requests.
+    Referrer-Policy = "origin-when-cross-origin"
+
+    # Upgrade all HTTP requests to HTTPS
+    Content-Security-Policy = "upgrade-insecure-requests"
