@@ -1067,6 +1067,17 @@ export const TransferContainer = forwardRef<
       };
     }, [buttonText, handleTransferClick, isDisabled, isLoading, loadingText]);
 
+    const isProcessingTxn = useMemo(
+      () => txQueue.txPayloads.length > 0,
+      [txQueue]
+    );
+
+    useEffect(() => {
+      if (!isProcessingTxn) {
+        setMainComponent(undefined);
+      }
+    }, [isProcessingTxn, setMainComponent]);
+
     return (
       <TransferCard
         ref={ref}

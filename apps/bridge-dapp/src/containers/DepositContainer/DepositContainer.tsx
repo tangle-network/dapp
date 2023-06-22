@@ -860,6 +860,17 @@ export const DepositContainer = forwardRef<
       amount,
     ]);
 
+    const isProcessingTxn = useMemo(
+      () => txQueue.txPayloads.length > 0,
+      [txQueue]
+    );
+
+    useEffect(() => {
+      if (!isProcessingTxn) {
+        setMainComponentName(undefined);
+      }
+    }, [isProcessingTxn]);
+
     return (
       <DepositCard
         ref={ref}
