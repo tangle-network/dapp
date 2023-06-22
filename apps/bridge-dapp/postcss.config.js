@@ -7,6 +7,7 @@ const { join } = require('path');
 
 module.exports = {
   plugins: {
+    'postcss-preset-env': {},
     'postcss-import': {},
     tailwindcss: {
       config: join(__dirname, 'tailwind.config.js'),

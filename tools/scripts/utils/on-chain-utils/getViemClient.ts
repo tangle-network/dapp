@@ -44,6 +44,7 @@ function defineViemChain(typedChainId: number) {
     id: chain.chainId,
     name: chain.name,
     network: chain.base,
+    testnet: true,
     nativeCurrency: {
       decimals: 18,
       name: 'ETH',
@@ -53,6 +54,14 @@ function defineViemChain(typedChainId: number) {
       public: { http: chain.evmRpcUrls },
       default: { http: chain.evmRpcUrls },
     },
+    blockExplorers: chain.blockExplorerStub
+      ? {
+          default: {
+            name: chain.name,
+            url: chain.blockExplorerStub,
+          },
+        }
+      : undefined,
     contracts: {
       multicall3: chain.multicall3
         ? {
@@ -77,7 +86,7 @@ function getViemClient(typedChainId: number) {
     batch: {
       multicall: true,
     },
-    transport: http(),
+    transport: http(undefined, { timeout: 60_000 }),
   });
 }
 

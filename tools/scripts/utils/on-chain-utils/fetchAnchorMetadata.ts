@@ -294,9 +294,9 @@ async function fetchAnchorMetadata(
       typedChainId,
       provider
     );
+  } else {
+    metadata = await fetchEVMAnchorMetadata(anchorAddress, typedChainId);
   }
-
-  metadata = await fetchEVMAnchorMetadata(anchorAddress, typedChainId);
 
   return metadata;
 }

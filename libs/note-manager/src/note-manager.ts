@@ -376,9 +376,7 @@ export class NoteManager {
     };
 
     // Convert the amount to units of wei
-    const utxo = await (backend == 'Arkworks'
-      ? Utxo.generateUtxo(input)
-      : CircomUtxo.generateUtxo(input));
+    const utxo = await CircomUtxo.generateUtxo(input);
 
     const noteInput: NoteGenInput = {
       ...this.defaultNoteGenInput,
