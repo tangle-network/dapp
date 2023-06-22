@@ -13,7 +13,17 @@
         "tsConfig": "libs/api-provider-environment/tsconfig.lib.json",
         "assets": ["libs/api-provider-environment/*.md"]
       },
-      "dependsOn": ["fetch-on-chain-config"]
+      "dependsOn": [
+        {
+          "dependencies": true,
+          "target": "build"
+        },
+        {
+          "dependencies": true,
+          "target": "fetch-on-chain-config",
+          "params": "forward"
+        }
+      ]
     },
     "fetch-on-chain-config": {
       "executor": "nx:run-commands",
