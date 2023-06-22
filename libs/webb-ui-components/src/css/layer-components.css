@@ -117,7 +117,8 @@
 }
 
 .mkt-monospace {
-  @apply text-[14px] leading-[20px] md:text-[16px] md:leading-[24px] font-satoshi-var;
+  @apply text-[14px] leading-[20px] md:text-[16px] md:leading-[24px];
+  fontfamily: 'Satoshi Variable';
 }
 
 @media screen and (max-width: 800px) {
