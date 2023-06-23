@@ -382,6 +382,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
 
           const activeKey = val[0];
           const nextKey = val[1];
+
           return {
             val: [
               activeKey,

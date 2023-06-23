@@ -143,9 +143,9 @@ export const useStaticConfig = () => {
 
 export const useActiveSession = () => {
   const {
-    metaData: { activeSession },
+    dkgDataFromPolkadotAPI: { currentSessionNumber },
   } = useStatsContext();
-  return activeSession;
+  return String(currentSessionNumber);
 };
 
 export const StatsProvider: React.FC<
@@ -267,6 +267,9 @@ export const StatsProvider: React.FC<
     };
 
     getPromiseApi();
+
+    const intervalId = setInterval(getPromiseApi, 10000);
+    return () => clearInterval(intervalId);
   }, [props.polkadotEndpoint]);
 
   useEffect(() => {
