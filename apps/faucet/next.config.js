@@ -14,6 +14,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/',
+        headers: [
+          {
+            key: 'x-header',
+            value: 'value',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: createSecureHeaders({
           frameGuard: 'sameorigin',
@@ -23,6 +32,11 @@ const nextConfig = {
           {
             key: 'Content-Security-Policy',
             value: 'upgrade-insecure-requests',
+          },
+          {
+            key: 'Permissions-Policy',
+            value:
+              'camera=(), microphone=(), geolocation=(), browsing-topics=()',
           },
         ]),
       },
