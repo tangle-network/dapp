@@ -1,4 +1,5 @@
-extends = "../../netlify.base.toml"
+[[plugins]]
+package = "@netlify/plugin-nextjs"
 
 [build]
 command = "yarn nx build webbsite"
