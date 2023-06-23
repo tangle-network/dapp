@@ -8,7 +8,7 @@ import {
 import { onError } from '@apollo/client/link/error';
 import { Header } from '../../components';
 import { StatsProvider } from '../../provider';
-import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { FC, PropsWithChildren, useMemo, useState } from 'react';
 import { Footer, useWebbUI } from '@webb-tools/webb-ui-components';
 import { RetryLink } from '@apollo/client/link/retry';
 import { NavBoxInfoContainer } from '../NavBlocksInfoContainer';
@@ -18,6 +18,7 @@ import {
   NetworkType,
 } from '@webb-tools/webb-ui-components/constants';
 import { isValidSubqueryEndpoint } from '../../utils';
+import cx from 'classnames';
 
 export const Layout: FC<PropsWithChildren> = ({ children }) => {
   const { notificationApi } = useWebbUI();
@@ -137,24 +138,41 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div className="min-w-full min-h-full">
-      <Header
-        selectedNetwork={selectedNetwork}
-        setUserSelectedNetwork={setUserSelectedNetwork}
-        selectedNetworkType={selectedNetworkType}
-        setSelectedNetworkType={setSelectedNetworkType}
-      />
+    <div>
+      <div
+        className={cx(
+          'w-full mx-auto flex-1 pb-10 h-[1900px]',
+          "bg-[url('assets/stats-bg.png')] dark:bg-[url('assets/stats-dark-bg.png')]",
+          'bg-no-repeat bg-cover'
+        )}
+      >
+        <Header
+          selectedNetwork={selectedNetwork}
+          setUserSelectedNetwork={setUserSelectedNetwork}
+          selectedNetworkType={selectedNetworkType}
+          setSelectedNetworkType={setSelectedNetworkType}
+        />
 
-      <ApolloProvider client={apolloClient}>
-        <StatsProvider
-          subqueryEndpoint={subqueryEndpoint}
-          polkadotEndpoint={polkadotEndpoint}
-        >
-          <NavBoxInfoContainer />
-          <main className="max-w-[1160px] mx-auto">{children}</main>
-        </StatsProvider>
-      </ApolloProvider>
-      <Footer />
+        <ApolloProvider client={apolloClient}>
+          <StatsProvider
+            subqueryEndpoint={subqueryEndpoint}
+            polkadotEndpoint={polkadotEndpoint}
+            dkgDataFromPolkadotAPI={{
+              currentKey: '',
+              currentSessionNumber: 0,
+              nextKey: '',
+              nextSessionNumber: 0,
+            }}
+          >
+            <NavBoxInfoContainer />
+            <main className="max-w-[1160px] mx-auto">{children}</main>
+          </StatsProvider>
+        </ApolloProvider>
+      </div>
+
+      <div className="max-w-[1160px] mx-auto">
+        <Footer />
+      </div>
     </div>
   );
 };

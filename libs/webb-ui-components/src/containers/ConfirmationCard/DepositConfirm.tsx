@@ -212,13 +212,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 }}
                 rightContent={depositingInfoStr}
               />
-              <InfoItem
-                leftTextProps={{
-                  variant: 'utility',
-                  title: 'Max fee',
-                }}
-                rightContent={feeContent}
-              />
             </div>
           </div>
         </div>

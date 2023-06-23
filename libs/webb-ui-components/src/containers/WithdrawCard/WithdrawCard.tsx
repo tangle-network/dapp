@@ -19,7 +19,9 @@ import {
   RelayerInput,
   Switcher,
   TokenInput,
+  ConnectWalletMobileButton,
 } from '../../components';
+import { useCheckMobile } from '../../hooks';
 import { Typography } from '../../typography';
 import { WithdrawCardProps } from './types';
 
@@ -43,6 +45,7 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     },
     ref
   ) => {
+    const { isMobile } = useCheckMobile();
     // Internal switcher state
     const [switcherChecked, setSwitcherChecked] = useState(
       () => unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked
@@ -97,10 +100,13 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
             <div className="flex space-x-2">
               <TokenInput
                 {...tokenInputProps}
+                title="Shielded Pool"
+                info="Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction."
                 className="grow shrink-0 basis-1"
               />
               <TokenInput
                 {...unwrappingAssetProps}
+                title="Token"
                 className={cx('grow shrink-0 basis-1', {
                   hidden: !switcherChecked,
                 })}
@@ -141,13 +147,20 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          <Button
-            {...withdrawBtnProps}
-            isFullWidth
-            className={twMerge('justify-center', withdrawBtnProps?.className)}
-          >
-            {withdrawBtnProps?.children ?? 'Withdraw'}
-          </Button>
+          {!isMobile ? (
+            <Button
+              {...withdrawBtnProps}
+              isFullWidth
+              className={twMerge(
+                'flex justify-center',
+                withdrawBtnProps?.className
+              )}
+            >
+              {withdrawBtnProps?.children ?? 'Withdraw'}
+            </Button>
+          ) : (
+            <ConnectWalletMobileButton isFullWidth />
+          )}
 
           {buttonDesc && (
             <Typography

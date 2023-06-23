@@ -1,9 +1,13 @@
-import { WebbComponentBase } from '../../types';
+import { DropdownMenuItemProps } from '@radix-ui/react-dropdown-menu';
+
+import { IWebbComponentBase } from '../../types';
 
 /**
  * `MenuItem` component's props
  */
-export interface MenuItemProps extends WebbComponentBase {
+export interface MenuItemProps
+  extends IWebbComponentBase,
+    DropdownMenuItemProps {
   /**
    * The icon displayed before the text
    */

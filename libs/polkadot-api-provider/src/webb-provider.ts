@@ -28,11 +28,12 @@ import {
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
+  CircomUtxo,
+  parseTypedChainId,
   Utxo,
   UtxoGenInput,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
-  parseTypedChainId,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -42,15 +43,15 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { BridgeStorage } from '@webb-tools/browser-utils';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
-import { Storage } from '@webb-tools/storage';
 import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
+import type { Backend } from '@webb-tools/wasm-utils';
 import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
@@ -60,8 +61,9 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-
 import { getLeaves } from './mt-utils';
+import { Storage } from '@webb-tools/storage';
+import { BridgeStorage } from '@webb-tools/browser-utils';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -84,12 +86,15 @@ export class WebbPolkadot
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend = 'Arkworks';
+  readonly backend: Backend = 'Circom';
 
   private _newBlock = new BehaviorSubject<null | number>(null);
 
   // Map to store the max edges for each tree id
   private readonly vAnchorMaxEdges = new Map<string, number>();
+
+  // Map to store the vAnchor levels for each tree id
+  private readonly vAnchorLevels = new Map<string, number>();
 
   private smallFixtures: ZkComponents | null = null;
 
@@ -450,24 +455,14 @@ export class WebbPolkadot
     maxEdges: number,
     isSmall?: boolean
   ): Promise<ZkComponents> {
-    const dummyAbortSignal = new AbortController().signal;
-
     if (isSmall) {
       if (this.smallFixtures) {
         return this.smallFixtures;
       }
 
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        isSmall,
-        true // isSubstrate
-      );
+      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
-      const smallWasm = await fetchVAnchorWasmFromAws(
-        maxEdges,
-        isSmall,
-        dummyAbortSignal
-      );
+      const smallWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
 
       const smallFixtures = {
         zkey: smallKey,
@@ -483,17 +478,9 @@ export class WebbPolkadot
       return this.largeFixtures;
     }
 
-    const largeKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      !!isSmall,
-      true // isSubstrate
-    );
+    const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
-    const largeWasm = await fetchVAnchorWasmFromAws(
-      maxEdges,
-      !!isSmall,
-      dummyAbortSignal
-    );
+    const largeWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
 
     const largeFixtures = {
       zkey: largeKey,
@@ -503,44 +490,6 @@ export class WebbPolkadot
 
     this.largeFixtures = largeFixtures;
     return largeFixtures;
-  }
-
-  /**
-   * Get the zero knowledge vanchor proving key
-   * @param maxEdges the max number of edges in the merkle tree
-   * @param isSmall whether fixtures are for small inputs (less than or equal to 2 inputs)
-   * @returns zk proving key
-   */
-  async getZkVAnchorKey(maxEdges: number, isSmall?: boolean) {
-    if (isSmall) {
-      if (this.smallFixtures) {
-        return this.smallFixtures.zkey;
-      }
-
-      const smallKey = await fetchVAnchorKeyFromAws(
-        maxEdges,
-        isSmall,
-        true // isSubstrate
-      );
-
-      // Return the key without storing it in the cache
-      // because we cached the response already in browser cache
-      return smallKey;
-    }
-
-    if (this.largeFixtures) {
-      return this.largeFixtures.zkey;
-    }
-
-    const largeKey = await fetchVAnchorKeyFromAws(
-      maxEdges,
-      !!isSmall,
-      true // isSubstrate
-    );
-
-    // Return the key without storing it in the cache
-    // because we cached the response already in browser cache
-    return largeKey;
   }
 
   async getVAnchorMaxEdges(
@@ -570,7 +519,37 @@ export class WebbPolkadot
     return maxEdges.toNumber();
   }
 
+  async getVAnchorLevels(
+    treeId: string,
+    provider?: providers.Provider | ApiPromise
+  ): Promise<number> {
+    if (provider instanceof providers.Provider) {
+      console.error(
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+      );
+      provider = this.api;
+    }
+
+    const storedLevels = this.vAnchorLevels.get(treeId);
+    if (storedLevels) {
+      return storedLevels;
+    }
+
+    const api = provider || this.api;
+    const treeData = await api.query.merkleTreeBn254.trees(treeId);
+    if (treeData.isNone) {
+      throw WebbError.from(WebbErrorCodes.TreeNotFound);
+    }
+
+    const treeMedata = treeData.unwrap();
+    const levels = treeMedata.depth.toNumber();
+
+    this.vAnchorLevels.set(treeId, levels);
+
+    return levels;
+  }
+
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {
-    return Utxo.generateUtxo(input);
+    return CircomUtxo.generateUtxo(input);
   }
 }

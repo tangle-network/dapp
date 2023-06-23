@@ -5,21 +5,16 @@ import {
   CloseCircleLineIcon,
   Menu,
 } from '@webb-tools/icons';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  Button,
-  Dropdown,
-  DropdownBasicButton,
-  DropdownBody,
-  MenuItem,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { FC, forwardRef, useMemo } from 'react';
+
+import { Typography } from '../../typography';
+import { Accordion, AccordionContent, AccordionItem } from '../Accordion';
+import { Button } from '../Button';
+import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
+import { MenuItem } from '../MenuItem';
 import { InternalOrExternalLink } from './InternalOrExternalLink';
-import { MobileNavProps, NavbarProps, NavItemType } from './types';
+import { MobileNavProps, NavItemType, NavbarProps } from './types';
 
 const isNavItem = (item: any): item is NavItemType => {
   return 'label' in item && 'url' in item;
@@ -63,7 +58,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                   </DropdownBasicButton>
 
                   <DropdownBody
-                    isPorttal={false}
+                    isPortal={false}
                     className="p-4 mt-4 space-y-4 w-[374px]"
                     size="sm"
                     align="start"
@@ -75,7 +70,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                         isInternal={subItem.isInternal}
                       >
                         <MenuItem
-                          className="px-4 py-2 rounded-lg hover:text-blue-70"
+                          className="navbar-item px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
                           icon={
                             <ArrowRight className="!fill-current" size="lg" />
                           }
@@ -122,7 +117,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
       </DropdownBasicButton>
 
       <DropdownBody
-        isPorttal={false}
+        isPortal={false}
         className="mt-4 p-4 space-y-4 w-screen sm:w-[374px]"
         size="sm"
         align="start"

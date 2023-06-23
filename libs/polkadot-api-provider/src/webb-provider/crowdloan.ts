@@ -49,7 +49,7 @@ export class PolkadotCrowdloan extends Crowdloan<
       },
       [
         contributePayload.parachainId,
-        contributePayload.amount._getInner(),
+        contributePayload.amount,
         undefined, // required
       ]
     );

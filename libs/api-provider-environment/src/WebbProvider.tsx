@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
@@ -9,18 +8,19 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
+  NetworkStorage,
   keypairStorageFactory,
   netStorageFactory,
-  NetworkStorage,
   noteStorageFactory,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import {
   ApiConfig,
   Chain,
+  Wallet,
   chainsConfig,
   chainsPopulated,
-  Wallet,
+  parseOnChainData,
   walletsConfig,
 } from '@webb-tools/dapp-config';
 import {
@@ -39,18 +39,17 @@ import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { SettingProvider } from '@webb-tools/react-environment';
 import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
-import { DimensionsProvider } from '@webb-tools/responsive-utils';
 import {
-  calculateTypedChainId,
   ChainType,
   Keypair,
+  calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
   Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
 } from '@webb-tools/web3-api-provider';
-import { notificationApi } from '@webb-tools/webb-ui-components/components/Notification';
+import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TAppEvent } from './app-event';
@@ -58,8 +57,8 @@ import constants from './constants';
 import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import { useTxApiQueue } from './transaction';
-import { evmProviderFactory, substrateProviderFactory } from './utils';
 import { WebbContext } from './webb-context';
+import onChainDataJson from './generated/on-chain-config.json';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -83,8 +82,14 @@ const registerInteractiveFeedback = (
   });
 };
 
-const defaultApiConfig = ApiConfig.init({
+const { currencies, anchors, fungibleToWrappableMap } =
+  parseOnChainData(onChainDataJson);
+
+const apiConfig = ApiConfig.init({
+  anchors,
   chains: chainsConfig,
+  currencies,
+  fungibleToWrappableMap,
   wallets: walletsConfig,
 });
 
@@ -96,7 +101,7 @@ function notificationHandler(notification: NotificationPayload) {
       const description = notification.data ? (
         <div>
           {Object.keys(notification.data).map((i, idx) => (
-            <Typography variant={'h6'} key={`${i}${idx}`}>
+            <Typography variant="body1" key={`${i}${idx}`}>
               {notification.data?.[i]}
             </Typography>
           ))}
@@ -181,8 +186,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
     InteractiveFeedback[]
   >([]);
-
-  const [apiConfig, setApiConfig] = useState<ApiConfig>(defaultApiConfig);
 
   /// An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
   useEffect(() => {
@@ -356,7 +359,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           alert(code);
       }
     },
-    [apiConfig, appEvent]
+    [appEvent]
   );
 
   const loginNoteAccount = useCallback(
@@ -424,11 +427,20 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     async (
       chain: Chain,
       _wallet: Wallet,
-      _networkStorage?: NetworkStorage | undefined
+      _networkStorage?: NetworkStorage | undefined,
+      _bridge?: Bridge | undefined
     ) => {
-      const relayerManagerFactory = await getRelayerManagerFactory();
-
       const wallet = _wallet || activeWallet;
+
+      const nextTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.chainId
+      );
+
+      const sharedWalletConnectionPayload = {
+        walletId: wallet.id,
+        typedChainId: { chainId: chain.chainId, chainType: chain.chainType },
+      };
 
       // wallet cleanup
       /// if new wallet id isn't the same of the current then the dApp is dealing with api change
@@ -438,18 +450,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       try {
         setLoading(true);
-        appEvent.send('walletConnectionState', 'loading');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'loading',
+        });
+
+        const relayerManagerFactory = await getRelayerManagerFactory();
 
         /// init the active api value
         let localActiveApi: WebbApiProvider<any> | null = null;
-
-        const apiConfig = await ApiConfig.initFromApi(
-          defaultApiConfig,
-          evmProviderFactory,
-          substrateProviderFactory
-        );
-
-        setApiConfig(apiConfig);
 
         switch (wallet.id) {
           case WalletId.Polkadot:
@@ -459,10 +468,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
               const url = chain.url;
-              const typedChainId = calculateTypedChainId(
-                chain.chainType,
-                chain.chainId
-              );
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
@@ -473,7 +478,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       setInteractiveFeedbacks,
                       feedback
                     );
-                    appEvent.send('walletConnectionState', 'failed');
+                    appEvent.send('walletConnectionState', {
+                      ...sharedWalletConnectionPayload,
+                      status: 'failed',
+                    });
                   },
                 },
                 relayerManager,
@@ -486,7 +494,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                       import.meta.url
                     )
                   ),
-                typedChainId,
+                nextTypedChainId,
                 wallet
               );
 
@@ -502,7 +510,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 localActiveApi.noteManager = noteManager;
               }
 
-              appEvent.send('walletConnectionState', 'sucess');
+              appEvent.send('walletConnectionState', {
+                ...sharedWalletConnectionPayload,
+                status: 'sucess',
+              });
               setLoading(false);
             }
             break;
@@ -664,14 +675,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.chainId) {
-                const typedChainId = calculateTypedChainId(
-                  ChainType.EVM,
-                  chain.chainId
-                );
                 const currency = Object.values(apiConfig.currencies).find(
                   (c) =>
                     c.type === CurrencyType.NATIVE &&
-                    Array.from(c.addresses.keys()).includes(typedChainId)
+                    Array.from(c.addresses.keys()).includes(nextTypedChainId)
                 );
                 if (!currency) {
                   throw new Error('Native token not found');
@@ -697,7 +704,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 const newChainId = newNetwork.chainId;
 
                 if (newChainId != chain.chainId) {
-                  appEvent.send('walletConnectionState', 'failed');
                   throw new Error('User rejected network switch');
                 }
 
@@ -728,17 +734,27 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         setActiveChain(chain);
         setActiveWallet(wallet);
         setLoading(false);
-        appEvent.send('walletConnectionState', 'sucess');
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'sucess',
+        });
+
+        // If the _bridge is passed in, set it as the active bridge
+        if (localActiveApi?.state && _bridge) {
+          localActiveApi.state.activeBridge = _bridge;
+        }
 
         return localActiveApi;
       } catch (e) {
         setLoading(false);
         logger.error(e);
 
-        appEvent.send('walletConnectionState', 'failed');
+        let err: WebbError | undefined = undefined;
+
         if (e instanceof WebbError) {
           /// Catch the errors for the switcher while switching
           catchWebbError(e);
+          err = e;
         } else {
           // Parse and display error
           const parsedError = parseError(e);
@@ -748,6 +764,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             secondaryMessage: parsedError.message,
           });
         }
+
+        appEvent.send('walletConnectionState', {
+          ...sharedWalletConnectionPayload,
+          status: 'failed',
+          error: err,
+        });
 
         return null;
       }
@@ -765,11 +787,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
   /// a util will store the network/wallet config before switching
   const switchChainAndStore = useCallback(
-    async (chain: Chain, wallet: Wallet) => {
+    async (chain: Chain, wallet: Wallet, bridge?: Bridge) => {
       setIsConnecting(true);
 
       try {
-        const provider = await switchChain(chain, wallet);
+        const provider = await switchChain(chain, wallet, undefined, bridge);
         /** TODO: `networkStorage` can be `null` here.
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous
@@ -940,9 +962,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       }}
     >
       <StoreProvider>
-        <SettingProvider>
-          <DimensionsProvider>{children}</DimensionsProvider>
-        </SettingProvider>
+        <SettingProvider>{children}</SettingProvider>
       </StoreProvider>
     </WebbContext.Provider>
   );

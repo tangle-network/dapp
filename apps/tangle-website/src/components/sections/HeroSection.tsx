@@ -1,33 +1,51 @@
-import { Socials } from '@webb-tools/webb-ui-components';
+import Image from 'next/image';
+import { Socials, Typography } from '@webb-tools/webb-ui-components';
+import {
+  WEBB_DOCS_URL,
+  STATS_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
-import { Heading, SectionDescription, LinkButton } from '..';
-import { STATS_DEV_URL, WEBB_DOCS_URL } from '../../constants';
+import { LinkButton } from '..';
 
 export const HeroSection = () => {
   return (
     <section>
-      <div className="max-w-[1440px] mx-auto flex flex-col items-stretch lg:flex-row md:px-4 lg:px-6">
-        <div className="flex-1 flex items-center bg-purple-10 px-5 py-16 md:py-32 md:pl-4 md:pr-36 lg:p-0">
-          <div className="flex flex-col gap-8 lg:w-[65%] lg:ml-[132.5px]">
-            <Heading className="w-3/5 text-mono-200">Tangle Network</Heading>
-            <SectionDescription>
-              The next-generation TSS based blockchain powering cross-chain
-              zero-knowledge messaging and applications.
-            </SectionDescription>
-            <div className="flex gap-4">
-              <LinkButton
-                href={WEBB_DOCS_URL}
-                variant="secondary"
-                className="bg-inherit"
+      <div className="flex flex-col items-stretch mx-auto lg:flex-row md:px-0">
+        <div className="flex items-center justify-end flex-1 px-5 py-16 bg-purple-10 md:py-32 lg:py-0 lg:px-0">
+          <div className="lg:w-full lg:max-w-[716px]">
+            <div className="flex flex-col gap-8 md:w-[80%] lg:w-[70%] lg:ml-[22.5%] lg:py-6">
+              <Typography
+                variant="mkt-h2"
+                className="w-3/5 font-black text-mono-200"
               >
-                Read Docs
-              </LinkButton>
-              <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+                Tangle Network
+              </Typography>
+              <Typography
+                variant="mkt-subheading"
+                className="font-medium text-mono-140"
+              >
+                The next-generation blockchain for seamless and private
+                cross-chain messaging and applications.
+              </Typography>
+              <div className="flex gap-4">
+                <LinkButton
+                  href={WEBB_DOCS_URL}
+                  variant="secondary"
+                  className="bg-inherit px-5 md:px-9"
+                >
+                  Read Docs
+                </LinkButton>
+                <LinkButton href={STATS_URL} className="px-5 md:px-9">
+                  View Network
+                </LinkButton>
+              </div>
+              <Socials />
             </div>
-            <Socials />
           </div>
         </div>
-        <div className="bg-hero_section w-full flex-1 bg-cover bg-no-repeat bg-center object-fill min-h-[459.98px] md:min-h-[791px] lg:border" />
+        <div className="relative aspect-[864/765] w-full flex-1">
+          <Image src={'/static/assets/hero-banner.jpeg'} alt="hero-img" fill />
+        </div>
       </div>
     </section>
   );

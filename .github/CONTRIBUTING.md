@@ -15,7 +15,6 @@ Reading and following these guidelines will help us make the contribution proces
     - [Pull Requests](#pull-requests)
   - [Getting Help](#getting-help)
 
-
 ## Getting Started
 
 Contributions are made to this repo via Issues and Pull Requests (PRs). A few general guidelines that cover both:

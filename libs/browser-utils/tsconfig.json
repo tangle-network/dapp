@@ -6,9 +6,8 @@
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "declaration": true,
+    "declaration": true
   },
   "files": [],
   "include": [],

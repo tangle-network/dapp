@@ -237,7 +237,7 @@ export const StatsProvider: React.FC<
         (Number(await apiPromise.consts.timestamp.minimumPeriod) * 2) / 1000;
       setBlockTime(blockTime);
       const sessionPeriod = await apiPromise.consts.dkg.sessionPeriod;
-      const sessionHeight = Number(sessionPeriod.toString()) * 12;
+      const sessionHeight = Number(sessionPeriod.toString()) * blockTime;
       setSessionHeight(sessionHeight);
 
       // Get DKG data from Polkadot API
@@ -289,7 +289,7 @@ export const StatsProvider: React.FC<
   }, [query]);
 
   const metaDataQuery = useMetaDataQuery({
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'network-only',
   });
 
   useEffect(() => {

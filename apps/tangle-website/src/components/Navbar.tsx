@@ -1,4 +1,5 @@
 import { AccordionTrigger } from '@radix-ui/react-accordion';
+import cx from 'classnames';
 import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
 import {
   Typography,
@@ -10,8 +11,11 @@ import {
   DropdownBody,
   MenuItem,
 } from '@webb-tools/webb-ui-components';
-import cx from 'classnames';
-import { TANGLE_NETWORK_DOCS_URL, STATS_DEV_URL } from '../constants';
+import {
+  TANGLE_DOCS_URL,
+  STATS_URL,
+} from '@webb-tools/webb-ui-components/constants';
+
 import { InternalOrExternalLink, IInternalOrExternalLink, LinkButton } from '.';
 
 type NavItem = IInternalOrExternalLink;
@@ -26,7 +30,7 @@ const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
     url: '#community',
     isInternal: true,
   },
-  { label: 'docs', url: TANGLE_NETWORK_DOCS_URL },
+  { label: 'docs', url: TANGLE_DOCS_URL },
   {
     label: 'ecosystem',
     url: '#',
@@ -68,7 +72,7 @@ export const Navbar = () => {
                 </DropdownBasicButton>
 
                 <DropdownBody
-                  isPorttal={false}
+                  isPortal={false}
                   className="p-4 mt-4 space-y-4 w-[374px]"
                   size="sm"
                   align="start"
@@ -96,7 +100,9 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <LinkButton href={STATS_DEV_URL}>View Network</LinkButton>
+          <LinkButton href={STATS_URL} className="px-5 md:px-9">
+            View Network
+          </LinkButton>
         </li>
 
         <li className="flex items-center justify-center md:hidden">
@@ -115,7 +121,7 @@ const MobileNav = () => {
       </DropdownBasicButton>
 
       <DropdownBody
-        isPorttal={false}
+        isPortal={false}
         className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
         size="sm"
         align="start"

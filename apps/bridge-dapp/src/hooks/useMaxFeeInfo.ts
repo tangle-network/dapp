@@ -28,15 +28,12 @@ type UseMaxFeeInfoReturnType = {
   feeInfo: RelayerFeeInfo | BigNumber | null;
 
   /**
-   * Fetch the max fee info for the current active chain
+   * Fetch the max fee info from the relayer if the active relayer is provided
+   * Otherwise, calculate the max fee info from the gas price * hard-coded gas limit
+   * @param activeRelayer The optional relayer to fetch the fee info from
+   * @returns void
    */
-  fetchMaxFeeInfo: () => Promise<void>;
-
-  /**
-   * Fetch the max fee info for the current active chain from a specific relayer
-   * @param relayer The relayer to fetch the max fee info from
-   */
-  fetchMaxFeeInfoFromRelayer: (relayer: ActiveWebbRelayer) => Promise<void>;
+  fetchFeeInfo: (activeRelayer?: ActiveWebbRelayer | null) => Promise<void>;
 
   /**
    * Reset the states inside the hook
@@ -152,7 +149,7 @@ export const useMaxFeeInfo = (
     [activeChain, apiConfig, opt?.fungibleCurrencyId]
   );
 
-  const fetchMaxFeeInfo = useCallback(async () => {
+  const calculateFeeInfo = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -203,6 +200,17 @@ export const useMaxFeeInfo = (
     }
   }, [activeApi, activeChain]);
 
+  const fetchFeeInfo = useCallback(
+    async (activeRelayer?: ActiveWebbRelayer | null) => {
+      if (activeRelayer) {
+        return fetchMaxFeeInfoFromRelayer(activeRelayer);
+      } else {
+        return calculateFeeInfo();
+      }
+    },
+    [calculateFeeInfo, fetchMaxFeeInfoFromRelayer]
+  );
+
   const resetMaxFeeInfo = useCallback(() => {
     setError(null);
     setIsLoading(false);
@@ -215,15 +223,15 @@ export const useMaxFeeInfo = (
       const message = getErrorMessage(error);
       notificationApi.addToQueue({
         variant: 'error',
-        message,
+        message: 'Failed to fetch max fee info',
+        secondaryMessage: message,
       });
     }
   }, [error, notificationApi, opt?.isHiddenNotiError]);
 
   return {
     feeInfo,
-    fetchMaxFeeInfoFromRelayer,
-    fetchMaxFeeInfo,
+    fetchFeeInfo,
     resetMaxFeeInfo,
     isLoading,
     error,

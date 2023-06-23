@@ -11,13 +11,15 @@ import {
 } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
-  getRoundedAmountString,
   TransactionItemStatus,
   TransactionPayload,
+  getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BehaviorSubject } from 'rxjs';
 
-function transactionItemStatusFromTxStatus<Key extends TransactionState>(
+function transactionItemStatusFromTxStatus(
   txStatus: TransactionState
 ): TransactionItemStatus {
   switch (txStatus) {
@@ -34,7 +36,6 @@ function transactionItemStatusFromTxStatus<Key extends TransactionState>(
 
 function mapTxToPayload(
   tx: Transaction<any>,
-  currencyConfig: Record<number, CurrencyConfig>,
   chainConfig: Record<number, ChainConfig>,
   dismissTransaction: (id: string) => void
 ): TransactionPayload {
@@ -98,6 +99,7 @@ function mapTxToPayload(
     method: tx.name as any,
   };
 }
+
 function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
@@ -105,27 +107,52 @@ function getTxMessageFromStatus<Key extends TransactionState>(
   switch (txStatus) {
     case TransactionState.Cancelling:
       return 'Canceling transaction';
+
     case TransactionState.Ideal:
       return 'Transaction in-progress';
+
     case TransactionState.PreparingTransaction:
       return 'Preparing transaction';
+
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
+
+    case TransactionState.FetchingLeavesFromRelayer:
+      return 'Fetching transaction leaves from the relayer...';
+
+    case TransactionState.ValidatingLeaves: {
+      const isValid = transactionStatusValue as undefined | boolean;
+      return isValid === undefined
+        ? 'Validating transaction leaves...'
+        : isValid
+        ? 'Transaction leaves are valid'
+        : 'Transaction leaves are invalid';
+    }
+
     case TransactionState.FetchingLeaves:
-      return 'Fetching transaction leaves...';
+      return 'Fetching transaction leaves on chain...';
+
     case TransactionState.GeneratingZk:
       return 'Generating zero knowledge proof...';
+
+    case TransactionState.InitializingTransaction:
+      return 'Initializing transaction...';
+
     case TransactionState.SendingTransaction:
       return 'Sending transaction...';
+
     case TransactionState.Intermediate:
       return `${transactionStatusValue.name}`;
+
     case TransactionState.Done:
       return 'Transaction completed';
+
     case TransactionState.Failed:
       return 'Transaction failed';
   }
   return '';
 }
+
 export type TransactionQueueApi = {
   txPayloads: TransactionPayload[];
   txQueue: Transaction<any>[];
@@ -146,148 +173,188 @@ export type TransactionQueueApi = {
     ): Transaction<NewNotesTxResult> | null;
   };
 };
+
+// The global transaction queue for the bridge dApp
+const txQueue$ = new BehaviorSubject<Transaction<NewNotesTxResult>[]>([]);
+
+const txPayloads$ = new BehaviorSubject<TransactionPayload[]>([]);
+
 export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
-  const [txQueue, setTxQueue] = useState<Transaction<any>[]>([]);
-  const [transactionPayloads, setTxPayloads] = useState<TransactionPayload[]>(
-    []
+  const { chains } = apiConfig;
+
+  const subscriptions = useRef(
+    new Map<string, Array<{ unsubscribe: () => void }>>()
   );
-  const { chains, currencies } = apiConfig;
-  const subscriptions =
-    useRef<Map<string, Array<{ unsubscribe: () => void }>>>();
+
+  const txQueue = useObservableState(txQueue$);
+
+  const txPayloads = useObservableState(txPayloads$);
+
   const [mainTxId, setMainTxId] = useState<null | string>(null);
-  useEffect(() => {
-    subscriptions.current = new Map();
-  }, []);
+
   /**
    * Action by the user to remove the transaction or Dismiss it
    *
    * */
   const dismissTransaction = useCallback(
     (id: string) => {
-      setTxQueue((txQueue) => {
-        return txQueue.filter((tx) => tx.id !== id);
-      });
-      if (subscriptions.current?.has(id)) {
+      const dismissTx = txQueue$.getValue().find((tx) => tx.id === id);
+      if (!dismissTx) {
+        return;
+      }
+
+      const nextTxQueue = txQueue$.getValue().filter((tx) => tx.id !== id);
+      txQueue$.next(nextTxQueue);
+
+      // Unsubscribe from the transaction
+      if (subscriptions.current.has(id)) {
         subscriptions.current.get(id)?.forEach((sub) => {
           sub.unsubscribe();
         });
       }
     },
-    [setTxQueue, subscriptions]
+    [subscriptions]
   );
 
   const registerTransaction = useCallback(
-    (tx: Transaction<any>) => {
+    (tx: Transaction<NewNotesTxResult>) => {
       setMainTxId(tx.id);
-      setTxQueue((queue) => {
-        const next = [...queue, tx];
-        setTxPayloads(
-          next.map((tx) =>
-            mapTxToPayload(tx, currencies, chains, dismissTransaction)
-          )
-        );
-        return [...queue, tx];
-      });
-      const sub = tx.$currentStatus.subscribe((updatedStatus) => {
-        setTxPayloads((txPayloads) => {
-          return txPayloads.map((txPayload) => {
-            if (txPayload.id !== tx.id) {
-              return txPayload;
+      const currentTxQueue = txQueue$.getValue();
+      txQueue$.next([...currentTxQueue, tx]);
+
+      // Subscribe to the transaction status
+      const statusSub = tx.$currentStatus.subscribe(
+        async ([nextTxState, nextTxData]) => {
+          if (nextTxState === TransactionState.Done) {
+            // Update the tx hash
+            const { txHash } = nextTxData as NewNotesTxResult;
+            tx.txHash = txHash;
+          }
+
+          if (nextTxState === TransactionState.SendingTransaction) {
+            // Update the tx hash
+            tx.txHash = nextTxData as string;
+          }
+
+          const payloads = txPayloads$.getValue();
+
+          const currentPayload = payloads.find(
+            (payload) => payload.id === tx.id
+          );
+          if (!currentPayload) {
+            return;
+          }
+
+          const nextStatus = transactionItemStatusFromTxStatus(nextTxState);
+          const nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
+
+          if (
+            nextStatus === currentPayload.txStatus.status &&
+            nextMessage === currentPayload.txStatus.message
+          ) {
+            return;
+          }
+
+          const nextPayloads = payloads.map((payload) => {
+            if (payload.id === tx.id) {
+              return {
+                ...payload,
+                txStatus: {
+                  ...payload.txStatus,
+                  status: nextStatus,
+                  message: nextMessage,
+                },
+              };
             }
-            const [txStatus, data] = updatedStatus;
+            return payload;
+          });
+
+          txPayloads$.next(nextPayloads);
+        }
+      );
+
+      // Substart to the transaction hash
+      const hashSub = tx.$txHash.subscribe((nextTxHash) => {
+        const payloads = txPayloads$.getValue();
+        const currentPayload = payloads.find((payload) => payload.id === tx.id);
+
+        if (!currentPayload) {
+          return;
+        }
+
+        if (nextTxHash === currentPayload.txStatus.txHash) {
+          return;
+        }
+
+        const nextPayloads = payloads.map((payload) => {
+          if (payload.id === tx.id) {
             return {
-              ...txPayload,
+              ...payload,
               txStatus: {
-                ...txPayload.txStatus,
-                status: transactionItemStatusFromTxStatus(txStatus),
-                message: getTxMessageFromStatus(txStatus, data),
+                ...payload.txStatus,
+                txHash: nextTxHash,
               },
             };
-          });
+          }
+          return payload;
         });
+
+        txPayloads$.next(nextPayloads);
       });
-      const txHashSub = tx.$txHash.subscribe((txHash) => {
-        setTxPayloads((txPayloads) => {
-          return txPayloads.map((txPayload) => {
-            if (txPayload.id !== tx.id) {
-              return txPayload;
-            }
-            return {
-              ...txPayload,
-              txStatus: {
-                ...txPayload.txStatus,
-                txHash,
-              },
-            };
-          });
-        });
-      });
-      subscriptions.current?.set(tx.id, [sub, txHashSub]);
+
+      // Update the subscriptions ref
+      subscriptions.current.set(tx.id, [statusSub, hashSub]);
     },
-    [
-      setTxQueue,
-      setTxPayloads,
-      subscriptions,
-      dismissTransaction,
-      currencies,
-      chains,
-    ]
-  );
-  const cancelTransaction = useCallback(
-    (id: string) => {
-      const tx = txQueue.find((tx) => tx.id === id);
-      tx?.cancel();
-    },
-    [txQueue]
+    []
   );
 
-  useEffect(() => {
-    setTxPayloads(
-      txQueue.map((tx) =>
-        mapTxToPayload(tx, currencies, chains, dismissTransaction)
-      )
-    );
-  }, [currencies, chains, txQueue, dismissTransaction]);
+  const cancelTransaction = useCallback((id: string) => {
+    const tx = txQueue$.getValue().find((tx) => tx.id === id);
+    tx?.cancel();
+  }, []);
 
   const startNewTransaction = useCallback(() => {
     setMainTxId(null);
-  }, [setMainTxId]);
+  }, []);
 
   const getLatestTransaction = useCallback(
     (
       name: 'Deposit' | 'Withdraw' | 'Transfer'
     ): Transaction<NewNotesTxResult> | null => {
-      const txes = txQueue.filter((tx) => tx.name === name);
+      const txes = txQueue$.getValue().filter((tx) => tx.name === name);
       if (txes.length === 0) {
         return null;
       }
       return txes[txes.length - 1];
     },
-    [txQueue]
+    []
   );
 
-  return useMemo(
-    () => ({
-      txQueue,
-      txPayloads: transactionPayloads,
-      currentTxId: mainTxId,
-      api: {
-        cancelTransaction,
-        dismissTransaction,
-        registerTransaction,
-        startNewTransaction,
-        getLatestTransaction,
-      },
-    }),
-    [
-      txQueue,
-      transactionPayloads,
-      mainTxId,
+  // Effect to subscribe to the txQueue and update the txPayloads
+  useEffect(() => {
+    const sub = txQueue$.subscribe((txQueue) => {
+      const nextPayloads = txQueue.map((tx) => {
+        return mapTxToPayload(tx, chains, dismissTransaction);
+      });
+
+      txPayloads$.next(nextPayloads);
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [chains, dismissTransaction]);
+
+  return {
+    txQueue,
+    txPayloads,
+    currentTxId: mainTxId,
+    api: {
       cancelTransaction,
       dismissTransaction,
       registerTransaction,
       startNewTransaction,
       getLatestTransaction,
-    ]
-  );
+    },
+  };
 }

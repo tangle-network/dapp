@@ -113,9 +113,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                 {isPage ? (
                   <div className="flex items-center">
                     <ArrowLeft size="lg" />
-                    <Typography variant={'body2'} fw="bold">
-                      Back to keys
-                    </Typography>
                   </div>
                 ) : (
                   <Expand size="lg" />

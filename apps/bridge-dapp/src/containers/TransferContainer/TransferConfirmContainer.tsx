@@ -8,11 +8,11 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
-  getRoundedAmountString,
   TransferConfirm,
+  getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { BigNumber, ethers } from 'ethers';
@@ -27,6 +27,7 @@ import {
   getTokenURI,
   getTransactionHash,
 } from '../../utils';
+import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
@@ -57,19 +58,20 @@ export const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const stage = useLatestTransactionStage('Transfer');
-
     const { api: vAnchorApi } = useVAnchor();
 
-    const progress = useTransactionProgressValue(stage);
-
-    const { activeApi, activeChain, apiConfig, noteManager } = useWebContext();
+    const { activeApi, activeChain, apiConfig, noteManager, txQueue } =
+      useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
-    const { api: txQueueApi, txPayloads } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+
+    const stage = useLatestTransactionStage(txId);
+
+    const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.chainId),
@@ -290,6 +292,9 @@ export const TransferConfirmContainer = forwardRef<
         }}
         note={changeNote?.serialize()}
         progress={progress}
+        recipientTitleProps={{
+          info: <RecipientPublicKeyTooltipContent />,
+        }}
         recipientPublicKey={recipient}
         relayerAddress={relayer?.beneficiary}
         relayerExternalUrl={relayer?.endpoint}

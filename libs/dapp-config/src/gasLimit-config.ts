@@ -5,6 +5,8 @@ export type GasLimitConfigType = {
   [typedChainId: number]: BigNumber;
 };
 
+export const DEFAULT_GAS_LIMIT = BigNumber.from(20000000);
+
 const gasLimitConfig: GasLimitConfigType = {
   // EVM
   [PresetTypedChainId.OptimismTestnet]: BigNumber.from(2000000),

@@ -110,7 +110,7 @@ const LoginWithTwitter = () => {
     const abortController = new AbortController();
 
     const loginWithTw = async () => {
-      if (!code || !state || error) {
+      if (!code || !state || error || !window) {
         if (state && error) {
           handleError(
             FaucetError.fromTwitterError(error),
@@ -124,7 +124,9 @@ const LoginWithTwitter = () => {
       setIsLoggingIn(true);
       setLoginError('');
 
-      const result = await loginWithTwitter(code, abortController.signal);
+      const uri = window.location.origin;
+
+      const result = await loginWithTwitter(code, uri, abortController.signal);
       if (!result) {
         setIsLoggingIn(false);
         return;
@@ -227,8 +229,8 @@ const LoginWithTwitter = () => {
           <Typography
             component="p"
             ta="center"
-            variant="mkt-utility"
-            className="!text-red-70 mt-2"
+            variant="mkt-caption"
+            className="!text-red-70 mt-2 font-medium"
           >
             {loginError}
           </Typography>

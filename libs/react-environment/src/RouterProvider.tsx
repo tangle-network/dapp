@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import React, {
+import {
   cloneElement,
   createElement,
   FC,
@@ -10,8 +10,8 @@ import React, {
 import {
   HashRouter as Router,
   useLocation,
-  useRoutes,
   useNavigate,
+  useRoutes,
 } from 'react-router-dom';
 
 import { StoreData, usePageTitle } from './store';
@@ -72,7 +72,7 @@ const Routes: FC<Props> = ({ config }) => {
 
   const element = useRoutes(_config, { ...location, key: location.pathname });
 
-  return <AnimatePresence exitBeforeEnter>{element};</AnimatePresence>;
+  return <AnimatePresence mode="wait">{element};</AnimatePresence>;
 };
 
 export const RouterProvider: FC<Props> = ({ config }) => {

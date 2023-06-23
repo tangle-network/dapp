@@ -14,6 +14,7 @@ export const useCurrencies = () => {
   const [wrappableCurrency, setWrappableCurrencyState] =
     useState<Currency | null>(null);
 
+  // Supported fungible currencies of the current chain
   const fungibleCurrencies = useMemo(() => {
     if (!activeChain) {
       return [];
@@ -36,7 +37,14 @@ export const useCurrencies = () => {
       .map((currencyConfig) => new Currency(currencyConfig));
   }, [activeChain, apiConfig.currencies]);
 
-  // Record where fungible currency id -> wrappable currencies
+  // All the fungible currencies
+  const allFungibleCurrencies = useMemo<Currency[]>(() => {
+    return apiConfig
+      .getCurrenciesBy({ role: CurrencyRole.Governable })
+      .map((c) => new Currency(c));
+  }, [apiConfig]);
+
+  // Record where fungible currency id -> wrappable currencies of the current chain
   const wrappableCurrenciesMap = useMemo(() => {
     if (!activeChain) {
       return {};
@@ -62,6 +70,27 @@ export const useCurrencies = () => {
     );
   }, [activeChain, apiConfig.fungibleToWrappableMap, apiConfig.currencies]);
 
+  // Record where fungible currency id -> wrappable currencies
+  const allWrappableCurrenciesMap = useMemo(() => {
+    return Array.from(apiConfig.fungibleToWrappableMap.entries()).reduce(
+      (prev, [fungibleId, typedChainIdWrappableMap]) => {
+        const wrappableIdSet = Array.from(
+          typedChainIdWrappableMap.values()
+        ).reduce((acc, set) => {
+          set.forEach((id) => acc.add(id));
+          return acc;
+        }, new Set<number>());
+
+        prev[fungibleId] = Array.from(wrappableIdSet.values()).map(
+          (id) => new Currency(apiConfig.currencies[id])
+        );
+
+        return prev;
+      },
+      {} as Record<number, Currency[]>
+    );
+  }, [apiConfig.currencies, apiConfig.fungibleToWrappableMap]);
+
   const wrappableCurrencies = useMemo(() => {
     if (!fungibleCurrency) {
       return [];
@@ -84,10 +113,14 @@ export const useCurrencies = () => {
    * Function to get the wrappable currencies for a given gorvened currency
    */
   const getWrappableCurrencies = useCallback(
-    (currencyId: number) => {
-      return wrappableCurrenciesMap[currencyId] || [];
+    (currencyId: number, onlyCurrentChain = true) => {
+      if (onlyCurrentChain) {
+        return wrappableCurrenciesMap[currencyId] || [];
+      }
+
+      return allWrappableCurrenciesMap[currencyId] || [];
     },
-    [wrappableCurrenciesMap]
+    [allWrappableCurrenciesMap, wrappableCurrenciesMap]
   );
 
   const setWrappableCurrency = useCallback(
@@ -152,6 +185,7 @@ export const useCurrencies = () => {
   }, [activeApi, loading]);
 
   return {
+    allFungibleCurrencies,
     fungibleCurrencies,
     fungibleCurrency,
     setFungibleCurrency,

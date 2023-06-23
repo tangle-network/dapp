@@ -1,13 +1,25 @@
 import { Account } from '@webb-tools/abstract-api-provider';
 import { Chain, Wallet } from '@webb-tools/dapp-config';
-import { TypedChainId, WalletId } from '@webb-tools/dapp-types';
+import {
+  InteractiveFeedback,
+  TypedChainId,
+  WalletId,
+  WebbError,
+} from '@webb-tools/dapp-types';
 import { EventBus } from '@webb-tools/app-util';
+
+type WalletConnectionStatus = 'idle' | 'loading' | 'sucess' | 'failed';
 
 export type AppEvents = {
   changeNetworkSwitcherVisibility: boolean;
   networkSwitched: [TypedChainId, WalletId];
   switchNetwork: [Chain, Wallet];
-  walletConnectionState: 'idle' | 'loading' | 'sucess' | 'failed';
+  walletConnectionState: {
+    typedChainId: TypedChainId;
+    error?: WebbError;
+    status: WalletConnectionStatus;
+    walletId: WalletId;
+  };
   setActiveAccount: Account;
 };
 

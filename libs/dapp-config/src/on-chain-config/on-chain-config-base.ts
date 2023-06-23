@@ -53,7 +53,7 @@ export abstract class OnChainConfigBase {
    */
   abstract fetchNativeCurrency(
     typedChainId: number,
-    provider?: ethers.providers.Provider | ApiPromise
+    provider?: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency | null>;
 
   /**
@@ -64,7 +64,7 @@ export abstract class OnChainConfigBase {
   abstract fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: ethers.providers.Provider | ApiPromise
+    provider: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency | null>;
 
   /**
@@ -77,7 +77,7 @@ export abstract class OnChainConfigBase {
   abstract fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: ethers.providers.Provider | ApiPromise
+    provider: ethers.providers.Web3Provider | ApiPromise
   ): Promise<ICurrency[]>;
 
   /**
@@ -93,7 +93,7 @@ export abstract class OnChainConfigBase {
     anchorConfig: Record<number, string[]>,
     providerFactory: (
       typedChainId: number
-    ) => Promise<ethers.providers.Provider | ApiPromise>,
+    ) => Promise<ethers.providers.Web3Provider | ApiPromise>,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
     existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
     existedAnchorConfig?: Record<number, ChainAddressConfig>
@@ -132,7 +132,8 @@ export abstract class OnChainConfigBase {
         wrappableCurrencies,
       }) => {
         // Add native currency
-        const currentNative = Object.values(currenciesConfig).find(
+        // First check if the native currency already exists in the config
+        const existedNative = Object.values(currenciesConfig).find(
           (currency) =>
             currency.name === nativeCurrency.name &&
             currency.symbol === nativeCurrency.symbol
@@ -140,8 +141,8 @@ export abstract class OnChainConfigBase {
 
         const { address: nativeAddr, ...restNative } = nativeCurrency;
 
-        if (!currentNative) {
-          const nextId = Object.keys(currenciesConfig).length + 1;
+        if (!existedNative) {
+          const nextId = Object.keys(currenciesConfig).length;
           currenciesConfig[nextId] = {
             ...restNative,
             id: nextId,
@@ -151,19 +152,20 @@ export abstract class OnChainConfigBase {
           };
         } else {
           if (
-            currentNative.addresses.has(typedChainId) &&
-            currentNative.addresses.get(typedChainId) !== nativeAddr
+            existedNative.addresses.has(typedChainId) &&
+            existedNative.addresses.get(typedChainId) !== nativeAddr
           ) {
             console.error(
-              `Native currency ${currentNative.name} already exists on chain ${typedChainId}`
+              `Native currency ${existedNative.name} already exists on chain ${typedChainId}`
             );
           }
 
-          currentNative.addresses.set(typedChainId, nativeAddr);
+          existedNative.addresses.set(typedChainId, nativeAddr);
         }
 
         // Add fungible currency
-        let currentFungible = Object.values(currenciesConfig).find(
+        // First check if the fungible currency already exists in the config
+        let existedFungible = Object.values(currenciesConfig).find(
           (currency) =>
             currency.name === fungibleCurrency.name &&
             currency.symbol === fungibleCurrency.symbol
@@ -171,44 +173,47 @@ export abstract class OnChainConfigBase {
 
         const { address: fungbileAddr, ...restFungible } = fungibleCurrency;
 
-        if (!currentFungible) {
+        if (!existedFungible) {
           const nextId = Object.keys(currenciesConfig).length + 1;
-          currentFungible = {
+          existedFungible = {
             ...restFungible,
             id: nextId,
             type: CurrencyType.ERC20,
             role: CurrencyRole.Governable,
             addresses: new Map([[typedChainId, fungbileAddr]]),
           };
-          currenciesConfig[nextId] = currentFungible;
+          currenciesConfig[nextId] = existedFungible;
         } else {
           if (
-            currentFungible.addresses.has(typedChainId) &&
-            currentFungible.addresses.get(typedChainId) !== fungbileAddr
+            existedFungible.addresses.has(typedChainId) &&
+            existedFungible.addresses.get(typedChainId) !== fungbileAddr
           ) {
             console.error(
-              `Fungible currency ${currentFungible.name} already exists on chain ${typedChainId}`
+              `Fungible currency ${existedFungible.name} already exists on chain ${typedChainId}`
             );
           }
 
-          currentFungible.addresses.set(typedChainId, fungbileAddr);
+          existedFungible.addresses.set(typedChainId, fungbileAddr);
         }
 
         // Add anchor
-        const anchor = anchorConfig[currentFungible.id];
-        if (!anchor) {
-          anchorConfig[currentFungible.id] = {
+        const existedAnchor = anchorConfig[existedFungible.id];
+        if (!existedAnchor) {
+          anchorConfig[existedFungible.id] = {
             [typedChainId]: anchorAddress,
           };
         } else {
-          if (anchor[typedChainId] && anchor[typedChainId] !== anchorAddress) {
+          if (
+            existedAnchor[typedChainId] &&
+            existedAnchor[typedChainId] !== anchorAddress
+          ) {
             console.error(
-              `Anchor for currency ${currentFungible.name} already exists on chain ${typedChainId}`,
-              `Current: ${anchor[typedChainId]}, new one: ${anchorAddress}`
+              `Anchor for currency ${existedFungible.name} already exists on chain ${typedChainId}`,
+              `Current: ${existedAnchor[typedChainId]}, new one: ${anchorAddress}`
             );
           }
 
-          anchor[typedChainId] = anchorAddress;
+          existedAnchor[typedChainId] = anchorAddress;
         }
 
         // Add wrappable currencies
@@ -250,10 +255,10 @@ export abstract class OnChainConfigBase {
 
         // Add fungible to wrappable map
         const wrappableIds = new Set(wrappableCurrencyConfigs.map((c) => c.id));
-        const wrappableMap = fungibleToWrappableMap.get(currentFungible.id);
+        const wrappableMap = fungibleToWrappableMap.get(existedFungible.id);
         if (!wrappableMap) {
           fungibleToWrappableMap.set(
-            currentFungible.id,
+            existedFungible.id,
             new Map([[typedChainId, wrappableIds]])
           );
         } else {

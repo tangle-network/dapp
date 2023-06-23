@@ -9,7 +9,10 @@ import {
   ChainInput,
   InfoItem,
   TokenInput,
+  ConnectWalletMobileButton,
+  Alert,
 } from '../../components';
+import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';
 import { DepositCardProps } from './types';
 
@@ -31,6 +34,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     },
     ref
   ) => {
+    const { isMobile } = useCheckMobile();
     const { amount, fee } = useMemo(() => {
       const amount = !amountInputProps.amount
         ? '--'
@@ -67,7 +71,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           <BridgeInputGroup className="flex flex-col space-y-2">
             <ChainInput {...sourceChainProps} chainType="source" />
 
-            <div className="flex space-x-2">
+            <div className="hidden lg:flex space-x-2">
               <TokenInput
                 {...tokenInputProps}
                 className="grow shrink-0 basis-1"
@@ -76,10 +80,19 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
               {bridgingTokenProps && (
                 <TokenInput
                   {...bridgingTokenProps}
-                  title="Bridging Token"
+                  title="Shielded Pool"
+                  info="Shielded pools hold mixed crypotcurrency and are used to maintain privacy of the transaction."
                   className="grow shrink-0 basis-1"
                 />
               )}
+            </div>
+
+            <div className="flex lg:hidden gap-2">
+              <TokenInput title="Deposit" className="grow shrink-0 basis-1" />
+              <TokenInput
+                title="Shielded Pool"
+                className="lg:hidden grow shrink-0 basis-1"
+              />
             </div>
           </BridgeInputGroup>
 
@@ -98,30 +111,26 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
               }}
               rightContent={amount}
             />
-
-            <InfoItem
-              leftTextProps={{
-                title: feePercentage ? `Fee (${feePercentage}%)` : `Max fee`,
-                variant: 'utility',
-              }}
-              rightContent={fee}
-            />
           </div>
         </div>
 
-        <Button
-          {...buttonProps}
-          isFullWidth
-          className={twMerge('justify-center', buttonProps.className)}
-        >
-          {typeof buttonProps.children === 'string' ? (
-            <Typography variant="body1" fw="bold" className="!text-inherit">
-              {buttonProps.children}
-            </Typography>
-          ) : (
-            buttonProps.children ?? 'Deposit'
-          )}
-        </Button>
+        {!isMobile ? (
+          <Button
+            {...buttonProps}
+            isFullWidth
+            className={twMerge('flex justify-center', buttonProps.className)}
+          >
+            {typeof buttonProps.children === 'string' ? (
+              <Typography variant="body1" fw="bold" className="!text-inherit">
+                {buttonProps.children}
+              </Typography>
+            ) : (
+              buttonProps.children ?? 'Deposit'
+            )}
+          </Button>
+        ) : (
+          <ConnectWalletMobileButton isFullWidth />
+        )}
       </div>
     );
   }

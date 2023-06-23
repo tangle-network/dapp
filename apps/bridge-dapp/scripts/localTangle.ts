@@ -29,6 +29,7 @@ import getLocalApi from './utils/getLocalApi';
 import getKeyring from './utils/getKeyRing';
 import transferAsset from './utils/transferAsset';
 
+// TODO: Replace this lib with `execa`
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const shelljs = require('shelljs');
 

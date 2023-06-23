@@ -3,6 +3,7 @@
 
 export * from './ext-provider/polkadot-provider';
 export * from './transaction';
+export * from './utils';
 export * from './webb-provider';
 export * from './webb-provider/bridge-api';
 export * from './webb-provider/chain-query';

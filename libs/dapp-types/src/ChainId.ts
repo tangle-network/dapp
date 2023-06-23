@@ -1,7 +1,10 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  ChainType,
+} from '@webb-tools/sdk-core/typed-chain-id';
 
 import EVMChainId from './EVMChainId';
 import SubstrateChainId from './SubstrateChainId';

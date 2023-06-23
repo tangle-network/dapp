@@ -12,6 +12,7 @@ import { ProposalStatus, ProposalType } from '../../generated/graphql';
 import {
   ProposalListItem,
   ProposalsQuery,
+  useProposal,
   useProposals,
 } from '../../provider/hooks';
 import { getChipColorByProposalType, mapChainIdToLogo } from '../../utils';
@@ -28,15 +29,14 @@ import {
   Chip,
   ChipColors,
   Filter,
-  LabelWithValue,
   Table,
   Divider,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ChainIcon, ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
+import { ChainIcon, Spinner } from '@webb-tools/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useStatsContext } from '../../provider/stats-provider';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -44,11 +44,10 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (props) => (
-      <Chip
-        color={getChipColorByProposalType(props.getValue<ProposalStatus>())}
-      >
-        {props.getValue<string>()}
-      </Chip>
+      <StatusChip
+        proposalId={props.row.original.id}
+        status={props.getValue<ProposalStatus>()}
+      />
     ),
   }),
 
@@ -148,7 +147,6 @@ export const ProposalsTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
-  const [totalItems, setTotalItems] = useState(0);
 
   const pagination = useMemo(
     () => ({
@@ -204,12 +202,20 @@ export const ProposalsTable = () => {
       selectedChains,
     ]
   );
+
+  const proposalsStats = useProposals(pageQuery);
+
+  const totalItems = useMemo(() => {
+    if (proposalsStats.val) {
+      return proposalsStats.val.pageInfo.count;
+    }
+    return 0;
+  }, [proposalsStats]);
+
   const pageCount = useMemo(
     () => Math.ceil(totalItems / pageSize),
     [pageSize, totalItems]
   );
-
-  const proposalsStats = useProposals(pageQuery);
 
   const data = useMemo(() => {
     if (proposalsStats.val) {
@@ -218,12 +224,6 @@ export const ProposalsTable = () => {
       return proposalsStats.val.items;
     }
     return [] as ProposalListItem[];
-  }, [proposalsStats]);
-
-  useEffect(() => {
-    if (proposalsStats.val) {
-      setTotalItems(proposalsStats.val.pageInfo.count);
-    }
   }, [proposalsStats]);
 
   const table = useReactTable<ProposalListItem>({
@@ -344,13 +344,60 @@ export const ProposalsTable = () => {
           </Accordion>
         </Filter>
       }
+      className="h-[850px]"
     >
-      <Table
-        tableProps={table as RTTable<unknown>}
-        isPaginated
-        totalRecords={totalItems}
-        title="Proposals"
-      />
+      {data.length > 0 ? (
+        <Table
+          tableProps={table as RTTable<unknown>}
+          isPaginated
+          totalRecords={totalItems}
+          title="Proposals"
+        />
+      ) : (
+        <div className="h-[850px] flex items-center flex-col justify-center">
+          <Spinner size="xl" />
+        </div>
+      )}
     </CardTable>
+  );
+};
+
+interface StatusChipProps {
+  proposalId: string;
+  status: ProposalStatus;
+}
+
+const StatusChip: React.FC<StatusChipProps> = ({ proposalId, status }) => {
+  const {
+    metaData: { activeSession },
+  } = useStatsContext();
+
+  const query = useMemo<Parameters<typeof useProposal>>(() => {
+    return [
+      activeSession,
+      {
+        filter: {
+          proposalId,
+        },
+        perPage: 10,
+        offset: 0,
+      },
+    ];
+  }, [activeSession, proposalId]);
+
+  const proposalDetails = useProposal(...query);
+
+  const proposalStatus = useMemo(() => {
+    return (
+      (proposalDetails.proposal.val?.timeline[
+        proposalDetails.proposal.val?.timeline.length - 1
+      ].id.split('-')[1] as ProposalStatus) ?? (status as ProposalStatus)
+    );
+  }, [proposalDetails]);
+
+  return (
+    <Chip color={getChipColorByProposalType(proposalStatus)}>
+      {proposalStatus === 'Open' ? 'Added' : proposalStatus}
+    </Chip>
   );
 };

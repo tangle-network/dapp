@@ -8,12 +8,12 @@ import { ComponentProps, useEffect, useState } from 'react';
 const navItems: Array<NavItemType | { [label: string]: Array<NavItemType> }> = [
   { label: 'community', url: 'https://webb.tools/community' },
   { label: 'docs', url: links.WEBB_DOCS_URL },
-  { label: 'tangle network', url: links.TANGLE_NETWORK_URL },
+  { label: 'tangle network', url: links.TANGLE_MARKETING_SITE },
 ];
 
 const buttonProps: Array<ComponentProps<typeof Button>> = [
   {
-    children: 'Huddle Bridge',
+    children: 'Hubble Bridge',
     href: links.BRIDGE_URL,
     rel: 'noreferrer',
     target: '_blank',
@@ -42,7 +42,7 @@ const Header = () => {
 
   return (
     <header
-      className={cx('fixed top-0 z-10 w-full bg-mono-0', {
+      className={cx('fixed top-0 z-10 w-full bg-mono-0 px-2', {
         'webb-shadow-sm': scrolled,
       })}
     >

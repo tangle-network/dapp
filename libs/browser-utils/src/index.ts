@@ -3,3 +3,4 @@ export * from './platform';
 export * from './retry-promise';
 export * from './storage';
 export * from './logger';
+export * from './promise-utils';

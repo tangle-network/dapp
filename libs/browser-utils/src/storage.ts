@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Storage } from '@webb-tools/storage';
-import { Keypair } from '@webb-tools/sdk-core';
 
 /// The `BridgeStorage` is used to store the leaves of the merkle tree
 /// of the underlying VAnchor contract. The key is the resource id

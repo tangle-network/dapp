@@ -1,7 +1,7 @@
 import { randRecentDate } from '@ngneat/falso';
 import { Currency } from '@webb-tools/abstract-api-provider';
-import { VAnchorTree__factory } from '@webb-tools/contracts';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { CurrencyRole } from '@webb-tools/dapp-types';
 import {
   useCurrencies,
   useNoteAccount,
@@ -12,14 +12,12 @@ import {
   calculateTypedChainId,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { hexToU8a } from '@webb-tools/utils';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
+
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { hexToU8a } from '@webb-tools/utils';
-import { CurrencyRole } from '@webb-tools/dapp-types';
 import { getVAnchorActionClass } from '../utils';
 
 const createdTime = randRecentDate();
@@ -27,7 +25,8 @@ const createdTime = randRecentDate();
 export const useSpendNotes = (): SpendNoteDataType[] => {
   const { allNotes } = useNoteAccount();
 
-  const { getWrappableCurrencies, fungibleCurrencies } = useCurrencies();
+  const { allFungibleCurrencies: fungibleCurrencies, getWrappableCurrencies } =
+    useCurrencies();
 
   const { activeChain, apiConfig, chains } = useWebContext();
 
@@ -120,13 +119,17 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           // Calculate the wrappable currencies
           let wrappableCurrencies: Currency[] = [];
-          const fungibleCurrency = fungibleCurrencies.find(
-            (currency) =>
+          const fungibleCurrency = fungibleCurrencies.find((currency) => {
+            return (
               currency.view.symbol === note.note.tokenSymbol &&
-              currency.hasChain(+note.note.sourceChainId)
-          );
+              currency.hasChain(+note.note.targetChainId)
+            );
+          });
           if (fungibleCurrency) {
-            const foundCurrencies = getWrappableCurrencies(fungibleCurrency.id);
+            const foundCurrencies = getWrappableCurrencies(
+              fungibleCurrency.id,
+              false
+            );
             wrappableCurrencies = foundCurrencies;
           }
 

@@ -1,9 +1,5 @@
-import {
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-  IntroducingTangleSvg,
-} from '..';
+import { IntroducingTangleSvg } from '..';
+import { Typography } from '@webb-tools/webb-ui-components';
 
 export const IntroducingSection = () => {
   return (
@@ -11,13 +7,23 @@ export const IntroducingSection = () => {
       <div className="max-w-[1440px] mx-auto flex flex-col gap-6 ">
         <div className="flex flex-col gap-4 items-center px-5 justify-center pt-[60px]">
           <div className="flex flex-col items-center gap-2">
-            <SectionHeader>Introducing</SectionHeader>
-            <SectionTitle>Tangle Network</SectionTitle>
+            <Typography
+              variant="mkt-small-caps"
+              className="font-black text-purple-70"
+            >
+              Introducing
+            </Typography>
+            <Typography variant="mkt-h3" className="font-black text-mono-200">
+              Tangle Network
+            </Typography>
           </div>
-          <SectionDescription className="text-center lg:w-[60%]">
+          <Typography
+            variant="mkt-body1"
+            className="text-center lg:w-[60%] font-medium text-mono-140 md:mb-12"
+          >
             The next-generation blockchain connecting cross-chain dApps with
             threshold signature scheme (TSS) governance system.
-          </SectionDescription>
+          </Typography>
         </div>
         <div className="flex justify-center">
           <IntroducingTangleSvg />

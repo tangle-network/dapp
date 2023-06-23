@@ -2,9 +2,5 @@
   "name": "@webb-tools/abstract-api-provider",
   "version": "0.0.1",
   "type": "commonjs",
-  "main": "./src/index.js",
-  "dependencies": {
-    "@webb-tools/dapp-config": "0.0.1",
-    "@webb-tools/dapp-types": "0.0.1"
-  }
+  "main": "./src/index.js"
 }

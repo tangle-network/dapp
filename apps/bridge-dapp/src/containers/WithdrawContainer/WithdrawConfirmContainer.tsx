@@ -1,13 +1,13 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useRelayers, useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
+  WithdrawConfirm,
   getRoundedAmountString,
   useCopyable,
   useWebbUI,
-  WithdrawConfirm,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
@@ -60,19 +60,19 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const stage = useLatestTransactionStage('Withdraw');
-
     const { api: vAnchorApi } = useVAnchor();
-
-    const progressValue = useTransactionProgressValue(stage);
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi, apiConfig, noteManager } = useWebContext();
+    const { activeApi, apiConfig, noteManager, txQueue } = useWebContext();
 
-    const { api: txQueueApi, txPayloads } = useTxQueue();
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+
+    const stage = useLatestTransactionStage(txId);
+
+    const progressValue = useTransactionProgressValue(stage);
 
     const {
       relayersState: { activeRelayer },

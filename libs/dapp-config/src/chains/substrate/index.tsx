@@ -2,7 +2,7 @@ import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
 import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
 import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
-import { ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 
 import { ChainConfig } from '../chain-config.interface';
 

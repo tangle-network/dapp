@@ -10,11 +10,11 @@ import {
   Keypair,
   Note,
   NoteGenInput,
-  parseTypedChainId,
   ResourceId,
-  toFixedHex,
   Utxo,
   UtxoGenInput,
+  parseTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
@@ -376,9 +376,7 @@ export class NoteManager {
     };
 
     // Convert the amount to units of wei
-    const utxo = await (backend == 'Arkworks'
-      ? Utxo.generateUtxo(input)
-      : CircomUtxo.generateUtxo(input));
+    const utxo = await CircomUtxo.generateUtxo(input);
 
     const noteInput: NoteGenInput = {
       ...this.defaultNoteGenInput,

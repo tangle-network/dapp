@@ -1,7 +1,6 @@
 import { VAnchorActions } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useCallback, useMemo, useState } from 'react';
-import { useTxQueue } from '../transaction';
 
 export interface VAnchorAPI {
   cancel(): Promise<void>;
@@ -13,7 +12,10 @@ export interface VAnchorAPI {
 export const useVAnchor = (): VAnchorAPI => {
   const { activeApi } = useWebContext();
   const [error] = useState('');
-  const { api: txQueueApi } = useTxQueue();
+
+  const {
+    txQueue: { api: txQueueApi },
+  } = useWebContext();
 
   /// api
   const api = useMemo(() => {

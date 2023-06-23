@@ -1,20 +1,28 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
+import { hexToU8a } from '@polkadot/util';
 import {
   AccountsAdapter,
   Bridge,
   Currency,
+  NewNotesTxResult,
   NotificationHandler,
   RelayChainMethods,
+  Transaction,
+  TransactionState,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
   WebbState,
 } from '@webb-tools/abstract-api-provider';
+import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
+import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
   getAnchorDeploymentBlockNumber,
@@ -25,35 +33,31 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
-import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
-  ChainType,
-  CircomUtxo,
-  Keypair,
-  Note,
-  toFixedHex,
-  Utxo,
-  UtxoGenInput,
-} from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
-import { ethers, providers, Signer } from 'ethers';
-import { Eth } from 'web3-eth';
-
-import { hexToU8a } from '@polkadot/util';
-
-import { ApiPromise } from '@polkadot/api';
-import { VAnchor } from '@webb-tools/anchors';
-import { retryPromise } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
+import { NoteManager } from '@webb-tools/note-manager';
+import {
+  ChainType,
+  CircomUtxo,
+  Keypair,
+  Note,
+  Utxo,
+  UtxoGenInput,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  toFixedHex,
+} from '@webb-tools/sdk-core';
+import { Storage } from '@webb-tools/storage';
 import { ZkComponents } from '@webb-tools/utils';
+import type { Backend } from '@webb-tools/wasm-utils';
+import { Signer, ethers, providers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
+import { Eth } from 'web3-eth';
+
 import { Web3Accounts, Web3Provider } from './ext-provider';
+import { calculateProvingLeavesAndCommitmentIndex } from './utils';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
@@ -75,6 +79,9 @@ export class WebbWeb3Provider
   // Map to store the max edges for each vanchor address
   private readonly vAnchorMaxEdges = new Map<string, number>();
 
+  // Map to store the vAnchor levels for each tree id
+  private readonly vAnchorLevels = new Map<string, number>();
+
   private smallFixtures: ZkComponents | null = null;
 
   private largeFixtures: ZkComponents | null = null;
@@ -83,7 +90,7 @@ export class WebbWeb3Provider
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend = 'Circom';
+  readonly backend: Backend = 'Circom';
 
   readonly methods: WebbMethods<WebbWeb3Provider>;
 
@@ -272,8 +279,14 @@ export class WebbWeb3Provider
   async getVariableAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    abortSignal?: AbortSignal
-  ): Promise<string[]> {
+    treeHeight: number,
+    targetRoot: string,
+    commitment: bigint,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }> {
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
@@ -283,15 +296,24 @@ export class WebbWeb3Provider
       vanchor.contract.address
     );
 
-    let leaves = await this.relayerManager.fetchLeavesFromRelayers(
-      relayers,
-      vanchor,
-      storage,
-      { abortSignal }
-    );
+    const leavesFromRelayers =
+      await this.relayerManager.fetchLeavesFromRelayers(
+        relayers,
+        vanchor,
+        storage,
+        treeHeight,
+        targetRoot,
+        commitment,
+        tx
+      );
 
     // If unable to fetch leaves from the relayers, get them from chain
-    if (!leaves) {
+    if (!leavesFromRelayers) {
+      tx?.next(TransactionState.FetchingLeaves, {
+        start: 0, // Dummy values
+        currentRange: [0, 0], // Dummy values
+      });
+
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
       const storedLeaves = await storage.get('leaves');
@@ -313,24 +335,50 @@ export class WebbWeb3Provider
         storedContractInfo.lastQueriedBlock + 1,
         0,
         retryPromise,
-        abortSignal
+        tx?.cancelToken.abortSignal
       );
 
       console.log('Leaves from chain: ', leavesFromChain);
 
-      leaves = [...storedContractInfo.leaves, ...leavesFromChain.newLeaves];
+      // Merge the leaves from chain with the stored leaves
+      // and fixed them to 32 bytes
+      const leaves = [
+        ...storedContractInfo.leaves,
+        ...leavesFromChain.newLeaves,
+      ].map((leaf) => toFixedHex(leaf));
 
-      // Fixed all the leaves to be 32 bytes
-      leaves = leaves.map((leaf) => toFixedHex(leaf));
+      console.log(`Got ${leaves.length} leaves from chain`);
 
-      // Cached the new leaves
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      // Validate the leaves
+      const { leafIndex, provingLeaves } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment.toString()
+        );
+
+      // If the leafIndex is -1, it means the commitment is not in the tree
+      // and we should continue to the next relayer
+      if (leafIndex === -1) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+      } else {
+        tx?.next(TransactionState.ValidatingLeaves, true);
+      }
+
+      // Cached all the leaves to re-use them later
       await storage.set('lastQueriedBlock', leavesFromChain.lastQueriedBlock);
       await storage.set('leaves', leaves);
-    } else {
-      console.log(`Got ${leaves.length} leaves from relayers.`);
+
+      // Return the leaves for proving and the commitment index
+      return {
+        provingLeaves,
+        commitmentIndex: leafIndex,
+      };
     }
 
-    return leaves;
+    return leavesFromRelayers;
   }
 
   async getVAnchorNotesFromChain(
@@ -588,6 +636,32 @@ export class WebbWeb3Provider
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
+  }
+
+  async getVAnchorLevels(
+    vAnchorAddressOrTreeId: string,
+    providerOrApi?: ethers.providers.Provider | ApiPromise | undefined
+  ): Promise<number> {
+    if (providerOrApi instanceof ApiPromise) {
+      console.error(
+        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
+      );
+      providerOrApi = this.ethersProvider;
+    }
+
+    const storedLevels = this.vAnchorLevels.get(vAnchorAddressOrTreeId);
+    if (storedLevels) {
+      return Promise.resolve(storedLevels);
+    }
+
+    const vAnchorContract = VAnchor__factory.connect(
+      vAnchorAddressOrTreeId,
+      providerOrApi ?? this.ethersProvider
+    );
+    const levels = await retryPromise(vAnchorContract.getLevels);
+
+    this.vAnchorLevels.set(vAnchorAddressOrTreeId, levels);
+    return levels;
   }
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {

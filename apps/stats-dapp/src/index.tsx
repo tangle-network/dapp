@@ -1,4 +1,4 @@
-import '../styles.css';
+import './styles.css';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';

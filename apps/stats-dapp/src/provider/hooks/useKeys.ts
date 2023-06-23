@@ -190,32 +190,46 @@ export function useKeys(
   const [call, query] = usePublicKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
   const { blockTime } = useStatsContext();
+  const [isLoading, setLoading] = useState(false);
+  const [fetched, setFetched] = useState(false);
   const [page, setPage] = useState<Loadable<Page<PublicKeyListView>>>({
     val: null,
     isFailed: false,
-    isLoading: true,
+    isLoading: false,
   });
 
-  // fetch the data once the filter has changed
   useEffect(() => {
-    call({
-      variables: {
-        offset: reqQuery.offset,
-        PerPage: reqQuery.perPage,
-      },
-      fetchPolicy: 'network-only',
-    }).catch((e) => {
-      setPage({
-        val: null,
-        isFailed: true,
-        isLoading: false,
-        error: e.message,
-      });
-    });
-  }, [reqQuery, call, currentKey]);
-  // Handle the GraphQl call response
+    if (!fetched) {
+      setLoading(true);
+      call({
+        variables: {
+          offset: reqQuery.offset,
+          PerPage: reqQuery.perPage,
+        },
+        fetchPolicy: 'network-only',
+      })
+        .then(() => {
+          setFetched(true);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setPage({
+            val: null,
+            isFailed: true,
+            isLoading: false,
+            error: e.message,
+          });
+        });
+    }
+  }, [reqQuery, call, currentKey, fetched]);
 
   useEffect(() => {
+    setFetched(false);
+  }, [reqQuery]);
+
+  useEffect(() => {
+    if (!fetched) return;
+
     const subscription = query.observable
       .map((res): Loadable<Page<PublicKeyListView>> => {
         if (res.loading) {
@@ -235,7 +249,6 @@ export function useKeys(
         }
         if (res.data.publicKeys) {
           const data = res.data.publicKeys;
-
           const filteredData = data.nodes.filter((n) => !!n);
 
           return {
@@ -243,14 +256,14 @@ export function useKeys(
             isFailed: false,
             val: {
               items: filteredData.map((node, idx) => {
-                const session = node.sessions?.nodes[0];
+                const session = node?.sessions?.nodes[0];
                 const thresholds = thresholdMap(
                   session ? session.thresholds : { nodes: [] }
                 );
                 const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
-                const authorities = mapAuthorities(session.sessionValidators)
-                  .filter((auth) => auth.isBest)
+                const authorities = mapAuthorities(session?.sessionValidators)
+                  ?.filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
 
                 const previousKeyId = idx
@@ -261,24 +274,25 @@ export function useKeys(
                     ? filteredData[idx + 1]?.id
                     : undefined;
                 const [start, end] = sessionFrame(
-                  session.block?.timestamp,
+                  session?.block?.timestamp,
                   sessionHeight
                 );
                 return {
-                  height: String(node.block?.number),
-                  session: session.id,
+                  height: String(node?.block?.number),
+                  session: session?.id,
                   keyGenThreshold: keyGen?.current ?? null,
                   signatureThreshold: signature?.current ?? null,
-                  compressed: node.compressed,
-                  uncompressed: node.uncompressed,
+                  compressed: node?.compressed,
+                  uncompressed: node?.uncompressed,
                   keyGenAuthorities: authorities,
                   end,
                   start,
-                  id: node.id,
+                  id: node?.id,
                   previousKeyId,
                   nextKeyId,
                 };
               }),
+
               pageInfo: {
                 count: data.totalCount,
                 hasNext: data.pageInfo.hasNextPage,
@@ -296,10 +310,11 @@ export function useKeys(
       .subscribe(setPage);
 
     return () => subscription.unsubscribe();
-  }, [query, blockTime, sessionHeight]);
+  }, [query, blockTime, sessionHeight, fetched]);
 
-  return page;
+  return isLoading ? { isLoading, isFailed: false, val: null } : page;
 }
+
 /**
  * Get the current Public key (Current session active) and the next public key (Next session active)
  * */

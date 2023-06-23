@@ -8,7 +8,7 @@ import { cachedFetch } from '@webb-tools/browser-utils';
 
 export const fetchVAnchorKeyFromAws = async (
   maxEdges: number,
-  small: boolean,
+  isSmall?: boolean,
   isSubstrate?: boolean,
   abortSignal?: AbortSignal
 ) => {
@@ -22,7 +22,7 @@ export const fetchVAnchorKeyFromAws = async (
 
   switch (maxEdges) {
     case 1:
-      if (small) {
+      if (isSmall) {
         filePath = isSubstrate ? '2-2-2' : 'vanchor_2/2';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
@@ -32,7 +32,7 @@ export const fetchVAnchorKeyFromAws = async (
 
       break;
     case 7:
-      if (small) {
+      if (isSmall) {
         filePath = isSubstrate ? '32-2-2' : 'vanchor_2/8';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
@@ -42,7 +42,7 @@ export const fetchVAnchorKeyFromAws = async (
 
       break;
     default:
-      if (small) {
+      if (isSmall) {
         filePath = isSubstrate ? '2-2-2' : 'vanchor_2/2';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
@@ -78,15 +78,15 @@ export const fetchVAnchorKeyFromAws = async (
 
 export const fetchVAnchorWasmFromAws = async (
   maxEdges: number,
-  small: boolean,
-  abortSignal: AbortSignal
+  isSmall?: boolean,
+  abortSignal?: AbortSignal
 ) => {
   let filePath: string;
   let cachedURI: string;
 
   switch (maxEdges) {
     case 1:
-      if (small) {
+      if (isSmall) {
         filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
@@ -96,7 +96,7 @@ export const fetchVAnchorWasmFromAws = async (
 
       break;
     case 7:
-      if (small) {
+      if (isSmall) {
         filePath = 'vanchor_2/8/poseidon_vanchor_2_8.wasm';
         cachedURI = getCachedFixtureURI(filePath);
       } else {
@@ -106,7 +106,7 @@ export const fetchVAnchorWasmFromAws = async (
 
       break;
     default:
-      if (small) {
+      if (isSmall) {
         filePath = 'vanchor_2/2/poseidon_vanchor_2_2.wasm';
         cachedURI = getCachedFixtureURI(filePath);
       } else {

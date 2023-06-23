@@ -1,330 +1,466 @@
-import { useState, useMemo, useEffect } from 'react';
-import {
-  Card,
-  TitleWithInfo,
-  Chip,
-} from '@webb-tools/webb-ui-components/components';
 import { Spinner } from '@webb-tools/icons';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Filler,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import type { ChartData, ChartOptions } from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import {
-  useProposalsOvertimeTotalCount,
-  TimeRange,
-} from '../../provider/hooks';
-import { useStatsContext } from '../../provider/stats-provider';
+import { Card, Chip, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { WebbColorsType } from '@webb-tools/webb-ui-components/types';
+import { useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Surface,
+  Symbols,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Config } from 'tailwindcss';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from /* preval */ '../../../tailwind.config.js';
-import { Config } from 'tailwindcss';
+import { useAllProposalsTimestamps } from '../../provider/hooks';
+import { useStatsContext } from '../../provider/stats-provider';
 const fullConfig = resolveConfig(tailwindConfig as Config);
 const webbColors = fullConfig.theme?.colors as unknown as WebbColorsType;
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend
-);
-
 const allProposals = [
   {
-    type: 'RefreshVote',
+    type: 'refreshVote',
     backgroundColor: '#85DC8E',
   },
   {
-    type: 'ProposerSetUpdateProposal',
+    type: 'proposerSetUpdateProposal',
     backgroundColor: '#9BC5FC',
   },
   {
-    type: 'AnchorCreateProposal',
+    type: 'anchorCreateProposal',
     backgroundColor: '#EAB612',
   },
   {
-    type: 'AnchorUpdateProposal',
+    type: 'anchorUpdateProposal',
     backgroundColor: '#4B3AA4',
   },
   {
-    type: 'TokenAddProposal',
+    type: 'tokenAddProposal',
     backgroundColor: '#A0370B',
   },
   {
-    type: 'TokenRemoveProposal',
+    type: 'tokenRemoveProposal',
     backgroundColor: '#288E32',
   },
   {
-    type: 'WrappingFeeUpdateProposal',
+    type: 'wrappingFeeUpdateProposal',
     backgroundColor: '#EF570D',
   },
   {
-    type: 'ResourceIdUpdateProposal',
+    type: 'resourceIdUpdateProposal',
     backgroundColor: '#624FBE',
   },
   {
-    type: 'RescueTokensProposal',
+    type: 'rescueTokensProposal',
     backgroundColor: '#B5A9F2',
   },
   {
-    type: 'MaxDepositLimitUpdateProposal',
-    backgroundColor: '#ECF4FF',
+    type: 'maxDepositLimitUpdateProposal',
+    backgroundColor: '#D08770',
   },
   {
-    type: 'MinWithdrawalLimitUpdateProposal',
+    type: 'minWithdrawalLimitUpdateProposal',
     backgroundColor: '#FFE07C',
   },
   {
-    type: 'SetVerifierProposal',
+    type: 'setVerifierProposal',
     backgroundColor: '#FFB18B',
   },
   {
-    type: 'SetTreasuryHandlerProposal',
+    type: 'setTreasuryHandlerProposal',
     backgroundColor: '#01550A',
   },
   {
-    type: 'FeeRecipientUpdateProposal',
-    backgroundColor: '#FFEDE4',
+    type: 'feeRecipientUpdateProposal',
+    backgroundColor: '#B48EAD',
   },
 ];
+
+const timeRanges = ['2 Hr', '10 Hr', '1 Day'];
 
 export const StackedAreaChartContainer = () => {
   const { isDarkMode } = useStatsContext();
 
-  const [timeRange, setTimeRange] = useState<TimeRange>('three-months');
+  const [timeRange, setTimeRange] = useState('2 Hr');
 
-  const { val: proposalOvertimeData, isLoading } =
-    useProposalsOvertimeTotalCount(timeRange);
+  const { val: allProposalsTimestamps, isLoading } =
+    useAllProposalsTimestamps();
 
-  const filteredProposalOvertimeData = useMemo(() => {
-    const firstDataPoint = proposalOvertimeData?.findIndex(
-      (item) => item.totalCount > 0
-    );
+  const countData: Record<
+    string,
+    {
+      [key: string]: string;
+    }
+  > = {};
 
-    if (firstDataPoint && firstDataPoint !== -1) {
-      const firstDataPointMonth = proposalOvertimeData?.[firstDataPoint]?.month;
-      if (firstDataPointMonth) {
-        return proposalOvertimeData?.filter(
-          (item) => item.month >= firstDataPointMonth - 1
-        );
+  const zeroData: { [key: string]: string } = {};
+
+  for (const proposalType of allProposals) {
+    zeroData[proposalType.type] = '0';
+  }
+
+  for (const proposalType of allProposals) {
+    if (allProposalsTimestamps) {
+      const proposals = allProposalsTimestamps[proposalType.type].nodes;
+      for (const proposal of proposals) {
+        const date = formatDateWithTime(proposal.block.timestamp);
+        if (!countData[date]) {
+          countData[date] = {
+            ...zeroData,
+            rawTimestamp: proposal.block.timestamp,
+          };
+        }
+        countData[date][proposalType.type] = (
+          +(countData[date][proposalType.type] || '0') + 1
+        ).toString();
       }
     }
-    return proposalOvertimeData;
-  }, [proposalOvertimeData]);
+  }
 
-  const chartData = useMemo<ChartData<'line'>>(() => {
-    return {
-      labels: [
-        ...new Set(filteredProposalOvertimeData?.map((data) => data.month)),
-      ],
-      datasets: filteredProposalOvertimeData
-        ? allProposals.map((proposal) => {
-            return {
-              label: proposal.type,
-              data: filteredProposalOvertimeData
-                .filter(
-                  (data) =>
-                    data.proposalType.toLocaleLowerCase() ===
-                    proposal.type.toLowerCase()
-                )
-                .map((data) => data.totalCount),
-              backgroundColor: proposal.backgroundColor,
-              fill: true,
-              tension: 0.3,
-              borderColor: proposal.backgroundColor,
-              borderWidth: 0,
-              radius: 0,
-              hoverRadius: 0,
-            };
-          })
-        : [],
-    };
-  }, [filteredProposalOvertimeData]);
+  for (const date in countData) {
+    let totalCount = 0;
 
-  const chartOptions = useMemo<ChartOptions<'line'>>(() => {
-    return {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: {
-            padding: 13,
-            usePointStyle: true,
-            pointStyle: 'rectRounded',
-            pointStyleWidth: 16,
-            color: isDarkMode ? webbColors.mono['40'] : webbColors.mono['160'],
-          },
-          align: 'start',
-          onHover: (_, legendItem, legend) => {
-            const datasetMeta = legend.chart.getDatasetMeta(
-              legendItem.datasetIndex ? legendItem.datasetIndex : 0
-            )._parsed;
-            const totalNumberOfProposals = datasetMeta
-              .map((data: any) => data.y)
-              .reduce((accumulator, value) => {
-                return accumulator + value;
-              }, 0);
+    allProposals.forEach((proposal) => {
+      const count = countData[date][proposal.type]
+        ? parseInt(countData[date][proposal.type], 10)
+        : 0;
+      totalCount += count;
+    });
 
-            const chart = legend.chart;
-            const tooltip = chart.tooltip;
+    countData[date].totalCount = totalCount.toString();
+  }
 
-            const length =
-              chart.data.datasets[
-                legendItem.datasetIndex ? legendItem.datasetIndex : 0
-              ].data.length;
+  const countDataSorted = Object.entries(countData);
 
-            chart.data.datasets[
-              legendItem.datasetIndex ? legendItem.datasetIndex : 0
-            ].data[length - 1] = totalNumberOfProposals;
+  countDataSorted.sort(
+    (a, b) =>
+      new Date(a[1].rawTimestamp).getTime() -
+      new Date(b[1].rawTimestamp).getTime()
+  );
 
-            tooltip?.setActiveElements(
-              [
-                {
-                  datasetIndex: legendItem.datasetIndex
-                    ? legendItem.datasetIndex
-                    : 0,
-                  index: length - 1,
-                },
-              ],
-              {
-                x: 0,
-                y: 0,
-              }
-            );
+  const convertedData = countDataSorted.map(([date, counts]) => ({
+    date,
+    rawTimestamp: counts.rawTimestamp,
+    ...allProposals.reduce((acc: { [key: string]: any }, type) => {
+      if (counts[type.type]) {
+        acc[type.type] = counts[type.type];
+      }
+      return acc;
+    }, {}),
+  }));
 
-            chart.update();
-          },
-        },
-        tooltip: {
-          callbacks: {
-            title: () => {
-              return `Total # of Proposals`;
-            },
-          },
-          mode: 'index',
-        },
-      },
-      scales: {
-        x: {
-          grid: {
-            display: false,
-          },
-          ticks: {
-            color: webbColors.mono['100'],
-          },
-        },
-        y: {
-          stacked: true,
-          grid: {
-            color: webbColors.mono['100'],
-            borderDash: [4, 4],
-          },
-          ticks: {
-            color: webbColors.mono['100'],
-          },
-        },
-      },
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'nearest',
-        intersect: false,
-      },
-    };
-  }, [isDarkMode]);
+  const thirtyMinData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 120);
+  }, [convertedData]);
 
-  useEffect(() => {
-    setTimeRange('three-months');
-  }, []);
+  const oneHourData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 600);
+  }, [convertedData]);
+
+  const oneDayData = useMemo(() => {
+    return filterDatesByMinutes(convertedData, 60 * 24);
+  }, [convertedData]);
+
+  const finalConvertedData = useMemo(() => {
+    let filteredData;
+
+    if (timeRange === '2 Hr') {
+      filteredData = thirtyMinData;
+
+      if (filteredData.length < 2) {
+        filteredData = oneHourData;
+
+        if (filteredData.length < 2) {
+          filteredData = oneDayData;
+
+          if (filteredData.length < 2) {
+            filteredData = convertedData;
+          }
+        }
+      }
+    } else if (timeRange === '10 Hr') {
+      filteredData = oneHourData;
+
+      if (filteredData.length < 2) {
+        filteredData = oneDayData;
+
+        if (filteredData.length < 2) {
+          filteredData = convertedData;
+        }
+      }
+    } else if (timeRange === '1 Day') {
+      filteredData = oneDayData;
+
+      if (filteredData.length < 2) {
+        filteredData = convertedData;
+      }
+    }
+
+    return filteredData;
+  }, [timeRange, convertedData, thirtyMinData, oneHourData, oneDayData]);
+
+  const nonZeroProposalTypes = finalConvertedData.reduce(
+    (types: any, proposal: any) => {
+      Object.entries(proposal).forEach(([key, value]) => {
+        if (
+          key !== 'date' &&
+          key !== 'rawTimestamp' &&
+          typeof value === 'string' &&
+          value > '0'
+        ) {
+          types.add(key);
+        }
+      });
+      return types;
+    },
+    new Set()
+  );
+
+  const nonZeroProposalTypesArray = Array.from(nonZeroProposalTypes);
 
   return (
-    <Card className="flex flex-col space-y-4 max-w-full">
-      <div className="flex items-center justify-between px-12 mb-8">
-        <TitleWithInfo
-          title="Proposal (Submission) History"
-          variant="h5"
-          info="Proposal (Submission) History"
-        />
-        <div className="flex items-center justify-between gap-5">
-          <Chip
-            color="blue"
-            className="px-3 py-1 cursor-pointer"
-            isSelected={timeRange === 'all' ? true : false}
-            onClick={() => setTimeRange('all')}
-          >
-            All
-          </Chip>
-          <Chip
-            color="blue"
-            className="px-3 py-1 cursor-pointer"
-            isSelected={timeRange === 'three-months' ? true : false}
-            onClick={() => setTimeRange('three-months')}
-          >
-            3M
-          </Chip>
-          <Chip
-            color="blue"
-            className="px-3 py-1 cursor-pointer"
-            isSelected={timeRange === 'six-months' ? true : false}
-            onClick={() => setTimeRange('six-months')}
-          >
-            6M
-          </Chip>
-          <Chip
-            color="blue"
-            className="px-3 py-1 cursor-pointer"
-            isSelected={timeRange === 'one-year' ? true : false}
-            onClick={() => setTimeRange('one-year')}
-          >
-            1Y
-          </Chip>
-          <Chip
-            color="blue"
-            className="px-3 py-1 cursor-pointer"
-            isSelected={timeRange === 'year-to-date' ? true : false}
-            onClick={() => setTimeRange('year-to-date')}
-          >
-            YTD
-          </Chip>
+    <Card>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-full">
+          <Spinner className="w-10 h-10 animate-spin" />
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between pt-2 pr-14">
+            <TitleWithInfo
+              title="Proposal (Submission) History"
+              variant="h5"
+              info="Proposal (Submission) History"
+            />
+            <div className="flex items-center justify-between gap-5">
+              {timeRanges.map((range) => (
+                <Chip
+                  key={range}
+                  color="blue"
+                  className="px-3 py-1 text-sm capitalize cursor-pointer"
+                  isSelected={timeRange === range ? true : false}
+                  onClick={() => setTimeRange(range)}
+                >
+                  {range}
+                </Chip>
+              ))}
+            </div>
+          </div>
 
-      <div className="flex pl-16 pr-24">
-        <TitleWithInfo
-          title="Proposal #"
-          variant="body1"
-          titleClassName="text-mono-200 dark:text-mono-0 transform -rotate-90 origin-bottom-left writing-mode-vertical-rl w-24"
-        />
+          <ResponsiveContainer width="100%" height={500}>
+            <AreaChart
+              width={1000}
+              height={500}
+              data={finalConvertedData}
+              margin={{ bottom: 60, left: 10, top: 20 }}
+            >
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fill: isDarkMode
+                    ? webbColors.mono['100']
+                    : webbColors.mono['140'],
+                }}
+                tickMargin={6}
+                tickCount={10}
+                tickFormatter={(tickItem) => {
+                  return tickItem % 1 === 0 ? tickItem : '';
+                }}
+                label={{
+                  value: 'Number of Proposals',
+                  angle: -90,
+                  position: 'insideLeft',
+                }}
+              />
 
-        {isLoading ? (
-          <Spinner className="block mx-auto" size="xl" />
-        ) : (
-          <Line
-            options={chartOptions}
-            data={chartData}
-            className="h-96 -ml-20"
-          />
-        )}
-      </div>
+              <XAxis
+                dataKey="date"
+                tickMargin={24}
+                axisLine={false}
+                tick={{
+                  fill: isDarkMode
+                    ? webbColors.mono['100']
+                    : webbColors.mono['140'],
+                }}
+                tickFormatter={(tickItem) => {
+                  return tickItem.split(',')[0] + ', ' + tickItem.split(',')[2];
+                }}
+                label={{ value: 'Date & Time', position: 'bottom', offset: 40 }}
+              />
 
-      <div className="flex items-center pl-[474px] !mt-0">
-        <TitleWithInfo
-          title="Month"
-          variant="body1"
-          titleClassName="text-mono-200 dark:text-mono-0"
-        />
-      </div>
+              <CartesianGrid
+                horizontal={false}
+                opacity={isDarkMode ? 0.1 : 0.2}
+                stroke={
+                  isDarkMode ? webbColors.mono['0'] : webbColors.mono['200']
+                }
+                strokeDasharray={4}
+              />
+
+              <Tooltip
+                content={({ payload, label }) => {
+                  let totalCount;
+
+                  if (countData[label]) {
+                    totalCount = countData[label].totalCount;
+                  }
+
+                  return (
+                    <div
+                      style={{
+                        backgroundColor: '#fff',
+                        padding: '10px',
+                        color: '#000',
+                        border: '2px solid #ccc',
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: webbColors.mono['200'],
+                          marginBottom: '0.6rem',
+                          fontWeight: 'bold',
+                          paddingBottom: '0.6rem',
+                          borderBottom: '1px solid #ccc',
+                        }}
+                      >{`Date: ${label}`}</p>
+
+                      {totalCount && (
+                        <p
+                          style={{
+                            color: webbColors.mono['200'],
+                            marginBottom: '0.6rem',
+                            paddingBottom: '0.6rem',
+                            borderBottom: '1px solid #ccc',
+                          }}
+                        >{`Total no. of proposals: ${totalCount}`}</p>
+                      )}
+
+                      {payload?.map((item) => {
+                        if (item.value === '0') return null;
+
+                        return (
+                          <p
+                            style={{
+                              color: allProposals.find(
+                                (proposal) => proposal.type === item.name
+                              )?.backgroundColor,
+                              textTransform: 'capitalize',
+                            }}
+                            key={item.dataKey}
+                          >
+                            {`${item.dataKey}: ${item.value}`}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
+              />
+
+              {allProposals.map((type) => {
+                return (
+                  <Area
+                    key={type.type}
+                    type="linear"
+                    dataKey={type.type}
+                    stackId={1}
+                    stroke="none"
+                    fill={type.backgroundColor}
+                  />
+                );
+              })}
+
+              <Legend
+                verticalAlign="top"
+                layout="vertical"
+                align="right"
+                wrapperStyle={{
+                  paddingLeft: '20px',
+                }}
+                payload={allProposals
+                  .filter((type) =>
+                    nonZeroProposalTypesArray.includes(type.type)
+                  )
+                  .map((type) => ({
+                    id: type.type,
+                    value:
+                      type.type.charAt(0).toUpperCase() + type.type.slice(1),
+                    type: 'circle',
+                    color: type.backgroundColor,
+                  }))}
+                content={<CustomizedLegend />}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </>
+      )}
     </Card>
   );
 };
+
+// Helper Functions and Components for Proposal History Chart
+
+function formatDateWithTime(timestamp: string) {
+  const date = new Date(timestamp);
+
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+}
+
+const CustomizedLegend = ({ payload }: { payload?: any }) => {
+  const { isDarkMode } = useStatsContext();
+
+  return (
+    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      {payload.map((entry: any, index: any) => (
+        <li
+          key={`item-${index}`}
+          style={{
+            marginBottom: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}
+        >
+          <Surface width={10} height={10}>
+            <Symbols cx={5} cy={5} type="circle" size={50} fill={entry.color} />
+          </Surface>
+          <span
+            style={{
+              color: isDarkMode
+                ? webbColors.mono['100']
+                : webbColors.mono['140'],
+              fontSize: '0.94em',
+            }}
+          >
+            {entry.value}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+function filterDatesByMinutes(data: any, minutes: number) {
+  const now = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
+
+  return data.filter((item: any) => {
+    const itemDate = new Date(item.rawTimestamp);
+
+    const minutesDifference =
+      (new Date(now).getTime() - itemDate.getTime()) / 60000;
+
+    return minutesDifference <= minutes;
+  });
+}

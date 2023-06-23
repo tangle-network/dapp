@@ -1,5 +1,6 @@
 import { isValid, parseISO } from 'date-fns';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
+import utcToZonedTime from 'date-fns-tz/utcToZonedTime';
 
 /**
  * Format a `date` to UTC string

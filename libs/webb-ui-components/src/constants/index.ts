@@ -7,9 +7,11 @@ import {
 import {
   Common2Icon,
   DiscordFill,
+  LinkedInFill,
   GithubFill,
   TelegramFill,
   TwitterFill,
+  YouTubeFill,
 } from '@webb-tools/icons';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
@@ -43,6 +45,15 @@ export type webbNetworksType = {
   networkType: NetworkType;
   networks: Network[];
 };
+
+export const BRIDGE_URL = 'https://app.webb.tools/';
+export const STATS_URL = 'https://stats.webb.tools/';
+export const WEBB_MKT_URL = 'https://webb.tools/';
+export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
+export const BRIDGE_DOCS_URL =
+  'https://docs.webb.tools/docs/dapps/hubble-bridge/overview';
+export const TANGLE_DOCS_URL =
+  'https://docs.webb.tools/docs/tangle-network/overview/';
 
 export const webbNetworks: webbNetworksType[] = [
   {
@@ -83,7 +94,7 @@ export const webbNetworks: webbNetworksType[] = [
 
 export const webbAppConfig: ExternalLink = {
   name: 'Hubble Bridge',
-  href: 'https://app.webb.tools/',
+  href: BRIDGE_URL,
   ...commonExternalProps,
 };
 
@@ -106,14 +117,14 @@ export const footerNavs: FooterNavsType = {
   dapp: [
     {
       name: 'bridge',
-      href: 'https://apps.webb.tools/',
+      href: BRIDGE_URL,
       ...commonExternalProps,
     },
   ],
   network: [
     {
       name: 'statistics',
-      href: 'https://stats.webb.tools/',
+      href: 'STATS_URL',
       ...commonExternalProps,
     },
     {
@@ -125,7 +136,7 @@ export const footerNavs: FooterNavsType = {
   developer: [
     {
       name: 'documentation',
-      href: 'https://docs.webb.tools/',
+      href: WEBB_DOCS_URL,
       ...commonExternalProps,
     },
     {
@@ -144,7 +155,7 @@ export const footerNavs: FooterNavsType = {
   company: [
     {
       name: 'about us',
-      href: 'https://www.webb.tools/',
+      href: WEBB_MKT_URL,
       ...commonExternalProps,
     },
     {
@@ -164,6 +175,11 @@ export const bottomLinks: ExternalLink[] = [
   {
     name: 'Privacy Policy',
     href: 'https://webb.tools/privacy-policy',
+    ...commonExternalProps,
+  },
+  {
+    name: 'Security',
+    href: '#',
     ...commonExternalProps,
   },
 ];
@@ -188,6 +204,12 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
     ...commonExternalProps,
   },
   {
+    name: 'linkedin',
+    Icon: LinkedInFill,
+    href: 'https://www.linkedin.com/company/webb-protocol/',
+    ...commonExternalProps,
+  },
+  {
     name: 'twitter',
     Icon: TwitterFill,
     href: 'https://twitter.com/webbprotocol',
@@ -197,6 +219,12 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
     name: 'github',
     Icon: GithubFill,
     href: 'https://github.com/webb-tools',
+    ...commonExternalProps,
+  },
+  {
+    name: 'youTube',
+    Icon: YouTubeFill,
+    href: 'https://webb.tools/blog/videos',
     ...commonExternalProps,
   },
 ];

@@ -41,20 +41,23 @@ export const ColorPalettesSection = () => {
   return (
     <section className="dark bg-mono-200 w-full px-4 py-[96px] md:py-[150px]">
       <div className="max-w-[1440px] mx-auto space-y-6 md:space-y-8">
-        <Typography variant="mkt-h2" className="text-center !text-mono-0">
+        <Typography
+          variant="mkt-h3"
+          className="font-black text-center dark:text-mono-0"
+        >
           Color Palettes
         </Typography>
 
         <Typography
-          variant="mkt-body"
-          className="text-center text-mono-140 md:max-w-[900px] mx-auto"
+          variant="mkt-subheading"
+          className="text-center dark:text-mono-60 md:max-w-[900px] mx-auto font-medium"
         >
           {
             "Below are the primary and secondary colors used in Webb's Ecosystem products. Download to view the entire spectrum of colors in Webb’s UI kit."
           }
         </Typography>
 
-        <div className="flex justify-center py-6 md:px-6 gap-3 md:gap-6">
+        <div className="flex justify-center gap-3 py-6 md:px-6 md:gap-6">
           {circleColors.map((item, i) => (
             <ColorCircle
               key={i}
@@ -73,7 +76,7 @@ export const ColorPalettesSection = () => {
           download
           target="_blank"
           rel="noreferrer"
-          className="block w-fit mx-auto"
+          className="block mx-auto w-fit"
         >
           <Button className="block mx-auto button-base button-primary">
             Download

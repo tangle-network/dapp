@@ -6,13 +6,17 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
-const polkadotBabelWebpackConfig = require('@polkadot/dev/config/babel-config-webpack.cjs');
 const TerserPlugin = require('terser-webpack-plugin');
+const { commandSync } = require('execa');
+const { workspaceRoot } = require('nx/src/utils/workspace-root');
 
 const findPackages = require('../../tools/scripts/findPackages');
+const packageJson = require(path.resolve(__dirname, 'package.json'));
+const packageVersion = packageJson.version;
 
 function mapChunks(name, regs, inc) {
   return regs.reduce(
@@ -30,7 +34,12 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
-  console.log('Running webpack in: ', mode);
+  commandSync('yarn fetch:onChainConfig', {
+    cwd: workspaceRoot,
+    stdio: 'inherit',
+  });
+
+  console.log(chalk.cyan('Running webpack in: ', mode));
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(__dirname, `../../libs/${dir}/src`);
@@ -59,7 +68,7 @@ function createWebpack(env, mode = 'production') {
       asyncWebAssembly: true,
     },
     context: env.context,
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src', 'index.tsx')],
+    entry: [path.resolve(__dirname, 'src', 'index.tsx')],
     mode,
     module: {
       rules: [
@@ -90,23 +99,13 @@ function createWebpack(env, mode = 'production') {
               },
             },
             {
-              // process tailwind stuff
-              // https://webpack.js.org/loaders/postcss-loader/
-              loader: 'postcss-loader',
-              options: {
-                sourceMap: isDevelopment,
-                postcssOptions: {
-                  plugins: [require('tailwindcss')],
-                },
-              },
-            },
-            {
               // load sass files into css files
               loader: 'sass-loader',
               options: {
                 sourceMap: isDevelopment,
               },
             },
+            'postcss-loader',
           ],
         },
         {
@@ -119,17 +118,7 @@ function createWebpack(env, mode = 'production') {
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      useBuiltIns: 'entry',
-                      corejs: '3',
-                      targets: {
-                        browsers: ['last 2 versions', 'not ie <= 8'],
-                        node: '14',
-                      },
-                    },
-                  ],
+                  '@babel/preset-env',
                   '@babel/preset-typescript',
                   [
                     '@babel/preset-react',
@@ -137,7 +126,6 @@ function createWebpack(env, mode = 'production') {
                   ],
                 ],
                 plugins: [
-                  ...(polkadotBabelWebpackConfig.plugins ?? []),
                   isDevelopment && require.resolve('react-refresh/babel'),
                   ['@babel/plugin-transform-runtime', { loose: false }],
                   ['@babel/plugin-proposal-class-properties', { loose: true }],
@@ -192,10 +180,11 @@ function createWebpack(env, mode = 'production') {
             },
           ],
         },
+        // svg react generator
         {
           test: /\.svg$/i,
           issuer: /\.[jt]sx?$/,
-          use: ['@svgr/webpack', 'file-loader'],
+          use: ['@svgr/webpack'],
         },
       ],
     },
@@ -243,7 +232,7 @@ function createWebpack(env, mode = 'production') {
       filename: '[name].[contenthash:8].js',
       globalObject: "(typeof self !== 'undefined' ? self : this)",
       hashFunction: 'xxhash64',
-      path: path.join(env.context, 'build'),
+      path: path.join(env.context, '../../dist/apps/bridge-dapp'),
       publicPath: '',
     },
     performance: {
@@ -270,6 +259,7 @@ function createWebpack(env, mode = 'production') {
         'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
           process.env.NX_BRIDGE_APP_DOMAIN
         ),
+        'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
@@ -290,6 +280,7 @@ function createWebpack(env, mode = 'production') {
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
         stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
         constants: false,
         fs: false,
         url: false,

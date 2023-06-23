@@ -17,6 +17,8 @@ export const WalletConnectionCard = forwardRef<
     {
       className,
       connectingWalletId,
+      errorBtnText = 'Try Again',
+      errorMessage = 'Connection Failed! Please try again.',
       failedWalletId,
       onWalletSelect,
       onClose,
@@ -102,6 +104,8 @@ export const WalletConnectionCard = forwardRef<
             <WalletContent
               failedWallet={failedWallet}
               connectingWallet={connectingWallet}
+              errorBtnText={errorBtnText}
+              errorMessage={errorMessage}
               onTryAgainBtnClick={onTryAgainBtnClick}
             />
           </div>
@@ -116,9 +120,11 @@ export const WalletConnectionCard = forwardRef<
               Don't have a wallet?
             </Typography>
 
-            {!failedWallet && !connectingWallet ? (
+            {(!failedWallet && !connectingWallet) ||
+            typeof onDownloadBtnClick === 'function' ? (
               <Button variant="utility" size="sm" onClick={onDownloadBtnClick}>
-                Download metamask
+                Download{' '}
+                {connectingWallet?.name ?? failedWallet?.name ?? 'Wallet'}
               </Button>
             ) : (
               <Button variant="utility" size="sm" onClick={onHelpBtnClick}>
@@ -136,30 +142,28 @@ export const WalletConnectionCard = forwardRef<
  * Internal components *
  ***********************/
 
+type PickedKeys = 'onTryAgainBtnClick' | 'errorBtnText' | 'errorMessage';
+
 const WalletContent = forwardRef<
   HTMLDivElement,
-  Pick<WalletConnectionCardProps, 'onTryAgainBtnClick'> &
+  Pick<WalletConnectionCardProps, PickedKeys> &
     PropsOf<'div'> & {
       connectingWallet?: Wallet;
       failedWallet?: Wallet;
     }
 >(
   (
-    { className, connectingWallet, failedWallet, onTryAgainBtnClick, ...props },
+    {
+      className,
+      connectingWallet,
+      errorBtnText,
+      errorMessage,
+      failedWallet,
+      onTryAgainBtnClick,
+      ...props
+    },
     ref
   ) => {
-    useEffect(() => {
-      if (
-        failedWallet &&
-        failedWallet.installLinks &&
-        Object.keys(failedWallet.installLinks).length > 0
-      ) {
-        const { id } = getPlatformMetaData();
-
-        window.open(failedWallet.installLinks[id], '_blank');
-      }
-    }, [failedWallet]);
-
     return (
       <div
         {...props}
@@ -184,12 +188,11 @@ const WalletContent = forwardRef<
               className="text-red-70 dark:text-red-70"
               ta="center"
             >
-              Connection Failed! Please check if your wallet is installed and
-              try again.
+              {errorMessage}
             </Typography>
 
             <Button className="mx-auto" onClick={onTryAgainBtnClick}>
-              Try Again
+              {errorBtnText}
             </Button>
           </>
         )}

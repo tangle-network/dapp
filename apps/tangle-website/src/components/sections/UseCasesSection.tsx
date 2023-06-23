@@ -3,8 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/free-mode';
-
-import { SectionHeader, SectionTitle2 } from '..';
 import { UseCase1Svg, UseCase2Svg, UseCase3Svg, UseCase4Svg } from '../svgs';
 
 const tangleUseCases = [
@@ -12,45 +10,47 @@ const tangleUseCases = [
     icon: <UseCase1Svg />,
     title: 'General Messaging Passing & Public Bridges',
     description:
-      'Capable of enabling public/plaintext cross-chain use cases. Providing efficiency, and security through the use of a TSS MPC that rotates frequently.',
+      'Seamlessly facilitate public and transparent cross-chain interactions. Experience unparalleled efficiency and security through a dynamic TSS-based system, where multiple participants collaborate harmoniously.',
     link: 'https://docs.webb.tools/docs/anchor-system/overview/',
   },
   {
     icon: <UseCase2Svg />,
     title: 'Connected Shielded Pool Protocols',
     description:
-      'The Tangle Network powers the ability to privately move and transfer assets between blockchains.',
+      'Unleash the true potential of interconnected ecosystems to empower private movement and the seamless transfer of assets between blockchains. Unleash the true potential of interconnected ecosystems.',
     link: 'https://docs.webb.tools/docs/protocols/asset-transfer/overview/',
   },
   {
     icon: <UseCase3Svg />,
     title: 'Connected Shielded Identity Protocols',
     description:
-      'The Tangle Network creates identities and connect groups between blockchains.',
+      'Harness the revolutionary privacy of the Network to forge identities and establish meaningful connections between diverse blockchains. Bridge the gaps and unite digital realms like never before.',
     link: 'https://docs.webb.tools/docs/protocols/identity/',
   },
   {
     icon: <UseCase4Svg />,
     title: 'Oracle System and Data Feeds',
     description:
-      'The Tangle Network leverages the Webb TSS DKG to sign payloads from data feeds for financial, identity, and other applications.',
+      'Empower financial, identity, and other applications with trustworthy information through the next-gen Webb DKG (Distributed Key Generation) to securely sign payloads from data feeds.',
     link: 'https://docs.webb.tools/docs/protocols/dkg/overview/',
   },
 ];
 
 export const UseCasesSection = () => {
   return (
-    <section className="bg-mono-200 px-[20px] py-[80px] xl:flex xl:items-center xl:justify-center">
-      <div>
-        <div className="flex flex-col gap-4">
-          <SectionHeader className="text-purple-40">Usecases</SectionHeader>
-          <SectionTitle2 className="text-left text-mono-0 md:max-w-[604px]">
-            Tangle Powers the Community to Optimized for Any Usecases.
-          </SectionTitle2>
+    <section className="bg-mono-200 px-[20px] lg:px-0 py-[60px]">
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex flex-col gap-4 lg:px-[11.25%]">
+          <Typography
+            variant="mkt-small-caps"
+            className="font-black text-purple-40"
+          >
+            Usecases
+          </Typography>
         </div>
 
         {/* Desktop + Mobile */}
-        <div className="mt-8 flex md:hidden lg:flex flex-col lg:flex-row gap-6">
+        <div className="lg:px-[11.25%] mt-8 flex flex-col items-stretch justify-items-stretch md:hidden lg:flex lg:flex-row gap-6">
           {tangleUseCases.map((useCase, i) => {
             return (
               <UseCaseCard
@@ -70,7 +70,7 @@ export const UseCasesSection = () => {
           slidesPerView="auto"
           freeMode={true}
           modules={[FreeMode]}
-          className="mt-8 hidden md:block lg:hidden"
+          className="mt-8 !hidden md:!block lg:!hidden"
         >
           {tangleUseCases.map((useCase, i) => {
             return (
@@ -100,18 +100,21 @@ export const UseCasesSection = () => {
 
 const UseCaseCard = ({ icon, title, description, link }) => {
   return (
-    <div className="flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px] md:w-[264px] md:h-[600px]">
+    <div className="min-h-[600px] md:min-h-min md:h-full lg:h-auto flex-[1] flex flex-col items-start justify-start gap-10 bg-[rgba(255,255,255,0.04)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.2)] rounded-xl py-[56px] px-[24px]">
       {icon}
       <div className="flex flex-col gap-4">
-        <Typography variant="h4" className="font-bold text-mono-0">
+        <Typography variant="mkt-subheading" className="font-black text-mono-0">
           {title}
         </Typography>
-        <Typography variant="body1" className="!text-mono-80 !leading-7">
+        <Typography
+          variant="mkt-body1"
+          className="!text-mono-80 !leading-7 font-medium"
+        >
           {description}
         </Typography>
       </div>
       <Button
-        className="!text-mono-0 bg-[#282633] border-mono-0 mt-auto"
+        className="!text-mono-0 bg-[#282633] border-mono-0 mt-auto px-5"
         href={link}
       >
         Learn More

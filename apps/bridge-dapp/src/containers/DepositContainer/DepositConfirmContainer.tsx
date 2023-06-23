@@ -7,7 +7,7 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { useTxQueue, useVAnchor } from '@webb-tools/react-hooks';
+import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { ethers } from 'ethers';
@@ -33,24 +33,20 @@ export const DepositConfirmContainer = forwardRef<
     {
       amount,
       destChain,
-      feeToken,
-      feeValue,
       fungibleTokenId,
       note,
       onResetState,
-      resetMainComponent,
       sourceChain,
       wrappableTokenId,
     },
     ref
   ) => {
-    const { api: txQueueApi, txPayloads } = useTxQueue();
     const [checked, setChecked] = useState(false);
     const { api, startNewTransaction } = useVAnchor();
 
     const [txId, setTxId] = useState('');
 
-    const stage = useLatestTransactionStage('Deposit');
+    const stage = useLatestTransactionStage(txId);
 
     const progress = useTransactionProgressValue(stage);
 
@@ -58,7 +54,11 @@ export const DepositConfirmContainer = forwardRef<
       () => stage !== TransactionState.Ideal,
       [stage]
     );
-    const { activeApi, activeChain, noteManager, apiConfig } = useWebContext();
+
+    const { activeApi, activeChain, noteManager, apiConfig, txQueue } =
+      useWebContext();
+
+    const { api: txQueueApi, txPayloads } = txQueue;
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: Note) => {
@@ -107,7 +107,7 @@ export const DepositConfirmContainer = forwardRef<
       // Start a new transaction
       if (depositTxInProgress) {
         startNewTransaction();
-        resetMainComponent();
+        onResetState?.();
         return;
       }
 
@@ -216,7 +216,6 @@ export const DepositConfirmContainer = forwardRef<
         tx.fail(getErrorMessage(error));
         captureSentryException(error, 'transactionType', 'deposit');
       } finally {
-        resetMainComponent();
         onResetState?.();
       }
     }, [
@@ -229,7 +228,6 @@ export const DepositConfirmContainer = forwardRef<
       wrappableToken,
       apiConfig,
       startNewTransaction,
-      resetMainComponent,
       txQueueApi,
       noteManager,
       fungibleTokenId,
@@ -301,11 +299,9 @@ export const DepositConfirmContainer = forwardRef<
         fungibleTokenSymbol={fungibleToken.view.symbol}
         sourceChain={sourceChain}
         destChain={destChain}
-        fee={feeValue ?? 0}
-        feeToken={feeToken}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusMessage={txStatusMessage}
-        onClose={() => resetMainComponent()}
+        onClose={onResetState}
       />
     );
   }

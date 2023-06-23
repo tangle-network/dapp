@@ -370,3 +370,132 @@ query ProposalsOvertimeTotalCount(
     totalCount
   }
 }
+
+query AllProposalsTimestamps {
+  refreshVote: proposalItems(
+    filter: { type: { equalTo: RefreshVote } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  proposerSetUpdateProposal: proposalItems(
+    filter: { type: { equalTo: ProposerSetUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  anchorCreateProposal: proposalItems(
+    filter: { type: { equalTo: AnchorCreateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  anchorUpdateProposal: proposalItems(
+    filter: { type: { equalTo: AnchorUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  tokenAddProposal: proposalItems(
+    filter: { type: { equalTo: TokenAddProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  tokenRemoveProposal: proposalItems(
+    filter: { type: { equalTo: TokenRemoveProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  wrappingFeeUpdateProposal: proposalItems(
+    filter: { type: { equalTo: WrappingFeeUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  resourceIdUpdateProposal: proposalItems(
+    filter: { type: { equalTo: ResourceIdUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  rescueTokensProposal: proposalItems(
+    filter: { type: { equalTo: RescueTokensProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  maxDepositLimitUpdateProposal: proposalItems(
+    filter: { type: { equalTo: MaxDepositLimitUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  minWithdrawalLimitUpdateProposal: proposalItems(
+    filter: { type: { equalTo: MinWithdrawalLimitUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  setVerifierProposal: proposalItems(
+    filter: { type: { equalTo: SetVerifierProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  setTreasuryHandlerProposal: proposalItems(
+    filter: { type: { equalTo: SetTreasuryHandlerProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+  feeRecipientUpdateProposal: proposalItems(
+    filter: { type: { equalTo: FeeRecipientUpdateProposal } }
+    first: 100
+    orderBy: BLOCK_NUMBER_DESC
+  ) {
+    nodes {
+      ...ProposalTimestamp
+    }
+  }
+}
