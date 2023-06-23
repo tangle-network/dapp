@@ -17,13 +17,13 @@ const nextConfig = {
         headers: createSecureHeaders({
           frameGuard: 'sameorigin',
           xssProtection: 'block-rendering',
-          contentSecurityPolicy: {
-            directives: {
-              defaultSrc: 'self',
-            },
-          },
           referrerPolicy: 'origin-when-cross-origin',
-        }),
+        }).concat([
+          {
+            key: 'Content-Security-Policy',
+            value: 'upgrade-insecure-requests',
+          },
+        ]),
       },
     ];
   },
