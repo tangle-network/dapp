@@ -46,7 +46,7 @@ export const KeyStatusCardContainer = () => {
           ? Number(currentKey?.session)
           : dkgDataFromPolkadotAPI?.currentSessionNumber,
     };
-  }, [data, dkgDataFromPolkadotAPI]);
+  }, [data, dkgDataFromPolkadotAPI, currentKey]);
 
   return (
     <KeyStatusCard
