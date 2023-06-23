@@ -19053,6 +19053,11 @@ neverthrow@^6.0.0:
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-6.0.0.tgz#bacd7661cade296ccc5c35760bb3b679214155b6"
   integrity sha512-kPZKRs4VkdloCGQXPoP84q4sT/1Z+lYM61AXyV8wWa2hnuo5KpPBF2S3crSFnMrOgUISmEBP8Vo/ngGZX60NhA==
 
+next-secure-headers@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/next-secure-headers/-/next-secure-headers-2.2.0.tgz#d4eb1b00a424f811c1455d1288990a4aad3026af"
+  integrity sha512-C7OfZ9JdSJyYMz2ZBMI/WwNbt0qNjlFWX9afUp8nEUzbz6ez3JbeopdyxSZJZJAzVLIAfyk6n73rFpd4e22jRg==
+
 next-seo@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-6.0.0.tgz#4568dc61a44dbdf5fe5ff44156cd0ff8804889a2"
