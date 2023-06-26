@@ -59,8 +59,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           return;
         }
 
-        let wrappableCurrencies: Currency[] = [];
-
+        const compositionSet = new Set<string>();
         const fungibleCurrency = fungibleCurrencies.find(
           (currency) => currency.view.symbol === tokenSymbol
         );
@@ -71,7 +70,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
             false
           );
 
-          wrappableCurrencies = foundCurrencies;
+          foundCurrencies.forEach((c) =>
+            compositionSet.add(c.view.symbol.toUpperCase())
+          );
         }
 
         let assetsUrl = '#';
@@ -90,9 +91,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           chain: chain.name,
           fungibleTokenSymbol: tokenSymbol,
           assetsUrl,
-          composition: wrappableCurrencies.map(
-            (currency) => currency.view.symbol
-          ),
+          composition: Array.from(compositionSet),
           availableBalance: Number(
             ethers.utils.formatUnits(amount, denomination)
           ),

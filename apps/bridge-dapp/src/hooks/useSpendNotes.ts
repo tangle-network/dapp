@@ -118,7 +118,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             : '?';
 
           // Calculate the wrappable currencies
-          let wrappableCurrencies: Currency[] = [];
+          const compositionSet = new Set<string>();
           const fungibleCurrency = fungibleCurrencies.find((currency) => {
             return (
               currency.view.symbol === note.note.tokenSymbol &&
@@ -130,7 +130,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
               fungibleCurrency.id,
               false
             );
-            wrappableCurrencies = foundCurrencies;
+            foundCurrencies.forEach((c) =>
+              compositionSet.add(c.view.symbol.toUpperCase())
+            );
           }
 
           // Calculate the assets url
@@ -151,9 +153,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             chain: chain.name.toLowerCase(),
             note: note.serialize(),
             assetsUrl,
-            composition: wrappableCurrencies.map(
-              (currency) => currency.view.symbol
-            ),
+            composition: Array.from(compositionSet),
             createdTime, // TODO: get the actual created time
             balance: Number(
               ethers.utils.formatUnits(note.note.amount, note.note.denomination)
