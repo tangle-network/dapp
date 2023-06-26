@@ -2,7 +2,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { parseTypedChainId, ResourceId } from '@webb-tools/sdk-core';
 import { useObservableState } from 'observable-hooks';
 import { useEffect } from 'react';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
 
 const resourceIdSubject = new BehaviorSubject<ResourceId | null>(null);
 

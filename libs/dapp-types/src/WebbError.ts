@@ -9,6 +9,8 @@ export enum WebbErrorCodes {
   NoCurrencyAvailable,
   // No fungible token is available
   NoFungibleTokenAvailable,
+  // Unsupported provider
+  UnsupportedProvider,
   // Unsupported chain is switch via the extension
   UnsupportedChain,
   // Unselected chain is a mismatch between provider and application
@@ -51,6 +53,8 @@ export enum WebbErrorCodes {
   TreeNotFound,
   // Insufficient disk space
   InsufficientDiskSpace,
+  // Invalid arguments
+  InvalidArguments,
 }
 
 // An Error message with error metadata
@@ -102,6 +106,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'No fungible token is available',
+        };
+
+      case WebbErrorCodes.UnsupportedProvider:
+        return {
+          code,
+          message: 'Unsupported provider',
         };
 
       case WebbErrorCodes.UnsupportedChain:
@@ -236,6 +246,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `Insufficient disk space, please make sure you have at least 500MB of free space`,
+        };
+
+      case WebbErrorCodes.InvalidArguments:
+        return {
+          code,
+          message: `Invalid arguments`,
         };
 
       default:

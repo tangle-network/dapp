@@ -1,5 +1,6 @@
 import {
   ActiveWebbRelayer,
+  calculateProvingLeavesAndCommitmentIndex,
   CancellationToken,
   generateCircomCommitment,
   isVAnchorDepositPayload,
@@ -33,7 +34,6 @@ import {
 import {
   ChainType,
   Keypair,
-  MerkleTree,
   Note,
   ResourceId,
   toFixedHex,
@@ -53,15 +53,15 @@ import {
   Overrides,
 } from 'ethers';
 
-import { Web3Provider } from '../ext-provider';
-import { WebbWeb3Provider } from '../webb-provider';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import {
-  calculateProvingLeavesAndCommitmentIndex,
-  handleVAnchorTxState,
-} from '../utils';
+import { Web3Provider } from '../ext-provider';
+import { handleVAnchorTxState } from '../utils';
+import { WebbWeb3Provider } from '../webb-provider';
 
-export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
+export class Web3VAnchorActions extends VAnchorActions<
+  'web3',
+  WebbWeb3Provider
+> {
   static async getNextIndex(
     apiConfig: ApiConfig,
     typedChainId: number,
@@ -85,7 +85,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<ParametersOfTransactMethod> | never {
+  ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
 
     const typedChainId = this.inner.typedChainId;
@@ -184,7 +184,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod,
+    txArgs: ParametersOfTransactMethod<'web3'>,
     changeNotes: Note[]
   ): Promise<void> | never {
     let txHash = '';
@@ -649,14 +649,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
       const { provingLeaves, commitmentIndex: leafIndex } =
-        await this.inner.getVariableAnchorLeaves(
-          sourceVAnchor,
-          leafStorage,
+        await this.inner.getVAnchorLeaves(sourceVAnchor, leafStorage, {
           treeHeight,
-          destRelayedRoot,
+          targetRoot: destRelayedRoot,
           commitment,
-          tx
-        );
+          tx,
+        });
 
       leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) => {
         return hexToU8a(leaf);

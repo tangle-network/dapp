@@ -6,13 +6,17 @@ import '@webb-tools/protocol-substrate-types';
 import {
   ApiInitHandler,
   Currency,
+  NewNotesTxResult,
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
+  Transaction,
+  TransactionState,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
+  calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
@@ -34,6 +38,7 @@ import {
   UtxoGenInput,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -49,7 +54,6 @@ import {
 } from '@webb-tools/fixtures-deployments';
 import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { PolkadotProvider } from './ext-provider';
@@ -64,20 +68,21 @@ import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { getLeaves } from './mt-utils';
 import { Storage } from '@webb-tools/storage';
 import { BridgeStorage } from '@webb-tools/browser-utils';
+import { providers } from 'ethers';
+import { VAnchor } from '@webb-tools/anchors';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
   implements WebbApiProvider<WebbPolkadot>
 {
-  type() {
-    return 'polkadot' as const;
-  }
+  readonly type = 'polkadot';
 
   state: WebbState;
   noteManager: NoteManager | null = null;
 
-  readonly methods: WebbMethods<WebbPolkadot>;
-  readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
+  readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
+
+  readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbPolkadot>>;
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
@@ -378,12 +383,32 @@ export class WebbPolkadot
     return this.typedChainidSubject.getValue();
   }
 
-  async getVariableAnchorLeaves(
-    api: ApiPromise,
+  async getVAnchorLeaves(
+    api: VAnchor | ApiPromise,
     storage: Storage<BridgeStorage>,
-    payload: { treeId: number; palletId: number },
-    abortSignal?: AbortSignal
-  ): Promise<string[]> {
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      treeId?: number;
+      palletId?: number;
+      tx?: Transaction<NewNotesTxResult>;
+    }
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }> {
+    if (api instanceof VAnchor) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
+    }
+
+    const { treeHeight, targetRoot, commitment, treeId, palletId, tx } =
+      options;
+
+    if (typeof treeId === 'undefined' || typeof palletId === 'undefined') {
+      throw WebbError.from(WebbErrorCodes.InvalidArguments);
+    }
+
     const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
     const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId);
     const chain = this.config.chains[typedChainId];
@@ -393,17 +418,25 @@ export class WebbPolkadot
       chainId,
     });
 
-    const leavesOrNull = await this.relayerManager.fetchLeavesFromRelayers(
-      relayers,
-      api,
-      storage,
-      { ...payload, abortSignal }
-    );
-
-    let leaves: string[];
+    const leavesFromRelayers =
+      await this.relayerManager.fetchLeavesFromRelayers(
+        relayers,
+        api,
+        storage,
+        {
+          ...options,
+          palletId,
+          treeId,
+        }
+      );
 
     // If unable to fetch leaves from the relayers, get them from chain
-    if (!leavesOrNull || leavesOrNull.length === 0) {
+    if (!leavesFromRelayers) {
+      tx?.next(TransactionState.FetchingLeaves, {
+        start: 0, // Dummy values
+        currentRange: [0, 0], // Dummy values
+      });
+
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
       const storedLeaves = await storage.get('leaves');
@@ -413,13 +446,14 @@ export class WebbPolkadot
       const queryBlock = lastQueriedBlock ? lastQueriedBlock + 1 : 0;
 
       console.log(
-        `Query leaves from chain ${chain?.name ?? 'Unknown'} of tree id ${
-          payload.treeId
-        } from block ${queryBlock} to ${endBlock.toNumber()}`
+        `Query leaves from chain ${
+          chain?.name ?? 'Unknown'
+        } of tree id ${treeId} from block ${queryBlock} to ${endBlock.toNumber()}`
       );
+
       const leavesFromChain = await getLeaves(
         api,
-        payload.treeId,
+        treeId,
         queryBlock,
         endBlock.toNumber()
       );
@@ -428,21 +462,45 @@ export class WebbPolkadot
         .map((leaf) => u8aToHex(leaf))
         .filter((leaf) => leaf !== ZERO_BYTES32); // Filter out zero leaves
 
-      console.log('Leaves from chain: ', leavesFromChainHex);
+      // Merge the leaves from chain with the stored leaves
+      // and fixed them to 32 bytes
+      const leaves = [...storedLeaves, ...leavesFromChainHex].map((leaf) =>
+        toFixedHex(leaf)
+      );
 
-      leaves = [...storedLeaves, ...leavesFromChainHex];
+      console.log(`Got ${leaves.length} leaves from chain`);
+
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      // Validate the leaves
+      const { leafIndex, provingLeaves } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment.toString()
+        );
+
+      // If the leafIndex is -1, it means the commitment is not in the tree
+      // and we should continue to the next relayer
+      if (leafIndex === -1) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+      } else {
+        tx?.next(TransactionState.ValidatingLeaves, true);
+      }
 
       // Cached the new leaves if not local chain
       if (chain?.tag !== 'dev') {
         await storage.set('lastQueriedBlock', endBlock.toNumber());
         await storage.set('leaves', leaves);
       }
-    } else {
-      console.log(`Got ${leavesOrNull.length} leaves from relayers.`);
-      leaves = leavesOrNull;
+
+      return {
+        provingLeaves,
+        commitmentIndex: leafIndex,
+      };
     }
 
-    return leaves;
+    return leavesFromRelayers;
   }
 
   /**
@@ -494,13 +552,10 @@ export class WebbPolkadot
 
   async getVAnchorMaxEdges(
     treeId: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: ApiPromise | providers.Web3Provider
   ): Promise<number> {
-    if (provider instanceof providers.Provider) {
-      console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
-      );
-      provider = this.api;
+    if (provider instanceof providers.Web3Provider) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
     }
 
     const storedMaxEdges = this.vAnchorMaxEdges.get(treeId);
@@ -521,13 +576,10 @@ export class WebbPolkadot
 
   async getVAnchorLevels(
     treeId: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: ApiPromise | providers.Web3Provider
   ): Promise<number> {
-    if (provider instanceof providers.Provider) {
-      console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
-      );
-      provider = this.api;
+    if (provider instanceof providers.Web3Provider) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
     }
 
     const storedLevels = this.vAnchorLevels.get(treeId);

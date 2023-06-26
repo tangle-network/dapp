@@ -10,7 +10,9 @@ import {
   TransactionState,
   TransferTransactionPayloadType,
   VAnchorActions,
+  WebbApiProvider,
   WithdrawTransactionPayloadType,
+  calculateProvingLeavesAndCommitmentIndex,
   generateCircomCommitment,
   isVAnchorDepositPayload,
   isVAnchorTransferPayload,
@@ -54,7 +56,10 @@ import {
 import createSubstrateResourceId from '../utils/createSubstrateResourceId';
 import { WebbPolkadot } from '../webb-provider';
 
-export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
+export class PolkadotVAnchorActions extends VAnchorActions<
+  'polkadot',
+  WebbPolkadot
+> {
   static async getNextIndex(
     apiConfig: ApiConfig,
     typedChainId: number,
@@ -85,7 +90,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> | never {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
 
     // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
@@ -117,7 +122,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
 
   transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod,
+    txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[]
   ): Promise<void> {
     throw new Error('Method not implemented.');
@@ -267,7 +272,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       throw new Error('No notes to deposit');
     }
 
-    const payload = notes[0];
     // In the withdraw/transfer flows, the destination chain is the current chain
     const destApi = this.inner.api;
 
@@ -293,35 +297,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       inputUtxos.push(utxo);
     });
 
-    const destTypedChainId = payload.note.targetChainId;
-    // Populate the leaves for the destination if not already populated
-    if (!leavesMap[destTypedChainId]) {
-      const treeId = +payload.note.targetIdentifyingData;
-      const palletId = await this.getVAnchorPalletId(destApi);
-      const { chainId } = parseTypedChainId(+destTypedChainId);
-
-      const resourceId = createSubstrateResourceId(
-        chainId,
-        treeId,
-        String(palletId)
-      );
-
-      const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      const leaves = await this.inner.getVariableAnchorLeaves(
-        destApi,
-        leafStorage,
-        {
-          treeId,
-          palletId,
-        },
-        tx?.cancelToken.abortSignal
-      );
-
-      leavesMap[destTypedChainId] = leaves.map((leaf) => {
-        return hexToU8a(leaf);
-      });
-    }
-
     return {
       sumInputNotes,
       inputUtxos,
@@ -335,7 +310,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx: Transaction<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const activeAccount = await this.inner.accounts.activeOrDefault;
     if (!activeAccount) {
       throw new Error('No active account');
@@ -367,14 +342,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       address,
       wrapUnwrapAssetId,
       leavesMap,
-    ] satisfies ParametersOfTransactMethod;
+    ] satisfies ParametersOfTransactMethod<'polkadot'>;
   }
 
   private async prepareWithdrawTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
@@ -400,7 +375,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx: Transaction<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { notes, changeUtxo, transferUtxo, feeAmount } = payload;
 
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
@@ -801,46 +776,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       targetChainId: targetTypedChainId,
       targetIdentifyingData: targetTreeId,
     } = note.note;
+
     const amountBN = new BN(amount);
 
-    // Fetch leaves of the source chain if not already fetched
-    if (leavesMap[sourceTypedChainId] === undefined) {
-      const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
-      const sourceChainEndpoint = sourceChainConfig.url;
-
-      const api =
-        String(this.inner.typedChainId) === sourceTypedChainId
-          ? this.inner.api
-          : await WebbPolkadot.getApiPromise(sourceChainEndpoint);
-
-      const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
-      const palletId = await this.getVAnchorPalletId(api);
-
-      const payload = {
-        palletId,
-        treeId: +sourceTreeId,
-      };
-
-      const resourceId = createSubstrateResourceId(
-        chainId,
-        payload.treeId,
-        String(palletId)
-      );
-
-      const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      const leaves = await this.inner.getVariableAnchorLeaves(
-        api,
-        leafStorage,
-        payload,
-        tx?.cancelToken.abortSignal
-      );
-      leavesMap[sourceTypedChainId] = leaves.map((leaf) => {
-        return hexToU8a(leaf);
-      });
-    }
-
-    let destHistorySourceRoot: string;
-    let treeHeight: BN;
+    let destRelayedRoot: string;
+    let treeHeight: number;
 
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (sourceTypedChainId === targetTypedChainId) {
@@ -852,46 +792,94 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
         throw WebbError.from(WebbErrorCodes.TreeNotFound);
       }
 
-      destHistorySourceRoot = destTree.root.toHex();
-      treeHeight = destTree.depth.toBn();
+      destRelayedRoot = destTree.root.toHex();
+      treeHeight = destTree.depth.toNumber();
     } else {
-      // Not implemented cross chain substrate <> substrate transactions yet.
+      // Not implemented cross chain substrate <> evm transactions yet.
       throw WebbError.from(WebbErrorCodes.NotImplemented);
     }
 
     // Fixed the root to be 32 bytes
-    destHistorySourceRoot = toFixedHex(destHistorySourceRoot);
+    destRelayedRoot = toFixedHex(destRelayedRoot);
 
-    // Remove leaves from the leaves map which have not yet been relayed
-    const provingTree = MerkleTree.createTreeWithRoot(
-      treeHeight.toNumber(),
-      leavesMap[sourceTypedChainId].map((leaf) => u8aToHex(leaf)),
-      destHistorySourceRoot
-    );
+    // The commitment of the note
+    const commitment = generateCircomCommitment(note.note);
 
-    if (!provingTree) {
-      // Outer try/catch will handle this
-      throw new Error('Fetched leaves do not match bridged anchor state');
+    let commitmentIndex: number;
+
+    // Fetch leaves of the source chain if not already fetched
+    if (!leavesMap[sourceTypedChainId]) {
+      const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
+      const sourceChainEndpoint = sourceChainConfig.url;
+
+      const api =
+        String(this.inner.typedChainId) === sourceTypedChainId
+          ? this.inner.api
+          : await WebbPolkadot.getApiPromise(sourceChainEndpoint);
+
+      const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+      const palletId = await this.getVAnchorPalletId(api);
+
+      const resourceId = createSubstrateResourceId(
+        chainId,
+        +sourceTreeId,
+        String(palletId)
+      );
+
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
+      const { provingLeaves, commitmentIndex: leafIndex } =
+        await this.inner.getVAnchorLeaves(api, leafStorage, {
+          treeHeight,
+          targetRoot: destRelayedRoot,
+          commitment,
+          palletId,
+          treeId: +sourceTreeId,
+        });
+
+      leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+
+      commitmentIndex = leafIndex;
+    } else {
+      const leaves = leavesMap[sourceTypedChainId].map((leaf) =>
+        u8aToHex(leaf)
+      );
+
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      const { provingLeaves, leafIndex } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          destRelayedRoot,
+          commitment.toString()
+        );
+      tx?.next(TransactionState.ValidatingLeaves, true);
+
+      commitmentIndex = leafIndex;
+
+      // If the proving leaves are more than the leaves we have,
+      // that means the commitment is not in the leaves we have
+      // so we need to reset the leaves
+      if (provingLeaves.length > leaves.length) {
+        leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) =>
+          hexToU8a(leaf)
+        );
+      }
     }
 
-    const provingLeaves = provingTree
-      .elements()
-      .map((el) => hexToU8a(toFixedHex(el.toHexString())));
-    leavesMap[sourceTypedChainId] = provingLeaves;
-    const commitment = generateCircomCommitment(note.note);
-    const leafIndex = provingTree.getIndexByElement(commitment);
     // Validate that the commitment is in the tree
-    if (leafIndex === -1) {
+    if (commitmentIndex === -1) {
       // Outer try/catch will handle this
       throw new Error(
-        'Commitment not found in tree, maybe waiting for relaying'
+        'Relayer has not yet relayed the commitment to the destination chain'
       );
     }
 
-    const utxo = await utxoFromVAnchorNote(note.note, leafIndex);
+    const utxo = await utxoFromVAnchorNote(note.note, commitmentIndex);
 
     return {
-      leafIndex,
+      leafIndex: commitmentIndex,
       utxo,
       amount: amountBN,
     };

@@ -3,6 +3,11 @@
 
 import { ApiPromise } from '@polkadot/api';
 import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '@webb-tools/abstract-api-provider';
+import {
   OptionalActiveRelayer,
   OptionalRelayer,
   RelayerQuery,
@@ -21,7 +26,7 @@ import {
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 
-export class PolkadotRelayerManager extends WebbRelayerManager {
+export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
@@ -103,38 +108,58 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
     api: ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
-      treeId?: number;
-      palletId?: number;
-      abortSignal?: AbortSignal;
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      treeId: number;
+      palletId: number;
+      tx?: Transaction<NewNotesTxResult>;
     }
-  ): Promise<string[] | null> {
-    const { treeId, palletId, abortSignal } = options;
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  } | null> {
+    const { treeId, palletId, treeHeight, targetRoot, commitment, tx } =
+      options;
 
-    if (!treeId || !palletId) {
-      this.logger.error(
-        WebbError.getErrorMessage(WebbErrorCodes.TreeNotFound).message
-      );
-      return null;
-    }
+    const abortSignal = tx?.cancelToken?.abortSignal;
 
-    let leaves: string[] = [];
     const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
     const typedChainId = calculateTypedChainId(chainId, ChainType.Substrate);
 
     // loop through relayers and get leaves
     for (const relayer of relayers) {
-      let relayerLeaves: Awaited<ReturnType<WebbRelayer['getLeaves']>>;
       try {
-        relayerLeaves = await relayer.getLeaves(
+        const { leaves, lastQueriedBlock } = await relayer.getLeaves(
           typedChainId,
           { treeId, palletId },
           abortSignal
         );
+
+        const result = await this.validateRelayerLeaves(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment,
+          tx
+        );
+
+        if (!result) {
+          continue;
+        }
+
+        // Cached all the leaves returned from the relayer to re-use later
+        await storage.set('lastQueriedBlock', lastQueriedBlock);
+        await storage.set('leaves', leaves);
+
+        // Return the leaves for proving
+        return result;
       } catch (e) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }
 
-      const treeData = await api.query.merkleTreeBn254.trees(treeId);
+      /*       const treeData = await api.query.merkleTreeBn254.trees(treeId);
       if (treeData.isNone) {
         this.logger.error(
           WebbError.getErrorMessage(WebbErrorCodes.TreeNotFound).message
@@ -163,7 +188,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager {
         await storage.set('leaves', relayerLeaves.leaves);
 
         return leaves;
-      }
+      } */
     }
 
     return null;

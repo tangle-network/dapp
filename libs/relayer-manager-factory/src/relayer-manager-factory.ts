@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { WebbProviderType } from '@webb-tools/abstract-api-provider';
 import {
   Capabilities,
   ChainNameIntoChainId,
@@ -164,7 +165,9 @@ export class WebbRelayerManagerFactory {
     return relayerManagerFactory;
   }
 
-  async getRelayerManager(type: RelayerCMDBase): Promise<WebbRelayerManager> {
+  async getRelayerManager(
+    type: RelayerCMDBase
+  ): Promise<WebbRelayerManager<WebbProviderType>> {
     const relayers = Object.keys(this.capabilities).map((endpoint) => {
       return new WebbRelayer(endpoint, this.capabilities[endpoint]);
     });

@@ -20,14 +20,13 @@ import {
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 
-import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
 import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 
-export class Web3RelayerManager extends WebbRelayerManager {
+export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
@@ -140,14 +139,18 @@ export class Web3RelayerManager extends WebbRelayerManager {
     relayers: WebbRelayer[],
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    treeHeight: number,
-    targetRoot: string,
-    commitment: bigint,
-    tx?: Transaction<NewNotesTxResult>
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      tx?: Transaction<NewNotesTxResult>;
+    }
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   } | null> {
+    const { treeHeight, targetRoot, commitment, tx } = options;
+
     const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
 
@@ -171,22 +174,16 @@ export class Web3RelayerManager extends WebbRelayerManager {
           continue;
         }
 
-        tx?.next(TransactionState.ValidatingLeaves, undefined);
-        const { leafIndex, provingLeaves } =
-          await calculateProvingLeavesAndCommitmentIndex(
-            treeHeight,
-            leaves,
-            targetRoot,
-            commitment.toString()
-          );
+        const result = await this.validateRelayerLeaves(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment,
+          tx
+        );
 
-        // If the leafIndex is -1, it means the commitment is not in the tree
-        // and we should continue to the next relayer
-        if (leafIndex === -1) {
-          tx?.next(TransactionState.ValidatingLeaves, false);
+        if (!result) {
           continue;
-        } else {
-          tx?.next(TransactionState.ValidatingLeaves, true);
         }
 
         // Cached all the leaves returned from the relayer to re-use later
@@ -194,10 +191,7 @@ export class Web3RelayerManager extends WebbRelayerManager {
         await storage.set('leaves', leaves);
 
         // Return the leaves for proving
-        return {
-          provingLeaves,
-          commitmentIndex: leafIndex,
-        };
+        return result;
       } catch (e) {
         tx?.next(TransactionState.ValidatingLeaves, false);
         continue;

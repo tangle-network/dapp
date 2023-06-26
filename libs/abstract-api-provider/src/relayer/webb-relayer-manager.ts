@@ -4,14 +4,21 @@
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
+import { ApiPromise } from '@polkadot/api';
+import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
+import { Storage } from '@webb-tools/storage';
+import {
+  NewNotesTxResult,
+  Transaction,
+  TransactionState,
+} from '../transaction';
+import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
+import { WebbProviderType } from '../webb-provider.interface';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
-import { VAnchor } from '@webb-tools/anchors';
-import { ApiPromise } from '@polkadot/api';
-import { Storage } from '@webb-tools/storage';
 
-export abstract class WebbRelayerManager {
+export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
   protected readonly logger = LoggerService.get('RelayerManager');
 
   private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(
@@ -71,12 +78,61 @@ export abstract class WebbRelayerManager {
    */
   abstract fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
-    api: ApiPromise | VAnchor,
+    api: Provider extends 'polkadot'
+      ? ApiPromise
+      : Provider extends 'web3'
+      ? VAnchor
+      : never,
     storage: Storage<BridgeStorage>,
     options: {
-      treeId?: number;
-      palletId?: number;
-      abortSignal?: AbortSignal;
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      importMetaUrl: string; // the url of the import.meta.url
+      treeId: Provider extends 'polkadot' ? number : never;
+      palletId: Provider extends 'polkadot' ? number : never;
+      tx?: Transaction<NewNotesTxResult>;
     }
-  ): Promise<string[] | null>;
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  } | null>;
+
+  /**
+   * Validate the commitment is in the tree and get the proving leaves
+   * from the leaves returned from the relayer
+   */
+  async validateRelayerLeaves(
+    treeHeight: number,
+    leaves: string[],
+    targetRoot: string,
+    commitment: bigint,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  } | null> {
+    tx?.next(TransactionState.ValidatingLeaves, undefined);
+    const { leafIndex, provingLeaves } =
+      await calculateProvingLeavesAndCommitmentIndex(
+        treeHeight,
+        leaves,
+        targetRoot,
+        commitment.toString()
+      );
+
+    // If the leafIndex is -1, it means the commitment is not in the tree
+    // and we should continue to the next relayer
+    if (leafIndex === -1) {
+      tx?.next(TransactionState.ValidatingLeaves, false);
+      return null;
+    } else {
+      tx?.next(TransactionState.ValidatingLeaves, true);
+    }
+
+    return {
+      provingLeaves,
+      commitmentIndex: leafIndex,
+    };
+  }
 }

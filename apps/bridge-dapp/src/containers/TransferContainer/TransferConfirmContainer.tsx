@@ -182,7 +182,7 @@ export const TransferConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
-        providerType: activeApi.type(),
+        providerType: activeApi.type,
       });
 
       setTxId(tx.id);
