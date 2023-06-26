@@ -1,6 +1,4 @@
 import {
-  PublicKeysQuery,
-  usePublicKeysQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
@@ -206,6 +204,7 @@ export function useKeys(
           offset: reqQuery.offset,
           PerPage: reqQuery.perPage,
         },
+        pollInterval: 10000,
         fetchPolicy: 'network-only',
       })
         .then(() => {
@@ -322,9 +321,8 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
-  const { blockTime } = useStatsContext();
-
   const activeSession = useActiveSession();
+
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -332,14 +330,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   });
 
   useEffect(() => {
-    if (metaData.val) {
+    if (activeSession) {
       call({
         variables: {
-          SessionId: [
-            metaData.val.activeSession,
-            String(Number(metaData.val.activeSession) + 1),
-          ],
+          SessionId: [activeSession, String(Number(activeSession) + 1)],
         },
+        pollInterval: 10000,
+        fetchPolicy: 'network-only',
       }).catch((e) => {
         setKeys({
           val: null,
@@ -349,7 +346,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         });
       });
     }
-  }, [metaData, call]);
+  }, [activeSession, call]);
 
   useEffect(() => {
     const subscription = query.observable
@@ -385,6 +382,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
 
           const activeKey = val[0];
           const nextKey = val[1];
+
           return {
             val: [
               activeKey,
@@ -416,7 +414,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       .subscribe(setKeys);
 
     return () => subscription.unsubscribe();
-  }, [query, activeSession, blockTime, sessionHeight, metaData]);
+  }, [query, activeSession, sessionHeight, metaData, setKeys]);
 
   return keys;
 }
