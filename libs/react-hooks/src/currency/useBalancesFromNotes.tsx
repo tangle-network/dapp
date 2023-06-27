@@ -1,14 +1,12 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { hexToU8a } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Currency } from '@webb-tools/abstract-api-provider';
-import { parseSubstrateTargetSystem } from '@webb-tools/dapp-config';
+import { ensureHex } from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
-import { ensureHex } from '@webb-tools/polkadot-api-provider';
 import { useNoteAccount } from '../useNoteAccount';
 
 /**

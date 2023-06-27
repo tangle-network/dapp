@@ -18,7 +18,11 @@ import {
   isVAnchorWithdrawPayload,
   utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
-import { ApiConfig, createSubstrateResourceId } from '@webb-tools/dapp-config';
+import {
+  ApiConfig,
+  createSubstrateResourceId,
+  ensureHex,
+} from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -48,11 +52,7 @@ import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
-import {
-  ensureHex,
-  getVAnchorExtDataHash,
-  groth16ProofToBytes,
-} from '../utils';
+import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotVAnchorActions extends VAnchorActions<

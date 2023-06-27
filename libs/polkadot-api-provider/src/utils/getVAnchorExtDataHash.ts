@@ -1,7 +1,7 @@
+import { ensureHex } from '@webb-tools/dapp-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { FIELD_SIZE } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
-import ensureHex from './ensureHex';
 
 const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
   const abi = new ethers.utils.AbiCoder();

@@ -6,6 +6,10 @@
     "types": ["node"],
     "strict": true
   },
-  "include": ["**/*.ts", "../../types/**/*.d.ts"],
+  "include": [
+    "**/*.ts",
+    "../../types/**/*.d.ts",
+    "../dapp-config/src/utils/ensureHex.ts"
+  ],
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }
