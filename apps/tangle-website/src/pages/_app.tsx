@@ -8,6 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles/globals.css';
+import 'react-notion-x/src/styles.css';
 import { Header } from '../components';
 import Script from 'next/script';
 import { useEffect } from 'react';
