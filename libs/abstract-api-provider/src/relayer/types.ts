@@ -12,11 +12,13 @@ import { ActiveWebbRelayer, WebbRelayer } from '.';
  * Relayer configuration for a chain
  * @param account - Relayer account that is going to be used to sign the transaction
  * @param beneficiary - Account that will receive the reward for relaying a transaction
+ * @param enabled - Indicates if the relayer is enabled
  * @param contracts -  List of contracts supported by a relayer
  **/
 export type RelayedChainConfig = {
   account: string;
   beneficiary?: string;
+  enabled?: boolean;
   contracts: Contract[];
 };
 

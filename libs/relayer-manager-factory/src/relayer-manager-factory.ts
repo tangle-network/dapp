@@ -11,13 +11,17 @@ import {
 } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
-  chainNameAdapter,
   RelayerCMDBase,
   RelayerConfig,
+  chainNameAdapter,
   relayerConfig,
 } from '@webb-tools/dapp-config/relayer-config';
 import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import { PolkadotRelayerManager } from '@webb-tools/polkadot-api-provider';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { Web3RelayerManager } from '@webb-tools/web3-api-provider';
 
 let relayerManagerFactory: WebbRelayerManagerFactory | null = null;
@@ -88,10 +92,14 @@ export class WebbRelayerManagerFactory {
               .filter(
                 (key) =>
                   info.substrate[key]?.beneficiary &&
-                  nameAdapter(key, 'substrate') != null
+                  info.substrate[key]?.enabled
               )
               .reduce((m, key) => {
-                m.set(nameAdapter(key, 'substrate'), info.substrate[key]);
+                const typedChainId = calculateTypedChainId(
+                  ChainType.Substrate,
+                  +key
+                );
+                m.set(typedChainId, info.substrate[key]);
 
                 return m;
               }, new Map())
@@ -113,12 +121,14 @@ export class WebbRelayerManagerFactory {
       const response = await fetch(`${endpoint}/api/v1/info`);
       const info: RelayerInfo = await response.json();
       this.logger.info('Received relayer info from endpoint: ', endpoint, info);
-      return WebbRelayerManagerFactory.infoIntoCapabilities(
+      const capabilities = WebbRelayerManagerFactory.infoIntoCapabilities(
         info,
         this.chainNameAdapter
       );
+      console.log('capabilities', capabilities);
+      return capabilities;
     } catch (error) {
-      // Ignore errors and clear the network errors
+      console.error('Error fetching relayer info: ', error);
     }
   }
 

@@ -100,7 +100,9 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
   }
 
   async getRelayersByChainAndAddress(_chainId: number, _address: string) {
-    return this.getRelayers({});
+    return this.getRelayers({
+      baseOn: 'substrate',
+    });
   }
 
   async fetchLeavesFromRelayers(
