@@ -16,9 +16,15 @@ import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
-import { getNativeCurrencyFromConfig } from './utils';
+import {
+  getNativeCurrencyFromConfig,
+  parseSubstrateTargetSystem,
+} from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
 import { parsedAnchorConfig } from './anchors';
+import assert from 'assert';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import { u8aToHex } from '@webb-tools/utils';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
@@ -191,5 +197,31 @@ export class ApiConfig {
       return true;
     });
     return currencies;
+  }
+
+  /**
+   * Parse the target system then compare with the anchor identifier
+   * @param anchorIdentifier the anchor identifier, either the anchor address on evm or tree id on substrate
+   * @param targetSystem the target system, which is get from the resource id (it should be 26 bytes)
+   * @returns true if the anchor identifier is matched with the target system
+   */
+  isEqTargetSystem(
+    anchorIdentifier: `0x${string}`,
+    targetSystem: Uint8Array
+  ): boolean {
+    assert(targetSystem.length === 26, 'target system should be 26-bytes');
+
+    const targetSystemHex = u8aToHex(targetSystem);
+
+    // If the anchor identifier is ethereum address, compare it directly with the target system
+    if (isEthereumAddress(anchorIdentifier)) {
+      // Compare using BigInt because the target hex maybe start with 0x00
+      return BigInt(anchorIdentifier) === BigInt(targetSystemHex);
+    }
+
+    // Otherwise, the anchor identifier is substrate tree id,
+    // parse the target system and compare the tree id
+    const { treeId } = parseSubstrateTargetSystem(targetSystemHex);
+    return +anchorIdentifier === treeId;
   }
 }

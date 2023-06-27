@@ -18,7 +18,7 @@ import {
   isVAnchorWithdrawPayload,
   utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
-import { ApiConfig } from '@webb-tools/dapp-config';
+import { ApiConfig, createSubstrateResourceId } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ChainType,
@@ -53,7 +53,6 @@ import {
   getVAnchorExtDataHash,
   groth16ProofToBytes,
 } from '../utils';
-import createSubstrateResourceId from '../utils/createSubstrateResourceId';
 import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotVAnchorActions extends VAnchorActions<

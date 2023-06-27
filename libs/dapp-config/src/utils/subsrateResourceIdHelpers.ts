@@ -30,7 +30,7 @@ export const parseSubstrateTargetSystem = (targetSystem: string) => {
   };
 };
 
-function createSubstrateResourceId(
+export function createSubstrateResourceId(
   chainId: number,
   treeId: number,
   palletIndex: string
@@ -44,5 +44,3 @@ function createSubstrateResourceId(
   );
   return resourceId;
 }
-
-export default createSubstrateResourceId;

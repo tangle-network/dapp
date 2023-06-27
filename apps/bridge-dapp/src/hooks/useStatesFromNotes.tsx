@@ -14,6 +14,7 @@ import { useShieldedAssets } from './useShieldedAssets';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { ChainListCardWrapper } from '../components';
+import { ensureHex } from '@webb-tools/polkadot-api-provider';
 
 /**
  * Hook to share the states which are calculated from notes
@@ -107,17 +108,15 @@ const useStatesFromNotes = () => {
         });
 
         const fungible = fungibleCurrencies.find((c) => {
-          const addrOrTreeId = apiConfig.getAnchorIdentifier(
-            c.id,
-            typedChainId
-          );
+          const anchorId = apiConfig.getAnchorIdentifier(c.id, typedChainId);
 
-          if (!addrOrTreeId) {
+          if (!anchorId) {
             return false;
           }
 
-          return (
-            BigInt(addrOrTreeId) === BigInt(u8aToHex(resourceId.targetSystem))
+          return apiConfig.isEqTargetSystem(
+            ensureHex(anchorId),
+            resourceId.targetSystem
           );
         });
 
