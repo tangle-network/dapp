@@ -107,14 +107,17 @@ const useStatesFromNotes = () => {
         });
 
         const fungible = fungibleCurrencies.find((c) => {
-          const anchorAddress = apiConfig.getAnchorAddress(c.id, typedChainId);
+          const addrOrTreeId = apiConfig.getAnchorIdentifier(
+            c.id,
+            typedChainId
+          );
 
-          if (!anchorAddress) {
+          if (!addrOrTreeId) {
             return false;
           }
 
           return (
-            BigInt(anchorAddress) === BigInt(u8aToHex(resourceId.targetSystem))
+            BigInt(addrOrTreeId) === BigInt(u8aToHex(resourceId.targetSystem))
           );
         });
 

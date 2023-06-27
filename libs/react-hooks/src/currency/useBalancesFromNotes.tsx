@@ -53,7 +53,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
           // on each chain
           notes.forEach(({ note }) => {
             const fungible = allFungibles.find((f) => {
-              const addrOrTreeId = apiConfig.getAnchorAddress(
+              const addrOrTreeId = apiConfig.getAnchorIdentifier(
                 f.id,
                 typedChainId
               );

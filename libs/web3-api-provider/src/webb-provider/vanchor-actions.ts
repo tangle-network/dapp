@@ -69,7 +69,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = apiConfig.chains[typedChainId];
-    const anchor = apiConfig.getAnchorAddress(fungibleCurrencyId, typedChainId);
+    const anchor = apiConfig.getAnchorIdentifier(
+      fungibleCurrencyId,
+      typedChainId
+    );
     if (!chain || !anchor) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
@@ -584,7 +587,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
-    const anchor = this.inner.config.getAnchorAddress(
+    const anchor = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );

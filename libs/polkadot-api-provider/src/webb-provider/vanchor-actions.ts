@@ -66,7 +66,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = apiConfig.chains[typedChainId];
-    const treeIdStr = apiConfig.getAnchorAddress(
+    const treeIdStr = apiConfig.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );
@@ -247,7 +247,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
-    const treeIdStr = this.inner.config.getAnchorAddress(
+    const treeIdStr = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );

@@ -156,7 +156,14 @@ export class ApiConfig {
     return this.currencies[currency as any] ?? undefined;
   }
 
-  getAnchorAddress(fungibleCurrencyId: number, typedChainId: number) {
+  /**
+   * Get the anchor identifier of the given fungible currency id and typed chain id
+   * it could be either the anchor address on evm or tree id on substrate
+   * @param fungibleCurrencyId the fungible currency id of the anchor
+   * @param typedChainId the typed chain id of the anchor
+   * @returns either the anchor address on evm or tree id on substrate
+   */
+  getAnchorIdentifier(fungibleCurrencyId: number, typedChainId: number) {
     const anchor = this.anchors[fungibleCurrencyId];
     if (!anchor) {
       return undefined;
