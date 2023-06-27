@@ -532,8 +532,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       leavesMap
     );
 
-    console.log('proofInputs', proofInputs);
-
     const witness = await this.getSnarkJsWitness(proofInputs, wasm);
 
     const proof = await this.getSnarkJsProof(zkey, witness);
@@ -628,6 +626,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     };
 
     const extDataHash = getVAnchorExtDataHash(extData);
+    console.log('extDataHash', extDataHash);
 
     return { extData, extDataHash };
   }

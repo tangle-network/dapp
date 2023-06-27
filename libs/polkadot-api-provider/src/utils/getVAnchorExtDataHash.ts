@@ -4,6 +4,7 @@ import { FIELD_SIZE } from '@webb-tools/sdk-core';
 import { ethers } from 'ethers';
 
 const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
+  console.log('extData', extData);
   const abi = new ethers.utils.AbiCoder();
   const encodedData = abi.encode(
     [

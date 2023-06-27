@@ -117,11 +117,11 @@ export const useMaxFeeInfo = (
           activeChain.chainId
         );
 
-        const vanchorAddr = apiConfig.getAnchorAddress(
+        const vanchorId = apiConfig.getAnchorIdentifier(
           opt.fungibleCurrencyId,
           currentTypedChainId
         );
-        if (!vanchorAddr) {
+        if (!vanchorId) {
           console.error('No anchor address in current active chain');
           return;
         }
@@ -135,7 +135,7 @@ export const useMaxFeeInfo = (
 
         const feeInfo = await relayer.getFeeInfo(
           currentTypedChainId,
-          vanchorAddr,
+          vanchorId,
           gasAmount
         );
         setFeeInfo(feeInfo);
