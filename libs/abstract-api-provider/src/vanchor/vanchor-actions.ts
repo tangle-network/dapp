@@ -3,7 +3,13 @@
 
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
-import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  Keypair,
+  Note,
+  ResourceId,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import BN from 'bn.js';
 import { BigNumber, ContractReceipt, Overrides } from 'ethers';
 
@@ -109,7 +115,7 @@ export const isVAnchorTransferPayload = (
 };
 
 export abstract class AbstractState<
-  T extends WebbApiProvider<any>
+  T extends WebbApiProvider<unknown>
 > extends EventBus<ActionEvent> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
@@ -134,7 +140,7 @@ export abstract class AbstractState<
 
 export abstract class VAnchorActions<
   ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any> = WebbApiProvider<any>
+  T extends WebbApiProvider<unknown> = WebbApiProvider<unknown>
 > extends AbstractState<T> {
   logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
 
@@ -158,6 +164,12 @@ export abstract class VAnchorActions<
     noteOrIndexBeforeInsertion: Note | number,
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;
+
+  abstract getResourceId(
+    anchorAddressOrTreeId: string,
+    chainId: number,
+    chainType: ChainType
+  ): Promise<ResourceId>;
 
   // A function to check if the (account, public key) pair is registered.
   abstract isPairRegistered(

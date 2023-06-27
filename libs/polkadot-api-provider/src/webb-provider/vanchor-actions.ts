@@ -10,7 +10,6 @@ import {
   TransactionState,
   TransferTransactionPayloadType,
   VAnchorActions,
-  WebbApiProvider,
   WithdrawTransactionPayloadType,
   calculateProvingLeavesAndCommitmentIndex,
   generateCircomCommitment,
@@ -22,12 +21,13 @@ import {
 import { ApiConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
+  ChainType,
   FIELD_SIZE,
   Keypair,
-  LeafIdentifier,
   MerkleProof,
   MerkleTree,
   Note,
+  ResourceId,
   Utxo,
   buildVariableWitnessCalculator,
   generateVariableWitnessInput,
@@ -267,6 +267,15 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return nextIdx.toBigInt();
   }
 
+  async getResourceId(
+    treeId: string,
+    chainId: number,
+    _: ChainType
+  ): Promise<ResourceId> {
+    const palletId = await this.getVAnchorPalletId(this.inner.api);
+    return createSubstrateResourceId(chainId, +treeId, palletId.toString());
+  }
+
   async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
@@ -410,8 +419,17 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const amount = formatUnits(payload.note.amount, payload.note.denomination);
 
     if (Number(balance) < Number(amount)) {
+      const { chainId, chainType } = parseTypedChainId(
+        +payload.note.targetChainId
+      );
+      const resourceId = await this.getResourceId(
+        payload.note.targetIdentifyingData,
+        chainId,
+        chainType
+      );
+
       this.emit('stateChange', TransactionState.Failed);
-      await this.inner.noteManager?.removeNote(payload);
+      await this.inner.noteManager?.removeNote(resourceId, payload);
       throw new Error('Not enough balance');
     }
   }
@@ -460,7 +478,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       .getNeighborRoots(treeId)
       .then((roots: Codec) => roots.toHuman());
 
-    const rootsSet = [hexToU8a(root), ...neighborRoots.map(hexToU8a)];
+    const rootsSet = [hexToU8a(root), ...neighborRoots.map((r) => hexToU8a(r))];
     const feeBigInt = BigInt(fee.toString());
     const extAmount = this.getExtAmount(inputs, outputs, feeBigInt);
 
@@ -468,16 +486,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     if (extAmountAbs <= feeBigInt) {
       throw new Error('The amount must be greater than the fee');
     }
-
-    // Pass the identifier for leaves alongside the proof input
-    const leafIds: LeafIdentifier[] = inputs.map((input) => {
-      const index = input.index ?? this.inner.state.defaultUtxoIndex;
-      if (!input.index) {
-        input.setIndex(index);
-      }
-
-      return { index, typedChainId: Number(input.originChainId) };
-    });
 
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
       hexToU8a(outputs[0].encrypt()),

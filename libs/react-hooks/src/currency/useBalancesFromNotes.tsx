@@ -7,6 +7,11 @@ import { useMemo } from 'react';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { useNoteAccount } from '../useNoteAccount';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import {
+  ensureHex,
+  parseSubstrateTargetSystem,
+} from '@webb-tools/polkadot-api-provider';
 
 /**
  * The return type of the useBalancesFromNotes
@@ -41,19 +46,31 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
           );
           // Convert bytes to hex string and then to BigInt to remove padding 0s at the beginning
           // then convert back to hex string
-          const anchorAddressBigInt = BigInt(u8aToHex(resourceId.targetSystem));
+          const targetSystem = u8aToHex(resourceId.targetSystem);
+          const anchorAddress = ensureHex(BigInt(targetSystem).toString(16));
 
           // Iterate through all notes and calculate the balance of each fungible currency
           // on each chain
           notes.forEach(({ note }) => {
             const fungible = allFungibles.find((f) => {
-              const addr = apiConfig.getAnchorAddress(f.id, typedChainId);
+              const addrOrTreeId = apiConfig.getAnchorAddress(
+                f.id,
+                typedChainId
+              );
+
+              let validIndentifier = false;
+              if (isEthereumAddress(anchorAddress)) {
+                validIndentifier = addrOrTreeId === anchorAddress;
+              } else {
+                const { treeId } = parseSubstrateTargetSystem(targetSystem);
+                validIndentifier =
+                  !!addrOrTreeId && treeId.toString() === addrOrTreeId;
+              }
 
               return (
-                addr &&
                 f.view.symbol === note.tokenSymbol &&
                 f.hasChain(typedChainId) &&
-                BigInt(addr) === anchorAddressBigInt
+                validIndentifier
               );
             });
 

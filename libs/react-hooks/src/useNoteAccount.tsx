@@ -1,5 +1,9 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  Note,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
@@ -133,7 +137,21 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             // Do not display notes that have zero value.
             .filter((note) => note.note.amount !== '0')
             .map(async (note) => {
-              await noteManager.addNote(note);
+              // Either contract address or tree id
+              const targetIdentifier = note.note.targetIdentifyingData;
+              const { chainType, chainId } = parseTypedChainId(
+                +note.note.targetChainId
+              );
+
+              // Index the note by destination resource id
+              const resourceId =
+                await activeApi.methods.variableAnchor.actions.inner.getResourceId(
+                  targetIdentifier,
+                  chainId,
+                  chainType
+                );
+
+              await noteManager.addNote(resourceId, note);
               return note;
             })
         );

@@ -10,12 +10,13 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 import { downloadNotes } from '../../utils';
 import { DeleteNotesModalProps } from './types';
+import { useVAnchor } from '@webb-tools/react-hooks';
 
 export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
   notes,
   setNotes,
 }) => {
-  const { noteManager } = useWebContext();
+  const { removeNoteFromNoteManager } = useVAnchor();
 
   const isOpen = useMemo(
     () => Array.isArray(notes) && notes.length > 0,
@@ -39,18 +40,18 @@ export const DeleteNotesModal: FC<DeleteNotesModalProps> = ({
   }, [notes, setNotes]);
 
   const handleDeleteNotes = useCallback(async () => {
-    if (!notes || !noteManager) {
+    if (!notes) {
       console.trace('No notes or note manager found');
       return;
     }
 
     try {
-      await Promise.all(notes.map((note) => noteManager.removeNote(note)));
+      await Promise.all(notes.map((note) => removeNoteFromNoteManager(note)));
       setNotes?.(undefined);
     } catch (error) {
       console.error('Error deleting notes:', error);
     }
-  }, [notes, setNotes, noteManager]);
+  }, [notes, setNotes, removeNoteFromNoteManager]);
 
   if (!notes) {
     return null;

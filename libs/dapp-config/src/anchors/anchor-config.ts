@@ -53,12 +53,6 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   [PresetTypedChainId.ProtocolSubstrateStandalone]: {
     '6': NaN,
   },
-  [PresetTypedChainId.LocalTangleStandalone]: {
-    '4': NaN,
-  },
-  [PresetTypedChainId.TangleStandaloneTestnet]: {
-    '4': NaN,
-  },
 };
 
 export const parsedAnchorConfig = Object.keys(anchorDeploymentBlock).reduce(
