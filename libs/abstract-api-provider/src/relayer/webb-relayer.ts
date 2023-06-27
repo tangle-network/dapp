@@ -49,7 +49,7 @@ type RelayerLeaves = {
 
 export interface RelayerFeeInfo {
   estimatedFee: BigNumber;
-  gasPrice: BigNumber;
+  gasPrice?: BigNumber;
   refundExchangeRate: BigNumber;
   maxRefund: BigNumber;
   timestamp: Date;
@@ -58,7 +58,7 @@ export interface RelayerFeeInfo {
 export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   return {
     estimatedFee: BigNumber.from(data.estimatedFee),
-    gasPrice: BigNumber.from(data.gasPrice),
+    gasPrice: data.gasPrice ? BigNumber.from(data.gasPrice) : undefined,
     refundExchangeRate: BigNumber.from(data.refundExchangeRate),
     maxRefund: BigNumber.from(data.maxRefund),
     timestamp: new Date(data.timestamp),
