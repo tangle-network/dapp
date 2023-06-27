@@ -1,8 +1,64 @@
 import { Transition } from '@headlessui/react';
-import { Banner, Footer } from '@webb-tools/webb-ui-components/components';
+import {
+  Banner,
+  Footer,
+  SideBar,
+} from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
+
+const items = [
+  {
+    name: 'Ecosystem',
+    isInternal: false,
+    href: '/',
+    icon: <div>✅</div>,
+    subItems: [],
+  },
+  {
+    name: 'Account',
+    isInternal: false,
+    href: '/bridge',
+    icon: <div>🌊</div>,
+    subItems: [],
+  },
+  {
+    name: 'Hubble',
+    isInternal: true,
+    href: '/',
+    icon: <div>✨</div>,
+    subItems: [
+      {
+        name: 'Bridge',
+        isInternal: true,
+        href: '/bridge',
+      },
+      {
+        name: 'Wrap/Unwrap',
+        isInternal: true,
+        href: '/wrap-unwrap',
+      },
+      {
+        name: 'Explorer',
+        isInternal: false,
+        href: '/explorer',
+      },
+      {
+        name: 'Faucet',
+        isInternal: false,
+        href: '/faucet',
+      },
+    ],
+  },
+  {
+    name: 'Account',
+    isInternal: true,
+    href: '/bridge',
+    icon: <div>🖼️</div>,
+    subItems: [],
+  },
+];
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -15,6 +71,8 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
     <div className="flex flex-col justify-between h-screen min-w-full min-h-full">
       <div className="flex-[1] flex flex-col">
         <Header />
+
+        <SideBar items={items} />
 
         <Transition
           show={showBanner}
