@@ -42,4 +42,3 @@ export const Default = Template.bind({});
 Default.args = {
   name: 'ethereum',
 };
-

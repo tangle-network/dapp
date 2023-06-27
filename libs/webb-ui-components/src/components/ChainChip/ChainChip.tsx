@@ -33,7 +33,13 @@ import { getChainChipClassName } from './utils';
  */
 export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
   (props, ref) => {
-    const { className: classNameProp, type, name, ...restProps } = props;
+    const {
+      className: classNameProp,
+      chainType,
+      iconName,
+      title,
+      ...restProps
+    } = props;
 
     const baseClsx = useMemo(
       () =>
@@ -42,14 +48,14 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
     );
 
     const className = useMemo(() => {
-      const chainChipClassNames = getChainChipClassName(type);
+      const chainChipClassNames = getChainChipClassName(chainType);
       return twMerge(baseClsx, chainChipClassNames, classNameProp);
-    }, [baseClsx, type, classNameProp]);
+    }, [baseClsx, chainType, classNameProp]);
 
     return (
       <span className={className} {...restProps} ref={ref}>
-        <ChainIcon name={name} size="md" />
-        {name}
+        <ChainIcon name={iconName} size="md" />
+        {title}
       </span>
     );
   }

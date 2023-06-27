@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ChainChip } from '../../components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -8,7 +6,7 @@ export default {
   component: ChainChip,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    type: {
+    chainType: {
       control: {
         type: 'select',
         options: [
@@ -16,6 +14,7 @@ export default {
           'ethereum',
           'optimism',
           'kusama',
+          'athena',
           'moonbeam',
           'polkadot',
           'arbitrum',
@@ -27,29 +26,31 @@ export default {
         ],
       },
     },
-    name: {
+    iconName: {
       control: {
         type: 'select',
         options: [
-          'polygon',
-          'polygon mumbai',
-          'ethereum',
-          'goerli',
-          'sepolia',
-          'optimism',
-          'optimism goerli',
-          'kusama',
-          'moonbeam',
-          'moonbase alpha',
-          'polkadot',
           'arbitrum',
           'arbitrum goerli',
+          'athena',
           'avalanche',
           'avalanche fuji',
           'cosmos',
+          'ethereum',
+          'ethereum goerli',
+          'ethereum rinkeby',
+          'ethereum sepolia',
+          'kusama',
+          'moonbeam',
+          'moonbeam alpha',
+          'optimism',
+          'optimism goerli',
+          'polkadot',
+          'polygon',
+          'polygon mumbai',
           'tangle',
           'scroll',
-          'athena',
+          'webb',
           'demeter',
           'hermes',
         ],
@@ -64,18 +65,7 @@ const Template = (args) => <ChainChip {...args} />;
 export const Ethereum = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Ethereum.args = {
-  type: 'ethereum',
-  name: 'ethereum',
-};
-
-export const Polygon = Template.bind({});
-Polygon.args = {
-  type: 'polygon',
-  name: 'polygon',
-};
-
-export const Cosmos = Template.bind({});
-Cosmos.args = {
-  type: 'cosmos',
-  name: 'cosmos',
+  chainType: 'ethereum',
+  iconName: 'ethereum',
+  title: 'Ethereum',
 };

@@ -14,6 +14,12 @@ const classNames: ChainChipClassNames = {
   kusama: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#000000]',
   },
+  athena: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#D9780E]',
+  },
+  cosmos: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#2E3148]',
+  },
   moonbeam: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#1D1336]',
   },
@@ -26,9 +32,6 @@ const classNames: ChainChipClassNames = {
   avalanche: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#E84142]',
   },
-  cosmos: {
-    default: 'text-mono-0 dark:text-mono-0 bg-[#2E3148]',
-  },
   tangle: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#221C41]',
   },
@@ -36,7 +39,7 @@ const classNames: ChainChipClassNames = {
     default: 'text-mono-200 dark:text-mono-200 bg-[#F7F8F7]',
   },
   'webb-dev': {
-    default: 'text-mono-0 dark:text-mono-0 bg-[#D9780F]',
+    default: 'text-mono-0 dark:text-mono-0 bg-[#ffffff]',
   },
 };
 

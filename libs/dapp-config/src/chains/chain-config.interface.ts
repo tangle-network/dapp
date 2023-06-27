@@ -10,6 +10,7 @@ export type ChainBase =
   | 'ethereum'
   | 'optimism'
   | 'kusama'
+  | 'athena'
   | 'moonbeam'
   | 'polkadot'
   | 'arbitrum'
