@@ -15,6 +15,7 @@ export type ChainBase =
   | 'arbitrum'
   | 'avalanche'
   | 'tangle'
+  | 'cosmos'
   | 'scroll'
   | 'webb-dev';
 

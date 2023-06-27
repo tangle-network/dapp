@@ -19,6 +19,7 @@ import { getChainChipClassName } from './utils';
   | arbitrum
   | avalanche
   | tangle
+  | cosmos
   | scroll
   | webb-dev
  * - `name`: `string` -
@@ -36,7 +37,7 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
 
     const baseClsx = useMemo(
       () =>
-        'box-border inline-flex items-center gap-1 pl-2 pr-3 py-1.5 rounded-full uppercase text-[12px] leading-[15px] font-bold text-mono-200 w-fit',
+        'box-border inline-flex items-center gap-1 pl-2 pr-3 py-1.5 rounded-md uppercase text-[12px] leading-[15px] font-bold text-mono-200 w-fit',
       []
     );
 

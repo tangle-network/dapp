@@ -20,6 +20,7 @@ export default {
           'polkadot',
           'arbitrum',
           'avalanche',
+          'cosmos',
           'tangle',
           'scroll',
           'webb-dev',
@@ -45,6 +46,7 @@ export default {
           'arbitrum goerli',
           'avalanche',
           'avalanche fuji',
+          'cosmos',
           'tangle',
           'scroll',
           'athena',
@@ -59,9 +61,21 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <ChainChip {...args} />;
 
-export const Primary = Template.bind({});
+export const Ethereum = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
+Ethereum.args = {
   type: 'ethereum',
   name: 'ethereum',
+};
+
+export const Polygon = Template.bind({});
+Polygon.args = {
+  type: 'polygon',
+  name: 'polygon',
+};
+
+export const Cosmos = Template.bind({});
+Cosmos.args = {
+  type: 'cosmos',
+  name: 'cosmos',
 };

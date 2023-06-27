@@ -26,6 +26,9 @@ const classNames: ChainChipClassNames = {
   avalanche: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#E84142]',
   },
+  cosmos: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#2E3148]',
+  },
   tangle: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#221C41]',
   },
