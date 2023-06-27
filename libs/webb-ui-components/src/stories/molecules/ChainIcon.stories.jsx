@@ -37,13 +37,9 @@ export default {
   },
 };
 
-export const Ethereum = Template.bind({});
-Ethereum.args = {
+export const Default = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Default.args = {
   name: 'ethereum',
 };
 
-export const Cosmos = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Cosmos.args = {
-  name: 'webb',
-};
