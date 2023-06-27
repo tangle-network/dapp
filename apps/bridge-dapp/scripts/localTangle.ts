@@ -2,36 +2,25 @@
  * Copyright 2023 Webb Technologies Inc.
  * SPDX-License-Identifier: Apache-2.0
  *
- * This script is used to start a local tangle network and create a pool share asset
+ * This script is used to setup a local tangle network and create a pool share asset
  * for the bridge dapp to use (mostly for testing purposes)
  *
  * Dependency:
  * - @webb-tools/tangle: https://github.com/webb-tools/tangle
- *   Please put the `tangle` repo in the same level as the `webb-dapp` repo
- *   and follow the instructions in the `tangle` repo to build the node binary
- *   and then run this script.
- *
- * Options:
- * -v --verbose: Enable node logging
+ *   Please run the `tangle` repo first and then run this script to
+ *   setup the nessary assets for the bridge dapp to use.
  */
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
-import { Command } from 'commander';
-import { workspaceRoot } from 'nx/src/utils/workspace-root';
-import { resolve } from 'path';
 
 import addAssetMetadata from './utils/addAssetMetadata';
 import createPoolShare from './utils/createPoolShare';
 import createVAnchor from './utils/createVAnchor';
-import getLocalApi from './utils/getLocalApi';
 import getKeyring from './utils/getKeyRing';
+import getLocalApi from './utils/getLocalApi';
 import transferAsset from './utils/transferAsset';
-
-// TODO: Replace this lib with `execa`
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const shelljs = require('shelljs');
 
 const ALICE_PORT = 9944;
 
@@ -46,42 +35,11 @@ const FUNGIBLE_ASSET = 'webbtTNT';
 
 const TEST_ACCOUNT = process.env.POLKADOT_TEST_ACCOUNT_ADDRESS;
 
-const AMOUNT = 1000;
-
-const localStandaloneTangleScript = resolve(
-  workspaceRoot,
-  '../tangle/scripts/run-standalone.sh'
-);
-
-// Define CLI options
-const program = new Command();
-
-program.option('-v --verbose', 'Enable node logging');
-
-program.parse(process.argv);
-
-const options = program.opts();
+const AMOUNT = 1_000_000;
 
 async function main() {
   // Start the nodes
   console.log(chalk.blue('Starting local tangle network...'));
-
-  const proc = shelljs.exec(localStandaloneTangleScript + ' --clean', {
-    cwd: resolve(localStandaloneTangleScript, '../../'),
-    async: true,
-    silent: true,
-  });
-  cleanup(() => proc.kill('SIGINT'));
-
-  if (options.verbose) {
-    console.log(chalk.inverse(' - Verbose mode enabled'));
-    proc.stdout.on('data', (data: Buffer) => {
-      console.log(data.toString());
-    });
-    proc.stderr.on('data', (data: Buffer) => {
-      console.error(data.toString());
-    });
-  }
 
   // Wait until we are ready and connected
   console.log(chalk.blue('Waiting for API to be ready...'));
@@ -167,7 +125,7 @@ async function initPoolShare(api: ApiPromise) {
   console.log(
     chalk`[+] {blue Wrapping ${AMOUNT} ${NATIVE_ASSET} to initialize the fee recipient account...}`
   );
-  const wrappingAmount = new BN(100).mul(new BN(10).pow(new BN(18)));
+  const wrappingAmount = new BN(AMOUNT).mul(new BN(10).pow(new BN(18)));
 
   const wrappingTx = await api.tx.tokenWrapper
     .wrap(NATIVE_ASSET_ID, poolShareAssetId, wrappingAmount, bobKey.address)
@@ -190,39 +148,6 @@ async function initPoolShare(api: ApiPromise) {
   console.log(chalk`  => {green Token wrapped with hash \`${wrappingHash}\`}`);
 
   console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
-}
-
-function cleanup(callback?: () => any) {
-  process.on('exit', function () {
-    // Begin reading from stdin so the process does not exit imidiately
-    process.stdin.resume();
-    console.log(
-      chalk.red.bold('exit event received, handling graceful shutdown...')
-    );
-    callback?.();
-    process.exit(0);
-  });
-
-  process.on('SIGINT', function () {
-    // Begin reading from stdin so the process does not exit imidiately
-    process.stdin.resume();
-    console.log(
-      chalk.red.bold('SIGINT received, handling graceful shutdown...')
-    );
-    callback?.();
-    process.exit(0);
-  });
-
-  process.on('uncaughtException', function (e) {
-    // Begin reading from stdin so the process does not exit imidiately
-    process.stdin.resume();
-    console.log(
-      chalk.red.bold('Uncaught Exception, handling graceful shutdown...')
-    );
-    console.log(e.stack);
-    callback?.();
-    process.exit(1);
-  });
 }
 
 main().catch(console.error);
