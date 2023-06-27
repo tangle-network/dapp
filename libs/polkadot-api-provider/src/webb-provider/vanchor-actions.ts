@@ -481,11 +481,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const feeBigInt = BigInt(fee.toString());
     const extAmount = this.getExtAmount(inputs, outputs, feeBigInt);
 
-    const extAmountAbs = extAmount < 0 ? -extAmount : extAmount;
-    if (extAmountAbs <= feeBigInt) {
-      throw new Error('The amount must be greater than the fee');
-    }
-
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
       hexToU8a(outputs[0].encrypt()),
       hexToU8a(outputs[1].encrypt()),
@@ -626,7 +621,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     };
 
     const extDataHash = getVAnchorExtDataHash(extData);
-    console.log('extDataHash', extDataHash);
 
     return { extData, extDataHash };
   }
