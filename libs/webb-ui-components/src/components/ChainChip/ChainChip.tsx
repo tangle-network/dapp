@@ -28,7 +28,7 @@ import { getChainChipClassName } from './utils';
  *
  * ```jsx
  *  <ChainChip type="optimism" name="optimism goerli" />
- *  <ChainChip type="moonbeam" name="moonbase alpha" />
+ *  <ChainChip type="moonbeam" name="moonbeam alpha" />
  * ```
  */
 export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
@@ -47,6 +47,11 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       []
     );
 
+    const _iconName = useMemo(
+      () => (iconName === 'tangle' ? 'tangle transparent' : iconName),
+      [iconName]
+    );
+
     const className = useMemo(() => {
       const chainChipClassNames = getChainChipClassName(chainType);
       return twMerge(baseClsx, chainChipClassNames, classNameProp);
@@ -54,7 +59,7 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
 
     return (
       <span className={className} {...restProps} ref={ref}>
-        <ChainIcon name={iconName} size="md" />
+        <ChainIcon name={_iconName} size="md" />
         {title}
       </span>
     );

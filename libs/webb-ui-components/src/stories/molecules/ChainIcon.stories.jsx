@@ -10,25 +10,28 @@ export default {
       control: {
         type: 'select',
         options: [
-          'polygon',
-          'polygon mumbai',
-          'ethereum',
-          'goerli',
-          'sepolia',
-          'optimism',
-          'optimism goerli',
-          'kusama',
-          'moonbeam',
-          'moonbase alpha',
-          'polkadot',
           'arbitrum',
           'arbitrum goerli',
+          'athena',
           'avalanche',
           'avalanche fuji',
           'cosmos',
-          'tangle',
+          'ethereum',
+          'ethereum goerli',
+          'ethereum rinkeby',
+          'ethereum sepolia',
+          'kusama',
+          'moonbeam',
+          'moonbeam alpha',
+          'optimism',
+          'optimism goerli',
+          'polkadot',
+          'polygon',
+          'polygon mumbai',
           'scroll',
-          'athena',
+          'scroll alpha',
+          'tangle',
+          'webb',
           'demeter',
           'hermes',
         ],
@@ -37,8 +40,68 @@ export default {
   },
 };
 
-export const Default = Template.bind({});
+export const Arbitrum = Template.bind({});
+Arbitrum.args = {
+  name: 'arbitrum',
+};
+
+export const Athena = Template.bind({});
+Athena.args = {
+  name: 'athena',
+};
+
+export const Avalanche = Template.bind({});
+Avalanche.args = {
+  name: 'avalanche',
+};
+
+export const Cosmos = Template.bind({});
+Cosmos.args = {
+  name: 'cosmos',
+};
+
+export const Ethereum = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
+Ethereum.args = {
   name: 'ethereum',
+};
+
+export const Kusama = Template.bind({});
+Kusama.args = {
+  name: 'kusama',
+};
+
+export const Moonbeam = Template.bind({});
+Moonbeam.args = {
+  name: 'moonbeam',
+};
+
+export const Optimism = Template.bind({});
+Optimism.args = {
+  name: 'optimism',
+};
+
+export const Polkadot = Template.bind({});
+Polkadot.args = {
+  name: 'polkadot',
+};
+
+export const Polygon = Template.bind({});
+Polygon.args = {
+  name: 'polygon',
+};
+
+export const Scroll = Template.bind({});
+Scroll.args = {
+  name: 'scroll',
+};
+
+export const Tangle = Template.bind({});
+Tangle.args = {
+  name: 'tangle',
+};
+
+export const Webb = Template.bind({});
+Webb.args = {
+  name: 'webb',
 };

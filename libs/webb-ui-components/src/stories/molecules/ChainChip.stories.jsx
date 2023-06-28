@@ -10,16 +10,16 @@ export default {
       control: {
         type: 'select',
         options: [
-          'polygon',
-          'ethereum',
-          'optimism',
-          'kusama',
-          'athena',
-          'moonbeam',
-          'polkadot',
           'arbitrum',
+          'athena',
           'avalanche',
           'cosmos',
+          'ethereum',
+          'kusama',
+          'moonbeam',
+          'optimism',
+          'polkadot',
+          'polygon',
           'tangle',
           'scroll',
           'webb-dev',
@@ -62,10 +62,86 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <ChainChip {...args} />;
 
+export const Arbitrum = Template.bind({});
+Arbitrum.args = {
+  chainType: 'arbitrum',
+  iconName: 'arbitrum',
+  title: 'Arbitrum',
+};
+
+export const Athena = Template.bind({});
+Athena.args = {
+  chainType: 'athena',
+  iconName: 'athena',
+  title: 'Athena',
+};
+
+export const Avalanche = Template.bind({});
+Avalanche.args = {
+  chainType: 'avalanche',
+  iconName: 'avalanche',
+  title: 'Avalanche',
+};
+
+export const Cosmos = Template.bind({});
+Cosmos.args = {
+  chainType: 'cosmos',
+  iconName: 'cosmos',
+  title: 'Cosmos',
+};
+
 export const Ethereum = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
 Ethereum.args = {
   chainType: 'ethereum',
   iconName: 'ethereum',
   title: 'Ethereum',
+};
+
+export const Kusama = Template.bind({});
+Kusama.args = {
+  chainType: 'kusama',
+  iconName: 'kusama',
+  title: 'Kusama',
+};
+
+export const Moonbeam = Template.bind({});
+Moonbeam.args = {
+  chainType: 'moonbeam',
+  iconName: 'moonbeam',
+  title: 'Moonbeam',
+};
+
+export const Optimism = Template.bind({});
+Optimism.args = {
+  chainType: 'optimism',
+  iconName: 'optimism',
+  title: 'Optimism',
+};
+
+export const Polkadot = Template.bind({});
+Polkadot.args = {
+  chainType: 'polkadot',
+  iconName: 'polkadot',
+  title: 'Polkadot',
+};
+
+export const Polygon = Template.bind({});
+Polygon.args = {
+  chainType: 'polygon',
+  iconName: 'polygon',
+  title: 'Polygon',
+};
+
+export const Scroll = Template.bind({});
+Scroll.args = {
+  chainType: 'scroll',
+  iconName: 'scroll',
+  title: 'Scroll',
+};
+
+export const Tangle = Template.bind({});
+Tangle.args = {
+  chainType: 'tangle',
+  iconName: 'tangle',
+  title: 'Tangle',
 };
