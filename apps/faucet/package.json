@@ -1,6 +1,6 @@
 {
   "name": "@webb-tools/faucet",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "APACHE-2.0",
   "description": "Official Webb Faucet"
 }
