@@ -151,4 +151,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Utilize Circom Proving for Substrate, Centralized the shared types, Move fetchOnChainConfig logic into webpack ([#1361](https://github.com/webb-tools/webb-dapp/pull/1361))
 - Close confirm containers when txn is dismissed ([#1362](https://github.com/webb-tools/webb-dapp/pull/1362))
 - Removes extra bg image on bridge ([#1367](https://github.com/webb-tools/webb-dapp/pull/1367))
-- Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))

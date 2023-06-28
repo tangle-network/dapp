@@ -117,5 +117,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes stats keys table pagination ([#1338](https://github.com/webb-tools/webb-dapp/pull/1338))
 - Fixes stats progress bar session length ([#1358](https://github.com/webb-tools/webb-dapp/pull/1358))
 - Fixes inconsistent stats background image ([#1359](https://github.com/webb-tools/webb-dapp/pull/1359))
-- Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
 - Fixes keys table real-time update & progress bar reset ([#1371](https://github.com/webb-tools/webb-dapp/pull/1371))
