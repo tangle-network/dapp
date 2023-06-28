@@ -200,6 +200,13 @@ class RelayedWithdraw {
 export class WebbRelayer {
   constructor(readonly endpoint: string, readonly capabilities: Capabilities) {}
 
+  readonly infoRoute = '/api/v1/info';
+
+  get infoUri() {
+    // Use URL class to ensure the full url is valid (e.g. with trailing slash)
+    return new URL(this.infoRoute, this.endpoint).toString();
+  }
+
   async initWithdraw<Target extends RelayerCMDKey>(target: Target) {
     const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
 

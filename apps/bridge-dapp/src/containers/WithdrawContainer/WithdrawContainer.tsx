@@ -838,7 +838,7 @@ export const WithdrawContainer = forwardRef<
         onChange={(nextRelayer) => {
           setRelayer(
             relayers.find((relayer) => {
-              return relayer.endpoint === nextRelayer.externalUrl;
+              return relayer.infoUri === nextRelayer.externalUrl;
             }) ?? null
           );
           setMainComponent(undefined);
