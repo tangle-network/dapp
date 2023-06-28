@@ -26,7 +26,7 @@ export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './Copyright';
 export * from './CopyLinkFill';
-export * from './ContrastTwoLine'
+export * from './ContrastTwoLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
 export * from './DeleteBinWithBg';
