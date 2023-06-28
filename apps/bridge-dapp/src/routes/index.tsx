@@ -5,7 +5,10 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC, lazy, Suspense } from 'react';
 import { Layout } from '../containers';
 
-const PageBridge = lazy(() => import('../pages/PageBridge'));
+const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
+const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
+const Account = lazy(() => import('../pages/Account'));
+const Ecosystem = lazy(() => import('../pages/Ecosystem'));
 
 const CSuspense: FC<BareProps> = ({ children }) => {
   return (
@@ -27,11 +30,38 @@ export const config: RouterConfigData[] = [
       {
         element: (
           <CSuspense>
-            <PageBridge />
+            <Bridge />
           </CSuspense>
         ),
-        path: 'bridge/*',
-        title: 'Bridges',
+        path: 'bridge',
+        title: 'Bridge',
+      },
+      {
+        element: (
+          <CSuspense>
+            <WrapAndUnwrap />
+          </CSuspense>
+        ),
+        path: 'wrap-unwrap',
+        title: 'Wrap/Unwrap',
+      },
+      {
+        element: (
+          <CSuspense>
+            <Account />
+          </CSuspense>
+        ),
+        path: 'account',
+        title: 'Account',
+      },
+      {
+        element: (
+          <CSuspense>
+            <Ecosystem />
+          </CSuspense>
+        ),
+        path: 'ecosystem',
+        title: 'Ecosystem',
       },
       {
         path: '*',

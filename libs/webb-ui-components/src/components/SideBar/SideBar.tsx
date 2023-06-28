@@ -1,28 +1,21 @@
 import React, { useState } from 'react';
 import { SidebarControl } from './components/SidebarControl';
 import { Item, ItemProps } from './components/Item';
+import { IconBase } from '@webb-tools/icons/types';
+import { LogoProps } from '../Logo/types';
 
 // Types
 type SidebarProps = {
+  Logo: React.FC<LogoProps>;
   items: ItemProps[];
 };
 
 // Component
-export const SideBar: React.FC<SidebarProps> = ({ items }) => {
+export const SideBar: React.FC<SidebarProps> = ({ Logo, items }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeItem, setActiveItem] = useState('');
-  const [activeSubItem, setActiveSubItem] = useState('');
 
   const toggleSideBar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const setActiveItemHandler = (name: string) => {
-    setActiveItem(name);
-  };
-
-  const setActiveSubItemHandler = (name: string) => {
-    setActiveSubItem(name);
   };
 
   const contentContainerClassName = isSidebarOpen
@@ -34,7 +27,13 @@ export const SideBar: React.FC<SidebarProps> = ({ items }) => {
       {/* Content */}
       <div className={contentContainerClassName}>
         {/* Logo */}
-        <div>LOGO</div>
+        <div>
+          {typeof Logo === 'string' ? (
+            <img src={Logo} alt="Logo" />
+          ) : (
+            <Logo size="md" />
+          )}
+        </div>
 
         {/* Items */}
         <div>

@@ -2,32 +2,39 @@ import { Transition } from '@headlessui/react';
 import {
   Banner,
   Footer,
+  Logo,
   SideBar,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
+import {
+  BillFill,
+  ContrastTwoLine,
+  GridFillIcon,
+  Tangle,
+} from '@webb-tools/icons';
 
 const items = [
   {
     name: 'Ecosystem',
-    isInternal: false,
-    href: '/',
-    icon: <div>✅</div>,
+    isInternal: true,
+    href: '/ecosystem',
+    Icon: GridFillIcon,
     subItems: [],
   },
   {
     name: 'Account',
-    isInternal: false,
-    href: '/bridge',
-    icon: <div>🌊</div>,
+    isInternal: true,
+    href: '/account',
+    Icon: BillFill,
     subItems: [],
   },
   {
     name: 'Hubble',
     isInternal: true,
-    href: '/',
-    icon: <div>✨</div>,
+    href: '/bridge',
+    Icon: ContrastTwoLine,
     subItems: [
       {
         name: 'Bridge',
@@ -42,20 +49,20 @@ const items = [
       {
         name: 'Explorer',
         isInternal: false,
-        href: '/explorer',
+        href: 'https://react.dev/',
       },
       {
         name: 'Faucet',
         isInternal: false,
-        href: '/faucet',
+        href: 'https://develop--webb-faucet.netlify.app/',
       },
     ],
   },
   {
-    name: 'Account',
-    isInternal: true,
-    href: '/bridge',
-    icon: <div>🖼️</div>,
+    name: 'Tangle Network',
+    isInternal: false,
+    href: 'https://stats.webb.tools/#/keys',
+    Icon: Tangle,
     subItems: [],
   },
 ];
@@ -72,7 +79,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
       <div className="flex-[1] flex flex-col">
         <Header />
 
-        <SideBar items={items} />
+        <SideBar items={items} Logo={Logo} />
 
         <Transition
           show={showBanner}

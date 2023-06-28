@@ -1,4 +1,6 @@
+import { ExternalLinkLine } from '@webb-tools/icons';
 import React, { useState } from 'react';
+import { pushToInternalLink, pushToExternalLink } from '../utils';
 
 // Types
 export type SubItemProps = {
@@ -9,22 +11,20 @@ export type SubItemProps = {
 
 // Component
 export const SubItem: React.FC<SubItemProps> = ({ name, isInternal, href }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div>
-      <div
-        className="flex items-center justify-between cursor-pointer"
-        onClick={toggleDropdown}
-      >
-        <div className="flex gap-1">
-          <div>{name}</div>
-        </div>
+    <div
+      className="flex items-center justify-between cursor-pointer"
+      onClick={
+        isInternal
+          ? () => pushToInternalLink(href)
+          : () => pushToExternalLink(href)
+      }
+    >
+      <div className="flex gap-1">
+        <div>{name}</div>
       </div>
+
+      {!isInternal && href && <ExternalLinkLine />}
     </div>
   );
 };

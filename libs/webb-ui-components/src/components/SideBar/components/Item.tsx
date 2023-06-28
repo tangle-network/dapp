@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { DropdownControl } from './DropdownControl';
 import { SubItem, SubItemProps } from './SubItem';
 import { ExternalLinkLine } from '@webb-tools/icons';
-import { InternalOrExternalLink } from '../../Navbar';
+import { pushToInternalLink, pushToExternalLink } from '../utils';
+import { IconBase } from '@webb-tools/icons/types';
 
 // Types
 export type ItemProps = {
   name: string;
   isInternal: boolean;
   href: string;
-  icon: React.ReactNode;
+  Icon: (props: IconBase) => JSX.Element;
   subItems: SubItemProps[];
   isSidebarOpen?: boolean;
 };
@@ -19,7 +20,7 @@ export const Item: React.FC<ItemProps> = ({
   name,
   isInternal,
   href,
-  icon,
+  Icon,
   subItems,
   isSidebarOpen,
 }) => {
@@ -29,17 +30,31 @@ export const Item: React.FC<ItemProps> = ({
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const pushToLinkAndToggleDropdown = () => {
+    if (isInternal && href) {
+      pushToInternalLink(href);
+    } else {
+      pushToExternalLink(href);
+    }
+
+    if (subItems.length > 0) {
+      toggleDropdown();
+    }
+  };
+
   return (
     <div>
-      <InternalOrExternalLink
-        url={href}
-        isInternal={isInternal}
+      <div
         className="flex items-center justify-between cursor-pointer"
-        onClick={subItems.length > 0 ? toggleDropdown : undefined}
+        onClick={pushToLinkAndToggleDropdown}
       >
         <div className="flex items-center justify-between">
           <div className="flex gap-1">
-            <div>{icon}</div>
+            {typeof Icon === 'string' ? (
+              <img src={Icon} alt="Logo" />
+            ) : (
+              <Icon width={24} height={24} />
+            )}
 
             {isSidebarOpen && <div>{name}</div>}
           </div>
@@ -47,14 +62,14 @@ export const Item: React.FC<ItemProps> = ({
 
         {isSidebarOpen && (
           <div>
-            {!isInternal && subItems.length <= 0 ? (
+            {!isInternal && href && subItems.length <= 0 ? (
               <ExternalLinkLine />
-            ) : isInternal && subItems.length > 0 ? (
+            ) : isInternal && href && subItems.length > 0 ? (
               <DropdownControl isDropdownOpen={isDropdownOpen} />
             ) : null}
           </div>
         )}
-      </InternalOrExternalLink>
+      </div>
 
       {isSidebarOpen && isDropdownOpen && (
         <div className="flex flex-col gap-1">
