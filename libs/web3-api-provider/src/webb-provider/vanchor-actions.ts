@@ -218,6 +218,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const setupTransactionArgs = [
       inputUtxos,
       outputUtxos,
+      // Ignore the override option if provided
       ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
     ] as Parameters<typeof vanchor.setupTransaction>;
 

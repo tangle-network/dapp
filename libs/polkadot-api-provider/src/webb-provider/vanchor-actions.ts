@@ -2,14 +2,18 @@ import { Codec } from '@polkadot/types/types';
 import { decodeAddress } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
+  CMDSwitcher,
   FixturesStatus,
   NewNotesTxResult,
   ParametersOfTransactMethod,
+  RelayedChainInput,
+  RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
   TransferTransactionPayloadType,
   VAnchorActions,
+  WithdrawRelayerArgs,
   WithdrawTransactionPayloadType,
   calculateProvingLeavesAndCommitmentIndex,
   generateCircomCommitment,
@@ -119,12 +123,116 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     throw new Error('Unsupported payload type');
   }
 
-  transactWithRelayer(
+  async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[]
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
+
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+    const chainId =
+      this.inner.api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+
+    const chainInfo: RelayedChainInput = {
+      baseOn: 'substrate',
+      contractAddress: anchorId,
+      endpoint: '',
+      name: chainId.toString(),
+    };
+
+    // Pad the input & output utxo
+    const inputUtxos = await this.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
+    const outputUtxos = await this.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+
+    const setupTransactionArgs = [
+      tx,
+      inputUtxos,
+      outputUtxos,
+      // Ignore the override option if provided
+      ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
+      anchorId,
+    ] as Parameters<typeof this.setupTransaction>;
+
+    const { extData, publicInputs: proofData } = await this.setupTransaction(
+      ...setupTransactionArgs
+    );
+
+    const relayTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<
+      typeof chainInfo,
+      'vAnchor'
+    >(chainInfo, {
+      chainId,
+      id: +anchorId,
+      extData: {
+        ...extData,
+        token: parseInt(extData.token, 16),
+      },
+      proofData: {
+        ...proofData,
+        extensionRoots: [],
+      },
+    } satisfies WithdrawRelayerArgs<'substrate', CMDSwitcher<'substrate'>>);
+
+    let txHash = '';
+
+    // Subscribe to the relayer's transaction status.
+    relayedVAnchorWithdraw.watcher.subscribe(async ([results, message]) => {
+      switch (results) {
+        case RelayedWithdrawResult.PreFlight:
+          tx.next(TransactionState.SendingTransaction, '');
+          break;
+        case RelayedWithdrawResult.OnFlight:
+          break;
+        case RelayedWithdrawResult.Continue:
+          break;
+        case RelayedWithdrawResult.CleanExit:
+          tx.next(TransactionState.Done, {
+            txHash,
+            outputNotes: changeNotes,
+          });
+          break;
+        case RelayedWithdrawResult.Errored: {
+          console.log('Change notes', changeNotes);
+          await Promise.all(
+            changeNotes.map(async (note) => {
+              const { chainId, chainType } = parseTypedChainId(
+                +note.note.targetChainId
+              );
+
+              const resourceId =
+                await this.inner.methods.variableAnchor.actions.inner.getResourceId(
+                  note.note.targetIdentifyingData,
+                  chainId,
+                  chainType
+                );
+
+              this.inner.noteManager?.removeNote(resourceId, note);
+              return true;
+            })
+          );
+          tx.fail(message ? message : 'Transaction failed');
+          break;
+        }
+      }
+    });
+
+    tx.next(TransactionState.Intermediate, {
+      name: 'Sending TX to relayer',
+    });
+
+    console.log('Relay tx payload', relayTxPayload);
+
+    // Send the transaction to the relayer.
+    relayedVAnchorWithdraw.send(relayTxPayload);
+
+    const results = await relayedVAnchorWithdraw.await();
+    if (results) {
+      const [, message] = results;
+      txHash = message ?? '';
+      tx.txHash = txHash;
+    }
   }
 
   async transact(
@@ -202,7 +310,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     account: string,
     pubkey: string
   ): Promise<boolean> {
-    return true;
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async register(
@@ -210,14 +318,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     account: string,
     pubkey: string
   ): Promise<boolean> {
-    throw new Error('Attempted to register with Polkadot');
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async syncNotesForKeypair(
     anchorAddress: string,
     owner: Keypair
   ): Promise<Note[]> {
-    throw new Error('Attempted to sync notes for keypair with Polkadot');
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   /**
@@ -521,7 +629,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       BigInt(sourceTypedChainId),
       inputs,
       outputs,
-      publicAmount,
+      extAmount,
       feeBigInt,
       extDataHash,
       leavesMap
@@ -675,7 +783,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     typedChainId: bigint,
     inputUtxos: Utxo[],
     outputUtxos: Utxo[],
-    publicAmount: bigint,
+    extAmount: bigint,
     fee: bigint,
     extDataHash: bigint,
     leavesMap: Record<string, Uint8Array[]>
@@ -699,26 +807,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       typedChainId,
       inputUtxos,
       outputUtxos,
-      publicAmount,
+      extAmount,
       fee,
       BigNumber.from(extDataHash), // Temporary use of `BigNumber`, need to change to `BigInt`
       vanchorMerkleProof
     );
-
-    /*     witnessInput['inputNullifier'] = witnessInput['inputNullifier'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPrivateKey'] = witnessInput['inPrivateKey'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPathElements'] = (
-      witnessInput['inPathElements'] as BigNumber[][]
-    ).reduce((prev, current) => {
-      prev.push(...current.map((el) => el.toString()));
-      return prev;
-    }, [] as string[]); */
 
     return witnessInput;
   }

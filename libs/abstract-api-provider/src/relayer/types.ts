@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
-import {
-  IVariableAnchorExtData,
-  IVariableAnchorPublicInputs,
-} from '@webb-tools/interfaces';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { ActiveWebbRelayer, WebbRelayer } from '.';
+import { HexString } from '@polkadot/util/types';
 
 /**
  * Relayer configuration for a chain
@@ -180,12 +178,13 @@ export type RelayerMessage = {
  * @param extDataHash - External data hash for the proof external data
  * */
 type SubstrateProofData = {
-  proof: Array<number>;
-  publicAmount: Array<number>;
-  roots: Array<number>[] | number[];
-  inputNullifiers: Array<number>[];
-  outputCommitments: Array<number>[];
-  extDataHash: Array<number>;
+  proof: HexString;
+  publicAmount: HexString;
+  roots: Array<HexString>;
+  inputNullifiers: Array<HexString>;
+  outputCommitments: Array<HexString>;
+  extDataHash: HexString;
+  extensionRoots: Array<HexString>;
 };
 
 /**
@@ -201,12 +200,12 @@ type SubstrateProofData = {
 type SubstrateExtData = {
   recipient: string;
   relayer: string;
-  extAmount: number | string;
-  fee: number;
-  encryptedOutput1: Array<number>;
-  encryptedOutput2: Array<number>;
+  extAmount: string;
+  fee: string;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
   refund: string;
-  token: string;
+  token: number;
 };
 
 /**

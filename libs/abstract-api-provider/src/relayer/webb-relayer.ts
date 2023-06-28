@@ -1,22 +1,22 @@
-import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
-  Capabilities,
   CMDSwitcher,
+  Capabilities,
   RelayedChainInput,
   RelayerCMDKey,
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Relayer withdraw status

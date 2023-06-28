@@ -77,8 +77,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
       }
 
       if (baseOn && !chainId) {
-        console.log(capabilities.supportedChains, baseOn);
-
         return capabilities.supportedChains[baseOn].size > 0;
       }
 
