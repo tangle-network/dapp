@@ -15,8 +15,7 @@
  * -v --verbose: Enable node logging
  */
 
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { LocalProtocolSubstrate } from '@webb-tools/test-utils';
+import { ApiPromise } from '@polkadot/api';
 import { BN } from 'bn.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
@@ -27,8 +26,8 @@ import addAssetMetadata from './utils/addAssetMetadata';
 import addAssetToPool from './utils/addAssetToPool';
 import createPoolShare from './utils/createPoolShare';
 import createVAnchor from './utils/createVAnchor';
-import getLocalApi from './utils/getLocalApi';
 import getKeyring from './utils/getKeyRing';
+import getLocalApi from './utils/getLocalApi';
 import transferAsset from './utils/transferAsset';
 
 // Load env variables
@@ -66,7 +65,7 @@ async function main() {
   // Start the nodes
   console.log(chalk.blue('Starting local substrate protocol...'));
 
-  const aliceNode = await LocalProtocolSubstrate.start({
+  /* await LocalProtocolSubstrate.start({
     name: 'substrate-alice',
     authority: 'alice',
     usageMode,
@@ -74,20 +73,20 @@ async function main() {
     enableLogging: options.verbose,
   });
 
-  const _bobNode = await LocalProtocolSubstrate.start({
+  await LocalProtocolSubstrate.start({
     name: 'substrate-bob',
     authority: 'bob',
     usageMode,
     ports: 'auto',
     enableLogging: options.verbose,
-  });
+  }); */
 
   // Wait until we are ready and connected
   console.log(chalk.blue('Waiting for API to be ready...'));
 
   const aliceApi = await getLocalApi(ALICE_PORT);
 
-  console.log(chalk`=> {green.bold API are ready!}`);
+  console.log(chalk`=> {green.bold API is ready!}`);
 
   await initPoolShare(aliceApi);
 }
@@ -151,8 +150,15 @@ async function initPoolShare(api: ApiPromise) {
       chalk`  => {green Token transferred to test account with hash \`${hash}\`}`
     );
   }
-
-  console.log(chalk.green.bold('✅ Protocol Substrate ready to use!!!'));
 }
 
-main().catch(console.error);
+main()
+  .then(() => {
+    console.log(chalk.green.bold('✅ Protocol Substrate ready to use!!!'));
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.log(chalk.red.bold('❌ Protocol Substrate failed to start!!!'));
+    console.log(error);
+    process.exit(1);
+  });

@@ -1,6 +1,4 @@
 import {
-  PublicKeysQuery,
-  usePublicKeysQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
@@ -206,6 +204,7 @@ export function useKeys(
           offset: reqQuery.offset,
           PerPage: reqQuery.perPage,
         },
+        pollInterval: 10000,
         fetchPolicy: 'network-only',
       })
         .then(() => {
@@ -222,6 +221,10 @@ export function useKeys(
         });
     }
   }, [reqQuery, call, currentKey, fetched]);
+
+  useEffect(() => {
+    setFetched(false);
+  }, [reqQuery]);
 
   useEffect(() => {
     if (!fetched) return;
@@ -252,14 +255,14 @@ export function useKeys(
             isFailed: false,
             val: {
               items: filteredData.map((node, idx) => {
-                const session = node.sessions?.nodes[0];
+                const session = node?.sessions?.nodes[0];
                 const thresholds = thresholdMap(
                   session ? session.thresholds : { nodes: [] }
                 );
                 const keyGen = thresholds.KEY_GEN;
                 const signature = thresholds.SIGNATURE;
-                const authorities = mapAuthorities(session.sessionValidators)
-                  .filter((auth) => auth.isBest)
+                const authorities = mapAuthorities(session?.sessionValidators)
+                  ?.filter((auth) => auth.isBest)
                   .map((auth) => auth.id);
 
                 const previousKeyId = idx
@@ -270,20 +273,20 @@ export function useKeys(
                     ? filteredData[idx + 1]?.id
                     : undefined;
                 const [start, end] = sessionFrame(
-                  session.block?.timestamp,
+                  session?.block?.timestamp,
                   sessionHeight
                 );
                 return {
-                  height: String(node.block?.number),
-                  session: session.id,
+                  height: String(node?.block?.number),
+                  session: session?.id,
                   keyGenThreshold: keyGen?.current ?? null,
                   signatureThreshold: signature?.current ?? null,
-                  compressed: node.compressed,
-                  uncompressed: node.uncompressed,
+                  compressed: node?.compressed,
+                  uncompressed: node?.uncompressed,
                   keyGenAuthorities: authorities,
                   end,
                   start,
-                  id: node.id,
+                  id: node?.id,
                   previousKeyId,
                   nextKeyId,
                 };
@@ -318,9 +321,8 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   const metaData = useCurrentMetaData();
   const [call, query] = useSessionKeysLazyQuery();
   const { sessionHeight } = useStaticConfig();
-  const { blockTime } = useStatsContext();
-
   const activeSession = useActiveSession();
+
   const [keys, setKeys] = useState<Loadable<[PublicKey, PublicKey]>>({
     val: null,
     isFailed: false,
@@ -328,14 +330,13 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
   });
 
   useEffect(() => {
-    if (metaData.val) {
+    if (activeSession) {
       call({
         variables: {
-          SessionId: [
-            metaData.val.activeSession,
-            String(Number(metaData.val.activeSession) + 1),
-          ],
+          SessionId: [activeSession, String(Number(activeSession) + 1)],
         },
+        pollInterval: 10000,
+        fetchPolicy: 'network-only',
       }).catch((e) => {
         setKeys({
           val: null,
@@ -345,7 +346,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
         });
       });
     }
-  }, [metaData, call]);
+  }, [activeSession, call]);
 
   useEffect(() => {
     const subscription = query.observable
@@ -381,6 +382,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
 
           const activeKey = val[0];
           const nextKey = val[1];
+
           return {
             val: [
               activeKey,
@@ -412,7 +414,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
       .subscribe(setKeys);
 
     return () => subscription.unsubscribe();
-  }, [query, activeSession, blockTime, sessionHeight, metaData]);
+  }, [query, activeSession, sessionHeight, metaData, setKeys]);
 
   return keys;
 }

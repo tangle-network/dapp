@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
 
@@ -27,9 +28,19 @@ export const GovernanceSystemSection = () => {
   return (
     <section className="dark bg-mono-200">
       <div className="max-w-[1440px] mx-auto">
-        <div className="ml-auto mr-0 lg:w-[88.75%] flex flex-col lg:flex-row-reverse lg:gap-6 pt-[40px] pb-[80px] lg:py-[60px]">
+        <div
+          className={cx(
+            'ml-auto mr-0 lg:w-[88.75%] pt-[40px] pb-[80px] lg:py-[60px]',
+            'flex flex-col lg:flex-row-reverse lg:gap-6'
+          )}
+        >
           <div className="flex items-center lg:flex-1">
-            <div className="relative w-[340px] md:w-[600px] lg:w-[708px] h-[367px] md:h-[647.65px] lg:h-[762.75px] ml-auto mr-0">
+            <div
+              className={cx(
+                'relative ml-auto mr-0',
+                'w-4/5 lg:w-full aspect-[463/500]'
+              )}
+            >
               <Image
                 src="/static/assets/governance-system.png"
                 alt="Governance System"
@@ -53,10 +64,16 @@ export const GovernanceSystemSection = () => {
               signature governance system
             </Typography>
             <div className="flex gap-4 mt-6">
-              <LinkButton href={WHAT_IS_TSS_URL} variant="secondary">
+              <LinkButton
+                href={WHAT_IS_TSS_URL}
+                variant="secondary"
+                className="px-5 md:px-9"
+              >
                 Read Docs
               </LinkButton>
-              <LinkButton href={STATS_URL}>View Network</LinkButton>
+              <LinkButton href={STATS_URL} className="px-5 md:px-9">
+                View Network
+              </LinkButton>
             </div>
             <div className="mt-[56px] flex flex-col gap-6">
               {governanceSystemQnAItems.map(

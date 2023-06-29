@@ -31,6 +31,7 @@ export const NavigationMenuContent = forwardRef<
       className,
       onAboutClick,
       onDevelopmentClick,
+      onFaucetClick,
       onHelpCenterClick,
       onRequestFeaturesClick,
       onTestnetClick,
@@ -61,13 +62,7 @@ export const NavigationMenuContent = forwardRef<
 
         <NavigationMenuDivider />
 
-        {/* TODO: Update Actions when click on Faucet */}
-        <MenuItem
-          icon={<FaucetIcon size="lg" />}
-          onClick={() => {
-            return;
-          }}
-        >
+        <MenuItem icon={<FaucetIcon size="lg" />} onClick={onFaucetClick}>
           Faucet
         </MenuItem>
 

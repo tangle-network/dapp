@@ -5,7 +5,7 @@ import { FC, useCallback, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapperProps } from './types';
 import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
-import { getAcitveSourceChains } from '../../utils/getAcitveSourceChains';
+import { getActiveSourceChains } from '../../utils/getActiveSourceChains';
 import { Bridge } from '@webb-tools/abstract-api-provider';
 
 /**
@@ -52,7 +52,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
   const chains = useMemo(() => {
     if (chainsProps) return chainsProps;
 
-    return getAcitveSourceChains(apiConfig.chains).map((val) => {
+    return getActiveSourceChains(apiConfig.chains).map((val) => {
       const currency = getNativeCurrencyFromConfig(
         apiConfig.currencies,
         calculateTypedChainId(val.chainType, val.chainId)

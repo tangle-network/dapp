@@ -1,11 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { executorWithTimeout } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { PolkadotProvider } from './ext-provider';
+import { PolkadotProvider } from '../ext-provider/polkadot-provider';
 
 const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
 
-export const substrateProviderFactory = async (
+const substrateProviderFactory = async (
   typedChainId: number
 ): Promise<ApiPromise> => {
   const cached = substrateProviderCache[typedChainId];
@@ -20,11 +20,15 @@ export const substrateProviderFactory = async (
 
   return executorWithTimeout(
     new Promise<ApiPromise>((res, rej) => {
-      PolkadotProvider.getApiPromise('', [chain.url], (error) => {
-        console.error('Error in substrateProviderFactory', error);
-        error.cancel();
-        rej(error);
-      })
+      PolkadotProvider.getApiPromise(
+        '',
+        [chain.url],
+        (error) => {
+          error.cancel();
+          rej(error);
+        },
+        { ignoreLog: true }
+      )
         .then((apiPromise) => {
           substrateProviderCache[typedChainId] = apiPromise;
 
@@ -34,3 +38,5 @@ export const substrateProviderFactory = async (
     })
   );
 };
+
+export default substrateProviderFactory;

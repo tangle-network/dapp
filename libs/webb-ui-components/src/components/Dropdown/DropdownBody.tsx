@@ -9,8 +9,8 @@ import { DropdownBodyProps } from './types';
  * The style wrapper around Radix `Content` and `Portal` component, must use inside the `Dropdown` component
  */
 export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
-  ({ children, className, size, isPorttal = true, ...props }, ref) => {
-    if (isPorttal) {
+  ({ children, className, size, isPortal = true, ...props }, ref) => {
+    if (isPortal) {
       return (
         <DropdownMenuPrimitive.Portal>
           <DropdownMenuPrimitive.Content

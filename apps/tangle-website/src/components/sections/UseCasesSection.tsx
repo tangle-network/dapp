@@ -114,7 +114,7 @@ const UseCaseCard = ({ icon, title, description, link }) => {
         </Typography>
       </div>
       <Button
-        className="!text-mono-0 bg-[#282633] border-mono-0 mt-auto"
+        className="!text-mono-0 bg-[#282633] border-mono-0 mt-auto px-5"
         href={link}
       >
         Learn More

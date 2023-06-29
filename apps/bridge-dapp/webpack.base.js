@@ -6,10 +6,13 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const { commandSync } = require('execa');
+const { workspaceRoot } = require('nx/src/utils/workspace-root');
 
 const findPackages = require('../../tools/scripts/findPackages');
 const packageJson = require(path.resolve(__dirname, 'package.json'));
@@ -31,7 +34,12 @@ function mapChunks(name, regs, inc) {
 }
 
 function createWebpack(env, mode = 'production') {
-  console.log('Running webpack in: ', mode);
+  commandSync('yarn fetch:onChainConfig', {
+    cwd: workspaceRoot,
+    stdio: 'inherit',
+  });
+
+  console.log(chalk.cyan('Running webpack in: ', mode));
   const isDevelopment = mode === 'development';
   const alias = findPackages().reduce((alias, { dir, name }) => {
     alias[name] = path.resolve(__dirname, `../../libs/${dir}/src`);
@@ -91,23 +99,13 @@ function createWebpack(env, mode = 'production') {
               },
             },
             {
-              // process tailwind stuff
-              // https://webpack.js.org/loaders/postcss-loader/
-              loader: 'postcss-loader',
-              options: {
-                sourceMap: isDevelopment,
-                postcssOptions: {
-                  plugins: [require('tailwindcss')],
-                },
-              },
-            },
-            {
               // load sass files into css files
               loader: 'sass-loader',
               options: {
                 sourceMap: isDevelopment,
               },
             },
+            'postcss-loader',
           ],
         },
         {

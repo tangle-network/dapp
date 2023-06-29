@@ -44,5 +44,5 @@ export interface DropdownBodyProps
    * If true, the dropdown will be rendered as a portal
    * @default true
    */
-  isPorttal?: boolean;
+  isPortal?: boolean;
 }

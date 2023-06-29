@@ -59,16 +59,11 @@ export const SupportedBySection = () => {
               target="_blank"
               rel="noreferrer"
               variant="secondary"
-              className="button-base-2 bg-inherit"
+              className="bg-inherit"
             >
               Learn More
             </Button>
-            <Button
-              href={WEBB_MKT_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="button-base-2"
-            >
+            <Button href={WEBB_MKT_URL} target="_blank" rel="noreferrer">
               Visit Webb
             </Button>
           </div>

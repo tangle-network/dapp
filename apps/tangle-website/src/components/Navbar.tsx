@@ -72,7 +72,7 @@ export const Navbar = () => {
                 </DropdownBasicButton>
 
                 <DropdownBody
-                  isPorttal={false}
+                  isPortal={false}
                   className="p-4 mt-4 space-y-4 w-[374px]"
                   size="sm"
                   align="start"
@@ -100,7 +100,9 @@ export const Navbar = () => {
         ))}
 
         <li>
-          <LinkButton href={STATS_URL}>View Network</LinkButton>
+          <LinkButton href={STATS_URL} className="px-5 md:px-9">
+            View Network
+          </LinkButton>
         </li>
 
         <li className="flex items-center justify-center md:hidden">
@@ -119,7 +121,7 @@ const MobileNav = () => {
       </DropdownBasicButton>
 
       <DropdownBody
-        isPorttal={false}
+        isPortal={false}
         className="mt-4 pt-4 w-screen sm:w-[374px] border-0 rounded-none"
         size="sm"
         align="start"

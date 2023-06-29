@@ -3,7 +3,7 @@
   "npmScope": "webb-frontends",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
@@ -11,8 +11,7 @@
           "test",
           "e2e",
           "build-storybook"
-        ],
-        "accessToken": "YWVmYTlhNjUtYzgwZS00MjkzLTgyODEtNGY5ZTc3N2QyMTczfHJlYWQtd3JpdGU="
+        ]
       }
     }
   },
@@ -24,6 +23,7 @@
         "{workspaceRoot}/dist/apps/bridge-dapp",
         "{workspaceRoot}/dist/apps/stats-dapp",
         "{workspaceRoot}/dist/apps/faucet/.next",
+        "{workspaceRoot}/dist/apps/hubble-stats/.next",
         "{workspaceRoot}/dist/apps/tangle-website/.next",
         "{workspaceRoot}/dist/apps/webbsite/.next"
       ]
