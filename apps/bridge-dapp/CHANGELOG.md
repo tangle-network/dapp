@@ -140,3 +140,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bridge Mobile UI ([#1285](https://github.com/webb-tools/webb-dapp/pull/1285))
 - UI updates for improved transaction flow on bridge ([#1316](https://github.com/webb-tools/webb-dapp/pull/1316))
 - Add breakpoint 480px to show one column layout ([#1321](https://github.com/webb-tools/webb-dapp/pull/1321))
+
+## [0.0.12] - 2023-06-28
+
+### Fixed, Changed and Added
+
+- Add token to wallet ([#1341](https://github.com/webb-tools/webb-dapp/pull/1341))
+- Optimize fetching contracts data ([#1350](https://github.com/webb-tools/webb-dapp/pull/1350))
+- Add Faucet link in navigation menu ([#1350](https://github.com/webb-tools/webb-dapp/pull/1355))
+- Utilize Circom Proving for Substrate, Centralized the shared types, Move fetchOnChainConfig logic into webpack ([#1361](https://github.com/webb-tools/webb-dapp/pull/1361))
+- Close confirm containers when txn is dismissed ([#1362](https://github.com/webb-tools/webb-dapp/pull/1362))
+- Removes extra bg image on bridge ([#1367](https://github.com/webb-tools/webb-dapp/pull/1367))
+- Relayer URL and Disable Radio When No Chains To Select ([#1379](https://github.com/webb-tools/webb-dapp/pull/1379))

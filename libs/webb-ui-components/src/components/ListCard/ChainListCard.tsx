@@ -93,6 +93,16 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       ];
     }, [currentActiveChain, filteredChains]);
 
+    // Count the number of chains in each category
+    const [liveCount, devCount, testCount] = useMemo(
+      () => [
+        chains.filter((chain) => chain.tag === 'live').length,
+        chains.filter((chain) => chain.tag === 'dev').length,
+        chains.filter((chain) => chain.tag === 'test').length,
+      ],
+      [chains]
+    );
+
     return (
       <ListCardWrapper
         {...props}
@@ -195,7 +205,8 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
               id="live"
               value="live"
               overrideRadixRadioItemProps={{
-                disabled: onlyCategory && onlyCategory !== 'live',
+                disabled:
+                  (onlyCategory && onlyCategory !== 'live') || !liveCount, // Disable if there are no live chains
               }}
             >
               Live
@@ -205,7 +216,8 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
               id="test"
               value="test"
               overrideRadixRadioItemProps={{
-                disabled: onlyCategory && onlyCategory !== 'test',
+                disabled:
+                  (onlyCategory && onlyCategory !== 'test') || !testCount, // Disable if there are no test chains
               }}
             >
               Testnet
@@ -215,7 +227,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
               id="dev"
               value="dev"
               overrideRadixRadioItemProps={{
-                disabled: onlyCategory && onlyCategory !== 'dev',
+                disabled: (onlyCategory && onlyCategory !== 'dev') || !devCount, // Disable if there are no dev chains
               }}
             >
               Development

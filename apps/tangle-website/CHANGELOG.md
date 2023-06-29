@@ -68,3 +68,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove bottom padding in footer ([#1314](https://github.com/webb-tools/webb-dapp/pull/1314))
 - Bridge Mobile UI ([#1285](https://github.com/webb-tools/webb-dapp/pull/1285))
 - Add image to Participation Mechanic items ([#1320](https://github.com/webb-tools/webb-dapp/pull/1320))
+
+## [0.0.5] - 2023-06-28
+
+### Fixed, Changed and Added
+
+- Adds tangle leader board UI ([#1344](https://github.com/webb-tools/webb-dapp/pull/1344))
+- Updated tangle website FAQ ([#1354](https://github.com/webb-tools/webb-dapp/pull/1354))
+- Fixes button line in small screen ([#1356](https://github.com/webb-tools/webb-dapp/pull/1356))
+- Fixes UI break on Governance System section ([#1364](https://github.com/webb-tools/webb-dapp/pull/1364))
+- Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
+- Privacy Policy and Terms Conditions pages for the Tangle Website ([#1375](https://github.com/webb-tools/webb-dapp/pull/1375))
