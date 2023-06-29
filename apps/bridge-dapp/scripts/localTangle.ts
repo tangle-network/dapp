@@ -48,22 +48,7 @@ async function main() {
 
   console.log(chalk`=> {green.bold API is ready!}`);
 
-  // Wait until the first block is produced
-  console.log(chalk`{blue Waiting for first block to be produced...}`);
-
-  aliceApi.rpc.chain.subscribeNewHeads(async (header) => {
-    const block = header.number.toNumber();
-    // Init pool share after first block
-    if (block === 1) {
-      console.log(chalk`=> {green.bold First block produced!}`);
-      await initPoolShare(aliceApi);
-    }
-  });
-
-  // Return the unresolved promise to keep the script running
-  return new Promise(() => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-  });
+  await initPoolShare(aliceApi);
 }
 
 async function initPoolShare(api: ApiPromise) {
@@ -146,8 +131,15 @@ async function initPoolShare(api: ApiPromise) {
   });
 
   console.log(chalk`  => {green Token wrapped with hash \`${wrappingHash}\`}`);
-
-  console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
 }
 
-main().catch(console.error);
+main()
+  .then(() => {
+    console.log(chalk.green.bold('✅ Tangle network ready to use!!!'));
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.log(chalk.red.bold('❌ Tangle Network failed to start!!!'));
+    console.log(error);
+    process.exit(1);
+  });

@@ -10,23 +10,19 @@ import {
 import {
   OptionalActiveRelayer,
   OptionalRelayer,
+  RelayedChainConfig,
   RelayerQuery,
-  shuffleRelayers,
   WebbRelayer,
   WebbRelayerManager,
+  shuffleRelayers,
 } from '@webb-tools/abstract-api-provider/relayer';
 import { BridgeStorage } from '@webb-tools/browser-utils';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import {
-  calculateTypedChainId,
-  ChainType,
-  MerkleTree,
-  Note,
-  toFixedHex,
-} from '@webb-tools/sdk-core';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 
 export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
+  private readonly supportedPallet = 'VAnchorBn254';
+
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
@@ -47,7 +43,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
    *  Accepts a 'RelayerQuery' object with optional, indexible fields.
    **/
   getRelayers(query: RelayerQuery): WebbRelayer[] {
-    const { baseOn, chainId, contractAddress, ipService } = query;
+    const { baseOn, typedChainId, contractAddress, ipService } = query;
     const relayers = this.relayers.filter((relayer) => {
       const capabilities = relayer.capabilities;
       if (!capabilities) {
@@ -60,11 +56,11 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
         }
       }
 
-      if (contractAddress && baseOn && chainId) {
+      if (contractAddress && baseOn && typedChainId) {
         if (baseOn === 'evm') {
           return Boolean(
             capabilities.supportedChains[baseOn]
-              .get(chainId)
+              .get(typedChainId)
               ?.contracts?.find(
                 (contract) => contract.address === contractAddress.toLowerCase()
               )
@@ -72,12 +68,34 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
         }
       }
 
-      if (baseOn && chainId) {
-        return Boolean(capabilities.supportedChains[baseOn].get(chainId));
+      if (baseOn && typedChainId) {
+        const chainConfig =
+          capabilities.supportedChains[baseOn].get(typedChainId);
+        return (
+          chainConfig &&
+          Array.isArray(chainConfig.pallets) &&
+          chainConfig.pallets.find((p) => p.pallet === this.supportedPallet)
+        );
       }
 
-      if (baseOn && !chainId) {
-        return capabilities.supportedChains[baseOn].size > 0;
+      if (baseOn && !typedChainId) {
+        if (baseOn === 'substrate') {
+          const chainConfigMap: Map<
+            number,
+            RelayedChainConfig<'substrate'>
+          > = capabilities.supportedChains[baseOn];
+          return Array.from(chainConfigMap.values()).some(
+            (chainConfig) =>
+              Array.isArray(chainConfig.pallets) &&
+              chainConfig.pallets.find((p) => p.pallet === this.supportedPallet)
+          );
+        } else {
+          const chainConfigMap: Map<
+            number,
+            RelayedChainConfig<'evm'>
+          > = capabilities.supportedChains[baseOn];
+          return chainConfigMap.size > 0;
+        }
       }
 
       return true;
@@ -97,9 +115,10 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
     );
   }
 
-  async getRelayersByChainAndAddress(_chainId: number, _address: string) {
+  async getRelayersByChainAndAddress(typedChainId: number, _: string) {
     return this.getRelayers({
       baseOn: 'substrate',
+      chainId: typedChainId,
     });
   }
 
@@ -158,37 +177,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
         tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }
-
-      /*       const treeData = await api.query.merkleTreeBn254.trees(treeId);
-      if (treeData.isNone) {
-        this.logger.error(
-          WebbError.getErrorMessage(WebbErrorCodes.TreeNotFound).message
-        );
-        return null;
-      }
-
-      const treeMetadata = treeData.unwrap();
-
-      const levels = treeMetadata.depth.toNumber();
-      const lastRootHex = treeMetadata.root.toHex();
-
-      // Fixed the last root to be 32 bytes
-      const lastRoot = toFixedHex(lastRootHex);
-      const tree = MerkleTree.createTreeWithRoot(
-        levels,
-        relayerLeaves.leaves,
-        lastRoot
-      );
-
-      // If we were able to build the tree, set local storage and break out of the loop
-      if (tree) {
-        leaves = relayerLeaves.leaves;
-
-        await storage.set('lastQueriedBlock', relayerLeaves.lastQueriedBlock);
-        await storage.set('leaves', relayerLeaves.leaves);
-
-        return leaves;
-      } */
     }
 
     return null;
