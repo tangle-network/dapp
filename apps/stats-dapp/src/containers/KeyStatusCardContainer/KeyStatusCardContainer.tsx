@@ -33,20 +33,12 @@ export const KeyStatusCardContainer = () => {
     [data]
   );
 
-  // Extra check to make sure the active key is the same as the one from polkadot API
   const activeKeyData = useMemo(() => {
     return {
-      key:
-        currentKey?.compressed === dkgDataFromPolkadotAPI?.currentKey
-          ? currentKey?.compressed
-          : dkgDataFromPolkadotAPI?.currentKey,
-      session:
-        Number(currentKey?.session) ===
-        dkgDataFromPolkadotAPI?.currentSessionNumber
-          ? Number(currentKey?.session)
-          : dkgDataFromPolkadotAPI?.currentSessionNumber,
+      key: currentKey?.compressed,
+      session: Number(currentKey?.session),
     };
-  }, [data, dkgDataFromPolkadotAPI]);
+  }, [data, currentKey]);
 
   return (
     <KeyStatusCard

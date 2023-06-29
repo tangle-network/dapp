@@ -143,9 +143,9 @@ export const useStaticConfig = () => {
 
 export const useActiveSession = () => {
   const {
-    metaData: { activeSession },
+    dkgDataFromPolkadotAPI: { currentSessionNumber },
   } = useStatsContext();
-  return activeSession;
+  return String(currentSessionNumber);
 };
 
 export const StatsProvider: React.FC<
@@ -224,7 +224,10 @@ export const StatsProvider: React.FC<
     dkgDataFromPolkadotAPI,
   ]);
 
-  const query = useLastBlockQuery();
+  const query = useLastBlockQuery({
+    pollInterval: 10000,
+    fetchPolicy: 'network-only',
+  });
 
   useEffect(() => {
     const getPromiseApi = async (): Promise<void> => {
@@ -264,6 +267,9 @@ export const StatsProvider: React.FC<
     };
 
     getPromiseApi();
+
+    const intervalId = setInterval(getPromiseApi, 10000);
+    return () => clearInterval(intervalId);
   }, [props.polkadotEndpoint]);
 
   useEffect(() => {
@@ -289,6 +295,7 @@ export const StatsProvider: React.FC<
   }, [query]);
 
   const metaDataQuery = useMetaDataQuery({
+    pollInterval: 10000,
     fetchPolicy: 'network-only',
   });
 
@@ -327,16 +334,6 @@ export const StatsProvider: React.FC<
       });
     return () => unSub.unsubscribe();
   }, [query, metaDataQuery, isReady, sessionHeight, dkgDataFromPolkadotAPI]);
-
-  useEffect(() => {
-    query.startPolling(blockTime * 1000 * 10);
-    metaDataQuery.startPolling(blockTime * 1000 * 10);
-
-    return () => {
-      query.stopPolling();
-      metaDataQuery.stopPolling();
-    };
-  }, [query, metaDataQuery, sessionHeight, blockTime]);
 
   return (
     <statsContext.Provider value={value}>
