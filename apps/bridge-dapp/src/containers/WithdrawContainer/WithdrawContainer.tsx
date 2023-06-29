@@ -827,7 +827,7 @@ export const WithdrawContainer = forwardRef<
 
             const r: RelayerType = {
               address: relayerData.beneficiary,
-              externalUrl: relayer.endpoint,
+              externalUrl: relayer.infoUri,
               theme,
             };
 

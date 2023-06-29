@@ -175,18 +175,20 @@ export class WebbRelayerManagerFactory {
     return relayerManagerFactory;
   }
 
-  async getRelayerManager(
-    type: RelayerCMDBase
-  ): Promise<WebbRelayerManager<WebbProviderType>> {
+  async getRelayerManager<CMDBase extends RelayerCMDBase>(
+    type: CMDBase
+  ): Promise<
+    CMDBase extends 'evm' ? Web3RelayerManager : PolkadotRelayerManager
+  > {
     const relayers = Object.keys(this.capabilities).map((endpoint) => {
       return new WebbRelayer(endpoint, this.capabilities[endpoint]);
     });
 
     switch (type) {
       case 'evm':
-        return new Web3RelayerManager(relayers);
+        return new Web3RelayerManager(relayers) as any;
       case 'substrate':
-        return new PolkadotRelayerManager(relayers);
+        return new PolkadotRelayerManager(relayers) as any;
     }
   }
 }

@@ -19,6 +19,8 @@ import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
 
 export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
+  protected supportedPallet: string | undefined;
+
   protected readonly logger = LoggerService.get('RelayerManager');
 
   private activeRelayerSubject = new BehaviorSubject<OptionalActiveRelayer>(

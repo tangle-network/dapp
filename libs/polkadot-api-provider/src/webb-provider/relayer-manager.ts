@@ -21,7 +21,7 @@ import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 
 export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
-  private readonly supportedPallet = 'VAnchorBn254';
+  supportedPallet = 'VAnchorBn254';
 
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
