@@ -20,6 +20,7 @@ export default {
           'polygon',
           'tangle',
           'scroll',
+          'orbit',
           'webb-dev',
         ],
       },
@@ -201,4 +202,26 @@ export const Tangle = Template.bind({});
 Tangle.args = {
   chainType: 'tangle',
   chainName: 'tangle',
+};
+
+// Orbit Hermes
+export const OrbitHermes = Template.bind({});
+OrbitHermes.args = {
+  chainType: 'orbit',
+  title: 'hermes',
+  chainName: 'hermes Orbit',
+};
+
+export const OrbitAthena = Template.bind({});
+OrbitAthena.args = {
+  chainType: 'orbit',
+  title: 'athena',
+  chainName: 'athena Orbit',
+};
+
+export const OrbitDemeter = Template.bind({});
+OrbitDemeter.args = {
+  chainType: 'orbit',
+  title: 'demeter',
+  chainName: 'demeter orbit',
 };

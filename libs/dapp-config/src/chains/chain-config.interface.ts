@@ -18,6 +18,7 @@ export type ChainBase =
   | 'polygon'
   | 'scroll'
   | 'tangle'
+  | 'orbit'
   | 'webb-dev';
 
 export interface ChainConfig {
