@@ -69,3 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update copy - closes #1323 ([#1324](https://github.com/webb-tools/webb-dapp/pull/1324))
 - Integrates Faucet App with Faucet Backend ([#1327](https://github.com/webb-tools/webb-dapp/pull/1327))
+
+## [0.0.5] - 2023-06-28
+
+### Fixed, Changed and Added
+
+- Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
