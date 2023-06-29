@@ -1,5 +1,9 @@
 import { Bridge, Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  ensureHex,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import {
   useCurrentResourceId,
@@ -7,13 +11,12 @@ import {
   useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { Note, ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { hexToU8a } from '@webb-tools/utils';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
-import { useShieldedAssets } from './useShieldedAssets';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { ChainListCardWrapper } from '../components';
+import { useShieldedAssets } from './useShieldedAssets';
 
 /**
  * Hook to share the states which are calculated from notes
@@ -107,14 +110,15 @@ const useStatesFromNotes = () => {
         });
 
         const fungible = fungibleCurrencies.find((c) => {
-          const anchorAddress = apiConfig.getAnchorAddress(c.id, typedChainId);
+          const anchorId = apiConfig.getAnchorIdentifier(c.id, typedChainId);
 
-          if (!anchorAddress) {
+          if (!anchorId) {
             return false;
           }
 
-          return (
-            BigInt(anchorAddress) === BigInt(u8aToHex(resourceId.targetSystem))
+          return apiConfig.isEqTargetSystem(
+            ensureHex(anchorId),
+            resourceId.targetSystem
           );
         });
 

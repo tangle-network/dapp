@@ -22,7 +22,10 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  RelayerType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { BigNumber, ethers } from 'ethers';
 import {
   ComponentProps,
@@ -159,11 +162,13 @@ export const WithdrawContainer = forwardRef<
     const notes = allNotes
       .get(currentResourceId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
+        (note) =>
+          note.note.tokenSymbol === fungibleCurrency?.view?.symbol &&
+          fungibleCurrency?.hasChain(+note.note.targetChainId)
       );
 
     return notes ?? null;
-  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
+  }, [allNotes, currentResourceId, fungibleCurrency]);
 
   const maxFeeArgs = useMemo(
     () => ({
@@ -811,18 +816,24 @@ export const WithdrawContainer = forwardRef<
               calculateTypedChainId(activeChain.chainType, activeChain.chainId)
             );
 
-            const theme =
-              activeChain.chainType === ChainType.EVM
-                ? ('ethereum' as const)
-                : ('substrate' as const);
+            if (!relayerData?.beneficiary) {
+              return undefined;
+            }
 
-            return {
-              address: relayerData?.beneficiary ?? '',
+            const theme: RelayerType['theme'] =
+              activeChain.chainType === ChainType.EVM
+                ? 'ethereum'
+                : 'substrate';
+
+            const r: RelayerType = {
+              address: relayerData.beneficiary,
               externalUrl: relayer.infoUri,
               theme,
             };
+
+            return r;
           })
-          .filter((x) => x !== undefined)}
+          .filter((r): r is RelayerType => r !== undefined)}
         onClose={() => setMainComponent(undefined)}
         onChange={(nextRelayer) => {
           setRelayer(

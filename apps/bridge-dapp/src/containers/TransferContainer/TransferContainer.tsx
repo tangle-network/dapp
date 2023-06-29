@@ -32,6 +32,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import {
   AssetType,
   ChainType,
+  RelayerType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
 import { BigNumber, ethers } from 'ethers';
@@ -293,8 +294,14 @@ export const TransferContainer = forwardRef<
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
+      const typedChainId = destChain
+        ? calculateTypedChainId(destChain.chainType, destChain.chainId)
+        : currentTypedChainId ?? 0;
+
       const currencies = selectableBridgingAssets
-        .map(({ symbol }) => apiConfig.getCurrencyBySymbol(symbol))
+        .map(({ symbol }) =>
+          apiConfig.getCurrencyBySymbolAndTypedChainId(symbol, typedChainId)
+        )
         .filter((c): c is CurrencyConfig => !!c);
 
       const unavailableTokens = apiConfig
@@ -319,6 +326,8 @@ export const TransferContainer = forwardRef<
       );
     }, [
       apiConfig,
+      currentTypedChainId,
+      destChain,
       handleBridgingAssetChange,
       onTryAnotherWallet,
       selectableBridgingAssets,
@@ -421,18 +430,24 @@ export const TransferContainer = forwardRef<
             calculateTypedChainId(activeChain.chainType, activeChain.chainId)
           );
 
-          const theme =
+          if (!relayerData?.beneficiary) {
+            return undefined;
+          }
+
+          const theme: RelayerType['theme'] =
             activeChain.chainType === ChainTypeEnum.EVM
               ? ('ethereum' as const)
               : ('substrate' as const);
 
-          return {
+          const r: RelayerType = {
             address: relayerData?.beneficiary ?? '',
             externalUrl: relayer.infoUri,
             theme,
           };
+
+          return r;
         })
-        .filter((x) => !!x);
+        .filter((r): r is RelayerType => !!r);
 
       setMainComponent(
         <RelayerListCard

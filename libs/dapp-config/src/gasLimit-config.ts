@@ -24,8 +24,13 @@ const gasLimitConfig: GasLimitConfigType = {
   [PresetTypedChainId.DemeterOrbit]: BigNumber.from(2000000), // TODO: benchmark gas limit
 
   // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(2000000), // Temporary
-  [PresetTypedChainId.LocalTangleStandalone]: BigNumber.from(2000000), // Temporary
+  // On substrate we don't use the gas amount, we use the partial fee instead
+  [PresetTypedChainId.ProtocolSubstrateStandalone]: BigNumber.from(
+    '10840000100000000000'
+  ),
+  [PresetTypedChainId.LocalTangleStandalone]: BigNumber.from(
+    '10840000100000000000'
+  ),
 };
 
 export default gasLimitConfig;
