@@ -41,7 +41,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     name: 'Tangle',
     env: ['development'],
   },
-  [PresetTypedChainId.TangleStandaloneTestnet]: {
+  /*   [PresetTypedChainId.TangleStandaloneTestnet]: {
     chainType: ChainType.Substrate,
     group: 'webb',
     tag: 'test',
@@ -53,7 +53,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     ),
     name: 'Tangle Standalone Testnet',
     env: ['development'],
-  },
+  }, */
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
     group: 'webb',

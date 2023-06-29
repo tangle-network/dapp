@@ -50,8 +50,8 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
-    '6': NaN,
+  [PresetTypedChainId.LocalTangleStandalone]: {
+    '1': NaN,
   },
 };
 
