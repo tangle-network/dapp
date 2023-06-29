@@ -473,13 +473,23 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
+    // Fee only applies if relayer is set
+    const actualFee = new BN(
+      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
+    );
+
+    // Refund only applies if relayer is set
+    const actualRefund = new BN(
+      relayer === ZERO_ADDRESS ? '0' : refundAmount.toString()
+    );
+
     return Promise.resolve([
       tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
       inputUtxos, // inputs
       [changeUtxo], // outputs
-      new BN(feeAmount.toString()), // fee
-      new BN(refundAmount.toString()), // refund
+      actualFee, // fee
+      actualRefund, // refund
       recipient, // recipient
       relayer, // relayer
       wrapUnwrapAssetId, // wrapUnwrapAssetId
@@ -499,16 +509,17 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
-    // If no relayer is set, the fee is 0, otherwise it's the feeAmount
-    const fee =
-      relayer === ZERO_ADDRESS ? new BN(0) : new BN(feeAmount.toString());
+    // Fee only applies if relayer is set
+    const actualFee = new BN(
+      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
+    );
 
     return Promise.resolve([
       tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
       inputUtxos, // inputs
       [changeUtxo, transferUtxo], // outputs
-      fee, // fee
+      actualFee, // fee
       new BN(0), // refund
       ZERO_ADDRESS, // recipient
       relayer, // relayer

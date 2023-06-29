@@ -10,6 +10,8 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '../utils';
+import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Get the max fee info for the current active chain
@@ -169,30 +171,33 @@ export const useMaxFeeInfo = (
       }
 
       const provider = activeApi.getProvider();
-      if (!(provider instanceof Web3Provider)) {
-        setFeeInfo(BigNumber.from(0));
+      if (provider instanceof PolkadotProvider) {
+        // On Substrate, we use partial fee dirrectly
+        setFeeInfo(gasLimit[currentTypedChain]);
         setIsLoading(false);
         return;
+      } else if (provider instanceof Web3Provider) {
+        const gasAmount = gasLimit[currentTypedChain];
+        const etherProvider = provider.intoEthersProvider();
+
+        // Get the greatest gas price
+        let gasPrice = await etherProvider.getGasPrice();
+        const feeData = await etherProvider.getFeeData();
+        if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
+          gasPrice = feeData.maxFeePerGas;
+        }
+
+        if (
+          feeData.maxPriorityFeePerGas &&
+          feeData.maxPriorityFeePerGas.gt(gasPrice)
+        ) {
+          gasPrice = feeData.maxPriorityFeePerGas;
+        }
+
+        setFeeInfo(gasAmount.mul(gasPrice));
+      } else {
+        throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
       }
-
-      const gasAmount = gasLimit[currentTypedChain];
-      const etherProvider = provider.intoEthersProvider();
-
-      // Get the greatest gas price
-      let gasPrice = await etherProvider.getGasPrice();
-      const feeData = await etherProvider.getFeeData();
-      if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
-        gasPrice = feeData.maxFeePerGas;
-      }
-
-      if (
-        feeData.maxPriorityFeePerGas &&
-        feeData.maxPriorityFeePerGas.gt(gasPrice)
-      ) {
-        gasPrice = feeData.maxPriorityFeePerGas;
-      }
-
-      setFeeInfo(gasAmount.mul(gasPrice));
     } catch (error) {
       setError(error);
     } finally {
