@@ -36,7 +36,7 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
     const {
       className: classNameProp,
       chainType,
-      iconName,
+      chainName,
       title,
       ...restProps
     } = props;
@@ -47,9 +47,9 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       []
     );
 
-    const _iconName = useMemo(
-      () => (iconName === 'tangle' ? 'tangle transparent' : iconName),
-      [iconName]
+    const iconName = useMemo(
+      () => (chainName === 'tangle' ? 'tangle transparent' : chainName),
+      [chainName]
     );
 
     const className = useMemo(() => {
@@ -59,8 +59,8 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
 
     return (
       <span className={className} {...restProps} ref={ref}>
-        <ChainIcon name={_iconName} size="md" />
-        {title}
+        <ChainIcon name={iconName} size="md" />
+        {title ?? chainName}
       </span>
     );
   }

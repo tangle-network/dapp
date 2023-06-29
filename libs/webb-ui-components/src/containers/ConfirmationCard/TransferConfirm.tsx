@@ -148,8 +148,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={sourceChain?.type ?? 'webb-dev'}
-                    name={sourceChain?.name ?? ''}
+                    chainType={sourceChain?.type ?? 'webb-dev'}
+                    chainName={sourceChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={token1Symbol ?? ''}
@@ -168,8 +168,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={destChain?.type ?? 'webb-dev'}
-                    name={destChain?.name ?? ''}
+                    chainType={destChain?.type ?? 'webb-dev'}
+                    chainName={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={token1Symbol ?? ''}

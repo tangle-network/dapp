@@ -1,10 +1,8 @@
 import { ChainChip } from '../../components';
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Design System/Molecules/ChainChip',
   component: ChainChip,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     chainType: {
       control: {
@@ -26,7 +24,7 @@ export default {
         ],
       },
     },
-    iconName: {
+    chainName: {
       control: {
         type: 'select',
         options: [
@@ -59,89 +57,148 @@ export default {
   },
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <ChainChip {...args} />;
 
+// ARBITRUM
 export const Arbitrum = Template.bind({});
 Arbitrum.args = {
   chainType: 'arbitrum',
-  iconName: 'arbitrum',
-  title: 'Arbitrum',
+  chainName: 'arbitrum',
 };
 
+export const ArbitrumGoerli = Template.bind({});
+ArbitrumGoerli.args = {
+  chainType: 'arbitrum',
+  chainName: 'arbitrum goerli',
+  title: 'goerli',
+};
+
+// ATHENA
 export const Athena = Template.bind({});
 Athena.args = {
   chainType: 'athena',
-  iconName: 'athena',
-  title: 'Athena',
+  chainName: 'athena',
 };
 
+// AVALANCHE
 export const Avalanche = Template.bind({});
 Avalanche.args = {
   chainType: 'avalanche',
-  iconName: 'avalanche',
-  title: 'Avalanche',
+  chainName: 'avalanche',
 };
 
+export const AvalancheFuji = Template.bind({});
+AvalancheFuji.args = {
+  chainType: 'avalanche',
+  chainName: 'avalanche fuji',
+  title: 'fuji',
+};
+
+// COSMOS
 export const Cosmos = Template.bind({});
 Cosmos.args = {
   chainType: 'cosmos',
-  iconName: 'cosmos',
-  title: 'Cosmos',
+  chainName: 'cosmos',
 };
 
+// ETHEREUM
 export const Ethereum = Template.bind({});
 Ethereum.args = {
   chainType: 'ethereum',
-  iconName: 'ethereum',
-  title: 'Ethereum',
+  chainName: 'ethereum',
 };
 
+export const Sepolia = Template.bind({});
+Sepolia.args = {
+  chainType: 'ethereum',
+  chainName: 'sepolia',
+};
+
+export const Goerli = Template.bind({});
+Goerli.args = {
+  chainType: 'ethereum',
+  chainName: 'goerli',
+};
+
+export const Rinkeby = Template.bind({});
+Rinkeby.args = {
+  chainType: 'ethereum',
+  chainName: 'rinkeby',
+};
+
+// KUSAMA
 export const Kusama = Template.bind({});
 Kusama.args = {
   chainType: 'kusama',
-  iconName: 'kusama',
-  title: 'Kusama',
+  chainName: 'kusama',
 };
 
+// MOONBEAM
 export const Moonbeam = Template.bind({});
 Moonbeam.args = {
   chainType: 'moonbeam',
-  iconName: 'moonbeam',
-  title: 'Moonbeam',
+  chainName: 'moonbeam',
 };
 
+export const MoonbaseAlpha = Template.bind({});
+MoonbaseAlpha.args = {
+  chainType: 'moonbeam',
+  chainName: 'moonbase alpha',
+  title: 'alpha',
+};
+
+// OPTIMISM
 export const Optimism = Template.bind({});
 Optimism.args = {
   chainType: 'optimism',
-  iconName: 'optimism',
-  title: 'Optimism',
+  chainName: 'optimism',
 };
 
+export const OptimismGoerli = Template.bind({});
+OptimismGoerli.args = {
+  chainType: 'optimism',
+  chainName: 'optimism goerli',
+  title: 'goerli',
+};
+
+// POLKADOT
 export const Polkadot = Template.bind({});
 Polkadot.args = {
   chainType: 'polkadot',
-  iconName: 'polkadot',
-  title: 'Polkadot',
+  chainName: 'polkadot',
 };
 
+// POLYGON
 export const Polygon = Template.bind({});
 Polygon.args = {
   chainType: 'polygon',
-  iconName: 'polygon',
-  title: 'Polygon',
+  chainName: 'polygon',
 };
 
+export const PolygonMumbai = Template.bind({});
+PolygonMumbai.args = {
+  chainType: 'polygon',
+  chainName: 'polygon mumbai',
+  title: 'mumbai',
+};
+
+// SCROLL
 export const Scroll = Template.bind({});
 Scroll.args = {
   chainType: 'scroll',
-  iconName: 'scroll',
-  title: 'Scroll',
+  chainName: 'scroll',
 };
 
+export const ScrollAlpha = Template.bind({});
+ScrollAlpha.args = {
+  chainType: 'scroll',
+  chainName: 'scroll alpha',
+  title: 'alpha',
+};
+
+// TANGLE
 export const Tangle = Template.bind({});
 Tangle.args = {
   chainType: 'tangle',
-  iconName: 'tangle',
-  title: 'Tangle',
+  chainName: 'tangle',
 };

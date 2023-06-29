@@ -10,7 +10,7 @@ export type ChainChipClassNames = {
 
 export interface ChainChipProps extends WebbComponentBase {
   chainType: ChainBase;
-  iconName: string;
-  title: string;
+  chainName: string;
+  title?: string;
   children?: React.ReactNode;
 }
