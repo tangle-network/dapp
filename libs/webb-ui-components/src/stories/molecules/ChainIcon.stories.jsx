@@ -105,3 +105,15 @@ export const Webb = Template.bind({});
 Webb.args = {
   name: 'webb',
 };
+
+export const Large = Template.bind({});
+Large.args = {
+  name: 'ethereum',
+  size: 'lg',
+};
+
+export const ExtraLarge = Template.bind({});
+ExtraLarge.args = {
+  name: 'ethereum',
+  size: 'xl',
+};
