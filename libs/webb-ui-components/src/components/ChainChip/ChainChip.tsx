@@ -19,6 +19,7 @@ import { getChainChipClassName } from './utils';
   | arbitrum
   | avalanche
   | tangle
+  | cosmos
   | scroll
   | webb-dev
  * - `name`: `string` -
@@ -27,28 +28,39 @@ import { getChainChipClassName } from './utils';
  *
  * ```jsx
  *  <ChainChip type="optimism" name="optimism goerli" />
- *  <ChainChip type="moonbeam" name="moonbase alpha" />
+ *  <ChainChip type="moonbeam" name="moonbeam alpha" />
  * ```
  */
 export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
   (props, ref) => {
-    const { className: classNameProp, type, name, ...restProps } = props;
+    const {
+      className: classNameProp,
+      chainType,
+      chainName,
+      title,
+      ...restProps
+    } = props;
 
     const baseClsx = useMemo(
       () =>
-        'box-border inline-flex items-center gap-1 pl-2 pr-3 py-1.5 rounded-full uppercase text-[12px] leading-[15px] font-bold text-mono-200 w-fit',
+        'box-border inline-flex items-center gap-1 pl-2 pr-3 py-1.5 rounded-md uppercase text-[12px] leading-[15px] font-bold text-mono-200 w-fit',
       []
     );
 
+    const iconName = useMemo(
+      () => (chainName === 'tangle' ? 'tangle transparent' : chainName),
+      [chainName]
+    );
+
     const className = useMemo(() => {
-      const chainChipClassNames = getChainChipClassName(type);
+      const chainChipClassNames = getChainChipClassName(chainType);
       return twMerge(baseClsx, chainChipClassNames, classNameProp);
-    }, [baseClsx, type, classNameProp]);
+    }, [baseClsx, chainType, classNameProp]);
 
     return (
       <span className={className} {...restProps} ref={ref}>
-        <ChainIcon name={name} size="md" />
-        {name}
+        <ChainIcon name={iconName} size="md" />
+        {title ?? chainName}
       </span>
     );
   }
