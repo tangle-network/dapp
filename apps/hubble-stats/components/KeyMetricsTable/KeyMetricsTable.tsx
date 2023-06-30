@@ -14,9 +14,9 @@ export const KeyMetricsTable: FC = () => {
     >
       <div className={'w-full table table-fixed border-collapse'}>
         <MetricItem title="Total Transactions" />
-        <MetricItem title="TVL" isCurrency />
-        <MetricItem title="Total Volume" isCurrency />
-        <MetricItem title="Total Fees" isCurrency />
+        <MetricItem title="TVL" prefix="$" />
+        <MetricItem title="Total Volume" prefix="$" />
+        <MetricItem title="Total Fees" prefix="$" />
       </div>
     </div>
   );

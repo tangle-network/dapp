@@ -7,13 +7,13 @@ interface MetricItemProps {
   title: string;
   value?: number;
   changeRate?: number;
-  isCurrency?: boolean;
+  prefix?: string;
 }
 
 export const MetricItem: FC<MetricItemProps> = ({
   title,
   value,
-  isCurrency,
+  prefix,
   changeRate,
 }) => {
   return (
@@ -34,7 +34,7 @@ export const MetricItem: FC<MetricItemProps> = ({
             fw="black"
             className="text-mono-140 uppercase"
           >
-            {isCurrency && value && '$'}
+            {value && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
               ? value
               : getRoundedAmountString(value, 2, Math.floor, true)}
