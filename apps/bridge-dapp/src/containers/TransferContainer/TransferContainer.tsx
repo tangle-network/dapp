@@ -971,7 +971,7 @@ export const TransferContainer = forwardRef<
       return `${getRoundedAmountString(
         Number(ethers.utils.formatEther(feeInWei)),
         3,
-        Math.round
+        { roundingFunction: Math.round }
       )} ${feeTokenSymbol}`;
     }, [feeInWei, feeTokenSymbol, isFetchingMaxFeeInfo]);
 
@@ -981,7 +981,7 @@ export const TransferContainer = forwardRef<
       const formatedRemainingBalance = getRoundedAmountString(
         availableAmountFromNotes - (transferAmount ?? 0),
         3,
-        Math.round
+        { roundingFunction: Math.round }
       );
 
       return [
@@ -1020,7 +1020,9 @@ export const TransferContainer = forwardRef<
       }
 
       const totalFee = Number(ethers.utils.formatEther(feeInWei));
-      const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+      const formattedFee = getRoundedAmountString(totalFee, 3, {
+        roundingFunction: Math.round,
+      });
       const tkSymbol = infoFormatted?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();
 

@@ -318,7 +318,7 @@ export const WithdrawConfirmContainer = forwardRef<
         const formattedRelayerFee = getRoundedAmountString(
           Number(feeInEthers),
           3,
-          Math.round
+          { roundingFunction: Math.round }
         );
         return `${formattedRelayerFee} ${fungibleCurrency.view.symbol}`;
       }
@@ -333,13 +333,17 @@ export const WithdrawConfirmContainer = forwardRef<
 
       const refundInEthers = Number(ethers.utils.formatEther(refundAmount));
 
-      return getRoundedAmountString(refundInEthers, 3, Math.round);
+      return getRoundedAmountString(refundInEthers, 3, {
+        roundingFunction: Math.round,
+      });
     }, [refundAmount]);
 
     const remainingAmount = useMemo(() => {
       const amountInEthers = Number(ethers.utils.formatEther(amountAfterFee));
 
-      return getRoundedAmountString(amountInEthers, 3, Math.round);
+      return getRoundedAmountString(amountInEthers, 3, {
+        roundingFunction: Math.round,
+      });
     }, [amountAfterFee]);
 
     return (

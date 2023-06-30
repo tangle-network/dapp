@@ -412,7 +412,9 @@ export const WithdrawContainer = forwardRef<
     const amountAfterFee = Number(ethers.utils.formatEther(amountAfterFeeWei));
 
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amountAfterFee, 3, Math.round)
+      ? getRoundedAmountString(amountAfterFee, 3, {
+          roundingFunction: Math.round,
+        })
       : undefined;
 
     const remainderAmount = isValidAmount
@@ -448,7 +450,7 @@ export const WithdrawContainer = forwardRef<
           exchangeRate={getRoundedAmountString(
             +ethers.utils.formatEther(feeInfo.refundExchangeRate),
             6,
-            Math.round
+            { roundingFunction: Math.round }
           )}
           fungibleTokenSymbol={fungibleCurrency?.view.symbol}
           nativeTokenSymbol={currentNativeCurrency?.symbol}
@@ -462,7 +464,7 @@ export const WithdrawContainer = forwardRef<
       ? getRoundedAmountString(
           Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
           3,
-          Math.round
+          { roundingFunction: Math.round }
         )
       : undefined;
 
@@ -1034,7 +1036,9 @@ export const WithdrawContainer = forwardRef<
     }
 
     const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
-    const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+    const formattedFee = getRoundedAmountString(totalFee, 3, {
+      roundingFunction: Math.round,
+    });
     const tkSymbol = selectedFungibleToken?.symbol ?? '';
     const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
@@ -1087,7 +1091,9 @@ export const WithdrawContainer = forwardRef<
           ? nativeCurrencySymbol
           : fungiCurrencySymbol;
 
-      feeText = `${getRoundedAmountString(fee, 3, Math.round)} ${tokenSymbol}`;
+      feeText = `${getRoundedAmountString(fee, 3, {
+        roundingFunction: Math.round,
+      })} ${tokenSymbol}`;
     }
 
     const txFeeContent = isFetchingFeeInfo ? 'Calculating...' : feeText;

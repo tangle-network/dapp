@@ -26,8 +26,7 @@ export function getDecimals(digit: number): number {
 export function getRoundedAmountString(
   num: number | undefined,
   digits = 3,
-  roundingFunction: numbro.Format['roundingFunction'] = Math.floor,
-  removeLengthConstraint: boolean | undefined = undefined
+  formatOption: numbro.Format = { roundingFunction: Math.floor }
 ): string {
   if (num === 0) {
     return '0';
@@ -48,11 +47,11 @@ export function getRoundedAmountString(
 
   return numbro(num).format({
     average: num > 1000,
-    totalLength: removeLengthConstraint || num < 1000 ? 0 : 3,
+    totalLength: num < 1000 ? 0 : 3,
     mantissa: digits,
     optionalMantissa: true,
     trimMantissa: true,
     thousandSeparated: true,
-    roundingFunction: roundingFunction,
+    ...formatOption,
   });
 }

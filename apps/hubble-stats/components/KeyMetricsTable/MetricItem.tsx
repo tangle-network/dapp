@@ -37,7 +37,10 @@ export const MetricItem: FC<MetricItemProps> = ({
             {value && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
               ? value
-              : getRoundedAmountString(value, 2, Math.floor, true)}
+              : getRoundedAmountString(value, 2, {
+                  roundingFunction: Math.floor,
+                  totalLength: 0,
+                })}
           </Typography>
         </span>
 
