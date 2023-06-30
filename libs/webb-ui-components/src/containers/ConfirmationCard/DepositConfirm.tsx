@@ -55,7 +55,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       const formatedAmount =
         typeof amount === 'number'
-          ? getRoundedAmountString(amount, 3, Math.round)
+          ? getRoundedAmountString(amount, 3, { roundingFunction: Math.round })
           : amount ?? '0';
 
       return `${formatedAmount} ${symbolStr}`;
@@ -65,7 +65,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       if (typeof fee === 'number' || typeof fee === 'string') {
         const formatedFee =
           typeof fee === 'number'
-            ? getRoundedAmountString(fee, 3, Math.round)
+            ? getRoundedAmountString(fee, 3, { roundingFunction: Math.round })
             : fee;
         return `${formatedFee} ${feeToken ?? ''}`;
       }

@@ -1,6 +1,4 @@
-import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
-import { getRoundedAmountString } from '../../utils';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -8,7 +6,6 @@ import { Button } from '../Button';
 import { ScrollArea } from '../ScrollArea';
 import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
-import { ListItem } from './ListItem';
 import { AssetType, WrapAssetListCardProps } from './types';
 
 export const WrapAssetListCard = forwardRef<

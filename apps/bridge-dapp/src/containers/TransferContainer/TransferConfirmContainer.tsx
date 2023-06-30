@@ -280,7 +280,9 @@ export const TransferConfirmContainer = forwardRef<
 
       const amountNum = Number(ethers.utils.formatEther(feeAmount));
 
-      return getRoundedAmountString(amountNum, 3, Math.round);
+      return getRoundedAmountString(amountNum, 3, {
+        roundingFunction: Math.round,
+      });
     }, [feeAmount]);
 
     return (
