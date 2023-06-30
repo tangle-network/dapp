@@ -19,11 +19,12 @@ export const MetricItem: FC<MetricItemProps> = ({
   return (
     <div
       className={cx(
-        'table-cell px-4 py-2 space-y-2 border-x border-mono-40',
+        'table-cell px-4 py-2 space-y-2',
+        'border-x border-mono-40 dark:border-mono-160',
         'first-of-type:border-l-0 last-of-type:border-r-0'
       )}
     >
-      <Typography variant="body1" className="text-mono-140">
+      <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
         {title}
       </Typography>
       <div className="flex items-center gap-1">
@@ -32,7 +33,7 @@ export const MetricItem: FC<MetricItemProps> = ({
           <Typography
             variant="body1"
             fw="black"
-            className="text-mono-140 uppercase"
+            className="uppercase text-mono-140 dark:text-mono-40"
           >
             {value && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
@@ -51,8 +52,8 @@ export const MetricItem: FC<MetricItemProps> = ({
               variant="body2"
               fw="bold"
               className={cx({
-                'text-green-70': changeRate >= 0,
-                'text-red-70': changeRate < 0,
+                '!text-green-70': changeRate >= 0,
+                '!text-red-70': changeRate < 0,
               })}
             >
               ({changeRate >= 0 ? `+` : `-`}
