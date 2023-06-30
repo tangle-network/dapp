@@ -1,13 +1,12 @@
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { Typography } from '../../typography';
-import cx from 'classnames';
 import React, { useEffect, useMemo } from 'react';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { Identicon } from './Identicon';
-
+import { Typography } from '../../typography';
+import { Identicon } from '.';
 import { AvatarProps } from './types';
-import { getAvatarSizeInPx } from './utils';
+import { getAvatarSizeInPx, getAvatarClassNames } from './utils';
 
 /**
  * Webb Avatar component
@@ -38,38 +37,21 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     value: valueProp,
   } = props;
 
-  const sizeClassName = useMemo(
-    () => (size === 'md' ? 'w-6 h-6' : 'w-12 h-12'),
-    [size]
-  );
+  const sizeClassName = useMemo(() => {
+    switch (size) {
+      case 'sm':
+        return 'w-4 h-4';
+      case 'md':
+        return 'w-6 h-6';
+      case 'lg':
+        return 'w-12 h-12';
+      default:
+        return 'w-6 h-6';
+    }
+  }, [size]);
 
   const classNames = useMemo(() => {
-    const borderColor =
-      typeof darkMode === 'boolean'
-        ? darkMode
-          ? ('border-mono-180' as const)
-          : ('border-mono-0' as const)
-        : ('border-mono-0 dark:border-mono-180' as const);
-
-    const bg =
-      typeof darkMode === 'boolean'
-        ? darkMode
-          ? ('bg-mono-180' as const)
-          : ('bg-mono-0' as const)
-        : ('bg-mono-0 dark:bg-mono-180' as const);
-
-    const text =
-      typeof darkMode === 'boolean'
-        ? darkMode
-          ? ('text-mono-0' as const)
-          : ('text-mono-180' as const)
-        : ('text-mono-180 dark:text-mono-0' as const);
-
-    return {
-      borderColor,
-      bg,
-      text,
-    };
+    return getAvatarClassNames(darkMode);
   }, [darkMode]);
 
   const typoVariant = useMemo(

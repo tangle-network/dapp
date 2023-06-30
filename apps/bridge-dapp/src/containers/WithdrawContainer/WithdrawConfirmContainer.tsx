@@ -60,11 +60,15 @@ export const WithdrawConfirmContainer = forwardRef<
   ) => {
     const { value: fungibleCurrency } = fungibleCurrencyProp;
 
-    const { api: vAnchorApi } = useVAnchor();
+    const {
+      api: vAnchorApi,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
+    } = useVAnchor();
 
     const { setMainComponent } = useWebbUI();
 
-    const { activeApi, apiConfig, noteManager, txQueue } = useWebContext();
+    const { activeApi, apiConfig, txQueue } = useWebContext();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -196,7 +200,10 @@ export const WithdrawConfirmContainer = forwardRef<
 
       const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(
@@ -219,7 +226,7 @@ export const WithdrawConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
-        providerType: activeApi.type(),
+        providerType: activeApi.type,
       });
 
       setTxId(tx.id);
@@ -227,9 +234,8 @@ export const WithdrawConfirmContainer = forwardRef<
       try {
         txQueueApi.registerTransaction(tx);
 
-        // Add the change note before sending the tx
         if (changeNote) {
-          noteManager?.addNote(changeNote);
+          await addNoteToNoteManager(changeNote);
         }
 
         const refund = refundAmount ?? BigNumber.from(0);
@@ -238,8 +244,8 @@ export const WithdrawConfirmContainer = forwardRef<
           notes: availableNotes,
           changeUtxo,
           recipient,
-          refundAmount: refund,
-          feeAmount: fee,
+          refundAmount: refund.toBigInt(),
+          feeAmount: fee.toBigInt(),
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -268,12 +274,12 @@ export const WithdrawConfirmContainer = forwardRef<
         }
 
         // Cleanup NoteAccount state
-        for (const note of availableNotes) {
-          await noteManager?.removeNote(note);
-        }
+        await Promise.all(
+          availableNotes.map((note) => removeNoteFromNoteManager(note))
+        );
       } catch (error) {
         console.log('Error while executing withdraw', error);
-        changeNote && (await noteManager?.removeNote(changeNote));
+        changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
         captureSentryException(error, 'transactionType', 'withdraw');
@@ -298,7 +304,8 @@ export const WithdrawConfirmContainer = forwardRef<
       recipient,
       fee,
       activeRelayer,
-      noteManager,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
       onResetState,
     ]);
 

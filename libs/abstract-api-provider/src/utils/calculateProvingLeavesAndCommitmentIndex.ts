@@ -4,6 +4,11 @@ import assert from 'assert';
 /**
  * Constructs the merkle tree is a heavy operation,
  * so we use a web worker to do it to prevent blocking the UI
+ * @param levels the number of levels in the tree
+ * @param leaves the leaves to construct the tree with
+ * @param targetRoot the target root to construct the tree with
+ * @param commitment the commitment to find the index of
+ * @param basePath the base path to the worker (e.g. import.meta.url)
  */
 function calculateProvingLeavesAndCommitmentIndex(
   levels: number,

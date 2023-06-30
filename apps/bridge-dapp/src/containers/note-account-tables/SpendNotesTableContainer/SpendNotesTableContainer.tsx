@@ -85,20 +85,20 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
         );
       }
 
-      const firstTwoTokens = composition.slice(0, 2);
+      const [firstToken, secondToken] = composition.slice(0, 2);
       const numOfHiddenTokens = composition.length - 2;
 
       return (
         <div className="flex items-center space-x-1 w-[220px]">
-          {firstTwoTokens.length === 1 ? (
+          {!secondToken ? (
             <IconWithTooltip
-              icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}
-              content={firstTwoTokens[0]}
+              icon={<TokenIcon size="lg" name={firstToken} />}
+              content={firstToken}
             />
           ) : (
             <TokenPairIcons
-              token1Symbol={firstTwoTokens[0]}
-              token2Symbol={firstTwoTokens[1]}
+              token1Symbol={firstToken}
+              token2Symbol={secondToken}
             />
           )}
 
