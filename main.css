@@ -1380,12 +1380,18 @@ video {
 }.bg-\[\#2C374B\]{
   --tw-bg-opacity: 1;
   background-color: rgb(44 55 75 / var(--tw-bg-opacity));
+}.bg-\[\#2E3148\]{
+  --tw-bg-opacity: 1;
+  background-color: rgb(46 49 72 / var(--tw-bg-opacity));
+}.bg-\[\#323653\]{
+  --tw-bg-opacity: 1;
+  background-color: rgb(50 54 83 / var(--tw-bg-opacity));
 }.bg-\[\#8247E5\]{
   --tw-bg-opacity: 1;
   background-color: rgb(130 71 229 / var(--tw-bg-opacity));
-}.bg-\[\#D9780F\]{
+}.bg-\[\#D9780E\]{
   --tw-bg-opacity: 1;
-  background-color: rgb(217 120 15 / var(--tw-bg-opacity));
+  background-color: rgb(217 120 14 / var(--tw-bg-opacity));
 }.bg-\[\#E6007A\]{
   --tw-bg-opacity: 1;
   background-color: rgb(230 0 122 / var(--tw-bg-opacity));
@@ -1395,12 +1401,15 @@ video {
 }.bg-\[\#EDF0F4\]{
   --tw-bg-opacity: 1;
   background-color: rgb(237 240 244 / var(--tw-bg-opacity));
-}.bg-\[\#F7F8F7\]{
-  --tw-bg-opacity: 1;
-  background-color: rgb(247 248 247 / var(--tw-bg-opacity));
 }.bg-\[\#FF0420\]{
   --tw-bg-opacity: 1;
   background-color: rgb(255 4 32 / var(--tw-bg-opacity));
+}.bg-\[\#FFF6EB\]{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 246 235 / var(--tw-bg-opacity));
+}.bg-\[\#ffffff\]{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }.bg-\[rgba\(0\2c 0\2c 0\2c 0\.1\)\]{
   background-color: rgba(0,0,0,0.1);
 }.bg-\[rgba\(0\2c 0\2c 0\2c 0\.25\)\]{
@@ -2250,14 +2259,12 @@ main{
 }.mkt-monospace{
   font-size: 14px;
   line-height: 20px;
-}html.mkt-monospace *:not(code, .mono1, .mono2){
-
-  font-family: 'Satoshi Variable', -apple-system, BlinkMacSystemFont, Arial,
-    sans-serif;
 }@media (min-width: 768px){.mkt-monospace{
     font-size: 16px;
     line-height: 24px;
   }
+}.mkt-monospace {
+  fontfamily: 'Satoshi Variable';
 }@media screen and (max-width: 800px) {
   .h1 {
     font-size: 46px;
@@ -2351,6 +2358,9 @@ main{
 }*[data-swipe='cancel'] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
+}.navbar-item:hover svg,
+.navbar-item.hover svg{
+  fill: #3D7BCE !important;
 }.placeholder\:text-\[16px\]::-moz-placeholder{
   font-size: 16px;
 }.placeholder\:text-\[16px\]::placeholder{
