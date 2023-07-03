@@ -7,7 +7,7 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
@@ -15,7 +15,6 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
@@ -29,6 +28,7 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
+import { formatEther } from 'viem';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -196,7 +196,7 @@ export const TransferConfirmContainer = forwardRef<
           notes: inputNotes,
           changeUtxo,
           transferUtxo,
-          feeAmount: feeAmount ?? BigNumber.from(0),
+          feeAmount: feeAmount ?? ZERO_BIG_INT,
         };
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
@@ -266,7 +266,7 @@ export const TransferConfirmContainer = forwardRef<
         return undefined;
       }
 
-      const amountNum = Number(ethers.utils.formatEther(feeAmount));
+      const amountNum = Number(formatEther(feeAmount));
 
       return getRoundedAmountString(amountNum, 3, Math.round);
     }, [feeAmount]);

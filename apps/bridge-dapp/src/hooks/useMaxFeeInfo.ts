@@ -7,9 +7,9 @@ import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '../utils';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 /**
  * Get the max fee info for the current active chain
@@ -25,7 +25,7 @@ type UseMaxFeeInfoReturnType = {
   /**
    * The max fee info for the current active chain
    */
-  feeInfo: RelayerFeeInfo | BigNumber | null;
+  feeInfo: RelayerFeeInfo | bigint | null;
 
   /**
    * Fetch the max fee info from the relayer if the active relayer is provided
@@ -72,7 +72,7 @@ export type MaxFeeInfoOption = {
  * Get the max fee info for the current active chain
  * @param {MaxFeeInfoOption} opt The option to customize the hook
  * @returns an object with the following properties:
- * - feeInfo: RelayerFeeInfo | BigNumber | null
+ * - feeInfo: RelayerFeeInfo | bigint | null
  * - fetchMaxFeeInfo: () => Promise<void> | never
  * - fetchMaxFeeInfoFromRelayer: (relayer: ActiveWebbRelayer) => Promise<void> | never
  * - resetMaxFeeInfo: () => void
@@ -84,9 +84,7 @@ export const useMaxFeeInfo = (
   const { activeApi, activeChain, apiConfig } = useWebContext();
 
   // State to store the max fee info
-  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | BigNumber | null>(
-    null
-  );
+  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | bigint | null>(null);
 
   // State to store the loading state
   const [isLoading, setIsLoading] = useState(false);
@@ -170,7 +168,7 @@ export const useMaxFeeInfo = (
 
       const provider = activeApi.getProvider();
       if (!(provider instanceof Web3Provider)) {
-        setFeeInfo(BigNumber.from(0));
+        setFeeInfo(ZERO_BIG_INT);
         setIsLoading(false);
         return;
       }
@@ -192,7 +190,7 @@ export const useMaxFeeInfo = (
         gasPrice = feeData.maxPriorityFeePerGas;
       }
 
-      setFeeInfo(gasAmount.mul(gasPrice));
+      setFeeInfo(gasPrice.mul(gasAmount).toBigInt());
     } catch (error) {
       setError(error);
     } finally {

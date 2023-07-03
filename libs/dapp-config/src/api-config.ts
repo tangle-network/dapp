@@ -9,7 +9,8 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { ethers } from 'ethers';
+import { PublicClient } from 'viem';
+import { parsedAnchorConfig } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -18,7 +19,6 @@ import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
 import { getNativeCurrencyFromConfig } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
-import { parsedAnchorConfig } from './anchors';
 
 export type Chain = ChainConfig & {
   wallets: Record<number, Wallet>;
@@ -65,9 +65,7 @@ export class ApiConfig {
 
   static initFromApi = async (
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
-    evmProviderFactory: (
-      typedChainId: number
-    ) => Promise<ethers.providers.Web3Provider>,
+    evmProviderFactory: (typedChainId: number) => Promise<PublicClient>,
     substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();

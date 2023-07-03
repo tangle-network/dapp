@@ -1,7 +1,6 @@
 import { poseidon } from 'circomlibjs';
 import { Keypair } from '@webb-tools/sdk-core';
 import { JsNote } from '@webb-tools/wasm-utils';
-import { BigNumber } from 'ethers';
 
 /**
  * Generate the commitment of the note
@@ -10,8 +9,8 @@ import { BigNumber } from 'ethers';
  */
 const generateCircomCommitment = (note: JsNote): bigint => {
   const noteSecretParts = note.secrets.split(':');
-  const chainId = BigNumber.from('0x' + noteSecretParts[0]).toString();
-  const amount = BigNumber.from('0x' + noteSecretParts[1]).toString();
+  const chainId = BigInt('0x' + noteSecretParts[0]).toString();
+  const amount = BigInt('0x' + noteSecretParts[1]).toString();
   const secretKey = '0x' + noteSecretParts[2];
   const blinding = '0x' + noteSecretParts[3];
 
@@ -19,7 +18,7 @@ const generateCircomCommitment = (note: JsNote): bigint => {
 
   const hash = poseidon([chainId, amount, keypair.getPubKey(), blinding]);
 
-  return BigNumber.from(hash).toBigInt();
+  return BigInt(hash);
 };
 
 export default generateCircomCommitment;

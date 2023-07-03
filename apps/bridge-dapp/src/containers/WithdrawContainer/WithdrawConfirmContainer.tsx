@@ -1,6 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
@@ -17,7 +17,6 @@ import {
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
-import { BigNumber, ethers } from 'ethers';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -29,6 +28,7 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
+import { formatEther, formatUnits } from 'viem';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -191,6 +191,7 @@ export const WithdrawConfirmContainer = forwardRef<
       const {
         sourceChainId: sourceTypedChainId,
         targetChainId: destTypedChainId,
+        denomination,
         tokenSymbol,
       } = note.note;
 
@@ -208,7 +209,7 @@ export const WithdrawConfirmContainer = forwardRef<
       }
       const tokenURI = getTokenURI(currency, destTypedChainId);
 
-      const amount = Number(ethers.utils.formatEther(amountAfterFee));
+      const amount = Number(formatUnits(amountAfterFee, +denomination));
 
       const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
         amount,
@@ -232,7 +233,7 @@ export const WithdrawConfirmContainer = forwardRef<
           noteManager?.addNote(changeNote);
         }
 
-        const refund = refundAmount ?? BigNumber.from(0);
+        const refund = refundAmount ?? ZERO_BIG_INT;
 
         const txPayload: WithdrawTransactionPayloadType = {
           notes: availableNotes,
@@ -312,7 +313,7 @@ export const WithdrawConfirmContainer = forwardRef<
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
-      const feeInEthers = ethers.utils.formatEther(fee);
+      const feeInEthers = formatEther(fee);
 
       if (activeRelayer) {
         const formattedRelayerFee = getRoundedAmountString(
@@ -331,13 +332,13 @@ export const WithdrawConfirmContainer = forwardRef<
         return undefined;
       }
 
-      const refundInEthers = Number(ethers.utils.formatEther(refundAmount));
+      const refundInEthers = Number(formatEther(refundAmount));
 
       return getRoundedAmountString(refundInEthers, 3, Math.round);
     }, [refundAmount]);
 
     const remainingAmount = useMemo(() => {
-      const amountInEthers = Number(ethers.utils.formatEther(amountAfterFee));
+      const amountInEthers = Number(formatEther(amountAfterFee));
 
       return getRoundedAmountString(amountInEthers, 3, Math.round);
     }, [amountAfterFee]);

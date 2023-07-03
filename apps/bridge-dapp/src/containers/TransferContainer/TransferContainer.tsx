@@ -1,6 +1,7 @@
 import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
+  ZERO_BIG_INT,
   Chain,
   CurrencyConfig,
   getNativeCurrencyFromConfig,
@@ -34,7 +35,7 @@ import {
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
-import { BigNumber, ethers } from 'ethers';
+import { formatEther, parseUnits, formatUnits } from 'viem';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { ChainListCardWrapper } from '../../components';
 import {
@@ -147,7 +148,7 @@ export const TransferContainer = forwardRef<
     } = useMaxFeeInfo(maxFeeArgs);
 
     const feeInWei = useMemo(() => {
-      if (!feeInfo || feeInfo instanceof BigNumber) {
+      if (!feeInfo || typeof feeInfo === 'bigint') {
         return feeInfo;
       }
 
@@ -479,15 +480,13 @@ export const TransferContainer = forwardRef<
       }
 
       // If relayer selected, return the amount minus the relayer fee
-      const fee = Number(ethers.utils.formatEther(feeInWei));
+      const fee = +formatEther(feeInWei);
       return transferAmount - fee;
     }, [activeRelayer, transferAmount, feeInWei]);
 
     // Boolean indicating whether inputs are valid to transfer
     const isValidToTransfer = useMemo<boolean>(() => {
-      const totalFee = Number(
-        ethers.utils.formatEther(feeInWei ?? ethers.constants.Zero)
-      );
+      const totalFee = Number(formatEther(feeInWei ?? ZERO_BIG_INT));
 
       const amountOrZero = transferAmount ?? 0;
 
@@ -512,70 +511,61 @@ export const TransferContainer = forwardRef<
       transferAmount,
     ]);
 
+    const transferAmountWei = useMemo(() => {
+      if (typeof transferAmount !== 'number' || !fungibleCurrency) {
+        return undefined;
+      }
+
+      return parseUnits(
+        transferAmount.toString(),
+        fungibleCurrency.view.decimals
+      );
+    }, [fungibleCurrency, transferAmount]);
+
     // Calculate input notes for current amount
     const inputNotes = useMemo(() => {
-      if (!fungibleCurrency) {
+      if (!fungibleCurrency || !transferAmountWei) {
         return [];
       }
 
-      return (
-        NoteManager.getNotesFifo(
-          availableNotes,
-          ethers.utils.parseUnits(
-            transferAmount?.toString() ?? '0',
-            fungibleCurrency.view.decimals
-          )
-        ) ?? []
-      );
-    }, [transferAmount, availableNotes, fungibleCurrency]);
+      return NoteManager.getNotesFifo(availableNotes, transferAmountWei) ?? [];
+    }, [fungibleCurrency, transferAmountWei, availableNotes]);
 
     // Calculate the info for UI display
     const infoFormatted = useMemo(() => {
-      const spentValue = inputNotes.reduce<ethers.BigNumber>(
-        (acc, note) => acc.add(ethers.BigNumber.from(note.note.amount)),
-        ethers.BigNumber.from(0)
+      const spentValue = inputNotes.reduce<bigint>(
+        (acc, note) => acc + BigInt(note.note.amount),
+        ZERO_BIG_INT
       );
 
-      const changeAmountBigNumber = fungibleCurrency
-        ? spentValue.sub(
-            ethers.utils.parseUnits(
-              transferAmount?.toString() ?? '0',
-              fungibleCurrency.view.decimals
-            )
-          )
-        : ethers.BigNumber.from(0);
+      const changeAmountBigInt =
+        fungibleCurrency && transferAmountWei
+          ? spentValue - transferAmountWei
+          : ZERO_BIG_INT;
 
       const formattedTransferAmount = isValidAmount
         ? getRoundedAmountString(receivingAmount)
         : undefined;
 
-      const changeAmount =
+      const changeAmount = fungibleCurrency
+        ? +formatUnits(changeAmountBigInt, fungibleCurrency.view.decimals)
+        : 0;
+
+      const formattedChangeAmount =
         isValidAmount && fungibleCurrency
-          ? getRoundedAmountString(
-              Number(
-                ethers.utils.formatUnits(
-                  changeAmountBigNumber,
-                  fungibleCurrency.view.decimals
-                )
-              )
-            )
+          ? getRoundedAmountString(changeAmount)
           : undefined;
 
       return {
         transferAmount: formattedTransferAmount,
-        changeAmount,
+        changeAmount: formattedChangeAmount,
         transferTokenSymbol: selectedBridgingAsset?.symbol ?? '',
-        rawChangeAmount: fungibleCurrency
-          ? +ethers.utils.formatUnits(
-              changeAmountBigNumber,
-              fungibleCurrency.getDecimals()
-            )
-          : 0,
+        rawChangeAmount: changeAmountBigInt,
       };
     }, [
-      transferAmount,
-      fungibleCurrency,
       inputNotes,
+      fungibleCurrency,
+      transferAmountWei,
       isValidAmount,
       receivingAmount,
       selectedBridgingAsset?.symbol,
@@ -655,13 +645,8 @@ export const TransferContainer = forwardRef<
         return;
       }
 
-      const changeAmount = infoFormatted.rawChangeAmount;
+      const changeAmountBI = infoFormatted.rawChangeAmount;
       const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
-
-      const transferAmountBN = ethers.utils.parseUnits(
-        transferAmount.toString(),
-        fungibleCurrencyDecimals
-      );
 
       const destTypedChainId = calculateTypedChainId(
         destChain.chainType,
@@ -675,14 +660,16 @@ export const TransferContainer = forwardRef<
         return;
       }
 
+      const transferAmountBI = transferAmountWei ?? ZERO_BIG_INT;
+
       // Setup the recipient's keypair.
       const recipientKeypair = Keypair.fromString(recipientPubKey);
 
-      const fee = feeInWei ?? BigNumber.from(0);
+      const fee = feeInWei ?? ZERO_BIG_INT;
 
       const utxoAmount = activeRelayer
-        ? transferAmountBN.sub(fee)
-        : transferAmountBN;
+        ? transferAmountBI - fee
+        : transferAmountBI;
 
       const transferUtxo = await activeApi.generateUtxo({
         curve: noteManager.defaultNoteGenInput.curve,
@@ -694,16 +681,11 @@ export const TransferContainer = forwardRef<
         index: activeApi.state.defaultUtxoIndex.toString(),
       });
 
-      const changeAmountBigNumber = ethers.utils.parseUnits(
-        changeAmount.toString(),
-        fungibleCurrencyDecimals
-      );
-
       const srcAddress =
         activeApi.state.activeBridge.targets[currentTypedChainId];
 
       let changeNote: Note | undefined;
-      if (changeAmountBigNumber.gt(0)) {
+      if (changeAmountBI > 0) {
         changeNote = await noteManager.generateNote(
           activeApi.backend,
           currentTypedChainId,
@@ -712,7 +694,7 @@ export const TransferContainer = forwardRef<
           srcAddress,
           fungibleCurrency.view.symbol,
           fungibleCurrency.getDecimals(),
-          changeAmount
+          changeAmountBI
         );
       }
 
@@ -724,7 +706,7 @@ export const TransferContainer = forwardRef<
         : await activeApi.generateUtxo({
             curve: noteManager.defaultNoteGenInput.curve,
             backend: activeApi.backend,
-            amount: changeAmountBigNumber.toString(),
+            amount: changeAmountBI.toString(),
             chainId: currentTypedChainId.toString(),
             keypair,
             originChainId: currentTypedChainId.toString(),
@@ -735,12 +717,10 @@ export const TransferContainer = forwardRef<
         <TransferConfirmContainer
           className="min-w-[550px]"
           inputNotes={inputNotes}
-          amount={Number(
-            ethers.utils.formatUnits(utxoAmount, fungibleCurrencyDecimals)
-          )}
+          amount={Number(formatUnits(utxoAmount, fungibleCurrencyDecimals))}
           feeInWei={feeInWei}
           feeToken={feeTokenSymbol}
-          changeAmount={changeAmount}
+          changeAmount={+formatUnits(changeAmountBI, fungibleCurrencyDecimals)}
           currency={fungibleCurrency}
           destChain={destChain}
           recipient={recipientPubKey}
@@ -765,6 +745,7 @@ export const TransferContainer = forwardRef<
       currentTypedChainId,
       inputNotes,
       infoFormatted.rawChangeAmount,
+      transferAmountWei,
       recipientPubKey,
       feeInWei,
       activeRelayer,
@@ -969,7 +950,7 @@ export const TransferContainer = forwardRef<
       }
 
       return `${getRoundedAmountString(
-        Number(ethers.utils.formatEther(feeInWei)),
+        Number(formatEther(feeInWei)),
         3,
         Math.round
       )} ${feeTokenSymbol}`;
@@ -1019,7 +1000,7 @@ export const TransferContainer = forwardRef<
         return;
       }
 
-      const totalFee = Number(ethers.utils.formatEther(feeInWei));
+      const totalFee = Number(formatEther(feeInWei));
       const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
       const tkSymbol = infoFormatted?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();

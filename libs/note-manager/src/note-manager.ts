@@ -5,6 +5,8 @@ import {
   NoteStorage,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { parseUnits } from 'viem';
 import {
   CircomUtxo,
   Keypair,
@@ -19,7 +21,6 @@ import {
 import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 
 type DefaultNoteGenInput = Pick<
@@ -158,23 +159,20 @@ export class NoteManager {
 
   // Trim the available notes to get the notes needed for a target amount.
   // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(
-    notes: Note[],
-    targetAmount: ethers.BigNumber
-  ): Note[] | null {
-    let currentAmount = ethers.BigNumber.from(0);
+  static getNotesFifo(notes: Note[], targetAmount: bigint): Note[] | null {
+    let currentAmount = ZERO_BIG_INT;
     const currentNotes: Note[] = [];
 
     for (const note of notes) {
-      if (currentAmount.gte(targetAmount)) {
+      if (currentAmount >= targetAmount) {
         break;
       }
 
-      currentAmount = currentAmount.add(note.note.amount);
+      currentAmount += BigInt(note.note.amount);
       currentNotes.push(note);
     }
 
-    return currentAmount.gte(targetAmount) ? currentNotes : null;
+    return currentAmount >= targetAmount ? currentNotes : null;
   }
 
   static keypairFromNote(note: Note): Keypair {
@@ -220,11 +218,8 @@ export class NoteManager {
 
   // Return enough notes to satisfy the amount
   // Returns null if it cannot satisfy
-  getNotesForTransact(
-    resourceId: string,
-    amount: ethers.BigNumber
-  ): Note[] | null {
-    const currentAmount = ethers.BigNumber.from(0);
+  getNotesForTransact(resourceId: string, amount: bigint): Note[] | null {
+    let currentAmount = ZERO_BIG_INT;
     const currentNotes: Note[] = [];
 
     const availableNotes = this.notesMap.get(resourceId);
@@ -233,31 +228,28 @@ export class NoteManager {
       return null;
     }
 
-    while (currentAmount.lt(amount)) {
+    while (currentAmount < amount) {
       const currentNote = availableNotes.pop();
 
       if (!currentNote) {
         return null;
       }
 
-      currentAmount.add(currentNote.note.amount);
+      currentAmount += BigInt(currentNote.note.amount);
       currentNotes.push(currentNote);
     }
 
     return currentNotes;
   }
 
-  getWithdrawableAmount(
-    resourceId: string,
-    tokenName: string
-  ): ethers.BigNumber {
+  getWithdrawableAmount(resourceId: string, tokenName: string): bigint {
     const availableChainNotes = this.notesMap.get(resourceId);
-    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
+    let amount = ZERO_BIG_INT;
 
     availableChainNotes
       ?.filter((note) => note.note.tokenSymbol === tokenName)
       .map((note) => {
-        amount.add(note.note.amount);
+        amount += BigInt(note.note.amount);
       });
 
     return amount;
@@ -359,16 +351,20 @@ export class NoteManager {
     destAnchorAddress: string,
     tokenSymbol: string,
     tokenDecimals: number,
-    amount: number
+    amount: number | bigint
   ): Promise<Note> {
-    const amountBigNumber = ethers.utils
-      .parseUnits(amount.toString(), tokenDecimals)
-      .toString();
+    let amountStr: string;
+
+    if (typeof amount === 'number') {
+      amountStr = parseUnits(amount.toString(), tokenDecimals).toString();
+    } else {
+      amountStr = amount.toString();
+    }
 
     const input: UtxoGenInput = {
       curve: this.defaultNoteGenInput.curve,
       backend,
-      amount: amountBigNumber,
+      amount: amountStr,
       originChainId: sourceTypedChainId.toString(),
       chainId: destTypedChainId.toString(),
       keypair: this.keypair,
@@ -380,7 +376,7 @@ export class NoteManager {
 
     const noteInput: NoteGenInput = {
       ...this.defaultNoteGenInput,
-      amount: amountBigNumber,
+      amount: amountStr,
       backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),

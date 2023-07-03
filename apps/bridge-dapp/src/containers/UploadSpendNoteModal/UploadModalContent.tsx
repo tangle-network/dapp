@@ -15,7 +15,6 @@ import {
   getHumanFileSize,
   notificationApi,
 } from '@webb-tools/webb-ui-components';
-import { ethers } from 'ethers';
 import { uniqueId } from 'lodash';
 import {
   forwardRef,
@@ -26,6 +25,7 @@ import {
   useState,
 } from 'react';
 import { RefHandle, UploadModalContentProps } from './types';
+import { formatUnits } from 'viem';
 
 export const UploadModalContent = forwardRef<
   RefHandle,
@@ -200,9 +200,9 @@ export const UploadModalContent = forwardRef<
               return null;
             }
 
-            const balance = ethers.utils.formatUnits(
-              note.note.amount,
-              note.note.denomination
+            const balance = formatUnits(
+              BigInt(note.note.amount),
+              +note.note.denomination
             );
 
             return (

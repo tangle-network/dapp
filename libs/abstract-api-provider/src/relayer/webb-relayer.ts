@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
@@ -48,19 +47,19 @@ type RelayerLeaves = {
 };
 
 export interface RelayerFeeInfo {
-  estimatedFee: BigNumber;
-  gasPrice: BigNumber;
-  refundExchangeRate: BigNumber;
-  maxRefund: BigNumber;
+  estimatedFee: bigint;
+  gasPrice: bigint;
+  refundExchangeRate: bigint;
+  maxRefund: bigint;
   timestamp: Date;
 }
 
 export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   return {
-    estimatedFee: BigNumber.from(data.estimatedFee),
-    gasPrice: BigNumber.from(data.gasPrice),
-    refundExchangeRate: BigNumber.from(data.refundExchangeRate),
-    maxRefund: BigNumber.from(data.maxRefund),
+    estimatedFee: BigInt(data.estimatedFee),
+    gasPrice: BigInt(data.gasPrice),
+    refundExchangeRate: BigInt(data.refundExchangeRate),
+    maxRefund: BigInt(data.maxRefund),
     timestamp: new Date(data.timestamp),
   };
 };
@@ -290,7 +289,7 @@ export class WebbRelayer {
   public async getFeeInfo(
     typedChainId: number,
     vanchor: string,
-    gasAmount: BigNumber,
+    gasAmount: bigint,
     abortSignal?: AbortSignal
   ): Promise<RelayerFeeInfo> | never {
     const { chainId, chainType } = parseTypedChainId(typedChainId);

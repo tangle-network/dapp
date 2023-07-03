@@ -4,9 +4,8 @@
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-import BN from 'bn.js';
-import { BigNumber, ContractReceipt, Overrides } from 'ethers';
 
+import { PublicActions } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
 import {
@@ -25,15 +24,15 @@ export type WithdrawTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   recipient: string;
-  refundAmount: BigNumber;
-  feeAmount: BigNumber;
+  refundAmount: bigint;
+  feeAmount: bigint;
 };
 
 export type TransferTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   transferUtxo: Utxo;
-  feeAmount: BigNumber;
+  feeAmount: bigint;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
@@ -75,9 +74,9 @@ export const isVAnchorWithdrawPayload = (
     typeof payload['recipient'] === 'string' &&
     payload['recipient'].length > 0 &&
     'feeAmount' in payload &&
-    payload['feeAmount'] instanceof BigNumber &&
+    typeof payload['feeAmount'] === 'bigint' &&
     'refundAmount' in payload &&
-    payload['refundAmount'] instanceof BigNumber
+    typeof payload['refundAmount'] === 'bigint'
   );
 };
 
@@ -102,7 +101,9 @@ export const isVAnchorTransferPayload = (
     'changeUtxo' in payload &&
     payload['changeUtxo'] instanceof Utxo &&
     'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo
+    payload['transferUtxo'] instanceof Utxo &&
+    'feeAmount' in payload &&
+    typeof payload['feeAmount'] === 'bigint'
   );
 };
 
@@ -151,7 +152,9 @@ export abstract class VAnchorActions<
    * A function to get the leaf index of a leaf in the tree
    */
   abstract getLeafIndex(
-    contractReceiptOrLeaf: ContractReceipt | Uint8Array,
+    contractReceiptOrLeaf:
+      | ReturnType<Awaited<PublicActions['simulateContract']>>
+      | Uint8Array,
     noteOrIndexBeforeInsertion: Note | number,
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;
@@ -201,12 +204,11 @@ export abstract class VAnchorActions<
     contractAddress: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BigNumber | BN,
-    refund: BigNumber | BN,
+    fee: bigint,
+    refund: bigint,
     recipient: string,
     relayer: string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>,
-    overridesTransaction?: Overrides
+    leavesMap: Record<string, Uint8Array[]>
   ): Promise<{ transactionHash: string; receipt?: TransactionReceipt }>;
 }

@@ -14,7 +14,7 @@ const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha];
  * @param chainId - Chain id of the target EVM chain.
  * @returns Viem's chain object.
  */
-function getViemChain(chainId: number) {
+function getViemChain(chainId: number): Chain {
   for (const chain of Object.values(chains)) {
     if (chain.id === chainId) {
       return chain;

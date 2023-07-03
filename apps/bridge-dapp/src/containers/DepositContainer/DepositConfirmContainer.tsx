@@ -10,8 +10,8 @@ import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
-import { ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -123,7 +123,7 @@ export const DepositConfirmContainer = forwardRef<
       } = note.note;
 
       // Calculate the amount
-      const formattedAmount = ethers.utils.formatUnits(amount, denomination);
+      const formattedAmount = formatUnits(BigInt(amount), +denomination);
 
       // Get the deposit token symbol
       let srcTokenSymbol = tokenSymbol;

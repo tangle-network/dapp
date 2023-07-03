@@ -18,6 +18,7 @@ import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
 import getViemClient from './getViemClient';
 import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
@@ -93,7 +94,7 @@ async function fetchEVMAnchorMetadata(
   } satisfies ICurrency;
 
   const wrappableWithoutNative = wrappableTokens.filter(
-    (addr) => BigInt(addr) !== BigInt(0)
+    (addr) => BigInt(addr) !== ZERO_BIG_INT
   );
   const res = await client.multicall({
     allowFailure: false,
@@ -145,7 +146,7 @@ async function fetchEVMAnchorMetadata(
   }
 
   const linkableAnchor = neighborEdges
-    .filter((edge) => edge.chainID !== BigInt(0))
+    .filter((edge) => edge.chainID !== ZERO_BIG_INT)
     .reduce((acc, edge) => {
       const chainId = edge.chainID.toString();
       const resourceIdHex = edge.srcResourceID;

@@ -1,4 +1,3 @@
-import { retryPromise } from '@webb-tools/browser-utils';
 import {
   ERC20__factory,
   FungibleTokenWrapper__factory,
@@ -7,7 +6,8 @@ import {
 import { EVMChainId, zeroAddress } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
-import { providers } from 'ethers';
+import { getContract, type PublicClient } from 'viem';
+import { ZERO_BIG_INT } from '../../';
 import { ChainAddressConfig } from '../../anchors';
 import { CurrencyConfig } from '../../currencies';
 import {
@@ -69,7 +69,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
   async fetchNativeCurrency(
     typedChainId: number,
-    _?: providers.Web3Provider
+    _?: PublicClient
   ): Promise<ICurrency | null> {
     // First check if the native currency is already cached
     const cachedNativeCurrency = this.nativeCurrencyCache.get(typedChainId);
@@ -127,7 +127,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: providers.Web3Provider
+    provider: PublicClient
   ): Promise<ICurrency | null> {
     // First check if the fungible currency is already cached
     const cachedFungibleCurrency = this.fungibleCurrencyCache.get(typedChainId);
@@ -143,17 +143,25 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     this.assertChainType(typedChainId, ChainType.EVM);
 
     try {
-      const vAcnhorContract = VAnchor__factory.connect(anchorAddress, provider);
-      const fungibleCurrencyAddress = await retryPromise(vAcnhorContract.token);
-      const fungibleCurrencyContract = ERC20__factory.connect(
-        fungibleCurrencyAddress,
-        provider
-      );
+      const vAcnhorContract = getContract({
+        address: `0x${anchorAddress.replace('0x', '')}`,
+        abi: VAnchor__factory.abi,
+        publicClient: provider,
+      });
 
+      const fungibleCurrencyAddress = await vAcnhorContract.read.token();
+
+      const fungibleCurrencyContract = getContract({
+        address: fungibleCurrencyAddress,
+        abi: ERC20__factory.abi,
+        publicClient: provider,
+      });
+
+      // This will be batched in one call
       const [name, symbol, decimals] = await Promise.all([
-        retryPromise(fungibleCurrencyContract.name),
-        retryPromise(fungibleCurrencyContract.symbol),
-        retryPromise(fungibleCurrencyContract.decimals),
+        fungibleCurrencyContract.read.name(),
+        fungibleCurrencyContract.read.symbol(),
+        fungibleCurrencyContract.read.decimals(),
       ]);
       const fungibleCurrency = {
         address: fungibleCurrencyAddress,
@@ -177,7 +185,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
   async fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: providers.Web3Provider
+    provider: PublicClient
   ): Promise<ICurrency[]> {
     // First check if the wrappable currencies are already cached
     const cachedCurrencies = this.wrappableCurrenciesCache.get(typedChainId);
@@ -192,31 +200,44 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     // Validate the chainType is EVM and get the chaindId
     this.assertChainType(typedChainId, ChainType.EVM);
 
-    const fungibleTokenWrapperContract = FungibleTokenWrapper__factory.connect(
-      fungibleCurrency.address,
-      provider
-    );
+    const fungibleTokenWrapperContract = getContract({
+      address: `0x${fungibleCurrency.address.replace('0x', '')}`,
+      abi: FungibleTokenWrapper__factory.abi,
+      publicClient: provider,
+    });
 
     try {
+      // This will be batched in one call
+      const [addressesWithNative, isNativeAllowed] = await Promise.all([
+        fungibleTokenWrapperContract.read.getTokens(),
+        fungibleTokenWrapperContract.read.isNativeAllowed(),
+      ]);
+
       // Filter the zero addresses because they are not ERC20 tokens
       // and we use the isNativeAllowed flag to determine if native currency is allowed
-      const addresses = (
-        await retryPromise(fungibleTokenWrapperContract.getTokens)
-      ).filter((address) => address !== zeroAddress);
+      const addresses = addressesWithNative.filter(
+        (address) => BigInt(address) !== ZERO_BIG_INT
+      );
 
       const wrappableERC20Contracts = addresses.map((address) =>
-        ERC20__factory.connect(address, provider)
+        getContract({
+          address,
+          abi: ERC20__factory.abi,
+          publicClient: provider,
+        })
       );
 
       const wrappableCurrenciesResponse = await Promise.allSettled<ICurrency>(
-        wrappableERC20Contracts.map(async (ERC20Contract) => {
+        wrappableERC20Contracts.map(async (contractInstance) => {
+          // This will be batched in one call
           const [name, symbol, decimals] = await Promise.all([
-            retryPromise(ERC20Contract.name),
-            retryPromise(ERC20Contract.symbol),
-            retryPromise(ERC20Contract.decimals),
+            contractInstance.read.name(),
+            contractInstance.read.symbol(),
+            contractInstance.read.decimals(),
           ]);
+
           return {
-            address: ERC20Contract.address,
+            address: contractInstance.address,
             decimals,
             symbol,
             name,
@@ -228,10 +249,6 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
         .filter((currency): currency is ICurrency => Boolean(currency));
 
-      // Check if  is allowed
-      const isNativeAllowed = await retryPromise(
-        fungibleTokenWrapperContract.isNativeAllowed
-      );
       if (isNativeAllowed) {
         const nativeCurrency = await this.fetchNativeCurrency(typedChainId);
         if (nativeCurrency) {
@@ -253,7 +270,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
 
   async fetchCurrenciesConfig(
     anchorConfig: Record<number, string[]>,
-    providerFactory: (typedChainId: number) => Promise<providers.Web3Provider>,
+    providerFactory: (typedChainId: number) => Promise<PublicClient>,
     existedCurreniciesConfig: Record<number, CurrencyConfig> = {},
     // prettier-ignore
     existedFungibleToWrappableMap: Map<number, Map<number, Set<number>>> = new Map(),
@@ -276,7 +293,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       evmTypedChainIds.map(async (typedChainId) => {
         try {
           const provider = await providerFactory(+typedChainId);
-          await provider.getNetwork();
+          await provider.getChainId();
           return true;
         } catch (error) {
           return false;

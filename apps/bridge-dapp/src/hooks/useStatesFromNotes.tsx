@@ -8,12 +8,15 @@ import {
 } from '@webb-tools/react-hooks';
 import { Note, ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
-import { BigNumber, ethers } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { useShieldedAssets } from './useShieldedAssets';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import {
+  ZERO_BIG_INT,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { ChainListCardWrapper } from '../components';
+import { formatUnits } from 'viem';
 
 /**
  * Hook to share the states which are calculated from notes
@@ -57,19 +60,20 @@ const useStatesFromNotes = () => {
       return 0;
     }
 
-    let tokenDecimals: number | undefined;
-    const amountBN = availableNotes.reduce<BigNumber>(
+    let tokenDecimals: number = +availableNotes[0].note.denomination;
+
+    const amountBI = availableNotes.reduce<bigint>(
       (accumulatedBalance, newNote) => {
         if (!tokenDecimals) {
           tokenDecimals = Number(newNote.note.denomination);
         }
 
-        return accumulatedBalance.add(newNote.note.amount);
+        return accumulatedBalance + BigInt(newNote.note.amount);
       },
-      BigNumber.from(0)
+      ZERO_BIG_INT
     );
 
-    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
+    return Number(formatUnits(amountBI, tokenDecimals));
   }, [availableNotes]);
 
   const chainsFromNotes = useMemo(() => {

@@ -59,6 +59,7 @@ import {
   calculateProvingLeavesAndCommitmentIndex,
   handleVAnchorTxState,
 } from '../utils';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
   async prepareTransaction(
@@ -140,7 +141,10 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
       // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-      const feeVal = relayer === ZERO_ADDRESS ? BigNumber.from(0) : feeAmount;
+      const feeVal =
+        relayer === ZERO_ADDRESS
+          ? BigNumber.from(0)
+          : BigNumber.from(feeAmount);
 
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
@@ -541,7 +545,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
     if (!event) {
       console.error('Leaf index not found in logs, falling back `0`');
-      return BigInt(0);
+      return ZERO_BIG_INT;
     }
 
     return event.leafIndex.toBigInt();

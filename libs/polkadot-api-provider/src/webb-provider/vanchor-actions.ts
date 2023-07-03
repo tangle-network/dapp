@@ -28,12 +28,11 @@ import {
 } from '@webb-tools/sdk-core';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 
 import * as snarkjs from 'snarkjs';
 
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import assert from 'assert';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
@@ -43,6 +42,7 @@ import {
   groth16ProofToBytes,
 } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
+import { formatUnits } from 'viem';
 
 export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   prepareTransaction(
@@ -71,8 +71,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     treeId: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BN,
-    refund: BN,
+    fee: bigint,
+    refund: bigint,
     recipient: string,
     relayer: string,
     wrapUnwrapAssetId: string,
@@ -220,7 +220,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     await this.checkHasBalance(payload, wrapUnwrapAssetId);
 
     const address = activeAccount.address;
-    const zeroBN = new BN(0);
 
     const depositUtxo = await utxoFromVAnchorNote(
       payload.note,
@@ -237,8 +236,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       payload.note.sourceIdentifyingData,
       inputUtxos,
       [depositUtxo],
-      zeroBN,
-      zeroBN,
+      ZERO_BIG_INT,
+      ZERO_BIG_INT,
       address,
       address,
       wrapUnwrapAssetId,
@@ -252,7 +251,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId)
     );
 
-    const amount = formatUnits(payload.note.amount, payload.note.denomination);
+    const amount = formatUnits(
+      BigInt(payload.note.amount),
+      +payload.note.denomination
+    );
 
     if (Number(balance) < Number(amount)) {
       this.emit('stateChange', TransactionState.Failed);
@@ -277,8 +279,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     tx: Transaction<NewNotesTxResult>,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BN,
-    refund: BN,
+    fee: bigint,
+    refund: bigint,
     recipient: string,
     relayer: string,
     wrapUnwrapAssetId: string,
@@ -540,30 +542,15 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     }
 
     const witnessInput = generateVariableWitnessInput(
-      roots.map((r) => BigNumber.from(r)), // Temporary use of `BigNumber`, need to change to `BigInt`
+      roots,
       typedChainId,
       inputUtxos,
       outputUtxos,
       publicAmount,
       fee,
-      BigNumber.from(extDataHash), // Temporary use of `BigNumber`, need to change to `BigInt`
+      extDataHash,
       vanchorMerkleProof
     );
-
-    /*     witnessInput['inputNullifier'] = witnessInput['inputNullifier'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPrivateKey'] = witnessInput['inPrivateKey'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPathElements'] = (
-      witnessInput['inPathElements'] as BigNumber[][]
-    ).reduce((prev, current) => {
-      prev.push(...current.map((el) => el.toString()));
-      return prev;
-    }, [] as string[]); */
 
     return witnessInput;
   }
@@ -603,11 +590,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
   private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
     const outAmount = outputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      BigInt(0)
+      ZERO_BIG_INT
     );
     const inAmount = inputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      BigInt(0)
+      ZERO_BIG_INT
     );
 
     return fee + outAmount - inAmount;

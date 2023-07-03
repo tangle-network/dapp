@@ -1,16 +1,16 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
+import { ApiConfig } from '@webb-tools/dapp-config';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
-import { ApiPromise } from '@polkadot/api';
-import { ApiConfig } from '@webb-tools/dapp-config';
+import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
-
+import { PublicClient } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
@@ -21,7 +21,6 @@ import { ActionEvent } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -250,13 +249,13 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // get vanchor max edges
   getVAnchorMaxEdges: (
     vAnchorAddress: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // get vanchor levels
   getVAnchorLevels: (
     vAnchorAddressOrTreeId: string,
-    providerOrApi?: providers.Provider | ApiPromise
+    providerOrApi?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // generate utxo

@@ -34,6 +34,8 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   {} as Record<number, Chain>
 );
 
+export const ZERO_BIG_INT = BigInt(0);
+
 export * from './anchors';
 export * from './api-config';
 export * from './bridges';

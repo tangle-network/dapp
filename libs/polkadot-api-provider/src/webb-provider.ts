@@ -26,13 +26,13 @@ import {
 } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
-  buildVariableWitnessCalculator,
-  calculateTypedChainId,
   ChainType,
   CircomUtxo,
-  parseTypedChainId,
   Utxo,
   UtxoGenInput,
+  buildVariableWitnessCalculator,
+  calculateTypedChainId,
+  parseTypedChainId,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -48,9 +48,9 @@ import {
 } from '@webb-tools/fixtures-deployments';
 import { ZkComponents } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
@@ -425,9 +425,10 @@ export class WebbPolkadot
 
   async getVAnchorMaxEdges(
     treeId: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: PublicClient | ApiPromise
   ): Promise<number> {
-    if (provider instanceof providers.Provider) {
+    // If provider is not instance of ApiPromise, display error and use `this.api` instead
+    if (!(provider instanceof ApiPromise)) {
       console.error(
         '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
       );
@@ -452,9 +453,9 @@ export class WebbPolkadot
 
   async getVAnchorLevels(
     treeId: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: PublicClient | ApiPromise
   ): Promise<number> {
-    if (provider instanceof providers.Provider) {
+    if (!(provider instanceof ApiPromise)) {
       console.error(
         '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
       );
