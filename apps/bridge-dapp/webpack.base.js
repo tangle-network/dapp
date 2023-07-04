@@ -63,6 +63,16 @@ function createWebpack(env, mode = 'production') {
       ]
     : [];
 
+  const envPath = path.resolve(
+    workspaceRoot,
+    'apps',
+    process.env.NX_TASK_TARGET_PROJECT,
+    '.env'
+  );
+
+  const bridgeEnvVars =
+    require('dotenv').config({ path: envPath }).parsed || {};
+
   return {
     experiments: {
       asyncWebAssembly: true,
@@ -260,7 +270,7 @@ function createWebpack(env, mode = 'production') {
           process.env.NX_BRIDGE_APP_DOMAIN
         ),
         'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
-        'process.env': JSON.stringify(process.env),
+        'process.env': JSON.stringify(bridgeEnvVars),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
