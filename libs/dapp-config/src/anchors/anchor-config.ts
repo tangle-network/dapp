@@ -1,4 +1,29 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
+import { config } from 'dotenv';
+import { LOCALNET_CHAIN_IDS } from '../chains';
+
+config();
+
+const localAncchorRecord = process.env.LOCAL_ORBIT_ANCHOR_ADDRESS
+  ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
+      (acc, chainId) => {
+        const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+        const anchorAddress: string = process.env
+          .LOCAL_ORBIT_ANCHOR_ADDRESS as string;
+
+        acc[typedChainId] = {
+          [anchorAddress]: 0,
+        };
+
+        return acc;
+      },
+      {}
+    )
+  : {};
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
 // 0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD - webbtTNT - DKG backend
@@ -39,15 +64,7 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xba730ee516fc52Ab35f001faa3114eeBd48eeCB8': 0,
   },
 
-  [PresetTypedChainId.HermesLocalnet]: {
-    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
-  },
-  [PresetTypedChainId.AthenaLocalnet]: {
-    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
-  },
-  [PresetTypedChainId.DemeterLocalnet]: {
-    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
-  },
+  ...localAncchorRecord,
 
   // Substrate
   [PresetTypedChainId.LocalTangleStandalone]: {
