@@ -23,6 +23,24 @@ type SidebarProps = {
   footer: FooterProps;
 };
 
+/**
+ * Sidebar Navigation Menu Component
+ *
+ * - `Logo`: The logo of the sidebar
+ * - `ClosedLogo`: The logo of the sidebar when it is closed
+ * - `items`: The items of the sidebar menu (see type `ItemProps`)
+ * - `footer`: The footer of the sidebar menu (see type `FooterProps`)
+ *
+ * ```jsx
+ *  // Example
+ *  <SideBar
+ *    Logo={Logo}
+ *    ClosedLogo={ClosedLogo}
+ *    items={items}
+ *    footer={footer}
+ *  />
+ * ```
+ */
 export const SideBar: React.FC<SidebarProps> = ({
   Logo,
   ClosedLogo,

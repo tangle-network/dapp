@@ -1,6 +1,14 @@
 import { MoonLine, SunLine } from '@webb-tools/icons';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
+/**
+ * ThemeToggle (Dark/Light) Component
+ *
+ * ```jsx
+ *  // Example
+ *  <ThemeToggle />
+ * ```
+ */
 export const ThemeToggle = () => {
   const [isDarkMode, toggleThemeMode] = useDarkMode();
 
