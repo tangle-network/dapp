@@ -3,33 +3,15 @@ import {
   Banner,
   Footer,
   Logo,
+  LogoWithoutName,
   SideBar,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
-import {
-  BillFill,
-  ContrastTwoLine,
-  GridFillIcon,
-  Tangle,
-} from '@webb-tools/icons';
+import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 
 const items = [
-  {
-    name: 'Ecosystem',
-    isInternal: true,
-    href: '/ecosystem',
-    Icon: GridFillIcon,
-    subItems: [],
-  },
-  {
-    name: 'Account',
-    isInternal: true,
-    href: '/account',
-    Icon: BillFill,
-    subItems: [],
-  },
   {
     name: 'Hubble',
     isInternal: true,
@@ -42,16 +24,6 @@ const items = [
         href: '/bridge',
       },
       {
-        name: 'Wrap/Unwrap',
-        isInternal: true,
-        href: '/wrap-unwrap',
-      },
-      {
-        name: 'Explorer',
-        isInternal: false,
-        href: 'https://react.dev/',
-      },
-      {
         name: 'Faucet',
         isInternal: false,
         href: 'https://develop--webb-faucet.netlify.app/',
@@ -60,12 +32,30 @@ const items = [
   },
   {
     name: 'Tangle Network',
-    isInternal: false,
-    href: 'https://stats.webb.tools/#/keys',
+    isInternal: true,
+    href: '',
     Icon: Tangle,
-    subItems: [],
+    subItems: [
+      {
+        name: 'DKG Explorer',
+        isInternal: false,
+        href: 'https://stats.webb.tools/#/keys',
+      },
+      {
+        name: 'Homepage',
+        isInternal: false,
+        href: 'https://tangle.webb.tools/',
+      },
+    ],
   },
 ];
+
+const footer = {
+  name: 'Webb Docs',
+  isInternal: false,
+  href: 'https://docs.webb.tools/',
+  Icon: DocumentationIcon,
+};
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -75,46 +65,42 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col justify-between h-screen min-w-full min-h-full">
-      <div className="flex-[1] flex flex-col">
-        <Header />
+    <div className="flex flex-col justify-between h-screen min-w-full min-h-full bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')] bg-top object-fill bg-no-repeat bg-cover">
+      <div className="flex flex-1 overflow-hidden">
+        <SideBar
+          items={items}
+          Logo={Logo}
+          ClosedLogo={LogoWithoutName}
+          footer={footer}
+        />
 
-        <SideBar items={items} Logo={Logo} />
-
-        <Transition
-          show={showBanner}
-          className={cx(
-            'hidden lg:block [transform-style:preserve-3d] origin-top duration-300 h-[60px]'
-          )}
-          leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
-          leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}
-        >
-          <Banner
-            className="[backface-visibility:hidden] h-full"
-            onClose={onCloseHandler}
-            dappName="stats"
-            buttonText="Report Bug"
-            bannerText="Hubble Bridge is in beta version."
-            buttonProps={{
-              href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
-              target: '_blank',
-            }}
-          />
-        </Transition>
-
-        <div
-          className={cx(
-            'w-full mx-auto flex-1',
-            "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
-            'bg-top object-fill bg-no-repeat bg-cover'
-          )}
-        >
-          <main>{children}</main>
-          <div className="px-4 lg:px-0 !bg-inherit">
-            <Footer isMinimal className="max-w-[1160px] w-full !bg-inherit" />
-          </div>
+        <div className="w-full mx-auto flex flex-col justify-between overflow-y-auto">
+          <Header />
+          <main className="px-4 lg:px-0">{children}</main>
+          <Footer isMinimal className="w-full mx-auto" />
         </div>
       </div>
+
+      <Transition
+        show={showBanner}
+        className={cx(
+          'hidden lg:block [transform-style:preserve-3d] origin-top duration-300 h-[60px]'
+        )}
+        leaveFrom={cx('[transform:rotateX(0deg)]', 'h-[60px]')}
+        leaveTo={cx('[transform:rotateX(-180deg)]', 'h-0')}
+      >
+        <Banner
+          className="[backface-visibility:hidden] h-full"
+          onClose={onCloseHandler}
+          dappName="stats"
+          buttonText="Report Bug"
+          bannerText="Hubble Bridge is in beta version."
+          buttonProps={{
+            href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
+            target: '_blank',
+          }}
+        />
+      </Transition>
     </div>
   );
 };

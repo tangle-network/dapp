@@ -1,7 +1,6 @@
 import { BareProps } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons';
 import { RouterConfigData } from '@webb-tools/react-environment';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC, lazy, Suspense } from 'react';
 import { Layout } from '../containers';
 

@@ -1,19 +1,19 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
+  Breadcrumbs,
+  BreadcrumbsItem,
   Button,
-  Logo,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
-
+import { NavLink, useLocation } from 'react-router-dom';
 import { useConnectWallet } from '../../hooks';
 import { ChainSwitcherButton } from './ChainSwitcherButton';
 import { WalletButton } from './WalletButton';
 import { HeaderProps } from './types';
+import { ContrastTwoLine } from '@webb-tools/icons';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -34,12 +34,25 @@ export const Header: FC<HeaderProps> = () => {
     [activeAccount, activeChain, activeWallet, loading]
   );
 
+  const location = useLocation();
+  const pathnames = location.pathname.split('/').filter((x) => x);
+  const currentPage = useMemo(() => pathnames[0], [pathnames]);
+  const subPage = useMemo(() => pathnames[1], [pathnames]);
+
   return (
-    <header className="p-4 bg-mono-0 dark:bg-mono-180">
+    <header className="pt-[24px] pb-[40px]">
       <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
-        <NavLink to={WEBB_MKT_URL} className="flex flex-col justify-center">
-          <Logo />
-        </NavLink>
+        <Breadcrumbs>
+          <NavLink to="/bridge">
+            <BreadcrumbsItem
+              icon={<ContrastTwoLine width={24} height={24} />}
+              className="!pl-0"
+            >
+              Hubble
+            </BreadcrumbsItem>
+          </NavLink>
+          <BreadcrumbsItem isLast={true}>Bridge</BreadcrumbsItem>
+        </Breadcrumbs>
 
         <div className="flex items-center space-x-2">
           {/** Wallet is actived */}

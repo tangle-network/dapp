@@ -16,7 +16,7 @@ export const SidebarControl: React.FC<SidebarControlProps> = ({
     <div>
       <div
         onClick={toggleSideBar}
-        className="bg-mono-0 dark:bg-mono-180 rounded-full p-1 cursor-pointer"
+        className="bg-mono-0 dark:bg-mono-180 rounded-full p-1 cursor-pointer shadow-lg"
       >
         {isSidebarOpen ? <ChevronLeft size="lg" /> : <ChevronRight size="lg" />}
       </div>
