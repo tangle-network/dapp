@@ -1,6 +1,14 @@
 // File contains shared types for dapp-config
 
-import { ICurrency } from './on-chain-config';
+/**
+ * The currency interface for the on-chain currencies
+ */
+export interface ICurrency {
+  decimals: number;
+  symbol: string;
+  name: string;
+  address: string;
+}
 
 /**
  * The type of the environment the dapp is running in
