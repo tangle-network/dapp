@@ -28,7 +28,7 @@ export default function RootLayout({
     {
       name: 'Hubble',
       isInternal: true,
-      href: 'https://app.webb.tools/#/bridge',
+      href: '',
       Icon: ContrastTwoLine,
       subItems: [
         {
