@@ -499,3 +499,14 @@ query AllProposalsTimestamps {
     }
   }
 }
+
+query ProposalThreshold($sessionId: String!) {
+  session(id: $sessionId) {
+    sessionProposers {
+      totalCount
+    }
+    thresholds {
+      totalCount
+    }
+  }
+}

@@ -9,6 +9,7 @@ import {
   VoteType,
   ProposalStatus,
   AllProposalsTimestampsDocument,
+  useProposalThresholdLazyQuery,
 } from '../../generated/graphql';
 import { mapProposalListItem } from './mappers';
 import { thresholdVariant } from './mappers/thresholds';
@@ -693,4 +694,59 @@ export function useAllProposalsTimestamps(): Loadable<AllProposalsTimestamps> {
   }, [lastProcessBlock]);
 
   return allProposalsTimestamps;
+}
+
+type ProposalThreshold = {
+  threshold: number;
+  total: number;
+};
+
+export function useProposalThreshold(
+  sessionId: string
+): Loadable<ProposalThreshold> {
+  const [proposalThreshold, setProposalThreshold] = useState<
+    Loadable<ProposalThreshold>
+  >({
+    isLoading: true,
+    val: null,
+    isFailed: false,
+  });
+
+  const [call, query] = useProposalThresholdLazyQuery();
+
+  useEffect(() => {
+    call({
+      variables: {
+        sessionId,
+      },
+    });
+  }, [sessionId, call]);
+
+  useEffect(() => {
+    const subscription = query.observable
+      .map((res): Loadable<ProposalThreshold> => {
+        if (res.data && res.data.session) {
+          const session = res.data.session;
+
+          return {
+            val: {
+              threshold: session.thresholds.totalCount ?? 0,
+              total: session.sessionProposers.totalCount ?? 0,
+            },
+            isFailed: false,
+            isLoading: false,
+          };
+        }
+        return {
+          isLoading: res.loading,
+          isFailed: Boolean(res.error),
+          error: res.error?.message ?? undefined,
+          val: null,
+        };
+      })
+      .subscribe(setProposalThreshold);
+    return () => subscription.unsubscribe();
+  }, [query]);
+
+  return proposalThreshold;
 }
