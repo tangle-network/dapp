@@ -1,5 +1,3 @@
-// Constants
-
 // The default native currency index in the asset registry pallet
 export const DEFAULT_NATIVE_INDEX = 0;
 

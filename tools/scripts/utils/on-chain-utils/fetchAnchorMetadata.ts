@@ -10,14 +10,17 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
+import {
+  DEFAULT_DECIMALS,
+  DEFAULT_NATIVE_INDEX,
+} from '@webb-tools/dapp-config/src/constants';
 import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
-import getViemClient from './getViemClient';
-import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
 import { getContract } from 'viem';
+import getViemClient from './getViemClient';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,

@@ -3,12 +3,12 @@ import {
   LOCALNET_CHAIN_IDS,
   SELF_HOSTED_CHAIN_IDS,
 } from '@webb-tools/dapp-config/src/chains';
+import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
 import { DEFAULT_EVM_CURRENCY } from '@webb-tools/dapp-config/src/currencies';
 import { ICurrency } from '@webb-tools/dapp-config/src/types';
 import { parseTypedChainId } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import chainData from './fixtures/native.json';
-import { DEFAULT_NATIVE_INDEX } from './shared';
 
 /// Private Methods
 
