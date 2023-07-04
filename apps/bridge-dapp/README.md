@@ -71,6 +71,12 @@ to stop the network run:
 docker compose down
 ```
 
+⚠️ **NOTE:** If you already ran the network before, you may need to remove the old data and logs before starting the network again. To do so, run the following commands:
+
+```
+rm -rf data logs
+```
+
 **4. Open a new window and navigate to the deploy directory**
 
 ```
