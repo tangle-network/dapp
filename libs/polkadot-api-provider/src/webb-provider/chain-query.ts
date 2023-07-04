@@ -6,10 +6,10 @@ import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { SignedBlock } from '@polkadot/types/interfaces';
 import { OrmlTokensAccountData } from '@polkadot/types/lookup';
 
-import { WebbPolkadot } from '../webb-provider';
-import { Observable, switchMap, throwError } from 'rxjs';
-import { BN } from 'bn.js';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { BN } from 'bn.js';
+import { Observable, of, switchMap } from 'rxjs';
+import { WebbPolkadot } from '../webb-provider';
 
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   constructor(protected inner: WebbPolkadot) {
@@ -38,7 +38,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
           try {
             tokenAccountData = await this.inner.api.query.tokens.accounts(
               activeAccount.address,
-              assetId
+              +assetId
             );
 
             if (tokenAccountData.isEmpty) {
@@ -85,6 +85,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
+      return of('');
     }
 
     const assetId =
@@ -103,6 +104,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   ): Observable<string> {
     if (accountAddressArg) {
       console.error('accountAddressArg is not supported for Polkadot');
+      return of('');
     }
     return this.getTokenBalanceByAssetId(assetId);
   }

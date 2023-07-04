@@ -1,5 +1,6 @@
 import {
   ActiveWebbRelayer,
+  calculateProvingLeavesAndCommitmentIndex,
   CancellationToken,
   generateCircomCommitment,
   isVAnchorDepositPayload,
@@ -33,8 +34,8 @@ import {
 import {
   ChainType,
   Keypair,
-  MerkleTree,
   Note,
+  parseTypedChainId,
   ResourceId,
   toFixedHex,
   Utxo,
@@ -53,19 +54,42 @@ import {
   Overrides,
 } from 'ethers';
 
+import { ApiConfig } from '@webb-tools/dapp-config';
 import { Web3Provider } from '../ext-provider';
+import { handleVAnchorTxState } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
-import {
-  calculateProvingLeavesAndCommitmentIndex,
-  handleVAnchorTxState,
-} from '../utils';
 
-export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
+export class Web3VAnchorActions extends VAnchorActions<
+  'web3',
+  WebbWeb3Provider
+> {
+  static async getNextIndex(
+    apiConfig: ApiConfig,
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = apiConfig.chains[typedChainId];
+    const anchor = apiConfig.getAnchorIdentifier(
+      fungibleCurrencyId,
+      typedChainId
+    );
+    if (!chain || !anchor) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const vanchor = VAnchor__factory.connect(anchor, provider);
+
+    const nextIdx = await vanchor.getNextIndex();
+
+    return BigInt(nextIdx);
+  }
+
   async prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<ParametersOfTransactMethod> | never {
+  ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
 
     const typedChainId = this.inner.typedChainId;
@@ -123,8 +147,8 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
         notes[0].note.targetIdentifyingData, // contractAddress
         inputUtxos, // inputs
         [changeUtxo], // outputs
-        feeVal, // fee
-        refundAmount, // refund
+        BigNumber.from(feeVal), // fee
+        BigNumber.from(refundAmount), // refund
         recipient, // recipient
         relayer, // relayer
         wrapUnwrapToken, // wrapUnwrapToken
@@ -164,7 +188,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod,
+    txArgs: ParametersOfTransactMethod<'web3'>,
     changeNotes: Note[]
   ): Promise<void> | never {
     let txHash = '';
@@ -194,6 +218,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const setupTransactionArgs = [
       inputUtxos,
       outputUtxos,
+      // Ignore the override option if provided
       ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
     ] as Parameters<typeof vanchor.setupTransaction>;
 
@@ -250,9 +275,20 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
           });
           break;
         case RelayedWithdrawResult.Errored: {
-          changeNotes.forEach((note) =>
-            this.inner.noteManager?.removeNote(note)
-          );
+          changeNotes.forEach(async (note) => {
+            const { chainId, chainType } = parseTypedChainId(
+              +note.note.targetChainId
+            );
+
+            const resourceId =
+              await this.inner.methods.variableAnchor.actions.inner.getResourceId(
+                note.note.targetIdentifyingData,
+                chainId,
+                chainType
+              );
+
+            this.inner.noteManager?.removeNote(resourceId, note);
+          });
           tx.fail(message ? message : 'Transaction failed');
           break;
         }
@@ -552,7 +588,7 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
-    const anchor = this.inner.config.getAnchorAddress(
+    const anchor = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );
@@ -566,6 +602,14 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     const nextIdx = await vanchor.getNextIndex();
 
     return BigInt(nextIdx);
+  }
+
+  async getResourceId(
+    anchorAddress: string,
+    chainId: number,
+    chainType: ChainType
+  ): Promise<ResourceId> {
+    return new ResourceId(anchorAddress, chainType, chainId);
   }
 
   private async fetchNoteLeaves(
@@ -629,14 +673,12 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
       const { provingLeaves, commitmentIndex: leafIndex } =
-        await this.inner.getVariableAnchorLeaves(
-          sourceVAnchor,
-          leafStorage,
+        await this.inner.getVAnchorLeaves(sourceVAnchor, leafStorage, {
           treeHeight,
-          destRelayedRoot,
+          targetRoot: destRelayedRoot,
           commitment,
-          tx
-        );
+          tx,
+        });
 
       leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) => {
         return hexToU8a(leaf);
@@ -754,8 +796,17 @@ export class Web3VAnchorActions extends VAnchorActions<WebbWeb3Provider> {
     }
     // Notification failed transaction if not enough balance
     if (!hasBalance) {
+      const { chainId, chainType } = parseTypedChainId(
+        +payload.note.targetChainId
+      );
+      const resourceId = await this.getResourceId(
+        payload.note.targetIdentifyingData,
+        chainId,
+        chainType
+      );
+
       this.emit('stateChange', TransactionState.Failed);
-      await this.inner.noteManager?.removeNote(payload);
+      await this.inner.noteManager?.removeNote(resourceId, payload);
       throw new Error('Not enough balance');
     }
   }

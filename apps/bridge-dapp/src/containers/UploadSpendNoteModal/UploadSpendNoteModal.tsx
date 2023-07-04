@@ -16,6 +16,7 @@ import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { PasteModalContent } from './PasteModalContent';
 import { RefHandle, UploadSpendNoteModalProps } from './types';
 import { UploadModalContent } from './UploadModalContent';
+import { useVAnchor } from '@webb-tools/react-hooks';
 
 export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   isOpen,
@@ -30,26 +31,15 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   // Ref for reset upload file and notes
   const ref = useRef<RefHandle | null>(null);
 
-  // Get noteManager from context
-  const { noteManager } = useWebContext();
+  const { addNoteToNoteManager } = useVAnchor();
 
   // Handle save uploaded notes funciton
   const handleSave = useCallback(async () => {
-    if (!noteManager) {
-      notificationApi({
-        variant: 'error',
-        message: 'Note manager is not available',
-        secondaryMessage:
-          'Please connect to a wallet and create a note account',
-      });
-      return;
-    }
-
     try {
       setSaving(true);
 
       await Promise.all(
-        Object.entries(notes).map(([, note]) => noteManager.addNote(note))
+        Object.entries(notes).map(([, note]) => addNoteToNoteManager(note))
       );
 
       notificationApi({
@@ -65,7 +55,7 @@ export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
       setSaving(false);
       setIsOpen(false);
     }
-  }, [noteManager, notes, setIsOpen]);
+  }, [addNoteToNoteManager, notes, setIsOpen]);
 
   // Handle set new note
   const handleNotesChange = useCallback((id: string, note: Note) => {

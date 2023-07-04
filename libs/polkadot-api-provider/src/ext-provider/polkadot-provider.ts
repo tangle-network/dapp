@@ -35,7 +35,7 @@ type ExtensionProviderEvents = {
   error: undefined;
   ready: undefined;
 
-  updateMetaData: Record<string, unknown>;
+  updateMetaData: MetadataDef;
 
   accountsChange: PolkadotAccount[];
 };
@@ -333,7 +333,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       return;
     }
 
-    const metadataDef = {
+    const metadataDef: MetadataDef = {
       chain: this.apiPromise.runtimeChain.toString(),
       genesisHash: this.apiPromise.genesisHash.toHex(),
       icon: 'substrate',

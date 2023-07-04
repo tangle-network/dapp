@@ -91,7 +91,7 @@ export class PolkadotTx<
     for (let i = 0; i < this.paths.length; i++) {
       const path = this.paths[i];
       txLogger.info(
-        `Sending ${path.section} ${path.method} transaction by`,
+        `Sending ${path.section}.${path.method} transaction by`,
         signAddress,
         this.parms
       );

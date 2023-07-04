@@ -1,22 +1,22 @@
-import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
+import { BigNumber } from 'ethers';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
-  Capabilities,
   CMDSwitcher,
+  Capabilities,
   RelayedChainInput,
   RelayerCMDKey,
   RelayerMessage,
   WithdrawRelayerArgs,
 } from './types';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Relayer withdraw status
@@ -49,7 +49,7 @@ type RelayerLeaves = {
 
 export interface RelayerFeeInfo {
   estimatedFee: BigNumber;
-  gasPrice: BigNumber;
+  gasPrice?: BigNumber;
   refundExchangeRate: BigNumber;
   maxRefund: BigNumber;
   timestamp: Date;
@@ -58,7 +58,7 @@ export interface RelayerFeeInfo {
 export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   return {
     estimatedFee: BigNumber.from(data.estimatedFee),
-    gasPrice: BigNumber.from(data.gasPrice),
+    gasPrice: data.gasPrice ? BigNumber.from(data.gasPrice) : undefined,
     refundExchangeRate: BigNumber.from(data.refundExchangeRate),
     maxRefund: BigNumber.from(data.maxRefund),
     timestamp: new Date(data.timestamp),
@@ -242,32 +242,46 @@ export class WebbRelayer {
 
   async getLeaves(
     typedChainId: number,
-    contractAddress: string,
+    contractAddressOrSubstratePayload:
+      | string
+      | { treeId: number; palletId: number },
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
     console.group(`getLeaves() for ${this.endpoint}`);
     console.log('On chain: ', chainsPopulated[typedChainId]?.name);
 
     const { chainId, chainType } = parseTypedChainId(typedChainId);
-    let url = '';
+    const baseUrl = `${this.endpoint}/api/v1/leaves`;
+    let path = '';
     switch (chainType) {
-      case ChainType.EVM:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
+      case ChainType.EVM: {
+        // EVM only supports contract address
+        if (typeof contractAddressOrSubstratePayload !== 'string') {
+          throw new Error('EVM only supports contract address');
+        }
+
+        const contractAddress = contractAddressOrSubstratePayload;
+
+        // Match endpoint here: https://github.com/webb-tools/relayer#for-evm
+        path = `/evm/${chainId.toString()}/${contractAddress}`;
         break;
-      case ChainType.Substrate:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/substrate/${chainId.toString()}/${contractAddress}`;
+      }
+      case ChainType.Substrate: {
+        // Substrate only supports palletId and treeId
+        if (typeof contractAddressOrSubstratePayload === 'string') {
+          throw new Error('Substrate only supports palletId and treeId');
+        }
+
+        const { treeId, palletId } = contractAddressOrSubstratePayload;
+
+        // Match endpoint here: https://github.com/webb-tools/relayer#for-substrate
+        path = `/substrate/${chainId}/${treeId}/${palletId}`;
         break;
+      }
       default:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
-        break;
+        throw new Error('unknown chain type');
     }
-    const req = await fetch(url, { signal: abortSignal });
+    const req = await fetch(`${baseUrl}${path}`, { signal: abortSignal });
 
     if (req.ok) {
       const jsonResponse = await req.json();

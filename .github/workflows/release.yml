@@ -61,6 +61,11 @@ jobs:
         with:
           paths: apps/tangle-website
 
+      - uses: marceloprado/has-changed-path@v1
+        id: changed-hubble-stats
+        with:
+          paths: apps/hubble-stats
+
       - name: create env file for webbsite, tangle-site and faucet
         run: |
           touch .env
@@ -119,4 +124,11 @@ jobs:
         uses: ./.github/actions/create-release
         with:
           package-path: apps/tangle-website
+          repo-token: ${{ secrets.REPO_TOKEN }}
+
+      - name: Release hubble stats
+        if: steps.changed-hubble-stats.outputs.changed == 'true'
+        uses: ./.github/actions/create-release
+        with:
+          package-path: apps/hubble-stats
           repo-token: ${{ secrets.REPO_TOKEN }}

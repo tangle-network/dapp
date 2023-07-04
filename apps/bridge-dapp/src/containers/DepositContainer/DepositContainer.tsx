@@ -411,17 +411,17 @@ export const DepositContainer = forwardRef<
         destChain.chainId
       );
 
-      const sourceAddress = apiConfig.getAnchorAddress(
+      const sourceId = apiConfig.getAnchorIdentifier(
         fungibleCurrency.id,
         sourceTypedChainId
       );
 
-      const destAddress = apiConfig.getAnchorAddress(
+      const destId = apiConfig.getAnchorIdentifier(
         fungibleCurrency.id,
         destTypedChainId
       );
 
-      if (!sourceAddress || !destAddress) {
+      if (!sourceId || !destId) {
         console.error('Not found source or destination address');
         return;
       }
@@ -429,9 +429,9 @@ export const DepositContainer = forwardRef<
       const newNote = await noteManager.generateNote(
         activeApi.backend,
         sourceTypedChainId,
-        sourceAddress,
+        sourceId,
         destTypedChainId,
-        destAddress,
+        destId,
         fungibleCurrency.view.symbol,
         fungibleCurrency.getDecimals(),
         amount

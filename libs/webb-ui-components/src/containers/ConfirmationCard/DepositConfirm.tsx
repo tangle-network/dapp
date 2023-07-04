@@ -55,7 +55,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
 
       const formatedAmount =
         typeof amount === 'number'
-          ? getRoundedAmountString(amount, 3, Math.round)
+          ? getRoundedAmountString(amount, 3, { roundingFunction: Math.round })
           : amount ?? '0';
 
       return `${formatedAmount} ${symbolStr}`;
@@ -65,7 +65,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       if (typeof fee === 'number' || typeof fee === 'string') {
         const formatedFee =
           typeof fee === 'number'
-            ? getRoundedAmountString(fee, 3, Math.round)
+            ? getRoundedAmountString(fee, 3, { roundingFunction: Math.round })
             : fee;
         return `${formatedFee} ${feeToken ?? ''}`;
       }
@@ -121,8 +121,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={sourceChain?.type ?? 'webb-dev'}
-                    name={sourceChain?.name ?? ''}
+                    chainName={sourceChain?.name ?? ''}
+                    chainType={sourceChain?.type ?? 'webb-dev'}
                   />
                   <TokenWithAmount
                     token1Symbol={wrappableTokenSymbol ?? fungibleTokenSymbol}
@@ -143,8 +143,8 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={destChain?.type ?? 'webb-dev'}
-                    name={destChain?.name ?? ''}
+                    chainType={destChain?.type ?? 'webb-dev'}
+                    chainName={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={fungibleTokenSymbol}

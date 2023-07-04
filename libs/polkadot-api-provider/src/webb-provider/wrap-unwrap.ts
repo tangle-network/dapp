@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
@@ -31,15 +29,25 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (!account) {
       return false;
     }
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+
+    if (!fungibleToken || !wrappableToken) {
+      return false;
+    }
+
     const bnAmount = ethers.utils.parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
     );
     const chainID = this.inner.typedChainId;
-    const fungibleTokenId = fungibleToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const fungibleTokenId = fungibleToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
+
+    if (!fungibleTokenId || !wrappableTokenId) {
+      return false;
+    }
+
     const poolShare = await this.inner.api.query.assetRegistry.assets(
       fungibleTokenId
     );
@@ -69,8 +77,13 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+
+    if (!fungibleToken || !wrappableToken) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
     const bnAmount = ethers.utils.parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
@@ -103,8 +116,12 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
   async wrap(payload: PolkadotWrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!fungibleToken || !wrappableToken) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
     const bnAmount = ethers.utils.parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
@@ -142,8 +159,12 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (!account) {
       return false;
     }
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!fungibleToken || !wrappableToken) {
+      return false;
+    }
+
     const bnAmount = ethers.utils.parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
@@ -152,12 +173,17 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const fungibleTokenId = fungibleToken.getAddress(chainID);
     const wrappableTokenId = wrappableToken.getAddress(chainID);
 
+    if (!fungibleTokenId || !wrappableTokenId) {
+      return false;
+    }
+
     const poolShare = await this.inner.api.query.assetRegistry.assets(
-      fungibleTokenId
+      +fungibleTokenId
     );
-    const _poolShareExistentialBalance = poolShare
-      .unwrap()
-      .existentialDeposit.toString();
+
+    if (poolShare.isNone) {
+      return false;
+    }
 
     const asset = await this.inner.api.query.assetRegistry.assets(
       wrappableTokenId

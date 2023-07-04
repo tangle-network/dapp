@@ -1,69 +1,238 @@
+import { Codec } from '@polkadot/types/types';
 import { decodeAddress } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
+  CMDSwitcher,
   FixturesStatus,
   NewNotesTxResult,
   ParametersOfTransactMethod,
+  RelayedChainInput,
+  RelayedWithdrawResult,
   Transaction,
   TransactionPayloadType,
   TransactionState,
+  TransferTransactionPayloadType,
   VAnchorActions,
+  WithdrawRelayerArgs,
+  WithdrawTransactionPayloadType,
+  calculateProvingLeavesAndCommitmentIndex,
+  generateCircomCommitment,
   isVAnchorDepositPayload,
+  isVAnchorTransferPayload,
+  isVAnchorWithdrawPayload,
   utxoFromVAnchorNote,
 } from '@webb-tools/abstract-api-provider';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import {
+  ApiConfig,
+  createSubstrateResourceId,
+  ensureHex,
+} from '@webb-tools/dapp-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import {
+  ChainType,
   FIELD_SIZE,
   Keypair,
-  LeafIdentifier,
   MerkleProof,
   MerkleTree,
   Note,
+  ResourceId,
   Utxo,
   buildVariableWitnessCalculator,
   generateVariableWitnessInput,
+  parseTypedChainId,
   randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
-import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
-
 import * as snarkjs from 'snarkjs';
 
+import { ApiPromise } from '@polkadot/api';
+import { bridgeStorageFactory } from '@webb-tools/browser-utils';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import assert from 'assert';
+import { BigNumber } from 'ethers';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
-import {
-  ensureHex,
-  getVAnchorExtDataHash,
-  groth16ProofToBytes,
-} from '../utils';
+import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
 
-export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
+export class PolkadotVAnchorActions extends VAnchorActions<
+  'polkadot',
+  WebbPolkadot
+> {
+  static async getNextIndex(
+    apiConfig: ApiConfig,
+    typedChainId: number,
+    fungibleCurrencyId: number
+  ): Promise<bigint> {
+    const chain = apiConfig.chains[typedChainId];
+    const treeIdStr = apiConfig.getAnchorIdentifier(
+      fungibleCurrencyId,
+      typedChainId
+    );
+
+    if (!chain || !treeIdStr) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const api = await WebbPolkadot.getApiPromise(chain.url);
+    const treeId = Number(treeIdStr);
+    if (isNaN(treeId)) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const nextIdx = await api.query.merkleTreeBn254.nextLeafIndex(treeId);
+
+    return nextIdx.toBigInt();
+  }
+
   prepareTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> | never {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
     tx.next(TransactionState.PreparingTransaction, undefined);
+
+    // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
+    if (!wrapUnwrapAssetId) {
+      const activeBridge = this.inner.state.activeBridge;
+      if (!activeBridge) {
+        throw WebbError.from(WebbErrorCodes.NoActiveBridge);
+      }
+
+      const fungibleAsset = activeBridge.currency;
+      const assetId = fungibleAsset.getAddress(this.inner.typedChainId);
+      if (!assetId) {
+        throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+      }
+
+      wrapUnwrapAssetId = assetId;
+    }
+
     if (isVAnchorDepositPayload(payload)) {
       return this.prepareDepositTransaction(tx, payload, wrapUnwrapAssetId);
+    } else if (isVAnchorWithdrawPayload(payload)) {
+      return this.prepareWithdrawTransaction(tx, payload, wrapUnwrapAssetId);
+    } else if (isVAnchorTransferPayload(payload)) {
+      return this.prepareTransferTransaction(tx, payload, wrapUnwrapAssetId);
     }
 
     throw new Error('Unsupported payload type');
   }
 
-  transactWithRelayer(
+  async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod,
+    txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[]
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
+
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
+
+    const chainId =
+      this.inner.api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+
+    const chainInfo: RelayedChainInput = {
+      baseOn: 'substrate',
+      contractAddress: anchorId,
+      endpoint: '',
+      name: chainId.toString(),
+    };
+
+    // Pad the input & output utxo
+    const inputUtxos = await this.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
+    const outputUtxos = await this.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+
+    const setupTransactionArgs = [
+      tx,
+      inputUtxos,
+      outputUtxos,
+      // Ignore the override option if provided
+      ...(restArgs.length === 6 ? restArgs : restArgs.slice(0, -1)),
+      anchorId,
+    ] as Parameters<typeof this.setupTransaction>;
+
+    const { extData, publicInputs: proofData } = await this.setupTransaction(
+      ...setupTransactionArgs
+    );
+
+    const relayTxPayload = relayedVAnchorWithdraw.generateWithdrawRequest<
+      typeof chainInfo,
+      'vAnchor'
+    >(chainInfo, {
+      chainId,
+      id: +anchorId,
+      extData: {
+        ...extData,
+        token: parseInt(extData.token, 16),
+      },
+      proofData: {
+        ...proofData,
+        extensionRoots: [],
+      },
+    } satisfies WithdrawRelayerArgs<'substrate', CMDSwitcher<'substrate'>>);
+
+    let txHash = '';
+
+    // Subscribe to the relayer's transaction status.
+    relayedVAnchorWithdraw.watcher.subscribe(async ([results, message]) => {
+      switch (results) {
+        case RelayedWithdrawResult.PreFlight:
+          tx.next(TransactionState.SendingTransaction, '');
+          break;
+        case RelayedWithdrawResult.OnFlight:
+          break;
+        case RelayedWithdrawResult.Continue:
+          break;
+        case RelayedWithdrawResult.CleanExit:
+          tx.next(TransactionState.Done, {
+            txHash,
+            outputNotes: changeNotes,
+          });
+          break;
+        case RelayedWithdrawResult.Errored: {
+          console.log('Change notes', changeNotes);
+          await Promise.all(
+            changeNotes.map(async (note) => {
+              const { chainId, chainType } = parseTypedChainId(
+                +note.note.targetChainId
+              );
+
+              const resourceId =
+                await this.inner.methods.variableAnchor.actions.inner.getResourceId(
+                  note.note.targetIdentifyingData,
+                  chainId,
+                  chainType
+                );
+
+              this.inner.noteManager?.removeNote(resourceId, note);
+              return true;
+            })
+          );
+          tx.fail(message ? message : 'Transaction failed');
+          break;
+        }
+      }
+    });
+
+    tx.next(TransactionState.Intermediate, {
+      name: 'Sending TX to relayer',
+    });
+
+    console.log('Relay tx payload', relayTxPayload);
+
+    // Send the transaction to the relayer.
+    relayedVAnchorWithdraw.send(relayTxPayload);
+
+    const results = await relayedVAnchorWithdraw.await();
+    if (results) {
+      const [, message] = results;
+      txHash = message ?? '';
+      tx.txHash = txHash;
+    }
   }
 
   async transact(
@@ -141,7 +310,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     account: string,
     pubkey: string
   ): Promise<boolean> {
-    return true;
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async register(
@@ -149,14 +318,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     account: string,
     pubkey: string
   ): Promise<boolean> {
-    throw new Error('Attempted to register with Polkadot');
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async syncNotesForKeypair(
     anchorAddress: string,
     owner: Keypair
   ): Promise<Note[]> {
-    throw new Error('Attempted to sync notes for keypair with Polkadot');
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   /**
@@ -185,7 +354,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     fungibleCurrencyId: number
   ): Promise<bigint> {
     const chain = this.inner.config.chains[typedChainId];
-    const treeIdStr = this.inner.config.getAnchorAddress(
+    const treeIdStr = this.inner.config.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );
@@ -205,13 +374,59 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     return nextIdx.toBigInt();
   }
 
+  async getResourceId(
+    treeId: string,
+    chainId: number,
+    _: ChainType
+  ): Promise<ResourceId> {
+    const palletId = await this.getVAnchorPalletId(this.inner.api);
+    return createSubstrateResourceId(chainId, +treeId, palletId.toString());
+  }
+
+  async commitmentsSetup(notes: Note[], tx?: Transaction<NewNotesTxResult>) {
+    if (notes.length === 0) {
+      throw new Error('No notes to deposit');
+    }
+
+    // In the withdraw/transfer flows, the destination chain is the current chain
+    const destApi = this.inner.api;
+
+    // Loop through the notes and populate the leaves map
+    const leavesMap: Record<string, Uint8Array[]> = {};
+
+    const notesLeaves = await Promise.all(
+      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi, tx))
+    );
+
+    // Keep track of the leafindices for each note
+    const leafIndices: number[] = [];
+
+    // Create input UTXOs for convenience calculations
+    const inputUtxos: Utxo[] = [];
+
+    // calculate the sum of input notes (for calculating the change utxo)
+    let sumInputNotes = new BN(0);
+
+    notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
+      sumInputNotes = sumInputNotes.add(amount);
+      leafIndices.push(leafIndex);
+      inputUtxos.push(utxo);
+    });
+
+    return {
+      sumInputNotes,
+      inputUtxos,
+      leavesMap,
+    };
+  }
+
   // ------------------ Private ------------------
 
   private async prepareDepositTransaction(
     tx: Transaction<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapAssetId: string
-  ): Promise<ParametersOfTransactMethod> {
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const activeAccount = await this.inner.accounts.activeOrDefault;
     if (!activeAccount) {
       throw new Error('No active account');
@@ -243,7 +458,74 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       address,
       wrapUnwrapAssetId,
       leavesMap,
-    ] satisfies ParametersOfTransactMethod;
+    ] satisfies ParametersOfTransactMethod<'polkadot'>;
+  }
+
+  private async prepareWithdrawTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: WithdrawTransactionPayloadType,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
+    const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    // Fee only applies if relayer is set
+    const actualFee = new BN(
+      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
+    );
+
+    // Refund only applies if relayer is set
+    const actualRefund = new BN(
+      relayer === ZERO_ADDRESS ? '0' : refundAmount.toString()
+    );
+
+    return Promise.resolve([
+      tx, // tx
+      notes[0].note.targetIdentifyingData, // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo], // outputs
+      actualFee, // fee
+      actualRefund, // refund
+      recipient, // recipient
+      relayer, // relayer
+      wrapUnwrapAssetId, // wrapUnwrapAssetId
+      leavesMap, // leavesMap
+    ]);
+  }
+
+  private async prepareTransferTransaction(
+    tx: Transaction<NewNotesTxResult>,
+    payload: TransferTransactionPayloadType,
+    wrapUnwrapAssetId: string
+  ): Promise<ParametersOfTransactMethod<'polkadot'>> {
+    const { notes, changeUtxo, transferUtxo, feeAmount } = payload;
+
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+
+    const relayer =
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+
+    // Fee only applies if relayer is set
+    const actualFee = new BN(
+      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
+    );
+
+    return Promise.resolve([
+      tx, // tx
+      notes[0].note.targetIdentifyingData, // contractAddress
+      inputUtxos, // inputs
+      [changeUtxo, transferUtxo], // outputs
+      actualFee, // fee
+      new BN(0), // refund
+      ZERO_ADDRESS, // recipient
+      relayer, // relayer
+      wrapUnwrapAssetId, // wrapUnwrapAssetId
+      leavesMap, // leavesMap
+    ]);
   }
 
   private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {
@@ -255,8 +537,17 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     const amount = formatUnits(payload.note.amount, payload.note.denomination);
 
     if (Number(balance) < Number(amount)) {
+      const { chainId, chainType } = parseTypedChainId(
+        +payload.note.targetChainId
+      );
+      const resourceId = await this.getResourceId(
+        payload.note.targetIdentifyingData,
+        chainId,
+        chainType
+      );
+
       this.emit('stateChange', TransactionState.Failed);
-      await this.inner.noteManager?.removeNote(payload);
+      await this.inner.noteManager?.removeNote(resourceId, payload);
       throw new Error('Not enough balance');
     }
   }
@@ -303,26 +594,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     // @ts-ignore
     const neighborRoots: string[] = await api.rpc.lt
       .getNeighborRoots(treeId)
-      .then((roots) => roots.toHuman());
+      .then((roots: Codec) => roots.toHuman());
 
-    const rootsSet = [hexToU8a(root), hexToU8a(neighborRoots[0])];
+    const rootsSet = [hexToU8a(root), ...neighborRoots.map((r) => hexToU8a(r))];
     const feeBigInt = BigInt(fee.toString());
     const extAmount = this.getExtAmount(inputs, outputs, feeBigInt);
-
-    const extAmountAbs = extAmount < 0 ? -extAmount : extAmount;
-    if (extAmountAbs <= feeBigInt) {
-      throw new Error('The amount must be greater than the fee');
-    }
-
-    // Pass the identifier for leaves alongside the proof input
-    const leafIds: LeafIdentifier[] = inputs.map((input) => {
-      const index = input.index ?? this.inner.state.defaultUtxoIndex;
-      if (!input.index) {
-        input.setIndex(index);
-      }
-
-      return { index, typedChainId: Number(input.originChainId) };
-    });
 
     const encryptedCommitments: [Uint8Array, Uint8Array] = [
       hexToU8a(outputs[0].encrypt()),
@@ -364,13 +640,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       BigInt(sourceTypedChainId),
       inputs,
       outputs,
-      publicAmount,
+      extAmount,
       feeBigInt,
       extDataHash,
       leavesMap
     );
-
-    console.log('proofInputs', proofInputs);
 
     const witness = await this.getSnarkJsWitness(proofInputs, wasm);
 
@@ -507,7 +781,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     }
 
     return {
-      element: BigNumber.from(u8aToHex(input.commitment)),
+      element: BigNumber.from(u8aToHex(input.commitment)), // Temporary use of BigNumber
       pathElements: inputMerklePathElements,
       pathIndices: inputMerklePathIndices,
       merkleRoot: tree.root(),
@@ -520,7 +794,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     typedChainId: bigint,
     inputUtxos: Utxo[],
     outputUtxos: Utxo[],
-    publicAmount: bigint,
+    extAmount: bigint,
     fee: bigint,
     extDataHash: bigint,
     leavesMap: Record<string, Uint8Array[]>
@@ -544,26 +818,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
       typedChainId,
       inputUtxos,
       outputUtxos,
-      publicAmount,
+      extAmount,
       fee,
       BigNumber.from(extDataHash), // Temporary use of `BigNumber`, need to change to `BigInt`
       vanchorMerkleProof
     );
-
-    /*     witnessInput['inputNullifier'] = witnessInput['inputNullifier'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPrivateKey'] = witnessInput['inPrivateKey'].map(
-      (el: HexString) => BigInt(el).toString()
-    );
-
-    witnessInput['inPathElements'] = (
-      witnessInput['inPathElements'] as BigNumber[][]
-    ).reduce((prev, current) => {
-      prev.push(...current.map((el) => el.toString()));
-      return prev;
-    }, [] as string[]); */
 
     return witnessInput;
   }
@@ -598,6 +857,143 @@ export class PolkadotVAnchorActions extends VAnchorActions<WebbPolkadot> {
     assert.strictEqual(isValid, true, 'Invalid proof');
 
     return proofOutput;
+  }
+
+  private async fetchNoteLeaves(
+    note: Note,
+    leavesMap: Record<string, Uint8Array[]>,
+    destApi: ApiPromise,
+    tx?: Transaction<NewNotesTxResult>
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
+    if (tx) {
+      tx.next(TransactionState.FetchingLeaves, {
+        end: undefined,
+        currentRange: [0, 1],
+        start: 0,
+      });
+    }
+
+    const {
+      amount,
+      sourceChainId: sourceTypedChainId,
+      sourceIdentifyingData: sourceTreeId,
+      targetChainId: targetTypedChainId,
+      targetIdentifyingData: targetTreeId,
+    } = note.note;
+
+    const amountBN = new BN(amount);
+
+    let destRelayedRoot: string;
+    let treeHeight: number;
+
+    // Get the latest root that has been relayed from the source chain to the destination chain
+    if (sourceTypedChainId === targetTypedChainId) {
+      const destTree = (
+        await destApi.query.merkleTreeBn254.trees(+targetTreeId)
+      ).unwrapOr(null);
+
+      if (!destTree) {
+        throw WebbError.from(WebbErrorCodes.TreeNotFound);
+      }
+
+      destRelayedRoot = destTree.root.toHex();
+      treeHeight = destTree.depth.toNumber();
+    } else {
+      // Not implemented cross chain substrate <> evm transactions yet.
+      throw WebbError.from(WebbErrorCodes.NotImplemented);
+    }
+
+    // Fixed the root to be 32 bytes
+    destRelayedRoot = toFixedHex(destRelayedRoot);
+
+    // The commitment of the note
+    const commitment = generateCircomCommitment(note.note);
+
+    let commitmentIndex: number;
+
+    // Fetch leaves of the source chain if not already fetched
+    if (!leavesMap[sourceTypedChainId]) {
+      const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
+      const sourceChainEndpoint = sourceChainConfig.url;
+
+      const api =
+        String(this.inner.typedChainId) === sourceTypedChainId
+          ? this.inner.api
+          : await WebbPolkadot.getApiPromise(sourceChainEndpoint);
+
+      const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+      const palletId = await this.getVAnchorPalletId(api);
+
+      const resourceId = createSubstrateResourceId(
+        chainId,
+        +sourceTreeId,
+        String(palletId)
+      );
+
+      const leafStorage = await bridgeStorageFactory(resourceId.toString());
+      const { provingLeaves, commitmentIndex: leafIndex } =
+        await this.inner.getVAnchorLeaves(api, leafStorage, {
+          treeHeight,
+          targetRoot: destRelayedRoot,
+          commitment,
+          palletId,
+          treeId: +sourceTreeId,
+        });
+
+      leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) => {
+        return hexToU8a(leaf);
+      });
+
+      commitmentIndex = leafIndex;
+    } else {
+      const leaves = leavesMap[sourceTypedChainId].map((leaf) =>
+        u8aToHex(leaf)
+      );
+
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      const { provingLeaves, leafIndex } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          destRelayedRoot,
+          commitment.toString()
+        );
+      tx?.next(TransactionState.ValidatingLeaves, true);
+
+      commitmentIndex = leafIndex;
+
+      // If the proving leaves are more than the leaves we have,
+      // that means the commitment is not in the leaves we have
+      // so we need to reset the leaves
+      if (provingLeaves.length > leaves.length) {
+        leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) =>
+          hexToU8a(leaf)
+        );
+      }
+    }
+
+    // Validate that the commitment is in the tree
+    if (commitmentIndex === -1) {
+      // Outer try/catch will handle this
+      throw new Error(
+        'Relayer has not yet relayed the commitment to the destination chain'
+      );
+    }
+
+    const utxo = await utxoFromVAnchorNote(note.note, commitmentIndex);
+
+    return {
+      leafIndex: commitmentIndex,
+      utxo,
+      amount: amountBN,
+    };
+  }
+
+  private async getVAnchorPalletId(api: ApiPromise): Promise<number> {
+    const metadata = await api.rpc.state.getMetadata();
+    return metadata.asLatest.pallets.findIndex((pallet) => {
+      return pallet.name.toString() === 'VAnchorBn254';
+    });
   }
 
   private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {

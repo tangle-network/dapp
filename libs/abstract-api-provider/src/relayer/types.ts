@@ -2,22 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
-import {
-  IVariableAnchorExtData,
-  IVariableAnchorPublicInputs,
-} from '@webb-tools/interfaces';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { ActiveWebbRelayer, WebbRelayer } from '.';
+import { HexString } from '@polkadot/util/types';
 
 /**
  * Relayer configuration for a chain
  * @param account - Relayer account that is going to be used to sign the transaction
  * @param beneficiary - Account that will receive the reward for relaying a transaction
+ * @param enabled - Indicates if the relayer is enabled
  * @param contracts -  List of contracts supported by a relayer
  **/
-export type RelayedChainConfig = {
+export type RelayedChainConfig<BaseOn extends RelayerCMDBase> = {
   account: string;
   beneficiary?: string;
-  contracts: Contract[];
+  enabled?: boolean;
+  contracts: BaseOn extends 'evm' ? Contract[] : never;
+  pallets: BaseOn extends 'substrate' ? Pallet[] : never;
 };
 
 /**
@@ -29,8 +30,8 @@ export type Capabilities = {
   hasIpService: boolean;
   features: RelayerFeatures;
   supportedChains: {
-    substrate: Map<number, RelayedChainConfig>;
-    evm: Map<number, RelayedChainConfig>;
+    substrate: Map<number, RelayedChainConfig<'substrate'>>;
+    evm: Map<number, RelayedChainConfig<'evm'>>;
   };
 };
 
@@ -54,6 +55,18 @@ export interface Contract {
   size: number;
   withdrawFeePercentage: number;
   linkedAnchors: LinkedAnchor[];
+}
+
+export interface Pallet {
+  pallet: string;
+  eventsWatcher: Partial<{
+    enableDataQuery: boolean;
+    enabled: boolean;
+    pollingInterval: number;
+    maxBlocksPerStep: number;
+    printProgressInterval: number;
+    syncBlocksFrom: number;
+  }>;
 }
 
 export interface LinkedAnchor {
@@ -121,8 +134,8 @@ export interface RelayerFeatures {
  * from the query /api/v1/info
  */
 export interface RelayerInfo {
-  substrate: Record<string, RelayedChainConfig | null>;
-  evm: Record<string, RelayedChainConfig | null>;
+  substrate: Record<string, RelayedChainConfig<'substrate'> | null>;
+  evm: Record<string, RelayedChainConfig<'evm'> | null>;
   features: RelayerFeatures;
 }
 
@@ -178,12 +191,13 @@ export type RelayerMessage = {
  * @param extDataHash - External data hash for the proof external data
  * */
 type SubstrateProofData = {
-  proof: Array<number>;
-  publicAmount: Array<number>;
-  roots: Array<number>[] | number[];
-  inputNullifiers: Array<number>[];
-  outputCommitments: Array<number>[];
-  extDataHash: Array<number>;
+  proof: HexString;
+  publicAmount: HexString;
+  roots: Array<HexString>;
+  inputNullifiers: Array<HexString>;
+  outputCommitments: Array<HexString>;
+  extDataHash: HexString;
+  extensionRoots: Array<HexString>;
 };
 
 /**
@@ -199,12 +213,12 @@ type SubstrateProofData = {
 type SubstrateExtData = {
   recipient: string;
   relayer: string;
-  extAmount: number | string;
-  fee: number;
-  encryptedOutput1: Array<number>;
-  encryptedOutput2: Array<number>;
+  extAmount: string;
+  fee: string;
+  encryptedOutput1: string;
+  encryptedOutput2: string;
   refund: string;
-  token: string;
+  token: number;
 };
 
 /**

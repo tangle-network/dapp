@@ -26,9 +26,17 @@ export default function RootLayout({
         <Head>
           <title>Welcome to Hubble Stats!</title>
         </Head>
-        <body>
-          {children}
-          <Footer isMinimal />
+        <body className="bg-body dark:bg-body_dark bg-cover flex">
+          {/* Slide Navigation */}
+          <nav className="w-[280px] h-full"></nav>
+
+          {/* Main Body */}
+          <main className="flex-[1]">
+            <div className="max-w-[1000px] mx-auto">
+              {children}
+              <Footer isMinimal style={{ background: 'inherit' }} />
+            </div>
+          </main>
         </body>
       </WebbUIProvider>
     </html>

@@ -9,7 +9,12 @@ import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  Note,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import {
   TransferConfirm,
   getRoundedAmountString,
@@ -58,10 +63,13 @@ export const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const { api: vAnchorApi } = useVAnchor();
+    const {
+      api: vAnchorApi,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
+    } = useVAnchor();
 
-    const { activeApi, activeChain, apiConfig, noteManager, txQueue } =
-      useWebContext();
+    const { activeApi, activeChain, apiConfig, txQueue } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -158,7 +166,10 @@ export const TransferConfirmContainer = forwardRef<
         tokenSymbol,
       } = note.note;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(
@@ -179,7 +190,7 @@ export const TransferConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
-        providerType: activeApi.type(),
+        providerType: activeApi.type,
       });
 
       setTxId(tx.id);
@@ -189,7 +200,7 @@ export const TransferConfirmContainer = forwardRef<
 
         // Add the change note before sending the tx
         if (changeNote) {
-          noteManager?.addNote(changeNote);
+          await addNoteToNoteManager(changeNote);
         }
 
         const txPayload: TransferTransactionPayloadType = {
@@ -222,11 +233,11 @@ export const TransferConfirmContainer = forwardRef<
 
         // Cleanup NoteAccount state
         for (const note of inputNotes) {
-          await noteManager?.removeNote(note);
+          await removeNoteFromNoteManager(note);
         }
       } catch (error) {
         console.error('Error occured while transfering', error);
-        changeNote && (await noteManager?.removeNote(changeNote));
+        changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
         captureSentryException(error, 'transactionType', 'transfer');
@@ -248,7 +259,8 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       feeAmount,
       activeRelayer,
-      noteManager,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
       onResetState,
     ]);
 
@@ -268,7 +280,9 @@ export const TransferConfirmContainer = forwardRef<
 
       const amountNum = Number(ethers.utils.formatEther(feeAmount));
 
-      return getRoundedAmountString(amountNum, 3, Math.round);
+      return getRoundedAmountString(amountNum, 3, {
+        roundingFunction: Math.round,
+      });
     }, [feeAmount]);
 
     return (

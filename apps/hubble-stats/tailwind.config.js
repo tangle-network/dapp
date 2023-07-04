@@ -19,7 +19,12 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        body: "url('/static/assets/bg.png')",
+        body_dark: "url('/static/assets/bg-dark.png')",
+      },
+    },
   },
   plugins: [],
 };
