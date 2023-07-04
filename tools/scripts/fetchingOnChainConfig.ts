@@ -1,11 +1,14 @@
 import { ApiPromise } from '@polkadot/api';
-import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { AnchorMetadata, ConfigType } from '@webb-tools/dapp-config/src/types';
+import {
+  AnchorMetadata,
+  ConfigType,
+  ICurrency,
+} from '@webb-tools/dapp-config/src/types';
 import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/utils/substrateProviderFactory';
 import {
   ChainType,

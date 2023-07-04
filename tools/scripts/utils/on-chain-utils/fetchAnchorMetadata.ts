@@ -10,8 +10,7 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
-import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
+import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';

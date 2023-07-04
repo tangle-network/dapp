@@ -9,12 +9,9 @@ import {
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
 import { ChainAddressConfig } from '../../anchors';
+import { ICurrency } from '../../types';
 import { CurrencyConfig } from '../../currencies';
-import {
-  CurrencyResponse,
-  ICurrency,
-  OnChainConfigBase,
-} from '../on-chain-config-base';
+import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;
