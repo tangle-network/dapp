@@ -3,7 +3,6 @@
 
 // The extra evm rpc urls are from https://github.com/DefiLlama/chainlist
 
-import { config } from 'dotenv';
 import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
 import ArbitrumLogo from '@webb-tools/logos/chains/ArbitrumLogo';
 import GanacheLogo from '@webb-tools/logos/chains/GanacheLogo';
@@ -14,8 +13,6 @@ import EtherLogo from '@webb-tools/logos/Eth';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 
 import { ChainConfig } from '../chain-config.interface';
-
-config();
 
 const hostedOrbitMulticall3Address =
   process.env.HOSTED_ORBIT_MULTLICALL3_ADDRESS;

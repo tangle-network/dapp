@@ -3,10 +3,7 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { config } from 'dotenv';
 import { LOCALNET_CHAIN_IDS } from '../chains';
-
-config();
 
 const localAncchorRecord = process.env.LOCAL_ORBIT_ANCHOR_ADDRESS
   ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
