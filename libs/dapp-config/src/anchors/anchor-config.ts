@@ -5,7 +5,7 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { LOCALNET_CHAIN_IDS } from '../chains';
 
-const localAncchorRecord = process.env.LOCAL_ORBIT_ANCHOR_ADDRESS
+const localAnchorRecord = process.env.LOCAL_ORBIT_ANCHOR_ADDRESS
   ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
       (acc, chainId) => {
         const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
@@ -61,7 +61,7 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
     '0xba730ee516fc52Ab35f001faa3114eeBd48eeCB8': 0,
   },
 
-  ...localAncchorRecord,
+  ...localAnchorRecord,
 
   // Substrate
   [PresetTypedChainId.LocalTangleStandalone]: {
