@@ -260,6 +260,7 @@ function createWebpack(env, mode = 'production') {
           process.env.NX_BRIDGE_APP_DOMAIN
         ),
         'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
+        'process.env': JSON.stringify(process.env),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
