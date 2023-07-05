@@ -24,7 +24,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
       variant="body1"
       fw="bold"
       className={cx(
-        'text-mono-140 flex-[1] flex items-center justify-center',
+        'text-mono-140 dark:text-mono-40 flex-[1] flex items-center justify-center',
         className
       )}
     >
@@ -32,7 +32,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
       {tooltip && (
         <Tooltip>
           <TooltipTrigger>
-            <InformationLine className="fill-mono-140" />
+            <InformationLine className="fill-mono-140 dark:fill-mono-40" />
           </TooltipTrigger>
           <TooltipBody>
             <span>{tooltip}</span>

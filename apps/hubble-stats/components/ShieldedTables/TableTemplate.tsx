@@ -50,9 +50,9 @@ export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
   const pageIndex = getState().pagination.pageIndex;
 
   return (
-    <div className="bg-mono-0 rounded-lg border border-mono-40">
+    <div className="bg-mono-0 dark:bg-mono-180 rounded-lg border border-mono-40 dark:border-mono-160">
       <table className="w-full">
-        <thead className="border-b border-mono-40">
+        <thead className="border-b border-mono-40 dark:border-mono-160">
           {getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, idx) => (
@@ -72,7 +72,10 @@ export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
           {getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell, idx) => (
-                <td key={idx} className="px-6 py-4 border-b border-mono-40">
+                <td
+                  key={idx}
+                  className="px-6 py-4 border-b border-mono-40 dark:border-mono-160"
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

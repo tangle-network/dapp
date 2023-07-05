@@ -17,7 +17,10 @@ export const NumberCell: FC<HeaderCellProps> = ({
   return (
     <Typography
       variant="body1"
-      className={cx('text-mono-140 text-center uppercase', className)}
+      className={cx(
+        'text-mono-140 dark:text-mono-40 text-center uppercase',
+        className
+      )}
     >
       {value && (prefix ?? '')}
       {typeof value === 'number' && value < 10000

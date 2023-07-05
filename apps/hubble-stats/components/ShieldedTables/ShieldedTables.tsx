@@ -36,13 +36,13 @@ export const ShieldedTables = () => {
                   isDisableStyle
                   className={cx(
                     'text-mono-100 radix-state-active:text-mono-200',
-                    'dark:radix-state-active:text-mono-0'
+                    'dark:radix-state-active:!text-mono-0'
                   )}
                 >
                   <Typography
                     variant="mkt-body2"
                     fw="black"
-                    className="text-current"
+                    className="!text-current"
                   >
                     Shielded {table.type}
                   </Typography>
