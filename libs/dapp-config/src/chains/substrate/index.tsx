@@ -1,9 +1,5 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
-import KSMLogo from '@webb-tools/logos/chains/KusamaLogo';
-import DOTLogo from '@webb-tools/logos/chains/PolkadotLogo';
-import WEBBLogo from '@webb-tools/logos/chains/WebbLogo';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-
 import { ChainConfig } from '../chain-config.interface';
 
 function populateBlockExplorerStub(connString: string): string {
@@ -21,24 +17,60 @@ function populateBlockExplorerStub(connString: string): string {
 export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.ProtocolSubstrateStandalone]: {
     chainType: ChainType.Substrate,
-    group: 'webb',
-    tag: 'dev',
-    chainId: SubstrateChainId.ProtocolSubstrateStandalone,
-    logo: WEBBLogo,
-    url: 'ws://127.0.0.1:9944',
-    blockExplorerStub: populateBlockExplorerStub('ws://127.0.0.1:9944'),
+    id: SubstrateChainId.ProtocolSubstrateStandalone,
     name: 'Substrate',
+    network: 'Substrate',
+    group: 'webb-dev',
+    tag: 'dev',
+    nativeCurrency: {
+      name: 'Webb Substrate',
+      symbol: 'WEBB',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Substrate Explorer',
+        url: populateBlockExplorerStub('ws://127.0.0.1:9944'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['ws://127.0.0.1:9944'],
+      },
+      public: {
+        http: [],
+        webSocket: ['ws://127.0.0.1:9944'],
+      },
+    },
     env: ['development'],
   },
   [PresetTypedChainId.LocalTangleStandalone]: {
     chainType: ChainType.Substrate,
-    group: 'webb',
-    tag: 'dev',
-    chainId: SubstrateChainId.LocalTangleStandalone,
-    logo: WEBBLogo,
-    url: 'ws://127.0.0.1:9944',
-    blockExplorerStub: populateBlockExplorerStub('ws://127.0.0.1:9944'),
+    id: SubstrateChainId.LocalTangleStandalone,
     name: 'Tangle',
+    network: 'Substrate',
+    group: 'tangle',
+    tag: 'dev',
+    nativeCurrency: {
+      name: 'Tangle',
+      symbol: 'TNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Explorer',
+        url: populateBlockExplorerStub('ws://127.0.0.1:9944'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: ['ws://127.0.0.1:9944'],
+      },
+      public: {
+        http: ['ws://127.0.0.1:9944'],
+      },
+    },
     env: ['development'],
   },
   /*   [PresetTypedChainId.TangleStandaloneTestnet]: {
@@ -56,26 +88,62 @@ export const chainsConfig: Record<number, ChainConfig> = {
   }, */
   [PresetTypedChainId.Kusama]: {
     chainType: ChainType.KusamaRelayChain,
-    group: 'webb',
-    tag: 'live',
-    chainId: SubstrateChainId.Kusama,
-    logo: KSMLogo,
-    url: 'wss://kusama-rpc.polkadot.io',
-    blockExplorerStub: populateBlockExplorerStub(
-      'wss://kusama-rpc.polkadot.io'
-    ),
+    id: SubstrateChainId.Kusama,
     name: 'Kusama',
+    network: 'Kusama',
+    group: 'kusama',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Kusama',
+      symbol: 'KSM',
+      decimals: 12,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Kusama Explorer',
+        url: populateBlockExplorerStub('wss://kusama-rpc.polkadot.io'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://kusama-rpc.polkadot.io'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://kusama-rpc.polkadot.io'],
+      },
+    },
     env: ['development'],
   },
   [PresetTypedChainId.Polkadot]: {
     chainType: ChainType.PolkadotRelayChain,
-    group: 'webb',
-    tag: 'live',
-    chainId: SubstrateChainId.Polkadot,
-    logo: DOTLogo,
-    url: 'wss://rpc.polkadot.io',
-    blockExplorerStub: populateBlockExplorerStub('wss://rpc.polkadot.io'),
+    id: SubstrateChainId.Polkadot,
     name: 'Polkadot',
+    network: 'Polkadot',
+    group: 'polkadot',
+    tag: 'live',
+    nativeCurrency: {
+      name: 'Polkadot',
+      symbol: 'DOT',
+      decimals: 10,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Kusama Explorer',
+        url: populateBlockExplorerStub('wss://rpc.polkadot.io'),
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: [],
+        webSocket: ['wss://rpc.polkadot.io'],
+      },
+      public: {
+        http: [],
+        webSocket: ['wss://rpc.polkadot.io'],
+      },
+    },
     env: ['development'],
   },
 };

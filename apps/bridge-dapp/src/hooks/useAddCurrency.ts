@@ -63,7 +63,7 @@ export const isTokenAddedToMetamask = (
 
   const typedChainId = calculateTypedChainId(
     activeChain.chainType,
-    activeChain.chainId
+    activeChain.id
   );
 
   const tokenAddress = currency.getAddressOfChain(typedChainId);
@@ -106,7 +106,7 @@ export const useAddCurrency = () => {
 
       const typedChainId = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.chainId
+        activeChain.id
       );
 
       const address = currency.getAddressOfChain(typedChainId);

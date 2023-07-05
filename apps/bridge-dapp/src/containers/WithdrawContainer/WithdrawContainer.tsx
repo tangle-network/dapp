@@ -836,9 +836,7 @@ export const WithdrawContainer = forwardRef<
           .map((relayer) => {
             const relayerData = relayer.capabilities.supportedChains[
               activeChain.chainType === ChainType.EVM ? 'evm' : 'substrate'
-            ].get(
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-            );
+            ].get(calculateTypedChainId(activeChain.chainType, activeChain.id));
 
             if (!relayerData?.beneficiary) {
               return undefined;

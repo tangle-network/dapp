@@ -177,7 +177,7 @@ const useStatesFromNotes = () => {
       symbol:
         getNativeCurrencyFromConfig(
           apiConfig.currencies,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          calculateTypedChainId(activeChain.chainType, activeChain.id)
         )?.symbol ?? 'Unknown',
     };
 
@@ -189,7 +189,7 @@ const useStatesFromNotes = () => {
         chains={chainsFromNotes.map((chain) => {
           const currency = getNativeCurrencyFromConfig(
             apiConfig.currencies,
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
           if (!currency) {
             console.error('No currency found for chain', chain.name);

@@ -127,7 +127,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         const chainNotes =
           await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
             activeApi.state.activeBridge.targets[
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+              calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
             noteManager.getKeypair()
           );

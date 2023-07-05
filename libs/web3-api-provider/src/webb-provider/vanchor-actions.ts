@@ -72,7 +72,9 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const provider = Web3Provider.fromUri(
+      chain.rpcUrls.default.http[0]
+    ).intoEthersProvider();
     const vanchor = VAnchor__factory.connect(anchor, provider);
 
     const nextIdx = await vanchor.getNextIndex();
@@ -527,7 +529,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const vanchor = VAnchor__factory.connect(
       addressOrTreeId,
-      Web3Provider.fromUri(chain.url).intoEthersProvider()
+      Web3Provider.fromUri(chain.rpcUrls.default.http[0]).intoEthersProvider()
     );
 
     // Get fragment and topic of the `NewCommitment` event.
@@ -581,7 +583,9 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+    const provider = Web3Provider.fromUri(
+      chain.rpcUrls.default.http[0]
+    ).intoEthersProvider();
     const vanchor = VAnchor__factory.connect(anchor, provider);
 
     const nextIdx = await vanchor.getNextIndex();
@@ -639,7 +643,10 @@ export class Web3VAnchorActions extends VAnchorActions<
       // Set up a provider for the source chain
       const sourceChainConfig =
         this.inner.config.chains[Number(parsedNote.sourceChainId)];
-      const sourceHttpProvider = Web3Provider.fromUri(sourceChainConfig.url);
+
+      const sourceHttpProvider = Web3Provider.fromUri(
+        sourceChainConfig.rpcUrls.default.http[0]
+      );
       const sourceAddress = parsedNote.sourceIdentifyingData;
       const sourceEthers = sourceHttpProvider.intoEthersProvider();
 

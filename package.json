@@ -112,6 +112,7 @@
     "graphql": "^16.6.0",
     "gridjs": "^6.0.6",
     "gridjs-react": "^6.0.1",
+    "lodash": "^4.17.21",
     "lottie-react": "^2.3.1",
     "neverthrow": "^6.0.0",
     "next": "13.3.0",

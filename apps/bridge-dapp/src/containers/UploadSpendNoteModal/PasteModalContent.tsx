@@ -115,11 +115,11 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
 
             const sourceCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
+              calculateTypedChainId(sourceChain.chainType, sourceChain.id)
             );
             const destCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(destChain.chainType, destChain.chainId)
+              calculateTypedChainId(destChain.chainType, destChain.id)
             );
 
             if (!sourceCurrency || !destCurrency) {

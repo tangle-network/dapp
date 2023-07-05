@@ -230,7 +230,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       if (innerNetworkStorage && innerChain) {
         const typedChainId = calculateTypedChainId(
           innerChain.chainType,
-          innerChain.chainId
+          innerChain.id
         );
 
         const networksConfig = await innerNetworkStorage.get('networksConfig');
@@ -265,10 +265,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         let hasSetFromStorage = false;
         const accounts = await nextActiveApi.accounts.accounts();
 
-        const typedChainId = calculateTypedChainId(
-          chain.chainType,
-          chain.chainId
-        );
+        const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
         // TODO resolve the account inner type issue
         setAccounts(accounts as any);
@@ -432,14 +429,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     ) => {
       const wallet = _wallet || activeWallet;
 
-      const nextTypedChainId = calculateTypedChainId(
-        chain.chainType,
-        chain.chainId
-      );
+      const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
       const sharedWalletConnectionPayload = {
         walletId: wallet.id,
-        typedChainId: { chainId: chain.chainId, chainType: chain.chainType },
+        typedChainId: { chainId: chain.id, chainType: chain.chainType },
       };
 
       // wallet cleanup
@@ -467,11 +461,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
-              const url = chain.url;
+              const webSocketUrls = chain.rpcUrls.default.webSocket;
+              if (!webSocketUrls || webSocketUrls.length === 0) {
+                throw new Error(
+                  `No websocket urls found for chain ${chain.name}`
+                );
+              }
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
-                [url],
+                Array.from(webSocketUrls),
                 {
                   onError: (feedback: InteractiveFeedback) => {
                     registerInteractiveFeedback(
@@ -529,7 +528,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     chain.chainType === ChainType.EVM &&
                     chain.evmRpcUrls?.length
                   ) {
-                    acc[chain.chainId] = chain.evmRpcUrls[0];
+                    acc[chain.id] = chain.evmRpcUrls[0];
                   }
                   return acc;
                 }, {} as Record<number, string>);
@@ -544,7 +543,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     [EVMChainId.EthereumMainNet]:
                       'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
                   },
-                  chainId: chain.chainId,
+                  chainId: chain.id,
                 });
 
                 web3Provider = await Web3Provider.fromWalletConnectProvider(
@@ -594,7 +593,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 updatedChainId,
               ]: number[]) => {
                 const nextChain = Object.values(chains).find(
-                  (chain) => chain.chainId === updatedChainId
+                  (chain) => chain.id === updatedChainId
                 );
 
                 try {
@@ -674,7 +673,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               await webbWeb3Provider.setChainListener();
               await webbWeb3Provider.setAccountListener();
 
-              if (chainId !== chain.chainId) {
+              if (chainId !== chain.id) {
                 const currency = Object.values(apiConfig.currencies).find(
                   (c) =>
                     c.type === CurrencyType.NATIVE &&
@@ -686,7 +685,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
                 // Switch to the chain
                 await web3Provider.switchAndAddChain({
-                  chainId: `0x${chain.chainId.toString(16)}`,
+                  chainId: `0x${chain.id.toString(16)}`,
                   chainName: chain.name,
                   rpcUrls: chain.evmRpcUrls ?? [],
                   nativeCurrency: {
@@ -703,7 +702,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 const newNetwork = await web3Provider.network;
                 const newChainId = newNetwork.chainId;
 
-                if (newChainId != chain.chainId) {
+                if (newChainId != chain.id) {
                   throw new Error('User rejected network switch');
                 }
 
@@ -711,7 +710,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 appEvent.send('networkSwitched', [
                   {
                     chainType: chain.chainType,
-                    chainId: chain.chainId,
+                    chainId: chain.id,
                   },
                   web3Provider instanceof WalletConnectProvider
                     ? WalletId.WalletConnectV2
@@ -801,7 +800,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           await Promise.all([
             _networkStorage.set(
               'defaultNetwork',
-              calculateTypedChainId(chain.chainType, chain.chainId)
+              calculateTypedChainId(chain.chainType, chain.id)
             ),
             _networkStorage.set('defaultWallet', wallet.id),
           ]);

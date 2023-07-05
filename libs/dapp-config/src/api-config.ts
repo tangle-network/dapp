@@ -112,7 +112,7 @@ export class ApiConfig {
 
   getEVMChainName(evmId: number): string {
     const chain = Object.values(this.chains).find(
-      (chainsConfig) => chainsConfig.chainId === evmId
+      (chainsConfig) => chainsConfig.id === evmId
     );
 
     if (chain) {

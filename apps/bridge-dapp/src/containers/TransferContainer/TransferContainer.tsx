@@ -281,7 +281,7 @@ export const TransferContainer = forwardRef<
           if (destChain) {
             const typedChainId = calculateTypedChainId(
               destChain.chainType,
-              destChain.chainId
+              destChain.id
             );
 
             // If the selected currency does not support the selected chain, reset the selected chain
@@ -300,7 +300,7 @@ export const TransferContainer = forwardRef<
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
       const typedChainId = destChain
-        ? calculateTypedChainId(destChain.chainType, destChain.chainId)
+        ? calculateTypedChainId(destChain.chainType, destChain.id)
         : currentTypedChainId ?? 0;
 
       const currencies = selectableBridgingAssets
@@ -431,9 +431,7 @@ export const TransferContainer = forwardRef<
         .map((relayer) => {
           const relayerData = relayer.capabilities.supportedChains[
             activeChain.chainType === ChainTypeEnum.EVM ? 'evm' : 'substrate'
-          ].get(
-            calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-          );
+          ].get(calculateTypedChainId(activeChain.chainType, activeChain.id));
 
           if (!relayerData?.beneficiary) {
             return undefined;
@@ -666,7 +664,7 @@ export const TransferContainer = forwardRef<
 
       const destTypedChainId = calculateTypedChainId(
         destChain.chainType,
-        destChain.chainId
+        destChain.id
       );
 
       // Current user keypair
@@ -806,7 +804,7 @@ export const TransferContainer = forwardRef<
           if (destChain) {
             const typedChainId = calculateTypedChainId(
               destChain.chainType,
-              destChain.chainId
+              destChain.id
             );
 
             // If the default fungible currency doesn't have the chain, reset the dest chain

@@ -137,9 +137,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           // Calculate the assets url
           let assetsUrl = '#';
-          const explorerUrl = chain.blockExplorerStub;
+          const explorerUrl = chain.blockExplorers?.default.url;
           const address = fungibleCurrency?.getAddressOfChain(
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
 
           if (explorerUrl && address) {

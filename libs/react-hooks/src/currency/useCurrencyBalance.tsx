@@ -17,7 +17,7 @@ export const useCurrencyBalance = (
 
     const subscription = activeApi.methods.chainQuery
       .tokenBalanceByCurrencyId(
-        calculateTypedChainId(activeChain.chainType, activeChain.chainId),
+        calculateTypedChainId(activeChain.chainType, activeChain.id),
         currency.id,
         address
       )

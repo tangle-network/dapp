@@ -25,7 +25,9 @@ async function evmProviderFactory(
     throw new Error(`Chain not found for ${typedChainId}`); // Development error
   }
 
-  const provider = Web3Provider.fromUri(chain.url).intoEthersProvider();
+  const provider = Web3Provider.fromUri(
+    chain.rpcUrls.default.http[0]
+  ).intoEthersProvider();
 
   evmProviderCache[typedChainId] = provider;
 

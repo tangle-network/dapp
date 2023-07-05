@@ -19,6 +19,8 @@ export enum WebbErrorCodes {
   NoAccountAvailable,
   // No active bridge
   NoActiveBridge,
+  // Missing endpoints in the configuration
+  NoEndpointsConfigured,
   // Failed to parse deposit note
   NoteParsingFailure,
   // PolkaDot extension not installed
@@ -228,6 +230,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `No currency is available`,
+        };
+
+      case WebbErrorCodes.NoEndpointsConfigured:
+        return {
+          code,
+          message: `Missing endpoints in the configuration`,
         };
 
       case WebbErrorCodes.TreeNotFound:

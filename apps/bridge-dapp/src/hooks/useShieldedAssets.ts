@@ -81,9 +81,9 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         }
 
         let assetsUrl = '#';
-        const explorerUrl = chain.blockExplorerStub;
+        const explorerUrl = chain.blockExplorers?.default.url;
         const address = fungibleCurrency?.getAddressOfChain(
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.id)
         );
 
         if (explorerUrl && address) {

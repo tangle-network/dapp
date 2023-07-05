@@ -114,7 +114,7 @@ export const useMaxFeeInfo = (
 
         const currentTypedChainId = calculateTypedChainId(
           activeChain.chainType,
-          activeChain.chainId
+          activeChain.id
         );
 
         const vanchorId = apiConfig.getAnchorIdentifier(
@@ -159,7 +159,7 @@ export const useMaxFeeInfo = (
 
       const currentTypedChain = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.chainId
+        activeChain.id
       );
 
       if (!gasLimit[currentTypedChain]) {

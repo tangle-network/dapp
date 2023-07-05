@@ -1,17 +1,11 @@
 import { CurrencyConfig, chainsConfig } from '@webb-tools/dapp-config';
 
 export const getTokenURI = (currency: CurrencyConfig, chainID: string) => {
-  const blockExplorerStub =
-    chainsConfig[Number(chainID)]?.blockExplorerStub ?? '';
+  const explorerUrl =
+    chainsConfig[Number(chainID)]?.blockExplorers?.default.url ?? '';
 
-  let explorerURI;
-
-  explorerURI = blockExplorerStub.endsWith('/')
-    ? blockExplorerStub
-    : blockExplorerStub + '/';
-
-  explorerURI =
-    explorerURI + `address/${currency.addresses.get(Number(chainID)) ?? ''}`;
-
-  return explorerURI;
+  return new URL(
+    `/address/${currency.addresses.get(Number(chainID)) ?? ''}`,
+    explorerUrl
+  ).toString();
 };

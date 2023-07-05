@@ -76,7 +76,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const api = await WebbPolkadot.getApiPromise(chain.url);
+    const endpoints = chain.rpcUrls.default.webSocket;
+    if (!endpoints || endpoints.length === 0) {
+      throw WebbError.from(WebbErrorCodes.NoEndpointsConfigured);
+    }
+
+    const api = await WebbPolkadot.getApiPromise(endpoints[0]);
     const treeId = Number(treeIdStr);
     if (isNaN(treeId)) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
@@ -931,7 +936,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Fetch leaves of the source chain if not already fetched
     if (!leavesMap[sourceTypedChainId]) {
       const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
-      const sourceChainEndpoint = sourceChainConfig.url;
+      const sourceChainEndpoint =
+        sourceChainConfig.rpcUrls.default.webSocket?.[0];
+
+      if (!sourceChainEndpoint) {
+        throw WebbError.from(WebbErrorCodes.NoEndpointsConfigured);
+      }
 
       const api =
         String(this.inner.typedChainId) === sourceTypedChainId

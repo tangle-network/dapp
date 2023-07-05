@@ -78,13 +78,11 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
   // Calculate the account explorer url
   const accountExplorerUrl = useMemo(() => {
-    if (!activeChain?.blockExplorerStub) return '#';
+    if (!activeChain?.blockExplorers) return '#';
 
-    const uri = activeChain.blockExplorerStub.endsWith('/')
-      ? `address/${account.address}`
-      : `/address/${account.address}`;
+    const url = activeChain.blockExplorers.default.url;
 
-    return `${activeChain.blockExplorerStub}${uri}`;
+    return new URL(`/address/${account.address}`, url).toString();
   }, [activeChain, account]);
 
   // Clear data function

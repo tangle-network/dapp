@@ -432,7 +432,7 @@ export class WebbWeb3Provider
             throw new Error('Chain not found'); // Development error
           }
 
-          const provider = Web3Provider.fromUri(chain.url);
+          const provider = Web3Provider.fromUri(chain.rpcUrls.default.http[0]);
           const vAnchorContract = VAnchor__factory.connect(
             vanchor.contract.address,
             provider.intoEthersProvider()
@@ -514,7 +514,7 @@ export class WebbWeb3Provider
         name: currency.name,
         symbol: currency.symbol,
       },
-      rpcUrls: chain.evmRpcUrls ?? [],
+      rpcUrls: Array.from(chain.rpcUrls.default.http ?? []),
     });
   }
 

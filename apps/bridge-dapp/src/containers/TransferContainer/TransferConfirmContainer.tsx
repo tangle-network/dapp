@@ -82,7 +82,7 @@ export const TransferConfirmContainer = forwardRef<
     const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
-      () => calculateTypedChainId(destChain.chainType, destChain.chainId),
+      () => calculateTypedChainId(destChain.chainType, destChain.id),
       [destChain]
     );
 
@@ -295,11 +295,11 @@ export const TransferConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         sourceChain={{
           name: activeChain?.name ?? '',
-          type: activeChain?.base ?? 'webb-dev',
+          type: activeChain?.group ?? 'webb-dev',
         }}
         destChain={{
           name: destChain.name,
-          type: destChain.base ?? 'webb-dev',
+          type: destChain.group ?? 'webb-dev',
         }}
         note={changeNote?.serialize()}
         progress={progress}

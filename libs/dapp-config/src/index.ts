@@ -8,7 +8,7 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   (acc, chainsConfig) => {
     const typedChainId = calculateTypedChainId(
       chainsConfig.chainType,
-      chainsConfig.chainId
+      chainsConfig.id
     );
 
     return {

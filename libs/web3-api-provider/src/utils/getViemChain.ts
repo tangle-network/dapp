@@ -34,40 +34,23 @@ function defineViemChain(typedChainId: number): chains.Chain {
     throw new Error('Chain not found in the chainsConfig');
   }
 
-  if (!chain.base) {
+  if (!chain.group) {
     throw new Error(`Chain ${chain.name} does not have a base network`);
   }
 
-  if (!chain.evmRpcUrls) {
-    throw new Error(`Chain ${chain.name} does not have evmRpcUrls`);
+  if (!chain.rpcUrls) {
+    throw new Error(`Chain ${chain.name} does not have rpc urls`);
   }
 
   return {
-    id: chain.chainId,
+    id: chain.id,
     name: chain.name,
-    network: chain.base,
+    network: chain.group,
     testnet: true,
     nativeCurrency: DEFAULT_EVM_CURRENCY,
-    rpcUrls: {
-      public: { http: chain.evmRpcUrls },
-      default: { http: chain.evmRpcUrls },
-    },
-    blockExplorers: chain.blockExplorerStub
-      ? {
-          default: {
-            name: chain.name,
-            url: chain.blockExplorerStub,
-          },
-        }
-      : undefined,
-    contracts: {
-      multicall3: chain.multicall3
-        ? {
-            address: chain.multicall3.address,
-            blockCreated: chain.multicall3.deployedAt,
-          }
-        : undefined,
-    },
+    rpcUrls: chain.rpcUrls,
+    blockExplorers: chain.blockExplorers,
+    contracts: chain.contracts,
   } as const satisfies chains.Chain;
 }
 
