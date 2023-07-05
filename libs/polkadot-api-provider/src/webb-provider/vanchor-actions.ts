@@ -32,20 +32,17 @@ import {
   ChainType,
   FIELD_SIZE,
   Keypair,
-  MerkleProof,
   MerkleTree,
   Note,
   ResourceId,
   Utxo,
   buildVariableWitnessCalculator,
-  generateVariableWitnessInput,
   parseTypedChainId,
   randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
-import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 import * as snarkjs from 'snarkjs';
 
@@ -54,7 +51,7 @@ import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import assert from 'assert';
-import { BigNumber } from 'ethers';
+import { formatUnits } from 'viem';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
@@ -744,11 +741,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     levels: number,
     input: Utxo,
     leavesMap?: Uint8Array[]
-  ): MerkleProof {
+  ) {
     const tree = new MerkleTree(levels, leavesMap);
 
     let inputMerklePathIndices: number[];
-    let inputMerklePathElements: BigNumber[];
+    let inputMerklePathElements: bigint[];
 
     if (Number(input.amount) > 0) {
       if (input.index === undefined) {
@@ -764,12 +761,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       if (leavesMap === undefined) {
         const path = tree.path(input.index);
         inputMerklePathIndices = path.pathIndices;
-        inputMerklePathElements = path.pathElements;
+        inputMerklePathElements = path.pathElements.map((x) => x.toBigInt());
       } else {
         const mt = new MerkleTree(levels, leavesMap);
         const path = mt.path(input.index);
         inputMerklePathIndices = path.pathIndices;
-        inputMerklePathElements = path.pathElements;
+        inputMerklePathElements = path.pathElements.map((x) => x.toBigInt());
       }
     } else {
       inputMerklePathIndices = new Array(tree.levels).fill(0);
@@ -777,10 +774,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     }
 
     return {
-      element: BigNumber.from(u8aToHex(input.commitment)), // Temporary use of BigNumber
+      element: BigInt(u8aToHex(input.commitment)),
       pathElements: inputMerklePathElements,
       pathIndices: inputMerklePathIndices,
-      merkleRoot: tree.root(),
+      merkleRoot: tree.root().toBigInt(),
     };
   }
 
@@ -797,7 +794,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   ) {
     const levels = await this.inner.getVAnchorLevels(treeId);
 
-    let vanchorMerkleProof: MerkleProof[];
+    let vanchorMerkleProof: Array<ReturnType<typeof this.getMerkleProof>>;
     if (Object.keys(leavesMap).length === 0) {
       vanchorMerkleProof = inputUtxos.map((u) =>
         this.getMerkleProof(levels, u)
@@ -809,18 +806,42 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       );
     }
 
-    const witnessInput = generateVariableWitnessInput(
-      roots,
-      typedChainId,
-      inputUtxos,
-      outputUtxos,
-      extAmount,
-      fee,
-      extDataHash,
-      vanchorMerkleProof
-    );
+    const vanchorMerkleProofs = vanchorMerkleProof.map((proof) => ({
+      pathIndex: MerkleTree.calculateIndexFromPathIndices(proof.pathIndices),
+      pathElements: proof.pathElements,
+    }));
 
-    return witnessInput;
+    const fieldSize = FIELD_SIZE.toBigInt();
+
+    const input = {
+      roots: roots.map((x) => x.toString()),
+      chainID: typedChainId.toString(),
+      inputNullifier: inputUtxos.map((x) => ensureHex(x.nullifier)),
+      outputCommitment: outputUtxos.map((x) =>
+        BigInt(u8aToHex(x.commitment)).toString()
+      ),
+      publicAmount: ((extAmount - fee + fieldSize) % fieldSize).toString(),
+      extDataHash: extDataHash.toString(),
+      // data for 2 transaction inputs
+      inAmount: inputUtxos.map((x) => x.amount.toString()),
+      inPrivateKey: inputUtxos.map((x) => ensureHex(x.secret_key)),
+      inBlinding: inputUtxos.map((x) =>
+        BigInt(ensureHex(x.blinding)).toString()
+      ),
+      inPathIndices: vanchorMerkleProofs.map((x) => x.pathIndex),
+      inPathElements: vanchorMerkleProofs.map((x) => x.pathElements),
+      // data for 2 transaction outputs
+      outChainID: outputUtxos.map((x) => x.chainId),
+      outAmount: outputUtxos.map((x) => x.amount.toString()),
+      outPubkey: outputUtxos.map((x) =>
+        BigInt(x.getKeypair().getPubKey()).toString()
+      ),
+      outBlinding: outputUtxos.map((x) =>
+        BigInt(ensureHex(x.blinding)).toString()
+      ),
+    };
+
+    return input;
   }
 
   private async getSnarkJsWitness(

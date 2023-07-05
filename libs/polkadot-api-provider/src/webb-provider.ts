@@ -69,7 +69,6 @@ import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 import { getLeaves } from './mt-utils';
 import { Storage } from '@webb-tools/storage';
 import { BridgeStorage } from '@webb-tools/browser-utils';
-import { providers } from 'ethers';
 import { VAnchor } from '@webb-tools/anchors';
 
 export class WebbPolkadot

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { BigNumber } from 'ethers';
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
