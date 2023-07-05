@@ -63,6 +63,16 @@ function createWebpack(env, mode = 'production') {
       ]
     : [];
 
+  const envPath = path.resolve(
+    workspaceRoot,
+    'apps',
+    process.env.NX_TASK_TARGET_PROJECT,
+    '.env'
+  );
+
+  const bridgeEnvVars =
+    require('dotenv').config({ path: envPath }).parsed || {};
+
   return {
     experiments: {
       asyncWebAssembly: true,
@@ -249,17 +259,9 @@ function createWebpack(env, mode = 'production') {
         resourceRegExp: /^\.\/locale$/,
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(mode),
-        'process.env.LOCAL_FIXTURES': JSON.stringify(
-          process.env.LOCAL_FIXTURES
-        ),
-        'process.env.DEPLOYMENT': JSON.stringify(
-          process.env.DEPLOYMENT ?? 'develop'
-        ),
-        'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
-          process.env.NX_BRIDGE_APP_DOMAIN
-        ),
+        'process.env': JSON.stringify(bridgeEnvVars),
         'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
+        'process.env.NODE_ENV': JSON.stringify(mode),
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({

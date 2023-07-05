@@ -3,19 +3,10 @@ import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import assert from 'assert';
 import { ethers } from 'ethers';
+
 import { ChainAddressConfig } from '../anchors';
-
 import { CurrencyConfig } from '../currencies';
-
-/**
- * The currency interface for the on-chain currencies
- */
-export interface ICurrency {
-  decimals: number;
-  symbol: string;
-  name: string;
-  address: string;
-}
+import { ICurrency } from '../types';
 
 export interface CurrencyResponse {
   typedChainId: number;
