@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useDarkMode } from '@webb-tools/webb-ui-components';
 import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
@@ -25,65 +25,9 @@ export type ShieldedAssetType = {
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
-const data: ShieldedAssetType[] = [
-  {
-    title: 'webbParachain',
-    address: '0xc0ffee254729296a45a3885639AC7E10F9d54979',
-    poolType: 'single',
-    composition: ['avax', 'btc', 'dot'],
-    deposits24h: 100,
-    tvl: 1000,
-    chains: ['polygon', 'goerli', 'avalanche', 'polkadot'],
-  },
-  {
-    title: 'webbParachain',
-    address: '0x1234...5678',
-    poolType: 'multi',
-    composition: ['link', 'matic', 'near', 'op', 'usdc'],
-    deposits24h: 9999,
-    tvl: 3_680_000,
-    chains: ['polygon', 'scroll', 'optimism'],
-  },
-  {
-    title: 'webbParachain',
-    address: '0x1234...5678',
-    poolType: 'single',
-    composition: ['usdc', 'usdt'],
-    deposits24h: 11000,
-    tvl: 233_321,
-    chains: ['cosmos', 'ethereum'],
-  },
-  {
-    title: 'webbParachain',
-    address: '0x1234...5678',
-    poolType: 'multi',
-    composition: ['weth', 'webbusdc'],
-    deposits24h: 100,
-    tvl: 3_680_000,
-    chains: ['polygon-mumbai', 'tangle'],
-  },
-  {
-    title: 'webbParachain',
-    address: '0x1234...5678',
-    poolType: 'single',
-    composition: ['one', 'near'],
-    deposits24h: 100,
-    tvl: 233_321,
-    chains: ['polygon', 'tangle'],
-  },
-  {
-    title: 'webbParachain',
-    address: '0x1234...5678',
-    poolType: 'single',
-    composition: ['moondev', 'matic', 'dot'],
-    deposits24h: 100,
-    tvl: 233_321,
-    chains: ['polygon', 'tangle'],
-  },
-];
-
 export const ShieldedAssetsTable = () => {
   const [isDarkMode] = useDarkMode();
+  const [data, setData] = useState<ShieldedAssetType[]>([]);
 
   const columns = useMemo(
     () => [
@@ -131,9 +75,5 @@ export const ShieldedAssetsTable = () => {
     [isDarkMode]
   );
 
-  return (
-    <div>
-      <TableTemplate data={data} columns={columns} pageSize={5} />
-    </div>
-  );
+  return <TableTemplate data={data} columns={columns} pageSize={5} />;
 };

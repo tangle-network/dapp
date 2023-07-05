@@ -17,12 +17,12 @@ export default function RootLayout({
   const [, setIsDarkMode] = useDarkMode();
 
   useEffect(() => {
-    setIsDarkMode('dark');
+    setIsDarkMode('light');
   }, [setIsDarkMode]);
 
   return (
     <html lang="en">
-      <WebbUIProvider defaultThemeMode="dark">
+      <WebbUIProvider defaultThemeMode="light">
         <Head>
           <title>Welcome to Hubble Stats!</title>
         </Head>
