@@ -9,37 +9,20 @@ import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { getContract, type PublicClient } from 'viem';
 import { ZERO_BIG_INT } from '../../';
 import { ChainAddressConfig } from '../../anchors';
-import { CurrencyConfig } from '../../currencies';
 import {
-  CurrencyResponse,
-  ICurrency,
-  OnChainConfigBase,
-} from '../on-chain-config-base';
+  LOCALNET_CHAIN_IDS,
+  SELF_HOSTED_CHAIN_IDS,
+  chainsConfig,
+} from '../../chains';
+import { CurrencyConfig, DEFAULT_EVM_CURRENCY } from '../../currencies';
+import { ICurrency } from '../../types';
+import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';
 
 // The chain info is retrieved from https://github.com/ethereum-lists/chains
 const CHAIN_URL = 'https://chainid.network/chains.json';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let EVMOnChainConfigInstance: EVMOnChainConfig;
-
-const LOCALNET_CHAIN_IDS = [
-  EVMChainId.HermesLocalnet,
-  EVMChainId.AthenaLocalnet,
-  EVMChainId.DemeterLocalnet,
-];
-
-const SELF_HOSTED_CHAIN_IDS = [
-  EVMChainId.HermesOrbit,
-  EVMChainId.AthenaOrbit,
-  EVMChainId.DemeterOrbit,
-];
-
-const DEFAULT_CURRENCY: ICurrency = {
-  name: 'Localnet Ether',
-  symbol: 'ETH',
-  decimals: 18,
-  address: zeroAddress,
-};
 
 // Cache the chain data
 let chainData: Array<{
@@ -83,8 +66,8 @@ export class EVMOnChainConfig extends OnChainConfigBase {
     // Maybe evn localnet or self hosted
     const customChainIds = LOCALNET_CHAIN_IDS.concat(SELF_HOSTED_CHAIN_IDS);
     if (customChainIds.includes(chainId)) {
-      this.nativeCurrencyCache.set(typedChainId, DEFAULT_CURRENCY);
-      return DEFAULT_CURRENCY;
+      this.nativeCurrencyCache.set(typedChainId, DEFAULT_EVM_CURRENCY);
+      return DEFAULT_EVM_CURRENCY;
     }
 
     if (!chainData.length) {
@@ -100,7 +83,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
           'Unable to retrieve native token information, fallback to default',
           error
         );
-        return DEFAULT_CURRENCY;
+        return DEFAULT_EVM_CURRENCY;
       }
     }
 
@@ -109,7 +92,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       console.error(
         `Found unsupported chainId ${chainId} for EVM, fallback to default`
       );
-      return DEFAULT_CURRENCY;
+      return DEFAULT_EVM_CURRENCY;
     }
 
     // Parse the native currency
@@ -174,7 +157,11 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       this.fungibleCurrencyCache.set(typedChainId, fungibleCurrency);
       return fungibleCurrency;
     } catch (error) {
-      console.error('Unable to retrieve fungible token information', error);
+      const chain = chainsConfig[typedChainId]?.name ?? 'Unknown';
+      console.error(
+        `Unable to retrieve fungible token information on ${chain}`,
+        error
+      );
       // Cache the error
       this.fungibleCurrencyCache.set(typedChainId, error as Error);
     }

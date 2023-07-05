@@ -3,8 +3,13 @@
 
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
-import { Keypair, Note, Utxo } from '@webb-tools/sdk-core';
-
+import {
+  ChainType,
+  Keypair,
+  Note,
+  ResourceId,
+  Utxo,
+} from '@webb-tools/sdk-core';
 import { PublicActions } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
@@ -14,11 +19,13 @@ import {
   Transaction,
   TransactionState,
 } from '../transaction';
-import type { WebbApiProvider } from '../webb-provider.interface';
+import type {
+  WebbApiProvider,
+  WebbProviderType,
+} from '../webb-provider.interface';
 
-export type ParametersOfTransactMethod = Awaited<
-  Parameters<VAnchorActions['transact']>
->;
+export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
+  Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
 
 export type WithdrawTransactionPayloadType = {
   notes: Note[];
@@ -108,7 +115,7 @@ export const isVAnchorTransferPayload = (
 };
 
 export abstract class AbstractState<
-  T extends WebbApiProvider<any>
+  T extends WebbApiProvider<unknown>
 > extends EventBus<ActionEvent> {
   state: TransactionState = TransactionState.Ideal;
   cancelToken: CancellationToken = new CancellationToken();
@@ -132,7 +139,8 @@ export abstract class AbstractState<
 }
 
 export abstract class VAnchorActions<
-  T extends WebbApiProvider<any> = WebbApiProvider<any>
+  ProviderType extends WebbProviderType,
+  T extends WebbApiProvider<unknown> = WebbApiProvider<unknown>
 > extends AbstractState<T> {
   logger: LoggerService = LoggerService.new(`${this.inner.type}VAnchorActions`);
 
@@ -159,6 +167,12 @@ export abstract class VAnchorActions<
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;
 
+  abstract getResourceId(
+    anchorAddressOrTreeId: string,
+    chainId: number,
+    chainType: ChainType
+  ): Promise<ResourceId>;
+
   // A function to check if the (account, public key) pair is registered.
   abstract isPairRegistered(
     target: string,
@@ -181,7 +195,7 @@ export abstract class VAnchorActions<
     tx: Transaction<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
-  ): Promise<ParametersOfTransactMethod> | never;
+  ): Promise<ParametersOfTransactMethod<ProviderType>> | never;
 
   /**
    * A function to send a transaction to the relayer
@@ -191,7 +205,7 @@ export abstract class VAnchorActions<
    */
   abstract transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod,
+    txArgs: ParametersOfTransactMethod<ProviderType>,
     changeNotes: Note[]
   ): Promise<void>;
 

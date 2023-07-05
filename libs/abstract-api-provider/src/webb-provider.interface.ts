@@ -11,13 +11,17 @@ import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { PublicClient } from 'viem';
+
+import { VAnchor } from '@webb-tools/anchors';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { Storage } from '@webb-tools/storage';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbState } from './state';
-import { ActionEvent } from './transaction';
+import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
@@ -28,9 +32,12 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 }
 
 /// list of the apis that are available for  the provider
-export interface WebbMethods<T extends WebbApiProvider<any>> {
+export interface WebbMethods<
+  ProviderType extends WebbProviderType,
+  T extends WebbApiProvider<any>
+> {
   // Variable Anchor API
-  variableAnchor: WebbVariableAnchor<T>;
+  variableAnchor: WebbVariableAnchor<ProviderType, T>;
   // Wrap and unwrap API
   wrapUnwrap: WrapAndUnwrap<T>;
   // Chain query : an API for querying chain storage used currently for balances
@@ -58,8 +65,11 @@ export type WebbTransactionMethod<T> = {
   enabled: boolean;
 };
 
-export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
-  actions: WebbMethod<VAnchorActions<T>, ActionEvent>;
+export interface WebbVariableAnchor<
+  ProviderType extends WebbProviderType,
+  T extends WebbApiProvider<any>
+> {
+  actions: WebbMethod<VAnchorActions<ProviderType, T>, ActionEvent>;
 }
 
 export interface WrapAndUnwrap<T> {
@@ -207,14 +217,14 @@ export type WebbProviderType = 'web3' | 'polkadot';
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   state: WebbState;
-  methods: WebbMethods<WebbApiProvider<T>>;
+  methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
   backend: Backend;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
   typedChainidSubject: BehaviorSubject<number>;
 
-  type(): WebbProviderType;
+  type: WebbProviderType;
 
   destroy(): Promise<void> | void;
 
@@ -222,7 +232,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   endSession?(): Promise<void>;
 
-  relayerManager: WebbRelayerManager;
+  relayerManager: WebbRelayerManager<WebbProviderType>;
 
   getProvider(): any;
 
@@ -260,4 +270,21 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   // generate utxo
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
+
+  getVAnchorLeaves(
+    vanchor: VAnchor | ApiPromise,
+    storage: Storage<BridgeStorage>,
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      importMetaUrl: string;
+      treeId?: number;
+      palletId?: number;
+      tx?: Transaction<NewNotesTxResult>;
+    }
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }>;
 }

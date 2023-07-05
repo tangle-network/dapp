@@ -64,6 +64,11 @@ export enum PresetTypedChainId {
     SubstrateChainId.LocalTangleStandalone
   ),
 
+  TangleStandaloneTestnet = calculateTypedChainId(
+    ChainType.Substrate,
+    SubstrateChainId.TangleStandaloneTestnet
+  ),
+
   DkgSubstrateStandalone = calculateTypedChainId(
     ChainType.Substrate,
     SubstrateChainId.ProtocolSubstrateStandalone

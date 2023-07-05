@@ -10,6 +10,8 @@ import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '../utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Get the max fee info for the current active chain
@@ -115,11 +117,11 @@ export const useMaxFeeInfo = (
           activeChain.chainId
         );
 
-        const vanchorAddr = apiConfig.getAnchorAddress(
+        const vanchorId = apiConfig.getAnchorIdentifier(
           opt.fungibleCurrencyId,
           currentTypedChainId
         );
-        if (!vanchorAddr) {
+        if (!vanchorId) {
           console.error('No anchor address in current active chain');
           return;
         }
@@ -133,7 +135,7 @@ export const useMaxFeeInfo = (
 
         const feeInfo = await relayer.getFeeInfo(
           currentTypedChainId,
-          vanchorAddr,
+          vanchorId,
           gasAmount
         );
         setFeeInfo(feeInfo);
@@ -167,30 +169,32 @@ export const useMaxFeeInfo = (
       }
 
       const provider = activeApi.getProvider();
-      if (!(provider instanceof Web3Provider)) {
-        setFeeInfo(ZERO_BIG_INT);
+      if (provider instanceof PolkadotProvider) {
+        // On Substrate, we use partial fee dirrectly
+        setFeeInfo(gasLimit[currentTypedChain]);
         setIsLoading(false);
-        return;
+      } else if (provider instanceof Web3Provider) {
+        const gasAmount = gasLimit[currentTypedChain];
+        const etherProvider = provider.intoEthersProvider();
+
+        // Get the greatest gas price
+        let gasPrice = await etherProvider.getGasPrice();
+        const feeData = await etherProvider.getFeeData();
+        if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
+          gasPrice = feeData.maxFeePerGas;
+        }
+
+        if (
+          feeData.maxPriorityFeePerGas &&
+          feeData.maxPriorityFeePerGas.gt(gasPrice)
+        ) {
+          gasPrice = feeData.maxPriorityFeePerGas;
+        }
+
+        setFeeInfo(gasAmount * gasPrice.toBigInt());
+      } else {
+        throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
       }
-
-      const gasAmount = gasLimit[currentTypedChain];
-      const etherProvider = provider.intoEthersProvider();
-
-      // Get the greatest gas price
-      let gasPrice = await etherProvider.getGasPrice();
-      const feeData = await etherProvider.getFeeData();
-      if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
-        gasPrice = feeData.maxFeePerGas;
-      }
-
-      if (
-        feeData.maxPriorityFeePerGas &&
-        feeData.maxPriorityFeePerGas.gt(gasPrice)
-      ) {
-        gasPrice = feeData.maxPriorityFeePerGas;
-      }
-
-      setFeeInfo(gasPrice.mul(gasAmount).toBigInt());
     } catch (error) {
       setError(error);
     } finally {

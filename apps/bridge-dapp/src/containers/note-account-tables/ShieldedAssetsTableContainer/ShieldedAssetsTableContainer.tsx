@@ -107,7 +107,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
 
           {numOfHiddenTokens > 0 && (
             <Typography className="inline-block" variant="body3" ta="center">
-              +3 others
+              +{numOfHiddenTokens} others
             </Typography>
           )}
         </div>

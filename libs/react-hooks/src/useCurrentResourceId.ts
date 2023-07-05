@@ -2,7 +2,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { parseTypedChainId, ResourceId } from '@webb-tools/sdk-core';
 import { useObservableState } from 'observable-hooks';
 import { useEffect } from 'react';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
 
 const resourceIdSubject = new BehaviorSubject<ResourceId | null>(null);
 
@@ -19,14 +19,14 @@ export const useCurrentResourceId = (): ResourceId | null => {
     const subscription = combineLatest([
       activeApi.typedChainidSubject,
       activeApi.state.$activeBridge,
-    ]).subscribe(([typedChainId, activeBridge]) => {
+    ]).subscribe(async ([typedChainId, activeBridge]) => {
       if (!activeBridge) {
         resourceIdSubject.next(null);
         return;
       }
 
-      const address = activeBridge.targets[typedChainId];
-      if (!address) {
+      const addressOrTreeId = activeBridge.targets[typedChainId];
+      if (!addressOrTreeId) {
         console.error('No anchor address found for the current chain');
         resourceIdSubject.next(null);
         return;
@@ -35,7 +35,12 @@ export const useCurrentResourceId = (): ResourceId | null => {
       const { chainId, chainType } = parseTypedChainId(typedChainId);
 
       const currentReourceId = resourceIdSubject.getValue();
-      const nextReourceId = new ResourceId(address, chainType, chainId);
+      const nextReourceId =
+        await activeApi.methods.variableAnchor.actions.inner.getResourceId(
+          addressOrTreeId,
+          chainId,
+          chainType
+        );
 
       if (currentReourceId?.toString() !== nextReourceId.toString()) {
         resourceIdSubject.next(nextReourceId);

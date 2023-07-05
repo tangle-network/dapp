@@ -6,16 +6,19 @@ import { ChainType } from '@webb-tools/sdk-core';
 import { AppEnvironment } from '../types';
 
 export type ChainBase =
-  | 'polygon'
+  | 'arbitrum'
+  | 'athena'
+  | 'avalanche'
+  | 'cosmos'
   | 'ethereum'
-  | 'optimism'
   | 'kusama'
   | 'moonbeam'
+  | 'optimism'
   | 'polkadot'
-  | 'arbitrum'
-  | 'avalanche'
-  | 'tangle'
+  | 'polygon'
   | 'scroll'
+  | 'tangle'
+  | 'orbit'
   | 'webb-dev';
 
 export interface ChainConfig {

@@ -1,8 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApiPromise } from '@polkadot/api';
-import { hexToU8a } from '@polkadot/util';
 import {
   AccountsAdapter,
   Bridge,
@@ -17,6 +15,7 @@ import {
   WebbMethods,
   WebbProviderEvents,
   WebbState,
+  calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
@@ -50,27 +49,26 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
-import { ZkComponents } from '@webb-tools/utils';
+import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { Signer, ethers, providers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Eth } from 'web3-eth';
 
 import { Web3Accounts, Web3Provider } from './ext-provider';
-import { calculateProvingLeavesAndCommitmentIndex } from './utils';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
+import { ApiPromise } from '@polkadot/api';
+import { PublicClient, getContract } from 'viem';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
   implements WebbApiProvider<WebbWeb3Provider>
 {
-  type() {
-    return 'web3' as const;
-  }
+  readonly type = 'web3';
 
   state: WebbState;
 
@@ -92,7 +90,7 @@ export class WebbWeb3Provider
 
   readonly backend: Backend = 'Circom';
 
-  readonly methods: WebbMethods<WebbWeb3Provider>;
+  readonly methods: WebbMethods<'web3', WebbApiProvider<WebbWeb3Provider>>;
 
   readonly relayChainMethods: RelayChainMethods<
     WebbApiProvider<WebbWeb3Provider>
@@ -276,17 +274,20 @@ export class WebbWeb3Provider
     return this.ethersProvider;
   }
 
-  async getVariableAnchorLeaves(
+  async getVAnchorLeaves(
     vanchor: VAnchor,
     storage: Storage<BridgeStorage>,
-    treeHeight: number,
-    targetRoot: string,
-    commitment: bigint,
-    tx?: Transaction<NewNotesTxResult>
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      tx?: Transaction<NewNotesTxResult>;
+    }
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
+    const { tx, commitment, targetRoot, treeHeight } = options;
     const evmId = (await vanchor.contract.provider.getNetwork()).chainId;
     const typedChainId = calculateTypedChainId(ChainType.EVM, evmId);
 
@@ -301,10 +302,7 @@ export class WebbWeb3Provider
         relayers,
         vanchor,
         storage,
-        treeHeight,
-        targetRoot,
-        commitment,
-        tx
+        options
       );
 
     // If unable to fetch leaves from the relayers, get them from chain
@@ -337,8 +335,6 @@ export class WebbWeb3Provider
         retryPromise,
         tx?.cancelToken.abortSignal
       );
-
-      console.log('Leaves from chain: ', leavesFromChain);
 
       // Merge the leaves from chain with the stored leaves
       // and fixed them to 32 bytes
@@ -614,13 +610,10 @@ export class WebbWeb3Provider
 
   async getVAnchorMaxEdges(
     vAnchorAddress: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: PublicClient | ApiPromise
   ): Promise<number> {
-    if (provider instanceof ApiPromise) {
-      console.error(
-        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
-      );
-      provider = this.ethersProvider;
+    if (provider instanceof ApiPromise || !provider) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
     }
 
     const storedMaxEdges = this.vAnchorMaxEdges.get(vAnchorAddress);
@@ -628,11 +621,13 @@ export class WebbWeb3Provider
       return Promise.resolve(storedMaxEdges);
     }
 
-    const vAnchorContract = VAnchor__factory.connect(
-      vAnchorAddress,
-      provider ?? this.ethersProvider
-    );
-    const maxEdges = await retryPromise(vAnchorContract.maxEdges);
+    const vAnchorContract = getContract({
+      address: `0x${vAnchorAddress.replace(/^0x/, '')}`,
+      abi: VAnchor__factory.abi,
+      publicClient: provider,
+    });
+
+    const maxEdges = await vAnchorContract.read.maxEdges();
 
     this.vAnchorMaxEdges.set(vAnchorAddress, maxEdges);
     return maxEdges;
@@ -640,13 +635,10 @@ export class WebbWeb3Provider
 
   async getVAnchorLevels(
     vAnchorAddressOrTreeId: string,
-    providerOrApi?: ethers.providers.Provider | ApiPromise | undefined
+    provider?: ApiPromise | PublicClient
   ): Promise<number> {
-    if (providerOrApi instanceof ApiPromise) {
-      console.error(
-        '`provider` of the type `ApiPromise` is not supported in web3 provider overriding to `this.ethersProvider`'
-      );
-      providerOrApi = this.ethersProvider;
+    if (provider instanceof ApiPromise || !provider) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
     }
 
     const storedLevels = this.vAnchorLevels.get(vAnchorAddressOrTreeId);
@@ -654,11 +646,12 @@ export class WebbWeb3Provider
       return Promise.resolve(storedLevels);
     }
 
-    const vAnchorContract = VAnchor__factory.connect(
-      vAnchorAddressOrTreeId,
-      providerOrApi ?? this.ethersProvider
-    );
-    const levels = await retryPromise(vAnchorContract.getLevels);
+    const vAnchorContract = getContract({
+      address: `0x${vAnchorAddressOrTreeId.replace(/^0x/, '')}`,
+      abi: VAnchor__factory.abi,
+      publicClient: provider,
+    });
+    const levels = await vAnchorContract.read.getLevels();
 
     this.vAnchorLevels.set(vAnchorAddressOrTreeId, levels);
     return levels;

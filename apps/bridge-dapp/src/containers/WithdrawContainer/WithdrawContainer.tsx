@@ -27,7 +27,10 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  RelayerType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   ComponentProps,
   forwardRef,
@@ -162,11 +165,13 @@ export const WithdrawContainer = forwardRef<
     const notes = allNotes
       .get(currentResourceId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
+        (note) =>
+          note.note.tokenSymbol === fungibleCurrency?.view?.symbol &&
+          fungibleCurrency?.hasChain(+note.note.targetChainId)
       );
 
     return notes ?? null;
-  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
+  }, [allNotes, currentResourceId, fungibleCurrency]);
 
   const maxFeeArgs = useMemo(
     () => ({
@@ -409,7 +414,7 @@ export const WithdrawContainer = forwardRef<
     selectedUnwrapToken,
   ]);
 
-  const [amountAfterFeeWei, amountAfterFee] = useMemo(() => {
+  const [amountAfterFeeWei, amountAfterFeeEther] = useMemo(() => {
     const decimals =
       wrappableCurrency?.getDecimals() ?? fungibleCurrency?.getDecimals();
 
@@ -440,7 +445,9 @@ export const WithdrawContainer = forwardRef<
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amountAfterFee, 3, Math.round)
+      ? getRoundedAmountString(amountAfterFeeEther, 3, {
+          roundingFunction: Math.round,
+        })
       : undefined;
 
     const remainderAmount = isValidAmount
@@ -461,7 +468,7 @@ export const WithdrawContainer = forwardRef<
     };
   }, [
     amount,
-    amountAfterFee,
+    amountAfterFeeEther,
     availableAmountFromNotes,
     fungibleCurrency?.view.symbol,
     isUnwrap,
@@ -476,7 +483,7 @@ export const WithdrawContainer = forwardRef<
           exchangeRate={getRoundedAmountString(
             +formatEther(feeInfo.refundExchangeRate),
             6,
-            Math.round
+            { roundingFunction: Math.round }
           )}
           fungibleTokenSymbol={fungibleCurrency?.view.symbol}
           nativeTokenSymbol={currentNativeCurrency?.symbol}
@@ -487,11 +494,9 @@ export const WithdrawContainer = forwardRef<
 
   const transactionFeeInfo = useMemo(() => {
     const estimatedFee = feeInfo
-      ? getRoundedAmountString(
-          Number(formatEther(feeInfo.estimatedFee)),
-          3,
-          Math.round
-        )
+      ? getRoundedAmountString(Number(formatEther(feeInfo.estimatedFee)), 3, {
+          roundingFunction: Math.round,
+        })
       : undefined;
 
     const refundFee =
@@ -835,18 +840,24 @@ export const WithdrawContainer = forwardRef<
               calculateTypedChainId(activeChain.chainType, activeChain.chainId)
             );
 
-            const theme =
-              activeChain.chainType === ChainType.EVM
-                ? ('ethereum' as const)
-                : ('substrate' as const);
+            if (!relayerData?.beneficiary) {
+              return undefined;
+            }
 
-            return {
-              address: relayerData?.beneficiary ?? '',
+            const theme: RelayerType['theme'] =
+              activeChain.chainType === ChainType.EVM
+                ? 'ethereum'
+                : 'substrate';
+
+            const r: RelayerType = {
+              address: relayerData.beneficiary,
               externalUrl: relayer.infoUri,
               theme,
             };
+
+            return r;
           })
-          .filter((x) => x !== undefined)}
+          .filter((r): r is RelayerType => r !== undefined)}
         onClose={() => setMainComponent(undefined)}
         onChange={(nextRelayer) => {
           setRelayer(
@@ -1039,26 +1050,22 @@ export const WithdrawContainer = forwardRef<
       return undefined;
     }
 
-    const receivingAmount = +formatEther(amountAfterFeeWei);
-    if (Number.isNaN(receivingAmount)) {
-      console.error('Invalid receiving amount');
-      return undefined;
-    }
-
     const unwrapTkSym = selectedUnwrapToken?.symbol ?? '';
 
-    if (receivingAmount > liquidity) {
+    if (amountAfterFeeEther > liquidity) {
       return `Insufficient liquidity. Available liquidity is ${liquidity} ${unwrapTkSym}`;
     }
-  }, [amountAfterFeeWei, isUnwrap, liquidity, selectedUnwrapToken?.symbol]);
+  }, [amountAfterFeeEther, isUnwrap, liquidity, selectedUnwrapToken?.symbol]);
 
   const buttonDesc = useMemo(() => {
-    if (!totalFeeInWei) {
+    if (!totalFee) {
       return liquidityDesc;
     }
 
-    const totalFee = Number(formatEther(totalFeeInWei));
-    const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+    const formattedFee = getRoundedAmountString(totalFee, 3, {
+      roundingFunction: Math.round,
+    });
+
     const tkSymbol = selectedFungibleToken?.symbol ?? '';
     const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
@@ -1072,7 +1079,7 @@ export const WithdrawContainer = forwardRef<
     amount,
     liquidityDesc,
     selectedFungibleToken?.symbol,
-    totalFeeInWei,
+    totalFee,
   ]);
 
   const infoItemProps = useMemo<
@@ -1111,7 +1118,9 @@ export const WithdrawContainer = forwardRef<
           ? nativeCurrencySymbol
           : fungiCurrencySymbol;
 
-      feeText = `${getRoundedAmountString(fee, 3, Math.round)} ${tokenSymbol}`;
+      feeText = `${getRoundedAmountString(fee, 3, {
+        roundingFunction: Math.round,
+      })} ${tokenSymbol}`;
     }
 
     const txFeeContent = isFetchingFeeInfo ? 'Calculating...' : feeText;

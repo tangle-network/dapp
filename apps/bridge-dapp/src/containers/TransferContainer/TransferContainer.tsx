@@ -33,6 +33,7 @@ import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/comp
 import {
   AssetType,
   ChainType,
+  RelayerType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
 import { formatEther, parseUnits, formatUnits } from 'viem';
@@ -147,12 +148,16 @@ export const TransferContainer = forwardRef<
       resetMaxFeeInfo,
     } = useMaxFeeInfo(maxFeeArgs);
 
-    const feeInWei = useMemo(() => {
-      if (!feeInfo || typeof feeInfo === 'bigint') {
-        return feeInfo;
+    const [feeInWei, feeInEther] = useMemo(() => {
+      if (!feeInfo) {
+        return [null, null];
       }
 
-      return feeInfo.estimatedFee;
+      if (typeof feeInfo === 'bigint') {
+        return [feeInfo, +formatEther(feeInfo)];
+      }
+
+      return [feeInfo.estimatedFee, +formatEther(feeInfo.estimatedFee)];
     }, [feeInfo]);
 
     const currentNativeCurrency = useMemo(() => {
@@ -294,8 +299,14 @@ export const TransferContainer = forwardRef<
 
     // Callback for bridging asset input click
     const handleBridgingAssetInputClick = useCallback(() => {
+      const typedChainId = destChain
+        ? calculateTypedChainId(destChain.chainType, destChain.chainId)
+        : currentTypedChainId ?? 0;
+
       const currencies = selectableBridgingAssets
-        .map(({ symbol }) => apiConfig.getCurrencyBySymbol(symbol))
+        .map(({ symbol }) =>
+          apiConfig.getCurrencyBySymbolAndTypedChainId(symbol, typedChainId)
+        )
         .filter((c): c is CurrencyConfig => !!c);
 
       const unavailableTokens = apiConfig
@@ -320,6 +331,8 @@ export const TransferContainer = forwardRef<
       );
     }, [
       apiConfig,
+      currentTypedChainId,
+      destChain,
       handleBridgingAssetChange,
       onTryAnotherWallet,
       selectableBridgingAssets,
@@ -422,18 +435,24 @@ export const TransferContainer = forwardRef<
             calculateTypedChainId(activeChain.chainType, activeChain.chainId)
           );
 
-          const theme =
+          if (!relayerData?.beneficiary) {
+            return undefined;
+          }
+
+          const theme: RelayerType['theme'] =
             activeChain.chainType === ChainTypeEnum.EVM
               ? ('ethereum' as const)
               : ('substrate' as const);
 
-          return {
+          const r: RelayerType = {
             address: relayerData?.beneficiary ?? '',
             externalUrl: relayer.infoUri,
             theme,
           };
+
+          return r;
         })
-        .filter((x) => !!x);
+        .filter((r): r is RelayerType => !!r);
 
       setMainComponent(
         <RelayerListCard
@@ -475,20 +494,18 @@ export const TransferContainer = forwardRef<
         return transferAmount;
       }
 
-      if (!feeInWei || !transferAmount) {
+      if (!feeInEther || !transferAmount) {
         return transferAmount;
       }
 
       // If relayer selected, return the amount minus the relayer fee
-      const fee = +formatEther(feeInWei);
-      return transferAmount - fee;
-    }, [activeRelayer, transferAmount, feeInWei]);
+      return transferAmount - feeInEther;
+    }, [activeRelayer, feeInEther, transferAmount]);
 
     // Boolean indicating whether inputs are valid to transfer
     const isValidToTransfer = useMemo<boolean>(() => {
-      const totalFee = Number(formatEther(feeInWei ?? ZERO_BIG_INT));
-
       const amountOrZero = transferAmount ?? 0;
+      const totalFee = feeInEther ?? 0;
 
       return [
         Boolean(fungibleCurrency), // No fungible currency selected
@@ -500,7 +517,8 @@ export const TransferContainer = forwardRef<
         activeRelayer ? amountOrZero >= totalFee : true, // Insufficient balance
       ].some((value) => value === false);
     }, [
-      feeInWei,
+      transferAmount,
+      feeInEther,
       fungibleCurrency,
       destChain,
       recipientError,
@@ -508,7 +526,6 @@ export const TransferContainer = forwardRef<
       recipientPubKey,
       isValidRecipient,
       activeRelayer,
-      transferAmount,
     ]);
 
     const transferAmountWei = useMemo(() => {
@@ -516,10 +533,7 @@ export const TransferContainer = forwardRef<
         return undefined;
       }
 
-      return parseUnits(
-        transferAmount.toString(),
-        fungibleCurrency.view.decimals
-      );
+      return parseUnits(`${transferAmount}`, fungibleCurrency.view.decimals);
     }, [fungibleCurrency, transferAmount]);
 
     // Calculate input notes for current amount
@@ -561,6 +575,7 @@ export const TransferContainer = forwardRef<
         changeAmount: formattedChangeAmount,
         transferTokenSymbol: selectedBridgingAsset?.symbol ?? '',
         rawChangeAmount: changeAmountBigInt,
+        rawChangeAmountInEther: changeAmount,
       };
     }, [
       inputNotes,
@@ -646,6 +661,7 @@ export const TransferContainer = forwardRef<
       }
 
       const changeAmountBI = infoFormatted.rawChangeAmount;
+      const changeAmountInEther = infoFormatted.rawChangeAmountInEther;
       const fungibleCurrencyDecimals = fungibleCurrency.getDecimals();
 
       const destTypedChainId = calculateTypedChainId(
@@ -720,7 +736,7 @@ export const TransferContainer = forwardRef<
           amount={Number(formatUnits(utxoAmount, fungibleCurrencyDecimals))}
           feeInWei={feeInWei}
           feeToken={feeTokenSymbol}
-          changeAmount={+formatUnits(changeAmountBI, fungibleCurrencyDecimals)}
+          changeAmount={changeAmountInEther}
           currency={fungibleCurrency}
           destChain={destChain}
           recipient={recipientPubKey}
@@ -745,6 +761,7 @@ export const TransferContainer = forwardRef<
       currentTypedChainId,
       inputNotes,
       infoFormatted.rawChangeAmount,
+      infoFormatted.rawChangeAmountInEther,
       transferAmountWei,
       recipientPubKey,
       feeInWei,
@@ -945,16 +962,14 @@ export const TransferContainer = forwardRef<
         return 'Calculating...';
       }
 
-      if (!feeInWei) {
+      if (!feeInEther) {
         return '--';
       }
 
-      return `${getRoundedAmountString(
-        Number(formatEther(feeInWei)),
-        3,
-        Math.round
-      )} ${feeTokenSymbol}`;
-    }, [feeInWei, feeTokenSymbol, isFetchingMaxFeeInfo]);
+      return `${getRoundedAmountString(feeInEther, 3, {
+        roundingFunction: Math.round,
+      })} ${feeTokenSymbol}`;
+    }, [feeInEther, feeTokenSymbol, isFetchingMaxFeeInfo]);
 
     const infoItemProps = useMemo<TransferCardProps['infoItemProps']>(() => {
       const { transferTokenSymbol } = infoFormatted;
@@ -962,7 +977,7 @@ export const TransferContainer = forwardRef<
       const formatedRemainingBalance = getRoundedAmountString(
         availableAmountFromNotes - (transferAmount ?? 0),
         3,
-        Math.round
+        { roundingFunction: Math.round }
       );
 
       return [
@@ -996,25 +1011,26 @@ export const TransferContainer = forwardRef<
 
     // Transfer button props
     const buttonDesc = useMemo(() => {
-      if (!feeInWei || !transferAmount) {
+      if (!feeInEther || !transferAmount) {
         return;
       }
 
-      const totalFee = Number(formatEther(feeInWei));
-      const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+      const formattedFee = getRoundedAmountString(feeInEther, 3, {
+        roundingFunction: Math.round,
+      });
       const tkSymbol = infoFormatted?.transferTokenSymbol ?? '';
       const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
-      if (activeRelayer && transferAmount < totalFee) {
+      if (activeRelayer && transferAmount < feeInEther) {
         return `Insufficient funds. You need more than ${feeText} to cover the fee`;
       }
 
       return;
     }, [
-      activeRelayer,
+      feeInEther,
       transferAmount,
-      feeInWei,
       infoFormatted?.transferTokenSymbol,
+      activeRelayer,
     ]);
 
     const isDisabled = useMemo(() => {

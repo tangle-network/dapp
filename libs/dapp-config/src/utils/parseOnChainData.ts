@@ -2,8 +2,7 @@ import {
   ChainType,
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { ICurrency } from '../on-chain-config';
-import { AnchorMetadata } from '../types';
+import { AnchorMetadata, ICurrency } from '../types';
 import addCurrencyToConfig from './addCurrencyToConfig';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { CurrencyConfig } from '../currencies';

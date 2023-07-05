@@ -1,8 +1,13 @@
+import { BN, u8aToHex } from '@polkadot/util';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { FIELD_SIZE } from '@webb-tools/sdk-core';
 import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem';
 
 const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
+  const tokenIdLE = new Uint8Array(
+    new BN(BigInt(extData.token).toString()).toArray('le', 4) // 4 bytes
+  );
+
   const encodedData = encodeAbiParameters(
     parseAbiParameters(
       '(bytes recipient,int256 extAmount,bytes relayer,uint256 fee,uint256 refund,bytes token,bytes encryptedOutput1,bytes encryptedOutput2)'
@@ -14,7 +19,7 @@ const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
         relayer: `0x${extData.relayer.replace(/^0x/, '')}`,
         fee: BigInt(extData.fee),
         refund: BigInt(extData.refund),
-        token: `0x${extData.token.replace(/^0x/, '')}`,
+        token: u8aToHex(tokenIdLE), // AbiCoder encode bytes as little endian
         encryptedOutput1: `0x${extData.encryptedOutput1.replace(/^0x/, '')}`,
         encryptedOutput2: `0x${extData.encryptedOutput2.replace(/^0x/, '')}`,
       },

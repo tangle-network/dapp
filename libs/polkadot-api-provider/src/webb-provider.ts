@@ -1,17 +1,22 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
+import '@webb-tools/api-derive';
 import '@webb-tools/protocol-substrate-types';
 
 import {
   ApiInitHandler,
   Currency,
+  NewNotesTxResult,
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
+  Transaction,
+  TransactionState,
   WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
+  calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
@@ -33,6 +38,7 @@ import {
   buildVariableWitnessCalculator,
   calculateTypedChainId,
   parseTypedChainId,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -46,7 +52,7 @@ import {
   fetchVAnchorKeyFromAws,
   fetchVAnchorWasmFromAws,
 } from '@webb-tools/fixtures-deployments';
-import { ZkComponents } from '@webb-tools/utils';
+import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -60,20 +66,24 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
+import { getLeaves } from './mt-utils';
+import { Storage } from '@webb-tools/storage';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { providers } from 'ethers';
+import { VAnchor } from '@webb-tools/anchors';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
   implements WebbApiProvider<WebbPolkadot>
 {
-  type() {
-    return 'polkadot' as const;
-  }
+  readonly type = 'polkadot';
 
   state: WebbState;
   noteManager: NoteManager | null = null;
 
-  readonly methods: WebbMethods<WebbPolkadot>;
-  readonly relayChainMethods: RelayChainMethods<WebbPolkadot>;
+  readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
+
+  readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbPolkadot>>;
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
@@ -342,6 +352,14 @@ export class WebbPolkadot
     return instance;
   }
 
+  static async getApiPromise(endpoint: string): Promise<ApiPromise> {
+    return new Promise((resolve, reject) => {
+      resolve(
+        PolkadotProvider.getApiPromise('', [endpoint], (error) => reject(error))
+      );
+    });
+  }
+
   async destroy(): Promise<void> {
     await this.provider.destroy();
     this.newBlockSub.forEach((unsub) => unsub());
@@ -366,6 +384,126 @@ export class WebbPolkadot
     return this.typedChainidSubject.getValue();
   }
 
+  async getVAnchorLeaves(
+    api: VAnchor | ApiPromise,
+    storage: Storage<BridgeStorage>,
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      treeId?: number;
+      palletId?: number;
+      tx?: Transaction<NewNotesTxResult>;
+    }
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }> {
+    if (api instanceof VAnchor) {
+      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
+    }
+
+    const { treeHeight, targetRoot, commitment, treeId, palletId, tx } =
+      options;
+
+    if (typeof treeId === 'undefined' || typeof palletId === 'undefined') {
+      throw WebbError.from(WebbErrorCodes.InvalidArguments);
+    }
+
+    const chainId = api.consts.linkableTreeBn254.chainIdentifier.toNumber();
+    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId);
+    const chain = this.config.chains[typedChainId];
+
+    const relayers = this.relayerManager.getRelayers({
+      baseOn: 'substrate',
+      chainId,
+    });
+
+    const leavesFromRelayers =
+      await this.relayerManager.fetchLeavesFromRelayers(
+        relayers,
+        api,
+        storage,
+        {
+          ...options,
+          palletId,
+          treeId,
+        }
+      );
+
+    // If unable to fetch leaves from the relayers, get them from chain
+    if (!leavesFromRelayers) {
+      tx?.next(TransactionState.FetchingLeaves, {
+        start: 0, // Dummy values
+        currentRange: [0, 0], // Dummy values
+      });
+
+      // check if we already cached some values.
+      const lastQueriedBlock = await storage.get('lastQueriedBlock');
+      const storedLeaves = await storage.get('leaves');
+      // The end block number is the current block number
+      const endBlock = await api.derive.chain.bestNumber();
+
+      const queryBlock = lastQueriedBlock ? lastQueriedBlock + 1 : 0;
+
+      console.log(
+        `Query leaves from chain ${
+          chain?.name ?? 'Unknown'
+        } of tree id ${treeId} from block ${queryBlock} to ${endBlock.toNumber()}`
+      );
+
+      const leavesFromChain = await getLeaves(
+        api,
+        treeId,
+        queryBlock,
+        endBlock.toNumber()
+      );
+
+      const leavesFromChainHex = leavesFromChain
+        .map((leaf) => u8aToHex(leaf))
+        .filter((leaf) => leaf !== ZERO_BYTES32); // Filter out zero leaves
+
+      // Merge the leaves from chain with the stored leaves
+      // and fixed them to 32 bytes
+      const leaves = [...storedLeaves, ...leavesFromChainHex].map((leaf) =>
+        toFixedHex(leaf)
+      );
+
+      console.log(`Got ${leaves.length} leaves from chain`);
+
+      tx?.next(TransactionState.ValidatingLeaves, undefined);
+      // Validate the leaves
+      const { leafIndex, provingLeaves } =
+        await calculateProvingLeavesAndCommitmentIndex(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment.toString()
+        );
+
+      // If the leafIndex is -1, it means the commitment is not in the tree
+      // and we should continue to the next relayer
+      if (leafIndex === -1) {
+        tx?.next(TransactionState.ValidatingLeaves, false);
+      } else {
+        tx?.next(TransactionState.ValidatingLeaves, true);
+      }
+
+      // Cached the new leaves if not local chain
+      if (chain?.tag !== 'dev') {
+        await storage.set('lastQueriedBlock', endBlock.toNumber());
+        await storage.set('leaves', leaves);
+      }
+
+      return {
+        provingLeaves,
+        commitmentIndex: leafIndex,
+      };
+    }
+
+    return leavesFromRelayers;
+  }
+
   /**
    * Get the zero knowledge fixtures
    * @param maxEdges the max number of edges in the merkle tree
@@ -376,8 +514,6 @@ export class WebbPolkadot
     maxEdges: number,
     isSmall?: boolean
   ): Promise<ZkComponents> {
-    const dummyAbortSignal = new AbortController().signal;
-
     if (isSmall) {
       if (this.smallFixtures) {
         return this.smallFixtures;
@@ -385,11 +521,7 @@ export class WebbPolkadot
 
       const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
-      const smallWasm = await fetchVAnchorWasmFromAws(
-        maxEdges,
-        isSmall,
-        dummyAbortSignal
-      );
+      const smallWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
 
       const smallFixtures = {
         zkey: smallKey,
@@ -407,11 +539,7 @@ export class WebbPolkadot
 
     const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
 
-    const largeWasm = await fetchVAnchorWasmFromAws(
-      maxEdges,
-      isSmall,
-      dummyAbortSignal
-    );
+    const largeWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
 
     const largeFixtures = {
       zkey: largeKey,

@@ -6,6 +6,7 @@ _Provide a detailed description of proposed changes._
 _Put an `x` in the boxes that apply._
 
 - [ ] `apps/bridge-dapp`
+- [ ] `apps/hubble-stats`
 - [ ] `apps/stats-dapp`
 - [ ] `apps/webbsite`
 - [ ] `apps/faucet`

@@ -8,7 +8,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useVAnchor } from '@webb-tools/react-hooks';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, parseTypedChainId } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
@@ -42,7 +42,12 @@ export const DepositConfirmContainer = forwardRef<
     ref
   ) => {
     const [checked, setChecked] = useState(false);
-    const { api, startNewTransaction } = useVAnchor();
+    const {
+      api,
+      startNewTransaction,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
+    } = useVAnchor();
 
     const [txId, setTxId] = useState('');
 
@@ -55,8 +60,7 @@ export const DepositConfirmContainer = forwardRef<
       [stage]
     );
 
-    const { activeApi, activeChain, noteManager, apiConfig, txQueue } =
-      useWebContext();
+    const { activeApi, activeChain, apiConfig, txQueue } = useWebContext();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -135,7 +139,10 @@ export const DepositConfirmContainer = forwardRef<
       // Get the destination token symbol
       const destToken = tokenSymbol;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(
@@ -157,7 +164,7 @@ export const DepositConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
-        providerType: activeApi.type(),
+        providerType: activeApi.type,
       });
 
       setTxId(tx.id);
@@ -173,11 +180,7 @@ export const DepositConfirmContainer = forwardRef<
           return txQueueApi.cancelTransaction(tx.id);
         }
 
-        // Add the note to the noteManager before transaction is sent.
-        // This helps to safeguard the user.
-        if (noteManager) {
-          await noteManager.addNote(note);
-        }
+        await addNoteToNoteManager(note);
 
         const nextIdx = Number(
           await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
@@ -198,8 +201,8 @@ export const DepositConfirmContainer = forwardRef<
 
         const indexedNote = await Note.deserialize(note.serialize());
         indexedNote.mutateIndex(noteIndex.toString());
-        await noteManager?.addNote(indexedNote);
-        await noteManager?.removeNote(note);
+        await removeNoteFromNoteManager(note);
+        await addNoteToNoteManager(indexedNote);
 
         // Notification Success Transaction
         tx.next(TransactionState.Done, {
@@ -208,7 +211,7 @@ export const DepositConfirmContainer = forwardRef<
         });
       } catch (error: any) {
         console.error(error);
-        noteManager?.removeNote(note);
+        removeNoteFromNoteManager(note);
         tx.txHash = getTransactionHash(error);
         tx.fail(getErrorMessage(error));
         captureSentryException(error, 'transactionType', 'deposit');
@@ -225,10 +228,11 @@ export const DepositConfirmContainer = forwardRef<
       wrappableToken,
       apiConfig,
       startNewTransaction,
-      txQueueApi,
-      noteManager,
-      fungibleTokenId,
       onResetState,
+      txQueueApi,
+      fungibleTokenId,
+      removeNoteFromNoteManager,
+      addNoteToNoteManager,
     ]);
 
     const activeChains = useMemo<string[]>(() => {

@@ -14,6 +14,41 @@ import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 
 import { ChainConfig } from '../chain-config.interface';
 
+const hostedOrbitMulticall3Address =
+  process.env.HOSTED_ORBIT_MULTLICALL3_ADDRESS;
+
+const athenaOrbitMulticall3DeploymentBlock = process.env
+  .ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const hermesOrbitMulticall3DeploymentBlock = process.env
+  .HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const demeterOrbitMulticall3DeploymentBlock = process.env
+  .DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const localOrbitMulticall3Address = process.env.LOCAL_ORBIT_MULTICALL3_ADDRESS;
+
+const localAthenaMulticall3DeploymentBlock = process.env
+  .LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const localHermesMulticall3DeploymentBlock = process.env
+  .LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
+const localDemeterMulticall3DeploymentBlock = process.env
+  .LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
+  : 0;
+
 export const chainsConfig: Record<number, ChainConfig> = {
   // Testnet
   [PresetTypedChainId.Goerli]: {
@@ -154,51 +189,57 @@ export const chainsConfig: Record<number, ChainConfig> = {
     group: 'eth',
     chainId: EVMChainId.HermesOrbit,
     name: 'Hermes Orbit',
-    base: 'webb-dev',
+    base: 'orbit',
     tag: 'test',
     url: 'https://hermes-testnet.webb.tools',
     evmRpcUrls: ['https://hermes-testnet.webb.tools'],
     blockExplorerStub: 'https://hermes-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
-    multicall3: {
-      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
-      deployedAt: 102,
-    },
+    multicall3: hostedOrbitMulticall3Address
+      ? {
+          address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: hermesOrbitMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
   [PresetTypedChainId.AthenaOrbit]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.AthenaOrbit,
     name: 'Athena Orbit',
-    base: 'webb-dev',
+    base: 'orbit',
     tag: 'test',
     url: 'https://athena-testnet.webb.tools',
     evmRpcUrls: ['https://athena-testnet.webb.tools'],
     blockExplorerStub: 'https://athena-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
-    multicall3: {
-      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
-      deployedAt: 100,
-    },
+    multicall3: hostedOrbitMulticall3Address
+      ? {
+          address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: athenaOrbitMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
   [PresetTypedChainId.DemeterOrbit]: {
     chainType: ChainType.EVM,
     group: 'eth',
     chainId: EVMChainId.DemeterOrbit,
     name: 'Demeter Orbit',
-    base: 'webb-dev',
+    base: 'orbit',
     tag: 'test',
     url: 'https://demeter-testnet.webb.tools',
     evmRpcUrls: ['https://demeter-testnet.webb.tools'],
     blockExplorerStub: 'https://demeter-explorer.webb.tools',
     logo: GanacheLogo,
     env: ['development', 'test'],
-    multicall3: {
-      address: '0xCf890FcB622733FCB2DDC915f2d499306B52dD2e',
-      deployedAt: 102,
-    },
+    multicall3: hostedOrbitMulticall3Address
+      ? {
+          address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: demeterOrbitMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
 
   // Localnet
@@ -213,6 +254,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     evmRpcUrls: ['http://127.0.0.1:5004'],
     logo: GanacheLogo,
     env: ['development'],
+    multicall3: localOrbitMulticall3Address
+      ? {
+          address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: localHermesMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
   [PresetTypedChainId.AthenaLocalnet]: {
     chainType: ChainType.EVM,
@@ -225,6 +272,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     evmRpcUrls: ['http://127.0.0.1:5005'],
     logo: GanacheLogo,
     env: ['development'],
+    multicall3: localOrbitMulticall3Address
+      ? {
+          address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: localAthenaMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
   [PresetTypedChainId.DemeterLocalnet]: {
     chainType: ChainType.EVM,
@@ -237,5 +290,11 @@ export const chainsConfig: Record<number, ChainConfig> = {
     evmRpcUrls: ['http://127.0.0.1:5006'],
     logo: GanacheLogo,
     env: ['development'],
+    multicall3: localOrbitMulticall3Address
+      ? {
+          address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
+          deployedAt: localDemeterMulticall3DeploymentBlock,
+        }
+      : undefined,
   },
 };

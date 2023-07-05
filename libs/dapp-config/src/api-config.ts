@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -9,6 +10,8 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
+import { u8aToHex } from '@webb-tools/utils';
+import assert from 'assert';
 import { PublicClient } from 'viem';
 import { parsedAnchorConfig } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
@@ -17,7 +20,10 @@ import { BridgeConfigEntry } from './bridges/bridge-config.interface';
 import { ChainConfig } from './chains/chain-config.interface';
 import { CurrencyConfig } from './currencies/currency-config.interface';
 import { EVMOnChainConfig, SubstrateOnChainConfig } from './on-chain-config';
-import { getNativeCurrencyFromConfig } from './utils';
+import {
+  getNativeCurrencyFromConfig,
+  parseSubstrateTargetSystem,
+} from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
@@ -104,7 +110,7 @@ export class ApiConfig {
     );
   };
 
-  getEVMChainName = (evmId: number): string => {
+  getEVMChainName(evmId: number): string {
     const chain = Object.values(this.chains).find(
       (chainsConfig) => chainsConfig.chainId === evmId
     );
@@ -114,30 +120,33 @@ export class ApiConfig {
     } else {
       throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
-  };
+  }
 
-  getChainNameFromTypedChainId = (typedChainId: TypedChainId): string => {
+  getChainNameFromTypedChainId(typedChainId: TypedChainId): string {
     const chain =
       this.chains[
         calculateTypedChainId(typedChainId.chainType, typedChainId.chainId)
       ];
     return chain.name;
-  };
+  }
 
-  getNativeCurrencySymbol = (evmId: number): string => {
+  getNativeCurrencySymbol(evmId: number): string {
     const currency = getNativeCurrencyFromConfig(
       this.currencies,
       calculateTypedChainId(ChainType.EVM, evmId)
     );
 
     return currency?.symbol ?? 'Unknown';
-  };
+  }
 
-  getCurrencyBySymbol(symbol: string): CurrencyConfig | undefined {
-    const currency = Object.keys(this.currencies).find(
-      (key) => this.currencies[key as any].symbol === symbol
+  getCurrencyBySymbolAndTypedChainId(
+    symbol: string,
+    typedChainId: number
+  ): CurrencyConfig | undefined {
+    return Object.values(this.currencies).find(
+      (currencyCfg) =>
+        currencyCfg.symbol === symbol && currencyCfg.addresses.has(typedChainId)
     );
-    return this.currencies[currency as any] ?? undefined;
   }
 
   getCurrencyByAddress(rawAddress: string): CurrencyConfig | undefined {
@@ -151,7 +160,14 @@ export class ApiConfig {
     return this.currencies[currency as any] ?? undefined;
   }
 
-  getAnchorAddress(fungibleCurrencyId: number, typedChainId: number) {
+  /**
+   * Get the anchor identifier of the given fungible currency id and typed chain id
+   * it could be either the anchor address on evm or tree id on substrate
+   * @param fungibleCurrencyId the fungible currency id of the anchor
+   * @param typedChainId the typed chain id of the anchor
+   * @returns either the anchor address on evm or tree id on substrate
+   */
+  getAnchorIdentifier(fungibleCurrencyId: number, typedChainId: number) {
     const anchor = this.anchors[fungibleCurrencyId];
     if (!anchor) {
       return undefined;
@@ -179,5 +195,31 @@ export class ApiConfig {
       return true;
     });
     return currencies;
+  }
+
+  /**
+   * Parse the target system then compare with the anchor identifier
+   * @param anchorIdentifier the anchor identifier, either the anchor address on evm or tree id on substrate
+   * @param targetSystem the target system, which is get from the resource id (it should be 26 bytes)
+   * @returns true if the anchor identifier is matched with the target system
+   */
+  isEqTargetSystem(
+    anchorIdentifier: `0x${string}`,
+    targetSystem: Uint8Array
+  ): boolean {
+    assert(targetSystem.length === 26, 'target system should be 26-bytes');
+
+    const targetSystemHex = u8aToHex(targetSystem);
+
+    // If the anchor identifier is ethereum address, compare it directly with the target system
+    if (isEthereumAddress(anchorIdentifier)) {
+      // Compare using BigInt because the target hex maybe start with 0x00
+      return BigInt(anchorIdentifier) === BigInt(targetSystemHex);
+    }
+
+    // Otherwise, the anchor identifier is substrate tree id,
+    // parse the target system and compare the tree id
+    const { treeId } = parseSubstrateTargetSystem(targetSystemHex);
+    return +anchorIdentifier === treeId;
   }
 }

@@ -62,25 +62,6 @@ export class NoteManager {
     this.notesMap = new Map();
   }
 
-  /**
-   * Get the resource id of the note
-   * @param note the note to parse and get the resource id
-   * @param isSource if true, get the resource id of the source chain,
-   * otherwise get the resource id of the target chain
-   */
-  static getResourceId(note: Note, isSource?: boolean): ResourceId {
-    const typedChainId = isSource
-      ? note.note.sourceChainId
-      : note.note.targetChainId;
-    const { chainId, chainType } = parseTypedChainId(+typedChainId);
-
-    const contractAddress = isSource
-      ? note.note.sourceIdentifyingData
-      : note.note.targetIdentifyingData;
-
-    return new ResourceId(contractAddress, chainType, chainId);
-  }
-
   static async initAndDecryptNotes(
     noteStorage: Storage<NoteStorage>,
     keypair: Keypair
@@ -255,13 +236,13 @@ export class NoteManager {
     return amount;
   }
 
-  async addNote(note: Note) {
-    const resourceId = NoteManager.getResourceId(note).toString();
-    const targetNotes = this.notesMap.get(resourceId);
+  async addNote(resourceId: ResourceId, note: Note) {
+    const resourceIdStr = resourceId.toString();
+    const targetNotes = this.notesMap.get(resourceIdStr);
 
     if (!targetNotes) {
       // Create a new entry into the notes map
-      this.notesMap.set(resourceId, [note]);
+      this.notesMap.set(resourceIdStr, [note]);
     } else {
       // Check if this same note has already been added
       if (
@@ -274,18 +255,18 @@ export class NoteManager {
 
       // Append the note to the existing available notes
       targetNotes.push(note);
-      this.notesMap.set(resourceId, targetNotes);
+      this.notesMap.set(resourceIdStr, targetNotes);
     }
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
 
     await this.updateStorage();
   }
 
-  async removeNote(note: Note) {
-    const resourceId = NoteManager.getResourceId(note).toString();
+  async removeNote(resourceId: ResourceId, note: Note) {
+    const resourceIdStr = resourceId.toString();
 
     // Remove the note from the local map
-    const targetNotes = this.notesMap.get(resourceId);
+    const targetNotes = this.notesMap.get(resourceIdStr);
     if (!targetNotes) {
       return;
     }
@@ -295,9 +276,9 @@ export class NoteManager {
     );
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
-      this.notesMap.set(resourceId, targetNotes);
+      this.notesMap.set(resourceIdStr, targetNotes);
     } else {
-      this.notesMap.delete(resourceId);
+      this.notesMap.delete(resourceIdStr);
     }
 
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);

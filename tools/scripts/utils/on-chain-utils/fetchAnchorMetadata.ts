@@ -10,15 +10,18 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
-import { AnchorMetadata } from '@webb-tools/dapp-config/src/types';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import {
+  DEFAULT_DECIMALS,
+  DEFAULT_NATIVE_INDEX,
+} from '@webb-tools/dapp-config/src/constants';
+import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
+import { getContract } from 'viem';
 import getViemClient from './getViemClient';
-import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from './shared';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
@@ -26,33 +29,50 @@ async function fetchEVMAnchorMetadata(
 ): Promise<AnchorMetadata> {
   const client = getViemClient(typedChainId);
 
-  const anchorAddrHex = (
-    anchorAddress.startsWith('0x') ? anchorAddress : `0x${anchorAddress}`
-  ) as `0x${string}`;
+  const anchorAddrHex = `0x${anchorAddress.replace(/^0x/, '')}` as const;
 
   const sharedAnchorProps = {
     address: anchorAddrHex,
     abi: VAnchor__factory.abi,
   } as const;
 
-  const [fungibleAddr, neighborEdges] = await client.multicall({
-    allowFailure: false,
-    contracts: [
-      {
-        ...sharedAnchorProps,
-        functionName: 'token',
-      },
-      {
-        ...sharedAnchorProps,
-        functionName: 'getLatestNeighborEdges',
-      },
-    ],
+  // Use when multicall is not supported
+  const vAnchorContract = getContract({
+    ...sharedAnchorProps,
+    publicClient: client,
   });
+
+  const isMulticallSupported = !!client.chain.contracts?.multicall3;
+
+  const [fungibleAddr, neighborEdges] = await (isMulticallSupported
+    ? client.multicall({
+        allowFailure: false,
+        contracts: [
+          {
+            ...sharedAnchorProps,
+            functionName: 'token',
+          },
+          {
+            ...sharedAnchorProps,
+            functionName: 'getLatestNeighborEdges',
+          },
+        ],
+      })
+    : Promise.all([
+        vAnchorContract.read.token(),
+        vAnchorContract.read.getLatestNeighborEdges(),
+      ]));
 
   const sharedFungibleProps = {
     address: fungibleAddr,
     abi: FungibleTokenWrapper__factory.abi,
   } as const;
+
+  // Use when multicall is not supported
+  const fungibleContract = getContract({
+    ...sharedFungibleProps,
+    publicClient: client,
+  });
 
   const [
     fungibleName,
@@ -60,31 +80,39 @@ async function fetchEVMAnchorMetadata(
     fungibleDecimals,
     wrappableTokens,
     isNativeAllowed,
-  ] = await client.multicall({
-    allowFailure: false,
-    contracts: [
-      {
-        ...sharedFungibleProps,
-        functionName: 'name',
-      },
-      {
-        ...sharedFungibleProps,
-        functionName: 'symbol',
-      },
-      {
-        ...sharedFungibleProps,
-        functionName: 'decimals',
-      },
-      {
-        ...sharedFungibleProps,
-        functionName: 'getTokens',
-      },
-      {
-        ...sharedFungibleProps,
-        functionName: 'isNativeAllowed',
-      },
-    ],
-  });
+  ] = await (isMulticallSupported
+    ? client.multicall({
+        allowFailure: false,
+        contracts: [
+          {
+            ...sharedFungibleProps,
+            functionName: 'name',
+          },
+          {
+            ...sharedFungibleProps,
+            functionName: 'symbol',
+          },
+          {
+            ...sharedFungibleProps,
+            functionName: 'decimals',
+          },
+          {
+            ...sharedFungibleProps,
+            functionName: 'getTokens',
+          },
+          {
+            ...sharedFungibleProps,
+            functionName: 'isNativeAllowed',
+          },
+        ],
+      })
+    : Promise.all([
+        fungibleContract.read.name(),
+        fungibleContract.read.symbol(),
+        fungibleContract.read.decimals(),
+        fungibleContract.read.getTokens(),
+        fungibleContract.read.isNativeAllowed(),
+      ]));
 
   const fungibleCurrency = {
     name: fungibleName,
@@ -93,33 +121,49 @@ async function fetchEVMAnchorMetadata(
     address: fungibleAddr,
   } satisfies ICurrency;
 
-  const wrappableWithoutNative = wrappableTokens.filter(
-    (addr) => BigInt(addr) !== ZERO_BIG_INT
-  );
-  const res = await client.multicall({
-    allowFailure: false,
-    contracts: wrappableWithoutNative
-      .map((addr) => {
-        return [
-          {
-            address: addr,
-            abi: ERC20__factory.abi,
-            functionName: 'name',
-          } as const,
-          {
-            address: addr,
-            abi: ERC20__factory.abi,
-            functionName: 'symbol',
-          } as const,
-          {
-            address: addr,
-            abi: ERC20__factory.abi,
-            functionName: 'decimals',
-          } as const,
-        ];
+  const wrappableWithoutNative: ReadonlyArray<`0x${string}`> =
+    wrappableTokens.filter((addr) => BigInt(addr) !== BigInt(0));
+
+  const res = await (isMulticallSupported
+    ? client.multicall({
+        allowFailure: false,
+        contracts: wrappableWithoutNative
+          .map((addr) => {
+            return [
+              {
+                address: addr,
+                abi: ERC20__factory.abi,
+                functionName: 'name',
+              } as const,
+              {
+                address: addr,
+                abi: ERC20__factory.abi,
+                functionName: 'symbol',
+              } as const,
+              {
+                address: addr,
+                abi: ERC20__factory.abi,
+                functionName: 'decimals',
+              } as const,
+            ];
+          })
+          .reduce((acc, val) => acc.concat(...val), []),
       })
-      .reduce((acc, val) => acc.concat(...val), []),
-  });
+    : Promise.all(
+        wrappableWithoutNative.map((addr) => {
+          const contract = getContract({
+            address: addr,
+            abi: ERC20__factory.abi,
+            publicClient: client,
+          });
+
+          return Promise.all([
+            contract.read.name(),
+            contract.read.symbol(),
+            contract.read.decimals(),
+          ]);
+        })
+      ).then((res) => res.reduce((acc, val) => acc.concat(...val), [])));
 
   assert.strictEqual(res.length % 3, 0, 'Result length is not a multiple of 3');
   assert.strictEqual(

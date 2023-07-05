@@ -1,10 +1,11 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import { hexToU8a } from '@webb-tools/utils';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
 
 import { Currency } from '@webb-tools/abstract-api-provider';
+import { ensureHex } from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { useNoteAccount } from '../useNoteAccount';
 
@@ -39,21 +40,24 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             resourceId.chainType,
             resourceId.chainId
           );
-          // Convert bytes to hex string and then to BigInt to remove padding 0s at the beginning
-          // then convert back to hex string
-          const anchorAddressBigInt = BigInt(u8aToHex(resourceId.targetSystem));
 
           // Iterate through all notes and calculate the balance of each fungible currency
           // on each chain
           notes.forEach(({ note }) => {
             const fungible = allFungibles.find((f) => {
-              const addr = apiConfig.getAnchorAddress(f.id, typedChainId);
+              const anchorIdentifier = apiConfig.getAnchorIdentifier(
+                f.id,
+                typedChainId
+              );
 
               return (
-                addr &&
+                anchorIdentifier &&
                 f.view.symbol === note.tokenSymbol &&
                 f.hasChain(typedChainId) &&
-                BigInt(addr) === anchorAddressBigInt
+                apiConfig.isEqTargetSystem(
+                  ensureHex(anchorIdentifier),
+                  resourceId.targetSystem
+                )
               );
             });
 

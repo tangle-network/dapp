@@ -48,48 +48,72 @@ Before setting up a local testnet, we first need to clear our local storage in t
 
 **1. Clear local storage in the browser**
 
-Next, we will open a separate terminal window and execute the following instructions. For more in-depth protocol-solidity setup please refer to the [`README.md`](https://github.com/webb-tools/protocol-solidity#-getting-started---)
+Next, we will open a separate terminal window and execute the following instructions. For more in-depth the Orbit setup please refer to the [`README.md`](https://github.com/webb-tools/orbit#-quick-start--)
 
-**2. Clone the [protocol-solidity](https://github.com/webb-tools/protocol-solidity) repo**
+**2. Clone the [orbit](https://github.com/webb-tools/orbit) repo**
 
 ```
-git clone https://github.com/webb-tools/protocol-solidity/
-cd protocol-solidity
+git clone https://github.com/webb-tools/orbit
+cd orbit
 ```
 
-**3. Install dependencies**
+**3. Start the network using [Docker](https://www.docker.com/)**
+
+You can follow the instructions [here](https://docs.docker.com/get-docker/) to install Docker on your machine. Then run the following command to start the network:
+
+```
+docker compose up
+```
+
+to stop the network run:
+
+```
+docker compose down
+```
+
+⚠️ **NOTE:** If you already ran the network before, you may need to remove the old data and logs before starting the network again. To do so, run the following commands:
+
+```
+rm -rf data logs
+```
+
+**4. Open a new window and navigate to the deploy directory**
+
+```
+cd deploy
+```
+
+**5. Populate fixtures**
+
+⚠️ **NOTE:** Prerequisites for fetching fixtures is to have [dvc](https://dvc.org/) installed locally. You can view installation instructions [here](https://dvc.org/doc/install). For macos it is recommended to install using `pip install dvc`.
+
+```
+yarn dvc:pull
+```
+
+**6. Install the npm dependencies for running deploy scripts**
 
 ```
 yarn install
 ```
 
-**4. Fetch submodules**
+**7. Run the deploy script and faucet script**
+
+Run the deploy script to deploy the contracts to the local running network.
 
 ```
-git submodule update --init --recursive
+yarn deploy --deployWeth --allowWrappingNativeToken --allowWrappingNativeToken
 ```
 
-**5. Populate fixtures from the submodules:**
+Run the faucet script to send test tokens to your account (replace the recipient address with your own address and the erc20Address with the address of the ERC20 token you want to send)
 
-⚠️ **NOTE:** Prerequisites for fetching fixtures is to have [dvc](https://dvc.org/) installed locally. You can view installation instructions [here](https://dvc.org/doc/install). For macos it is recommended to install using `pip install dvc`.
-
-```
-yarn fetch:fixtures
-```
-
-**6. Compile contracts and build typescript interfaces**
-
-```
-yarn build
-```
-
-**7. Start local test network**
-
-```
-npx ts-node ./scripts/evm/deployments/LocalEvmVBridge.ts
+```sh
+yarn faucet --recipients="YOUR_WALLET_ADDRESS" --nativeTokenAmount=1000 --erc20Address="DEPLOYED_ERC20_ADDRESS" --erc20Amount=1000
 ```
 
 Great! Now you have a running local EVM test network.
+
+> ⚠️️ Note: After deploying the contracts, maybe you need to restart the bridge-dapp and update the environment variables in the `.env` file with the deployed contract addresses and deploy block number.
 
 #### Setting up local relayer
 
