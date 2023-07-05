@@ -11,7 +11,7 @@ import {
   ShieldedCell,
 } from './cells';
 
-export type ShieldedAssetType = {
+export type ShieldedPoolType = {
   title: string;
   address: string;
   poolType: PoolType;
@@ -21,7 +21,7 @@ export type ShieldedAssetType = {
   chains: string[];
 };
 
-const columnHelper = createColumnHelper<ShieldedAssetType>();
+const columnHelper = createColumnHelper<ShieldedPoolType>();
 
 const columns = [
   columnHelper.accessor('title', {
@@ -66,7 +66,7 @@ const columns = [
 ];
 
 export const ShieldedPoolsTable = () => {
-  const [data, setData] = useState<ShieldedAssetType[]>([]);
+  const [data, setData] = useState<ShieldedPoolType[]>([]);
 
   return <TableTemplate data={data} columns={columns} pageSize={5} />;
 };
