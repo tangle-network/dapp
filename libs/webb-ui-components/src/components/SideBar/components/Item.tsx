@@ -84,7 +84,15 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
                 : ''
             }
           >
-            <Icon width={24} height={24} />
+            <Icon
+              width={24}
+              height={24}
+              className={
+                isActive
+                  ? '!fill-mono-200 dark:!fill-mono-0'
+                  : '!fill-mono-100 dark:!fill-mono-60'
+              }
+            />
           </div>
 
           {isSidebarOpen && (
