@@ -526,9 +526,9 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 const rpc = Object.values(chains).reduce((acc, chain) => {
                   if (
                     chain.chainType === ChainType.EVM &&
-                    chain.evmRpcUrls?.length
+                    chain.rpcUrls.public.http.length
                   ) {
-                    acc[chain.id] = chain.evmRpcUrls[0];
+                    acc[chain.id] = chain.rpcUrls.public.http[0];
                   }
                   return acc;
                 }, {} as Record<number, string>);
@@ -687,14 +687,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 await web3Provider.switchAndAddChain({
                   chainId: `0x${chain.id.toString(16)}`,
                   chainName: chain.name,
-                  rpcUrls: chain.evmRpcUrls ?? [],
+                  rpcUrls: Array.from(chain.rpcUrls.default.http ?? []),
                   nativeCurrency: {
                     decimals: 18,
                     name: currency.name,
                     symbol: currency.symbol,
                   },
-                  blockExplorerUrls: chain.blockExplorerStub
-                    ? [chain.blockExplorerStub]
+                  blockExplorerUrls: chain.blockExplorers
+                    ? [chain.blockExplorers.default.url]
                     : undefined,
                 });
 
