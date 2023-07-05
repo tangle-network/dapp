@@ -69,9 +69,7 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
           isActive && isSidebarOpen
             ? 'bg-mono-20 dark:bg-mono-170 rounded-full'
             : '',
-          isSidebarOpen
-            ? 'justify-between px-2 py-3'
-            : 'justify-center'
+          isSidebarOpen ? 'justify-between px-2 py-3' : 'justify-center'
         )}
         onClick={pushToLinkAndToggleDropdown}
       >
