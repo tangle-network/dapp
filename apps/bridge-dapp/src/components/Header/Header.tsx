@@ -40,7 +40,7 @@ export const Header: FC<HeaderProps> = () => {
   const subPage = useMemo(() => pathnames[1], [pathnames]);
 
   return (
-    <header className="pt-[24px] pb-[40px]">
+    <header className="pt-6 pb-10">
       <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
         <Breadcrumbs>
           <NavLink to="/bridge">

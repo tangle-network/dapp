@@ -14,7 +14,7 @@ export const ThemeToggle = () => {
 
   return (
     <div
-      className={`relative inline-block w-[56px] h-[32px] align-middle select-none transition duration-200 ease-in rounded-full ${
+      className={`relative inline-block w-14 h-8 align-middle select-none transition duration-200 ease-in rounded-full ${
         isDarkMode ? 'bg-mono-0' : 'bg-mono-200'
       }`}
     >
@@ -36,9 +36,9 @@ export const ThemeToggle = () => {
         }`}
       >
         {isDarkMode ? (
-          <MoonLine className="h-[28px] w-[28px] ml-[-2px] bg-mono-200 rounded-full p-[3px]" />
+          <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-200 rounded-full p-[3px]" />
         ) : (
-          <SunLine className="h-[28px] w-[28px] ml-[3px] bg-blue-30 rounded-full p-[2px]" />
+          <SunLine className="h-7 w-7 ml-[3px] bg-blue-30 rounded-full p-0.5" />
         )}
       </div>
     </div>

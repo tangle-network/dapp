@@ -62,16 +62,16 @@ export const SideBar: React.FC<SidebarProps> = ({
     <div className="flex gap-2 sticky top-0 left-0 z-50">
       <div
         className={twMerge(
-          'h-screen flex flex-col justify-between py-[48px] px-[16px] bg-mono-0 dark:bg-mono-160 transition-all duration-200 ease-in-out',
-          isSidebarOpen ? 'w-[280px]' : 'w-[64px]'
+          'h-screen flex flex-col justify-between py-12 px-4 bg-mono-0 dark:bg-mono-160 transition-all duration-200 ease-in-out',
+          isSidebarOpen ? 'w-72' : 'w-16'
         )}
       >
         <div>
-          <div className={isSidebarOpen ? 'px-[8px]' : ''}>
+          <div className={isSidebarOpen ? 'px-2' : ''}>
             {!isSidebarOpen && ClosedLogo ? <ClosedLogo /> : <Logo size="md" />}
           </div>
 
-          <div className="mt-[44px] flex flex-col gap-[16px]">
+          <div className="mt-11 flex flex-col gap-4">
             {items.map((itemProps, index) => (
               <Item
                 {...itemProps}
@@ -116,7 +116,7 @@ export const SideBar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="pt-[48px] px-[12px]">
+      <div className="pt-12 px-3">
         <SidebarControl
           isSidebarOpen={isSidebarOpen}
           toggleSideBar={() => setIsSidebarOpen(!isSidebarOpen)}

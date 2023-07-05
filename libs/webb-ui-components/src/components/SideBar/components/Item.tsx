@@ -70,7 +70,7 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
             ? 'bg-mono-20 dark:bg-mono-170 rounded-full'
             : '',
           isSidebarOpen
-            ? 'justify-between px-[8px] py-[12px]'
+            ? 'justify-between px-2 py-3'
             : 'justify-center'
         )}
         onClick={pushToLinkAndToggleDropdown}
@@ -81,7 +81,7 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
               !isSidebarOpen
                 ? twMerge(
                     isActive ? 'rounded-full bg-mono-20 dark:bg-mono-170 ' : '',
-                    'p-[12px]'
+                    'p-3'
                   )
                 : ''
             }
@@ -114,7 +114,7 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
       </div>
 
       {isSidebarOpen && isDropdownOpen && (
-        <ul className="flex flex-col gap-[28px] pl-[48px] pr-[20px]">
+        <ul className="flex flex-col gap-7 pl-12 pr-5">
           {subItems.map((subItemProps, index) => (
             <SubItem
               {...subItemProps}
