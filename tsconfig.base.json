@@ -44,8 +44,6 @@
       "@webb-tools/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
       "@webb-tools/icons": ["libs/icons/src/index.ts"],
       "@webb-tools/icons/*": ["libs/icons/src/*"],
-      "@webb-tools/logos": ["libs/logos/src/index.ts"],
-      "@webb-tools/logos/*": ["libs/logos/src/*"],
       "@webb-tools/note-manager": ["libs/note-manager/src/index.ts"],
       "@webb-tools/note-manager/*": ["libs/note-manager/src/*"],
       "@webb-tools/polkadot-api-provider": [

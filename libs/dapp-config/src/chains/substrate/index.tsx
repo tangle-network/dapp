@@ -65,10 +65,12 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     rpcUrls: {
       default: {
-        http: ['ws://127.0.0.1:9944'],
+        http: [],
+        webSocket: ['ws://127.0.0.1:9944'],
       },
       public: {
-        http: ['ws://127.0.0.1:9944'],
+        http: [],
+        webSocket: ['ws://127.0.0.1:9944'],
       },
     },
     env: ['development'],
