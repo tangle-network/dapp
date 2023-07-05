@@ -1,0 +1,53 @@
+import { FC, useMemo } from 'react';
+import cx from 'classnames';
+import { TokenIcon, ChainIcon } from '@webb-tools/icons';
+
+interface IconsCellProps {
+  type: 'chains' | 'tokens';
+  items: string[];
+  className?: string;
+  iconSize?: number;
+}
+
+export const IconsCell: FC<IconsCellProps> = ({
+  items,
+  className,
+  type,
+  iconSize = 16,
+}) => {
+  const Icon = useMemo(
+    () => (type === 'chains' ? ChainIcon : TokenIcon),
+    [type]
+  );
+  const iconSizeNotCovered = useMemo(() => (3 / 4) * iconSize, [iconSize]);
+
+  return (
+    <div
+      className={cx(
+        'h-[16px] flex',
+        { 'justify-center': type === 'tokens' },
+        { 'justify-end': type === 'chains' },
+        className
+      )}
+    >
+      <div
+        className="relative"
+        style={{
+          height: iconSize,
+          width: (items.length - 1) * iconSizeNotCovered + iconSize,
+        }}
+      >
+        {items.map((item, idx) => {
+          return (
+            <Icon
+              key={idx}
+              name={item}
+              className="absolute top-0"
+              style={{ left: `${idx * iconSizeNotCovered}px` }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};

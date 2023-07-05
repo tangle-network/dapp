@@ -64,6 +64,8 @@ export * from './Save';
 export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
+export * from './ShieldedAssetDark';
+export * from './ShieldedAssetLight';
 export * from './ShieldKeyholeIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
