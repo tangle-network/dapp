@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import { TableTemplate } from '.';
+import { TableTemplate } from '..';
 import {
   HeaderCell,
   IconsCell,
@@ -9,7 +9,7 @@ import {
   PoolTypeCell,
   PoolType,
   ShieldedCell,
-} from './cells';
+} from '../table-cells';
 
 export type ShieldedPoolType = {
   title: string;
@@ -68,5 +68,7 @@ const columns = [
 export const ShieldedPoolsTable = () => {
   const [data, setData] = useState<ShieldedPoolType[]>([]);
 
-  return <TableTemplate data={data} columns={columns} pageSize={5} />;
+  return (
+    <TableTemplate data={data} columns={columns} pageSize={5} hasPagination />
+  );
 };

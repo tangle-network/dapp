@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useDarkMode } from '@webb-tools/webb-ui-components';
 import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 
-import { TableTemplate } from '.';
+import { TableTemplate } from '..';
 import {
   HeaderCell,
   IconsCell,
@@ -11,7 +11,7 @@ import {
   PoolTypeCell,
   PoolType,
   ShieldedCell,
-} from './cells';
+} from '../table-cells';
 
 export type ShieldedAssetType = {
   title: string;
@@ -75,5 +75,7 @@ export const ShieldedAssetsTable = () => {
     [isDarkMode]
   );
 
-  return <TableTemplate data={data} columns={columns} pageSize={5} />;
+  return (
+    <TableTemplate data={data} columns={columns} pageSize={5} hasPagination />
+  );
 };

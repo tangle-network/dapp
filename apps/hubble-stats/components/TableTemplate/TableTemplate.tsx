@@ -13,12 +13,16 @@ interface TableTemplateProps<T> {
   pageSize: number;
   data: T[];
   columns: ColumnDef<T, any>[];
+  hasPagination?: boolean;
+  hasColumnBorder?: boolean;
 }
 
 export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
   pageSize,
   data,
   columns,
+  hasPagination,
+  hasColumnBorder,
 }: TableTemplateProps<T>) => {
   const {
     getHeaderGroups,
@@ -56,7 +60,10 @@ export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
           {getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header, idx) => (
-                <th key={idx} className="px-6 py-4">
+                <th
+                  key={idx}
+                  className={cx('px-6 py-4', { 'border-r': hasColumnBorder })}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -74,7 +81,10 @@ export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
               {row.getVisibleCells().map((cell, idx) => (
                 <td
                   key={idx}
-                  className="px-6 py-4 border-b border-mono-40 dark:border-mono-160"
+                  className={cx(
+                    'px-6 py-4 border-b border-mono-40 dark:border-mono-160',
+                    { 'border-r': hasColumnBorder }
+                  )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -84,19 +94,21 @@ export const TableTemplate: FC<TableTemplateProps<any>> = <T,>({
         </tbody>
       </table>
 
-      <Pagination
-        canNextPage={getCanNextPage()}
-        canPreviousPage={getCanPreviousPage()}
-        itemsPerPage={pageSize}
-        totalItems={data.length}
-        totalPages={getPageCount()}
-        previousPage={previousPage}
-        nextPage={nextPage}
-        page={pageIndex + 1}
-        setPageIndex={setPageIndex}
-        iconSize="md"
-        className="pl-6 py-4 border-t-0"
-      />
+      {hasPagination && (
+        <Pagination
+          canNextPage={getCanNextPage()}
+          canPreviousPage={getCanPreviousPage()}
+          itemsPerPage={pageSize}
+          totalItems={data.length}
+          totalPages={getPageCount()}
+          previousPage={previousPage}
+          nextPage={nextPage}
+          page={pageIndex + 1}
+          setPageIndex={setPageIndex}
+          iconSize="md"
+          className="pl-6 py-4 border-t-0"
+        />
+      )}
     </div>
   );
 };
