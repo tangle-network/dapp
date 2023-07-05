@@ -86,7 +86,7 @@ export default function RootLayout({
             items={items}
             Logo={Logo}
             ClosedLogo={LogoWithoutName}
-            logoLink='https://webb.tools/'
+            logoLink="https://webb.tools/"
             footer={footer}
           />
           <main className="flex-1 overflow-y-auto">
