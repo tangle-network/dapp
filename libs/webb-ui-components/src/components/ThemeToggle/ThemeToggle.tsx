@@ -15,7 +15,7 @@ export const ThemeToggle = () => {
   return (
     <div
       className={`relative inline-block w-14 h-8 align-middle select-none transition duration-200 ease-in rounded-full ${
-        isDarkMode ? 'bg-mono-0' : 'bg-mono-200'
+        isDarkMode ? 'bg-mono-200' : 'bg-blue-10'
       }`}
     >
       <input
@@ -32,13 +32,13 @@ export const ThemeToggle = () => {
       ></label>
       <div
         className={`toggle-icon absolute inset-y-0 left-0 flex items-center transition-transform duration-200 ease-in  ${
-          isDarkMode ? 'translate-x-full' : ''
+          !isDarkMode ? 'translate-x-full' : ''
         }`}
       >
         {isDarkMode ? (
-          <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-200 rounded-full p-[3px]" />
+          <SunLine className="h-7 w-7 ml-[3px] bg-blue-30 rounded-full p-0.5 !fill-mono-200" />
         ) : (
-          <SunLine className="h-7 w-7 ml-[3px] bg-blue-30 rounded-full p-0.5" />
+          <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-200 rounded-full p-[3px] !fill-mono-0" />
         )}
       </div>
     </div>
