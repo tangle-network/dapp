@@ -18,7 +18,8 @@ type FooterProps = {
 
 type SidebarProps = {
   Logo: React.FC<LogoProps>;
-  ClosedLogo?: React.FC<LogoProps>;
+  ClosedLogo: React.FC<LogoProps>;
+  logoLink?: string;
   items: ItemProps[];
   footer: FooterProps;
 };
@@ -44,6 +45,7 @@ type SidebarProps = {
 export const SideBar: React.FC<SidebarProps> = ({
   Logo,
   ClosedLogo,
+  logoLink,
   items,
   footer,
 }) => {
@@ -68,7 +70,13 @@ export const SideBar: React.FC<SidebarProps> = ({
       >
         <div>
           <div className={isSidebarOpen ? 'px-2' : ''}>
-            {!isSidebarOpen && ClosedLogo ? <ClosedLogo /> : <Logo size="md" />}
+            <a href={logoLink ? logoLink : '/'} target="_blank">
+              {!isSidebarOpen && ClosedLogo ? (
+                <ClosedLogo />
+              ) : (
+                <Logo size="md" />
+              )}
+            </a>
           </div>
 
           <div className="mt-11 flex flex-col gap-4">

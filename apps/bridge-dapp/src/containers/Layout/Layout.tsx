@@ -71,6 +71,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           items={items}
           Logo={Logo}
           ClosedLogo={LogoWithoutName}
+          logoLink="https://webb.tools/"
           footer={footer}
         />
 

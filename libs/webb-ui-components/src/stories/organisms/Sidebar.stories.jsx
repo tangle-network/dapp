@@ -62,5 +62,6 @@ Default.args = {
   items: items,
   Logo: Logo,
   ClosedLogo: LogoWithoutName,
+  logoLink: 'https://webb.tools/',
   footer: footer,
 };
