@@ -8537,10 +8537,10 @@
   resolved "https://registry.yarnpkg.com/@wagmi/chains/-/chains-1.4.0.tgz#71855105b510de0b412b8238016808dd9940d370"
   integrity sha512-9HwJrhcZ1TxyrCbE10y7s1eSiSiyfGam7AHIOLYExaOX+vpOZ+MNTt4orFEDbEpz1fxwJDPPI38lanAUix1OSA==
 
-"@wagmi/connectors@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-2.6.3.tgz#37b2343f3419677b56c7a98cda52a8bc92f97ba6"
-  integrity sha512-tloHzZq/7OCoOnveNdouhwv0pB1H0lB8+wqurColJsQdMKBTKn5xodl0pCkHjcKHZdELyIcuTINoq9aDzt30sA==
+"@wagmi/connectors@2.6.5":
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-2.6.5.tgz#fffe51f445338711ae2d78a94213ca589ebee29f"
+  integrity sha512-klF31togMDd0qQqEcLl5cCGxjMbL0RRXQ8I1vxmEa3KdGzw6Z3ICVzX7/bDfnNEZcOW7BKyAnZDq7rCt5jTOiw==
   dependencies:
     "@coinbase/wallet-sdk" "^3.6.6"
     "@ledgerhq/connect-kit-loader" "^1.1.0"
@@ -8549,16 +8549,17 @@
     "@walletconnect/ethereum-provider" "2.8.6"
     "@walletconnect/legacy-provider" "^2.0.0"
     "@walletconnect/modal" "2.5.9"
+    "@walletconnect/utils" "2.8.6"
     abitype "0.8.7"
     eventemitter3 "^4.0.7"
 
-"@wagmi/core@^1.3.4":
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-1.3.4.tgz#91dd9b12cc576f0cff92aec9bda85e9f408bd385"
-  integrity sha512-2p6DVtKMRjkFljaQVIBtbH/oHpgoHQ1l9lSG8RmH6Z+Gm8IO67KdUbO0HuxceO/3sfBPrbNY6abbyMEaz0Rx1g==
+"@wagmi/core@^1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-1.3.6.tgz#5204716d0ab8b518c8f1eecef5176f551f804c28"
+  integrity sha512-TXv9ZlRR5aySfERFuWMuo+lKXC/CoqtxVJZVHPqhK1jY+nldMx3AvrWzzF4CccRaMYcVdvPFepvmxzq2A2VvWg==
   dependencies:
     "@wagmi/chains" "1.4.0"
-    "@wagmi/connectors" "2.6.3"
+    "@wagmi/connectors" "2.6.5"
     abitype "0.8.7"
     eventemitter3 "^4.0.7"
     zustand "^4.3.1"
@@ -26089,25 +26090,10 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
-viem@^1.0.0:
+viem@^1.0.0, viem@^1.2.9:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/viem/-/viem-1.2.9.tgz#8ccf786cd00d28b14b644f2b9fe35fc6bf2bdc41"
   integrity sha512-EnEbTuAAHv43unUgMISdQXbD9mrhZLvOdmf6eRGbDFl+XwP/PEzZAT79RaWAuDPnLXGMP1gBCJF++NFjSMukUw==
-  dependencies:
-    "@adraffy/ens-normalize" "1.9.0"
-    "@noble/curves" "1.0.0"
-    "@noble/hashes" "1.3.0"
-    "@scure/bip32" "1.3.0"
-    "@scure/bip39" "1.2.0"
-    "@wagmi/chains" "1.2.0"
-    abitype "0.8.11"
-    isomorphic-ws "5.0.0"
-    ws "8.12.0"
-
-viem@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-1.2.5.tgz#e9f80a57b80d8749624b4b31a98041549a25c5ad"
-  integrity sha512-AeQ1hiyPKXnWb/KTsxRLt7KZUmLgd6NTCe/GyQf+8TZO7ndXmSZf88swE+60v1bLT+FDUWXufKGJ2oNT129wXw==
   dependencies:
     "@adraffy/ens-normalize" "1.9.0"
     "@noble/curves" "1.0.0"
