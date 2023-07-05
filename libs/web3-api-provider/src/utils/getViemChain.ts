@@ -1,9 +1,9 @@
-import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config/src/chains';
-import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { EVMChainId } from '@webb-tools/dapp-types/src/EVMChainId';
-import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { Chain, createPublicClient, http } from 'viem';
-
+import {
+  DEFAULT_EVM_CURRENCY,
+  LOCALNET_CHAIN_IDS,
+  chainsConfig,
+} from '@webb-tools/dapp-config';
+import { EVMChainId } from '@webb-tools/dapp-types';
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
@@ -16,7 +16,7 @@ const VIEM_NOT_SUPPORTED_MULTICALL_CHAINS = [EVMChainId.ScrollAlpha].concat(
  * @param chainId - Chain id of the target EVM chain.
  * @returns Viem's chain object.
  */
-function getViemChain(chainId: number): Chain {
+function getViemChain(chainId: number): chains.Chain | undefined {
   for (const chain of Object.values(chains)) {
     if (chain.id === chainId) {
       return chain;
@@ -28,7 +28,7 @@ function getViemChain(chainId: number): Chain {
  * Defines the Viem chain object from the org chain config.
  * @returns Viem's chain object.
  */
-function defineViemChain(typedChainId: number): Chain {
+function defineViemChain(typedChainId: number): chains.Chain {
   const chain = chainsConfig[typedChainId];
   if (!chain) {
     throw new Error('Chain not found in the chainsConfig');
@@ -47,11 +47,7 @@ function defineViemChain(typedChainId: number): Chain {
     name: chain.name,
     network: chain.base,
     testnet: true,
-    nativeCurrency: {
-      decimals: 18,
-      name: 'ETH',
-      symbol: 'ETH',
-    },
+    nativeCurrency: DEFAULT_EVM_CURRENCY,
     rpcUrls: {
       public: { http: chain.evmRpcUrls },
       default: { http: chain.evmRpcUrls },
@@ -72,24 +68,7 @@ function defineViemChain(typedChainId: number): Chain {
           }
         : undefined,
     },
-  } as const satisfies Chain;
+  } as const satisfies chains.Chain;
 }
 
-function getViemClient(typedChainId: number) {
-  const { chainId } = parseTypedChainId(typedChainId);
-
-  let chain = getViemChain(chainId);
-  if (!chain || VIEM_NOT_SUPPORTED_MULTICALL_CHAINS.includes(chainId)) {
-    chain = defineViemChain(typedChainId);
-  }
-
-  return createPublicClient({
-    chain: chain,
-    batch: {
-      multicall: !!chain.contracts?.multicall3,
-    },
-    transport: http(undefined, { timeout: 60_000 }),
-  });
-}
-
-export default getViemClient;
+export { getViemChain, defineViemChain, VIEM_NOT_SUPPORTED_MULTICALL_CHAINS };

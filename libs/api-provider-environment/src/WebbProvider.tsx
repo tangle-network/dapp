@@ -519,10 +519,10 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             break;
 
           case WalletId.MetaMask:
-          case WalletId.WalletConnectV1:
+          case WalletId.WalletConnectV2:
             {
               let web3Provider: Web3Provider;
-              if (wallet?.id === WalletId.WalletConnectV1) {
+              if (wallet?.id === WalletId.WalletConnectV2) {
                 // Get rpcs from evm chains
                 const rpc = Object.values(chains).reduce((acc, chain) => {
                   if (
@@ -714,7 +714,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     chainId: chain.chainId,
                   },
                   web3Provider instanceof WalletConnectProvider
-                    ? WalletId.WalletConnectV1
+                    ? WalletId.WalletConnectV2
                     : WalletId.MetaMask,
                 ]);
               }

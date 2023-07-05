@@ -182,6 +182,30 @@ export class WebbWeb3Provider
     this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
+  // Init web3 provider with the `Web3Accounts` as the default account provider
+  static async init(
+    web3Provider: Web3Provider,
+    chainId: number,
+    relayerManager: Web3RelayerManager,
+    noteManager: NoteManager | null,
+    appConfig: ApiConfig,
+    notification: NotificationHandler,
+    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
+  ) {
+    const accounts = new Web3Accounts(web3Provider.eth);
+
+    return new WebbWeb3Provider(
+      web3Provider,
+      chainId,
+      relayerManager,
+      noteManager,
+      appConfig,
+      notification,
+      accounts,
+      wasmFactory
+    );
+  }
+
   getProvider(): Web3Provider {
     return this.web3Provider;
   }
@@ -455,53 +479,6 @@ export class WebbWeb3Provider
     );
 
     return notes;
-  }
-
-  // Init web3 provider with the `Web3Accounts` as the default account provider
-  static async init(
-    web3Provider: Web3Provider,
-    chainId: number,
-    relayerManager: Web3RelayerManager,
-    noteManager: NoteManager | null,
-    appConfig: ApiConfig,
-    notification: NotificationHandler,
-    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
-  ) {
-    const accounts = new Web3Accounts(web3Provider.eth);
-
-    return new WebbWeb3Provider(
-      web3Provider,
-      chainId,
-      relayerManager,
-      noteManager,
-      appConfig,
-      notification,
-      accounts,
-      wasmFactory
-    );
-  }
-
-  // Init web3 provider with a generic account provider
-  static async initWithCustomAccountAdapter(
-    web3Provider: Web3Provider,
-    chainId: number,
-    relayerManager: Web3RelayerManager,
-    noteManager: NoteManager | null,
-    appConfig: ApiConfig,
-    notification: NotificationHandler,
-    web3AccountProvider: AccountsAdapter<Eth>,
-    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
-  ) {
-    return new WebbWeb3Provider(
-      web3Provider,
-      chainId,
-      relayerManager,
-      noteManager,
-      appConfig,
-      notification,
-      web3AccountProvider,
-      wasmFactory
-    );
   }
 
   get typedChainId(): number {

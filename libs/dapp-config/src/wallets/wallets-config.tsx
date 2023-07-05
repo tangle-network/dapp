@@ -89,8 +89,8 @@ export const walletsConfig: Record<number, WalletConfig> = {
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
   },
-  [WalletId.WalletConnectV1]: {
-    id: WalletId.WalletConnectV1,
+  [WalletId.WalletConnectV2]: {
+    id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
     name: 'wallet connect',
     title: `Wallet Connect`,
