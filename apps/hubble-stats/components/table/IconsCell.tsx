@@ -13,7 +13,7 @@ export const IconsCell: FC<IconsCellProps> = ({
   items,
   className,
   type,
-  iconSize = 16,
+  iconSize = 24,
 }) => {
   const Icon = useMemo(
     () => (type === 'chains' ? ChainIcon : TokenIcon),
@@ -24,11 +24,12 @@ export const IconsCell: FC<IconsCellProps> = ({
   return (
     <div
       className={cx(
-        'h-[16px] flex',
+        'flex',
         { 'justify-center': type === 'tokens' },
         { 'justify-end': type === 'chains' },
         className
       )}
+      style={{ height: iconSize }}
     >
       <div
         className="relative"
@@ -43,7 +44,11 @@ export const IconsCell: FC<IconsCellProps> = ({
               key={idx}
               name={item}
               className="absolute top-0"
-              style={{ left: `${idx * iconSizeNotCovered}px` }}
+              style={{
+                left: `${idx * iconSizeNotCovered}px`,
+                width: iconSize,
+                height: iconSize,
+              }}
             />
           );
         })}
