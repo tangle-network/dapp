@@ -1,13 +1,12 @@
+'use client';
+
 import { useState } from 'react';
 import { TabContent, TabsRoot } from '@webb-tools/webb-ui-components';
 
-import {
-  ShieldedAssetsTable,
-  ShieldedPoolsTable,
-  ShieldedAssetType,
-  ShieldedPoolType,
-} from '.';
-import { TabsTriggerList } from '..';
+import { ShieldedAssetsTable } from './ShieldedAssetsTable';
+import { ShieldedPoolsTable } from './ShieldedPoolsTable';
+import { ShieldedAssetType, ShieldedPoolType } from './types';
+import { TabsTriggerList } from '../TabsTriggerList';
 
 const pageSize = 5;
 const assetsTab = 'Shielded Assets';
