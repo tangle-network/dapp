@@ -201,7 +201,7 @@ const Proposals = () => {
         <Stats items={statsItems} />
       </Card>
 
-      <StackedAreaChartContainer />
+      {/* <StackedAreaChartContainer /> */}
 
       <ProposalsTable />
 
