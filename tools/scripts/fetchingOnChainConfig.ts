@@ -21,8 +21,9 @@ import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import path from 'path';
 import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
-import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
+import { ZERO_ADDRESS } from '@webb-tools/utils';
+import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
@@ -90,22 +91,34 @@ async function filterActiveSubstrateChains(
   }, {} as Record<number, ApiPromise>);
 }
 
-async function fetchNativeTask(
-  typedChainIds: number[],
-  substrateProviderRecord?: Record<number, ApiPromise>
-) {
-  const nativeCurrencies = await typedChainIds.reduce(
-    async (acc, typedChainId) => {
-      const native = await acc;
-      const provider = substrateProviderRecord?.[typedChainId];
-      const nativeCurrency = await fetchNativeCurrency(typedChainId, provider);
-      native[typedChainId] = nativeCurrency;
-      return native;
-    },
-    {} as Promise<Record<number, ICurrency>>
-  );
+function fetchNativeTask(typedChainIds: number[]) {
+  return typedChainIds.map((typedChainId) => {
+    const { chainType } = parseTypedChainId(typedChainId);
+    let currencyId: string = '';
 
-  return nativeCurrencies;
+    switch (chainType) {
+      case ChainType.EVM: {
+        currencyId = ZERO_ADDRESS;
+        break;
+      }
+
+      case ChainType.Substrate: {
+        currencyId = `${DEFAULT_NATIVE_INDEX}`;
+        break;
+      }
+
+      default: {
+        throw new Error(
+          `Unsupported chain type ${chainType} for chain ${typedChainId}`
+        );
+      }
+    }
+
+    return {
+      ...chainsConfig[typedChainId].nativeCurrency,
+      address: currencyId,
+    } satisfies ICurrency;
+  });
 }
 
 async function fetchAnchorMetadataTask(
@@ -233,10 +246,7 @@ const tasks = new Listr<Ctx>(
               title: color.cyan(`Fetching native currencies...`),
               options: { persistentOutput: true },
               task: async (ctx, task) => {
-                ctx.nativeRecord = await fetchNativeTask(
-                  ctx.typedChainIds,
-                  ctx.substrateProviderRecord
-                );
+                ctx.nativeRecord = fetchNativeTask(ctx.typedChainIds);
 
                 const symbolsSet = Object.values(ctx.nativeRecord).reduce(
                   (acc, cur) => {
