@@ -1,36 +1,44 @@
+import { useState } from 'react';
 import { TabContent, TabsRoot } from '@webb-tools/webb-ui-components';
 
-import { ChainFilter, ShieldedAssetsTable, ShieldedPoolsTable } from '.';
+import {
+  ShieldedAssetsTable,
+  ShieldedPoolsTable,
+  ShieldedAssetType,
+  ShieldedPoolType,
+} from '.';
 import { TabsTriggerList } from '..';
 
-const tabs = [
-  {
-    value: 'assets',
-    title: 'Shielded Assets',
-    component: <ShieldedAssetsTable />,
-  },
-  {
-    value: 'pools',
-    title: 'Shielded Pools',
-    component: <ShieldedPoolsTable />,
-  },
-];
+const pageSize = 5;
+const assetsTab = 'Shielded Assets';
+const poolsTab = 'Shielded Pools';
 
 export const ShieldedTables = () => {
+  const [assetsData, setAssetsData] = useState<ShieldedAssetType[]>([]);
+  const [poolsData, setPoolsData] = useState<ShieldedPoolType[]>([]);
+  const [globalSearchText, setGlobalSearchText] = useState<string>('');
+
   return (
-    <TabsRoot defaultValue="assets" className="space-y-4">
+    <TabsRoot defaultValue={assetsTab} className="space-y-4">
       <div className="flex justify-between items-center">
-        <TabsTriggerList tabs={tabs} />
-        <ChainFilter />
+        <TabsTriggerList tabs={[assetsTab, poolsTab]} />
       </div>
 
-      {tabs.map((tab, idx) => {
-        return (
-          <TabContent key={idx} value={tab.value}>
-            {tab.component}
-          </TabContent>
-        );
-      })}
+      <TabContent value={assetsTab}>
+        <ShieldedAssetsTable
+          data={assetsData}
+          globalSearchText={globalSearchText}
+          pageSize={pageSize}
+        />
+      </TabContent>
+
+      <TabContent value={poolsTab}>
+        <ShieldedPoolsTable
+          data={poolsData}
+          globalSearchText={globalSearchText}
+          pageSize={pageSize}
+        />
+      </TabContent>
     </TabsRoot>
   );
 };

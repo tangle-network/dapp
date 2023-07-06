@@ -2,7 +2,7 @@ import { FC } from 'react';
 import cx from 'classnames';
 import { Chip, ChipProps } from '@webb-tools/webb-ui-components';
 
-export type PoolType = 'single' | 'multi';
+import { PoolType } from '../ShieldedTables';
 
 export interface PoolTypeCellProps {
   type: PoolType;

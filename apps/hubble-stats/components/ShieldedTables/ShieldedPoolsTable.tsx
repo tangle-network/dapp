@@ -1,74 +1,103 @@
-import { useState } from 'react';
-import { createColumnHelper } from '@tanstack/react-table';
+import { FC } from 'react';
+import {
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  ColumnDef,
+  Table as RTTable,
+} from '@tanstack/react-table';
+import { Table, fuzzyFilter } from '@webb-tools/webb-ui-components';
 
-import { TableTemplate } from '..';
+import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
 import {
   HeaderCell,
   IconsCell,
   NumberCell,
   PoolTypeCell,
-  PoolType,
   ShieldedCell,
-} from '../table-cells';
-
-export type ShieldedPoolType = {
-  title: string;
-  address: string;
-  poolType: PoolType;
-  token: number;
-  deposits24h: number;
-  tvl: number;
-  chains: string[];
-};
+} from '../table';
 
 const columnHelper = createColumnHelper<ShieldedPoolType>();
 
-const columns = [
-  columnHelper.accessor('title', {
+const columns: ColumnDef<ShieldedPoolType, any>[] = [
+  columnHelper.accessor('poolAddress', {
     header: () => (
       <HeaderCell title="Shielded Pools" className="justify-start" />
     ),
-    cell: (row) => (
+    cell: (props) => (
       <ShieldedCell
-        title={row.row.original.title}
-        address={row.row.original.address}
+        title={props.row.original.poolSymbol}
+        address={props.row.original.poolAddress}
       />
     ),
   }),
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
-    cell: (poolType) => <PoolTypeCell type={poolType.getValue()} />,
+    cell: (props) => <PoolTypeCell type={props.getValue()} />,
   }),
   columnHelper.accessor('token', {
     header: () => <HeaderCell title="Token #" className="justify-end" />,
-    cell: (token) => (
-      <NumberCell value={token.getValue()} className="text-right" />
+    cell: (props) => (
+      <NumberCell value={props.getValue()} className="text-right" />
     ),
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
-    cell: (deposits24h) => <NumberCell value={deposits24h.getValue()} />,
+    cell: (props) => <NumberCell value={props.getValue()} />,
   }),
   columnHelper.accessor('tvl', {
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
-    cell: (tvl) => <NumberCell value={tvl.getValue()} prefix="$" />,
+    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
   }),
   columnHelper.accessor('chains', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
-    cell: (chains) => (
+    cell: (props) => (
       <IconsCell
         type="chains"
-        items={chains.getValue()}
+        items={props.getValue()}
         className="justify-end"
       />
     ),
   }),
 ];
 
-export const ShieldedPoolsTable = () => {
-  const [data, setData] = useState<ShieldedPoolType[]>([]);
+export const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
+  data,
+  globalSearchText,
+  pageSize,
+}) => {
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      globalFilter: globalSearchText,
+    },
+    initialState: {
+      pagination: {
+        pageSize,
+      },
+    },
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
   return (
-    <TableTemplate data={data} columns={columns} pageSize={5} hasPagination />
+    <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
+      <Table
+        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
+        tableProps={table as RTTable<unknown>}
+        isPaginated
+        totalRecords={data.length}
+      />
+    </div>
   );
 };

@@ -1,81 +1,116 @@
-import { useState, useMemo } from 'react';
-import { createColumnHelper } from '@tanstack/react-table';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { FC, useMemo } from 'react';
+import {
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  ColumnDef,
+  Table as RTTable,
+} from '@tanstack/react-table';
+import {
+  Table,
+  fuzzyFilter,
+  useDarkMode,
+} from '@webb-tools/webb-ui-components';
 import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 
-import { TableTemplate } from '..';
+import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import {
   HeaderCell,
   IconsCell,
   NumberCell,
   PoolTypeCell,
-  PoolType,
   ShieldedCell,
-} from '../table-cells';
-
-export type ShieldedAssetType = {
-  title: string;
-  address: string;
-  poolType: PoolType;
-  composition: string[];
-  deposits24h: number;
-  tvl: number;
-  chains: string[];
-};
+} from '../table';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
-export const ShieldedAssetsTable = () => {
-  const [isDarkMode] = useDarkMode();
-  const [data, setData] = useState<ShieldedAssetType[]>([]);
+const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
+  columnHelper.accessor('poolType', {
+    header: () => <HeaderCell title="Pool Type" />,
+    cell: (props) => <PoolTypeCell type={props.getValue()} />,
+  }),
+  columnHelper.accessor('composition', {
+    header: () => <HeaderCell title="Composition" />,
+    cell: (props) => <IconsCell type="tokens" items={props.getValue()} />,
+  }),
+  columnHelper.accessor('deposits24h', {
+    header: () => <HeaderCell title="24H Deposits" />,
+    cell: (props) => <NumberCell value={props.getValue()} />,
+  }),
+  columnHelper.accessor('tvl', {
+    header: () => <HeaderCell title="TVL" tooltip="TVL" />,
+    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+  }),
+  columnHelper.accessor('chains', {
+    header: () => <HeaderCell title="Chains" className="justify-end" />,
+    cell: (props) => (
+      <IconsCell
+        type="chains"
+        items={props.getValue()}
+        className="justify-end"
+      />
+    ),
+  }),
+];
 
-  const columns = useMemo(
+export const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
+  data,
+  globalSearchText,
+  pageSize,
+}) => {
+  const [isDarkMode] = useDarkMode();
+
+  const columns = useMemo<ColumnDef<ShieldedAssetType, any>[]>(
     () => [
-      columnHelper.accessor('title', {
+      columnHelper.accessor('assetAddress', {
         header: () => (
           <HeaderCell title="Shielded Assets" className="justify-start" />
         ),
-        cell: (row) => (
+        cell: (props) => (
           <ShieldedCell
-            title={row.row.original.title}
-            address={row.row.original.address}
+            title={props.row.original.assetSymbol}
+            address={props.row.original.assetAddress}
             icon={isDarkMode ? <ShieldedAssetDark /> : <ShieldedAssetLight />}
           />
         ),
       }),
-      columnHelper.accessor('poolType', {
-        header: () => <HeaderCell title="Pool Type" />,
-        cell: (poolType) => <PoolTypeCell type={poolType.getValue()} />,
-      }),
-      columnHelper.accessor('composition', {
-        header: () => <HeaderCell title="Composition" />,
-        cell: (composition) => (
-          <IconsCell type="tokens" items={composition.getValue()} />
-        ),
-      }),
-      columnHelper.accessor('deposits24h', {
-        header: () => <HeaderCell title="24H Deposits" />,
-        cell: (deposits24h) => <NumberCell value={deposits24h.getValue()} />,
-      }),
-      columnHelper.accessor('tvl', {
-        header: () => <HeaderCell title="TVL" tooltip="TVL" />,
-        cell: (tvl) => <NumberCell value={tvl.getValue()} prefix="$" />,
-      }),
-      columnHelper.accessor('chains', {
-        header: () => <HeaderCell title="Chains" className="justify-end" />,
-        cell: (chains) => (
-          <IconsCell
-            type="chains"
-            items={chains.getValue()}
-            className="justify-end"
-          />
-        ),
-      }),
+      ...staticColumns,
     ],
     [isDarkMode]
   );
 
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      globalFilter: globalSearchText,
+    },
+    initialState: {
+      pagination: {
+        pageSize,
+      },
+    },
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
   return (
-    <TableTemplate data={data} columns={columns} pageSize={5} hasPagination />
+    <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180">
+      <Table
+        thClassName="border-t-0 bg-mono-0 dark:bg-mono-160"
+        tableProps={table as RTTable<unknown>}
+        isPaginated
+        totalRecords={data.length}
+      />
+    </div>
   );
 };

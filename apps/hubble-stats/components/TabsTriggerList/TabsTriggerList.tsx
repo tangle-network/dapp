@@ -6,14 +6,8 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 
-type TabType = {
-  value: string;
-  title: string;
-  [key: string]: any;
-};
-
 interface TabsProps {
-  tabs: TabType[];
+  tabs: string[];
 }
 
 export const TabsTriggerList: FC<TabsProps> = ({ tabs }) => {
@@ -23,7 +17,7 @@ export const TabsTriggerList: FC<TabsProps> = ({ tabs }) => {
         return (
           <TabTrigger
             key={idx}
-            value={tab.value}
+            value={tab}
             isDisableStyle
             className={cx(
               'text-mono-100 radix-state-active:text-mono-200',
@@ -35,7 +29,7 @@ export const TabsTriggerList: FC<TabsProps> = ({ tabs }) => {
               fw="black"
               className="!text-current"
             >
-              {tab.title}
+              {tab}
             </Typography>
           </TabTrigger>
         );
