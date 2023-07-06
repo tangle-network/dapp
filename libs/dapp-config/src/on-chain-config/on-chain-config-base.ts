@@ -17,10 +17,6 @@ export interface CurrencyResponse {
 }
 
 export abstract class OnChainConfigBase {
-  // Cache the native currencies to avoid finding the chain data multiple times
-  // typedChainId -> nativeCurrency
-  protected nativeCurrencyCache = new Map<number, ICurrency>();
-
   // Cache the fungible currencies
   // typedChainId -> fungibleCurrency | Error
   protected fungibleCurrencyCache = new Map<number, ICurrency | Error>();
@@ -35,17 +31,6 @@ export abstract class OnChainConfigBase {
   protected constructor() {
     // empty
   }
-
-  /**
-   * Retrieves the native token info for the given chain id
-   * @param typedChainId the typed chain id to get the native token info for
-   * @param provider the provider to use (optional on evm but required on substrate)
-   * @returns the native token info for the given chain id
-   */
-  abstract fetchNativeCurrency(
-    typedChainId: number,
-    provider?: PublicClient | ApiPromise
-  ): Promise<ICurrency | null>;
 
   /**
    * Get the fungible currency config for a given typed chain id,
