@@ -1,11 +1,6 @@
 import { FC } from 'react';
 import cx from 'classnames';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipBody,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { IconWithTooltip, Typography } from '@webb-tools/webb-ui-components';
 import { InformationLine } from '@webb-tools/icons';
 
 interface HeaderCellProps {
@@ -30,14 +25,10 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     >
       {title}
       {tooltip && (
-        <Tooltip>
-          <TooltipTrigger>
-            <InformationLine className="fill-mono-140 dark:fill-mono-40" />
-          </TooltipTrigger>
-          <TooltipBody>
-            <span>{tooltip}</span>
-          </TooltipBody>
-        </Tooltip>
+        <IconWithTooltip
+          icon={<InformationLine className="fill-mono-140 dark:fill-mono-40" />}
+          content={tooltip}
+        />
       )}
     </Typography>
   );
