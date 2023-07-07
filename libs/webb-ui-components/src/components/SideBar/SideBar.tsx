@@ -76,33 +76,52 @@ export const SideBar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-evenly">
-          <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-            <footer.Icon width={24} height={24} className="cursor-pointer" />
-          </Link>
-
-          {isSidebarOpen && (
-            <>
-              <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                <Typography variant="body1" className="cursor-pointer">
-                  {footer.name}
-                </Typography>
-              </Link>
-
-              {!footer.isInternal ? (
-                <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                  <ExternalLinkLine
-                    className="cursor-pointer"
-                    width={24}
-                    height={24}
-                  />
-                </Link>
-              ) : (
-                ''
-              )}
-              <ThemeToggle />
-            </>
+        <div
+          className={twMerge(
+            'flex items-center justify-between',
+            isSidebarOpen ? 'p-2' : 'pl-1'
           )}
+        >
+          <div className="group flex items-center justify-between">
+            <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+              <footer.Icon
+                width={24}
+                height={24}
+                className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+              />
+            </Link>
+
+            {isSidebarOpen && (
+              <>
+                <div className={isSidebarOpen ? 'pl-4' : ''}>
+                  <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+                    <Typography
+                      variant="body1"
+                      className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+                    >
+                      {footer.name}
+                    </Typography>
+                  </Link>
+                </div>
+
+                {!footer.isInternal ? (
+                  <div className={isSidebarOpen ? 'pl-[26px]' : ''}>
+                    <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+                      <ExternalLinkLine
+                        className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                        width={24}
+                        height={24}
+                      />
+                    </Link>
+                  </div>
+                ) : (
+                  ''
+                )}
+              </>
+            )}
+          </div>
+
+          {isSidebarOpen && <ThemeToggle />}
         </div>
       </div>
 
