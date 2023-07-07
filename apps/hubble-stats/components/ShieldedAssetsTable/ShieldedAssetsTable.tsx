@@ -12,18 +12,13 @@ import {
 import {
   Table,
   fuzzyFilter,
+  IconsGroup,
   useDarkMode,
 } from '@webb-tools/webb-ui-components';
 import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
-import {
-  HeaderCell,
-  IconsCell,
-  NumberCell,
-  PoolTypeCell,
-  ShieldedCell,
-} from '../table';
+import { HeaderCell, NumberCell, PoolTypeCell, ShieldedCell } from '../table';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
@@ -34,7 +29,13 @@ const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
   }),
   columnHelper.accessor('composition', {
     header: () => <HeaderCell title="Composition" />,
-    cell: (props) => <IconsCell type="tokens" items={props.getValue()} />,
+    cell: (props) => (
+      <IconsGroup
+        icons={props.getValue()}
+        type="token"
+        className="justify-center"
+      />
+    ),
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
@@ -47,9 +48,9 @@ const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
   columnHelper.accessor('chains', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
     cell: (props) => (
-      <IconsCell
-        type="chains"
-        items={props.getValue()}
+      <IconsGroup
+        icons={props.getValue()}
+        type="chain"
         className="justify-end"
       />
     ),

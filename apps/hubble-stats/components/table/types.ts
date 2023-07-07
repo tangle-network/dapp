@@ -4,13 +4,6 @@ export interface HeaderCellProps {
   className?: string;
 }
 
-export interface IconsCellProps {
-  type: 'chains' | 'tokens';
-  items: string[];
-  className?: string;
-  iconSize?: number;
-}
-
 export interface NumberCellProps {
   value?: number;
   prefix?: string;

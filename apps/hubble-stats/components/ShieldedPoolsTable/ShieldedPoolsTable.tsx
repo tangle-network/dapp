@@ -9,16 +9,10 @@ import {
   ColumnDef,
   Table as RTTable,
 } from '@tanstack/react-table';
-import { Table, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import { Table, IconsGroup, fuzzyFilter } from '@webb-tools/webb-ui-components';
 
 import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
-import {
-  HeaderCell,
-  IconsCell,
-  NumberCell,
-  PoolTypeCell,
-  ShieldedCell,
-} from '../table';
+import { HeaderCell, NumberCell, PoolTypeCell, ShieldedCell } from '../table';
 
 const columnHelper = createColumnHelper<ShieldedPoolType>();
 
@@ -55,9 +49,9 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   columnHelper.accessor('chains', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
     cell: (props) => (
-      <IconsCell
-        type="chains"
-        items={props.getValue()}
+      <IconsGroup
+        icons={props.getValue()}
+        type="chain"
         className="justify-end"
       />
     ),
