@@ -1,14 +1,15 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { WalletClient } from '@wagmi/core';
 import {
   Account,
   AccountsAdapter,
   PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import { Eth } from 'web3-eth';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
-export class Web3Account extends Account<Eth> {
+export class Web3Account extends Account<WalletClient['account']> {
   get avatar() {
     return '';
   }
@@ -18,23 +19,27 @@ export class Web3Account extends Account<Eth> {
   }
 }
 
-export class Web3Accounts extends AccountsAdapter<Eth> {
-  providerName = 'Eth';
+export class Web3Accounts extends AccountsAdapter<
+  WalletClient,
+  WalletClient['account']
+> {
+  providerName = 'Web3';
 
   async accounts() {
-    const accounts = await this._inner.getAccounts();
+    const account = this.inner.account;
 
-    return accounts.map((address) => new Web3Account(this.inner, address));
+    return [new Web3Account(account, account.address)];
   }
 
   get activeOrDefault() {
-    const defaultAccount = this.inner.defaultAccount;
+    const defaultAccount = this.inner.account;
 
-    return defaultAccount ? new Web3Account(this.inner, defaultAccount) : null;
+    return defaultAccount
+      ? new Web3Account(defaultAccount, defaultAccount.address)
+      : null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setActiveAccount(account: Account): PromiseOrT<void> {
-    return undefined;
+  setActiveAccount(_: Account): PromiseOrT<void> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 }

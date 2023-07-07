@@ -10,7 +10,6 @@ import {
   ResourceId,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { PublicActions } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
 import {
@@ -23,6 +22,7 @@ import type {
   WebbApiProvider,
   WebbProviderType,
 } from '../webb-provider.interface';
+import { Hash } from 'viem';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
   Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
@@ -160,9 +160,7 @@ export abstract class VAnchorActions<
    * A function to get the leaf index of a leaf in the tree
    */
   abstract getLeafIndex(
-    contractReceiptOrLeaf:
-      | ReturnType<Awaited<PublicActions['simulateContract']>>
-      | Uint8Array,
+    txHashOrLeaf: Hash | Uint8Array,
     noteOrIndexBeforeInsertion: Note | number,
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;

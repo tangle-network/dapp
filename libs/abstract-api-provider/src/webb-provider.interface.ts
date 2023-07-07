@@ -10,10 +10,10 @@ import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PublicClient } from 'viem';
+import { GetContractReturnType, PublicClient } from 'viem';
 
-import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import { Storage } from '@webb-tools/storage';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
@@ -251,7 +251,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   wasmFactory: WasmFactory;
 
   // new block observable
-  newBlock: Observable<unknown>;
+  newBlock: Observable<bigint | null>;
 
   // get zk fixtures
   getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
@@ -272,7 +272,9 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 
   getVAnchorLeaves(
-    vanchor: VAnchor | ApiPromise,
+    vanchor:
+      | GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+      | ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;

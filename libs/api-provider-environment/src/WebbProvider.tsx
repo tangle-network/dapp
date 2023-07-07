@@ -27,7 +27,6 @@ import {
   BareProps,
   CurrencyRole,
   CurrencyType,
-  EVMChainId,
   InteractiveFeedback,
   WalletId,
   WebbError,
@@ -45,20 +44,20 @@ import {
   calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
 } from '@webb-tools/web3-api-provider';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { WagmiConfig } from 'wagmi';
 import { TAppEvent } from './app-event';
 import constants from './constants';
 import { parseError, unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
+import onChainDataJson from './generated/on-chain-config.json';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
-import onChainDataJson from './generated/on-chain-config.json';
+import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -155,7 +154,7 @@ notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
 
-export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
+const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
     undefined
   );
@@ -520,53 +519,12 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           case WalletId.MetaMask:
           case WalletId.WalletConnectV2:
             {
-              let web3Provider: Web3Provider;
-              if (wallet?.id === WalletId.WalletConnectV2) {
-                // Get rpcs from evm chains
-                const rpc = Object.values(chains).reduce((acc, chain) => {
-                  if (
-                    chain.chainType === ChainType.EVM &&
-                    chain.rpcUrls.public.http.length
-                  ) {
-                    acc[chain.id] = chain.rpcUrls.public.http[0];
-                  }
-                  return acc;
-                }, {} as Record<number, string>);
-
-                const provider = new WalletConnectProvider({
-                  rpc: {
-                    ...rpc,
-
-                    //default on metamask
-                    [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
-
-                    [EVMChainId.EthereumMainNet]:
-                      'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  },
-                  chainId: chain.id,
-                });
-
-                web3Provider = await Web3Provider.fromWalletConnectProvider(
-                  provider
-                );
-              } else {
-                /// init provider from the extension
-                web3Provider = await Web3Provider.fromExtension();
+              const connector = walletsConfig[wallet.id].connector;
+              if (!connector) {
+                throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
               }
 
-              const clientInfo = web3Provider.clientMeta;
-              if (clientInfo) {
-                notificationApi({
-                  message: 'Connected to EVM wallet',
-                  secondaryMessage: `Connected to ${clientInfo.name}`,
-                  variant: 'success',
-                  key: 'network-connect',
-                  Icon: React.cloneElement(wallet.Logo, { size: 'xl' }),
-                });
-              }
-              /// get the current active chain from metamask
-              const network = await web3Provider.network;
-              const chainId = network.chainId;
+              const chainId = chain.id;
 
               const relayerManager =
                 (await relayerManagerFactory.getRelayerManager(
@@ -574,7 +532,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 )) as Web3RelayerManager;
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
-                web3Provider,
+                connector,
                 chainId,
                 relayerManager,
                 noteManager,
@@ -670,8 +628,8 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               // Listen for chain updates when user switches chains in the extension
               webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
-              await webbWeb3Provider.setChainListener();
-              await webbWeb3Provider.setAccountListener();
+              webbWeb3Provider.setChainListener();
+              webbWeb3Provider.setAccountListener();
 
               if (chainId !== chain.id) {
                 const currency = Object.values(apiConfig.currencies).find(
@@ -964,5 +922,13 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         <SettingProvider>{children}</SettingProvider>
       </StoreProvider>
     </WebbContext.Provider>
+  );
+};
+
+export const WebbProvider: FC<WebbProviderProps> = (props) => {
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <WebbProviderInner {...props} />
+    </WagmiConfig>
   );
 };

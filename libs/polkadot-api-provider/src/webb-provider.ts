@@ -93,7 +93,7 @@ export class WebbPolkadot
 
   readonly backend: Backend = 'Circom';
 
-  private _newBlock = new BehaviorSubject<null | number>(null);
+  private _newBlock = new BehaviorSubject<null | bigint>(null);
 
   // Map to store the max edges for each tree id
   private readonly vAnchorMaxEdges = new Map<string, number>();
@@ -366,16 +366,16 @@ export class WebbPolkadot
 
   private async listenerBlocks() {
     const block = await this.provider.api.query.system.number();
-    this._newBlock.next(block.toNumber());
+    this._newBlock.next(block.toBigInt());
     const sub = await this.provider.api.rpc.chain.subscribeFinalizedHeads(
       (header) => {
-        this._newBlock.next(header.number.toNumber());
+        this._newBlock.next(header.number.toBigInt());
       }
     );
     return sub;
   }
 
-  get newBlock(): Observable<number | null> {
+  get newBlock(): Observable<bigint | null> {
     return this._newBlock.asObservable();
   }
 

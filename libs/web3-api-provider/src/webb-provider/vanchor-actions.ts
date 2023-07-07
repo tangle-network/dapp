@@ -1,7 +1,6 @@
 import {
   ActiveWebbRelayer,
   calculateProvingLeavesAndCommitmentIndex,
-  CancellationToken,
   generateCircomCommitment,
   isVAnchorDepositPayload,
   isVAnchorTransferPayload,
@@ -23,6 +22,7 @@ import {
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
 import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import gasLimitConfig, {
   DEFAULT_GAS_LIMIT,
 } from '@webb-tools/dapp-config/gasLimit-config';
@@ -47,9 +47,8 @@ import {
   ZERO_ADDRESS,
   ZERO_BYTES32,
 } from '@webb-tools/utils';
-import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers';
-
-import { ApiConfig, ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { getContract, GetContractReturnType, Hash, PublicClient } from 'viem';
+import { getPublicClient } from 'wagmi/actions';
 import { Web3Provider } from '../ext-provider';
 import { handleVAnchorTxState } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
@@ -188,11 +187,9 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
-    const vanchor = await this.inner.getVariableAnchorByAddress(
-      contractAddress
-    );
+    const vanchor = this.inner.getVariableAnchorByAddress(contractAddress);
 
-    const chainId = await vanchor.contract.getChainId();
+    const chainId = await vanchor.read.getChainId();
 
     const chainInfo: RelayedChainInput = {
       baseOn: 'evm',
@@ -418,12 +415,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     anchorAddress: string,
     owner: Keypair
   ): Promise<Note[]> {
-    const cancelToken = new CancellationToken();
-    const vanchor = await this.inner.getVariableAnchorByAddress(anchorAddress);
+    const vAnchorContract =
+      this.inner.getVariableAnchorByAddress(anchorAddress);
     const notes = await this.inner.getVAnchorNotesFromChain(
-      vanchor,
-      owner,
-      cancelToken.abortSignal
+      vAnchorContract,
+      owner
     );
     return notes;
   }
@@ -517,7 +513,7 @@ export class Web3VAnchorActions extends VAnchorActions<
    * @param addressOrTreeId the address of the vanchor or the treeId of the vanchor
    */
   async getLeafIndex(
-    receipt: ContractReceipt,
+    txHash: Hash,
     note: Note,
     addressOrTreeId: string
   ): Promise<bigint> {
@@ -527,47 +523,32 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
 
-    const vanchor = VAnchor__factory.connect(
-      addressOrTreeId,
-      Web3Provider.fromUri(chain.rpcUrls.default.http[0]).intoEthersProvider()
-    );
+    const receipt = await this.inner.publicClient.getTransactionReceipt({
+      hash: txHash,
+    });
 
-    // Get fragment and topic of the `NewCommitment` event.
-    const eventFragment = vanchor.interface.getEvent('NewCommitment');
-    const topic = vanchor.interface.getEventTopic(eventFragment);
+    const filter = await this.inner.publicClient.createContractEventFilter({
+      abi: VAnchor__factory.abi,
+      address: ensureHex(addressOrTreeId),
+      eventName: 'NewCommitment',
+      fromBlock: receipt.blockNumber,
+      toBlock: receipt.blockNumber,
+      strict: true,
+    });
 
-    // Filter the logs for the event
-    const filteredLogs = receipt.logs.filter((log) =>
-      log.topics.includes(topic)
-    );
-
-    // Parse the log data
-    const parsedEvents = filteredLogs
-      .map((log) => {
-        const decodedValues = vanchor.interface.decodeEventLog(
-          eventFragment,
-          log.data,
-          log.topics
-        );
-        return decodedValues;
-      })
-      .map((val) => ({
-        leafIndex: BigNumber.from(val.leafIndex),
-        commitment: BigNumber.from(val.commitment),
-      }));
+    const logs = await this.inner.publicClient.getFilterChanges({ filter });
 
     // Get the leaf index of the note
-    const depositedCommitment = generateCircomCommitment(note.note).toString();
-    const event = parsedEvents.find((value) =>
-      value.commitment.eq(depositedCommitment)
-    );
-
-    if (!event) {
-      console.error('Leaf index not found in logs, falling back `0`');
+    const depositedCommitment = generateCircomCommitment(note.note);
+    const log = logs.find((log) => log.args.commitment === depositedCommitment);
+    if (!log) {
+      console.error(
+        `Leaf index not found in log ${log}, falling back to \`${ZERO_BIG_INT}\``
+      );
       return ZERO_BIG_INT;
     }
 
-    return event.leafIndex.toBigInt();
+    return log.args.leafIndex;
   }
 
   async getNextIndex(
@@ -583,12 +564,15 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const provider = Web3Provider.fromUri(
-      chain.rpcUrls.default.http[0]
-    ).intoEthersProvider();
-    const vanchor = VAnchor__factory.connect(anchor, provider);
+    const publicClient = getPublicClient({ chainId: chain.id });
 
-    const nextIdx = await vanchor.getNextIndex();
+    const vAnchorContract = getContract({
+      abi: VAnchor__factory.abi,
+      address: ensureHex(anchor),
+      publicClient,
+    });
+
+    const nextIdx = await vAnchorContract.read.getNextIndex();
 
     return BigInt(nextIdx);
   }
@@ -641,31 +625,25 @@ export class Web3VAnchorActions extends VAnchorActions<
     // If we haven't had any leaves from this chain yet, we need to fetch them
     if (!leavesMap[parsedNote.sourceChainId]) {
       // Set up a provider for the source chain
-      const sourceChainConfig =
-        this.inner.config.chains[Number(parsedNote.sourceChainId)];
+      const { chainId } = parseTypedChainId(+parsedNote.sourceChainId);
+      const sourceAnchorId = parsedNote.sourceIdentifyingData;
 
-      const sourceHttpProvider = Web3Provider.fromUri(
-        sourceChainConfig.rpcUrls.default.http[0]
-      );
-      const sourceAddress = parsedNote.sourceIdentifyingData;
-      const sourceEthers = sourceHttpProvider.intoEthersProvider();
+      const sourcePublicClient = getPublicClient({ chainId });
+      const sourceVAnchorContract = getContract({
+        abi: VAnchor__factory.abi,
+        address: ensureHex(sourceAnchorId),
+        publicClient: sourcePublicClient,
+      });
 
-      const sourceVAnchor =
-        await this.inner.getVariableAnchorByAddressAndProvider(
-          sourceAddress,
-          sourceEthers
-        );
-
-      const chainId = await sourceVAnchor.contract.getChainId();
       const resourceId = ResourceId.newFromContractAddress(
-        sourceVAnchor.contract.address,
+        sourceVAnchorContract.address,
         ChainType.EVM,
-        chainId.toNumber()
+        chainId
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
       const { provingLeaves, commitmentIndex: leafIndex } =
-        await this.inner.getVAnchorLeaves(sourceVAnchor, leafStorage, {
+        await this.inner.getVAnchorLeaves(sourceVAnchorContract, leafStorage, {
           treeHeight,
           targetRoot: destRelayedRoot,
           commitment,
@@ -724,7 +702,9 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async getVAnchor(
     payload: Note,
     isDestAnchor = false
-  ): Promise<VAnchor> | never {
+  ):
+    | Promise<GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>>
+    | never {
     const { note } = payload;
     const { sourceChainId, targetChainId } = note;
     const vanchors = await this.inner.methods.bridgeApi.getVAnchors();
@@ -748,7 +728,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw new Error(`No Anchor for the chain ${note.targetChainId}`);
     }
 
-    return await this.inner.getVariableAnchorByAddress(vanchorAddress);
+    return this.inner.getVariableAnchorByAddress(vanchorAddress);
   }
 
   private async getTokenWrapper(
