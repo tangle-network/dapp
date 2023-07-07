@@ -89,9 +89,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <WebbUIProvider defaultThemeMode="light">
-        <Head>
-          <title>Welcome to Hubble Stats!</title>
-        </Head>
         <body className="bg-body dark:bg-body_dark bg-cover flex overflow-hidden">
           <SideBar
             items={items}
