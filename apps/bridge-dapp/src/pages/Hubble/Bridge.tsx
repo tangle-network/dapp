@@ -18,13 +18,12 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
-
 import {
   EducationCard,
   InteractiveFeedbackView,
   WalletModal,
-} from '../components';
-import { FilterButton, ManageButton } from '../components/tables';
+} from '../../components';
+import { FilterButton, ManageButton } from '../../components/tables';
 import {
   CreateAccountModal,
   DeleteNotesModal,
@@ -32,21 +31,21 @@ import {
   TransferContainer,
   UploadSpendNoteModal,
   WithdrawContainer,
-} from '../containers';
+} from '../../containers';
 import {
   ShieldedAssetsTableContainer,
   SpendNotesTableContainer,
-} from '../containers/note-account-tables';
-import { NoteAccountTableContainerProps } from '../containers/note-account-tables/types';
+} from '../../containers/note-account-tables';
+import { NoteAccountTableContainerProps } from '../../containers/note-account-tables/types';
 import {
   useShieldedAssets,
   useSpendNotes,
   useTryAnotherWalletWithView,
-} from '../hooks';
-import { BridgeTabType } from '../types';
-import { downloadNotes } from '../utils';
+} from '../../hooks';
+import { BridgeTabType } from '../../types';
+import { downloadNotes } from '../../utils';
 
-const PageBridge = () => {
+const Bridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
@@ -384,4 +383,4 @@ const PageBridge = () => {
   );
 };
 
-export default PageBridge;
+export default Bridge;
