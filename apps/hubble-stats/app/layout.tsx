@@ -22,6 +22,7 @@ import {
   WEBB_DOCS_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
+import { Header } from '../components/Header';
 
 export default function RootLayout({
   children,
@@ -101,6 +102,7 @@ export default function RootLayout({
           />
           <main className="flex-1 overflow-y-auto">
             <div className="max-w-[1000px] mx-auto">
+              <Header />
               {children}
               <Footer isMinimal style={{ background: 'inherit' }} />
             </div>
