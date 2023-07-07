@@ -10,7 +10,7 @@ interface MetricItemProps {
   prefix?: string;
 }
 
-export const MetricItem: FC<MetricItemProps> = ({
+const MetricItem: FC<MetricItemProps> = ({
   title,
   value,
   prefix,
@@ -65,3 +65,5 @@ export const MetricItem: FC<MetricItemProps> = ({
     </div>
   );
 };
+
+export default MetricItem;

@@ -9,11 +9,7 @@ interface HeaderCellProps {
   className?: string;
 }
 
-export const HeaderCell: FC<HeaderCellProps> = ({
-  title,
-  tooltip,
-  className,
-}) => {
+const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
   return (
     <Typography
       variant="body1"
@@ -33,3 +29,5 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     </Typography>
   );
 };
+
+export default HeaderCell;

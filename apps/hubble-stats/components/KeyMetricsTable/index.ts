@@ -1,1 +1,1 @@
-export * from './KeyMetricsTable';
+export { default as KeyMetricsTable } from './KeyMetricsTable';

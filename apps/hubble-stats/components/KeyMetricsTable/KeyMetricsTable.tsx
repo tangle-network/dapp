@@ -2,9 +2,9 @@
 
 import { FC } from 'react';
 import cx from 'classnames';
-import { MetricItem } from './MetricItem';
+import MetricItem from './MetricItem';
 
-export const KeyMetricsTable: FC = () => {
+const KeyMetricsTable: FC = () => {
   return (
     <div
       className={cx(
@@ -23,3 +23,5 @@ export const KeyMetricsTable: FC = () => {
     </div>
   );
 };
+
+export default KeyMetricsTable;

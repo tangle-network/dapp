@@ -9,11 +9,7 @@ interface ShieldedCellProps {
   icon?: JSX.Element;
 }
 
-export const ShieldedCell: FC<ShieldedCellProps> = ({
-  title,
-  address,
-  icon,
-}) => {
+const ShieldedCell: FC<ShieldedCellProps> = ({ title, address, icon }) => {
   return (
     <div className="flex items-center gap-2">
       {icon ?? null}
@@ -43,3 +39,5 @@ export const ShieldedCell: FC<ShieldedCellProps> = ({
     </div>
   );
 };
+
+export default ShieldedCell;

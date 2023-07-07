@@ -9,7 +9,7 @@ interface IconsCellProps {
   iconSize?: number;
 }
 
-export const IconsCell: FC<IconsCellProps> = ({
+const IconsCell: FC<IconsCellProps> = ({
   items,
   className,
   type,
@@ -19,6 +19,8 @@ export const IconsCell: FC<IconsCellProps> = ({
     () => (type === 'chains' ? ChainIcon : TokenIcon),
     [type]
   );
+
+  // 3/4: the space not covered by the next icon
   const iconSizeNotCovered = useMemo(() => (3 / 4) * iconSize, [iconSize]);
 
   return (
@@ -56,3 +58,5 @@ export const IconsCell: FC<IconsCellProps> = ({
     </div>
   );
 };
+
+export default IconsCell;

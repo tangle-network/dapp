@@ -9,11 +9,7 @@ interface HeaderCellProps {
   className?: string;
 }
 
-export const NumberCell: FC<HeaderCellProps> = ({
-  value,
-  prefix,
-  className,
-}) => {
+const NumberCell: FC<HeaderCellProps> = ({ value, prefix, className }) => {
   return (
     <Typography
       variant="body1"
@@ -32,3 +28,5 @@ export const NumberCell: FC<HeaderCellProps> = ({
     </Typography>
   );
 };
+
+export default NumberCell;

@@ -14,10 +14,12 @@ const typeColorMap: Record<PoolTypeCellProps['type'], ChipProps['color']> = {
   multi: 'blue',
 };
 
-export const PoolTypeCell: FC<PoolTypeCellProps> = ({ type, className }) => {
+const PoolTypeCell: FC<PoolTypeCellProps> = ({ type, className }) => {
   return (
     <div className={cx('text-center', className)}>
       <Chip color={typeColorMap[type]}>{type}</Chip>
     </div>
   );
 };
+
+export default PoolTypeCell;
