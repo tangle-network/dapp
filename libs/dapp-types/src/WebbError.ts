@@ -57,6 +57,8 @@ export enum WebbErrorCodes {
   InsufficientDiskSpace,
   // Invalid arguments
   InvalidArguments,
+  // No connector configured for the wallet
+  NoConnectorConfigured,
 }
 
 // An Error message with error metadata
@@ -260,6 +262,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `Invalid arguments`,
+        };
+
+      case WebbErrorCodes.NoConnectorConfigured:
+        return {
+          code,
+          message: `No connector configured for the wallet`,
         };
 
       default:

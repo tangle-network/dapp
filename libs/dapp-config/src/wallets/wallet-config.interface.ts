@@ -1,8 +1,11 @@
-// Copyright 2022 @webb-tools/
+// Copyright 2023 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+
+export type SupportedConnector = MetaMaskConnector | WalletConnectConnector;
 
 export interface WalletConfig {
   id: number;
@@ -24,6 +27,8 @@ export interface WalletConfig {
   detect?(): boolean | Promise<boolean>;
 
   supportedChainIds: number[];
+
+  connector?: SupportedConnector;
 }
 
 export type ManagedWallet = {
