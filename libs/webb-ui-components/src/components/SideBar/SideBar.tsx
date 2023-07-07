@@ -128,12 +128,12 @@ export const SideBar: React.FC<SidebarProps> = ({
       <div className="pt-12 px-3">
         <div
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-mono-0 dark:bg-mono-180 rounded-full p-1 cursor-pointer shadow-lg"
+          className="bg-mono-0 dark:bg-mono-180 rounded-full cursor-pointer shadow-lg p-1"
         >
           {isSidebarOpen ? (
-            <ChevronLeft size="lg" />
+            <ChevronLeft size="md" />
           ) : (
-            <ChevronRight size="lg" />
+            <ChevronRight size="md" />
           )}
         </div>
       </div>
