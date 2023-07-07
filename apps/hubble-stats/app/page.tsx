@@ -1,10 +1,13 @@
-import { KeyMetricsTable, ShieldedTables } from '../components';
+import {
+  KeyMetricsTableContainer,
+  ShieldedTablesContainer,
+} from '../containers';
 
 export default async function Index() {
   return (
     <div className="py-4 space-y-8">
-      <KeyMetricsTable />
-      <ShieldedTables />
+      <KeyMetricsTableContainer />
+      <ShieldedTablesContainer />
     </div>
   );
 }

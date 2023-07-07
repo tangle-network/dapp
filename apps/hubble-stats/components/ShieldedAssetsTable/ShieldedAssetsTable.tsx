@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import {
   createColumnHelper,
   useReactTable,
@@ -9,9 +9,14 @@ import {
   ColumnDef,
   Table as RTTable,
 } from '@tanstack/react-table';
-import { Table, fuzzyFilter } from '@webb-tools/webb-ui-components';
+import {
+  Table,
+  fuzzyFilter,
+  useDarkMode,
+} from '@webb-tools/webb-ui-components';
+import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 
-import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
+import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import {
   HeaderCell,
   IconsCell,
@@ -20,29 +25,16 @@ import {
   ShieldedCell,
 } from '../table';
 
-const columnHelper = createColumnHelper<ShieldedPoolType>();
+const columnHelper = createColumnHelper<ShieldedAssetType>();
 
-const columns: ColumnDef<ShieldedPoolType, any>[] = [
-  columnHelper.accessor('poolAddress', {
-    header: () => (
-      <HeaderCell title="Shielded Pools" className="justify-start" />
-    ),
-    cell: (props) => (
-      <ShieldedCell
-        title={props.row.original.poolSymbol}
-        address={props.row.original.poolAddress}
-      />
-    ),
-  }),
+const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
     cell: (props) => <PoolTypeCell type={props.getValue()} />,
   }),
-  columnHelper.accessor('token', {
-    header: () => <HeaderCell title="Token #" className="justify-end" />,
-    cell: (props) => (
-      <NumberCell value={props.getValue()} className="text-right" />
-    ),
+  columnHelper.accessor('composition', {
+    header: () => <HeaderCell title="Composition" />,
+    cell: (props) => <IconsCell type="tokens" items={props.getValue()} />,
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
@@ -64,11 +56,32 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   }),
 ];
 
-export const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
+const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   data,
   globalSearchText,
   pageSize,
 }) => {
+  const [isDarkMode] = useDarkMode();
+
+  const columns = useMemo<ColumnDef<ShieldedAssetType, any>[]>(
+    () => [
+      columnHelper.accessor('assetAddress', {
+        header: () => (
+          <HeaderCell title="Shielded Assets" className="justify-start" />
+        ),
+        cell: (props) => (
+          <ShieldedCell
+            title={props.row.original.assetSymbol}
+            address={props.row.original.assetAddress}
+            icon={isDarkMode ? <ShieldedAssetDark /> : <ShieldedAssetLight />}
+          />
+        ),
+      }),
+      ...staticColumns,
+    ],
+    [isDarkMode]
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -102,3 +115,5 @@ export const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
     </div>
   );
 };
+
+export default ShieldedAssetsTable;

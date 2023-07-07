@@ -1,2 +1,3 @@
-export * from './KeyMetricsTable';
-export * from './ShieldedTables';
+export * from './KeyMetricItem';
+export * from './ShieldedAssetsTable';
+export * from './ShieldedPoolsTable';

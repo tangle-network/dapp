@@ -6,13 +6,13 @@ import {
   TableAndChartTabType,
 } from '@webb-tools/webb-ui-components';
 
-import { ShieldedAssetsTable } from './ShieldedAssetsTable';
-import { ShieldedPoolsTable } from './ShieldedPoolsTable';
-import { ShieldedAssetType, ShieldedPoolType } from './types';
+import { ShieldedAssetsTable, ShieldedPoolsTable } from '../../components';
+import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
+import { ShieldedPoolType } from '../../components/ShieldedPoolsTable/types';
 
 const pageSize = 5;
 
-export const ShieldedTables = () => {
+const ShieldedTablesContainer = () => {
   const [assetsData, setAssetsData] = useState<ShieldedAssetType[]>([]);
   const [poolsData, setPoolsData] = useState<ShieldedPoolType[]>([]);
   const [globalSearchText, setGlobalSearchText] = useState<string>('');
@@ -45,3 +45,5 @@ export const ShieldedTables = () => {
 
   return <TableAndChartTabs tabs={tabs} />;
 };
+
+export default ShieldedTablesContainer;

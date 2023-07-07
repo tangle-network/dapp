@@ -2,9 +2,10 @@
 
 import { FC } from 'react';
 import cx from 'classnames';
-import MetricItem from './MetricItem';
 
-const KeyMetricsTable: FC = () => {
+import { KeyMetricItem } from '../../components';
+
+const KeyMetricsTableContainer: FC = () => {
   return (
     <div
       className={cx(
@@ -15,13 +16,13 @@ const KeyMetricsTable: FC = () => {
       )}
     >
       <div className={'w-full table table-fixed border-collapse'}>
-        <MetricItem title="Total Transactions" />
-        <MetricItem title="TVL" prefix="$" />
-        <MetricItem title="Total Volume" prefix="$" />
-        <MetricItem title="Total Fees" prefix="$" />
+        <KeyMetricItem title="Total Transactions" />
+        <KeyMetricItem title="TVL" prefix="$" />
+        <KeyMetricItem title="Total Volume" prefix="$" />
+        <KeyMetricItem title="Total Fees" prefix="$" />
       </div>
     </div>
   );
 };
 
-export default KeyMetricsTable;
+export default KeyMetricsTableContainer;

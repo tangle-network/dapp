@@ -3,14 +3,9 @@ import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
-interface MetricItemProps {
-  title: string;
-  value?: number;
-  changeRate?: number;
-  prefix?: string;
-}
+import { MetricItemProps } from './types';
 
-const MetricItem: FC<MetricItemProps> = ({
+const KeyMetricItem: FC<MetricItemProps> = ({
   title,
   value,
   prefix,
@@ -66,4 +61,4 @@ const MetricItem: FC<MetricItemProps> = ({
   );
 };
 
-export default MetricItem;
+export default KeyMetricItem;
