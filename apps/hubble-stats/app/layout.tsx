@@ -24,9 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <WebbUIProvider defaultThemeMode="light">
-        <Head>
-          <title>Welcome to Hubble Stats!</title>
-        </Head>
         <body className="bg-body dark:bg-body_dark bg-cover flex h-screen">
           {/* Slide Navigation */}
           <nav className="w-[280px] h-full"></nav>
