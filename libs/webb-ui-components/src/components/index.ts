@@ -50,6 +50,7 @@ export * from './Socials';
 export * from './Stats';
 export * from './Switcher';
 export * from './Table';
+export * from './TableAndChartTabs';
 export * from './Tabs';
 export * from './TangleLogo';
 export * from './ThemeSwitcher';
