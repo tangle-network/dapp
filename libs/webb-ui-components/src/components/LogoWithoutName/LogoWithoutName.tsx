@@ -53,7 +53,7 @@ export const LogoWithoutName: React.FC<LogoWithoutNameProps> = (props) => {
 
       default: {
         console.error('Logo size is not supported');
-        
+
         return {
           width: defaultLogoSize.width,
           height: defaultLogoSize.height,
