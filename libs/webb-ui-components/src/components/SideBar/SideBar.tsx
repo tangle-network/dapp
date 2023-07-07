@@ -39,9 +39,14 @@ export const SideBar: React.FC<SidebarProps> = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeItem, setActiveItem] = useState<number | null>(0);
+  const [isHovering, setIsHovering] = useState(false);
 
   return (
-    <div className="flex gap-2 sticky top-0 left-0 z-50">
+    <div
+      className="flex gap-2 top-0 left-0 z-50 relative"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       <div
         className={twMerge(
           'h-screen flex flex-col justify-between py-12 px-4 bg-mono-0 dark:bg-mono-160 transition-all duration-200 ease-in-out',
@@ -125,18 +130,23 @@ export const SideBar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="pt-12 px-3">
+      {isHovering && (
         <div
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="bg-mono-0 dark:bg-mono-180 rounded-full cursor-pointer shadow-lg p-1"
+          className="pt-12 px-3 absolute top-0 right-0"
+          style={{ transform: 'translateX(100%)' }}
         >
-          {isSidebarOpen ? (
-            <ChevronLeft size="md" />
-          ) : (
-            <ChevronRight size="md" />
-          )}
+          <div
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="bg-mono-0 dark:bg-mono-180 rounded-full cursor-pointer shadow-lg p-1"
+          >
+            {isSidebarOpen ? (
+              <ChevronLeft size="md" />
+            ) : (
+              <ChevronRight size="md" />
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
