@@ -60,7 +60,7 @@ export default function RootLayout({
     },
     {
       name: 'Tangle Network',
-      isInternal: true,
+      isInternal: false,
       href: '',
       Icon: Tangle,
       subItems: [
