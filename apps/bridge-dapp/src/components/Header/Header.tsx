@@ -34,11 +34,6 @@ export const Header: FC<HeaderProps> = () => {
     [activeAccount, activeChain, activeWallet, loading]
   );
 
-  const location = useLocation();
-  const pathnames = location.pathname.split('/').filter((x) => x);
-  const currentPage = useMemo(() => pathnames[0], [pathnames]);
-  const subPage = useMemo(() => pathnames[1], [pathnames]);
-
   return (
     <header className="pt-6 pb-10">
       <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">

@@ -28,16 +28,6 @@ const defaultLogoSize = {
 export const LogoWithoutName: React.FC<LogoWithoutNameProps> = (props) => {
   const { darkMode, size = 'md', ...restProps } = props;
 
-  const fillClassName = useMemo(
-    () =>
-      typeof darkMode === 'boolean'
-        ? darkMode
-          ? ('fill-mono-0' as const)
-          : ('fill-mono-200' as const)
-        : ('fill-mono-200 dark:fill-mono-0' as const),
-    [darkMode]
-  );
-
   const { height, width } = useMemo(() => {
     switch (size) {
       case 'sm': {
@@ -62,7 +52,12 @@ export const LogoWithoutName: React.FC<LogoWithoutNameProps> = (props) => {
       }
 
       default: {
-        throw new Error('Unknown Logo size');
+        console.error('Logo size is not supported');
+        
+        return {
+          width: defaultLogoSize.width,
+          height: defaultLogoSize.height,
+        };
       }
     }
   }, [size]);

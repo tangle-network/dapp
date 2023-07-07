@@ -9,9 +9,19 @@ import {
   SideBar,
   Logo,
   LogoWithoutName,
+  ItemProps,
+  FooterProps,
 } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
+import {
+  BRIDGE_URL,
+  WEBB_FAUCET_URL,
+  STATS_URL,
+  TANGLE_MKT_URL,
+  WEBB_DOCS_URL,
+  WEBB_MKT_URL,
+} from '@webb-tools/webb-ui-components/constants';
 
 export default function RootLayout({
   children,
@@ -24,7 +34,7 @@ export default function RootLayout({
     setIsDarkMode('light');
   }, [setIsDarkMode]);
 
-  const items = [
+  const items: ItemProps[] = [
     {
       name: 'Hubble',
       isInternal: true,
@@ -34,7 +44,7 @@ export default function RootLayout({
         {
           name: 'Bridge',
           isInternal: false,
-          href: 'https://app.webb.tools/#/bridge',
+          href: BRIDGE_URL,
         },
         {
           name: 'Explorer',
@@ -44,7 +54,7 @@ export default function RootLayout({
         {
           name: 'Faucet',
           isInternal: false,
-          href: 'https://develop--webb-faucet.netlify.app/',
+          href: WEBB_FAUCET_URL,
         },
       ],
     },
@@ -57,21 +67,21 @@ export default function RootLayout({
         {
           name: 'DKG Explorer',
           isInternal: false,
-          href: 'https://stats.webb.tools/#/keys',
+          href: STATS_URL,
         },
         {
           name: 'Homepage',
           isInternal: false,
-          href: 'https://tangle.webb.tools/',
+          href: TANGLE_MKT_URL,
         },
       ],
     },
   ];
 
-  const footer = {
+  const footer: FooterProps = {
     name: 'Webb Docs',
     isInternal: false,
-    href: 'https://docs.webb.tools/',
+    href: WEBB_DOCS_URL,
     Icon: DocumentationIcon,
   };
 
@@ -86,7 +96,7 @@ export default function RootLayout({
             items={items}
             Logo={Logo}
             ClosedLogo={LogoWithoutName}
-            logoLink="https://webb.tools/"
+            logoLink={WEBB_MKT_URL}
             footer={footer}
           />
           <main className="flex-1 overflow-y-auto">

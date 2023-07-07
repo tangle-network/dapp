@@ -1,28 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { SidebarControl } from './components/SidebarControl';
-import { Item, ItemProps } from './components/Item';
-import { LogoProps } from '../Logo/types';
+import React, { useState } from 'react';
+import { SidebarProps } from './types';
+import { Item } from './Item';
 import { twMerge } from 'tailwind-merge';
 import { ThemeToggle } from '../ThemeToggle';
-import { IconBase } from '@webb-tools/icons/types';
 import { Typography } from '../../typography/Typography';
-import { ExternalLinkLine } from '@webb-tools/icons';
-import { pushToExternalLink, pushToInternalLink } from './utils';
-
-type FooterProps = {
-  name: string;
-  isInternal: boolean;
-  href: string;
-  Icon: (props: IconBase) => JSX.Element;
-};
-
-type SidebarProps = {
-  Logo: React.FC<LogoProps>;
-  ClosedLogo: React.FC<LogoProps>;
-  logoLink?: string;
-  items: ItemProps[];
-  footer: FooterProps;
-};
+import {
+  ChainIcon,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLinkLine,
+} from '@webb-tools/icons';
+import { Link } from '../Link';
 
 /**
  * Sidebar Navigation Menu Component
@@ -52,14 +40,6 @@ export const SideBar: React.FC<SidebarProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeItem, setActiveItem] = useState<number | null>(0);
 
-  const pushToFooterLink = () => {
-    if (footer.isInternal) {
-      pushToInternalLink(footer.href);
-    } else {
-      pushToExternalLink(footer.href);
-    }
-  };
-
   return (
     <div className="flex gap-2 sticky top-0 left-0 z-50">
       <div
@@ -70,7 +50,11 @@ export const SideBar: React.FC<SidebarProps> = ({
       >
         <div>
           <div className={isSidebarOpen ? 'px-2' : ''}>
-            <a href={logoLink ? logoLink : '/'} target="_blank">
+            <a
+              href={logoLink ? logoLink : '/'}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {!isSidebarOpen && ClosedLogo ? (
                 <ClosedLogo />
               ) : (
@@ -82,6 +66,7 @@ export const SideBar: React.FC<SidebarProps> = ({
           <div className="mt-11 flex flex-col gap-4">
             {items.map((itemProps, index) => (
               <Item
+                key={index}
                 {...itemProps}
                 isSidebarOpen={isSidebarOpen}
                 isActive={activeItem === index}
@@ -92,29 +77,26 @@ export const SideBar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="flex items-center justify-evenly">
-          <footer.Icon
-            width={24}
-            height={24}
-            onClick={pushToFooterLink}
-            className="cursor-pointer"
-          />
+          <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+            <footer.Icon width={24} height={24} className="cursor-pointer" />
+          </Link>
 
           {isSidebarOpen && (
             <>
-              <Typography
-                variant="body1"
-                className="cursor-pointer"
-                onClick={pushToFooterLink}
-              >
-                {footer.name}
-              </Typography>
+              <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+                <Typography variant="body1" className="cursor-pointer">
+                  {footer.name}
+                </Typography>
+              </Link>
+
               {!footer.isInternal ? (
-                <ExternalLinkLine
-                  className="cursor-pointer"
-                  onClick={pushToFooterLink}
-                  width={24}
-                  height={24}
-                />
+                <Link href={footer.href} aTagProps={{ target: '_blank' }}>
+                  <ExternalLinkLine
+                    className="cursor-pointer"
+                    width={24}
+                    height={24}
+                  />
+                </Link>
               ) : (
                 ''
               )}
@@ -125,10 +107,16 @@ export const SideBar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="pt-12 px-3">
-        <SidebarControl
-          isSidebarOpen={isSidebarOpen}
-          toggleSideBar={() => setIsSidebarOpen(!isSidebarOpen)}
-        />
+        <div
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="bg-mono-0 dark:bg-mono-180 rounded-full p-1 cursor-pointer shadow-lg"
+        >
+          {isSidebarOpen ? (
+            <ChevronLeft size="lg" />
+          ) : (
+            <ChevronRight size="lg" />
+          )}
+        </div>
       </div>
     </div>
   );

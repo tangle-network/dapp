@@ -2,6 +2,8 @@ import { Transition } from '@headlessui/react';
 import {
   Banner,
   Footer,
+  ItemProps,
+  FooterProps,
   Logo,
   LogoWithoutName,
   SideBar,
@@ -10,12 +12,20 @@ import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Header } from '../../components/Header';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
+import {
+  WEBB_DAPP_NEW_ISSUE_URL,
+  WEBB_MKT_URL,
+  WEBB_FAUCET_URL,
+  STATS_URL,
+  TANGLE_MKT_URL,
+  WEBB_DOCS_URL,
+} from '../../constants';
 
-const items = [
+const items: ItemProps[] = [
   {
     name: 'Hubble',
     isInternal: true,
-    href: '/bridge',
+    href: '',
     Icon: ContrastTwoLine,
     subItems: [
       {
@@ -26,34 +36,34 @@ const items = [
       {
         name: 'Faucet',
         isInternal: false,
-        href: 'https://develop--webb-faucet.netlify.app/',
+        href: WEBB_FAUCET_URL,
       },
     ],
   },
   {
     name: 'Tangle Network',
-    isInternal: true,
+    isInternal: false,
     href: '',
     Icon: Tangle,
     subItems: [
       {
         name: 'DKG Explorer',
         isInternal: false,
-        href: 'https://stats.webb.tools/#/keys',
+        href: STATS_URL,
       },
       {
         name: 'Homepage',
         isInternal: false,
-        href: 'https://tangle.webb.tools/',
+        href: TANGLE_MKT_URL,
       },
     ],
   },
 ];
 
-const footer = {
+const footer: FooterProps = {
   name: 'Webb Docs',
   isInternal: false,
-  href: 'https://docs.webb.tools/',
+  href: WEBB_DOCS_URL,
   Icon: DocumentationIcon,
 };
 
@@ -71,7 +81,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           items={items}
           Logo={Logo}
           ClosedLogo={LogoWithoutName}
-          logoLink="https://webb.tools/"
+          logoLink={WEBB_MKT_URL}
           footer={footer}
         />
 
@@ -97,7 +107,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           buttonText="Report Bug"
           bannerText="Hubble Bridge is in beta version."
           buttonProps={{
-            href: 'https://github.com/webb-tools/webb-dapp/issues/new/choose',
+            href: WEBB_DAPP_NEW_ISSUE_URL,
             target: '_blank',
           }}
         />
