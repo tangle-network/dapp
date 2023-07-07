@@ -82,6 +82,11 @@ export const SideBar: React.FC<SidebarProps> = ({
         </div>
 
         <div
+          className="flex-grow"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        />
+
+        <div
           className={twMerge(
             'flex items-center justify-between',
             isSidebarOpen ? 'p-2' : 'pl-1'
