@@ -3,11 +3,7 @@ import cx from 'classnames';
 import { IconWithTooltip, Typography } from '@webb-tools/webb-ui-components';
 import { InformationLine } from '@webb-tools/icons';
 
-interface HeaderCellProps {
-  title: string;
-  tooltip?: string;
-  className?: string;
-}
+import { HeaderCellProps } from './types';
 
 const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
   return (

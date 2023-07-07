@@ -3,11 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
-interface ShieldedCellProps {
-  title: string;
-  address: string;
-  icon?: JSX.Element;
-}
+import { ShieldedCellProps } from './types';
 
 const ShieldedCell: FC<ShieldedCellProps> = ({ title, address, icon }) => {
   return (

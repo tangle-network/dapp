@@ -2,12 +2,7 @@ import { FC, useMemo } from 'react';
 import cx from 'classnames';
 import { TokenIcon, ChainIcon } from '@webb-tools/icons';
 
-interface IconsCellProps {
-  type: 'chains' | 'tokens';
-  items: string[];
-  className?: string;
-  iconSize?: number;
-}
+import { IconsCellProps } from './types';
 
 const IconsCell: FC<IconsCellProps> = ({
   items,

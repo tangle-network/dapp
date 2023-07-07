@@ -3,13 +3,9 @@ import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
-interface HeaderCellProps {
-  value?: number;
-  prefix?: string;
-  className?: string;
-}
+import { NumberCellProps } from './types';
 
-const NumberCell: FC<HeaderCellProps> = ({ value, prefix, className }) => {
+const NumberCell: FC<NumberCellProps> = ({ value, prefix, className }) => {
   return (
     <Typography
       variant="body1"

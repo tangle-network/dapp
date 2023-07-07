@@ -1,6 +1,4 @@
-import type { Chain } from '@webb-tools/dapp-config';
-
-export type PoolType = 'single' | 'multi';
+import { PoolType } from '../table/types';
 
 export interface ShieldedAssetType {
   assetAddress: string;
