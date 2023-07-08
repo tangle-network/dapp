@@ -7,6 +7,7 @@ export * from './ArrowRightUp';
 export * from './AuctionLine';
 export * from './BankLine';
 export * from './BellIcon';
+export * from './BillFill';
 export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';
@@ -25,6 +26,7 @@ export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './Copyright';
 export * from './CopyLinkFill';
+export * from './ContrastTwoLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
 export * from './DeleteBinWithBg';
@@ -93,4 +95,5 @@ export * from './Alert';
 export * from './PartyFill';
 
 // Tangle Icons
+export * from './Tangle';
 export * from './TangleIcon';

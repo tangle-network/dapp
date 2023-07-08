@@ -62,7 +62,12 @@ export const Logo: React.FC<LogoProps> = (props) => {
       }
 
       default: {
-        throw new Error('Unknown Logo size');
+        console.error('Logo size is not supported');
+
+        return {
+          width: defaultLogoSize.width,
+          height: defaultLogoSize.height,
+        };
       }
     }
   }, [size]);
