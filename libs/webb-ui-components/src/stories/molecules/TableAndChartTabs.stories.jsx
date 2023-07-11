@@ -13,29 +13,11 @@ const Template = (args) => <TableAndChartTabs {...args} />;
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Primary.args = {
-  tabs: [
-    {
-      value: 'Tab 1',
-      component: 'Tab 1 content',
-    },
-    {
-      value: 'Tab 2',
-      component: 'Tab 2 content',
-    },
-  ],
+  tabs: ['Tab 1', 'Tab 2'],
 };
 
 export const WithFilter = Template.bind({});
 WithFilter.args = {
-  tabs: [
-    {
-      value: 'Tab 1',
-      component: 'Tab 1 content',
-    },
-    {
-      value: 'Tab 2',
-      component: 'Tab 2 content',
-    },
-  ],
+  tabs: ['Tab 1', 'Tab 2'],
   filterComponent: 'Filter component',
 };

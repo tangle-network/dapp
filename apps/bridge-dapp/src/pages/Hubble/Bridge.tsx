@@ -46,6 +46,9 @@ import {
 import { BridgeTabType } from '../../types';
 import { downloadNotes } from '../../utils';
 
+const shieldedAssetsTab = 'Shielded Assets';
+const spendNotesTab = 'Available Spend Notes';
+
 const Bridge = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
@@ -214,34 +217,6 @@ const Bridge = () => {
     [txPayloads]
   );
 
-  const noteAccountTabs = useMemo(
-    () => [
-      {
-        value: 'Shielded Assets',
-        component: (
-          <ShieldedAssetsTableContainer
-            data={shieldedAssetsFilteredTableData}
-            {...sharedNoteAccountTableContainerProps}
-          />
-        ),
-      },
-      {
-        value: 'Available Spend Notes',
-        component: (
-          <SpendNotesTableContainer
-            data={spendNotesFilteredTableData}
-            {...sharedNoteAccountTableContainerProps}
-          />
-        ),
-      },
-    ],
-    [
-      shieldedAssetsFilteredTableData,
-      spendNotesFilteredTableData,
-      sharedNoteAccountTableContainerProps,
-    ]
-  );
-
   const noteAccountTabsRightButtons = useMemo(
     () => (
       <div className="flex items-center space-x-2">
@@ -353,11 +328,27 @@ const Bridge = () => {
         {noteManager && (
           <div className="max-w-[1160px] mx-auto mt-4">
             <TableAndChartTabs
-              tabs={noteAccountTabs}
+              tabs={[shieldedAssetsTab, spendNotesTab]}
               className="space-y-4"
               onValueChange={(val) => setActiveTable(val as typeof activeTable)}
               filterComponent={noteAccountTabsRightButtons}
-            />
+            >
+              {/* Shielded Assets Table */}
+              <TabContent value={shieldedAssetsTab}>
+                <ShieldedAssetsTableContainer
+                  data={shieldedAssetsFilteredTableData}
+                  {...sharedNoteAccountTableContainerProps}
+                />
+              </TabContent>
+
+              {/* Spend Notes Table */}
+              <TabContent value={spendNotesTab}>
+                <SpendNotesTableContainer
+                  data={spendNotesFilteredTableData}
+                  {...sharedNoteAccountTableContainerProps}
+                />
+              </TabContent>
+            </TableAndChartTabs>
           </div>
         )}
 

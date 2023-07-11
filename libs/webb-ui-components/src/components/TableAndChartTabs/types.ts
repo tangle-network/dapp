@@ -7,7 +7,7 @@ export type TableAndChartTabType = {
 };
 
 export interface TableAndChartTabsProps extends Tabs.TabsProps {
-  tabs: TableAndChartTabType[];
+  tabs: string[];
   filterComponent?: ReactNode;
   className?: string;
   listClassName?: string;

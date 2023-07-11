@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import cx from 'classnames';
 
-import { TabsRoot, TabContent, TabsList, TabTrigger } from '../Tabs';
+import { TabsRoot, TabsList, TabTrigger } from '../Tabs';
 import { Typography } from '../../typography';
 import { TableAndChartTabsProps } from './types';
 
@@ -11,11 +11,12 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   className,
   listClassName,
   triggerClassName,
+  children,
   ...tabsProps
 }) => {
   return (
     <TabsRoot
-      defaultValue={tabs[0].value}
+      defaultValue={tabs[0]}
       className={cx('space-y-4', className)}
       {...tabsProps}
     >
@@ -26,7 +27,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
             return (
               <TabTrigger
                 key={idx}
-                value={tab.value}
+                value={tab}
                 isDisableStyle
                 className={cx(
                   'text-mono-100 radix-state-active:text-mono-200',
@@ -39,7 +40,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   fw="black"
                   className="!text-current"
                 >
-                  {tab.value}
+                  {tab}
                 </Typography>
               </TabTrigger>
             );
@@ -51,11 +52,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
       </div>
 
       {/* Tabs Content */}
-      {tabs.map((tab, idx) => (
-        <TabContent key={idx} value={tab.value}>
-          {tab.component}
-        </TabContent>
-      ))}
+      {children}
     </TabsRoot>
   );
 };
