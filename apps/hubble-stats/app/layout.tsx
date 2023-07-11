@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <WebbUIProvider defaultThemeMode="light">
-        <body className="bg-body dark:bg-body_dark bg-cover flex overflow-hidden">
+        <body className="bg-body dark:bg-body_dark bg-cover flex">
           <SideBar
             items={items}
             Logo={Logo}
