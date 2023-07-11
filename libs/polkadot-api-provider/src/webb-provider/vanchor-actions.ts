@@ -303,9 +303,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const txHash = await polkadotTx.call(activeAccount.address);
 
-    return {
-      transactionHash: txHash,
-    };
+    return txHash;
   }
 
   async isPairRegistered(

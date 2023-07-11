@@ -222,5 +222,5 @@ export abstract class VAnchorActions<
     relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
-  ): Promise<{ transactionHash: string; receipt?: TransactionReceipt }>;
+  ): Promise<string>;
 }

@@ -353,9 +353,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     tx.txHash = hash;
 
-    return {
-      transactionHash: hash,
-    };
+    return hash;
   }
 
   // Check if the evm address and keyData pairing has already registered.
