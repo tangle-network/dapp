@@ -57,6 +57,7 @@ import {
   GetContractReturnType,
   Hash,
   PublicClient,
+  SwitchChainError,
   WalletClient,
   getContract,
 } from 'viem';
@@ -514,9 +515,37 @@ export class WebbWeb3Provider
     return this.unsubscribeAll();
   }
 
-  switchOrAddChain(evmChainId: number) {
-    return switchNetwork({
-      chainId: evmChainId,
+  async switchOrAddChain(evmChainId: number) {
+    try {
+      await this.walletClient.switchChain({ id: evmChainId });
+    } catch (error) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (error instanceof SwitchChainError) {
+        await this.walletClient.addChain({
+          chain: this.config.chains[this.typedChainId],
+        });
+      } else {
+        throw error; // Otherwise, throw the error to be handled by the caller.
+      }
+    }
+    return;
+  }
+
+  async watchAsset(currency: Currency, imgUrl?: string) {
+    const addr = currency.getAddressOfChain(this.typedChainId);
+    if (!addr) {
+      throw WebbError.from(WebbErrorCodes.NoCurrencyAvailable);
+    }
+
+    this.walletClient.watchAsset({
+      type: 'ERC20',
+      options: {
+        address: addr,
+        decimals: currency.getDecimals(),
+        // Slice the symbol to 10 characters to avoid overflow
+        symbol: currency.view.symbol.slice(0, 10),
+        image: imgUrl,
+      },
     });
   }
 

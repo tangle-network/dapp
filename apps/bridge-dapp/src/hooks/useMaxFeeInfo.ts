@@ -1,17 +1,18 @@
+import { fetchFeeData } from '@wagmi/core';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '../utils';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Get the max fee info for the current active chain
@@ -173,25 +174,29 @@ export const useMaxFeeInfo = (
         // On Substrate, we use partial fee dirrectly
         setFeeInfo(gasLimit[currentTypedChain]);
         setIsLoading(false);
-      } else if (provider instanceof Web3Provider) {
+      } else if (activeApi instanceof WebbWeb3Provider) {
         const gasAmount = gasLimit[currentTypedChain];
-        const etherProvider = provider.intoEthersProvider();
+        const walletClient = activeApi.getProvider();
 
-        // Get the greatest gas price
-        let gasPrice = await etherProvider.getGasPrice();
-        const feeData = await etherProvider.getFeeData();
-        if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
-          gasPrice = feeData.maxFeePerGas;
+        const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } =
+          await fetchFeeData({
+            chainId: walletClient.chain?.id,
+          });
+
+        let actualGasPrice = ZERO_BIG_INT;
+        if (gasPrice && gasPrice > actualGasPrice) {
+          actualGasPrice = gasPrice;
         }
 
-        if (
-          feeData.maxPriorityFeePerGas &&
-          feeData.maxPriorityFeePerGas.gt(gasPrice)
-        ) {
-          gasPrice = feeData.maxPriorityFeePerGas;
+        if (maxFeePerGas && maxFeePerGas > actualGasPrice) {
+          actualGasPrice = maxFeePerGas;
         }
 
-        setFeeInfo(gasAmount * gasPrice.toBigInt());
+        if (maxPriorityFeePerGas && maxPriorityFeePerGas > actualGasPrice) {
+          actualGasPrice = maxPriorityFeePerGas;
+        }
+
+        setFeeInfo(gasAmount * actualGasPrice);
       } else {
         throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
       }
