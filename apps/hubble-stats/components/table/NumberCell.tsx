@@ -5,7 +5,13 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
 import { NumberCellProps } from './types';
 
-const NumberCell: FC<NumberCellProps> = ({ value, prefix, className }) => {
+const NumberCell: FC<NumberCellProps> = ({
+  value,
+  prefix,
+  suffix,
+  isProtected = false,
+  className,
+}) => {
   return (
     <Typography
       variant="body1"
@@ -15,12 +21,15 @@ const NumberCell: FC<NumberCellProps> = ({ value, prefix, className }) => {
       )}
     >
       {value && (prefix ?? '')}
-      {typeof value === 'number' && value < 10000
+      {isProtected
+        ? '****'
+        : typeof value === 'number' && value < 10000
         ? value
         : getRoundedAmountString(value, 2, {
             roundingFunction: Math.floor,
             totalLength: 0,
           })}
+      {value && (suffix ? ` ${suffix}` : '')}
     </Typography>
   );
 };
