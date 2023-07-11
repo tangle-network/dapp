@@ -22,7 +22,7 @@ import type {
   WebbApiProvider,
   WebbProviderType,
 } from '../webb-provider.interface';
-import { Hash } from 'viem';
+import { Address, Hash } from 'viem';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
   Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
@@ -213,13 +213,13 @@ export abstract class VAnchorActions<
    */
   abstract transact(
     tx: Transaction<NewNotesTxResult>,
-    contractAddress: string,
+    contractAddress: ProviderType extends 'web3' ? Address : string,
     inputs: Utxo[],
     outputs: Utxo[],
     fee: bigint,
     refund: bigint,
-    recipient: string,
-    relayer: string,
+    recipient: ProviderType extends 'web3' ? Address : string,
+    relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<{ transactionHash: string; receipt?: TransactionReceipt }>;

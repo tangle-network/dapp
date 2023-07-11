@@ -1,5 +1,3 @@
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
@@ -10,6 +8,8 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 import { chainsConfig as evmChainsConfig } from '../chains/evm';
 import { WalletConfig } from './wallet-config.interface';

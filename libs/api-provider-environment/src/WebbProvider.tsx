@@ -631,38 +631,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
               webbWeb3Provider.setChainListener();
               webbWeb3Provider.setAccountListener();
 
-              if (chainId !== chain.id) {
-                const currency = Object.values(apiConfig.currencies).find(
-                  (c) =>
-                    c.type === CurrencyType.NATIVE &&
-                    Array.from(c.addresses.keys()).includes(nextTypedChainId)
-                );
-                if (!currency) {
-                  throw new Error('Native token not found');
-                }
+              // Get the new chain id after the initialization of webb provider
+              const currentChainId = await webbWeb3Provider.getChainId();
 
-                // Switch to the chain
-                await web3Provider.switchAndAddChain({
-                  chainId: `0x${chain.id.toString(16)}`,
-                  chainName: chain.name,
-                  rpcUrls: Array.from(chain.rpcUrls.default.http ?? []),
-                  nativeCurrency: {
-                    decimals: 18,
-                    name: currency.name,
-                    symbol: currency.symbol,
-                  },
-                  blockExplorerUrls: chain.blockExplorers
-                    ? [chain.blockExplorers.default.url]
-                    : undefined,
-                });
-
-                // add network will prompt the switch, check evmId again and throw if user rejected
-                const newNetwork = await web3Provider.network;
-                const newChainId = newNetwork.chainId;
-
-                if (newChainId != chain.id) {
-                  throw new Error('User rejected network switch');
-                }
+              if (currentChainId !== chain.id) {
+                await webbWeb3Provider.switchOrAddChain(chain.id);
 
                 // Emit events
                 appEvent.send('networkSwitched', [
@@ -670,9 +643,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     chainType: chain.chainType,
                     chainId: chain.id,
                   },
-                  web3Provider instanceof WalletConnectProvider
-                    ? WalletId.WalletConnectV2
-                    : WalletId.MetaMask,
+                  wallet.id,
                 ]);
               }
 

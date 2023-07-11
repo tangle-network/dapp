@@ -384,7 +384,7 @@ export class WebbPolkadot
   }
 
   async getVAnchorLeaves(
-    api: VAnchor | ApiPromise,
+    api: ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
@@ -398,10 +398,6 @@ export class WebbPolkadot
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    if (api instanceof VAnchor) {
-      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
-    }
-
     const { treeHeight, targetRoot, commitment, treeId, palletId, tx } =
       options;
 

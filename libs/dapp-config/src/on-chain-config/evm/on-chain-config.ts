@@ -6,9 +6,9 @@ import {
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { getContract, type PublicClient } from 'viem';
-import { ZERO_BIG_INT } from '../../';
 import { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
+import { ZERO_BIG_INT } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
 import { ICurrency } from '../../types';
 import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';

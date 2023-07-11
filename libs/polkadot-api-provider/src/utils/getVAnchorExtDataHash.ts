@@ -1,6 +1,6 @@
 import { BN, u8aToHex } from '@polkadot/util';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
-import { FIELD_SIZE } from '@webb-tools/sdk-core';
+import { FIELD_SIZE } from '@webb-tools/utils';
 import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem';
 
 const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {

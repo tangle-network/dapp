@@ -27,7 +27,6 @@ import {
   ZERO_BIG_INT,
   ensureHex,
   getAnchorDeploymentBlockNumber,
-  getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
 import {
   CurrencyRole,
@@ -69,8 +68,9 @@ import {
   watchBlockNumber,
   watchNetwork,
 } from 'wagmi/actions';
-import { MetaMaskConnector } from 'wagmi/dist/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/dist/connectors/walletConnect';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
@@ -285,13 +285,13 @@ export class WebbWeb3Provider
   }
 
   // VAnchors require zero knowledge proofs on deposit - Fetch the small and large circuits.
-  getVariableAnchorByAddress(
+  getVAnchorContractByAddress(
     address: string
   ): GetContractReturnType<typeof VAnchor__factory.abi, PublicClient> {
-    return this.getVariableAnchorByAddressAndProvider(address);
+    return this.getVAnchorContractByAddressAndProvider(address);
   }
 
-  getVariableAnchorByAddressAndProvider(
+  getVAnchorContractByAddressAndProvider(
     address: string,
     provider?: PublicClient
   ): GetContractReturnType<typeof VAnchor__factory.abi, PublicClient> {
@@ -479,14 +479,7 @@ export class WebbWeb3Provider
   }
 
   get capabilities(): ProvideCapabilities {
-    const connector = Object.values(this.config.wallets)
-      .map((w) => w.connector)
-      .filter((c): c is SupportedConnector => !!c)
-      .find((c) => c.id === this.connector.id);
-
-    if (!connector) {
-      throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
-    }
+    const connector = this.connector;
 
     if (connector instanceof MetaMaskConnector) {
       return {
@@ -641,6 +634,25 @@ export class WebbWeb3Provider
 
   generateUtxo(input: UtxoGenInput): Promise<Utxo> {
     return CircomUtxo.generateUtxo(input);
+  }
+
+  /**
+   * The the VAnchor instance for the the logic inside this class,
+   * we not use this for signing transactions. In the future we will
+   * refactor the VAnchor class itself not require a signer.
+   */
+  async getVAnchorInstance(
+    address: string,
+    provider: PublicClient
+  ): Promise<VAnchor> {
+    const maxEdges = await this.getVAnchorMaxEdges(address, provider);
+
+    return VAnchor.connect(
+      ensureHex(address),
+      await this.getZkFixtures(maxEdges, true),
+      await this.getZkFixtures(maxEdges, false),
+      null as any // We need the logic inside this class so pass the signer as null
+    );
   }
 
   // ================== PRIVATE METHODS ===================

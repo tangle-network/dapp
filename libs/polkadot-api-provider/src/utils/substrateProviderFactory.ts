@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { executorWithTimeout } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PolkadotProvider } from '../ext-provider/polkadot-provider';
 
 const substrateProviderCache: { [typedChainId: number]: ApiPromise } = {};
@@ -13,7 +13,7 @@ const substrateProviderFactory = async (
     return cached;
   }
 
-  const chain = chainsPopulated[typedChainId];
+  const chain = chainsConfig[typedChainId];
   if (!chain) {
     throw new Error(`Chain not found for ${typedChainId}`); // Development error
   }

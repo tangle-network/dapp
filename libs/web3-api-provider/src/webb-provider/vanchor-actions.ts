@@ -16,12 +16,15 @@ import {
   utxoFromVAnchorNote,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
-import { VAnchor } from '@webb-tools/anchors';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
 } from '@webb-tools/browser-utils/storage';
-import { ERC20__factory, VAnchor__factory } from '@webb-tools/contracts';
+import {
+  ERC20__factory,
+  FungibleTokenWrapper__factory,
+  VAnchor__factory,
+} from '@webb-tools/contracts';
 import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import gasLimitConfig, {
   DEFAULT_GAS_LIMIT,
@@ -40,16 +43,23 @@ import {
   toFixedHex,
   Utxo,
 } from '@webb-tools/sdk-core';
-import { FungibleTokenWrapper } from '@webb-tools/tokens';
 import {
   hexToU8a,
   u8aToHex,
   ZERO_ADDRESS,
   ZERO_BYTES32,
 } from '@webb-tools/utils';
-import { getContract, GetContractReturnType, Hash, PublicClient } from 'viem';
+import {
+  Account,
+  Address,
+  Chain,
+  getContract,
+  GetContractReturnType,
+  Hash,
+  PublicClient,
+  SendTransactionParameters,
+} from 'viem';
 import { getPublicClient } from 'wagmi/actions';
-import { Web3Provider } from '../ext-provider';
 import { handleVAnchorTxState } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
 
@@ -62,21 +72,23 @@ export class Web3VAnchorActions extends VAnchorActions<
     typedChainId: number,
     fungibleCurrencyId: number
   ): Promise<bigint> {
-    const chain = apiConfig.chains[typedChainId];
+    const { chainId } = parseTypedChainId(typedChainId);
+
     const anchor = apiConfig.getAnchorIdentifier(
       fungibleCurrencyId,
       typedChainId
     );
-    if (!chain || !anchor) {
+    if (!anchor) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const provider = Web3Provider.fromUri(
-      chain.rpcUrls.default.http[0]
-    ).intoEthersProvider();
-    const vanchor = VAnchor__factory.connect(anchor, provider);
+    const vAnchorContract = getContract({
+      abi: VAnchor__factory.abi,
+      address: ensureHex(anchor),
+      publicClient: getPublicClient({ chainId: chainId }),
+    });
 
-    const nextIdx = await vanchor.getNextIndex();
+    const nextIdx = await vAnchorContract.read.getNextIndex();
 
     return BigInt(nextIdx);
   }
@@ -90,9 +102,8 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
-      const tokenWrapper = await this.getTokenWrapper(payload);
-      if (wrapUnwrapToken === '')
-        wrapUnwrapToken = tokenWrapper.contract.address;
+      const tokenWrapper = await this.getTokenWrapperContract(payload);
+      if (wrapUnwrapToken === '') wrapUnwrapToken = tokenWrapper.address;
 
       await this.checkHasBalance(payload, wrapUnwrapToken);
 
@@ -112,7 +123,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
       return Promise.resolve([
         tx, // tx
-        payload.note.sourceIdentifyingData, // contractAddress
+        ensureHex(payload.note.sourceIdentifyingData), // contractAddress
         [], // inputs
         [depositUtxo], // outputs
         ZERO_BIG_INT, // fee
@@ -135,13 +146,13 @@ export class Web3VAnchorActions extends VAnchorActions<
 
       return Promise.resolve([
         tx, // tx
-        notes[0].note.targetIdentifyingData, // contractAddress
+        ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
         inputUtxos, // inputs
         [changeUtxo], // outputs
         feeVal, // fee
         refundAmount, // refund
-        recipient, // recipient
-        relayer, // relayer
+        ensureHex(recipient), // recipient
+        ensureHex(relayer), // relayer
         wrapUnwrapToken, // wrapUnwrapToken
         leavesMap, // leavesMap
       ]);
@@ -159,13 +170,13 @@ export class Web3VAnchorActions extends VAnchorActions<
       // set the anchor to make the transfer on (where the notes are being spent for the transfer)
       return Promise.resolve([
         tx, // tx
-        notes[0].note.targetIdentifyingData, // contractAddress
+        ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
         inputUtxos, // inputs
         [changeUtxo, transferUtxo], // outputs
         feeVal, // fee
         ZERO_BIG_INT, // refund
         ZERO_ADDRESS, // recipient
-        relayer, // relayer
+        ensureHex(relayer), // relayer
         '', // wrapUnwrapToken (not used for transfers)
         leavesMap, // leavesMap,
       ]);
@@ -187,9 +198,10 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
-    const vanchor = this.inner.getVariableAnchorByAddress(contractAddress);
+    const vAnchorContract =
+      this.inner.getVAnchorContractByAddress(contractAddress);
 
-    const chainId = await vanchor.read.getChainId();
+    const chainId = await vAnchorContract.read.getChainId();
 
     const chainInfo: RelayedChainInput = {
       baseOn: 'evm',
@@ -198,13 +210,18 @@ export class Web3VAnchorActions extends VAnchorActions<
       name: chainId.toString(),
     };
 
-    // Pad the input & output utxo
-    const inputUtxos = await vanchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
-    const outputUtxos = await vanchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+    const vAnchor = await this.inner.getVAnchorInstance(
+      contractAddress,
+      this.inner.publicClient
+    );
 
-    const { extAmount, extData, publicInputs } = await vanchor.setupTransaction(
+    // Pad the input & output utxo
+    const inputUtxos = await vAnchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
+    const outputUtxos = await vAnchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
+
+    const { extAmount, extData, publicInputs } = await vAnchor.setupTransaction(
       inputUtxos,
-      outputUtxos,
+      [outputUtxos[0], outputUtxos[1]],
       ...restArgs
     );
 
@@ -213,29 +230,31 @@ export class Web3VAnchorActions extends VAnchorActions<
         typeof chainInfo,
         'vAnchor'
       >(chainInfo, {
-        chainId: chainId.toNumber(),
+        chainId: +chainId.toString(),
         id: contractAddress,
         extData: {
           recipient: extData.recipient,
           relayer: extData.relayer,
-          extAmount: extAmount.toHexString().replace('0x', ''),
-          fee: extData.fee,
+          extAmount: extAmount.toString(16),
+          fee: extData.fee.toString(),
           encryptedOutput1: extData.encryptedOutput1,
           encryptedOutput2: extData.encryptedOutput2,
-          refund: extData.refund,
+          refund: extData.refund.toString(),
           token: extData.token,
         },
         proofData: {
           proof: publicInputs.proof,
           extensionRoots: publicInputs.extensionRoots,
-          extDataHash: padHexString(publicInputs.extDataHash.toHexString()),
-          publicAmount: publicInputs.publicAmount,
+          extDataHash: padHexString(
+            ensureHex(publicInputs.extDataHash.toString(16))
+          ),
+          publicAmount: publicInputs.publicAmount.toString(),
           roots: publicInputs.roots,
           outputCommitments: publicInputs.outputCommitments.map((output) =>
-            padHexString(output.toHexString())
+            padHexString(ensureHex(output.toString(16)))
           ),
           inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
-            padHexString(nullifier.toHexString())
+            padHexString(ensureHex(nullifier.toString(16)))
           ),
         },
       });
@@ -293,24 +312,19 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async transact(
     tx: Transaction<NewNotesTxResult>,
-    contractAddress: string,
+    contractAddress: Address,
     inputs: Utxo[],
     outputs: Utxo[],
     fee: bigint,
     refund: bigint,
-    recipient: string,
-    relayer: string,
-    wrapUnwrapToken: string,
+    recipient: Address,
+    relayer: Address,
+    wrapUnwrapToken: Address,
     leavesMap: Record<string, Uint8Array[]>
   ) {
-    const signer = await this.inner.getProvider().getSigner();
-    const maxEdges = await this.inner.getVAnchorMaxEdges(contractAddress);
-
-    const vanchor = await VAnchor.connect(
+    const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
-      await this.inner.getZkFixtures(maxEdges, true),
-      await this.inner.getZkFixtures(maxEdges, false),
-      signer
+      this.inner.publicClient
     );
 
     tx.txHash = '';
@@ -319,7 +333,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const typedChainId = this.inner.typedChainId;
     const gasLimit = gasLimitConfig[typedChainId] ?? DEFAULT_GAS_LIMIT;
 
-    const receipt = await vanchor.transact(
+    const hash = await vAnchor.transact(
       inputs,
       outputs,
       fee,
@@ -329,16 +343,18 @@ export class Web3VAnchorActions extends VAnchorActions<
       wrapUnwrapToken,
       leavesMap,
       {
-        gasLimit,
+        gas: gasLimit,
+        walletClient: this.inner.walletClient,
         onTransactionState(state, payload) {
           handleVAnchorTxState(tx, state, payload);
         },
       }
     );
 
+    tx.txHash = hash;
+
     return {
-      transactionHash: receipt.transactionHash,
-      receipt: receipt,
+      transactionHash: hash,
     };
   }
 
@@ -363,10 +379,12 @@ export class Web3VAnchorActions extends VAnchorActions<
 
   async register(
     anchorAddress: string,
-    account: string,
-    keyData: string
+    account: Address,
+    keyData: Address
   ): Promise<boolean> {
-    const vanchor = await this.inner.getVariableAnchorByAddress(anchorAddress);
+    const vAnchorContract =
+      this.inner.getVAnchorContractByAddress(anchorAddress);
+
     this.inner.notificationHandler({
       description: 'Registering Account',
       key: 'register',
@@ -376,8 +394,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     try {
-      // The user may reject on-chain registration
-      await vanchor.register(account, keyData);
+      const { request } = await vAnchorContract.simulate.register([
+        { owner: account, keyData },
+      ]);
+
+      await this.inner.walletClient.sendTransaction(request);
     } catch (ex) {
       this.inner.notificationHandler({
         description: 'Account Registration Failed',
@@ -386,6 +407,7 @@ export class Web3VAnchorActions extends VAnchorActions<
         message: 'Account Registration Failed',
         name: 'Transaction',
       });
+
       return false;
     }
 
@@ -416,7 +438,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     owner: Keypair
   ): Promise<Note[]> {
     const vAnchorContract =
-      this.inner.getVariableAnchorByAddress(anchorAddress);
+      this.inner.getVAnchorContractByAddress(anchorAddress);
     const notes = await this.inner.getVAnchorNotesFromChain(
       vAnchorContract,
       owner
@@ -429,40 +451,54 @@ export class Web3VAnchorActions extends VAnchorActions<
     option: {
       inputs: Utxo[];
       outputs: Utxo[];
-      fee: BigNumber;
-      refund: BigNumber;
-      recipient: string;
-      relayer: string;
+      fee: bigint;
+      refund: bigint;
+      recipient: Address;
+      relayer: Address;
       wrapUnwrapToken: string;
       leavesMap: Record<string, Uint8Array[]>;
     }
-  ): Promise<BigNumber> | never {
-    const vanchor = await this.inner.getVariableAnchorByAddress(vAnchorAddress);
+  ): Promise<bigint> | never {
+    const account = this.inner.walletClient.account;
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
 
-    const { publicInputs, extData, extAmount } = await vanchor.setupTransaction(
-      await vanchor.padUtxos(option.inputs, 16), // 16 is the max number of inputs
-      await vanchor.padUtxos(option.outputs, 2), // 2 is the max number of outputs
-      option.fee,
-      option.refund,
-      option.recipient,
-      option.relayer,
-      option.wrapUnwrapToken,
-      option.leavesMap
+    const vAnchorInstance = await this.inner.getVAnchorInstance(
+      vAnchorAddress,
+      this.inner.publicClient
     );
 
-    const options = await vanchor.getWrapUnwrapOptions(
+    const inUtxos = await vAnchorInstance.padUtxos(option.inputs, 16); // 16 is the max number of inputs
+    const [outUtxo1, outUtxo2] = await vAnchorInstance.padUtxos(
+      option.outputs,
+      2
+    ); // 2 is the max number of outputs
+
+    const { publicInputs, extData, extAmount } =
+      await vAnchorInstance.setupTransaction(
+        inUtxos,
+        [outUtxo1, outUtxo2],
+        option.fee,
+        option.refund,
+        option.recipient,
+        option.relayer,
+        option.wrapUnwrapToken,
+        option.leavesMap
+      );
+
+    const options = await vAnchorInstance.getWrapUnwrapOptions(
       extAmount,
       option.refund,
       option.wrapUnwrapToken
     );
 
-    return vanchor.contract.estimateGas.transact(
-      publicInputs.proof,
-      ZERO_BYTES32,
-      extData,
-      publicInputs,
-      extData,
-      options
+    return vAnchorInstance.contract.estimateGas.transact(
+      [publicInputs.proof, ZERO_BYTES32, extData, publicInputs, extData],
+      {
+        account,
+        value: options.value ?? ZERO_BIG_INT,
+      }
     );
   }
 
@@ -473,7 +509,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const payload = notes[0];
     const destVAnchor = await this.getVAnchor(payload, true);
-    const treeHeight = await destVAnchor.contract.getLevels();
+    const treeHeight = await destVAnchor.read.getLevels();
 
     // Loop through the notes and populate the leaves map
     const leavesMap: Record<string, Uint8Array[]> = {};
@@ -491,10 +527,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     const inputUtxos: Utxo[] = [];
 
     // calculate the sum of input notes (for calculating the change utxo)
-    let sumInputNotes: BigNumber = BigNumber.from(0);
+    let sumInputNotes: bigint = ZERO_BIG_INT;
 
     notesLeaves.forEach(({ amount, leafIndex, utxo }) => {
-      sumInputNotes = sumInputNotes.add(amount);
+      sumInputNotes += BigInt(amount);
       leafIndices.push(leafIndex);
       inputUtxos.push(utxo);
     });
@@ -585,37 +621,41 @@ export class Web3VAnchorActions extends VAnchorActions<
     return new ResourceId(anchorAddress, chainType, chainId);
   }
 
+  // ================== PRIVATE METHODS ===================
+
   private async fetchNoteLeaves(
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
-    destVAnchor: VAnchor,
+    destVAnchor: GetContractReturnType<
+      typeof VAnchor__factory.abi,
+      PublicClient
+    >,
     treeHeight: number,
     tx?: Transaction<NewNotesTxResult>
-  ): Promise<{ leafIndex: number; utxo: Utxo; amount: BigNumber }> | never {
+  ): Promise<{ leafIndex: number; utxo: Utxo; amount: bigint }> | never {
     if (tx) {
       // Fetching leaves from relayer initially
       tx.next(TransactionState.FetchingLeavesFromRelayer, undefined);
     }
 
     const parsedNote = note.note;
-    const amount = BigNumber.from(parsedNote.amount);
+    const amount = BigInt(parsedNote.amount);
 
-    let destRelayedRoot: string;
+    let destRelayedRootBI: bigint;
 
     // Get the latest root that has been relayed from the source chain to the destination chain
     if (parsedNote.sourceChainId === parsedNote.targetChainId) {
-      const destRoot = await destVAnchor.contract.getLastRoot();
-      destRelayedRoot = destRoot.toHexString();
+      destRelayedRootBI = await destVAnchor.read.getLastRoot();
     } else {
-      const edgeIndex = await destVAnchor.contract.edgeIndex(
-        parsedNote.sourceChainId
-      );
-      const edge = await destVAnchor.contract.edgeList(edgeIndex);
-      destRelayedRoot = edge[1].toHexString();
+      const edgeIndex = await destVAnchor.read.edgeIndex([
+        BigInt(parsedNote.sourceChainId),
+      ]);
+      const edge = await destVAnchor.read.edgeList([edgeIndex]);
+      destRelayedRootBI = edge[1];
     }
 
     // Fixed the root to be 32 bytes
-    destRelayedRoot = toFixedHex(destRelayedRoot);
+    const destRelayedRoot = toFixedHex(destRelayedRootBI);
 
     // The commitment of the note
     const commitment = generateCircomCommitment(parsedNote);
@@ -728,44 +768,52 @@ export class Web3VAnchorActions extends VAnchorActions<
       throw new Error(`No Anchor for the chain ${note.targetChainId}`);
     }
 
-    return this.inner.getVariableAnchorByAddress(vanchorAddress);
+    return this.inner.getVAnchorContractByAddress(vanchorAddress);
   }
 
-  private async getTokenWrapper(
-    payload: Note,
-    isDest = false
-  ): Promise<FungibleTokenWrapper> {
+  private async getTokenWrapperContract(payload: Note, isDest = false) {
     const vAnchor = await this.getVAnchor(payload, isDest);
-    const currentWebbToken = await vAnchor.contract.token();
-    return FungibleTokenWrapper.connect(
-      currentWebbToken,
-      this.inner.getEthersProvider().getSigner()
-    );
+    const currentWebbToken = await vAnchor.read.token();
+    return getContract({
+      abi: FungibleTokenWrapper__factory.abi,
+      address: currentWebbToken,
+      publicClient: this.inner.publicClient,
+    });
   }
 
   private async checkHasBalance(
     payload: Note,
     wrapUnwrapToken: string
   ): Promise<void> | never {
-    const provider = this.inner.getEthersProvider();
-    const signer = await provider.getSigner().getAddress();
+    const account = this.inner.walletClient.account;
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
     // Checking for balance of the wrapUnwrapToken
     let hasBalance: boolean;
     // If the `wrapUnwrapToken` is the `ZERO_ADDRESS`, we are wrapping
     // the native token. Therefore, we must check the native balance.
     if (checkNativeAddress(wrapUnwrapToken)) {
-      const nativeBalance = await provider.getBalance(signer);
-      hasBalance = nativeBalance.gte(payload.note.amount);
+      const nativeBalance = await this.inner.publicClient.getBalance({
+        address: account.address,
+      });
+      hasBalance = nativeBalance >= BigInt(payload.note.amount);
     } else {
       // If the `wrapUnwrapToken` is not the `ZERO_ADDRESS`, we assume that
       // the `wrapUnwrapToken` has been set to either the wrappedToken address
       // of the address of a wrappable ERC20 token. In either case, we can check the
       // balance using the `ERC20` contract.
-      const erc20 = ERC20__factory.connect(wrapUnwrapToken, provider);
-      const balance = await erc20.balanceOf(signer);
+      const erc20Contract = getContract({
+        address: ensureHex(wrapUnwrapToken),
+        abi: ERC20__factory.abi,
+        publicClient: this.inner.publicClient,
+      });
+      const balance = await erc20Contract.read.balanceOf([account.address]);
       console.log('Balance: ', balance);
-      hasBalance = balance.gte(payload.note.amount);
+      hasBalance = balance >= BigInt(payload.note.amount);
     }
+
     // Notification failed transaction if not enough balance
     if (!hasBalance) {
       const { chainId, chainType } = parseTypedChainId(
@@ -787,17 +835,30 @@ export class Web3VAnchorActions extends VAnchorActions<
     tx: Transaction<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapToken: string,
-    tokenWrapper: FungibleTokenWrapper
+    tokenWrapper: GetContractReturnType<
+      typeof FungibleTokenWrapper__factory.abi,
+      PublicClient
+    >
   ): Promise<void> | never {
     const { note } = payload;
     const { amount } = note;
 
-    const srcVAnchor = await this.getVAnchor(payload);
-    const spenderAddress = srcVAnchor.contract.address;
-    const currentWebbToken = await srcVAnchor.getWebbToken();
+    const account = this.inner.walletClient.account;
+    if (!account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
 
-    const approvalValue = await tokenWrapper.contract.getAmountToWrap(amount);
-    let approvalTransaction: ContractTransaction | undefined;
+    const srcVAnchor = await this.inner.getVAnchorInstance(
+      ensureHex(payload.note.sourceIdentifyingData),
+      this.inner.publicClient
+    );
+
+    const spenderAddress = srcVAnchor.contract.address;
+    const currentWebbToken = srcVAnchor.getWebbToken();
+
+    const amountBI = BigInt(amount);
+
+    const approvalValue = await tokenWrapper.read.getAmountToWrap([amountBI]);
 
     const isNative = checkNativeAddress(wrapUnwrapToken);
 
@@ -808,55 +869,58 @@ export class Web3VAnchorActions extends VAnchorActions<
     // Only non-native tokens require approval
     if (!isNative) {
       const isRequiredApproval = !isWrapOrUnwrap
-        ? await srcVAnchor.isWebbTokenApprovalRequired(amount)
+        ? await srcVAnchor.isWebbTokenApprovalRequired(amountBI, account)
         : await srcVAnchor.isWrappableTokenApprovalRequired(
-            wrapUnwrapToken,
-            approvalValue
+            ensureHex(wrapUnwrapToken),
+            approvalValue,
+            account
           );
 
       if (isRequiredApproval) {
+        let approvalHash: string;
+
+        tx.next(TransactionState.Intermediate, {
+          name: 'Approval is required for depositing',
+          data: {
+            tokenAddress: wrapUnwrapToken,
+          },
+        });
+
         if (isWrapOrUnwrap) {
           // approve the wrappable asset
-          const token = ERC20__factory.connect(
-            wrapUnwrapToken,
-            this.inner.getEthersProvider().getSigner()
-          );
-          approvalTransaction = await token.approve(
-            spenderAddress,
-            approvalValue,
+          const tokenContract = getContract({
+            address: ensureHex(wrapUnwrapToken),
+            abi: ERC20__factory.abi,
+            publicClient: this.inner.publicClient,
+          });
+
+          const { request } = await tokenContract.simulate.approve(
+            [spenderAddress, approvalValue],
             {
-              gasLimit: '0x5B8D80',
+              gas: BigInt('0x5B8D80'),
             }
           );
+
+          approvalHash = await this.inner.walletClient.sendTransaction(request);
         } else {
           // approve the token
-          approvalTransaction = await currentWebbToken.approve(
-            spenderAddress,
-            amount,
+          const { request } = await currentWebbToken.simulate.approve(
+            [spenderAddress, amountBI],
             {
-              gasLimit: '0x5B8D80',
+              gas: BigInt('0x5B8D80'),
             }
           );
+
+          approvalHash = await this.inner.walletClient.sendTransaction(request);
         }
+
+        tx.next(TransactionState.Intermediate, {
+          name: 'Approved',
+          data: {
+            txHash: approvalHash,
+          },
+        });
       }
-    }
-
-    if (approvalTransaction) {
-      // Notification Waiting for approval notification
-      tx.next(TransactionState.Intermediate, {
-        name: 'Approval is required for depositing',
-        data: {
-          tokenAddress: wrapUnwrapToken,
-        },
-      });
-
-      await approvalTransaction.wait();
-      tx.next(TransactionState.Intermediate, {
-        name: 'Approved',
-        data: {
-          txHash: approvalTransaction.hash,
-        },
-      });
     }
   }
 }

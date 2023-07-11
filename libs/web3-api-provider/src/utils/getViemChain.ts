@@ -1,8 +1,8 @@
 import {
-  DEFAULT_EVM_CURRENCY,
   LOCALNET_CHAIN_IDS,
   chainsConfig,
-} from '@webb-tools/dapp-config';
+} from '@webb-tools/dapp-config/chains';
+import { DEFAULT_EVM_CURRENCY } from '@webb-tools/dapp-config/currencies';
 import { EVMChainId } from '@webb-tools/dapp-types';
 import * as chains from 'viem/chains';
 
@@ -54,4 +54,4 @@ function defineViemChain(typedChainId: number): chains.Chain {
   } as const satisfies chains.Chain;
 }
 
-export { getViemChain, defineViemChain, VIEM_NOT_SUPPORTED_MULTICALL_CHAINS };
+export { VIEM_NOT_SUPPORTED_MULTICALL_CHAINS, defineViemChain, getViemChain };

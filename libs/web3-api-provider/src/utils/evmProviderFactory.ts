@@ -1,10 +1,8 @@
-import { chainsPopulated } from '@webb-tools/dapp-config';
-import { ethers } from 'ethers';
-
-import { Web3Provider } from '../ext-provider/web3-provider';
+import { PublicClient } from 'viem';
+import getViemClient from './getViemClient';
 
 const evmProviderCache: {
-  [typedChainId: number]: ethers.providers.Web3Provider;
+  [typedChainId: number]: PublicClient;
 } = {};
 
 /**
@@ -12,26 +10,17 @@ const evmProviderCache: {
  * @param typedChainId the typed chain id to get the provider for
  * @returns the provider for the given typed chain id
  */
-async function evmProviderFactory(
-  typedChainId: number
-): Promise<ethers.providers.Web3Provider> {
+async function evmProviderFactory(typedChainId: number): Promise<PublicClient> {
   const cached = evmProviderCache[typedChainId];
   if (cached) {
     return cached;
   }
 
-  const chain = chainsPopulated[typedChainId];
-  if (!chain) {
-    throw new Error(`Chain not found for ${typedChainId}`); // Development error
-  }
+  const client = getViemClient(typedChainId);
 
-  const provider = Web3Provider.fromUri(
-    chain.rpcUrls.default.http[0]
-  ).intoEthersProvider();
+  evmProviderCache[typedChainId] = client;
 
-  evmProviderCache[typedChainId] = provider;
-
-  return provider;
+  return client;
 }
 
 export default evmProviderFactory;

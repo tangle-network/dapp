@@ -1,12 +1,12 @@
 import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { createPublicClient, http } from 'viem';
+import { PublicClient, createPublicClient, http } from 'viem';
 import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
   getViemChain,
 } from './getViemChain';
 
-function getViemClient(typedChainId: number) {
+function getViemClient(typedChainId: number): PublicClient {
   const { chainId } = parseTypedChainId(typedChainId);
 
   let chain = getViemChain(chainId);

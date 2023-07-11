@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WalletClient } from '@wagmi/core';
+import { WalletClient, Address } from 'viem';
 import {
   Account,
   AccountsAdapter,
@@ -10,6 +10,13 @@ import {
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export class Web3Account extends Account<WalletClient['account']> {
+  constructor(
+    public readonly _inner: WalletClient['account'],
+    public readonly address: Address
+  ) {
+    super(_inner, address);
+  }
+
   get avatar() {
     return '';
   }
@@ -27,6 +34,10 @@ export class Web3Accounts extends AccountsAdapter<
 
   async accounts() {
     const account = this.inner.account;
+
+    if (!account) {
+      return [];
+    }
 
     return [new Web3Account(account, account.address)];
   }

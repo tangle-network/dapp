@@ -1,4 +1,4 @@
-import { ZERO_ADDRESS } from '@webb-tools/utils';
+import { zeroAddress } from 'viem';
 
 export * from './currency-config.interface';
 
@@ -6,5 +6,5 @@ export const DEFAULT_EVM_CURRENCY = {
   name: 'Ether',
   symbol: 'ETH',
   decimals: 18,
-  address: ZERO_ADDRESS,
+  address: zeroAddress,
 } as const;

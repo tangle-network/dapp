@@ -10,10 +10,10 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import {
   DEFAULT_DECIMALS,
   DEFAULT_NATIVE_INDEX,
+  ZERO_BIG_INT,
 } from '@webb-tools/dapp-config/src/constants';
 import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';

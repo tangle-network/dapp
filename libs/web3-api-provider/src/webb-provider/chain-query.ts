@@ -3,20 +3,22 @@
 
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
 import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import {
+  ensureHex,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { zeroAddress } from '@webb-tools/dapp-types';
-import { catchError, Observable, of, switchMap } from 'rxjs';
+import { Observable, catchError, of, switchMap } from 'rxjs';
+import { Address, formatEther, getContract } from 'viem';
 import { WebbWeb3Provider } from '../webb-provider';
-import { formatEther } from 'viem';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   constructor(protected inner: WebbWeb3Provider) {
     super(inner);
   }
 
-  async currentBlock(): Promise<number> {
-    const provider = this.inner.getEthersProvider();
-    return provider.getBlockNumber();
+  currentBlock() {
+    return this.inner.publicClient.getBlockNumber();
   }
 
   // Returns the balance formatted in ETH units.
@@ -25,14 +27,15 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     currencyId: number,
     accountAddressArg?: string
   ): Observable<string> {
-    const provider = this.inner.getEthersProvider();
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        const accountAddress = await this.getAccountAddress(accountAddressArg);
-        if (!accountAddress) {
+        const account = await this.getAccountAddress(accountAddressArg);
+        if (!account) {
           console.error('No account selected');
           return '';
         }
+
+        const accountAddress: Address = ensureHex(account);
 
         const nativeCurrency = getNativeCurrencyFromConfig(
           this.inner.config.currencies,
@@ -46,8 +49,10 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
 
         // Return the balance of the account if native currency
         if (nativeCurrency.id === currencyId) {
-          const tokenBalanceBig = await provider.getBalance(accountAddress);
-          const tokenBalance = formatEther(tokenBalanceBig.toBigInt());
+          const tokenBalanceBig = await this.inner.publicClient.getBalance({
+            address: accountAddress,
+          });
+          const tokenBalance = formatEther(tokenBalanceBig);
 
           return tokenBalance;
         } else {
@@ -63,9 +68,15 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
           }
 
           // Create a token instance for this chain
-          const tokenInstance = ERC20Factory.connect(currencyOnChain, provider);
-          const tokenBalanceBig = await tokenInstance.balanceOf(accountAddress);
-          const tokenBalance = formatEther(tokenBalanceBig.toBigInt());
+          const tokenInstance = getContract({
+            address: ensureHex(currencyOnChain),
+            abi: ERC20Factory.abi,
+            publicClient: this.inner.publicClient,
+          });
+          const tokenBalanceBig = await tokenInstance.read.balanceOf([
+            accountAddress,
+          ]);
+          const tokenBalance = formatEther(tokenBalanceBig);
 
           return tokenBalance;
         }
@@ -78,27 +89,38 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     address: string,
     accountAddressArg?: string
   ): Observable<string> {
-    const provider = this.inner.getEthersProvider();
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        const accountAddress = await this.getAccountAddress(accountAddressArg);
+        const account = await this.getAccountAddress(accountAddressArg);
 
-        if (!accountAddress) {
+        if (!account) {
           console.log('no account selected');
           return '';
         }
 
+        const accountAddress: Address = ensureHex(account);
+
         // Return the balance of the account if native currency
         if (address === zeroAddress) {
-          const tokenBalanceBig = await provider.getBalance(accountAddress);
-          const tokenBalance = formatEther(tokenBalanceBig.toBigInt());
+          const tokenBalanceBig = await this.inner.publicClient.getBalance({
+            address: accountAddress,
+          });
+          const tokenBalance = formatEther(tokenBalanceBig);
 
           return tokenBalance;
         } else {
           // Create a token instance for this chain
-          const tokenInstance = ERC20Factory.connect(address, provider);
-          const tokenBalanceBig = await tokenInstance.balanceOf(accountAddress);
-          const tokenBalance = formatEther(tokenBalanceBig.toBigInt());
+          const tokenInstance = getContract({
+            address: ensureHex(address),
+            abi: ERC20Factory.abi,
+            publicClient: this.inner.publicClient,
+          });
+
+          const tokenBalanceBig = await tokenInstance.read.balanceOf([
+            accountAddress,
+          ]);
+
+          const tokenBalance = formatEther(tokenBalanceBig);
 
           return tokenBalance;
         }

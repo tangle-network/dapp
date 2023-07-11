@@ -55,7 +55,7 @@ async function filterActiveEVMChains(
         .map(async (typedChainId) => {
           try {
             const provider = await evmProviderFactory(typedChainId);
-            await provider.getNetwork();
+            await provider.getChainId();
             return typedChainId;
           } catch (error) {
             return null;
