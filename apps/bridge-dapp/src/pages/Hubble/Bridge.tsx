@@ -326,29 +326,33 @@ const Bridge = () => {
 
         {/** Account stats table */}
         {noteManager && (
-          <div className="max-w-[1160px] mx-auto mt-4">
-            <TableAndChartTabs
-              tabs={[shieldedAssetsTab, spendNotesTab]}
-              className="space-y-4"
-              onValueChange={(val) => setActiveTable(val as typeof activeTable)}
-              filterComponent={noteAccountTabsRightButtons}
-            >
-              {/* Shielded Assets Table */}
-              <TabContent value={shieldedAssetsTab}>
-                <ShieldedAssetsTableContainer
-                  data={shieldedAssetsFilteredTableData}
-                  {...sharedNoteAccountTableContainerProps}
-                />
-              </TabContent>
+          <div className="px-4">
+            <div className="max-w-[1160px] mx-auto mt-4">
+              <TableAndChartTabs
+                tabs={[shieldedAssetsTab, spendNotesTab]}
+                className="space-y-4"
+                onValueChange={(val) =>
+                  setActiveTable(val as typeof activeTable)
+                }
+                filterComponent={noteAccountTabsRightButtons}
+              >
+                {/* Shielded Assets Table */}
+                <TabContent value={shieldedAssetsTab}>
+                  <ShieldedAssetsTableContainer
+                    data={shieldedAssetsFilteredTableData}
+                    {...sharedNoteAccountTableContainerProps}
+                  />
+                </TabContent>
 
-              {/* Spend Notes Table */}
-              <TabContent value={spendNotesTab}>
-                <SpendNotesTableContainer
-                  data={spendNotesFilteredTableData}
-                  {...sharedNoteAccountTableContainerProps}
-                />
-              </TabContent>
-            </TableAndChartTabs>
+                {/* Spend Notes Table */}
+                <TabContent value={spendNotesTab}>
+                  <SpendNotesTableContainer
+                    data={spendNotesFilteredTableData}
+                    {...sharedNoteAccountTableContainerProps}
+                  />
+                </TabContent>
+              </TableAndChartTabs>
+            </div>
           </div>
         )}
 

@@ -35,7 +35,7 @@ export const Header: FC<HeaderProps> = () => {
   );
 
   return (
-    <header className="pt-6 pb-10">
+    <header className="pt-6 pb-10 px-4">
       <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
         <Breadcrumbs>
           <NavLink to="/bridge">

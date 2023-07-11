@@ -88,7 +88,9 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
         <div className="w-full mx-auto flex flex-col justify-between overflow-y-auto">
           <Header />
           <main className="px-4 lg:px-0">{children}</main>
-          <Footer isMinimal className="w-full mx-auto" />
+          <div className="px-4">
+            <Footer isMinimal className="w-full mx-auto" />
+          </div>
         </div>
       </div>
 

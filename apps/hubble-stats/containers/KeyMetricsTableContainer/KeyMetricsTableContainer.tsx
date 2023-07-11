@@ -15,7 +15,7 @@ const KeyMetricsTableContainer: FC = () => {
         'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.80)0%,rgba(43,47,64,0.00)_100%)]'
       )}
     >
-      <div className={'w-full table table-fixed border-collapse'}>
+      <div className="w-full table table-fixed border-collapse">
         <KeyMetricItem title="Total Transactions" />
         <KeyMetricItem title="TVL" prefix="$" />
         <KeyMetricItem title="Total Volume" prefix="$" />
