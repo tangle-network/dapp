@@ -14,6 +14,7 @@ export type SidebarProps = {
   logoLink?: string;
   items: ItemProps[];
   footer: FooterProps;
+  className?: string;
 };
 
 export type ItemProps = {

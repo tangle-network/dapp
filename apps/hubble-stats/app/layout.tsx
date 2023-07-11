@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <WebbUIProvider defaultThemeMode="light">
-        <body className="bg-body dark:bg-body_dark bg-cover flex">
+        <body className="h-screen bg-body dark:bg-body_dark bg-cover flex">
           <SideBar
             items={items}
             Logo={Logo}
@@ -97,7 +97,7 @@ export default function RootLayout({
             logoLink={WEBB_MKT_URL}
             footer={footer}
           />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto overflow-scroll">
             <div className="max-w-[1000px] mx-auto">
               <Header />
               {children}
