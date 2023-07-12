@@ -50,7 +50,11 @@ export class Web3Accounts extends AccountsAdapter<
       : null;
   }
 
-  setActiveAccount(_: Account): PromiseOrT<void> {
-    throw WebbError.from(WebbErrorCodes.NotImplemented);
+  setActiveAccount(
+    nextAccount: Account<WalletClient['account']>
+  ): PromiseOrT<void> {
+    if (this.activeOrDefault !== nextAccount) {
+      throw new WebbError(WebbErrorCodes.NotImplemented);
+    }
   }
 }
