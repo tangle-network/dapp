@@ -18,14 +18,19 @@ import {
 import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
-import { HeaderCell, NumberCell, PoolTypeCell, ShieldedCell } from '../table';
+import { HeaderCell, NumberCell, ShieldedCell } from '../table';
+import { PoolTypeChip } from '..';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
 const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
-    cell: (props) => <PoolTypeCell type={props.getValue()} />,
+    cell: (props) => (
+      <div className="text-center">
+        <PoolTypeChip type={props.getValue()} />
+      </div>
+    ),
   }),
   columnHelper.accessor('composition', {
     header: () => <HeaderCell title="Composition" />,
