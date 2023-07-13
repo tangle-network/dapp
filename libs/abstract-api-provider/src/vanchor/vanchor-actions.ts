@@ -1,7 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import {
   ChainType,
@@ -10,6 +9,7 @@ import {
   ResourceId,
   Utxo,
 } from '@webb-tools/sdk-core';
+import { Address, Hash } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
 import {
@@ -22,7 +22,6 @@ import type {
   WebbApiProvider,
   WebbProviderType,
 } from '../webb-provider.interface';
-import { Address, Hash } from 'viem';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
   Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
@@ -160,8 +159,9 @@ export abstract class VAnchorActions<
    * A function to get the leaf index of a leaf in the tree
    */
   abstract getLeafIndex(
-    txHashOrLeaf: Hash | Uint8Array,
-    noteOrIndexBeforeInsertion: Note | number,
+    txHashOrLeaf: Hash,
+    noteOrIndexBeforeInsertion: Note,
+    indexBeforeInsertion: number,
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;
 
@@ -222,5 +222,5 @@ export abstract class VAnchorActions<
     relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
-  ): Promise<string>;
+  ): Promise<Hash>;
 }

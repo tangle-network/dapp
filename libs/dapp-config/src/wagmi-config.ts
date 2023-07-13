@@ -10,7 +10,8 @@ if (!process.env['WALLET_CONNECT_PROJECT_ID']) {
 
 const { publicClient, webSocketPublicClient } = configureChains(
   Object.values(chainsConfig),
-  [publicProvider()]
+  [publicProvider()],
+  { batch: { multicall: true }, stallTimeout: 30_000 }
 );
 
 const connectors = Object.values(walletsConfig)

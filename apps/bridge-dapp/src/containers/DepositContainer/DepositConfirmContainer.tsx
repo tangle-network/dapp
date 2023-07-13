@@ -8,9 +8,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useVAnchor } from '@webb-tools/react-hooks';
-import { Note, parseTypedChainId } from '@webb-tools/sdk-core';
+import { Note } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 import {
   useLatestTransactionStage,
@@ -85,7 +85,7 @@ export const DepositConfirmContainer = forwardRef<
     }, [apiConfig.currencies, fungibleTokenId]);
 
     const wrappableToken = useMemo(() => {
-      if (!wrappableTokenId) {
+      if (typeof wrappableTokenId === 'undefined') {
         return;
       }
 
@@ -187,15 +187,14 @@ export const DepositConfirmContainer = forwardRef<
         );
         const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
 
-        const { transactionHash, receipt } = await api.transact(...args);
+        const transactionHash = await api.transact(...args);
 
         tx.txHash = transactionHash;
 
-        const leaf = note.getLeaf();
-
         const noteIndex = await api.getLeafIndex(
-          receipt ?? leaf,
-          receipt ? note : indexBeforeInsert,
+          transactionHash,
+          note,
+          indexBeforeInsert,
           sourceIdentifyingData
         );
 

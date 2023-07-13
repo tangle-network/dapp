@@ -353,6 +353,9 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     tx.txHash = hash;
 
+    // Wait for the transaction to be finalized.
+    await this.inner.publicClient.waitForTransactionReceipt({ hash });
+
     return hash;
   }
 
@@ -549,6 +552,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   async getLeafIndex(
     txHash: Hash,
     note: Note,
+    _: number, // Ignore the index before insertion
     addressOrTreeId: string
   ): Promise<bigint> {
     const typedChainId = this.inner.typedChainId;
@@ -561,16 +565,12 @@ export class Web3VAnchorActions extends VAnchorActions<
       hash: txHash,
     });
 
-    const filter = await this.inner.publicClient.createContractEventFilter({
-      abi: VAnchor__factory.abi,
-      address: ensureHex(addressOrTreeId),
-      eventName: 'NewCommitment',
-      fromBlock: receipt.blockNumber,
-      toBlock: receipt.blockNumber,
-      strict: true,
-    });
-
-    const logs = await this.inner.publicClient.getFilterChanges({ filter });
+    const logs = await this.inner.getNewCommitmentLogs(
+      this.inner.publicClient,
+      ensureHex(addressOrTreeId),
+      receipt.blockNumber,
+      receipt.blockNumber
+    );
 
     // Get the leaf index of the note
     const depositedCommitment = generateCircomCommitment(note.note);

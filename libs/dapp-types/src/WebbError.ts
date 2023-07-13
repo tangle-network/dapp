@@ -13,6 +13,8 @@ export enum WebbErrorCodes {
   UnsupportedProvider,
   // Unsupported chain is switch via the extension
   UnsupportedChain,
+  // Unsupported wallet
+  UnsupportedWallet,
   // Unselected chain is a mismatch between provider and application
   UnselectedChain,
   // No accounts are available
@@ -121,7 +123,13 @@ export class WebbError extends Error {
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,
-          message: 'you have switched to unsupported chain',
+          message: 'You have switched to unsupported chain',
+        };
+
+      case WebbErrorCodes.UnsupportedWallet:
+        return {
+          code,
+          message: 'You have selected unsupported wallet',
         };
 
       case WebbErrorCodes.UnselectedChain:

@@ -5,7 +5,11 @@ import {
   VAnchorTree__factory,
 } from '@webb-tools/contracts';
 import { ZERO_BIG_INT, ensureHex } from '@webb-tools/dapp-config';
-import { checkNativeAddress } from '@webb-tools/dapp-types';
+import {
+  WebbError,
+  WebbErrorCodes,
+  checkNativeAddress,
+} from '@webb-tools/dapp-types';
 import {
   CircomUtxo,
   Keypair,
@@ -26,6 +30,7 @@ import {
   u8aToHex,
 } from '@webb-tools/utils';
 import assert from 'assert';
+import merge from 'lodash/merge';
 import * as snarkjs from 'snarkjs';
 import {
   Account,
@@ -40,7 +45,6 @@ import {
   keccak256,
   parseAbiParameters,
 } from 'viem';
-import merge from 'lodash/merge';
 
 type FullProof = {
   proof: Proof;
@@ -351,17 +355,21 @@ class VAnchor {
     const [{ walletClient, ...override }, txOptions] =
       this.splitTransactionOptions(overridesTransaction);
 
+    if (!walletClient.account) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
     // Default UTXO chain ID will match with the configured signer's chain ID
-    inputs = await this.padUtxos(inputs, 16);
-    outputs = await this.padUtxos(outputs, 2);
+    const inputs_ = await this.padUtxos(inputs, 16);
+    const outputs_ = await this.padUtxos(outputs, 2);
 
     txOptions.onTransactionState?.(
       TransactionState.GENERATE_ZK_PROOF,
       undefined
     );
     const { extAmount, extData, publicInputs } = await this.setupTransaction(
-      inputs,
-      [outputs[0], outputs[1]],
+      inputs_,
+      [outputs_[0], outputs_[1]],
       fee,
       refund,
       recipient,
@@ -381,7 +389,7 @@ class VAnchor {
       undefined
     );
 
-    const { request, result } = await this.contract.simulate.transact(
+    const { request } = await this.contract.simulate.transact(
       [
         publicInputs.proof,
         ZERO_BYTES32,
@@ -410,15 +418,12 @@ class VAnchor {
           encryptedOutput2: extData.encryptedOutput2,
         },
       ],
-      merge(
-        { value: ZERO_BIG_INT },
-        { account: walletClient.account },
-        override,
-        txValueOption
-      )
+      merge({ account: walletClient.account }, txValueOption, override)
     );
 
-    const txHash = await walletClient.sendTransaction(request);
+    console.log('request', request);
+
+    const txHash = await walletClient.writeContract(request);
 
     txOptions.onTransactionState?.(
       TransactionState.WAITING_FOR_FINALIZATION,
@@ -437,7 +442,7 @@ class VAnchor {
   ) {
     if (extAmount > ZERO_BIG_INT && checkNativeAddress(wrapUnwrapToken)) {
       const tokenWrapperContract = getContract({
-        address: ensureHex(wrapUnwrapToken),
+        address: this.fungibleToken,
         abi: TokenWrapper__factory.abi,
         publicClient: this.publicClient,
       });
@@ -459,7 +464,9 @@ class VAnchor {
       throw new Error('Refund should be zero');
     }
 
-    return {};
+    return {
+      value: ZERO_BIG_INT,
+    };
   }
 
   public async isWebbTokenApprovalRequired(

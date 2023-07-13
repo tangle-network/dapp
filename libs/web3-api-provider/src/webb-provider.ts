@@ -233,9 +233,15 @@ export class WebbWeb3Provider
       }
 
       connector = connector_ as SupportedConnector;
+    } else {
+      // If the connector is already configured, we need to make sure it's connected.
+      const { chain } = await connector.connect({ chainId });
+      if (chain.unsupported) {
+        throw WebbError.from(WebbErrorCodes.UnsupportedWallet);
+      }
     }
 
-    const walletClient = await connector.getWalletClient();
+    const walletClient = await connector.getWalletClient({ chainId });
 
     const accounts = new Web3Accounts(walletClient);
 
@@ -691,13 +697,14 @@ export class WebbWeb3Provider
       ensureHex(address),
       await this.getZkFixtures(maxEdges, true),
       await this.getZkFixtures(maxEdges, false),
-      null as any // We need the logic inside this class so pass the signer as null
+      provider
     );
   }
 
   /**
    * Get the logs from the vAnchor contract
-   * from `fromBlock` to `toBlock` (exclusive) and filter them
+   * from `fromBlock` to `toBlock` (exclusive)
+   * or at block (`fromBlock === toBlock`) and filter them
    * by the `NewCommitment` event.
    * @param publicClient the public client to use
    * @param vAnchorAddress the address of the vAnchor contract
@@ -711,6 +718,8 @@ export class WebbWeb3Provider
     fromBlock: bigint,
     toBlock: bigint
   ) {
+    const isTheSameBlock = fromBlock === toBlock;
+
     // Use getLogs instead of createEventFilter.NewCommitment because
     // createEventFilter.NewCommitment does not work without wss connection
     const logs = await retryPromise(() =>
@@ -720,7 +729,7 @@ export class WebbWeb3Provider
           'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
         ),
         fromBlock,
-        toBlock: toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+        toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
         strict: true,
       })
     );
@@ -743,19 +752,17 @@ export class WebbWeb3Provider
       PublicClient
     >
   ): Promise<{ lastQueriedBlock: bigint; newLeaves: Array<Hash> }> {
-    const lastQueriedBlock =
-      finalBlockArg || (await publicClient.getBlockNumber());
+    const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
 
-    const filter = await vAnchorContract.createEventFilter.NewCommitment({
-      fromBlock: startingBlock,
-      toBlock: lastQueriedBlock,
-      strict: true,
-    });
-
-    const logs = await publicClient.getFilterChanges({ filter });
+    const logs = await this.getNewCommitmentLogs(
+      publicClient,
+      vAnchorContract.address,
+      startingBlock,
+      latestBlock
+    );
 
     return {
-      lastQueriedBlock,
+      lastQueriedBlock: latestBlock,
       newLeaves: logs.map((log) => ensureHex(log.args.commitment.toString(16))),
     };
   }

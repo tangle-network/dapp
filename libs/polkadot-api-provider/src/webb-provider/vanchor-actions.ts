@@ -303,7 +303,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const txHash = await polkadotTx.call(activeAccount.address);
 
-    return txHash;
+    return ensureHex(txHash);
   }
 
   async isPairRegistered(
@@ -336,10 +336,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
    * @param addressOrTreeId the address or tree id of the tree
    */
   async getLeafIndex(
-    leaf: Uint8Array,
+    txHash: string,
+    note: Note,
     indexBeforeInsertion: number,
     addressOrTreeId: string
   ): Promise<bigint> {
+    const leaf = note.getLeaf();
     const treeId = Number(addressOrTreeId);
     const idx = await getLeafIndex(
       this.inner.api,

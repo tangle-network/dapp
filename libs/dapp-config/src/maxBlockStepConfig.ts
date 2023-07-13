@@ -6,9 +6,9 @@ export type MaxBlockStepConfigType = {
 };
 
 const maxBlockStepCfg: MaxBlockStepConfigType = {
-  default: 2048,
+  default: 2_048,
 
-  [PresetTypedChainId.ArbitrumTestnet]: 262144,
+  [PresetTypedChainId.ArbitrumTestnet]: 16_777_216,
 };
 
 export default maxBlockStepCfg;
