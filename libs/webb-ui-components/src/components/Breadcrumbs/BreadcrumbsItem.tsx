@@ -52,7 +52,7 @@ export const BreadcrumbsItem = React.forwardRef<
     <Chip
       color="grey"
       isDisabled={true}
-      className={twMerge(className, 'ml-3 mb-[0.4px]')}
+      className={twMerge('ml-3 mb-[0.4px]', className)}
       ref={ref}
     >
       {icon}

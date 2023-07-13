@@ -3,14 +3,9 @@ import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
-interface MetricItemProps {
-  title: string;
-  value?: number;
-  changeRate?: number;
-  prefix?: string;
-}
+import { MetricItemProps } from './types';
 
-export const MetricItem: FC<MetricItemProps> = ({
+const KeyMetricItem: FC<MetricItemProps> = ({
   title,
   value,
   prefix,
@@ -19,7 +14,7 @@ export const MetricItem: FC<MetricItemProps> = ({
   return (
     <div
       className={cx(
-        'table-cell px-4 py-2 space-y-2',
+        'table-cell px-4 py-2 space-y-2 w-1/4',
         'border-x border-mono-40 dark:border-mono-160',
         'first-of-type:border-l-0 last-of-type:border-r-0'
       )}
@@ -65,3 +60,5 @@ export const MetricItem: FC<MetricItemProps> = ({
     </div>
   );
 };
+
+export default KeyMetricItem;
