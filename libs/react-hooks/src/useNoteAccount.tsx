@@ -4,6 +4,7 @@ import {
   Note,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
@@ -174,10 +175,17 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
           ),
         });
       } catch (error) {
+        let msg = 'Something went wrong while syncing notes';
+
+        if (isViemError(error)) {
+          msg = error.shortMessage;
+        }
+
         console.error('Error while syncing notes', error);
+        console.dir(error);
         notificationApi.addToQueue({
           variant: 'error',
-          message: 'Something went wrong while syncing notes',
+          message: msg,
         });
       } finally {
         noteManager.isSyncingNote = false;

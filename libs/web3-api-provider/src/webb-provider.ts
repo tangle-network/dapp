@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { getConfig } from '@wagmi/core';
 import {
   Bridge,
   Currency,
@@ -19,6 +20,7 @@ import {
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
+import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
@@ -28,6 +30,7 @@ import {
   ensureHex,
   getAnchorDeploymentBlockNumber,
 } from '@webb-tools/dapp-config';
+import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig';
 import {
   CurrencyRole,
   WebbError,
@@ -54,14 +57,15 @@ import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject } from 'rxjs';
 import {
+  Address,
   GetContractReturnType,
   Hash,
   PublicClient,
   SwitchChainError,
   WalletClient,
   getContract,
+  parseAbiItem,
 } from 'viem';
-import { getConfig } from '@wagmi/core';
 import {
   connect,
   getPublicClient,
@@ -691,6 +695,39 @@ export class WebbWeb3Provider
     );
   }
 
+  /**
+   * Get the logs from the vAnchor contract
+   * from `fromBlock` to `toBlock` (exclusive) and filter them
+   * by the `NewCommitment` event.
+   * @param publicClient the public client to use
+   * @param vAnchorAddress the address of the vAnchor contract
+   * @param fromBlock the block to start fetching logs from
+   * @param toBlock the block to stop fetching logs from (exclusive)
+   * @returns the filtered logs
+   */
+  async getNewCommitmentLogs(
+    publicClient: PublicClient,
+    vAnchorAddress: Address,
+    fromBlock: bigint,
+    toBlock: bigint
+  ) {
+    // Use getLogs instead of createEventFilter.NewCommitment because
+    // createEventFilter.NewCommitment does not work without wss connection
+    const logs = await retryPromise(() =>
+      publicClient.getLogs({
+        address: vAnchorAddress,
+        event: parseAbiItem(
+          'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
+        ),
+        fromBlock,
+        toBlock: toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+        strict: true,
+      })
+    );
+
+    return logs;
+  }
+
   // ================== PRIVATE METHODS ===================
 
   /**
@@ -736,16 +773,47 @@ export class WebbWeb3Provider
     >
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
-
-    const filter = await vAnchorContract.createEventFilter.NewCommitment({
-      fromBlock: startingBlock,
-      toBlock: 'latest',
-      strict: true,
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      +chainId.toString()
+    );
+    const publicClient = getPublicClient({
+      chainId: +chainId.toString(),
     });
 
-    const logs = await getPublicClient({
-      chainId: +chainId.toString(),
-    }).getFilterLogs({ filter });
+    const latestBlock = await publicClient.getBlockNumber();
+
+    const maxBlockStep =
+      maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
+
+    const logs: Awaited<ReturnType<WebbWeb3Provider['getNewCommitmentLogs']>> =
+      [];
+
+    // We loop through the blocks in chunks to avoid hitting the max block step limit
+    let currentBlock: bigint = startingBlock;
+    while (currentBlock < latestBlock) {
+      const logsChunk = await this.getNewCommitmentLogs(
+        publicClient,
+        vAnchorContract.address,
+        currentBlock,
+        currentBlock + BigInt(maxBlockStep)
+      );
+
+      logs.push(...logsChunk);
+
+      currentBlock += BigInt(maxBlockStep);
+
+      const percentage: number =
+        (+(currentBlock - startingBlock).toString() /
+          +(latestBlock - startingBlock).toString()) *
+        100;
+
+      console.log(
+        `Fetching UTXOs ${currentBlock.toLocaleString()}/${latestBlock.toLocaleString()} (${percentage.toFixed(
+          2
+        )}%)`
+      );
+    }
 
     const parsedLogs = logs.map((log) => ({
       encryptedOutput: log.args.encryptedOutput,
