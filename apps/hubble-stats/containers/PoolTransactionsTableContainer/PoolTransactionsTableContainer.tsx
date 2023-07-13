@@ -10,7 +10,38 @@ import { PoolTransactionType } from '../../components/PoolTransactionsTable/type
 const pageSize = 10;
 
 const PoolTransactionsTableContainer = () => {
-  const [poolsData, setPoolsData] = useState<PoolTransactionType[]>([]);
+  const [poolsData, setPoolsData] = useState<PoolTransactionType[]>([
+    {
+      txHash: '0x1234567890',
+      activity: 'deposit',
+      tokenAmount: 100,
+      tokenSymbol: 'ETH',
+      source: 'ethereum',
+      sourceChainType: 'ethereum',
+      destination: 'webb',
+      time: 1629780000,
+    },
+    {
+      txHash: '0x1234567890',
+      activity: 'transfer',
+      tokenAmount: 100,
+      tokenSymbol: 'ETH',
+      source: 'ethereum',
+      sourceChainType: 'ethereum',
+      destination: 'webb',
+      time: 1629780000,
+    },
+    {
+      txHash: '0x1234567890',
+      activity: 'withdraw',
+      tokenAmount: 100,
+      tokenSymbol: 'ETH',
+      source: 'ethereum',
+      sourceChainType: 'ethereum',
+      destination: 'webb',
+      time: 1629780000,
+    },
+  ]);
   const [globalSearchText, setGlobalSearchText] = useState<string>('');
 
   const filterButton = useMemo(
