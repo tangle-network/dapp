@@ -57,11 +57,7 @@ const FilterButton: FC<FilterButtonProps> = ({
 
       <DropdownBody className="min-w-[300px] pb-4" size="sm">
         {/* Token */}
-        <Accordion
-          type="multiple"
-          defaultValue={['token']}
-          className="pt-4 pb-2 px-4"
-        >
+        <Accordion type="multiple" defaultValue={[]} className="pt-4 pb-2 px-4">
           <AccordionItem
             value="token"
             className="p-0 border-b border-mono-40 dark:border-mono-140"
@@ -74,11 +70,13 @@ const FilterButton: FC<FilterButtonProps> = ({
                 onChange={(tokens) => {
                   setSelectedTokens(tokens as [string, string][]);
                 }}
-                iconGetter={([_key, name]) => <TokenIcon name={name} />}
+                iconGetter={([_key, name]) => (
+                  <TokenIcon name={name} size="lg" />
+                )}
                 labelGetter={([_, name]) => name}
                 keyGetter={([tokenId]) => `Filter_proposals${tokenId}`}
                 className="px-0"
-                labelClassName="!pl-0"
+                labelClassName="uppercase"
                 showAllLabel={false}
               />
             </AccordionContent>
