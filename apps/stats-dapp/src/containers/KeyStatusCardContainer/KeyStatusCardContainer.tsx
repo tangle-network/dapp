@@ -48,10 +48,8 @@ export const KeyStatusCardContainer = () => {
       sessionNumber={activeKeyData.session}
       keyType="current"
       keyVal={activeKeyData.key ?? ''}
-      startTime={currentKey?.start ?? new Date()}
-      endTime={
-        currentKey?.end ?? new Date(new Date().getTime() + sessionHeight * 1000)
-      }
+      startTime={currentKey?.start ?? null}
+      endTime={currentKey?.end ?? null}
       authorities={authorities ?? new Set<string>()}
       totalAuthorities={authorities.size ?? 0}
       fullDetailUrl={data ? `drawer/${currentKey?.id}` : ''}
