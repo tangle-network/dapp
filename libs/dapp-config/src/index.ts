@@ -19,15 +19,9 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
           .filter(({ supportedChainIds }) =>
             supportedChainIds.includes(typedChainId)
           )
-          .reduce(
-            (acc, walletsConfig) => ({
-              ...acc,
-              [walletsConfig.id]: {
-                ...walletsConfig,
-              },
-            }),
-            {} as Record<number, Wallet>
-          ),
+          .reduce((acc, walletsConfig) => {
+            return Array.from(new Set([...acc, walletsConfig.id])); // dedupe
+          }, [] as Array<Wallet['id']>),
       },
     };
   },

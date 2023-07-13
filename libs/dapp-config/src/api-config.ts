@@ -27,7 +27,7 @@ import {
 import { WalletConfig } from './wallets/wallet-config.interface';
 
 export type Chain = ChainConfig & {
-  wallets: Record<number, Wallet>;
+  wallets: Array<Wallet['id']>;
 };
 
 export type Wallet = WalletConfig;

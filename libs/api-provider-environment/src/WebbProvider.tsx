@@ -774,14 +774,32 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         return;
       }
 
+      let walletCfg: Wallet;
+
       // wallet config by chain
-      const walletConfig =
-        chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
+      if (Array.isArray(chainConfig.wallets)) {
+        if (!chainConfig.wallets.length) {
+          return;
+        }
+
+        // The new API with array of wallet ids
+        if (chainConfig.wallets.includes(wallet)) {
+          walletCfg = apiConfig.wallets[wallet];
+        } else {
+          walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+        }
+      } else {
+        // The old API with Record of wallet ids and wallet configs
+        walletCfg =
+          chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
+      }
+
       const activeApi = await switchChain(
         chainConfig,
-        walletConfig,
+        walletCfg,
         _networkStorage
       );
+
       const networkDefaultConfig = await _networkStorage.get('networksConfig');
 
       if (activeApi) {

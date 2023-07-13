@@ -28,7 +28,7 @@ export const WalletModal: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  const { chains } = useWebContext();
+  const { apiConfig, chains } = useWebContext();
 
   const chain = useMemo(() => {
     if (!selectedChain) {
@@ -38,6 +38,12 @@ export const WalletModal: FC = () => {
     return selectedChain;
   }, [chains, selectedChain]);
 
+  const supportedWalletCfgs = useMemo(() => {
+    return chain.wallets
+      .map((walletId) => apiConfig.wallets[walletId])
+      .filter((w) => !!w);
+  }, [apiConfig.wallets, chain.wallets]);
+
   // Get the current failed or connecting wallet
   const getCurrentWallet = useCallback(() => {
     const walletId = failedWalletId ?? connectingWalletId;
@@ -45,8 +51,12 @@ export const WalletModal: FC = () => {
       return undefined;
     }
 
-    return chain.wallets[walletId];
-  }, [chain, failedWalletId, connectingWalletId]);
+    if (!chain.wallets.includes(walletId)) {
+      return undefined;
+    }
+
+    return apiConfig.wallets[walletId];
+  }, [failedWalletId, connectingWalletId, chain.wallets, apiConfig.wallets]);
 
   const isNotInstalledError = useMemo(() => {
     if (!connectError) {
@@ -140,7 +150,7 @@ export const WalletModal: FC = () => {
         isCenter
       >
         <WalletConnectionCard
-          wallets={Object.values(chain.wallets)}
+          wallets={supportedWalletCfgs}
           onWalletSelect={handleWalletSelect}
           onClose={() => toggleModal(false)}
           connectingWalletId={connectingWalletId}
