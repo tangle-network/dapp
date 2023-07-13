@@ -12,7 +12,7 @@ import {
   DropdownBody,
 } from '@webb-tools/webb-ui-components';
 import { TokenIcon, ChevronDown } from '@webb-tools/icons';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { chainsConfig, ChainConfig } from '@webb-tools/dapp-config/chains';
 
 import { FilterButtonProps } from './types';
 
@@ -71,14 +71,15 @@ const FilterButton: FC<FilterButtonProps> = ({
               <CheckBoxMenuGroup
                 value={selectedTokens}
                 options={tokens}
-                onChange={(v) => {
-                  setSelectedTokens(v);
+                onChange={(tokens) => {
+                  setSelectedTokens(tokens as [string, string][]);
                 }}
                 iconGetter={([_key, name]) => <TokenIcon name={name} />}
                 labelGetter={([_, name]) => name}
                 keyGetter={([tokenId]) => `Filter_proposals${tokenId}`}
                 className="px-0"
                 labelClassName="!pl-0"
+                showAllLabel={false}
               />
             </AccordionContent>
           </AccordionItem>
@@ -94,7 +95,7 @@ const FilterButton: FC<FilterButtonProps> = ({
                 value={selectedSourceChains}
                 options={sourceChainOptions}
                 onChange={(chains) => {
-                  setSelectedSourceChains(chains);
+                  setSelectedSourceChains(chains as [string, ChainConfig][]);
                 }}
                 labelGetter={([_, chain]: any) => (
                   <ChainChip chainName={chain.name} chainType={chain.base} />
@@ -102,6 +103,7 @@ const FilterButton: FC<FilterButtonProps> = ({
                 keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 className="px-0"
                 labelClassName="!pl-0"
+                showAllLabel={false}
               />
             </AccordionContent>
           </AccordionItem>
@@ -116,7 +118,9 @@ const FilterButton: FC<FilterButtonProps> = ({
                 value={selectedDestinationChains}
                 options={destinationChainOptions}
                 onChange={(chains) => {
-                  setSelectedDestinationChains(chains);
+                  setSelectedDestinationChains(
+                    chains as [string, ChainConfig][]
+                  );
                 }}
                 labelGetter={([_, chain]: any) => (
                   <ChainChip chainName={chain.name} chainType={chain.base} />
@@ -124,6 +128,7 @@ const FilterButton: FC<FilterButtonProps> = ({
                 keyGetter={([chainId]) => `Filter_proposals${chainId}`}
                 className="px-0"
                 labelClassName="!pl-0"
+                showAllLabel={false}
               />
             </AccordionContent>
           </AccordionItem>

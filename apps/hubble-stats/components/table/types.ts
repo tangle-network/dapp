@@ -45,15 +45,13 @@ export interface DestinationCellProps {
 
 export interface FilterButtonProps {
   tokens: [string, string][];
-  selectedTokens: 'all' | [string, string][];
-  setSelectedTokens: (tokens: 'all' | [string, string][]) => void;
+  selectedTokens: [string, string][];
+  setSelectedTokens: (tokens: [string, string][]) => void;
   sourceChains: string[];
-  selectedSourceChains: 'all' | [string, ChainConfig][];
-  setSelectedSourceChains: (chains: 'all' | [string, ChainConfig][]) => void;
+  selectedSourceChains: [string, ChainConfig][];
+  setSelectedSourceChains: (chains: [string, ChainConfig][]) => void;
   destinationChains: string[];
-  selectedDestinationChains: 'all' | [string, ChainConfig][];
-  setSelectedDestinationChains: (
-    chains: 'all' | [string, ChainConfig][]
-  ) => void;
+  selectedDestinationChains: [string, ChainConfig][];
+  setSelectedDestinationChains: (chains: [string, ChainConfig][]) => void;
   showAllFn: () => void;
 }
