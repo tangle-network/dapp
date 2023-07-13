@@ -10,6 +10,7 @@ import {
   ErrorFallback,
   TabContent,
   TabTrigger,
+  TableAndChartTabs,
   TabsList,
   TabsRoot,
   TransactionQueueCard,
@@ -44,6 +45,9 @@ import {
 } from '../../hooks';
 import { BridgeTabType } from '../../types';
 import { downloadNotes } from '../../utils';
+
+const shieldedAssetsTab = 'Shielded Assets';
+const spendNotesTab = 'Available Spend Notes';
 
 const Bridge = () => {
   // State for the tabs
@@ -154,8 +158,8 @@ const Bridge = () => {
   const spendNotesTableData = useSpendNotes();
 
   const [activeTable, setActiveTable] = useState<
-    'shielded-assets' | 'available-spend-notes'
-  >('shielded-assets');
+    'Shielded Assets' | 'Available Spend Notes'
+  >('Shielded Assets');
 
   const destinationChains = useMemo(() => {
     return shieldedAssetsTableData.map((asset) => asset.chain);
@@ -211,6 +215,40 @@ const Bridge = () => {
   const isDisplayTxQueueCard = useMemo(
     () => txPayloads.length > 0,
     [txPayloads]
+  );
+
+  const noteAccountTabsRightButtons = useMemo(
+    () => (
+      <div className="flex items-center space-x-2">
+        <ManageButton
+          onUpload={handleOpenUploadModal}
+          onDownload={handleDownloadAllNotes}
+        />
+        <FilterButton
+          destinationChains={destinationChains}
+          setSelectedChains={setSelectedChains}
+          selectedChains={selectedChains}
+          searchPlaceholder={
+            activeTable === 'Shielded Assets'
+              ? 'Search asset'
+              : 'Search spend note'
+          }
+          globalSearchText={globalSearchText}
+          setGlobalSearchText={setGlobalSearchText}
+          clearAllFilters={clearAllFilters}
+        />
+      </div>
+    ),
+    [
+      activeTable,
+      destinationChains,
+      globalSearchText,
+      selectedChains,
+      clearAllFilters,
+      setGlobalSearchText,
+      handleOpenUploadModal,
+      handleDownloadAllNotes,
+    ]
   );
 
   return (
@@ -288,68 +326,34 @@ const Bridge = () => {
 
         {/** Account stats table */}
         {noteManager && (
-          <TabsRoot
-            defaultValue="shielded-assets"
-            className="max-w-[1160px] mx-auto mt-4 space-y-4"
-            onValueChange={(val) => setActiveTable(val as typeof activeTable)}
-          >
-            <div className="flex items-center justify-between mb-4">
-              {/** Tabs buttons */}
-              <TabsList
-                aria-label="account-statistics-table"
-                className="space-x-3.5 py-4"
+          <div className="px-4">
+            <div className="max-w-[1160px] mx-auto mt-4">
+              <TableAndChartTabs
+                tabs={[shieldedAssetsTab, spendNotesTab]}
+                className="space-y-4"
+                onValueChange={(val) =>
+                  setActiveTable(val as typeof activeTable)
+                }
+                filterComponent={noteAccountTabsRightButtons}
               >
-                <TabTrigger
-                  isDisableStyle
-                  value="shielded-assets"
-                  className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
-                >
-                  Shielded Assets
-                </TabTrigger>
-                <TabTrigger
-                  isDisableStyle
-                  value="available-spend-notes"
-                  className="h5 radix-state-active:font-bold text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0"
-                >
-                  Available Spend Notes
-                </TabTrigger>
-              </TabsList>
+                {/* Shielded Assets Table */}
+                <TabContent value={shieldedAssetsTab}>
+                  <ShieldedAssetsTableContainer
+                    data={shieldedAssetsFilteredTableData}
+                    {...sharedNoteAccountTableContainerProps}
+                  />
+                </TabContent>
 
-              {/** Right buttons (manage and filter) */}
-              <div className="flex items-center space-x-2">
-                <ManageButton
-                  onUpload={handleOpenUploadModal}
-                  onDownload={handleDownloadAllNotes}
-                />
-                <FilterButton
-                  destinationChains={destinationChains}
-                  setSelectedChains={setSelectedChains}
-                  selectedChains={selectedChains}
-                  searchPlaceholder={
-                    activeTable === 'shielded-assets'
-                      ? 'Search asset'
-                      : 'Search spend note'
-                  }
-                  globalSearchText={globalSearchText}
-                  setGlobalSearchText={setGlobalSearchText}
-                  clearAllFilters={clearAllFilters}
-                />
-              </div>
+                {/* Spend Notes Table */}
+                <TabContent value={spendNotesTab}>
+                  <SpendNotesTableContainer
+                    data={spendNotesFilteredTableData}
+                    {...sharedNoteAccountTableContainerProps}
+                  />
+                </TabContent>
+              </TableAndChartTabs>
             </div>
-
-            <TabContent value="shielded-assets">
-              <ShieldedAssetsTableContainer
-                data={shieldedAssetsFilteredTableData}
-                {...sharedNoteAccountTableContainerProps}
-              />
-            </TabContent>
-            <TabContent value="available-spend-notes">
-              <SpendNotesTableContainer
-                data={spendNotesFilteredTableData}
-                {...sharedNoteAccountTableContainerProps}
-              />
-            </TabContent>
-          </TabsRoot>
+          </div>
         )}
 
         {/** Last login */}

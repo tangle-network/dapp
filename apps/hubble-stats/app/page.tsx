@@ -1,5 +1,9 @@
-import { KeyMetricsTable } from '../components';
 import { Metadata } from 'next';
+
+import {
+  KeyMetricsTableContainer,
+  ShieldedTablesContainer,
+} from '../containers';
 
 export const metadata: Metadata = {
   title: 'Hubble Stats',
@@ -8,8 +12,9 @@ export const metadata: Metadata = {
 
 export default async function Index() {
   return (
-    <div className="py-4">
-      <KeyMetricsTable />
+    <div className="py-4 space-y-8">
+      <KeyMetricsTableContainer />
+      <ShieldedTablesContainer />
     </div>
   );
 }
