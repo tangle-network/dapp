@@ -32,6 +32,7 @@ export const CheckBoxMenu = React.forwardRef<
       checkboxProps,
       children,
       className: clsxProp,
+      labelClassName,
       icon,
       label,
       onChange,
@@ -62,7 +63,7 @@ export const CheckBoxMenu = React.forwardRef<
         ref={ref}
       >
         <span className="text-inherit dark:text-inherit">{icon}</span>
-        <span className={'flex-grow px-2'}>{label}</span>
+        <span className={cx('flex-grow px-2', labelClassName)}>{label}</span>
         <CheckBox id={id} onChange={onChange} {...inputProps} />
       </label>
     );

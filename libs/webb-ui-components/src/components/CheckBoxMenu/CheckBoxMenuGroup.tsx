@@ -1,5 +1,7 @@
-import { CheckBoxMenu } from '../CheckBoxMenu/CheckBoxMenu';
 import { useMemo } from 'react';
+import cx from 'classnames';
+
+import { CheckBoxMenu } from '../CheckBoxMenu/CheckBoxMenu';
 
 export type CheckBoxMenuGroupProps<T> = {
   value: T[] | 'all';
@@ -8,6 +10,8 @@ export type CheckBoxMenuGroupProps<T> = {
   iconGetter?(value: T): JSX.Element;
   labelGetter(value: T): JSX.Element | string;
   keyGetter(value: T): string;
+  className?: string;
+  labelClassName?: string;
 };
 /**
  * React component for building toggleable checkbox menu
@@ -27,6 +31,8 @@ export function CheckBoxMenuGroup<T>({
   onChange,
   options,
   value,
+  className,
+  labelClassName,
 }: CheckBoxMenuGroupProps<T>) {
   const isAllSelected = useMemo(
     () => value === 'all' || value.length === options.length,
@@ -35,7 +41,8 @@ export function CheckBoxMenuGroup<T>({
   return (
     <>
       <CheckBoxMenu
-        className="px-2"
+        className={cx('px-2', className)}
+        labelClassName={labelClassName}
         checkboxProps={{
           isChecked: isAllSelected,
         }}
@@ -47,7 +54,7 @@ export function CheckBoxMenuGroup<T>({
 
       {options.map((opt) => (
         <CheckBoxMenu
-          className="px-2"
+          className={cx('px-2', className)}
           onChange={() => {
             const isSelected =
               isAllSelected || (value as T[]).indexOf(opt) > -1;

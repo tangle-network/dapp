@@ -1,3 +1,5 @@
+import { ChainConfig } from '@webb-tools/dapp-config';
+
 export interface HeaderCellProps {
   title: string;
   tooltip?: string;
@@ -39,4 +41,19 @@ export interface TimeCellProps {
 
 export interface DestinationCellProps {
   className?: string;
+}
+
+export interface FilterButtonProps {
+  tokens: [string, string][];
+  selectedTokens: 'all' | [string, string][];
+  setSelectedTokens: (tokens: 'all' | [string, string][]) => void;
+  sourceChains: string[];
+  selectedSourceChains: 'all' | [string, ChainConfig][];
+  setSelectedSourceChains: (chains: 'all' | [string, ChainConfig][]) => void;
+  destinationChains: string[];
+  selectedDestinationChains: 'all' | [string, ChainConfig][];
+  setSelectedDestinationChains: (
+    chains: 'all' | [string, ChainConfig][]
+  ) => void;
+  showAllFn: () => void;
 }
