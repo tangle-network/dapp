@@ -29,7 +29,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [, setIsDarkMode] = useDarkMode();
+  const [, setIsDarkMode] = useDarkMode('light');
 
   useEffect(() => {
     setIsDarkMode('light');

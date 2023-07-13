@@ -8,8 +8,8 @@ const typeColorMap: Record<PoolTypeChipProps['type'], ChipProps['color']> = {
   multi: 'blue',
 };
 
-const PoolTypeChip: FC<PoolTypeChipProps> = ({ type }) => {
-  return <Chip color={typeColorMap[type]}>{type}</Chip>;
+const PoolTypeChip: FC<PoolTypeChipProps> = ({ type, name }) => {
+  return <Chip color={typeColorMap[type]}>{name ?? type}</Chip>;
 };
 
 export default PoolTypeChip;

@@ -3,10 +3,10 @@ import { IconBase } from './types';
 
 export const ShieldedAssetLight = (props: IconBase) => {
   return createIcon({
-    ...props,
     width: 24,
     height: 30,
     viewBox: '0 0 24 30',
+    ...props,
     path: (
       <>
         <path
