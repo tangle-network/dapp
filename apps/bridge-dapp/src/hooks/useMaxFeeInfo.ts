@@ -4,8 +4,7 @@ import {
   RelayerFeeInfo,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
+import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -176,14 +175,15 @@ export const useMaxFeeInfo = (
         setIsLoading(false);
       } else if (activeApi instanceof WebbWeb3Provider) {
         const gasAmount = gasLimit[currentTypedChain];
-        const walletClient = activeApi.getProvider();
+        const walletClient = activeApi.walletClient;
+        const publicClient = activeApi.publicClient;
 
         const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } =
           await fetchFeeData({
             chainId: walletClient.chain?.id,
           });
 
-        let actualGasPrice = ZERO_BIG_INT;
+        let actualGasPrice = await publicClient.getGasPrice();
         if (gasPrice && gasPrice > actualGasPrice) {
           actualGasPrice = gasPrice;
         }

@@ -28,7 +28,7 @@ import {
 import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import gasLimitConfig, {
   DEFAULT_GAS_LIMIT,
-} from '@webb-tools/dapp-config/gasLimit-config';
+} from '@webb-tools/dapp-config/gasLimitConfig';
 import {
   checkNativeAddress,
   WebbError,
