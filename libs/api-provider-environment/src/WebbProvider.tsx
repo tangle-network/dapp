@@ -1,4 +1,3 @@
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
   Currency,
@@ -23,10 +22,10 @@ import {
   parseOnChainData,
   walletsConfig,
 } from '@webb-tools/dapp-config';
+import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   BareProps,
   CurrencyRole,
-  CurrencyType,
   InteractiveFeedback,
   WalletId,
   WebbError,
@@ -57,7 +56,6 @@ import { insufficientApiInterface } from './error/interactive-errors/insufficien
 import onChainDataJson from './generated/on-chain-config.json';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
-import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -215,7 +213,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   /// it will store on the provider and the storage of the network
   const setActiveAccount = useCallback(
     async (
-      account: Account<any>,
+      account: Account,
       options: {
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
@@ -248,7 +246,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       _setActiveAccount(account);
       // TODO resolve the account inner type issue
-      await innerActiveApi.accounts.setActiveAccount(account as any);
+      await innerActiveApi.accounts.setActiveAccount(account);
     },
     [activeApi, activeChain, networkStorage]
   );

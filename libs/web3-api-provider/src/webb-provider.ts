@@ -61,10 +61,10 @@ import {
   WalletClient,
   getContract,
 } from 'viem';
+import { getConfig } from '@wagmi/core';
 import {
   connect,
   getPublicClient,
-  switchNetwork,
   watchAccount,
   watchBlockNumber,
   watchNetwork,
@@ -211,17 +211,24 @@ export class WebbWeb3Provider
     notification: NotificationHandler,
     wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
   ) {
-    const { connector, chain } = await connect({
-      chainId,
-      connector: requestConnector,
-    });
+    let connector = requestConnector;
 
-    if (chain.unsupported) {
-      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
-    }
+    const cfg = getConfig();
+    if (cfg.connector !== connector) {
+      const { connector: connector_, chain } = await connect({
+        chainId,
+        connector: requestConnector,
+      });
 
-    if (!connector) {
-      throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
+      if (chain.unsupported) {
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+      }
+
+      if (!connector_) {
+        throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
+      }
+
+      connector = connector_ as SupportedConnector;
     }
 
     const walletClient = await connector.getWalletClient();
