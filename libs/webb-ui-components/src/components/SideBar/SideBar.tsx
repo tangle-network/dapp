@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
 import { SidebarProps } from './types';
 import { Item } from './Item';
 import { twMerge } from 'tailwind-merge';
@@ -36,6 +37,7 @@ export const SideBar: React.FC<SidebarProps> = ({
   logoLink,
   items,
   footer,
+  className,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeItem, setActiveItem] = useState<number | null>(0);
@@ -43,7 +45,7 @@ export const SideBar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className="flex gap-2 top-0 left-0 z-50 relative"
+      className={cx('flex gap-2 top-0 left-0 z-50 relative', className)}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
