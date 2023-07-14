@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   TVLChartContainer,
   VolumeChartContainer,
+  VolumeDataType,
 } from '@webb-tools/webb-ui-components';
 
 export const VolumeChartsContainer = () => {
@@ -14,9 +15,12 @@ export const VolumeChartsContainer = () => {
   const [tvlValue, setTvlValue] = useState<number | null>(null);
   const [tvlDate, setTVLDate] = useState<Date | null>(null);
 
-  // Volume value & Set Volume value (When user hover on chart - Tooltip response value)
+  // 24 Hour Volume value & Set Volume value (When user hover on chart - Tooltip response value)
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
+
+  // 24 Hour Volume data type (day, week, month) - Default value is Week
+  const [volumeDataType, setVolumeDataType] = useState<VolumeDataType>('Week');
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
@@ -79,6 +83,8 @@ export const VolumeChartsContainer = () => {
         volumeDate={volumeDate}
         setVolumeDate={setVolumeDate}
         volumeData={volumeData}
+        volumeDataType={volumeDataType}
+        setVolumeDataType={setVolumeDataType}
         isDarkMode={isDarkMode}
       />
     </div>

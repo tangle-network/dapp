@@ -5,5 +5,9 @@ export type VolumeChartContainerProps = {
   volumeDate: Date | null;
   setVolumeDate: (date: Date | null) => void;
   volumeData: any;
+  volumeDataType: VolumeDataType;
+  setVolumeDataType: (value: VolumeDataType) => void;
   isDarkMode: boolean;
 };
+
+export type VolumeDataType = 'Day' | 'Week' | 'Month';

@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { BarChart, Bar, XAxis, Tooltip } from 'recharts';
 import { VolumeChartContainerProps } from './types';
 import { VolumeChartsContainerInfo } from '../VolumeChartsContainerInfo';
+import { Chip } from '../Chip';
 
 export const VolumeChartContainer = forwardRef<
   HTMLDivElement,
@@ -15,6 +16,8 @@ export const VolumeChartContainer = forwardRef<
       volumeDate,
       setVolumeDate,
       volumeData,
+      volumeDataType,
+      setVolumeDataType,
       isDarkMode,
       ...props
     },
@@ -26,11 +29,40 @@ export const VolumeChartContainer = forwardRef<
         ref={ref}
         {...props}
       >
-        <VolumeChartsContainerInfo
-          heading="Volume 24H"
-          value={`$${volumeValue ?? currentVolumeValue}m`}
-          date={volumeDate}
-        />
+        <div className="flex items-start justify-between">
+          <VolumeChartsContainerInfo
+            heading="Volume 24H"
+            value={`$${volumeValue ?? currentVolumeValue}m`}
+            date={volumeDate}
+          />
+
+          <div className="flex items-center gap-1">
+            <Chip
+              color="blue"
+              className="cursor-pointer"
+              isSelected={volumeDataType === 'Day'}
+              onClick={() => setVolumeDataType('Day')}
+            >
+              D
+            </Chip>
+            <Chip
+              color="blue"
+              className="cursor-pointer"
+              isSelected={volumeDataType === 'Week'}
+              onClick={() => setVolumeDataType('Week')}
+            >
+              W
+            </Chip>
+            <Chip
+              color="blue"
+              className="cursor-pointer"
+              isSelected={volumeDataType === 'Month'}
+              onClick={() => setVolumeDataType('Month')}
+            >
+              M
+            </Chip>
+          </div>
+        </div>
 
         <BarChart
           width={560}
