@@ -68,7 +68,7 @@ export const VolumeChartsContainer = () => {
     <div className="grid grid-cols-2 gap-4">
       {/* TVL Chart Container */}
       <VolumeChartWrapper
-        heading='TVL'
+        heading="TVL"
         currentValue={currentTvlValue}
         value={tvlValue}
         date={tvlDate}
@@ -119,7 +119,7 @@ export const VolumeChartsContainer = () => {
 
       {/* 24 Hour Volume Chart Container */}
       <VolumeChartWrapper
-        heading='Volume 24H'
+        heading="Volume 24H"
         currentValue={currentVolumeValue}
         value={volumeValue}
         date={volumeDate}
