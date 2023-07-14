@@ -11,7 +11,7 @@ import {
 import { ChartContainer } from '../../components';
 
 export default {
-  title: 'Design System/Organisms/VolumeChartWrapper',
+  title: 'Design System/Organisms/ChartContainer',
   component: ChartContainer,
 };
 
