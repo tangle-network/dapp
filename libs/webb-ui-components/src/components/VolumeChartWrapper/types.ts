@@ -1,4 +1,5 @@
 export type VolumeChartWrapperProps = {
+  heading?: string;
   currentValue: number;
   value: number | null;
   date: Date | null;

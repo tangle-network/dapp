@@ -10,6 +10,7 @@ export const VolumeChartWrapper = forwardRef<
 >(
   (
     {
+      heading,
       currentValue,
       value,
       date,
@@ -33,7 +34,7 @@ export const VolumeChartWrapper = forwardRef<
       <div className={className} ref={ref} {...props}>
         <div className="flex items-start justify-between">
           <VolumeChartsContainerInfo
-            heading="TVL"
+            heading={heading}
             value={`$${value ?? currentValue}m`}
             date={date}
           />
