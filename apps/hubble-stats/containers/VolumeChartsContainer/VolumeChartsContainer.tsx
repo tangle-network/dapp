@@ -1,9 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  DaysFilterType,
-  ChartContainer,
-} from '@webb-tools/webb-ui-components';
+import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
 import {
   Area,
   AreaChart,
