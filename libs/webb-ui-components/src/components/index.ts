@@ -68,6 +68,8 @@ export * from './TokensRing';
 export * from './TokenWithAmount';
 export * from './Tooltip';
 export * from './TVLChartContainer';
+export * from './VolumeChartContainer';
+export * from './VolumeChartsContainerInfo';
 export * from './WalletConnectionCard';
 export * from './WebsiteCommunity';
 export * from './WebsiteFooter';

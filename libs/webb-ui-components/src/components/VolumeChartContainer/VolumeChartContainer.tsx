@@ -1,20 +1,20 @@
 import { forwardRef } from 'react';
-import { AreaChart, Area, XAxis, Tooltip } from 'recharts';
-import { TVLChartContainerProps } from './types';
+import { BarChart, Bar, XAxis, Tooltip } from 'recharts';
+import { VolumeChartContainerProps } from './types';
 import { VolumeChartsContainerInfo } from '../VolumeChartsContainerInfo';
 
-export const TVLChartContainer = forwardRef<
+export const VolumeChartContainer = forwardRef<
   HTMLDivElement,
-  TVLChartContainerProps
+  VolumeChartContainerProps
 >(
   (
     {
-      currentTvlValue,
-      tvlValue,
-      setTvlValue,
-      tvlDate,
-      setTVLDate,
-      tvlData,
+      currentVolumeValue,
+      volumeValue,
+      setVolumeValue,
+      volumeDate,
+      setVolumeDate,
+      volumeData,
       isDarkMode,
       ...props
     },
@@ -27,18 +27,18 @@ export const TVLChartContainer = forwardRef<
         {...props}
       >
         <VolumeChartsContainerInfo
-          heading="TVL"
-          value={`$${tvlValue ?? currentTvlValue}m`}
-          date={tvlDate}
+          heading="Volume 24H"
+          value={`$${volumeValue ?? currentVolumeValue}m`}
+          date={volumeDate}
         />
 
-        <AreaChart
+        <BarChart
           width={560}
           height={180}
-          data={tvlData}
+          data={volumeData}
           onMouseLeave={() => {
-            setTVLDate && setTVLDate(null);
-            setTvlValue && setTvlValue(null);
+            setVolumeDate && setVolumeDate(null);
+            setVolumeDate && setVolumeDate(null);
           }}
         >
           <XAxis
@@ -60,20 +60,15 @@ export const TVLChartContainer = forwardRef<
             contentStyle={{ display: 'none' }}
             content={({ active, payload }) => {
               if (active && payload && payload.length) {
-                setTvlValue && setTvlValue(payload[0].payload['value']);
-                setTVLDate && setTVLDate(payload[0].payload['date']);
+                setVolumeValue && setVolumeValue(payload[0].payload['value']);
+                setVolumeDate && setVolumeDate(payload[0].payload['date']);
               }
 
               return null;
             }}
           />
-          <Area
-            dataKey="value"
-            stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
-            fillOpacity={0}
-            strokeWidth={2}
-          />
-        </AreaChart>
+          <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
+        </BarChart>
       </div>
     );
   }
