@@ -1,4 +1,4 @@
-export type VolumeChartWrapperProps = {
+export type ChartContainerProps = {
   heading?: string;
   currentValue: number;
   value: number | null;

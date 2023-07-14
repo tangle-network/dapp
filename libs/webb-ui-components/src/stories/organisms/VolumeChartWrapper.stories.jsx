@@ -1,10 +1,18 @@
 import { useState, useMemo } from 'react';
-import { AreaChart, Area, XAxis, Tooltip, BarChart, Bar } from 'recharts';
-import { VolumeChartWrapper } from '../../components';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  Tooltip,
+  BarChart,
+  Bar,
+  ResponsiveContainer,
+} from 'recharts';
+import { ChartContainer } from '../../components';
 
 export default {
   title: 'Design System/Organisms/VolumeChartWrapper',
-  component: VolumeChartWrapper,
+  component: ChartContainer,
 };
 
 export const TVL = () => {
@@ -16,7 +24,7 @@ export const TVL = () => {
   const tvlData = useMemo(() => {
     const data = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 200; i++) {
       data.push({
         date: new Date(Date.now() + i * 24 * 60 * 60 * 1000),
         value: Math.floor(Math.random() * 20) + 1,
@@ -27,55 +35,55 @@ export const TVL = () => {
   }, []);
 
   return (
-    <VolumeChartWrapper
+    <ChartContainer
       heading="TVL"
       currentValue={currentTvlValue}
       value={tvlValue}
       date={tvlDate}
     >
-      <AreaChart
-        width={560}
-        height={180}
-        data={tvlData}
-        onMouseLeave={() => {
-          setTVLDate && setTVLDate(null);
-          setTvlValue && setTvlValue(null);
-        }}
-      >
-        <XAxis
-          dataKey="date"
-          tickFormatter={(date) =>
-            new Date(date).toLocaleDateString('en-US', {
-              day: 'numeric',
-            })
-          }
-          strokeOpacity={0}
-          tick={{
-            fontSize: '16px',
-            fill: '#9CA0B0',
-            fontWeight: 400,
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart
+          data={tvlData}
+          onMouseLeave={() => {
+            setTVLDate && setTVLDate(null);
+            setTvlValue && setTvlValue(null);
           }}
-          tickMargin={16}
-        />
-        <Tooltip
-          contentStyle={{ display: 'none' }}
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              setTvlValue && setTvlValue(payload[0].payload['value']);
-              setTVLDate && setTVLDate(payload[0].payload['date']);
+        >
+          <XAxis
+            dataKey="date"
+            tickFormatter={(date) =>
+              new Date(date).toLocaleDateString('en-US', {
+                day: 'numeric',
+              })
             }
+            strokeOpacity={0}
+            tick={{
+              fontSize: '16px',
+              fill: '#9CA0B0',
+              fontWeight: 400,
+            }}
+            tickMargin={16}
+          />
+          <Tooltip
+            contentStyle={{ display: 'none' }}
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                setTvlValue && setTvlValue(payload[0].payload['value']);
+                setTVLDate && setTVLDate(payload[0].payload['date']);
+              }
 
-            return null;
-          }}
-        />
-        <Area
-          dataKey="value"
-          stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
-          fillOpacity={0}
-          strokeWidth={2}
-        />
-      </AreaChart>
-    </VolumeChartWrapper>
+              return null;
+            }}
+          />
+          <Area
+            dataKey="value"
+            stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
+            fillOpacity={0}
+            strokeWidth={2}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </ChartContainer>
   );
 };
 
@@ -89,7 +97,7 @@ export const Volume = () => {
   const volumeData = useMemo(() => {
     const data = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 200; i++) {
       data.push({
         date: new Date(Date.now() + i * 24 * 60 * 60 * 1000),
         value: Math.floor(Math.random() * 20) + 1,
@@ -100,7 +108,7 @@ export const Volume = () => {
   }, []);
 
   return (
-    <VolumeChartWrapper
+    <ChartContainer
       heading="Volume 24H"
       currentValue={currentVolumeValue}
       value={volumeValue}
@@ -109,43 +117,43 @@ export const Volume = () => {
       daysFilterType={volumeDataType}
       setDaysFilterType={setVolumeDataType}
     >
-      <BarChart
-        width={560}
-        height={180}
-        data={volumeData}
-        onMouseLeave={() => {
-          setVolumeValue && setVolumeValue(null);
-          setVolumeDate && setVolumeDate(null);
-        }}
-      >
-        <XAxis
-          dataKey="date"
-          tickFormatter={(date) =>
-            new Date(date).toLocaleDateString('en-US', {
-              day: 'numeric',
-            })
-          }
-          strokeOpacity={0}
-          tick={{
-            fontSize: '16px',
-            fill: '#9CA0B0',
-            fontWeight: 400,
+      <ResponsiveContainer width="100%" height={180}>
+        <BarChart
+          data={volumeData}
+          onMouseLeave={() => {
+            setVolumeValue && setVolumeValue(null);
+            setVolumeDate && setVolumeDate(null);
           }}
-          tickMargin={16}
-        />
-        <Tooltip
-          contentStyle={{ display: 'none' }}
-          content={({ active, payload }) => {
-            if (active && payload && payload.length) {
-              setVolumeValue && setVolumeValue(payload[0].payload['value']);
-              setVolumeDate && setVolumeDate(payload[0].payload['date']);
+        >
+          <XAxis
+            dataKey="date"
+            tickFormatter={(date) =>
+              new Date(date).toLocaleDateString('en-US', {
+                day: 'numeric',
+              })
             }
+            strokeOpacity={0}
+            tick={{
+              fontSize: '16px',
+              fill: '#9CA0B0',
+              fontWeight: 400,
+            }}
+            tickMargin={16}
+          />
+          <Tooltip
+            contentStyle={{ display: 'none' }}
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                setVolumeValue && setVolumeValue(payload[0].payload['value']);
+                setVolumeDate && setVolumeDate(payload[0].payload['date']);
+              }
 
-            return null;
-          }}
-        />
-        <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
-      </BarChart>
-    </VolumeChartWrapper>
+              return null;
+            }}
+          />
+          <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
+        </BarChart>
+      </ResponsiveContainer>
+    </ChartContainer>
   );
 };
