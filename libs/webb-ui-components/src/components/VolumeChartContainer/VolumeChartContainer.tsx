@@ -69,7 +69,7 @@ export const VolumeChartContainer = forwardRef<
           height={180}
           data={volumeData}
           onMouseLeave={() => {
-            setVolumeDate && setVolumeDate(null);
+            setVolumeValue && setVolumeValue(null);
             setVolumeDate && setVolumeDate(null);
           }}
         >
