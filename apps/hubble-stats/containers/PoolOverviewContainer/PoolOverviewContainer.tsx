@@ -19,7 +19,8 @@ const PoolOverviewContainer = () => {
     <div
       className={cx(
         'w-full space-y-4 p-6 rounded-lg',
-        'border-2 border-mono-0 dark:border-mono-160'
+        'border-2 border-mono-0 dark:border-mono-160',
+        'bg-glass dark:bg-glass_dark'
       )}
     >
       <div className="flex flex-col items-center gap-1">

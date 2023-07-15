@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import Head from 'next/head';
 import {
   WebbUIProvider,
-  useDarkMode,
   Footer,
   SideBar,
   Logo,
@@ -29,12 +27,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [, setIsDarkMode] = useDarkMode('light');
-
-  useEffect(() => {
-    setIsDarkMode('light');
-  }, [setIsDarkMode]);
-
   const items: ItemProps[] = [
     {
       name: 'Hubble',

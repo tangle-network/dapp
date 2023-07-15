@@ -10,10 +10,10 @@ export default function Pool({ params }: { params: { slug: string } }) {
   return (
     <div className="py-4 space-y-8">
       <div className="flex gap-4">
-        <div className="flex-[1]">
+        <div className="w-[400px]">
           <PoolOverviewContainer />
         </div>
-        <div className="flex-[2]"></div>
+        <div className="flex-grow"></div>
       </div>
       <PoolTransactionsTableContainer />
       <PoolMetadataTableContainer />
