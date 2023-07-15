@@ -57,8 +57,8 @@ import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject } from 'rxjs';
 import {
-  Address,
   GetContractReturnType,
+  GetLogsReturnType,
   Hash,
   PublicClient,
   SwitchChainError,
@@ -714,25 +714,77 @@ export class WebbWeb3Provider
    */
   async getNewCommitmentLogs(
     publicClient: PublicClient,
-    vAnchorAddress: Address,
+    vAnchorContract: GetContractReturnType<
+      typeof VAnchor__factory.abi,
+      PublicClient
+    >,
     fromBlock: bigint,
     toBlock: bigint
   ) {
     const isTheSameBlock = fromBlock === toBlock;
 
-    // Use getLogs instead of createEventFilter.NewCommitment because
-    // createEventFilter.NewCommitment does not work without wss connection
-    const logs = await retryPromise(() =>
-      publicClient.getLogs({
-        address: vAnchorAddress,
-        event: parseAbiItem(
-          'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
-        ),
-        fromBlock,
-        toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
-        strict: true,
-      })
+    const chainId = await vAnchorContract.read.getChainId();
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      +chainId.toString()
     );
+
+    const maxBlockStep =
+      maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
+
+    const commonGetLogsProps = {
+      address: vAnchorContract.address,
+      event: parseAbiItem(
+        'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
+      ),
+      strict: true,
+    } as const;
+
+    if (isTheSameBlock || toBlock - fromBlock <= maxBlockStep) {
+      // Use getLogs instead of createEventFilter.NewCommitment because
+      // createEventFilter.NewCommitment does not work without wss connection
+      return retryPromise(() =>
+        publicClient.getLogs({
+          ...commonGetLogsProps,
+          fromBlock,
+          toBlock: isTheSameBlock ? toBlock : toBlock - BigInt(1), // toBlock is exclusive to prevent fetching the same block twice
+        })
+      );
+    }
+
+    const logs: GetLogsReturnType<
+      (typeof commonGetLogsProps)['event'],
+      true,
+      'NewCommitment'
+    > = [];
+
+    // We loop through the blocks in chunks to avoid hitting the max block step limit
+    let currentBlock = fromBlock;
+
+    while (currentBlock < toBlock) {
+      const logsChunk = await retryPromise(() =>
+        publicClient.getLogs({
+          ...commonGetLogsProps,
+          fromBlock: currentBlock,
+          toBlock: currentBlock + BigInt(maxBlockStep) - BigInt(1),
+        })
+      );
+
+      logs.push(...logsChunk);
+
+      currentBlock += BigInt(maxBlockStep);
+
+      const percentage: number =
+        (+(currentBlock - fromBlock).toString() /
+          +(toBlock - fromBlock).toString()) *
+        100;
+
+      console.log(
+        `Fetching UTXOs ${currentBlock.toLocaleString()}/${toBlock.toLocaleString()} (${percentage.toFixed(
+          2
+        )}%)`
+      );
+    }
 
     return logs;
   }
@@ -756,7 +808,7 @@ export class WebbWeb3Provider
 
     const logs = await this.getNewCommitmentLogs(
       publicClient,
-      vAnchorContract.address,
+      vAnchorContract,
       startingBlock,
       latestBlock
     );
@@ -780,48 +832,18 @@ export class WebbWeb3Provider
     >
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
-    const typedChainId = calculateTypedChainId(
-      ChainType.EVM,
-      +chainId.toString()
-    );
     const publicClient = getPublicClient({
       chainId: +chainId.toString(),
     });
 
     const latestBlock = await publicClient.getBlockNumber();
 
-    const maxBlockStep =
-      maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
-
-    const logs: Awaited<ReturnType<WebbWeb3Provider['getNewCommitmentLogs']>> =
-      [];
-
-    // We loop through the blocks in chunks to avoid hitting the max block step limit
-    let currentBlock: bigint = startingBlock;
-
-    while (currentBlock < latestBlock) {
-      const logsChunk = await this.getNewCommitmentLogs(
-        publicClient,
-        vAnchorContract.address,
-        currentBlock,
-        currentBlock + BigInt(maxBlockStep)
-      );
-
-      logs.push(...logsChunk);
-
-      currentBlock += BigInt(maxBlockStep);
-
-      const percentage: number =
-        (+(currentBlock - startingBlock).toString() /
-          +(latestBlock - startingBlock).toString()) *
-        100;
-
-      console.log(
-        `Fetching UTXOs ${currentBlock.toLocaleString()}/${latestBlock.toLocaleString()} (${percentage.toFixed(
-          2
-        )}%)`
-      );
-    }
+    const logs = await this.getNewCommitmentLogs(
+      publicClient,
+      vAnchorContract,
+      startingBlock,
+      latestBlock
+    );
 
     const parsedLogs = logs.map((log) => ({
       encryptedOutput: log.args.encryptedOutput,

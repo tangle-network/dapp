@@ -50,14 +50,11 @@ import {
   ZERO_BYTES32,
 } from '@webb-tools/utils';
 import {
-  Account,
   Address,
-  Chain,
   getContract,
   GetContractReturnType,
   Hash,
   PublicClient,
-  SendTransactionParameters,
 } from 'viem';
 import { getPublicClient } from 'wagmi/actions';
 import { handleVAnchorTxState } from '../utils';
@@ -569,7 +566,11 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const logs = await this.inner.getNewCommitmentLogs(
       this.inner.publicClient,
-      ensureHex(addressOrTreeId),
+      getContract({
+        address: ensureHex(addressOrTreeId),
+        abi: VAnchor__factory.abi,
+        publicClient: this.inner.publicClient,
+      }),
       receipt.blockNumber,
       receipt.blockNumber
     );
