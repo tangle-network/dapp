@@ -455,7 +455,21 @@ export class WebbWeb3Provider
     const utxos = await this.getSpendableUtxosFromChain(
       owner,
       BigInt(getAnchorDeploymentBlockNumber(typedChainId, anchorId) || 1),
-      vAnchorContract
+      vAnchorContract,
+      (fromBlock, toBlock, currenctBlock) => {
+        const fromBlockNumber = +fromBlock.toString();
+        const toBlockNumber = +toBlock.toString();
+        const currenctBlockNumber = +currenctBlock.toString();
+
+        const percentage =
+          ((currenctBlockNumber - fromBlockNumber) /
+            (toBlockNumber - fromBlockNumber + 1)) *
+          100;
+
+        const progress = percentage >= 100 ? 100 : percentage;
+
+        NoteManager.syncNotesProgress = progress;
+      }
     );
 
     console.log(`Found ${utxos.length} UTXOs on chain`);
@@ -710,6 +724,7 @@ export class WebbWeb3Provider
    * @param vAnchorAddress the address of the vAnchor contract
    * @param fromBlock the block to start fetching logs from
    * @param toBlock the block to stop fetching logs from
+   * @param onCurrentProcessingBlock a callback to call when the current processing block changes
    * @returns the filtered logs
    */
   async getNewCommitmentLogs(
@@ -719,7 +734,8 @@ export class WebbWeb3Provider
       PublicClient
     >,
     fromBlock: bigint,
-    toBlock: bigint
+    toBlock: bigint,
+    onCurrentProcessingBlock?: (block: bigint) => void
   ) {
     const isTheSameBlock = fromBlock === toBlock;
 
@@ -741,6 +757,7 @@ export class WebbWeb3Provider
     } as const;
 
     if (isTheSameBlock || toBlock - fromBlock <= maxBlockStep) {
+      onCurrentProcessingBlock?.(fromBlock);
       // Use getLogs instead of createEventFilter.NewCommitment because
       // createEventFilter.NewCommitment does not work without wss connection
       return retryPromise(() =>
@@ -762,6 +779,8 @@ export class WebbWeb3Provider
     let currentBlock = fromBlock;
 
     while (currentBlock < toBlock) {
+      onCurrentProcessingBlock?.(currentBlock);
+
       const logsChunk = await retryPromise(() =>
         publicClient.getLogs({
           ...commonGetLogsProps,
@@ -773,17 +792,6 @@ export class WebbWeb3Provider
       logs.push(...logsChunk);
 
       currentBlock += BigInt(maxBlockStep);
-
-      const percentage: number =
-        (+(currentBlock - fromBlock).toString() /
-          +(toBlock - fromBlock).toString()) *
-        100;
-
-      console.log(
-        `Fetching UTXOs ${currentBlock.toLocaleString()}/${toBlock.toLocaleString()} (${percentage.toFixed(
-          2
-        )}%)`
-      );
     }
 
     return logs;
@@ -829,7 +837,12 @@ export class WebbWeb3Provider
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
       PublicClient
-    >
+    >,
+    onBlockProcessed?: (
+      fromBlock: bigint,
+      toBlock: bigint,
+      currentBlock: bigint
+    ) => void
   ): Promise<Array<Utxo>> {
     const chainId = await vAnchorContract.read.getChainId();
     const publicClient = getPublicClient({
@@ -842,7 +855,9 @@ export class WebbWeb3Provider
       publicClient,
       vAnchorContract,
       startingBlock,
-      latestBlock
+      latestBlock,
+      (currentBlock) =>
+        onBlockProcessed?.(startingBlock, latestBlock, currentBlock)
     );
 
     const parsedLogs = logs.map((log) => ({

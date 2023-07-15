@@ -43,6 +43,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     allNotes,
     isSyncingNote,
     syncNotes: handleSyncNotes,
+    syncNotesProgress,
   } = useNoteAccount();
 
   const { setMainComponent, notificationApi, logger } = useWebbUI();
@@ -274,6 +275,11 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
             <div className="flex items-center space-x-1">
               <Button
                 isLoading={isSyncingNote}
+                loadingText={
+                  Number.isNaN(syncNotesProgress)
+                    ? ''
+                    : `${syncNotesProgress.toFixed(2)}%`
+                }
                 onClick={() => handleSyncNotes(handleNewNotes, handleSyncNotes)}
                 variant="utility"
               >

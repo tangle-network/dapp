@@ -44,6 +44,13 @@ export class NoteManager {
 
   private isSyncingNoteSubject = new BehaviorSubject(false);
 
+  /**
+   * A subject that emits the progress of syncing notes.
+   * The value is a 2-decimal point percentage of the progress
+   * or NaN if the progress is not started.
+   */
+  private static syncNotesProgressSubject = new BehaviorSubject(NaN);
+
   static readonly defaultNoteGenInput: DefaultNoteGenInput = {
     curve: 'Bn254',
     denomination: '18',
@@ -183,6 +190,18 @@ export class NoteManager {
 
   get defaultNoteGenInput(): DefaultNoteGenInput {
     return NoteManager.defaultNoteGenInput;
+  }
+
+  static get $syncNotesProgress() {
+    return this.syncNotesProgressSubject.asObservable();
+  }
+
+  static get syncNotesProgress() {
+    return this.syncNotesProgressSubject.getValue();
+  }
+
+  static set syncNotesProgress(value: number) {
+    this.syncNotesProgressSubject.next(value);
   }
 
   getKeypair() {

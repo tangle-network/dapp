@@ -8,14 +8,14 @@ export const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
   const {
     children = <Spinner darkMode={props.darkMode} className="w-5 h-5" />,
     className,
-    label,
+    hasLabel = false,
     placement = 'start',
   } = props;
 
   const mergedClassName = twMerge(
     'flex items-center',
-    label ? 'relative' : 'absolute',
-    label ? (placement === 'start' ? `mr-2` : `ml-2`) : undefined,
+    hasLabel ? 'relative' : 'absolute',
+    hasLabel ? (placement === 'start' ? `mr-2` : `ml-2`) : undefined,
     className
   );
 

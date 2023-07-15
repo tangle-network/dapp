@@ -1,4 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { NoteManager } from '@webb-tools/note-manager';
 import {
   calculateTypedChainId,
   Note,
@@ -6,6 +7,7 @@ import {
 } from '@webb-tools/sdk-core';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
@@ -32,6 +34,11 @@ export type UseNoteAccountReturnType = {
    * The flag to indicate if the notes are syncing
    */
   isSyncingNote: boolean;
+
+  /**
+   * The sync notes progress
+   */
+  syncNotesProgress: number;
 
   /**
    * The sync notes function
@@ -85,6 +92,11 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isSuccessfullyCreatedNoteAccount,
     setIsSuccessfullyCreatedNoteAccount,
   ] = useState(false);
+
+  const syncNotesProgress = useObservableState(
+    NoteManager.$syncNotesProgress,
+    NaN
+  );
 
   if (!isOpenNoteAccountModalSubject) {
     isOpenNoteAccountModalSubject = new BehaviorSubject(false);
@@ -270,6 +282,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isOpenNoteAccountModal,
     isSuccessfullyCreatedNoteAccount,
     isSyncingNote,
+    syncNotesProgress,
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
     syncNotes: handleSyncNotes,
