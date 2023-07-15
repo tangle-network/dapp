@@ -21,6 +21,7 @@ import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
 import { PoolTypeChip } from '..';
 
+
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
 const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [

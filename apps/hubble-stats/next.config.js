@@ -18,40 +18,26 @@ const nextConfig = {
   },
 
   // webpack config for wasm support
-  // following this approach: https://github.com/vercel/next.js/issues/29362#issuecomment-971377869
-  webpack: (config, { isServer, dev }) => {
+  // following this approach: https://github.com/vercel/next.js/issues/29362#issuecomment-1149903338
+  webpack: (config, { isServer }) => {
+    // it makes a WebAssembly modules async modules
     config.experiments = {
+      syncWebAssembly: true,
       asyncWebAssembly: true,
       layers: true,
     };
 
-    if (!dev && isServer) {
-      config.output.webassemblyModuleFilename = 'chunks/[id].wasm';
-      config.plugins.push(new WasmChunksFixPlugin());
+    // generate wasm module in ".next/server" for ssr & ssg
+    if (isServer) {
+      config.output.webassemblyModuleFilename =
+        './../static/wasm/[modulehash].wasm';
+    } else {
+      config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
     }
 
     return config;
   },
 };
-
-class WasmChunksFixPlugin {
-  apply(compiler) {
-    compiler.hooks.thisCompilation.tap('WasmChunksFixPlugin', (compilation) => {
-      compilation.hooks.processAssets.tap(
-        { name: 'WasmChunksFixPlugin' },
-        (assets) =>
-          Object.entries(assets).forEach(([pathname, source]) => {
-            if (!pathname.match(/\.wasm$/)) return;
-            compilation.deleteAsset(pathname);
-
-            const name = pathname.split('/')[1];
-            const info = compilation.assetsInfo.get(pathname);
-            compilation.emitAsset(name, source, info);
-          })
-      );
-    });
-  }
-}
 
 const plugins = [
   // Add more Next.js plugins to this list if needed.
