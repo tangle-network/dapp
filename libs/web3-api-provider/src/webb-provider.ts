@@ -703,13 +703,13 @@ export class WebbWeb3Provider
 
   /**
    * Get the logs from the vAnchor contract
-   * from `fromBlock` to `toBlock` (exclusive)
+   * from `fromBlock` to `toBlock`
    * or at block (`fromBlock === toBlock`) and filter them
    * by the `NewCommitment` event.
    * @param publicClient the public client to use
    * @param vAnchorAddress the address of the vAnchor contract
    * @param fromBlock the block to start fetching logs from
-   * @param toBlock the block to stop fetching logs from (exclusive)
+   * @param toBlock the block to stop fetching logs from
    * @returns the filtered logs
    */
   async getNewCommitmentLogs(
