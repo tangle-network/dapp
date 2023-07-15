@@ -798,6 +798,7 @@ export class WebbWeb3Provider
 
     // We loop through the blocks in chunks to avoid hitting the max block step limit
     let currentBlock: bigint = startingBlock;
+
     while (currentBlock < latestBlock) {
       const logsChunk = await this.getNewCommitmentLogs(
         publicClient,

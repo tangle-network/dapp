@@ -440,10 +440,12 @@ export class Web3VAnchorActions extends VAnchorActions<
   ): Promise<Note[]> {
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(anchorAddress);
+
     const notes = await this.inner.getVAnchorNotesFromChain(
       vAnchorContract,
       owner
     );
+
     return notes;
   }
 
