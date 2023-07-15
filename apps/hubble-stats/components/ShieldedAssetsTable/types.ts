@@ -1,6 +1,5 @@
 import { PoolType } from '../PoolTypeChip/types';
 
-
 export interface ShieldedAssetType {
   assetAddress: string;
   assetSymbol: string;
