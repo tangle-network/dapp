@@ -38,8 +38,8 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
           >
             <ArrowRight
               className={cx({
-                '-rotate-90 fill-green-70': changeRate >= 0,
-                'rotate-90 fill-red-70': changeRate < 0,
+                '-rotate-90 !fill-green-70': changeRate >= 0,
+                'rotate-90 !fill-red-70': changeRate < 0,
               })}
             />
             {getRoundedAmountString(Math.abs(changeRate), 2)}%

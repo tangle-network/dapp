@@ -52,9 +52,10 @@ const PoolOverviewContainer = () => {
         <PoolOverviewItem title="24h deposits" className="flex-[1]" />
         <PoolOverviewItem
           title="tvl"
+          prefix="$"
           className="flex-[1] border-x border-mono-40 dark:border-mono-140"
         />
-        <PoolOverviewItem title="24h fees" className="flex-[1]" />
+        <PoolOverviewItem title="24h fees" prefix="$" className="flex-[1]" />
       </div>
     </div>
   );
