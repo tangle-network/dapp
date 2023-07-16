@@ -509,6 +509,17 @@ class VAnchor {
     return false;
   }
 
+  public getWebbToken(): GetContractReturnType<
+    typeof ERC20__factory.abi,
+    PublicClient
+  > {
+    return getContract({
+      address: this.fungibleToken,
+      abi: ERC20__factory.abi,
+      publicClient: this.publicClient,
+    });
+  }
+
   public splitTransactionOptions<T extends object>(
     options?: T & TransactionOptions
   ): [T, TransactionOptions] {
@@ -524,17 +535,6 @@ class VAnchor {
       rest,
       { keypair, treeChainId, externalLeaves, onTransactionState },
     ] as [T, TransactionOptions];
-  }
-
-  public getWebbToken(): GetContractReturnType<
-    typeof ERC20__factory.abi,
-    PublicClient
-  > {
-    return getContract({
-      address: this.fungibleToken,
-      abi: ERC20__factory.abi,
-      publicClient: this.publicClient,
-    });
   }
 
   public getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {

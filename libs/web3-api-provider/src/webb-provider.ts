@@ -49,11 +49,15 @@ import {
   UtxoGenInput,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
+  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Storage } from '@webb-tools/storage';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
+import flatten from 'lodash/flatten';
+import groupBy from 'lodash/groupBy';
+import mapKeys from 'lodash/mapKeys';
 import { BehaviorSubject } from 'rxjs';
 import {
   GetContractReturnType,
@@ -871,13 +875,9 @@ export class WebbWeb3Provider
       (utxo): utxo is Utxo => utxo !== null
     );
 
-    const isUtxosSpent = await this.validateIsSpent(
-      filteredUtxos.map((utxo) => BigInt(ensureHex(utxo.nullifier))),
-      vAnchorContract
-    );
-
-    const spendableUtxos = filteredUtxos.filter(
-      (_, index) => !isUtxosSpent[index]
+    const spendableUtxos = await this.validateIsSpent(
+      filteredUtxos,
+      vAnchorContract.address
     );
 
     return spendableUtxos;
@@ -907,8 +907,11 @@ export class WebbWeb3Provider
         chainId: decryptedUtxo.chainId,
         curve: 'Bn254',
         keypair: owner,
-        index: decryptedUtxo.index?.toString() ?? leafIndex.toString(),
       });
+
+      const idx = decryptedUtxo.index || +leafIndex.toString();
+
+      regeneratedUtxo.setIndex(idx);
 
       if (BigInt(regeneratedUtxo.amount) === ZERO_BIG_INT) {
         return null;
@@ -927,12 +930,57 @@ export class WebbWeb3Provider
    * @returns an array of boolean values, where `true` means the nullifier is spent, otherwise `false`
    */
   private async validateIsSpent(
-    nullifiers: Array<bigint>,
-    vAnchorContract: GetContractReturnType<
-      typeof VAnchor__factory.abi,
-      PublicClient
-    >
-  ): Promise<ReadonlyArray<boolean>> {
-    return vAnchorContract.read.isSpentArray([nullifiers]);
+    utxos: ReadonlyArray<Utxo>,
+    vAnchorIdentifier: string
+  ): Promise<Array<Utxo>> {
+    // Get record of chainId -> Utxos
+    const utxosByChainId = groupBy(
+      utxos,
+      (utxo) => parseTypedChainId(+utxo.chainId).chainId
+    );
+
+    // Get record of chainId -> contract instance
+    const vAnchorContractsByChainId = Object.keys(utxosByChainId).reduce(
+      (acc, chainIdStr) => {
+        const chainId = +chainIdStr;
+
+        if (!acc[chainId]) {
+          acc[chainId] = getContract({
+            address: ensureHex(vAnchorIdentifier),
+            abi: VAnchor__factory.abi,
+            publicClient: getPublicClient({ chainId }),
+          });
+        }
+
+        return acc;
+      },
+      {} as Record<
+        number,
+        GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+      >
+    );
+
+    // Use the contract instance to validate the nullifiers
+    // by calling isSpentArray and get the non-spent utxos
+    const nonSpentUtxosByChainId = await Promise.all(
+      Object.entries(vAnchorContractsByChainId).map(
+        async ([chainId, vAnchorContract]) => {
+          const nullifiers = utxosByChainId[chainId].map((utxo) =>
+            BigInt(ensureHex(utxo.nullifier))
+          );
+
+          const isSpentArray = await vAnchorContract.read.isSpentArray([
+            nullifiers,
+          ]);
+
+          return utxosByChainId[chainId].filter(
+            (_, index) => !isSpentArray[index]
+          );
+        }
+      )
+    );
+
+    // Flatten the array of arrays
+    return flatten(nonSpentUtxosByChainId);
   }
 }
