@@ -232,20 +232,18 @@ export class Web3VAnchorActions extends VAnchorActions<
         extData: {
           recipient: extData.recipient,
           relayer: extData.relayer,
-          extAmount: extAmount.toString(16),
-          fee: extData.fee.toString(),
+          extAmount: toFixedHex(extAmount).replace('0x', ''),
+          fee: toFixedHex(extData.fee),
+          refund: toFixedHex(extData.refund),
+          token: extData.token,
           encryptedOutput1: extData.encryptedOutput1,
           encryptedOutput2: extData.encryptedOutput2,
-          refund: extData.refund.toString(),
-          token: extData.token,
         },
         proofData: {
           proof: publicInputs.proof,
           extensionRoots: publicInputs.extensionRoots,
-          extDataHash: padHexString(
-            ensureHex(publicInputs.extDataHash.toString(16))
-          ),
-          publicAmount: publicInputs.publicAmount.toString(),
+          extDataHash: toFixedHex(publicInputs.extDataHash),
+          publicAmount: publicInputs.publicAmount,
           roots: publicInputs.roots,
           outputCommitments: publicInputs.outputCommitments.map((output) =>
             padHexString(ensureHex(output.toString(16)))
@@ -494,7 +492,13 @@ export class Web3VAnchorActions extends VAnchorActions<
     );
 
     return vAnchorInstance.contract.estimateGas.transact(
-      [publicInputs.proof, ZERO_BYTES32, extData, publicInputs, extData],
+      [
+        publicInputs.proof,
+        ZERO_BYTES32,
+        extData,
+        { ...publicInputs, publicAmount: BigInt(publicInputs.publicAmount) },
+        extData,
+      ],
       {
         account,
         value: options.value ?? ZERO_BIG_INT,

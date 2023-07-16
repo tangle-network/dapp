@@ -410,7 +410,7 @@ class VAnchor {
             publicInputs.outputCommitments[0],
             publicInputs.outputCommitments[1],
           ],
-          publicAmount: publicInputs.publicAmount,
+          publicAmount: BigInt(publicInputs.publicAmount),
           extDataHash: publicInputs.extDataHash,
         },
         {
@@ -667,7 +667,7 @@ class VAnchor {
         BigInt(toFixedHex(u8aToHex(outputs[0].commitment))),
         BigInt(toFixedHex(u8aToHex(outputs[1].commitment))),
       ] as const,
-      publicAmount: publicAmount,
+      publicAmount: toFixedHex(publicAmount) as Hash,
       extDataHash: BigInt(extDataHash),
     };
 
