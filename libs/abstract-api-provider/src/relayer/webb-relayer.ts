@@ -246,9 +246,6 @@ export class WebbRelayer {
       | { treeId: number; palletId: number },
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
-    console.group(`getLeaves() for ${this.endpoint}`);
-    console.log('On chain: ', chainsPopulated[typedChainId]?.name);
-
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     const baseUrl = `${this.endpoint}/api/v1/leaves`;
     let path = '';
@@ -284,18 +281,19 @@ export class WebbRelayer {
 
     if (req.ok) {
       const jsonResponse = await req.json();
-      console.log('response: ', jsonResponse);
+      console.log(
+        `Response from ${this.endpoint} for chain ${chainsPopulated[typedChainId]?.name}: `,
+        jsonResponse
+      );
       const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
-      console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
         leaves: fetchedLeaves,
       };
     } else {
-      console.groupEnd();
       throw new Error('network error');
     }
   }

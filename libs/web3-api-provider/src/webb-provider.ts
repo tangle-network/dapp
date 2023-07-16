@@ -358,7 +358,7 @@ export class WebbWeb3Provider
       );
 
     // If unable to fetch leaves from the relayers, get them from chain
-    if (!leavesFromRelayers) {
+    if (!leavesFromRelayers || leavesFromRelayers.commitmentIndex === -1) {
       tx?.next(TransactionState.FetchingLeaves, {
         start: 0, // Dummy values
         currentRange: [0, 0], // Dummy values

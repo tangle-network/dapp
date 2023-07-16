@@ -514,11 +514,25 @@ export class Web3VAnchorActions extends VAnchorActions<
     // Loop through the notes and populate the leaves map
     const leavesMap: Record<string, Uint8Array[]> = {};
 
-    const notesLeaves = await Promise.all(
-      notes.map((note) =>
-        this.fetchNoteLeaves(note, leavesMap, destVAnchor, treeHeight, tx)
-      )
-    );
+    const notesLeaves: Array<
+      Awaited<ReturnType<Web3VAnchorActions['fetchNoteLeaves']>>
+    > = [];
+
+    // Fetch the leaves for each note in sequencial order
+    // because if we fetch them in parallel, if one of the
+    // task fails, others will still be running and resolve.
+    // That makes the UI to show the wrong state.
+    for (const note of notes) {
+      const noteLeaves = await this.fetchNoteLeaves(
+        note,
+        leavesMap,
+        destVAnchor,
+        treeHeight,
+        tx
+      );
+
+      notesLeaves.push(noteLeaves);
+    }
 
     // Keep track of the leafindices for each note
     const leafIndices: number[] = [];
@@ -691,6 +705,13 @@ export class Web3VAnchorActions extends VAnchorActions<
           tx,
         });
 
+      // Validate that the commitment is in the tree
+      if (leafIndex === -1) {
+        return Promise.reject(
+          WebbError.from(WebbErrorCodes.CommitmentNotInTree)
+        );
+      }
+
       leavesMap[parsedNote.sourceChainId] = provingLeaves.map((leaf) => {
         return hexToU8a(leaf);
       });
@@ -709,6 +730,14 @@ export class Web3VAnchorActions extends VAnchorActions<
           destRelayedRoot,
           commitment.toString()
         );
+
+      // Validate that the commitment is in the tree
+      if (leafIndex === -1) {
+        return Promise.reject(
+          WebbError.from(WebbErrorCodes.CommitmentNotInTree)
+        );
+      }
+
       tx?.next(TransactionState.ValidatingLeaves, true);
 
       commitmentIndex = leafIndex;
@@ -721,14 +750,6 @@ export class Web3VAnchorActions extends VAnchorActions<
           hexToU8a(leaf)
         );
       }
-    }
-
-    // Validate that the commitment is in the tree
-    if (commitmentIndex === -1) {
-      // Outer try/catch will handle this
-      throw new Error(
-        'Relayer has not yet relayed the commitment to the destination chain'
-      );
     }
 
     const utxo = await utxoFromVAnchorNote(parsedNote, commitmentIndex);

@@ -61,6 +61,8 @@ export enum WebbErrorCodes {
   InvalidArguments,
   // No connector configured for the wallet
   NoConnectorConfigured,
+  // Relayer has not yet relayed the commitment to the destination chain
+  CommitmentNotInTree,
 }
 
 // An Error message with error metadata
@@ -276,6 +278,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `No connector configured for the wallet`,
+        };
+
+      case WebbErrorCodes.CommitmentNotInTree:
+        return {
+          code,
+          message: `Relayer has not yet relayed the commitment to the destination chain`,
         };
 
       default:

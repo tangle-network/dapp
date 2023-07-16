@@ -245,8 +245,8 @@ export const WithdrawConfirmContainer = forwardRef<
           notes: availableNotes,
           changeUtxo,
           recipient,
-          refundAmount: refund.toBigInt(),
-          feeAmount: fee.toBigInt(),
+          refundAmount: refund,
+          feeAmount: fee,
         };
 
         const args = await vAnchorApi.prepareTransaction(
@@ -264,7 +264,7 @@ export const WithdrawConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const { transactionHash } = await vAnchorApi.transact(...args);
+          const transactionHash = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
           tx.txHash = transactionHash;
@@ -362,11 +362,11 @@ export const WithdrawConfirmContainer = forwardRef<
         activeChains={activeChains}
         sourceChain={{
           name: chainsPopulated[sourceTypedChainId].name,
-          type: chainsPopulated[sourceTypedChainId].base ?? 'webb-dev',
+          type: chainsPopulated[sourceTypedChainId].group ?? 'webb-dev',
         }}
         destChain={{
           name: chainsPopulated[targetTypedChainId].name,
-          type: chainsPopulated[targetTypedChainId].base ?? 'webb-dev',
+          type: chainsPopulated[targetTypedChainId].group ?? 'webb-dev',
         }}
         actionBtnProps={{
           isDisabled: withdrawTxInProgress

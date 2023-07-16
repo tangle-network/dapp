@@ -178,7 +178,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
           tx
         );
 
-        if (!result) {
+        if (!result || result.commitmentIndex === -1) {
           continue;
         }
 
