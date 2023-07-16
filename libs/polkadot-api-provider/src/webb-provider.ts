@@ -12,7 +12,6 @@ import {
   RelayChainMethods,
   Transaction,
   TransactionState,
-  WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -113,8 +112,7 @@ export class WebbPolkadot
     public readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
-    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
-    readonly wasmFactory: WasmFactory
+    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
   ) {
     super();
 
@@ -267,7 +265,6 @@ export class WebbPolkadot
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
     apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
-    wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
     typedChainId: number,
     wallet: Wallet // Current wallet to initialize
   ): Promise<WebbPolkadot> {
@@ -291,8 +288,7 @@ export class WebbPolkadot
       apiConfig,
       notification,
       provider,
-      accounts,
-      wasmFactory
+      accounts
     );
     /// check metadata update
     await instance.awaitMetaDataCheck();
@@ -314,8 +310,7 @@ export class WebbPolkadot
     notification: NotificationHandler, // Notification handler that will be used for the provider
     accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
     apiPromise: ApiPromise,
-    injectedExtension: InjectedExtension,
-    wasmFactory: WasmFactory
+    injectedExtension: InjectedExtension
   ): Promise<WebbPolkadot> {
     const provider = new PolkadotProvider(
       apiPromise,
@@ -336,8 +331,7 @@ export class WebbPolkadot
       ApiConfig,
       notification,
       provider,
-      accounts,
-      wasmFactory
+      accounts
     );
 
     await instance.ensureApiInterface();

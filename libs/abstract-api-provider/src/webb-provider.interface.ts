@@ -190,11 +190,6 @@ export type NotificationHandler = ((
   // remove the notification programmatically
   remove(key: string | number): void;
 };
-/**
- * Wasm factory
- * @param name - optional name to map an action to a worker currently there's only sdk-core
- **/
-export type WasmFactory = (name?: string) => Worker | null;
 
 export type WebbProviderType = 'web3' | 'polkadot';
 
@@ -211,7 +206,6 @@ export type WebbProviderType = 'web3' | 'polkadot';
  * @param {WebbRelayerManager} relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
  * @param {any} getProvider - A getter method for getting the underlying provider
  * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
- * @param {WasmFactory} wasmFactory - Provider of the wasm workers
  *
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
@@ -246,9 +240,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   // Notification handler
   notificationHandler: NotificationHandler;
-
-  // wasm-utils workers factory
-  wasmFactory: WasmFactory;
 
   // new block observable
   newBlock: Observable<bigint | null>;

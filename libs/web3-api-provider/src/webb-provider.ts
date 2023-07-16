@@ -12,7 +12,6 @@ import {
   RelayChainMethods,
   Transaction,
   TransactionState,
-  WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -130,8 +129,7 @@ export class WebbWeb3Provider
     readonly noteManager: NoteManager | null,
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
-    readonly accounts: Web3Accounts,
-    readonly wasmFactory: WasmFactory
+    readonly accounts: Web3Accounts
   ) {
     super();
 
@@ -212,8 +210,7 @@ export class WebbWeb3Provider
     relayerManager: Web3RelayerManager,
     noteManager: NoteManager | null,
     appConfig: ApiConfig,
-    notification: NotificationHandler,
-    wasmFactory: WasmFactory // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
+    notification: NotificationHandler
   ) {
     let connector = requestConnector;
 
@@ -253,8 +250,7 @@ export class WebbWeb3Provider
       noteManager,
       appConfig,
       notification,
-      accounts,
-      wasmFactory
+      accounts
     );
   }
 

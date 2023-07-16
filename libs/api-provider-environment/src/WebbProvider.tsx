@@ -483,13 +483,6 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 relayerManager,
                 apiConfig,
                 notificationHandler,
-                () =>
-                  new Worker(
-                    new URL(
-                      '@webb-tools/react-environment/arkworks-proving-manager.worker',
-                      import.meta.url
-                    )
-                  ),
                 nextTypedChainId,
                 wallet
               );
@@ -535,14 +528,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 relayerManager,
                 noteManager,
                 apiConfig,
-                notificationHandler,
-                () =>
-                  new Worker(
-                    new URL(
-                      '@webb-tools/react-environment/circom-proving-manager.worker',
-                      import.meta.url
-                    )
-                  )
+                notificationHandler
               );
 
               const providerUpdateHandler = async ([
