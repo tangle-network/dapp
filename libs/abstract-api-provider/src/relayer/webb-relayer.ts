@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
@@ -178,9 +178,9 @@ class RelayedWithdraw {
     this.ws.send(JSON.stringify(withdrawRequest));
   }
 
-  await() {
-    return this.watcher
-      .pipe(
+  await(): Promise<[RelayedWithdrawResult, string | undefined]> {
+    return firstValueFrom(
+      this.watcher.pipe(
         filter(([next]) => {
           return (
             next === RelayedWithdrawResult.CleanExit ||
@@ -188,7 +188,7 @@ class RelayedWithdraw {
           );
         })
       )
-      .toPromise();
+    );
   }
 
   get currentStatus() {
