@@ -6,13 +6,13 @@ type TokenConfigType = Record<string, string>;
 // TODO: We should fetch the token info (e.g. symbol, decimals, name, ...) from the chain
 const tokens: Record<string, TokenConfigType> = {
   [PresetTypedChainId.AthenaOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    webbWETH: '0x915EbFAd9c4Af2F420782a5F03BD544f9a1FF1d1',
   },
   [PresetTypedChainId.HermesOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    webbWETH: '0x915EbFAd9c4Af2F420782a5F03BD544f9a1FF1d1',
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    webbWETH: '0x915EbFAd9c4Af2F420782a5F03BD544f9a1FF1d1',
   },
 };
 
