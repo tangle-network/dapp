@@ -495,6 +495,9 @@ export class WebbWeb3Provider
       })
     );
 
+    // Reset the progress
+    NoteManager.syncNotesProgress = Number.NaN;
+
     return notes;
   }
 
