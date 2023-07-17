@@ -57,7 +57,6 @@ import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
-import mapKeys from 'lodash/mapKeys';
 import { BehaviorSubject } from 'rxjs';
 import {
   GetContractReturnType,
@@ -278,15 +277,8 @@ export class WebbWeb3Provider
   }
 
   setAccountListener() {
-    return watchAccount(async (account) => {
-      const connector = account.connector;
-      if (!connector) {
-        return;
-      }
-
-      const walletClient = await connector.getWalletClient();
-      const newAcc = new Web3Accounts(walletClient);
-      this.emit('newAccounts', newAcc);
+    return watchAccount(async () => {
+      this.emit('newAccounts', this.accounts);
     });
   }
 

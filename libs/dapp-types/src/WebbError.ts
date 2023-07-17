@@ -63,6 +63,8 @@ export enum WebbErrorCodes {
   NoConnectorConfigured,
   // Relayer has not yet relayed the commitment to the destination chain
   CommitmentNotInTree,
+  // Switch account failed
+  SwitchAccountFailed,
 }
 
 // An Error message with error metadata
@@ -284,6 +286,12 @@ export class WebbError extends Error {
         return {
           code,
           message: `Relayer has not yet relayed the commitment to the destination chain`,
+        };
+
+      case WebbErrorCodes.SwitchAccountFailed:
+        return {
+          code,
+          message: 'Failed to switch account',
         };
 
       default:

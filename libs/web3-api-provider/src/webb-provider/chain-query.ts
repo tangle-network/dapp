@@ -51,6 +51,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         if (nativeCurrency.id === currencyId) {
           const tokenBalanceBig = await this.inner.publicClient.getBalance({
             address: accountAddress,
+            blockTag: 'latest',
           });
           const tokenBalance = formatEther(tokenBalanceBig);
 
@@ -73,9 +74,12 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
             abi: ERC20Factory.abi,
             publicClient: this.inner.publicClient,
           });
-          const tokenBalanceBig = await tokenInstance.read.balanceOf([
-            accountAddress,
-          ]);
+          const tokenBalanceBig = await tokenInstance.read.balanceOf(
+            [accountAddress],
+            {
+              blockTag: 'latest',
+            }
+          );
           const tokenBalance = formatEther(tokenBalanceBig);
 
           return tokenBalance;
@@ -94,7 +98,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         const account = await this.getAccountAddress(accountAddressArg);
 
         if (!account) {
-          console.log('no account selected');
+          console.error('no account selected');
           return '';
         }
 
@@ -104,6 +108,7 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
         if (address === zeroAddress) {
           const tokenBalanceBig = await this.inner.publicClient.getBalance({
             address: accountAddress,
+            blockTag: 'latest',
           });
           const tokenBalance = formatEther(tokenBalanceBig);
 
@@ -116,9 +121,12 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
             publicClient: this.inner.publicClient,
           });
 
-          const tokenBalanceBig = await tokenInstance.read.balanceOf([
-            accountAddress,
-          ]);
+          const tokenBalanceBig = await tokenInstance.read.balanceOf(
+            [accountAddress],
+            {
+              blockTag: 'latest',
+            }
+          );
 
           const tokenBalance = formatEther(tokenBalanceBig);
 
@@ -132,15 +140,6 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   private async getAccountAddress(
     accAddr?: string
   ): Promise<string | undefined> {
-    if (accAddr) {
-      return accAddr;
-    }
-
-    const accounts = await this.inner.accounts.accounts();
-    if (!accounts?.length) {
-      return undefined;
-    }
-
-    return accounts[0]?.address;
+    return accAddr ?? this.inner.accounts.activeOrDefault?.address;
   }
 }

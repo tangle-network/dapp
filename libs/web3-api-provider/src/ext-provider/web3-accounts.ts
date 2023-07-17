@@ -1,13 +1,13 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WalletClient, Address } from 'viem';
 import {
   Account,
   AccountsAdapter,
   PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { Address, JsonRpcAccount, WalletClient } from 'viem';
+import { getAccount } from 'wagmi/actions';
 
 export class Web3Account extends Account<WalletClient['account']> {
   constructor(
@@ -33,21 +33,31 @@ export class Web3Accounts extends AccountsAdapter<
   providerName = 'Web3';
 
   async accounts() {
-    const account = this.inner.account;
+    const addresses = await this.inner.getAddresses();
 
-    if (!account) {
-      return [];
-    }
-
-    return [new Web3Account(account, account.address)];
+    return addresses.map(
+      (address) =>
+        new Web3Account(
+          { type: 'json-rpc', address } satisfies WalletClient['account'],
+          address
+        )
+    );
   }
 
   get activeOrDefault() {
-    const defaultAccount = this.inner.account;
+    const defaultAccount = getAccount();
 
-    return defaultAccount
-      ? new Web3Account(defaultAccount, defaultAccount.address)
-      : null;
+    if (!defaultAccount.address) {
+      return null;
+    }
+
+    return new Web3Account(
+      {
+        type: 'json-rpc',
+        address: defaultAccount.address,
+      } satisfies WalletClient['account'],
+      defaultAccount.address
+    );
   }
 
   setActiveAccount(_: Account): PromiseOrT<void> {

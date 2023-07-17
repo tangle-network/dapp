@@ -27,6 +27,8 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ClearDataModal } from './ClearDataModal';
 import { HeaderButton } from './HeaderButton';
+import { WebbWeb3Provider, isViemError } from '@webb-tools/web3-api-provider';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
@@ -35,8 +37,13 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
   // Clear data modal
   const [isOpen, setIsOpen] = useState(false);
 
-  const { activeChain, noteManager, purgeNoteAccount, inactivateApi } =
-    useWebContext();
+  const {
+    activeApi,
+    activeChain,
+    noteManager,
+    purgeNoteAccount,
+    inactivateApi,
+  } = useWebContext();
 
   // Get all note, syncNotes and isSyncingNote function
   const {
@@ -147,32 +154,25 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
 
   // Funciton to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
-    if (!activeChain) {
-      notificationApi({
-        variant: 'error',
-        message: 'No active chain',
-      });
+    // Switch account only support on web3 provider
+    if (!activeApi || !(activeApi instanceof WebbWeb3Provider)) {
       return;
     }
 
-    if (
-      typeof window !== 'undefined' &&
-      typeof window.ethereum !== 'undefined'
-    ) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_requestPermissions',
-          params: [
-            {
-              eth_accounts: {},
-            },
-          ],
-        });
-      } catch (error) {
-        console.log(error);
+    try {
+      const walletClient = activeApi.walletClient;
+
+      await walletClient.requestPermissions({ eth_accounts: {} });
+    } catch (error) {
+      let message = WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
+
+      if (isViemError(error)) {
+        message = error.shortMessage;
       }
+
+      notificationApi({ variant: 'error', message });
     }
-  }, [activeChain, notificationApi]);
+  }, [activeApi, notificationApi]);
 
   // Disconnect function
   // TODO: The disconnect function does not work properly
