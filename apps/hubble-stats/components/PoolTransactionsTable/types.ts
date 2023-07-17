@@ -1,5 +1,4 @@
-import { ChainBase } from '@webb-tools/dapp-config';
-
+import { ChainGroup } from '@webb-tools/dapp-config';
 import { ActivityType } from '../table/types';
 
 export type PoolTransactionType = {
@@ -8,7 +7,7 @@ export type PoolTransactionType = {
   tokenAmount: number;
   tokenSymbol: string;
   source: string;
-  sourceChainType: ChainBase;
+  sourceChainType: ChainGroup;
   destination: string;
   time: number;
 };
