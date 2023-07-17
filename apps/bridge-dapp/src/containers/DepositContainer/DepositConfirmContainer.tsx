@@ -11,7 +11,7 @@ import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { formatUnits } from 'viem';
+import { ContractFunctionRevertedError, formatUnits } from 'viem';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -24,6 +24,7 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
+import { isViemError } from '@webb-tools/web3-api-provider';
 
 export const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -208,11 +209,26 @@ export const DepositConfirmContainer = forwardRef<
           txHash: transactionHash,
           outputNotes: [indexedNote],
         });
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
         removeNoteFromNoteManager(note);
         tx.txHash = getTransactionHash(error);
-        tx.fail(getErrorMessage(error));
+
+        let errorMessage = getErrorMessage(error);
+        if (isViemError(error)) {
+          errorMessage = error.shortMessage;
+
+          const revertError = error.walk(
+            (err) => err instanceof ContractFunctionRevertedError
+          );
+
+          if (revertError instanceof ContractFunctionRevertedError) {
+            errorMessage = revertError.reason ?? revertError.shortMessage;
+          }
+        }
+
+        tx.fail(errorMessage);
+
         captureSentryException(error, 'transactionType', 'deposit');
       } finally {
         onResetState?.();

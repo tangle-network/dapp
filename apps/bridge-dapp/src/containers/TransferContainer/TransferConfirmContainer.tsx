@@ -33,7 +33,8 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
-import { formatEther } from 'viem';
+import { ContractFunctionRevertedError, formatEther } from 'viem';
+import { isViemError } from '@webb-tools/web3-api-provider';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -239,7 +240,22 @@ export const TransferConfirmContainer = forwardRef<
         console.error('Error occured while transfering', error);
         changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
-        tx.fail(getErrorMessage(error));
+
+        let errorMessage = getErrorMessage(error);
+        if (isViemError(error)) {
+          errorMessage = error.shortMessage;
+
+          const revertError = error.walk(
+            (err) => err instanceof ContractFunctionRevertedError
+          );
+
+          if (revertError instanceof ContractFunctionRevertedError) {
+            errorMessage = revertError.reason ?? revertError.shortMessage;
+          }
+        }
+
+        tx.fail(errorMessage);
+
         captureSentryException(error, 'transactionType', 'transfer');
       } finally {
         setMainComponent(undefined);

@@ -28,7 +28,8 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
-import { formatEther, formatUnits } from 'viem';
+import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
+import { isViemError } from '@webb-tools/web3-api-provider';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -282,7 +283,22 @@ export const WithdrawConfirmContainer = forwardRef<
         console.log('Error while executing withdraw', error);
         changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
-        tx.fail(getErrorMessage(error));
+
+        let errorMessage = getErrorMessage(error);
+        if (isViemError(error)) {
+          errorMessage = error.shortMessage;
+
+          const revertError = error.walk(
+            (err) => err instanceof ContractFunctionRevertedError
+          );
+
+          if (revertError instanceof ContractFunctionRevertedError) {
+            errorMessage = revertError.reason ?? revertError.shortMessage;
+          }
+        }
+
+        tx.fail(errorMessage);
+
         captureSentryException(error, 'transactionType', 'withdraw');
       } finally {
         setMainComponent(undefined);
