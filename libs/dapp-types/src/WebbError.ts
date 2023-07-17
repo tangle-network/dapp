@@ -65,6 +65,8 @@ export enum WebbErrorCodes {
   CommitmentNotInTree,
   // Switch account failed
   SwitchAccountFailed,
+  // Switch chain failed
+  SwitchChainFailed,
 }
 
 // An Error message with error metadata
@@ -292,6 +294,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to switch account',
+        };
+
+      case WebbErrorCodes.SwitchChainFailed:
+        return {
+          code,
+          message: 'Failed to switch chain',
         };
 
       default:

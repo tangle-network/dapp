@@ -45,13 +45,14 @@ import {
 import {
   Web3RelayerManager,
   WebbWeb3Provider,
+  isViemError,
 } from '@webb-tools/web3-api-provider';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { WagmiConfig } from 'wagmi';
 import { TAppEvent } from './app-event';
 import constants from './constants';
-import { parseError, unsupportedChain } from './error';
+import { unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import onChainDataJson from './generated/on-chain-config.json';
 import { useTxApiQueue } from './transaction';
@@ -669,11 +670,18 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           err = e;
         } else {
           // Parse and display error
-          const parsedError = parseError(e);
+          let errorMessage = WebbError.getErrorMessage(
+            WebbErrorCodes.SwitchChainFailed
+          ).message;
+
+          if (isViemError(e)) {
+            errorMessage = e.shortMessage;
+          }
+
           notificationApi({
             variant: 'error',
             message: 'Web3: Switch Chain Error',
-            secondaryMessage: parsedError.message,
+            secondaryMessage: errorMessage,
           });
         }
 

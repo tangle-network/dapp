@@ -1,7 +1,6 @@
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { WebbError } from '@webb-tools/dapp-types';
 import { SnackBarOpts } from '@webb-tools/webb-ui-components';
-import { Transaction } from 'viem';
+import { Transaction, TransactionReceipt } from 'viem';
 
 export const DEPOSIT_FAILURE_MSG: Omit<SnackBarOpts, 'close'> = {
   variant: 'error',
