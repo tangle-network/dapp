@@ -18,4 +18,9 @@ export interface CheckBoxMenuProps extends WebbComponentBase {
    *
    * */
   checkboxProps?: CheckBoxProps;
+
+  /**
+   * Label class name
+   * */
+  labelClassName?: string;
 }

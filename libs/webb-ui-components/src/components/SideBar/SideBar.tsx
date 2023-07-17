@@ -1,17 +1,13 @@
+import { ChevronLeft, ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
+import cx from 'classnames';
 import React, { useState } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
-import { SidebarProps } from './types';
-import { Item } from './Item';
 import { twMerge } from 'tailwind-merge';
-import { ThemeToggle } from '../ThemeToggle';
+import useLocalStorageState from 'use-local-storage-state';
 import { Typography } from '../../typography/Typography';
-import {
-  ChainIcon,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
 import { Link } from '../Link';
+import { ThemeToggle } from '../ThemeToggle';
+import { Item } from './Item';
+import { SidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -37,6 +33,7 @@ export const SideBar: React.FC<SidebarProps> = ({
   logoLink,
   items,
   footer,
+  className,
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
     'isSidebarOpen',
@@ -50,7 +47,7 @@ export const SideBar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className="relative top-0 left-0 z-50 flex gap-2"
+      className={cx('flex gap-2 top-0 left-0 z-50 relative', className)}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
