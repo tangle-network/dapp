@@ -14,6 +14,7 @@ const TableComp = <T extends RowData>(
     totalRecords = 0,
     thClassName,
     tdClassName,
+    paginationClassName,
     title,
     ...props
   }: TableProps<T>,
@@ -85,6 +86,7 @@ const TableComp = <T extends RowData>(
           nextPage={table.nextPage}
           setPageIndex={table.setPageIndex}
           title={title}
+          className={paginationClassName}
         />
       )}
     </div>
