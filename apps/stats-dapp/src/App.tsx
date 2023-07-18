@@ -1,8 +1,7 @@
-import { RouterProvider } from '@webb-tools/react-environment';
+import * as Sentry from '@sentry/react';
+import { RouterProvider } from '@webb-tools/api-provider-environment';
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-import * as Sentry from '@sentry/react';
-
 import { routes } from './routes';
 
 const App: FC = () => {

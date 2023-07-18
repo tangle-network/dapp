@@ -1,8 +1,7 @@
-import { FC, lazy, Suspense, PropsWithChildren } from 'react';
-
-import { Layout } from '../containers';
+import { RouterConfigData } from '@webb-tools/api-provider-environment';
 import { Spinner } from '@webb-tools/icons';
-import { RouterConfigData } from '@webb-tools/react-environment';
+import { FC, PropsWithChildren, Suspense, lazy } from 'react';
+import { Layout } from '../containers';
 
 const PageAuthorities = lazy(() => import('../pages/Authorities'));
 const PageAuthorityDetailDrawer = lazy(
