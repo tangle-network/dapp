@@ -8,6 +8,8 @@ export * from './Props';
 export * from './utils';
 export * from './WalletId';
 export * from './WebbError';
+export * from './Storage';
+export { default as Storagge } from './Storage';
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000';
 export const ZERO = 'ZERO';

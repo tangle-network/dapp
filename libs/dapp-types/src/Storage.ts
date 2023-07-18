@@ -11,7 +11,7 @@ export interface StorageHandler<T> {
   commit(key: string, data: T): Promise<void>;
 }
 
-export class Storage<Store> extends EventBus<{
+class Storage<Store> extends EventBus<{
   update: Store;
 }> {
   static instances = new Map<string, Storage<any>>();
@@ -86,3 +86,5 @@ export class Storage<Store> extends EventBus<{
     this.emit('update', this.data);
   }
 }
+
+export default Storage;

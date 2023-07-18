@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ApiPromise } from '@polkadot/api';
 import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
-import { Storage } from '@webb-tools/storage';
+import Storage from '@webb-tools/dapp-types/Storage';
 import {
   NewNotesTxResult,
   Transaction,
