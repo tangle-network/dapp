@@ -36,7 +36,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
   ) => {
     const className = useMemo(() => {
       return twMerge(
-        'bg-mono-0 dark:bg-mono-160 p-6 flex flex-col justify-between gap-4 border-2 rounded-lg  border-mono-0 dark:border-mono-160',
+        'p-6 flex flex-col justify-between gap-4 border-2 rounded-lg dark:border-mono-160 border-mono-0 backdrop-blur-xl',
         wrapperClassName
       );
     }, [wrapperClassName]);

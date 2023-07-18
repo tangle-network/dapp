@@ -1,15 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  Tooltip,
-  XAxis,
-  ResponsiveContainer,
-} from 'recharts';
+import { Areachart, Barchart } from '../../components';
 
 export const VolumeChartsContainer = () => {
   // Current TVLVolume & Volume values (Default values)
@@ -78,48 +70,12 @@ export const VolumeChartsContainer = () => {
         value={tvlValue}
         date={tvlDate}
       >
-        <ResponsiveContainer width="100%" height={180}>
-          <AreaChart
-            data={tvlData}
-            onMouseLeave={() => {
-              setTVLDate && setTVLDate(null);
-              setTvlValue && setTvlValue(null);
-            }}
-          >
-            <XAxis
-              dataKey="date"
-              tickFormatter={(date) =>
-                new Date(date).toLocaleDateString('en-US', {
-                  day: 'numeric',
-                })
-              }
-              strokeOpacity={0}
-              tick={{
-                fontSize: '16px',
-                fill: '#9CA0B0',
-                fontWeight: 400,
-              }}
-              tickMargin={16}
-            />
-            <Tooltip
-              contentStyle={{ display: 'none' }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  setTvlValue && setTvlValue(payload[0].payload['value']);
-                  setTVLDate && setTVLDate(payload[0].payload['date']);
-                }
-
-                return null;
-              }}
-            />
-            <Area
-              dataKey="value"
-              stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
-              fillOpacity={0}
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        <Areachart
+          data={tvlData}
+          setDate={setTVLDate}
+          setValue={setTvlValue}
+          isDarkMode={isDarkMode}
+        />
       </ChartContainer>
 
       {/* 24 Hour Volume Chart Container */}
@@ -132,43 +88,12 @@ export const VolumeChartsContainer = () => {
         daysFilterType={volumeDataType}
         setDaysFilterType={setVolumeDataType}
       >
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart
-            data={volumeData}
-            onMouseLeave={() => {
-              setVolumeValue && setVolumeValue(null);
-              setVolumeDate && setVolumeDate(null);
-            }}
-          >
-            <XAxis
-              dataKey="date"
-              tickFormatter={(date) =>
-                new Date(date).toLocaleDateString('en-US', {
-                  day: 'numeric',
-                })
-              }
-              strokeOpacity={0}
-              tick={{
-                fontSize: '16px',
-                fill: '#9CA0B0',
-                fontWeight: 400,
-              }}
-              tickMargin={16}
-            />
-            <Tooltip
-              contentStyle={{ display: 'none' }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  setVolumeValue && setVolumeValue(payload[0].payload['value']);
-                  setVolumeDate && setVolumeDate(payload[0].payload['date']);
-                }
-
-                return null;
-              }}
-            />
-            <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
-          </BarChart>
-        </ResponsiveContainer>
+        <Barchart
+          data={volumeData}
+          setDate={setVolumeDate}
+          setValue={setVolumeValue}
+          isDarkMode={isDarkMode}
+        />
       </ChartContainer>
     </div>
   );
