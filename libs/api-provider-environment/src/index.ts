@@ -1,5 +1,4 @@
 export * from './RouterProvider';
-export * from './SettingProvider';
 export * from './WebbProvider';
 export * from './app-event';
 export * from './constants';

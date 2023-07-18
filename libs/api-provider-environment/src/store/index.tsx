@@ -60,7 +60,8 @@ export function usePageTitle(config: {
     }
 
     ui.setTitle(_config);
-  }, [_config, ui]);
+    /* eslint-disable-next-line */
+  }, [_config]);
 }
 
 export function useSubMenu(config: SubMenu | null): void {
@@ -71,5 +72,6 @@ export function useSubMenu(config: SubMenu | null): void {
     ui.setSubMenu(_config);
 
     return (): void => ui.setSubMenu(null);
-  }, [_config, ui]);
+    /* eslint-disable-next-line */
+  }, [_config]);
 }

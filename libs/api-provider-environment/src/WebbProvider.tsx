@@ -58,7 +58,6 @@ import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
 import onChainDataJson from './generated/on-chain-config.json';
 import { StoreProvider } from './store';
-import { SettingProvider } from './SettingProvider';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -958,9 +957,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         txQueue,
       }}
     >
-      <StoreProvider>
-        <SettingProvider>{children}</SettingProvider>
-      </StoreProvider>
+      <StoreProvider>{children}</StoreProvider>
     </WebbContext.Provider>
   );
 };
