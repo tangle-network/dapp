@@ -28,9 +28,6 @@ export const Header = () => {
               Hubble Overview
             </BreadcrumbsItem>
           </Link>
-          <BreadcrumbsItem icon={<GridFillIcon />} isLast className="ml-0">
-              Hubble Overview
-            </BreadcrumbsItem>
         </Breadcrumbs>
       </div>
 
