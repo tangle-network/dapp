@@ -5,7 +5,7 @@
  * @returns A promise that resolves to the result of the original promise
  * or rejects after the timeout
  */
-export const executorWithTimeout = <T>(
+const executorWithTimeout = <T>(
   promise: Promise<T>,
   timeout = 5000
 ): Promise<T> => {
@@ -25,3 +25,5 @@ export const executorWithTimeout = <T>(
       });
   });
 };
+
+export default executorWithTimeout;

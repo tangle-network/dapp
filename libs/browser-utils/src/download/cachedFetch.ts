@@ -3,7 +3,7 @@ import { LoggerService } from '../logger';
 
 const logger = LoggerService.get('cached fetch');
 
-export async function cachedFetch(
+async function cachedFetch(
   ...params: Parameters<typeof fetch>
 ): Promise<Uint8Array> {
   const fixturesCache = await caches.open('fixtures');
@@ -46,3 +46,5 @@ export async function cachedFetch(
 
   throw new Error('network error');
 }
+
+export default cachedFetch;

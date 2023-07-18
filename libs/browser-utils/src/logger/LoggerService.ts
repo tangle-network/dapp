@@ -60,7 +60,7 @@ export enum LogLevel {
 type LoggersMaps = Record<string, LoggerService>;
 type LoggerFn = (...message: any[]) => void;
 
-export class LoggerService {
+class LoggerService {
   public static readonly eventBus = new LoggerEvent();
   private static _loggers: LoggersMaps = {};
   public static _enabled = true;
@@ -210,3 +210,5 @@ export class LoggerService {
     ) as LoggerFn;
   }.call(this);
 }
+
+export default LoggerService;

@@ -1,4 +1,4 @@
-export function downloadBlob(blob: Blob, fileType: string, fileName: string) {
+function downloadBlob(blob: Blob, fileType: string, fileName: string) {
   const a = document.createElement('a');
   a.download = fileName;
   a.href = URL.createObjectURL(blob);
@@ -11,3 +11,5 @@ export function downloadBlob(blob: Blob, fileType: string, fileName: string) {
     URL.revokeObjectURL(a.href);
   }, 1500);
 }
+
+export default downloadBlob;

@@ -10,7 +10,7 @@ type PlatformMetaData = {
   name: string;
   storeName: string;
 };
-export const getPlatformMetaData = (): PlatformMetaData => {
+const getPlatformMetaData = (): PlatformMetaData => {
   const browser = detect();
 
   const name = browser?.name;
@@ -32,3 +32,5 @@ export const getPlatformMetaData = (): PlatformMetaData => {
       throw new Error('unsupported platform');
   }
 };
+
+export default getPlatformMetaData;

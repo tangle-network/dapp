@@ -1,7 +1,7 @@
-import { downloadBlob } from './download-blob';
-import { stringIntoBlob } from './string-into-blob';
+import downloadBlob from './downloadBlob';
+import stringIntoBlob from './stringIntoBlob';
 
-export function downloadString(
+function downloadString(
   text: string,
   fileName: string,
   fileType = 'plan/text'
@@ -9,3 +9,5 @@ export function downloadString(
   const textBlob = stringIntoBlob(text, fileType);
   downloadBlob(textBlob, fileType, fileName);
 }
+
+export default downloadString;

@@ -4,7 +4,7 @@
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export async function retryPromise<T extends () => Promise<any>>(
+async function retryPromise<T extends () => Promise<any>>(
   executor: T,
   maxRetries = 20,
   sleepTime = 0,
@@ -31,3 +31,5 @@ export async function retryPromise<T extends () => Promise<any>>(
   }
   throw new Error('Max retries reached');
 }
+
+export default retryPromise;
