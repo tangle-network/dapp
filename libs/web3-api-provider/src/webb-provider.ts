@@ -20,7 +20,11 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
-import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+  retryPromise,
+} from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
@@ -34,10 +38,6 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import Storage from '@webb-tools/dapp-types/Storage';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,

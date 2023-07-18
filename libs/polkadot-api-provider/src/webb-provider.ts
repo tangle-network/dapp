@@ -48,16 +48,16 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { VAnchor } from '@webb-tools/anchors';
-import { BridgeStorage } from '@webb-tools/browser-utils';
+import {
+  BridgeStorage,
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/browser-utils';
 import Storage from '@webb-tools/dapp-types/Storage';
 import { providers } from 'ethers';
 import { PolkadotProvider } from './ext-provider';
