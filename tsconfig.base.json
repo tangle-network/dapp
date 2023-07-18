@@ -49,8 +49,6 @@
       ],
       "@webb-tools/react-components": ["libs/react-components/src/index.ts"],
       "@webb-tools/react-components/*": ["libs/react-components/src/*"],
-      "@webb-tools/react-environment": ["libs/react-environment/src/index.ts"],
-      "@webb-tools/react-environment/*": ["libs/react-environment/src/*"],
       "@webb-tools/react-hooks": ["libs/react-hooks/src/index.ts"],
       "@webb-tools/react-hooks/*": ["libs/react-hooks/src/*"],
       "@webb-tools/relayer-manager-factory": [
