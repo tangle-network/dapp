@@ -1,5 +1,5 @@
 import { useModal } from '@webb-tools/webb-ui-components';
-import { noop } from 'lodash';
+import noop from 'lodash/noop';
 import {
   createContext,
   FC,
@@ -21,7 +21,7 @@ function useSetting<T>(
 
   const setValue = useCallback(
     (value: T): void => {
-      window.localStorage.setItem(key, value as any as string);
+      window.localStorage.setItem(key, JSON.stringify(value));
       _setValue(value);
     },
     [_setValue, key]
@@ -31,13 +31,13 @@ function useSetting<T>(
     const storaged = window.localStorage.getItem(key);
 
     if (storaged) {
-      _setValue(storaged as any as T);
+      _setValue(JSON.parse(storaged));
     } else if (defaultValue) {
       _setValue(defaultValue);
     }
   }, [_setValue, defaultValue]);
 
-  return { setValue, value: value as any as T };
+  return { setValue, value: value };
 }
 
 export interface SettingDate {
@@ -53,16 +53,16 @@ export interface SettingDate {
 
 export const SettingContext = createContext<SettingDate>({
   browser: 'unknown',
-  changeEndpoint: noop as any,
+  changeEndpoint: noop,
   closeSetting: noop,
   endpoint: '',
   openSetting: noop,
-  setTheme: noop as any,
+  setTheme: noop,
   settingVisible: false,
   theme: 'normal',
 });
 
-export const SettingProvider: FC<PropsWithChildren<any>> = ({ children }) => {
+export const SettingProvider: FC<PropsWithChildren> = ({ children }) => {
   const {
     close: closeSetting,
     open: openSetting,

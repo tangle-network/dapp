@@ -64,8 +64,6 @@ export interface UseUIConfigReturnType extends UIData {
   setSubMenu: (menu: SubMenu | null) => void;
 }
 
-const storage = Storage;
-
 export const useUIConfig = (): UseUIConfigReturnType => {
   const [state, dispatch] = useReducer(reducer, initState);
 

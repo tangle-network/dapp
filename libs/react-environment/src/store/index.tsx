@@ -60,7 +60,6 @@ export function usePageTitle(config: {
     }
 
     ui.setTitle(_config);
-    /* eslint-disable-next-line */
   }, [_config]);
 }
 
