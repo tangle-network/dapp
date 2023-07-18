@@ -1,2 +1,2 @@
-export * from './Areachart'
-export * from './types'
+export * from './Areachart';
+export * from './types';

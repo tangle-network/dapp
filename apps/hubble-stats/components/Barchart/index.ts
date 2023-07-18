@@ -1,2 +1,2 @@
-export * from './Barchart'
-export * from './types'
+export * from './Barchart';
+export * from './types';
