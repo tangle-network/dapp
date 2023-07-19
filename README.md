@@ -20,10 +20,10 @@
 <h2 id="table-of-contents" style=border:0!important> Table of Contents </h2>
 
 <details open="open">
-  <summary>Table of Contents</summary>
+  <summary id="#table-of-contents">Table of Contents</summary>
   <ul>
     <li><a href="#start">Getting Started</a></li>
-    <li><a href="#apps">Apps</a></li>
+    <li><a href="#apps">Applications</a></li>
     <li><a href="#libs">Libraries</a></li>
     <li><a href="#test">Testing</a></li>
     <li><a href="#contribute">Contributing</a></li>
@@ -46,6 +46,8 @@ npm install --global yarn
 
 Great! Now your **Node** environment is ready!
 
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
+
 <h2 id="apps"> Applications </h2>
 
 - [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
@@ -54,6 +56,8 @@ Great! Now your **Node** environment is ready!
 - [stats-dapp](./apps/stats-dapp/README.md): an interface for displaying statistical data of Webb's Tangle Network (DKG system).
 - [tangle-website](./apps/tangle-website/README.md): an interface for the Tangle ecosystem and development.
 - [webbsite](./apps/webbsite/README.md): an interface for the Webb ecosystem and development.
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="libs"> Libraries </h2>
 
@@ -70,6 +74,8 @@ Great! Now your **Node** environment is ready!
 - `tailwind-preset`: the Webb TailwindCSS preset for all the apps.
 - `web3-api-provider`: the EVM provider for the bridge.
 - [webb-ui-components](./libs/webb-ui-components/README.md): a collection of reusable components for building interfaces quickly.
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="test"> Testing </h2>
 
@@ -96,6 +102,8 @@ yarn test
    ```
 
 Visit `http://localhost:4400/` to see the Webb Component Library! 🕸️ 🚀
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="contribute"> Contributing </h2>
 
@@ -125,11 +133,15 @@ yarn format
 yarn build
 ```
 
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
+
 <h2 id="license"> License </h2>
 
 Licensed under <a href="LICENSE">Apache 2.0 license</a>.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, as defined in the Apache 2.0 license, shall be licensed as above, without any additional terms or conditions.
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="help"> Need help? </h2>
 
@@ -159,3 +171,5 @@ If you need help or you want to additional information please:
 <a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure,%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Fawebb-tools%webb-dapp" alt="Share on Telegram"/>
 </a>
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
