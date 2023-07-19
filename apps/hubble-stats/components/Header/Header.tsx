@@ -24,7 +24,7 @@ export const Header = () => {
       <div>
         <Breadcrumbs>
           <Link href="/">
-            <BreadcrumbsItem icon={<GridFillIcon />} isLast className="ml-0">
+            <BreadcrumbsItem icon={<GridFillIcon />} className="ml-0">
               Hubble Overview
             </BreadcrumbsItem>
           </Link>

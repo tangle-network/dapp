@@ -1,7 +1,5 @@
 'use client';
-
 import { useEffect } from 'react';
-import Head from 'next/head';
 import {
   WebbUIProvider,
   useDarkMode,
@@ -97,8 +95,9 @@ export default function RootLayout({
             logoLink={WEBB_MKT_URL}
             footer={footer}
           />
-          <main className="flex-1 overflow-y-auto overflow-scroll">
-            <div className="max-w-[1000px] mx-auto">
+
+          <main className="flex-1 overflow-y-auto">
+            <div className="max-w-[1240px] mx-auto">
               <Header />
               {children}
               <Footer isMinimal style={{ background: 'inherit' }} />
