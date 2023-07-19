@@ -36,7 +36,7 @@ After setting up the development environment, you can proceed to run the DKG sta
    yarn start:stats
    ```
 
-Visit http://localhost:3001/ to see the Webb Stats UI! If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
+Visit `http://localhost:3001/` to see the Webb Stats UI! If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
 
 Happy hacking!
 
