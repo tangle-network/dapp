@@ -10,18 +10,18 @@
 # Webb Hubble Bridge
 
 <p align="left">
-    <strong>🔭 Private cross-chain bridge for digital assets 🚀</strong>
+    <strong> Private cross-chain bridge for digital assets </strong>
     <br />
 </p>
 
-## Run Hubble Bridge 💻
+## Run Hubble Bridge
 
 Once the development environment is set up, you may proceed to install the required dependencies and run the dapp locally.
 
 1. Clone this repo
 
    ```bash
-   git clone git@github.com:webb-tools/webb-dapp.git && cd webb-dapp
+   git clone git@github.com:webb-tools/webb-dapp.git
    ```
 
 2. Install dependencies by `yarn`
@@ -36,7 +36,7 @@ Once the development environment is set up, you may proceed to install the requi
    yarn start:bridge
    ```
 
-Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI! 🕸️ 🚀
+Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI!
 
 ### Run local Webb relayer and local network alongside Hubble bridge
 
@@ -190,4 +190,12 @@ You have now successfully setup:
 - local Hubble bridge
 - configured your MetaMask wallet for testing / development
 
-Happy hacking! 🚀💻
+Happy hacking!
+
+<h2 id="help"> Need help? </h2>
+
+If you need help or you want to additional information please:
+
+- Refer to the [Webb Official Documentation](https://docs.webb.tools/).
+- If you have feedback on how to improve the Webb Dapp interface or you have a specific question? Check out the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback).
+- If you found a bug please [open an issue](https://github.com/webb-tools/webb-dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
