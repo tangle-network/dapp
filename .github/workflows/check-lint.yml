@@ -63,7 +63,7 @@ jobs:
         uses: lycheeverse/lychee-action@v1.5.4
         with:
           # Ignore the README.md file as some social sharing links are not valid
-          args: --verbose --no-progress './**/*.md' './**/*.html' './**/*.rst'--timeout 60
+          args: --verbose --no-progress --timeout 60 './**/*.md' './**/*.html' './**/*.rst'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
