@@ -165,10 +165,10 @@ If you need help or you want to additional information please:
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//github.com/webb-tools/webb-dapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=LinkedIn&logo=LinkedIn&style=social&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" alt="Share on LinkedIn"/>
 </a>
-<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure,%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem" target="_blank">
+<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=Twitter&logo=Twitter&style=social&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" alt="Shared on Twitter"/>
 </a>
-<a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure,%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" target="_blank">
+<a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Fawebb-tools%webb-dapp" alt="Share on Telegram"/>
 </a>
 
