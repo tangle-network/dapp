@@ -1123,6 +1123,8 @@ video {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }.grid-cols-2{
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}.flex-row{
+  flex-direction: row;
 }.flex-col{
   flex-direction: column;
 }.flex-wrap{
@@ -1717,6 +1719,12 @@ video {
   text-align: justify;
 }.align-middle{
   vertical-align: middle;
+}.\!text-\[12px\]{
+  font-size: 12px !important;
+}.\!text-\[20px\]{
+  font-size: 20px !important;
+}.\!text-\[24px\]{
+  font-size: 24px !important;
 }.\!text-lg{
   font-size: 1.125rem !important;
   line-height: 1.75rem !important;
@@ -1757,6 +1765,12 @@ video {
   text-transform: capitalize;
 }.normal-case{
   text-transform: none;
+}.\!leading-\[15px\]{
+  line-height: 15px !important;
+}.\!leading-\[30px\]{
+  line-height: 30px !important;
+}.\!leading-\[36px\]{
+  line-height: 36px !important;
 }.leading-6{
   line-height: 1.5rem;
 }.leading-\[15px\]{
@@ -1915,6 +1929,10 @@ video {
   outline-offset: 2px;
 }.filter{
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}.backdrop-blur-xl{
+  --tw-backdrop-blur: blur(24px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }.transition{
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -2197,6 +2215,8 @@ main{
 .mono2 {
   font-family: 'Cousine', monospace;
   font-size: 16px;
+}.recharts-cartesian-axis-tick-value tspan {
+  font-family: 'Cousine', monospace !important;
 }/** Layer components */.h1 {
   font-size: 64px;
   line-height: 96px;
@@ -2920,6 +2940,9 @@ main{
 }:is(.dark .dark\:border-mono-140){
   --tw-border-opacity: 1;
   border-color: rgb(78 84 99 / var(--tw-border-opacity));
+}:is(.dark .dark\:border-mono-160){
+  --tw-border-opacity: 1;
+  border-color: rgb(58 62 83 / var(--tw-border-opacity));
 }:is(.dark .dark\:border-mono-180){
   --tw-border-opacity: 1;
   border-color: rgb(43 47 64 / var(--tw-border-opacity));
