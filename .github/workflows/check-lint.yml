@@ -62,8 +62,6 @@ jobs:
       - name: Link Checker
         uses: lycheeverse/lychee-action@v1.5.4
         with:
-          # Ignore the README.md file as some social sharing links are not valid
-          args: --exclude-path 'README.md'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
