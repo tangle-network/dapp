@@ -6,6 +6,7 @@ import { ButtonSpinner } from './ButtonSpinner';
 import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The Webb Button Component
@@ -101,22 +102,29 @@ function ButtonContent(props: ButtonContentProps) {
   return (
     <>
       {leftIcon && (
-        <span className={cx(`mr-2`, 'block !text-inherit')}>{leftIcon}</span>
+        <span
+          className={cx(
+            variant === 'link' ? 'mr-1' : 'mr-2',
+            'block !text-inherit',
+            'grow-0 shrink-0',
+            getFlexBasic(leftIcon.props.size)
+          )}
+        >
+          {leftIcon}
+        </span>
       )}
-      <span
-        className={cx(
-          'block !text-inherit',
-          { 'border-b-[1.6px]': variant === 'link' },
-          {
-            'border-b-transparent group-hover:border-inherit dark:group-hover:border-inherit':
-              variant === 'link',
-          }
-        )}
-      >
-        {children}
-      </span>
+      <span className={cx('block !text-inherit')}>{children}</span>
       {rightIcon && (
-        <span className={cx(`ml-2`, 'block !text-inherit')}>{rightIcon}</span>
+        <span
+          className={cx(
+            variant === 'link' ? 'ml-1' : 'ml-2',
+            'block !text-inherit',
+            'grow-0 shrink-0',
+            getFlexBasic(rightIcon.props.size)
+          )}
+        >
+          {rightIcon}
+        </span>
       )}
     </>
   );

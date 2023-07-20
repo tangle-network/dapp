@@ -1,3 +1,4 @@
+import { IconBase } from '@webb-tools/icons/types';
 import { IWebbComponentBase, WebbComponentBase } from '../../types';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
@@ -98,18 +99,18 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
    * If added, the button will show an icon before the button's label
    * @type React.ReactElement
    */
-  leftIcon?: React.ReactElement;
+  leftIcon?: React.ReactElement<IconBase>;
 
   /**
    * If added, the button will show an icon after the button's label
    */
-  rightIcon?: React.ReactElement;
+  rightIcon?: React.ReactElement<IconBase>;
 
   /**
    * Replace the spinner component when `isLoading` is set to `true`
    * @type React.ReactElement
    */
-  spinner?: React.ReactElement;
+  spinner?: React.ReactElement<IconBase>;
 
   /**
    * It determines the placement of the spinner when isLoading is true

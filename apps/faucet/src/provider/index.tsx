@@ -85,7 +85,6 @@ const config = Object.entries(tokens).reduce(
       return acc;
     }
 
-    // TODO: Should index by typed chain id
     acc[typedChainId] = {
       chainId: chain.chainId,
       name: chain.name,
