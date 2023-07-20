@@ -7,11 +7,11 @@ import { NetworkTable } from '../../components';
 import { TokenCompositionType } from '../../components/NetworkTable/types';
 
 interface NetworkTableContainerProps {
-  chains: number[];
-  tvlData: TokenCompositionType[];
-  volumeData: TokenCompositionType[];
-  depositsData: TokenCompositionType[];
-  feesData: TokenCompositionType[];
+  chains?: number[];
+  tvlData?: TokenCompositionType[];
+  volumeData?: TokenCompositionType[];
+  depositsData?: TokenCompositionType[];
+  feesData?: TokenCompositionType[];
 }
 
 const NetworkTableContainer: FC<NetworkTableContainerProps> = ({

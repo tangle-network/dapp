@@ -14,13 +14,6 @@ export interface NumberCellProps {
   className?: string;
 }
 
-export type PoolType = 'single' | 'multi';
-
-export interface PoolTypeCellProps {
-  type: PoolType;
-  className?: string;
-}
-
 export interface ShieldedCellProps {
   title: string;
   address: string;
