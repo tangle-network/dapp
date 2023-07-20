@@ -6,7 +6,7 @@ export * from './Currency';
 export * from './InteractiveFeedback';
 export * from './Props';
 export * from './Storage';
-export { default as Storagge } from './Storage';
+export { default as Storage } from './Storage';
 export * from './WalletId';
 export * from './WebbError';
 export * from './appMode';
