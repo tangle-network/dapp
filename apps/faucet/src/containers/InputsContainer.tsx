@@ -1,4 +1,5 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   Button,
   Chip,
@@ -99,40 +100,43 @@ const AmountChip = () => {
 };
 
 const TokenAddressLink = () => {
-  const { inputValues$ } = useFaucetContext();
+  const { inputValues$, config } = useFaucetContext();
 
   const token = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.token))
   );
 
-  const chain = useObservableState(
+  const typedChainId = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
 
-  const explorerLink = useMemo(() => {
-    if (!token || !chain) return '';
+  const tokenAddress = useMemo(() => {
+    if (!token || !typedChainId) return '';
 
-    const chainConfig = Object.values(chainsConfig).find(
-      (config) => config.name === chain
-    );
-
-    return chainConfig?.blockExplorerStub ?? '';
-  }, [chain, token]);
+    return config[typedChainId].tokenAddresses[token] ?? '';
+  }, [config, token, typedChainId]);
 
   // Calculate the token explorer link
   const tokenExplorerLink = useMemo(() => {
-    if (!token) return '';
+    if (!tokenAddress || !typedChainId) return '';
 
-    return `${explorerLink}/token/${token}`;
-  }, [explorerLink, token]);
+    return `${chainsConfig[typedChainId].blockExplorerStub}/token/${tokenAddress}`;
+  }, [tokenAddress, typedChainId]);
 
-  return token ? (
-    <Button variant="link" size="sm" href={tokenExplorerLink} target="_blank">
-      {shortenHex(token)}
+  return tokenAddress ? (
+    <Button
+      variant="link"
+      size="sm"
+      href={tokenExplorerLink}
+      target="_blank"
+      className="normal-case"
+      rightIcon={<ExternalLinkLine className="!fill-current" />}
+    >
+      {shortenHex(tokenAddress)}
     </Button>
   ) : (
     <Typography variant="mkt-body2" className="font-black">
-      {token || '--'}
+      --
     </Typography>
   );
 };

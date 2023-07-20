@@ -1,5 +1,7 @@
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainIcon } from '@webb-tools/icons';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   ChainInput,
   Dropdown,
@@ -13,20 +15,28 @@ import { useFaucetContext } from '../provider';
 
 const ChainDropdown: FC = () => {
   // State to hold the selected chain
-  const [chain, setChain] = useState<string | undefined>();
+  const [typedChainId, setTypedChainId] = useState<number | undefined>();
 
   const { config, inputValues$ } = useFaucetContext();
 
-  const chainNames = useMemo(() => Object.keys(config), [config]);
+  const chains = useMemo(
+    () =>
+      Object.keys(config)
+        .map((c) => chainsConfig[+c])
+        .filter(Boolean),
+    [config]
+  );
 
   const chainInputVal = useMemo(
-    () => (chain ? { name: chain } : undefined),
-    [chain]
+    () =>
+      typedChainId ? { name: chainsConfig[typedChainId].name } : undefined,
+    [typedChainId]
   );
 
   const handleValueChange = useCallback(
-    (val: string) => {
-      setChain(val);
+    (nextTypedChainId: string) => {
+      const val = +nextTypedChainId;
+      setTypedChainId(+val);
       const currentVal = inputValues$.getValue();
       inputValues$.next({ ...currentVal, chain: val });
     },
@@ -48,11 +58,18 @@ const ChainDropdown: FC = () => {
       </DropdownBasicButton>
 
       <DropdownBody className="radix-side-bottom:mt-3 radix-side-top:mb-3 w-[277px]">
-        <RadioGroup value={chain} onValueChange={handleValueChange}>
-          {chainNames.map((chainName, i) => (
-            <RadioItem key={`${chainName}-${i}`} value={chainName} asChild>
-              <MenuItem startIcon={<ChainIcon size="lg" name={chainName} />}>
-                {chainName}
+        <RadioGroup
+          value={typedChainId?.toString()}
+          onValueChange={handleValueChange}
+        >
+          {chains.map((chain, i) => (
+            <RadioItem
+              key={`${chain.name}-${i}`}
+              value={`${calculateTypedChainId(chain.chainType, chain.chainId)}`}
+              asChild
+            >
+              <MenuItem startIcon={<ChainIcon size="lg" name={chain.name} />}>
+                {chain.name}
               </MenuItem>
             </RadioItem>
           ))}

@@ -272,7 +272,7 @@ const Info = () => {
 
   return (
     <Transition
-      show={true}
+      show={isDisplayed}
       enter="transition-opacity duration-150"
       enterFrom={cx('opacity-0 -translate-y-[100%]')}
       enterTo={cx('opacity-100 translate-y-0')}

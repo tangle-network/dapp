@@ -21,19 +21,19 @@ const logger = LoggerService.get('MintButtonContainer');
 
 const mintTokens = async (
   accessToken: string,
-  { chain: chainName, recepient, recepientAddressType }: InputValuesType,
+  { chain: typedChainId, recepient, recepientAddressType }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
 ): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
-  if (!chainName) {
+  if (!typedChainId) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
 
-  const chain = config[chainName];
+  const chain = config[typedChainId];
   if (!chain) {
     return err(
       FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN, {
-        selectedChain: chainName,
+        selectedChain: chain,
       })
     );
   }
