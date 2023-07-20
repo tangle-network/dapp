@@ -21,7 +21,7 @@ After setting up the development environment, you can proceed to run the faucet 
 1. Clone this repo
 
    ```bash
-   git clone git@github.com:webb-tools/webb-dapp.git &&
+   git clone git@github.com:webb-tools/webb-dapp.git
    ```
 
 2. Install dependencies by `yarn`

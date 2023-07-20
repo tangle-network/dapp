@@ -101,7 +101,7 @@ yarn test
    yarn nx storybook webb-ui-components
    ```
 
-Visit `http://localhost:4400/` to see the Webb Component Library! 🕸️ 🚀
+Visit `http://localhost:4400/` to see the Webb Component Library!
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
