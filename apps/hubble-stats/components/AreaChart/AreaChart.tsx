@@ -1,23 +1,28 @@
-import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
-import { BarchartProps } from './types';
+import { FC } from 'react';
+import {
+  ResponsiveContainer,
+  AreaChart as AreaChartCmp,
+  Area,
+  Tooltip,
+  XAxis,
+} from 'recharts';
+import { AreaChartProps } from './types';
 
-export const Barchart = (props: BarchartProps) => {
-  const {
-    data,
-    setValue,
-    setDate,
-    isDarkMode,
-    width = '100%',
-    height = 180,
-  } = props;
-
+const AreaChart: FC<AreaChartProps> = ({
+  data,
+  setDate,
+  setValue,
+  isDarkMode,
+  width = '100%',
+  height = 180,
+}) => {
   return (
     <ResponsiveContainer width={width} height={height}>
-      <BarChart
+      <AreaChartCmp
         data={data}
         onMouseLeave={() => {
-          setValue && setValue(null);
           setDate && setDate(null);
+          setValue && setValue(null);
         }}
       >
         <XAxis
@@ -46,8 +51,15 @@ export const Barchart = (props: BarchartProps) => {
             return null;
           }}
         />
-        <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
-      </BarChart>
+        <Area
+          dataKey="value"
+          stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
+          fillOpacity={0}
+          strokeWidth={2}
+        />
+      </AreaChartCmp>
     </ResponsiveContainer>
   );
 };
+
+export default AreaChart;

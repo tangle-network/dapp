@@ -11,7 +11,7 @@ const KeyMetricsTableContainer: FC = () => {
       className={cx(
         'w-full rounded-lg overflow-hidden',
         'border-2 border-mono-0 dark:border-mono-160',
-        'backdrop-blur-xl'
+        'bg-glass dark:bg-glass_dark'
       )}
     >
       <div className="w-full table table-fixed border-collapse">

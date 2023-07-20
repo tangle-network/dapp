@@ -12,7 +12,8 @@ import {
 import { Table, IconsGroup, fuzzyFilter } from '@webb-tools/webb-ui-components';
 
 import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
-import { HeaderCell, NumberCell, PoolTypeCell, ShieldedCell } from '../table';
+import { HeaderCell, NumberCell, ShieldedCell } from '../table';
+import { PoolTypeChip } from '..';
 
 const columnHelper = createColumnHelper<ShieldedPoolType>();
 
@@ -30,7 +31,11 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   }),
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
-    cell: (props) => <PoolTypeCell type={props.getValue()} />,
+    cell: (props) => (
+      <div className="text-center">
+        <PoolTypeChip type={props.getValue()} />
+      </div>
+    ),
   }),
   columnHelper.accessor('token', {
     header: () => <HeaderCell title="Token #" className="justify-end" />,

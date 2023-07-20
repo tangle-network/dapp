@@ -1,8 +1,7 @@
 'use client';
-import { useEffect } from 'react';
+
 import {
   WebbUIProvider,
-  useDarkMode,
   Footer,
   SideBar,
   Logo,
@@ -20,19 +19,13 @@ import {
   WEBB_DOCS_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { Header } from '../components/Header';
+import { Header } from '../components';
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [, setIsDarkMode] = useDarkMode();
-
-  useEffect(() => {
-    setIsDarkMode('light');
-  }, [setIsDarkMode]);
-
   const items: ItemProps[] = [
     {
       name: 'Hubble',
@@ -96,12 +89,10 @@ export default function RootLayout({
             footer={footer}
           />
 
-          <main className="flex-1 overflow-y-auto">
-            <div className="max-w-[1240px] mx-auto">
-              <Header />
-              {children}
-              <Footer isMinimal style={{ background: 'inherit' }} />
-            </div>
+          <main className="flex-1 px-10 overflow-y-auto">
+            <Header />
+            {children}
+            <Footer isMinimal style={{ background: 'inherit' }} />
           </main>
         </body>
       </WebbUIProvider>

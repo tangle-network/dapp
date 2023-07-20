@@ -9,7 +9,7 @@ import {
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 
-export const Header = () => {
+const Header = () => {
   const tvl = useMemo(() => {
     return 'TVL: $13,642,124';
   }, []);
@@ -80,3 +80,5 @@ export const VolumeChip: React.FC<VolumeChipProps> = ({
     </Chip>
   );
 };
+
+export default Header;
