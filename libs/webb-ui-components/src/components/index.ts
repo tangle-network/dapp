@@ -10,6 +10,7 @@ export * from './BridgeInputs';
 export * from './Button';
 export * from './Card';
 export * from './CardTable';
+export * from './ChartContainer';
 export * from './ChainsRing';
 export * from './CheckBox';
 export * from './CheckBoxMenu';

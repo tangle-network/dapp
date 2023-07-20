@@ -25,10 +25,13 @@ export function useDarkMode(
   const [preferredTheme, setPreferredTheme] =
     useState<SupportTheme>(defaultTheme);
 
-  const isDarkMode =
-    isBrowser() && localStorage.getItem('theme') !== null
-      ? localStorage.getItem('theme') === 'dark'
-      : preferredTheme === 'dark';
+  const isDarkMode = useMemo(
+    () =>
+      isBrowser() && localStorage.getItem('theme') !== null
+        ? localStorage.getItem('theme') === 'dark'
+        : preferredTheme === 'dark',
+    [preferredTheme]
+  );
 
   useEffect(() => {
     if (!isBrowser()) {

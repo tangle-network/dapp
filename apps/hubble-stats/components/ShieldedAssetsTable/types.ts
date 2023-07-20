@@ -1,4 +1,4 @@
-import { PoolType } from '../table/types';
+import { PoolType } from '../PoolTypeChip/types';
 
 export interface ShieldedAssetType {
   assetAddress: string;

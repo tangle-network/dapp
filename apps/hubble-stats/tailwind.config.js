@@ -9,7 +9,7 @@ module.exports = {
   content: [
     join(
       __dirname,
-      '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
+      '{src,pages,components,containers,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'
     ),
     join(
       __dirname,
@@ -23,6 +23,10 @@ module.exports = {
       backgroundImage: {
         body: "url('/static/assets/bg.png')",
         body_dark: "url('/static/assets/bg-dark.png')",
+        glass:
+          'linear-gradient(180deg,rgba(255,255,255,0.80) 0%,rgba(255,255,255,0.00) 100%)',
+        glass_dark:
+          'linear-gradient(180deg,rgba(43,47,64,0.80) 0%,rgba(43,47,64,0.00) 100%)',
       },
     },
   },
