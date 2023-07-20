@@ -22,10 +22,11 @@ const TokenDropdown = () => {
   );
 
   const setToken = useCallback(
-    (token: string | undefined) => {
+    (token: string | undefined, contractAddress?: string) => {
       const currentVal = inputValues$.getValue();
       inputValues$.next({
         ...currentVal,
+        contractAddress,
         token,
       });
     },
@@ -36,13 +37,19 @@ const TokenDropdown = () => {
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
 
+  const currentChainData = useMemo(() => {
+    if (!selectedChain) return undefined;
+
+    return config[selectedChain];
+  }, [config, selectedChain]);
+
   const tokenNames = useMemo(() => {
-    if (!selectedChain || !config[selectedChain]?.tokenAddresses) {
+    if (!selectedChain || !currentChainData) {
       return [];
     }
 
-    return Object.keys(config[selectedChain].tokenAddresses);
-  }, [config, selectedChain]);
+    return Object.keys(currentChainData.tokenAddresses);
+  }, [currentChainData, selectedChain]);
 
   const tokenInputVal = useMemo(
     () => (token ? { symbol: token } : undefined),
@@ -51,17 +58,18 @@ const TokenDropdown = () => {
 
   const handleValueChange = React.useCallback(
     (val: string) => {
-      setToken(val);
+      setToken(val, currentChainData?.tokenAddresses[val]);
     },
-    [setToken]
+    [currentChainData?.tokenAddresses, setToken]
   );
 
   // Effect to reset the token value when the chain changes
   useEffect(() => {
-    if (tokenNames.length > 0) {
-      setToken(tokenNames[0]);
+    if (tokenNames.length > 0 && currentChainData) {
+      const defaultToken = tokenNames[0];
+      setToken(defaultToken, currentChainData.tokenAddresses[defaultToken]);
     }
-  }, [setToken, tokenNames]);
+  }, [currentChainData, setToken, tokenNames]);
 
   return (
     <Dropdown className="block grow shrink basis-0">

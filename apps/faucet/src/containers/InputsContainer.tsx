@@ -100,27 +100,21 @@ const AmountChip = () => {
 };
 
 const TokenAddressLink = () => {
-  const { inputValues$, config } = useFaucetContext();
+  const { inputValues$ } = useFaucetContext();
 
-  const token = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.token))
+  const tokenAddress = useObservableState<string | undefined>(
+    inputValues$.pipe(map((inputValues) => inputValues.contractAddress))
   );
 
   const typedChainId = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
 
-  const tokenAddress = useMemo(() => {
-    if (!token || !typedChainId) return '';
-
-    return config[typedChainId].tokenAddresses[token] ?? '';
-  }, [config, token, typedChainId]);
-
   // Calculate the token explorer link
   const tokenExplorerLink = useMemo(() => {
     if (!tokenAddress || !typedChainId) return '';
 
-    return `${chainsConfig[typedChainId].blockExplorerStub}/token/${tokenAddress}`;
+    return `${chainsConfig[typedChainId]?.blockExplorerStub}/token/${tokenAddress}`;
   }, [tokenAddress, typedChainId]);
 
   return tokenAddress ? (
