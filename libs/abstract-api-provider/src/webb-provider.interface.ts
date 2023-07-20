@@ -13,8 +13,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils';
+import Storage from '@webb-tools/dapp-types/Storage';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';

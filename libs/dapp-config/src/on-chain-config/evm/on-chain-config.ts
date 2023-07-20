@@ -4,7 +4,7 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { EVMChainId, zeroAddress } from '@webb-tools/dapp-types';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
 import { providers } from 'ethers';

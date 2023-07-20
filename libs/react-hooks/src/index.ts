@@ -8,7 +8,6 @@ export * from './useCurrentResourceId';
 export * from './useFetch';
 export * from './useIp';
 export * from './useNoteAccount';
-export * from './useSetting';
 export * from './useWallets';
 export * from './vanchor/useVAnchor';
 

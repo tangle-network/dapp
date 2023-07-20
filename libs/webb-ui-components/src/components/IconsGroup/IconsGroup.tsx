@@ -15,13 +15,13 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
 
     return (
       <div
+        ref={ref}
         className={twMerge(
           'flex items-center -space-x-2',
           getIconsSpacingClassName(iconSize),
           className
         )}
         {...props}
-        ref={ref}
       >
         {icons.map((icon, idx) => (
           <IconWithTooltip

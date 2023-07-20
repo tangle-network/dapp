@@ -1,6 +1,6 @@
+import { RouterConfigData } from '@webb-tools/api-provider-environment';
 import { BareProps } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons';
-import { RouterConfigData } from '@webb-tools/react-environment';
 import { FC, lazy, Suspense } from 'react';
 import { Layout } from '../containers';
 

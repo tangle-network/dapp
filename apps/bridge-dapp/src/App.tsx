@@ -1,5 +1,8 @@
-import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
-import { RouterProvider } from '@webb-tools/react-environment';
+import {
+  AppEvent,
+  RouterProvider,
+  WebbProvider,
+} from '@webb-tools/api-provider-environment';
 import { FC } from 'react';
 
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';

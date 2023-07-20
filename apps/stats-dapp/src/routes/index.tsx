@@ -1,40 +1,27 @@
-import { FC, lazy, Suspense, PropsWithChildren } from 'react';
-
-import { Layout } from '../containers';
+import { RouterConfigData } from '@webb-tools/api-provider-environment';
 import { Spinner } from '@webb-tools/icons';
-import { RouterConfigData } from '@webb-tools/react-environment';
+import { FC, PropsWithChildren, Suspense, lazy } from 'react';
+import { Layout } from '../containers';
 
-const PageAuthorities = lazy(
-  () => import('@webb-tools/stats-dapp/pages/Authorities')
-);
+const PageAuthorities = lazy(() => import('../pages/Authorities'));
 const PageAuthorityDetailDrawer = lazy(
-  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailDrawer')
+  () => import('../pages/AuthorityDetailDrawer')
 );
-const PageAuthorityDetail = lazy(
-  () => import('@webb-tools/stats-dapp/pages/AuthorityDetailPage')
-);
+const PageAuthorityDetail = lazy(() => import('../pages/AuthorityDetailPage'));
 
 const PageAuthoritiesHistory = lazy(
-  () => import('@webb-tools/stats-dapp/pages/AuthoritiesHistory')
+  () => import('../pages/AuthoritiesHistory')
 );
 
-const PageKeys = lazy(() => import('@webb-tools/stats-dapp/pages/Keys'));
-const PageKeyDetailDrawer = lazy(
-  () => import('@webb-tools/stats-dapp/pages/KeyDetailDrawer')
-);
-const PageKeyDetail = lazy(
-  () => import('@webb-tools/stats-dapp/pages/KeyDetailPage')
-);
+const PageKeys = lazy(() => import('../pages/Keys'));
+const PageKeyDetailDrawer = lazy(() => import('../pages/KeyDetailDrawer'));
+const PageKeyDetail = lazy(() => import('../pages/KeyDetailPage'));
 
-const PageProposals = lazy(
-  () => import('@webb-tools/stats-dapp/pages/Proposals')
-);
+const PageProposals = lazy(() => import('../pages/Proposals'));
 const PageProposalDetailDrawer = lazy(
-  () => import('@webb-tools/stats-dapp/pages/ProposalDetailDrawer')
+  () => import('../pages/ProposalDetailDrawer')
 );
-const PageProposalDetail = lazy(
-  () => import('@webb-tools/stats-dapp/pages/ProposalDetailPage')
-);
+const PageProposalDetail = lazy(() => import('../pages/ProposalDetailPage'));
 
 const CSuspense: FC<PropsWithChildren> = ({ children }) => {
   return (

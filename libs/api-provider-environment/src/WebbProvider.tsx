@@ -36,8 +36,6 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { SettingProvider } from '@webb-tools/react-environment';
-import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
   ChainType,
@@ -59,6 +57,7 @@ import { insufficientApiInterface } from './error/interactive-errors/insufficien
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
 import onChainDataJson from './generated/on-chain-config.json';
+import { StoreProvider } from './store';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -490,7 +489,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 () =>
                   new Worker(
                     new URL(
-                      '@webb-tools/react-environment/arkworks-proving-manager.worker',
+                      './arkworks-proving-manager.worker',
                       import.meta.url
                     )
                   ),
@@ -583,10 +582,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 notificationHandler,
                 () =>
                   new Worker(
-                    new URL(
-                      '@webb-tools/react-environment/circom-proving-manager.worker',
-                      import.meta.url
-                    )
+                    new URL('./circom-proving-manager.worker', import.meta.url)
                   )
               );
 
@@ -961,9 +957,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         txQueue,
       }}
     >
-      <StoreProvider>
-        <SettingProvider>{children}</SettingProvider>
-      </StoreProvider>
+      <StoreProvider>{children}</StoreProvider>
     </WebbContext.Provider>
   );
 };

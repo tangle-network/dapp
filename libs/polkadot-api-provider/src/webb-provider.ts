@@ -33,11 +33,11 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
   CircomUtxo,
-  parseTypedChainId,
   Utxo,
   UtxoGenInput,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
+  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 
@@ -48,15 +48,20 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { VAnchor } from '@webb-tools/anchors';
+import {
+  BridgeStorage,
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/browser-utils';
+import Storage from '@webb-tools/dapp-types/Storage';
+import { providers } from 'ethers';
 import { PolkadotProvider } from './ext-provider';
+import { getLeaves } from './mt-utils';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
@@ -65,11 +70,6 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-import { getLeaves } from './mt-utils';
-import { Storage } from '@webb-tools/storage';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { providers } from 'ethers';
-import { VAnchor } from '@webb-tools/anchors';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>

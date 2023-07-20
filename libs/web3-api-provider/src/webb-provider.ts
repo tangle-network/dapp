@@ -1,6 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
 import {
   AccountsAdapter,
   Bridge,
@@ -19,7 +20,11 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor } from '@webb-tools/anchors';
 import { EventBus } from '@webb-tools/app-util';
-import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+  retryPromise,
+} from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
@@ -32,10 +37,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
+import Storage from '@webb-tools/dapp-types/Storage';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
@@ -48,20 +50,17 @@ import {
   calculateTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { Signer, ethers, providers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 import { Eth } from 'web3-eth';
-
 import { Web3Accounts, Web3Provider } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import { ApiPromise } from '@polkadot/api';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
