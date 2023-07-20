@@ -1,4 +1,4 @@
-export type BarchartProps = {
+export type BarChartProps = {
   data: any;
   setValue: (value: number | null) => void;
   setDate: (date: Date | null) => void;

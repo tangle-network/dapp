@@ -1,9 +1,10 @@
 'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
-import { Areachart, Barchart } from '../../components';
+import { AreaChart, BarChart } from '../../components';
 
-export const VolumeChartsContainer = () => {
+const OverviewChartsContainer = () => {
   // Current TVLVolume & Volume values (Default values)
   const [currentTvlValue, setCurrentTvlValue] = useState<number>(13.6);
   const [currentVolumeValue, setCurrentVolumeValue] = useState<number>(8.56);
@@ -70,7 +71,7 @@ export const VolumeChartsContainer = () => {
         value={tvlValue}
         date={tvlDate}
       >
-        <Areachart
+        <AreaChart
           data={tvlData}
           setDate={setTVLDate}
           setValue={setTvlValue}
@@ -88,7 +89,7 @@ export const VolumeChartsContainer = () => {
         daysFilterType={volumeDataType}
         setDaysFilterType={setVolumeDataType}
       >
-        <Barchart
+        <BarChart
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}
@@ -98,3 +99,5 @@ export const VolumeChartsContainer = () => {
     </div>
   );
 };
+
+export default OverviewChartsContainer;

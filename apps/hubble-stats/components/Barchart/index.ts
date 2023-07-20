@@ -1,2 +1,1 @@
-export * from './Barchart';
-export * from './types';
+export { default as BarChart } from './BarChart';

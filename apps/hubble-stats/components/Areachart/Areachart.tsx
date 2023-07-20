@@ -1,19 +1,24 @@
-import { ResponsiveContainer, AreaChart, Area, Tooltip, XAxis } from 'recharts';
-import { AreachartProps } from './types';
+import { FC } from 'react';
+import {
+  ResponsiveContainer,
+  AreaChart as AreaChartCmp,
+  Area,
+  Tooltip,
+  XAxis,
+} from 'recharts';
+import { AreaChartProps } from './types';
 
-export const Areachart = (props: AreachartProps) => {
-  const {
-    data,
-    setDate,
-    setValue,
-    isDarkMode,
-    width = '100%',
-    height = 180,
-  } = props;
-
+const AreaChart: FC<AreaChartProps> = ({
+  data,
+  setDate,
+  setValue,
+  isDarkMode,
+  width = '100%',
+  height = 180,
+}) => {
   return (
     <ResponsiveContainer width={width} height={height}>
-      <AreaChart
+      <AreaChartCmp
         data={data}
         onMouseLeave={() => {
           setDate && setDate(null);
@@ -52,7 +57,9 @@ export const Areachart = (props: AreachartProps) => {
           fillOpacity={0}
           strokeWidth={2}
         />
-      </AreaChart>
+      </AreaChartCmp>
     </ResponsiveContainer>
   );
 };
+
+export default AreaChart;

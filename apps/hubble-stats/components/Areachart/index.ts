@@ -1,2 +1,1 @@
-export * from './Areachart';
-export * from './types';
+export { default as AreaChart } from './AreaChart';

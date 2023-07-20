@@ -1,19 +1,24 @@
-import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
-import { BarchartProps } from './types';
+import { FC } from 'react';
+import {
+  ResponsiveContainer,
+  BarChart as BarChartCmp,
+  XAxis,
+  Tooltip,
+  Bar,
+} from 'recharts';
+import { BarChartProps } from './types';
 
-export const Barchart = (props: BarchartProps) => {
-  const {
-    data,
-    setValue,
-    setDate,
-    isDarkMode,
-    width = '100%',
-    height = 180,
-  } = props;
-
+const BarChart: FC<BarChartProps> = ({
+  data,
+  setValue,
+  setDate,
+  isDarkMode,
+  width = '100%',
+  height = 180,
+}) => {
   return (
     <ResponsiveContainer width={width} height={height}>
-      <BarChart
+      <BarChartCmp
         data={data}
         onMouseLeave={() => {
           setValue && setValue(null);
@@ -47,7 +52,9 @@ export const Barchart = (props: BarchartProps) => {
           }}
         />
         <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
-      </BarChart>
+      </BarChartCmp>
     </ResponsiveContainer>
   );
 };
+
+export default BarChart;
