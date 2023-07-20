@@ -18,6 +18,8 @@ import { useObservableState } from 'observable-hooks';
 import { useCallback, useMemo } from 'react';
 
 import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+import ErrorPayload from '../errors/FaucetErrorPayload';
 import failedAnimation from '../lottie/failed.json';
 import processingAnimation from '../lottie/processing.json';
 import sucessAnimation from '../lottie/success.json';
@@ -102,6 +104,41 @@ const ProcessingModal = () => {
     }
   }, [mintTokenRes]);
 
+  const errorMessage = useMemo(() => {
+    if (!mintTokenRes) return '';
+
+    let message = 'Oops, the transfer could not be completed.';
+
+    if (FaucetError.isFaucetError(mintTokenRes)) {
+      if (
+        mintTokenRes.getErrorCode() === FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS
+      ) {
+        const payload = mintTokenRes.getPayload();
+
+        if (payload && 'lastClaimedDate' in payload) {
+          const { lastClaimedDate, claimPeriod } =
+            payload as ErrorPayload[FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS];
+
+          if (lastClaimedDate && claimPeriod) {
+            const timeLeft =
+              Date.now() - lastClaimedDate.getTime() + claimPeriod;
+
+            const hours = Math.floor(timeLeft / 3600000);
+            const minutes = Math.floor(timeLeft / 60000);
+            const timeStr = `${
+              hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''}` : ''
+            } ${
+              minutes > 0 ? `${minutes} minute${minutes > 1 ? 's' : ''}` : ''
+            }`;
+            message = `You have already claimed within the specified time period. Please wait ${timeStr.trim()} before making another claim.`;
+          }
+        }
+      }
+    }
+
+    return message;
+  }, [mintTokenRes]);
+
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       // Only close the modal when the minting is successful or failed
@@ -158,7 +195,7 @@ const ProcessingModal = () => {
             {isSuccess
               ? 'This transfer has been made to your wallet address.'
               : isFailed
-              ? 'Oops, the transfer could not be completed.'
+              ? errorMessage
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 
