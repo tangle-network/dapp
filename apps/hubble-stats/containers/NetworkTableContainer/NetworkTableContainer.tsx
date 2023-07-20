@@ -1,18 +1,26 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { TableAndChartTabs, Typography } from '@webb-tools/webb-ui-components';
 
 import { NetworkTable } from '../../components';
 import { TokenCompositionType } from '../../components/NetworkTable/types';
 
-const NetworkTableContainer: FC = () => {
-  const [chains, setChains] = useState<number[]>([]);
-  const [tvlData, setTvlData] = useState<TokenCompositionType[]>([]);
-  const [volumeData, setVolumeData] = useState<TokenCompositionType[]>([]);
-  const [depositsData, setDepositsData] = useState<TokenCompositionType[]>([]);
-  const [feesData, setFeesData] = useState<TokenCompositionType[]>([]);
+interface NetworkTableContainerProps {
+  chains: number[];
+  tvlData: TokenCompositionType[];
+  volumeData: TokenCompositionType[];
+  depositsData: TokenCompositionType[];
+  feesData: TokenCompositionType[];
+}
 
+const NetworkTableContainer: FC<NetworkTableContainerProps> = ({
+  chains = [],
+  tvlData = [],
+  volumeData = [],
+  depositsData = [],
+  feesData = [],
+}) => {
   return (
     <div className="space-y-1">
       <TableAndChartTabs tabs={['TVL', 'Volume', '24H Deposits', 'Fees']}>
