@@ -14,7 +14,12 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { MintTokenBody, MintTokenErrorCodes } from '../types';
+import {
+  MintTokenBody,
+  MintTokenErrorCodes,
+  TooManyClaimResponse,
+} from '../types';
+import isTooManyClaimResponse from '../utils/isTooManyClaimResponse';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
@@ -65,17 +70,31 @@ const mintTokens = async (
     });
 
     if (!response.ok) {
-      const result = await safeParseJSON<{ code: number; message: string }>(
-        response
-      );
+      const result = await safeParseJSON<
+        { code: number; message: string } | TooManyClaimResponse
+      >(response);
       if (result.isOk()) {
         const data = result.value;
-        return err(
-          FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
-            extraInfo: data.message,
-            status: data.code,
-          })
-        );
+
+        if (!isTooManyClaimResponse(data)) {
+          return err(
+            FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
+              extraInfo: data.message,
+              status: data.code,
+            })
+          );
+        } else {
+          return err(
+            FaucetError.from(FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS, {
+              claimPeriod: data.time_to_wait_between_claims_ms ?? undefined,
+              error: data.error,
+              lastClaimedDate: data.last_claimed_date
+                ? new Date(data.last_claimed_date)
+                : undefined,
+              reason: data.reason,
+            })
+          );
+        }
       } else {
         return err(result.error);
       }

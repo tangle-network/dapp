@@ -177,10 +177,18 @@ export type MintTokenBody = {
   };
 };
 
+export type TooManyClaimResponse = {
+  error: string;
+  reason: string;
+  last_claimed_date: string | null;
+  time_to_wait_between_claims_ms: number | null;
+};
+
 export type MintTokenErrorCodes =
   | FaucetErrorCode.INVALID_SELECTED_CHAIN
   | FaucetErrorCode.MINT_TOKENS_FAILED
-  | FaucetErrorCode.JSON_PARSE_ERROR;
+  | FaucetErrorCode.JSON_PARSE_ERROR
+  | FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS;
 
 /**
  * The mint token result type
