@@ -113,6 +113,11 @@ export const walletsConfig: Record<number, WalletConfig> = {
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
+    connector: new WalletConnectConnector({
+      options: {
+        projectId: process.env['WALLET_CONNECT_PROJECT_ID'],
+      },
+    }),
   },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,
@@ -132,11 +137,6 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/talisman-polkadot-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
     },
-    connector: new WalletConnectConnector({
-      options: {
-        projectId: process.env['WALLET_CONNECT_PROJECT_ID'],
-      },
-    }),
   },
   [WalletId.SubWallet]: {
     id: WalletId.SubWallet,
