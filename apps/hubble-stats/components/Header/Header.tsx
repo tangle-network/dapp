@@ -9,7 +9,7 @@ import {
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 
-export const Header = () => {
+const Header = () => {
   const tvl = useMemo(() => {
     return 'TVL: $13,642,124';
   }, []);
@@ -24,7 +24,7 @@ export const Header = () => {
       <div>
         <Breadcrumbs>
           <Link href="/">
-            <BreadcrumbsItem icon={<GridFillIcon />} isLast className="ml-0">
+            <BreadcrumbsItem icon={<GridFillIcon />} className="ml-0">
               Hubble Overview
             </BreadcrumbsItem>
           </Link>
@@ -80,3 +80,5 @@ export const VolumeChip: React.FC<VolumeChipProps> = ({
     </Chip>
   );
 };
+
+export default Header;

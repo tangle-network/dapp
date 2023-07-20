@@ -7,7 +7,7 @@ import { IconsGroupProps } from './types';
 import { getIconsSpacingClassName } from './utils';
 
 export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
-  ({ type, icons, iconSize = 'lg', className }, ref) => {
+  ({ type, icons, iconSize = 'lg', className, ...props }, ref) => {
     const Icon = useMemo(
       () => (type === 'chain' ? ChainIcon : TokenIcon),
       [type]
@@ -21,6 +21,7 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
           getIconsSpacingClassName(iconSize),
           className
         )}
+        {...props}
       >
         {icons.map((icon, idx) => (
           <IconWithTooltip

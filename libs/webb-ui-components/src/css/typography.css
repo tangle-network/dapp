@@ -110,3 +110,7 @@ code,
   font-family: 'Cousine', monospace;
   font-size: 16px;
 }
+
+.recharts-cartesian-axis-tick-value tspan {
+  font-family: 'Cousine', monospace !important;
+}
