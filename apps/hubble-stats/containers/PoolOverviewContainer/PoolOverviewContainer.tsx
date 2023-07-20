@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { FC } from 'react';
 import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
@@ -24,9 +24,9 @@ type PoolOverviewType = {
   fees24h: number;
 };
 
-const PoolOverviewContainer = () => {
-  const [poolOverviewData, setPoolOverviewData] = useState<PoolOverviewType>();
-
+const PoolOverviewContainer: FC<{ poolOverviewData?: PoolOverviewType }> = ({
+  poolOverviewData = undefined,
+}) => {
   return (
     <div
       className={cx(
