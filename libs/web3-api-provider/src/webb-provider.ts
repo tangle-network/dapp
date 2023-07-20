@@ -19,7 +19,11 @@ import {
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
-import { retryPromise } from '@webb-tools/browser-utils';
+import {
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+  retryPromise,
+} from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
@@ -35,10 +39,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
+import Storage from '@webb-tools/dapp-types/Storage';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
@@ -52,7 +53,6 @@ import {
   parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import flatten from 'lodash/flatten';

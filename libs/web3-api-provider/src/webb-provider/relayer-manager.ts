@@ -10,13 +10,13 @@ import {
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import Storage from '@webb-tools/dapp-types/Storage';
 import {
   calculateTypedChainId,
   ChainType,
   Note,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 
 import {
   NewNotesTxResult,

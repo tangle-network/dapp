@@ -34,8 +34,6 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { SettingProvider } from '@webb-tools/react-environment';
-import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
   ChainType,
@@ -55,6 +53,7 @@ import constants from './constants';
 import { unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import onChainDataJson from './generated/on-chain-config.json';
+import { StoreProvider } from './store';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
 
@@ -899,9 +898,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         txQueue,
       }}
     >
-      <StoreProvider>
-        <SettingProvider>{children}</SettingProvider>
-      </StoreProvider>
+      <StoreProvider>{children}</StoreProvider>
     </WebbContext.Provider>
   );
 };

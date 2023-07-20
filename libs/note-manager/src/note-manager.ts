@@ -7,18 +7,16 @@ import {
 } from '@webb-tools/browser-utils/storage';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { parseUnits } from 'viem';
+import Storage from '@webb-tools/dapp-types/Storage';
 import {
   CircomUtxo,
   Keypair,
   Note,
   NoteGenInput,
   ResourceId,
-  Utxo,
   UtxoGenInput,
-  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject } from 'rxjs';

@@ -38,10 +38,6 @@
       "@webb-tools/dapp-config/*": ["libs/dapp-config/src/*"],
       "@webb-tools/dapp-types": ["libs/dapp-types/src/index.ts"],
       "@webb-tools/dapp-types/*": ["libs/dapp-types/src/*"],
-      "@webb-tools/fixtures-deployments": [
-        "libs/fixtures-deployments/src/index.ts"
-      ],
-      "@webb-tools/fixtures-deployments/*": ["libs/fixtures-deployments/src/*"],
       "@webb-tools/icons": ["libs/icons/src/index.ts"],
       "@webb-tools/icons/*": ["libs/icons/src/*"],
       "@webb-tools/note-manager": ["libs/note-manager/src/index.ts"],
@@ -51,8 +47,6 @@
       ],
       "@webb-tools/react-components": ["libs/react-components/src/index.ts"],
       "@webb-tools/react-components/*": ["libs/react-components/src/*"],
-      "@webb-tools/react-environment": ["libs/react-environment/src/index.ts"],
-      "@webb-tools/react-environment/*": ["libs/react-environment/src/*"],
       "@webb-tools/react-hooks": ["libs/react-hooks/src/index.ts"],
       "@webb-tools/react-hooks/*": ["libs/react-hooks/src/*"],
       "@webb-tools/relayer-manager-factory": [
@@ -62,8 +56,6 @@
         "libs/relayer-manager-factory/src/*"
       ],
       "@webb-tools/stats-dapp/*": ["apps/stats-dapp/src/*"],
-      "@webb-tools/storage": ["libs/storage/src/index.ts"],
-      "@webb-tools/storage/*": ["libs/storage/src/*"],
       "@webb-tools/tailwind-plugin": ["libs/tailwind-plugin/src/index.ts"],
       "@webb-tools/tailwind-preset": ["libs/tailwind-preset"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],

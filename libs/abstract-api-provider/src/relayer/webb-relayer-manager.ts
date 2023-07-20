@@ -1,13 +1,12 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Note } from '@webb-tools/sdk-core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-
 import { ApiPromise } from '@polkadot/api';
 import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import { Storage } from '@webb-tools/storage';
+import Storage from '@webb-tools/dapp-types/Storage';
+import { Note } from '@webb-tools/sdk-core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
 import {
   NewNotesTxResult,

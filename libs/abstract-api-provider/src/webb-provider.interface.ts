@@ -3,18 +3,16 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
+import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
-
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
-import { Storage } from '@webb-tools/storage';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
