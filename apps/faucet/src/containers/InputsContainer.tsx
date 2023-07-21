@@ -114,7 +114,7 @@ const TokenAddressLink = () => {
   const tokenExplorerLink = useMemo(() => {
     if (!tokenAddress || !typedChainId) return '';
 
-    return `${chainsConfig[typedChainId]?.blockExplorerStub}/token/${tokenAddress}`;
+    return `${chainsConfig[typedChainId]?.blockExplorers?.default.url}/token/${tokenAddress}`;
   }, [tokenAddress, typedChainId]);
 
   return tokenAddress ? (

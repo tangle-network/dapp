@@ -65,7 +65,7 @@ const ChainDropdown: FC = () => {
           {chains.map((chain, i) => (
             <RadioItem
               key={`${chain.name}-${i}`}
-              value={`${calculateTypedChainId(chain.chainType, chain.chainId)}`}
+              value={`${calculateTypedChainId(chain.chainType, chain.id)}`}
               asChild
             >
               <MenuItem startIcon={<ChainIcon size="lg" name={chain.name} />}>
