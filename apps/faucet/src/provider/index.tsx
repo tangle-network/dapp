@@ -86,7 +86,7 @@ const config = Object.entries(tokens).reduce(
     }
 
     acc[typedChainId] = {
-      chainId: chain.chainId,
+      chainId: chain.id,
       name: chain.name,
       tokenAddresses: tokensRecord,
       type: chain.chainType === ChainType.Substrate ? 'Substrate' : 'Evm',

@@ -134,7 +134,7 @@ export const ShieldedAssetsTableContainer: FC<
       const isSupported =
         activeWallet &&
         activeWallet.supportedChainIds.includes(
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.id)
         );
 
       if (isSupported) {

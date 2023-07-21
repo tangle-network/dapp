@@ -1,10 +1,13 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { NoteManager } from '@webb-tools/note-manager';
 import {
   calculateTypedChainId,
   Note,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
@@ -31,6 +34,11 @@ export type UseNoteAccountReturnType = {
    * The flag to indicate if the notes are syncing
    */
   isSyncingNote: boolean;
+
+  /**
+   * The sync notes progress
+   */
+  syncNotesProgress: number;
 
   /**
    * The sync notes function
@@ -85,6 +93,11 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     setIsSuccessfullyCreatedNoteAccount,
   ] = useState(false);
 
+  const syncNotesProgress = useObservableState(
+    NoteManager.$syncNotesProgress,
+    NaN
+  );
+
   if (!isOpenNoteAccountModalSubject) {
     isOpenNoteAccountModalSubject = new BehaviorSubject(false);
   }
@@ -127,7 +140,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         const chainNotes =
           await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
             activeApi.state.activeBridge.targets[
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+              calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
             noteManager.getKeypair()
           );
@@ -174,10 +187,17 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
           ),
         });
       } catch (error) {
+        let msg = 'Something went wrong while syncing notes';
+
+        if (isViemError(error)) {
+          msg = error.shortMessage;
+        }
+
         console.error('Error while syncing notes', error);
+        console.dir(error);
         notificationApi.addToQueue({
           variant: 'error',
-          message: 'Something went wrong while syncing notes',
+          message: msg,
         });
       } finally {
         noteManager.isSyncingNote = false;
@@ -262,6 +282,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isOpenNoteAccountModal,
     isSuccessfullyCreatedNoteAccount,
     isSyncingNote,
+    syncNotesProgress,
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
     syncNotes: handleSyncNotes,

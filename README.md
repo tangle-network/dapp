@@ -10,120 +10,74 @@
 # Webb Monorepo
 
 <p align="left">
-    <strong>🚀  Decentralized interfaces into the Webb protocol 🚀</strong>
+    <strong>Decentralized interfaces into the Webb protocol</strong>
     <br />
 </p>
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/webb-tools/webb-dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/webb-tools/webb-dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/license/apache2-0-php/) [![Twitter](https://img.shields.io/badge/follow-%40webbprotocol-1DA1F2?logo=twitter&style=flat-square)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
 <!-- TABLE OF CONTENTS -->
-<h2 id="table-of-contents" style=border:0!important> 📖 Table of Contents</h2>
+<h2 id="table-of-contents" style=border:0!important> Table of Contents </h2>
 
 <details open="open">
-  <summary>Table of Contents</summary>
+  <summary id="#table-of-contents">Table of Contents</summary>
   <ul>
-    <li><a href="#start"> Getting Started</a></li>
+    <li><a href="#start">Getting Started</a></li>
+    <li><a href="#apps">Applications</a></li>
+    <li><a href="#libs">Libraries</a></li>
     <li><a href="#test">Testing</a></li>
     <li><a href="#contribute">Contributing</a></li>
     <li><a href="#license">License</a></li>
+    <li><a href="#help">Need help?</a></li>
   </ul>  
 </details>
 
-<h2 id="start"> Getting Started  🎉 </h2>
+<h2 id="start"> Getting Started </h2>
 
-This repo is a monorepo containing decentralized interfaces into the Webb protocol! It makes use of [nx.dev](https://nx.dev/) for fast and extensible build system. The repo consists of 3 notable areas:
+This is a monorepo for decentralized interfaces in the Webb protocol. It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` directory contains the protocol's interfaces while `libs` contains the necessary code and logic.
 
-- [bridge-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp) an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
-- [stats-dapp:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/stats-dapp) an interface for displaying statistics data of Webb's Tangle Network.
-- [webbsite:](https://github.com/webb-tools/webb-dapp/tree/develop/apps/webbsite) an interface for the Webb ecosystem and development.
-- [webb-ui-components:](https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components) a collection of reusable components for building interfaces quickly.
+### Prerequisites
 
-For additional information, please refer to the [Webb Official Documentation](https://docs.webb.tools/) 📝. Have feedback on how to improve the webb-dapp interface? Or have a specific question to ask? Checkout the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback) 💬.
-
-## Prerequisites
-
-This repository makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [`yarn`](https://classic.yarnpkg.com/en/docs/install):
+This repository makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [yarn](https://classic.yarnpkg.com/en/docs/install):
 
 ```bash
 npm install --global yarn
 ```
 
-Great! Now your **Node** environment is ready! 🚀🚀
+Great! Now your **Node** environment is ready!
 
-## Run Hubble bridge locally 💻
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
-Once the development environment is set up, you may proceed to install the required dependencies and run the dapp locally.
+<h2 id="apps"> Applications </h2>
 
-1. Clone this repo
+- [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
+- [faucet](./apps/faucet/README.md): an interface for requesting cryptocurrencies (assets) on the Webb Protocol System.
+- [hubble-stats](./apps/hubble-stats/README.md): an interface for displaying statistical data of the Cross-chain Bridging System.
+- [stats-dapp](./apps/stats-dapp/README.md): an interface for displaying statistical data of Webb's Tangle Network (DKG system).
+- [tangle-website](./apps/tangle-website/README.md): an interface for the Tangle ecosystem and development.
+- [webbsite](./apps/webbsite/README.md): an interface for the Webb ecosystem and development.
 
-   ```bash
-   git clone git@github.com:webb-tools/webb-dapp.git && cd webb-dapp
-   ```
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
-2. Install dependencies by `yarn`
+<h2 id="libs"> Libraries </h2>
 
-   ```bash
-   yarn install
-   ```
+- `abstract-api-provider`: a collection of base and abstract classes that unify the API across multiple providers.
+- `api-provider-environment`: contains the React context definitions, the app event, and functions for handling interactive feedback errors for the bridge app.
+- `browser-utils`: contains all the browser utility functions, such as fetch with caching, download file and string, the customized logger class, get browser platform, and the storage factory function for interacting with local storage.
+- `dapp-config`: contains all configurations (chains, wallets, etc.) for the bridge dApp.
+- `dapp-types`: contains all the sharable TypeScript types and interfaces across the apps.
+- `icons`: contains all the sharable icons across the apps.
+- `note-manager`: contains all the logic for storing note account data.
+- `polkadot-api-provider`: the Substrate (or Polkadot) provider for the bridge.
+- `react-hooks`: contains all the sharable hooks across the apps.
+- `relayer-manager-factory`: contains all the logic for interacting with the relayer.
+- `tailwind-preset`: the Webb TailwindCSS preset for all the apps.
+- `web3-api-provider`: the EVM provider for the bridge.
+- [webb-ui-components](./libs/webb-ui-components/README.md): a collection of reusable components for building interfaces quickly.
 
-3. Start the bridge-dapp:
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
-   ```bash
-   yarn start:bridge
-   ```
-
-Visit `http://localhost:3000/` to see the Webb Bridge Dapp UI! 🕸️ 🚀 If you would like to utilize the Hubble bridge
-with a local EVM network and local relayer refer to the instructions [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge).
-
-### Setting Up a Local EVM Network with Hubble Bridge
-
-If you want to create a local EVM network with a local relayer and Hubble bridge, we have step-by-step instructions you can follow [here](https://github.com/webb-tools/webb-dapp/tree/develop/apps/bridge-dapp#webb-hubble-bridge). Before setting up a local EVM network be sure to clear your `localStorage`.
-
-If you're comfortable running scripts and using a macOS environment, you can use the following scripts in the `/tools/scripts/` directory to quickly set up a local testing environment:
-
-- `contracts.sh`: This script compiles Webb smart contracts from [protocol-solidity](https://github.com/webb-tools/protocol-solidity), sets up an EVM localnet (e.g. Hermes, Athena, and Demeter), and populates required fixtures. You can use this script on its own.
-- `relayer.sh`: This script sets up the required `.env` variables for running a [Webb relayer](https://github.com/webb-tools/relayer) for the EVM localnets, fetches the `webb-relayer` binary, and executes it. You must have an EVM localnet running to use this script.
-- `bridge.sh`: This script sets up and starts the Hubble bridge at `localhost:3000`. You can use this script on its own.
-- `local-bridge-network.sh`: This script runs all the above scripts for an entire local network setup. It compiles the Webb smart contracts, sets up the EVM localnet, adds the required `.env` variables, fetches the `webb-relayer` binary, executes it, and starts the local Hubble bridge at `localhost:3000`. It opens three Terminal windows and can only be run in a macOS environment.
-
-We now have our local environment running, next we will want to setup our MetaMask wallet to add test tokens and **reset the account** on Metamask to reset the account’s nonce and tx history. Please refer to the support article [here](https://metamask.zendesk.com/hc/en-us/articles/360015488891-How-to-reset-an-account) for instructions on how to reset a MetaMask account.
-
-Lastly, we will want to one of the following accounts to obtain test tokens.
-
-```
-// Any of these keys has 1000 ETH on each testnet
-0x0000000000000000000000000000000000000000000000000000000000000001
-0x0000000000000000000000000000000000000000000000000000000000000002
-0xc0d375903fd6f6ad3edafc2c5428900c0757ce1da10e5dd864fe387b32b91d7e
-```
-
-If you are unfamiliar with how to import an account with MetaMask, please refer to the support article [here](https://metamask.zendesk.com/hc/en-us/articles/360015489331-How-to-import-an-account#:~:text=Click%20the%20circle%20icon%20at,key%20and%20click%20%E2%80%9CImport%E2%80%9D).
-
-## Run stats-dapp locally 💻
-
-Once the development environment is set up, you may proceed to install the required dependencies and run the dapp locally.
-
-1. Clone this repo
-
-   ```bash
-   git clone git@github.com:webb-tools/webb-dapp.git && cd webb-dapp
-   ```
-
-2. Install dependencies by `yarn`
-
-   ```bash
-   yarn install
-   ```
-
-3. Start the stats-dapp:
-
-   ```bash
-   yarn start:stats
-   ```
-
-Visit `http://localhost:3000/` to see the Webb Stats UI! 🕸️ 🚀 If you would like to setup a local SubQuery backend please refer to the instructions [here](https://github.com/webb-tools/webb-subql#webb-subquery).
-
-<h2 id="test"> Testing 🧪 </h2>
+<h2 id="test"> Testing </h2>
 
 The following instructions outlines how to run Webb Dapp test suite.
 
@@ -147,15 +101,17 @@ yarn test
    yarn nx storybook webb-ui-components
    ```
 
-Visit `http://localhost:4400/` to see the Webb Component Library! 🕸️ 🚀
+Visit `http://localhost:4400/` to see the Webb Component Library!
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="contribute"> Contributing </h2>
 
 Interested in contributing to the Webb Dapp interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
 
-If you have a contribution in mind, please check out our [Contribution Guide](./.github/CONTRIBUTING.md) for information on how to do so. We are excited for your first contribution!
+If you would like to contribute, please refer to our [Contribution Guide](./.github/CONTRIBUTING.md) for instructions. We are excited for your first contribution!
 
-### Lint before you push! 🪥
+### Lint before you push!
 
 Please ensure you lint and format your changes prior to opening a PR.
 
@@ -177,8 +133,43 @@ yarn format
 yarn build
 ```
 
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
+
 <h2 id="license"> License </h2>
 
 Licensed under <a href="LICENSE">Apache 2.0 license</a>.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, as defined in the Apache 2.0 license, shall be licensed as above, without any additional terms or conditions.
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
+
+<h2 id="help"> Need help? </h2>
+
+If you need help or you want to additional information please:
+
+- Refer to the [Webb Official Documentation](https://docs.webb.tools/).
+- If you have feedback on how to improve the Webb Dapp interface or you have a specific question? Check out the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback).
+- If you found a bug please [open an issue](https://github.com/webb-tools/webb-dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
+
+---
+
+**Follow us at**
+
+[![Follow us on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol)
+[![Follow us on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
+
+---
+
+**Share** the project link with your network on social media.
+
+<a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//github.com/webb-tools/webb-dapp" target="_blank">
+  <img src="https://img.shields.io/twitter/url?label=LinkedIn&logo=LinkedIn&style=social&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" alt="Share on LinkedIn"/>
+</a>
+<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem" target="_blank">
+  <img src="https://img.shields.io/twitter/url?label=Twitter&logo=Twitter&style=social&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" alt="Shared on Twitter"/>
+</a>
+<a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60webb-tools/webb-dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/webb-tools/webb-dapp%20%23webbEcosystem&url=https%3A%2F%2Fgithub.com%2Fwebb-tools%2Fwebb-dapp" target="_blank">
+  <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Fawebb-tools%webb-dapp" alt="Share on Telegram"/>
+</a>
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>

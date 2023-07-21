@@ -1,13 +1,12 @@
+import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
+import { cloneElement, forwardRef, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { cloneElement, forwardRef, useEffect, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { Button } from '../Button';
 import { ListItem } from '../ListCard/ListItem';
 import { WalletConnectionCardProps } from './types';
-import { Wallet } from '@webb-tools/dapp-config';
-import { getPlatformMetaData } from '@webb-tools/browser-utils/platform/get-platform-metadata';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,

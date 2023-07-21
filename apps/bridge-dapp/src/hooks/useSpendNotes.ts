@@ -14,10 +14,10 @@ import {
 } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
-import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
+import { formatUnits } from 'viem';
 import { getVAnchorActionClass } from '../utils';
 
 const createdTime = randRecentDate();
@@ -137,9 +137,9 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
 
           // Calculate the assets url
           let assetsUrl = '#';
-          const explorerUrl = chain.blockExplorerStub;
+          const explorerUrl = chain.blockExplorers?.default.url;
           const address = fungibleCurrency?.getAddressOfChain(
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
 
           if (explorerUrl && address) {
@@ -156,7 +156,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             composition: Array.from(compositionSet),
             createdTime, // TODO: get the actual created time
             balance: Number(
-              ethers.utils.formatUnits(note.note.amount, note.note.denomination)
+              formatUnits(BigInt(note.note.amount), +note.note.denomination)
             ),
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()

@@ -88,13 +88,18 @@ const ProcessingModal = () => {
       return '';
     }
 
-    if (!chain.blockExplorerStub) {
+    if (!chain.blockExplorers) {
       alert(`Chain ${chain.name} does not have a block explorer url`);
       return '';
     }
 
     if (txReceipt) {
-      return `${chain.blockExplorerStub}/tx/${txReceipt.transactionHash}`;
+      const explorerUrl = chain.blockExplorers.default.url;
+
+      return new URL(
+        `/tx/${txReceipt.transactionHash}`,
+        explorerUrl
+      ).toString();
     } else if (txHash) {
       alert(`Substrate tx hash ${txHash} is not supported yet`);
       return '';

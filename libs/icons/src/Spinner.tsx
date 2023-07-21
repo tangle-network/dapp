@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
-export const Spinner: React.FC<IconBase> = (props) => {
+export const Spinner = React.memo<IconBase>((props) => {
   // Spin animation attach to className
   const className = twMerge(
     props.className,
@@ -31,4 +31,4 @@ export const Spinner: React.FC<IconBase> = (props) => {
     displayName: 'Spinner',
     viewBox: '0 0 20 20',
   });
-};
+});

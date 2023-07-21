@@ -10,13 +10,13 @@
 # Webb UI Kit
 
 <p align="left">
-    <strong>🚀 A React implementation of Webb's Design System 🎨</strong>
+    <strong> A React implementation of Webb's Design System </strong>
     <br />
 </p>
 
 [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/license/apache2-0-php/) [![Twitter](https://img.shields.io/badge/follow-%40webbprotocol-1DA1F2?logo=twitter&style=flat-square)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
-<h2 id="start"> Getting Started  🎉 </h2>
+<h2 id="start"> Getting Started </h2>
 
 This is the official component library for the Webb Ecosystem! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
 
@@ -32,7 +32,7 @@ npm install --global yarn
 
 This component library also makes use of [tailwindcss](https://tailwindcss.com/). For installation guides please refer to official documentation [here](https://tailwindcss.com/docs/installation/framework-guides).
 
-Great! Now your environment is ready! 🚀🚀
+Great! Now your environment is ready!
 
 ## Usage
 
@@ -117,7 +117,7 @@ nx build webb-ui-components
    yarn nx storybook webb-ui-components
    ```
 
-Visit `http://localhost:4400/` to see the Webb Component Library! 🕸️ 🚀
+Visit `http://localhost:4400/` to see the Webb Component Library!
 
 <h2 id="contribute"> Contributing </h2>
 
@@ -129,7 +129,7 @@ If you have a contribution in mind, please check out our [Contribution Guide](..
 
 We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/webb-tools/webb-dapp/issues/new/choose) and we will get in touch!
 
-### Lint before you push! 🪥
+### Lint before you push!
 
 Please ensure you lint and format your changes prior to opening a PR.
 

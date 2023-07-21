@@ -73,7 +73,7 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(
         ref={ref}
       >
         {isLoading && spinnerPlacement === 'start' && (
-          <ButtonSpinner label={loadingText}>{spinner}</ButtonSpinner>
+          <ButtonSpinner hasLabel={!!loadingText}>{spinner}</ButtonSpinner>
         )}
         {isLoading ? (
           loadingText || (
@@ -85,7 +85,7 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(
           <ButtonContent {...contentProps} />
         )}
         {isLoading && spinnerPlacement === 'end' && (
-          <ButtonSpinner label={loadingText} placement="end">
+          <ButtonSpinner hasLabel={!!loadingText} placement="end">
             {spinner}
           </ButtonSpinner>
         )}

@@ -8,13 +8,17 @@ import { useEffect, useState } from 'react';
 export const useWallets = () => {
   const [wallets, setWallets] = useState<ManagedWallet[]>([]);
 
-  const { activeApi, activeChain, activeWallet, inactivateApi } =
+  const { activeApi, activeChain, activeWallet, apiConfig, inactivateApi } =
     useWebContext();
   useEffect(() => {
     let isSubscribed = true;
 
     const configureSelectedWallets = async () => {
-      const walletsFromActiveChain = Object.values(activeChain?.wallets ?? {});
+      const walletIds = Object.values(activeChain?.wallets ?? {});
+      const walletsFromActiveChain = walletIds.map(
+        (walletId) => apiConfig.wallets[walletId]
+      );
+
       const wallets = await Promise.all(
         walletsFromActiveChain.map(
           async ({ detect, ...walletConfig }): Promise<ManagedWallet> => {
@@ -60,7 +64,7 @@ export const useWallets = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [activeChain, activeWallet, activeApi, inactivateApi]);
+  }, [activeChain, activeWallet, activeApi, inactivateApi, apiConfig.wallets]);
 
   return {
     wallets,

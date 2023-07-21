@@ -22,7 +22,7 @@ export const useCurrencies = () => {
 
     const currentTypedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.chainId
+      activeChain.id
     );
     const currencies = apiConfig.currencies ?? [];
 
@@ -52,7 +52,7 @@ export const useCurrencies = () => {
 
     const typedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.chainId
+      activeChain.id
     );
 
     return Array.from(apiConfig.fungibleToWrappableMap.entries()).reduce(
