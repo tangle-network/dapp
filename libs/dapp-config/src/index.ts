@@ -8,7 +8,7 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
   (acc, chainsConfig) => {
     const typedChainId = calculateTypedChainId(
       chainsConfig.chainType,
-      chainsConfig.chainId
+      chainsConfig.id
     );
 
     return {
@@ -19,15 +19,9 @@ export const chainsPopulated = Object.values(chainsConfig).reduce(
           .filter(({ supportedChainIds }) =>
             supportedChainIds.includes(typedChainId)
           )
-          .reduce(
-            (acc, walletsConfig) => ({
-              ...acc,
-              [walletsConfig.id]: {
-                ...walletsConfig,
-              },
-            }),
-            {} as Record<number, Wallet>
-          ),
+          .reduce((acc, walletsConfig) => {
+            return Array.from(new Set([...acc, walletsConfig.id])); // dedupe
+          }, [] as Array<Wallet['id']>),
       },
     };
   },
@@ -38,6 +32,7 @@ export * from './anchors';
 export * from './api-config';
 export * from './bridges';
 export * from './chains';
+export * from './constants';
 export * from './currencies';
 export * from './utils';
 export * from './wallets';

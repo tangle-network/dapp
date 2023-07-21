@@ -25,6 +25,7 @@ export const IconsGroup = forwardRef<HTMLDivElement, IconsGroupProps>(
       >
         {icons.map((icon, idx) => (
           <IconWithTooltip
+            key={`${icon}-${idx}`}
             icon={<Icon key={idx} name={icon} size={iconSize} />}
             content={icon}
           />

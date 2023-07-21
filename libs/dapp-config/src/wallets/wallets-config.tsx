@@ -1,7 +1,6 @@
 import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
-
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
@@ -9,7 +8,11 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons';
-import { WalletConfig } from '.';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+
+import { chainsConfig as evmChainsConfig } from '../chains/evm';
+import { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
@@ -46,7 +49,13 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
+if (!process.env['WALLET_CONNECT_PROJECT_ID']) {
+  throw new Error('Missing WALLET_CONNECT_PROJECT_ID env variable.');
+}
+
 export const walletsConfig: Record<number, WalletConfig> = {
+  // TODO: Should move all hardcoded wallet configs to connectors
+  // https://wagmi.sh/examples/custom-connector
   [WalletId.Polkadot]: {
     id: WalletId.Polkadot,
     Logo: <PolkadotJsIcon />,
@@ -88,9 +97,12 @@ export const walletsConfig: Record<number, WalletConfig> = {
       [SupportedBrowsers.Chrome]:
         'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en',
     },
+    connector: new MetaMaskConnector({
+      chains: Object.values(evmChainsConfig),
+    }),
   },
-  [WalletId.WalletConnectV1]: {
-    id: WalletId.WalletConnectV1,
+  [WalletId.WalletConnectV2]: {
+    id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
     name: 'wallet connect',
     title: `Wallet Connect`,
@@ -101,6 +113,11 @@ export const walletsConfig: Record<number, WalletConfig> = {
     },
     supportedChainIds: [...ANY_EVM],
     homeLink: 'https://walletconnect.com/',
+    connector: new WalletConnectConnector({
+      options: {
+        projectId: process.env['WALLET_CONNECT_PROJECT_ID'],
+      },
+    }),
   },
   [WalletId.Talisman]: {
     id: WalletId.Talisman,

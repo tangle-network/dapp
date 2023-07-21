@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise } from '@polkadot/api';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
@@ -9,7 +10,10 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { ethers } from 'ethers';
+import { u8aToHex } from '@webb-tools/utils';
+import assert from 'assert';
+import { PublicClient } from 'viem';
+import { parsedAnchorConfig } from './anchors';
 import { AnchorConfigEntry } from './anchors/anchor-config.interface';
 import { getBridgeConfigByAsset } from './bridges';
 import { BridgeConfigEntry } from './bridges/bridge-config.interface';
@@ -21,13 +25,9 @@ import {
   parseSubstrateTargetSystem,
 } from './utils';
 import { WalletConfig } from './wallets/wallet-config.interface';
-import { parsedAnchorConfig } from './anchors';
-import assert from 'assert';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { u8aToHex } from '@webb-tools/utils';
 
 export type Chain = ChainConfig & {
-  wallets: Record<number, Wallet>;
+  wallets: Array<Wallet['id']>;
 };
 
 export type Wallet = WalletConfig;
@@ -71,9 +71,7 @@ export class ApiConfig {
 
   static initFromApi = async (
     config: Pick<ApiConfigInput, 'chains' | 'wallets'>,
-    evmProviderFactory: (
-      typedChainId: number
-    ) => Promise<ethers.providers.Web3Provider>,
+    evmProviderFactory: (typedChainId: number) => Promise<PublicClient>,
     substrateProviderFactory: (typedChainId: number) => Promise<ApiPromise>
   ) => {
     const evmOnChainConfig = EVMOnChainConfig.getInstance();
@@ -114,7 +112,7 @@ export class ApiConfig {
 
   getEVMChainName(evmId: number): string {
     const chain = Object.values(this.chains).find(
-      (chainsConfig) => chainsConfig.chainId === evmId
+      (chainsConfig) => chainsConfig.id === evmId
     );
 
     if (chain) {

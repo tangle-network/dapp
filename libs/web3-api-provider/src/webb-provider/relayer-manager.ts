@@ -9,7 +9,6 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
-import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import Storage from '@webb-tools/dapp-types/Storage';
 import {
@@ -24,6 +23,8 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
+import { VAnchor__factory } from '@webb-tools/contracts';
+import { GetContractReturnType, PublicClient } from 'viem';
 
 export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
   async mapRelayerIntoActive(
@@ -136,7 +137,10 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
-    vanchor: VAnchor,
+    vanchorContract: GetContractReturnType<
+      typeof VAnchor__factory.abi,
+      PublicClient
+    >,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
@@ -150,28 +154,21 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
   } | null> {
     const { treeHeight, targetRoot, commitment, tx } = options;
 
-    const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
-    const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
+    const sourceEvmId = await vanchorContract.read.getChainId();
+
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      +sourceEvmId.toString()
+    );
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
       try {
         const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
-          vanchor.contract.address,
+          vanchorContract.address,
           tx?.cancelToken.abortSignal
         );
-        const validLatestLeaf = await vanchor.leafCreatedAtBlock(
-          leaves[leaves.length - 1],
-          lastQueriedBlock
-        );
-
-        console.log('validLatestLeaf', validLatestLeaf);
-
-        // leaves from relayer somewhat validated, attempt to build the tree
-        if (!validLatestLeaf) {
-          continue;
-        }
 
         const result = await this.validateRelayerLeaves(
           treeHeight,
@@ -181,7 +178,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
           tx
         );
 
-        if (!result) {
+        if (!result || result.commitmentIndex === -1) {
           continue;
         }
 

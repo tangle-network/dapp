@@ -2,10 +2,9 @@ import {
   ColumnDef,
   createColumnHelper,
   getCoreRowModel,
-  Table as RTTable,
   useReactTable,
 } from '@tanstack/react-table';
-import { useStatsContext } from '../provider/stats-provider';
+import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import {
   Button,
   Card,
@@ -14,20 +13,19 @@ import {
   TitleWithInfo,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { ExternalLinkLine, TokenIcon } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { ArcElement, Chart as ChartJS, Legend } from 'chart.js';
-import { BigNumber } from 'ethers';
 import React, { useMemo, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { ProposalsTable, TimeRange } from '../containers';
+import { StackedAreaChartContainer } from '../containers/StackedAreaChartContainer';
 import {
   ProposalListItem,
   ProposalStatus,
   useProposalsOverview,
 } from '../provider/hooks';
+import { useStatsContext } from '../provider/stats-provider';
 import { mapChainIdToLogo } from '../utils';
-import { StackedAreaChartContainer } from '../containers/StackedAreaChartContainer';
 
 const columnHelper = createColumnHelper<ProposalListItem>();
 
@@ -35,10 +33,7 @@ const columns: ColumnDef<ProposalListItem, any>[] = [
   columnHelper.accessor('height', {
     header: 'Height',
     cell: (props) =>
-      BigNumber.from(props.getValue<string>())
-        .div(1000)
-        .toBigInt()
-        .toLocaleString(),
+      (BigInt(props.getValue<string>()) / BigInt(1000)).toLocaleString(),
   }),
 
   columnHelper.accessor('type', {

@@ -1,13 +1,13 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { ApiPromise } from '@polkadot/api';
+import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
+import Storage from '@webb-tools/dapp-types/Storage';
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-
-import { ApiPromise } from '@polkadot/api';
-import { VAnchor } from '@webb-tools/anchors';
-import { BridgeStorage, LoggerService } from '@webb-tools/browser-utils';
-import Storage from '@webb-tools/dapp-types/Storage';
+import { GetContractReturnType, PublicClient } from 'viem';
 import {
   NewNotesTxResult,
   Transaction,
@@ -83,7 +83,7 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
     api: Provider extends 'polkadot'
       ? ApiPromise
       : Provider extends 'web3'
-      ? VAnchor
+      ? GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
       : never,
     storage: Storage<BridgeStorage>,
     options: {

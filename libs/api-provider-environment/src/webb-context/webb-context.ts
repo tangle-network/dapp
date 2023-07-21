@@ -3,7 +3,6 @@ import {
   Bridge,
   Transaction,
   WebbApiProvider,
-  WebbProviderType,
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, Chain, Wallet } from '@webb-tools/dapp-config';
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
@@ -11,8 +10,6 @@ import { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 import { AppEvent, TAppEvent } from '../app-event';
 import { TransactionQueueApi } from '../transaction';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 
 export interface WebbContextState<T = unknown> {
   loading: boolean;

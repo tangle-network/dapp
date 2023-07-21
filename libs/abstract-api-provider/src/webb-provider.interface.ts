@@ -3,18 +3,16 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
+import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
+import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-import { VAnchor } from '@webb-tools/anchors';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import Storage from '@webb-tools/dapp-types/Storage';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
+import { GetContractReturnType, PublicClient } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
@@ -190,11 +188,6 @@ export type NotificationHandler = ((
   // remove the notification programmatically
   remove(key: string | number): void;
 };
-/**
- * Wasm factory
- * @param name - optional name to map an action to a worker currently there's only sdk-core
- **/
-export type WasmFactory = (name?: string) => Worker | null;
 
 export type WebbProviderType = 'web3' | 'polkadot';
 
@@ -211,7 +204,6 @@ export type WebbProviderType = 'web3' | 'polkadot';
  * @param {WebbRelayerManager} relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
  * @param {any} getProvider - A getter method for getting the underlying provider
  * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
- * @param {WasmFactory} wasmFactory - Provider of the wasm workers
  *
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
@@ -247,11 +239,8 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // Notification handler
   notificationHandler: NotificationHandler;
 
-  // wasm-utils workers factory
-  wasmFactory: WasmFactory;
-
   // new block observable
-  newBlock: Observable<unknown>;
+  newBlock: Observable<bigint | null>;
 
   // get zk fixtures
   getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
@@ -259,20 +248,22 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // get vanchor max edges
   getVAnchorMaxEdges: (
     vAnchorAddress: string,
-    provider?: ApiPromise | providers.Web3Provider
+    provider?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // get vanchor levels
   getVAnchorLevels: (
     vAnchorAddressOrTreeId: string,
-    providerOrApi?: ApiPromise | providers.Web3Provider
+    providerOrApi?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // generate utxo
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 
   getVAnchorLeaves(
-    vanchor: VAnchor | ApiPromise,
+    vanchor:
+      | GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+      | ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;

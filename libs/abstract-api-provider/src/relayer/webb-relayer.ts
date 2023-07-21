@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { BigNumber } from 'ethers';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
@@ -48,19 +47,19 @@ type RelayerLeaves = {
 };
 
 export interface RelayerFeeInfo {
-  estimatedFee: BigNumber;
-  gasPrice?: BigNumber;
-  refundExchangeRate: BigNumber;
-  maxRefund: BigNumber;
+  estimatedFee: bigint;
+  gasPrice: bigint;
+  refundExchangeRate: bigint;
+  maxRefund: bigint;
   timestamp: Date;
 }
 
 export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   return {
-    estimatedFee: BigNumber.from(data.estimatedFee),
-    gasPrice: data.gasPrice ? BigNumber.from(data.gasPrice) : undefined,
-    refundExchangeRate: BigNumber.from(data.refundExchangeRate),
-    maxRefund: BigNumber.from(data.maxRefund),
+    estimatedFee: BigInt(data.estimatedFee),
+    gasPrice: BigInt(data.gasPrice),
+    refundExchangeRate: BigInt(data.refundExchangeRate),
+    maxRefund: BigInt(data.maxRefund),
     timestamp: new Date(data.timestamp),
   };
 };
@@ -179,9 +178,9 @@ class RelayedWithdraw {
     this.ws.send(JSON.stringify(withdrawRequest));
   }
 
-  await() {
-    return this.watcher
-      .pipe(
+  await(): Promise<[RelayedWithdrawResult, string | undefined]> {
+    return firstValueFrom(
+      this.watcher.pipe(
         filter(([next]) => {
           return (
             next === RelayedWithdrawResult.CleanExit ||
@@ -189,7 +188,7 @@ class RelayedWithdraw {
           );
         })
       )
-      .toPromise();
+    );
   }
 
   get currentStatus() {
@@ -247,9 +246,6 @@ export class WebbRelayer {
       | { treeId: number; palletId: number },
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
-    console.group(`getLeaves() for ${this.endpoint}`);
-    console.log('On chain: ', chainsPopulated[typedChainId]?.name);
-
     const { chainId, chainType } = parseTypedChainId(typedChainId);
     const baseUrl = `${this.endpoint}/api/v1/leaves`;
     let path = '';
@@ -285,18 +281,19 @@ export class WebbRelayer {
 
     if (req.ok) {
       const jsonResponse = await req.json();
-      console.log('response: ', jsonResponse);
+      console.log(
+        `Response from ${this.endpoint} for chain ${chainsPopulated[typedChainId]?.name}: `,
+        jsonResponse
+      );
       const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
-      console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
         leaves: fetchedLeaves,
       };
     } else {
-      console.groupEnd();
       throw new Error('network error');
     }
   }
@@ -304,7 +301,7 @@ export class WebbRelayer {
   public async getFeeInfo(
     typedChainId: number,
     vanchor: string,
-    gasAmount: BigNumber,
+    gasAmount: bigint,
     abortSignal?: AbortSignal
   ): Promise<RelayerFeeInfo> | never {
     const { chainId, chainType } = parseTypedChainId(typedChainId);

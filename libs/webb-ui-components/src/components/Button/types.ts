@@ -131,9 +131,10 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
 
 export interface ButtonSpinnerProps extends WebbComponentBase {
   /**
-   * The label to show when `isLoading` is `true`
+   * Indicates if the button has a label or not
+   * @default false
    */
-  label?: string;
+  hasLabel?: boolean;
   /**
    * It determines the placement of the spinner when `isLoading` is `true`
    */

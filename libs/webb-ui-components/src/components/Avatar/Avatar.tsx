@@ -3,8 +3,8 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography';
-import { Identicon } from '.';
+import { Typography } from '../../typography/Typography';
+import { Identicon } from './Identicon';
 import { AvatarProps } from './types';
 import { getAvatarSizeInPx, getAvatarClassNames } from './utils';
 
