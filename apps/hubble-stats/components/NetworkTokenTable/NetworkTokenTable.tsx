@@ -1,7 +1,9 @@
 import { FC, useMemo } from 'react';
+import cx from 'classnames';
 import {
-  createColumnHelper,
   useReactTable,
+  createColumnHelper,
+  getExpandedRowModel,
   getCoreRowModel,
   ColumnDef,
   Table as RTTable,
@@ -12,34 +14,61 @@ import {
   fuzzyFilter,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
+import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
 import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
 
-import { NetworkPoolType, NetworkPoolTableProps } from './types';
+import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
 
-const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
-  const columnHelper = useMemo(() => createColumnHelper<NetworkPoolType>(), []);
+const NetworkTokenTable: FC<NetworkTokenTableProps> = ({ chains, data }) => {
+  const columnHelper = useMemo(
+    () => createColumnHelper<NetworkTokenType>(),
+    []
+  );
 
-  const columns = useMemo<ColumnDef<NetworkPoolType, any>[]>(
+  const columns = useMemo<ColumnDef<NetworkTokenType, any>[]>(
     () => [
-      columnHelper.accessor('poolSymbol', {
+      columnHelper.accessor('symbol', {
         header: () => null,
-        cell: (props) => (
-          <div className="flex items-center gap-1">
-            <ShieldedAssetLight className="block dark:hidden" />
-            <ShieldedAssetDark className="hidden dark:block" />
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
+        cell: (props) => {
+          const isSubToken = !props.row.getCanExpand();
+          return (
+            <div
+              className={cx('flex items-center gap-1', { 'pl-2': isSubToken })}
             >
-              {props.row.original.poolSymbol}
-            </Typography>
-          </div>
-        ),
+              {isSubToken && <CornerDownRightLine />}
+              {/* Token Icon */}
+              <TokenIcon
+                name={isSubToken ? props.row.original.symbol : 'webb'}
+                size="lg"
+              />
+
+              {/* Symbol */}
+              <Typography
+                variant="body1"
+                fw="bold"
+                className={cx('text-mono-200 dark:text-mono-0', {
+                  uppercase: isSubToken,
+                })}
+              >
+                {props.row.original.symbol}
+              </Typography>
+
+              {/* Composition Percentage */}
+              {isSubToken && props.row.original.compositionPercentage && (
+                <Typography
+                  variant="body2"
+                  fw="bold"
+                  className="text-mono-120 dark:text-mono-80 uppercase"
+                >
+                  {props.row.original.compositionPercentage}%
+                </Typography>
+              )}
+            </div>
+          );
+        },
       }),
-      columnHelper.accessor('poolAggregate', {
+      columnHelper.accessor('aggregate', {
         header: () => (
           <HeaderCell
             title="Aggregate"
@@ -81,16 +110,21 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
   const table = useReactTable({
     data,
     columns,
+    state: {
+      expanded: true,
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    getSubRows: (row) => row.tokens,
     globalFilterFn: fuzzyFilter,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   if (chains.length === 0) {
     return (
-      <Typography variant="body1">No network pool data available</Typography>
+      <Typography variant="body1">No network token data available</Typography>
     );
   }
 
@@ -106,4 +140,4 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
   );
 };
 
-export default NetworkPoolTable;
+export default NetworkTokenTable;
