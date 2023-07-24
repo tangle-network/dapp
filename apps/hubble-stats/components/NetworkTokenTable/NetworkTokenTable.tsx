@@ -15,7 +15,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
-import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
+import { chainsConfig, ChainGroup } from '@webb-tools/dapp-config/chains';
 
 import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
@@ -88,7 +88,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
             <div className="w-full text-center">
               <ChainChip
                 chainName={chainsConfig[chainId].name}
-                chainType={chainsConfig[chainId].base as ChainBase}
+                chainType={chainsConfig[chainId].group as ChainGroup}
                 // shorten the title to last word of the chain name
                 title={chainsConfig[chainId].name.split(' ').pop()}
               />
