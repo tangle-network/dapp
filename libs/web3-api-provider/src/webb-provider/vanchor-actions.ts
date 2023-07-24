@@ -26,9 +26,7 @@ import {
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import gasLimitConfig, {
-  DEFAULT_GAS_LIMIT,
-} from '@webb-tools/dapp-config/gasLimitConfig';
+import gasLimitConfig from '@webb-tools/dapp-config/gasLimitConfig';
 import {
   checkNativeAddress,
   WebbError,
@@ -326,7 +324,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     tx.next(TransactionState.SendingTransaction, '');
 
     const typedChainId = this.inner.typedChainId;
-    const gasLimit = gasLimitConfig[typedChainId] ?? DEFAULT_GAS_LIMIT;
+    const gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
 
     const hash = await vAnchor.transact(
       inputs,
@@ -667,6 +665,11 @@ export class Web3VAnchorActions extends VAnchorActions<
       destRelayedRootBI = await destVAnchor.read.getLastRoot();
     } else {
       const edgeIndex = await destVAnchor.read.edgeIndex([
+        BigInt(parsedNote.sourceChainId),
+      ]);
+      const nei = await destVAnchor.read.getLatestNeighborEdges();
+      console.log('Neighbour: ', nei);
+      destVAnchor.read.currentNeighborRootIndex([
         BigInt(parsedNote.sourceChainId),
       ]);
       const edge = await destVAnchor.read.edgeList([edgeIndex]);
