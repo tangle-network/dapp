@@ -18,12 +18,16 @@ import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
 import { NetworkPoolType, NetworkPoolTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
 
-const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
+const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
+  chains,
+  data,
+  prefixUnit = '$',
+}) => {
   const columnHelper = useMemo(() => createColumnHelper<NetworkPoolType>(), []);
 
   const columns = useMemo<ColumnDef<NetworkPoolType, any>[]>(
     () => [
-      columnHelper.accessor('poolSymbol', {
+      columnHelper.accessor('symbol', {
         header: () => null,
         cell: (props) => (
           <div className="flex items-center gap-1">
@@ -34,12 +38,12 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
               fw="bold"
               className="text-mono-200 dark:text-mono-0"
             >
-              {props.row.original.poolSymbol}
+              {props.row.original.symbol}
             </Typography>
           </div>
         ),
       }),
-      columnHelper.accessor('poolAggregate', {
+      columnHelper.accessor('aggregate', {
         header: () => (
           <HeaderCell
             title="Aggregate"
@@ -65,7 +69,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
             props.row.original.chainsData[chainId] ? (
               <NumberCell
                 value={props.row.original.chainsData[chainId]}
-                prefix={props.row.original.prefixUnit}
+                prefix={prefixUnit}
               />
             ) : (
               <Typography variant="body1" ta="center">
@@ -75,7 +79,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
         })
       ),
     ],
-    [chains, columnHelper]
+    [chains, columnHelper, prefixUnit]
   );
 
   const table = useReactTable({

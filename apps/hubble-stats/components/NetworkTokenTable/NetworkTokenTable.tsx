@@ -20,7 +20,11 @@ import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
 import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
 
-const NetworkTokenTable: FC<NetworkTokenTableProps> = ({ chains, data }) => {
+const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
+  chains,
+  data,
+  prefixUnit = '$',
+}) => {
   const columnHelper = useMemo(
     () => createColumnHelper<NetworkTokenType>(),
     []
@@ -59,7 +63,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({ chains, data }) => {
                 <Typography
                   variant="body2"
                   fw="bold"
-                  className="text-mono-120 dark:text-mono-80 uppercase"
+                  className="!text-[12px] text-mono-120 dark:text-mono-80 uppercase"
                 >
                   {props.row.original.compositionPercentage}%
                 </Typography>
@@ -94,7 +98,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({ chains, data }) => {
             props.row.original.chainsData[chainId] ? (
               <NumberCell
                 value={props.row.original.chainsData[chainId]}
-                prefix={props.row.original.prefixUnit}
+                prefix={prefixUnit}
               />
             ) : (
               <Typography variant="body1" ta="center">
@@ -104,7 +108,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({ chains, data }) => {
         })
       ),
     ],
-    [chains, columnHelper]
+    [chains, columnHelper, prefixUnit]
   );
 
   const table = useReactTable({
