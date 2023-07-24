@@ -17,7 +17,6 @@ import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
 
 import { TokenCompositionType, NetworkTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
-import { convertChainChipTitle } from '../../utils';
 
 const NetworkTable: FC<NetworkTableProps> = ({ chains, data }) => {
   const columnHelper = useMemo(
@@ -57,7 +56,8 @@ const NetworkTable: FC<NetworkTableProps> = ({ chains, data }) => {
               <ChainChip
                 chainName={chainsConfig[chainId].name}
                 chainType={chainsConfig[chainId].base as ChainBase}
-                title={convertChainChipTitle(chainsConfig[chainId].name)}
+                // shorten the title to last word of the chain name
+                title={chainsConfig[chainId].name.split(' ').pop()}
               />
             </div>
           ),
