@@ -202,7 +202,7 @@
     "@webb-tools/contracts": "0.5.47",
     "@webb-tools/interfaces": "0.5.47",
     "@webb-tools/protocol-substrate-types": "0.0.10",
-    "@webb-tools/sdk-core": "0.1.4-126",
+    "@webb-tools/sdk-core": "0.1.8",
     "@webb-tools/test-utils": "0.1.4-126",
     "@webb-tools/tokens": "0.5.47",
     "@webb-tools/utils": "0.5.39",
