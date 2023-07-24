@@ -182,9 +182,20 @@ export interface FixedAmountProps
   id?: string;
 
   /**
-   * The fixed number list to display
+   * The amount step
+   * @default 0.5
    */
-  values: number[];
+  step?: number;
+
+  /**
+   * The max amount
+   */
+  max?: number;
+
+  /**
+   * The min amount
+   */
+  min?: number;
 
   /**
    * The value prop
@@ -195,11 +206,6 @@ export interface FixedAmountProps
    * The callback function to control the component
    */
   onChange?: (nextVal: number) => void;
-
-  /**
-   * The amount menu props to pass into the AmountMenu component
-   */
-  amountMenuProps?: ComponentProps<typeof AmountMenu>;
 
   /**
    * Disable the input
