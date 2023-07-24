@@ -296,7 +296,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     // Send the transaction to the relayer.
-    relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+    relayedVAnchorWithdraw.send(relayedDepositTxPayload, +`${chainId}`);
     const results = await relayedVAnchorWithdraw.await();
     if (results) {
       const [, message] = results;

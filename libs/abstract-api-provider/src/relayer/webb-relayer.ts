@@ -2,18 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { Observable, Subject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
 import { chainsPopulated } from '@webb-tools/dapp-config';
+import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { Hex } from 'viem';
 import {
   CMDSwitcher,
   Capabilities,
   RelayedChainInput,
   RelayerCMDKey,
   RelayerMessage,
+  SendTxResponse,
   WithdrawRelayerArgs,
 } from './types';
 
@@ -101,30 +104,132 @@ const parseRelayerFeeErrorMessage = async (
  **/
 class RelayedWithdraw {
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
-  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> =
     new Subject();
 
   private readonly logger = LoggerService.get('RelayedWithdraw');
 
-  constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
+  private readonly txProcesser = new BehaviorSubject<
+    | {
+        payload: ReturnType<RelayedWithdraw['generateWithdrawRequest']>;
+        chainId: number;
+      }
+    | undefined
+  >(undefined);
+
+  readonly SEND_TX_ROUTE = '/api/v1/send';
+
+  readonly QUERY_STATUS_ROUTE = '/api/v1/tx';
+
+  readonly POOLING_INTERVAL = 500;
+
+  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+
+  constructor(private endpoint: URL, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
 
-    ws.onmessage = ({ data }) => {
-      const handledMessage = this.handleMessage(JSON.parse(data));
-
-      this.status = handledMessage[0];
-      this.emitter.next(handledMessage);
-
-      if (this.status === RelayedWithdrawResult.CleanExit) {
-        this.emitter.complete();
-        this.ws.close();
+    this.txProcesser.subscribe(async (next) => {
+      if (!next) {
+        return;
       }
-    };
 
-    ws.onerror = (e) => {
-      this.logger.error('Relayer error: ', e);
-    };
+      const { payload, chainId } = next;
+
+      const body = JSON.stringify(payload);
+      const anchorIdentifier = Object.values(payload)[0].vAnchor['contract'];
+
+      const baseOn = Object.keys(payload)[0];
+      if (baseOn !== 'evm' && baseOn !== 'substrate') {
+        this.status = RelayedWithdrawResult.Errored;
+        this.emitter.next([
+          RelayedWithdrawResult.Errored,
+          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments).message,
+        ]);
+        return;
+      }
+
+      try {
+        const resp = await fetch(
+          this.getSendTxUri(baseOn, chainId, anchorIdentifier)
+        );
+
+        const data: SendTxResponse = await resp.json();
+        if (data.status === 'Sent') {
+          const { itemKey } = data as SendTxResponse<'Sent'>;
+
+          // Start pooling for the status of the tx until it's processed
+          // or exit if got 404 error
+          const queryStatus = async () => {
+            try {
+              const resp = await fetch(
+                this.getQueryStatusUri(baseOn, chainId, itemKey)
+              );
+
+              const data: RelayerMessage = await resp.json();
+              const handledMessage = this.handleMessage(data);
+
+              this.status = handledMessage[0];
+              this.emitter.next(handledMessage);
+
+              if (this.status === RelayedWithdrawResult.Continue) {
+                setTimeout(queryStatus, this.POOLING_INTERVAL);
+              } else if (this.status === RelayedWithdrawResult.CleanExit) {
+                this.emitter.complete();
+              }
+            } catch (error) {
+              let message = WebbError.getErrorMessage(
+                WebbErrorCodes.FailedToSendTx
+              ).message;
+              if (error instanceof Error) {
+                message = error.message;
+              }
+
+              // If the tx is not found then it's processed
+              this.status = RelayedWithdrawResult.Errored;
+              this.emitter.next([RelayedWithdrawResult.Errored, message]);
+              this.emitter.complete();
+            }
+          };
+
+          queryStatus();
+        } else {
+          const { reason, message } = data as SendTxResponse<'Failed'>;
+          this.status = RelayedWithdrawResult.Errored;
+          this.emitter.next([RelayedWithdrawResult.Errored, reason || message]);
+        }
+      } catch (error) {
+        this.logger.error('Relayer error: ', error);
+
+        this.status = RelayedWithdrawResult.Errored;
+        this.emitter.next([
+          RelayedWithdrawResult.Errored,
+          WebbError.getErrorMessage(WebbErrorCodes.FailedToSendTx).message,
+        ]);
+      }
+    });
+  }
+
+  private getSendTxUri(
+    base: RelayerCMDBase,
+    chainId: number,
+    anchorIdentifier: string
+  ) {
+    return new URL(
+      `${this.SEND_TX_ROUTE}/${base}/${chainId}/${anchorIdentifier}`,
+      this.endpoint
+    );
+  }
+
+  private getQueryStatusUri(
+    base: RelayerCMDBase,
+    chainId: number,
+    itemKey: string
+  ) {
+    return new URL(
+      `${this.QUERY_STATUS_ROUTE}/${base}/${chainId}/${itemKey}`,
+      this.endpoint
+    );
   }
 
   private handleMessage = (
@@ -132,22 +237,12 @@ class RelayedWithdraw {
   ): [RelayedWithdrawResult, string | undefined] => {
     this.logger.info('Relayer message: ', data);
 
-    if (data.network && typeof data.network !== 'string') {
-      const { failed } = data.network;
+    const { status } = data;
 
-      return [
-        RelayedWithdrawResult.Errored,
-        failed?.reason || 'Relayer network error',
-      ];
-    } else if (data.error || data.withdraw?.errored) {
-      return [
-        RelayedWithdrawResult.Errored,
-        data.error || data.withdraw?.errored?.reason,
-      ];
-    } else if (data.network === 'invalidRelayerAddress') {
-      return [RelayedWithdrawResult.Errored, 'Invalid relayer address'];
-    } else if (data.withdraw?.finalized) {
-      return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
+    if (typeof status === 'object' && 'Processed' in status) {
+      return [RelayedWithdrawResult.CleanExit, status.Processed.txHash];
+    } else if (typeof status === 'object' && 'Failed' in status) {
+      return [RelayedWithdrawResult.Errored, status.Failed.reason];
     } else {
       return [RelayedWithdrawResult.Continue, undefined];
     }
@@ -169,13 +264,17 @@ class RelayedWithdraw {
     };
   }
 
-  send(withdrawRequest: any) {
+  send(
+    withdrawRequest: ReturnType<RelayedWithdraw['generateWithdrawRequest']>,
+    chainId: number
+  ) {
     if (this.status !== RelayedWithdrawResult.PreFlight) {
       throw Error('there is a withdraw process running');
     }
 
     this.status = RelayedWithdrawResult.OnFlight;
-    this.ws.send(JSON.stringify(withdrawRequest));
+
+    this.txProcesser.next({ payload: withdrawRequest, chainId });
   }
 
   await(): Promise<[RelayedWithdrawResult, string | undefined]> {
@@ -207,26 +306,7 @@ export class WebbRelayer {
   }
 
   async initWithdraw<Target extends RelayerCMDKey>(target: Target) {
-    const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
-
-    await new Promise((resolve, reject) => {
-      ws.onopen = resolve;
-      ws.onerror = reject;
-    });
-
-    /// insure the socket is open
-    /// maybe removed soon
-    for (;;) {
-      if (ws.readyState === 1) {
-        break;
-      }
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 300);
-      });
-    }
-
-    return new RelayedWithdraw(ws, target);
+    return new RelayedWithdraw(new URL(this.endpoint), target);
   }
 
   async getIp(): Promise<string> {
