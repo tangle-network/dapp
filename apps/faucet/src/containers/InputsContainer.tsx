@@ -126,7 +126,13 @@ const TokenAddressLink = () => {
       className="normal-case"
       rightIcon={<ExternalLinkLine className="!fill-current" />}
     >
-      {shortenHex(tokenAddress)}
+      <Typography
+        component="span"
+        variant="body2"
+        className="font-bold text-inherit"
+      >
+        {shortenHex(tokenAddress)}
+      </Typography>
     </Button>
   ) : (
     <Typography variant="mkt-body2" className="font-black">
