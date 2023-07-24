@@ -1,0 +1,104 @@
+import { FC, useMemo } from 'react';
+import {
+  createColumnHelper,
+  useReactTable,
+  getCoreRowModel,
+  ColumnDef,
+  Table as RTTable,
+} from '@tanstack/react-table';
+import {
+  ChainChip,
+  Table,
+  fuzzyFilter,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
+import { chainsConfig, ChainBase } from '@webb-tools/dapp-config/chains';
+
+import { NetworkPoolType, NetworkPoolTableProps } from './types';
+import { HeaderCell, NumberCell } from '../table';
+
+const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
+  const columnHelper = useMemo(() => createColumnHelper<NetworkPoolType>(), []);
+
+  const columns = useMemo<ColumnDef<NetworkPoolType, any>[]>(
+    () => [
+      columnHelper.accessor('poolSymbol', {
+        header: () => null,
+        cell: (props) => (
+          <div className="flex items-center gap-1">
+            <ShieldedAssetLight className="block dark:hidden" />
+            <ShieldedAssetDark className="hidden dark:block" />
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="text-mono-140 dark:text-mono-60"
+            >
+              {props.row.original.poolSymbol}
+            </Typography>
+          </div>
+        ),
+      }),
+      columnHelper.accessor('poolAggregate', {
+        header: () => <HeaderCell title="Aggregate" />,
+        cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+      }),
+      ...chains.map((chainId) =>
+        columnHelper.accessor('chainsData', {
+          id: chainId.toString(),
+          header: () => (
+            <div className="w-full text-center">
+              <ChainChip
+                chainName={chainsConfig[chainId].name}
+                chainType={chainsConfig[chainId].base as ChainBase}
+                // shorten the title to last word of the chain name
+                title={chainsConfig[chainId].name.split(' ').pop()}
+              />
+            </div>
+          ),
+          cell: (props) =>
+            props.row.original.chainsData[chainId] ? (
+              <NumberCell
+                value={props.row.original.chainsData[chainId]}
+                prefix="$"
+              />
+            ) : (
+              <Typography variant="body1" ta="center">
+                *
+              </Typography>
+            ),
+        })
+      ),
+    ],
+    [chains, columnHelper]
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  if (chains.length === 0) {
+    return (
+      <Typography variant="body1">No network pool data available</Typography>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
+      <Table
+        thClassName="border-t-0 bg-mono-0 border-r last:border-r-0 first:pl-4 last:pr-2"
+        tdClassName="border-r last:border-r-0 first:pl-4 last:pr-2"
+        tableProps={table as RTTable<unknown>}
+        totalRecords={data.length}
+      />
+    </div>
+  );
+};
+
+export default NetworkPoolTable;

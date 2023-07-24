@@ -2,6 +2,7 @@ export * from './AreaChart';
 export * from './BarChart';
 export * from './Header';
 export * from './KeyMetricItem';
+export * from './NetworkPoolTable';
 export * from './NetworkTable';
 export * from './PoolMetadataTable';
 export * from './PoolOverviewItem';
