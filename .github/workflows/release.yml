@@ -82,6 +82,7 @@ jobs:
 
           touch apps/bridge-dapp/.env
           echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> apps/bridge-dapp/.env
+          echo WALLET_CONNECT_PROJECT_ID=${{ secrets.WALLET_CONNECT_PROJECT_ID }} >> apps/bridge-dapp/.env
           echo HOSTED_ORBIT_MULTLICALL3_ADDRESS=${{ secrets.HOSTED_ORBIT_MULTLICALL3_ADDRESS }} >> apps/bridge-dapp/.env
           echo ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> apps/bridge-dapp/.env
           echo HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> apps/bridge-dapp/.env

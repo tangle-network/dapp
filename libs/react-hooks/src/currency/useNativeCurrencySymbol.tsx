@@ -9,6 +9,6 @@ export const useNativeCurrencySymbol = () => {
       return '';
     }
 
-    return apiConfig.getNativeCurrencySymbol(activeChain.chainId);
+    return apiConfig.getNativeCurrencySymbol(activeChain.id);
   }, [activeChain, apiConfig]);
 };

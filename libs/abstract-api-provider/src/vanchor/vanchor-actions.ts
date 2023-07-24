@@ -1,7 +1,6 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EventBus, LoggerService } from '@webb-tools/app-util';
 import {
   ChainType,
@@ -10,9 +9,7 @@ import {
   ResourceId,
   Utxo,
 } from '@webb-tools/sdk-core';
-import BN from 'bn.js';
-import { BigNumber, ContractReceipt, Overrides } from 'ethers';
-
+import { Address, Hash } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
 import {
@@ -41,7 +38,7 @@ export type TransferTransactionPayloadType = {
   notes: Note[];
   changeUtxo: Utxo;
   transferUtxo: Utxo;
-  feeAmount: BigNumber;
+  feeAmount: bigint;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
@@ -110,7 +107,9 @@ export const isVAnchorTransferPayload = (
     'changeUtxo' in payload &&
     payload['changeUtxo'] instanceof Utxo &&
     'transferUtxo' in payload &&
-    payload['transferUtxo'] instanceof Utxo
+    payload['transferUtxo'] instanceof Utxo &&
+    'feeAmount' in payload &&
+    typeof payload['feeAmount'] === 'bigint'
   );
 };
 
@@ -160,8 +159,9 @@ export abstract class VAnchorActions<
    * A function to get the leaf index of a leaf in the tree
    */
   abstract getLeafIndex(
-    contractReceiptOrLeaf: ContractReceipt | Uint8Array,
-    noteOrIndexBeforeInsertion: Note | number,
+    txHashOrLeaf: Hash,
+    noteOrIndexBeforeInsertion: Note,
+    indexBeforeInsertion: number,
     vAnchorAddressOrTreeId: string
   ): Promise<bigint>;
 
@@ -213,15 +213,14 @@ export abstract class VAnchorActions<
    */
   abstract transact(
     tx: Transaction<NewNotesTxResult>,
-    contractAddress: string,
+    contractAddress: ProviderType extends 'web3' ? Address : string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BigNumber | BN,
-    refund: BigNumber | BN,
-    recipient: string,
-    relayer: string,
+    fee: bigint,
+    refund: bigint,
+    recipient: ProviderType extends 'web3' ? Address : string,
+    relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>,
-    overridesTransaction?: Overrides
-  ): Promise<{ transactionHash: string; receipt?: TransactionReceipt }>;
+    leavesMap: Record<string, Uint8Array[]>
+  ): Promise<Hash>;
 }

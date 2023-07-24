@@ -1,10 +1,10 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
 import { Chain } from '@webb-tools/dapp-config';
-import { useCallback } from 'react';
 import { useCurrentResourceId } from '@webb-tools/react-hooks';
+import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { useCallback } from 'react';
 
 const IMAGE_URL_TEMPLATE =
   'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/{symbol}.png';
@@ -63,7 +63,7 @@ export const isTokenAddedToMetamask = (
 
   const typedChainId = calculateTypedChainId(
     activeChain.chainType,
-    activeChain.chainId
+    activeChain.id
   );
 
   const tokenAddress = currency.getAddressOfChain(typedChainId);
@@ -91,22 +91,19 @@ export const useAddCurrency = () => {
 
   return useCallback(
     async (currency: Currency): Promise<boolean> => {
-      if (!activeApi || !activeChain) {
+      if (!activeApi || !activeChain || !activeAccount) {
         return false;
       }
 
-      const provider = activeApi.getProvider();
+      const accountAddress = activeAccount.address;
 
-      const accountAddress = activeAccount?.address;
-
-      // Provider is not a Web3Provider instance so we can't add tokens
-      if (!(provider instanceof Web3Provider)) {
+      if (!(activeApi instanceof WebbWeb3Provider)) {
         return false;
       }
 
       const typedChainId = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.chainId
+        activeChain.id
       );
 
       const address = currency.getAddressOfChain(typedChainId);
@@ -116,22 +113,17 @@ export const useAddCurrency = () => {
         return false;
       }
 
-      // A valid symbol is max 11 characters long
-      const validSymbol = currency.view.symbol.slice(0, 11);
-
       try {
-        const wasAdded = await provider.addToken({
-          address,
-          symbol: validSymbol,
-          decimals: currency.view.decimals,
-          image: await getCurrencyImageUrl(currency.view.symbol),
-        });
+        await activeApi.watchAsset(
+          currency,
+          await getCurrencyImageUrl(currency.view.symbol)
+        );
 
-        if (wasAdded && accountAddress && currentResourceId && address) {
+        if (accountAddress && currentResourceId && address) {
           recordAddedToken(accountAddress, currentResourceId, address);
         }
 
-        return Boolean(wasAdded);
+        return true;
       } catch (error) {
         console.error(error);
         return false;

@@ -13,12 +13,16 @@ export enum WebbErrorCodes {
   UnsupportedProvider,
   // Unsupported chain is switch via the extension
   UnsupportedChain,
+  // Unsupported wallet
+  UnsupportedWallet,
   // Unselected chain is a mismatch between provider and application
   UnselectedChain,
   // No accounts are available
   NoAccountAvailable,
   // No active bridge
   NoActiveBridge,
+  // Missing endpoints in the configuration
+  NoEndpointsConfigured,
   // Failed to parse deposit note
   NoteParsingFailure,
   // PolkaDot extension not installed
@@ -55,6 +59,14 @@ export enum WebbErrorCodes {
   InsufficientDiskSpace,
   // Invalid arguments
   InvalidArguments,
+  // No connector configured for the wallet
+  NoConnectorConfigured,
+  // Relayer has not yet relayed the commitment to the destination chain
+  CommitmentNotInTree,
+  // Switch account failed
+  SwitchAccountFailed,
+  // Switch chain failed
+  SwitchChainFailed,
 }
 
 // An Error message with error metadata
@@ -117,7 +129,13 @@ export class WebbError extends Error {
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,
-          message: 'you have switched to unsupported chain',
+          message: 'You have switched to unsupported chain',
+        };
+
+      case WebbErrorCodes.UnsupportedWallet:
+        return {
+          code,
+          message: 'You have selected unsupported wallet',
         };
 
       case WebbErrorCodes.UnselectedChain:
@@ -230,6 +248,12 @@ export class WebbError extends Error {
           message: `No currency is available`,
         };
 
+      case WebbErrorCodes.NoEndpointsConfigured:
+        return {
+          code,
+          message: `Missing endpoints in the configuration`,
+        };
+
       case WebbErrorCodes.TreeNotFound:
         return {
           code,
@@ -252,6 +276,30 @@ export class WebbError extends Error {
         return {
           code,
           message: `Invalid arguments`,
+        };
+
+      case WebbErrorCodes.NoConnectorConfigured:
+        return {
+          code,
+          message: `No connector configured for the wallet`,
+        };
+
+      case WebbErrorCodes.CommitmentNotInTree:
+        return {
+          code,
+          message: `Relayer has not yet relayed the commitment to the destination chain`,
+        };
+
+      case WebbErrorCodes.SwitchAccountFailed:
+        return {
+          code,
+          message: 'Failed to switch account',
+        };
+
+      case WebbErrorCodes.SwitchChainFailed:
+        return {
+          code,
+          message: 'Failed to switch chain',
         };
 
       default:

@@ -12,7 +12,6 @@ import {
   RelayChainMethods,
   Transaction,
   TransactionState,
-  WasmFactory,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -33,11 +32,11 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
   CircomUtxo,
-  parseTypedChainId,
   Utxo,
   UtxoGenInput,
   buildVariableWitnessCalculator,
   calculateTypedChainId,
+  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 
@@ -48,15 +47,19 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/fixtures-deployments';
 import { ZERO_BYTES32, ZkComponents, u8aToHex } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import {
+  BridgeStorage,
+  fetchVAnchorKeyFromAws,
+  fetchVAnchorWasmFromAws,
+} from '@webb-tools/browser-utils';
+import Storage from '@webb-tools/dapp-types/Storage';
+import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
+import { getLeaves } from './mt-utils';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
@@ -65,11 +68,6 @@ import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
-import { getLeaves } from './mt-utils';
-import { Storage } from '@webb-tools/storage';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { providers } from 'ethers';
-import { VAnchor } from '@webb-tools/anchors';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -93,7 +91,7 @@ export class WebbPolkadot
 
   readonly backend: Backend = 'Circom';
 
-  private _newBlock = new BehaviorSubject<null | number>(null);
+  private _newBlock = new BehaviorSubject<null | bigint>(null);
 
   // Map to store the max edges for each tree id
   private readonly vAnchorMaxEdges = new Map<string, number>();
@@ -113,8 +111,7 @@ export class WebbPolkadot
     public readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
-    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
-    readonly wasmFactory: WasmFactory
+    readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>
   ) {
     super();
 
@@ -267,7 +264,6 @@ export class WebbPolkadot
     relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
     apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
-    wasmFactory: WasmFactory, // A Factory Fn that wil return wasm worker that would be supplied eventually to the `sdk-core`
     typedChainId: number,
     wallet: Wallet // Current wallet to initialize
   ): Promise<WebbPolkadot> {
@@ -291,8 +287,7 @@ export class WebbPolkadot
       apiConfig,
       notification,
       provider,
-      accounts,
-      wasmFactory
+      accounts
     );
     /// check metadata update
     await instance.awaitMetaDataCheck();
@@ -314,8 +309,7 @@ export class WebbPolkadot
     notification: NotificationHandler, // Notification handler that will be used for the provider
     accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
     apiPromise: ApiPromise,
-    injectedExtension: InjectedExtension,
-    wasmFactory: WasmFactory
+    injectedExtension: InjectedExtension
   ): Promise<WebbPolkadot> {
     const provider = new PolkadotProvider(
       apiPromise,
@@ -336,8 +330,7 @@ export class WebbPolkadot
       ApiConfig,
       notification,
       provider,
-      accounts,
-      wasmFactory
+      accounts
     );
 
     await instance.ensureApiInterface();
@@ -366,16 +359,16 @@ export class WebbPolkadot
 
   private async listenerBlocks() {
     const block = await this.provider.api.query.system.number();
-    this._newBlock.next(block.toNumber());
+    this._newBlock.next(block.toBigInt());
     const sub = await this.provider.api.rpc.chain.subscribeFinalizedHeads(
       (header) => {
-        this._newBlock.next(header.number.toNumber());
+        this._newBlock.next(header.number.toBigInt());
       }
     );
     return sub;
   }
 
-  get newBlock(): Observable<number | null> {
+  get newBlock(): Observable<bigint | null> {
     return this._newBlock.asObservable();
   }
 
@@ -384,7 +377,7 @@ export class WebbPolkadot
   }
 
   async getVAnchorLeaves(
-    api: VAnchor | ApiPromise,
+    api: ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
@@ -398,10 +391,6 @@ export class WebbPolkadot
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    if (api instanceof VAnchor) {
-      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
-    }
-
     const { treeHeight, targetRoot, commitment, treeId, palletId, tx } =
       options;
 
@@ -552,10 +541,14 @@ export class WebbPolkadot
 
   async getVAnchorMaxEdges(
     treeId: string,
-    provider?: ApiPromise | providers.Web3Provider
+    provider?: PublicClient | ApiPromise
   ): Promise<number> {
-    if (provider instanceof providers.Web3Provider) {
-      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
+    // If provider is not instance of ApiPromise, display error and use `this.api` instead
+    if (!(provider instanceof ApiPromise)) {
+      console.error(
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+      );
+      provider = this.api;
     }
 
     const storedMaxEdges = this.vAnchorMaxEdges.get(treeId);
@@ -576,10 +569,13 @@ export class WebbPolkadot
 
   async getVAnchorLevels(
     treeId: string,
-    provider?: ApiPromise | providers.Web3Provider
+    provider?: PublicClient | ApiPromise
   ): Promise<number> {
-    if (provider instanceof providers.Web3Provider) {
-      throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
+    if (!(provider instanceof ApiPromise)) {
+      console.error(
+        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`'
+      );
+      provider = this.api;
     }
 
     const storedLevels = this.vAnchorLevels.get(treeId);

@@ -2,7 +2,7 @@ import { PropsOf } from '../../types';
 import { ComponentProps } from 'react';
 import { Avatar, Button, CheckBox, TitleWithInfo } from '../../components';
 import { UseCopyableReturnType } from '../../hooks';
-import { ChainBase } from '@webb-tools/dapp-config';
+import { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -35,7 +35,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The source chain symbol
    */
   sourceChain?: {
-    type: ChainBase;
+    type: ChainGroup;
     name: string;
   };
 
@@ -43,7 +43,7 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The destination chain symbol
    */
   destChain?: {
-    type: ChainBase;
+    type: ChainGroup;
     name: string;
   };
 

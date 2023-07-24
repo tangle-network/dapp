@@ -7,7 +7,7 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import {
   ChainType,
@@ -20,7 +20,6 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
@@ -34,6 +33,8 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
+import { ContractFunctionRevertedError, formatEther } from 'viem';
+import { isViemError } from '@webb-tools/web3-api-provider';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -82,7 +83,7 @@ export const TransferConfirmContainer = forwardRef<
     const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
-      () => calculateTypedChainId(destChain.chainType, destChain.chainId),
+      () => calculateTypedChainId(destChain.chainType, destChain.id),
       [destChain]
     );
 
@@ -207,7 +208,7 @@ export const TransferConfirmContainer = forwardRef<
           notes: inputNotes,
           changeUtxo,
           transferUtxo,
-          feeAmount: feeAmount ?? BigNumber.from(0),
+          feeAmount: feeAmount ?? ZERO_BIG_INT,
         };
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
@@ -221,7 +222,7 @@ export const TransferConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const { transactionHash } = await vAnchorApi.transact(...args);
+          const transactionHash = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
           tx.txHash = transactionHash;
@@ -239,7 +240,22 @@ export const TransferConfirmContainer = forwardRef<
         console.error('Error occured while transfering', error);
         changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
-        tx.fail(getErrorMessage(error));
+
+        let errorMessage = getErrorMessage(error);
+        if (isViemError(error)) {
+          errorMessage = error.shortMessage;
+
+          const revertError = error.walk(
+            (err) => err instanceof ContractFunctionRevertedError
+          );
+
+          if (revertError instanceof ContractFunctionRevertedError) {
+            errorMessage = revertError.reason ?? revertError.shortMessage;
+          }
+        }
+
+        tx.fail(errorMessage);
+
         captureSentryException(error, 'transactionType', 'transfer');
       } finally {
         setMainComponent(undefined);
@@ -278,7 +294,7 @@ export const TransferConfirmContainer = forwardRef<
         return undefined;
       }
 
-      const amountNum = Number(ethers.utils.formatEther(feeAmount));
+      const amountNum = Number(formatEther(feeAmount));
 
       return getRoundedAmountString(amountNum, 3, {
         roundingFunction: Math.round,
@@ -295,11 +311,11 @@ export const TransferConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         sourceChain={{
           name: activeChain?.name ?? '',
-          type: activeChain?.base ?? 'webb-dev',
+          type: activeChain?.group ?? 'webb-dev',
         }}
         destChain={{
           name: destChain.name,
-          type: destChain.base ?? 'webb-dev',
+          type: destChain.group ?? 'webb-dev',
         }}
         note={changeNote?.serialize()}
         progress={progress}

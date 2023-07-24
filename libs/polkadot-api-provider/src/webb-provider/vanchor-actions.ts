@@ -32,28 +32,26 @@ import {
   ChainType,
   FIELD_SIZE,
   Keypair,
-  MerkleProof,
   MerkleTree,
   Note,
   ResourceId,
   Utxo,
   buildVariableWitnessCalculator,
-  generateVariableWitnessInput,
   parseTypedChainId,
   randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
-import { formatUnits } from 'ethers/lib/utils';
 import { firstValueFrom } from 'rxjs';
 import * as snarkjs from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import assert from 'assert';
-import { BigNumber } from 'ethers';
+import { formatUnits } from 'viem';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
@@ -78,7 +76,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const api = await WebbPolkadot.getApiPromise(chain.url);
+    const endpoints = chain.rpcUrls.default.webSocket;
+    if (!endpoints || endpoints.length === 0) {
+      throw WebbError.from(WebbErrorCodes.NoEndpointsConfigured);
+    }
+
+    const api = await WebbPolkadot.getApiPromise(endpoints[0]);
     const treeId = Number(treeIdStr);
     if (isNaN(treeId)) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
@@ -240,8 +243,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     treeId: string,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BN,
-    refund: BN,
+    fee: bigint,
+    refund: bigint,
     recipient: string,
     relayer: string,
     wrapUnwrapAssetId: string,
@@ -300,9 +303,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
 
     const txHash = await polkadotTx.call(activeAccount.address);
 
-    return {
-      transactionHash: txHash,
-    };
+    return ensureHex(txHash);
   }
 
   async isPairRegistered(
@@ -335,10 +336,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
    * @param addressOrTreeId the address or tree id of the tree
    */
   async getLeafIndex(
-    leaf: Uint8Array,
+    txHash: string,
+    note: Note,
     indexBeforeInsertion: number,
     addressOrTreeId: string
   ): Promise<bigint> {
+    const leaf = note.getLeaf();
     const treeId = Number(addressOrTreeId);
     const idx = await getLeafIndex(
       this.inner.api,
@@ -435,7 +438,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     await this.checkHasBalance(payload, wrapUnwrapAssetId);
 
     const address = activeAccount.address;
-    const zeroBN = new BN(0);
 
     const depositUtxo = await utxoFromVAnchorNote(
       payload.note,
@@ -452,8 +454,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       payload.note.sourceIdentifyingData,
       inputUtxos,
       [depositUtxo],
-      zeroBN,
-      zeroBN,
+      ZERO_BIG_INT,
+      ZERO_BIG_INT,
       address,
       address,
       wrapUnwrapAssetId,
@@ -474,14 +476,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
     // Fee only applies if relayer is set
-    const actualFee = new BN(
-      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
-    );
+    const actualFee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
 
     // Refund only applies if relayer is set
-    const actualRefund = new BN(
-      relayer === ZERO_ADDRESS ? '0' : refundAmount.toString()
-    );
+    const actualRefund = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
 
     return Promise.resolve([
       tx, // tx
@@ -510,17 +508,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
 
     // Fee only applies if relayer is set
-    const actualFee = new BN(
-      relayer === ZERO_ADDRESS ? '0' : feeAmount.toString()
-    );
-
+    const actualFee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
     return Promise.resolve([
       tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
       inputUtxos, // inputs
       [changeUtxo, transferUtxo], // outputs
       actualFee, // fee
-      new BN(0), // refund
+      ZERO_BIG_INT, // refund
       ZERO_ADDRESS, // recipient
       relayer, // relayer
       wrapUnwrapAssetId, // wrapUnwrapAssetId
@@ -534,7 +529,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId)
     );
 
-    const amount = formatUnits(payload.note.amount, payload.note.denomination);
+    const amount = formatUnits(
+      BigInt(payload.note.amount),
+      +payload.note.denomination
+    );
 
     if (Number(balance) < Number(amount)) {
       const { chainId, chainType } = parseTypedChainId(
@@ -568,8 +566,8 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     tx: Transaction<NewNotesTxResult>,
     inputs: Utxo[],
     outputs: Utxo[],
-    fee: BN,
-    refund: BN,
+    fee: bigint,
+    refund: bigint,
     recipient: string,
     relayer: string,
     wrapUnwrapAssetId: string,
@@ -748,11 +746,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     levels: number,
     input: Utxo,
     leavesMap?: Uint8Array[]
-  ): MerkleProof {
+  ) {
     const tree = new MerkleTree(levels, leavesMap);
 
     let inputMerklePathIndices: number[];
-    let inputMerklePathElements: BigNumber[];
+    let inputMerklePathElements: bigint[];
 
     if (Number(input.amount) > 0) {
       if (input.index === undefined) {
@@ -768,12 +766,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       if (leavesMap === undefined) {
         const path = tree.path(input.index);
         inputMerklePathIndices = path.pathIndices;
-        inputMerklePathElements = path.pathElements;
+        inputMerklePathElements = path.pathElements.map((x) => x.toBigInt());
       } else {
         const mt = new MerkleTree(levels, leavesMap);
         const path = mt.path(input.index);
         inputMerklePathIndices = path.pathIndices;
-        inputMerklePathElements = path.pathElements;
+        inputMerklePathElements = path.pathElements.map((x) => x.toBigInt());
       }
     } else {
       inputMerklePathIndices = new Array(tree.levels).fill(0);
@@ -781,10 +779,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     }
 
     return {
-      element: BigNumber.from(u8aToHex(input.commitment)), // Temporary use of BigNumber
+      element: BigInt(u8aToHex(input.commitment)),
       pathElements: inputMerklePathElements,
       pathIndices: inputMerklePathIndices,
-      merkleRoot: tree.root(),
+      merkleRoot: tree.root().toBigInt(),
     };
   }
 
@@ -801,7 +799,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   ) {
     const levels = await this.inner.getVAnchorLevels(treeId);
 
-    let vanchorMerkleProof: MerkleProof[];
+    let vanchorMerkleProof: Array<ReturnType<typeof this.getMerkleProof>>;
     if (Object.keys(leavesMap).length === 0) {
       vanchorMerkleProof = inputUtxos.map((u) =>
         this.getMerkleProof(levels, u)
@@ -813,18 +811,42 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       );
     }
 
-    const witnessInput = generateVariableWitnessInput(
-      roots.map((r) => BigNumber.from(r)), // Temporary use of `BigNumber`, need to change to `BigInt`
-      typedChainId,
-      inputUtxos,
-      outputUtxos,
-      extAmount,
-      fee,
-      BigNumber.from(extDataHash), // Temporary use of `BigNumber`, need to change to `BigInt`
-      vanchorMerkleProof
-    );
+    const vanchorMerkleProofs = vanchorMerkleProof.map((proof) => ({
+      pathIndex: MerkleTree.calculateIndexFromPathIndices(proof.pathIndices),
+      pathElements: proof.pathElements,
+    }));
 
-    return witnessInput;
+    const fieldSize = FIELD_SIZE.toBigInt();
+
+    const input = {
+      roots: roots.map((x) => x.toString()),
+      chainID: typedChainId.toString(),
+      inputNullifier: inputUtxos.map((x) => ensureHex(x.nullifier)),
+      outputCommitment: outputUtxos.map((x) =>
+        BigInt(u8aToHex(x.commitment)).toString()
+      ),
+      publicAmount: ((extAmount - fee + fieldSize) % fieldSize).toString(),
+      extDataHash: extDataHash.toString(),
+      // data for 2 transaction inputs
+      inAmount: inputUtxos.map((x) => x.amount.toString()),
+      inPrivateKey: inputUtxos.map((x) => ensureHex(x.secret_key)),
+      inBlinding: inputUtxos.map((x) =>
+        BigInt(ensureHex(x.blinding)).toString()
+      ),
+      inPathIndices: vanchorMerkleProofs.map((x) => x.pathIndex),
+      inPathElements: vanchorMerkleProofs.map((x) => x.pathElements),
+      // data for 2 transaction outputs
+      outChainID: outputUtxos.map((x) => x.chainId),
+      outAmount: outputUtxos.map((x) => x.amount.toString()),
+      outPubkey: outputUtxos.map((x) =>
+        BigInt(x.getKeypair().getPubKey()).toString()
+      ),
+      outBlinding: outputUtxos.map((x) =>
+        BigInt(ensureHex(x.blinding)).toString()
+      ),
+    };
+
+    return input;
   }
 
   private async getSnarkJsWitness(
@@ -914,7 +936,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Fetch leaves of the source chain if not already fetched
     if (!leavesMap[sourceTypedChainId]) {
       const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
-      const sourceChainEndpoint = sourceChainConfig.url;
+      const sourceChainEndpoint =
+        sourceChainConfig.rpcUrls.default.webSocket?.[0];
+
+      if (!sourceChainEndpoint) {
+        throw WebbError.from(WebbErrorCodes.NoEndpointsConfigured);
+      }
 
       const api =
         String(this.inner.typedChainId) === sourceTypedChainId
@@ -999,11 +1026,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   private getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
     const outAmount = outputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      BigInt(0)
+      ZERO_BIG_INT
     );
     const inAmount = inputs.reduce(
       (sum, x) => sum + BigInt(x.amount),
-      BigInt(0)
+      ZERO_BIG_INT
     );
 
     return fee + outAmount - inAmount;

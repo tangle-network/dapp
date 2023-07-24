@@ -13,14 +13,15 @@ import {
 import {
   DEFAULT_DECIMALS,
   DEFAULT_NATIVE_INDEX,
+  ZERO_BIG_INT,
 } from '@webb-tools/dapp-config/src/constants';
 import { AnchorMetadata, ICurrency } from '@webb-tools/dapp-config/src/types';
 import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
+import getViemClient from '@webb-tools/web3-api-provider/src/utils/getViemClient';
 import assert from 'assert';
 import { getContract } from 'viem';
-import getViemClient from './getViemClient';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
@@ -189,7 +190,7 @@ async function fetchEVMAnchorMetadata(
   }
 
   const linkableAnchor = neighborEdges
-    .filter((edge) => edge.chainID !== BigInt(0))
+    .filter((edge) => edge.chainID !== ZERO_BIG_INT)
     .reduce((acc, edge) => {
       const chainId = edge.chainID.toString();
       const resourceIdHex = edge.srcResourceID;

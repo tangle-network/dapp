@@ -125,7 +125,6 @@ export class WebbRelayerManagerFactory {
         info,
         this.chainNameAdapter
       );
-      console.log('capabilities', capabilities);
       return capabilities;
     } catch (error) {
       console.error('Error fetching relayer info: ', error);

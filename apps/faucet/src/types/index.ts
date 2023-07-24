@@ -1,7 +1,7 @@
 // File contains all shared types used in the app
 
-import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { UserV2 } from 'twitter-api-v2';
+import { TransactionReceipt } from 'viem';
 
 import FaucetError from '../errors/FaucetError';
 import FaucetErrorCode from '../errors/FaucetErrorCode';

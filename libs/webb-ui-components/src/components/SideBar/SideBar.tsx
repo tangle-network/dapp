@@ -1,17 +1,13 @@
-import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import { SidebarProps } from './types';
-import { Item } from './Item';
+import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ThemeToggle } from '../ThemeToggle';
+import useLocalStorageState from 'use-local-storage-state';
 import { Typography } from '../../typography/Typography';
-import {
-  ChainIcon,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
 import { Link } from '../Link';
+import { ThemeToggle } from '../ThemeToggle';
+import { Item } from './Item';
+import { SidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -39,7 +35,13 @@ export const SideBar: React.FC<SidebarProps> = ({
   footer,
   className,
 }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
+    'isSidebarOpen',
+    {
+      defaultValue: true,
+    }
+  );
+
   const [activeItem, setActiveItem] = useState<number | null>(0);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -70,7 +72,7 @@ export const SideBar: React.FC<SidebarProps> = ({
             </a>
           </div>
 
-          <div className="mt-11 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-11">
             {items.map((itemProps, index) => (
               <Item
                 key={index}
@@ -94,7 +96,7 @@ export const SideBar: React.FC<SidebarProps> = ({
             isSidebarOpen ? 'p-2' : 'pl-1'
           )}
         >
-          <div className="group flex items-center justify-between">
+          <div className="flex items-center justify-between group">
             <Link href={footer.href} aTagProps={{ target: '_blank' }}>
               <footer.Icon
                 width={24}
@@ -139,12 +141,12 @@ export const SideBar: React.FC<SidebarProps> = ({
 
       {isHovering && (
         <div
-          className="pt-12 px-3 absolute top-0 right-0"
+          className="absolute top-0 right-0 px-3 pt-12"
           style={{ transform: 'translateX(100%)' }}
         >
           <div
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="bg-mono-0 dark:bg-mono-180 rounded-full cursor-pointer shadow-lg p-1"
+            className="p-1 rounded-full shadow-lg cursor-pointer bg-mono-0 dark:bg-mono-180"
           >
             {isSidebarOpen ? (
               <ChevronLeft size="md" />

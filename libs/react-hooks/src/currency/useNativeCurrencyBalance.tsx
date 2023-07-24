@@ -16,7 +16,7 @@ export const useNativeCurrencyBalance = () => {
 
     const typedChainId = calculateTypedChainId(
       activeChain.chainType,
-      activeChain.chainId
+      activeChain.id
     );
 
     const nativeCurrency = getNativeCurrencyFromConfig(

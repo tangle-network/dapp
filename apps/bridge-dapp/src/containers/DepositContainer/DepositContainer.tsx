@@ -138,7 +138,7 @@ export const DepositContainer = forwardRef<
           if (maybeChain) {
             const currency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(maybeChain.chainType, maybeChain.chainId)
+              calculateTypedChainId(maybeChain.chainType, maybeChain.id)
             );
 
             return {
@@ -169,7 +169,7 @@ export const DepositContainer = forwardRef<
 
       const currency = getNativeCurrencyFromConfig(
         currencies,
-        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+        calculateTypedChainId(activeChain.chainType, activeChain.id)
       );
 
       return {
@@ -314,7 +314,7 @@ export const DepositContainer = forwardRef<
 
       return getNativeCurrencyFromConfig(
         currencies,
-        calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+        calculateTypedChainId(activeChain.chainType, activeChain.id)
       );
     }, [activeChain, currencies]);
 
@@ -403,12 +403,12 @@ export const DepositContainer = forwardRef<
 
       const sourceTypedChainId = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.chainId
+        activeChain.id
       );
 
       const destTypedChainId = calculateTypedChainId(
         destChain.chainType,
-        destChain.chainId
+        destChain.id
       );
 
       const sourceId = apiConfig.getAnchorIdentifier(
@@ -445,11 +445,11 @@ export const DepositContainer = forwardRef<
         amount,
         sourceChain: {
           name: activeChain.name,
-          type: activeChain.base ?? 'webb-dev',
+          type: activeChain.group ?? 'webb-dev',
         },
         destChain: {
           name: destChain.name,
-          type: destChain.base ?? 'webb-dev',
+          type: destChain.group ?? 'webb-dev',
         },
         note: newNote,
         onResetState: handleResetState,
@@ -681,7 +681,7 @@ export const DepositContainer = forwardRef<
           const isSupported =
             activeWallet &&
             activeWallet.supportedChainIds.includes(
-              calculateTypedChainId(chain.chainType, chain.chainId)
+              calculateTypedChainId(chain.chainType, chain.id)
             );
 
           // If the selected chain is supported by the active wallet

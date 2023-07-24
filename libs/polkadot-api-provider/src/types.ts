@@ -11,9 +11,9 @@ export interface IVAnchorPublicInputs {
 
 export interface Groth16Proof {
   proof: {
-    pi_a: string[];
-    pi_b: string[][];
-    pi_c: string[];
+    pi_a: [HexString, HexString];
+    pi_b: [[HexString, HexString], [HexString, HexString]];
+    pi_c: [HexString, HexString];
     curve: string;
     prococol: 'groth16';
   };

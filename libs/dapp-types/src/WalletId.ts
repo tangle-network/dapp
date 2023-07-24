@@ -1,7 +1,7 @@
 export enum WalletId {
   Polkadot = 1,
   MetaMask,
-  WalletConnectV1,
+  WalletConnectV2,
   OneWallet,
   Talisman,
   SubWallet,
