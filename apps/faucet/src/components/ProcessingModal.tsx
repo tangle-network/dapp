@@ -25,6 +25,7 @@ import processingAnimation from '../lottie/processing.json';
 import sucessAnimation from '../lottie/success.json';
 import { useFaucetContext } from '../provider';
 import addTokenToMetamask from '../utils/addTokenToMetamask';
+import parseErrorFromResult from '../utils/parseErrorFromResult';
 
 const ProcessingModal = () => {
   const {
@@ -109,40 +110,10 @@ const ProcessingModal = () => {
     }
   }, [mintTokenRes]);
 
-  const errorMessage = useMemo(() => {
-    if (!mintTokenRes) return '';
-
-    let message = 'Oops, the transfer could not be completed.';
-
-    if (FaucetError.isFaucetError(mintTokenRes)) {
-      if (
-        mintTokenRes.getErrorCode() === FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS
-      ) {
-        const payload = mintTokenRes.getPayload();
-
-        if (payload && 'lastClaimedDate' in payload) {
-          const { lastClaimedDate, claimPeriod } =
-            payload as ErrorPayload[FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS];
-
-          if (lastClaimedDate && claimPeriod) {
-            const timeLeft =
-              Date.now() - lastClaimedDate.getTime() + claimPeriod;
-
-            const hours = Math.floor(timeLeft / 3600000);
-            const minutes = Math.floor(timeLeft / 60000);
-            const timeStr = `${
-              hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''}` : ''
-            } ${
-              minutes > 0 ? `${minutes} minute${minutes > 1 ? 's' : ''}` : ''
-            }`;
-            message = `You have already claimed within the specified time period. Please wait ${timeStr.trim()} before making another claim.`;
-          }
-        }
-      }
-    }
-
-    return message;
-  }, [mintTokenRes]);
+  const errorMessage = useMemo(
+    () => parseErrorFromResult(mintTokenRes),
+    [mintTokenRes]
+  );
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
