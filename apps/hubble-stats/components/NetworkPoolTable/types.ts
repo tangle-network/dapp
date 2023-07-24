@@ -3,6 +3,7 @@ export type NetworkPoolType = {
   poolSymbol: string;
   poolAggregate: number;
   chainsData: Record<number, number | undefined>;
+  prefixUnit?: string;
 };
 
 export interface NetworkPoolTableProps {

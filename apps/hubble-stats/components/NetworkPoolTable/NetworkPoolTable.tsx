@@ -60,7 +60,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({ chains, data }) => {
             props.row.original.chainsData[chainId] ? (
               <NumberCell
                 value={props.row.original.chainsData[chainId]}
-                prefix="$"
+                prefix={props.row.original.prefixUnit}
               />
             ) : (
               <Typography variant="body1" ta="center">
