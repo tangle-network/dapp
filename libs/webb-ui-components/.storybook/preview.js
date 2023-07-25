@@ -1,3 +1,4 @@
+import { withThemeByDataAttribute } from '@storybook/addon-styling';
 import '../src/tailwind.css';
 
 export const parameters = {
@@ -10,3 +11,14 @@ export const parameters = {
     },
   },
 };
+
+export const decorators = [
+  withThemeByDataAttribute({
+    themes: {
+      light: 'light',
+      dark: 'dark',
+    },
+    defaultTheme: 'light',
+    attributeName: 'data-mode',
+  }),
+];
