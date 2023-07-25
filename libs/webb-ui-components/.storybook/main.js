@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 const remarkGfm = require('remark-gfm');
 const rootMain = require('../../../.storybook/main');
 
@@ -10,7 +11,6 @@ module.exports = {
   ],
   addons: [
     ...rootMain.addons,
-    '@nx/react/plugins/storybook',
     {
       name: '@storybook/addon-docs',
       options: {
@@ -21,6 +21,7 @@ module.exports = {
         },
       },
     },
+    '@nx/react/plugins/storybook',
   ],
   webpackFinal: async (config, { configType }) => {
     // apply any global webpack configs that might have been specified in .storybook/main.js
@@ -47,6 +48,21 @@ module.exports = {
       test: /\.svg$/,
       enforce: 'pre',
       loader: require.resolve('@svgr/webpack'),
+    });
+
+    config.module.rules.push({
+      test: /\.css$/,
+      use: [
+        {
+          loader: 'postcss-loader',
+          options: {
+            postcssOptions: {
+              plugins: [require('tailwindcss'), require('autoprefixer')],
+            },
+          },
+        },
+      ],
+      include: path.resolve(__dirname, '../'),
     });
 
     return config;

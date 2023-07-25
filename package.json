@@ -268,8 +268,6 @@
     "sass-loader": "^13.0.0",
     "storybook": "^7.0.12",
     "storybook-addon-react-router-v6": "^1.0.0",
-    "storybook-dark-mode": "^3.0.0",
-    "storybook-tailwind-dark-mode": "^1.0.22",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "style-loader": "^3.3.1",
