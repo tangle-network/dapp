@@ -103,7 +103,7 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
       <div
         {...props}
         ref={ref}
-        className={twMerge('flex gap-6 items-center max-w-[160px]', className)}
+        className={twMerge('flex gap-6 items-center', className)}
       >
         <button
           className={sharedIconBtnClsx}
@@ -113,11 +113,11 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
           }
         >
           <IndeterminateCircleLineIcon
-            className="group-hover:enabled:hidden !fill-inherit"
+            className="group-hover:group-enabled:hidden !fill-inherit"
             size="lg"
           />
           <IndeterminateCircleFillIcon
-            className="hidden group-hover:enabled:inline-block !fill-inherit"
+            className="hidden group-hover:group-enabled:inline-block !fill-inherit"
             size="lg"
           />
         </button>
@@ -142,11 +142,11 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
           }
         >
           <AddCircleLineIcon
-            className="group-hover:enabled:hidden !fill-inherit"
+            className="group-hover:group-enabled:hidden !fill-inherit"
             size="lg"
           />
           <AddCircleFillIcon
-            className="hidden group-hover:enabled:inline-block !fill-inherit"
+            className="hidden group-hover:group-enabled:inline-block !fill-inherit"
             size="lg"
           />
         </button>
