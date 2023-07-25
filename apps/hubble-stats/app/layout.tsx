@@ -87,12 +87,13 @@ export default function RootLayout({
             ClosedLogo={LogoWithoutName}
             logoLink={WEBB_MKT_URL}
             footer={footer}
+            className="hidden lg:block"
           />
 
-          <main className="flex-1 px-10 overflow-y-auto">
+          <main className="flex-1 px-3 md:px-5 lg:px-10 overflow-y-auto">
             <Header />
             {children}
-            <Footer isMinimal style={{ background: 'inherit' }} />
+            <Footer isMinimal className="max-w-none" />
           </main>
         </body>
       </WebbUIProvider>

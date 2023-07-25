@@ -1,5 +1,6 @@
-import { flexRender, RowData } from '@tanstack/react-table';
 import React, { forwardRef } from 'react';
+import cx from 'classnames';
+import { flexRender, RowData } from '@tanstack/react-table';
 
 import { Pagination } from '../Pagination';
 import { TData } from './TData';
@@ -12,6 +13,7 @@ const TableComp = <T extends RowData>(
     isPaginated,
     tableProps: table,
     totalRecords = 0,
+    tableClassName,
     thClassName,
     tdClassName,
     paginationClassName,
@@ -22,7 +24,9 @@ const TableComp = <T extends RowData>(
 ) => {
   return (
     <div {...props} ref={ref}>
-      <table className="w-full border-collapse table-auto">
+      <table
+        className={cx('w-full border-collapse table-auto', tableClassName)}
+      >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

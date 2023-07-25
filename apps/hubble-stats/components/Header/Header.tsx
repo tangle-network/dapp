@@ -24,7 +24,10 @@ const Header = () => {
       <div>
         <Breadcrumbs>
           <Link href="/">
-            <BreadcrumbsItem icon={<GridFillIcon />} className="ml-0">
+            <BreadcrumbsItem
+              icon={<GridFillIcon />}
+              className="ml-0 bg-[rgba(156,160,176,0.10)] dark:bg-[rgba(255,255,255,0.05)]"
+            >
               Hubble Overview
             </BreadcrumbsItem>
           </Link>
@@ -32,7 +35,7 @@ const Header = () => {
       </div>
 
       {/* TVL and Volume Chips */}
-      <div className="flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-4">
         <VolumeChip
           color="blue"
           Icon={BlockIcon}
