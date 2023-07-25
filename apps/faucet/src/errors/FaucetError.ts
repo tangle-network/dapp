@@ -17,6 +17,7 @@ const errorMessages: {
   [FaucetErrorCode.MINT_TOKENS_FAILED]: 'Mint tokens failed',
   [FaucetErrorCode.INVALID_SELECTED_CHAIN]:
     'No chain selected or invalid chain selected',
+  [FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS]: 'Too many claim requests',
 };
 
 /**

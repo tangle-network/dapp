@@ -59,13 +59,15 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <Header />
+      <div className="hero-bg">
+        <Header />
 
-      <main className="mt-[72px]">
-        <Component {...pageProps} />
-      </main>
+        <main className="mt-[72px]">
+          <Component {...pageProps} />
+        </main>
 
-      <Footer isNext />
+        <Footer isMinimal isNext className="py-12 m-0 mx-auto mt-4" />
+      </div>
     </Provider>
   );
 };
