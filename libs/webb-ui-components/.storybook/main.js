@@ -21,6 +21,7 @@ module.exports = {
         },
       },
     },
+    // Addon for Tailwind CSS dark mode support, but it only works on the preview page, not the docs page
     {
       name: '@storybook/addon-styling',
       options: {
