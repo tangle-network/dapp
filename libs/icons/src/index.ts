@@ -1,5 +1,6 @@
 export * from './AddBoxLineIcon';
-export * from './AddCircleLine';
+export * from './AddCircleFillIcon';
+export * from './AddCircleLineIcon';
 export * from './ArrowDropDownFill';
 export * from './ArrowDropUpFill';
 export * from './ArrowLeft';
@@ -52,7 +53,8 @@ export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
 export * from './HelpLineIcon';
-export * from './IndeterminateCircleLine';
+export * from './IndeterminateCircleFillIcon';
+export * from './IndeterminateCircleLineIcon';
 export * from './InformationLine';
 export * from './InformationLineFill';
 export * from './KeyIcon';
