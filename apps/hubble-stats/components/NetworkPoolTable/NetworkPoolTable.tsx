@@ -17,12 +17,15 @@ import { chainsConfig, ChainGroup } from '@webb-tools/dapp-config/chains';
 
 import { NetworkPoolType, NetworkPoolTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
+import { getSortedChains } from '../../utils';
 
 const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
   chains,
   data,
   prefixUnit = '$',
 }) => {
+  const sortedChains = useMemo(() => getSortedChains(chains), [chains]);
+
   const columnHelper = useMemo(() => createColumnHelper<NetworkPoolType>(), []);
 
   const columns = useMemo<ColumnDef<NetworkPoolType, any>[]>(
@@ -52,7 +55,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
         ),
         cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
       }),
-      ...chains.map((chainId) =>
+      ...sortedChains.map((chainId) =>
         columnHelper.accessor('chainsData', {
           id: chainId.toString(),
           header: () => (
@@ -79,7 +82,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
         })
       ),
     ],
-    [chains, columnHelper, prefixUnit]
+    [sortedChains, columnHelper, prefixUnit]
   );
 
   const table = useReactTable({

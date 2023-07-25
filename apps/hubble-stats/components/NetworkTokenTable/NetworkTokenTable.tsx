@@ -19,12 +19,15 @@ import { chainsConfig, ChainGroup } from '@webb-tools/dapp-config/chains';
 
 import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
+import { getSortedChains } from '../../utils';
 
 const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
   chains,
   data,
   prefixUnit = '$',
 }) => {
+  const sortedChains = useMemo(() => getSortedChains(chains), [chains]);
+
   const columnHelper = useMemo(
     () => createColumnHelper<NetworkTokenType>(),
     []
@@ -81,7 +84,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
         ),
         cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
       }),
-      ...chains.map((chainId) =>
+      ...sortedChains.map((chainId) =>
         columnHelper.accessor('chainsData', {
           id: chainId.toString(),
           header: () => (
@@ -108,7 +111,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
         })
       ),
     ],
-    [chains, columnHelper, prefixUnit]
+    [sortedChains, columnHelper, prefixUnit]
   );
 
   const table = useReactTable({
