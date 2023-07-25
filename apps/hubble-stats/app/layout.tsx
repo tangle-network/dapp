@@ -21,6 +21,8 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { Header } from '../components';
 
+import '../styles/globals.css';
+
 export default function RootLayout({
   children,
 }: {

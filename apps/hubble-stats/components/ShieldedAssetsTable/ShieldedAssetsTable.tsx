@@ -64,7 +64,6 @@ const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
 
 const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   data,
-  globalSearchText,
   pageSize,
 }) => {
   const [isDarkMode] = useDarkMode();
@@ -91,9 +90,6 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   const table = useReactTable({
     data,
     columns,
-    state: {
-      globalFilter: globalSearchText,
-    },
     initialState: {
       pagination: {
         pageSize,
@@ -112,6 +108,7 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160">
       <Table
+        tableClassName="overflow-x-auto no-scrollbar"
         thClassName="border-t-0 bg-mono-0"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}
