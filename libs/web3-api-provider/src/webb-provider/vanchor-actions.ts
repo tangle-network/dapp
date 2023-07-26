@@ -668,7 +668,6 @@ export class Web3VAnchorActions extends VAnchorActions<
         BigInt(parsedNote.sourceChainId),
       ]);
       const nei = await destVAnchor.read.getLatestNeighborEdges();
-      console.log('Neighbour: ', nei);
       destVAnchor.read.currentNeighborRootIndex([
         BigInt(parsedNote.sourceChainId),
       ]);

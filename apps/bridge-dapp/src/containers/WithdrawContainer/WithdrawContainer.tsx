@@ -187,7 +187,7 @@ export const WithdrawContainer = forwardRef<
     resetMaxFeeInfo,
   } = useMaxFeeInfo(maxFeeArgs);
 
-  const feeInfo = useMemo(() => {
+  const relayerFeeInfo = useMemo(() => {
     if (typeof feeInfoOrBigInt !== 'bigint') {
       return feeInfoOrBigInt;
     }
@@ -370,8 +370,8 @@ export const WithdrawContainer = forwardRef<
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
-      typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
-      totalFee ? amount >= totalFee : true, // When relayer is selected, amount should be greater than fee
+      isUnwrap && typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
+      activeRelayer && totalFee ? amount >= totalFee : true, // When relayer is selected, amount should be greater than fee
       Boolean(feeInfoOrBigInt),
     ].some((value) => value === false);
   }, [
@@ -384,6 +384,7 @@ export const WithdrawContainer = forwardRef<
     liquidity,
     amount,
     totalFee,
+    activeRelayer,
     feeInfoOrBigInt,
   ]);
 
@@ -478,10 +479,10 @@ export const WithdrawContainer = forwardRef<
 
   const refundInfo = useMemo(
     () =>
-      feeInfo ? (
+      relayerFeeInfo ? (
         <ExchangeRateInfo
           exchangeRate={getRoundedAmountString(
-            +formatEther(feeInfo.refundExchangeRate),
+            +formatEther(relayerFeeInfo.refundExchangeRate),
             6,
             { roundingFunction: Math.round }
           )}
@@ -489,20 +490,29 @@ export const WithdrawContainer = forwardRef<
           nativeTokenSymbol={currentNativeCurrency?.symbol}
         />
       ) : undefined,
-    [currentNativeCurrency?.symbol, feeInfo, fungibleCurrency?.view.symbol]
+    [
+      currentNativeCurrency?.symbol,
+      relayerFeeInfo,
+      fungibleCurrency?.view.symbol,
+    ]
   );
 
   const transactionFeeInfo = useMemo(() => {
-    const estimatedFee = feeInfo
-      ? getRoundedAmountString(Number(formatEther(feeInfo.estimatedFee)), 3, {
-          roundingFunction: Math.round,
-        })
+    const estimatedFee = relayerFeeInfo
+      ? getRoundedAmountString(
+          Number(formatEther(relayerFeeInfo.estimatedFee)),
+          3,
+          {
+            roundingFunction: Math.round,
+          }
+        )
       : undefined;
 
     const refundFee =
-      feeInfo && refundAmount && isRefund
+      relayerFeeInfo && refundAmount && isRefund
         ? getRoundedAmountString(
-            refundAmount * Number(formatEther(feeInfo.refundExchangeRate))
+            refundAmount *
+              Number(formatEther(relayerFeeInfo.refundExchangeRate))
           )
         : undefined;
 
@@ -515,7 +525,7 @@ export const WithdrawContainer = forwardRef<
     ) : undefined;
 
     return transactionFeeInfo;
-  }, [feeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
+  }, [relayerFeeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
 
   const handleResetState = useCallback(() => {
     setAmountError('');
@@ -991,11 +1001,11 @@ export const WithdrawContainer = forwardRef<
 
   const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
     () => ({
-      isDisabled: !activeRelayer || !feeInfo,
+      isDisabled: !activeRelayer || !relayerFeeInfo,
       isChecked: isRefund,
       onChange: () => setIsRefund((prev) => !prev),
     }),
-    [activeRelayer, feeInfo, isRefund]
+    [activeRelayer, relayerFeeInfo, isRefund]
   );
 
   const parseRefundAmount = useCallback(
@@ -1012,7 +1022,7 @@ export const WithdrawContainer = forwardRef<
       }
 
       const relayerMaxRefund = parseFloat(
-        formatEther(feeInfo?.maxRefund ?? ZERO_BIG_INT)
+        formatEther(relayerFeeInfo?.maxRefund ?? ZERO_BIG_INT)
       );
       if (Number.isNaN(relayerMaxRefund) || parsedValue > relayerMaxRefund) {
         setRefundAmountError(
@@ -1024,23 +1034,23 @@ export const WithdrawContainer = forwardRef<
       setRefundAmountError('');
       setRefundAmount(parsedValue);
     },
-    [feeInfo]
+    [relayerFeeInfo]
   );
 
   const refundAmountInputProps = useMemo<ComponentProps<typeof AmountInput>>(
     () => ({
       amount: refundAmount ? refundAmount.toString() : undefined,
       errorMessage: refundAmountError,
-      isDisabled: !feeInfo,
+      isDisabled: !relayerFeeInfo,
       onAmountChange: parseRefundAmount,
       onMaxBtnClick: () => {
-        if (!feeInfo) {
+        if (!relayerFeeInfo) {
           return;
         }
-        parseRefundAmount(formatEther(feeInfo.maxRefund));
+        parseRefundAmount(formatEther(relayerFeeInfo.maxRefund));
       },
     }),
-    [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
+    [relayerFeeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
 
   const liquidityDesc = useMemo(() => {
@@ -1246,12 +1256,12 @@ export const WithdrawContainer = forwardRef<
 
   // Side effect to uncheck the refund checkbox when feeInfo is not available
   useEffect(() => {
-    if (!feeInfo) {
+    if (!relayerFeeInfo) {
       setIsRefund(false);
       setRefundAmount(0);
       setRefundAmountError('');
     }
-  }, [feeInfo]);
+  }, [relayerFeeInfo]);
 
   const isProcessingTxn = useMemo(
     () => txQueue.txPayloads.length > 0,
