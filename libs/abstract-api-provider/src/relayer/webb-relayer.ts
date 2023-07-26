@@ -135,9 +135,12 @@ class RelayedWithdraw {
       }
 
       const { payload, chainId } = next;
+      const tx = Object.values(payload)[0];
+      const anchorIdentifier = tx.vAnchor['contract'];
 
-      const body = JSON.stringify(payload);
-      const anchorIdentifier = Object.values(payload)[0].vAnchor['contract'];
+      const extData = tx.vAnchor['extData'];
+      const proofData = tx.vAnchor['proofData'];
+      const body = JSON.stringify({ extData, proofData });
 
       const baseOn = Object.keys(payload)[0];
       if (baseOn !== 'evm' && baseOn !== 'substrate') {
@@ -150,8 +153,14 @@ class RelayedWithdraw {
       }
 
       try {
+        console.log(
+          'url',
+          this.getSendTxUri(baseOn, chainId, anchorIdentifier).toString()
+        );
+
+        console.log('body', body);
         const resp = await fetch(
-          this.getSendTxUri(baseOn, chainId, anchorIdentifier),
+          this.getSendTxUri(baseOn, chainId, anchorIdentifier).toString(),
           {
             method: 'POST',
             body,
@@ -161,7 +170,10 @@ class RelayedWithdraw {
           }
         );
 
+        console.log('resp: ', resp);
+
         const data: SendTxResponse = await resp.json();
+        console.log('data: ', data);
         if (data.status === 'Sent') {
           const { itemKey } = data as SendTxResponse<'Sent'>;
 
