@@ -1,13 +1,19 @@
+import { Transition } from '@headlessui/react';
 import { LoggerService } from '@webb-tools/browser-utils';
 import { CheckboxCircleLine } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { map } from 'rxjs';
 
+import TwitterLink from '../components/TwitterLink';
 import clientConfig from '../config/client';
 import FaucetError from '../errors/FaucetError';
 import FaucetErrorCode from '../errors/FaucetErrorCode';
+import { useFaucetContext } from '../provider';
 import useStore, { StoreKey } from '../store';
 import { TwitterLoginResponse } from '../types';
 import loginWithTwitter from '../utils/loginWithTwitter';
@@ -226,14 +232,18 @@ const LoginWithTwitter = () => {
         </Button>
       ) : (
         loginError && (
-          <Typography
-            component="p"
-            ta="center"
-            variant="mkt-caption"
-            className="!text-red-70 mt-2 font-medium"
-          >
-            {loginError}
-          </Typography>
+          <>
+            <Typography
+              component="p"
+              ta="center"
+              variant="mkt-body2"
+              className="!text-red-70 mt-2"
+            >
+              {loginError}
+            </Typography>
+
+            <Info />
+          </>
         )
       )}
     </div>
@@ -241,3 +251,39 @@ const LoginWithTwitter = () => {
 };
 
 export default LoginWithTwitter;
+
+const Info = () => {
+  const { inputValues$ } = useFaucetContext();
+
+  const [getStore] = useStore();
+
+  const twitterHandle = useMemo(() => {
+    return getStore(StoreKey.twitterHandle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getStore(StoreKey.twitterHandle)]);
+  const selectedChain = useObservableState(
+    inputValues$.pipe(map((inputValues) => inputValues.chain))
+  );
+  const selectedToken = useObservableState(
+    inputValues$.pipe(map((inputValues) => inputValues.token))
+  );
+
+  const isDisplayed = !twitterHandle && !!selectedChain && !!selectedToken;
+
+  return (
+    <Transition
+      show={isDisplayed}
+      enter="transition-opacity duration-150"
+      enterFrom={cx('opacity-0 -translate-y-[100%]')}
+      enterTo={cx('opacity-100 translate-y-0')}
+      leave="transition-opacity duration-150"
+      leaveFrom={cx('opacity-100 translate-y-0')}
+      leaveTo={cx('opacity-0 -translate-y-[100%]')}
+    >
+      <Typography variant="mkt-body2" ta="center" className="mt-2">
+        *Please follow <TwitterLink isInheritFont />{' '}
+        {' on Twitter and login again to get authenticated.'}
+      </Typography>
+    </Transition>
+  );
+};

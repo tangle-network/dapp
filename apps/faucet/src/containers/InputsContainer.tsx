@@ -1,17 +1,20 @@
-import { Transition } from '@headlessui/react';
-import { Chip, Typography } from '@webb-tools/webb-ui-components';
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ExternalLinkLine } from '@webb-tools/icons';
+import {
+  Button,
+  Chip,
+  Label,
+  shortenHex,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useObservableState } from 'observable-hooks';
-import { forwardRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { map } from 'rxjs';
-import { twMerge } from 'tailwind-merge';
 
 import ChainDropdown from '../components/ChainDropdown';
-import ContractAddressInput from '../components/ContractAddressInput';
 import RecipientAddressInput from '../components/RecipientAddressInput';
 import TokenDropdown from '../components/TokenDropdown';
-import TwitterLink from '../components/TwitterLink';
 import { useFaucetContext } from '../provider';
 import useStore, { StoreKey } from '../store';
 import MintButtonContainer from './MintButtonContainer';
@@ -25,28 +28,52 @@ const InputsContainer = () => {
             <ChainDropdown />
             <TokenDropdown />
           </div>
-          <Info />
         </div>
-
-        {/** Contract address input */}
-        <InputWrapper title="Network Contract Address:">
-          <ContractAddressInput />
-        </InputWrapper>
 
         {/** Recipient address input */}
         <InputWrapper title="Recipient Address:">
           <RecipientAddressInput />
         </InputWrapper>
 
-        {/** Amount */}
-        <div className="flex items-center justify-between">
-          <Label className="mb-0">Amount:</Label>
+        {/** Token Address */}
+        <InputWrapper align="horizontal" title="Token Contract Address:">
+          <TokenAddressLink />
+        </InputWrapper>
 
+        {/** Amount */}
+        <InputWrapper title="Amount:" align="horizontal">
           <AmountChip />
-        </div>
+        </InputWrapper>
       </div>
 
       <MintButtonContainer />
+    </div>
+  );
+};
+
+export default InputsContainer;
+
+const InputWrapper = ({
+  children,
+  title,
+  align = 'vertical',
+}: {
+  children: React.ReactNode;
+  title: string;
+  align?: 'horizontal' | 'vertical';
+}) => {
+  return (
+    <div
+      className={cx('flex', {
+        'flex-col space-y-4': align === 'vertical',
+        'items-center justify-between': align === 'horizontal',
+      })}
+    >
+      <Label className="block font-black mkt-body2 text-mono-200">
+        {title}
+      </Label>
+
+      {children}
     </div>
   );
 };
@@ -72,77 +99,44 @@ const AmountChip = () => {
   );
 };
 
-const Label = forwardRef<HTMLLabelElement, PropsOf<'label'>>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <label
-        {...props}
-        ref={ref}
-        className={twMerge(
-          'mkt-caption !font-bold !text-mono-200 mb-4 block',
-          className
-        )}
-      >
-        {children}
-      </label>
-    );
-  }
-);
-
-Label.displayName = 'Label';
-
-const InputWrapper = ({
-  children,
-  title,
-}: {
-  children: React.ReactNode;
-  title: string;
-}) => {
-  return (
-    <div>
-      <Label className="mkt-caption !font-bold !text-mono-200 mb-4 block">
-        {title}
-      </Label>
-
-      {children}
-    </div>
-  );
-};
-
-const Info = () => {
+const TokenAddressLink = () => {
   const { inputValues$ } = useFaucetContext();
 
-  const [getStore] = useStore();
+  const tokenAddress = useObservableState<string | undefined>(
+    inputValues$.pipe(map((inputValues) => inputValues.contractAddress))
+  );
 
-  const twitterHandle = useMemo(() => {
-    return getStore(StoreKey.twitterHandle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getStore(StoreKey.twitterHandle)]);
-  const selectedChain = useObservableState(
+  const typedChainId = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
-  const selectedToken = useObservableState(
-    inputValues$.pipe(map((inputValues) => inputValues.token))
-  );
 
-  const isDisplayed = !twitterHandle && !!selectedChain && !!selectedToken;
+  // Calculate the token explorer link
+  const tokenExplorerLink = useMemo(() => {
+    if (!tokenAddress || !typedChainId) return '';
 
-  return (
-    <Transition
-      show={isDisplayed}
-      enter="transition-opacity duration-150"
-      enterFrom={cx('opacity-0 -translate-y-[100%]')}
-      enterTo={cx('opacity-100 translate-y-0')}
-      leave="transition-opacity duration-150"
-      leaveFrom={cx('opacity-100 translate-y-0')}
-      leaveTo={cx('opacity-0 -translate-y-[100%]')}
+    return `${chainsConfig[typedChainId]?.blockExplorers?.default.url}/token/${tokenAddress}`;
+  }, [tokenAddress, typedChainId]);
+
+  return tokenAddress ? (
+    <Button
+      variant="link"
+      size="sm"
+      href={tokenExplorerLink}
+      target="_blank"
+      className="normal-case"
+      rightIcon={<ExternalLinkLine className="!fill-current" />}
     >
-      <Typography variant="mkt-caption" className="mt-2 font-medium">
-        *Please follow <TwitterLink isInheritFont />{' '}
-        {' on Twitter and login to get started.'}
+      <Typography
+        component="span"
+        variant="body2"
+        className="font-bold text-inherit"
+      >
+        {shortenHex(tokenAddress)}
       </Typography>
-    </Transition>
+    </Button>
+  ) : (
+    <Typography variant="mkt-body2" className="font-black">
+      --
+    </Typography>
   );
 };
-
-export default InputsContainer;

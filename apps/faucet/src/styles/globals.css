@@ -1,7 +1,7 @@
 /* Font Family Satoshi Variable */
 
 .hero-bg {
-  @apply bg-center bg-no-repeat object-fill bg-cover;
+  @apply bg-center bg-fixed bg-no-repeat object-fill bg-cover;
   background-image: url('/static/assets/faucet-hero.png');
 }
 

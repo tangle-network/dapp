@@ -76,7 +76,7 @@ jobs:
           echo "NETLIFY_LOGS_URL=$LOGS_URL" >> $GITHUB_OUTPUT
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.0
+        uses: unsplash/comment-on-pr@v1.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MSG: |
