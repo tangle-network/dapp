@@ -49,6 +49,7 @@ export * from './Popover';
 export * from './Progress';
 export * from './Radio';
 export * from './SideBar';
+export * from './SideBarItem';
 export * from './Slider';
 export * from './Socials';
 export * from './Stats';

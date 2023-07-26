@@ -5,36 +5,30 @@ const items = [
   {
     name: 'Hubble',
     isInternal: true,
-    href: '/bridge',
     Icon: ContrastTwoLine,
     subItems: [
       {
         name: 'Bridge',
         isInternal: true,
-        href: '/bridge',
       },
       {
         name: 'Faucet',
         isInternal: false,
-        href: 'https://develop--webb-faucet.netlify.app/',
       },
     ],
   },
   {
     name: 'Tangle Network',
     isInternal: true,
-    href: '',
     Icon: Tangle,
     subItems: [
       {
         name: 'DKG Explorer',
         isInternal: false,
-        href: 'https://stats.webb.tools/#/keys',
       },
       {
         name: 'Homepage',
         isInternal: false,
-        href: 'https://tangle.webb.tools/',
       },
     ],
   },

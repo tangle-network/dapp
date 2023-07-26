@@ -6,7 +6,7 @@ import {
   SideBar,
   Logo,
   LogoWithoutName,
-  ItemProps,
+  SideBarItemProps,
   FooterProps,
 } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
@@ -26,7 +26,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const items: ItemProps[] = [
+  const items: SideBarItemProps[] = [
     {
       name: 'Hubble',
       isInternal: true,

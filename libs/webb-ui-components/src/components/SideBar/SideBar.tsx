@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import cx from 'classnames';
-import { SidebarProps } from './types';
-import { Item } from './Item';
 import { twMerge } from 'tailwind-merge';
-import { ThemeToggle } from '../ThemeToggle';
+import { ChevronLeft, ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
+
 import { Typography } from '../../typography/Typography';
-import {
-  ChainIcon,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
+import { SideBarItem } from '../SideBarItem';
+import { ThemeToggle } from '../ThemeToggle';
 import { Link } from '../Link';
+import { SidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -72,7 +68,7 @@ export const SideBar: React.FC<SidebarProps> = ({
 
           <div className="mt-11 flex flex-col gap-4">
             {items.map((itemProps, index) => (
-              <Item
+              <SideBarItem
                 key={index}
                 {...itemProps}
                 isSidebarOpen={isSidebarOpen}

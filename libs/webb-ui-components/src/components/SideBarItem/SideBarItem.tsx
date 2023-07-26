@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { ItemProps, ExtraItemProps } from './types';
+import { SideBarItemProps, SideBarExtraItemProps } from './types';
 import { SubItem } from './SubItem';
 import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
 import { Typography } from '../../typography/Typography';
 import { twMerge } from 'tailwind-merge';
 import { Link } from '../Link';
 
-export const Item: React.FC<ItemProps & ExtraItemProps> = ({
+export const SideBarItem: React.FC<
+  SideBarItemProps & SideBarExtraItemProps
+> = ({
   name,
   isInternal,
   href,
@@ -52,7 +54,6 @@ export const Item: React.FC<ItemProps & ExtraItemProps> = ({
                 : '',
               isSidebarOpen ? 'justify-between px-2 py-3' : 'justify-center'
             )}
-            // onClick={pushToLinkAndToggleDropdown}
           >
             <div className="flex gap-[16px]">
               <div
