@@ -1,13 +1,16 @@
-import { BlockIcon, GridFillIcon, Spinner } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+import { FC, useMemo } from 'react';
+import Link from 'next/link';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
   Chip,
   ChipProps,
+  SideBarMenu,
 } from '@webb-tools/webb-ui-components';
-import Link from 'next/link';
-import React, { useMemo } from 'react';
+import { BlockIcon, GridFillIcon, Spinner } from '@webb-tools/icons';
+import { IconBase } from '@webb-tools/icons/types';
+
+import { sideBarProps } from '../../constants';
 
 const Header = () => {
   const tvl = useMemo(() => {
@@ -21,7 +24,8 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between pt-6 pb-4">
       {/* Breadcrumbs */}
-      <div>
+      <div className="flex gap-2 items-center">
+        <SideBarMenu {...sideBarProps} className="lg:hidden" />
         <Breadcrumbs>
           <Link href="/">
             <BreadcrumbsItem
@@ -67,7 +71,7 @@ type VolumeChipProps = {
   isLoading?: boolean;
 };
 
-export const VolumeChip: React.FC<VolumeChipProps> = ({
+export const VolumeChip: FC<VolumeChipProps> = ({
   color,
   className,
   Icon,
