@@ -93,6 +93,7 @@ const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
   return (
     <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
       <Table
+        tableClassName="overflow-x-auto"
         thClassName="border-t-0 bg-mono-0"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}

@@ -21,7 +21,10 @@ const ShieldedTablesContainer: FC<ShieldedTablesContainerProps> = ({
   poolsData = [],
 }) => {
   return (
-    <TableAndChartTabs tabs={[assetsTableTab, poolsTableTab]}>
+    <TableAndChartTabs
+      tabs={[assetsTableTab, poolsTableTab]}
+      headerClassName="w-full overflow-x-auto"
+    >
       {/* Shielded Assets Table */}
       <TabContent value={assetsTableTab}>
         <ShieldedAssetsTable data={assetsData} pageSize={pageSize} />

@@ -9,6 +9,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   tabs,
   filterComponent,
   className,
+  headerClassName,
   listClassName,
   triggerClassName,
   children,
@@ -20,7 +21,12 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
       className={cx('space-y-4', className)}
       {...tabsProps}
     >
-      <div className="flex justify-between items-center">
+      <div
+        className={cx(
+          'flex justify-between items-center gap-4',
+          headerClassName
+        )}
+      >
         {/* Tabs List on the left */}
         <TabsList className={cx('space-x-4', listClassName)}>
           {tabs.map((tab, idx) => {
