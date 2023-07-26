@@ -15,92 +15,94 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TokenIcon, CornerDownRightLine } from '@webb-tools/icons';
-import { chainsConfig, ChainGroup } from '@webb-tools/dapp-config/chains';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
-import { getSortedChains } from '../../utils';
+import { getSortedTypedChainIds } from '../../utils';
+
+const columnHelper = createColumnHelper<NetworkTokenType>();
+
+const staticColumns: ColumnDef<NetworkTokenType, any>[] = [
+  columnHelper.accessor('symbol', {
+    header: () => null,
+    cell: (props) => {
+      const isSubToken = !props.row.getCanExpand();
+      return (
+        <div className={cx('flex items-center gap-1', { 'pl-2': isSubToken })}>
+          {isSubToken && <CornerDownRightLine />}
+          {/* Token Icon */}
+          <TokenIcon
+            name={isSubToken ? props.row.original.symbol : 'webb'}
+            size="lg"
+          />
+
+          {/* Symbol */}
+          <Typography
+            variant="body1"
+            fw="bold"
+            className={cx('text-mono-200 dark:text-mono-0', {
+              uppercase: isSubToken,
+            })}
+          >
+            {props.row.original.symbol}
+          </Typography>
+
+          {/* Composition Percentage */}
+          {isSubToken && props.row.original.compositionPercentage && (
+            <Typography
+              variant="body2"
+              fw="bold"
+              className="!text-[12px] text-mono-120 dark:text-mono-80 uppercase"
+            >
+              {props.row.original.compositionPercentage}%
+            </Typography>
+          )}
+        </div>
+      );
+    },
+  }),
+  columnHelper.accessor('aggregate', {
+    header: () => (
+      <HeaderCell
+        title="Aggregate"
+        className="text-mono-200 dark:text-mono-0"
+      />
+    ),
+    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+  }),
+];
 
 const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
-  chains,
+  typedChainIds,
   data,
   prefixUnit = '$',
 }) => {
-  const sortedChains = useMemo(() => getSortedChains(chains), [chains]);
-
-  const columnHelper = useMemo(
-    () => createColumnHelper<NetworkTokenType>(),
-    []
+  const sortedTypedChainIds = useMemo(
+    () => getSortedTypedChainIds(typedChainIds),
+    [typedChainIds]
   );
 
   const columns = useMemo<ColumnDef<NetworkTokenType, any>[]>(
     () => [
-      columnHelper.accessor('symbol', {
-        header: () => null,
-        cell: (props) => {
-          const isSubToken = !props.row.getCanExpand();
-          return (
-            <div
-              className={cx('flex items-center gap-1', { 'pl-2': isSubToken })}
-            >
-              {isSubToken && <CornerDownRightLine />}
-              {/* Token Icon */}
-              <TokenIcon
-                name={isSubToken ? props.row.original.symbol : 'webb'}
-                size="lg"
-              />
-
-              {/* Symbol */}
-              <Typography
-                variant="body1"
-                fw="bold"
-                className={cx('text-mono-200 dark:text-mono-0', {
-                  uppercase: isSubToken,
-                })}
-              >
-                {props.row.original.symbol}
-              </Typography>
-
-              {/* Composition Percentage */}
-              {isSubToken && props.row.original.compositionPercentage && (
-                <Typography
-                  variant="body2"
-                  fw="bold"
-                  className="!text-[12px] text-mono-120 dark:text-mono-80 uppercase"
-                >
-                  {props.row.original.compositionPercentage}%
-                </Typography>
-              )}
-            </div>
-          );
-        },
-      }),
-      columnHelper.accessor('aggregate', {
-        header: () => (
-          <HeaderCell
-            title="Aggregate"
-            className="text-mono-200 dark:text-mono-0"
-          />
-        ),
-        cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
-      }),
-      ...sortedChains.map((chainId) =>
+      ...staticColumns,
+      ...sortedTypedChainIds.map((typedChainId) =>
         columnHelper.accessor('chainsData', {
-          id: chainId.toString(),
+          id: typedChainId.toString(),
           header: () => (
             <div className="w-full text-center">
               <ChainChip
-                chainName={chainsConfig[chainId].name}
-                chainType={chainsConfig[chainId].group as ChainGroup}
+                chainName={chainsConfig[typedChainId].name}
+                chainType={chainsConfig[typedChainId].group}
                 // shorten the title to last word of the chain name
-                title={chainsConfig[chainId].name.split(' ').pop()}
+                title={chainsConfig[typedChainId].name.split(' ').pop()}
               />
             </div>
           ),
           cell: (props) =>
-            props.row.original.chainsData[chainId] ? (
+            typeof props.row.original.chainsData[typedChainId] === 'number' ? (
               <NumberCell
-                value={props.row.original.chainsData[chainId]}
+                value={props.row.original.chainsData[typedChainId]}
                 prefix={prefixUnit}
               />
             ) : (
@@ -111,7 +113,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
         })
       ),
     ],
-    [sortedChains, columnHelper, prefixUnit]
+    [sortedTypedChainIds, prefixUnit]
   );
 
   const table = useReactTable({
@@ -129,7 +131,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
     getExpandedRowModel: getExpandedRowModel(),
   });
 
-  if (chains.length === 0) {
+  if (typedChainIds.length === 0) {
     return (
       <Typography variant="body1">No network token data available</Typography>
     );

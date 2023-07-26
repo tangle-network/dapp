@@ -8,13 +8,13 @@ import { NetworkPoolType } from '../../components/NetworkPoolTable/types';
 import { NetworkTokenType } from '../../components/NetworkTokenTable/types';
 
 interface NetworkTablesContainerProps {
-  chains?: number[];
+  typedChainIds?: number[];
   networkPoolData?: NetworkPoolType[];
   networkTokenData?: NetworkTokenType[];
 }
 
 const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
-  chains = [],
+  typedChainIds = [],
   networkPoolData = [],
   networkTokenData = [],
 }) => {
@@ -23,14 +23,20 @@ const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
       <TableAndChartTabs
         tabs={['TVL', 'Volume', '24H Deposits', 'Relayer Fees']}
       >
-        <NetworkPoolTable chains={chains} data={networkPoolData} />
+        <NetworkPoolTable
+          typedChainIds={typedChainIds}
+          data={networkPoolData}
+        />
       </TableAndChartTabs>
 
       <div className="space-y-1">
         <TableAndChartTabs tabs={['TWL', 'Wrapping Fees']}>
-          <NetworkTokenTable chains={chains} data={networkTokenData} />
+          <NetworkTokenTable
+            typedChainIds={typedChainIds}
+            data={networkTokenData}
+          />
         </TableAndChartTabs>
-        {chains.length > 0 && (
+        {typedChainIds.length > 0 && (
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"

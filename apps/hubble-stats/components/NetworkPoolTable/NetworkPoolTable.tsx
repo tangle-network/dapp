@@ -13,65 +13,72 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
-import { chainsConfig, ChainGroup } from '@webb-tools/dapp-config/chains';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { NetworkPoolType, NetworkPoolTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
-import { getSortedChains } from '../../utils';
+import { getSortedTypedChainIds } from '../../utils';
+
+const columnHelper = createColumnHelper<NetworkPoolType>();
+
+const staticColumns: ColumnDef<NetworkPoolType, any>[] = [
+  columnHelper.accessor('symbol', {
+    header: () => null,
+    cell: (props) => (
+      <div className="flex items-center gap-1">
+        <ShieldedAssetLight className="block dark:hidden" />
+        <ShieldedAssetDark className="hidden dark:block" />
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.row.original.symbol}
+        </Typography>
+      </div>
+    ),
+  }),
+  columnHelper.accessor('aggregate', {
+    header: () => (
+      <HeaderCell
+        title="Aggregate"
+        className="text-mono-200 dark:text-mono-0"
+      />
+    ),
+    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+  }),
+];
 
 const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
-  chains,
+  typedChainIds,
   data,
   prefixUnit = '$',
 }) => {
-  const sortedChains = useMemo(() => getSortedChains(chains), [chains]);
-
-  const columnHelper = useMemo(() => createColumnHelper<NetworkPoolType>(), []);
+  const sortedTypedChainIds = useMemo(
+    () => getSortedTypedChainIds(typedChainIds),
+    [typedChainIds]
+  );
 
   const columns = useMemo<ColumnDef<NetworkPoolType, any>[]>(
     () => [
-      columnHelper.accessor('symbol', {
-        header: () => null,
-        cell: (props) => (
-          <div className="flex items-center gap-1">
-            <ShieldedAssetLight className="block dark:hidden" />
-            <ShieldedAssetDark className="hidden dark:block" />
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {props.row.original.symbol}
-            </Typography>
-          </div>
-        ),
-      }),
-      columnHelper.accessor('aggregate', {
-        header: () => (
-          <HeaderCell
-            title="Aggregate"
-            className="text-mono-200 dark:text-mono-0"
-          />
-        ),
-        cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
-      }),
-      ...sortedChains.map((chainId) =>
+      ...staticColumns,
+      ...sortedTypedChainIds.map((typedChainId) =>
         columnHelper.accessor('chainsData', {
-          id: chainId.toString(),
+          id: typedChainId.toString(),
           header: () => (
             <div className="w-full text-center">
               <ChainChip
-                chainName={chainsConfig[chainId].name}
-                chainType={chainsConfig[chainId].group as ChainGroup}
+                chainName={chainsConfig[typedChainId].name}
+                chainType={chainsConfig[typedChainId].group}
                 // shorten the title to last word of the chain name
-                title={chainsConfig[chainId].name.split(' ').pop()}
+                title={chainsConfig[typedChainId].name.split(' ').pop()}
               />
             </div>
           ),
           cell: (props) =>
-            props.row.original.chainsData[chainId] ? (
+            typeof props.row.original.chainsData[typedChainId] === 'number' ? (
               <NumberCell
-                value={props.row.original.chainsData[chainId]}
+                value={props.row.original.chainsData[typedChainId]}
                 prefix={prefixUnit}
               />
             ) : (
@@ -82,7 +89,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
         })
       ),
     ],
-    [sortedChains, columnHelper, prefixUnit]
+    [sortedTypedChainIds, prefixUnit]
   );
 
   const table = useReactTable({
@@ -95,7 +102,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (chains.length === 0) {
+  if (typedChainIds.length === 0) {
     return (
       <Typography variant="body1">No network pool data available</Typography>
     );

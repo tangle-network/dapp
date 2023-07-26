@@ -29,7 +29,7 @@ export interface NetworkTokenTableProps {
   /**
    * The list of all available chains
    */
-  chains: number[];
+  typedChainIds: number[];
 
   /**
    * The data for whole table (list of tokens and subTokens)

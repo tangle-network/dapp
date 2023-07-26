@@ -1,11 +1,11 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 /**
- * A function to sort chains by name
+ * A function to sort typedChainIds by name
  * @param chainIds
  * @returns sorted chain ids
  */
-const getSortedChains = (chainIds: number[]) => {
+const getSortedTypedChainIds = (chainIds: number[]) => {
   return chainIds.sort((chain1, chain2) => {
     const chain1Group = chainsConfig[chain1].group;
     const chain2Group = chainsConfig[chain2].group;
@@ -24,4 +24,4 @@ const getSortedChains = (chainIds: number[]) => {
   });
 };
 
-export default getSortedChains;
+export default getSortedTypedChainIds;

@@ -1,1 +1,1 @@
-export { default as getSortedChains } from './getSortedChains';
+export { default as getSortedTypedChainIds } from './getSortedTypedChainIds';

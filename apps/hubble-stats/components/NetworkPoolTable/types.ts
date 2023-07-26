@@ -10,7 +10,7 @@ export type NetworkPoolType = {
   aggregate: number;
 
   /**
-   * The value on each chain
+   * The value on each chain indexed by typedChainId
    */
   chainsData: Record<number, number | undefined>;
 };
@@ -19,7 +19,7 @@ export interface NetworkPoolTableProps {
   /**
    * The list of all available chains
    */
-  chains: number[];
+  typedChainIds: number[];
 
   /**
    * The data for whole table
