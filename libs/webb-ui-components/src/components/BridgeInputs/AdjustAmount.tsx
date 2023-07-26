@@ -62,17 +62,11 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
     );
 
     const handleMinusClick = useCallback(() => {
-      if (isDisabled) return;
-
       const nextVal = value - step;
 
-      if (!min) {
-        setValue(nextVal);
-        onChange?.(nextVal);
-        return;
-      }
-
-      if (nextVal < min) {
+      // If the component is disabled or `min` is defined and `nextVal` is less than `min`,
+      // then we don't need to update the value
+      if (isDisabled || (typeof min === 'number' && nextVal < min)) {
         return;
       }
 
@@ -81,17 +75,11 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
     }, [isDisabled, min, onChange, step, value]);
 
     const handlePlusClick = useCallback(() => {
-      if (isDisabled) return;
-
       const nextVal = value + step;
 
-      if (!max) {
-        setValue(nextVal);
-        onChange?.(nextVal);
-        return;
-      }
-
-      if (nextVal > max) {
+      // If the component is disabled or `max` is defined and `nextVal` is greater than `max`,
+      // then we don't need to update the value
+      if (isDisabled || (typeof max === 'number' && nextVal > max)) {
         return;
       }
 
