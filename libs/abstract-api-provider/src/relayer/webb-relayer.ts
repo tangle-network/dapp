@@ -151,7 +151,14 @@ class RelayedWithdraw {
 
       try {
         const resp = await fetch(
-          this.getSendTxUri(baseOn, chainId, anchorIdentifier)
+          this.getSendTxUri(baseOn, chainId, anchorIdentifier),
+          {
+            method: 'POST',
+            body,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
         );
 
         const data: SendTxResponse = await resp.json();
