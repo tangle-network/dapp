@@ -28,7 +28,6 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
  * <FixedAmount {...fixedAmountProps} className={cx({ hidden: amountType !== 'fixed' })} hidden={amountType !== 'fixed'} />
  * ```
  */
-
 export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   (
     {

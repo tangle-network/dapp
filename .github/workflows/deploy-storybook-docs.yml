@@ -1,9 +1,15 @@
 name: publish
-on: 
+on:
   push:
     branches:
       - develop
-    paths: ["libs/webb-ui-components/src/stories/**", "libs/webb-ui-components/.storybook/**", ".storybook" ] # Trigger the action only when files change in the folders defined here
+      # Bridge V2 feature branch
+      - hubble-bridge-v2
+    paths: [
+        'libs/webb-ui-components/src/stories/**',
+        'libs/webb-ui-components/.storybook/**',
+        '.storybook',
+      ] # Trigger the action only when files change in the folders defined here
 jobs:
   component-docs:
     runs-on: ubuntu-latest

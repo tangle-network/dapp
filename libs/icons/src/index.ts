@@ -1,4 +1,6 @@
 export * from './AddBoxLineIcon';
+export * from './AddCircleFillIcon';
+export * from './AddCircleLineIcon';
 export * from './ArrowDropDownFill';
 export * from './ArrowDropUpFill';
 export * from './ArrowLeft';
@@ -12,8 +14,8 @@ export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';
 export * from './CheckboxBlankCircleLine';
-export * from './CheckboxCircleLine';
 export * from './CheckboxCircleFill';
+export * from './CheckboxCircleLine';
 export * from './CheckboxFill';
 export * from './ChevronDown';
 export * from './ChevronLeft';
@@ -24,9 +26,9 @@ export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
-export * from './Copyright';
-export * from './CopyLinkFill';
 export * from './ContrastTwoLine';
+export * from './CopyLinkFill';
+export * from './Copyright';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
 export * from './DeleteBinWithBg';
@@ -51,6 +53,8 @@ export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
 export * from './HelpLineIcon';
+export * from './IndeterminateCircleFillIcon';
+export * from './IndeterminateCircleLineIcon';
 export * from './InformationLine';
 export * from './InformationLineFill';
 export * from './KeyIcon';
@@ -66,9 +70,9 @@ export * from './Save';
 export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
+export * from './ShieldKeyholeIcon';
 export * from './ShieldedAssetDark';
 export * from './ShieldedAssetLight';
-export * from './ShieldKeyholeIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
 export * from './SparklingIcon';
@@ -90,8 +94,8 @@ export * from './YouTubeFill';
 export * from './wallets';
 
 // imagre URIs
-export * from './AlertFill';
 export * from './Alert';
+export * from './AlertFill';
 export * from './PartyFill';
 
 // Tangle Icons

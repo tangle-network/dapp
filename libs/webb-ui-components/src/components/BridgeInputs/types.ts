@@ -301,3 +301,42 @@ export interface RefundInputProps {
    */
   refundAmountInputProps?: ComponentProps<typeof AmountInput>;
 }
+
+export interface AdjustAmountProps extends Omit<PropsOf<'div'>, 'onChange'> {
+  /**
+   * The maximum value
+   */
+  max?: number;
+
+  /**
+   * The minimum value
+   */
+  min?: number;
+
+  /**
+   * The step between each value
+   */
+  step?: number;
+
+  /**
+   * The actual value (used to control the component)
+   */
+  value?: number;
+
+  /**
+   * Disable the input
+   */
+  isDisabled?: boolean;
+
+  /**
+   * The icon button class name to override style
+   */
+  iconClassName?: string;
+
+  /**
+   * The callback function when the value is changed
+   * @param nextValue next value of the component
+   * @returns void
+   */
+  onChange?: (nextValue: number) => void;
+}
