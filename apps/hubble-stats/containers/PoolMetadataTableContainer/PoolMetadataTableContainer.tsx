@@ -7,10 +7,10 @@ import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
 
 const metadata: PoolAttributeType[] = [
   {
-    name: 'Token name',
+    name: 'Pool name',
   },
   {
-    name: 'Token symbol',
+    name: 'Pool symbol',
   },
   {
     name: 'Signature Bridge',
@@ -31,6 +31,9 @@ const metadata: PoolAttributeType[] = [
     name: 'Treasury Address',
     isAddress: true,
     externalLink: '#',
+  },
+  {
+    name: 'Wrapping Fees',
   },
   {
     name: 'Creation date',
