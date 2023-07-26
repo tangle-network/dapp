@@ -45,6 +45,11 @@ enum FaucetErrorCode {
   JSON_PARSE_ERROR,
 
   /**
+   * To many requests at the same time
+   */
+  TOO_MANY_CLAIM_REQUESTS,
+
+  /**
    * Mint tokens failed
    */
   MINT_TOKENS_FAILED,

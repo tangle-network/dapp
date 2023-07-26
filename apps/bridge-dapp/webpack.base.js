@@ -63,15 +63,13 @@ function createWebpack(env, mode = 'production') {
       ]
     : [];
 
-  const envPath = path.resolve(
-    workspaceRoot,
-    'apps',
-    process.env.NX_TASK_TARGET_PROJECT,
-    '.env'
-  );
-
-  const bridgeEnvVars =
-    require('dotenv').config({ path: envPath }).parsed || {};
+  // Load bridge dapp specific env vars by prefixing with BRIDGE_DAPP_
+  const bridgeEnvVars = Object.keys(process.env)
+    .filter((key) => key.startsWith('BRIDGE_DAPP_'))
+    .reduce((envVars, key) => {
+      envVars[key] = JSON.stringify(process.env[key]);
+      return envVars;
+    }, {});
 
   return {
     experiments: {

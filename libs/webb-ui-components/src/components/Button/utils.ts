@@ -44,7 +44,7 @@ const classNames: ButtonClassNames = {
   link: {
     base: {
       common:
-        'group text-blue-70 border-transparent dark:text-blue-50 font-bold',
+        'text-blue-70 border-b-2 border-b-transparent dark:text-blue-50 font-bold',
       hover:
         'hover:border-blue-70 dark:hover:text-blue-30 dark:hover:border-blue-30',
       active:

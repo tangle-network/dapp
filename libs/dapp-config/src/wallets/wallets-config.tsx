@@ -49,8 +49,10 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
-if (!process.env['WALLET_CONNECT_PROJECT_ID']) {
-  throw new Error('Missing WALLET_CONNECT_PROJECT_ID env variable.');
+if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
+  throw new Error(
+    'Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID env variable.'
+  );
 }
 
 export const walletsConfig: Record<number, WalletConfig> = {
@@ -115,7 +117,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     homeLink: 'https://walletconnect.com/',
     connector: new WalletConnectConnector({
       options: {
-        projectId: process.env['WALLET_CONNECT_PROJECT_ID'],
+        projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'],
       },
     }),
   },

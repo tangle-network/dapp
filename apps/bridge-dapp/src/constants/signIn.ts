@@ -1,4 +1,4 @@
-const domain = process.env.NX_BRIDGE_APP_DOMAIN ?? 'localhost';
+const domain = process.env.BRIDGE_DAPP_DOMAIN ?? 'localhost';
 
 const origin = `http${domain === 'localhost' ? '' : 's'}://${domain}/login`;
 
