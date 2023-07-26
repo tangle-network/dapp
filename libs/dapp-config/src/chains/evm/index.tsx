@@ -19,38 +19,39 @@ import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
 const hostedOrbitMulticall3Address =
-  process.env.HOSTED_ORBIT_MULTLICALL3_ADDRESS;
+  process.env.BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS;
 
 const athenaOrbitMulticall3DeploymentBlock = process.env
-  .ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 const hermesOrbitMulticall3DeploymentBlock = process.env
-  .HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 const demeterOrbitMulticall3DeploymentBlock = process.env
-  .DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
-const localOrbitMulticall3Address = process.env.LOCAL_ORBIT_MULTICALL3_ADDRESS;
+const localOrbitMulticall3Address =
+  process.env.BRIDGE_DAPP_LOCAL_ORBIT_MULTICALL3_ADDRESS;
 
 const localAthenaMulticall3DeploymentBlock = process.env
-  .LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_ATHENA_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 const localHermesMulticall3DeploymentBlock = process.env
-  .LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_HERMES_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 const localDemeterMulticall3DeploymentBlock = process.env
-  .LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK
-  ? parseInt(process.env.LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
+  .BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK
+  ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
 export const chainsConfig: Record<number, ChainConfig> = {
