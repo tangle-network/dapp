@@ -34,7 +34,7 @@ export type WebbExtendedChain = {
   /**
    * The group of the chain (e.g Ethereum, Polkadot, etc)
    */
-  group?: ChainGroup;
+  group: ChainGroup;
 
   /**
    * The tag indicating the network (e.g dev, test, live)

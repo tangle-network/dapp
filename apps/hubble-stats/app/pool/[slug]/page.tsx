@@ -1,4 +1,5 @@
 import {
+  NetworkTablesContainer,
   PoolMetadataTableContainer,
   PoolOverviewContainer,
   PoolTransactionsTableContainer,
@@ -15,7 +16,11 @@ export default function Pool({ params }: { params: { slug: string } }) {
         </div>
         <div className="flex-grow"></div>
       </div>
+
+      <NetworkTablesContainer />
+
       <PoolTransactionsTableContainer />
+
       <PoolMetadataTableContainer />
     </div>
   );
