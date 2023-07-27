@@ -4,7 +4,7 @@ const { createSecureHeaders } = require('next-secure-headers');
 const securityHeaders = createSecureHeaders({
   frameGuard: 'sameorigin',
   xssProtection: 'block-rendering',
-  referrerPolicy: 'origin-when-cross-origin',
+  referrerPolicy: 'no-referrer-when-downgrade',
 }).concat([
   {
     key: 'Content-Security-Policy',

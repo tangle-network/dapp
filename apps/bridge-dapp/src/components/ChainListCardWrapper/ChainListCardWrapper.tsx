@@ -55,7 +55,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     return getActiveSourceChains(apiConfig.chains).map((val) => {
       const currency = getNativeCurrencyFromConfig(
         apiConfig.currencies,
-        calculateTypedChainId(val.chainType, val.chainId)
+        calculateTypedChainId(val.chainType, val.id)
       );
 
       return {
@@ -84,7 +84,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
       const isSupported =
         activeWallet &&
         activeWallet.supportedChainIds.includes(
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.id)
         );
 
       let bridge: Bridge | undefined;

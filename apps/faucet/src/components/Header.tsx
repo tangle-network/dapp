@@ -1,5 +1,10 @@
 import links from '@webb-tools/dapp-config/links';
-import { Button, Logo, Navbar } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Logo,
+  Navbar,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { NavItemType } from '@webb-tools/webb-ui-components/components/Navbar/types';
 import cx from 'classnames';
 import Link from 'next/link';
@@ -47,8 +52,12 @@ const Header = () => {
       })}
     >
       <div className="max-w-[1160px] flex items-center justify-between min-h-[72px] mx-auto">
-        <Link href="/">
+        <Link className="flex items-center gap-2" href="/">
           <Logo />
+
+          <Typography variant="mkt-body2" fw="medium">
+            {'| Faucet'}
+          </Typography>
         </Link>
 
         <Navbar buttonProps={buttonProps} navItems={navItems} />

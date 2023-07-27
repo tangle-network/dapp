@@ -1,6 +1,7 @@
 import { Bridge, Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
+  ZERO_BIG_INT,
   ensureHex,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
@@ -13,8 +14,8 @@ import {
 import { Note, ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { BigNumber, ethers } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 import { ChainListCardWrapper } from '../components';
 import { useShieldedAssets } from './useShieldedAssets';
 
@@ -60,19 +61,20 @@ const useStatesFromNotes = () => {
       return 0;
     }
 
-    let tokenDecimals: number | undefined;
-    const amountBN = availableNotes.reduce<BigNumber>(
+    let tokenDecimals: number = +availableNotes[0].note.denomination;
+
+    const amountBI = availableNotes.reduce<bigint>(
       (accumulatedBalance, newNote) => {
         if (!tokenDecimals) {
           tokenDecimals = Number(newNote.note.denomination);
         }
 
-        return accumulatedBalance.add(newNote.note.amount);
+        return accumulatedBalance + BigInt(newNote.note.amount);
       },
-      BigNumber.from(0)
+      ZERO_BIG_INT
     );
 
-    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
+    return Number(formatUnits(amountBI, tokenDecimals));
   }, [availableNotes]);
 
   const chainsFromNotes = useMemo(() => {
@@ -175,7 +177,7 @@ const useStatesFromNotes = () => {
       symbol:
         getNativeCurrencyFromConfig(
           apiConfig.currencies,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          calculateTypedChainId(activeChain.chainType, activeChain.id)
         )?.symbol ?? 'Unknown',
     };
 
@@ -187,7 +189,7 @@ const useStatesFromNotes = () => {
         chains={chainsFromNotes.map((chain) => {
           const currency = getNativeCurrencyFromConfig(
             apiConfig.currencies,
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
           if (!currency) {
             console.error('No currency found for chain', chain.name);

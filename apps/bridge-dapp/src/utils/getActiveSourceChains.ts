@@ -9,7 +9,7 @@ export const getActiveSourceChains = (
   const currentEnv = process.env.NODE_ENV || 'development';
 
   return Object.values(chains).filter((chain) => {
-    const typedChainId = calculateTypedChainId(chain.chainType, chain.chainId);
+    const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
     const anchorConfig = anchorDeploymentBlock[typedChainId];
 
     const env = chain.env;

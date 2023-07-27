@@ -57,6 +57,10 @@ jobs:
         run: yarn add -D -W netlify-cli
 
       - name: Build project
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
         run: yarn build:webbsite
 
       - name: Deploy site
@@ -79,7 +83,9 @@ jobs:
           echo "NETLIFY_LOGS_URL=$LOGS_URL" >> $GITHUB_OUTPUT
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.0
+        # Use master branch to fix issue with entrypoint.sh script
+        # https://github.com/unsplash/comment-on-pr/issues/51
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MSG: |

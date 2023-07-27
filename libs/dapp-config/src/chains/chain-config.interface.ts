@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType } from '@webb-tools/sdk-core';
+import type { Chain } from '@wagmi/chains';
 
 import { AppEnvironment } from '../types';
 
-export type ChainBase =
+export type ChainGroup =
   | 'arbitrum'
   | 'athena'
   | 'avalanche'
@@ -21,25 +22,34 @@ export type ChainBase =
   | 'orbit'
   | 'webb-dev';
 
-export interface ChainConfig {
+/**
+ * The extended chain interface that includes the chain type and group
+ */
+export type WebbExtendedChain = {
+  /**
+   * The type of chain (e.g EVM, Substrate, etc)
+   */
   chainType: ChainType;
-  name: string;
-  base?: ChainBase;
-  group: string;
-  chainId: number;
+
+  /**
+   * The group of the chain (e.g Ethereum, Polkadot, etc)
+   */
+  group: ChainGroup;
+
+  /**
+   * The tag indicating the network (e.g dev, test, live)
+   */
   tag: 'dev' | 'test' | 'live';
-  url: string;
-  evmRpcUrls?: string[];
-  blockExplorerStub?: string;
-  logo: React.ComponentType | React.ElementType;
 
   /**
    * The supported environments for this chain (defaults to all)
    */
   env?: AppEnvironment[];
 
-  multicall3?: {
-    address: `0x${string}`;
-    deployedAt: number;
-  };
-}
+  /**
+   * The contracts for this chain
+   */
+  contracts?: Chain['contracts'];
+};
+
+export type ChainConfig = Chain & WebbExtendedChain;

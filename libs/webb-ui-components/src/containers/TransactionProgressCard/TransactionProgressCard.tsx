@@ -31,7 +31,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  firedAt={new Date()}
  status={'in-progress'}
  tokens={[<TokenIcon size={'lg'} name={'ETH'} />, <TokenIcon size={'lg'} name={'WEBB'} />]}
- wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+ wallets={{ src: <ChainIcon name="polygon mumbai" />, dist: <ChainIcon name="ethereum" /> }}
  label={{
                   tokenURI: 'https://polygon.technology/',
                   amount: '0.999',
@@ -58,7 +58,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  status={'in-progress'}
  syncNote={() => {}}
  tokens={[<TokenIcon size={'lg'} name={'ETH'} />]}
- wallets={{ src: <PolygonLogo />, dist: <WalletLine width={16} height={14.6} /> }}
+ wallets={{ src: <ChainIcon name="polygon mumbai" />, dist: <WalletLine width={16} height={14.6} /> }}
  label={{
                   amount: '0.999',
                   nativeValue: '1430',
@@ -80,7 +80,7 @@ const sectionPadding = 'py-2  px-4 m-0 mt-0';
  firedAt={new Date()}
  status={'in-progress'}
  tokens={[<TokenIcon size={'lg'} name={'WEBB'} />, <TokenIcon size={'lg'} name={'ETH'} />]}
- wallets={{ src: <PolygonLogo />, dist: <EthLogo /> }}
+ wallets={{ src: <ChainIcon name="polygon mumbai" />, dist: <ChainIcon name="ethereum" /> }}
  label={{
                     tokenURI: 'https://polygon.technology/',
                     amount: '0.999',

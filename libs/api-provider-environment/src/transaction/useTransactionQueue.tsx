@@ -45,9 +45,9 @@ function mapTxToPayload(
   let explorerUri = '';
 
   if (tx.name === 'Deposit') {
-    explorerUri = chainConfig[wallets.src]?.blockExplorerStub ?? '';
+    explorerUri = chainConfig[wallets.src]?.blockExplorers?.default.url ?? '';
   } else {
-    explorerUri = chainConfig[wallets.dest]?.blockExplorerStub ?? '';
+    explorerUri = chainConfig[wallets.dest]?.blockExplorers?.default.url ?? '';
   }
 
   const srcChainName = chainConfig[wallets.src]?.name;

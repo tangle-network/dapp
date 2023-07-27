@@ -6,9 +6,17 @@ import {
   AccountsAdapter,
   PromiseOrT,
 } from '@webb-tools/abstract-api-provider/account';
-import { Eth } from 'web3-eth';
+import { Address, JsonRpcAccount, WalletClient } from 'viem';
+import { getAccount } from 'wagmi/actions';
 
-export class Web3Account extends Account<Eth> {
+export class Web3Account extends Account<WalletClient['account']> {
+  constructor(
+    public readonly _inner: WalletClient['account'],
+    public readonly address: Address
+  ) {
+    super(_inner, address);
+  }
+
   get avatar() {
     return '';
   }
@@ -18,23 +26,41 @@ export class Web3Account extends Account<Eth> {
   }
 }
 
-export class Web3Accounts extends AccountsAdapter<Eth> {
-  providerName = 'Eth';
+export class Web3Accounts extends AccountsAdapter<
+  WalletClient,
+  WalletClient['account']
+> {
+  providerName = 'Web3';
 
   async accounts() {
-    const accounts = await this._inner.getAccounts();
+    const addresses = await this.inner.getAddresses();
 
-    return accounts.map((address) => new Web3Account(this.inner, address));
+    return addresses.map(
+      (address) =>
+        new Web3Account(
+          { type: 'json-rpc', address } satisfies WalletClient['account'],
+          address
+        )
+    );
   }
 
   get activeOrDefault() {
-    const defaultAccount = this.inner.defaultAccount;
+    const defaultAccount = getAccount();
 
-    return defaultAccount ? new Web3Account(this.inner, defaultAccount) : null;
+    if (!defaultAccount.address) {
+      return null;
+    }
+
+    return new Web3Account(
+      {
+        type: 'json-rpc',
+        address: defaultAccount.address,
+      } satisfies WalletClient['account'],
+      defaultAccount.address
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setActiveAccount(account: Account): PromiseOrT<void> {
+  setActiveAccount(_: Account): PromiseOrT<void> {
     return undefined;
   }
 }

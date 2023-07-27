@@ -1,8 +1,11 @@
 import { Spinner } from '@webb-tools/icons';
+import { useNoteAccount } from '@webb-tools/react-hooks';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { useEffect, useState } from 'react';
 
 export const LoadingTable = () => {
+  const { syncNotesProgress } = useNoteAccount();
+
   return (
     <div className="h-[511px] bg-mono-0 dark:bg-mono-160 rounded-lg flex items-center justify-center">
       <div>
@@ -11,7 +14,10 @@ export const LoadingTable = () => {
         </div>
 
         <Typography variant="h5" ta="center" fw="bold">
-          Syncing notes
+          Syncing notes{' '}
+          {Number.isNaN(syncNotesProgress)
+            ? ''
+            : `${syncNotesProgress.toFixed(2)}%`}
         </Typography>
 
         <LoadingText />
@@ -38,7 +44,12 @@ const LoadingText = () => {
   }, []);
 
   return (
-    <Typography variant="body2" fw="semibold" className="!text-mono-100">
+    <Typography
+      ta="center"
+      variant="body2"
+      fw="semibold"
+      className="!text-mono-100"
+    >
       Please wait a few minutes{`...`.slice(0, dots)}
     </Typography>
   );

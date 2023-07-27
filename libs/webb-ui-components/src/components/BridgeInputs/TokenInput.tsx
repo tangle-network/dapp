@@ -76,35 +76,25 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
             <div className="flex items-center space-x-1">
               {token.tokenComposition ? (
                 <TokenPairIcons
-                  token1Symbol={token.tokenComposition[0].trim().toLowerCase()}
-                  token2Symbol={token.tokenComposition[1].trim().toLowerCase()}
+                  token1Symbol={token.tokenComposition[0].trim()}
+                  token2Symbol={token.tokenComposition[1].trim()}
                 />
               ) : (
                 <TokenIcon
                   onClick={handleTokenIconClick}
-                  name={token.symbol.trim().toLowerCase()}
+                  name={token.symbol.trim()}
                   size="lg"
                 />
               )}
 
               {token.tokenComposition ? (
-                <Typography
-                  component="span"
-                  variant="h5"
-                  fw="bold"
-                  className="capitalize"
-                >
+                <Typography component="span" variant="h5" fw="bold">
                   {token.tokenComposition[0].trim() +
                     '/' +
                     token.tokenComposition[1].trim()}
                 </Typography>
               ) : (
-                <Typography
-                  component="span"
-                  variant="h5"
-                  fw="bold"
-                  className="capitalize"
-                >
+                <Typography component="span" variant="h5" fw="bold">
                   {token.symbol.trim()}
                 </Typography>
               )}

@@ -1,6 +1,9 @@
 export * from './download';
-export * from './platform';
-export * from './retry-promise';
-export * from './storage';
+export * from './executorWithTimeout';
+export { default as executorWithTimeout } from './executorWithTimeout';
+export * from './fetchFixtures';
 export * from './logger';
-export * from './promise-utils';
+export * from './platform';
+export * from './retryPromise';
+export { default as retryPromise } from './retryPromise';
+export * from './storage';

@@ -16,9 +16,9 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     super(inner);
   }
 
-  async currentBlock(): Promise<number> {
+  async currentBlock(): Promise<bigint> {
     const block: SignedBlock = await this.inner.api.rpc.chain.getBlock();
-    return block.block.header.number.toNumber();
+    return block.block.header.number.toBigInt();
   }
 
   private getTokenBalanceByAssetId(assetId: string): Observable<string> {

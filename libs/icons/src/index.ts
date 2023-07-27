@@ -25,6 +25,7 @@ export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
 export * from './Copyright';
+export * from './CornerDownRightLine';
 export * from './CopyLinkFill';
 export * from './ContrastTwoLine';
 export * from './DefaultTokenIcon';

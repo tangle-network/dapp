@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export abstract class ChainQuery<Provider> {
   constructor(protected inner: Provider) {}
 
-  abstract currentBlock(): Promise<number>;
+  abstract currentBlock(): Promise<bigint>;
 
   abstract tokenBalanceByCurrencyId(
     typedChainId: number,
