@@ -299,11 +299,12 @@ class RelayedWithdraw {
   await(): Promise<[RelayedWithdrawResult, string | undefined]> {
     return firstValueFrom(
       this.watcher.pipe(
-        filter(([next]) => {
-          return (
-            next === RelayedWithdrawResult.CleanExit ||
-            next === RelayedWithdrawResult.Errored
-          );
+        filter(([next, message]) => {
+          if (next === RelayedWithdrawResult.Errored) {
+            throw new Error(message);
+          }
+
+          return next === RelayedWithdrawResult.CleanExit;
         })
       )
     );
