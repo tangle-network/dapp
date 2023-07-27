@@ -17,7 +17,6 @@ export const SideBarMenu: FC<SidebarProps> = ({
   className,
 }) => {
   const [activeItem, setActiveItem] = useState<number | null>(0);
-  console.log('activeItem :', activeItem);
 
   return (
     <div className={cx('flex items-center', className)}>

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import useLocalStorageState from 'use-local-storage-state';
 
 type SupportTheme = 'light' | 'dark';
 
@@ -22,78 +23,52 @@ export type ToggleThemeModeFunc = (
 export function useDarkMode(
   defaultTheme: SupportTheme = 'dark'
 ): [boolean, ToggleThemeModeFunc] {
-  const [preferredTheme, setPreferredTheme] =
-    useState<SupportTheme>(defaultTheme);
+  const currentLocalTheme = localStorage.getItem(
+    'theme'
+  ) as SupportTheme | null;
 
-  const isDarkMode = useMemo(
-    () =>
-      isBrowser() && localStorage.getItem('theme') !== null
-        ? localStorage.getItem('theme') === 'dark'
-        : preferredTheme === 'dark',
-    [preferredTheme]
-  );
+  const [theme, setTheme] = useLocalStorageState('theme', {
+    defaultValue: currentLocalTheme ?? defaultTheme,
+  });
+
+  const isDarkMode = useMemo(() => theme === 'dark', [theme]);
 
   useEffect(() => {
     if (!isBrowser()) {
       return;
     }
 
-    if (localStorage.getItem('theme') === null) {
+    if (theme === 'dark') {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      window.dispatchEvent(new Event('storage'));
-    }
-
-    if (
-      localStorage.getItem('theme') === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-      setPreferredTheme('dark');
     } else {
       document.documentElement.classList.remove('dark');
-      setPreferredTheme('light');
     }
-  }, []);
+  }, [theme]);
 
   const toggleThemeMode = useCallback<ToggleThemeModeFunc>(
     (nextThemeMode?: SupportTheme | undefined) => {
-      if (!isBrowser()) {
-        return;
-      }
+      if (!isBrowser()) return;
 
-      let _nextThemeMode: SupportTheme;
+      const _nextThemeMode =
+        nextThemeMode ?? theme === 'dark' ? 'light' : 'dark';
 
-      if (!nextThemeMode) {
-        _nextThemeMode = preferredTheme === 'dark' ? 'light' : 'dark';
-      } else {
-        _nextThemeMode = nextThemeMode;
-      }
+      if (_nextThemeMode === theme) return;
 
       switch (_nextThemeMode) {
         case 'dark': {
-          if (localStorage.getItem('theme') !== _nextThemeMode) {
-            document.documentElement.classList.add(_nextThemeMode);
-            localStorage.setItem('theme', _nextThemeMode);
-            window.dispatchEvent(new Event('storage'));
-          }
+          document.documentElement.classList.add('dark');
           break;
         }
 
         case 'light': {
-          if (localStorage.getItem('theme') !== _nextThemeMode) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', _nextThemeMode);
-            window.dispatchEvent(new Event('storage'));
-          }
+          document.documentElement.classList.remove('dark');
           break;
         }
       }
 
-      setPreferredTheme(_nextThemeMode);
+      setTheme(_nextThemeMode);
     },
-    [preferredTheme]
+    [theme, setTheme]
   );
 
   return [isDarkMode, toggleThemeMode];
