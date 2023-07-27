@@ -155,7 +155,11 @@ class RelayedWithdraw {
 
       try {
         this.logger.info(
-          `Sending tx to relayer: ${uri} with body: ${JSON.parse(body)}`
+          `Sending tx to relayer: ${uri} with body: ${JSON.stringify(
+            JSON.parse(body),
+            null,
+            2
+          )}`
         );
         const resp = await fetch(uri, {
           method: 'POST',
@@ -166,7 +170,9 @@ class RelayedWithdraw {
         });
 
         const data: SendTxResponse = await resp.json();
-        this.logger.info(`Got tx response from relayer: ${data}`);
+        this.logger.info(
+          `Got tx response from relayer: ${JSON.stringify(data, null, 2)}`
+        );
         if (data.status === 'Sent') {
           const { itemKey } = data as SendTxResponse<'Sent'>;
 
