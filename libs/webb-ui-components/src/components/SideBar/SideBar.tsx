@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, forwardRef } from 'react';
 import cx from 'classnames';
 import useLocalStorageState from 'use-local-storage-state';

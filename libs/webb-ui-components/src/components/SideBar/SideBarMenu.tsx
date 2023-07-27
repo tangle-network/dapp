@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, forwardRef } from 'react';
 import cx from 'classnames';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -10,7 +12,7 @@ import { Link } from '../Link';
 import { SidebarProps } from './types';
 
 export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
-  ({ Logo, logoLink, items, footer, className, ...props }, ref) => {
+  ({ Logo, ClosedLogo, logoLink, items, footer, className, ...props }, ref) => {
     const [activeItem, setActiveItem] = useState<number | null>(0);
 
     return (
