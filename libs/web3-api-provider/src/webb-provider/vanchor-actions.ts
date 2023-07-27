@@ -669,10 +669,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       const edgeIndex = await destVAnchor.read.edgeIndex([
         BigInt(parsedNote.sourceChainId),
       ]);
-      const nei = await destVAnchor.read.getLatestNeighborEdges();
-      destVAnchor.read.currentNeighborRootIndex([
-        BigInt(parsedNote.sourceChainId),
-      ]);
       const edge = await destVAnchor.read.edgeList([edgeIndex]);
       destRelayedRootBI = edge[1];
     }
