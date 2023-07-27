@@ -28,6 +28,7 @@ import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
   ApiConfig,
+  LOCALNET_CHAIN_IDS,
   SupportedConnector,
   ZERO_BIG_INT,
   ensureHex,
@@ -360,22 +361,31 @@ export class WebbWeb3Provider
         currentRange: [0, 0], // Dummy values
       });
 
-      // check if we already cached some values.
-      const lastQueriedBlock = await storage.get('lastQueriedBlock');
-      const storedLeaves = await storage.get('leaves');
+      const isLocal = LOCALNET_CHAIN_IDS.includes(+`${evmId}`);
 
-      const storedContractInfo: BridgeStorage = {
-        lastQueriedBlock:
-          (lastQueriedBlock ||
-            getAnchorDeploymentBlockNumber(typedChainId, anchorId)) ??
-          0,
-        leaves: storedLeaves || [],
-      };
+      // check if we already cached some values in the storage and the chain id is not local
+      let lastQueriedBlock = !isLocal
+        ? await storage.get('lastQueriedBlock')
+        : 0;
+      let storedLeaves = !isLocal ? await storage.get('leaves') : [];
 
-      console.log('Stored contract info: ', storedContractInfo);
+      if (!isLocal) {
+        const storedContractInfo: BridgeStorage = {
+          lastQueriedBlock:
+            (lastQueriedBlock ||
+              getAnchorDeploymentBlockNumber(typedChainId, anchorId)) ??
+            0,
+          leaves: storedLeaves || [],
+        };
+
+        console.log('Stored contract info: ', storedContractInfo);
+
+        lastQueriedBlock = storedContractInfo.lastQueriedBlock;
+        storedLeaves = storedContractInfo.leaves;
+      }
 
       const leavesFromChain = await this.getDepositLeaves(
-        BigInt(storedContractInfo.lastQueriedBlock + 1),
+        BigInt(lastQueriedBlock + 1),
         ZERO_BIG_INT,
         getPublicClient({ chainId: +evmId.toString() }),
         vAnchorContract
@@ -383,10 +393,9 @@ export class WebbWeb3Provider
 
       // Merge the leaves from chain with the stored leaves
       // and fixed them to 32 bytes
-      const leaves = [
-        ...storedContractInfo.leaves,
-        ...leavesFromChain.newLeaves,
-      ].map((leaf) => toFixedHex(leaf));
+      const leaves = [...storedLeaves, ...leavesFromChain.newLeaves].map(
+        (leaf) => toFixedHex(leaf)
+      );
 
       console.log(`Got ${leaves.length} leaves from chain`);
 
@@ -408,12 +417,14 @@ export class WebbWeb3Provider
         tx?.next(TransactionState.ValidatingLeaves, true);
       }
 
-      // Cached all the leaves to re-use them later
-      await storage.set(
-        'lastQueriedBlock',
-        +leavesFromChain.lastQueriedBlock.toString()
-      );
-      await storage.set('leaves', leaves);
+      // Cached all the leaves to re-use them later if not localnet
+      if (!isLocal) {
+        await storage.set(
+          'lastQueriedBlock',
+          +leavesFromChain.lastQueriedBlock.toString()
+        );
+        await storage.set('leaves', leaves);
+      }
 
       // Return the leaves for proving and the commitment index
       return {

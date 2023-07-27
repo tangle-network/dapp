@@ -67,7 +67,7 @@ function createWebpack(env, mode = 'production') {
   const bridgeEnvVars = Object.keys(process.env)
     .filter((key) => key.startsWith('BRIDGE_DAPP_'))
     .reduce((envVars, key) => {
-      envVars[key] = JSON.stringify(process.env[key]);
+      envVars[`process.env.${key}`] = JSON.stringify(process.env[key]);
       return envVars;
     }, {});
 
@@ -257,9 +257,9 @@ function createWebpack(env, mode = 'production') {
         resourceRegExp: /^\.\/locale$/,
       }),
       new webpack.DefinePlugin({
-        'process.env': JSON.stringify(bridgeEnvVars),
         'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
         'process.env.NODE_ENV': JSON.stringify(mode),
+        ...bridgeEnvVars,
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({
