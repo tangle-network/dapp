@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { ChevronLeft, ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
 
 import { Typography } from '../../typography/Typography';
-import { SideBarItem } from '../SideBarItem';
+import { SideBarItem } from './Item';
 import { ThemeToggle } from '../ThemeToggle';
 import { Link } from '../Link';
 import { SidebarProps } from './types';
