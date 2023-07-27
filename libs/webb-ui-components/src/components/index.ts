@@ -64,6 +64,8 @@ export * from './ThemeToggle';
 export * from './TimeLine';
 export * from './TimeProgress';
 export * from './TitleWithInfo';
+export * from './ToggleCard';
+export { default as ToggleCard } from './ToggleCard';
 export * from './TokenPair';
 export * from './TokenPairIcons';
 export * from './TokenSelector';
