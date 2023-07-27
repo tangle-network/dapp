@@ -111,6 +111,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
   return (
     <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
       <Table
+        tableClassName="overflow-x-auto"
         thClassName="border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"
         tdClassName="border-r last:border-r-0 first:px-3 last:pr-2"
         tableProps={table as RTTable<unknown>}
