@@ -387,9 +387,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     try {
-      const { request } = await vAnchorContract.simulate.register([
-        { owner: account, keyData },
-      ]);
+      const { request } = await vAnchorContract.simulate.register(
+        [{ owner: account, keyData }],
+        { account }
+      );
 
       const txHash = await this.inner.walletClient.writeContract(request);
 
@@ -927,6 +928,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             [spenderAddress, approvalValue],
             {
               gas: BigInt('0x5B8D80'),
+              account,
             }
           );
 
@@ -937,6 +939,7 @@ export class Web3VAnchorActions extends VAnchorActions<
             [spenderAddress, amountBI],
             {
               gas: BigInt('0x5B8D80'),
+              account,
             }
           );
 

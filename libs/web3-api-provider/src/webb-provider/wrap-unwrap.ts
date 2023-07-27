@@ -148,10 +148,12 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
           `No wrappable token address for ${wrappableToken.view.name} on selected chain`
         );
       }
-      const { request } = await webbFungibleToken.simulate.unwrap([
-        ensureHex(wrappableTokenAddress),
-        amount,
-      ]);
+
+      const account = this.inner.walletClient.account;
+      const { request } = await webbFungibleToken.simulate.unwrap(
+        [ensureHex(wrappableTokenAddress), amount],
+        { account }
+      );
 
       const txHash = await this.inner.walletClient.writeContract(request);
 
@@ -266,10 +268,10 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             persist: true,
           });
 
-          const { request } = await wrappableTokenInstance.simulate.approve([
-            webbFungibleToken.address,
-            amount,
-          ]);
+          const { request } = await wrappableTokenInstance.simulate.approve(
+            [webbFungibleToken.address, amount],
+            { account }
+          );
 
           await this.inner.walletClient.writeContract(request);
 
