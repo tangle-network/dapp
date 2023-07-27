@@ -916,30 +916,25 @@ export class Web3VAnchorActions extends VAnchorActions<
 
         if (isWrapOrUnwrap) {
           // approve the wrappable asset
-          const tokenContract = getContract({
+          approvalHash = await this.inner.walletClient.writeContract({
             address: ensureHex(wrapUnwrapToken),
             abi: ERC20__factory.abi,
-            publicClient: this.inner.publicClient,
+            functionName: 'approve',
+            args: [spenderAddress, approvalValue],
+            account,
+            chain: this.inner.walletClient.chain,
+            gas: BigInt('0x5B8D80'),
           });
-
-          const { request } = await tokenContract.simulate.approve(
-            [spenderAddress, approvalValue],
-            {
-              gas: BigInt('0x5B8D80'),
-            }
-          );
-
-          approvalHash = await this.inner.walletClient.sendTransaction(request);
         } else {
-          // approve the token
-          const { request } = await currentWebbToken.simulate.approve(
-            [spenderAddress, amountBI],
-            {
-              gas: BigInt('0x5B8D80'),
-            }
-          );
-
-          approvalHash = await this.inner.walletClient.sendTransaction(request);
+          approvalHash = await this.inner.walletClient.writeContract({
+            address: currentWebbToken.address,
+            abi: currentWebbToken.abi,
+            functionName: 'approve',
+            args: [spenderAddress, amountBI],
+            account,
+            chain: this.inner.walletClient.chain,
+            gas: BigInt('0x5B8D80'),
+          });
         }
 
         tx.next(TransactionState.Intermediate, {
