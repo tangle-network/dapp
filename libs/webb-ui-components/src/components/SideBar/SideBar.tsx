@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import { useState, forwardRef } from 'react';
 import cx from 'classnames';
 import useLocalStorageState from 'use-local-storage-state';
 import { twMerge } from 'tailwind-merge';
