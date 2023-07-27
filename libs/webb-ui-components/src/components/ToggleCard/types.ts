@@ -18,8 +18,7 @@ export interface ToggleCardProps extends PropsOf<'div'> {
   title: string;
 
   /**
-   * The id of the card
-   * @default to `title` if not provided
+   * The id of the card (default to `title` if not provided)
    */
   id?: string;
 

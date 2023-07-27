@@ -1,5 +1,5 @@
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import { forwardRef } from 'react';
+import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { Label } from '../Label';
@@ -15,7 +15,9 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
     return (
       <div
         className={twMerge(
-          'px-4 py-2 rounded-lg bg-[#F7F8F7]/50 hover:bg-mono-20 dark:bg-mono-180 dark:hover:bg-mono-170',
+          'px-4 py-2 rounded-lg max-w-md',
+          'bg-[#F7F8F7]/50 hover:bg-mono-20',
+          'dark:bg-mono-180 dark:hover:bg-mono-170',
           className
         )}
         ref={ref}
@@ -30,7 +32,10 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
                   getFlexBasic(Icon.props.size)
                 )}
               >
-                {Icon}
+                {cloneElement(Icon, {
+                  ...Icon.props,
+                  className: twMerge(Icon.props.className, '!fill-mono-100'),
+                })}
               </span>
             )}
 
@@ -38,16 +43,21 @@ const ToggleCard = forwardRef<HTMLDivElement, ToggleCardProps>(
               <Label id={id ?? title}>
                 <TitleWithInfo
                   title={title}
-                  variant="utility"
+                  variant="body1"
                   info={info}
                   titleComponent="span"
-                  className="text-mono-100 dark:text-mono-80"
+                  className="text-mono-180 dark:text-mono-40"
                   titleClassName="capitalize !text-inherit"
                 />
               </Label>
 
               {description && (
-                <Typography variant="body1">{description}</Typography>
+                <Typography
+                  className="text-mono-180 dark:text-mono-40"
+                  variant="body1"
+                >
+                  {description}
+                </Typography>
               )}
             </div>
           </div>
