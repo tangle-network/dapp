@@ -23,12 +23,8 @@ export type ToggleThemeModeFunc = (
 export function useDarkMode(
   defaultTheme: SupportTheme = 'dark'
 ): [boolean, ToggleThemeModeFunc] {
-  const currentLocalTheme = isBrowser()
-    ? (localStorage.getItem('theme') as SupportTheme)
-    : null;
-
   const [theme, setTheme] = useLocalStorageState('theme', {
-    defaultValue: currentLocalTheme ?? defaultTheme,
+    defaultValue: defaultTheme,
   });
 
   const isDarkMode = useMemo(() => theme === 'dark', [theme]);
