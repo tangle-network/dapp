@@ -6,10 +6,8 @@ import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { Hex } from 'viem';
 import {
   CMDSwitcher,
   Capabilities,
@@ -135,12 +133,6 @@ class RelayedWithdraw {
       }
 
       const { payload, chainId } = next;
-      const tx = Object.values(payload)[0];
-      const anchorIdentifier = tx.vAnchor['contract'];
-
-      const extData = tx.vAnchor['extData'];
-      const proofData = tx.vAnchor['proofData'];
-      const body = JSON.stringify({ extData, proofData });
 
       const baseOn = Object.keys(payload)[0];
       if (baseOn !== 'evm' && baseOn !== 'substrate') {
@@ -152,34 +144,37 @@ class RelayedWithdraw {
         return;
       }
 
+      const tx = Object.values(payload)[0];
+      const anchorIdentifier = tx.vAnchor['contract'];
+
+      const extData = tx.vAnchor['extData'];
+      const proofData = tx.vAnchor['proofData'];
+
+      const uri = this.getSendTxUri(baseOn, chainId, anchorIdentifier);
+      const body = JSON.stringify({ extData, proofData });
+
       try {
-        console.log(
-          'url',
-          this.getSendTxUri(baseOn, chainId, anchorIdentifier).toString()
+        this.logger.info(
+          `Sending tx to relayer: ${uri} with body: ${JSON.parse(body)}`
         );
-
-        console.log('body', body);
-        const resp = await fetch(
-          this.getSendTxUri(baseOn, chainId, anchorIdentifier).toString(),
-          {
-            method: 'POST',
-            body,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        console.log('resp: ', resp);
+        const resp = await fetch(uri, {
+          method: 'POST',
+          body,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
         const data: SendTxResponse = await resp.json();
-        console.log('data: ', data);
+        this.logger.info(`Got tx response from relayer: ${data}`);
         if (data.status === 'Sent') {
           const { itemKey } = data as SendTxResponse<'Sent'>;
 
           // Start pooling for the status of the tx until it's processed
           // or exit if got 404 error
           const queryStatus = async () => {
+            let timeout: ReturnType<typeof setTimeout> | undefined;
+
             try {
               const resp = await fetch(
                 this.getQueryStatusUri(baseOn, chainId, itemKey)
@@ -192,7 +187,7 @@ class RelayedWithdraw {
               this.emitter.next(handledMessage);
 
               if (this.status === RelayedWithdrawResult.Continue) {
-                setTimeout(queryStatus, this.POOLING_INTERVAL);
+                timeout = setTimeout(queryStatus, this.POOLING_INTERVAL);
               } else if (this.status === RelayedWithdrawResult.CleanExit) {
                 this.emitter.complete();
               }
@@ -208,6 +203,8 @@ class RelayedWithdraw {
               this.status = RelayedWithdrawResult.Errored;
               this.emitter.next([RelayedWithdrawResult.Errored, message]);
               this.emitter.complete();
+            } finally {
+              clearTimeout(timeout);
             }
           };
 
@@ -271,8 +268,6 @@ class RelayedWithdraw {
     T extends RelayedChainInput,
     C extends CMDSwitcher<T['baseOn']>
   >(chain: T, payload: WithdrawRelayerArgs<T['baseOn'], C>) {
-    console.log('withdraw payload: ', payload);
-
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -381,10 +376,6 @@ export class WebbRelayer {
 
     if (req.ok) {
       const jsonResponse = await req.json();
-      console.log(
-        `Response from ${this.endpoint} for chain ${chainsPopulated[typedChainId]?.name}: `,
-        jsonResponse
-      );
       const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
