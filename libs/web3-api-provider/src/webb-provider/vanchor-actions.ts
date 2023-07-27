@@ -391,7 +391,9 @@ export class Web3VAnchorActions extends VAnchorActions<
         { owner: account, keyData },
       ]);
 
-      await this.inner.walletClient.sendTransaction(request);
+      const txHash = await this.inner.walletClient.writeContract(request);
+
+      await this.inner.publicClient.waitForTransactionReceipt({ hash: txHash });
     } catch (ex) {
       this.inner.notificationHandler({
         description: 'Account Registration Failed',
@@ -904,7 +906,7 @@ export class Web3VAnchorActions extends VAnchorActions<
           );
 
       if (isRequiredApproval) {
-        let approvalHash: string;
+        let approvalHash: Hash;
 
         tx.next(TransactionState.Intermediate, {
           name: 'Approval is required for depositing',
@@ -915,26 +917,35 @@ export class Web3VAnchorActions extends VAnchorActions<
 
         if (isWrapOrUnwrap) {
           // approve the wrappable asset
-          approvalHash = await this.inner.walletClient.writeContract({
+          const tokenContract = getContract({
             address: ensureHex(wrapUnwrapToken),
             abi: ERC20__factory.abi,
-            functionName: 'approve',
-            args: [spenderAddress, approvalValue],
-            account,
-            chain: this.inner.walletClient.chain,
-            gas: BigInt('0x5B8D80'),
+            publicClient: this.inner.publicClient,
           });
+
+          const { request } = await tokenContract.simulate.approve(
+            [spenderAddress, approvalValue],
+            {
+              gas: BigInt('0x5B8D80'),
+            }
+          );
+
+          approvalHash = await this.inner.walletClient.writeContract(request);
         } else {
-          approvalHash = await this.inner.walletClient.writeContract({
-            address: currentWebbToken.address,
-            abi: currentWebbToken.abi,
-            functionName: 'approve',
-            args: [spenderAddress, amountBI],
-            account,
-            chain: this.inner.walletClient.chain,
-            gas: BigInt('0x5B8D80'),
-          });
+          // approve the token
+          const { request } = await currentWebbToken.simulate.approve(
+            [spenderAddress, amountBI],
+            {
+              gas: BigInt('0x5B8D80'),
+            }
+          );
+
+          approvalHash = await this.inner.walletClient.writeContract(request);
         }
+
+        await this.inner.publicClient.waitForTransactionReceipt({
+          hash: approvalHash,
+        });
 
         tx.next(TransactionState.Intermediate, {
           name: 'Approved',

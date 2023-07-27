@@ -153,7 +153,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         amount,
       ]);
 
-      const txHash = await this.inner.walletClient.sendTransaction(request);
+      const txHash = await this.inner.walletClient.writeContract(request);
 
       this.inner.notificationHandler({
         description: `Unwrapping ${amountNumber} of ${fungibleToken.view.name} to
@@ -271,7 +271,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
             amount,
           ]);
 
-          await this.inner.walletClient.sendTransaction(request);
+          await this.inner.walletClient.writeContract(request);
 
           this.inner.notificationHandler.remove('waiting-approval');
         }
@@ -282,7 +282,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
         amount,
       ]);
 
-      const txHash = await this.inner.walletClient.sendTransaction(request);
+      const txHash = await this.inner.walletClient.writeContract(request);
 
       this.inner.notificationHandler({
         description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
