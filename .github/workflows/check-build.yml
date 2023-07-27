@@ -32,22 +32,24 @@ jobs:
           touch .env
           echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
           echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
+
           echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
           echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
           echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
           echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
           echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
+
           echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
 
-          touch apps/bridge-dapp/.env
-          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> apps/bridge-dapp/.env
-          echo WALLET_CONNECT_PROJECT_ID=${{ secrets.WALLET_CONNECT_PROJECT_ID }} >> apps/bridge-dapp/.env
-          echo HOSTED_ORBIT_MULTLICALL3_ADDRESS=${{ secrets.HOSTED_ORBIT_MULTLICALL3_ADDRESS }} >> apps/bridge-dapp/.env
-          echo ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> apps/bridge-dapp/.env
-          echo HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> apps/bridge-dapp/.env
-          echo DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> apps/bridge-dapp/.env
+
+          echo BRIDGE_DAPP_DOMAIN=${{ secrets.BRIDGE_DAPP_DOMAIN }} >> .env
+          echo BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID=${{ secrets.BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID }} >> .env
+          echo BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS=${{ secrets.BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS }} >> .env
+          echo BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
+          echo BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
+          echo BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
 
       - name: Install deps
         run: yarn install

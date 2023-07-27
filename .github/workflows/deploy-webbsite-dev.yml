@@ -83,7 +83,9 @@ jobs:
           echo "NETLIFY_LOGS_URL=$LOGS_URL" >> $GITHUB_OUTPUT
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.1
+        # Use master branch to fix issue with entrypoint.sh script
+        # https://github.com/unsplash/comment-on-pr/issues/51
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MSG: |
