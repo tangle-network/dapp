@@ -27,7 +27,7 @@ export * from './CommonWealth';
 export * from './Copyright';
 export * from './CornerDownRightLine';
 export * from './CopyLinkFill';
-export * from './ContrastLine'
+export * from './ContrastLine';
 export * from './ContrastTwoLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';

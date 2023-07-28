@@ -62,7 +62,10 @@ export const BreadcrumbsItem = React.forwardRef<
       ref={ref}
     >
       {icon}
-      <Typography variant="label" className="capitalize !font-semibold dark:text-mono-0">
+      <Typography
+        variant="label"
+        className="capitalize !font-semibold dark:text-mono-0"
+      >
         {children}
       </Typography>
     </Chip>

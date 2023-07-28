@@ -9,7 +9,8 @@ export const BreadcrumbsSeparator = React.forwardRef<
   const { children, className: classNameProp } = props;
 
   const baseClsx = useMemo(
-    () => 'inline-flex pointer-events-none !text-mono-120 dark:!text-mono-80 font-bold mx-2',
+    () =>
+      'inline-flex pointer-events-none !text-mono-120 dark:!text-mono-80 font-bold mx-2',
     []
   );
 
