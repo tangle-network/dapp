@@ -1,5 +1,4 @@
 'use client';
-
 import {
   WebbUIProvider,
   Footer,
@@ -10,7 +9,14 @@ import {
   FooterProps,
 } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
-import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
+import {
+  CoinIcon,
+  ContrastLine,
+  ContrastTwoLine,
+  DocumentationIcon,
+  GridFillIcon,
+  Tangle,
+} from '@webb-tools/icons';
 import {
   BRIDGE_URL,
   WEBB_FAUCET_URL,
@@ -19,7 +25,9 @@ import {
   WEBB_DOCS_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { Header } from '../components';
+import { usePathname } from 'next/navigation';
+import { Breadcrumb, Header } from '../components';
+import { useMemo } from 'react';
 
 export default function RootLayout({
   children,
@@ -77,6 +85,35 @@ export default function RootLayout({
     Icon: DocumentationIcon,
   };
 
+  const pathname = usePathname();
+
+  const breadCrumbs = useMemo(() => {
+    const parts = pathname.split('/');
+    const activeItem = parts[parts.length - 1];
+
+    const breadCrumbItems: Breadcrumb[] = [
+      {
+        label: 'Hubble Overview',
+        isLast: activeItem !== '' ? false : true,
+        icon: (
+          <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
+        ),
+        href: '/',
+      },
+    ];
+
+    if (activeItem !== '') {
+      breadCrumbItems.push({
+        label: activeItem,
+        isLast: true,
+        icon: <CoinIcon />,
+        href: '',
+      });
+    }
+
+    return breadCrumbItems;
+  }, [pathname]);
+
   return (
     <html lang="en">
       <WebbUIProvider defaultThemeMode="light">
@@ -90,7 +127,11 @@ export default function RootLayout({
           />
 
           <main className="flex-1 px-10 overflow-y-auto">
-            <Header />
+            <Header
+              breadcrumbs={breadCrumbs}
+              tvlValue="$13,642,124"
+              volumeValue="$8,562,122"
+            />
             {children}
             <Footer isMinimal style={{ background: 'inherit' }} />
           </main>

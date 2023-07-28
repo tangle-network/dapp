@@ -8,7 +8,10 @@ export const BreadcrumbsSeparator = React.forwardRef<
 >((props, ref) => {
   const { children, className: classNameProp } = props;
 
-  const baseClsx = useMemo(() => 'inline-flex pointer-events-none', []);
+  const baseClsx = useMemo(
+    () => 'inline-flex pointer-events-none !text-mono-120 dark:!text-mono-80 font-bold mx-2',
+    []
+  );
 
   const className = useMemo(
     () => twMerge(baseClsx, classNameProp),

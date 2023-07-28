@@ -1,4 +1,4 @@
-import { BlockIcon, GridFillIcon, Spinner } from '@webb-tools/icons';
+import { BlockIcon, Spinner } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
   Breadcrumbs,
@@ -7,27 +7,26 @@ import {
   ChipProps,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import React from 'react';
+import { HeaderProps } from './types';
 
-const Header = () => {
-  const tvl = useMemo(() => {
-    return 'TVL: $13,642,124';
-  }, []);
-
-  const volume = useMemo(() => {
-    return 'volume: $8,562,122';
-  }, []);
-
+const Header = ({ breadcrumbs, tvlValue, volumeValue }: HeaderProps) => {
   return (
     <div className="flex items-center justify-between pt-6 pb-4">
       {/* Breadcrumbs */}
       <div>
         <Breadcrumbs>
-          <Link href="/">
-            <BreadcrumbsItem icon={<GridFillIcon />} className="ml-0">
-              Hubble Overview
-            </BreadcrumbsItem>
-          </Link>
+          {breadcrumbs.map((breadcrumb, index) => (
+            <Link key={index} href={breadcrumb.href}>
+              <BreadcrumbsItem
+                icon={breadcrumb.icon}
+                className={breadcrumb.className}
+                isLast={breadcrumb.isLast}
+              >
+                {breadcrumb.label}
+              </BreadcrumbsItem>
+            </Link>
+          ))}
         </Breadcrumbs>
       </div>
 
@@ -38,16 +37,16 @@ const Header = () => {
           Icon={BlockIcon}
           iconSize="lg"
           iconClassName="stroke-blue-90 dark:stroke-blue-30"
-          value={tvl}
-          isLoading={tvl ? false : true}
+          value={tvlValue}
+          isLoading={tvlValue ? false : true}
         />
         <VolumeChip
           color="blue"
           Icon={BlockIcon}
           iconSize="lg"
           iconClassName="stroke-blue-90 dark:stroke-blue-30"
-          value={volume}
-          isLoading={volume ? false : true}
+          value={volumeValue}
+          isLoading={volumeValue ? false : true}
         />
       </div>
     </div>
