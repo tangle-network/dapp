@@ -4,12 +4,9 @@ import { useState, forwardRef } from 'react';
 import cx from 'classnames';
 import useLocalStorageState from 'use-local-storage-state';
 import { twMerge } from 'tailwind-merge';
-import { ChevronLeft, ChevronRight, ExternalLinkLine } from '@webb-tools/icons';
+import { ChevronLeft, ChevronRight } from '@webb-tools/icons';
 
-import { Typography } from '../../typography/Typography';
-import { Link } from '../Link';
-import { ThemeToggle } from '../ThemeToggle';
-import { SideBarItem } from './Item';
+import { SideBarLogo, SideBarItems, SideBarFooter } from '.';
 import { SidebarProps } from './types';
 
 /**
@@ -39,7 +36,6 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       }
     );
 
-    const [activeItem, setActiveItem] = useState<number | null>(0);
     const [isHovering, setIsHovering] = useState(false);
 
     return (
@@ -58,30 +54,13 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
         >
           <div>
             <div className={isSidebarOpen ? 'px-2' : ''}>
-              <a
-                href={logoLink ? logoLink : '/'}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {!isSidebarOpen && ClosedLogo ? (
-                  <ClosedLogo />
-                ) : (
-                  <Logo size="md" />
-                )}
-              </a>
+              <SideBarLogo
+                logoLink={logoLink}
+                Logo={!isSidebarOpen && ClosedLogo ? ClosedLogo : Logo}
+              />
             </div>
 
-            <div className="flex flex-col gap-4 mt-11">
-              {items.map((itemProps, index) => (
-                <SideBarItem
-                  key={index}
-                  {...itemProps}
-                  isSidebarOpen={isSidebarOpen}
-                  isActive={activeItem === index}
-                  setIsActive={() => setActiveItem(index)}
-                />
-              ))}
-            </div>
+            <SideBarItems items={items} isExpanded={isSidebarOpen} />
           </div>
 
           <div
@@ -89,53 +68,14 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           />
 
-          <div
-            className={twMerge(
-              'flex items-center justify-between',
-              isSidebarOpen ? 'p-2' : 'pl-1'
-            )}
-          >
-            <div className="flex items-center justify-between group">
-              <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                <footer.Icon
-                  width={24}
-                  height={24}
-                  className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                />
-              </Link>
-
-              {isSidebarOpen && (
-                <>
-                  <div className={isSidebarOpen ? 'pl-4' : ''}>
-                    <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                      <Typography
-                        variant="body1"
-                        className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
-                      >
-                        {footer.name}
-                      </Typography>
-                    </Link>
-                  </div>
-
-                  {!footer.isInternal ? (
-                    <div className={isSidebarOpen ? 'pl-[26px]' : ''}>
-                      <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                        <ExternalLinkLine
-                          className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                          width={24}
-                          height={24}
-                        />
-                      </Link>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </>
-              )}
-            </div>
-
-            {isSidebarOpen && <ThemeToggle />}
-          </div>
+          <SideBarFooter
+            name={footer.name}
+            Icon={footer.Icon}
+            isInternal={footer.isInternal}
+            href={footer.href}
+            isExpanded={isSidebarOpen}
+            className={isSidebarOpen ? 'p-2' : 'pl-1'}
+          />
         </div>
 
         {isHovering && (

@@ -1,22 +1,21 @@
 'use client';
 
-import { useState, forwardRef } from 'react';
-import cx from 'classnames';
+import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
 import * as Dialog from '@radix-ui/react-dialog';
-import { HamburgerMenu, ExternalLinkLine } from '@webb-tools/icons';
+import { HamburgerMenu } from '@webb-tools/icons';
 
-import { Typography } from '../../typography/Typography';
-import { SideBarItem } from './Item';
-import { ThemeToggle } from '../ThemeToggle';
-import { Link } from '../Link';
+import { SideBarLogo, SideBarItems, SideBarFooter } from '.';
 import { SidebarProps } from './types';
 
 export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
   ({ Logo, ClosedLogo, logoLink, items, footer, className, ...props }, ref) => {
-    const [activeItem, setActiveItem] = useState<number | null>(0);
-
     return (
-      <div className={cx('flex items-center', className)} {...props} ref={ref}>
+      <div
+        className={twMerge('flex items-center', className)}
+        {...props}
+        ref={ref}
+      >
         <Dialog.Root>
           <Dialog.Trigger>
             <HamburgerMenu
@@ -28,7 +27,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.1)] animate-[showDialogOverlay_150ms]" />
             <Dialog.Content
-              className={cx(
+              className={twMerge(
                 'w-[280px] h-full overflow-auto py-6 px-4',
                 '!bg-mono-0 dark:!bg-mono-160 fixed left-0',
                 'animate-[sideBarSlideLeftToRight_400ms]',
@@ -36,65 +35,18 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
               )}
             >
               <div>
-                <a
-                  href={logoLink ? logoLink : '/'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Logo size="md" />
-                </a>
-
-                <div className="mt-11 flex flex-col gap-4">
-                  {items.map((itemProps, index) => (
-                    <SideBarItem
-                      key={index}
-                      {...itemProps}
-                      isSidebarOpen={true}
-                      isActive={activeItem === index}
-                      setIsActive={() => setActiveItem(index)}
-                    />
-                  ))}
-                </div>
+                <SideBarLogo logoLink={logoLink} Logo={Logo} />
+                <SideBarItems items={items} isExpanded />
               </div>
 
-              <div className="flex items-center justify-between gap-2 p-2">
-                <div className="group flex items-center justify-between">
-                  <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                    <footer.Icon
-                      width={24}
-                      height={24}
-                      className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                    />
-                  </Link>
-
-                  <div className="pl-2">
-                    <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                      <Typography
-                        variant="body1"
-                        className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
-                      >
-                        {footer.name}
-                      </Typography>
-                    </Link>
-                  </div>
-
-                  {!footer.isInternal ? (
-                    <div className="pl-[26px]">
-                      <Link href={footer.href} aTagProps={{ target: '_blank' }}>
-                        <ExternalLinkLine
-                          className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                          width={24}
-                          height={24}
-                        />
-                      </Link>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </div>
-
-                <ThemeToggle />
-              </div>
+              <SideBarFooter
+                name={footer.name}
+                Icon={footer.Icon}
+                isInternal={footer.isInternal}
+                href={footer.href}
+                isExpanded
+                className="gap-2 p-2"
+              />
             </Dialog.Content>
           </Dialog.Portal>
         </Dialog.Root>

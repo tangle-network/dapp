@@ -2,21 +2,35 @@ import { IconBase } from '@webb-tools/icons/types';
 
 import { LogoProps } from '../Logo/types';
 
-export type SideBarFooterProps = {
+type SideBarFooterType = {
   name: string;
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
 };
 
-export type SidebarProps = {
-  Logo: React.FC<LogoProps>;
-  ClosedLogo?: React.FC<LogoProps>;
-  logoLink?: string;
-  items: SideBarItemProps[];
-  footer: SideBarFooterProps;
+export interface SideBarFooterProps extends SideBarFooterType {
+  isExpanded: boolean;
   className?: string;
-};
+}
+
+export interface SideBarLogoProps {
+  Logo: React.FC<LogoProps>;
+  logoLink?: string;
+}
+
+export interface SidebarProps extends SideBarLogoProps {
+  ClosedLogo?: React.FC<LogoProps>;
+  items: SideBarItemProps[];
+  footer: SideBarFooterType;
+  className?: string;
+}
+
+export interface SideBarItemsProps {
+  items: SideBarItemProps[];
+  isExpanded: boolean;
+  className?: string;
+}
 
 export type SideBarItemProps = {
   name: string;
@@ -27,7 +41,7 @@ export type SideBarItemProps = {
 };
 
 export type SideBarExtraItemProps = {
-  isSidebarOpen?: boolean;
+  isExpanded?: boolean;
   isActive?: boolean;
   setIsActive?: () => void;
 };
