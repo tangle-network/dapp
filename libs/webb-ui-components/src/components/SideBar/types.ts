@@ -2,7 +2,7 @@ import { IconBase } from '@webb-tools/icons/types';
 
 import { LogoProps } from '../Logo/types';
 
-type SideBarFooterType = {
+export type SideBarFooterType = {
   name: string;
   isInternal: boolean;
   href: string;

@@ -2,7 +2,7 @@ import {
   Logo,
   LogoWithoutName,
   SideBarItemProps,
-  SideBarFooterProps,
+  SideBarFooterType,
   SidebarProps,
 } from '@webb-tools/webb-ui-components';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
@@ -59,7 +59,7 @@ const sideBarItems: SideBarItemProps[] = [
   },
 ];
 
-const sideBarFooter: SideBarFooterProps = {
+const sideBarFooter: SideBarFooterType = {
   name: 'Webb Docs',
   isInternal: false,
   href: WEBB_DOCS_URL,

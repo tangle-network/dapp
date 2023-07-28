@@ -3,7 +3,7 @@ import {
   Banner,
   Footer,
   SideBarItemProps,
-  SideBarFooterProps,
+  SideBarFooterType,
   Logo,
   LogoWithoutName,
   SideBar,
@@ -60,7 +60,7 @@ const items: SideBarItemProps[] = [
   },
 ];
 
-const footer: SideBarFooterProps = {
+const footer: SideBarFooterType = {
   name: 'Webb Docs',
   isInternal: false,
   href: WEBB_DOCS_URL,
