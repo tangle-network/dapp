@@ -67,6 +67,8 @@ export enum WebbErrorCodes {
   SwitchAccountFailed,
   // Switch chain failed
   SwitchChainFailed,
+  // Failed to send the transaction to the relayer
+  FailedToSendTx,
 }
 
 // An Error message with error metadata
@@ -300,6 +302,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to switch chain',
+        };
+
+      case WebbErrorCodes.FailedToSendTx:
+        return {
+          code,
+          message: 'Failed to send the transaction to the relayer',
         };
 
       default:

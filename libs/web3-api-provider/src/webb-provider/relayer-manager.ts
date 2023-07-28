@@ -24,6 +24,7 @@ import {
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
+import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
 import { GetContractReturnType, PublicClient } from 'viem';
 
 export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
@@ -183,8 +184,11 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
         }
 
         // Cached all the leaves returned from the relayer to re-use later
-        await storage.set('lastQueriedBlock', lastQueriedBlock);
-        await storage.set('leaves', leaves);
+        // if the chain id is not localnet
+        if (!LOCALNET_CHAIN_IDS.includes(+`${sourceEvmId}`)) {
+          await storage.set('lastQueriedBlock', lastQueriedBlock);
+          await storage.set('leaves', leaves);
+        }
 
         // Return the leaves for proving
         return result;

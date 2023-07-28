@@ -228,7 +228,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     console.log('Relay tx payload', relayTxPayload);
 
     // Send the transaction to the relayer.
-    relayedVAnchorWithdraw.send(relayTxPayload);
+    relayedVAnchorWithdraw.send(relayTxPayload, chainId);
 
     const results = await relayedVAnchorWithdraw.await();
     if (results) {

@@ -126,7 +126,7 @@ export const useMaxFeeInfo = (
           return;
         }
 
-        const gasAmount = gasLimit[currentTypedChainId];
+        const gasAmount = gasLimit[currentTypedChainId] ?? gasLimit.default;
         if (!gasAmount) {
           throw new Error(
             `No gas amount config for current chain: ${currentTypedChainId}`

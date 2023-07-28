@@ -23,9 +23,9 @@ export enum EVMChainId {
   DemeterOrbit = 3884533463,
 
   /** Local EVM */
-  HermesLocalnet = 5004,
-  AthenaLocalnet = 5005,
-  DemeterLocalnet = 5006,
+  HermesLocalnet = 5001,
+  AthenaLocalnet = 5002,
+  DemeterLocalnet = 5003,
 }
 
 export default EVMChainId;

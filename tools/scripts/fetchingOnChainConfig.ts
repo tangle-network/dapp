@@ -1,4 +1,17 @@
+import path from 'path';
+import { workspaceRoot } from 'nx/src/utils/workspace-root';
+import { config } from 'dotenv';
+
+config({
+  path: path.join(workspaceRoot, '.env'),
+});
+
+config({
+  path: path.join(workspaceRoot, 'apps/bridge-dapp', '.env'),
+});
+
 import { ApiPromise } from '@polkadot/api';
+import merge from 'lodash/merge';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
@@ -17,8 +30,6 @@ import {
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import fs from 'fs';
 import { Listr, color } from 'listr2';
-import { workspaceRoot } from 'nx/src/utils/workspace-root';
-import path from 'path';
 import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
@@ -54,7 +65,7 @@ async function filterActiveEVMChains(
         )
         .map(async (typedChainId) => {
           try {
-            const provider = await evmProviderFactory(typedChainId);
+            const provider = evmProviderFactory(typedChainId);
             await provider.getChainId();
             return typedChainId;
           } catch (error) {
@@ -92,7 +103,7 @@ async function filterActiveSubstrateChains(
 }
 
 function fetchNativeTask(typedChainIds: number[]) {
-  return typedChainIds.map((typedChainId) => {
+  return typedChainIds.reduce((acc, typedChainId) => {
     const { chainType } = parseTypedChainId(typedChainId);
     let currencyId: string = '';
 
@@ -114,11 +125,15 @@ function fetchNativeTask(typedChainIds: number[]) {
       }
     }
 
-    return {
+    const native = {
       ...chainsConfig[typedChainId].nativeCurrency,
       address: currencyId,
     } satisfies ICurrency;
-  });
+
+    acc[typedChainId] = native;
+
+    return acc;
+  }, {} as Record<number, ICurrency>);
 }
 
 async function fetchAnchorMetadataTask(
@@ -150,6 +165,45 @@ async function fetchAnchorMetadataTask(
         metadata,
       };
     })
+  );
+
+  metadataWithTypedChainId.forEach(
+    ({ typedChainId, metadata: metadataArray }) => {
+      metadataArray.forEach((metadata) => {
+        const currentAnchor = metadata.address;
+
+        const linkableAnchorByAddress = metadataWithTypedChainId
+          .filter(
+            ({ typedChainId: otherTypedChainId }) =>
+              otherTypedChainId !== typedChainId
+          )
+          .filter(({ metadata }) =>
+            metadata.some((m) => m.address === currentAnchor)
+          );
+
+        // Aggregate the linkable anchors
+        const aggregateAnchor = linkableAnchorByAddress.reduce(
+          (acc, { typedChainId, metadata }) => {
+            const otherAnchor = metadata.find(
+              (m) => m.address === currentAnchor
+            )?.address;
+
+            if (otherAnchor) {
+              acc[typedChainId] = otherAnchor;
+            }
+
+            return acc;
+          },
+          {} as Record<number, string>
+        );
+
+        // Merge the aggregate anchor into the current linkable anchors
+        metadata.linkableAnchor = merge(
+          metadata.linkableAnchor,
+          aggregateAnchor
+        );
+      });
+    }
   );
 
   const metadataRecord = metadataWithTypedChainId.reduce(
