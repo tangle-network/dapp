@@ -1,5 +1,7 @@
 import React, { cloneElement, useMemo } from 'react';
 import { Spinner } from './Spinner';
+import StatusIndicator from './StatusIndicator';
+import { StatusIndicatorProps } from './StatusIndicator/types';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
@@ -7,10 +9,9 @@ import { getIconSizeInPixel } from './utils';
 // If the chain name contains `tangle`, then it is a tangle chain
 const TANGLE_CHAIN = 'tangle';
 
-export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
-  isActive,
-  ...props
-}) => {
+export const ChainIcon: React.FC<
+  TokenIconBase & { status?: StatusIndicatorProps['variant'] }
+> = ({ status, ...props }) => {
   const {
     className,
     name: nameProp,
@@ -52,10 +53,13 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
       ...restProps,
     };
 
-    return isActive ? (
+    return typeof status !== 'undefined' ? (
       <div className="relative">
         {cloneElement(svgElement, props)}
-        <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
+        <StatusIndicator
+          variant={status}
+          className="absolute top-0 right-0 inline-block"
+        />
       </div>
     ) : (
       cloneElement(svgElement, props)

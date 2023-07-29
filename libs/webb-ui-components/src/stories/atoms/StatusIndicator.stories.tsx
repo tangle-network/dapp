@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import StatusIndicator from '../../components/StatusIndicator';
+import StatusIndicator from '@webb-tools/icons/StatusIndicator';
 
 const meta: Meta<typeof StatusIndicator> = {
   title: 'Design System/V2 (WIP)/Atoms/StatusIndicator',

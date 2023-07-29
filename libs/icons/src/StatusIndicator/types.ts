@@ -1,8 +1,8 @@
-import { PropsOf } from '../../types';
+import { ComponentProps } from 'react';
 
 export type StatusVariant = 'success' | 'warning' | 'error' | 'info';
 
-export interface StatusIndicatorProps extends PropsOf<'svg'> {
+export interface StatusIndicatorProps extends ComponentProps<'svg'> {
   /**
    * The color variant of the status indicator.
    * @default 'info'
