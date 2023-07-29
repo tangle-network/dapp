@@ -1,6 +1,7 @@
 import { IconBase } from '@webb-tools/icons/types';
 import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 
@@ -175,4 +176,6 @@ export type ChainButtonProps = PropsOf<'button'> & {
    * The typed chain id to display in the button
    */
   chain: ChainConfig;
+
+  status?: StatusIndicatorProps['variant'];
 };

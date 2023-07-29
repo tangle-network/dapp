@@ -46,10 +46,11 @@ export const ChainIcon: React.FC<
 
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
+    const sizeInNumber = parseInt(sizeInPx);
     const props: React.SVGProps<SVGSVGElement> = {
       className,
-      width: parseInt(sizeInPx),
-      height: parseInt(sizeInPx),
+      width: sizeInNumber,
+      height: sizeInNumber,
       ...restProps,
     };
 
@@ -58,7 +59,12 @@ export const ChainIcon: React.FC<
         {cloneElement(svgElement, props)}
         <StatusIndicator
           variant={status}
-          className="absolute top-0 right-0 inline-block"
+          size={sizeInNumber / 2}
+          className="absolute inline-block"
+          style={{
+            top: -(sizeInNumber / 4),
+            right: -(sizeInNumber / 4),
+          }}
         />
       </div>
     ) : (

@@ -19,3 +19,12 @@ export const Default: Story = {
     <ChainButton chain={chainsConfig[PresetTypedChainId.Sepolia]} />
   ),
 };
+
+export const WithStatus: Story = {
+  render: () => (
+    <ChainButton
+      chain={chainsConfig[PresetTypedChainId.Sepolia]}
+      status="success"
+    />
+  ),
+};

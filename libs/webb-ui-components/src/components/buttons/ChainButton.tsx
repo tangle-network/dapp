@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
-  ({ className, chain, ...props }, ref) => {
+  ({ className, chain, status, ...props }, ref) => {
     // Get last word of chain name to prevent long names from overflowing
     const shortName = chain.name.split(' ').pop() ?? 'Unknown';
 
@@ -26,6 +26,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
       >
         <div className="flex items-center gap-1">
           <ChainIcon
+            status={status}
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
             name={chain.name}
