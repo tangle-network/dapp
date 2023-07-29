@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { FileUploadAreaProps } from './types';
 
 export const FileUploadArea = forwardRef<HTMLDivElement, FileUploadAreaProps>(

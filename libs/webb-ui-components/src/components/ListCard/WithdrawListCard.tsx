@@ -8,7 +8,7 @@ import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, MouseEventHandler, useMemo } from 'react';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { ScrollArea } from '../ScrollArea';
 import { TokenPair } from '../TokenPair';
 import { ListCardWrapper } from './ListCardWrapper';

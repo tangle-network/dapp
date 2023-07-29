@@ -1,6 +1,6 @@
 import { PropsOf, WebbComponentBase } from '../../types';
 import { ComponentProps } from 'react';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 
 export interface BannerPropsType extends WebbComponentBase {
   /**

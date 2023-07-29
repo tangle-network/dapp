@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../../components/Button';
+import { Button } from '../../components/buttons';
 import { Typography } from '../../typography';
 import { TransactionCardFooterProps, TransactionCardItemProps } from './types';
 

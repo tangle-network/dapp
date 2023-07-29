@@ -8,7 +8,7 @@ import Lottie from 'lottie-react';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../../components/Button';
+import { Button } from '../../components/buttons';
 import { Chip, ChipColors } from '../../components/Chip';
 import { Disclaimer } from '../../components/Disclaimer';
 import { Typography } from '../../typography';
