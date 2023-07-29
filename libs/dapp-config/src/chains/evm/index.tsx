@@ -7,14 +7,16 @@ import {
   goerli,
   moonbaseAlpha,
   optimismGoerli,
-  polygonMumbai,
+  polygonMumbai as polygonMumbai_,
   scrollTestnet,
   sepolia,
   type Chain,
 } from '@wagmi/chains';
 import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import merge from 'lodash/merge';
 import mergeWith from 'lodash/mergeWith';
+import cloneDeep from 'lodash/cloneDeep';
 import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
@@ -54,11 +56,24 @@ const localDemeterMulticall3DeploymentBlock = process.env
   ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
+// Default rpc url of mumbai is not working so we orverride it
+// endpoint here: https://chainid.network/chains.json
+const polygonMumbai = merge(cloneDeep(polygonMumbai_), {
+  rpcUrls: {
+    default: {
+      http: ['https://endpoints.omniatech.io/v1/matic/mumbai/public'],
+    },
+    public: {
+      http: ['https://endpoints.omniatech.io/v1/matic/mumbai/public'],
+    },
+  },
+});
+
 const mergeChain = (
   chain: Chain,
   extended: WebbExtendedChain & { rpcUrls: Chain['rpcUrls'] }
 ): ChainConfig => {
-  return mergeWith(chain, extended, (objValue, srcValue) => {
+  return mergeWith(cloneDeep(chain), extended, (objValue, srcValue) => {
     if (Array.isArray(objValue)) {
       return objValue.concat(srcValue);
     }
@@ -81,7 +96,7 @@ const additionalRpcUrls = {
     'https://arbitrum-goerli.publicnode.com',
   ],
   [PresetTypedChainId.PolygonTestnet]: [
-    'https://endpoints.omniatech.io/v1/matic/mumbai/public',
+    'https://polygon-mumbai.blockpi.network/v1/rpc/public',
     'https://polygon-mumbai-bor.publicnode.com/',
   ],
   [PresetTypedChainId.MoonbaseAlpha]: [
