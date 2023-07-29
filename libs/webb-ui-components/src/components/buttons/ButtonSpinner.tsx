@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { ButtonSpinnerProps } from './types';
 
-export const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
+const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
   const {
     children = <Spinner darkMode={props.darkMode} className="w-5 h-5" />,
     className,
@@ -21,3 +21,5 @@ export const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
 
   return <div className={mergedClassName}>{children}</div>;
 };
+
+export default ButtonSpinner;
