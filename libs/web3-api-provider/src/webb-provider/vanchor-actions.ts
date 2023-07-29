@@ -26,9 +26,7 @@ import {
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { ApiConfig, ensureHex, ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import gasLimitConfig, {
-  DEFAULT_GAS_LIMIT,
-} from '@webb-tools/dapp-config/gasLimitConfig';
+import gasLimitConfig from '@webb-tools/dapp-config/gasLimitConfig';
 import {
   checkNativeAddress,
   WebbError,
@@ -255,7 +253,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       });
 
     // Subscribe to the relayer's transaction status.
-    relayedVAnchorWithdraw.watcher.subscribe(([results, message]) => {
+    relayedVAnchorWithdraw.watcher.subscribe(([results]) => {
       switch (results) {
         case RelayedWithdrawResult.PreFlight:
           tx.next(TransactionState.SendingTransaction, '');
@@ -285,7 +283,6 @@ export class Web3VAnchorActions extends VAnchorActions<
 
             this.inner.noteManager?.removeNote(resourceId, note);
           });
-          tx.fail(message ? message : 'Transaction failed');
           break;
         }
       }
@@ -296,7 +293,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     // Send the transaction to the relayer.
-    relayedVAnchorWithdraw.send(relayedDepositTxPayload);
+    relayedVAnchorWithdraw.send(relayedDepositTxPayload, +`${chainId}`);
     const results = await relayedVAnchorWithdraw.await();
     if (results) {
       const [, message] = results;
@@ -326,7 +323,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     tx.next(TransactionState.SendingTransaction, '');
 
     const typedChainId = this.inner.typedChainId;
-    const gasLimit = gasLimitConfig[typedChainId] ?? DEFAULT_GAS_LIMIT;
+    const gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
 
     const hash = await vAnchor.transact(
       inputs,
@@ -390,11 +387,14 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     try {
-      const { request } = await vAnchorContract.simulate.register([
-        { owner: account, keyData },
-      ]);
+      const { request } = await vAnchorContract.simulate.register(
+        [{ owner: account, keyData }],
+        { account }
+      );
 
-      await this.inner.walletClient.sendTransaction(request);
+      const txHash = await this.inner.walletClient.writeContract(request);
+
+      await this.inner.publicClient.waitForTransactionReceipt({ hash: txHash });
     } catch (ex) {
       this.inner.notificationHandler({
         description: 'Account Registration Failed',
@@ -903,7 +903,7 @@ export class Web3VAnchorActions extends VAnchorActions<
           );
 
       if (isRequiredApproval) {
-        let approvalHash: string;
+        let approvalHash: Hash;
 
         tx.next(TransactionState.Intermediate, {
           name: 'Approval is required for depositing',
@@ -924,21 +924,27 @@ export class Web3VAnchorActions extends VAnchorActions<
             [spenderAddress, approvalValue],
             {
               gas: BigInt('0x5B8D80'),
+              account,
             }
           );
 
-          approvalHash = await this.inner.walletClient.sendTransaction(request);
+          approvalHash = await this.inner.walletClient.writeContract(request);
         } else {
           // approve the token
           const { request } = await currentWebbToken.simulate.approve(
             [spenderAddress, amountBI],
             {
               gas: BigInt('0x5B8D80'),
+              account,
             }
           );
 
-          approvalHash = await this.inner.walletClient.sendTransaction(request);
+          approvalHash = await this.inner.walletClient.writeContract(request);
         }
+
+        await this.inner.publicClient.waitForTransactionReceipt({
+          hash: approvalHash,
+        });
 
         tx.next(TransactionState.Intermediate, {
           name: 'Approved',

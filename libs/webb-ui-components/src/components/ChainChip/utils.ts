@@ -42,7 +42,7 @@ const classNames: ChainChipClassNames = {
     default: 'text-mono-0 bg-[#323653]',
   },
   'webb-dev': {
-    default: 'text-mono-0 dark:text-mono-0 bg-[#ffffff]',
+    default: 'text-mono-0 dark:text-mono-0 bg-[#D9780F]',
   },
 };
 

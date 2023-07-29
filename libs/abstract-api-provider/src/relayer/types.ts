@@ -1,10 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { HexString } from '@polkadot/util/types';
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { IVariableAnchorExtData } from '@webb-tools/interfaces';
+import { Hash, Hex } from 'viem';
 import { ActiveWebbRelayer, WebbRelayer } from '.';
-import { HexString } from '@polkadot/util/types';
 
 /**
  * Relayer configuration for a chain
@@ -176,9 +177,16 @@ export interface Errored {
  * @param network - Relayer network status update
  **/
 export type RelayerMessage = {
-  withdraw?: Withdraw;
-  error?: string;
-  network?: string | { failed: { reason: string } };
+  itemKey: Hex;
+  status:
+    | 'Pending'
+    | { Processing: { step: string; progress: number } }
+    | { Failed: { reason: string } }
+    | {
+        Processed: {
+          txHash: Hash;
+        };
+      };
 };
 
 /**
@@ -333,3 +341,12 @@ export type WithdrawRelayerArgs<
 
 export type OptionalRelayer = WebbRelayer | null;
 export type OptionalActiveRelayer = ActiveWebbRelayer | null;
+
+export interface SendTxResponse<
+  Status extends 'Sent' | 'Failed' = 'Sent' | 'Failed'
+> {
+  status: Status;
+  message: string;
+  reason: Status extends 'Failed' ? string : never;
+  itemKey: Status extends 'Sent' ? Hex : never;
+}
