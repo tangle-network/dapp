@@ -620,16 +620,16 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
               if (currentChainId !== chain.id) {
                 await webbWeb3Provider.switchOrAddChain(chain.id);
-
-                // Emit events
-                appEvent.send('networkSwitched', [
-                  {
-                    chainType: chain.chainType,
-                    chainId: chain.id,
-                  },
-                  wallet.id,
-                ]);
               }
+
+              // Emit events
+              appEvent.send('networkSwitched', [
+                {
+                  chainType: chain.chainType,
+                  chainId: chain.id,
+                },
+                wallet.id,
+              ]);
 
               await setActiveApiWithAccounts(
                 webbWeb3Provider,
