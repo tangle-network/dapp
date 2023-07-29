@@ -1,5 +1,6 @@
 import { IconBase } from '@webb-tools/icons/types';
-import { IWebbComponentBase, WebbComponentBase } from '../../types';
+import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
+import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 
@@ -164,4 +165,14 @@ export type ButtonClassNames = {
     sm: string;
     md: string;
   };
+};
+
+/**
+ * The ChainButton component props
+ */
+export type ChainButtonProps = PropsOf<'button'> & {
+  /**
+   * The typed chain id to display in the button
+   */
+  chain: ChainConfig;
 };

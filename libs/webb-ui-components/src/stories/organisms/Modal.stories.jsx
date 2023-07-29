@@ -4,7 +4,7 @@ import { Modal } from '../../components/Modal/Modal';
 import { ModalTrigger } from '../../components/Modal/ModalTrigger';
 import { ModalContent } from '../../components/Modal/ModalContent';
 import { WalletConnectionCard } from '../../components/WalletConnectionCard';
-import { Button } from '../../components/Button';
+import { Button } from '../../components/buttons';
 import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
 import { WalletId } from '@webb-tools/dapp-types/WalletId';
 
