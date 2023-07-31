@@ -7,7 +7,6 @@ export type Breadcrumb = {
 };
 
 export type HeaderProps = {
-  breadcrumbs: Breadcrumb[];
   tvlValue: string;
   volumeValue: string;
 };

@@ -1,4 +1,4 @@
-import { BlockIcon, Spinner } from '@webb-tools/icons';
+import { BlockIcon, CoinIcon, ContrastLine, Spinner } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import {
   Breadcrumbs,
@@ -7,16 +7,46 @@ import {
   ChipProps,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
-import React from 'react';
-import { HeaderProps } from './types';
+import React, { useMemo } from 'react';
+import { HeaderProps, Breadcrumb } from './types';
+import { usePathname } from 'next/navigation';
 
-const Header = ({ breadcrumbs, tvlValue, volumeValue }: HeaderProps) => {
+const Header = ({ tvlValue, volumeValue }: HeaderProps) => {
+  const pathname = usePathname();
+
+  const breadCrumbs = useMemo(() => {
+    const parts = pathname.split('/');
+    const activeItem = parts[parts.length - 1];
+
+    const breadCrumbItems: Breadcrumb[] = [
+      {
+        label: 'Hubble Overview',
+        isLast: activeItem !== '' ? false : true,
+        icon: (
+          <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
+        ),
+        href: '/',
+      },
+    ];
+
+    if (activeItem !== '') {
+      breadCrumbItems.push({
+        label: activeItem,
+        isLast: true,
+        icon: <CoinIcon />,
+        href: '',
+      });
+    }
+
+    return breadCrumbItems;
+  }, [pathname]);
+
   return (
     <div className="flex items-center justify-between pt-6 pb-4">
       {/* Breadcrumbs */}
       <div>
         <Breadcrumbs>
-          {breadcrumbs.map((breadcrumb, index) => (
+          {breadCrumbs.map((breadcrumb, index) => (
             <Link key={index} href={breadcrumb.href}>
               <BreadcrumbsItem
                 icon={breadcrumb.icon}

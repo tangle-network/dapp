@@ -22,7 +22,7 @@ export const BreadcrumbsItem = React.forwardRef<
   HTMLSpanElement,
   BreadcrumbsItemPropsType
 >((props, ref) => {
-  const { isLast, icon, children, className: classNameProp } = props;
+  const { isLast = false, icon, children, className: classNameProp } = props;
 
   const baseClsx = useMemo(() => 'flex items-center gap-x-2 w-fit', []);
 
@@ -71,9 +71,3 @@ export const BreadcrumbsItem = React.forwardRef<
     </Chip>
   );
 });
-
-const BreadcrumbsItemsDefaultProps = {
-  isLast: false,
-};
-
-BreadcrumbsItem.defaultProps = BreadcrumbsItemsDefaultProps;
