@@ -13,6 +13,5 @@ export interface ShieldedAssetType {
 
 export interface ShieldedAssetsTableProps {
   data: ShieldedAssetType[];
-  globalSearchText: string;
   pageSize: number;
 }

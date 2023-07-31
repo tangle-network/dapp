@@ -1,5 +1,10 @@
-import { ItemProps, FooterProps } from '@webb-tools/webb-ui-components';
-import '@webb-tools/webb-ui-components/tailwind.css';
+import {
+  Logo,
+  LogoWithoutName,
+  SideBarItemProps,
+  SideBarFooterType,
+  SidebarProps,
+} from '@webb-tools/webb-ui-components';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
   BRIDGE_URL,
@@ -7,9 +12,10 @@ import {
   STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
+  WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
-export const sidebarItems: ItemProps[] = [
+const sideBarItems: SideBarItemProps[] = [
   {
     name: 'Hubble',
     isInternal: true,
@@ -53,9 +59,19 @@ export const sidebarItems: ItemProps[] = [
   },
 ];
 
-export const sidebarFooter: FooterProps = {
+const sideBarFooter: SideBarFooterType = {
   name: 'Webb Docs',
   isInternal: false,
   href: WEBB_DOCS_URL,
   Icon: DocumentationIcon,
 };
+
+const sideBarProps: SidebarProps = {
+  Logo,
+  ClosedLogo: LogoWithoutName,
+  items: sideBarItems,
+  footer: sideBarFooter,
+  logoLink: WEBB_MKT_URL,
+};
+
+export default sideBarProps;

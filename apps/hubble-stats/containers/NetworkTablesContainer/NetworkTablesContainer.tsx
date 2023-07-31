@@ -22,6 +22,8 @@ const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
     <div className="space-y-12">
       <TableAndChartTabs
         tabs={['TVL', 'Volume', '24H Deposits', 'Relayer Fees']}
+        headerClassName="w-full overflow-x-auto"
+        triggerClassName="whitespace-nowrap"
       >
         <NetworkPoolTable
           typedChainIds={typedChainIds}
@@ -30,7 +32,11 @@ const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
       </TableAndChartTabs>
 
       <div className="space-y-1">
-        <TableAndChartTabs tabs={['TWL', 'Wrapping Fees']}>
+        <TableAndChartTabs
+          tabs={['TWL', 'Wrapping Fees']}
+          headerClassName="w-full overflow-x-auto"
+          triggerClassName="whitespace-nowrap"
+        >
           <NetworkTokenTable
             typedChainIds={typedChainIds}
             data={networkTokenData}

@@ -2,10 +2,12 @@ import React from 'react';
 import { ExternalLinkLine } from '@webb-tools/icons';
 import { Typography } from '../../typography/Typography';
 import { twMerge } from 'tailwind-merge';
-import { SubItemProps, ExtraSubItemProps } from './types';
+import { SideBarSubItemProps, SideBarExtraSubItemProps } from './types';
 import { Link } from '../Link';
 
-export const SubItem: React.FC<SubItemProps & ExtraSubItemProps> = ({
+export const SubItem: React.FC<
+  SideBarSubItemProps & SideBarExtraSubItemProps
+> = ({
   name,
   isInternal,
   href,
