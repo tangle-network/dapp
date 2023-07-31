@@ -60,7 +60,7 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3.5.3
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.5.4
+        uses: lycheeverse/lychee-action@v1.8.0
         with:
           # Ignore the README.md file as some social sharing links are not valid
           args: --verbose --no-progress --exclude-path 'README.md' './**/*.md' './**/*.html' './**/*.rst'

@@ -16,6 +16,7 @@ export enum EVMChainId {
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollAlpha = 534353,
+  TangleTestnet = 4006,
 
   /** Self hosted EVM */
   AthenaOrbit = 3884533461,

@@ -221,6 +221,37 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
   },
 
+  [PresetTypedChainId.TangleTestnet]: {
+    chainType: ChainType.EVM,
+    id: EVMChainId.TangleTestnet,
+    name: 'Tangle Testnet',
+    network: 'Tangle',
+    group: 'webb-dev',
+    tag: 'test',
+    nativeCurrency: {
+      name: 'Test Tangle Network Token',
+      symbol: 'tTNT',
+      decimals: 18,
+    },
+    blockExplorers: {
+      default: {
+        name: 'Tangle Testnet Explorer',
+        url: 'https://tangle-testnet-explorer.webb.tools',
+      },
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://tangle-standalone-archive.webb.tools'],
+      },
+      public: {
+        http: ['https://tangle-standalone-archive.webb.tools'],
+      },
+    },
+    env: ['development', 'test'],
+    contracts: {
+      multicall3: undefined,
+    },
+  },
   // Localnet
   [PresetTypedChainId.HermesLocalnet]: {
     chainType: ChainType.EVM,

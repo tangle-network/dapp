@@ -8,6 +8,8 @@ const errorMessages: {
   [FaucetErrorCode.INVALID_STORE_KEY]: 'Invalid store key',
   [FaucetErrorCode.TWITTER_LOGIN_FAILED]: 'Twitter login failed',
   [FaucetErrorCode.INVALID_RESPONSE]: 'Invalid response',
+  [FaucetErrorCode.MISSING_CONTRACT_ADDRESS]:
+    'Missing contract address in the operation',
   [FaucetErrorCode.INVALID_REQUEST_BODY]: 'Invalid request body',
   [FaucetErrorCode.REFRESH_TOKENS_FAILED]: 'Refresh tokens failed',
   [FaucetErrorCode.TWITTER_LOGIN_DENIED]: 'Twitter login denied',

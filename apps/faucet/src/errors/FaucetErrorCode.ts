@@ -25,6 +25,11 @@ enum FaucetErrorCode {
   INVALID_REQUEST_BODY,
 
   /**
+   * Missing contract address in the operation
+   */
+  MISSING_CONTRACT_ADDRESS,
+
+  /**
    * Inavlid selected chain
    */
   INVALID_SELECTED_CHAIN,

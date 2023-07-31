@@ -116,6 +116,11 @@ export enum PresetTypedChainId {
     ChainType.EVM,
     EVMChainId.DemeterLocalnet
   ),
+
+  TangleTestnet = calculateTypedChainId(
+    ChainType.EVM,
+    EVMChainId.TangleTestnet
+  ),
 }
 
 export { EVMChainId, SubstrateChainId };
