@@ -194,7 +194,7 @@
     "@types/react-dom": "18.2.4",
     "@types/react-router-dom": "5.3.3",
     "@typescript-eslint/eslint-plugin": "5.62.0",
-    "@typescript-eslint/parser": "5.59.6",
+    "@typescript-eslint/parser": "5.62.0",
     "@webb-tools/anchors": "0.5.47",
     "@webb-tools/api": "0.1.4-126",
     "@webb-tools/api-derive": "0.1.4-126",
