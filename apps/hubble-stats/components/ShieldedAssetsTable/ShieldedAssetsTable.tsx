@@ -20,6 +20,7 @@ import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
 import { PoolTypeChip } from '..';
+import { getChainNamesByTypedId } from '../../utils';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
@@ -50,11 +51,11 @@ const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
     cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
   }),
-  columnHelper.accessor('chains', {
+  columnHelper.accessor('typedChainIds', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
     cell: (props) => (
       <IconsGroup
-        icons={props.getValue()}
+        icons={getChainNamesByTypedId(props.getValue())}
         type="chain"
         className="justify-end"
       />
@@ -70,14 +71,14 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
 
   const columns = useMemo<ColumnDef<ShieldedAssetType, any>[]>(
     () => [
-      columnHelper.accessor('assetAddress', {
+      columnHelper.accessor('address', {
         header: () => (
           <HeaderCell title="Shielded Assets" className="justify-start" />
         ),
         cell: (props) => (
           <ShieldedCell
-            title={props.row.original.assetSymbol}
-            address={props.row.original.assetAddress}
+            title={props.row.original.symbol}
+            address={props.row.original.address}
             icon={isDarkMode ? <ShieldedAssetDark /> : <ShieldedAssetLight />}
           />
         ),
