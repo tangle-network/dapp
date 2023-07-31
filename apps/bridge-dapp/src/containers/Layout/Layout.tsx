@@ -2,8 +2,8 @@ import { Transition } from '@headlessui/react';
 import {
   Banner,
   Footer,
-  ItemProps,
-  FooterProps,
+  SideBarItemProps,
+  SideBarFooterType,
   Logo,
   LogoWithoutName,
   SideBar,
@@ -21,7 +21,7 @@ import {
   WEBB_DOCS_URL,
 } from '../../constants';
 
-const items: ItemProps[] = [
+const items: SideBarItemProps[] = [
   {
     name: 'Hubble',
     isInternal: true,
@@ -60,7 +60,7 @@ const items: ItemProps[] = [
   },
 ];
 
-const footer: FooterProps = {
+const footer: SideBarFooterType = {
   name: 'Webb Docs',
   isInternal: false,
   href: WEBB_DOCS_URL,

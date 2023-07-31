@@ -14,11 +14,24 @@ const KeyMetricsTableContainer: FC = () => {
         'bg-glass dark:bg-glass_dark'
       )}
     >
-      <div className="w-full table table-fixed border-collapse">
+      {/* Tablet and Desktop */}
+      <div className="w-full hidden md:table table-fixed border-collapse">
         <KeyMetricItem title="Total Transactions" />
         <KeyMetricItem title="TVL" prefix="$" />
         <KeyMetricItem title="Total Volume" prefix="$" />
         <KeyMetricItem title="Total Fees" prefix="$" />
+      </div>
+
+      {/* Mobile */}
+      <div className="block md:hidden">
+        <div className="w-full table table-fixed border-collapse">
+          <KeyMetricItem title="Total Transactions" />
+          <KeyMetricItem title="TVL" prefix="$" />
+        </div>
+        <div className="w-full table table-fixed border-collapse">
+          <KeyMetricItem title="Total Volume" prefix="$" />
+          <KeyMetricItem title="Total Fees" prefix="$" />
+        </div>
       </div>
     </div>
   );

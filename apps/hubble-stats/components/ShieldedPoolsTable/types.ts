@@ -12,6 +12,5 @@ export interface ShieldedPoolType {
 
 export interface ShieldedPoolsTableProps {
   data: ShieldedPoolType[];
-  globalSearchText: string;
   pageSize: number;
 }

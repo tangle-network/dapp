@@ -51,6 +51,7 @@ export * from './ForumIcon';
 export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
+export * from './HamburgerMenu';
 export * from './HelpLineIcon';
 export * from './InformationLine';
 export * from './InformationLineFill';

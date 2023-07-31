@@ -1,43 +1,58 @@
 import { IconBase } from '@webb-tools/icons/types';
+
 import { LogoProps } from '../Logo/types';
 
-export type FooterProps = {
+export type SideBarFooterType = {
   name: string;
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
 };
 
-export type SidebarProps = {
-  Logo: React.FC<LogoProps>;
-  ClosedLogo: React.FC<LogoProps>;
-  logoLink?: string;
-  items: ItemProps[];
-  footer: FooterProps;
+export interface SideBarFooterProps extends SideBarFooterType {
+  isExpanded: boolean;
   className?: string;
-};
+}
 
-export type ItemProps = {
+export interface SideBarLogoProps {
+  Logo: React.FC<LogoProps>;
+  logoLink?: string;
+}
+
+export interface SidebarProps extends SideBarLogoProps {
+  ClosedLogo?: React.FC<LogoProps>;
+  items: SideBarItemProps[];
+  footer: SideBarFooterType;
+  className?: string;
+}
+
+export interface SideBarItemsProps {
+  items: SideBarItemProps[];
+  isExpanded: boolean;
+  className?: string;
+}
+
+export type SideBarItemProps = {
   name: string;
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
-  subItems: SubItemProps[];
+  subItems: SideBarSubItemProps[];
 };
 
-export type ExtraItemProps = {
-  isSidebarOpen?: boolean;
+export type SideBarExtraItemProps = {
+  isExpanded?: boolean;
   isActive?: boolean;
   setIsActive?: () => void;
 };
 
-export type SubItemProps = {
+export type SideBarSubItemProps = {
   name: string;
   isInternal: boolean;
   href: string;
 };
 
-export type ExtraSubItemProps = {
+export type SideBarExtraSubItemProps = {
   isActive?: boolean;
   setItemIsActive?: () => void;
   setSubItemIsActive?: () => void;
