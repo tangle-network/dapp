@@ -75,8 +75,8 @@ const PoolMetadataTable: FC<PoolMetadataTableProps> = ({ data }) => {
   return (
     <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
       <Table
-        thClassName="w-1/2 border-t-0 bg-mono-0 border-r last-of-type:border-r-0"
-        tdClassName="border-r last-of-type:border-r-0"
+        thClassName="w-1/2 border-t-0 bg-mono-0 border-r last-of-type:border-r-0 first:pl-2 last:pr-2"
+        tdClassName="border-r last-of-type:border-r-0 first:pl-2 last:pr-2"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}
         totalRecords={data.length}

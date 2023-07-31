@@ -39,9 +39,7 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   }),
   columnHelper.accessor('token', {
     header: () => <HeaderCell title="Token #" className="justify-end" />,
-    cell: (props) => (
-      <NumberCell value={props.getValue()} className="text-right" />
-    ),
+    cell: (props) => <NumberCell value={props.getValue()} />,
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
@@ -65,15 +63,11 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
 
 const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
   data,
-  globalSearchText,
   pageSize,
 }) => {
   const table = useReactTable({
     data,
     columns,
-    state: {
-      globalFilter: globalSearchText,
-    },
     initialState: {
       pagination: {
         pageSize,
@@ -92,6 +86,7 @@ const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
   return (
     <div className="overflow-hidden rounded-lg bg-mono-0 dark:bg-mono-180 border border-mono-40 dark:border-mono-160">
       <Table
+        tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}
