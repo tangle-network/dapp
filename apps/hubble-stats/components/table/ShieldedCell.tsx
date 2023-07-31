@@ -1,14 +1,19 @@
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import { ExternalLinkIcon } from '@radix-ui/react-icons';
+import {
+  ExternalLinkLine,
+  ShieldedAssetDark,
+  ShieldedAssetLight,
+} from '@webb-tools/icons';
 
 import { ShieldedCellProps } from './types';
 
-const ShieldedCell: FC<ShieldedCellProps> = ({ title, address, icon }) => {
+const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
   return (
     <div className="flex items-center gap-2">
-      {icon ?? null}
+      <ShieldedAssetLight className="block dark:hidden" />
+      <ShieldedAssetDark className="hidden dark:block" />
 
       <div className="flex flex-col">
         <Typography
@@ -28,7 +33,7 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address, icon }) => {
 
           {/* TODO: update href */}
           <a href="#" target="_blank" rel="noreferrer">
-            <ExternalLinkIcon className="fill-mono-140 dark:fill-mono-40" />
+            <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
           </a>
         </div>
       </div>

@@ -15,7 +15,6 @@ export interface NumberCellProps {
 export interface ShieldedCellProps {
   title: string;
   address: string;
-  icon?: JSX.Element;
 }
 
 export type ActivityType = 'deposit' | 'transfer' | 'withdraw';

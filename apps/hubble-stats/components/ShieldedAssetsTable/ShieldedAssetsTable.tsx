@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import {
   createColumnHelper,
   useReactTable,
@@ -9,13 +9,7 @@ import {
   ColumnDef,
   Table as RTTable,
 } from '@tanstack/react-table';
-import {
-  Table,
-  fuzzyFilter,
-  IconsGroup,
-  useDarkMode,
-} from '@webb-tools/webb-ui-components';
-import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
+import { Table, fuzzyFilter, IconsGroup } from '@webb-tools/webb-ui-components';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
@@ -24,7 +18,18 @@ import { getChainNamesByTypedId } from '../../utils';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
-const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
+const columns: ColumnDef<ShieldedAssetType, any>[] = [
+  columnHelper.accessor('address', {
+    header: () => (
+      <HeaderCell title="Shielded Assets" className="justify-start" />
+    ),
+    cell: (props) => (
+      <ShieldedCell
+        title={props.row.original.symbol}
+        address={props.row.original.address}
+      />
+    ),
+  }),
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
     cell: (props) => (
@@ -67,27 +72,6 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   data,
   pageSize,
 }) => {
-  const [isDarkMode] = useDarkMode();
-
-  const columns = useMemo<ColumnDef<ShieldedAssetType, any>[]>(
-    () => [
-      columnHelper.accessor('address', {
-        header: () => (
-          <HeaderCell title="Shielded Assets" className="justify-start" />
-        ),
-        cell: (props) => (
-          <ShieldedCell
-            title={props.row.original.symbol}
-            address={props.row.original.address}
-            icon={isDarkMode ? <ShieldedAssetDark /> : <ShieldedAssetLight />}
-          />
-        ),
-      }),
-      ...staticColumns,
-    ],
-    [isDarkMode]
-  );
-
   const table = useReactTable({
     data,
     columns,
