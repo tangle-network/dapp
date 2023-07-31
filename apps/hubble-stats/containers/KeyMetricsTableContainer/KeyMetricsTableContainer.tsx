@@ -1,19 +1,12 @@
 'use client';
 
 import { FC } from 'react';
-import cx from 'classnames';
 
 import { KeyMetricItem } from '../../components';
 
 const KeyMetricsTableContainer: FC = () => {
   return (
-    <div
-      className={cx(
-        'w-full rounded-lg overflow-hidden',
-        'border-2 border-mono-0 dark:border-mono-160',
-        'bg-glass dark:bg-glass_dark'
-      )}
-    >
+    <div className="w-full rounded-lg overflow-hidden border-2 border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark">
       {/* Tablet and Desktop */}
       <div className="w-full hidden md:table table-fixed border-collapse">
         <KeyMetricItem title="Total Transactions" />

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import cx from 'classnames';
+import { twMerge } from 'tailwind-merge';
 import { IconWithTooltip, Typography } from '@webb-tools/webb-ui-components';
 import { InformationLine } from '@webb-tools/icons';
 
@@ -10,7 +10,7 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
     <Typography
       variant="body1"
       fw="bold"
-      className={cx(
+      className={twMerge(
         'text-mono-140 dark:text-mono-40 flex-[1] flex items-center justify-center whitespace-nowrap',
         className
       )}
