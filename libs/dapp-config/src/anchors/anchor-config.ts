@@ -7,19 +7,19 @@ import { LOCALNET_CHAIN_IDS } from '../chains';
 
 const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
   ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
-      (acc, chainId) => {
-        const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
-        const anchorAddress: string = process.env
-          .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
+    (acc, chainId) => {
+      const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+      const anchorAddress: string = process.env
+        .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
 
-        acc[typedChainId] = {
-          [anchorAddress]: 0,
-        };
+      acc[typedChainId] = {
+        [anchorAddress]: 0,
+      };
 
-        return acc;
-      },
-      {}
-    )
+      return acc;
+    },
+    {}
+  )
   : {};
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
@@ -52,13 +52,16 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99': 25,
+    '0x19E60bbC8b19CBBA2936BEC4B5CE6542013DF02c': 70,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99': 25,
+    '0x19E60bbC8b19CBBA2936BEC4B5CE6542013DF02c': 70,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99': 25,
+    '0x19E60bbC8b19CBBA2936BEC4B5CE6542013DF02c': 70,
+  },
+  [PresetTypedChainId.TangleTestnet]: {
+    '0x19E60bbC8b19CBBA2936BEC4B5CE6542013DF02c': 158_874,
   },
 
   ...localAnchorRecord,
