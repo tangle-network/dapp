@@ -1,18 +1,21 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components';
 
 import { PoolTransactionsTable } from '../../components';
 import { FilterButton } from '../../components/table';
 import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
 
+interface PoolTransactionsTableContainerProps {
+  poolsData?: PoolTransactionType[];
+}
+
 const pageSize = 10;
 
-const PoolTransactionsTableContainer = () => {
-  const [poolsData, setPoolsData] = useState<PoolTransactionType[]>([]);
-  const [globalSearchText, setGlobalSearchText] = useState<string>('');
-
+const PoolTransactionsTableContainer: FC<
+  PoolTransactionsTableContainerProps
+> = ({ poolsData = [] }) => {
   const filterButton = useMemo(
     () => (
       <FilterButton
@@ -46,11 +49,7 @@ const PoolTransactionsTableContainer = () => {
       headerClassName="w-full overflow-x-auto"
       triggerClassName="whitespace-nowrap"
     >
-      <PoolTransactionsTable
-        data={poolsData}
-        globalSearchText={globalSearchText}
-        pageSize={pageSize}
-      />
+      <PoolTransactionsTable data={poolsData} pageSize={pageSize} />
     </TableAndChartTabs>
   );
 };

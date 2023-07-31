@@ -66,15 +66,11 @@ const columns: ColumnDef<PoolTransactionType, any>[] = [
 
 const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
   data,
-  globalSearchText,
   pageSize,
 }) => {
   const table = useReactTable({
     data,
     columns,
-    state: {
-      globalFilter: globalSearchText,
-    },
     initialState: {
       pagination: {
         pageSize,

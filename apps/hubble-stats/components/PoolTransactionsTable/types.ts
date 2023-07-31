@@ -14,6 +14,5 @@ export type PoolTransactionType = {
 
 export interface PoolTransactionsTableProps {
   data: PoolTransactionType[];
-  globalSearchText: string;
   pageSize: number;
 }

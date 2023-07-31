@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import {
   Accordion,
   AccordionButton,
@@ -12,7 +12,7 @@ import {
   DropdownBody,
 } from '@webb-tools/webb-ui-components';
 import { TokenIcon, ChevronDown } from '@webb-tools/icons';
-import { chainsConfig, ChainConfig } from '@webb-tools/dapp-config/chains';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { FilterButtonProps } from './types';
 
@@ -28,18 +28,6 @@ const FilterButton: FC<FilterButtonProps> = ({
   setSelectedDestinationChains,
   showAllFn,
 }) => {
-  const sourceChainOptions = useMemo(() => {
-    return Object.keys(chainsConfig)
-      .map((key: any) => [String(key), chainsConfig[key]])
-      .filter((val: any) => sourceChains.includes(val['1'].name));
-  }, [sourceChains]);
-
-  const destinationChainOptions = useMemo(() => {
-    return Object.keys(chainsConfig)
-      .map((key: any) => [String(key), chainsConfig[key]])
-      .filter((val: any) => destinationChains.includes(val['1'].name));
-  }, [destinationChains]);
-
   return (
     <Dropdown>
       <DropdownBasicButton className="group">
@@ -68,13 +56,11 @@ const FilterButton: FC<FilterButtonProps> = ({
                 value={selectedTokens}
                 options={tokens}
                 onChange={(tokens) => {
-                  setSelectedTokens(tokens as [string, string][]);
+                  setSelectedTokens(tokens as [number, string][]);
                 }}
-                iconGetter={([_key, name]) => (
-                  <TokenIcon name={name} size="lg" />
-                )}
+                iconGetter={([_, name]) => <TokenIcon name={name} size="lg" />}
                 labelGetter={([_, name]) => name}
-                keyGetter={([tokenId]) => `Filter_proposals${tokenId}`}
+                keyGetter={([tokenId]) => tokenId.toString()}
                 className="px-0"
                 labelClassName="uppercase"
                 showAllLabel={false}
@@ -91,14 +77,17 @@ const FilterButton: FC<FilterButtonProps> = ({
             <AccordionContent className="p-0">
               <CheckBoxMenuGroup
                 value={selectedSourceChains}
-                options={sourceChainOptions}
+                options={sourceChains}
                 onChange={(chains) => {
-                  setSelectedSourceChains(chains as [string, ChainConfig][]);
+                  setSelectedSourceChains(chains as number[]);
                 }}
-                labelGetter={([_, chain]: any) => (
-                  <ChainChip chainName={chain.name} chainType={chain.base} />
+                labelGetter={(typedChainId) => (
+                  <ChainChip
+                    chainName={chainsConfig[typedChainId].name}
+                    chainType={chainsConfig[typedChainId].group}
+                  />
                 )}
-                keyGetter={([chainId]) => `Filter_proposals${chainId}`}
+                keyGetter={(typedChainId) => typedChainId.toString()}
                 className="px-0"
                 labelClassName="!pl-0"
                 showAllLabel={false}
@@ -114,16 +103,17 @@ const FilterButton: FC<FilterButtonProps> = ({
             <AccordionContent className="p-0">
               <CheckBoxMenuGroup
                 value={selectedDestinationChains}
-                options={destinationChainOptions}
+                options={destinationChains}
                 onChange={(chains) => {
-                  setSelectedDestinationChains(
-                    chains as [string, ChainConfig][]
-                  );
+                  setSelectedDestinationChains(chains as number[]);
                 }}
-                labelGetter={([_, chain]: any) => (
-                  <ChainChip chainName={chain.name} chainType={chain.base} />
+                labelGetter={(typedChainId) => (
+                  <ChainChip
+                    chainName={chainsConfig[typedChainId].name}
+                    chainType={chainsConfig[typedChainId].group}
+                  />
                 )}
-                keyGetter={([chainId]) => `Filter_proposals${chainId}`}
+                keyGetter={(typedChainId) => typedChainId.toString()}
                 className="px-0"
                 labelClassName="!pl-0"
                 showAllLabel={false}
