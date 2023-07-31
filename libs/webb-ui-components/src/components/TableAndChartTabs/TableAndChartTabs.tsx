@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import cx from 'classnames';
+import { twMerge } from 'tailwind-merge';
 
 import { TabsRoot, TabsList, TabTrigger } from '../Tabs';
 import { Typography } from '../../typography';
@@ -9,6 +9,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   tabs,
   filterComponent,
   className,
+  headerClassName,
   listClassName,
   triggerClassName,
   children,
@@ -17,19 +18,24 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   return (
     <TabsRoot
       defaultValue={tabs[0]}
-      className={cx('space-y-4', className)}
+      className={twMerge('space-y-4', className)}
       {...tabsProps}
     >
-      <div className="flex justify-between items-center">
+      <div
+        className={twMerge(
+          'flex justify-between items-center gap-4',
+          headerClassName
+        )}
+      >
         {/* Tabs List on the left */}
-        <TabsList className={cx('space-x-4', listClassName)}>
+        <TabsList className={twMerge('space-x-4', listClassName)}>
           {tabs.map((tab, idx) => {
             return (
               <TabTrigger
                 key={idx}
                 value={tab}
                 isDisableStyle
-                className={cx(
+                className={twMerge(
                   'text-mono-100 radix-state-active:text-mono-200',
                   'dark:radix-state-active:!text-mono-0',
                   triggerClassName

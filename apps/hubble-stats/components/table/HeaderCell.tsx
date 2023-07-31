@@ -11,7 +11,7 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
       variant="body1"
       fw="bold"
       className={cx(
-        'text-mono-140 dark:text-mono-40 flex-[1] flex items-center justify-center',
+        'text-mono-140 dark:text-mono-40 flex-[1] flex items-center justify-center whitespace-nowrap',
         className
       )}
     >

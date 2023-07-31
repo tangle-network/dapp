@@ -1,4 +1,4 @@
-import { SideBar, Logo, LogoWithoutName } from '../../components';
+import { SideBarMenu, Logo, LogoWithoutName } from '../../components';
 import { ContrastTwoLine, Tangle, DocumentationIcon } from '@webb-tools/icons';
 
 const items = [
@@ -42,13 +42,13 @@ const footer = {
 };
 
 export default {
-  title: 'Design System/Organisms/SideBar',
-  component: SideBar,
+  title: 'Design System/Organisms/SideBarMenu',
+  component: SideBarMenu,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template = (args) => <SideBar {...args} />;
+const Template = (args) => <SideBarMenu {...args} />;
 
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args

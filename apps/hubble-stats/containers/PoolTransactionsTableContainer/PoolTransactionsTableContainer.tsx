@@ -43,6 +43,8 @@ const PoolTransactionsTableContainer = () => {
     <TableAndChartTabs
       tabs={['All Transactions', 'Deposits', 'Transfers', 'Withdrawals']}
       filterComponent={filterButton}
+      headerClassName="w-full overflow-x-auto"
+      triggerClassName="whitespace-nowrap"
     >
       <PoolTransactionsTable
         data={poolsData}

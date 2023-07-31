@@ -54,6 +54,7 @@ export { default as GasStationFill } from './GasStationFill';
 export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
+export * from './HamburgerMenu';
 export * from './HelpLineIcon';
 export * from './IndeterminateCircleFillIcon';
 export * from './IndeterminateCircleLineIcon';
