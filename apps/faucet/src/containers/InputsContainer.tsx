@@ -1,4 +1,5 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   Button,
@@ -79,9 +80,11 @@ const InputWrapper = ({
 };
 
 const AmountChip = () => {
-  const { amount, inputValues$ } = useFaucetContext();
+  const { amount$, inputValues$ } = useFaucetContext();
 
   const [getStore] = useStore();
+
+  const amount = useObservableState(amount$);
 
   const token = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.token))
@@ -91,6 +94,14 @@ const AmountChip = () => {
     return getStore(StoreKey.twitterHandle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getStore(StoreKey.twitterHandle)]);
+
+  if (Number.isNaN(amount)) {
+    return (
+      <Typography variant="mkt-body2" className="font-black">
+        --
+      </Typography>
+    );
+  }
 
   return (
     <Chip isDisabled={!twitterHandle} color="blue" className="rounded-lg">
@@ -117,7 +128,7 @@ const TokenAddressLink = () => {
     return `${chainsConfig[typedChainId]?.blockExplorers?.default.url}/token/${tokenAddress}`;
   }, [tokenAddress, typedChainId]);
 
-  return tokenAddress ? (
+  return tokenAddress && BigInt(tokenAddress) !== ZERO_BIG_INT ? (
     <Button
       variant="link"
       size="sm"
