@@ -879,8 +879,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       this.inner.publicClient
     );
 
-    const spenderAddress = srcVAnchor.contract.address;
-    const currentWebbToken = srcVAnchor.getWebbToken();
+    const currentFungibleToken = srcVAnchor.getWebbToken();
 
     const amountBI = BigInt(amount);
 
@@ -890,7 +889,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     // If the `wrapUnwrapToken` is different from the `currentWebbToken` address,
     // we are wrapping / unwrapping. otherwise, we are depositing / withdrawing.
-    const isWrapOrUnwrap = wrapUnwrapToken !== currentWebbToken.address;
+    const isWrapOrUnwrap = wrapUnwrapToken !== currentFungibleToken.address;
 
     // Only non-native tokens require approval
     if (!isNative) {
@@ -920,8 +919,10 @@ export class Web3VAnchorActions extends VAnchorActions<
             publicClient: this.inner.publicClient,
           });
 
+          // On the wrap case, we need to approve the tokenWrapper contract
+          // to spend the token on behalf of the user to wrap it.
           const { request } = await tokenContract.simulate.approve(
-            [spenderAddress, approvalValue],
+            [currentFungibleToken.address, approvalValue],
             {
               gas: BigInt('0x5B8D80'),
               account,
@@ -930,9 +931,10 @@ export class Web3VAnchorActions extends VAnchorActions<
 
           approvalHash = await this.inner.walletClient.writeContract(request);
         } else {
-          // approve the token
-          const { request } = await currentWebbToken.simulate.approve(
-            [spenderAddress, amountBI],
+          // If we are depositing (without wrapping), we need to approve the
+          // VAnchor contract to spend the user's fungible token.
+          const { request } = await currentFungibleToken.simulate.approve(
+            [srcVAnchor.contract.address, amountBI],
             {
               gas: BigInt('0x5B8D80'),
               account,
