@@ -1,4 +1,5 @@
 import { LoggerService } from '@webb-tools/browser-utils';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { Button } from '@webb-tools/webb-ui-components';
 import { err, ok, Result } from 'neverthrow';
@@ -26,10 +27,19 @@ const logger = LoggerService.get('MintButtonContainer');
 
 const mintTokens = async (
   accessToken: string,
-  { chain: typedChainId, recepient, recepientAddressType }: InputValuesType,
+  {
+    chain: typedChainId,
+    recepient,
+    recepientAddressType,
+    contractAddress,
+  }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
 ): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
+  if (!contractAddress) {
+    return err(FaucetError.from(FaucetErrorCode.MISSING_CONTRACT_ADDRESS));
+  }
+
   if (!typedChainId) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
@@ -49,8 +59,11 @@ const mintTokens = async (
     'Content-Type': 'application/x-www-form-urlencoded',
   } as const satisfies HeadersInit;
 
+  const onlyNativeToken = BigInt(contractAddress) === ZERO_BIG_INT;
+
   const body = {
     faucet: {
+      onlyNativeToken,
       typedChainId: {
         [chain.type]: chain.chainId,
       },

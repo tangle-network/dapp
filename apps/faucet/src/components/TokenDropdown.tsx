@@ -1,4 +1,5 @@
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -12,10 +13,11 @@ import { useObservableState } from 'observable-hooks';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
+import constants from '../config/shared';
 import { useFaucetContext } from '../provider';
 
 const TokenDropdown = () => {
-  const { config, inputValues$ } = useFaucetContext();
+  const { config, inputValues$, amount$ } = useFaucetContext();
 
   const token = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.token))
@@ -24,13 +26,21 @@ const TokenDropdown = () => {
   const setToken = useCallback(
     (token: string | undefined, contractAddress?: string) => {
       const currentVal = inputValues$.getValue();
+
+      // If the contract address is 0, then we are using the native token
+      if (contractAddress && BigInt(contractAddress) === ZERO_BIG_INT) {
+        amount$.next(constants.nativeAmount);
+      } else if (contractAddress) {
+        amount$.next(constants.amount);
+      }
+
       inputValues$.next({
         ...currentVal,
         contractAddress,
         token,
       });
     },
-    [inputValues$]
+    [amount$, inputValues$]
   );
 
   const selectedChain = useObservableState(

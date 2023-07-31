@@ -68,6 +68,11 @@ type ErrorPayload = {
   };
 
   /**
+   * No payload for this error
+   */
+  [FaucetErrorCode.MISSING_CONTRACT_ADDRESS]: undefined;
+
+  /**
    * Extra info for the mint tokens failed error
    */
   [FaucetErrorCode.MINT_TOKENS_FAILED]:
