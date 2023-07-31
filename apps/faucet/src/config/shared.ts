@@ -11,6 +11,10 @@ const amount = process.env.NEXT_PUBLIC_AMOUNT
   ? +process.env.NEXT_PUBLIC_AMOUNT
   : 20;
 
+const nativeAmount = process.env.NEXT_PUBLIC_NATIVE_AMOUNT
+  ? +process.env.NEXT_PUBLIC_NATIVE_AMOUNT
+  : 0.5;
+
 const twitterClientId = process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID || '';
 if (!twitterClientId) {
   throw FaucetError.from(FaucetErrorCode.MISSING_ENV_VAR, {
@@ -21,6 +25,7 @@ if (!twitterClientId) {
 const config = {
   amount,
   faucetBackendUrl,
+  nativeAmount,
   twitterClientId,
 };
 
