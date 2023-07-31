@@ -52,6 +52,8 @@ export * from './SideBar';
 export * from './Slider';
 export * from './Socials';
 export * from './Stats';
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';
 export * from './Switcher';
 export * from './Table';
 export * from './TableAndChartTabs';
