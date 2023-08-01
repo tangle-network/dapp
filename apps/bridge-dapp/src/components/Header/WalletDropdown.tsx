@@ -3,6 +3,7 @@ import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ExternalLinkLine,
   LoginBoxLineIcon,
@@ -11,26 +12,24 @@ import {
 } from '@webb-tools/icons';
 import { useNoteAccount, useWallets } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
+import { WebbWeb3Provider, isViemError } from '@webb-tools/web3-api-provider';
 import {
   Avatar,
   Button,
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  IconWithTooltip,
   KeyValueWithButton,
   MenuItem,
-  shortenString,
   Typography,
+  WalletButton,
   useWebbUI,
-  IconWithTooltip,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { ClearDataModal } from './ClearDataModal';
-import { HeaderButton } from './HeaderButton';
-import { WebbWeb3Provider, isViemError } from '@webb-tools/web3-api-provider';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
-export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
+export const WalletDropdown: FC<{ account: Account; wallet: WalletConfig }> = ({
   account,
   wallet,
 }) => {
@@ -67,19 +66,6 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
       Array.from(allNotes.values()).reduce((acc, curr) => acc + curr.length, 0),
     [allNotes]
   );
-
-  const displayText = useMemo(() => {
-    if (account.name) {
-      return account.name;
-    }
-
-    // if account address starts with 0x, then truncate it to xxxx...xxxx
-    if (account.address.toLowerCase().startsWith('0x')) {
-      return shortenString(account.address.substring(2), 4);
-    }
-
-    return shortenString(account.address, 4);
-  }, [account]);
 
   // Get the note account keypair to display public + encryption key
   const keyPair = useMemo(() => noteManager?.getKeypair(), [noteManager]);
@@ -192,13 +178,7 @@ export const WalletButton: FC<{ account: Account; wallet: WalletConfig }> = ({
     <>
       <Dropdown>
         <DropdownTrigger asChild>
-          <HeaderButton className="rounded-full">
-            {wallet.Logo}
-
-            <Typography variant="body1" fw="bold">
-              {displayText}
-            </Typography>
-          </HeaderButton>
+          <WalletButton wallet={wallet} address={account.address} />
         </DropdownTrigger>
 
         <DropdownBody className="mt-6 w-[480px] p-4 space-y-4 dark:bg-mono-160">

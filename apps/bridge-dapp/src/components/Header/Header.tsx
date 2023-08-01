@@ -14,7 +14,7 @@ import { FC, useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapper } from '../ChainListCardWrapper';
-import { WalletButton } from './WalletButton';
+import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
 
 /**
@@ -65,7 +65,7 @@ export const Header: FC<HeaderProps> = () => {
                 status="success"
                 onClick={() => setMainComponent(<ChainListCardWrapper />)}
               />
-              <WalletButton account={activeAccount} wallet={activeWallet} />
+              <WalletDropdown account={activeAccount} wallet={activeWallet} />
             </div>
           ) : (
             <Button
