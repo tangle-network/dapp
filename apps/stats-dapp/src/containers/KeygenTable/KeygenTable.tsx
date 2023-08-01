@@ -237,7 +237,7 @@ export const KeygenTable: FC = () => {
             key: item.compressed,
             authorities: new Set(item.keyGenAuthorities),
             keygenThreshold: item.keyGenThreshold ?? 0,
-            keyId: item.uncompressed,
+            keyId: '', // item.uncompressed
             totalAuthorities: item.keyGenAuthorities.length,
             signatureThreshold: item.signatureThreshold ?? 0,
             previousKeyId: item.previousKeyId,
