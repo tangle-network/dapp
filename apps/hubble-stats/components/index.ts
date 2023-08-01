@@ -1,6 +1,6 @@
 export * from './AreaChart';
 export * from './BarChart';
-export * from './Header';
+export * from './Breadcrumbs';
 export * from './KeyMetricItem';
 export * from './NetworkPoolTable';
 export * from './NetworkTokenTable';
