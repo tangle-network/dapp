@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useMemo } from 'react';
 import cx from 'classnames';
 import {

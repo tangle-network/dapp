@@ -1,5 +1,3 @@
-'use client';
-
 import { FC, useMemo } from 'react';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components';
 

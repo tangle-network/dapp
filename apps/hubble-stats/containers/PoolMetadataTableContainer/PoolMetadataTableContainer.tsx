@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 

@@ -5,12 +5,11 @@ import {
   BreadcrumbsItem,
   Chip,
   ChipProps,
-  SideBarMenu,
 } from '@webb-tools/webb-ui-components';
 import { BlockIcon, GridFillIcon, Spinner } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 
-import { sideBarProps } from '../../constants';
+import { SideBarMenu } from '..';
 
 const Header = () => {
   const tvl = useMemo(() => {
@@ -25,7 +24,7 @@ const Header = () => {
     <div className="flex items-center justify-between pt-6 pb-4">
       {/* Breadcrumbs */}
       <div className="flex gap-2 items-center">
-        <SideBarMenu {...sideBarProps} className="lg:hidden" />
+        <SideBarMenu />
         <Breadcrumbs>
           <Link href="/">
             <BreadcrumbsItem
