@@ -492,14 +492,19 @@ class VAnchor {
     account: Account
   ) {
     const userAddress = account.address;
+
     const tokenInstance = getContract({
       address: tokenAddress,
       abi: ERC20__factory.abi,
       publicClient: this.publicClient,
     });
+
+    // When wrapping, we need to check allowance of the fungible token
+    // as the fungible token is the contract that transfers the token
+    // from the user to the contract
     const tokenAllowance = await tokenInstance.read.allowance([
       userAddress,
-      this.contract.address,
+      this.fungibleToken,
     ]);
 
     if (tokenAllowance < depositAmount) {
