@@ -56,7 +56,7 @@ const localDemeterMulticall3DeploymentBlock = process.env
   ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
-// Default rpc url of mumbai is not working so we orverride it
+// Default rpc url of mumbai is not working so we override it
 // endpoint here: https://chainid.network/chains.json
 const polygonMumbai = merge(cloneDeep(polygonMumbai_), {
   rpcUrls: {
