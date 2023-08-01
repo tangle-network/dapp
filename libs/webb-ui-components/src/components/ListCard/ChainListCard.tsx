@@ -2,7 +2,7 @@ import { ChainIcon, InformationLine, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Chip } from '../Chip';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';

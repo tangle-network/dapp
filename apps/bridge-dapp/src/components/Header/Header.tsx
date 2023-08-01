@@ -1,25 +1,29 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ContrastTwoLine } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
   Button,
+  ChainButton,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useConnectWallet } from '../../hooks';
-import { ChainSwitcherButton } from './ChainSwitcherButton';
-import { WalletButton } from './WalletButton';
+import { ChainListCardWrapper } from '../ChainListCardWrapper';
+import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import { ContrastTwoLine } from '@webb-tools/icons';
 
 /**
  * The statistic `Header` for `Layout` container
  */
 export const Header: FC<HeaderProps> = () => {
   const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
+
+  const { setMainComponent } = useWebbUI();
 
   const { toggleModal } = useConnectWallet();
 
@@ -35,7 +39,7 @@ export const Header: FC<HeaderProps> = () => {
   );
 
   return (
-    <header className="pt-6 pb-10 px-4">
+    <header className="px-4 pt-6 pb-10">
       <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
         <Breadcrumbs>
           <NavLink to="/bridge">
@@ -53,10 +57,15 @@ export const Header: FC<HeaderProps> = () => {
           {/** Wallet is actived */}
           {isDisplayNetworkSwitcherAndWalletButton &&
           activeAccount &&
-          activeWallet ? (
+          activeWallet &&
+          activeChain ? (
             <div className="hidden lg:!flex items-center space-x-2">
-              <ChainSwitcherButton />
-              <WalletButton account={activeAccount} wallet={activeWallet} />
+              <ChainButton
+                chain={activeChain}
+                status="success"
+                onClick={() => setMainComponent(<ChainListCardWrapper />)}
+              />
+              <WalletDropdown account={activeAccount} wallet={activeWallet} />
             </div>
           ) : (
             <Button

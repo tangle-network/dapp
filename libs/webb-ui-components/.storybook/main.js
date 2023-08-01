@@ -21,17 +21,7 @@ module.exports = {
         },
       },
     },
-    // Addon for Tailwind CSS dark mode support, but it only works on the preview page, not the docs page
-    {
-      name: '@storybook/addon-styling',
-      options: {
-        // Check out https://github.com/storybookjs/addon-styling/blob/main/docs/api.md
-        // For more details on this addon's options.
-        postCss: {
-          implementation: require.resolve('postcss'),
-        },
-      },
-    },
+    '@storybook/addon-styling',
     '@nx/react/plugins/storybook',
   ],
   webpackFinal: async (config, { configType }) => {

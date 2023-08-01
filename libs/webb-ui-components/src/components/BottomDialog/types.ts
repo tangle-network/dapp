@@ -7,7 +7,7 @@ import {
 } from '@radix-ui/react-dialog';
 
 import { PropsOf, IWebbComponentBase } from '../../types';
-import { ButtonProps } from '../Button/types';
+import { ButtonProps } from '../buttons/types';
 
 export interface BottomDialogProps extends PropsOf<'div'>, IWebbComponentBase {
   radixRootProps?: RdxDialogProps;

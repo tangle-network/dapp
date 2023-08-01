@@ -2,7 +2,7 @@ import { Typography } from '../../typography';
 import React, { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { CopyWithTooltip } from '../CopyWithTooltip';
 import { KeyCardProps } from './types';
 

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 import { PropsOf } from '../../types';
-import { ButtonProps } from '../Button';
+import { ButtonProps } from '../buttons';
 
 export interface ErrorFallbackProps extends PropsOf<'div'> {
   /**

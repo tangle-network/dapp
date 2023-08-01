@@ -1,5 +1,8 @@
 import { IconBase } from '@webb-tools/icons/types';
-import { IWebbComponentBase, WebbComponentBase } from '../../types';
+import { IWebbComponentBase, PropsOf, WebbComponentBase } from '../../types';
+import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
+import { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 
@@ -164,4 +167,47 @@ export type ButtonClassNames = {
     sm: string;
     md: string;
   };
+};
+
+/**
+ * The ChainButton component props
+ */
+export type ChainButtonProps = PropsOf<'button'> & {
+  /**
+   * The chain to display in the button
+   */
+  chain: ChainConfig;
+
+  /**
+   * The status of the chain
+   */
+  status?: StatusIndicatorProps['variant'];
+};
+
+/**
+ * The ChainButton component props
+ */
+export type WalletButtonProps = PropsOf<'button'> & {
+  /**
+   * The wallet to display in the button
+   */
+  wallet: WalletConfig;
+
+  /**
+   * The current address of the wallet
+   */
+  address: string;
+};
+
+export type LoadingPillStatus = 'success' | 'loading' | 'error';
+
+/**
+ * The LoadingPill component props
+ */
+export type LoadingPillProps = PropsOf<'button'> & {
+  /**
+   * Status of the pill
+   * @default "loading"
+   */
+  status?: LoadingPillStatus;
 };

@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 import * as constants from '../../constants';
 import { Typography } from '../../typography';
-import { Button, ButtonProps } from '../Button';
+import { Button, ButtonProps } from '../buttons';
 import { ErrorFallbackProps } from './types';
 
 const telegramInfo = constants.defaultSocialConfigs.find(

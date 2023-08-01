@@ -104,3 +104,6 @@ export * from './PartyFill';
 // Tangle Icons
 export * from './Tangle';
 export * from './TangleIcon';
+
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';

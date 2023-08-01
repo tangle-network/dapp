@@ -2,7 +2,7 @@ import { InformationLine } from '@webb-tools/icons';
 import { FC, useCallback, useState } from 'react';
 
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Input } from '../Input';
 
 export const WebsiteNewsletterForm: FC<{

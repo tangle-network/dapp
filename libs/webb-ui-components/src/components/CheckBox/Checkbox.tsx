@@ -3,7 +3,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InformationLine } from '@webb-tools/icons';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { CheckBoxProps } from './types';
 

@@ -4,7 +4,7 @@ import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { ListItem } from '../ListCard/ListItem';
 import { WalletConnectionCardProps } from './types';
 
