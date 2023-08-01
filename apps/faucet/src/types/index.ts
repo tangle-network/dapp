@@ -188,7 +188,8 @@ export type MintTokenErrorCodes =
   | FaucetErrorCode.INVALID_SELECTED_CHAIN
   | FaucetErrorCode.MINT_TOKENS_FAILED
   | FaucetErrorCode.JSON_PARSE_ERROR
-  | FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS;
+  | FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS
+  | FaucetErrorCode.MISSING_CONTRACT_ADDRESS;
 
 /**
  * The mint token result type

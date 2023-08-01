@@ -45,7 +45,7 @@ export type FaucetContextType = {
   /**
    * The default amount to send
    */
-  amount: number;
+  amount$: BehaviorSubject<number>;
 
   /**
    * The faucet config contains the supported chains and tokens
@@ -98,13 +98,13 @@ const config = Object.entries(tokens).reduce(
 );
 
 const defaultContextValue = {
-  amount: sharedConfig.amount,
+  amount$: new BehaviorSubject(NaN),
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
   isMintingSuccess$: new BehaviorSubject<boolean>(false),
   mintTokenResult$: new BehaviorSubject<MintTokenResult | null>(null),
-};
+} satisfies FaucetContextType;
 
 const FaucetContext = createContext<FaucetContextType>(defaultContextValue);
 

@@ -23,7 +23,7 @@ export default function RootLayout({
         <body className="h-screen bg-body dark:bg-body_dark bg-cover flex">
           <SideBar />
           <main className="flex-1 px-3 md:px-5 lg:px-10 overflow-y-auto">
-            <Header />
+            <Header tvlValue="$13,642,124" volumeValue="$8,562,122" />
             {children}
             <Footer isMinimal className="max-w-none" />
           </main>
