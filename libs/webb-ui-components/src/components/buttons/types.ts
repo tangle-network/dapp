@@ -198,3 +198,16 @@ export type WalletButtonProps = PropsOf<'button'> & {
    */
   address: string;
 };
+
+export type LoadingPillStatus = 'success' | 'loading' | 'error';
+
+/**
+ * The LoadingPill component props
+ */
+export type LoadingPillProps = PropsOf<'button'> & {
+  /**
+   * Status of the pill
+   * @default "loading"
+   */
+  status?: LoadingPillStatus;
+};
