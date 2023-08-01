@@ -1,5 +1,5 @@
 import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { PublicClient, createPublicClient, http } from 'viem';
+import { PublicClient, createPublicClient, fallback, http } from 'viem';
 import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
@@ -19,7 +19,9 @@ function getViemClient(typedChainId: number): PublicClient {
     batch: {
       multicall: !!chain.contracts?.multicall3,
     },
-    transport: http(undefined, { timeout: 60_000 }),
+    transport: fallback(
+      chain.rpcUrls.public.http.map((url) => http(url, { timeout: 60_000 }))
+    ),
   });
 }
 
