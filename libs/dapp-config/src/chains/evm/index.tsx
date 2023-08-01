@@ -7,7 +7,7 @@ import {
   goerli,
   moonbaseAlpha,
   optimismGoerli,
-  polygonMumbai,
+  polygonMumbai as polygonMumbai_,
   scrollTestnet,
   sepolia,
   type Chain,
@@ -15,6 +15,8 @@ import {
 import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import merge from 'lodash/merge';
+import mergeWith from 'lodash/mergeWith';
+import cloneDeep from 'lodash/cloneDeep';
 import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
@@ -54,72 +56,147 @@ const localDemeterMulticall3DeploymentBlock = process.env
   ? parseInt(process.env.BRIDGE_DAPP_LOCAL_DEMETER_MULTICALL3_DEPLOYMENT_BLOCK)
   : 0;
 
+// Default rpc url of mumbai is not working so we override it
+// endpoint here: https://chainid.network/chains.json
+const polygonMumbai = merge(cloneDeep(polygonMumbai_), {
+  rpcUrls: {
+    default: {
+      http: ['https://endpoints.omniatech.io/v1/matic/mumbai/public'],
+    },
+    public: {
+      http: ['https://endpoints.omniatech.io/v1/matic/mumbai/public'],
+    },
+  },
+});
+
+const mergeChain = (
+  chain: Chain,
+  extended: WebbExtendedChain & { rpcUrls: Chain['rpcUrls'] }
+): ChainConfig => {
+  return mergeWith(cloneDeep(chain), extended, (objValue, srcValue) => {
+    if (Array.isArray(objValue)) {
+      return objValue.concat(srcValue);
+    }
+
+    return undefined;
+  });
+};
+
+const additionalRpcUrls = {
+  [PresetTypedChainId.Goerli]: [
+    'https://ethereum-goerli.publicnode.com',
+    'https://rpc.ankr.com/eth_goerli',
+  ],
+  [PresetTypedChainId.OptimismTestnet]: [
+    'https://endpoints.omniatech.io/v1/op/goerli/public',
+    'https://optimism-goerli.public.blastapi.io',
+  ],
+  [PresetTypedChainId.ArbitrumTestnet]: [
+    'https://endpoints.omniatech.io/v1/arbitrum/goerli/public',
+    'https://arbitrum-goerli.publicnode.com',
+  ],
+  [PresetTypedChainId.PolygonTestnet]: [
+    'https://polygon-mumbai.blockpi.network/v1/rpc/public',
+    'https://polygon-mumbai-bor.publicnode.com/',
+  ],
+  [PresetTypedChainId.MoonbaseAlpha]: [
+    'https://moonbase-alpha.public.blastapi.io',
+    'https://moonbeam-alpha.api.onfinality.io/public',
+  ],
+  [PresetTypedChainId.Sepolia]: [
+    'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+    'https://eth-sepolia.public.blastapi.io',
+  ],
+  [PresetTypedChainId.AvalancheFuji]: [
+    'https://avalanche-fuji-c-chain.publicnode.com',
+    'https://api.avax-test.network/ext/bc/C/rpc',
+  ],
+  [PresetTypedChainId.ScrollAlpha]: [
+    'https://scroll-testnet.blockpi.network/v1/rpc/public',
+    'https://scroll-alphanet.public.blastapi.io',
+  ],
+};
+
 export const chainsConfig: Record<number, ChainConfig> = {
   // Testnet
-  [PresetTypedChainId.Goerli]: merge<Chain, WebbExtendedChain>(goerli, {
+  [PresetTypedChainId.Goerli]: mergeChain(goerli, {
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.Goerli] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.Goerli] },
+    },
   }),
-  [PresetTypedChainId.OptimismTestnet]: merge<Chain, WebbExtendedChain>(
-    optimismGoerli,
-    {
-      chainType: ChainType.EVM,
-      group: 'optimism',
-      tag: 'test',
-    }
-  ),
-  [PresetTypedChainId.ArbitrumTestnet]: merge<Chain, WebbExtendedChain>(
-    arbitrumGoerli,
-    {
-      chainType: ChainType.EVM,
-      group: 'arbitrum',
-      tag: 'test',
-    }
-  ),
-  [PresetTypedChainId.PolygonTestnet]: merge<Chain, WebbExtendedChain>(
-    polygonMumbai,
-    {
-      chainType: ChainType.EVM,
-      group: 'polygon',
-      tag: 'test',
-    }
-  ),
-  [PresetTypedChainId.MoonbaseAlpha]: merge<Chain, WebbExtendedChain>(
-    moonbaseAlpha,
-    {
-      chainType: ChainType.EVM,
-      group: 'moonbeam',
-      tag: 'test',
-    }
-  ),
-  [PresetTypedChainId.Sepolia]: merge<Chain, WebbExtendedChain>(sepolia, {
+  [PresetTypedChainId.OptimismTestnet]: mergeChain(optimismGoerli, {
+    chainType: ChainType.EVM,
+    group: 'optimism',
+    tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.OptimismTestnet] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.OptimismTestnet] },
+    },
+  }),
+  [PresetTypedChainId.ArbitrumTestnet]: mergeChain(arbitrumGoerli, {
+    chainType: ChainType.EVM,
+    group: 'arbitrum',
+    tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.ArbitrumTestnet] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.ArbitrumTestnet] },
+    },
+  }),
+  [PresetTypedChainId.PolygonTestnet]: mergeChain(polygonMumbai, {
+    chainType: ChainType.EVM,
+    group: 'polygon',
+    tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.PolygonTestnet] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.PolygonTestnet] },
+    },
+  }),
+  [PresetTypedChainId.MoonbaseAlpha]: mergeChain(moonbaseAlpha, {
+    chainType: ChainType.EVM,
+    group: 'moonbeam',
+    tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.MoonbaseAlpha] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.MoonbaseAlpha] },
+    },
+  }),
+  [PresetTypedChainId.Sepolia]: mergeChain(sepolia, {
     chainType: ChainType.EVM,
     group: 'ethereum',
     tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.Sepolia] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.Sepolia] },
+    },
   }),
-  [PresetTypedChainId.AvalancheFuji]: merge<Chain, WebbExtendedChain>(
-    avalancheFuji,
-    {
-      chainType: ChainType.EVM,
-      group: 'avalanche',
-      tag: 'test',
-    }
-  ),
-  [PresetTypedChainId.ScrollAlpha]: merge<Chain, WebbExtendedChain>(
-    scrollTestnet,
-    {
-      chainType: ChainType.EVM,
-      group: 'scroll',
-      tag: 'test',
-      contracts: {
-        multicall3: {
-          address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-          blockCreated: 2745641,
-        },
+  [PresetTypedChainId.AvalancheFuji]: mergeChain(avalancheFuji, {
+    chainType: ChainType.EVM,
+    group: 'avalanche',
+    tag: 'test',
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.AvalancheFuji] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.AvalancheFuji] },
+    },
+  }),
+  [PresetTypedChainId.ScrollAlpha]: mergeChain(scrollTestnet, {
+    chainType: ChainType.EVM,
+    group: 'scroll',
+    tag: 'test',
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 2745641,
       },
-    }
-  ),
+    },
+    rpcUrls: {
+      public: { http: additionalRpcUrls[PresetTypedChainId.ScrollAlpha] },
+      default: { http: additionalRpcUrls[PresetTypedChainId.ScrollAlpha] },
+    },
+  }),
 
   // Self hosted chains
   [PresetTypedChainId.HermesOrbit]: {
