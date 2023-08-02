@@ -116,7 +116,7 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
               )}
 
               <TitleWithInfo
-                title={`${balance} ${balanceInUsd ? `≈ $${balanceInUsd}` : ''}`}
+                title={`${balance} ${balanceInUsd ? `≈$${balanceInUsd}` : ''}`}
                 variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"

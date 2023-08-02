@@ -78,7 +78,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             <div className="flex items-center">
               <Typography variant="body1" fw="bold">
                 {typeof totalFee === 'number'
-                  ? `~ ${totalFee} ${totalFeeToken}`.trim()
+                  ? `~${totalFee} ${totalFeeToken}`.trim()
                   : '-'}
               </Typography>
 
@@ -137,14 +137,14 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                       />
                     </div>
 
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-2 !text-inherit">
                       <Typography
                         variant="body1"
                         fw="bold"
                         className="text-mono-200 dark:text-mono-40"
                       >
                         {typeof value === 'number'
-                          ? `~ ${value} ${tokenSymbol}`.trim()
+                          ? `~${value} ${tokenSymbol}`.trim()
                           : '-'}
                       </Typography>
 
@@ -154,7 +154,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                           fw="semibold"
                           className="!text-inherit"
                         >
-                          `(≈ ${valueInUsd}))`
+                          {`(≈${valueInUsd})`}
                         </Typography>
                       )}
                     </div>

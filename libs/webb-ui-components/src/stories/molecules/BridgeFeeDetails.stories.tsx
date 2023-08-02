@@ -17,3 +17,32 @@ export const Default: Story = {
     <BridgeFeeDetails bridgeFeeInfo="Total fees" gasFeeInfo="Gas fee" />
   ),
 };
+
+export const WithGasFee: Story = {
+  render: () => (
+    <BridgeFeeDetails
+      bridgeFeeInfo="Total fees"
+      gasFeeInfo="Gas fee"
+      gasFee={0.05}
+      gasFeeToken="webbETH"
+      gasFeeInUSD={89.21}
+    />
+  ),
+};
+
+export const WithRelayerFee: Story = {
+  render: () => (
+    <BridgeFeeDetails
+      bridgeFeeInfo="Total fees"
+      gasFeeInfo="Gas fee"
+      gasFee={0.04}
+      gasFeeToken="webbETH"
+      gasFeeInUSD={89.21}
+      relayerFee={0.01}
+      relayerFeeToken="webbETH"
+      relayerFeeInUSD={23.32}
+      relayerFeeInfo="Relayer fee"
+      relayerFeePercentage={1}
+    />
+  ),
+};
