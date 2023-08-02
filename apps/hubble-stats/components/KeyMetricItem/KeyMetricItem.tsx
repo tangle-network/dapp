@@ -12,7 +12,13 @@ const KeyMetricItem: FC<MetricItemProps> = ({
   changeRate,
 }) => {
   return (
-    <div className="table-cell px-4 py-2 space-y-2 w-1/4 border-x border-mono-40 dark:border-mono-160 first-of-type:border-l-0 last-of-type:border-r-0">
+    <div
+      className={cx(
+        'w-1/4 table-cell px-4 py-2 space-y-2',
+        'border-x border-mono-40 dark:border-mono-160',
+        'first-of-type:border-l-0 last-of-type:border-r-0'
+      )}
+    >
       <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
         {title}
       </Typography>

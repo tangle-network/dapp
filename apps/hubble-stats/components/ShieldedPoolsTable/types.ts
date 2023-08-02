@@ -7,7 +7,7 @@ export interface ShieldedPoolType {
   token: number;
   deposits24h: number;
   tvl: number;
-  typedChainIds: string[];
+  typedChainIds: number[];
 }
 
 export interface ShieldedPoolsTableProps {
