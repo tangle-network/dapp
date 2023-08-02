@@ -25,6 +25,7 @@ export * from './Drawer';
 export * from './Dropdown';
 export * from './DropdownMenu';
 export * from './ErrorFallback';
+export { default as third } from './FeeDetails';
 export * from './FileUploads';
 export * from './Filter';
 export * from './Footer';

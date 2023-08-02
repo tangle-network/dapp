@@ -15,6 +15,8 @@ export interface AccordionButtonProps
     PropsOf<'button'>,
     AccordionTriggerProps {}
 
+export interface AccordionButtonBaseProps extends AccordionTriggerProps {}
+
 export interface AccordionContentProps
   extends IWebbComponentBase,
     RdxAccordionContentProps {}

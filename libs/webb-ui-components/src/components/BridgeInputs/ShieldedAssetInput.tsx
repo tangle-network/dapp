@@ -82,7 +82,7 @@ export const ShieldedAssetInput = forwardRef<
             component="span"
             className="uppercase text-mono-100 dark:text-mono-80"
           >
-            Balance: {balance} {balanceInUsd ? `≈ $${balanceInUsd}` : ''}
+            Balance: {balance} {balanceInUsd ? `≈$${balanceInUsd}` : ''}
           </Typography>
 
           <ChevronRight className="inline-block grow" />
