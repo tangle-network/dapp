@@ -53,18 +53,20 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       <Accordion
         {...props}
         className={twMerge(
-          'rounded-lg p-3',
-          'bg-mono-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
+          'rounded-lg p-3 w-full max-w-lg',
+          'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
           className
         )}
         ref={ref}
+        collapsible
         type="single"
       >
-        <AccordionItem value="fee-details">
-          <AccordionButtonBase className="flex items-center justify-between">
+        <AccordionItem value="fee-details" className="space-y-2">
+          <AccordionButtonBase className="flex items-center justify-between w-full">
             <TitleWithInfo
               title="Fees"
-              titleClassName={cx('font-bold text-mono-120 dark:text-mono-100')}
+              className="text-mono-120 dark:text-mono-100"
+              titleClassName={cx('!text-inherit')}
               info={info}
             />
 
@@ -79,11 +81,14 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                 <TokenIcon name={totalFeeToken} className="ml-2" />
               )}
 
-              <ArrowDropDownFill size="lg" className="ml-2" />
+              <ArrowDropDownFill
+                size="lg"
+                className="ml-2 fill-mono-120 dark:fill-mono-100"
+              />
             </div>
           </AccordionButtonBase>
 
-          <AccordionContent className="px-2 py-0">
+          <AccordionContent className="px-2 py-0 space-y-2">
             {items?.map(
               (
                 { name, info, tokenSymbol = '', value, Icon, valueInUsd },
@@ -93,7 +98,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                   className="flex items-center justify-between text-mono-120 dark:text-mono-100"
                   key={`${name}-${index}`}
                 >
-                  <div className="flex items-center gap-[2px]">
+                  <div className="flex items-center gap-[2px] !text-current">
                     <CornerDownRightLine className="!fill-current" />
 
                     {Icon &&
@@ -110,6 +115,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                       title={name}
                       info={info}
                       variant="body1"
+                      titleClassName={cx('!text-inherit')}
                       className="!text-inherit space-x-[2px]"
                     />
                   </div>
