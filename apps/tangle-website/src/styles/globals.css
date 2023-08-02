@@ -59,7 +59,6 @@ button[data-radix-collection-item] > svg {
 }
 
 /** Override the notion styles */
-
 .notion-page {
   @apply !max-w-[900px] !mx-auto !w-auto;
 }
@@ -67,7 +66,7 @@ button[data-radix-collection-item] > svg {
 .notion-title {
   @apply text-[24px] leading-[32.4px] /** small screen */
   md:text-[36px] md:leading-[54px] /** medium screen */
-  !mb-[48px] !font-black;
+  !mb-[24px] !font-black;
 }
 
 .notion b,
@@ -75,14 +74,15 @@ button[data-radix-collection-item] > svg {
   @apply !font-black;
 }
 
-.notion-text {
+.notion-h3 {
+  @apply !mb-5;
+}
+
+.notion-text,
+.notion-list li {
   @apply text-[16px] leading-[21.6px] /** small screen */
   md:text-[18px] md:leading-[27px] /** medium screen */
   font-medium;
-}
-
-.notion-list li {
-  @apply font-semibold;
 }
 
 .notion-link {
