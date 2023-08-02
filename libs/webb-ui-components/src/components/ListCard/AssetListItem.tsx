@@ -4,7 +4,7 @@ import { getRoundedAmountString } from '../../utils';
 import { ComponentProps, forwardRef, useMemo, useRef, useState } from 'react';
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 
 export const AssetListItem = forwardRef<
   HTMLLIElement,

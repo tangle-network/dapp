@@ -7,7 +7,7 @@ export * from './Banner';
 export * from './BottomDialog';
 export * from './Breadcrumbs';
 export * from './BridgeInputs';
-export * from './Button';
+export * from './buttons';
 export * from './Card';
 export * from './CardTable';
 export * from './ChainChip';

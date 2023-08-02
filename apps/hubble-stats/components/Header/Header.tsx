@@ -1,3 +1,5 @@
+import { BlockIcon, CoinIcon, ContrastLine, Spinner } from '@webb-tools/icons';
+import { IconBase } from '@webb-tools/icons/types';
 import { FC, useMemo } from 'react';
 import Link from 'next/link';
 import {
@@ -7,19 +9,40 @@ import {
   ChipProps,
   SideBarMenu,
 } from '@webb-tools/webb-ui-components';
-import { BlockIcon, GridFillIcon, Spinner } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+import { HeaderProps, Breadcrumb } from './types';
+import { usePathname } from 'next/navigation';
 
 import { sideBarProps } from '../../constants';
 
-const Header = () => {
-  const tvl = useMemo(() => {
-    return 'TVL: $13,642,124';
-  }, []);
+const Header = ({ tvlValue, volumeValue }: HeaderProps) => {
+  const pathname = usePathname();
 
-  const volume = useMemo(() => {
-    return 'volume: $8,562,122';
-  }, []);
+  const breadCrumbs = useMemo(() => {
+    const parts = pathname.split('/');
+    const activeItem = parts[parts.length - 1];
+
+    const breadCrumbItems: Breadcrumb[] = [
+      {
+        label: 'Hubble Overview',
+        isLast: activeItem !== '' ? false : true,
+        icon: (
+          <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
+        ),
+        href: '/',
+      },
+    ];
+
+    if (activeItem !== '') {
+      breadCrumbItems.push({
+        label: activeItem,
+        isLast: true,
+        icon: <CoinIcon />,
+        href: '',
+      });
+    }
+
+    return breadCrumbItems;
+  }, [pathname]);
 
   return (
     <div className="flex items-center justify-between pt-6 pb-4">
@@ -27,14 +50,17 @@ const Header = () => {
       <div className="flex gap-2 items-center">
         <SideBarMenu {...sideBarProps} className="lg:hidden" />
         <Breadcrumbs>
-          <Link href="/">
-            <BreadcrumbsItem
-              icon={<GridFillIcon />}
-              className="ml-0 bg-[rgba(156,160,176,0.10)] dark:bg-[rgba(255,255,255,0.05)]"
-            >
-              Hubble Overview
-            </BreadcrumbsItem>
-          </Link>
+          {breadCrumbs.map((breadcrumb, index) => (
+            <Link key={index} href={breadcrumb.href}>
+              <BreadcrumbsItem
+                icon={breadcrumb.icon}
+                className={breadcrumb.className}
+                isLast={breadcrumb.isLast}
+              >
+                {breadcrumb.label}
+              </BreadcrumbsItem>
+            </Link>
+          ))}
         </Breadcrumbs>
       </div>
 
@@ -45,16 +71,16 @@ const Header = () => {
           Icon={BlockIcon}
           iconSize="lg"
           iconClassName="stroke-blue-90 dark:stroke-blue-30"
-          value={tvl}
-          isLoading={tvl ? false : true}
+          value={tvlValue}
+          isLoading={tvlValue ? false : true}
         />
         <VolumeChip
           color="blue"
           Icon={BlockIcon}
           iconSize="lg"
           iconClassName="stroke-blue-90 dark:stroke-blue-30"
-          value={volume}
-          isLoading={volume ? false : true}
+          value={volumeValue}
+          isLoading={volumeValue ? false : true}
         />
       </div>
     </div>

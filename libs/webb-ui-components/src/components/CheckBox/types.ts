@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { WebbComponentBase } from '../../types';
 import { WebbTypographyVariant } from '../../typography/types';
 

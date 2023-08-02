@@ -26,6 +26,7 @@ export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
+export * from './ContrastLine';
 export * from './ContrastTwoLine';
 export * from './CopyLinkFill';
 export * from './Copyright';
@@ -104,3 +105,6 @@ export * from './PartyFill';
 // Tangle Icons
 export * from './Tangle';
 export * from './TangleIcon';
+
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';

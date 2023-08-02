@@ -1,7 +1,7 @@
 import { Typography } from '../../typography';
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { WebsiteCommunityProps } from './types';
 
 /**

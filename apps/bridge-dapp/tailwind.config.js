@@ -5,6 +5,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join } = require('path');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [preset],
   content: [

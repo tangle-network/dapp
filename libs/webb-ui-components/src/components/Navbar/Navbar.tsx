@@ -10,7 +10,7 @@ import { FC, forwardRef, useMemo } from 'react';
 
 import { Typography } from '../../typography';
 import { Accordion, AccordionContent, AccordionItem } from '../Accordion';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
 import { MenuItem } from '../MenuItem';
 import { InternalOrExternalLink } from './InternalOrExternalLink';

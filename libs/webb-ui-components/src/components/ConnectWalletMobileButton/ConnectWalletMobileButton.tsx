@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 
 import { Typography } from '../../typography';
-import { Button, ButtonProps } from '../Button';
+import { Button, ButtonProps } from '../buttons';
 import {
   BottomDialog,
   BottomDialogTrigger,

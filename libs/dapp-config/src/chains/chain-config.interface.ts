@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@webb-tools/sdk-core';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import type { Chain } from '@wagmi/chains';
 
 import { AppEnvironment } from '../types';

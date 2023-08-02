@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { AmountMenu } from '../AmountMenu';
 import { InputWrapper } from '../BridgeInputs/InputWrapper';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Dropdown, DropdownBody } from '../Dropdown';
 import { Input } from '../Input/Input';
 import { Label } from '../Label';

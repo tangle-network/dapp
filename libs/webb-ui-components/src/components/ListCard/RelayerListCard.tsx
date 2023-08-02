@@ -6,7 +6,7 @@ import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Avatar } from '../Avatar';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
 import { ListCardWrapper } from './ListCardWrapper';

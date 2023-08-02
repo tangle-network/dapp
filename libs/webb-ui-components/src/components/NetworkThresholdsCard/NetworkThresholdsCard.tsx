@@ -1,7 +1,7 @@
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Card } from '../Card';
 import { Chip } from '../Chip';
 import { KeyValueWithButton } from '../KeyValueWithButton';

@@ -2,7 +2,7 @@ import { Typography } from '../../typography';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { ScrollArea } from '../ScrollArea';
 import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
