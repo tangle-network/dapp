@@ -1,9 +1,9 @@
-import { FC } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 
 import { ShieldedAssetsTable, ShieldedPoolsTable } from '../../components';
 import { ShieldedAssetType } from '../../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../../components/ShieldedPoolsTable/types';
+import { getShieldedTablesDD } from '../../utils';
 
 interface ShieldedTablesContainerProps {
   assetsData?: ShieldedAssetType[];
@@ -14,10 +14,14 @@ const pageSize = 5;
 const assetsTableTab = 'Shielded Assets';
 const poolsTableTab = 'Shielded Pools';
 
-const ShieldedTablesContainer: FC<ShieldedTablesContainerProps> = ({
-  assetsData = [],
-  poolsData = [],
-}) => {
+async function getShieldedTablesData(): Promise<ShieldedTablesContainerProps> {
+  await new Promise((r) => setTimeout(r, 1000));
+  return getShieldedTablesDD(pageSize * 2 - 2);
+}
+
+export default async function ShieldedTablesContainer() {
+  const { assetsData, poolsData } = await getShieldedTablesData();
+
   return (
     <TableAndChartTabs
       tabs={[assetsTableTab, poolsTableTab]}
@@ -34,6 +38,4 @@ const ShieldedTablesContainer: FC<ShieldedTablesContainerProps> = ({
       </TabContent>
     </TableAndChartTabs>
   );
-};
-
-export default ShieldedTablesContainer;
+}

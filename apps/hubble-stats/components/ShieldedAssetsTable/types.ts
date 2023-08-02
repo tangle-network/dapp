@@ -12,6 +12,6 @@ export interface ShieldedAssetType {
 }
 
 export interface ShieldedAssetsTableProps {
-  data: ShieldedAssetType[];
+  data?: ShieldedAssetType[];
   pageSize: number;
 }

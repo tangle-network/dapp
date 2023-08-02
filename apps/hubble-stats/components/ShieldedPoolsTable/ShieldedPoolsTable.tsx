@@ -42,7 +42,9 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   }),
   columnHelper.accessor('token', {
     header: () => <HeaderCell title="Token #" className="justify-end" />,
-    cell: (props) => <NumberCell value={props.getValue()} />,
+    cell: (props) => (
+      <NumberCell value={props.getValue()} className="text-right" />
+    ),
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
@@ -65,7 +67,7 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
 ];
 
 const ShieldedPoolsTable: FC<ShieldedPoolsTableProps> = ({
-  data,
+  data = [],
   pageSize,
 }) => {
   const table = useReactTable({
