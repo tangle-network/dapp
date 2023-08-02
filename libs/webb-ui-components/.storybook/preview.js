@@ -1,5 +1,6 @@
 import { withThemeByClassName } from '@storybook/addon-styling';
 import '../src/tailwind.css';
+import './override.css';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

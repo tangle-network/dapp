@@ -53,7 +53,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       <Accordion
         {...props}
         className={twMerge(
-          'rounded-lg p-3 w-full max-w-lg',
+          'rounded-lg w-full max-w-lg',
           'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
           className
         )}
@@ -61,8 +61,13 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         collapsible
         type="single"
       >
-        <AccordionItem value="fee-details" className="space-y-2">
-          <AccordionButtonBase className="flex items-center justify-between w-full">
+        <AccordionItem value="fee-details" className="p-0">
+          <AccordionButtonBase
+            className={cx(
+              'grop flex items-center justify-between w-full',
+              'p-3'
+            )}
+          >
             <TitleWithInfo
               title="Fees"
               className="text-mono-120 dark:text-mono-100"
@@ -83,67 +88,80 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
 
               <ArrowDropDownFill
                 size="lg"
-                className="ml-2 fill-mono-120 dark:fill-mono-100"
+                className={cx(
+                  'ml-2 fill-mono-120 dark:fill-mono-100 duration-300',
+                  'group-radix-state-open:rotate-180',
+                  'group-radix-state-closed:rotate-0'
+                )}
               />
             </div>
           </AccordionButtonBase>
 
-          <AccordionContent className="px-2 py-0 space-y-2">
-            {items?.map(
-              (
-                { name, info, tokenSymbol = '', value, Icon, valueInUsd },
-                index
-              ) => (
-                <div
-                  className="flex items-center justify-between text-mono-120 dark:text-mono-100"
-                  key={`${name}-${index}`}
-                >
-                  <div className="flex items-center gap-[2px] !text-current">
-                    <CornerDownRightLine className="!fill-current" />
+          <AccordionContent
+            className={cx(
+              'overflow-hidden p-0',
+              'radix-state-open:animate-accordion-slide-down',
+              'radix-state-closed:animate-accordion-slide-up'
+            )}
+          >
+            {/** Put content in the <div></div> to prevent UI shifting when animating */}
+            <div className="px-5 pt-0 pb-3 space-y-2">
+              {items?.map(
+                (
+                  { name, info, tokenSymbol = '', value, Icon, valueInUsd },
+                  index
+                ) => (
+                  <div
+                    className="flex items-center justify-between text-mono-120 dark:text-mono-100"
+                    key={`${name}-${index}`}
+                  >
+                    <div className="flex items-center gap-[2px] !text-current">
+                      <CornerDownRightLine className="!fill-current" />
 
-                    {Icon &&
-                      cloneElement(Icon, {
-                        ...Icon.props,
-                        size: 'md',
-                        className: twMerge(
-                          Icon.props.className,
-                          '!fill-current'
-                        ),
-                      })}
+                      {Icon &&
+                        cloneElement(Icon, {
+                          ...Icon.props,
+                          size: 'md',
+                          className: twMerge(
+                            Icon.props.className,
+                            '!fill-current'
+                          ),
+                        })}
 
-                    <TitleWithInfo
-                      title={name}
-                      info={info}
-                      variant="body1"
-                      titleClassName={cx('!text-inherit')}
-                      className="!text-inherit space-x-[2px]"
-                    />
-                  </div>
+                      <TitleWithInfo
+                        title={name}
+                        info={info}
+                        variant="body1"
+                        titleClassName={cx('!text-inherit')}
+                        className="!text-inherit space-x-[2px]"
+                      />
+                    </div>
 
-                  <div className="flex items-start gap-2">
-                    <Typography
-                      variant="body1"
-                      fw="bold"
-                      className="text-mono-200 dark:text-mono-40"
-                    >
-                      {typeof value === 'number'
-                        ? `~ ${value} ${tokenSymbol}`.trim()
-                        : '-'}
-                    </Typography>
-
-                    {typeof valueInUsd === 'number' && (
+                    <div className="flex items-start gap-2">
                       <Typography
                         variant="body1"
-                        fw="semibold"
-                        className="!text-inherit"
+                        fw="bold"
+                        className="text-mono-200 dark:text-mono-40"
                       >
-                        `(≈ ${valueInUsd}))`
+                        {typeof value === 'number'
+                          ? `~ ${value} ${tokenSymbol}`.trim()
+                          : '-'}
                       </Typography>
-                    )}
+
+                      {typeof valueInUsd === 'number' && (
+                        <Typography
+                          variant="body1"
+                          fw="semibold"
+                          className="!text-inherit"
+                        >
+                          `(≈ ${valueInUsd}))`
+                        </Typography>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
