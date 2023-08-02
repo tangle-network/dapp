@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import {
   createColumnHelper,
@@ -25,56 +27,52 @@ const columnHelper = createColumnHelper<PoolTransactionType>();
 const columns: ColumnDef<PoolTransactionType, any>[] = [
   columnHelper.accessor('activity', {
     header: () => <HeaderCell title="Pool Type" className="justify-start" />,
-    cell: (row) => (
+    cell: (props) => (
       <ActivityCell
-        txHash={row.row.original.txHash}
-        activity={row.row.original.activity}
+        txHash={props.row.original.txHash}
+        activity={props.row.original.activity}
       />
     ),
   }),
   columnHelper.accessor('tokenAmount', {
     header: () => <HeaderCell title="Token Amount" className="justify-start" />,
-    cell: (row) => (
+    cell: (props) => (
       <NumberCell
-        value={row.row.original.tokenAmount}
-        suffix={row.row.original.tokenSymbol}
+        value={props.row.original.tokenAmount}
+        suffix={props.row.original.tokenSymbol}
         className="text-left"
-        isProtected={row.row.original.activity === 'transfer'}
+        isProtected={props.row.original.activity === 'transfer'}
       />
     ),
   }),
   columnHelper.accessor('source', {
     header: () => <HeaderCell title="Source" className="justify-start" />,
-    cell: (row) => (
+    cell: (props) => (
       <ChainChip
-        chainName={row.row.original.source}
-        chainType={row.row.original.sourceChainType}
+        chainName={props.row.original.source}
+        chainType={props.row.original.sourceChainType}
       />
     ),
   }),
   columnHelper.accessor('destination', {
     header: () => <HeaderCell title="Destination" className="justify-start" />,
-    cell: (row) => <DestinationCell />,
+    cell: (props) => <DestinationCell />,
   }),
   columnHelper.accessor('time', {
     header: () => <HeaderCell title="Time" className="justify-end" />,
-    cell: (row) => (
-      <TimeCell time={row.row.original.time} className="text-right" />
+    cell: (props) => (
+      <TimeCell time={props.row.original.time} className="text-right" />
     ),
   }),
 ];
 
 const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
   data,
-  globalSearchText,
   pageSize,
 }) => {
   const table = useReactTable({
     data,
     columns,
-    state: {
-      globalFilter: globalSearchText,
-    },
     initialState: {
       pagination: {
         pageSize,

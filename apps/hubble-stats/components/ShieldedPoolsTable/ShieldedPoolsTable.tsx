@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import {
   createColumnHelper,
@@ -14,18 +16,19 @@ import { Table, IconsGroup, fuzzyFilter } from '@webb-tools/webb-ui-components';
 import { ShieldedPoolType, ShieldedPoolsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
 import { PoolTypeChip } from '..';
+import { getChainNamesByTypedId } from '../../utils';
 
 const columnHelper = createColumnHelper<ShieldedPoolType>();
 
 const columns: ColumnDef<ShieldedPoolType, any>[] = [
-  columnHelper.accessor('poolAddress', {
+  columnHelper.accessor('address', {
     header: () => (
       <HeaderCell title="Shielded Pools" className="justify-start" />
     ),
     cell: (props) => (
       <ShieldedCell
-        title={props.row.original.poolSymbol}
-        address={props.row.original.poolAddress}
+        title={props.row.original.symbol}
+        address={props.row.original.address}
       />
     ),
   }),
@@ -49,11 +52,11 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
     cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
   }),
-  columnHelper.accessor('chains', {
+  columnHelper.accessor('typedChainIds', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
     cell: (props) => (
       <IconsGroup
-        icons={props.getValue()}
+        icons={getChainNamesByTypedId(props.getValue())}
         type="chain"
         className="justify-end"
       />

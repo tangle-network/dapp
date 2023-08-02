@@ -14,7 +14,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
   return (
     <div
       className={cx(
-        'table-cell px-4 py-2 space-y-2 w-1/4',
+        'w-1/4 table-cell px-4 py-2 space-y-2',
         'border-x border-mono-40 dark:border-mono-160',
         'first-of-type:border-l-0 last-of-type:border-r-0'
       )}

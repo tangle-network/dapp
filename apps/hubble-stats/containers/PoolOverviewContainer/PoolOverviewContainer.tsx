@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
@@ -31,8 +29,8 @@ const PoolOverviewContainer: FC<{ poolOverviewData?: PoolOverviewType }> = ({
     <div
       className={cx(
         'w-full space-y-4 p-6 rounded-lg',
-        'border-2 border-mono-0 dark:border-mono-160',
-        'bg-glass dark:bg-glass_dark'
+        'bg-glass dark:bg-glass_dark',
+        'border-2 border-mono-0 dark:border-mono-160'
       )}
     >
       <div className="flex flex-col items-center gap-1">

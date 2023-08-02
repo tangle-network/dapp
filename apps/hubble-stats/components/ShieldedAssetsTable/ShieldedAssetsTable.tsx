@@ -1,4 +1,6 @@
-import { FC, useMemo } from 'react';
+'use client';
+
+import { FC } from 'react';
 import {
   createColumnHelper,
   useReactTable,
@@ -9,21 +11,27 @@ import {
   ColumnDef,
   Table as RTTable,
 } from '@tanstack/react-table';
-import {
-  Table,
-  fuzzyFilter,
-  IconsGroup,
-  useDarkMode,
-} from '@webb-tools/webb-ui-components';
-import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
+import { Table, fuzzyFilter, IconsGroup } from '@webb-tools/webb-ui-components';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
 import { PoolTypeChip } from '..';
+import { getChainNamesByTypedId } from '../../utils';
 
 const columnHelper = createColumnHelper<ShieldedAssetType>();
 
-const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
+const columns: ColumnDef<ShieldedAssetType, any>[] = [
+  columnHelper.accessor('address', {
+    header: () => (
+      <HeaderCell title="Shielded Assets" className="justify-start" />
+    ),
+    cell: (props) => (
+      <ShieldedCell
+        title={props.row.original.symbol}
+        address={props.row.original.address}
+      />
+    ),
+  }),
   columnHelper.accessor('poolType', {
     header: () => <HeaderCell title="Pool Type" />,
     cell: (props) => (
@@ -50,11 +58,11 @@ const staticColumns: ColumnDef<ShieldedAssetType, any>[] = [
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
     cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
   }),
-  columnHelper.accessor('chains', {
+  columnHelper.accessor('typedChainIds', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,
     cell: (props) => (
       <IconsGroup
-        icons={props.getValue()}
+        icons={getChainNamesByTypedId(props.getValue())}
         type="chain"
         className="justify-end"
       />
@@ -66,27 +74,6 @@ const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
   data,
   pageSize,
 }) => {
-  const [isDarkMode] = useDarkMode();
-
-  const columns = useMemo<ColumnDef<ShieldedAssetType, any>[]>(
-    () => [
-      columnHelper.accessor('assetAddress', {
-        header: () => (
-          <HeaderCell title="Shielded Assets" className="justify-start" />
-        ),
-        cell: (props) => (
-          <ShieldedCell
-            title={props.row.original.assetSymbol}
-            address={props.row.original.assetAddress}
-            icon={isDarkMode ? <ShieldedAssetDark /> : <ShieldedAssetLight />}
-          />
-        ),
-      }),
-      ...staticColumns,
-    ],
-    [isDarkMode]
-  );
-
   const table = useReactTable({
     data,
     columns,

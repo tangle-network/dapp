@@ -1,14 +1,14 @@
 import { PoolType } from '../PoolTypeChip/types';
 
 export interface ShieldedAssetType {
-  assetAddress: string;
-  assetSymbol: string;
-  assetsUrl: string;
+  address: string;
+  symbol: string;
+  url: string;
   poolType: PoolType;
   composition: string[];
   deposits24h: number;
   tvl: number;
-  chains: string[];
+  typedChainIds: number[];
 }
 
 export interface ShieldedAssetsTableProps {
