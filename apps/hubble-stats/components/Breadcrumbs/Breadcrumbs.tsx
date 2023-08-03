@@ -13,15 +13,19 @@ import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
   const pathname = usePathname();
+  const parts = pathname.split('/');
+  let activeItem = parts[parts.length - 1];
+
+  if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
+    // TODO: handle getting pool name from address and redirect user if invalid address
+    activeItem = 'webbParachain';
+  }
 
   const breadCrumbs = useMemo(() => {
-    const parts = pathname.split('/');
-    const activeItem = parts[parts.length - 1];
-
     const breadCrumbItems: BreadcrumbType[] = [
       {
         label: 'Hubble Overview',
-        isLast: activeItem !== '' ? false : true,
+        isLast: activeItem === '',
         icon: (
           <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
         ),
@@ -39,7 +43,7 @@ const Breadcrumbs: FC = () => {
     }
 
     return breadCrumbItems;
-  }, [pathname]);
+  }, [activeItem]);
 
   return (
     <BreadcrumbsCmp>
