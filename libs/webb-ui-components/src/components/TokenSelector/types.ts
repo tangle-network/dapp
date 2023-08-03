@@ -2,7 +2,7 @@ import { IWebbComponentBase, PropsOf } from '../../types';
 
 export interface TokenSelectorProps
   extends IWebbComponentBase,
-    PropsOf<'button'> {
+    Omit<PropsOf<'button'>, 'disabled'> {
   /**
    * The chidren must be a token symbol (e.g. eth, dot, ...)
    * for rendering the token icon and displaying.
@@ -14,4 +14,9 @@ export interface TokenSelectorProps
    * If `true`, the component will display as disable state
    */
   isActive?: boolean;
+
+  /**
+   * If `true`, the component will display as disable state
+   */
+  isDisabled?: boolean;
 }

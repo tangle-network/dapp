@@ -16,3 +16,13 @@ type Story = StoryObj<typeof TokenSelector>;
 export const Default: Story = {
   render: () => <TokenSelector />,
 };
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+export const Disabled: Story = {
+  render: () => <TokenSelector isDisabled />,
+};
+
+// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
+export const WithToken: Story = {
+  render: () => <TokenSelector children="WETH" />,
+};
