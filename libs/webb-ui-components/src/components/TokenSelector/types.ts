@@ -5,16 +5,13 @@ export interface TokenSelectorProps
     PropsOf<'button'> {
   /**
    * The chidren must be a token symbol (e.g. eth, dot, ...)
+   * for rendering the token icon and displaying.
+   * If not provided, the component will display the placeholder
    */
-  children: string;
+  children?: string;
 
   /**
    * If `true`, the component will display as disable state
    */
   isActive?: boolean;
-
-  /**
-   * The callback when user clicks on the token
-   */
-  onTokenClick?: (symbol: string) => void;
 }

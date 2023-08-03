@@ -32,7 +32,7 @@ export interface DynamicSVGImportOptions {
  * @returns `error`, `loading` and `SvgIcon` in an object
  */
 export function useDynamicSVGImport(
-  name: string,
+  name?: string,
   options: DynamicSVGImportOptions = {}
 ) {
   const [importedIcon, setImportedIcon] = useState<
@@ -43,7 +43,11 @@ export function useDynamicSVGImport(
 
   const { onCompleted, onError } = options;
 
-  const _name = useMemo(() => name.trim().toLowerCase(), [name]);
+  const _name = useMemo(
+    () =>
+      typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder',
+    [name]
+  );
   const type = useMemo(() => options.type ?? 'token', [options]);
 
   useEffect(() => {

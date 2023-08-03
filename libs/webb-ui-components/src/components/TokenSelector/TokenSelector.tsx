@@ -1,26 +1,12 @@
 import { TokenIcon } from '@webb-tools/icons';
 import cx from 'classnames';
-import { MouseEvent, forwardRef, useMemo, useRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TokenSelectorProps } from './types';
 
-export const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
-  (
-    { children, className, disabled, isActive, onTokenClick, ...props },
-    ref
-  ) => {
-    const onTokenClickRef = useRef(onTokenClick);
-
-    const handleTokenIconClick = useMemo(() => {
-      if (typeof onTokenClick === 'function') {
-        return (event: MouseEvent<SVGSVGElement>) => {
-          event.stopPropagation();
-          onTokenClickRef.current?.(children);
-        };
-      }
-    }, []);
-
+const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
+  ({ children, className, disabled, isActive, ...props }, ref) => {
     const mergedClsx = useMemo(
       () =>
         twMerge(
@@ -44,14 +30,14 @@ export const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
 
     return (
       <button {...props} disabled={isDisabled} className={mergedClsx} ref={ref}>
-        <TokenIcon
-          onClick={handleTokenIconClick}
-          name={children.toLowerCase()}
-          size="lg"
-        />
+        <TokenIcon name={children?.toLowerCase()} size="lg" />
 
-        <span className="inline-block text-inherit">{children}</span>
+        <span className="inline-block text-inherit">
+          {children ?? 'Select'}
+        </span>
       </button>
     );
   }
 );
+
+export default TokenSelector;
