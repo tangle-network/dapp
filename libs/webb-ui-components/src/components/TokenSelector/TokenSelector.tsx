@@ -80,9 +80,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
           size="lg"
           className={cx(
             'group-disabled:hidden',
-            'fill-mono-120 dark:fill-mono-100',
-            'group-enabled:group-hover:fill-mono-40',
-            'dark:group-enabled:group-hover:fill-mono-100'
+            'fill-mono-120 dark:fill-mono-100'
           )}
         />
       </button>
