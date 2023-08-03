@@ -1,19 +1,14 @@
 import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import {
-  ExternalLinkLine,
-  ShieldedAssetDark,
-  ShieldedAssetLight,
-} from '@webb-tools/icons';
+import { ExternalLinkLine, ShieldedAssetIcon } from '@webb-tools/icons';
 
 import { ShieldedCellProps } from './types';
 
 const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
   return (
     <div className="flex items-center gap-2">
-      <ShieldedAssetLight className="block dark:hidden" />
-      <ShieldedAssetDark className="hidden dark:block" />
+      <ShieldedAssetIcon />
 
       <div className="flex flex-col">
         <Typography

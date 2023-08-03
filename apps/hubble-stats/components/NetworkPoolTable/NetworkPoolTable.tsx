@@ -1,25 +1,25 @@
 'use client';
 
-import { FC, useMemo } from 'react';
 import {
-  createColumnHelper,
-  useReactTable,
-  getCoreRowModel,
   ColumnDef,
   Table as RTTable,
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { ShieldKeyholeIcon } from '@webb-tools/icons';
 import {
   ChainChip,
   Table,
-  fuzzyFilter,
   Typography,
+  fuzzyFilter,
 } from '@webb-tools/webb-ui-components';
-import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { FC, useMemo } from 'react';
 
-import { NetworkPoolType, NetworkPoolTableProps } from './types';
-import { HeaderCell, NumberCell } from '../table';
 import { getSortedTypedChainIds } from '../../utils';
+import { HeaderCell, NumberCell } from '../table';
+import { NetworkPoolTableProps, NetworkPoolType } from './types';
 
 const columnHelper = createColumnHelper<NetworkPoolType>();
 
@@ -28,8 +28,7 @@ const staticColumns: ColumnDef<NetworkPoolType, any>[] = [
     header: () => null,
     cell: (props) => (
       <div className="flex items-center gap-1">
-        <ShieldedAssetLight className="block dark:hidden" />
-        <ShieldedAssetDark className="hidden dark:block" />
+        <ShieldKeyholeIcon />
         <Typography
           variant="body1"
           fw="bold"
@@ -111,7 +110,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
+    <div className="overflow-hidden border rounded-lg border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"
