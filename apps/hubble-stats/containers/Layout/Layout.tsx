@@ -15,6 +15,9 @@ const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
             <SideBarMenu />
             <Breadcrumbs />
           </div>
+          {/* TypeScript doesn't understand async components. */}
+          {/* Current approach: https://github.com/vercel/next.js/issues/42292#issuecomment-1298459024 */}
+          {/* @ts-expect-error Server Component */}
           <OverviewChipsContainer />
         </div>
 
