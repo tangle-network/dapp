@@ -1,5 +1,3 @@
-import { ChainConfig } from '@webb-tools/dapp-config';
-
 export interface HeaderCellProps {
   title: string;
   tooltip?: string;
@@ -17,7 +15,6 @@ export interface NumberCellProps {
 export interface ShieldedCellProps {
   title: string;
   address: string;
-  icon?: JSX.Element;
 }
 
 export type ActivityType = 'deposit' | 'transfer' | 'withdraw';
@@ -37,14 +34,14 @@ export interface DestinationCellProps {
 }
 
 export interface FilterButtonProps {
-  tokens: [string, string][];
-  selectedTokens: [string, string][];
-  setSelectedTokens: (tokens: [string, string][]) => void;
-  sourceChains: string[];
-  selectedSourceChains: [string, ChainConfig][];
-  setSelectedSourceChains: (chains: [string, ChainConfig][]) => void;
-  destinationChains: string[];
-  selectedDestinationChains: [string, ChainConfig][];
-  setSelectedDestinationChains: (chains: [string, ChainConfig][]) => void;
+  tokens: [number, string][];
+  selectedTokens: [number, string][];
+  setSelectedTokens: (tokens: [number, string][]) => void;
+  sourceChains: number[];
+  selectedSourceChains: number[];
+  setSelectedSourceChains: (chains: number[]) => void;
+  destinationChains: number[];
+  selectedDestinationChains: number[];
+  setSelectedDestinationChains: (chains: number[]) => void;
   showAllFn: () => void;
 }

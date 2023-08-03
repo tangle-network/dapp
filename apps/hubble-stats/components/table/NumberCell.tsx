@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import cx from 'classnames';
+import { twMerge } from 'tailwind-merge';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
@@ -15,7 +15,7 @@ const NumberCell: FC<NumberCellProps> = ({
   return (
     <Typography
       variant="body1"
-      className={cx(
+      className={twMerge(
         'text-mono-140 dark:text-mono-40 text-center uppercase',
         className
       )}

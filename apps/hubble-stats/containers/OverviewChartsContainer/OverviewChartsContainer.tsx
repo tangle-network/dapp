@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
+
 import { AreaChart, BarChart } from '../../components';
 
 const OverviewChartsContainer = () => {
@@ -19,22 +20,6 @@ const OverviewChartsContainer = () => {
 
   // 24 Hour Volume data type (day, week, month) - Default value is Week
   const [volumeDataType, setVolumeDataType] = useState<DaysFilterType>('week');
-
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  useEffect(() => {
-    const handleThemeChange = () => {
-      setIsDarkMode(localStorage.getItem('theme') === 'dark');
-    };
-
-    handleThemeChange();
-
-    window.addEventListener('storage', handleThemeChange);
-
-    return () => {
-      window.removeEventListener('storage', handleThemeChange);
-    };
-  }, []);
 
   const tvlData = useMemo(() => {
     const data = [];
@@ -71,12 +56,7 @@ const OverviewChartsContainer = () => {
         value={tvlValue}
         date={tvlDate}
       >
-        <AreaChart
-          data={tvlData}
-          setDate={setTVLDate}
-          setValue={setTvlValue}
-          isDarkMode={isDarkMode}
-        />
+        <AreaChart data={tvlData} setDate={setTVLDate} setValue={setTvlValue} />
       </ChartContainer>
 
       {/* 24 Hour Volume Chart Container */}
@@ -93,7 +73,6 @@ const OverviewChartsContainer = () => {
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}
-          isDarkMode={isDarkMode}
         />
       </ChartContainer>
     </div>

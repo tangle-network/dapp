@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import {
   ResponsiveContainer,
@@ -6,16 +8,19 @@ import {
   Tooltip,
   XAxis,
 } from 'recharts';
+import { useDarkMode } from '@webb-tools/webb-ui-components';
+
 import { AreaChartProps } from './types';
 
 const AreaChart: FC<AreaChartProps> = ({
   data,
   setDate,
   setValue,
-  isDarkMode,
   width = '100%',
   height = 180,
 }) => {
+  const [isDarkMode] = useDarkMode();
+
   return (
     <ResponsiveContainer width={width} height={height}>
       <AreaChartCmp

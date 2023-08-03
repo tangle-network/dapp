@@ -1,5 +1,4 @@
-'use client';
-
+import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import { PoolMetadataTable } from '../../components';
@@ -40,7 +39,7 @@ const metadata: PoolAttributeType[] = [
   },
 ];
 
-const PoolMetadataTableContainer = () => {
+const PoolMetadataTableContainer: FC = () => {
   return (
     <div className="space-y-4">
       <Typography variant="h5" fw="black">

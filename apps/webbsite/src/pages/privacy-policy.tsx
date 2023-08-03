@@ -9,10 +9,11 @@ import { Typography } from '@webb-tools/webb-ui-components';
 
 const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
   return (
-    <>
+    <div className="bg-mono-20">
       <NextSeo title="Privacy Policy" description="Privacy Policy of Webb" />
 
       <NotionRenderer
+        className="!bg-inherit"
         bodyClassName="!mt-[68px]"
         fullPage
         disableHeader
@@ -24,7 +25,7 @@ const PrivacyPolicy: FC<{ data: ExtendedRecordMap }> = ({ data }) => {
         pageCover={<div />} // Keep the content inside the <main></main>
         recordMap={data}
       />
-    </>
+    </div>
   );
 };
 

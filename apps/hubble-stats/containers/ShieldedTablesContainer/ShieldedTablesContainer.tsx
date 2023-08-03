@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 import { TableAndChartTabs, TabContent } from '@webb-tools/webb-ui-components';
 

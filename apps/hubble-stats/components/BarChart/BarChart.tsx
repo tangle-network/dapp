@@ -1,3 +1,5 @@
+'use client';
+
 import { FC } from 'react';
 import {
   ResponsiveContainer,
@@ -6,16 +8,19 @@ import {
   Tooltip,
   Bar,
 } from 'recharts';
+import { useDarkMode } from '@webb-tools/webb-ui-components';
+
 import { BarChartProps } from './types';
 
 const BarChart: FC<BarChartProps> = ({
   data,
   setValue,
   setDate,
-  isDarkMode,
   width = '100%',
   height = 180,
 }) => {
+  const [isDarkMode] = useDarkMode();
+
   return (
     <ResponsiveContainer width={width} height={height}>
       <BarChartCmp
