@@ -24,7 +24,8 @@ export default function Pool({ params }: { params: { slug: string } }) {
 
       <PoolTransactionsTableContainer />
 
-      <PoolMetadataTableContainer />
+      {/* @ts-expect-error Server Component */}
+      <PoolMetadataTableContainer poolAddress={poolAddress} />
     </div>
   );
 }

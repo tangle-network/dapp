@@ -16,7 +16,6 @@ type PoolOverviewType = {
 export default async function getPoolOverviewData(
   poolAddress: string
 ): Promise<PoolOverviewType> {
-  // TODO: handle if poolAddress is invalid
 
   return {
     name: 'webbParachain',
