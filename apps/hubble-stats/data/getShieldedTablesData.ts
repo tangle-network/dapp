@@ -4,7 +4,10 @@ import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
 
-type ShieldedTablesDataType = [ShieldedAssetType[], ShieldedPoolType[]];
+type ShieldedTablesDataType = {
+  assetsData: ShieldedAssetType[];
+  poolsData: ShieldedPoolType[];
+};
 
 const typedChainIds = [
   1099511627781, 1099511628196, 1099511629063, 1099511670889, 1099511707777,
@@ -70,5 +73,5 @@ export default async function getShieldedTablesData(): Promise<ShieldedTablesDat
   await new Promise((r) => setTimeout(r, 1000));
   const assetsData = arrayFrom(8, () => getNewAsset());
   const poolsData = arrayFrom(8, () => getNewPool());
-  return [assetsData, poolsData];
+  return { assetsData, poolsData };
 }

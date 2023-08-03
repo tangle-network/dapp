@@ -8,7 +8,7 @@ const assetsTableTab = 'Shielded Assets';
 const poolsTableTab = 'Shielded Pools';
 
 export default async function ShieldedTablesContainer() {
-  const [assetsData, poolsData] = await getShieldedTablesData();
+  const { assetsData, poolsData } = await getShieldedTablesData();
 
   return (
     <TableAndChartTabs
