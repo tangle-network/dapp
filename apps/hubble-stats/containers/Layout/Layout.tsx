@@ -1,17 +1,26 @@
-import { FC } from 'react';
+import vAnchorClient from '@webb-tools/vanchor-client';
 import { Footer } from '@webb-tools/webb-ui-components';
+import React from 'react';
 
 import { OverviewChipsContainer } from '..';
-import { SideBar, SideBarMenu, Breadcrumbs } from '../../components';
+import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
-const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
+const Layout = async ({ children }: { children?: React.ReactNode }) => {
+  const tvl =
+    await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+      vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
+      '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99'
+    );
+
+  console.log('TVL', tvl.totalValueLocked);
+
   return (
-    <body className="h-screen bg-body dark:bg-body_dark bg-cover flex">
+    <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
       <SideBar />
-      <main className="flex-1 px-3 md:px-5 lg:px-10 overflow-y-auto">
+      <main className="flex-1 px-3 overflow-y-auto md:px-5 lg:px-10">
         {/* Header */}
         <div className="flex items-center justify-between pt-6 pb-4">
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <SideBarMenu />
             <Breadcrumbs />
           </div>
