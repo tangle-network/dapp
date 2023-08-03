@@ -18,7 +18,7 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
       <div className="flex justify-center items-center gap-1">
         <Typography variant="h5" fw="black" className="text-center">
           {value && (prefix ?? '')}
-          {getRoundedAmountString(value, 2, {
+          {getRoundedAmountString(value, 1, {
             roundingFunction: Math.floor,
             totalLength: 0,
           })}
@@ -42,7 +42,7 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
                 'rotate-90 !fill-red-70': changeRate < 0,
               })}
             />
-            {getRoundedAmountString(Math.abs(changeRate), 2)}%
+            {getRoundedAmountString(Math.abs(changeRate), 1)}%
           </Typography>
         )}
       </div>
