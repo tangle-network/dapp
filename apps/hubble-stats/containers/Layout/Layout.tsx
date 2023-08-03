@@ -4,15 +4,18 @@ import React from 'react';
 
 import { OverviewChipsContainer } from '..';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
+import { formatEther } from 'viem';
 
 const Layout = async ({ children }: { children?: React.ReactNode }) => {
-  const tvl =
+  const { totalValueLocked } =
     await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
       vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
       '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99'
     );
 
-  console.log('TVL', tvl.totalValueLocked);
+  console.log('Fetched data from vAnchor subgraph: ', totalValueLocked);
+
+  const formatted = +formatEther(BigInt(totalValueLocked));
 
   return (
     <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
@@ -24,7 +27,10 @@ const Layout = async ({ children }: { children?: React.ReactNode }) => {
             <SideBarMenu />
             <Breadcrumbs />
           </div>
-          <OverviewChipsContainer />
+          <OverviewChipsContainer
+            tvlValue={formatted}
+            volumeValue={formatted}
+          />
         </div>
 
         {/* Body */}
