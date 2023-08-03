@@ -5,6 +5,23 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { TokenSelectorProps } from './types';
 
+/**
+ * The TokenSelector component
+ *
+ * Props:
+ * - children: the token symbol to display and render token icon
+ * - className: the className to override styling
+ * - isDisabled: whether the selector is disabled
+ * - isActive: whether the selector is active
+ * - tokenType: the token type to display (unshielded or shielded default: unshielded)
+ *
+ * @example
+ * ```jsx
+ *  <TokenSelector />
+ *  <TokenSelector isDisabled />
+ *  <TokenSelector>WETH</TokenSelector>
+ * ```
+ */
 const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
   (
     {

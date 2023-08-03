@@ -35,6 +35,11 @@ interface ShieldedAssetIconProps extends IconBase {
   displayPlaceholder?: boolean;
 }
 
+/**
+ * Purpose of this icon is unifying ShieldedAssetDark.tsx and ShieldedAssetLight.tsx
+ * into one component.
+ * Current challenge is that the structure of the icon is different between different sizes.
+ */
 const ShieldedAssetIcon = ({
   displayPlaceholder,
   ...props
