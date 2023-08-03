@@ -76,6 +76,7 @@ export * from './Search';
 export * from './SendPlanLineIcon';
 export * from './ShieldKeyholeIcon';
 export * from './ShieldedAssetDark';
+export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
 export * from './ShieldedAssetLight';
 export * from './ShuffleLine';
 export * from './SosLineIcon';

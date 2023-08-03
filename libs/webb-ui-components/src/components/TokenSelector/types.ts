@@ -1,5 +1,7 @@
 import { IWebbComponentBase, PropsOf } from '../../types';
 
+export type TokenType = 'shielded' | 'unshielded';
+
 export interface TokenSelectorProps
   extends IWebbComponentBase,
     Omit<PropsOf<'button'>, 'disabled'> {
@@ -9,6 +11,12 @@ export interface TokenSelectorProps
    * If not provided, the component will display the placeholder
    */
   children?: string;
+
+  /**
+   * The token type
+   * @default 'unshielded'
+   */
+  tokenType?: TokenType;
 
   /**
    * If `true`, the component will display as disable state

@@ -1,4 +1,4 @@
-import { ChevronDown, TokenIcon } from '@webb-tools/icons';
+import { ChevronDown, ShieldedAssetIcon, TokenIcon } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -6,7 +6,17 @@ import { Typography } from '../../typography/Typography';
 import { TokenSelectorProps } from './types';
 
 const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
-  ({ children, className, isDisabled, isActive, ...props }, ref) => {
+  (
+    {
+      children,
+      className,
+      isDisabled,
+      isActive,
+      tokenType = 'unshielded',
+      ...props
+    },
+    ref
+  ) => {
     const mergedClsx = useMemo(
       () =>
         twMerge(
@@ -31,7 +41,14 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
 
     return (
       <button {...props} disabled={disabled} className={mergedClsx} ref={ref}>
-        <TokenIcon name={children?.toLowerCase()} size="lg" />
+        {tokenType === 'unshielded' ? (
+          <TokenIcon name={children?.toLowerCase()} size="lg" />
+        ) : (
+          <ShieldedAssetIcon
+            size="lg"
+            displayPlaceholder={typeof children === 'undefined'}
+          />
+        )}
 
         <Typography
           variant="h5"
