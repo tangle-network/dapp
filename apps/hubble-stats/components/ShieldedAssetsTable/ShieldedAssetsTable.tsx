@@ -71,7 +71,7 @@ const columns: ColumnDef<ShieldedAssetType, any>[] = [
 ];
 
 const ShieldedAssetsTable: FC<ShieldedAssetsTableProps> = ({
-  data,
+  data = [],
   pageSize,
 }) => {
   const table = useReactTable({

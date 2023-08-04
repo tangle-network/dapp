@@ -29,12 +29,12 @@ export interface NetworkTokenTableProps {
   /**
    * The list of all available chains
    */
-  typedChainIds: number[];
+  typedChainIds?: number[];
 
   /**
    * The data for whole table (list of tokens and subTokens)
    */
-  data: Array<NetworkTokenType>;
+  data?: Array<NetworkTokenType>;
 
   /**
    * The prefix unit of all the values on the table

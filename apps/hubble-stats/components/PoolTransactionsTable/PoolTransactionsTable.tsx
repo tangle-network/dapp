@@ -12,6 +12,7 @@ import {
   Table as RTTable,
 } from '@tanstack/react-table';
 import { Table, fuzzyFilter, ChainChip } from '@webb-tools/webb-ui-components';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { PoolTransactionType, PoolTransactionsTableProps } from './types';
 import {
@@ -45,16 +46,18 @@ const columns: ColumnDef<PoolTransactionType, any>[] = [
       />
     ),
   }),
-  columnHelper.accessor('source', {
+  columnHelper.accessor('sourceTypedChainId', {
     header: () => <HeaderCell title="Source" className="justify-start" />,
     cell: (props) => (
       <ChainChip
-        chainName={props.row.original.source}
-        chainType={props.row.original.sourceChainType}
+        chainName={chainsConfig[props.getValue()].name}
+        chainType={chainsConfig[props.getValue()].group}
+        // shorten the title to last word of the chain name
+        title={chainsConfig[props.getValue()].name.split(' ').pop()}
       />
     ),
   }),
-  columnHelper.accessor('destination', {
+  columnHelper.accessor('destinationTypedChainId', {
     header: () => <HeaderCell title="Destination" className="justify-start" />,
     cell: (props) => <DestinationCell />,
   }),
