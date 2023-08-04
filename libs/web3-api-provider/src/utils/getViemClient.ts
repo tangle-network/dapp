@@ -1,15 +1,21 @@
 import { parseTypedChainId } from '@webb-tools/sdk-core';
-import { PublicClient, createPublicClient, fallback, http } from 'viem';
+import { Chain, PublicClient, createPublicClient, fallback, http } from 'viem';
 import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,
   defineViemChain,
   getViemChain,
 } from './getViemChain';
+import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
 
 function getViemClient(typedChainId: number): PublicClient {
   const { chainId } = parseTypedChainId(typedChainId);
 
-  let chain = getViemChain(chainId);
+  let chain: Chain | undefined = chainsConfig[typedChainId];
+
+  if (!chain) {
+    chain = getViemChain(typedChainId);
+  }
+
   if (!chain || VIEM_NOT_SUPPORTED_MULTICALL_CHAINS.includes(chainId)) {
     chain = defineViemChain(typedChainId);
   }
