@@ -52,6 +52,8 @@ const columns: ColumnDef<PoolTransactionType, any>[] = [
       <ChainChip
         chainName={chainsConfig[props.getValue()].name}
         chainType={chainsConfig[props.getValue()].group}
+        // shorten the title to last word of the chain name
+        title={chainsConfig[props.getValue()].name.split(' ').pop()}
       />
     ),
   }),

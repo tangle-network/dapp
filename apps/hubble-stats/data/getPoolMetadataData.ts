@@ -1,4 +1,4 @@
-import { randNumber, randEthereumAddress, randRecentDate } from '@ngneat/falso';
+import { randNumber, randEthereumAddress } from '@ngneat/falso';
 
 type PoolMetadataDataType = {
   name: string;

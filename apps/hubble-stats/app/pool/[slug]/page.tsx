@@ -23,7 +23,8 @@ export default function Pool({ params }: { params: { slug: string } }) {
       {/* @ts-expect-error Server Component */}
       <NetworkTablesContainer poolAddress={poolAddress} />
 
-      <PoolTransactionsTableContainer />
+      {/* @ts-expect-error Server Component */}
+      <PoolTransactionsTableContainer poolAddress={poolAddress} />
 
       {/* @ts-expect-error Server Component */}
       <PoolMetadataTableContainer poolAddress={poolAddress} />

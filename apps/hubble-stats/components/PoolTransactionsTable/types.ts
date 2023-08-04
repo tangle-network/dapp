@@ -7,7 +7,7 @@ export type PoolTransactionType = {
   tokenSymbol: string;
   sourceTypedChainId: number;
   destinationTypedChainId?: number;
-  time: number;
+  time?: string;
 };
 
 export interface PoolTransactionsTableProps {
