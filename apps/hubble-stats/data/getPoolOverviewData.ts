@@ -16,7 +16,6 @@ type PoolOverviewType = {
 export default async function getPoolOverviewData(
   poolAddress: string
 ): Promise<PoolOverviewType> {
-
   return {
     name: 'webbParachain',
     url: '#',

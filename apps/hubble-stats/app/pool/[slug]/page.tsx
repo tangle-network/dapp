@@ -20,7 +20,8 @@ export default function Pool({ params }: { params: { slug: string } }) {
         <div className="flex-grow"></div>
       </div>
 
-      <NetworkTablesContainer />
+      {/* @ts-expect-error Server Component */}
+      <NetworkTablesContainer poolAddress={poolAddress} />
 
       <PoolTransactionsTableContainer />
 

@@ -19,12 +19,12 @@ export interface NetworkPoolTableProps {
   /**
    * The list of all available chains
    */
-  typedChainIds: number[];
+  typedChainIds?: number[];
 
   /**
    * The data for whole table
    */
-  data: Array<NetworkPoolType>;
+  data?: Array<NetworkPoolType>;
 
   /**
    * The prefix unit of all the values on the table
