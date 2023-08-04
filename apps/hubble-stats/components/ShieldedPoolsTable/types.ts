@@ -11,6 +11,6 @@ export interface ShieldedPoolType {
 }
 
 export interface ShieldedPoolsTableProps {
-  data: ShieldedPoolType[];
+  data?: ShieldedPoolType[];
   pageSize: number;
 }
