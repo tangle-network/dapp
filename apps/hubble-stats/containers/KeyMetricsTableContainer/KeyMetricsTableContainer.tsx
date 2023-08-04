@@ -1,9 +1,47 @@
-import { FC } from 'react';
 import cx from 'classnames';
 
 import { KeyMetricItem } from '../../components';
+import { getKeyMetricsData } from '../../data';
 
-const KeyMetricsTableContainer: FC = () => {
+export default async function KeyMetricsTableContainer() {
+  const {
+    totalTx,
+    txChangeRate,
+    tvl,
+    tvlChangeRate,
+    volume,
+    volumeChangeRate,
+    fees,
+  } = await getKeyMetricsData();
+
+  const TotalTx = (
+    <KeyMetricItem
+      title="Total Transactions"
+      value={totalTx}
+      changeRate={txChangeRate}
+    />
+  );
+
+  const Tvl = (
+    <KeyMetricItem
+      title="TVL"
+      prefix="$"
+      value={tvl}
+      changeRate={tvlChangeRate}
+    />
+  );
+
+  const Volume = (
+    <KeyMetricItem
+      title="Total Volume"
+      prefix="$"
+      value={volume}
+      changeRate={volumeChangeRate}
+    />
+  );
+
+  const Fees = <KeyMetricItem title="Total Fees" prefix="$" value={fees} />;
+
   return (
     <div
       className={cx(
@@ -14,25 +52,23 @@ const KeyMetricsTableContainer: FC = () => {
     >
       {/* Tablet and Desktop */}
       <div className="w-full hidden md:table table-fixed border-collapse">
-        <KeyMetricItem title="Total Transactions" />
-        <KeyMetricItem title="TVL" prefix="$" />
-        <KeyMetricItem title="Total Volume" prefix="$" />
-        <KeyMetricItem title="Total Fees" prefix="$" />
+        {TotalTx}
+        {Tvl}
+        {Volume}
+        {Fees}
       </div>
 
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="w-full table table-fixed border-collapse">
-          <KeyMetricItem title="Total Transactions" />
-          <KeyMetricItem title="TVL" prefix="$" />
+          {TotalTx}
+          {Tvl}
         </div>
         <div className="w-full table table-fixed border-collapse">
-          <KeyMetricItem title="Total Volume" prefix="$" />
-          <KeyMetricItem title="Total Fees" prefix="$" />
+          {Volume}
+          {Fees}
         </div>
       </div>
     </div>
   );
-};
-
-export default KeyMetricsTableContainer;
+}

@@ -1,45 +1,68 @@
-import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import { PoolMetadataTable } from '../../components';
 import { PoolAttributeType } from '../../components/PoolMetadataTable/types';
+import { getPoolMetadataData } from '../../data';
 
-const metadata: PoolAttributeType[] = [
-  {
-    name: 'Pool name',
-  },
-  {
-    name: 'Pool symbol',
-  },
-  {
-    name: 'Signature Bridge',
-    isAddress: true,
-    externalLink: '#',
-  },
-  {
-    name: 'VAnchor',
-    isAddress: true,
-    externalLink: '#',
-  },
-  {
-    name: 'Fungible Token',
-    isAddress: true,
-    externalLink: '#',
-  },
-  {
-    name: 'Treasury Address',
-    isAddress: true,
-    externalLink: '#',
-  },
-  {
-    name: 'Wrapping Fees',
-  },
-  {
-    name: 'Creation date',
-  },
-];
+export default async function PoolMetadataTableContainer({
+  poolAddress,
+}: {
+  poolAddress: string;
+}) {
+  const {
+    name,
+    symbol,
+    signatureBridge,
+    vAnchor,
+    fungibleToken,
+    treasuryAddress,
+    wrappingFees,
+    creationDate,
+  } = await getPoolMetadataData(poolAddress);
 
-const PoolMetadataTableContainer: FC = () => {
+  const metadata: PoolAttributeType[] = [
+    {
+      name: 'Pool name',
+      detail: name,
+    },
+    {
+      name: 'Pool symbol',
+      detail: symbol,
+    },
+    {
+      name: 'Signature Bridge',
+      detail: signatureBridge,
+      isAddress: true,
+      externalLink: '#',
+    },
+    {
+      name: 'VAnchor',
+      detail: vAnchor,
+      isAddress: true,
+      externalLink: '#',
+    },
+    {
+      name: 'Fungible Token',
+      detail: fungibleToken,
+      isAddress: true,
+      externalLink: '#',
+    },
+    {
+      name: 'Treasury Address',
+      detail: treasuryAddress,
+      isAddress: true,
+      externalLink: '#',
+    },
+    {
+      name: 'Wrapping Fees',
+      detail: `${wrappingFees}%`,
+    },
+    {
+      name: 'Creation date',
+      detail: creationDate,
+    },
+  ];
+
   return (
     <div className="space-y-4">
       <Typography variant="h5" fw="black">
@@ -48,6 +71,4 @@ const PoolMetadataTableContainer: FC = () => {
       <PoolMetadataTable data={metadata} />
     </div>
   );
-};
-
-export default PoolMetadataTableContainer;
+}

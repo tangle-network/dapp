@@ -1,6 +1,7 @@
 'use client';
 
 import { FC } from 'react';
+import cx from 'classnames';
 import {
   createColumnHelper,
   useReactTable,
@@ -36,27 +37,28 @@ const columns: ColumnDef<PoolAttributeType, any>[] = [
       <Typography
         variant="body1"
         ta="center"
-        className="text-mono-140 dark:text-mono-40"
+        className={cx(
+          'text-mono-140 dark:text-mono-40',
+          'flex justify-center items-center gap-1'
+        )}
       >
-        {props.getValue() ? (
-          props.row.original.isAddress ? (
-            <div className="flex justify-center items-center gap-1">
-              {shortenHex(props.getValue())}
-              {props.row.original.externalLink && (
-                <a
-                  href={props.row.original.externalLink}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <ExternalLinkIcon className="fill-mono-140 dark:fill-mono-40" />
-                </a>
-              )}
-            </div>
-          ) : (
-            props.getValue()
-          )
-        ) : (
+        {props.getValue() === undefined ? (
           '-'
+        ) : props.row.original.isAddress ? (
+          <>
+            {shortenHex(props.getValue())}
+            {props.row.original.externalLink && (
+              <a
+                href={props.row.original.externalLink}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <ExternalLinkIcon className="fill-mono-140 dark:fill-mono-40" />
+              </a>
+            )}
+          </>
+        ) : (
+          props.getValue()
         )}
       </Typography>
     ),

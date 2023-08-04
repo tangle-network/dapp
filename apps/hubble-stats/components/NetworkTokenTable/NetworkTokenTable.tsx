@@ -71,13 +71,15 @@ const staticColumns: ColumnDef<NetworkTokenType, any>[] = [
         className="text-mono-200 dark:text-mono-0"
       />
     ),
-    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+    cell: (props) => (
+      <NumberCell value={props.getValue()} prefix="$" className="lowercase" />
+    ),
   }),
 ];
 
 const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
-  typedChainIds,
-  data,
+  typedChainIds = [],
+  data = [],
   prefixUnit = '$',
 }) => {
   const sortedTypedChainIds = useMemo(
@@ -106,6 +108,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
               <NumberCell
                 value={props.row.original.chainsData[typedChainId]}
                 prefix={prefixUnit}
+                className="lowercase"
               />
             ) : (
               <Typography variant="body1" ta="center">

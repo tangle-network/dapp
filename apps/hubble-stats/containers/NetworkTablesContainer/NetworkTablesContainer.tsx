@@ -1,21 +1,16 @@
-import { FC } from 'react';
 import { TableAndChartTabs, Typography } from '@webb-tools/webb-ui-components';
 
 import { NetworkPoolTable, NetworkTokenTable } from '../../components';
-import { NetworkPoolType } from '../../components/NetworkPoolTable/types';
-import { NetworkTokenType } from '../../components/NetworkTokenTable/types';
+import { getNetworkTablesData } from '../../data';
 
-interface NetworkTablesContainerProps {
-  typedChainIds?: number[];
-  networkPoolData?: NetworkPoolType[];
-  networkTokenData?: NetworkTokenType[];
-}
+export default async function NetworkTablesContainer({
+  poolAddress,
+}: {
+  poolAddress: string;
+}) {
+  const { networkPoolData, networkTokenData, typedChainIds } =
+    await getNetworkTablesData(poolAddress);
 
-const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
-  typedChainIds = [],
-  networkPoolData = [],
-  networkTokenData = [],
-}) => {
   return (
     <div className="space-y-12">
       <TableAndChartTabs
@@ -40,7 +35,7 @@ const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
             data={networkTokenData}
           />
         </TableAndChartTabs>
-        {typedChainIds.length > 0 && (
+        {typedChainIds !== undefined && typedChainIds.length > 0 && (
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
@@ -51,6 +46,4 @@ const NetworkTablesContainer: FC<NetworkTablesContainerProps> = ({
       </div>
     </div>
   );
-};
-
-export default NetworkTablesContainer;
+}
