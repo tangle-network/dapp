@@ -1,6 +1,6 @@
-import path from 'path';
-import { workspaceRoot } from 'nx/src/utils/workspace-root';
 import { config } from 'dotenv';
+import { workspaceRoot } from 'nx/src/utils/workspace-root';
+import path from 'path';
 
 config({
   path: path.join(workspaceRoot, '.env'),
@@ -11,12 +11,12 @@ config({
 });
 
 import { ApiPromise } from '@polkadot/api';
-import merge from 'lodash/merge';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
+import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
 import {
   AnchorMetadata,
   ConfigType,
@@ -27,14 +27,14 @@ import {
   ChainType,
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
+import { ZERO_ADDRESS } from '@webb-tools/utils';
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import fs from 'fs';
 import { Listr, color } from 'listr2';
+import merge from 'lodash/merge';
 import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
-import { ZERO_ADDRESS } from '@webb-tools/utils';
-import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
 
@@ -69,6 +69,7 @@ async function filterActiveEVMChains(
             await provider.getChainId();
             return typedChainId;
           } catch (error) {
+            console.log(error);
             return null;
           }
         })
@@ -152,6 +153,12 @@ async function fetchAnchorMetadataTask(
           fetchAnchorMetadata(address, typedChainId, provider)
         )
       );
+
+      metadataSettled.forEach((res) => {
+        if (res.status === 'rejected') {
+          console.log(res.reason);
+        }
+      });
 
       const metadata = metadataSettled
         .filter(

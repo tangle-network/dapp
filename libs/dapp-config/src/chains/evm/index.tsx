@@ -102,6 +102,7 @@ const additionalRpcUrls = {
   [PresetTypedChainId.MoonbaseAlpha]: [
     'https://moonbase-alpha.public.blastapi.io',
     'https://moonbeam-alpha.api.onfinality.io/public',
+    'https://moonbase.unitedbloc.com:1000',
   ],
   [PresetTypedChainId.Sepolia]: [
     'https://endpoints.omniatech.io/v1/eth/sepolia/public',
