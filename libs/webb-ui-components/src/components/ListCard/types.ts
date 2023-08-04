@@ -170,39 +170,6 @@ export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
   onConnectWallet?: PropsOf<'button'>['onClick'];
 }
 
-export interface WrapAssetListCardProps
-  extends Omit<ListCardWrapperProps, 'onChange'> {
-  /**
-   * Optional card title to change the title of the card
-   */
-  title: string;
-
-  /**
-   * If `true`, the component will display in connected view
-   */
-  isDisconnected?: boolean;
-
-  /**
-   * The relayer list to display
-   */
-  assets: AssetType[];
-
-  /**
-   * The current selected relayer, use to control the component
-   */
-  value?: AssetType;
-
-  /**
-   * The callback to control the state of the component
-   */
-  onChange?: (nextAsset: AssetType) => void;
-
-  /**
-   * The event handler when the relayer is disabled and user hit connect wallet button on the card
-   */
-  onConnect?: PropsOf<'button'>['onClick'];
-}
-
 export interface TokenListCardProps
   extends Omit<ListCardWrapperProps, 'onChange'> {
   /**
