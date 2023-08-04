@@ -1,7 +1,13 @@
 import { TokenIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
-import { ComponentProps, forwardRef, useMemo, useRef, useState } from 'react';
+import React, {
+  ComponentProps,
+  forwardRef,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
 import { Button } from '../buttons';
@@ -11,21 +17,21 @@ export const AssetListItem = forwardRef<
   AssetType & ComponentProps<typeof ListItem>
 >(
   (
-    { balance, name, symbol, onTokenClick, isTokenAddedToMetamask, ...props },
+    { balance, name, symbol, isTokenAddedToMetamask, onClick, ...props },
     ref
   ) => {
-    const onTokenClickRef = useRef(onTokenClick);
+    const onTokenClickRef = useRef(onClick);
 
     const [isHovered, setIsHovered] = useState(false);
 
     const handleTokenIconClick = useMemo(() => {
-      if (typeof onTokenClick === 'function') {
-        return (event: any) => {
+      if (typeof onTokenClickRef.current === 'function') {
+        return (event: React.MouseEvent) => {
           event.stopPropagation();
-          onTokenClickRef.current?.(symbol);
+          onTokenClickRef.current?.(event as React.MouseEvent<HTMLLIElement>);
         };
       }
-    }, [onTokenClick, symbol]);
+    }, []);
 
     return (
       <ListItem

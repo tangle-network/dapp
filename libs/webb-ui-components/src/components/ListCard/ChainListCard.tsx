@@ -148,7 +148,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                 >
                   <div className="flex items-center space-x-2">
                     <ChainIcon
-                      isActive={isConnected}
+                      status={isConnected ? 'success' : undefined}
                       size="lg"
                       name={currentChain.name}
                     />

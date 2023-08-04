@@ -3,7 +3,7 @@ import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
-import { TokenSelector } from '../TokenSelector';
+import TokenSelector from '../TokenSelector';
 import { AssetListItem } from './AssetListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
@@ -59,7 +59,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       [onChange, setAsset, unavailableTokens]
     );
 
-    const { filteredPopular, filteredSelect, filteredUnavailable } = useMemo(
+    const { filteredPopular, filteredSelect } = useMemo(
       () => ({
         filteredPopular: getFilterList(popularTokens),
         filteredSelect: getFilterList(selectTokens),
@@ -93,7 +93,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 <TokenSelector
                   key={`${current.name}-${idx}`}
                   onClick={() => onItemChange(current)}
-                  onTokenClick={current.onTokenClick}
                 >
                   {current.symbol}
                 </TokenSelector>

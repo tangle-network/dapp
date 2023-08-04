@@ -1,10 +1,6 @@
-import React from 'react';
-
-import {
-  Card,
-  TitleWithInfo,
-  TokenSelector,
-} from '@webb-tools/webb-ui-components/components';
+import { Card } from '../../components/Card';
+import { TitleWithInfo } from '../../components/TitleWithInfo';
+import TokenSelector from '../../components/TokenSelector';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

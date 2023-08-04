@@ -2,11 +2,7 @@ import { FC } from 'react';
 import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import {
-  ShieldedAssetLight,
-  ShieldedAssetDark,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
+import { ExternalLinkLine, ShieldedAssetIcon } from '@webb-tools/icons';
 
 import { PoolTypeChip, PoolOverviewItem } from '../../components';
 import { PoolType } from '../../components/PoolTypeChip/types';
@@ -35,17 +31,7 @@ const PoolOverviewContainer: FC<{ poolOverviewData?: PoolOverviewType }> = ({
     >
       <div className="flex flex-col items-center gap-1">
         {/* Icon */}
-        <ShieldedAssetLight
-          width={40}
-          height={48}
-          className="block dark:hidden"
-        />
-
-        <ShieldedAssetDark
-          width={40}
-          height={48}
-          className="hidden dark:block"
-        />
+        <ShieldedAssetIcon size="xl" />
 
         {/* Name */}
         <Typography variant="h5" fw="bold">

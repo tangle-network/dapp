@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { cloneElement, useMemo } from 'react';
+import React, { MouseEventHandler, cloneElement, useMemo } from 'react';
 
 import { Spinner } from './Spinner';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
@@ -27,12 +27,24 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   });
 
   const className = useMemo(
-    () => twMerge(cx({ 'cursor-copy': Boolean(onClick) }), classNameProp),
+    () =>
+      twMerge(
+        cx({
+          'cursor-copy': Boolean(onClick),
+          [cx(
+            'fill-mono-60 stroke-mono-60',
+            'dark:fill-mono-140 dark:stroke-mono-140'
+          )]: typeof name === 'undefined', // Style for placeholder
+        }),
+        classNameProp
+      ),
     [classNameProp]
   );
 
   // Prevent infinite loop when the passed onClick not use useCallback
-  const onClickRef = React.useRef(onClick);
+  const onClickRef = React.useRef<
+    MouseEventHandler<SVGSVGElement | HTMLDivElement> | undefined
+  >(onClick);
 
   if (error) {
     return <span>{error.message}</span>;
@@ -53,12 +65,12 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
     };
 
     return isActive ? (
-      <div className="relative">
+      <div className="relative" onClick={onClickRef.current}>
         {cloneElement(svgElement, props)}
         <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
       </div>
     ) : (
-      cloneElement(svgElement, props)
+      cloneElement(svgElement, { ...props, onClick: onClickRef.current })
     );
   }
 
