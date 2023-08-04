@@ -34,6 +34,7 @@ const ANY_EVM = [
   PresetTypedChainId.HermesOrbit,
   PresetTypedChainId.AthenaOrbit,
   PresetTypedChainId.DemeterOrbit,
+  PresetTypedChainId.TangleTestnet,
 
   // Localnet
   PresetTypedChainId.HermesLocalnet,
