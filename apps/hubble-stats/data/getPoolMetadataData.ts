@@ -23,6 +23,6 @@ export default async function getPoolMetadataData(
     fungibleToken: randEthereumAddress(),
     treasuryAddress: randEthereumAddress(),
     wrappingFees: randNumber({ min: 1, max: 99 }),
-    creationDate: randRecentDate().getTime().toString(),
+    creationDate: '13 August 2023',
   };
 }
