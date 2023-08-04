@@ -1,57 +1,12 @@
-'use client';
+import PoolTransactionsTableCmp from './PoolTransactionsTableCmp';
+import { getPoolTransactionsData } from '../../data';
 
-import { FC, useMemo } from 'react';
-import { TableAndChartTabs } from '@webb-tools/webb-ui-components';
+export default async function PoolTransactionsTableContainer({
+  poolAddress,
+}: {
+  poolAddress: string;
+}) {
+  const { transactions } = await getPoolTransactionsData(poolAddress);
 
-import { PoolTransactionsTable } from '../../components';
-import { FilterButton } from '../../components/table';
-import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
-
-interface PoolTransactionsTableContainerProps {
-  poolsData?: PoolTransactionType[];
+  return <PoolTransactionsTableCmp transactions={transactions} />;
 }
-
-const pageSize = 10;
-
-const PoolTransactionsTableContainer: FC<
-  PoolTransactionsTableContainerProps
-> = ({ poolsData = [] }) => {
-  const filterButton = useMemo(
-    () => (
-      <FilterButton
-        tokens={[]}
-        selectedTokens={[]}
-        setSelectedTokens={() => {
-          return;
-        }}
-        sourceChains={[]}
-        selectedSourceChains={[]}
-        setSelectedSourceChains={() => {
-          return;
-        }}
-        destinationChains={[]}
-        selectedDestinationChains={[]}
-        setSelectedDestinationChains={() => {
-          return;
-        }}
-        showAllFn={() => {
-          return;
-        }}
-      />
-    ),
-    []
-  );
-
-  return (
-    <TableAndChartTabs
-      tabs={['All Transactions', 'Deposits', 'Transfers', 'Withdrawals']}
-      filterComponent={filterButton}
-      headerClassName="w-full overflow-x-auto"
-      triggerClassName="whitespace-nowrap"
-    >
-      <PoolTransactionsTable data={poolsData} pageSize={pageSize} />
-    </TableAndChartTabs>
-  );
-};
-
-export default PoolTransactionsTableContainer;

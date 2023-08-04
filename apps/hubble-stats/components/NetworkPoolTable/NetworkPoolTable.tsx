@@ -52,8 +52,8 @@ const staticColumns: ColumnDef<NetworkPoolType, any>[] = [
 ];
 
 const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
-  typedChainIds,
-  data,
+  typedChainIds = [],
+  data = [],
   prefixUnit = '$',
 }) => {
   const sortedTypedChainIds = useMemo(

@@ -1,29 +1,23 @@
-import { FC } from 'react';
+import numbro from 'numbro';
 import { Chip } from '@webb-tools/webb-ui-components';
 import { BlockIcon } from '@webb-tools/icons';
 
-interface OverviewChipsContainerProps {
-  tvlValue?: number;
-  volumeValue?: number;
-}
+import { getOverviewChipsData } from '../../data';
 
-const OverviewChipsContainer: FC<OverviewChipsContainerProps> = ({
-  tvlValue,
-  volumeValue,
-}) => {
+export default async function OverviewChipsContainer() {
+  const { tvl, volume } = await getOverviewChipsData();
+
   return (
     <div className="hidden md:flex items-center gap-4">
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        TVL: {tvlValue ? `${tvlValue}` : ' - '}
+        TVL: ${numbro(tvl).format({ thousandSeparated: true })}
       </Chip>
 
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        Volume: {volumeValue ? `${volumeValue}` : ' - '}
+        Volume: ${numbro(volume).format({ thousandSeparated: true })}
       </Chip>
     </div>
   );
-};
-
-export default OverviewChipsContainer;
+}
