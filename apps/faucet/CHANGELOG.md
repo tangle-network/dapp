@@ -75,3 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
+
+## [0.0.6] - 2023-08-07
+
+- Improve the Faucet UI ([#1454](https://github.com/webb-tools/webb-dapp/pull/1454))

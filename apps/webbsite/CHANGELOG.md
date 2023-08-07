@@ -73,3 +73,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adds shielded pool protocol pages ([#1335](https://github.com/webb-tools/webb-dapp/pull/1335))
 - Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
+
+## [0.0.6] - 2023-08-07
+
+### Fixed, Changed and Added
+
+- Fixed font family and font size in webbsite.

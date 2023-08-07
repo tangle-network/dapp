@@ -118,3 +118,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes stats progress bar session length ([#1358](https://github.com/webb-tools/webb-dapp/pull/1358))
 - Fixes inconsistent stats background image ([#1359](https://github.com/webb-tools/webb-dapp/pull/1359))
 - Fixes keys table real-time update & progress bar reset ([#1371](https://github.com/webb-tools/webb-dapp/pull/1371))
+
+## [0.0.12] - 2023-08-07
+
+### Fixed, Changed and Added
+
+- Removes proposal page and addresses bugs in keys and authorities page ([#1501](https://github.com/webb-tools/webb-dapp/pull/1501))
