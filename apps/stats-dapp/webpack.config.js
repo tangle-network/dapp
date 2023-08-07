@@ -46,6 +46,13 @@ function createWebpackBase() {
     isDevelopment ? 'development' : 'production'
   );
 
+  const bridgeEnvVars = Object.keys(process.env)
+    .filter((key) => key.startsWith('BRIDGE_DAPP_'))
+    .reduce((envVars, key) => {
+      envVars[`process.env.${key}`] = JSON.stringify(process.env[key]);
+      return envVars;
+    }, {});
+
   return {
     mode: isDevelopment ? 'development' : 'production',
     devtool: isDevelopment ? 'source-map' : false,
@@ -267,6 +274,10 @@ function createWebpackBase() {
       process.env.ANALYZE && new BundleAnalyzerPlugin(),
 
       new webpack.optimize.SplitChunksPlugin(),
+
+      new webpack.DefinePlugin({
+        ...bridgeEnvVars,
+      }),
     ]
       .concat(plugins)
       .filter(Boolean),
