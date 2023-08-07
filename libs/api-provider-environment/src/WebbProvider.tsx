@@ -1,4 +1,3 @@
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import {
   Account,
   Currency,
@@ -23,11 +22,10 @@ import {
   parseOnChainData,
   walletsConfig,
 } from '@webb-tools/dapp-config';
+import wagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   BareProps,
   CurrencyRole,
-  CurrencyType,
-  EVMChainId,
   InteractiveFeedback,
   WalletId,
   WebbError,
@@ -36,8 +34,6 @@ import {
 import { Spinner } from '@webb-tools/icons';
 import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { SettingProvider } from '@webb-tools/react-environment';
-import { StoreProvider } from '@webb-tools/react-environment/store';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
   ChainType,
@@ -45,20 +41,21 @@ import {
   calculateTypedChainId,
 } from '@webb-tools/sdk-core';
 import {
-  Web3Provider,
   Web3RelayerManager,
   WebbWeb3Provider,
+  isViemError,
 } from '@webb-tools/web3-api-provider';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { WagmiConfig } from 'wagmi';
 import { TAppEvent } from './app-event';
 import constants from './constants';
-import { parseError, unsupportedChain } from './error';
+import { unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
+import onChainDataJson from './generated/on-chain-config.json';
+import { StoreProvider } from './store';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
-import onChainDataJson from './generated/on-chain-config.json';
 
 interface WebbProviderProps extends BareProps {
   appEvent: TAppEvent;
@@ -155,7 +152,7 @@ notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
 
-export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
+const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
   const [activeWallet, setActiveWallet] = useState<Wallet | undefined>(
     undefined
   );
@@ -216,7 +213,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
   /// it will store on the provider and the storage of the network
   const setActiveAccount = useCallback(
     async (
-      account: Account<any>,
+      account: Account,
       options: {
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
@@ -230,7 +227,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
       if (innerNetworkStorage && innerChain) {
         const typedChainId = calculateTypedChainId(
           innerChain.chainType,
-          innerChain.chainId
+          innerChain.id
         );
 
         const networksConfig = await innerNetworkStorage.get('networksConfig');
@@ -249,7 +246,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
 
       _setActiveAccount(account);
       // TODO resolve the account inner type issue
-      await innerActiveApi.accounts.setActiveAccount(account as any);
+      await innerActiveApi.accounts.setActiveAccount(account);
     },
     [activeApi, activeChain, networkStorage]
   );
@@ -265,10 +262,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         let hasSetFromStorage = false;
         const accounts = await nextActiveApi.accounts.accounts();
 
-        const typedChainId = calculateTypedChainId(
-          chain.chainType,
-          chain.chainId
-        );
+        const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
         // TODO resolve the account inner type issue
         setAccounts(accounts as any);
@@ -432,14 +426,11 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
     ) => {
       const wallet = _wallet || activeWallet;
 
-      const nextTypedChainId = calculateTypedChainId(
-        chain.chainType,
-        chain.chainId
-      );
+      const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
       const sharedWalletConnectionPayload = {
         walletId: wallet.id,
-        typedChainId: { chainId: chain.chainId, chainType: chain.chainType },
+        typedChainId: { chainId: chain.id, chainType: chain.chainType },
       };
 
       // wallet cleanup
@@ -467,11 +458,16 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             {
               const relayerManager =
                 await relayerManagerFactory.getRelayerManager('substrate');
-              const url = chain.url;
+              const webSocketUrls = chain.rpcUrls.default.webSocket;
+              if (!webSocketUrls || webSocketUrls.length === 0) {
+                throw new Error(
+                  `No websocket urls found for chain ${chain.name}`
+                );
+              }
 
               const webbPolkadot = await WebbPolkadot.init(
                 constants.APP_NAME,
-                [url],
+                Array.from(webSocketUrls),
                 {
                   onError: (feedback: InteractiveFeedback) => {
                     registerInteractiveFeedback(
@@ -487,13 +483,6 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 relayerManager,
                 apiConfig,
                 notificationHandler,
-                () =>
-                  new Worker(
-                    new URL(
-                      '@webb-tools/react-environment/arkworks-proving-manager.worker',
-                      import.meta.url
-                    )
-                  ),
                 nextTypedChainId,
                 wallet
               );
@@ -519,55 +508,14 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
             break;
 
           case WalletId.MetaMask:
-          case WalletId.WalletConnectV1:
+          case WalletId.WalletConnectV2:
             {
-              let web3Provider: Web3Provider;
-              if (wallet?.id === WalletId.WalletConnectV1) {
-                // Get rpcs from evm chains
-                const rpc = Object.values(chains).reduce((acc, chain) => {
-                  if (
-                    chain.chainType === ChainType.EVM &&
-                    chain.evmRpcUrls?.length
-                  ) {
-                    acc[chain.chainId] = chain.evmRpcUrls[0];
-                  }
-                  return acc;
-                }, {} as Record<number, string>);
-
-                const provider = new WalletConnectProvider({
-                  rpc: {
-                    ...rpc,
-
-                    //default on metamask
-                    [EVMChainId.HarmonyTestnet1]: 'https://api.s1.b.hmny.io',
-
-                    [EVMChainId.EthereumMainNet]:
-                      'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-                  },
-                  chainId: chain.chainId,
-                });
-
-                web3Provider = await Web3Provider.fromWalletConnectProvider(
-                  provider
-                );
-              } else {
-                /// init provider from the extension
-                web3Provider = await Web3Provider.fromExtension();
+              const connector = walletsConfig[wallet.id].connector;
+              if (!connector) {
+                throw WebbError.from(WebbErrorCodes.NoConnectorConfigured);
               }
 
-              const clientInfo = web3Provider.clientMeta;
-              if (clientInfo) {
-                notificationApi({
-                  message: 'Connected to EVM wallet',
-                  secondaryMessage: `Connected to ${clientInfo.name}`,
-                  variant: 'success',
-                  key: 'network-connect',
-                  Icon: React.cloneElement(wallet.Logo, { size: 'xl' }),
-                });
-              }
-              /// get the current active chain from metamask
-              const network = await web3Provider.network;
-              const chainId = network.chainId;
+              const chainId = chain.id;
 
               const relayerManager =
                 (await relayerManagerFactory.getRelayerManager(
@@ -575,26 +523,19 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 )) as Web3RelayerManager;
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
-                web3Provider,
+                connector,
                 chainId,
                 relayerManager,
                 noteManager,
                 apiConfig,
-                notificationHandler,
-                () =>
-                  new Worker(
-                    new URL(
-                      '@webb-tools/react-environment/circom-proving-manager.worker',
-                      import.meta.url
-                    )
-                  )
+                notificationHandler
               );
 
               const providerUpdateHandler = async ([
                 updatedChainId,
               ]: number[]) => {
                 const nextChain = Object.values(chains).find(
-                  (chain) => chain.chainId === updatedChainId
+                  (chain) => chain.id === updatedChainId
                 );
 
                 try {
@@ -671,53 +612,24 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
               // Listen for chain updates when user switches chains in the extension
               webbWeb3Provider.on('providerUpdate', providerUpdateHandler);
 
-              await webbWeb3Provider.setChainListener();
-              await webbWeb3Provider.setAccountListener();
+              webbWeb3Provider.setChainListener();
+              webbWeb3Provider.setAccountListener();
 
-              if (chainId !== chain.chainId) {
-                const currency = Object.values(apiConfig.currencies).find(
-                  (c) =>
-                    c.type === CurrencyType.NATIVE &&
-                    Array.from(c.addresses.keys()).includes(nextTypedChainId)
-                );
-                if (!currency) {
-                  throw new Error('Native token not found');
-                }
+              // Get the new chain id after the initialization of webb provider
+              const currentChainId = await webbWeb3Provider.getChainId();
 
-                // Switch to the chain
-                await web3Provider.switchAndAddChain({
-                  chainId: `0x${chain.chainId.toString(16)}`,
-                  chainName: chain.name,
-                  rpcUrls: chain.evmRpcUrls ?? [],
-                  nativeCurrency: {
-                    decimals: 18,
-                    name: currency.name,
-                    symbol: currency.symbol,
-                  },
-                  blockExplorerUrls: chain.blockExplorerStub
-                    ? [chain.blockExplorerStub]
-                    : undefined,
-                });
-
-                // add network will prompt the switch, check evmId again and throw if user rejected
-                const newNetwork = await web3Provider.network;
-                const newChainId = newNetwork.chainId;
-
-                if (newChainId != chain.chainId) {
-                  throw new Error('User rejected network switch');
-                }
-
-                // Emit events
-                appEvent.send('networkSwitched', [
-                  {
-                    chainType: chain.chainType,
-                    chainId: chain.chainId,
-                  },
-                  web3Provider instanceof WalletConnectProvider
-                    ? WalletId.WalletConnectV1
-                    : WalletId.MetaMask,
-                ]);
+              if (currentChainId !== chain.id) {
+                await webbWeb3Provider.switchOrAddChain(chain.id);
               }
+
+              // Emit events
+              appEvent.send('networkSwitched', [
+                {
+                  chainType: chain.chainType,
+                  chainId: chain.id,
+                },
+                wallet.id,
+              ]);
 
               await setActiveApiWithAccounts(
                 webbWeb3Provider,
@@ -757,11 +669,18 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           err = e;
         } else {
           // Parse and display error
-          const parsedError = parseError(e);
+          let errorMessage = WebbError.getErrorMessage(
+            WebbErrorCodes.SwitchChainFailed
+          ).message;
+
+          if (isViemError(e)) {
+            errorMessage = e.shortMessage;
+          }
+
           notificationApi({
             variant: 'error',
             message: 'Web3: Switch Chain Error',
-            secondaryMessage: parsedError.message,
+            secondaryMessage: errorMessage,
           });
         }
 
@@ -801,7 +720,7 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
           await Promise.all([
             _networkStorage.set(
               'defaultNetwork',
-              calculateTypedChainId(chain.chainType, chain.chainId)
+              calculateTypedChainId(chain.chainType, chain.id)
             ),
             _networkStorage.set('defaultWallet', wallet.id),
           ]);
@@ -848,14 +767,32 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         return;
       }
 
+      let walletCfg: Wallet;
+
       // wallet config by chain
-      const walletConfig =
-        chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
+      if (Array.isArray(chainConfig.wallets)) {
+        if (!chainConfig.wallets.length) {
+          return;
+        }
+
+        // The new API with array of wallet ids
+        if (chainConfig.wallets.includes(wallet)) {
+          walletCfg = apiConfig.wallets[wallet];
+        } else {
+          walletCfg = apiConfig.wallets[chainConfig.wallets[0]];
+        }
+      } else {
+        // The old API with Record of wallet ids and wallet configs
+        walletCfg =
+          chainConfig.wallets[wallet] || Object.values(chainConfig)[0];
+      }
+
       const activeApi = await switchChain(
         chainConfig,
-        walletConfig,
+        walletCfg,
         _networkStorage
       );
+
       const networkDefaultConfig = await _networkStorage.get('networksConfig');
 
       if (activeApi) {
@@ -961,9 +898,15 @@ export const WebbProvider: FC<WebbProviderProps> = ({ children, appEvent }) => {
         txQueue,
       }}
     >
-      <StoreProvider>
-        <SettingProvider>{children}</SettingProvider>
-      </StoreProvider>
+      <StoreProvider>{children}</StoreProvider>
     </WebbContext.Provider>
+  );
+};
+
+export const WebbProvider: FC<WebbProviderProps> = (props) => {
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <WebbProviderInner {...props} />
+    </WagmiConfig>
   );
 };

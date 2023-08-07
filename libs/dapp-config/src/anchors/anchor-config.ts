@@ -1,4 +1,26 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
+import { LOCALNET_CHAIN_IDS } from '../chains';
+
+const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
+  ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
+      (acc, chainId) => {
+        const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+        const anchorAddress: string = process.env
+          .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
+
+        acc[typedChainId] = {
+          [anchorAddress]: 0,
+        };
+
+        return acc;
+      },
+      {}
+    )
+  : {};
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
 // 0x34E2a2686B8a8FD62ee1FB2865be67bAB75b21dD - webbtTNT - DKG backend
@@ -30,31 +52,23 @@ export const anchorDeploymentBlock: Record<number, Record<string, number>> = {
   },
 
   [PresetTypedChainId.HermesOrbit]: {
-    '0xba730ee516fc52Ab35f001faa3114eeBd48eeCB8': 0,
+    '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05': 23,
   },
   [PresetTypedChainId.AthenaOrbit]: {
-    '0xba730ee516fc52Ab35f001faa3114eeBd48eeCB8': 0,
+    '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05': 23,
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    '0xba730ee516fc52Ab35f001faa3114eeBd48eeCB8': 0,
+    '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05': 23,
+  },
+  [PresetTypedChainId.TangleTestnet]: {
+    '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05': 1_881,
   },
 
-  [PresetTypedChainId.HermesLocalnet]: {
-    '0xc705034ded85e817b9E56C977E61A2098362898B': 0,
-  },
-  [PresetTypedChainId.AthenaLocalnet]: {
-    '0x91eB86019FD8D7c5a9E31143D422850A13F670A3': 0,
-  },
-  [PresetTypedChainId.DemeterLocalnet]: {
-    '0x6595b34ED0a270B10a586FC1EA22030A95386f1e': 0,
-  },
+  ...localAnchorRecord,
 
   // Substrate
-  [PresetTypedChainId.ProtocolSubstrateStandalone]: {
-    '6': NaN,
-  },
   [PresetTypedChainId.LocalTangleStandalone]: {
-    '4': NaN,
+    '1': NaN,
   },
 };
 

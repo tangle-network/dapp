@@ -14,4 +14,5 @@ export * from './transaction';
 export * from './webb-provider.interface';
 
 export { default as generateCircomCommitment } from './utils/generateCircomCommitment';
+export { default as calculateProvingLeavesAndCommitmentIndex } from './utils/calculateProvingLeavesAndCommitmentIndex';
 export { default as utxoFromVAnchorNote } from './utils/utxoFromVAnchorNote';

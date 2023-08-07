@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import '@webb-tools/protocol-substrate-types';
 import '@webb-tools/api-derive';
+import '@webb-tools/protocol-substrate-types';
 
 import {
   Amount,
@@ -12,9 +10,8 @@ import {
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider/wrap-unwrap';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { BigNumber, ethers } from 'ethers';
 import { BehaviorSubject, lastValueFrom, Observable, Subject } from 'rxjs';
-
+import { parseUnits } from 'viem';
 import { WebbPolkadot } from '../webb-provider';
 
 export type PolkadotWrapPayload = Amount;
@@ -31,15 +28,25 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (!account) {
       return false;
     }
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+
+    if (!fungibleToken || !wrappableToken) {
+      return false;
+    }
+
+    const bnAmount = parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
     );
     const chainID = this.inner.typedChainId;
-    const fungibleTokenId = fungibleToken.getAddress(chainID)!;
-    const wrappableTokenId = wrappableToken.getAddress(chainID)!;
+    const fungibleTokenId = fungibleToken.getAddress(chainID);
+    const wrappableTokenId = wrappableToken.getAddress(chainID);
+
+    if (!fungibleTokenId || !wrappableTokenId) {
+      return false;
+    }
+
     const poolShare = await this.inner.api.query.assetRegistry.assets(
       fungibleTokenId
     );
@@ -53,25 +60,30 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const userBalance = await lastValueFrom(
       this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId)
     );
-    const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
+    const enoughBalance = bnAmount <= BigInt(userBalance);
     if (!enoughBalance) {
       return false;
     }
     const balance = await lastValueFrom(
       this.inner.methods.chainQuery.tokenBalanceByAddress(fungibleTokenId)
     );
-    const validBalanceAfterDeposit = bnAmount
-      .add(BigNumber.from(balance))
-      .gt(BigNumber.from(poolShareExistentialBalance));
+
+    const validBalanceAfterDeposit =
+      bnAmount + BigInt(balance) > BigInt(poolShareExistentialBalance);
     return validBalanceAfterDeposit;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+
+    if (!fungibleToken || !wrappableToken) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const bnAmount = parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
     );
@@ -103,9 +115,13 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
 
   async wrap(payload: PolkadotWrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!fungibleToken || !wrappableToken) {
+      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+    }
+
+    const bnAmount = parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
     );
@@ -142,9 +158,13 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     if (!account) {
       return false;
     }
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency!;
-    const wrappableToken = this.inner.state.wrappableCurrency!;
-    const bnAmount = ethers.utils.parseUnits(
+    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
+    const wrappableToken = this.inner.state.wrappableCurrency;
+    if (!fungibleToken || !wrappableToken) {
+      return false;
+    }
+
+    const bnAmount = parseUnits(
       amountNumber.toString(),
       wrappableToken.getDecimals()
     );
@@ -152,12 +172,17 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const fungibleTokenId = fungibleToken.getAddress(chainID);
     const wrappableTokenId = wrappableToken.getAddress(chainID);
 
+    if (!fungibleTokenId || !wrappableTokenId) {
+      return false;
+    }
+
     const poolShare = await this.inner.api.query.assetRegistry.assets(
-      fungibleTokenId
+      +fungibleTokenId
     );
-    const _poolShareExistentialBalance = poolShare
-      .unwrap()
-      .existentialDeposit.toString();
+
+    if (poolShare.isNone) {
+      return false;
+    }
 
     const asset = await this.inner.api.query.assetRegistry.assets(
       wrappableTokenId
@@ -173,7 +198,7 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const userBalance = await lastValueFrom(
       this.inner.methods.chainQuery.tokenBalanceByAddress(fungibleTokenId)
     );
-    const enoughBalance = bnAmount.lte(BigNumber.from(userBalance));
+    const enoughBalance = bnAmount <= BigInt(userBalance);
     // User have enough balance to unwrap
     if (!enoughBalance) {
       return false;
@@ -182,9 +207,9 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
     const balance = await lastValueFrom(
       this.inner.methods.chainQuery.tokenBalanceByAddress(wrappableTokenId)
     );
-    const validBalanceAfterDeposit = bnAmount
-      .add(BigNumber.from(balance))
-      .gte(BigNumber.from(assetExistentialBalance));
+
+    const validBalanceAfterDeposit =
+      bnAmount + BigInt(balance) > BigInt(assetExistentialBalance);
     return validBalanceAfterDeposit;
   }
 

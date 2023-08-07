@@ -12,7 +12,6 @@ export interface IconBase extends SVGBase {
    * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
    * @default "md"
    */
-
   size?: IconSize;
 
   darkMode?: boolean;

@@ -1,4 +1,5 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { zeroAddress } from 'viem';
 
 // Record of token symbol to token address
 type TokenConfigType = Record<string, string>;
@@ -6,13 +7,20 @@ type TokenConfigType = Record<string, string>;
 // TODO: We should fetch the token info (e.g. symbol, decimals, name, ...) from the chain
 const tokens: Record<string, TokenConfigType> = {
   [PresetTypedChainId.AthenaOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    ETH: zeroAddress,
+    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
   [PresetTypedChainId.HermesOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    ETH: zeroAddress,
+    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
   [PresetTypedChainId.DemeterOrbit]: {
-    webbtTNT: '0x631f0dAfEC5ECd9391FAA65830Cb19fD7e156EE8',
+    ETH: zeroAddress,
+    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
+  },
+  [PresetTypedChainId.TangleTestnet]: {
+    tTNT: zeroAddress,
+    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
 };
 

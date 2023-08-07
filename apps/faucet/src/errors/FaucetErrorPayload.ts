@@ -68,6 +68,11 @@ type ErrorPayload = {
   };
 
   /**
+   * No payload for this error
+   */
+  [FaucetErrorCode.MISSING_CONTRACT_ADDRESS]: undefined;
+
+  /**
    * Extra info for the mint tokens failed error
    */
   [FaucetErrorCode.MINT_TOKENS_FAILED]:
@@ -88,6 +93,18 @@ type ErrorPayload = {
 
   // No payload for these errors
   [FaucetErrorCode.TWITTER_LOGIN_DENIED]: undefined;
+
+  /**
+   * Extra info for the too many claim requests error
+   * @param lastClaimedDate The last claimed date
+   * @param claimPerid The claim period in milliseconds
+   */
+  [FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS]: {
+    error: string;
+    lastClaimedDate?: Date;
+    reason: string;
+    claimPeriod?: number;
+  };
 };
 
 export default ErrorPayload;

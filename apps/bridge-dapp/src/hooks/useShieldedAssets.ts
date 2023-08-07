@@ -1,12 +1,11 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
-import { CurrencyRole } from '@webb-tools/dapp-types';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { BigNumber, ethers } from 'ethers';
-import React, { useMemo } from 'react';
+import React from 'react';
 
+import { formatUnits, parseUnits } from 'viem';
 import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
 
 export const useShieldedAssets = (): ShieldedAssetDataType[] => {
@@ -21,7 +20,15 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
   const groupedNotes = React.useMemo(() => {
     return Array.from(allNotes.values()).reduce((acc, notes) => {
       notes.forEach((note) => {
-        const { targetChainId, tokenSymbol, amount, denomination } = note.note;
+        const {
+          targetChainId,
+          tokenSymbol,
+          amount: amountStr,
+          denomination: denominationStr,
+        } = note.note;
+
+        const amount = BigInt(amountStr);
+        const denomination = Number(denominationStr);
 
         const chain = chainsPopulated[Number(targetChainId)];
         // This could happen in the case of a chain being removed from the
@@ -41,17 +48,15 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
         );
 
         if (existedChain) {
-          const parsedAvailableBalance = ethers.utils.parseUnits(
-            existedChain.availableBalance.toString(),
+          const parsedAvailableBalance = parseUnits(
+            `${existedChain.availableBalance}`,
             denomination
           );
 
-          const summedBalance = BigNumber.from(amount).add(
-            parsedAvailableBalance
-          );
+          const summedBalance = amount + parsedAvailableBalance;
 
           existedChain.availableBalance = Number(
-            ethers.utils.formatUnits(summedBalance, denomination)
+            formatUnits(summedBalance, denomination)
           );
 
           existedChain.numberOfNotesFound += 1;
@@ -59,8 +64,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           return;
         }
 
-        let wrappableCurrencies: Currency[] = [];
-
+        const compositionSet = new Set<string>();
         const fungibleCurrency = fungibleCurrencies.find(
           (currency) => currency.view.symbol === tokenSymbol
         );
@@ -71,13 +75,15 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
             false
           );
 
-          wrappableCurrencies = foundCurrencies;
+          foundCurrencies.forEach((c) =>
+            compositionSet.add(c.view.symbol.toUpperCase())
+          );
         }
 
         let assetsUrl = '#';
-        const explorerUrl = chain.blockExplorerStub;
+        const explorerUrl = chain.blockExplorers?.default.url;
         const address = fungibleCurrency?.getAddressOfChain(
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.id)
         );
 
         if (explorerUrl && address) {
@@ -90,12 +96,8 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
           chain: chain.name,
           fungibleTokenSymbol: tokenSymbol,
           assetsUrl,
-          composition: wrappableCurrencies.map(
-            (currency) => currency.view.symbol
-          ),
-          availableBalance: Number(
-            ethers.utils.formatUnits(amount, denomination)
-          ),
+          composition: Array.from(compositionSet),
+          availableBalance: Number(formatUnits(amount, denomination)),
           numberOfNotesFound: 1,
           rawChain: chain,
           rawFungibleCurrency: fungibleCurrency,

@@ -1,5 +1,10 @@
 import { Bridge, Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import {
+  ZERO_BIG_INT,
+  ensureHex,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import {
   useCurrentResourceId,
@@ -7,13 +12,12 @@ import {
   useNoteAccount,
 } from '@webb-tools/react-hooks';
 import { Note, ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
-import { BigNumber, ethers } from 'ethers';
-import { useCallback, useMemo, useState } from 'react';
-import { useShieldedAssets } from './useShieldedAssets';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import { hexToU8a } from '@webb-tools/utils';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
+import { useCallback, useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 import { ChainListCardWrapper } from '../components';
+import { useShieldedAssets } from './useShieldedAssets';
 
 /**
  * Hook to share the states which are calculated from notes
@@ -57,19 +61,20 @@ const useStatesFromNotes = () => {
       return 0;
     }
 
-    let tokenDecimals: number | undefined;
-    const amountBN = availableNotes.reduce<BigNumber>(
+    let tokenDecimals: number = +availableNotes[0].note.denomination;
+
+    const amountBI = availableNotes.reduce<bigint>(
       (accumulatedBalance, newNote) => {
         if (!tokenDecimals) {
           tokenDecimals = Number(newNote.note.denomination);
         }
 
-        return accumulatedBalance.add(newNote.note.amount);
+        return accumulatedBalance + BigInt(newNote.note.amount);
       },
-      BigNumber.from(0)
+      ZERO_BIG_INT
     );
 
-    return Number(ethers.utils.formatUnits(amountBN, tokenDecimals));
+    return Number(formatUnits(amountBI, tokenDecimals));
   }, [availableNotes]);
 
   const chainsFromNotes = useMemo(() => {
@@ -107,14 +112,15 @@ const useStatesFromNotes = () => {
         });
 
         const fungible = fungibleCurrencies.find((c) => {
-          const anchorAddress = apiConfig.getAnchorAddress(c.id, typedChainId);
+          const anchorId = apiConfig.getAnchorIdentifier(c.id, typedChainId);
 
-          if (!anchorAddress) {
+          if (!anchorId) {
             return false;
           }
 
-          return (
-            BigInt(anchorAddress) === BigInt(u8aToHex(resourceId.targetSystem))
+          return apiConfig.isEqTargetSystem(
+            ensureHex(anchorId),
+            resourceId.targetSystem
           );
         });
 
@@ -171,7 +177,7 @@ const useStatesFromNotes = () => {
       symbol:
         getNativeCurrencyFromConfig(
           apiConfig.currencies,
-          calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+          calculateTypedChainId(activeChain.chainType, activeChain.id)
         )?.symbol ?? 'Unknown',
     };
 
@@ -183,7 +189,7 @@ const useStatesFromNotes = () => {
         chains={chainsFromNotes.map((chain) => {
           const currency = getNativeCurrencyFromConfig(
             apiConfig.currencies,
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
           if (!currency) {
             console.error('No currency found for chain', chain.name);

@@ -84,16 +84,30 @@
 }
 
 /** Override the notion styles */
+.notion-page {
+  @apply !max-w-[900px] !mx-auto !w-auto;
+}
+
+.notion-title {
+  @apply text-[24px] leading-[32.4px] /** small screen */
+  md:text-[36px] md:leading-[54px] /** medium screen */
+  !mb-[24px] !font-black;
+}
+
+.notion b,
 .notion-h-title {
-  @apply heading-3;
+  @apply !font-black;
 }
 
-.notion-text {
-  @apply sub-heading-1;
+.notion-h3 {
+  @apply !mb-5;
 }
 
+.notion-text,
 .notion-list li {
-  @apply font-semibold;
+  @apply text-[16px] leading-[21.6px] /** small screen */
+  md:text-[18px] md:leading-[27px] /** medium screen */
+  font-medium;
 }
 
 .notion-link {

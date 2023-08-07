@@ -24,7 +24,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -36,7 +36,12 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo NX_BRIDGE_APP_DOMAIN=${{ secrets.NX_BRIDGE_APP_DOMAIN }} >> .env
+          echo BRIDGE_DAPP_DOMAIN=${{ secrets.BRIDGE_DAPP_DOMAIN }} >> .env
+          echo BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID=${{ secrets.BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID }} >> .env
+          echo BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS=${{ secrets.BRIDGE_DAPP_HOSTED_ORBIT_MULTLICALL3_ADDRESS }} >> .env
+          echo BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_ATHENA_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
+          echo BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_HERMES_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
+          echo BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK=${{ secrets.BRIDGE_DAPP_DEMETER_ORBIT_MULTICALL3_DEPLOYMENT_BLOCK }} >> .env
 
       - name: Build project
         run: yarn build:bridge
@@ -51,7 +56,9 @@ jobs:
           args: deploy context=deploy-preview site=$NETLIFY_BRIDGE_SITE_ID --dir=./dist/apps/bridge-dapp/
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.0
+        # Use master branch to fix issue with entrypoint.sh script
+        # https://github.com/unsplash/comment-on-pr/issues/51
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |

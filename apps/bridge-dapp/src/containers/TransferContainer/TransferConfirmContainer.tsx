@@ -7,15 +7,19 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ChainType,
+  Note,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import {
   TransferConfirm,
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { BigNumber, ethers } from 'ethers';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import {
   useLatestTransactionStage,
@@ -29,6 +33,8 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
+import { ContractFunctionRevertedError, formatEther } from 'viem';
+import { isViemError } from '@webb-tools/web3-api-provider';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -58,10 +64,13 @@ export const TransferConfirmContainer = forwardRef<
     // State for tracking the status of the change note checkbox
     const [isChecked, setIsChecked] = useState(false);
 
-    const { api: vAnchorApi } = useVAnchor();
+    const {
+      api: vAnchorApi,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
+    } = useVAnchor();
 
-    const { activeApi, activeChain, apiConfig, noteManager, txQueue } =
-      useWebContext();
+    const { activeApi, activeChain, apiConfig, txQueue } = useWebContext();
 
     const { setMainComponent } = useWebbUI();
 
@@ -74,7 +83,7 @@ export const TransferConfirmContainer = forwardRef<
     const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
-      () => calculateTypedChainId(destChain.chainType, destChain.chainId),
+      () => calculateTypedChainId(destChain.chainType, destChain.id),
       [destChain]
     );
 
@@ -158,7 +167,10 @@ export const TransferConfirmContainer = forwardRef<
         tokenSymbol,
       } = note.note;
 
-      const currency = apiConfig.getCurrencyBySymbol(tokenSymbol);
+      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        tokenSymbol,
+        +destTypedChainId
+      );
       if (!currency) {
         console.error(`Currency not found for symbol ${tokenSymbol}`);
         captureSentryException(
@@ -179,7 +191,7 @@ export const TransferConfirmContainer = forwardRef<
         },
         token: tokenSymbol,
         tokenURI,
-        providerType: activeApi.type(),
+        providerType: activeApi.type,
       });
 
       setTxId(tx.id);
@@ -189,14 +201,14 @@ export const TransferConfirmContainer = forwardRef<
 
         // Add the change note before sending the tx
         if (changeNote) {
-          noteManager?.addNote(changeNote);
+          await addNoteToNoteManager(changeNote);
         }
 
         const txPayload: TransferTransactionPayloadType = {
           notes: inputNotes,
           changeUtxo,
           transferUtxo,
-          feeAmount: feeAmount ?? BigNumber.from(0),
+          feeAmount: feeAmount ?? ZERO_BIG_INT,
         };
 
         const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
@@ -210,7 +222,7 @@ export const TransferConfirmContainer = forwardRef<
             outputNotes
           );
         } else {
-          const { transactionHash } = await vAnchorApi.transact(...args);
+          const transactionHash = await vAnchorApi.transact(...args);
 
           // Notification Success Transaction
           tx.txHash = transactionHash;
@@ -222,13 +234,28 @@ export const TransferConfirmContainer = forwardRef<
 
         // Cleanup NoteAccount state
         for (const note of inputNotes) {
-          await noteManager?.removeNote(note);
+          await removeNoteFromNoteManager(note);
         }
       } catch (error) {
         console.error('Error occured while transfering', error);
-        changeNote && (await noteManager?.removeNote(changeNote));
+        changeNote && (await removeNoteFromNoteManager(changeNote));
         tx.txHash = getTransactionHash(error);
-        tx.fail(getErrorMessage(error));
+
+        let errorMessage = getErrorMessage(error);
+        if (isViemError(error)) {
+          errorMessage = error.shortMessage;
+
+          const revertError = error.walk(
+            (err) => err instanceof ContractFunctionRevertedError
+          );
+
+          if (revertError instanceof ContractFunctionRevertedError) {
+            errorMessage = revertError.reason ?? revertError.shortMessage;
+          }
+        }
+
+        tx.fail(errorMessage);
+
         captureSentryException(error, 'transactionType', 'transfer');
       } finally {
         setMainComponent(undefined);
@@ -248,7 +275,8 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       feeAmount,
       activeRelayer,
-      noteManager,
+      addNoteToNoteManager,
+      removeNoteFromNoteManager,
       onResetState,
     ]);
 
@@ -266,9 +294,11 @@ export const TransferConfirmContainer = forwardRef<
         return undefined;
       }
 
-      const amountNum = Number(ethers.utils.formatEther(feeAmount));
+      const amountNum = Number(formatEther(feeAmount));
 
-      return getRoundedAmountString(amountNum, 3, Math.round);
+      return getRoundedAmountString(amountNum, 3, {
+        roundingFunction: Math.round,
+      });
     }, [feeAmount]);
 
     return (
@@ -281,11 +311,11 @@ export const TransferConfirmContainer = forwardRef<
         changeAmount={changeAmount}
         sourceChain={{
           name: activeChain?.name ?? '',
-          type: activeChain?.base ?? 'webb-dev',
+          type: activeChain?.group ?? 'webb-dev',
         }}
         destChain={{
           name: destChain.name,
-          type: destChain.base ?? 'webb-dev',
+          type: destChain.group ?? 'webb-dev',
         }}
         note={changeNote?.serialize()}
         progress={progress}

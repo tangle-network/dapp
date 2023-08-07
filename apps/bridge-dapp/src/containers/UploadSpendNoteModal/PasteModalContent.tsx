@@ -15,9 +15,9 @@ import {
   chainsPopulated,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
-import { ethers } from 'ethers';
 import { PasteModalContentProps } from './types';
 import { isValidNote } from '../../utils';
+import { formatUnits } from 'viem';
 
 const initialNotes = {
   [uniqueId()]: '',
@@ -115,20 +115,20 @@ export const PasteModalContent: FC<PasteModalContentProps> = ({
 
             const sourceCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(sourceChain.chainType, sourceChain.chainId)
+              calculateTypedChainId(sourceChain.chainType, sourceChain.id)
             );
             const destCurrency = getNativeCurrencyFromConfig(
               currencies,
-              calculateTypedChainId(destChain.chainType, destChain.chainId)
+              calculateTypedChainId(destChain.chainType, destChain.id)
             );
 
             if (!sourceCurrency || !destCurrency) {
               return null;
             }
 
-            const balance = ethers.utils.formatUnits(
-              note.note.amount,
-              note.note.denomination
+            const balance = formatUnits(
+              BigInt(note.note.amount),
+              +note.note.denomination
             );
 
             return (

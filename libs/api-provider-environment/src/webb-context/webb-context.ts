@@ -50,7 +50,7 @@ export interface WebbContextState<T = unknown> {
   txQueue: TransactionQueueApi;
 }
 
-export const WebbContext = React.createContext<WebbContextState>({
+export const WebbContext = React.createContext<WebbContextState<unknown>>({
   chains: {},
   accounts: [],
   loading: true,
@@ -106,10 +106,6 @@ export const WebbContext = React.createContext<WebbContextState>({
   },
 });
 
-export const useWebContext = <T = unknown>() => {
-  return React.useContext(WebbContext) as WebbContextState<T>;
-};
-export const useApiConfig = () => {
-  const { apiConfig } = useWebContext();
-  return apiConfig;
+export const useWebContext = () => {
+  return React.useContext(WebbContext);
 };

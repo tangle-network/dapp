@@ -24,7 +24,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -46,7 +46,9 @@ jobs:
           args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./dist/apps/stats-dapp/
 
       - name: Netlify Preview URL
-        uses: unsplash/comment-on-pr@v1.3.0
+        # Use master branch to fix issue with entrypoint.sh script
+        # https://github.com/unsplash/comment-on-pr/issues/51
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT: |

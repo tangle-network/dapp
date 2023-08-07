@@ -3,7 +3,6 @@ query PublicKeys($PerPage: Int, $offset: Int) {
     nodes {
       id
       compressed
-      uncompressed
       history
       block {
         timestamp
@@ -36,7 +35,6 @@ query PublicKey($id: String!) {
   publicKey(id: $id) {
     id
     compressed
-    uncompressed
     history
     block {
       timestamp

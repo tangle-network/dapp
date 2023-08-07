@@ -9,25 +9,25 @@ import {
   WebbRelayer,
   WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
-import { VAnchor } from '@webb-tools/anchors';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
+import Storage from '@webb-tools/dapp-types/Storage';
 import {
   calculateTypedChainId,
   ChainType,
-  MerkleTree,
   Note,
   parseTypedChainId,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 
-import { calculateProvingLeavesAndCommitmentIndex } from '../utils';
 import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
+import { VAnchor__factory } from '@webb-tools/contracts';
+import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
+import { GetContractReturnType, PublicClient } from 'viem';
 
-export class Web3RelayerManager extends WebbRelayerManager {
+export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
@@ -138,66 +138,60 @@ export class Web3RelayerManager extends WebbRelayerManager {
    */
   async fetchLeavesFromRelayers(
     relayers: WebbRelayer[],
-    vanchor: VAnchor,
+    vanchorContract: GetContractReturnType<
+      typeof VAnchor__factory.abi,
+      PublicClient
+    >,
     storage: Storage<BridgeStorage>,
-    treeHeight: number,
-    targetRoot: string,
-    commitment: bigint,
-    tx?: Transaction<NewNotesTxResult>
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      tx?: Transaction<NewNotesTxResult>;
+    }
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   } | null> {
-    const sourceEvmId = (await vanchor.contract.provider.getNetwork()).chainId;
-    const typedChainId = calculateTypedChainId(ChainType.EVM, sourceEvmId);
+    const { treeHeight, targetRoot, commitment, tx } = options;
+
+    const sourceEvmId = await vanchorContract.read.getChainId();
+
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      +sourceEvmId.toString()
+    );
 
     // loop through the sourceRelayers to fetch leaves
     for (let i = 0; i < relayers.length; i++) {
       try {
         const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
-          vanchor.contract.address,
+          vanchorContract.address,
           tx?.cancelToken.abortSignal
         );
-        const validLatestLeaf = await vanchor.leafCreatedAtBlock(
-          leaves[leaves.length - 1],
-          lastQueriedBlock
+
+        const result = await this.validateRelayerLeaves(
+          treeHeight,
+          leaves,
+          targetRoot,
+          commitment,
+          tx
         );
 
-        console.log('validLatestLeaf', validLatestLeaf);
-
-        // leaves from relayer somewhat validated, attempt to build the tree
-        if (!validLatestLeaf) {
+        if (!result || result.commitmentIndex === -1) {
           continue;
-        }
-
-        tx?.next(TransactionState.ValidatingLeaves, undefined);
-        const { leafIndex, provingLeaves } =
-          await calculateProvingLeavesAndCommitmentIndex(
-            treeHeight,
-            leaves,
-            targetRoot,
-            commitment.toString()
-          );
-
-        // If the leafIndex is -1, it means the commitment is not in the tree
-        // and we should continue to the next relayer
-        if (leafIndex === -1) {
-          tx?.next(TransactionState.ValidatingLeaves, false);
-          continue;
-        } else {
-          tx?.next(TransactionState.ValidatingLeaves, true);
         }
 
         // Cached all the leaves returned from the relayer to re-use later
-        await storage.set('lastQueriedBlock', lastQueriedBlock);
-        await storage.set('leaves', leaves);
+        // if the chain id is not localnet
+        if (!LOCALNET_CHAIN_IDS.includes(+`${sourceEvmId}`)) {
+          await storage.set('lastQueriedBlock', lastQueriedBlock);
+          await storage.set('leaves', leaves);
+        }
 
         // Return the leaves for proving
-        return {
-          provingLeaves,
-          commitmentIndex: leafIndex,
-        };
+        return result;
       } catch (e) {
         tx?.next(TransactionState.ValidatingLeaves, false);
         continue;

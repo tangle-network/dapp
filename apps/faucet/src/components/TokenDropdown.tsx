@@ -1,4 +1,5 @@
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -12,37 +13,53 @@ import { useObservableState } from 'observable-hooks';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { map } from 'rxjs';
 
+import constants from '../config/shared';
 import { useFaucetContext } from '../provider';
 
 const TokenDropdown = () => {
-  const { config, inputValues$ } = useFaucetContext();
+  const { config, inputValues$, amount$ } = useFaucetContext();
 
   const token = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.token))
   );
 
   const setToken = useCallback(
-    (token: string | undefined) => {
+    (token: string | undefined, contractAddress?: string) => {
       const currentVal = inputValues$.getValue();
+
+      // If the contract address is 0, then we are using the native token
+      if (contractAddress && BigInt(contractAddress) === ZERO_BIG_INT) {
+        amount$.next(constants.nativeAmount);
+      } else if (contractAddress) {
+        amount$.next(constants.amount);
+      }
+
       inputValues$.next({
         ...currentVal,
+        contractAddress,
         token,
       });
     },
-    [inputValues$]
+    [amount$, inputValues$]
   );
 
   const selectedChain = useObservableState(
     inputValues$.pipe(map((inputValues) => inputValues.chain))
   );
 
+  const currentChainData = useMemo(() => {
+    if (!selectedChain) return undefined;
+
+    return config[selectedChain];
+  }, [config, selectedChain]);
+
   const tokenNames = useMemo(() => {
-    if (!selectedChain || !config[selectedChain]?.tokenAddresses) {
+    if (!selectedChain || !currentChainData) {
       return [];
     }
 
-    return Object.keys(config[selectedChain].tokenAddresses);
-  }, [config, selectedChain]);
+    return Object.keys(currentChainData.tokenAddresses);
+  }, [currentChainData, selectedChain]);
 
   const tokenInputVal = useMemo(
     () => (token ? { symbol: token } : undefined),
@@ -51,17 +68,18 @@ const TokenDropdown = () => {
 
   const handleValueChange = React.useCallback(
     (val: string) => {
-      setToken(val);
+      setToken(val, currentChainData?.tokenAddresses[val]);
     },
-    [setToken]
+    [currentChainData?.tokenAddresses, setToken]
   );
 
   // Effect to reset the token value when the chain changes
   useEffect(() => {
-    if (tokenNames.length > 0) {
-      setToken(tokenNames[0]);
+    if (tokenNames.length > 0 && currentChainData) {
+      const defaultToken = tokenNames[0];
+      setToken(defaultToken, currentChainData.tokenAddresses[defaultToken]);
     }
-  }, [setToken, tokenNames]);
+  }, [currentChainData, setToken, tokenNames]);
 
   return (
     <Dropdown className="block grow shrink basis-0">

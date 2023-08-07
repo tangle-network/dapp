@@ -63,6 +63,14 @@ function createWebpack(env, mode = 'production') {
       ]
     : [];
 
+  // Load bridge dapp specific env vars by prefixing with BRIDGE_DAPP_
+  const bridgeEnvVars = Object.keys(process.env)
+    .filter((key) => key.startsWith('BRIDGE_DAPP_'))
+    .reduce((envVars, key) => {
+      envVars[`process.env.${key}`] = JSON.stringify(process.env[key]);
+      return envVars;
+    }, {});
+
   return {
     experiments: {
       asyncWebAssembly: true,
@@ -249,17 +257,9 @@ function createWebpack(env, mode = 'production') {
         resourceRegExp: /^\.\/locale$/,
       }),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(mode),
-        'process.env.LOCAL_FIXTURES': JSON.stringify(
-          process.env.LOCAL_FIXTURES
-        ),
-        'process.env.DEPLOYMENT': JSON.stringify(
-          process.env.DEPLOYMENT ?? 'develop'
-        ),
-        'process.env.NX_BRIDGE_APP_DOMAIN': JSON.stringify(
-          process.env.NX_BRIDGE_APP_DOMAIN
-        ),
         'process.env.BRIDGE_VERSION': JSON.stringify(packageVersion),
+        'process.env.NODE_ENV': JSON.stringify(mode),
+        ...bridgeEnvVars,
       }),
       new webpack.optimize.SplitChunksPlugin(),
       new MiniCssExtractPlugin({

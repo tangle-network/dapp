@@ -10,7 +10,6 @@ import {
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
-  TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
@@ -22,7 +21,7 @@ import {
   shortenString,
   Table,
   TitleWithInfo,
-  TokenPairIcons,
+  IconsGroup,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
@@ -85,30 +84,7 @@ const staticColumns: ColumnDef<SpendNoteDataType, any>[] = [
         );
       }
 
-      const firstTwoTokens = composition.slice(0, 2);
-      const numOfHiddenTokens = composition.length - 2;
-
-      return (
-        <div className="flex items-center space-x-1 w-[220px]">
-          {firstTwoTokens.length === 1 ? (
-            <IconWithTooltip
-              icon={<TokenIcon size="lg" name={firstTwoTokens[0]} />}
-              content={firstTwoTokens[0]}
-            />
-          ) : (
-            <TokenPairIcons
-              token1Symbol={firstTwoTokens[0]}
-              token2Symbol={firstTwoTokens[1]}
-            />
-          )}
-
-          {numOfHiddenTokens > 0 && (
-            <Typography className="inline-block" variant="body3">
-              +{numOfHiddenTokens} others
-            </Typography>
-          )}
-        </div>
-      );
+      return <IconsGroup icons={composition} type="token" />;
     },
   }),
 

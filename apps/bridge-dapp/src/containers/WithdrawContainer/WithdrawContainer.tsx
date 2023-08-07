@@ -1,5 +1,10 @@
+import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
+import {
+  ZERO_BIG_INT,
+  getNativeCurrencyFromConfig,
+} from '@webb-tools/dapp-config';
+import { isValidAddress } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import {
   useBalancesFromNotes,
@@ -22,8 +27,10 @@ import {
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { BigNumber, ethers } from 'ethers';
+import {
+  AssetType,
+  RelayerType,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   ComponentProps,
   forwardRef,
@@ -32,20 +39,19 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
-import { isValidAddress } from '@webb-tools/dapp-types';
+import { formatEther, formatUnits, parseEther, parseUnits } from 'viem';
 import {
   WalletState,
   useAddCurrency,
   useConnectWallet,
   useMaxFeeInfo,
 } from '../../hooks';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
+import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
 import { ExchangeRateInfo, TransactionFeeInfo } from './shared';
 import { WithdrawContainerProps } from './types';
-import { WithdrawConfirmContainer } from './WithdrawConfirmContainer';
-import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 const DEFAULT_FIXED_AMOUNTS = [0.1, 0.25, 0.5, 1.0];
 
@@ -159,11 +165,13 @@ export const WithdrawContainer = forwardRef<
     const notes = allNotes
       .get(currentResourceId.toString())
       ?.filter(
-        (note) => note.note.tokenSymbol === fungibleCurrency?.view?.symbol
+        (note) =>
+          note.note.tokenSymbol === fungibleCurrency?.view?.symbol &&
+          fungibleCurrency?.hasChain(+note.note.targetChainId)
       );
 
     return notes ?? null;
-  }, [allNotes, currentResourceId, fungibleCurrency?.view?.symbol]);
+  }, [allNotes, currentResourceId, fungibleCurrency]);
 
   const maxFeeArgs = useMemo(
     () => ({
@@ -174,18 +182,18 @@ export const WithdrawContainer = forwardRef<
 
   const {
     isLoading: isFetchingFeeInfo,
-    feeInfo: feeInfoOrBigNumber,
+    feeInfo: feeInfoOrBigInt,
     fetchFeeInfo,
     resetMaxFeeInfo,
   } = useMaxFeeInfo(maxFeeArgs);
 
-  const feeInfo = useMemo(() => {
-    if (!(feeInfoOrBigNumber instanceof BigNumber)) {
-      return feeInfoOrBigNumber;
+  const relayerFeeInfo = useMemo(() => {
+    if (typeof feeInfoOrBigInt !== 'bigint') {
+      return feeInfoOrBigInt;
     }
 
     return null;
-  }, [feeInfoOrBigNumber]);
+  }, [feeInfoOrBigInt]);
 
   const currentNativeCurrency = useMemo(() => {
     if (!currentTypedChainId) {
@@ -320,43 +328,53 @@ export const WithdrawContainer = forwardRef<
 
   const [isValidRecipient, setIsValidRecipient] = useState(false);
 
-  const totalFeeInWei = useMemo(() => {
-    if (!feeInfoOrBigNumber || feeInfoOrBigNumber instanceof BigNumber) {
-      return feeInfoOrBigNumber;
+  const [totalFeeInWei, totalFee] = useMemo(() => {
+    if (!feeInfoOrBigInt || typeof feeInfoOrBigInt === 'bigint') {
+      return [null, null];
     }
 
-    let feeWei = feeInfoOrBigNumber.estimatedFee;
+    let feeWei = feeInfoOrBigInt.estimatedFee;
+
+    // If the relayer is active, the fee will be paid in the selected fungible currency.
+    // Otherwise, the fee will be paid in the native currency of the selected chain.
+    const decimals = activeRelayer
+      ? fungibleCurrency?.getDecimals()
+      : currentNativeCurrency?.decimals;
 
     if (refundAmount && isRefund) {
-      const exchangeRate = Number(
-        ethers.utils.formatEther(feeInfoOrBigNumber.refundExchangeRate)
-      );
-      const converted = refundAmount * exchangeRate;
-      const refundAmountWei = ethers.utils.parseEther(converted.toFixed(6));
+      const parsedRefundAmount = decimals
+        ? parseUnits(`${refundAmount}`, decimals)
+        : parseEther(`${refundAmount}`);
 
-      feeWei = feeWei.add(refundAmountWei);
+      feeWei += parsedRefundAmount * feeInfoOrBigInt.refundExchangeRate;
     }
 
-    return feeWei;
-  }, [feeInfoOrBigNumber, isRefund, refundAmount]);
+    const feeFormatted = decimals
+      ? formatUnits(feeWei, decimals)
+      : formatEther(feeWei);
+
+    return [feeWei, Number(feeFormatted)];
+  }, [
+    feeInfoOrBigInt,
+    activeRelayer,
+    fungibleCurrency,
+    currentNativeCurrency?.decimals,
+    refundAmount,
+    isRefund,
+  ]);
 
   const isDisabledWithdraw = useMemo(() => {
-    const totalFee = Number(
-      ethers.utils.formatEther(totalFeeInWei ?? ethers.constants.Zero)
-    );
-
     return [
       Boolean(fungibleCurrency), // No fungible currency selected
       isUnwrap ? Boolean(wrappableCurrency) : true, // No unwrappable currency selected when unwrapping
       Boolean(isValidAmount), // Amount is greater than available amount
       Boolean(recipient), // No recipient address
       isValidRecipient, // Invalid recipient address
-      typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
-      activeRelayer ? amount >= totalFee : true, // When relayer is selected, amount should be greater than fee
-      Boolean(feeInfoOrBigNumber),
+      isUnwrap && typeof liquidity === 'number' ? liquidity >= amount : true, // Insufficient liquidity
+      activeRelayer && totalFee ? amount >= totalFee : true, // When relayer is selected, amount should be greater than fee
+      Boolean(feeInfoOrBigInt),
     ].some((value) => value === false);
   }, [
-    totalFeeInWei,
     fungibleCurrency,
     isUnwrap,
     wrappableCurrency,
@@ -365,8 +383,9 @@ export const WithdrawContainer = forwardRef<
     isValidRecipient,
     liquidity,
     amount,
+    totalFee,
     activeRelayer,
-    feeInfoOrBigNumber,
+    feeInfoOrBigInt,
   ]);
 
   const buttonText = useMemo(() => {
@@ -396,23 +415,40 @@ export const WithdrawContainer = forwardRef<
     selectedUnwrapToken,
   ]);
 
-  const amountAfterFeeWei = useMemo(() => {
-    const amountWei = ethers.utils.parseEther(amount.toString());
+  const [amountAfterFeeWei, amountAfterFeeEther] = useMemo(() => {
+    const decimals =
+      wrappableCurrency?.getDecimals() ?? fungibleCurrency?.getDecimals();
+
+    const amountWei = decimals
+      ? parseUnits(`${amount}`, decimals)
+      : parseEther(`${amount}`);
+
     // If no fee or no active relayer, then return the original amount
     // as the fee is not deducted from the amount
     if (!totalFeeInWei || !activeRelayer) {
-      return amountWei;
+      return [amountWei, amount] as const;
     }
 
-    return amountWei.sub(totalFeeInWei);
-  }, [activeRelayer, amount, totalFeeInWei]);
+    const amountAfterFeeWei = amountWei - totalFeeInWei;
+    const amountAfterFee = decimals
+      ? formatUnits(amountAfterFeeWei, decimals)
+      : formatEther(amountAfterFeeWei);
+
+    return [amountAfterFeeWei, Number(amountAfterFee)] as const;
+  }, [
+    activeRelayer,
+    amount,
+    fungibleCurrency,
+    totalFeeInWei,
+    wrappableCurrency,
+  ]);
 
   // Calculate the info for UI display
   const infoCalculated = useMemo(() => {
-    const amountAfterFee = Number(ethers.utils.formatEther(amountAfterFeeWei));
-
     const receivingAmount = isValidAmount
-      ? getRoundedAmountString(amountAfterFee, 3, Math.round)
+      ? getRoundedAmountString(amountAfterFeeEther, 3, {
+          roundingFunction: Math.round,
+        })
       : undefined;
 
     const remainderAmount = isValidAmount
@@ -433,7 +469,7 @@ export const WithdrawContainer = forwardRef<
     };
   }, [
     amount,
-    amountAfterFeeWei,
+    amountAfterFeeEther,
     availableAmountFromNotes,
     fungibleCurrency?.view.symbol,
     isUnwrap,
@@ -443,34 +479,40 @@ export const WithdrawContainer = forwardRef<
 
   const refundInfo = useMemo(
     () =>
-      feeInfo ? (
+      relayerFeeInfo ? (
         <ExchangeRateInfo
           exchangeRate={getRoundedAmountString(
-            +ethers.utils.formatEther(feeInfo.refundExchangeRate),
+            +formatEther(relayerFeeInfo.refundExchangeRate),
             6,
-            Math.round
+            { roundingFunction: Math.round }
           )}
           fungibleTokenSymbol={fungibleCurrency?.view.symbol}
           nativeTokenSymbol={currentNativeCurrency?.symbol}
         />
       ) : undefined,
-    [currentNativeCurrency?.symbol, feeInfo, fungibleCurrency?.view.symbol]
+    [
+      currentNativeCurrency?.symbol,
+      relayerFeeInfo,
+      fungibleCurrency?.view.symbol,
+    ]
   );
 
   const transactionFeeInfo = useMemo(() => {
-    const estimatedFee = feeInfo
+    const estimatedFee = relayerFeeInfo
       ? getRoundedAmountString(
-          Number(ethers.utils.formatEther(feeInfo.estimatedFee)),
+          Number(formatEther(relayerFeeInfo.estimatedFee)),
           3,
-          Math.round
+          {
+            roundingFunction: Math.round,
+          }
         )
       : undefined;
 
     const refundFee =
-      feeInfo && refundAmount && isRefund
+      relayerFeeInfo && refundAmount && isRefund
         ? getRoundedAmountString(
             refundAmount *
-              Number(ethers.utils.formatEther(feeInfo.refundExchangeRate))
+              Number(formatEther(relayerFeeInfo.refundExchangeRate))
           )
         : undefined;
 
@@ -483,7 +525,7 @@ export const WithdrawContainer = forwardRef<
     ) : undefined;
 
     return transactionFeeInfo;
-  }, [feeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
+  }, [relayerFeeInfo, fungibleCurrency?.view.symbol, isRefund, refundAmount]);
 
   const handleResetState = useCallback(() => {
     setAmountError('');
@@ -540,7 +582,7 @@ export const WithdrawContainer = forwardRef<
     // Get the notes that will be spent for this withdraw
     const inputNotes = NoteManager.getNotesFifo(
       availableNotesFromManager ?? [],
-      ethers.utils.parseUnits(amount.toString(), fungibleDecimals)
+      parseUnits(amount.toString() as `${number}`, fungibleDecimals)
     );
 
     if (!inputNotes) {
@@ -548,16 +590,13 @@ export const WithdrawContainer = forwardRef<
     }
 
     // Get the cumulative value of the notes to be spent
-    const sumInputNotes = inputNotes.reduce<ethers.BigNumber>(
-      (currentValue, note) => {
-        return currentValue.add(ethers.BigNumber.from(note.note.amount));
-      },
-      BigNumber.from(0)
-    );
+    const sumInputNotes = inputNotes.reduce<bigint>((currentValue, note) => {
+      return currentValue + BigInt(note.note.amount);
+    }, BigInt(0));
 
-    const changeAmountBigNumber = sumInputNotes.sub(
-      ethers.utils.parseUnits(amount.toString(), fungibleDecimals)
-    );
+    const changeAmountBI =
+      sumInputNotes -
+      parseUnits(amount.toString() as `${number}`, fungibleDecimals);
 
     const keypair = noteManager.getKeypair();
     if (!keypair.privkey) {
@@ -567,12 +606,12 @@ export const WithdrawContainer = forwardRef<
 
     // Formatted the change amount for UI displaying
     const formattedChangeAmount = Number(
-      ethers.utils.formatUnits(changeAmountBigNumber, fungibleDecimals)
+      formatUnits(changeAmountBI, fungibleDecimals)
     );
 
     // Generate the change note based on the change utxo
     let changeNote: Note | undefined;
-    if (changeAmountBigNumber.gt(0)) {
+    if (changeAmountBI > 0) {
       changeNote = await noteManager.generateNote(
         activeApi.backend,
         currentTypedChainId,
@@ -594,7 +633,7 @@ export const WithdrawContainer = forwardRef<
       : await activeApi.generateUtxo({
           curve: noteManager.defaultNoteGenInput.curve,
           backend: activeApi.backend,
-          amount: changeAmountBigNumber.toString(),
+          amount: changeAmountBI.toString(),
           chainId: currentTypedChainId.toString(),
           keypair,
           originChainId: currentTypedChainId.toString(),
@@ -605,9 +644,9 @@ export const WithdrawContainer = forwardRef<
     const sourceTypedChainId = Number(inputNotes[0].note.sourceChainId);
 
     const fee =
-      feeInfoOrBigNumber instanceof BigNumber
-        ? feeInfoOrBigNumber
-        : totalFeeInWei ?? BigNumber.from(0);
+      typeof feeInfoOrBigInt === 'bigint'
+        ? feeInfoOrBigInt
+        : totalFeeInWei ?? ZERO_BIG_INT;
 
     setMainComponent(
       <WithdrawConfirmContainer
@@ -633,7 +672,7 @@ export const WithdrawContainer = forwardRef<
         }
         feeInfo={transactionFeeInfo}
         receivingInfo={refundInfo}
-        refundAmount={ethers.utils.parseEther(refundAmount.toString())}
+        refundAmount={parseEther(`${refundAmount}`)}
         refundToken={currentNativeCurrency?.symbol}
         recipient={recipient}
         onResetState={handleResetState}
@@ -652,7 +691,7 @@ export const WithdrawContainer = forwardRef<
     recipient,
     availableNotesFromManager,
     amount,
-    feeInfoOrBigNumber,
+    feeInfoOrBigInt,
     totalFeeInWei,
     setMainComponent,
     amountAfterFeeWei,
@@ -807,22 +846,26 @@ export const WithdrawContainer = forwardRef<
           .map((relayer) => {
             const relayerData = relayer.capabilities.supportedChains[
               activeChain.chainType === ChainType.EVM ? 'evm' : 'substrate'
-            ].get(
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
-            );
+            ].get(calculateTypedChainId(activeChain.chainType, activeChain.id));
 
-            const theme =
+            if (!relayerData?.beneficiary) {
+              return undefined;
+            }
+
+            const theme: RelayerType['theme'] =
               activeChain.chainType === ChainType.EVM
-                ? ('ethereum' as const)
-                : ('substrate' as const);
+                ? 'ethereum'
+                : 'substrate';
 
-            return {
-              address: relayerData?.beneficiary ?? '',
+            const r: RelayerType = {
+              address: relayerData.beneficiary,
               externalUrl: relayer.infoUri,
               theme,
             };
+
+            return r;
           })
-          .filter((x) => x !== undefined)}
+          .filter((r): r is RelayerType => r !== undefined)}
         onClose={() => setMainComponent(undefined)}
         onChange={(nextRelayer) => {
           setRelayer(
@@ -958,11 +1001,11 @@ export const WithdrawContainer = forwardRef<
 
   const refundCheckboxProps = useMemo<ComponentProps<typeof CheckBox>>(
     () => ({
-      isDisabled: !activeRelayer || !feeInfo,
+      isDisabled: !activeRelayer || !relayerFeeInfo,
       isChecked: isRefund,
       onChange: () => setIsRefund((prev) => !prev),
     }),
-    [activeRelayer, feeInfo, isRefund]
+    [activeRelayer, relayerFeeInfo, isRefund]
   );
 
   const parseRefundAmount = useCallback(
@@ -979,7 +1022,7 @@ export const WithdrawContainer = forwardRef<
       }
 
       const relayerMaxRefund = parseFloat(
-        ethers.utils.formatEther(feeInfo?.maxRefund ?? '0')
+        formatEther(relayerFeeInfo?.maxRefund ?? ZERO_BIG_INT)
       );
       if (Number.isNaN(relayerMaxRefund) || parsedValue > relayerMaxRefund) {
         setRefundAmountError(
@@ -991,23 +1034,23 @@ export const WithdrawContainer = forwardRef<
       setRefundAmountError('');
       setRefundAmount(parsedValue);
     },
-    [feeInfo]
+    [relayerFeeInfo]
   );
 
   const refundAmountInputProps = useMemo<ComponentProps<typeof AmountInput>>(
     () => ({
       amount: refundAmount ? refundAmount.toString() : undefined,
       errorMessage: refundAmountError,
-      isDisabled: !feeInfo,
+      isDisabled: !relayerFeeInfo,
       onAmountChange: parseRefundAmount,
       onMaxBtnClick: () => {
-        if (!feeInfo) {
+        if (!relayerFeeInfo) {
           return;
         }
-        parseRefundAmount(ethers.utils.formatEther(feeInfo.maxRefund));
+        parseRefundAmount(formatEther(relayerFeeInfo.maxRefund));
       },
     }),
-    [feeInfo, parseRefundAmount, refundAmount, refundAmountError]
+    [relayerFeeInfo, parseRefundAmount, refundAmount, refundAmountError]
   );
 
   const liquidityDesc = useMemo(() => {
@@ -1015,26 +1058,22 @@ export const WithdrawContainer = forwardRef<
       return undefined;
     }
 
-    const receivingAmount = +ethers.utils.formatEther(amountAfterFeeWei);
-    if (Number.isNaN(receivingAmount)) {
-      console.error('Invalid receiving amount');
-      return undefined;
-    }
-
     const unwrapTkSym = selectedUnwrapToken?.symbol ?? '';
 
-    if (receivingAmount > liquidity) {
+    if (amountAfterFeeEther > liquidity) {
       return `Insufficient liquidity. Available liquidity is ${liquidity} ${unwrapTkSym}`;
     }
-  }, [amountAfterFeeWei, isUnwrap, liquidity, selectedUnwrapToken?.symbol]);
+  }, [amountAfterFeeEther, isUnwrap, liquidity, selectedUnwrapToken?.symbol]);
 
   const buttonDesc = useMemo(() => {
-    if (!totalFeeInWei) {
+    if (!totalFee) {
       return liquidityDesc;
     }
 
-    const totalFee = Number(ethers.utils.formatEther(totalFeeInWei));
-    const formattedFee = getRoundedAmountString(totalFee, 3, Math.round);
+    const formattedFee = getRoundedAmountString(totalFee, 3, {
+      roundingFunction: Math.round,
+    });
+
     const tkSymbol = selectedFungibleToken?.symbol ?? '';
     const feeText = `${formattedFee} ${tkSymbol}`.trim();
 
@@ -1048,7 +1087,7 @@ export const WithdrawContainer = forwardRef<
     amount,
     liquidityDesc,
     selectedFungibleToken?.symbol,
-    totalFeeInWei,
+    totalFee,
   ]);
 
   const infoItemProps = useMemo<
@@ -1070,24 +1109,26 @@ export const WithdrawContainer = forwardRef<
         ? `${formattedRefundAmount} ${nativeCurrencySymbol}`
         : '--';
 
-    const feeBN = totalFeeInWei
+    const feeBI = totalFeeInWei
       ? totalFeeInWei
-      : feeInfoOrBigNumber instanceof BigNumber
-      ? feeInfoOrBigNumber
+      : typeof feeInfoOrBigInt === 'bigint'
+      ? feeInfoOrBigInt
       : undefined;
 
     let feeText = '--';
-    if (feeBN) {
-      const fee = Number(ethers.utils.formatEther(feeBN));
+    if (feeBI) {
+      const fee = Number(formatEther(feeBI));
 
       // If feeInfo is instance of BigNumber, it means that the fee is in native currency
       // otherwise it's in fungible token
       const tokenSymbol =
-        feeInfoOrBigNumber instanceof BigNumber
+        typeof feeInfoOrBigInt === 'bigint'
           ? nativeCurrencySymbol
           : fungiCurrencySymbol;
 
-      feeText = `${getRoundedAmountString(fee, 3, Math.round)} ${tokenSymbol}`;
+      feeText = `${getRoundedAmountString(fee, 3, {
+        roundingFunction: Math.round,
+      })} ${tokenSymbol}`;
     }
 
     const txFeeContent = isFetchingFeeInfo ? 'Calculating...' : feeText;
@@ -1132,7 +1173,7 @@ export const WithdrawContainer = forwardRef<
     >['infoItemProps'];
   }, [
     currentNativeCurrency?.symbol,
-    feeInfoOrBigNumber,
+    feeInfoOrBigInt,
     infoCalculated,
     isFetchingFeeInfo,
     isRefund,
@@ -1215,12 +1256,12 @@ export const WithdrawContainer = forwardRef<
 
   // Side effect to uncheck the refund checkbox when feeInfo is not available
   useEffect(() => {
-    if (!feeInfo) {
+    if (!relayerFeeInfo) {
       setIsRefund(false);
       setRefundAmount(0);
       setRefundAmountError('');
     }
-  }, [feeInfo]);
+  }, [relayerFeeInfo]);
 
   const isProcessingTxn = useMemo(
     () => txQueue.txPayloads.length > 0,

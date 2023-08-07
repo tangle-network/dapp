@@ -1,11 +1,11 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
-import { ethers } from 'ethers';
-import { useMemo } from 'react';
-
 import { Currency } from '@webb-tools/abstract-api-provider';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import { ensureHex } from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
+import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { hexToU8a } from '@webb-tools/utils';
+import { useMemo } from 'react';
+import { formatUnits } from 'viem';
 import { useNoteAccount } from '../useNoteAccount';
 
 /**
@@ -39,21 +39,24 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             resourceId.chainType,
             resourceId.chainId
           );
-          // Convert bytes to hex string and then to BigInt to remove padding 0s at the beginning
-          // then convert back to hex string
-          const anchorAddressBigInt = BigInt(u8aToHex(resourceId.targetSystem));
 
           // Iterate through all notes and calculate the balance of each fungible currency
           // on each chain
           notes.forEach(({ note }) => {
             const fungible = allFungibles.find((f) => {
-              const addr = apiConfig.getAnchorAddress(f.id, typedChainId);
+              const anchorIdentifier = apiConfig.getAnchorIdentifier(
+                f.id,
+                typedChainId
+              );
 
               return (
-                addr &&
+                anchorIdentifier &&
                 f.view.symbol === note.tokenSymbol &&
                 f.hasChain(typedChainId) &&
-                BigInt(addr) === anchorAddressBigInt
+                apiConfig.isEqTargetSystem(
+                  ensureHex(anchorIdentifier),
+                  resourceId.targetSystem
+                )
               );
             });
 
@@ -71,9 +74,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then create a new record with the amount of the note
             // on the current chain and return
             if (!existedRecord) {
-              const amount = +ethers.utils.formatUnits(
-                note.amount,
-                note.denomination
+              const amount = +formatUnits(
+                BigInt(note.amount),
+                +note.denomination
               );
 
               acc[fungible.id] = {
@@ -91,9 +94,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then add the amount of the note to the existed amount
             // and return
             if (existedAmount) {
-              const amount = +ethers.utils.formatUnits(
-                note.amount,
-                note.denomination
+              const amount = +formatUnits(
+                BigInt(note.amount),
+                +note.denomination
               );
 
               acc[fungible.id] = {
@@ -107,9 +110,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // If the amount on the current chain does not exist
             // then create a new record with the amount of the note
             // on the current chain and return
-            const amount = +ethers.utils.formatUnits(
-              note.amount,
-              note.denomination
+            const amount = +formatUnits(
+              BigInt(note.amount),
+              +note.denomination
             );
 
             acc[fungible.id] = {

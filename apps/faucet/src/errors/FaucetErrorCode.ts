@@ -25,6 +25,11 @@ enum FaucetErrorCode {
   INVALID_REQUEST_BODY,
 
   /**
+   * Missing contract address in the operation
+   */
+  MISSING_CONTRACT_ADDRESS,
+
+  /**
    * Inavlid selected chain
    */
   INVALID_SELECTED_CHAIN,
@@ -43,6 +48,11 @@ enum FaucetErrorCode {
    * The error when call `.json()` on the response
    */
   JSON_PARSE_ERROR,
+
+  /**
+   * To many requests at the same time
+   */
+  TOO_MANY_CLAIM_REQUESTS,
 
   /**
    * Mint tokens failed

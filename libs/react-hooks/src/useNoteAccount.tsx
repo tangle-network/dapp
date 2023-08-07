@@ -1,6 +1,13 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId, Note } from '@webb-tools/sdk-core';
+import { NoteManager } from '@webb-tools/note-manager';
+import {
+  calculateTypedChainId,
+  Note,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import { Button, Typography, useWebbUI } from '@webb-tools/webb-ui-components';
+import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
@@ -27,6 +34,11 @@ export type UseNoteAccountReturnType = {
    * The flag to indicate if the notes are syncing
    */
   isSyncingNote: boolean;
+
+  /**
+   * The sync notes progress
+   */
+  syncNotesProgress: number;
 
   /**
    * The sync notes function
@@ -81,6 +93,11 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     setIsSuccessfullyCreatedNoteAccount,
   ] = useState(false);
 
+  const syncNotesProgress = useObservableState(
+    NoteManager.$syncNotesProgress,
+    NaN
+  );
+
   if (!isOpenNoteAccountModalSubject) {
     isOpenNoteAccountModalSubject = new BehaviorSubject(false);
   }
@@ -123,7 +140,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
         const chainNotes =
           await activeApi.methods.variableAnchor.actions.inner.syncNotesForKeypair(
             activeApi.state.activeBridge.targets[
-              calculateTypedChainId(activeChain.chainType, activeChain.chainId)
+              calculateTypedChainId(activeChain.chainType, activeChain.id)
             ],
             noteManager.getKeypair()
           );
@@ -133,7 +150,21 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
             // Do not display notes that have zero value.
             .filter((note) => note.note.amount !== '0')
             .map(async (note) => {
-              await noteManager.addNote(note);
+              // Either contract address or tree id
+              const targetIdentifier = note.note.targetIdentifyingData;
+              const { chainType, chainId } = parseTypedChainId(
+                +note.note.targetChainId
+              );
+
+              // Index the note by destination resource id
+              const resourceId =
+                await activeApi.methods.variableAnchor.actions.inner.getResourceId(
+                  targetIdentifier,
+                  chainId,
+                  chainType
+                );
+
+              await noteManager.addNote(resourceId, note);
               return note;
             })
         );
@@ -156,10 +187,17 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
           ),
         });
       } catch (error) {
+        let msg = 'Something went wrong while syncing notes';
+
+        if (isViemError(error)) {
+          msg = error.shortMessage;
+        }
+
         console.error('Error while syncing notes', error);
+        console.dir(error);
         notificationApi.addToQueue({
           variant: 'error',
-          message: 'Something went wrong while syncing notes',
+          message: msg,
         });
       } finally {
         noteManager.isSyncingNote = false;
@@ -244,6 +282,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
     isOpenNoteAccountModal,
     isSuccessfullyCreatedNoteAccount,
     isSyncingNote,
+    syncNotesProgress,
     setOpenNoteAccountModal,
     setSuccessfullyCreatedNoteAccount,
     syncNotes: handleSyncNotes,

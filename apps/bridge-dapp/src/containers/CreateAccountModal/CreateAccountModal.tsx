@@ -1,12 +1,12 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import cx from 'classnames';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
+  Download,
   ExchangeLine,
   InformationLine,
   WalletLineIcon,
-  Download,
 } from '@webb-tools/icons';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   Button,
   CheckBox,
@@ -16,12 +16,13 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useState } from 'react';
-import { CreateAccountModalProps } from './types';
+import cx from 'classnames';
 import Lottie from 'lottie-react';
-import privacySecurityJson from './privacy-security.json';
-import congratsJson from './congrats.json';
+import { FC, useCallback, useState } from 'react';
 import { createSignInMessage } from '../../constants/signIn';
+import congratsJson from './congrats.json';
+import privacySecurityJson from './privacy-security.json';
+import { CreateAccountModalProps } from './types';
 
 const successBridgeInfo = [
   {
@@ -62,35 +63,42 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
   // Loading button when user hits create account
   const [isCreating, setIsCreating] = useState(false);
 
-  const { loginNoteAccount } = useWebContext();
+  const { loginNoteAccount, activeApi } = useWebContext();
 
   const loginWithMetamask = useCallback(async () => {
     try {
       setIsCreating(true);
-      const metamask = await Web3Provider.fromExtension();
-      const accounts = await metamask.eth.getAccounts();
-      if (accounts.length && accounts[0] != null) {
-        const msg = createSignInMessage(
-          accounts[0],
-          await metamask.eth.getChainId()
-        );
 
-        const signedString = await metamask.eth.personal.sign(
-          msg,
-          accounts[0],
-          undefined as any
-        );
-        await loginNoteAccount(signedString.slice(0, 66));
-
-        setIsSuccess?.(true);
+      if (!activeApi) {
+        throw WebbError.from(WebbErrorCodes.ApiNotReady);
       }
+
+      if (!(activeApi instanceof WebbWeb3Provider)) {
+        throw WebbError.from(WebbErrorCodes.NotImplemented);
+      }
+
+      const account = activeApi.accounts.activeOrDefault;
+      if (!account) {
+        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+      }
+
+      const msg = createSignInMessage(
+        account.address,
+        await activeApi.getChainId()
+      );
+
+      const signedString = await activeApi.sign(msg);
+
+      await loginNoteAccount(signedString.slice(0, 66));
+
+      setIsSuccess?.(true);
     } catch (error) {
       console.log('Error occurs when creating note account');
       console.log(error);
     } finally {
       setIsCreating(false);
     }
-  }, [loginNoteAccount, setIsSuccess]);
+  }, [activeApi, loginNoteAccount, setIsSuccess]);
 
   const handleOpenChange = useCallback(
     async (nextOpen: boolean) => {

@@ -1,4 +1,5 @@
 import { LoggerService } from '@webb-tools/browser-utils';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { Button } from '@webb-tools/webb-ui-components';
 import { err, ok, Result } from 'neverthrow';
@@ -14,26 +15,40 @@ import {
   useFaucetContext,
 } from '../provider';
 import useStore, { StoreKey } from '../store';
-import { MintTokenBody, MintTokenErrorCodes } from '../types';
+import {
+  MintTokenBody,
+  MintTokenErrorCodes,
+  TooManyClaimResponse,
+} from '../types';
+import isTooManyClaimResponse from '../utils/isTooManyClaimResponse';
 import safeParseJSON from '../utils/safeParseJSON';
 
 const logger = LoggerService.get('MintButtonContainer');
 
 const mintTokens = async (
   accessToken: string,
-  { chain: chainName, recepient, recepientAddressType }: InputValuesType,
+  {
+    chain: typedChainId,
+    recepient,
+    recepientAddressType,
+    contractAddress,
+  }: InputValuesType,
   config: FaucetContextType['config'],
   abortSignal?: AbortSignal
 ): Promise<Result<MintTokenBody, FaucetError<MintTokenErrorCodes>>> => {
-  if (!chainName) {
+  if (!contractAddress) {
+    return err(FaucetError.from(FaucetErrorCode.MISSING_CONTRACT_ADDRESS));
+  }
+
+  if (!typedChainId) {
     return err(FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN));
   }
 
-  const chain = config[chainName];
+  const chain = config[typedChainId];
   if (!chain) {
     return err(
       FaucetError.from(FaucetErrorCode.INVALID_SELECTED_CHAIN, {
-        selectedChain: chainName,
+        selectedChain: chain,
       })
     );
   }
@@ -44,8 +59,11 @@ const mintTokens = async (
     'Content-Type': 'application/x-www-form-urlencoded',
   } as const satisfies HeadersInit;
 
+  const onlyNativeToken = BigInt(contractAddress) === ZERO_BIG_INT;
+
   const body = {
     faucet: {
+      onlyNativeToken,
       typedChainId: {
         [chain.type]: chain.chainId,
       },
@@ -65,17 +83,31 @@ const mintTokens = async (
     });
 
     if (!response.ok) {
-      const result = await safeParseJSON<{ code: number; message: string }>(
-        response
-      );
+      const result = await safeParseJSON<
+        { code: number; message: string } | TooManyClaimResponse
+      >(response);
       if (result.isOk()) {
         const data = result.value;
-        return err(
-          FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
-            extraInfo: data.message,
-            status: data.code,
-          })
-        );
+
+        if (!isTooManyClaimResponse(data)) {
+          return err(
+            FaucetError.from(FaucetErrorCode.MINT_TOKENS_FAILED, {
+              extraInfo: data.message,
+              status: data.code,
+            })
+          );
+        } else {
+          return err(
+            FaucetError.from(FaucetErrorCode.TOO_MANY_CLAIM_REQUESTS, {
+              claimPeriod: data.time_to_wait_between_claims_ms ?? undefined,
+              error: data.error,
+              lastClaimedDate: data.last_claimed_date
+                ? new Date(data.last_claimed_date)
+                : undefined,
+              reason: data.reason,
+            })
+          );
+        }
       } else {
         return err(result.error);
       }

@@ -18,11 +18,14 @@ import { useObservableState } from 'observable-hooks';
 import { useCallback, useMemo } from 'react';
 
 import FaucetError from '../errors/FaucetError';
+import FaucetErrorCode from '../errors/FaucetErrorCode';
+import ErrorPayload from '../errors/FaucetErrorPayload';
 import failedAnimation from '../lottie/failed.json';
 import processingAnimation from '../lottie/processing.json';
 import sucessAnimation from '../lottie/success.json';
 import { useFaucetContext } from '../provider';
 import addTokenToMetamask from '../utils/addTokenToMetamask';
+import parseErrorFromResult from '../utils/parseErrorFromResult';
 
 const ProcessingModal = () => {
   const {
@@ -86,13 +89,18 @@ const ProcessingModal = () => {
       return '';
     }
 
-    if (!chain.blockExplorerStub) {
+    if (!chain.blockExplorers) {
       alert(`Chain ${chain.name} does not have a block explorer url`);
       return '';
     }
 
     if (txReceipt) {
-      return `${chain.blockExplorerStub}/tx/${txReceipt.transactionHash}`;
+      const explorerUrl = chain.blockExplorers.default.url;
+
+      return new URL(
+        `/tx/${txReceipt.transactionHash}`,
+        explorerUrl
+      ).toString();
     } else if (txHash) {
       alert(`Substrate tx hash ${txHash} is not supported yet`);
       return '';
@@ -101,6 +109,11 @@ const ProcessingModal = () => {
       return '';
     }
   }, [mintTokenRes]);
+
+  const errorMessage = useMemo(
+    () => parseErrorFromResult(mintTokenRes),
+    [mintTokenRes]
+  );
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
@@ -158,7 +171,7 @@ const ProcessingModal = () => {
             {isSuccess
               ? 'This transfer has been made to your wallet address.'
               : isFailed
-              ? 'Oops, the transfer could not be completed.'
+              ? errorMessage
               : 'Your request is in progress. It may take up to a few seconds to complete the request.'}
           </Typography>
 

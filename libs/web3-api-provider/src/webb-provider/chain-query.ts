@@ -2,23 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainQuery } from '@webb-tools/abstract-api-provider';
-import { zeroAddress } from '@webb-tools/dapp-types';
-import { ERC20__factory as ERC20Factory } from '@webb-tools/contracts';
-
-import { ethers } from 'ethers';
-
+import { ensureHex } from '@webb-tools/dapp-config';
+import { checkNativeAddress } from '@webb-tools/dapp-types';
+import { parseTypedChainId } from '@webb-tools/sdk-core';
+import { Observable, catchError, of, switchMap } from 'rxjs';
+import { Address, formatEther } from 'viem';
+import { fetchBalance } from 'wagmi/actions';
 import { WebbWeb3Provider } from '../webb-provider';
-import { catchError, Observable, of, switchMap } from 'rxjs';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 
 export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   constructor(protected inner: WebbWeb3Provider) {
     super(inner);
   }
 
-  async currentBlock(): Promise<number> {
-    const provider = this.inner.getEthersProvider();
-    return provider.getBlockNumber();
+  currentBlock() {
+    return this.inner.publicClient.getBlockNumber();
   }
 
   // Returns the balance formatted in ETH units.
@@ -27,50 +25,29 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     currencyId: number,
     accountAddressArg?: string
   ): Observable<string> {
-    const provider = this.inner.getEthersProvider();
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        const accountAddress = await this.getAccountAddress(accountAddressArg);
-        if (!accountAddress) {
+        const currency = this.inner.state.getCurrencies()[currencyId];
+        if (!currency) {
+          return '';
+        }
+
+        const account = await this.getAccountAddress(accountAddressArg);
+        if (!account) {
           console.error('No account selected');
           return '';
         }
 
-        const nativeCurrency = getNativeCurrencyFromConfig(
-          this.inner.config.currencies,
-          typedChainId
+        const accountAddress: Address = ensureHex(account);
+        const tknAddr = currency.getAddressOfChain(typedChainId);
+
+        const balance = await this.fetchAccountBalance(
+          accountAddress,
+          typedChainId,
+          tknAddr ? ensureHex(tknAddr) : undefined
         );
 
-        if (!nativeCurrency) {
-          console.error('No native currency found for chain');
-          return '';
-        }
-
-        // Return the balance of the account if native currency
-        if (nativeCurrency.id === currencyId) {
-          const tokenBalanceBig = await provider.getBalance(accountAddress);
-          const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
-
-          return tokenBalance;
-        } else {
-          // Find the currency address on this chain
-          const currency = this.inner.state.getCurrencies()[currencyId];
-          if (!currency) {
-            return '';
-          }
-
-          const currencyOnChain = currency.getAddress(typedChainId);
-          if (!currencyOnChain) {
-            return '';
-          }
-
-          // Create a token instance for this chain
-          const tokenInstance = ERC20Factory.connect(currencyOnChain, provider);
-          const tokenBalanceBig = await tokenInstance.balanceOf(accountAddress);
-          const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
-
-          return tokenBalance;
-        }
+        return formatEther(balance.value);
       }),
       catchError(() => of('')) // Return empty string when error
     );
@@ -80,30 +57,24 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
     address: string,
     accountAddressArg?: string
   ): Observable<string> {
-    const provider = this.inner.getEthersProvider();
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        const accountAddress = await this.getAccountAddress(accountAddressArg);
-
-        if (!accountAddress) {
-          console.log('no account selected');
+        const account = await this.getAccountAddress(accountAddressArg);
+        if (!account) {
+          console.error('no account selected');
           return '';
         }
 
-        // Return the balance of the account if native currency
-        if (address === zeroAddress) {
-          const tokenBalanceBig = await provider.getBalance(accountAddress);
-          const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+        const accountAddress: Address = ensureHex(account);
+        const tknAddress: Address = ensureHex(address);
 
-          return tokenBalance;
-        } else {
-          // Create a token instance for this chain
-          const tokenInstance = ERC20Factory.connect(address, provider);
-          const tokenBalanceBig = await tokenInstance.balanceOf(accountAddress);
-          const tokenBalance = ethers.utils.formatEther(tokenBalanceBig);
+        const balance = await this.fetchAccountBalance(
+          accountAddress,
+          this.inner.typedChainId,
+          tknAddress
+        );
 
-          return tokenBalance;
-        }
+        return formatEther(balance.value);
       }),
       catchError(() => of('')) // Return empty string when error
     );
@@ -112,15 +83,21 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
   private async getAccountAddress(
     accAddr?: string
   ): Promise<string | undefined> {
-    if (accAddr) {
-      return accAddr;
-    }
+    return accAddr ?? this.inner.accounts.activeOrDefault?.address;
+  }
 
-    const accounts = await this.inner.accounts.accounts();
-    if (!accounts?.length) {
-      return undefined;
-    }
-
-    return accounts[0]?.address;
+  private fetchAccountBalance(
+    accountAddress: Address,
+    typedChainId: number,
+    tokenAddress?: Address
+  ) {
+    return fetchBalance({
+      address: accountAddress,
+      chainId: parseTypedChainId(typedChainId).chainId,
+      token:
+        tokenAddress && !checkNativeAddress(tokenAddress)
+          ? tokenAddress
+          : undefined,
+    });
   }
 }

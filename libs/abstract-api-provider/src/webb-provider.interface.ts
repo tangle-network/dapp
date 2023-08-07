@@ -1,27 +1,28 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EventBus } from '@webb-tools/app-util';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
 import { ApiPromise } from '@polkadot/api';
+import { EventBus } from '@webb-tools/app-util';
+import { BridgeStorage } from '@webb-tools/browser-utils';
+import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
+import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
+import { NoteManager } from '@webb-tools/note-manager';
+import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import { providers } from 'ethers';
 import { BehaviorSubject, Observable } from 'rxjs';
-
+import { GetContractReturnType, PublicClient } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbState } from './state';
-import { ActionEvent } from './transaction';
+import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -29,9 +30,12 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 }
 
 /// list of the apis that are available for  the provider
-export interface WebbMethods<T extends WebbApiProvider<any>> {
+export interface WebbMethods<
+  ProviderType extends WebbProviderType,
+  T extends WebbApiProvider<any>
+> {
   // Variable Anchor API
-  variableAnchor: WebbVariableAnchor<T>;
+  variableAnchor: WebbVariableAnchor<ProviderType, T>;
   // Wrap and unwrap API
   wrapUnwrap: WrapAndUnwrap<T>;
   // Chain query : an API for querying chain storage used currently for balances
@@ -59,8 +63,11 @@ export type WebbTransactionMethod<T> = {
   enabled: boolean;
 };
 
-export interface WebbVariableAnchor<T extends WebbApiProvider<any>> {
-  actions: WebbMethod<VAnchorActions<T>, ActionEvent>;
+export interface WebbVariableAnchor<
+  ProviderType extends WebbProviderType,
+  T extends WebbApiProvider<any>
+> {
+  actions: WebbMethod<VAnchorActions<ProviderType, T>, ActionEvent>;
 }
 
 export interface WrapAndUnwrap<T> {
@@ -181,11 +188,6 @@ export type NotificationHandler = ((
   // remove the notification programmatically
   remove(key: string | number): void;
 };
-/**
- * Wasm factory
- * @param name - optional name to map an action to a worker currently there's only sdk-core
- **/
-export type WasmFactory = (name?: string) => Worker | null;
 
 export type WebbProviderType = 'web3' | 'polkadot';
 
@@ -202,20 +204,19 @@ export type WebbProviderType = 'web3' | 'polkadot';
  * @param {WebbRelayerManager} relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
  * @param {any} getProvider - A getter method for getting the underlying provider
  * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
- * @param {WasmFactory} wasmFactory - Provider of the wasm workers
  *
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<any>;
   state: WebbState;
-  methods: WebbMethods<WebbApiProvider<T>>;
+  methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
   backend: Backend;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
   typedChainidSubject: BehaviorSubject<number>;
 
-  type(): WebbProviderType;
+  type: WebbProviderType;
 
   destroy(): Promise<void> | void;
 
@@ -223,7 +224,7 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   endSession?(): Promise<void>;
 
-  relayerManager: WebbRelayerManager;
+  relayerManager: WebbRelayerManager<WebbProviderType>;
 
   getProvider(): any;
 
@@ -238,11 +239,8 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // Notification handler
   notificationHandler: NotificationHandler;
 
-  // wasm-utils workers factory
-  wasmFactory: WasmFactory;
-
   // new block observable
-  newBlock: Observable<unknown>;
+  newBlock: Observable<bigint | null>;
 
   // get zk fixtures
   getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
@@ -250,15 +248,34 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   // get vanchor max edges
   getVAnchorMaxEdges: (
     vAnchorAddress: string,
-    provider?: providers.Provider | ApiPromise
+    provider?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // get vanchor levels
   getVAnchorLevels: (
     vAnchorAddressOrTreeId: string,
-    providerOrApi?: providers.Provider | ApiPromise
+    providerOrApi?: PublicClient | ApiPromise
   ) => Promise<number>;
 
   // generate utxo
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
+
+  getVAnchorLeaves(
+    vanchor:
+      | GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+      | ApiPromise,
+    storage: Storage<BridgeStorage>,
+    options: {
+      treeHeight: number;
+      targetRoot: string;
+      commitment: bigint;
+      importMetaUrl: string;
+      treeId?: number;
+      palletId?: number;
+      tx?: Transaction<NewNotesTxResult>;
+    }
+  ): Promise<{
+    provingLeaves: string[];
+    commitmentIndex: number;
+  }>;
 }

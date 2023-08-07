@@ -1,24 +1,39 @@
+import { config } from 'dotenv';
+import { workspaceRoot } from 'nx/src/utils/workspace-root';
+import path from 'path';
+
+config({
+  path: path.join(workspaceRoot, '.env'),
+});
+
+config({
+  path: path.join(workspaceRoot, 'apps/bridge-dapp', '.env'),
+});
+
 import { ApiPromise } from '@polkadot/api';
-import { ICurrency } from '@webb-tools/dapp-config/on-chain-config/on-chain-config-base';
 import {
   anchorDeploymentBlock,
   parsedAnchorConfig,
 } from '@webb-tools/dapp-config/src/anchors/anchor-config';
 import { chainsConfig } from '@webb-tools/dapp-config/src/chains/chain-config';
-import { AnchorMetadata, ConfigType } from '@webb-tools/dapp-config/src/types';
+import { DEFAULT_NATIVE_INDEX } from '@webb-tools/dapp-config/src/constants';
+import {
+  AnchorMetadata,
+  ConfigType,
+  ICurrency,
+} from '@webb-tools/dapp-config/src/types';
 import substrateProviderFactory from '@webb-tools/polkadot-api-provider/src/utils/substrateProviderFactory';
 import {
   ChainType,
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
+import { ZERO_ADDRESS } from '@webb-tools/utils';
 import evmProviderFactory from '@webb-tools/web3-api-provider/src/utils/evmProviderFactory';
 import fs from 'fs';
 import { Listr, color } from 'listr2';
-import { workspaceRoot } from 'nx/src/utils/workspace-root';
-import path from 'path';
+import merge from 'lodash/merge';
 import { ON_CHAIN_CONFIG_PATH } from './constants';
 import fetchAnchorMetadata from './utils/on-chain-utils/fetchAnchorMetadata';
-import fetchNativeCurrency from './utils/on-chain-utils/fetchNative';
 import mergeConfig from './utils/on-chain-utils/mergeConfig';
 
 const configPath = path.join(workspaceRoot, ON_CHAIN_CONFIG_PATH);
@@ -50,10 +65,11 @@ async function filterActiveEVMChains(
         )
         .map(async (typedChainId) => {
           try {
-            const provider = await evmProviderFactory(typedChainId);
-            await provider.getNetwork();
+            const provider = evmProviderFactory(typedChainId);
+            await provider.getChainId();
             return typedChainId;
           } catch (error) {
+            console.log(error);
             return null;
           }
         })
@@ -87,22 +103,38 @@ async function filterActiveSubstrateChains(
   }, {} as Record<number, ApiPromise>);
 }
 
-async function fetchNativeTask(
-  typedChainIds: number[],
-  substrateProviderRecord?: Record<number, ApiPromise>
-) {
-  const nativeCurrencies = await typedChainIds.reduce(
-    async (acc, typedChainId) => {
-      const native = await acc;
-      const provider = substrateProviderRecord?.[typedChainId];
-      const nativeCurrency = await fetchNativeCurrency(typedChainId, provider);
-      native[typedChainId] = nativeCurrency;
-      return native;
-    },
-    {} as Promise<Record<number, ICurrency>>
-  );
+function fetchNativeTask(typedChainIds: number[]) {
+  return typedChainIds.reduce((acc, typedChainId) => {
+    const { chainType } = parseTypedChainId(typedChainId);
+    let currencyId: string = '';
 
-  return nativeCurrencies;
+    switch (chainType) {
+      case ChainType.EVM: {
+        currencyId = ZERO_ADDRESS;
+        break;
+      }
+
+      case ChainType.Substrate: {
+        currencyId = `${DEFAULT_NATIVE_INDEX}`;
+        break;
+      }
+
+      default: {
+        throw new Error(
+          `Unsupported chain type ${chainType} for chain ${typedChainId}`
+        );
+      }
+    }
+
+    const native = {
+      ...chainsConfig[typedChainId].nativeCurrency,
+      address: currencyId,
+    } satisfies ICurrency;
+
+    acc[typedChainId] = native;
+
+    return acc;
+  }, {} as Record<number, ICurrency>);
 }
 
 async function fetchAnchorMetadataTask(
@@ -122,6 +154,12 @@ async function fetchAnchorMetadataTask(
         )
       );
 
+      metadataSettled.forEach((res) => {
+        if (res.status === 'rejected') {
+          console.log(res.reason);
+        }
+      });
+
       const metadata = metadataSettled
         .filter(
           (result): result is PromiseFulfilledResult<AnchorMetadata> =>
@@ -134,6 +172,45 @@ async function fetchAnchorMetadataTask(
         metadata,
       };
     })
+  );
+
+  metadataWithTypedChainId.forEach(
+    ({ typedChainId, metadata: metadataArray }) => {
+      metadataArray.forEach((metadata) => {
+        const currentAnchor = metadata.address;
+
+        const linkableAnchorByAddress = metadataWithTypedChainId
+          .filter(
+            ({ typedChainId: otherTypedChainId }) =>
+              otherTypedChainId !== typedChainId
+          )
+          .filter(({ metadata }) =>
+            metadata.some((m) => m.address === currentAnchor)
+          );
+
+        // Aggregate the linkable anchors
+        const aggregateAnchor = linkableAnchorByAddress.reduce(
+          (acc, { typedChainId, metadata }) => {
+            const otherAnchor = metadata.find(
+              (m) => m.address === currentAnchor
+            )?.address;
+
+            if (otherAnchor) {
+              acc[typedChainId] = otherAnchor;
+            }
+
+            return acc;
+          },
+          {} as Record<number, string>
+        );
+
+        // Merge the aggregate anchor into the current linkable anchors
+        metadata.linkableAnchor = merge(
+          metadata.linkableAnchor,
+          aggregateAnchor
+        );
+      });
+    }
   );
 
   const metadataRecord = metadataWithTypedChainId.reduce(
@@ -230,10 +307,7 @@ const tasks = new Listr<Ctx>(
               title: color.cyan(`Fetching native currencies...`),
               options: { persistentOutput: true },
               task: async (ctx, task) => {
-                ctx.nativeRecord = await fetchNativeTask(
-                  ctx.typedChainIds,
-                  ctx.substrateProviderRecord
-                );
+                ctx.nativeRecord = fetchNativeTask(ctx.typedChainIds);
 
                 const symbolsSet = Object.values(ctx.nativeRecord).reduce(
                   (acc, cur) => {

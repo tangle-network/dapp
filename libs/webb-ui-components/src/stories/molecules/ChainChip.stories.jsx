@@ -1,53 +1,55 @@
-import React from 'react';
-
 import { ChainChip } from '../../components';
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Design System/Molecules/ChainChip',
   component: ChainChip,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    type: {
+    chainType: {
       control: {
         type: 'select',
         options: [
-          'polygon',
+          'arbitrum',
+          'athena',
+          'avalanche',
+          'cosmos',
           'ethereum',
-          'optimism',
           'kusama',
           'moonbeam',
+          'optimism',
           'polkadot',
-          'arbitrum',
-          'avalanche',
+          'polygon',
           'tangle',
           'scroll',
+          'orbit',
           'webb-dev',
         ],
       },
     },
-    name: {
+    chainName: {
       control: {
         type: 'select',
         options: [
-          'polygon',
-          'polygon mumbai',
-          'ethereum',
-          'goerli',
-          'sepolia',
-          'optimism',
-          'optimism goerli',
-          'kusama',
-          'moonbeam',
-          'moonbase alpha',
-          'polkadot',
           'arbitrum',
           'arbitrum goerli',
+          'athena',
           'avalanche',
           'avalanche fuji',
+          'cosmos',
+          'ethereum',
+          'ethereum goerli',
+          'ethereum rinkeby',
+          'ethereum sepolia',
+          'kusama',
+          'moonbeam',
+          'moonbeam alpha',
+          'optimism',
+          'optimism goerli',
+          'polkadot',
+          'polygon',
+          'polygon mumbai',
           'tangle',
           'scroll',
-          'athena',
+          'webb',
           'demeter',
           'hermes',
         ],
@@ -56,12 +58,170 @@ export default {
   },
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => <ChainChip {...args} />;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  type: 'ethereum',
-  name: 'ethereum',
+// ARBITRUM
+export const Arbitrum = Template.bind({});
+Arbitrum.args = {
+  chainType: 'arbitrum',
+  chainName: 'arbitrum',
+};
+
+export const ArbitrumGoerli = Template.bind({});
+ArbitrumGoerli.args = {
+  chainType: 'arbitrum',
+  chainName: 'arbitrum goerli',
+  title: 'goerli',
+};
+
+// ATHENA
+export const Athena = Template.bind({});
+Athena.args = {
+  chainType: 'athena',
+  chainName: 'athena',
+};
+
+// AVALANCHE
+export const Avalanche = Template.bind({});
+Avalanche.args = {
+  chainType: 'avalanche',
+  chainName: 'avalanche',
+};
+
+export const AvalancheFuji = Template.bind({});
+AvalancheFuji.args = {
+  chainType: 'avalanche',
+  chainName: 'avalanche fuji',
+  title: 'fuji',
+};
+
+// COSMOS
+export const Cosmos = Template.bind({});
+Cosmos.args = {
+  chainType: 'cosmos',
+  chainName: 'cosmos',
+};
+
+// ETHEREUM
+export const Ethereum = Template.bind({});
+Ethereum.args = {
+  chainType: 'ethereum',
+  chainName: 'ethereum',
+};
+
+export const Sepolia = Template.bind({});
+Sepolia.args = {
+  chainType: 'ethereum',
+  chainName: 'sepolia',
+};
+
+export const Goerli = Template.bind({});
+Goerli.args = {
+  chainType: 'ethereum',
+  chainName: 'goerli',
+};
+
+export const Rinkeby = Template.bind({});
+Rinkeby.args = {
+  chainType: 'ethereum',
+  chainName: 'rinkeby',
+};
+
+// KUSAMA
+export const Kusama = Template.bind({});
+Kusama.args = {
+  chainType: 'kusama',
+  chainName: 'kusama',
+};
+
+// MOONBEAM
+export const Moonbeam = Template.bind({});
+Moonbeam.args = {
+  chainType: 'moonbeam',
+  chainName: 'moonbeam',
+};
+
+export const MoonbaseAlpha = Template.bind({});
+MoonbaseAlpha.args = {
+  chainType: 'moonbeam',
+  chainName: 'moonbase alpha',
+  title: 'alpha',
+};
+
+// OPTIMISM
+export const Optimism = Template.bind({});
+Optimism.args = {
+  chainType: 'optimism',
+  chainName: 'optimism',
+};
+
+export const OptimismGoerli = Template.bind({});
+OptimismGoerli.args = {
+  chainType: 'optimism',
+  chainName: 'optimism goerli',
+  title: 'goerli',
+};
+
+// POLKADOT
+export const Polkadot = Template.bind({});
+Polkadot.args = {
+  chainType: 'polkadot',
+  chainName: 'polkadot',
+};
+
+// POLYGON
+export const Polygon = Template.bind({});
+Polygon.args = {
+  chainType: 'polygon',
+  chainName: 'polygon',
+};
+
+export const PolygonMumbai = Template.bind({});
+PolygonMumbai.args = {
+  chainType: 'polygon',
+  chainName: 'polygon mumbai',
+  title: 'mumbai',
+};
+
+// SCROLL
+export const Scroll = Template.bind({});
+Scroll.args = {
+  chainType: 'scroll',
+  chainName: 'scroll',
+};
+
+export const ScrollAlpha = Template.bind({});
+ScrollAlpha.args = {
+  chainType: 'scroll',
+  chainName: 'scroll alpha',
+  title: 'alpha',
+};
+
+// TANGLE
+export const Tangle = Template.bind({});
+Tangle.args = {
+  chainType: 'tangle',
+  chainName: 'tangle',
+};
+
+// Orbit Hermes
+export const OrbitHermes = Template.bind({});
+OrbitHermes.args = {
+  chainType: 'orbit',
+  title: 'hermes',
+  chainName: 'hermes Orbit',
+};
+
+export const OrbitAthena = Template.bind({});
+OrbitAthena.args = {
+  chainType: 'orbit',
+  title: 'athena',
+  chainName: 'athena Orbit',
+};
+
+export const OrbitDemeter = Template.bind({});
+OrbitDemeter.args = {
+  chainType: 'orbit',
+  title: 'demeter',
+  chainName: 'demeter orbit',
 };

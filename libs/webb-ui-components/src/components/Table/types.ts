@@ -25,6 +25,11 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
   totalRecords?: number;
 
   /**
+   * The optional class name for overriding style table component
+   */
+  tableClassName?: string;
+
+  /**
    * The optional class name for overriding style THeader component
    */
   thClassName?: string;
@@ -33,6 +38,12 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    * The optional class name for overriding style TData component
    */
   tdClassName?: string;
+
+  /**
+   * The optional class name for overriding style Pagination component
+   */
+  paginationClassName?: string;
+
   /**
    * The table title to display in the pagination
    */

@@ -22,12 +22,6 @@ export const metadata: DefaultSeoProps = {
   openGraph: {
     images: [
       {
-        alt: 'Og Image Alt',
-        height: 1800,
-        url: 'https://webb-assets.s3.amazonaws.com/og.png',
-        width: 2400,
-      },
-      {
         alt: 'Optimized Og Image Alt',
         height: 630,
         url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
@@ -59,13 +53,15 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <Header />
+      <div className="hero-bg">
+        <Header />
 
-      <main className="mt-[72px]">
-        <Component {...pageProps} />
-      </main>
+        <main className="mt-[72px]">
+          <Component {...pageProps} />
+        </main>
 
-      <Footer isNext />
+        <Footer isMinimal isNext className="py-12 m-0 mx-auto mt-4" />
+      </div>
     </Provider>
   );
 };

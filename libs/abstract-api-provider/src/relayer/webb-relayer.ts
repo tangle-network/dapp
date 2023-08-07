@@ -1,22 +1,22 @@
-import { BigNumber } from 'ethers';
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LoggerService } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
-  Capabilities,
   CMDSwitcher,
+  Capabilities,
   RelayedChainInput,
   RelayerCMDKey,
   RelayerMessage,
+  SendTxResponse,
   WithdrawRelayerArgs,
 } from './types';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 
 /**
  * Relayer withdraw status
@@ -48,19 +48,19 @@ type RelayerLeaves = {
 };
 
 export interface RelayerFeeInfo {
-  estimatedFee: BigNumber;
-  gasPrice: BigNumber;
-  refundExchangeRate: BigNumber;
-  maxRefund: BigNumber;
+  estimatedFee: bigint;
+  gasPrice: bigint;
+  refundExchangeRate: bigint;
+  maxRefund: bigint;
   timestamp: Date;
 }
 
 export const parseRelayerFeeInfo = (data: any): RelayerFeeInfo | never => {
   return {
-    estimatedFee: BigNumber.from(data.estimatedFee),
-    gasPrice: BigNumber.from(data.gasPrice),
-    refundExchangeRate: BigNumber.from(data.refundExchangeRate),
-    maxRefund: BigNumber.from(data.maxRefund),
+    estimatedFee: BigInt(data.estimatedFee),
+    gasPrice: BigInt(data.gasPrice),
+    refundExchangeRate: BigInt(data.refundExchangeRate),
+    maxRefund: BigInt(data.maxRefund),
     timestamp: new Date(data.timestamp),
   };
 };
@@ -102,30 +102,156 @@ const parseRelayerFeeErrorMessage = async (
  **/
 class RelayedWithdraw {
   private status: RelayedWithdrawResult = RelayedWithdrawResult.PreFlight;
-  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+
   private emitter: Subject<[RelayedWithdrawResult, string | undefined]> =
     new Subject();
 
   private readonly logger = LoggerService.get('RelayedWithdraw');
 
-  constructor(private ws: WebSocket, private prefix: RelayerCMDKey) {
+  private readonly txProcesser = new BehaviorSubject<
+    | {
+        payload: ReturnType<RelayedWithdraw['generateWithdrawRequest']>;
+        chainId: number;
+      }
+    | undefined
+  >(undefined);
+
+  readonly SEND_TX_ROUTE = '/api/v1/send';
+
+  readonly QUERY_STATUS_ROUTE = '/api/v1/tx';
+
+  readonly POOLING_INTERVAL = 500;
+
+  readonly watcher: Observable<[RelayedWithdrawResult, string | undefined]>;
+
+  constructor(private endpoint: URL, private prefix: RelayerCMDKey) {
     this.watcher = this.emitter.asObservable();
 
-    ws.onmessage = ({ data }) => {
-      const handledMessage = this.handleMessage(JSON.parse(data));
-
-      this.status = handledMessage[0];
-      this.emitter.next(handledMessage);
-
-      if (this.status === RelayedWithdrawResult.CleanExit) {
-        this.emitter.complete();
-        this.ws.close();
+    this.txProcesser.subscribe(async (next) => {
+      if (!next) {
+        return;
       }
-    };
 
-    ws.onerror = (e) => {
-      this.logger.error('Relayer error: ', e);
-    };
+      const { payload, chainId } = next;
+
+      const baseOn = Object.keys(payload)[0];
+      if (baseOn !== 'evm' && baseOn !== 'substrate') {
+        this.status = RelayedWithdrawResult.Errored;
+        this.emitter.next([
+          RelayedWithdrawResult.Errored,
+          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments).message,
+        ]);
+        return;
+      }
+
+      const tx = Object.values(payload)[0];
+      const anchorIdentifier = tx.vAnchor['contract'];
+
+      const extData = tx.vAnchor['extData'];
+      const proofData = tx.vAnchor['proofData'];
+
+      const uri = this.getSendTxUri(baseOn, chainId, anchorIdentifier);
+      const body = JSON.stringify({ extData, proofData });
+
+      try {
+        this.logger.info(
+          `Sending tx to relayer: ${uri} with body: ${JSON.stringify(
+            JSON.parse(body),
+            null,
+            2
+          )}`
+        );
+        const resp = await fetch(uri, {
+          method: 'POST',
+          body,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data: SendTxResponse = await resp.json();
+        this.logger.info(
+          `Got tx response from relayer: ${JSON.stringify(data, null, 2)}`
+        );
+        if (data.status === 'Sent') {
+          const { itemKey } = data as SendTxResponse<'Sent'>;
+
+          // Start pooling for the status of the tx until it's processed
+          // or exit if got 404 error
+          const queryStatus = async () => {
+            let timeout: ReturnType<typeof setTimeout> | undefined;
+
+            try {
+              const resp = await fetch(
+                this.getQueryStatusUri(baseOn, chainId, itemKey)
+              );
+
+              const data: RelayerMessage = await resp.json();
+              const handledMessage = this.handleMessage(data);
+
+              this.status = handledMessage[0];
+              this.emitter.next(handledMessage);
+
+              if (this.status === RelayedWithdrawResult.Continue) {
+                timeout = setTimeout(queryStatus, this.POOLING_INTERVAL);
+              } else if (this.status === RelayedWithdrawResult.CleanExit) {
+                this.emitter.complete();
+              }
+            } catch (error) {
+              let message = WebbError.getErrorMessage(
+                WebbErrorCodes.FailedToSendTx
+              ).message;
+              if (error instanceof Error) {
+                message = error.message;
+              }
+
+              // If the tx is not found then it's processed
+              this.status = RelayedWithdrawResult.Errored;
+              this.emitter.next([RelayedWithdrawResult.Errored, message]);
+              this.emitter.complete();
+            } finally {
+              clearTimeout(timeout);
+            }
+          };
+
+          queryStatus();
+        } else {
+          const { reason, message } = data as SendTxResponse<'Failed'>;
+          this.status = RelayedWithdrawResult.Errored;
+          this.emitter.next([RelayedWithdrawResult.Errored, reason || message]);
+        }
+      } catch (error) {
+        this.logger.error('Relayer error: ', error);
+
+        this.status = RelayedWithdrawResult.Errored;
+        this.emitter.next([
+          RelayedWithdrawResult.Errored,
+          WebbError.getErrorMessage(WebbErrorCodes.FailedToSendTx).message,
+        ]);
+      }
+    });
+  }
+
+  private getSendTxUri(
+    base: RelayerCMDBase,
+    chainId: number,
+    anchorIdentifier: string
+  ) {
+    return new URL(
+      `${this.SEND_TX_ROUTE}/${base}/${chainId}/${anchorIdentifier}`,
+      this.endpoint
+    );
+  }
+
+  private getQueryStatusUri(
+    base: RelayerCMDBase,
+    chainId: number,
+    itemKey: string
+  ) {
+    return new URL(
+      `${this.QUERY_STATUS_ROUTE}/${base}/${chainId}/${itemKey}`,
+      this.endpoint
+    );
   }
 
   private handleMessage = (
@@ -133,22 +259,12 @@ class RelayedWithdraw {
   ): [RelayedWithdrawResult, string | undefined] => {
     this.logger.info('Relayer message: ', data);
 
-    if (data.network && typeof data.network !== 'string') {
-      const { failed } = data.network;
+    const { status } = data;
 
-      return [
-        RelayedWithdrawResult.Errored,
-        failed?.reason || 'Relayer network error',
-      ];
-    } else if (data.error || data.withdraw?.errored) {
-      return [
-        RelayedWithdrawResult.Errored,
-        data.error || data.withdraw?.errored?.reason,
-      ];
-    } else if (data.network === 'invalidRelayerAddress') {
-      return [RelayedWithdrawResult.Errored, 'Invalid relayer address'];
-    } else if (data.withdraw?.finalized) {
-      return [RelayedWithdrawResult.CleanExit, data.withdraw.finalized.txHash];
+    if (typeof status === 'object' && 'Processed' in status) {
+      return [RelayedWithdrawResult.CleanExit, status.Processed.txHash];
+    } else if (typeof status === 'object' && 'Failed' in status) {
+      return [RelayedWithdrawResult.Errored, status.Failed.reason];
     } else {
       return [RelayedWithdrawResult.Continue, undefined];
     }
@@ -158,8 +274,6 @@ class RelayedWithdraw {
     T extends RelayedChainInput,
     C extends CMDSwitcher<T['baseOn']>
   >(chain: T, payload: WithdrawRelayerArgs<T['baseOn'], C>) {
-    console.log('withdraw payload: ', payload);
-
     return {
       [chain.baseOn]: {
         [this.prefix]: {
@@ -170,26 +284,31 @@ class RelayedWithdraw {
     };
   }
 
-  send(withdrawRequest: any) {
+  send(
+    withdrawRequest: ReturnType<RelayedWithdraw['generateWithdrawRequest']>,
+    chainId: number
+  ) {
     if (this.status !== RelayedWithdrawResult.PreFlight) {
       throw Error('there is a withdraw process running');
     }
 
     this.status = RelayedWithdrawResult.OnFlight;
-    this.ws.send(JSON.stringify(withdrawRequest));
+
+    this.txProcesser.next({ payload: withdrawRequest, chainId });
   }
 
-  await() {
-    return this.watcher
-      .pipe(
-        filter(([next]) => {
-          return (
-            next === RelayedWithdrawResult.CleanExit ||
-            next === RelayedWithdrawResult.Errored
-          );
+  await(): Promise<[RelayedWithdrawResult, string | undefined]> {
+    return firstValueFrom(
+      this.watcher.pipe(
+        filter(([next, message]) => {
+          if (next === RelayedWithdrawResult.Errored) {
+            throw new Error(message);
+          }
+
+          return next === RelayedWithdrawResult.CleanExit;
         })
       )
-      .toPromise();
+    );
   }
 
   get currentStatus() {
@@ -208,26 +327,7 @@ export class WebbRelayer {
   }
 
   async initWithdraw<Target extends RelayerCMDKey>(target: Target) {
-    const ws = new WebSocket(this.endpoint.replace('http', 'ws') + '/ws');
-
-    await new Promise((resolve, reject) => {
-      ws.onopen = resolve;
-      ws.onerror = reject;
-    });
-
-    /// insure the socket is open
-    /// maybe removed soon
-    for (;;) {
-      if (ws.readyState === 1) {
-        break;
-      }
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 300);
-      });
-    }
-
-    return new RelayedWithdraw(ws, target);
+    return new RelayedWithdraw(new URL(this.endpoint), target);
   }
 
   async getIp(): Promise<string> {
@@ -242,47 +342,55 @@ export class WebbRelayer {
 
   async getLeaves(
     typedChainId: number,
-    contractAddress: string,
+    contractAddressOrSubstratePayload:
+      | string
+      | { treeId: number; palletId: number },
     abortSignal?: AbortSignal
   ): Promise<RelayerLeaves> {
-    console.group(`getLeaves() for ${this.endpoint}`);
-    console.log('On chain: ', chainsPopulated[typedChainId]?.name);
-
     const { chainId, chainType } = parseTypedChainId(typedChainId);
-    let url = '';
+    const baseUrl = `${this.endpoint}/api/v1/leaves`;
+    let path = '';
     switch (chainType) {
-      case ChainType.EVM:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
+      case ChainType.EVM: {
+        // EVM only supports contract address
+        if (typeof contractAddressOrSubstratePayload !== 'string') {
+          throw new Error('EVM only supports contract address');
+        }
+
+        const contractAddress = contractAddressOrSubstratePayload;
+
+        // Match endpoint here: https://github.com/webb-tools/relayer#for-evm
+        path = `/evm/${chainId.toString()}/${contractAddress}`;
         break;
-      case ChainType.Substrate:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/substrate/${chainId.toString()}/${contractAddress}`;
+      }
+      case ChainType.Substrate: {
+        // Substrate only supports palletId and treeId
+        if (typeof contractAddressOrSubstratePayload === 'string') {
+          throw new Error('Substrate only supports palletId and treeId');
+        }
+
+        const { treeId, palletId } = contractAddressOrSubstratePayload;
+
+        // Match endpoint here: https://github.com/webb-tools/relayer#for-substrate
+        path = `/substrate/${chainId}/${treeId}/${palletId}`;
         break;
+      }
       default:
-        url = `${
-          this.endpoint
-        }/api/v1/leaves/evm/${chainId.toString()}/${contractAddress}`;
-        break;
+        throw new Error('unknown chain type');
     }
-    const req = await fetch(url, { signal: abortSignal });
+    const req = await fetch(`${baseUrl}${path}`, { signal: abortSignal });
 
     if (req.ok) {
       const jsonResponse = await req.json();
-      console.log('response: ', jsonResponse);
       const fetchedLeaves: `0x${string}`[] = jsonResponse.leaves;
       const lastQueriedBlock: string = jsonResponse.lastQueriedBlock;
       const lastQueriedBlockNumber: number = parseInt(lastQueriedBlock);
 
-      console.groupEnd();
       return {
         lastQueriedBlock: lastQueriedBlockNumber,
         leaves: fetchedLeaves,
       };
     } else {
-      console.groupEnd();
       throw new Error('network error');
     }
   }
@@ -290,7 +398,7 @@ export class WebbRelayer {
   public async getFeeInfo(
     typedChainId: number,
     vanchor: string,
-    gasAmount: BigNumber,
+    gasAmount: bigint,
     abortSignal?: AbortSignal
   ): Promise<RelayerFeeInfo> | never {
     const { chainId, chainType } = parseTypedChainId(typedChainId);

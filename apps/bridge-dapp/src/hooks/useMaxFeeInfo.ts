@@ -1,13 +1,15 @@
+import { fetchFeeData } from '@wagmi/core';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import gasLimit from '@webb-tools/dapp-config/gasLimit-config';
+import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Web3Provider } from '@webb-tools/web3-api-provider';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '../utils';
 
@@ -25,7 +27,7 @@ type UseMaxFeeInfoReturnType = {
   /**
    * The max fee info for the current active chain
    */
-  feeInfo: RelayerFeeInfo | BigNumber | null;
+  feeInfo: RelayerFeeInfo | bigint | null;
 
   /**
    * Fetch the max fee info from the relayer if the active relayer is provided
@@ -72,7 +74,7 @@ export type MaxFeeInfoOption = {
  * Get the max fee info for the current active chain
  * @param {MaxFeeInfoOption} opt The option to customize the hook
  * @returns an object with the following properties:
- * - feeInfo: RelayerFeeInfo | BigNumber | null
+ * - feeInfo: RelayerFeeInfo | bigint | null
  * - fetchMaxFeeInfo: () => Promise<void> | never
  * - fetchMaxFeeInfoFromRelayer: (relayer: ActiveWebbRelayer) => Promise<void> | never
  * - resetMaxFeeInfo: () => void
@@ -84,9 +86,7 @@ export const useMaxFeeInfo = (
   const { activeApi, activeChain, apiConfig } = useWebContext();
 
   // State to store the max fee info
-  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | BigNumber | null>(
-    null
-  );
+  const [feeInfo, setFeeInfo] = useState<RelayerFeeInfo | bigint | null>(null);
 
   // State to store the loading state
   const [isLoading, setIsLoading] = useState(false);
@@ -114,19 +114,19 @@ export const useMaxFeeInfo = (
 
         const currentTypedChainId = calculateTypedChainId(
           activeChain.chainType,
-          activeChain.chainId
+          activeChain.id
         );
 
-        const vanchorAddr = apiConfig.getAnchorAddress(
+        const vanchorId = apiConfig.getAnchorIdentifier(
           opt.fungibleCurrencyId,
           currentTypedChainId
         );
-        if (!vanchorAddr) {
+        if (!vanchorId) {
           console.error('No anchor address in current active chain');
           return;
         }
 
-        const gasAmount = gasLimit[currentTypedChainId];
+        const gasAmount = gasLimit[currentTypedChainId] ?? gasLimit.default;
         if (!gasAmount) {
           throw new Error(
             `No gas amount config for current chain: ${currentTypedChainId}`
@@ -135,7 +135,7 @@ export const useMaxFeeInfo = (
 
         const feeInfo = await relayer.getFeeInfo(
           currentTypedChainId,
-          vanchorAddr,
+          vanchorId,
           gasAmount
         );
         setFeeInfo(feeInfo);
@@ -159,7 +159,7 @@ export const useMaxFeeInfo = (
 
       const currentTypedChain = calculateTypedChainId(
         activeChain.chainType,
-        activeChain.chainId
+        activeChain.id
       );
 
       if (!gasLimit[currentTypedChain]) {
@@ -169,30 +169,37 @@ export const useMaxFeeInfo = (
       }
 
       const provider = activeApi.getProvider();
-      if (!(provider instanceof Web3Provider)) {
-        setFeeInfo(BigNumber.from(0));
+      if (provider instanceof PolkadotProvider) {
+        // On Substrate, we use partial fee dirrectly
+        setFeeInfo(gasLimit[currentTypedChain]);
         setIsLoading(false);
-        return;
+      } else if (activeApi instanceof WebbWeb3Provider) {
+        const gasAmount = gasLimit[currentTypedChain];
+        const walletClient = activeApi.walletClient;
+        const publicClient = activeApi.publicClient;
+
+        const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } =
+          await fetchFeeData({
+            chainId: walletClient.chain?.id,
+          });
+
+        let actualGasPrice = await publicClient.getGasPrice();
+        if (gasPrice && gasPrice > actualGasPrice) {
+          actualGasPrice = gasPrice;
+        }
+
+        if (maxFeePerGas && maxFeePerGas > actualGasPrice) {
+          actualGasPrice = maxFeePerGas;
+        }
+
+        if (maxPriorityFeePerGas && maxPriorityFeePerGas > actualGasPrice) {
+          actualGasPrice = maxPriorityFeePerGas;
+        }
+
+        setFeeInfo(gasAmount * actualGasPrice);
+      } else {
+        throw WebbError.from(WebbErrorCodes.UnsupportedProvider);
       }
-
-      const gasAmount = gasLimit[currentTypedChain];
-      const etherProvider = provider.intoEthersProvider();
-
-      // Get the greatest gas price
-      let gasPrice = await etherProvider.getGasPrice();
-      const feeData = await etherProvider.getFeeData();
-      if (feeData.maxFeePerGas && feeData.maxFeePerGas.gt(gasPrice)) {
-        gasPrice = feeData.maxFeePerGas;
-      }
-
-      if (
-        feeData.maxPriorityFeePerGas &&
-        feeData.maxPriorityFeePerGas.gt(gasPrice)
-      ) {
-        gasPrice = feeData.maxPriorityFeePerGas;
-      }
-
-      setFeeInfo(gasAmount.mul(gasPrice));
     } catch (error) {
       setError(error);
     } finally {

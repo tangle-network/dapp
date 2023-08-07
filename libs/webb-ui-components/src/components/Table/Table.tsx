@@ -1,5 +1,6 @@
-import { flexRender, RowData } from '@tanstack/react-table';
 import React, { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { flexRender, RowData } from '@tanstack/react-table';
 
 import { Pagination } from '../Pagination';
 import { TData } from './TData';
@@ -12,8 +13,10 @@ const TableComp = <T extends RowData>(
     isPaginated,
     tableProps: table,
     totalRecords = 0,
+    tableClassName,
     thClassName,
     tdClassName,
+    paginationClassName,
     title,
     ...props
   }: TableProps<T>,
@@ -21,7 +24,9 @@ const TableComp = <T extends RowData>(
 ) => {
   return (
     <div {...props} ref={ref}>
-      <table className="w-full border-collapse table-auto">
+      <table
+        className={twMerge('w-full border-collapse table-auto', tableClassName)}
+      >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -85,6 +90,7 @@ const TableComp = <T extends RowData>(
           nextPage={table.nextPage}
           setPageIndex={table.setPageIndex}
           title={title}
+          className={paginationClassName}
         />
       )}
     </div>

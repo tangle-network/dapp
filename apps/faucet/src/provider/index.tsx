@@ -13,9 +13,9 @@ import { AddressType, FaucetChainDataType, MintTokenResult } from '../types';
  */
 export type InputValuesType = {
   /**
-   * Current selected chain name
+   * Current selected typed chain id
    */
-  chain?: string;
+  chain?: number;
 
   /**
    * Current selected token symbol
@@ -45,13 +45,13 @@ export type FaucetContextType = {
   /**
    * The default amount to send
    */
-  amount: number;
+  amount$: BehaviorSubject<number>;
 
   /**
    * The faucet config contains the supported chains and tokens
-   * (chain name -> supported token symbol -> contract address)
+   * (typed chain id -> supported token symbol -> contract address)
    */
-  config: Record<string, FaucetChainDataType>;
+  config: { [typedChainId: number]: FaucetChainDataType };
 
   /**
    * The observer to hold the all input values for the faucet form
@@ -76,7 +76,8 @@ export type FaucetContextType = {
 
 // Serialize the tokens config to the FaucetChainDataType
 const config = Object.entries(tokens).reduce(
-  (acc, [typedChainId, tokensRecord]) => {
+  (acc, [typedChainIdStr, tokensRecord]) => {
+    const typedChainId = +typedChainIdStr;
     const chain = chainsConfig[+typedChainId];
 
     if (!chain) {
@@ -84,8 +85,8 @@ const config = Object.entries(tokens).reduce(
       return acc;
     }
 
-    acc[chain.name] = {
-      chainId: chain.chainId,
+    acc[typedChainId] = {
+      chainId: chain.id,
       name: chain.name,
       tokenAddresses: tokensRecord,
       type: chain.chainType === ChainType.Substrate ? 'Substrate' : 'Evm',
@@ -93,17 +94,17 @@ const config = Object.entries(tokens).reduce(
 
     return acc;
   },
-  {} as Record<string, FaucetChainDataType>
+  {} as Record<number, FaucetChainDataType>
 );
 
 const defaultContextValue = {
-  amount: sharedConfig.amount,
+  amount$: new BehaviorSubject(NaN),
   config,
   inputValues$: new BehaviorSubject<InputValuesType>({}),
   isMintingModalOpen$: new BehaviorSubject<boolean>(false),
   isMintingSuccess$: new BehaviorSubject<boolean>(false),
   mintTokenResult$: new BehaviorSubject<MintTokenResult | null>(null),
-};
+} satisfies FaucetContextType;
 
 const FaucetContext = createContext<FaucetContextType>(defaultContextValue);
 

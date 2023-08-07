@@ -9,14 +9,20 @@ export enum WebbErrorCodes {
   NoCurrencyAvailable,
   // No fungible token is available
   NoFungibleTokenAvailable,
+  // Unsupported provider
+  UnsupportedProvider,
   // Unsupported chain is switch via the extension
   UnsupportedChain,
+  // Unsupported wallet
+  UnsupportedWallet,
   // Unselected chain is a mismatch between provider and application
   UnselectedChain,
   // No accounts are available
   NoAccountAvailable,
   // No active bridge
   NoActiveBridge,
+  // Missing endpoints in the configuration
+  NoEndpointsConfigured,
   // Failed to parse deposit note
   NoteParsingFailure,
   // PolkaDot extension not installed
@@ -45,10 +51,24 @@ export enum WebbErrorCodes {
   TransactionCancelled,
   /// There is a transaction in progress
   TransactionInProgress,
+  // Not implemented
+  NotImplemented,
   /// The tree not found
   TreeNotFound,
   // Insufficient disk space
   InsufficientDiskSpace,
+  // Invalid arguments
+  InvalidArguments,
+  // No connector configured for the wallet
+  NoConnectorConfigured,
+  // Relayer has not yet relayed the commitment to the destination chain
+  CommitmentNotInTree,
+  // Switch account failed
+  SwitchAccountFailed,
+  // Switch chain failed
+  SwitchChainFailed,
+  // Failed to send the transaction to the relayer
+  FailedToSendTx,
 }
 
 // An Error message with error metadata
@@ -102,10 +122,22 @@ export class WebbError extends Error {
           message: 'No fungible token is available',
         };
 
+      case WebbErrorCodes.UnsupportedProvider:
+        return {
+          code,
+          message: 'Unsupported provider',
+        };
+
       case WebbErrorCodes.UnsupportedChain:
         return {
           code,
-          message: 'you have switched to unsupported chain',
+          message: 'You have switched to unsupported chain',
+        };
+
+      case WebbErrorCodes.UnsupportedWallet:
+        return {
+          code,
+          message: 'You have selected unsupported wallet',
         };
 
       case WebbErrorCodes.UnselectedChain:
@@ -218,16 +250,64 @@ export class WebbError extends Error {
           message: `No currency is available`,
         };
 
+      case WebbErrorCodes.NoEndpointsConfigured:
+        return {
+          code,
+          message: `Missing endpoints in the configuration`,
+        };
+
       case WebbErrorCodes.TreeNotFound:
         return {
           code,
-          message: `The tree not found`,
+          message: `Not found tree for the given tree id`,
+        };
+
+      case WebbErrorCodes.NotImplemented:
+        return {
+          code,
+          message: `Not implemented`,
         };
 
       case WebbErrorCodes.InsufficientDiskSpace:
         return {
           code,
           message: `Insufficient disk space, please make sure you have at least 500MB of free space`,
+        };
+
+      case WebbErrorCodes.InvalidArguments:
+        return {
+          code,
+          message: `Invalid arguments`,
+        };
+
+      case WebbErrorCodes.NoConnectorConfigured:
+        return {
+          code,
+          message: `No connector configured for the wallet`,
+        };
+
+      case WebbErrorCodes.CommitmentNotInTree:
+        return {
+          code,
+          message: `Relayer has not yet relayed the commitment to the destination chain`,
+        };
+
+      case WebbErrorCodes.SwitchAccountFailed:
+        return {
+          code,
+          message: 'Failed to switch account',
+        };
+
+      case WebbErrorCodes.SwitchChainFailed:
+        return {
+          code,
+          message: 'Failed to switch chain',
+        };
+
+      case WebbErrorCodes.FailedToSendTx:
+        return {
+          code,
+          message: 'Failed to send the transaction to the relayer',
         };
 
       default:

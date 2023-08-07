@@ -5,21 +5,20 @@ import {
   NoteStorage,
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { parseUnits } from 'viem';
+import Storage from '@webb-tools/dapp-types/Storage';
 import {
   CircomUtxo,
   Keypair,
   Note,
   NoteGenInput,
   ResourceId,
-  Utxo,
   UtxoGenInput,
-  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { Storage } from '@webb-tools/storage';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import { ethers } from 'ethers';
 import { BehaviorSubject } from 'rxjs';
 
 type DefaultNoteGenInput = Pick<
@@ -43,6 +42,13 @@ export class NoteManager {
 
   private isSyncingNoteSubject = new BehaviorSubject(false);
 
+  /**
+   * A subject that emits the progress of syncing notes.
+   * The value is a 2-decimal point percentage of the progress
+   * or NaN if the progress is not started.
+   */
+  private static syncNotesProgressSubject = new BehaviorSubject(NaN);
+
   static readonly defaultNoteGenInput: DefaultNoteGenInput = {
     curve: 'Bn254',
     denomination: '18',
@@ -59,25 +65,6 @@ export class NoteManager {
     private keypair: Keypair
   ) {
     this.notesMap = new Map();
-  }
-
-  /**
-   * Get the resource id of the note
-   * @param note the note to parse and get the resource id
-   * @param isSource if true, get the resource id of the source chain,
-   * otherwise get the resource id of the target chain
-   */
-  static getResourceId(note: Note, isSource?: boolean): ResourceId {
-    const typedChainId = isSource
-      ? note.note.sourceChainId
-      : note.note.targetChainId;
-    const { chainId, chainType } = parseTypedChainId(+typedChainId);
-
-    const contractAddress = isSource
-      ? note.note.sourceIdentifyingData
-      : note.note.targetIdentifyingData;
-
-    return new ResourceId(contractAddress, chainType, chainId);
   }
 
   static async initAndDecryptNotes(
@@ -158,23 +145,20 @@ export class NoteManager {
 
   // Trim the available notes to get the notes needed for a target amount.
   // It is assumed the notes passed are grouped for the same target and asset.
-  static getNotesFifo(
-    notes: Note[],
-    targetAmount: ethers.BigNumber
-  ): Note[] | null {
-    let currentAmount = ethers.BigNumber.from(0);
+  static getNotesFifo(notes: Note[], targetAmount: bigint): Note[] | null {
+    let currentAmount = ZERO_BIG_INT;
     const currentNotes: Note[] = [];
 
     for (const note of notes) {
-      if (currentAmount.gte(targetAmount)) {
+      if (currentAmount >= targetAmount) {
         break;
       }
 
-      currentAmount = currentAmount.add(note.note.amount);
+      currentAmount += BigInt(note.note.amount);
       currentNotes.push(note);
     }
 
-    return currentAmount.gte(targetAmount) ? currentNotes : null;
+    return currentAmount >= targetAmount ? currentNotes : null;
   }
 
   static keypairFromNote(note: Note): Keypair {
@@ -206,6 +190,18 @@ export class NoteManager {
     return NoteManager.defaultNoteGenInput;
   }
 
+  static get $syncNotesProgress() {
+    return this.syncNotesProgressSubject.asObservable();
+  }
+
+  static get syncNotesProgress() {
+    return this.syncNotesProgressSubject.getValue();
+  }
+
+  static set syncNotesProgress(value: number) {
+    this.syncNotesProgressSubject.next(value);
+  }
+
   getKeypair() {
     return this.keypair;
   }
@@ -220,11 +216,8 @@ export class NoteManager {
 
   // Return enough notes to satisfy the amount
   // Returns null if it cannot satisfy
-  getNotesForTransact(
-    resourceId: string,
-    amount: ethers.BigNumber
-  ): Note[] | null {
-    const currentAmount = ethers.BigNumber.from(0);
+  getNotesForTransact(resourceId: string, amount: bigint): Note[] | null {
+    let currentAmount = ZERO_BIG_INT;
     const currentNotes: Note[] = [];
 
     const availableNotes = this.notesMap.get(resourceId);
@@ -233,43 +226,40 @@ export class NoteManager {
       return null;
     }
 
-    while (currentAmount.lt(amount)) {
+    while (currentAmount < amount) {
       const currentNote = availableNotes.pop();
 
       if (!currentNote) {
         return null;
       }
 
-      currentAmount.add(currentNote.note.amount);
+      currentAmount += BigInt(currentNote.note.amount);
       currentNotes.push(currentNote);
     }
 
     return currentNotes;
   }
 
-  getWithdrawableAmount(
-    resourceId: string,
-    tokenName: string
-  ): ethers.BigNumber {
+  getWithdrawableAmount(resourceId: string, tokenName: string): bigint {
     const availableChainNotes = this.notesMap.get(resourceId);
-    const amount: ethers.BigNumber = ethers.BigNumber.from(0);
+    let amount = ZERO_BIG_INT;
 
     availableChainNotes
       ?.filter((note) => note.note.tokenSymbol === tokenName)
       .map((note) => {
-        amount.add(note.note.amount);
+        amount += BigInt(note.note.amount);
       });
 
     return amount;
   }
 
-  async addNote(note: Note) {
-    const resourceId = NoteManager.getResourceId(note).toString();
-    const targetNotes = this.notesMap.get(resourceId);
+  async addNote(resourceId: ResourceId, note: Note) {
+    const resourceIdStr = resourceId.toString();
+    const targetNotes = this.notesMap.get(resourceIdStr);
 
     if (!targetNotes) {
       // Create a new entry into the notes map
-      this.notesMap.set(resourceId, [note]);
+      this.notesMap.set(resourceIdStr, [note]);
     } else {
       // Check if this same note has already been added
       if (
@@ -282,18 +272,18 @@ export class NoteManager {
 
       // Append the note to the existing available notes
       targetNotes.push(note);
-      this.notesMap.set(resourceId, targetNotes);
+      this.notesMap.set(resourceIdStr, targetNotes);
     }
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
 
     await this.updateStorage();
   }
 
-  async removeNote(note: Note) {
-    const resourceId = NoteManager.getResourceId(note).toString();
+  async removeNote(resourceId: ResourceId, note: Note) {
+    const resourceIdStr = resourceId.toString();
 
     // Remove the note from the local map
-    const targetNotes = this.notesMap.get(resourceId);
+    const targetNotes = this.notesMap.get(resourceIdStr);
     if (!targetNotes) {
       return;
     }
@@ -303,9 +293,9 @@ export class NoteManager {
     );
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
-      this.notesMap.set(resourceId, targetNotes);
+      this.notesMap.set(resourceIdStr, targetNotes);
     } else {
-      this.notesMap.delete(resourceId);
+      this.notesMap.delete(resourceIdStr);
     }
 
     this.notesUpdatedSubject.next(!this.notesUpdatedSubject.value);
@@ -359,16 +349,20 @@ export class NoteManager {
     destAnchorAddress: string,
     tokenSymbol: string,
     tokenDecimals: number,
-    amount: number
+    amount: number | bigint
   ): Promise<Note> {
-    const amountBigNumber = ethers.utils
-      .parseUnits(amount.toString(), tokenDecimals)
-      .toString();
+    let amountStr: string;
+
+    if (typeof amount === 'number') {
+      amountStr = parseUnits(amount.toString(), tokenDecimals).toString();
+    } else {
+      amountStr = amount.toString();
+    }
 
     const input: UtxoGenInput = {
       curve: this.defaultNoteGenInput.curve,
       backend,
-      amount: amountBigNumber,
+      amount: amountStr,
       originChainId: sourceTypedChainId.toString(),
       chainId: destTypedChainId.toString(),
       keypair: this.keypair,
@@ -380,7 +374,7 @@ export class NoteManager {
 
     const noteInput: NoteGenInput = {
       ...this.defaultNoteGenInput,
-      amount: amountBigNumber,
+      amount: amountStr,
       backend,
       secrets: [
         toFixedHex(destTypedChainId, 8).substring(2),

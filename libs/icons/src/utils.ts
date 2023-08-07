@@ -44,11 +44,31 @@ export function getIconSizeInPixel(size: IconSize) {
     }
 
     case 'lg': {
-      return '32px' as const;
+      return '24px' as const;
     }
 
     case 'md': {
       return '16px' as const;
+    }
+
+    default: {
+      throw new Error('Unknown icon size');
+    }
+  }
+}
+
+export function getFlexBasic(size: IconSize = 'md') {
+  switch (size) {
+    case 'xl': {
+      return 'basis-12' as const;
+    }
+
+    case 'lg': {
+      return 'basis-6' as const;
+    }
+
+    case 'md': {
+      return 'basic-4' as const;
     }
 
     default: {

@@ -12,7 +12,6 @@ import {
   ChainIcon,
   ExternalLinkLine,
   SendPlanLineIcon,
-  TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { useNoteAccount } from '@webb-tools/react-hooks';
@@ -22,7 +21,7 @@ import {
   fuzzyFilter,
   IconWithTooltip,
   Table,
-  TokenPairIcons,
+  IconsGroup,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
@@ -88,30 +87,7 @@ const staticColumns: ColumnDef<ShieldedAssetDataType, any>[] = [
         );
       }
 
-      const [firstToken, secondToken] = composition.slice(0, 2);
-      const numOfHiddenTokens = composition.length - 2;
-
-      return (
-        <div className="flex items-center space-x-1 w-[220px]">
-          {!secondToken ? (
-            <IconWithTooltip
-              icon={<TokenIcon size="lg" name={firstToken} />}
-              content={firstToken}
-            />
-          ) : (
-            <TokenPairIcons
-              token1Symbol={firstToken}
-              token2Symbol={secondToken}
-            />
-          )}
-
-          {numOfHiddenTokens > 0 && (
-            <Typography className="inline-block" variant="body3" ta="center">
-              +3 others
-            </Typography>
-          )}
-        </div>
-      );
+      return <IconsGroup icons={composition} type="token" />;
     },
   }),
 
@@ -158,7 +134,7 @@ export const ShieldedAssetsTableContainer: FC<
       const isSupported =
         activeWallet &&
         activeWallet.supportedChainIds.includes(
-          calculateTypedChainId(chain.chainType, chain.chainId)
+          calculateTypedChainId(chain.chainType, chain.id)
         );
 
       if (isSupported) {

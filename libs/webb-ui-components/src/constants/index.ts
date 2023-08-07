@@ -49,11 +49,15 @@ export type webbNetworksType = {
 export const BRIDGE_URL = 'https://app.webb.tools/';
 export const STATS_URL = 'https://stats.webb.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools/';
+export const TANGLE_MKT_URL = 'https://tangle.webb.tools/';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 export const BRIDGE_DOCS_URL =
   'https://docs.webb.tools/docs/projects/hubble-bridge/overview/';
 export const TANGLE_DOCS_URL =
   'https://docs.webb.tools/docs/projects/tangle-network/overview/';
+export const WEBB_DAPP_NEW_ISSUE_URL =
+  'https://github.com/webb-tools/webb-dapp/issues/new/choose';
+export const WEBB_FAUCET_URL = 'https://faucet.webb.tools/';
 
 export const webbNetworks: webbNetworksType[] = [
   {
@@ -107,10 +111,10 @@ export const headerNavs: Link[] = [
     name: 'Authorities',
     path: 'authorities',
   },
-  {
-    name: 'Proposals',
-    path: 'proposals',
-  },
+  // {
+  //   name: 'Proposals',
+  //   path: 'proposals',
+  // },
 ];
 
 export const footerNavs: FooterNavsType = {

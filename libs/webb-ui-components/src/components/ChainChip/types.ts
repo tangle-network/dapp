@@ -1,15 +1,16 @@
 import { WebbComponentBase } from '../../types';
 import React from 'react';
-import { ChainBase } from '@webb-tools/dapp-config/chains';
+import { ChainGroup } from '@webb-tools/dapp-config/chains';
 
 export type ChainChipClassNames = {
-  [key in ChainBase]: {
+  [key in ChainGroup]: {
     default: string;
   };
 };
 
 export interface ChainChipProps extends WebbComponentBase {
-  type: ChainBase;
-  name: string;
+  chainType: ChainGroup;
+  chainName: string;
+  title?: string;
   children?: React.ReactNode;
 }

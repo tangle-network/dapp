@@ -7,13 +7,18 @@ import {
   useNoteAccount,
   useVAnchor,
 } from '@webb-tools/react-hooks';
-import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  ResourceId,
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
-import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
+import { formatUnits } from 'viem';
+import { getVAnchorActionClass } from '../utils';
 
 const createdTime = randRecentDate();
 
@@ -113,7 +118,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             : '?';
 
           // Calculate the wrappable currencies
-          let wrappableCurrencies: Currency[] = [];
+          const compositionSet = new Set<string>();
           const fungibleCurrency = fungibleCurrencies.find((currency) => {
             return (
               currency.view.symbol === note.note.tokenSymbol &&
@@ -125,14 +130,16 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
               fungibleCurrency.id,
               false
             );
-            wrappableCurrencies = foundCurrencies;
+            foundCurrencies.forEach((c) =>
+              compositionSet.add(c.view.symbol.toUpperCase())
+            );
           }
 
           // Calculate the assets url
           let assetsUrl = '#';
-          const explorerUrl = chain.blockExplorerStub;
+          const explorerUrl = chain.blockExplorers?.default.url;
           const address = fungibleCurrency?.getAddressOfChain(
-            calculateTypedChainId(chain.chainType, chain.chainId)
+            calculateTypedChainId(chain.chainType, chain.id)
           );
 
           if (explorerUrl && address) {
@@ -146,12 +153,10 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
             chain: chain.name.toLowerCase(),
             note: note.serialize(),
             assetsUrl,
-            composition: wrappableCurrencies.map(
-              (currency) => currency.view.symbol
-            ),
+            composition: Array.from(compositionSet),
             createdTime, // TODO: get the actual created time
             balance: Number(
-              ethers.utils.formatUnits(note.note.amount, note.note.denomination)
+              formatUnits(BigInt(note.note.amount), +note.note.denomination)
             ),
             subsequentDeposits: note.note.index
               ? subsequentDepositsNumber.toString()
@@ -187,7 +192,11 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
         const indices = await Promise.all(
           filterChainIdsAndAddresses.map(
             async ({ fungibleCurrencyId, typedChainId }) => {
-              const idx = await vAnchorApi.getNextIndex(
+              const { chainType } = parseTypedChainId(typedChainId);
+              const VAnchorAction = getVAnchorActionClass(chainType);
+
+              const idx = await VAnchorAction.getNextIndex(
+                apiConfig,
                 typedChainId,
                 fungibleCurrencyId
               );
@@ -208,7 +217,7 @@ export const useSpendNotes = (): SpendNoteDataType[] => {
     };
 
     getIndices();
-  }, [filterChainIdsAndAddresses, vAnchorApi]);
+  }, [apiConfig, filterChainIdsAndAddresses, vAnchorApi]);
 
   return notes;
 };

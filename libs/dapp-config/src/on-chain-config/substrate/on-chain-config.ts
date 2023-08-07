@@ -9,21 +9,14 @@ import {
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 
 import { ChainAddressConfig } from '../../anchors';
+import { chainsConfig } from '../../chains';
+import { DEFAULT_DECIMALS, DEFAULT_NATIVE_INDEX } from '../../constants';
 import { CurrencyConfig } from '../../currencies';
-import {
-  CurrencyResponse,
-  ICurrency,
-  OnChainConfigBase,
-} from '../on-chain-config-base';
+import { ICurrency } from '../../types';
+import { CurrencyResponse, OnChainConfigBase } from '../on-chain-config-base';
 
 // the singleton instance of the EVM on-chain config with lazy initialization
 let SubstrateOnChainConfigInstance: SubstrateOnChainConfig;
-
-// The default native currency index in the asset registry pallet
-const DEFAULT_NATIVE_INDEX = 0;
-
-// the default decimals
-const DEFAULT_DECIMALS = 18;
 
 // Cache the currencies config
 let cachedCurrenciesConfig: {
@@ -42,46 +35,6 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       SubstrateOnChainConfigInstance = new SubstrateOnChainConfig();
     }
     return SubstrateOnChainConfigInstance;
-  }
-
-  async fetchNativeCurrency(
-    typedChainId: number,
-    provider?: ApiPromise
-  ): Promise<ICurrency | null> {
-    if (!provider) {
-      console.error(
-        'The provider is required for fetching the native currency on Substrate'
-      );
-      return null;
-    }
-
-    this.assertChainType(typedChainId, ChainType.Substrate);
-
-    // First check if the native currency is already cached
-    const cachedNativeCurrency = this.nativeCurrencyCache.get(typedChainId);
-    if (cachedNativeCurrency) {
-      if (cachedNativeCurrency instanceof Error) {
-        return null;
-      }
-
-      return Promise.resolve(cachedNativeCurrency);
-    }
-
-    const name = provider.registry.chainTokens[DEFAULT_NATIVE_INDEX];
-    const decimals = provider.registry.chainDecimals[DEFAULT_NATIVE_INDEX];
-    // The native currency is always at index 0 in the asset registry pallet
-    const address = DEFAULT_NATIVE_INDEX.toString();
-
-    const native: ICurrency = {
-      name,
-      symbol: name,
-      decimals,
-      address,
-    };
-
-    // Cache the native currency
-    this.nativeCurrencyCache.set(typedChainId, native);
-    return native;
   }
 
   async fetchFungibleCurrency(
@@ -190,17 +143,17 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       );
       const wrappable: ICurrency[] = await Promise.all(
         wrappableAssetIds.map(async (assetId) => {
-          if (assetId === '0') {
-            const native = await this.fetchNativeCurrency(
-              typedChainId,
-              provider
-            );
+          if (assetId === `${DEFAULT_NATIVE_INDEX}`) {
+            const native = chainsConfig[typedChainId].nativeCurrency;
 
             if (!native) {
               throw new Error('Native currency not found');
             }
 
-            return native;
+            return {
+              ...native,
+              address: `${DEFAULT_NATIVE_INDEX}`,
+            };
           }
           const asset = await provider.query.assetRegistry.assets(assetId);
           if (asset.isNone) {
@@ -274,30 +227,13 @@ export class SubstrateOnChainConfig extends OnChainConfigBase {
       };
     }
 
-    // Fetch all native currencies (not in try catch because it not call any contract)
-    const nativeCurrenciesWithNull = await Promise.all(
-      substrateTypedChainIds.map(async (typedChainId) => {
-        const provider = await providerFactory(+typedChainId);
-
-        return {
-          typedChainId: +typedChainId,
-          nativeCurrency: await this.fetchNativeCurrency(
-            +typedChainId,
-            provider
-          ),
-        };
-      })
-    );
-
-    // Fetch all native currencies
-    const nativeCurrencies = nativeCurrenciesWithNull.filter(
-      (
-        currency
-      ): currency is Pick<
-        CurrencyResponse,
-        'typedChainId' | 'nativeCurrency'
-      > => Boolean(currency.nativeCurrency)
-    );
+    const nativeCurrencies = substrateTypedChainIds.map((typedChainId) => ({
+      typedChainId: +typedChainId,
+      nativeCurrency: {
+        ...chainsConfig[+typedChainId].nativeCurrency,
+        address: `${DEFAULT_NATIVE_INDEX}`,
+      } satisfies ICurrency,
+    }));
 
     // Fetch all fungible currencies
     const fungibleCurrenciesWithNull = await Promise.allSettled(

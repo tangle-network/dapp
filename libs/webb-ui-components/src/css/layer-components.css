@@ -198,6 +198,15 @@
   }
 }
 
+@keyframes sideBarSlideLeftToRight {
+  from {
+    left: -280px;
+  }
+  to {
+    left: 0;
+  }
+}
+
 *[data-swipe='end'] {
   animation: 100ms ease-out;
 }

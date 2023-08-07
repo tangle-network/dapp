@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Avatar } from '@webb-tools/webb-ui-components/components';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -17,6 +15,24 @@ export const Default = Template.bind({});
 Default.args = {
   key: '2',
   size: 'md',
+  src: 'https://webb-assets.s3.amazonaws.com/WebbLogo.svg',
+  sourceVariant: 'address',
+};
+
+export const Small = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Small.args = {
+  key: '2',
+  size: 'sm',
+  src: 'https://webb-assets.s3.amazonaws.com/WebbLogo.svg',
+  sourceVariant: 'address',
+};
+
+export const Large = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+Large.args = {
+  key: '2',
+  size: 'lg',
   src: 'https://webb-assets.s3.amazonaws.com/WebbLogo.svg',
   sourceVariant: 'address',
 };

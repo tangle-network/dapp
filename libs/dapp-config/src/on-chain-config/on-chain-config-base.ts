@@ -2,20 +2,11 @@ import { ApiPromise } from '@polkadot/api';
 import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
 import assert from 'assert';
-import { ethers } from 'ethers';
+import type { PublicClient } from 'viem';
+
 import { ChainAddressConfig } from '../anchors';
-
 import { CurrencyConfig } from '../currencies';
-
-/**
- * The currency interface for the on-chain currencies
- */
-export interface ICurrency {
-  decimals: number;
-  symbol: string;
-  name: string;
-  address: string;
-}
+import { ICurrency } from '../types';
 
 export interface CurrencyResponse {
   typedChainId: number;
@@ -26,10 +17,6 @@ export interface CurrencyResponse {
 }
 
 export abstract class OnChainConfigBase {
-  // Cache the native currencies to avoid finding the chain data multiple times
-  // typedChainId -> nativeCurrency
-  protected nativeCurrencyCache = new Map<number, ICurrency>();
-
   // Cache the fungible currencies
   // typedChainId -> fungibleCurrency | Error
   protected fungibleCurrencyCache = new Map<number, ICurrency | Error>();
@@ -46,17 +33,6 @@ export abstract class OnChainConfigBase {
   }
 
   /**
-   * Retrieves the native token info for the given chain id
-   * @param typedChainId the typed chain id to get the native token info for
-   * @param provider the provider to use (optional on evm but required on substrate)
-   * @returns the native token info for the given chain id
-   */
-  abstract fetchNativeCurrency(
-    typedChainId: number,
-    provider?: ethers.providers.Web3Provider | ApiPromise
-  ): Promise<ICurrency | null>;
-
-  /**
    * Get the fungible currency config for a given typed chain id,
    * this function depends on the hardcoded anchor config
    * @param typedChainId the typed chain id to get the fungible currnecy
@@ -64,7 +40,7 @@ export abstract class OnChainConfigBase {
   abstract fetchFungibleCurrency(
     typedChainId: number,
     anchorAddress: string,
-    provider: ethers.providers.Web3Provider | ApiPromise
+    provider: PublicClient | ApiPromise
   ): Promise<ICurrency | null>;
 
   /**
@@ -77,7 +53,7 @@ export abstract class OnChainConfigBase {
   abstract fetchWrappableCurrencies(
     fungibleCurrency: ICurrency,
     typedChainId: number,
-    provider: ethers.providers.Web3Provider | ApiPromise
+    provider: PublicClient | ApiPromise
   ): Promise<ICurrency[]>;
 
   /**
@@ -93,7 +69,7 @@ export abstract class OnChainConfigBase {
     anchorConfig: Record<number, string[]>,
     providerFactory: (
       typedChainId: number
-    ) => Promise<ethers.providers.Web3Provider | ApiPromise>,
+    ) => Promise<PublicClient | ApiPromise>,
     existedCurreniciesConfig?: Record<number, CurrencyConfig>,
     existedFungibleToWrappableMap?: Map<number, Map<number, Set<number>>>,
     existedAnchorConfig?: Record<number, ChainAddressConfig>

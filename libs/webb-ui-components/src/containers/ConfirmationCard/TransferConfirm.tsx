@@ -74,7 +74,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         return '--';
       }
 
-      const formated = getRoundedAmountString(amount, 3, Math.round);
+      const formated = getRoundedAmountString(amount, 3, {
+        roundingFunction: Math.round,
+      });
       return `${formated} ${token1Symbol ?? ''}`;
     }, [amount, token1Symbol]);
 
@@ -83,7 +85,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         return '--';
       }
 
-      const formated = getRoundedAmountString(changeAmount, 3, Math.round);
+      const formated = getRoundedAmountString(changeAmount, 3, {
+        roundingFunction: Math.round,
+      });
       return `${formated} ${token1Symbol ?? ''}`;
     }, [changeAmount, token1Symbol]);
 
@@ -93,7 +97,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       }
 
       if (typeof fee === 'number') {
-        const formatedFee = getRoundedAmountString(fee, 3, Math.round);
+        const formatedFee = getRoundedAmountString(fee, 3, {
+          roundingFunction: Math.round,
+        });
         return `${formatedFee} ${feeToken ?? ''}`;
       }
 
@@ -148,8 +154,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={sourceChain?.type ?? 'webb-dev'}
-                    name={sourceChain?.name ?? ''}
+                    chainType={sourceChain?.type ?? 'webb-dev'}
+                    chainName={sourceChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={token1Symbol ?? ''}
@@ -168,8 +174,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                     className="text-mono-100 dark:text-mono-80"
                   />
                   <ChainChip
-                    type={destChain?.type ?? 'webb-dev'}
-                    name={destChain?.name ?? ''}
+                    chainType={destChain?.type ?? 'webb-dev'}
+                    chainName={destChain?.name ?? ''}
                   />
                   <TokenWithAmount
                     token1Symbol={token1Symbol ?? ''}
