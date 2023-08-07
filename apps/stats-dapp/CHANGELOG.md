@@ -123,4 +123,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed, Changed and Added
 
-- Remove proposal page and addresses bugs in keys and authorities page ([#1501](https://github.com/webb-tools/webb-dapp/pull/1501))
+- Remove proposal page and addresses bugs in keys and authorities page ([#1501](https://github.com/webb-tools/webb-dapp/pull/1501)).
