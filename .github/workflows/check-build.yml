@@ -57,3 +57,7 @@ jobs:
 
       - name: build
         run: yarn nx run-many --all --target=build
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
