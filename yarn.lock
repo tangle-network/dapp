@@ -3325,6 +3325,18 @@
     tweetnacl "^1.0.3"
     tweetnacl-util "^0.15.1"
 
+"@metamask/eth-sig-util@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/eth-sig-util/-/eth-sig-util-6.0.0.tgz#083321dc7285a9aa6e066db7c49be6e94c5e03a3"
+  integrity sha512-M0ezVz8lirXG1P6rHPzx+9i4zfhebCgVHE8XQT8VWxy/eUWllHQGcBcE8QmOusC7su55M4CMr9AyMIu0lx452g==
+  dependencies:
+    "@ethereumjs/util" "^8.0.6"
+    bn.js "^4.12.0"
+    ethereum-cryptography "^2.0.0"
+    ethjs-util "^0.1.6"
+    tweetnacl "^1.0.3"
+    tweetnacl-util "^0.15.1"
+
 "@metamask/safe-event-emitter@2.0.0", "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
@@ -9065,12 +9077,30 @@
     ethers "^5.7.0"
     typescript "^5.0.4"
 
+"@webb-tools/contracts@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/contracts/-/contracts-1.0.8.tgz#0ac450922eb0820dea42591a3eed435d20e85223"
+  integrity sha512-iiifaHrHemmMytESIXVoEZ1zBu/3zBspDT+/GRla8gmdLmWgfdHnrJX+zsKJ4UwY1olLRpEVmlO/ZrK/YOMc5w==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    ethers "^5.7.0"
+    typescript "^5.0.4"
+
 "@webb-tools/create2-utils@^0.5.47", "@webb-tools/create2-utils@^0.5.48":
   version "0.5.48"
   resolved "https://registry.yarnpkg.com/@webb-tools/create2-utils/-/create2-utils-0.5.48.tgz#657c571aadcb6d9abe58574fd0d3c49685064a82"
   integrity sha512-YR6pKL4Cp3pxkCLvVvrVDEAeGwGePYLpccxuNYLbTJiKn11pDkC8xKZ/MHhO0A9YZG2hMiEnjh4KZNLaVxpC+A==
   dependencies:
     "@webb-tools/contracts" "^0.5.48"
+    ethers "5.7.0"
+
+"@webb-tools/create2-utils@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/create2-utils/-/create2-utils-1.0.8.tgz#7b34fa79aa046e0b6cb0c630e18cb9c43668558d"
+  integrity sha512-Sz4OryoRMl88dm4yMRh+K+cSPYEhFk8knQ5GkSIBCr6yEp04Ax5jk/NCmDQsuWKSWL+ZeDBxYcruveibsEARUg==
+  dependencies:
+    "@webb-tools/contracts" "^1.0.8"
     ethers "5.7.0"
 
 "@webb-tools/dkg-substrate-types@0.0.5":
@@ -9195,15 +9225,14 @@
     prettier "^2.2.1"
     tiny-secp256k1 "^2.2.1"
 
-"@webb-tools/tokens@0.5.47":
-  version "0.5.47"
-  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-0.5.47.tgz#f9ba859b18c33fcfa0c4de92f8cc0bb9edfac252"
-  integrity sha512-TjkVUTfSRwGlaHo/+7C2S9XO3XvMqrLdkP1k7dF9siaXNzQ5PwoUV2VZGSyusJciuR2s4VVtC2hG5kV+1l7SlA==
+"@webb-tools/tokens@1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/tokens/-/tokens-1.0.8.tgz#6131d929a1f56c47c0013d1335f8c55d82518481"
+  integrity sha512-C+6+LptqoO1GiagLv7dhZlRl1osYwRs1dnmhgja6Uj6DrG6ukkJVys+ITmP6ZZMNODKtcxqs5sFKwbqlk7qGaA==
   dependencies:
-    "@webb-tools/contracts" "^0.5.47"
-    "@webb-tools/create2-utils" "^0.5.47"
-    "@webb-tools/sdk-core" "0.1.4-126"
-    "@webb-tools/utils" "^0.5.39"
+    "@webb-tools/contracts" "^1.0.8"
+    "@webb-tools/create2-utils" "^1.0.8"
+    "@webb-tools/utils" "^1.0.8"
     ethers "5.7.0"
 
 "@webb-tools/tokens@^0.5.47":
@@ -9234,6 +9263,17 @@
   dependencies:
     "@webb-tools/sdk-core" "0.1.4-126"
     babyjubjub "^1.0.4"
+    ethers "5.7.0"
+    snarkjs "^0.6.10"
+
+"@webb-tools/utils@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/utils/-/utils-1.0.8.tgz#6612d7f6987fd3a5bc45bbb159a36e4690a1f268"
+  integrity sha512-Jiu7VmorA2xL/y1AR/66zu+8ipEilJ5h+J7ATVFwi4y+r5WSW2slQBud5uefzoKVqhMNkZwO/ZVHdM/dsdaRlA==
+  dependencies:
+    "@metamask/eth-sig-util" "^6.0.0"
+    circomlibjs "^0.0.8"
+    elliptic "6.5.4"
     ethers "5.7.0"
     snarkjs "^0.6.10"
 
