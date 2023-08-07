@@ -257,12 +257,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
     providerOrApi?: PublicClient | ApiPromise
   ) => Promise<number>;
 
-  // get vanchor levels
-  getVAnchorLevels: (
-    vAnchorAddressOrTreeId: string,
-    providerOrApi?: providers.Provider | ApiPromise
-  ) => Promise<number>;
-
   // generate utxo
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 
