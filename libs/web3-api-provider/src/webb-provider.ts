@@ -754,11 +754,13 @@ export class WebbWeb3Provider
     const maxBlockStep =
       maxBlockStepCfg[typedChainId] ?? maxBlockStepCfg.default;
 
+    const event = parseAbiItem(
+      'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
+    );
+
     const commonGetLogsProps = {
       address: vAnchorContract.address,
-      event: parseAbiItem(
-        'event NewCommitment(uint256 commitment, uint256 subTreeIndex,uint256 leafIndex, bytes encryptedOutput)' // TODO: use the abi from the contract
-      ),
+      event,
       strict: true,
     } as const;
 
@@ -775,11 +777,7 @@ export class WebbWeb3Provider
       );
     }
 
-    const logs: GetLogsReturnType<
-      (typeof commonGetLogsProps)['event'],
-      true,
-      'NewCommitment'
-    > = [];
+    const logs: GetLogsReturnType<typeof event, [typeof event], true> = [];
 
     // We loop through the blocks in chunks to avoid hitting the max block step limit
     let currentBlock = fromBlock;
