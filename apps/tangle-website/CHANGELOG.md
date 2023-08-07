@@ -84,4 +84,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed, Changed and Added
 
-- chore: update privacy & policy page in mkt sites based on latest design ([#1492](https://github.com/webb-tools/webb-dapp/pull/1492)).
+- chore: update privacy & policy page in mkt sites based on latest design ([#1492](https://github.com/webb-tools/webb-dapp/pull/1492))
