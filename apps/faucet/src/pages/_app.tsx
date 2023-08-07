@@ -22,12 +22,6 @@ export const metadata: DefaultSeoProps = {
   openGraph: {
     images: [
       {
-        alt: 'Og Image Alt',
-        height: 1800,
-        url: 'https://webb-assets.s3.amazonaws.com/og.png',
-        width: 2400,
-      },
-      {
         alt: 'Optimized Og Image Alt',
         height: 630,
         url: 'https://webb-assets.s3.amazonaws.com/og-optimize.png',
