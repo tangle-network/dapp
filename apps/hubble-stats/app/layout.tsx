@@ -1,6 +1,6 @@
-import { Metadata } from 'next';
-import { WebbUIProvider, Footer } from '@webb-tools/webb-ui-components';
+import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
+import { Metadata } from 'next';
 
 import { Layout } from '../containers';
 
