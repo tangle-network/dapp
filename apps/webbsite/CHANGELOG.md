@@ -78,4 +78,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed, Changed and Added
 
-- Fixed font family and font size in webbsite.
+- Fixed font family and font size issues on webbsite.
