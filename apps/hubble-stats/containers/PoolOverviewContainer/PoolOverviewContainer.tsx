@@ -29,7 +29,7 @@ export default async function PoolOverviewContainer({
   return (
     <div
       className={cx(
-        'w-full lg:h-[278px] p-6 rounded-lg',
+        'w-full lg:min-h-[278px] p-6 rounded-lg',
         'bg-glass dark:bg-glass_dark',
         'border-2 border-mono-0 dark:border-mono-160',
         'lg:flex lg:items-center'

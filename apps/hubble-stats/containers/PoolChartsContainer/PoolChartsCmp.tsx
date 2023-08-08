@@ -30,19 +30,14 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
   const [feesDate, setFeesDate] = useState<Date | null>(null);
 
   return (
-    <TableAndChartTabs
-      tabs={[tvlTab, volumeTab, feesTab]}
-      headerClassName="w-full overflow-x-auto"
-      triggerClassName="whitespace-nowrap"
-      className="w-full"
-    >
+    <TableAndChartTabs tabs={[tvlTab, volumeTab, feesTab]}>
       {/* TVL */}
       <TabContent value={tvlTab}>
         <ChartContainer
           currentValue={currentTvl}
           value={tvlValue}
           date={tvlDate}
-          className="bg-glass dark:bg-glass_dark lg:h-[278px]"
+          className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
           <AreaChart
             data={tvlData}
@@ -58,7 +53,7 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
           currentValue={currentVolume}
           value={volumeValue}
           date={volumeDate}
-          className="bg-glass dark:bg-glass_dark lg:h-[278px]"
+          className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
           <BarChart
             data={volumeData}
@@ -74,7 +69,7 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
           currentValue={currentFees}
           value={feesValue}
           date={feesDate}
-          className="bg-glass dark:bg-glass_dark lg:h-[278px]"
+          className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
           <BarChart
             data={feesData}
