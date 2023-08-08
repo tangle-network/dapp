@@ -143,7 +143,7 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
+    <div className="overflow-x-auto rounded-lg border border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0 border-r first:px-3 last:border-r-0 last:pr-2"

@@ -4,4 +4,5 @@ export type BreadcrumbType = {
   icon: JSX.Element;
   href: string;
   className?: string;
+  textClassName?: string;
 };

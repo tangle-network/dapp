@@ -18,8 +18,18 @@ const BarChart: FC<BarChartProps> = ({
   setDate,
   width = '100%',
   height = 180,
+  fillColor: color = 'blue',
 }) => {
   const [isDarkMode] = useDarkMode();
+
+  let fillColor: string;
+  switch (color) {
+    case 'blue':
+      fillColor = isDarkMode ? '#81B3F6' : '#3D7BCE';
+      break;
+    case 'purple':
+      fillColor = '#B5A9F2';
+  }
 
   return (
     <ResponsiveContainer width={width} height={height}>
@@ -56,7 +66,7 @@ const BarChart: FC<BarChartProps> = ({
             return null;
           }}
         />
-        <Bar dataKey="value" fill={isDarkMode ? '#81B3F6' : '#3D7BCE'} />
+        <Bar dataKey="value" fill={fillColor} />
       </BarChartCmp>
     </ResponsiveContainer>
   );

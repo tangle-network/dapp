@@ -1,9 +1,4 @@
-import {
-  rand,
-  randEthereumAddress,
-  randNumber,
-  randFloat,
-} from '@ngneat/falso';
+import { rand, randEthereumAddress, randFloat } from '@ngneat/falso';
 import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 
 import { PoolTransactionType } from '../components/PoolTransactionsTable/types';
@@ -13,7 +8,7 @@ const typedChainIds = [
   1099512049389, 1099512162129, 1099522782887,
 ];
 
-type PoolTransactionDataType = {
+export type PoolTransactionDataType = {
   transactions: PoolTransactionType[];
 };
 
