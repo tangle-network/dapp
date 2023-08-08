@@ -729,7 +729,7 @@ export class WebbWeb3Provider
    * @param publicClient the public client to use
    * @param vAnchorAddress the address of the vAnchor contract
    * @param fromBlock the block to start fetching logs from
-   * @param toBlock the block to stop fetching logs from
+   * @param toBlock the block to stop fetching logs from (exclusive)
    * @param onCurrentProcessingBlock a callback to call when the current processing block changes
    * @returns the filtered logs
    */

@@ -323,7 +323,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     tx.next(TransactionState.SendingTransaction, '');
 
     const typedChainId = this.inner.typedChainId;
-    const gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
+
+    let gasLimit: bigint | undefined;
+    if (tx.name !== 'Deposit') {
+      gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
+    }
 
     const hash = await vAnchor.transact(
       inputs,

@@ -1002,9 +1002,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Validate that the commitment is in the tree
     if (commitmentIndex === -1) {
       // Outer try/catch will handle this
-      throw new Error(
-        'Relayer has not yet relayed the commitment to the destination chain'
-      );
+      throw WebbError.from(WebbErrorCodes.CommitmentNotInTree);
     }
 
     const utxo = await utxoFromVAnchorNote(note.note, commitmentIndex);
