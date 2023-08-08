@@ -26,6 +26,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={currentTvl}
         value={tvlValue}
         date={tvlDate}
+        className="bg-glass dark:bg-glass_dark"
       >
         <AreaChart data={tvlData} setDate={setTVLDate} setValue={setTvlValue} />
       </ChartContainer>
@@ -39,6 +40,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         filterType="days"
         daysFilterType={volumeDataType}
         setDaysFilterType={setVolumeDataType}
+        className="bg-glass dark:bg-glass_dark"
       >
         <BarChart
           data={volumeData}
