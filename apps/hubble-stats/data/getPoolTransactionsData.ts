@@ -8,7 +8,7 @@ const typedChainIds = [
   1099512049389, 1099512162129, 1099522782887,
 ];
 
-type PoolTransactionDataType = {
+export type PoolTransactionDataType = {
   transactions: PoolTransactionType[];
 };
 
