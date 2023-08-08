@@ -1,9 +1,4 @@
-import {
-  rand,
-  randEthereumAddress,
-  randNumber,
-  randFloat,
-} from '@ngneat/falso';
+import { rand, randEthereumAddress, randFloat } from '@ngneat/falso';
 import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
 
 import { PoolTransactionType } from '../components/PoolTransactionsTable/types';
