@@ -15,7 +15,7 @@ const Proposals = () => {
 
   // console.log('Batched Proposal', batchedProposal);
 
-  return <div className="flex flex-col space-y-4"></div>;
+  return <div className="flex flex-col space-y-4">Proposal Page</div>;
 };
 
 export default Proposals;
