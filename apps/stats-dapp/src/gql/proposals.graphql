@@ -1,0 +1,32 @@
+query ProposalBatches($perPage: Int!, $offset: Int!) {
+  proposalBatches(offset: $offset, first: $perPage) {
+    totalCount
+
+    nodes {
+      id
+      blockNumber
+      timestamp
+      proposals
+      chain
+      status
+    }
+
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+
+query ProposalBatch($batchId: String!) {
+  proposalBatch(id: $batchId) {
+    id
+    blockNumber
+    timestamp
+    proposals
+    chain
+    status
+  }
+}

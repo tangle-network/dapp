@@ -1,14 +1,21 @@
-import { Outlet } from 'react-router-dom';
-import { ProposalsTable } from '../containers';
+import { useBatchedProposal, useBatchedProposals } from '../provider';
 
 const Proposals = () => {
-  return (
-    <div className="flex flex-col space-y-4">
-      <ProposalsTable />
+  // All Batched Proposals
+  const batchedProposals = useBatchedProposals({
+    offset: 0,
+    perPage: 10,
+    filter: null,
+  });
 
-      <Outlet />
-    </div>
-  );
+  // Single Batched Proposal
+  const batchedProposal = useBatchedProposal('10');
+
+  // console.log('Batched Proposals', batchedProposals);
+
+  // console.log('Batched Proposal', batchedProposal);
+
+  return <div className="flex flex-col space-y-4">Proposal Page</div>;
 };
 
 export default Proposals;
