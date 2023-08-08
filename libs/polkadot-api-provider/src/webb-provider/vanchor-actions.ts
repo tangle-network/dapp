@@ -28,6 +28,7 @@ import {
   ensureHex,
 } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import {
   ChainType,
   FIELD_SIZE,
@@ -49,7 +50,6 @@ import * as snarkjs from 'snarkjs';
 import { ApiPromise } from '@polkadot/api';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import assert from 'assert';
 import { formatUnits } from 'viem';
 import { getLeafIndex } from '../mt-utils';

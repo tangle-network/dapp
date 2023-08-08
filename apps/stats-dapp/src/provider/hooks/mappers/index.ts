@@ -1,11 +1,8 @@
 import {
-  ProposalListViewFragment,
-  ProposalStatus,
-  ProposalType,
   SessionAuthValidatorFragment,
   SessionAuthValidatorNodeFragment,
 } from '../../../generated/graphql';
-import { ProposalListItem } from '..';
+
 export type Authority = {
   id: string;
   location: string | null;
@@ -42,23 +39,4 @@ export function mapAuthorities(
   data: SessionAuthValidatorFragment
 ): Authority[] {
   return data?.edges.map((item) => mapSessionAuthValidatorNode(item.node!));
-}
-
-export function mapProposalListItem(
-  data: ProposalListViewFragment
-): ProposalListItem {
-  return {
-    id: data.id,
-    chain: String(data.chainId),
-    proposers: {
-      count: data.proposalVotesByProposalId.totalCount,
-      firstElements: data.proposalVotesByProposalId.nodes.map(
-        (node) => node?.voterId ?? ''
-      ),
-    },
-    status: data.status as ProposalStatus,
-    txHash: '',
-    type: data.type as ProposalType,
-    height: data.block?.number,
-  };
 }

@@ -79,3 +79,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes UI break on Governance System section ([#1364](https://github.com/webb-tools/webb-dapp/pull/1364))
 - Setup Secure Headers and Detect Inactive Issues ([#1370](https://github.com/webb-tools/webb-dapp/pull/1370))
 - Privacy Policy and Terms Conditions pages for the Tangle Website ([#1375](https://github.com/webb-tools/webb-dapp/pull/1375))
+
+## [0.0.6] - 2023-08-07
+
+### Fixed, Changed and Added
+
+- chore: update privacy & policy page in mkt sites based on latest design ([#1492](https://github.com/webb-tools/webb-dapp/pull/1492)).

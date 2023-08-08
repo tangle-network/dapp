@@ -197,11 +197,11 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               keyValue={keyDetail.compressed}
               className="grow shrink basis-0 max-w-none"
             />
-            <KeyCard
+            {/* <KeyCard
               title="Uncompressed key"
               keyValue={keyDetail.uncompressed}
               className="grow shrink basis-0 max-w-none"
-            />
+            /> */}
           </div>
         </div>
 
@@ -236,10 +236,10 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       externalUrl="https://webb.tools" // TODO: Determine the external url
                       extraContent={
                         <div className="flex items-center space-x-2">
-                          <KeyValueWithButton
+                          {/* <KeyValueWithButton
                             keyValue={keyDetail.uncompressed}
                             size="sm"
-                          />
+                          /> */}
                         </div>
                       }
                     />

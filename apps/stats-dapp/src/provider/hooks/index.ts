@@ -1,4 +1,4 @@
-export * from './useProposals';
+// export * from './useProposals';
 export * from './useAuthorities';
 export * from './useKeys';
 export * from './useCurrentMetaData';

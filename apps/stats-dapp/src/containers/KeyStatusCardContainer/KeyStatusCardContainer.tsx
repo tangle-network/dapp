@@ -2,7 +2,6 @@ import { KeyStatusCard } from '@webb-tools/webb-ui-components/components/KeyStat
 import { KeyStatusCardProps } from '@webb-tools/webb-ui-components/components/KeyStatusCard/types';
 import { Spinner } from '@webb-tools/icons';
 import React, { FC, forwardRef, useMemo } from 'react';
-
 import { KeyStatusCardContainerProps } from './types';
 import { useStatsContext } from '../../provider/stats-provider';
 import { PublicKey, useActiveKeys } from '../../provider/hooks';

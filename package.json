@@ -204,7 +204,7 @@
     "@webb-tools/protocol-substrate-types": "0.0.10",
     "@webb-tools/sdk-core": "0.1.4-126",
     "@webb-tools/test-utils": "0.1.4-126",
-    "@webb-tools/tokens": "0.5.47",
+    "@webb-tools/tokens": "1.0.8",
     "@webb-tools/utils": "0.5.39",
     "@webb-tools/wasm-utils": "0.1.4-126",
     "autoprefixer": "10.4.14",
