@@ -243,14 +243,16 @@ export const TransferContainer = forwardRef<
         acc.push({
           name: currency.view.name,
           symbol: currency.view.symbol,
-          balance,
-          onTokenClick: () => addCurrency(currency),
-          isTokenAddedToMetamask: isTokenAddedToMetamask(
+          assetBalanceProps:
+            typeof balance === 'number' ? { balance } : undefined,
+          onAddToken: isTokenAddedToMetamask(
             currency,
             activeChain,
             activeAccount?.address,
             currentResourceId
-          ),
+          )
+            ? undefined
+            : () => addCurrency(currency),
         });
 
         return acc;
@@ -398,7 +400,8 @@ export const TransferContainer = forwardRef<
     const onAmountChange = useCallback(
       (amount: string): void => {
         const parsedAmount = Number(amount);
-        const availableAmount = selectedBridgingAsset?.balance ?? 0;
+        const availableAmount =
+          selectedBridgingAsset?.assetBalanceProps?.balance ?? 0;
 
         if (isNaN(parsedAmount) || parsedAmount < 0) {
           setAmountError('Invalid amount');
@@ -413,7 +416,7 @@ export const TransferContainer = forwardRef<
         setTransferAmount(parsedAmount);
         setAmountError('');
       },
-      [selectedBridgingAsset?.balance]
+      [selectedBridgingAsset?.assetBalanceProps?.balance]
     );
 
     // Callback for relayer input clicked
@@ -481,9 +484,10 @@ export const TransferContainer = forwardRef<
       return (
         typeof transferAmount === 'number' &&
         transferAmount > 0 &&
-        transferAmount <= (selectedBridgingAsset?.balance ?? 0)
+        transferAmount <=
+          (selectedBridgingAsset?.assetBalanceProps?.balance ?? 0)
       );
-    }, [transferAmount, selectedBridgingAsset?.balance]);
+    }, [transferAmount, selectedBridgingAsset?.assetBalanceProps?.balance]);
 
     // The actual amount to be transferred
     const receivingAmount = useMemo(() => {
@@ -912,7 +916,9 @@ export const TransferContainer = forwardRef<
         errorMessage: amountError,
         isDisabled: !selectedBridgingAsset || needSwitchChain,
         onMaxBtnClick: () =>
-          setTransferAmount(selectedBridgingAsset?.balance ?? 0),
+          setTransferAmount(
+            selectedBridgingAsset?.assetBalanceProps?.balance ?? 0
+          ),
       };
     }, [
       transferAmount,

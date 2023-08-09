@@ -224,16 +224,16 @@ export const WithdrawContainer = forwardRef<
     return {
       symbol: fungibleCurrency.view.symbol,
       name: fungibleCurrency.view.name,
-      balance,
-      onTokenClick: () => addCurrency(fungibleCurrency),
-      balanceType: 'note',
-      isTokenAddedToMetamask: isTokenAddedToMetamask(
+      assetBalanceProps: typeof balance === 'number' ? { balance } : undefined,
+      onAddToken: isTokenAddedToMetamask(
         fungibleCurrency,
         activeChain,
         activeAccount?.address,
         currentResourceId
-      ),
-    };
+      )
+        ? undefined
+        : () => addCurrency(fungibleCurrency),
+    } satisfies AssetType;
   }, [
     addCurrency,
     balancesFromNotes,
@@ -251,15 +251,15 @@ export const WithdrawContainer = forwardRef<
     return {
       symbol: wrappableCurrency.view.symbol,
       name: wrappableCurrency.view.name,
-      onTokenClick: () => addCurrency(wrappableCurrency),
-      balanceType: 'wallet',
-      isTokenAddedToMetamask: isTokenAddedToMetamask(
+      onAddToken: isTokenAddedToMetamask(
         wrappableCurrency,
         activeChain,
         activeAccount?.address,
         currentResourceId
-      ),
-    };
+      )
+        ? undefined
+        : () => addCurrency(wrappableCurrency),
+    } satisfies AssetType;
   }, [
     addCurrency,
     wrappableCurrency,
@@ -732,15 +732,17 @@ export const WithdrawContainer = forwardRef<
         return {
           name: currency.view.name,
           symbol: currency.view.symbol,
-          balance,
-          onTokenClick: () => addCurrency(currency),
-          isTokenAddedToMetamask: isTokenAddedToMetamask(
+          assetBalanceProps:
+            typeof balance === 'number' ? { balance } : undefined,
+          onAddToken: isTokenAddedToMetamask(
             currency,
             activeChain,
             activeAccount?.address,
             currentResourceId
-          ),
-        };
+          )
+            ? undefined
+            : () => addCurrency(currency),
+        } satisfies AssetType;
       }
     );
 
@@ -785,14 +787,15 @@ export const WithdrawContainer = forwardRef<
         return {
           name: currency.view.name,
           symbol: currency.view.symbol,
-          onTokenClick: () => addCurrency(currency),
-          isTokenAddedToMetamask: isTokenAddedToMetamask(
+          onAddToken: isTokenAddedToMetamask(
             currency,
             activeChain,
             activeAccount?.address,
             currentResourceId
-          ),
-        };
+          )
+            ? undefined
+            : () => addCurrency(currency),
+        } satisfies AssetType;
       });
 
       setMainComponent(
