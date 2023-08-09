@@ -41,8 +41,8 @@ export const AddTokenToWallet: Story = {
 export const WithWarningBadge: Story = {
   render: () => (
     <TokenListItem
-      name="Ethereum"
-      symbol="ETH"
+      name="Webb Ethereum"
+      symbol="webbETH"
       assetBadgeProps={{
         variant: 'warning',
         children: 'Low liquidity',
@@ -54,8 +54,8 @@ export const WithWarningBadge: Story = {
 export const WithInfoBadge: Story = {
   render: () => (
     <TokenListItem
-      name="Ethereum"
-      symbol="ETH"
+      name="Webb Ethereum"
+      symbol="webbETH"
       assetBadgeProps={{
         variant: 'info',
         children: 'Switch chain',
