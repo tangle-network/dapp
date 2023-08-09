@@ -282,7 +282,7 @@ export function useKeys(
                   keyGenThreshold: keyGen?.current ?? null,
                   signatureThreshold: signature?.current ?? null,
                   compressed: node?.compressed,
-                  uncompressed: node?.uncompressed,
+                  uncompressed: '', // node?.uncompressed
                   keyGenAuthorities: authorities,
                   end,
                   start,
@@ -373,7 +373,7 @@ export function useActiveKeys(): Loadable<[PublicKey, PublicKey]> {
                   end,
                   start,
                   compressed: publicKey?.compressed,
-                  uncompressed: publicKey?.uncompressed,
+                  uncompressed: '', // publicKey?.uncompressed
                   keyGenAuthorities,
                   isCurrent: activeSession === session?.id,
                   isDone: Number(activeSession) > Number(session?.id),
@@ -499,7 +499,7 @@ export function useKey(id: string): PublicKeyDetailsPage {
             val: {
               height: publicKey.block?.number,
               compressed: publicKey.compressed,
-              uncompressed: publicKey.uncompressed,
+              uncompressed: '', // publicKey.uncompressed
               id: publicKey.id,
               session: session.id,
               end,

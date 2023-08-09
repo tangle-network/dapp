@@ -141,7 +141,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     <div>
       <div
         className={cx(
-          'w-full mx-auto flex-1 pb-10 h-[1900px]',
+          'w-full mx-auto flex-1 pb-10',
           "bg-[url('assets/stats-bg.png')] dark:bg-[url('assets/stats-dark-bg.png')]",
           'bg-no-repeat bg-cover'
         )}

@@ -4,9 +4,9 @@ import { chainsConfig } from './chains/evm';
 import { SupportedConnector } from './wallets/wallet-config.interface';
 import { walletsConfig } from './wallets/wallets-config';
 
-if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
-  throw new Error('Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID');
-}
+// if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
+//   throw new Error('Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID');
+// }
 
 const { publicClient, webSocketPublicClient } = configureChains(
   Object.values(chainsConfig),

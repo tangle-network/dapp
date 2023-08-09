@@ -11,13 +11,13 @@ const links = [
   {
     label: 'Usage Guide',
     getLink: (tab: EducationCardProps['currentTab']) => {
-      return `https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/${tab.toLowerCase()}/`;
+      return `https://docs.webb.tools/docs/projects/hubble-bridge/usage-guide/${tab.toLowerCase()}/`;
     },
     Icon: UsageGuideIcon,
   },
   {
     label: 'Getting Started',
-    href: 'https://docs.webb.tools/docs/dapps/hubble-bridge/overview/',
+    href: 'https://docs.webb.tools/docs/projects/hubble-bridge/overview/',
     Icon: UsageGuideIcon,
   },
 ];

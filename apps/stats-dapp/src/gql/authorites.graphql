@@ -55,7 +55,6 @@ query ValidatorSessions(
         publicKey {
           id
           compressed
-          uncompressed
           block {
             id
             number

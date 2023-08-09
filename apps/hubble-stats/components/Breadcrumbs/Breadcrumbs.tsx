@@ -13,19 +13,24 @@ import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
   const pathname = usePathname();
+  const parts = pathname.split('/');
+  let activeItem = parts[parts.length - 1];
+
+  if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
+    // TODO: handle getting pool name from address and redirect user if invalid address
+    activeItem = 'webbParachain';
+  }
 
   const breadCrumbs = useMemo(() => {
-    const parts = pathname.split('/');
-    const activeItem = parts[parts.length - 1];
-
     const breadCrumbItems: BreadcrumbType[] = [
       {
         label: 'Hubble Overview',
-        isLast: activeItem !== '' ? false : true,
+        isLast: activeItem === '',
         icon: (
           <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
         ),
         href: '/',
+        textClassName: '!text-[12px] lg:!text-[16px]',
       },
     ];
 
@@ -35,11 +40,12 @@ const Breadcrumbs: FC = () => {
         isLast: true,
         icon: <CoinIcon />,
         href: '',
+        textClassName: '!text-[12px] lg:!text-[16px]',
       });
     }
 
     return breadCrumbItems;
-  }, [pathname]);
+  }, [activeItem]);
 
   return (
     <BreadcrumbsCmp>
@@ -48,6 +54,7 @@ const Breadcrumbs: FC = () => {
           <BreadcrumbsItem
             icon={breadcrumb.icon}
             className={breadcrumb.className}
+            textClassName={breadcrumb.textClassName}
             isLast={breadcrumb.isLast}
           >
             {breadcrumb.label}

@@ -18,7 +18,7 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
       <div className="flex justify-center items-center gap-1">
         <Typography variant="h5" fw="black" className="text-center">
           {value && (prefix ?? '')}
-          {getRoundedAmountString(value, 2, {
+          {getRoundedAmountString(value, 1, {
             roundingFunction: Math.floor,
             totalLength: 0,
           })}
@@ -42,7 +42,7 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
                 'rotate-90 !fill-red-70': changeRate < 0,
               })}
             />
-            {getRoundedAmountString(Math.abs(changeRate), 2)}%
+            {getRoundedAmountString(Math.abs(changeRate), 1)}%
           </Typography>
         )}
       </div>
@@ -50,7 +50,10 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
       <Typography
         variant="utility"
         tw="black"
-        className="w-full uppercase block text-center text-mono-120 dark:text-mono-80 !text-[12px]"
+        className={cx(
+          'w-full uppercase block text-center !text-[10px] md:!text-[12px]',
+          'text-mono-120 dark:text-mono-80'
+        )}
       >
         {title}
       </Typography>

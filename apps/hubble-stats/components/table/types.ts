@@ -25,7 +25,7 @@ export interface ActivityCellProps {
 }
 
 export interface TimeCellProps {
-  time?: number;
+  time?: string;
   className?: string;
 }
 

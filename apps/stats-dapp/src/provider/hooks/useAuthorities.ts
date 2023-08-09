@@ -13,7 +13,7 @@ import { mapAuthorities, mapSessionAuthValidatorNode } from './mappers';
 import { Loadable, Page, PageInfoQuery } from './types';
 import { useCurrentMetaData } from './useCurrentMetaData';
 import { PublicKey } from './useKeys';
-import { DiscreteList } from './useProposals';
+// import { DiscreteList } from './useProposals';
 import { useActiveSession } from '../stats-provider';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -50,7 +50,7 @@ export type UpcomingThreshold = {
   keyGen: string;
   signature: string;
   proposer: string;
-  authoritySet: DiscreteList;
+  authoritySet: any; // DiscreteList
 };
 
 export type UpcomingThresholds = Record<
@@ -194,7 +194,7 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
                 : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
               compressed: publicKey.compressed!,
-              uncompressed: publicKey.uncompressed!,
+              uncompressed: '', // publicKey.uncompressed!
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -431,7 +431,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               return {
                 id: publicKey.id,
                 session: session.id,
-                publicKey: publicKey.uncompressed!,
+                publicKey: '', // publicKey.uncompressed!
                 height: `${publicKey.block?.number ?? '-'}`,
                 authority: {
                   count: session.sessionValidators.totalCount,

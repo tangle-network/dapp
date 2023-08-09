@@ -1,338 +1,98 @@
-import {
-  ProposalType,
-  ThresholdVariant,
-  useProposalDetailsLazyQuery,
-  useProposalsLazyQuery,
-  useProposalsOverviewLazyQuery,
-  useProposalVotesWithVotesTypeLazyQuery,
-  useProposalVotesWithoutVotesTypeLazyQuery,
-  VoteType,
-  ProposalStatus,
-  AllProposalsTimestampsDocument,
-} from '../../generated/graphql';
-import { mapProposalListItem } from './mappers';
-import { thresholdVariant } from './mappers/thresholds';
+import { useEffect, useState } from 'react';
 import { Loadable, Page, PageInfoQuery } from './types';
-import { useEffect, useMemo, useState } from 'react';
-import { useStatsContext } from '../stats-provider';
-import { useApolloClient } from '@apollo/client';
+import {
+  useProposalBatchesLazyQuery,
+  useProposalBatchQuery,
+} from '../../generated/graphql';
 
-/**
- * Threshold values
- * @param proposal - The proposer threshold value a session
- * @param proposers -The number of proposers of a session
- *
- * */
-type Thresholds = {
-  proposal: string;
-  proposers: string;
-};
-/**
- * Proposal type Status counter map for proposal statuses
- * @params accepted - number of accepted proposals
- * @params rejected - number of rejected proposals
- * @params open - number of open proposals
- * @params signed - number of signed proposals
- * */
-type ProposalTypeStats = {
-  accepted: number;
-  rejected: number;
-  open: number;
-  signed: number;
-};
-/** List over view
- *
- * A type for infinite number of list will show a defined number of items and will have the count for the full list
- * @param T - The underlying list item type
- * @param count - Total number of the list of `T`
- * */
-export type DiscreteList<T = string> = {
-  firstElements: T[];
-  count: number;
-};
-/**
- * Proposal list item
- * @params id - proposal identifier
- * @params status - proposal status
- * @params type - proposal type
- * @params txHash -  Proposal submission transaction hash
- * @params proposers - proposers list view
- * @params chain - Proposal chain
- * */
-export type ProposalListItem = {
-  id: string;
-  status: ProposalStatus;
-  height?: string;
-  type: ProposalType;
-  txHash: string;
-  proposers: DiscreteList;
-  chain: string;
-};
-
-/**
- * Proposal page
- * */
-type ProposalsPage = Loadable<Page<ProposalListItem>>;
-/**
- * Proposals overview
- * @params totalProposals - total number of proposers and proposal the current threshold
- * @param status -  Proposal status counter `ProposalTypeStats`
- * @param openProposals -  list of recent open proposals
- **/
-type ProposalsOverview = {
-  thresholds: Thresholds;
-  stats: ProposalTypeStats;
-  openProposals: ProposalListItem[];
-};
-/**
- * Proposal timeline item
- *  @param status - Proposals status at that timeline item
- *  @param at - The data the timeline item took place
- *  @param blockNumber - the block number the timeline item took place
- *  @param hash - Transaction hash of the timeline item
- *
- * */
-type ProposalTimeLine = {
-  id: string;
-  status: ProposalStatus;
-  at: Date;
-  blockNumber: number;
-  hash: string;
-};
-/**
- * Vote listing item
- *
- * @param id - Vote identifier
- * @param voterId - The voter id (account 32)
- * @param for - Boolean value indicate if the vote is against or for the proposal, absent indicate abstain vote
- * @param timestamp - The date the vote took place
- * */
-export type VoteListItem = {
-  id: string;
-  voterId: string;
-  status: VoteType;
-  timestamp: Date;
-};
-/**
- * Votes page type
- * */
-type VotesPage = Loadable<Page<VoteListItem>>;
-
-/**
- * Votes query
- * @param proposalId -  Proposal id to filter votes by proposal
- * @param isFor - Optional boolean value to filter votes by for or against if absent will return all votes
- * */
-export type VotesQuery = PageInfoQuery<{
-  proposalId: string;
-  status?: VoteType;
-}>;
-
-/**
- * Proposal data
- * @params data - Proposal encoded proposal data
- * @params type - Proposal type
- * */
-type ProposalData = {
-  type: ProposalType;
+export type Proposal = {
   data: string;
+  type: string;
 };
-/**
- * Proposal detail
- *
- * @params id - Proposal identifier
- * @params height - Proposal submission block number
- * @params tsHash - Proposal submission transaction hash
- * @params chain - Proposal chain
- * @params forPercentage - Percentage of votes for the proposal
- * @params againstPercentage - Percentage of votes against the proposal
- * @params abstainPercentage - Number of proposers that didn't submit a vote yet
- * @params forCount - Number of proposers that voted for the proposer
- * @params againstCount - Number of proposers that voted against the proposal
- * @params abstainCount - Number of proposals without any votes for the proposal
- * @params timeline - Progress of the proposal status
- * @param data - proposal data
- * */
-export type ProposalDetails = {
+
+export type ProposalBatch = {
   id: string;
-  height: string;
-  txHash: string;
+  status: string;
+  height: number;
+  proposals: Proposal[];
   chain: string;
-  forPercentage: number;
-  againstPercentage: number;
-  abstainPercentage: number;
-  forCount: number;
-  againstCount: number;
-  abstainCount: number;
-  allCount: number;
-  timeline: ProposalTimeLine[];
-  data: ProposalData;
-  status: ProposalStatus;
 };
-type BlockRange = { start: number; end: number };
-/**
- * Proposals overview
- * @return ProposalsOverview - Proposal overview data
- * */
-export function useProposalsOverview(
-  sessionId: string,
-  range?: BlockRange
-): Loadable<ProposalsOverview> {
-  const [proposalsOverview, setProposalsOverview] = useState<
-    Loadable<ProposalsOverview>
-  >({
-    isLoading: true,
-    val: null,
-    isFailed: false,
-  });
-  const [call, query] = useProposalsOverviewLazyQuery();
 
-  useEffect(() => {
-    call({
-      variables: {
-        endRange: range
-          ? {
-              lessThanOrEqualTo: range.end,
-            }
-          : undefined,
-        startRange: range
-          ? {
-              greaterThanOrEqualTo: range.start,
-            }
-          : undefined,
-        sessionId: sessionId,
-      },
-    }).catch((e) => {
-      setProposalsOverview({
-        isLoading: false,
-        isFailed: true,
-        val: null,
-        error: e.message,
-      });
-    });
-  }, [range, sessionId, call]);
-  useEffect(() => {
-    const subscription = query.observable
-      .map((res): Loadable<ProposalsOverview> => {
-        if (res.data && res.data.session && res.data.openProposals) {
-          const session = res.data.session;
-          const threshold = thresholdVariant(
-            session.thresholds,
-            ThresholdVariant.Proposer
-          );
+export type BatchedProposalsQuery = PageInfoQuery;
 
-          const thresholds: Thresholds = {
-            proposal: String(threshold?.current ?? '-'),
-            proposers: String(session.sessionProposers.totalCount),
-          };
-          const openProposalsCount = res.data.open?.totalCount ?? 0;
-          const rejectedProposalsCount = res.data.reject?.totalCount ?? 0;
-          const signedProposalsCount = res.data.signed?.totalCount ?? 0;
-          const acceptedProposalsCount = res.data.accepted?.totalCount ?? 0;
-          const proposalStats: ProposalTypeStats = {
-            open: openProposalsCount,
-            rejected: rejectedProposalsCount,
-            accepted: acceptedProposalsCount,
-            signed: signedProposalsCount,
-          };
+export type BatchedProposals = Loadable<Page<ProposalBatch>>;
 
-          const openProposals = res.data.openProposals.nodes
-            .filter((p) => p !== null)
-            .map((p) => mapProposalListItem(p!));
-          return {
-            val: {
-              openProposals,
-              stats: proposalStats,
-              thresholds,
-            },
-            isFailed: false,
-            isLoading: false,
-          };
-        }
-        return {
-          isLoading: res.loading,
-          isFailed: Boolean(res.error),
-          error: res.error?.message ?? undefined,
-          val: null,
-        };
-      })
-      .subscribe(setProposalsOverview);
-    return () => subscription.unsubscribe();
-  }, [query]);
-  return proposalsOverview;
-}
+export type BatchedProposalQuery = string;
 
-type ProposalsFilters = {
-  type?: ProposalType[];
-  status?: ProposalStatus[];
-  chains?: number[];
-};
-export type ProposalsQuery = PageInfoQuery<ProposalsFilters>;
+export type BatchedProposal = Loadable<ProposalBatch>;
 
-/**
- * Listing query for proposals
- * */
-export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
-  const [proposalsPage, setProposalsPage] = useState<ProposalsPage>({
+// FOR BATCHED PROPOSALS TABLE
+export const useBatchedProposals = (
+  batchedProposalsQuery: BatchedProposalsQuery
+): BatchedProposals => {
+  const { offset, perPage } = batchedProposalsQuery;
+
+  const [call, query] = useProposalBatchesLazyQuery();
+
+  const [batchedProposals, setBatchedProposals] = useState<BatchedProposals>({
     isLoading: false,
-    val: null,
     isFailed: false,
+    val: {
+      items: [],
+      pageInfo: {
+        count: 0,
+        hasNext: false,
+        hasPrevious: false,
+      },
+    },
   });
-  const [call, query] = useProposalsLazyQuery();
+
   useEffect(() => {
     call({
       variables: {
-        offset: reqQuery.offset,
-        perPage: reqQuery.perPage,
-        filter:
-          reqQuery.filter.type ||
-          reqQuery.filter.status ||
-          reqQuery.filter.chains
-            ? {
-                status: reqQuery.filter.status
-                  ? { in: reqQuery.filter.status }
-                  : undefined,
-                type: reqQuery.filter.type
-                  ? { in: reqQuery.filter.type }
-                  : undefined,
-                chainId: reqQuery.filter.chains
-                  ? { in: reqQuery.filter.chains }
-                  : undefined,
-              }
-            : undefined,
+        offset,
+        perPage,
       },
-      pollInterval: 10000,
-      fetchPolicy: 'network-only',
-    }).catch((e) => {
-      setProposalsPage({
-        isLoading: false,
-        isFailed: true,
-        val: null,
-        error: e.message,
-      });
     });
-  }, [reqQuery, call]);
+  }, [offset, perPage]);
 
   useEffect(() => {
     const subscription = query.observable
-      .map((res): ProposalsPage => {
-        if (res.data && res.data.proposalItems) {
-          const data = res.data.proposalItems.nodes
-            .filter((p) => p !== null)
-            .map((p) => mapProposalListItem(p!));
+      .map((res): BatchedProposals => {
+        if (res.data) {
+          const data = res.data.proposalBatches?.nodes
+            .filter((batch) => batch !== null)
+            .map((batch) => {
+              return {
+                id: batch?.id,
+                status: batch?.status,
+                height: Number(batch?.blockNumber),
+                proposals: batch?.proposals?.map((proposal: any) => {
+                  return {
+                    type: proposal?.kind,
+                    data: proposal?.data,
+                  };
+                }),
+                chain: batch?.chain,
+              };
+            });
+
           return {
             isFailed: false,
             isLoading: false,
             val: {
-              items: data,
+              items: data as ProposalBatch[],
               pageInfo: {
-                count: res.data.proposalItems.totalCount,
-                hasPrevious: res.data.proposalItems.pageInfo.hasPreviousPage,
-                hasNext: res.data.proposalItems.pageInfo.hasNextPage,
+                count: res.data.proposalBatches?.totalCount ?? 0,
+                hasPrevious:
+                  res.data.proposalBatches?.pageInfo.hasPreviousPage ?? false,
+                hasNext:
+                  res.data.proposalBatches?.pageInfo.hasNextPage ?? false,
               },
             },
           };
         }
+
         return {
           isLoading: res.loading,
           isFailed: Boolean(res.error),
@@ -340,357 +100,73 @@ export function useProposals(reqQuery: ProposalsQuery): ProposalsPage {
           val: null,
         };
       })
-      .subscribe(setProposalsPage);
+      .subscribe(setBatchedProposals);
+
     return () => subscription.unsubscribe();
   }, [query]);
 
-  return proposalsPage;
-}
-
-type NextAndPrevStatus = {
-  nextProposalId: string | null;
-  previousProposalId: string | null;
-};
-type ProposalDetailsPage = {
-  proposal: Loadable<ProposalDetails>;
-  votes: VotesPage;
-  nextAndPrevStatus: Loadable<NextAndPrevStatus>;
+  return batchedProposals;
 };
 
-/**
- * Load a proposal with paginated votes and status at a given session
- * @example
- * An example of using previous and next values
- * ```jsx
- *  const ProposalDetailsPage = ({id,targetSessionId}:{id:string ,targetSessionId:string}) => {
- *    const proposalDetailsPage = useProposal(targetSessionId , {
- *      offset: 0,
- *      perPage: 10,
- *      filter:{
- *        proposalId:id
- *      }
- *    });
- *    const nextAndPrevStatus = proposalDetailsPage.nextAndPrevStatus
- *    const hasNext = useMemo( () => nextAndPrevStatus.val?.nextProposalId !== null, [nextAndPrevStatus])
- *    const hasPrev = useMemo( () => nextAndPrevStatus.val?.previousProposalId !== null, [nextAndPrevStatus])
- *    return <div>
- *      <button  disabled={!hasPrev}>Next</button> <button disabled={!hasNext}>Prev</button>
- *    </div>
- *  }
- * ```
- *
- * */
-export function useProposal(
-  targetSessionId: string,
-  votesReqQuery: VotesQuery
-): ProposalDetailsPage {
-  const [proposalDetails, setProposalDetails] = useState<
-    Loadable<ProposalDetails>
-  >({
-    isLoading: false,
-    val: null,
-    isFailed: false,
+// FOR INDIVIDUAL BATCHED PROPOSAL DETAILS
+export const useBatchedProposal = (
+  batchedProposalQuery: BatchedProposalQuery
+) => {
+  const { data, error, loading } = useProposalBatchQuery({
+    variables: {
+      batchId: batchedProposalQuery,
+    },
   });
 
-  const [nextAndPrevStatus, setNextAndPrevStatus] = useState<
-    Loadable<NextAndPrevStatus>
-  >({
+  const [batchedProposal, setBatchedProposal] = useState<BatchedProposal>({
     isLoading: false,
-    val: null,
     isFailed: false,
+    val: null,
   });
 
-  const [call, query] = useProposalDetailsLazyQuery();
-  const { offset, perPage } = votesReqQuery;
-  const proposalId = votesReqQuery.filter.proposalId;
-  const votes = useVotes(votesReqQuery);
-
-  const [proposalIds, setProposalIds] = useState<string[]>([]);
-
   useEffect(() => {
-    const ids = localStorage.getItem('proposalIds');
-    if (ids) {
-      setProposalIds(JSON.parse(ids));
-    }
-  }, []);
+    if (data) {
+      const batch = data.proposalBatch;
 
-  useEffect(() => {
-    const index = proposalIds.indexOf(proposalId);
+      const proposalBatch = {
+        id: batch?.id,
+        status: batch?.status,
+        height: Number(batch?.blockNumber),
+        proposals: batch?.proposals?.map((proposal: any) => {
+          return {
+            type: proposal?.kind,
+            data: proposal?.data,
+          };
+        }),
+        chain: batch?.chain,
+      };
 
-    if (index !== -1) {
-      const itemBefore = proposalIds[index + 1];
-      const itemAfter = proposalIds[index - 1];
-
-      setNextAndPrevStatus({
-        val: {
-          nextProposalId: itemAfter ? String(itemAfter) : null,
-          previousProposalId: itemBefore ? String(itemBefore) : null,
-        },
+      setBatchedProposal({
         isLoading: false,
         isFailed: false,
+        val: proposalBatch as ProposalBatch,
       });
 
       return;
-    } else {
-      setNextAndPrevStatus({
-        val: null,
-        isLoading: true,
-        isFailed: false,
-      });
     }
-  }, [proposalId, proposalIds]);
 
-  useEffect(() => {
-    call({
-      variables: {
-        id: proposalId,
-        targetSessionId,
-      },
-      pollInterval: 10000,
-      fetchPolicy: 'network-only',
-    }).catch((e) => {
-      setProposalDetails({
+    if (error) {
+      setBatchedProposal({
         isLoading: false,
         isFailed: true,
+        error: error.message,
         val: null,
-        error: e.message,
-      });
-    });
-  }, [proposalId, offset, perPage, targetSessionId, call]);
-
-  useEffect(() => {
-    const subscription = query.observable
-      .map((res): Loadable<ProposalDetails> => {
-        if (res.data && res.data.proposalItem && res.data.session) {
-          const proposal = res.data.proposalItem;
-          const forCount = proposal.votesFor.totalCount;
-          const allVotes = proposal.totalVotes.totalCount;
-          const expectedVotesCount =
-            res.data.session.sessionProposers.totalCount;
-          const abstainCount = res.data.proposalItem.abstain.totalCount;
-          const againstCount = res.data.proposalItem.against.totalCount;
-          return {
-            isLoading: false,
-            isFailed: false,
-            val: {
-              id: proposal.id,
-              data: {
-                data: proposal.data,
-                type: proposal.type,
-              },
-              status: proposal.status as any,
-              abstainCount,
-              forCount,
-              againstCount,
-              allCount: allVotes,
-              abstainPercentage: (abstainCount / expectedVotesCount) * 100,
-              forPercentage: (forCount / expectedVotesCount) * 100,
-              againstPercentage: (againstCount / expectedVotesCount) * 100,
-              chain: String(res.data.proposalItem.chainId),
-              height: proposal.block?.number,
-              timeline: proposal.proposalTimelineStatuses.nodes.map((item) => {
-                const statusItem = item!;
-                return {
-                  at: new Date(statusItem.timestamp),
-                  blockNumber: statusItem.blockNumber,
-                  hash: '0x000',
-                  status: statusItem.status as any,
-                  id: statusItem.id,
-                };
-              }),
-              txHash: '0x000',
-            },
-          };
-        }
-        return {
-          isLoading: res.loading,
-          isFailed: Boolean(res.error),
-          error: res.error?.message ?? undefined,
-          val: null,
-        };
-      })
-      .subscribe(setProposalDetails);
-
-    return () => subscription.unsubscribe();
-  }, [query]);
-
-  return useMemo(
-    () => ({
-      proposal: proposalDetails,
-      votes,
-      nextAndPrevStatus,
-    }),
-    [nextAndPrevStatus, proposalDetails, votes]
-  );
-}
-
-export function useVotes(votesReqQuery: VotesQuery): VotesPage {
-  const [votes, setVotes] = useState<VotesPage>({
-    isLoading: true,
-    isFailed: false,
-    val: null,
-  });
-
-  const [callWithVotesType, queryWithVotesType] =
-    useProposalVotesWithVotesTypeLazyQuery();
-
-  const [callWithoutVotesType, queryWithoutVotesType] =
-    useProposalVotesWithoutVotesTypeLazyQuery();
-
-  const {
-    filter: { proposalId, status },
-    offset,
-    perPage,
-  } = votesReqQuery;
-
-  useEffect(() => {
-    if (status) {
-      callWithVotesType({
-        variables: {
-          proposalId,
-          offset,
-          perPage,
-          voteType: status,
-        },
-      }).catch((e) => {
-        setVotes({
-          isLoading: false,
-          isFailed: true,
-          val: null,
-          error: e.message,
-        });
-      });
-    } else {
-      callWithoutVotesType({
-        variables: {
-          proposalId,
-          offset,
-          perPage,
-        },
-      }).catch((e) => {
-        setVotes({
-          isLoading: false,
-          isFailed: true,
-          val: null,
-          error: e.message,
-        });
       });
     }
-  }, [
-    perPage,
-    offset,
-    status,
-    callWithVotesType,
-    callWithoutVotesType,
-    proposalId,
-  ]);
 
-  useEffect(() => {
-    const query = status ? queryWithVotesType : queryWithoutVotesType;
-
-    const subscription = query.observable
-      .map((res): VotesPage => {
-        if (res.data && res.data.proposalVotes) {
-          const votes = res.data.proposalVotes;
-          const data = votes.nodes
-            .filter((p) => p !== null)
-            .map((p): VoteListItem => {
-              const vote = p!;
-              return {
-                status: vote.voteStatus,
-                id: vote.id,
-                voterId: vote.voterId,
-                timestamp: new Date(vote.block?.timestamp),
-              };
-            });
-          return {
-            isFailed: false,
-            isLoading: false,
-            val: {
-              items: data,
-              pageInfo: {
-                count: votes.totalCount,
-                hasPrevious: votes.pageInfo.hasPreviousPage,
-                hasNext: votes.pageInfo.hasNextPage,
-              },
-            },
-          };
-        }
-        return {
-          isLoading: res.loading,
-          isFailed: Boolean(res.error),
-          error: res.error?.message ?? undefined,
-          val: null,
-        };
-      })
-      .subscribe(setVotes);
-    return () => subscription.unsubscribe();
-  }, [queryWithVotesType, queryWithoutVotesType, status, setVotes]);
-
-  return votes;
-}
-
-export type TimeRange =
-  | 'all'
-  | 'one-year'
-  | 'six-months'
-  | 'three-months'
-  | 'year-to-date';
-
-export type AllProposalsTimestamps = {
-  [K: string]: {
-    nodes: {
-      block: {
-        timestamp: string;
-      };
-    }[];
-  };
-};
-
-export function useAllProposalsTimestamps(): Loadable<AllProposalsTimestamps> {
-  const [allProposalsTimestamps, setAllProposalsTimestamps] = useState<
-    Loadable<AllProposalsTimestamps>
-  >({
-    isLoading: true,
-    val: null,
-    isFailed: false,
-  });
-
-  const client = useApolloClient();
-
-  const {
-    metaData: { lastProcessBlock },
-  } = useStatsContext();
-
-  useEffect(() => {
-    setAllProposalsTimestamps({
-      isLoading: true,
-      isFailed: false,
-      val: null,
-    });
-
-    client
-      .query({
-        query: AllProposalsTimestampsDocument,
-      })
-      .then((data) => {
-        if (data) {
-          setAllProposalsTimestamps({
-            isLoading: false,
-            isFailed: false,
-            val: data.data,
-          });
-        }
-      })
-      .catch((e: any) => {
-        setAllProposalsTimestamps({
-          isLoading: false,
-          isFailed: true,
-          error: e.message,
-          val: null,
-        });
+    if (loading) {
+      setBatchedProposal({
+        isLoading: true,
+        isFailed: false,
+        val: null,
       });
-  }, [lastProcessBlock]);
+    }
+  }, [data, error, loading]);
 
-  return allProposalsTimestamps;
-}
+  return batchedProposal;
+};

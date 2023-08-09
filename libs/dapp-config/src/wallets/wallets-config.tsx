@@ -34,6 +34,7 @@ const ANY_EVM = [
   PresetTypedChainId.HermesOrbit,
   PresetTypedChainId.AthenaOrbit,
   PresetTypedChainId.DemeterOrbit,
+  PresetTypedChainId.TangleTestnet,
 
   // Localnet
   PresetTypedChainId.HermesLocalnet,
@@ -49,11 +50,11 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
 ];
 
-if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
-  throw new Error(
-    'Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID env variable.'
-  );
-}
+// if (!process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID']) {
+//   throw new Error(
+//     'Missing BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID env variable.'
+//   );
+// }
 
 export const walletsConfig: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
@@ -117,7 +118,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     homeLink: 'https://walletconnect.com/',
     connector: new WalletConnectConnector({
       options: {
-        projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'],
+        projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
       },
     }),
   },

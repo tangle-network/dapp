@@ -10,12 +10,10 @@ const Layout = async ({ children }: { children?: React.ReactNode }) => {
   const { totalValueLocked } =
     await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
       vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
-      '0xDa68464c391Da8ff60b40273F2Ef0a9971694F99'
+      '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05'
     );
 
   console.log('Fetched data from vAnchor subgraph: ', totalValueLocked);
-
-  const formatted = +formatEther(BigInt(totalValueLocked));
 
   return (
     <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
@@ -27,10 +25,10 @@ const Layout = async ({ children }: { children?: React.ReactNode }) => {
             <SideBarMenu />
             <Breadcrumbs />
           </div>
-          <OverviewChipsContainer
-            tvlValue={formatted}
-            volumeValue={formatted}
-          />
+          {/* TypeScript doesn't understand async components. */}
+          {/* Current approach: https://github.com/vercel/next.js/issues/42292#issuecomment-1298459024 */}
+          {/* @ts-expect-error Server Component */}
+          <OverviewChipsContainer />
         </div>
 
         {/* Body */}
