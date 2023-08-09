@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
 import TokenSelector from '../TokenSelector';
-import { AssetListItem } from './AssetListItem';
+import TokenListItem from './TokenListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
@@ -115,7 +115,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           <ScrollArea className="min-w-[350px] h-[376px]">
             <ul>
               {filteredSelect.map((current, idx) => (
-                <AssetListItem
+                <TokenListItem
                   key={`${current.name}-${idx}`}
                   {...current}
                   onClick={() => onItemChange(current)}

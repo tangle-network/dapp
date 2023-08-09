@@ -156,6 +156,11 @@ export interface KeygenType {
   nextKeyId?: string;
 }
 
+/**
+ * The supported token type
+ */
+export type TokenType = 'shielded' | 'unshielded';
+
 /*****************
  * UTILITY TYPES *
  *****************/

@@ -1,6 +1,4 @@
-import { IWebbComponentBase, PropsOf } from '../../types';
-
-export type TokenType = 'shielded' | 'unshielded';
+import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
 
 export interface TokenSelectorProps
   extends IWebbComponentBase,

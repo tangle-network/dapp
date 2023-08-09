@@ -1,5 +1,13 @@
 import numbro from 'numbro';
 
+export interface RoundedAmountFormatOptions extends numbro.Format {
+  /**
+   * The default placeholder to use when formatting a value with no value
+   * @default '-'
+   */
+  defaultPlaceholder?: string;
+}
+
 /**
  * Return dynamic 0.001 format based on number of digits
  * to display
@@ -26,14 +34,20 @@ export function getDecimals(digit: number): number {
 export function getRoundedAmountString(
   num: number | undefined,
   digits = 3,
-  formatOption: numbro.Format = { roundingFunction: Math.floor }
+  formatOption: RoundedAmountFormatOptions = {}
 ): string {
+  const {
+    roundingFunction = Math.floor,
+    defaultPlaceholder = '-',
+    ...restOpts
+  } = formatOption;
+
   if (num === 0) {
     return '0';
   }
 
   if (!num) {
-    return '-';
+    return defaultPlaceholder;
   }
 
   if (num < 0) {
@@ -52,6 +66,7 @@ export function getRoundedAmountString(
     optionalMantissa: true,
     trimMantissa: true,
     thousandSeparated: true,
-    ...formatOption,
+    roundingFunction,
+    ...restOpts,
   });
 }

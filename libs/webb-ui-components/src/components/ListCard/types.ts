@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { IWebbComponentBase, PropsOf } from '../../types';
+import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
 import { AvatarProps } from '../Avatar';
 import { ScrollArea } from '../ScrollArea';
 
@@ -68,6 +68,12 @@ export type AssetType = {
    * Check if the token is added to metamask
    */
   isTokenAddedToMetamask?: boolean;
+
+  /**
+   * The token type
+   * @default 'unshielded'
+   */
+  tokenType?: TokenType;
 };
 
 export interface ListCardWrapperProps
@@ -211,47 +217,4 @@ export interface TokenListCardProps
    * The type of transaction this token list card is used for
    */
   txnType?: 'deposit' | 'transfer' | 'withdraw';
-}
-
-export interface WithDrawListCardProps
-  extends Omit<ListCardWrapperProps, 'onChange'> {
-  /**
-   * Optional card title to change the title of the card
-   */
-  title: string;
-
-  /**
-   * The asset pair list
-   */
-  assetPairs?: AssetType[];
-
-  /**
-   * The current selected asset, use to control the component
-   */
-  value?: AssetType;
-
-  /**
-   * The callback to control the value of the component
-   */
-  onChange?: (nextAsset: AssetType) => void;
-
-  /**
-   * If `true`, the component will display in connected view
-   */
-  isDisconnected?: boolean;
-
-  /**
-   * Callback being invoked when user hits switch wallet button
-   */
-  onSwitchWallet?: PropsOf<'div'>['onClick'];
-
-  /**
-   * Callback being invoked when user hits recover from secret note
-   */
-  onRecoverWithSecretNote?: PropsOf<'div'>['onClick'];
-
-  /**
-   * Callback being invoked when user hits connect wallet button
-   */
-  onConnectWallet?: PropsOf<'div'>['onClick'];
 }
