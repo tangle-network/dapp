@@ -1,50 +1,49 @@
-import { TokenIcon } from '@webb-tools/icons';
+import { AlertFill, TokenIcon } from '@webb-tools/icons';
 import React, { ComponentProps, forwardRef, useMemo, useRef } from 'react';
+import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
+import Badge from '../Badge';
 import { IconWithTooltip } from '../IconWithTooltip';
 import { Button } from '../buttons';
 import { ListItem } from './ListItem';
-import { AssetType } from './types';
-import Badge from '../Badge';
+import { AssetBadgeInfoType, AssetBalanceType, AssetType } from './types';
 
-const Balance = ({
-  balance,
-  balanceInUsd,
-  subContent,
-}: {
-  balance: number;
-  balanceInUsd?: number;
-  subContent?: string;
-}) => {
-  <div>
-    <Typography ta="right" variant="h5" fw="bold">
-      {getRoundedAmountString(balance)}
-    </Typography>
+const Balance = ({ balance, balanceInUsd, subContent }: AssetBalanceType) => {
+  return (
+    <div>
+      <Typography ta="right" variant="h5" fw="bold">
+        {getRoundedAmountString(balance)}
+      </Typography>
 
-    {typeof balanceInUsd === 'number' ? (
-      <Typography
-        ta="right"
-        variant="body3"
-        fw="semibold"
-        className="!text-mono-100"
-      >
-        ${getRoundedAmountString(balanceInUsd)}
-      </Typography>
-    ) : typeof subContent === 'string' ? (
-      <Typography
-        ta="right"
-        variant="body3"
-        fw="semibold"
-        className="!text-mono-100"
-      >
-        {subContent}
-      </Typography>
-    ) : null}
-  </div>;
+      {typeof balanceInUsd === 'number' ? (
+        <Typography
+          ta="right"
+          variant="body3"
+          fw="semibold"
+          className="!text-mono-100"
+        >
+          ${getRoundedAmountString(balanceInUsd)}
+        </Typography>
+      ) : typeof subContent === 'string' ? (
+        <Typography
+          ta="right"
+          variant="body3"
+          fw="semibold"
+          className="!text-mono-100"
+        >
+          {subContent}
+        </Typography>
+      ) : null}
+    </div>
+  );
 };
 
-const AddToWalletButton = ({ onClick }: { onClick: () => void }) => (
+const AddToWalletButton = ({
+  onClick,
+}: {
+  onClick: NonNullable<PropsOf<'button'>['onClick']>;
+}) => (
   <>
     <Button
       variant="link"
@@ -64,18 +63,14 @@ const AddToWalletButton = ({ onClick }: { onClick: () => void }) => (
   </>
 );
 
-const BadgeInfo = ({
-  variant,
-  children,
-}: {
-  variant: 'info' | 'warning';
-  children: React.ReactNode;
-}) => {
+const BadgeInfo = ({ variant, children }: AssetBadgeInfoType) => {
   let color: ComponentProps<typeof Badge>['color'] = 'blue';
+  let badgeIcon: ComponentProps<typeof Badge>['icon'];
 
   switch (variant) {
     case 'warning': {
       color = 'yellow';
+      badgeIcon = <AlertFill />;
       break;
     }
 
@@ -85,37 +80,59 @@ const BadgeInfo = ({
     }
   }
 
-  return <IconWithTooltip icon={<Badge color={color} />} content={children} />;
+  return (
+    <IconWithTooltip
+      icon={<Badge icon={badgeIcon} color={color} />}
+      content={children}
+    />
+  );
 };
 
-const TokenListItem_ = forwardRef<
+/**
+ * TokenListItem component
+ *
+ * Props:
+ * - name: the name of the token
+ * - symbol: the symbol of the token
+ * - balance: the balance of the token
+ * - onAddToken: callback when user hit the add token button
+ *
+ * @example
+ * ```tsx
+ * <TokenListItem name="Ethereum" symbol="ETH" />
+ * ```
+ */
+const TokenListItem = forwardRef<
   HTMLLIElement,
   AssetType & ComponentProps<typeof ListItem>
 >(
   (
-    { balance, name, symbol, isTokenAddedToMetamask, onClick, ...props },
+    {
+      assetBadgeProps,
+      assetBalanceProps,
+      isDisabled,
+      name,
+      onAddToken,
+      symbol,
+      ...props
+    },
     ref
   ) => {
-    const onTokenClickRef = useRef(onClick);
+    const onAddTokenRef = useRef(onAddToken);
 
     const handleTokenIconClick = useMemo(() => {
-      if (typeof onTokenClickRef.current === 'function') {
-        return (event: React.MouseEvent) => {
+      if (typeof onAddTokenRef.current === 'function') {
+        return (event: React.MouseEvent<HTMLButtonElement>) => {
           event.stopPropagation();
-          onTokenClickRef.current?.(event as React.MouseEvent<HTMLLIElement>);
+          onAddTokenRef.current?.(event);
         };
       }
     }, []);
 
     return (
-      <ListItem {...props} ref={ref}>
+      <ListItem {...props} isDisabled={isDisabled} ref={ref}>
         <div className="flex items-center">
-          <TokenIcon
-            onClick={handleTokenIconClick}
-            size="lg"
-            name={symbol}
-            className="mr-2"
-          />
+          <TokenIcon size="lg" name={symbol} className="mr-2" />
 
           <p>
             <Typography
@@ -138,50 +155,16 @@ const TokenListItem_ = forwardRef<
           </p>
         </div>
 
-        {isTokenAddedToMetamask ? (
-          <Typography className="cursor-default" variant="h5" fw="bold">
-            {getRoundedAmountString(balance ?? 0)}
-          </Typography>
-        ) : (
-          <>
-            <Button
-              variant="link"
-              onClick={handleTokenIconClick}
-              size="sm"
-              className="hidden group-hover:block"
-            >
-              Add to Wallet
-            </Button>
-            <Typography
-              className="block cursor-default group-hover:hidden"
-              variant="h5"
-              fw="bold"
-            >
-              --
-            </Typography>
-          </>
-        )}
+        {typeof handleTokenIconClick === 'function' && !isDisabled ? (
+          <AddToWalletButton onClick={handleTokenIconClick} />
+        ) : typeof assetBalanceProps === 'object' ? (
+          <Balance {...assetBalanceProps} />
+        ) : typeof assetBadgeProps === 'object' ? (
+          <BadgeInfo {...assetBadgeProps} />
+        ) : null}
       </ListItem>
     );
   }
 );
-
-interface ITokenListItem
-  extends React.ForwardRefExoticComponent<
-    AssetType &
-      ComponentProps<typeof ListItem> &
-      React.RefAttributes<HTMLLIElement>
-  > {
-  Balance: typeof Balance;
-  AddToWalletButton: typeof AddToWalletButton;
-  BadgeInfo: typeof BadgeInfo;
-}
-
-const TokenListItem = {
-  ...TokenListItem_,
-  Balance,
-  AddToWalletButton,
-  BadgeInfo,
-} as ITokenListItem;
 
 export default TokenListItem;

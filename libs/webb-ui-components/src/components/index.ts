@@ -1,5 +1,7 @@
 export * from './Accordion';
 export * from './Alert';
+export * from './Badge';
+export { default as Badge } from './Badge';
 export * from './AmountMenu';
 export * from './Avatar';
 export * from './AvatarGroup';

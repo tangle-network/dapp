@@ -49,17 +49,13 @@ const Badge = forwardRef<SVGSVGElement, BadgeProps>(
           rx={12}
           className={classNames[color].wrapper}
         />
-        <foreignObject>
+        <foreignObject x={4} y={4} width={16} height={16}>
           {cloneElement(icon, {
             ...icon.props,
             className: twMerge(icon.props.className, classNames[color].icon),
             size: 'md',
           })}
         </foreignObject>
-        <path
-          d="M12 18.667a6.667 6.667 0 110-13.334 6.667 6.667 0 010 13.334zm0-1.334a5.333 5.333 0 100-10.666 5.333 5.333 0 000 10.666z"
-          fill="#01550A"
-        />
       </svg>
     );
   }

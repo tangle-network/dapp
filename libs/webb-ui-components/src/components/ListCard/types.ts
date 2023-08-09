@@ -48,6 +48,35 @@ export type RelayerType = {
   theme?: AvatarProps['theme'];
 };
 
+export type AssetBalanceType = {
+  /**
+   * The asset balance of user
+   */
+  balance?: number;
+
+  /**
+   * The asset balance in USD
+   */
+  balanceInUsd?: number;
+
+  /**
+   * The sub content below the balance
+   */
+  subContent?: string;
+};
+
+export type AssetBadgeInfoType = {
+  /**
+   * The badge variant
+   */
+  variant: 'info' | 'warning';
+
+  /**
+   * The badge content
+   */
+  children: React.ReactNode;
+};
+
 export type AssetType = {
   /**
    * The asset name
@@ -60,20 +89,27 @@ export type AssetType = {
   symbol: string;
 
   /**
-   * The asset balance of user
+   * Callback when user hit the add token button
    */
-  balance?: number;
-
-  /**
-   * Check if the token is added to metamask
-   */
-  isTokenAddedToMetamask?: boolean;
+  onAddToken?: PropsOf<'button'>['onClick'];
 
   /**
    * The token type
    * @default 'unshielded'
    */
   tokenType?: TokenType;
+
+  /**
+   * The asset balance props
+   * @type {AssetBalanceType}
+   */
+  assetBalanceProps?: AssetBalanceType;
+
+  /**
+   * The asset badge props
+   * @type {AssetBadgeInfoType}
+   */
+  assetBadgeProps?: AssetBadgeInfoType;
 };
 
 export interface ListCardWrapperProps
