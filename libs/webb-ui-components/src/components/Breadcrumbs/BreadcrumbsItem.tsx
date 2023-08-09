@@ -22,7 +22,13 @@ export const BreadcrumbsItem = React.forwardRef<
   HTMLSpanElement,
   BreadcrumbsItemPropsType
 >((props, ref) => {
-  const { isLast = false, icon, children, className: classNameProp } = props;
+  const {
+    isLast = false,
+    icon,
+    children,
+    className: classNameProp,
+    textClassName,
+  } = props;
 
   const baseClsx = useMemo(() => 'flex items-center gap-x-2 w-fit', []);
 
@@ -44,7 +50,10 @@ export const BreadcrumbsItem = React.forwardRef<
         {icon}
         <Typography
           variant="label"
-          className="capitalize !font-semibold text-mono-120 dark:text-mono-60"
+          className={twMerge(
+            'capitalize !font-semibold text-mono-120 dark:text-mono-60',
+            textClassName
+          )}
         >
           {children}
         </Typography>
@@ -64,7 +73,10 @@ export const BreadcrumbsItem = React.forwardRef<
       {icon}
       <Typography
         variant="label"
-        className="capitalize !font-semibold dark:text-mono-0"
+        className={twMerge(
+          'capitalize !font-semibold dark:text-mono-0',
+          textClassName
+        )}
       >
         {children}
       </Typography>

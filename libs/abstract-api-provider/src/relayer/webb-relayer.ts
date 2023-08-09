@@ -195,6 +195,7 @@ class RelayedWithdraw {
               if (this.status === RelayedWithdrawResult.Continue) {
                 timeout = setTimeout(queryStatus, this.POOLING_INTERVAL);
               } else if (this.status === RelayedWithdrawResult.CleanExit) {
+                clearTimeout(timeout);
                 this.emitter.complete();
               }
             } catch (error) {
@@ -208,9 +209,8 @@ class RelayedWithdraw {
               // If the tx is not found then it's processed
               this.status = RelayedWithdrawResult.Errored;
               this.emitter.next([RelayedWithdrawResult.Errored, message]);
-              this.emitter.complete();
-            } finally {
               clearTimeout(timeout);
+              this.emitter.complete();
             }
           };
 

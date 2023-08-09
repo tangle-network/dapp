@@ -7,4 +7,5 @@ export type BarChartProps = {
   setDate: (date: Date | null) => void;
   width?: number | string;
   height?: number | string;
+  fillColor?: 'blue' | 'purple';
 };
