@@ -2,9 +2,11 @@ import { TokenIcon } from '@webb-tools/icons';
 import React, { ComponentProps, forwardRef, useMemo, useRef } from 'react';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
+import { IconWithTooltip } from '../IconWithTooltip';
 import { Button } from '../buttons';
 import { ListItem } from './ListItem';
 import { AssetType } from './types';
+import Badge from '../Badge';
 
 const Balance = ({
   balance,
@@ -42,7 +44,51 @@ const Balance = ({
   </div>;
 };
 
-const TokenListItem = forwardRef<
+const AddToWalletButton = ({ onClick }: { onClick: () => void }) => (
+  <>
+    <Button
+      variant="link"
+      onClick={onClick}
+      size="sm"
+      className="hidden group-hover:block"
+    >
+      Add to Wallet
+    </Button>
+    <Typography
+      className="block cursor-default group-hover:hidden"
+      variant="h5"
+      fw="bold"
+    >
+      --
+    </Typography>
+  </>
+);
+
+const BadgeInfo = ({
+  variant,
+  children,
+}: {
+  variant: 'info' | 'warning';
+  children: React.ReactNode;
+}) => {
+  let color: ComponentProps<typeof Badge>['color'] = 'blue';
+
+  switch (variant) {
+    case 'warning': {
+      color = 'yellow';
+      break;
+    }
+
+    default: {
+      color = 'blue';
+      break;
+    }
+  }
+
+  return <IconWithTooltip icon={<Badge color={color} />} content={children} />;
+};
+
+const TokenListItem_ = forwardRef<
   HTMLLIElement,
   AssetType & ComponentProps<typeof ListItem>
 >(
@@ -101,7 +147,8 @@ const TokenListItem = forwardRef<
             <Button
               variant="link"
               onClick={handleTokenIconClick}
-              className="uppercase text-[12px] hidden group-hover:block"
+              size="sm"
+              className="hidden group-hover:block"
             >
               Add to Wallet
             </Button>
@@ -118,5 +165,23 @@ const TokenListItem = forwardRef<
     );
   }
 );
+
+interface ITokenListItem
+  extends React.ForwardRefExoticComponent<
+    AssetType &
+      ComponentProps<typeof ListItem> &
+      React.RefAttributes<HTMLLIElement>
+  > {
+  Balance: typeof Balance;
+  AddToWalletButton: typeof AddToWalletButton;
+  BadgeInfo: typeof BadgeInfo;
+}
+
+const TokenListItem = {
+  ...TokenListItem_,
+  Balance,
+  AddToWalletButton,
+  BadgeInfo,
+} as ITokenListItem;
 
 export default TokenListItem;
