@@ -1,6 +1,6 @@
-import { twMerge } from 'tailwind-merge';
 import cx from 'classnames';
-import { createIcon } from './create-icon';
+import { twMerge } from 'tailwind-merge';
+import { ChainIcon } from './ChainIcon';
 import { IconBase } from './types';
 
 const getSizeProps = (size: IconBase['size']) => {
@@ -30,12 +30,17 @@ interface ShieldedAssetIconProps extends IconBase {
    * Whether to display the placeholder icon or not
    */
   displayPlaceholder?: boolean;
+
+  /**
+   * Chain name to display on the chain icon
+   */
+  chainName?: string;
 }
 
-const ShieldedAssetIcon = ({
+const ShieldedAssetIconInner = ({
   displayPlaceholder,
   ...props
-}: ShieldedAssetIconProps) => {
+}: Omit<ShieldedAssetIconProps, 'chainName'>) => {
   return (
     <svg
       {...props}
@@ -198,6 +203,34 @@ const ShieldedAssetIcon = ({
         />
       </defs>
     </svg>
+  );
+};
+
+const ShieldedAssetIcon = ({
+  displayPlaceholder,
+  chainName,
+  ...props
+}: ShieldedAssetIconProps) => {
+  if (typeof chainName === 'string' && !displayPlaceholder) {
+    return (
+      <div className="relative">
+        <ShieldedAssetIcon displayPlaceholder={displayPlaceholder} {...props} />
+        <ChainIcon
+          className="absolute inline-block"
+          style={{ right: 0, bottom: 0, transform: 'translateX(-50%)' }}
+          name={chainName}
+          width={12}
+          height={12}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <ShieldedAssetIconInner
+      displayPlaceholder={displayPlaceholder}
+      {...props}
+    />
   );
 };
 

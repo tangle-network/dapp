@@ -63,3 +63,33 @@ export const WithInfoBadge: Story = {
     />
   ),
 };
+
+export const ShieldedPoolItem: Story = {
+  render: () => (
+    <TokenListItem
+      name="Webb Ethereum"
+      symbol="webbETH"
+      tokenType="shielded"
+      explorerUrl="https://webb.tools"
+      assetBalanceProps={{
+        balance: 0,
+      }}
+    />
+  ),
+};
+
+export const ShieldedPoolItemWithChain: Story = {
+  render: () => (
+    <TokenListItem
+      name="Webb Ethereum"
+      symbol="webbETH"
+      tokenType="shielded"
+      explorerUrl="https://webb.tools"
+      chainName="Polygon Mumbai"
+      assetBalanceProps={{
+        balance: 0,
+        subContent: 'Webb Ethereum',
+      }}
+    />
+  ),
+};

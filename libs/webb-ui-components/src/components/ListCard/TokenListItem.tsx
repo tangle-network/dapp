@@ -1,4 +1,9 @@
-import { AlertFill, TokenIcon } from '@webb-tools/icons';
+import {
+  AlertFill,
+  ExternalLinkLine,
+  ShieldedAssetIcon,
+  TokenIcon,
+} from '@webb-tools/icons';
 import React, { ComponentProps, forwardRef, useMemo, useRef } from 'react';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
@@ -110,10 +115,13 @@ const TokenListItem = forwardRef<
     {
       assetBadgeProps,
       assetBalanceProps,
+      chainName,
+      explorerUrl,
       isDisabled,
       name,
       onAddToken,
       symbol,
+      tokenType = 'unshielded',
       ...props
     },
     ref
@@ -132,7 +140,15 @@ const TokenListItem = forwardRef<
     return (
       <ListItem {...props} isDisabled={isDisabled} ref={ref}>
         <div className="flex items-center">
-          <TokenIcon size="lg" name={symbol} className="mr-2" />
+          {tokenType === 'unshielded' ? (
+            <TokenIcon size="lg" name={symbol} className="mr-2" />
+          ) : (
+            <ShieldedAssetIcon
+              chainName={chainName}
+              size="lg"
+              className="mr-2"
+            />
+          )}
 
           <p>
             <Typography
@@ -148,9 +164,19 @@ const TokenListItem = forwardRef<
               component="span"
               variant="body1"
               fw="bold"
-              className="block capitalize cursor-default text-mono-100 dark:text-mono-80"
+              className="capitalize cursor-default text-mono-100 dark:text-mono-80"
             >
-              {name}
+              {name}{' '}
+              {typeof explorerUrl === 'string' && (
+                <a
+                  href={explorerUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="!text-inherit"
+                >
+                  <ExternalLinkLine className="inline-block !fill-current" />
+                </a>
+              )}
             </Typography>
           </p>
         </div>

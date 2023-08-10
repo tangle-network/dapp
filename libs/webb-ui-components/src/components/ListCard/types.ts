@@ -110,6 +110,16 @@ export type AssetType = {
    * @type {AssetBadgeInfoType}
    */
   assetBadgeProps?: AssetBadgeInfoType;
+
+  /**
+   * The chain name of the asset (use to display the chain logo)
+   */
+  chainName?: string;
+
+  /**
+   * The asset explorer url
+   */
+  explorerUrl?: string;
 };
 
 export interface ListCardWrapperProps
