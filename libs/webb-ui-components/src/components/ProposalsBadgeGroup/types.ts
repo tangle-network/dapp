@@ -1,4 +1,4 @@
-import { ProposalVariant } from "@webb-tools/icons";
+import { ProposalVariant } from '@webb-tools/icons';
 
 export interface ProposalsBadgeGroupProps {
   proposals: ProposalVariant[];
