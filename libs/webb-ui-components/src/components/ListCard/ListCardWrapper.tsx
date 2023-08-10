@@ -1,7 +1,7 @@
 import { Close } from '@webb-tools/icons';
-import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import { ListCardWrapperProps } from './types';
 
@@ -11,7 +11,7 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
       <div
         {...props}
         className={twMerge(
-          'rounded-xl bg-mono-0 dark:bg-mono-180 p-9',
+          'rounded-xl bg-mono-0 dark:bg-mono-190 w-full max-w-xl p-9',
           className
         )}
         ref={ref}

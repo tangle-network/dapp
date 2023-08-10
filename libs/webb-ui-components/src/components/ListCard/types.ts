@@ -15,9 +15,9 @@ export type ChainType = {
   tag: 'dev' | 'test' | 'live';
 
   /**
-   * The token symbol of the chain
+   * Whether the current chain needs to switch wallet
    */
-  symbol: string;
+  needSwitchWallet?: boolean;
 };
 
 export type RelayerType = {
