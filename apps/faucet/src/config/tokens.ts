@@ -8,19 +8,16 @@ type TokenConfigType = Record<string, string>;
 const tokens: Record<string, TokenConfigType> = {
   [PresetTypedChainId.AthenaOrbit]: {
     ETH: zeroAddress,
-    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
   [PresetTypedChainId.HermesOrbit]: {
     ETH: zeroAddress,
-    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
   [PresetTypedChainId.DemeterOrbit]: {
     ETH: zeroAddress,
-    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
   },
   [PresetTypedChainId.TangleTestnet]: {
     tTNT: zeroAddress,
-    webbtTNT: '0x7F07E8FF927DA7a900f1876Be7FE87Eb61cCeF6F',
+    webbtTNT: '0x1920d33AB0EC499b23Ca655a690164961c63A076',
   },
 };
 
