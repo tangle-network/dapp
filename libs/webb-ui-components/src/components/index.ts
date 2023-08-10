@@ -47,6 +47,7 @@ export * from './Notification';
 export * from './Pagination';
 export * from './Popover';
 export * from './Progress';
+export * from './ProposalsBadgeGroup';
 export * from './Radio';
 export * from './SideBar';
 export * from './Slider';

@@ -1,3 +1,4 @@
+import { ProposalsTable } from '../containers';
 import { useBatchedProposal, useBatchedProposals } from '../provider';
 
 const Proposals = () => {
@@ -15,7 +16,11 @@ const Proposals = () => {
 
   // console.log('Batched Proposal', batchedProposal);
 
-  return <div className="flex flex-col space-y-4">Proposal Page</div>;
+  return (
+    <div className="flex flex-col space-y-4">
+      <ProposalsTable />
+    </div>
+  );
 };
 
 export default Proposals;

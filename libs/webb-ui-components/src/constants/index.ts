@@ -111,10 +111,10 @@ export const headerNavs: Link[] = [
     name: 'Authorities',
     path: 'authorities',
   },
-  // {
-  //   name: 'Proposals',
-  //   path: 'proposals',
-  // },
+  {
+    name: 'Proposals',
+    path: 'proposals',
+  },
 ];
 
 export const footerNavs: FooterNavsType = {
