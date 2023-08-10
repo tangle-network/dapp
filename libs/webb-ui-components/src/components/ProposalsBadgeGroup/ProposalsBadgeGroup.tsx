@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ProposalsBadgeGroupProps } from './types';
 import ProposalBadge from '@webb-tools/icons/ProposalBadge/ProposalBadge';

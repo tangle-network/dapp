@@ -1,23 +1,44 @@
+import { Card, Stats, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { ProposalsTable } from '../containers';
-import { useBatchedProposal, useBatchedProposals } from '../provider';
+import { useMemo } from 'react';
+import { useStatsContext } from '../provider';
 
 const Proposals = () => {
-  // All Batched Proposals
-  const batchedProposals = useBatchedProposals({
-    offset: 0,
-    perPage: 10,
-    filter: null,
-  });
+  const {
+    dkgDataFromPolkadotAPI: { proposerCount, proposerThreshold },
+  } = useStatsContext();
 
-  // Single Batched Proposal
-  const batchedProposal = useBatchedProposal('10');
-
-  // console.log('Batched Proposals', batchedProposals);
-
-  // console.log('Batched Proposal', batchedProposal);
+  const statsItems = useMemo(() => {
+    return [
+      {
+        titleProps: {
+          title: 'Proposal Threshold',
+          info: 'Proposal Threshold',
+        },
+        value: proposerThreshold,
+      },
+      {
+        titleProps: {
+          title: 'Proposers',
+          info: 'Proposers',
+        },
+        value: proposerCount,
+      },
+    ];
+  }, [proposerCount, proposerThreshold]);
 
   return (
     <div className="flex flex-col space-y-4">
+      <Card>
+        <TitleWithInfo
+          title="Proposals Status"
+          variant="h5"
+          info="Proposals Status"
+        />
+
+        <Stats items={statsItems} />
+      </Card>
+
       <ProposalsTable />
     </div>
   );

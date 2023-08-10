@@ -27,7 +27,11 @@ import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/ut
 import { ChainIcon, Spinner } from '@webb-tools/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ProposalBatchStatus, ProposalType } from '../../generated/graphql';
+import {
+  ProposalBatchStatus,
+  ProposalType,
+  ProposalBatchesOrderBy,
+} from '../../generated/graphql';
 import {
   ProposalBatch,
   BatchedProposalsQuery,
@@ -155,6 +159,7 @@ export const ProposalsTable = () => {
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
+      orderBy: ProposalBatchesOrderBy.IdDesc,
       filter: null,
     }),
     [

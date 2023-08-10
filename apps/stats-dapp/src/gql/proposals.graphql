@@ -1,5 +1,5 @@
-query ProposalBatches($perPage: Int!, $offset: Int!) {
-  proposalBatches(offset: $offset, first: $perPage) {
+query ProposalBatches($perPage: Int!, $offset: Int!, $orderBy: [ProposalBatchesOrderBy!]) {
+  proposalBatches(offset: $offset, first: $perPage, orderBy: $orderBy) {
     totalCount
 
     nodes {

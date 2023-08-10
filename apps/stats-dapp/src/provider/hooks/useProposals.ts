@@ -3,6 +3,7 @@ import { Loadable, Page, PageInfoQuery } from './types';
 import {
   useProposalBatchesLazyQuery,
   useProposalBatchQuery,
+  ProposalBatchesOrderBy,
 } from '../../generated/graphql';
 
 export type Proposal = {
@@ -18,7 +19,9 @@ export type ProposalBatch = {
   chain: string;
 };
 
-export type BatchedProposalsQuery = PageInfoQuery;
+export type BatchedProposalsQuery = PageInfoQuery & {
+  orderBy?: ProposalBatchesOrderBy;
+};
 
 export type BatchedProposals = Loadable<Page<ProposalBatch>>;
 
@@ -30,7 +33,7 @@ export type BatchedProposal = Loadable<ProposalBatch>;
 export const useBatchedProposals = (
   batchedProposalsQuery: BatchedProposalsQuery
 ): BatchedProposals => {
-  const { offset, perPage } = batchedProposalsQuery;
+  const { offset, perPage, orderBy } = batchedProposalsQuery;
 
   const [call, query] = useProposalBatchesLazyQuery();
 
@@ -52,6 +55,7 @@ export const useBatchedProposals = (
       variables: {
         offset,
         perPage,
+        orderBy,
       },
     });
   }, [offset, perPage]);
