@@ -100,7 +100,7 @@ export const Header: FC<HeaderProps> = ({
                   </Typography>
                 </MenuItem>
 
-                <MenuItem className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
+                <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
                   <Typography variant="label" fw="bold">
                     Advanced
                   </Typography>
@@ -117,7 +117,7 @@ export const Header: FC<HeaderProps> = ({
                       setSelectedNetworkType={setSelectedNetworkType}
                     />
                   </div>
-                </MenuItem>
+                </div>
               </DropdownBody>
             </Dropdown>
           </div>
