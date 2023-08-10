@@ -7,19 +7,19 @@ import { LOCALNET_CHAIN_IDS } from '../chains';
 
 const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
   ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, number>>>(
-    (acc, chainId) => {
-      const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
-      const anchorAddress: string = process.env
-        .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
+      (acc, chainId) => {
+        const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+        const anchorAddress: string = process.env
+          .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
 
-      acc[typedChainId] = {
-        [anchorAddress]: 0,
-      };
+        acc[typedChainId] = {
+          [anchorAddress]: 0,
+        };
 
-      return acc;
-    },
-    {}
-  )
+        return acc;
+      },
+      {}
+    )
   : {};
 
 // 0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d - webbAlpha - mocked backend
