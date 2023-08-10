@@ -1,4 +1,7 @@
-import { randNumber } from '@ngneat/falso';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
+
+import { vAnchorAddresses, allSubgraphUrls } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number;
@@ -6,9 +9,41 @@ type OverviewChipsDataType = {
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
+  const tvlVAnchorsByChainsData =
+    await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
+      allSubgraphUrls,
+      vAnchorAddresses
+    );
+
+  const depositVAnchorsByChainsData =
+    await vAnchorClient.Deposit.GetVAnchorsDepositByChains(
+      allSubgraphUrls,
+      vAnchorAddresses
+    );
+
+  const tvl = tvlVAnchorsByChainsData.reduce((tvlTotal, vAnchorsByChain) => {
+    const tvlVAnchorsByChain = vAnchorsByChain.reduce(
+      (tvlTotalByChain, vAnchor) =>
+        tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked)),
+      0
+    );
+    return tvlTotal + tvlVAnchorsByChain;
+  }, 0);
+
+  const volume = depositVAnchorsByChainsData.reduce(
+    (depositTotal, vAnchorsByChain) => {
+      const depositVAnchorsByChain = vAnchorsByChain.reduce(
+        (tvlTotalByChain, vAnchor) =>
+          tvlTotalByChain + +formatEther(BigInt(vAnchor.deposit)),
+        0
+      );
+      return depositTotal + depositVAnchorsByChain;
+    },
+    0
+  );
+
   return {
-    tvl: randNumber({ min: 10_000_000, max: 99_999_999 }),
-    volume: randNumber({ min: 1_000_000, max: 9_999_999 }),
+    tvl,
+    volume,
   };
 }

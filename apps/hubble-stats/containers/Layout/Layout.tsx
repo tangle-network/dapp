@@ -1,20 +1,10 @@
-import vAnchorClient from '@webb-tools/vanchor-client';
-import { Footer } from '@webb-tools/webb-ui-components';
 import React from 'react';
+import { Footer } from '@webb-tools/webb-ui-components';
 
 import { OverviewChipsContainer } from '..';
 import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
-import { formatEther } from 'viem';
 
 const Layout = async ({ children }: { children?: React.ReactNode }) => {
-  const { totalValueLocked } =
-    await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
-      vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
-      '0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05'
-    );
-
-  console.log('Fetched data from vAnchor subgraph: ', totalValueLocked);
-
   return (
     <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
       <SideBar />
