@@ -30,7 +30,12 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
               `shrink-0 grow-0 ${getFlexBasic('lg')}`
             ),
           })}
-          <Typography variant="body1" fw="bold" component="p">
+          <Typography
+            variant="body1"
+            fw="bold"
+            component="p"
+            className="dark:text-mono-0"
+          >
             {isHex(address)
               ? `${shortenHex(address)}`
               : `${shortenString(address)})}`}

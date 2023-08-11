@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
 import TokenSelector from '../TokenSelector';
-import { AssetListItem } from './AssetListItem';
+import TokenListItem from './TokenListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
@@ -25,8 +25,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     },
     ref
   ) => {
-    const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
-
     // Search text
     const [searchText, setSearchText] = useState('');
 
@@ -36,7 +34,9 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           (r) =>
             r.name.toLowerCase().includes(searchText.toLowerCase()) ||
             r.symbol.toString().includes(searchText.toLowerCase()) ||
-            r.balance?.toString().includes(searchText.toLowerCase())
+            r.assetBalanceProps?.balance
+              ?.toString()
+              .includes(searchText.toLowerCase())
         ),
       [searchText]
     );
@@ -53,10 +53,9 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           return;
         }
 
-        setAsset(nextItem);
         onChange?.(nextItem);
       },
-      [onChange, setAsset, unavailableTokens]
+      [onChange, unavailableTokens]
     );
 
     const { filteredPopular, filteredSelect } = useMemo(
@@ -115,7 +114,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           <ScrollArea className="min-w-[350px] h-[376px]">
             <ul>
               {filteredSelect.map((current, idx) => (
-                <AssetListItem
+                <TokenListItem
                   key={`${current.name}-${idx}`}
                   {...current}
                   onClick={() => onItemChange(current)}

@@ -69,7 +69,7 @@ export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
 export * from './QRCode';
-export * from './RefreshIcon';
+export { default as RefreshLineIcon } from './RefreshLineIcon';
 export * from './Save';
 export * from './SaveWithBg';
 export * from './Search';

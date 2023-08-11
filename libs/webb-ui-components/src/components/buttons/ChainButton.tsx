@@ -31,7 +31,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
             name={chain.name}
           />
-          <p>{shortName}</p>
+          <p className="font-bold">{shortName}</p>
           <ChevronDown
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}

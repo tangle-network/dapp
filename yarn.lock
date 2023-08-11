@@ -6824,12 +6824,12 @@
   resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-7.0.25.tgz#a2754a8af5de78a47a0bc2193f3baf80e302ad7b"
   integrity sha512-abM0M+H19eZu0dRK+/2PB0W9b7xXFhiPddXpFCjIfJQFGPIwGBWVAFot1bKR5Mu4IB9OftkJYMRtYEEBrNep3A==
 
-"@storybook/core-events@7.0.27":
-  version "7.0.27"
-  resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-7.0.27.tgz#94c7f8877998a25e8d14bafa51839fedfa442769"
-  integrity sha512-sNnqgO5i5DUIqeQfNbr987KWvAciMN9FmMBuYdKjVFMqWFyr44HTgnhfKwZZKl+VMDYkHA9Do7UGSYZIKy0P4g==
+"@storybook/core-events@7.1.1":
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-7.1.1.tgz#c2c30085bd254a27cdbd266a8e7755876abf9361"
+  integrity sha512-P5iI4zvCJo85de/sghglEHFK/GGkWAQQKzRFrz9kbVBX5LNaosfD7IYHIz/6ZWNPzxWR+RBOKcrRUfcArL4Njg==
 
-"@storybook/core-events@7.2.1", "@storybook/core-events@^7.0.0":
+"@storybook/core-events@7.2.1", "@storybook/core-events@^7.0.12":
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/@storybook/core-events/-/core-events-7.2.1.tgz#05121c9bac6ac3989acc05b49116107331e0c398"
   integrity sha512-EUXYb3gyQ2EzpDAWkgfoDl1EPabj3OE6+zntsD/gwvzQU85BTocs10ksnRyS55bfrQpYbf+Z+gw2CZboyagLgg==
@@ -7245,6 +7245,26 @@
     ts-dedent "^2.0.0"
     util-deprecate "^1.0.2"
 
+"@storybook/preview-api@7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@storybook/preview-api/-/preview-api-7.2.1.tgz#0de54f11237d837db918d672e7f4c2bc34abf8f7"
+  integrity sha512-WKecuOdeh9+og6bPR9KoQf/JCeSRPCcfZv9uNfJzAp3IiTnS3UpfCz+HBZzZJQrisgbd7OulNY400HQUmxY2Ag==
+  dependencies:
+    "@storybook/channels" "7.2.1"
+    "@storybook/client-logger" "7.2.1"
+    "@storybook/core-events" "7.2.1"
+    "@storybook/csf" "^0.1.0"
+    "@storybook/global" "^5.0.0"
+    "@storybook/types" "7.2.1"
+    "@types/qs" "^6.9.5"
+    dequal "^2.0.2"
+    lodash "^4.17.21"
+    memoizerific "^1.11.3"
+    qs "^6.10.0"
+    synchronous-promise "^2.0.15"
+    ts-dedent "^2.0.0"
+    util-deprecate "^1.0.2"
+
 "@storybook/preview-api@^7.0.12":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@storybook/preview-api/-/preview-api-7.1.1.tgz#5093b5a05ec75394193b05a45358193c0dff5e86"
@@ -7257,26 +7277,6 @@
     "@storybook/csf" "^0.1.0"
     "@storybook/global" "^5.0.0"
     "@storybook/types" "7.1.1"
-    "@types/qs" "^6.9.5"
-    dequal "^2.0.2"
-    lodash "^4.17.21"
-    memoizerific "^1.11.3"
-    qs "^6.10.0"
-    synchronous-promise "^2.0.15"
-    ts-dedent "^2.0.0"
-    util-deprecate "^1.0.2"
-
-"@storybook/preview-api@7.2.1":
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/@storybook/preview-api/-/preview-api-7.2.1.tgz#0de54f11237d837db918d672e7f4c2bc34abf8f7"
-  integrity sha512-WKecuOdeh9+og6bPR9KoQf/JCeSRPCcfZv9uNfJzAp3IiTnS3UpfCz+HBZzZJQrisgbd7OulNY400HQUmxY2Ag==
-  dependencies:
-    "@storybook/channels" "7.2.1"
-    "@storybook/client-logger" "7.2.1"
-    "@storybook/core-events" "7.2.1"
-    "@storybook/csf" "^0.1.0"
-    "@storybook/global" "^5.0.0"
-    "@storybook/types" "7.2.1"
     "@types/qs" "^6.9.5"
     dequal "^2.0.2"
     lodash "^4.17.21"
@@ -21212,7 +21212,7 @@ postcss-selector-not@^7.0.1:
   dependencies:
     postcss-selector-parser "^6.0.10"
 
-postcss-selector-parser@^6.0.0, postcss-selector-parser@^6.0.10, postcss-selector-parser@^6.0.11, postcss-selector-parser@^6.0.2, postcss-selector-parser@^6.0.4, postcss-selector-parser@^6.0.5, postcss-selector-parser@^6.0.9:
+postcss-selector-parser@^6.0.10, postcss-selector-parser@^6.0.11, postcss-selector-parser@^6.0.2, postcss-selector-parser@^6.0.4, postcss-selector-parser@^6.0.5, postcss-selector-parser@^6.0.9:
   version "6.0.13"
   resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.0.13.tgz#d05d8d76b1e8e173257ef9d60b706a8e5e99bf1b"
   integrity sha512-EaV1Gl4mUEV4ddhDnv/xtj7sxwrwxdetHdWUGnT4VJQf+4d05v6lHYZr8N573k5Z0BViss7BDhfWtKS3+sfAqQ==

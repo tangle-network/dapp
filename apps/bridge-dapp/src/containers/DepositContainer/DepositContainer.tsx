@@ -248,15 +248,19 @@ export const DepositContainer = forwardRef<
           return {
             name: currency.view.name,
             symbol: currency.view.symbol,
-            balance: balances[currency.id],
-            onTokenClick: () => addCurrency(currency),
-            isTokenAddedToMetamask: isTokenAddedToMetamask(
+            assetBalanceProps:
+              typeof balances[currency.id] === 'number'
+                ? { balance: balances[currency.id] }
+                : undefined,
+            onAddToken: isTokenAddedToMetamask(
               currency,
               activeChain,
               activeAccount?.address,
               currentResourceId
-            ),
-          };
+            )
+              ? undefined
+              : () => addCurrency(currency),
+          } satisfies AssetType;
         }
       );
     }, [
@@ -283,8 +287,11 @@ export const DepositContainer = forwardRef<
         return {
           name: currency.name,
           symbol: currency.symbol,
-          balance: balances[currency.id],
-        };
+          assetBalanceProps:
+            typeof balances[currency.id] === 'number'
+              ? { balance: balances[currency.id] }
+              : undefined,
+        } satisfies AssetType;
       });
     }, [currencies, populatedSelectableWebbTokens, balances]);
 
@@ -599,18 +606,22 @@ export const DepositContainer = forwardRef<
       }
 
       const tokens = getPossibleFungibleCurrencies(wrappableCurrency.id).map(
-        (currency): AssetType => ({
-          name: currency.view.name,
-          balance: balances[currency.id] ?? 0,
-          symbol: currency.view.symbol,
-          onTokenClick: () => addCurrency(currency),
-          isTokenAddedToMetamask: isTokenAddedToMetamask(
-            currency,
-            activeChain,
-            activeAccount?.address,
-            currentResourceId
-          ),
-        })
+        (currency): AssetType =>
+          ({
+            name: currency.view.name,
+            assetBalanceProps: {
+              balance: balances[currency.id] ?? 0,
+            },
+            symbol: currency.view.symbol,
+            onAddToken: isTokenAddedToMetamask(
+              currency,
+              activeChain,
+              activeAccount?.address,
+              currentResourceId
+            )
+              ? undefined
+              : () => addCurrency(currency),
+          } satisfies AssetType)
       );
 
       return {

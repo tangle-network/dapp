@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 import { MenuItemProps } from './types';
 
 /**
- * The `MenuItem` component
+ * The dropdown `MenuItem` component (must be used inside the `Dropdown*` component)
  *
  * Props:
  *

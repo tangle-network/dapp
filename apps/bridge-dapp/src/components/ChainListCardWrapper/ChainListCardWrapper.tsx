@@ -1,12 +1,12 @@
+import { Bridge } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
+import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useConnectWallet } from '../../hooks';
-import { ChainListCardWrapperProps } from './types';
-import { getNativeCurrencyFromConfig } from '@webb-tools/dapp-config';
 import { getActiveSourceChains } from '../../utils/getActiveSourceChains';
-import { Bridge } from '@webb-tools/abstract-api-provider';
+import { ChainListCardWrapperProps } from './types';
 
 /**
  * The wrapper component for the ChainListCard component
@@ -53,16 +53,10 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     if (chainsProps) return chainsProps;
 
     return getActiveSourceChains(apiConfig.chains).map((val) => {
-      const currency = getNativeCurrencyFromConfig(
-        apiConfig.currencies,
-        calculateTypedChainId(val.chainType, val.id)
-      );
-
       return {
         name: val.name,
         tag: val.tag,
-        symbol: currency?.symbol ?? 'Unknown',
-      };
+      } satisfies ChainType;
     });
   }, [apiConfig, chainsProps]);
 

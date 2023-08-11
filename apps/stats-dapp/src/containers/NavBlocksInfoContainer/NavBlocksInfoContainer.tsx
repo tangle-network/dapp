@@ -9,7 +9,7 @@ import {
   FileCodeLineIcon,
   GraphIcon,
   BlockIcon,
-  RefreshIcon,
+  RefreshLineIcon,
   Spinner,
 } from '@webb-tools/icons';
 import {
@@ -123,7 +123,10 @@ export const NavBoxInfoContainer = () => {
           )}
         </Chip>
         <Chip color="blue">
-          <RefreshIcon size="lg" className="fill-blue-90 dark:fill-blue-30" />{' '}
+          <RefreshLineIcon
+            size="lg"
+            className="fill-blue-90 dark:fill-blue-30"
+          />{' '}
           {currentKey ? (
             `Session: ${Number(currentKey?.session).toLocaleString()}`
           ) : (
