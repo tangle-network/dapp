@@ -27,7 +27,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
         <RadioGroup.Item
           {...overrideRadixRadioItemProps}
           className={twMerge(
-            'peer w-[18px] h-[18px] rounded-full bg-mono-0 dark:bg-mono-180 border border-mono-100',
+            'peer grow-0 shrink-0 basis-[18px] h-[18px] rounded-full bg-mono-0 dark:bg-mono-180 border border-mono-100',
             'enabled:radix-state-unchecked:hover:bg-blue-10 enabled:radix-state-unchecked:hover:dark:bg-blue-120',
             'enabled:radix-state-unchecked:hover:border-blue-40 enabled:radix-state-unchecked:hover:dark:border-blue-90',
             'enabled:radix-state-unchecked:hover:shadow-[0_0_0_1px_rgba(213,230,255,1)] hover:dark:shadow-none',
@@ -48,7 +48,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
             )}
           />
         </RadioGroup.Item>
-        {label && (
+        {typeof label === 'string' || typeof label === 'number' ? (
           <Typography
             component="label"
             variant="body1"
@@ -60,6 +60,8 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
           >
             {label}
           </Typography>
+        ) : (
+          label
         )}
       </div>
     );

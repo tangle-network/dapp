@@ -32,11 +32,6 @@ export type RelayerType = {
   externalUrl: string;
 
   /**
-   * Relayer fee
-   */
-  fee?: string | number;
-
-  /**
    * Relayer percentage
    */
   percentage?: number;
@@ -46,6 +41,11 @@ export type RelayerType = {
    * @default 'polkadot'
    */
   theme?: AvatarProps['theme'];
+
+  /**
+   * Whether the relayer is disabled
+   */
+  isDisabled?: boolean;
 };
 
 export type AssetBalanceType = {

@@ -18,7 +18,7 @@ export const ListItem = forwardRef<
 
         cx({
           'hover:bg-blue-10 dark:hover:bg-blue-120': !isDisabled,
-          'opacity-70': isDisabled,
+          'opacity-50': isDisabled,
         }),
         className
       )}

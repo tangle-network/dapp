@@ -25,7 +25,7 @@ export interface RadioItemProps extends PropsOf<'div'> {
   /**
    * The children as the label of radio button.
    */
-  children?: string;
+  children?: React.ReactNode;
 
   /**
    * The object to override the props of the radio item.
