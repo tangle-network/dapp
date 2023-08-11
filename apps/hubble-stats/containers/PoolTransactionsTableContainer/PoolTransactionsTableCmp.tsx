@@ -1,18 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components';
 
 import { PoolTransactionsTable } from '../../components';
 import { FilterButton } from '../../components/table';
-import { PoolTransactionType } from '../../components/PoolTransactionsTable/types';
+import { PoolTransactionDataType } from '../../data';
 
 const pageSize = 10;
 
-const PoolTransactionsTableCmp = ({
+const PoolTransactionsTableCmp: FC<PoolTransactionDataType> = ({
   transactions,
-}: {
-  transactions: PoolTransactionType[];
 }) => {
   const filterButton = useMemo(
     () => (

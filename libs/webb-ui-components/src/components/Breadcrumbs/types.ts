@@ -7,6 +7,7 @@ export interface BreadcrumbsPropsType extends WebbComponentBase {
 export interface BreadcrumbsItemPropsType extends WebbComponentBase {
   isLast?: boolean;
   icon?: React.ReactNode;
+  textClassName?: string;
 }
 
 export interface BreadcrumbsSeparatorPropsType extends WebbComponentBase {}

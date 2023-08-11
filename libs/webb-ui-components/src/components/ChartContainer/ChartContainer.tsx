@@ -3,6 +3,7 @@ import { ChartContainerProps } from './types';
 import { Chip } from '../Chip';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
+import { getRoundedAmountString } from '../../utils';
 
 /**
  * Container for charts (e.g. TVL, Volume, etc.) that displays chart heading, value, chart (should be passed as a child) and along with optional chart filters (e.g days, tokens and chains).
@@ -36,7 +37,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
   ) => {
     const className = useMemo(() => {
       return twMerge(
-        'p-6 flex flex-col justify-between gap-4 border-2 rounded-lg dark:border-mono-160 border-mono-0 backdrop-blur-xl',
+        'p-6 flex flex-col justify-between gap-4 border-2 rounded-lg dark:border-mono-160 border-mono-0',
         wrapperClassName
       );
     }, [wrapperClassName]);
@@ -61,7 +62,10 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
                 fw="bold"
                 className="!text-[24px] !leading-[36px] text-mono-200 dark:text-mono-0"
               >
-                {`$${value ?? currentValue}m`}
+                {`$${getRoundedAmountString(value ?? currentValue, 2, {
+                  roundingFunction: Math.floor,
+                  totalLength: 0,
+                })}`}
               </Typography>
 
               <Typography

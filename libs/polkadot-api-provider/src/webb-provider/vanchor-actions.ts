@@ -28,6 +28,7 @@ import {
   ensureHex,
 } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import {
   ChainType,
   FIELD_SIZE,
@@ -49,7 +50,6 @@ import * as snarkjs from 'snarkjs';
 import { ApiPromise } from '@polkadot/api';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import assert from 'assert';
 import { formatUnits } from 'viem';
 import { getLeafIndex } from '../mt-utils';
@@ -1002,9 +1002,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Validate that the commitment is in the tree
     if (commitmentIndex === -1) {
       // Outer try/catch will handle this
-      throw new Error(
-        'Relayer has not yet relayed the commitment to the destination chain'
-      );
+      throw WebbError.from(WebbErrorCodes.CommitmentNotInTree);
     }
 
     const utxo = await utxoFromVAnchorNote(note.note, commitmentIndex);

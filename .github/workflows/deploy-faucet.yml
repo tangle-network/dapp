@@ -53,7 +53,11 @@ jobs:
         run: yarn add -D -W netlify-cli
 
       - name: Build project
-        run: yarn nx build faucet
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: yarn build:faucet
 
       - name: Deploy site
         id: deploy-netlify
