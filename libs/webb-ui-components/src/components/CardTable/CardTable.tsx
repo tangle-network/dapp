@@ -39,7 +39,7 @@ export const CardTable: React.FC<CardTableProps> = ({
       )}
     >
       {/** Title and filter */}
-      <div className="flex items-center justify-between px-6 pt-4 pb-2">
+      <div className="flex items-center justify-between px-6 pt-4 py-4">
         <TitleWithInfo {...titleProps} />
 
         {leftTitle}

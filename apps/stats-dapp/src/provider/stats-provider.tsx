@@ -64,6 +64,8 @@ type StatsProvidervalue = {
     currentKey: string;
     nextSessionNumber: number;
     nextKey: string;
+    proposerCount: number;
+    proposerThreshold: number;
   };
 };
 
@@ -119,6 +121,8 @@ const statsContext: React.Context<StatsProvidervalue> =
       currentKey: '',
       nextSessionNumber: 0,
       nextKey: '',
+      proposerCount: 0,
+      proposerThreshold: 0,
     },
   });
 
@@ -178,6 +182,8 @@ export const StatsProvider: React.FC<
     currentKey: '',
     nextSessionNumber: 0,
     nextKey: '',
+    proposerCount: 0,
+    proposerThreshold: 0,
   });
 
   useEffect(() => {
@@ -258,11 +264,16 @@ export const StatsProvider: React.FC<
         nextSessionNumber = nextDKGPublicKey[0];
         nextKey = nextDKGPublicKey[1];
       }
+      const proposerCount = await apiPromise.query.dkgProposals.proposerCount();
+      const proposerThreshold =
+        await apiPromise.query.dkgProposals.proposerThreshold();
       setDkgDataFromPolkadotAPI({
         currentSessionNumber,
         currentKey,
         nextSessionNumber,
         nextKey,
+        proposerCount: Number(proposerCount.toString()),
+        proposerThreshold: Number(proposerThreshold.toString()),
       });
     };
 
