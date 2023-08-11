@@ -718,8 +718,6 @@ video {
   margin-left: 1rem;
 }.ml-8{
   margin-left: 2rem;
-}.ml-9{
-  margin-left: 2.25rem;
 }.ml-\[3px\]{
   margin-left: 3px;
 }.mr-1{
@@ -891,6 +889,8 @@ video {
   width: 100vw;
 }.min-w-0{
   min-width: 0px;
+}.min-w-\[100px\]{
+  min-width: 100px;
 }.min-w-\[176px\]{
   min-width: 176px;
 }.min-w-\[200px\]{
@@ -934,8 +934,6 @@ video {
   max-width: 356px;
 }.max-w-\[420px\]{
   max-width: 420px;
-}.max-w-\[422px\]{
-  max-width: 422px;
 }.max-w-\[470px\]{
   max-width: 470px;
 }.max-w-\[518px\]{
@@ -958,6 +956,8 @@ video {
   max-width: 28rem;
 }.max-w-none{
   max-width: none;
+}.max-w-xl{
+  max-width: 36rem;
 }.flex-1{
   flex: 1 1 0%;
 }.flex-\[1\]{
@@ -1588,10 +1588,16 @@ video {
   fill: #ECF4FF;
 }.fill-blue-70{
   fill: #3D7BCE;
+}.fill-blue-90{
+  fill: #1C529A;
 }.fill-current{
   fill: currentColor;
+}.fill-green-10{
+  fill: #EBFFF0;
 }.fill-green-70{
   fill: #288E32;
+}.fill-green-90{
+  fill: #00710C;
 }.fill-mono-0{
   fill: #fff;
 }.fill-mono-120{
@@ -1604,12 +1610,20 @@ video {
   fill: #1F1D2B;
 }.fill-mono-60{
   fill: #D3D8E2;
+}.fill-red-10{
+  fill: #FFCEB7;
 }.fill-red-70{
   fill: #C64A17;
+}.fill-red-90{
+  fill: #A0370B;
 }.fill-transparent{
   fill: transparent;
+}.fill-yellow-10{
+  fill: #FFFAEA;
 }.fill-yellow-70{
   fill: #F4C328;
+}.fill-yellow-90{
+  fill: #AF8C1E;
 }.\!stroke-none{
   stroke: none !important;
 }.stroke-\[\#23579D\]{
@@ -1996,10 +2010,6 @@ video {
   outline-offset: 2px;
 }.filter{
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}.backdrop-blur-xl{
-  --tw-backdrop-blur: blur(24px);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }.transition{
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -2639,6 +2649,8 @@ main{
   margin-left: 0.25rem;
 }.group:hover .group-hover\:block{
   display: block;
+}.group:hover .group-hover\:hidden{
+  display: none;
 }.group\/tr:hover .group-hover\/tr\:bg-blue-0{
   --tw-bg-opacity: 1;
   background-color: rgb(236 244 255 / var(--tw-bg-opacity));
@@ -3078,10 +3090,6 @@ main{
 }.disabled\:hover\:border-mono-80:hover:disabled{
   --tw-border-opacity: 1;
   border-color: rgb(194 200 212 / var(--tw-border-opacity));
-}:is(.dark .dark\:block){
-  display: block;
-}:is(.dark .dark\:hidden){
-  display: none;
 }:is(.dark .dark\:border-2){
   border-width: 2px;
 }:is(.dark .dark\:border-\[\#4E5463\]){
@@ -3191,6 +3199,9 @@ main{
 }:is(.dark .dark\:bg-mono-180){
   --tw-bg-opacity: 1;
   background-color: rgb(43 47 64 / var(--tw-bg-opacity));
+}:is(.dark .dark\:bg-mono-190){
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 40 54 / var(--tw-bg-opacity));
 }:is(.dark .dark\:bg-mono-20){
   --tw-bg-opacity: 1;
   background-color: rgb(247 248 247 / var(--tw-bg-opacity));
@@ -3229,6 +3240,8 @@ main{
   fill: #67A0EE;
 }:is(.dark .dark\:fill-current){
   fill: currentColor;
+}:is(.dark .dark\:fill-green-120){
+  fill: #0F3413;
 }:is(.dark .dark\:fill-green-30){
   fill: #85DC8E;
 }:is(.dark .dark\:fill-green-50){
@@ -3243,8 +3256,16 @@ main{
   fill: #2B2F40;
 }:is(.dark .dark\:fill-mono-40){
   fill: #E2E5EB;
+}:is(.dark .dark\:fill-red-120){
+  fill: #422417;
+}:is(.dark .dark\:fill-red-30){
+  fill: #FF874D;
 }:is(.dark .dark\:fill-red-50){
   fill: #EF570D;
+}:is(.dark .dark\:fill-yellow-120){
+  fill: #3F3517;
+}:is(.dark .dark\:fill-yellow-30){
+  fill: #FFE07C;
 }:is(.dark .dark\:stroke-\[\#23579D\]){
   stroke: #23579D;
 }:is(.dark .dark\:stroke-\[\#4CB457\]){
