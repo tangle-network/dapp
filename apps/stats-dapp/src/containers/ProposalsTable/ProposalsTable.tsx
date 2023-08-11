@@ -17,7 +17,6 @@ import {
   CardTable,
   CheckBoxMenuGroup,
   Chip,
-  ChipColors,
   Filter,
   Table,
   Divider,
@@ -25,7 +24,7 @@ import {
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ChainIcon, Spinner } from '@webb-tools/icons';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ProposalBatchStatus,
@@ -37,6 +36,11 @@ import {
   BatchedProposalsQuery,
   useBatchedProposals,
 } from '../../provider/hooks';
+import {
+  mapProposalStatusToChipColor,
+  PROPOSAL_STATUS,
+  PROPOSAL_TYPES,
+} from './utils';
 
 const columnHelper = createColumnHelper<ProposalBatch>();
 
@@ -84,42 +88,6 @@ const columns: ColumnDef<ProposalBatch, any>[] = [
   //   ),
   // }),
 ];
-
-const PROPOSAL_TYPES: ProposalType[] = [
-  ProposalType.AnchorCreate,
-  ProposalType.AnchorUpdate,
-  ProposalType.Evm,
-  ProposalType.FeeRecipientUpdate,
-  ProposalType.MaxDepositLimitUpdate,
-  ProposalType.MinWithdrawalLimitUpdate,
-  ProposalType.Refresh,
-  ProposalType.RescueTokens,
-  ProposalType.ResourceIdUpdate,
-  ProposalType.ResourceIdUpdate,
-  ProposalType.SetTreasuryHandler,
-  ProposalType.SetVerifier,
-  ProposalType.TokenAdd,
-  ProposalType.TokenRemove,
-  ProposalType.WrappingFeeUpdate,
-];
-const PROPOSAL_STATUS: ProposalBatchStatus[] = [
-  ProposalBatchStatus.Signed,
-  ProposalBatchStatus.Removed,
-  ProposalBatchStatus.Expired,
-];
-
-function mapProposalStatusToChipColor(status: ProposalBatchStatus): ChipColors {
-  switch (status) {
-    case ProposalBatchStatus.Signed:
-      return 'green';
-    case ProposalBatchStatus.Removed:
-      return 'red';
-    case ProposalBatchStatus.Expired:
-      return 'yellow';
-  }
-
-  return 'purple';
-}
 
 export const ProposalsTable = () => {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -188,8 +156,6 @@ export const ProposalsTable = () => {
 
   const data = useMemo(() => {
     if (batchedProposals.val) {
-      const proposalIds = batchedProposals.val.items.map((item) => item.id);
-      localStorage.setItem('proposalIds', JSON.stringify(proposalIds));
       return batchedProposals.val.items;
     }
 

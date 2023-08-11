@@ -18,9 +18,7 @@ export function getChipColorByProposalType(
     }
 
     default: {
-      throw new Error(
-        'Unknow ProposalStatus inside `getChipColorByProposalType` functioni'
-      );
+      return 'purple';
     }
   }
 }
