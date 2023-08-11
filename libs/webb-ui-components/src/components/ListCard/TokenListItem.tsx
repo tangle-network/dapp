@@ -1,6 +1,7 @@
 import {
   AlertFill,
   ExternalLinkLine,
+  RefreshLineIcon,
   ShieldedAssetIcon,
   TokenIcon,
 } from '@webb-tools/icons';
@@ -81,6 +82,7 @@ const BadgeInfo = ({ variant, children }: AssetBadgeInfoType) => {
 
     default: {
       color = 'blue';
+      badgeIcon = <RefreshLineIcon />;
       break;
     }
   }
