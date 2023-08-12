@@ -1,4 +1,4 @@
-import { WebbComponentBase } from '../../types';
+import { PropsOf, WebbComponentBase } from '../../types';
 
 type ProgressSize = 'sm' | 'md' | 'lg';
 
@@ -33,3 +33,21 @@ export type ProgressClassName = {
     label: string;
   };
 };
+
+export interface SteppedProgressProps extends PropsOf<'ul'> {
+  /**
+   * The total number of steps
+   * @default 5
+   */
+  steps?: number;
+
+  /**
+   * The current active step
+   */
+  activeStep?: number;
+
+  /**
+   * If `true`, the steps will be displayed paused
+   */
+  paused?: boolean;
+}
