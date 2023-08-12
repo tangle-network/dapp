@@ -169,6 +169,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   rightIcon={
                     savedEnpoints.customSubqueryEndpoint ? (
                       <DeleteBinWithBg
+                        className="cursor-pointer"
                         onClick={() => {
                           setDefaultEndpointsAsUserSelected();
                           localStorage.removeItem('customSubqueryEndpoint');
@@ -181,6 +182,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                       />
                     ) : customSubqueryEndpoint ? (
                       <SaveWithBg
+                        className="cursor-pointer"
                         onClick={async () => {
                           if (
                             await isValidSubqueryEndpoint(
@@ -224,6 +226,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                   rightIcon={
                     savedEnpoints.customPolkadotEndpoint ? (
                       <DeleteBinWithBg
+                        className="cursor-pointer"
                         onClick={() => {
                           setDefaultEndpointsAsUserSelected();
                           localStorage.removeItem('customPolkadotEndpoint');
@@ -236,6 +239,7 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({
                       />
                     ) : customPolkadotEndpoint ? (
                       <SaveWithBg
+                        className="cursor-pointer"
                         onClick={async () => {
                           if (
                             await isValidPolkadotEndpoint(

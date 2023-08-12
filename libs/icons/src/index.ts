@@ -107,3 +107,6 @@ export * from './TangleIcon';
 
 export * from './StatusIndicator';
 export { default as StatusIndicator } from './StatusIndicator';
+
+// Proposal Badges
+export * from './ProposalBadge';
