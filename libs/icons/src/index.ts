@@ -1,4 +1,6 @@
 export * from './AddBoxLineIcon';
+export { default as AccountCircleLineIcon } from './AccountCircleLineIcon';
+export { default as ClipboardLineIcon } from './ClipboardLineIcon';
 export * from './AddCircleFillIcon';
 export * from './AddCircleLineIcon';
 export * from './ArrowDropDownFill';
