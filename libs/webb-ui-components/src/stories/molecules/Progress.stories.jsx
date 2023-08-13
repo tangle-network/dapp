@@ -1,10 +1,8 @@
-import React from 'react';
-
-import { Progress } from '@webb-tools/webb-ui-components/components';
+import { Progress, SteppedProgress } from '../../components/Progress';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/Molecules/Progress',
+  title: 'Design System/V2 (WIP)/Molecules/Progress',
   component: Progress,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
@@ -19,9 +17,29 @@ Default.args = {
   value: '60',
 };
 
-export const withMax = Template.bind({});
+export const WithMax = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-withMax.args = {
+WithMax.args = {
   ...Default.args,
   max: '70',
 };
+
+export const SteppedProgressDefault = () => (
+  <SteppedProgress className="max-w-xl" steps={8} />
+);
+
+export const SteppedProgressWithActiveStep = () => (
+  <SteppedProgress className="max-w-xl" steps={8} activeStep={3} />
+);
+
+export const SteppedProgressCompleted = () => (
+  <SteppedProgress className="max-w-xl" steps={8} activeStep={9} />
+);
+
+export const SteppedProgressPaused = () => (
+  <SteppedProgress className="max-w-xl" steps={8} paused />
+);
+
+export const SteppedProgressPausedWithActiveStep = () => (
+  <SteppedProgress className="max-w-xl" steps={8} activeStep={3} paused />
+);
