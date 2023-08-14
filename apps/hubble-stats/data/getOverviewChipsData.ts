@@ -9,7 +9,8 @@ type OverviewChipsDataType = {
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
-  let tvl, volume;
+  let tvl: number | undefined;
+  let volume: number | undefined;
 
   try {
     const tvlVAnchorsByChainsData =
@@ -18,7 +19,7 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
         vAnchorAddresses
       );
 
-    tvl = tvlVAnchorsByChainsData.reduce((tvlTotal, vAnchorsByChain) => {
+    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
       const tvlVAnchorsByChain = vAnchorsByChain.reduce(
         (tvlTotalByChain, vAnchor) =>
           tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked)),
@@ -37,7 +38,7 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
         vAnchorAddresses
       );
 
-    volume = depositVAnchorsByChainsData.reduce(
+    volume = depositVAnchorsByChainsData?.reduce(
       (depositTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (tvlTotalByChain, vAnchor) =>

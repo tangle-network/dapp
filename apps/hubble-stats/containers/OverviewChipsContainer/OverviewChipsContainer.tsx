@@ -12,7 +12,7 @@ export default async function OverviewChipsContainer() {
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
         TVL: $
-        {tvl
+        {typeof tvl === 'number'
           ? numbro(tvl).format({ thousandSeparated: true, mantissa: 2 })
           : '-'}
       </Chip>
@@ -20,7 +20,7 @@ export default async function OverviewChipsContainer() {
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
         Volume: $
-        {volume
+        {typeof volume === 'number'
           ? numbro(volume).format({ thousandSeparated: true, mantissa: 2 })
           : '-'}
       </Chip>
