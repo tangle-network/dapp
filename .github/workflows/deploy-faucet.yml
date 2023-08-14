@@ -49,9 +49,6 @@ jobs:
           echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
           echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
 
-      - name: Install netlify-cli
-        run: yarn add -D -W netlify-cli
-
       - name: Build project
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
@@ -63,7 +60,7 @@ jobs:
         id: deploy-netlify
         shell: bash
         run: |
-          COMMAND=$(echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_FAUCET_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/faucet/.next" )
+          COMMAND=$(echo "yarn netlify deploy --build context=deploy-preview --site $NETLIFY_FAUCET_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/faucet/.next --filter=@webb-tools/faucet" )
           OUTPUT=$(sh -c "$COMMAND")
           echo "response<<EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
