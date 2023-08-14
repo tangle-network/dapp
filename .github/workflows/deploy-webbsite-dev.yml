@@ -53,9 +53,6 @@ jobs:
           echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
           echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
 
-      - name: Install netlify-cli
-        run: yarn add -D -W netlify-cli
-
       - name: Build project
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
@@ -67,7 +64,7 @@ jobs:
         id: deploy-netlify
         shell: bash
         run: |
-          COMMAND=$(echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next" )
+          COMMAND=$(echo "yarn netlify deploy --build context=deploy-preview --site $NETLIFY_WEBBSITE_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/webbsite/.next --filter=@webb-tools/webbsite" )
           OUTPUT=$(sh -c "$COMMAND")
           echo "response<<EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
