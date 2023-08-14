@@ -42,9 +42,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Install netlify-cli
-        run: yarn add -D -W netlify-cli
-
       - name: Build project
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
@@ -56,7 +53,7 @@ jobs:
         id: deploy-netlify
         shell: bash
         run: |
-          COMMAND=$(echo "npx netlify deploy --build context=deploy-preview --site $NETLIFY_HUBBLE_STATS_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/hubble-stats/.next" )
+          COMMAND=$(echo "yarn netlify deploy --build context=deploy-preview --site $NETLIFY_HUBBLE_STATS_ID --auth $NETLIFY_AUTH_TOKEN --dir=./dist/apps/hubble-stats/.next --filter=@webb-tools/hubble-stats" )
           OUTPUT=$(sh -c "$COMMAND")
           echo "response<<EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT

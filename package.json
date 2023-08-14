@@ -245,6 +245,7 @@
     "listr2": "^6.6.0",
     "markdown-loader": "^8.0.0",
     "mini-css-extract-plugin": "^2.6.0",
+    "netlify-cli": "^16.0.3",
     "null-loader": "^4.0.1",
     "numbro": "^2.3.6",
     "nx": "16.1.4",

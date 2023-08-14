@@ -47,7 +47,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         with:
-          args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./dist/apps/stats-dapp/
+          args: deploy context=deploy-preview site=$NETLIFY_SITE_ID --dir=./dist/apps/stats-dapp/ --filter=@webb-tools/stats-dapp
 
       - name: Netlify Preview URL
         # Use master branch to fix issue with entrypoint.sh script
