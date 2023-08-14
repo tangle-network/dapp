@@ -23,7 +23,7 @@ const ThemeSwitcherButton = () => {
   return (
     <button
       className="relative inline-block text-left"
-      onClick={() => toggleThemeMode(isDarkMode ? 'light' : 'dark')}
+      onClick={() => toggleThemeMode()}
     >
       {Icon}
     </button>

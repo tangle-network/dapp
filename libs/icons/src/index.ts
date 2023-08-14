@@ -100,3 +100,6 @@ export * from './PartyFill';
 // Tangle Icons
 export * from './Tangle';
 export * from './TangleIcon';
+
+// Proposal Badges
+export * from './ProposalBadge';
