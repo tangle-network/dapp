@@ -1,17 +1,17 @@
-import { FC } from 'react';
+import React from 'react';
 import { Footer } from '@webb-tools/webb-ui-components';
 
 import { OverviewChipsContainer } from '..';
-import { SideBar, SideBarMenu, Breadcrumbs } from '../../components';
+import { Breadcrumbs, SideBar, SideBarMenu } from '../../components';
 
-const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
+const Layout = async ({ children }: { children?: React.ReactNode }) => {
   return (
-    <body className="h-screen bg-body dark:bg-body_dark bg-cover flex">
+    <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
       <SideBar />
-      <main className="flex-1 px-3 md:px-5 lg:px-10 overflow-y-auto">
+      <main className="flex-1 px-3 overflow-y-auto md:px-5 lg:px-10">
         {/* Header */}
         <div className="flex items-center justify-between pt-6 pb-4">
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <SideBarMenu />
             <Breadcrumbs />
           </div>
