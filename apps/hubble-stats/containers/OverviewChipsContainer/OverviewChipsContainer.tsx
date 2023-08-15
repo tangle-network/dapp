@@ -11,12 +11,18 @@ export default async function OverviewChipsContainer() {
     <div className="hidden md:flex items-center gap-4">
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        TVL: ${numbro(tvl).format({ thousandSeparated: true })}
+        TVL: $
+        {typeof tvl === 'number'
+          ? numbro(tvl).format({ thousandSeparated: true, mantissa: 2 })
+          : '-'}
       </Chip>
 
       <Chip color="blue">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        Volume: ${numbro(volume).format({ thousandSeparated: true })}
+        Volume: $
+        {typeof volume === 'number'
+          ? numbro(volume).format({ thousandSeparated: true, mantissa: 2 })
+          : '-'}
       </Chip>
     </div>
   );
