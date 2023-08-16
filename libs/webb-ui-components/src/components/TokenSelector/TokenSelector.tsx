@@ -58,14 +58,14 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
 
     return (
       <button {...props} disabled={disabled} className={mergedClsx} ref={ref}>
-        {tokenType === 'unshielded' ? (
-          <TokenIcon name={children?.toLowerCase()} size="lg" />
-        ) : (
+        {tokenType === 'shielded' ? (
           <ShieldedAssetIcon
             size="lg"
             displayPlaceholder={typeof children === 'undefined'}
           />
-        )}
+        ) : children ? (
+          <TokenIcon name={children.toLowerCase()} size="lg" />
+        ) : null}
 
         <Typography
           variant="h5"
@@ -73,7 +73,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
           component="span"
           className="block text-mono-200 dark:text-mono-40"
         >
-          {children ?? 'Select'}
+          {children ?? 'Select token'}
         </Typography>
 
         <ChevronDown

@@ -25,7 +25,7 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
           {...restProps}
           ref={forwardedRef}
           className={twMerge(
-            'group flex gap-1 px-4 py-2 max-w-md rounded-lg',
+            'group flex items-center gap-1 px-4 py-2 max-w-md rounded-lg',
             'bg-[#F7F8F7]/50 dark:bg-mono-180',
             'outline outline-1 outline-offset-1 outline-transparent',
             cx({
@@ -99,6 +99,7 @@ const TextFieldInput = forwardRef<
         ref={forwardedRef}
         className={twMerge(
           'h5 font-bold grow bg-transparent focus-visible:outline-none',
+          'focus:ring-0 border-0 p-0',
           cx({
             'text-mono-200 dark:text-mono-0': !isDisabled,
             'text-mono-80 dark:text-mono-120': isDisabled,
