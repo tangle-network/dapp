@@ -235,6 +235,49 @@ const TxProgressorFooter = forwardRef<
 );
 TxProgressorFooter.displayName = 'TxProgressorFooter';
 
+/**
+ * The Transaction Progressor component is a component
+ * that displays the progress of a transaction.
+ *
+ * It is composed of 4 components:
+ * - `TxProgressor.Root`
+ * - `TxProgressor.Header`
+ * - `TxProgressor.Body`
+ * - `TxProgressor.Footer`
+ *
+ * @example
+ * ```tsx
+ * <TxProgressor.Root>
+ *  <TxProgressor.Header name="Deposit" createdAt={Date.now()} />
+ *    <TxProgressor.Body
+ *      txSourceInfo={{
+ *        typedChainId: PresetTypedChainId.Goerli,
+ *        amount: -1.45,
+ *        tokenSymbol: 'WETH',
+ *        walletAddress: randEthereumAddress(),
+ *      }}
+ *      txDestinationInfo={{
+ *        typedChainId: PresetTypedChainId.PolygonTestnet,
+ *        amount: 1.45,
+ *        tokenSymbol: 'webbETH',
+ *        tokenType: 'shielded',
+ *        accountType: 'note',
+ *        walletAddress: randEthereumAddress(),
+ *      }}
+ *    />
+ *    <TxProgressor.Footer
+ *      status="info"
+ *      statusMessage="Fetching Leaves (15%)"
+ *      steppedProgressProps={{
+ *        steps: 8,
+ *        activeStep: 3,
+ *      }}
+ *      externalUrl={new URL('https://webb.tools')}
+ *      actionProps={{ children: 'Open explorer' }}
+ *    />
+ *  </TxProgressor.Root>
+ * ```
+ */
 const TxProgressor = Object.assign(
   {},
   {
