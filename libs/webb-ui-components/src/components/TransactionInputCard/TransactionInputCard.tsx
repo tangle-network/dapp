@@ -238,6 +238,7 @@ const TransactionInputCardBody = forwardRef<
         <div className="max-w-[160px]">
           {isFixedAmount ? (
             <AdjustAmount
+              min={0}
               {...fixedAmountProps}
               value={amount}
               onChange={onAmountChange}
@@ -245,6 +246,7 @@ const TransactionInputCardBody = forwardRef<
           ) : (
             <TextFieldInput
               placeholder="0"
+              min={0}
               {...customAmountProps}
               type="number"
               inputMode="numeric"
