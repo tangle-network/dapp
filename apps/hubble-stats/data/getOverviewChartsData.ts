@@ -48,15 +48,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   // });
 
   try {
-    console.log(
-      'vAnchorClient: ',
-      vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange
-    );
-
     const tvlDateRangeData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange(
-        vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
-        ['0x91eb86019fd8d7c5a9e31143d422850a13f670a3'],
+        vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
+        ['0x7aA556dD0AF8bed063444E14A6A9af46C9266973'],
         getDateFromEpoch(1692057600),
         1
       );
