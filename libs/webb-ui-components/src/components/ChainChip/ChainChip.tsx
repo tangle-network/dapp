@@ -57,10 +57,15 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       return twMerge(baseClsx, chainChipClassNames, classNameProp);
     }, [baseClsx, chainType, classNameProp]);
 
+    // Short chain name
+    const shortChainName = useMemo(() => {
+      return chainName.split(' ').pop();
+    }, [chainName]);
+
     return (
       <span className={className} {...restProps} ref={ref}>
         <ChainIcon name={iconName} size="md" />
-        {title ?? chainName}
+        {title ?? shortChainName}
       </span>
     );
   }
