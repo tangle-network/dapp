@@ -1,5 +1,6 @@
 'use client';
 
+import cx from 'classnames';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ArrowRight,
@@ -38,7 +39,7 @@ const TxProgressorRoot = forwardRef<
       {...props}
       ref={ref}
       className={twMerge(
-        'w-full max-w-md rounded-lg p-4',
+        'w-full max-w-lg rounded-lg p-4',
         'bg-mono-0 dark:bg-mono-180',
         className
       )}
@@ -86,6 +87,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
   tokenSymbol,
   tokenType = 'unshielded',
   typedChainId,
+  isSource,
   walletAddress,
   ...props
 }) => {
@@ -101,7 +103,12 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         <ChainChip chainName={chain.name} chainType={chain.group} />
 
         {walletAddress && (
-          <Chip color="grey" className="flex items-center gap-1">
+          <Chip
+            color="grey"
+            className={twMerge(
+              'flex items-center gap-1 bg-mono-20 dark:bg-mono-140 rounded-md px-2 py-1'
+            )}
+          >
             {accountType === 'note' ? (
               <ShieldKeyholeIcon />
             ) : (
@@ -122,7 +129,9 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         )}
       </div>
 
-      <div className="flex items-center gap-1">
+      <div
+        className={cx('flex items-center gap-1', { 'justify-end': !isSource })}
+      >
         <Typography
           variant="h5"
           fw="semibold"
@@ -130,10 +139,10 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         >
           <b>
             {amount > 0
-              ? `+${amount}`
+              ? `+${amount.toFixed(2)}`
               : amount < 0
-              ? `-${Math.abs(amount)}`
-              : `${amount}`}
+              ? `-${Math.abs(amount).toFixed(2)}`
+              : `${amount.toFixed(2)}`}
           </b>{' '}
           {tokenSymbol}
         </Typography>
@@ -159,11 +168,11 @@ const TxProgressorBody = forwardRef<
       ref={ref}
       className={twMerge('flex items-start justify-between mt-2', className)}
     >
-      <TxProgressorBodyItem {...txSourceInfo} />
+      <TxProgressorBodyItem {...txSourceInfo} isSource />
 
       <ArrowRight size="lg" />
 
-      <TxProgressorBodyItem {...txDestinationInfo} dir="rtl" />
+      <TxProgressorBodyItem {...txDestinationInfo} />
     </div>
   );
 });

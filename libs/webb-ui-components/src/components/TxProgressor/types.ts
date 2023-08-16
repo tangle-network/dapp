@@ -40,6 +40,11 @@ export type TxInfo = {
    * @default 'unshielded'
    */
   tokenType?: TokenType;
+
+  /**
+   * The isSource flag to display the source info
+   */
+  isSource?: boolean;
 };
 
 export interface TxProgressorHeaderProps extends PropsOf<'div'> {
