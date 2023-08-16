@@ -1,9 +1,17 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-export const vAnchorAddresses = ['0x4b88368Eb14D7d09f0ca737832cEBfb8F12e3f05'];
+export const vAnchorAddresses = ['0x91eb86019fd8d7c5a9e31143d422850a13f670a3'];
 
 export const allSubgraphUrls = [
   vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
   vAnchorClient.SubgraphUrl.vAnchorOrbitHermes,
   vAnchorClient.SubgraphUrl.vAnchorOrbitDemeter,
 ];
+
+export const allLocalSubgraphUrls = [
+  vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
+  // vAnchorClient.SubgraphUrl.vAnchorHermesLocal,
+  // vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
+];
+
+export const startingEpoch = 1692057600;

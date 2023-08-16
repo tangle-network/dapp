@@ -22,7 +22,7 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
     tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
       const tvlVAnchorsByChain = vAnchorsByChain.reduce(
         (tvlTotalByChain, vAnchor) =>
-          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked)),
+          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
         0
       );
       return tvlTotal + tvlVAnchorsByChain;
@@ -42,7 +42,7 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
       (depositTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (tvlTotalByChain, vAnchor) =>
-            tvlTotalByChain + +formatEther(BigInt(vAnchor.deposit)),
+            tvlTotalByChain + +formatEther(BigInt(vAnchor.deposit ?? 0)),
           0
         );
         return depositTotal + depositVAnchorsByChain;

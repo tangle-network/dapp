@@ -37,6 +37,8 @@ const nextConfig = {
 
     return config;
   },
+
+  transpilePackages: ['@webb-tools/vanchor-client'],
 };
 
 const plugins = [

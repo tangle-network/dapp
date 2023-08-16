@@ -10269,10 +10269,8 @@
     ethers "5.7.0"
     snarkjs "^0.6.10"
 
-"@webb-tools/vanchor-client@0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@webb-tools/vanchor-client/-/vanchor-client-0.1.13.tgz#65499c47893aa90292b6b028d565b77ecde11246"
-  integrity sha512-8PjM+5nFlzHwpNH3ESezlIZsI6d+BdzM/WdFPlC6ugmWvGv4YcmhK/4RzcHxgRt1H/Z+VIu8Lwjtj+lCNO+m1g==
+"@webb-tools/vanchor-client@file:../webb-graphql/packages/vanchor-client":
+  version "0.1.14"
   dependencies:
     "@graphprotocol/client-cli" "3.0.0"
     graphql "16.7.1"
