@@ -1,95 +1,171 @@
-import { randNumber } from '@ngneat/falso';
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import {
   vAnchorAddresses,
-  allLocalSubgraphUrls,
+  availableSubgraphUrls,
   startingEpoch,
 } from '../constants';
-import { getNumOfDatesFromStart, getDateFromEpoch } from '../utils';
+import {
+  getNumOfDatesFromStart,
+  getDateFromEpoch,
+  getEpochFromDate,
+} from '../utils';
 
 export type OverviewChartsDataType = {
-  currentTvl: number;
-  currentVolume: number;
-  tvlData: {
-    date: Date;
-    value: number;
-  }[];
-  volumeData: {
-    date: Date;
-    value: number;
-  }[];
+  currentTvl: number | undefined;
+  currentVolume: number | undefined;
+  tvlData:
+    | {
+        date: Date;
+        value: number;
+      }[]
+    | undefined;
+  volumeData:
+    | {
+        date: Date;
+        value: number;
+      }[]
+    | undefined;
 };
 
 export default async function getOverviewChartsData(): Promise<OverviewChartsDataType> {
-  const tvlData: { [epoch: string]: number } = {};
-  const depositData: { [epoch: number]: number } = {};
-
-  // await allLocalSubgraphUrls.forEach(async (subgraphUrl) => {
-  //   const tvlDateRangeData =
-  //     await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange(
-  //       vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
-  //       ['0x91eb86019fd8d7c5a9e31143d422850a13f670a3'],
-  //       getDateFromEpoch(1692057600),
-  //       1
-  //     );
-
-  //   console.log("tvlDateRangeData: ", tvlDateRangeData);
-
-  //   Object.keys(tvlDateRangeData).forEach((epoch: string) => {
-  //     if (!tvlData[epoch]) tvlData[epoch] = 0;
-  //     tvlData[epoch] += +formatEther(
-  //       BigInt(tvlDateRangeData[epoch as any] as number)
-  //     );
-  //   });
-
-  //   console.log(tvlDateRangeData);
-  // });
-
+  let currentTvl: number | undefined;
   try {
-    const tvlDateRangeData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange(
-        vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
-        ['0x7aA556dD0AF8bed063444E14A6A9af46C9266973'],
-        getDateFromEpoch(1692057600),
-        1
+    const tvlVAnchorsByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
+        availableSubgraphUrls,
+        vAnchorAddresses
       );
 
-    console.log('tvlDateRangeData: ', tvlDateRangeData);
+    currentTvl = tvlVAnchorsByChainsData?.reduce(
+      (tvlTotal, vAnchorsByChain) => {
+        const tvlVAnchorsByChain = vAnchorsByChain.reduce(
+          (tvlTotalByChain, vAnchor) =>
+            tvlTotalByChain +
+            +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
+          0
+        );
+        return tvlTotal + tvlVAnchorsByChain;
+      },
+      0
+    );
+  } catch {
+    currentTvl = undefined;
+  }
+
+  let volume24h: number | undefined;
+  try {
+    const volumeVAnchorsByChainsData =
+      await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
+        availableSubgraphUrls,
+        vAnchorAddresses,
+        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60),
+        new Date()
+      );
+
+    volume24h = volumeVAnchorsByChainsData?.reduce(
+      (volumeTotal, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (volumeTotalByChain, vAnchor) =>
+            volumeTotalByChain + +formatEther(BigInt(vAnchor.volume ?? 0)),
+          0
+        );
+        return volumeTotal + depositVAnchorsByChain;
+      },
+      0
+    );
+  } catch {
+    volume24h = undefined;
+  }
+
+  let tvlData: { [epoch: string]: number } = {};
+  try {
+    const fetchedTvlData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
+        availableSubgraphUrls,
+        vAnchorAddresses,
+        getDateFromEpoch(startingEpoch),
+        getNumOfDatesFromStart()
+      );
+
+    console.log('fetchedTvlData :', fetchedTvlData);
+    tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
+      Object.keys(tvlDataByChain).forEach((epoch: string) => {
+        if (!tvlMap[epoch]) tvlMap[epoch] = 0;
+        tvlMap[epoch] += +formatEther(BigInt(tvlDataByChain[epoch]));
+      });
+      return tvlMap;
+    }, {});
+  } catch (e) {
+    console.log('e :', e);
+    tvlData = {};
+  }
+
+  let volumeData: { [epoch: string]: number } = {};
+  try {
+    const fetchedVolumeData =
+      await vAnchorClient.Volume.GetVAnchorsVolumeByChainsByDateRange(
+        availableSubgraphUrls,
+        vAnchorAddresses,
+        getDateFromEpoch(startingEpoch),
+        getNumOfDatesFromStart()
+      );
+
+    console.log('fetchedVolumeData :', fetchedVolumeData);
+    volumeData = fetchedVolumeData.reduce((volumeMap, volumeDataByChain) => {
+      Object.keys(volumeDataByChain).forEach((epoch: string) => {
+        if (!volumeMap[epoch]) volumeMap[epoch] = 0;
+        volumeMap[epoch] += +formatEther(BigInt(volumeDataByChain[epoch]));
+      });
+      return volumeMap;
+    }, {});
+  } catch (e) {
+    console.log('e :', e);
+    volumeData = {};
+  }
+
+  // Test
+  try {
+    const fetchedTvlData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange(
+        availableSubgraphUrls[0],
+        vAnchorAddresses,
+        getDateFromEpoch(startingEpoch),
+        getNumOfDatesFromStart()
+      );
+    console.log('fetchedTvlData :', fetchedTvlData);
+  } catch (e) {
+    console.log('e :', e);
+  }
+
+  try {
+    const volumeDateRangeData =
+      await vAnchorClient.Volume.GetVAnchorsVolumeByChainByDateRange(
+        availableSubgraphUrls[0],
+        vAnchorAddresses,
+        getDateFromEpoch(startingEpoch),
+        getNumOfDatesFromStart()
+      );
+
+    console.log('volumeDateRangeData: ', volumeDateRangeData);
   } catch (error) {
     console.log('error :', error);
   }
 
-  // allLocalSubgraphUrls.forEach(async (subgraphUrl) => {
-  //   const tvlDateRangeData =
-  //     await vAnchorClient.Deposit.GetVAnchorsDepositByChainByDateRange(
-  //       subgraphUrl,
-  //       vAnchorAddresses,
-  //       getDateFromEpoch(1692057600),
-  //       1
-  //     );
-
-  //   console.log(tvlDateRangeData);
-  // });
-
   return {
-    currentTvl: randNumber({ min: 10_000_000, max: 20_000_000 }),
-    currentVolume: randNumber({ min: 1_000_000, max: 10_000_000 }),
+    currentTvl,
+    currentVolume: volume24h,
     tvlData: Object.keys(tvlData).map((epoch) => {
       return {
         date: getDateFromEpoch(+epoch),
         value: tvlData[+epoch],
       };
     }),
-    volumeData: [...Array(100).keys()].map((i) => {
+    volumeData: Object.keys(volumeData).map((epoch) => {
       return {
-        // Getting warning in console: Only plain objects can be passed to Client Components from Server Components. Date objects are not supported.
-        // Fix: https://github.com/vercel/next.js/issues/11993#issuecomment-617375501
-        date: JSON.parse(
-          JSON.stringify(new Date(Date.now() + i * 24 * 60 * 60 * 1000))
-        ),
-        value: randNumber({ min: 1_000_000, max: 10_000_000 }),
+        date: getDateFromEpoch(+epoch),
+        value: volumeData[+epoch],
       };
     }),
   };

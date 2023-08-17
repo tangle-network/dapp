@@ -14,4 +14,6 @@ export const allLocalSubgraphUrls = [
   // vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
 ];
 
+export const availableSubgraphUrls = allLocalSubgraphUrls;
+
 export const startingEpoch = 1692057600;
