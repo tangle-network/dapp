@@ -21,6 +21,7 @@ import {
   Table,
   Divider,
   ProposalsBadgeGroup,
+  Button,
 } from '@webb-tools/webb-ui-components/components';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ChainIcon, Spinner } from '@webb-tools/icons';
@@ -79,14 +80,19 @@ const columns: ColumnDef<ProposalBatch, any>[] = [
     },
   }),
 
-  // columnHelper.accessor('id', {
-  //   header: '',
-  //   cell: (props) => (
-  //     <Button variant="link" size="sm">
-  //       <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
-  //     </Button>
-  //   ),
-  // }),
+  columnHelper.accessor('id', {
+    header: '',
+    cell: (props) => {
+      const isDisabled =
+        props.row.original.proposals.length === 0 ? true : false;
+
+      return (
+        <Button variant="link" size="sm" isDisabled={isDisabled}>
+          <Link to={`drawer/${props.getValue<string>()}`}>Details</Link>
+        </Button>
+      );
+    },
+  }),
 ];
 
 export const ProposalsTable = () => {
@@ -156,6 +162,9 @@ export const ProposalsTable = () => {
 
   const data = useMemo(() => {
     if (batchedProposals.val) {
+      const proposalIds = batchedProposals.val.items.map((item) => item.id);
+      localStorage.setItem('proposalIds', JSON.stringify(proposalIds));
+
       return batchedProposals.val.items;
     }
 
@@ -302,6 +311,6 @@ interface StatusChipProps {
   status: ProposalBatchStatus;
 }
 
-const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
+export const StatusChip: React.FC<StatusChipProps> = ({ status }) => {
   return <Chip color={getChipColorByProposalType(status)}>{status}</Chip>;
 };

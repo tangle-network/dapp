@@ -6,6 +6,11 @@ import {
   ProposalBatchesOrderBy,
 } from '../../generated/graphql';
 
+export type ProposalTimeline = {
+  status: string;
+  timestamp: string;
+}
+
 export type Proposal = {
   data: string;
   type: string;
@@ -17,6 +22,7 @@ export type ProposalBatch = {
   height: number;
   proposals: Proposal[];
   chain: string;
+  timeline: ProposalTimeline[];
 };
 
 export type BatchedProposalsQuery = PageInfoQuery & {
@@ -143,6 +149,7 @@ export const useBatchedProposal = (
           };
         }),
         chain: batch?.chain,
+        timeline: batch?.timeline,
       };
 
       setBatchedProposal({

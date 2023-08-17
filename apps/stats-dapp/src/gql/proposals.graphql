@@ -28,5 +28,6 @@ query ProposalBatch($batchId: String!) {
     proposals
     chain
     status
+    timeline
   }
 }
