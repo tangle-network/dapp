@@ -4,7 +4,9 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ChainIcon,
   ChevronDown,
-  ShieldKeyholeIcon,
+  ShieldKeyholeFillIcon,
+  ShieldKeyholeLineIcon,
+  WalletFillIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import { createContext, forwardRef, useContext, useMemo } from 'react';
@@ -20,7 +22,7 @@ import {
   TransactionInputCardRootProps,
   TransactionMaxAmountButtonProps,
 } from './types';
-import { TextFieldInput } from '../TextField';
+import { TextFieldInput, TextFieldRoot } from '../TextField';
 import TokenSelector from '../TokenSelector';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { Switcher } from '../Switcher';
@@ -55,6 +57,7 @@ const TransactionInputCardRoot = forwardRef<
         className={twMerge(
           'w-full max-w-lg rounded-lg p-3 space-y-2',
           'bg-[#F7F8F7]/50 dark:bg-mono-180',
+          'hover:bg-mono-20 dark:bg-mono-180',
           className
         )}
       >
@@ -156,15 +159,21 @@ const TransactionMaxAmountButton = forwardRef<
         )}
       >
         {accountType === 'note' ? (
-          <ShieldKeyholeIcon className="!fill-current" />
+          <>
+            <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+            <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+          </>
         ) : (
-          <WalletLineIcon className="!fill-current" />
+          <>
+            <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+            <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+          </>
         )}
 
         <Typography
           variant="body1"
           fw="bold"
-          className="!text-inherit group-hover:enabled:underline"
+          className="!text-inherit group-hover:group-enabled:underline"
         >
           {maxAmount ?? '--'} {tokenSymbol ?? ''}
         </Typography>
@@ -233,17 +242,21 @@ const TransactionInputCardBody = forwardRef<
       <div
         {...props}
         ref={ref}
-        className={twMerge('flex items-center justify-between', className)}
+        className={twMerge(
+          'flex items-center justify-between gap-4',
+          className
+        )}
       >
-        <div className="max-w-[160px]">
-          {isFixedAmount ? (
-            <AdjustAmount
-              min={0}
-              {...fixedAmountProps}
-              value={amount}
-              onChange={onAmountChange}
-            />
-          ) : (
+        {isFixedAmount ? (
+          <AdjustAmount
+            min={0}
+            {...fixedAmountProps}
+            className={twMerge('max-w-[160px]', fixedAmountProps?.className)}
+            value={amount}
+            onChange={onAmountChange}
+          />
+        ) : (
+          <TextFieldRoot className="max-w-none grow">
             <TextFieldInput
               placeholder="0"
               min={0}
@@ -253,8 +266,8 @@ const TransactionInputCardBody = forwardRef<
               value={amount}
               onChange={handleTextFieldChange}
             />
-          )}
-        </div>
+          </TextFieldRoot>
+        )}
 
         <TokenSelector {...tokenSelectorProps}>{tokenSymbol}</TokenSelector>
       </div>

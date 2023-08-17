@@ -5,7 +5,7 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ArrowRight,
   ExternalLinkLine,
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
@@ -110,7 +110,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
             )}
           >
             {accountType === 'note' ? (
-              <ShieldKeyholeIcon />
+              <ShieldKeyholeLineIcon />
             ) : (
               <WalletLineIcon />
             )}

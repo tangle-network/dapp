@@ -1,7 +1,7 @@
 import {
   ArrowRight,
   ExternalLinkLine,
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import Lottie from 'lottie-react';
@@ -169,18 +169,18 @@ export const TransactionProgressCard = forwardRef<
       switch (method) {
         case 'Withdraw':
           return [
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
             <WalletLineIcon size={'lg'} />,
           ];
         case 'Deposit':
           return [
             <WalletLineIcon size={'lg'} />,
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
           ];
         case 'Transfer':
           return [
-            <ShieldKeyholeIcon size={'lg'} />,
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
           ];
       }
     }, [method]);
