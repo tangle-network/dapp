@@ -9,7 +9,7 @@ import {
 export type ProposalTimeline = {
   status: string;
   timestamp: string;
-}
+};
 
 export type Proposal = {
   data: string;
