@@ -26,16 +26,14 @@ export function Index() {
         }}
       />
 
-      <div className="relative w-full h-screen min-h-[900px] xl:min-h-[1500px]">
-        <div className="absolute top-0 left-0 w-full h-full">
-          <Lottie
-            path="/animations/hero-loop.json"
-            play
-            loop
-            className="w-full h-full"
-            rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
-          />
-        </div>
+      <div className="relative w-full">
+        <Lottie
+          path="/animations/hero-loop.json"
+          play
+          loop
+          className="w-full h-full"
+          rendererSettings={{ preserveAspectRatio: 'xMidYMax slice' }}
+        />
         <HeroSection />
       </div>
 
