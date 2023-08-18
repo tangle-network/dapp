@@ -4,6 +4,7 @@ import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { TokenSelectorProps } from './types';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The TokenSelector component
@@ -60,27 +61,34 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       <button {...props} disabled={disabled} className={mergedClsx} ref={ref}>
         {tokenType === 'shielded' ? (
           <ShieldedAssetIcon
-            size="lg"
             displayPlaceholder={typeof children === 'undefined'}
+            size="lg"
+            className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
           />
         ) : children ? (
-          <TokenIcon name={children.toLowerCase()} size="lg" />
+          <TokenIcon
+            name={children.toLowerCase()}
+            size="lg"
+            className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
+          />
         ) : null}
 
         <Typography
           variant="h5"
           fw="bold"
           component="span"
-          className="block text-mono-200 dark:text-mono-40"
+          className="block truncate text-mono-200 dark:text-mono-40"
         >
           {children ?? 'Select token'}
         </Typography>
 
         <ChevronDown
           size="lg"
-          className={cx(
+          className={twMerge(
             'group-disabled:hidden',
-            'fill-mono-120 dark:fill-mono-100'
+            'fill-mono-120 dark:fill-mono-100',
+            'shrink-0 grow-0',
+            getFlexBasic('lg')
           )}
         />
       </button>

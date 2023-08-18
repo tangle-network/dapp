@@ -13,6 +13,10 @@ import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { AdjustAmount } from '../BridgeInputs';
+import { Switcher } from '../Switcher';
+import { TextFieldInput } from '../TextField';
+import { TitleWithInfo } from '../TitleWithInfo';
+import TokenSelector from '../TokenSelector';
 import {
   TransactionChainSelectorProps,
   TransactionInputCardBodyProps,
@@ -22,10 +26,6 @@ import {
   TransactionInputCardRootProps,
   TransactionMaxAmountButtonProps,
 } from './types';
-import { TextFieldInput, TextFieldRoot } from '../TextField';
-import TokenSelector from '../TokenSelector';
-import { TitleWithInfo } from '../TitleWithInfo';
-import { Switcher } from '../Switcher';
 
 const TransactionInputCardContext =
   createContext<TransactionInputCardContextValue>({});
@@ -243,20 +243,19 @@ const TransactionInputCardBody = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'flex items-center justify-between gap-4',
+          'flex items-center justify-between gap-2',
           className
         )}
       >
-        {isFixedAmount ? (
-          <AdjustAmount
-            min={0}
-            {...fixedAmountProps}
-            className={twMerge('max-w-[160px]', fixedAmountProps?.className)}
-            value={amount}
-            onChange={onAmountChange}
-          />
-        ) : (
-          <TextFieldRoot className="max-w-none grow">
+        <div className="grow">
+          {isFixedAmount ? (
+            <AdjustAmount
+              min={0}
+              {...fixedAmountProps}
+              value={amount}
+              onChange={onAmountChange}
+            />
+          ) : (
             <TextFieldInput
               placeholder="0"
               min={0}
@@ -266,10 +265,15 @@ const TransactionInputCardBody = forwardRef<
               value={amount}
               onChange={handleTextFieldChange}
             />
-          </TextFieldRoot>
-        )}
+          )}
+        </div>
 
-        <TokenSelector {...tokenSelectorProps}>{tokenSymbol}</TokenSelector>
+        <TokenSelector
+          {...tokenSelectorProps}
+          className={twMerge('max-w-[210px]', tokenSelectorProps?.className)}
+        >
+          {tokenSymbol}
+        </TokenSelector>
       </div>
     );
   }
@@ -341,10 +345,10 @@ const TransactionInputCard = Object.assign(
 export default TransactionInputCard;
 
 export {
-  TransactionInputCardRoot,
-  TransactionInputCardHeader,
+  TransactionChainSelector,
   TransactionInputCardBody,
   TransactionInputCardFooter,
-  TransactionChainSelector,
+  TransactionInputCardHeader,
+  TransactionInputCardRoot,
   TransactionMaxAmountButton,
 };
