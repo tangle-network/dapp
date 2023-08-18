@@ -89,7 +89,6 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
         getNumOfDatesFromStart()
       );
 
-    console.log('fetchedTvlData :', fetchedTvlData);
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
       Object.keys(tvlDataByChain).forEach((epoch: string) => {
         if (!tvlMap[epoch]) tvlMap[epoch] = 0;
@@ -98,60 +97,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
       return tvlMap;
     }, {});
   } catch (e) {
-    console.log('e :', e);
     tvlData = {};
   }
 
-  let volumeData: { [epoch: string]: number } = {};
-  try {
-    const fetchedVolumeData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChainsByDateRange(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        getNumOfDatesFromStart()
-      );
-
-    console.log('fetchedVolumeData :', fetchedVolumeData);
-    volumeData = fetchedVolumeData.reduce((volumeMap, volumeDataByChain) => {
-      Object.keys(volumeDataByChain).forEach((epoch: string) => {
-        if (!volumeMap[epoch]) volumeMap[epoch] = 0;
-        volumeMap[epoch] += +formatEther(BigInt(volumeDataByChain[epoch]));
-      });
-      return volumeMap;
-    }, {});
-  } catch (e) {
-    console.log('e :', e);
-    volumeData = {};
-  }
-
-  // Test
-  try {
-    const fetchedTvlData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainByDateRange(
-        availableSubgraphUrls[0],
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        getNumOfDatesFromStart()
-      );
-    console.log('fetchedTvlData :', fetchedTvlData);
-  } catch (e) {
-    console.log('e :', e);
-  }
-
-  try {
-    const volumeDateRangeData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChainByDateRange(
-        availableSubgraphUrls[0],
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        getNumOfDatesFromStart()
-      );
-
-    console.log('volumeDateRangeData: ', volumeDateRangeData);
-  } catch (error) {
-    console.log('error :', error);
-  }
+  const volumeData: { [epoch: string]: number } = {};
 
   return {
     currentTvl,

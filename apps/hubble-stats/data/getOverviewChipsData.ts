@@ -2,7 +2,6 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { vAnchorAddresses, availableSubgraphUrls } from '../constants';
-import { getDateFromEpoch, getEpochFromDate } from '../utils';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;
@@ -34,12 +33,9 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
 
   try {
     const volumeVAnchorsByChainsData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
+      await vAnchorClient.Volume.GetVAnchorsVolumeByChains(
         availableSubgraphUrls,
-        vAnchorAddresses,
-        // Start date: yesterday
-        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60),
-        new Date()
+        vAnchorAddresses
       );
 
     volume = volumeVAnchorsByChainsData?.reduce(
