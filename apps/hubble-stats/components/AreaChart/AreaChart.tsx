@@ -44,6 +44,7 @@ const AreaChart: FC<AreaChartProps> = ({
             fontWeight: 400,
           }}
           tickMargin={16}
+          interval="preserveStartEnd"
         />
         <Tooltip
           contentStyle={{ display: 'none' }}

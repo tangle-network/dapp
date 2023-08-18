@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
+import { ChartContainer } from '@webb-tools/webb-ui-components';
 
 import { AreaChart, BarChart } from '../../components';
 import { OverviewChartsDataType } from '../../data';
@@ -16,7 +16,6 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
   const [tvlDate, setTVLDate] = useState<Date | null>(null);
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
-  const [volumeDataType, setVolumeDataType] = useState<DaysFilterType>('week');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -37,9 +36,6 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={currentVolume}
         value={volumeValue}
         date={volumeDate}
-        filterType="days"
-        daysFilterType={volumeDataType}
-        setDaysFilterType={setVolumeDataType}
         className="bg-glass dark:bg-glass_dark"
       >
         <BarChart
