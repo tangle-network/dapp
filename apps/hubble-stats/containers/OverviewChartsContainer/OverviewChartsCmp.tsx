@@ -18,8 +18,6 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
   const [volumeDataType, setVolumeDataType] = useState<DaysFilterType>('week');
 
-  console.log('tvlData :', tvlData);
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* TVL Chart Container */}

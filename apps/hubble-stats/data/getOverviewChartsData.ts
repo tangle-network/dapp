@@ -15,18 +15,14 @@ import {
 export type OverviewChartsDataType = {
   currentTvl: number | undefined;
   currentVolume: number | undefined;
-  tvlData:
-    | {
-        date: Date;
-        value: number;
-      }[]
-    | undefined;
-  volumeData:
-    | {
-        date: Date;
-        value: number;
-      }[]
-    | undefined;
+  tvlData: {
+    date: Date;
+    value: number;
+  }[];
+  volumeData: {
+    date: Date;
+    value: number;
+  }[];
 };
 
 export default async function getOverviewChartsData(): Promise<OverviewChartsDataType> {
@@ -107,13 +103,13 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     currentVolume: volume24h,
     tvlData: Object.keys(tvlData).map((epoch) => {
       return {
-        date: getDateFromEpoch(+epoch),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
         value: tvlData[+epoch],
       };
     }),
     volumeData: Object.keys(volumeData).map((epoch) => {
       return {
-        date: getDateFromEpoch(+epoch),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
         value: volumeData[+epoch],
       };
     }),
