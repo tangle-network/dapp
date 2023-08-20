@@ -10,10 +10,13 @@ export const allSubgraphUrls = [
 
 export const allLocalSubgraphUrls = [
   vAnchorClient.SubgraphUrl.vAnchorAthenaLocal,
-  // vAnchorClient.SubgraphUrl.vAnchorHermesLocal,
-  // vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
+  vAnchorClient.SubgraphUrl.vAnchorHermesLocal,
+  vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
 ];
 
 export const availableSubgraphUrls = allLocalSubgraphUrls;
 
 export const startingEpoch = 1692057600;
+
+export const numOfDatesFromStart =
+  1 + Math.floor((new Date().getTime() / 1000 - startingEpoch) / 86400);

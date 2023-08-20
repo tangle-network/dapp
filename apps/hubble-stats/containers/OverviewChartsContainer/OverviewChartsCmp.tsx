@@ -3,7 +3,7 @@
 import { FC, useState } from 'react';
 import { ChartContainer } from '@webb-tools/webb-ui-components';
 
-import { AreaChart, BarChart } from '../../components';
+import { AreaChart, VolumeChart } from '../../components';
 import { OverviewChartsDataType } from '../../data';
 
 const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
@@ -35,10 +35,10 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         heading="Volume 24H"
         currentValue={currentVolume}
         value={volumeValue}
-        date={volumeDate}
+        date={null}
         className="bg-glass dark:bg-glass_dark"
       >
-        <BarChart
+        <VolumeChart
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}
