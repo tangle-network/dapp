@@ -3,6 +3,7 @@
 import { FC } from 'react';
 import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
 
+import { ChartTooltip } from '..';
 import { VolumeChartProps } from './types';
 
 const VolumeChart: FC<VolumeChartProps> = ({
@@ -20,6 +21,7 @@ const VolumeChart: FC<VolumeChartProps> = ({
           setValue && setValue(null);
           setDate && setDate(null);
         }}
+        barGap={0}
       >
         <XAxis
           dataKey="date"
@@ -38,13 +40,30 @@ const VolumeChart: FC<VolumeChartProps> = ({
           interval="preserveStartEnd"
         />
         <Tooltip
-          contentStyle={{ display: 'none' }}
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
-              setValue && setValue(payload[0].payload['value']);
+              setValue && setValue(payload[0].payload['volume']);
               setDate && setDate(payload[0].payload['date']);
+              return (
+                <ChartTooltip
+                  date={payload[0].payload['date']}
+                  info={[
+                    {
+                      color: '#624FBE',
+                      label: 'Deposits',
+                      value: payload[0].payload['deposit'],
+                      valuePrefix: '$',
+                    },
+                    {
+                      color: '#B5A9F2',
+                      label: 'Withdrawals',
+                      value: payload[0].payload['withdrawal'],
+                      valuePrefix: '$',
+                    },
+                  ]}
+                />
+              );
             }
-
             return null;
           }}
         />

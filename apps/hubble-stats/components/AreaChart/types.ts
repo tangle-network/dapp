@@ -7,4 +7,7 @@ export type AreaChartProps = {
   setDate: (date: Date | null) => void;
   width?: number | string;
   height?: number | string;
+  showTooltip?: boolean;
+  tooltipLabel?: string;
+  tooltipValuePrefix?: string;
 };

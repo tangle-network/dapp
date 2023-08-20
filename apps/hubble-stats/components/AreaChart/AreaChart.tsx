@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import {
   ResponsiveContainer,
   AreaChart as AreaChartCmp,
@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { useDarkMode } from '@webb-tools/webb-ui-components';
 
+import { ChartTooltip } from '..';
 import { AreaChartProps } from './types';
 
 const AreaChart: FC<AreaChartProps> = ({
@@ -18,8 +19,16 @@ const AreaChart: FC<AreaChartProps> = ({
   setValue,
   width = '100%',
   height = 180,
+  showTooltip = true,
+  tooltipLabel = '',
+  tooltipValuePrefix = '',
 }) => {
   const [isDarkMode] = useDarkMode();
+
+  const fillColor = useMemo(
+    () => (isDarkMode ? '#C6BBFA' : '#624FBE'),
+    [isDarkMode]
+  );
 
   return (
     <ResponsiveContainer width={width} height={height}>
@@ -52,6 +61,22 @@ const AreaChart: FC<AreaChartProps> = ({
             if (active && payload && payload.length) {
               setValue && setValue(payload[0].payload['value']);
               setDate && setDate(payload[0].payload['date']);
+              if (!showTooltip) {
+                return null;
+              }
+              return (
+                <ChartTooltip
+                  date={payload[0].payload['date']}
+                  info={[
+                    {
+                      color: fillColor,
+                      label: tooltipLabel,
+                      value: payload[0].payload['value'],
+                      valuePrefix: tooltipValuePrefix,
+                    },
+                  ]}
+                />
+              );
             }
 
             return null;
@@ -59,7 +84,7 @@ const AreaChart: FC<AreaChartProps> = ({
         />
         <Area
           dataKey="value"
-          stroke={isDarkMode ? '#C6BBFA' : '#624FBE'}
+          stroke={fillColor}
           fillOpacity={0}
           strokeWidth={2}
         />

@@ -27,7 +27,13 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         date={tvlDate}
         className="bg-glass dark:bg-glass_dark"
       >
-        <AreaChart data={tvlData} setDate={setTVLDate} setValue={setTvlValue} />
+        <AreaChart
+          data={tvlData}
+          setDate={setTVLDate}
+          setValue={setTvlValue}
+          tooltipLabel="TVL"
+          tooltipValuePrefix="$"
+        />
       </ChartContainer>
 
       {/* 24 Hour Volume Chart Container */}
