@@ -41,7 +41,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         heading="Volume 24H"
         currentValue={currentVolume}
         value={volumeValue}
-        date={null}
+        date={volumeDate}
         className="bg-glass dark:bg-glass_dark"
       >
         <VolumeChart
