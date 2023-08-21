@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import {
   GridFillIcon,
   KeyIcon,
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   TeamFillIcon,
   UserStarFillIcon,
   FoldersFillIcon,
@@ -81,7 +81,7 @@ export const NavBoxInfoContainer = () => {
           <BreadcrumbsItem
             icon={
               currentPage === 'keys' ? (
-                <ShieldKeyholeIcon />
+                <ShieldKeyholeLineIcon />
               ) : currentPage === 'authorities' && subPage !== 'history' ? (
                 <UserStarFillIcon />
               ) : currentPage === 'authorities' && subPage === 'history' ? (

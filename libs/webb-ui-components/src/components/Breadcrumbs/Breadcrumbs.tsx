@@ -13,7 +13,7 @@ import { BreadcrumbsSeparator } from './BreadcrumbsSeparator';
  *  <Breadcrumbs>
  *    <BreadcrumbsItem icon={<GridFillIcon />}>Tangle Explorer</BreadcrumbsItem>
  *    <BreadcrumbsItem icon={<KeyIcon />}>Keys Overview</BreadcrumbsItem>
- *    <BreadcrumbsItem icon={<ShieldKeyholeIcon />} isLast>Keygen details</BreadcrumbsItem>
+ *    <BreadcrumbsItem icon={<ShieldKeyholeLineIcon />} isLast>Keygen details</BreadcrumbsItem>
  *  <Breadcrumbs />
  * ```
  */

@@ -1,5 +1,9 @@
 import { Breadcrumbs, BreadcrumbsItem } from '@webb-tools/webb-ui-components';
-import { GridFillIcon, KeyIcon, ShieldKeyholeIcon } from '@webb-tools/icons';
+import {
+  GridFillIcon,
+  KeyIcon,
+  ShieldKeyholeLineIcon,
+} from '@webb-tools/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -34,7 +38,7 @@ Default.args = {
   },
   itemTwoChildren: 'Keys Overview',
   itemThreeProps: {
-    icon: <ShieldKeyholeIcon />,
+    icon: <ShieldKeyholeLineIcon />,
     isLast: true,
   },
   itemThreeChildren: 'Keygen details',
@@ -51,7 +55,7 @@ CustomSeparator.args = {
   },
   itemTwoChildren: 'Keys Overview',
   itemThreeProps: {
-    icon: <ShieldKeyholeIcon />,
+    icon: <ShieldKeyholeLineIcon />,
     isLast: true,
   },
   itemThreeChildren: 'Keygen details',
