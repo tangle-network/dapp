@@ -162,6 +162,8 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
               currentSessionNumber: 0,
               nextKey: '',
               nextSessionNumber: 0,
+              proposerCount: 0,
+              proposerThreshold: 0,
             }}
           >
             <NavBoxInfoContainer />

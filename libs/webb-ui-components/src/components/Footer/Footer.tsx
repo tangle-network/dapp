@@ -20,7 +20,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       <footer
         {...props}
         className={twMerge(
-          'flex flex-col space-y-4 max-w-[1160px] mx-auto mt-[72px] mb-[98px]',
+          'flex flex-col space-y-4 max-w-[1160px] mx-auto py-[72px]',
           className
         )}
         ref={ref}
