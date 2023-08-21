@@ -2,6 +2,7 @@ import { Card, Stats, TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { ProposalsTable } from '../containers';
 import { useMemo } from 'react';
 import { useStatsContext } from '../provider';
+import { Outlet } from 'react-router-dom';
 
 const Proposals = () => {
   const {
@@ -40,6 +41,8 @@ const Proposals = () => {
       </Card>
 
       <ProposalsTable />
+
+      <Outlet />
     </div>
   );
 };
