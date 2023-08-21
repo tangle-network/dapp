@@ -76,6 +76,8 @@ export { default as TokenSelector } from './TokenSelector';
 export * from './TokenWithAmount';
 export * from './TokensRing';
 export * from './Tooltip';
+export * from './TransactionInputCard';
+export { default as TransactionInputCard } from './TransactionInputCard';
 export * from './TxProgressor';
 export { default as TxProgressor } from './TxProgressor';
 export * from './WalletConnectionCard';

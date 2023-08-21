@@ -1,6 +1,5 @@
-export * from './AddBoxLineIcon';
 export { default as AccountCircleLineIcon } from './AccountCircleLineIcon';
-export { default as ClipboardLineIcon } from './ClipboardLineIcon';
+export * from './AddBoxLineIcon';
 export * from './AddCircleFillIcon';
 export * from './AddCircleLineIcon';
 export * from './ArrowDropDownFill';
@@ -23,6 +22,7 @@ export * from './ChevronDown';
 export * from './ChevronLeft';
 export * from './ChevronRight';
 export * from './ChevronUp';
+export { default as ClipboardLineIcon } from './ClipboardLineIcon';
 export * from './Close';
 export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
@@ -76,7 +76,9 @@ export * from './Save';
 export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
-export * from './ShieldKeyholeIcon';
+export { default as ShieldKeyholeFillIcon } from './ShieldKeyholeFillIcon';
+export * from './ShieldKeyholeLineIcon';
+export { default as ShieldKeyholeLineIcon } from './ShieldKeyholeLineIcon';
 export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
@@ -92,7 +94,8 @@ export * from './TwitterFill';
 export * from './UploadCloudIcon';
 export * from './UsageGuideIcon';
 export * from './UserStarFillIcon';
-export * from './WalletLineIcon';
+export { default as WalletLineIcon } from './WalletLineIcon';
+export { default as WalletFillIcon } from './WalletFillIcon';
 export * from './YouTubeFill';
 
 // Wallet icons
