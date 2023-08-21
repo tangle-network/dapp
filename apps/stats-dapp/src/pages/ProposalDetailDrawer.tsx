@@ -3,8 +3,8 @@ import {
   DrawerContent,
 } from '@webb-tools/webb-ui-components/components';
 import { useNavigate } from 'react-router-dom';
-
 import { ProposalDetail } from '../containers';
+import { useEffect } from 'react';
 
 const ProposalDetailDrawer = () => {
   const nagivate = useNavigate();

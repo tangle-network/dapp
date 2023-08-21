@@ -106,7 +106,7 @@ export const routes: RouterConfigData[] = [
             <PageProposalDetail />
           </CSuspense>
         ),
-        path: 'proposals/:proposalId',
+        path: 'proposals/:proposalBatchId',
       },
       {
         element: (
@@ -116,7 +116,7 @@ export const routes: RouterConfigData[] = [
         ),
         children: [
           {
-            path: 'drawer/:proposalId',
+            path: 'drawer/:proposalBatchId',
             element: (
               <CSuspense>
                 <PageProposalDetailDrawer />
