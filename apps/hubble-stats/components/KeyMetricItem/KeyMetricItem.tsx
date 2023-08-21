@@ -30,7 +30,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
             fw="black"
             className="uppercase text-mono-140 dark:text-mono-40"
           >
-            {value && (prefix ?? '')}
+            {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
               ? value
               : getRoundedAmountString(value, 2, {
