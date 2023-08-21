@@ -330,7 +330,7 @@ const ProposalDecodedData: FC<{ data: Record<string, any> }> = ({ data }) => {
 
   return (
     <div className="whitespace-pre-wrap !dark:text-mono-80 text-mono-200">
-      {JSON.stringify(knowProposal ? data.data : data, null, 2)}
+      {JSON.stringify(knowProposal ? data.data : data, null, 4)}
     </div>
   );
 };
