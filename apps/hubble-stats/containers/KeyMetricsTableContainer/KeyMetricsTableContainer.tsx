@@ -24,7 +24,7 @@ export default async function KeyMetricsTableContainer() {
 
   const Volume = (
     <KeyMetricItem
-      title="Total Volume"
+      title="Volume"
       prefix="$"
       value={volume}
       changeRate={volumeChangeRate}

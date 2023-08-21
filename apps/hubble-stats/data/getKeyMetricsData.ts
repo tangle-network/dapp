@@ -2,18 +2,22 @@ import { randNumber, randFloat } from '@ngneat/falso';
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getTvl, getVolume24h } from './reusable';
 import { vAnchorAddresses, availableSubgraphUrls } from '../constants';
 
 type KeyMetricDataType = {
-  tvl: number;
+  tvl: number | undefined;
   tvlChangeRate: number;
-  volume: number;
+  volume: number | undefined;
   volumeChangeRate: number;
   relayerFees: number | undefined;
   wrappingFees: number | undefined;
 };
 
 export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
+  const tvl = await getTvl();
+  const volume = await getVolume24h();
+
   let relayerFees: number | undefined;
   let wrappingFees: number | undefined;
 
@@ -64,9 +68,9 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   }
 
   return {
-    tvl: randNumber({ min: 1_000_000, max: 50_000_000 }),
+    tvl,
     tvlChangeRate: randFloat({ min: -20, max: 20, fraction: 2 }),
-    volume: randNumber({ min: 20_000_000, max: 99_999_999 }),
+    volume,
     volumeChangeRate: randFloat({ min: -20, max: 20, fraction: 2 }),
     relayerFees,
     wrappingFees,

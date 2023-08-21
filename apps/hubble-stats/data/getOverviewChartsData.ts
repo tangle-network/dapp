@@ -1,13 +1,14 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getTvl, getVolume24h } from './reusable';
 import {
   vAnchorAddresses,
   availableSubgraphUrls,
   startingEpoch,
   numOfDatesFromStart,
 } from '../constants';
-import { getDateFromEpoch, getEpochFromDate, getEpochArray } from '../utils';
+import { getDateFromEpoch, getEpochArray } from '../utils';
 
 type VolumeDataType = {
   [epoch: string]: { deposit: number; withdrawal: number };
@@ -29,54 +30,8 @@ export type OverviewChartsDataType = {
 };
 
 export default async function getOverviewChartsData(): Promise<OverviewChartsDataType> {
-  let currentTvl: number | undefined;
-  try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
-        availableSubgraphUrls,
-        vAnchorAddresses
-      );
-
-    currentTvl = tvlVAnchorsByChainsData?.reduce(
-      (tvlTotal, vAnchorsByChain) => {
-        const tvlVAnchorsByChain = vAnchorsByChain.reduce(
-          (tvlTotalByChain, vAnchor) =>
-            tvlTotalByChain +
-            +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
-          0
-        );
-        return tvlTotal + tvlVAnchorsByChain;
-      },
-      0
-    );
-  } catch {
-    currentTvl = undefined;
-  }
-
-  let volume24h: number | undefined;
-  try {
-    const volumeVAnchorsByChainsData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60),
-        getDateFromEpoch(getEpochFromDate(new Date()))
-      );
-
-    volume24h = volumeVAnchorsByChainsData?.reduce(
-      (volumeTotal, vAnchorsByChain) => {
-        const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (volumeTotalByChain, vAnchor) =>
-            volumeTotalByChain + +formatEther(BigInt(vAnchor.volume ?? 0)),
-          0
-        );
-        return volumeTotal + depositVAnchorsByChain;
-      },
-      0
-    );
-  } catch {
-    volume24h = undefined;
-  }
+  const currentTvl = await getTvl();
+  const volume24h = await getVolume24h();
 
   let tvlData: { [epoch: string]: number } = {};
   try {

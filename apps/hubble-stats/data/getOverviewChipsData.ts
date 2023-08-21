@@ -1,6 +1,7 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getTvl } from './reusable';
 import { vAnchorAddresses, availableSubgraphUrls } from '../constants';
 
 type OverviewChipsDataType = {
@@ -9,27 +10,9 @@ type OverviewChipsDataType = {
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
-  let tvl: number | undefined;
+  const tvl = await getTvl();
+
   let volume: number | undefined;
-
-  try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
-        availableSubgraphUrls,
-        vAnchorAddresses
-      );
-
-    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
-      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
-        (tvlTotalByChain, vAnchor) =>
-          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
-        0
-      );
-      return tvlTotal + tvlVAnchorsByChain;
-    }, 0);
-  } catch {
-    tvl = undefined;
-  }
 
   try {
     const volumeVAnchorsByChainsData =
