@@ -43,8 +43,9 @@ import cx from 'classnames';
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import { forwardRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
+import { ECPairFactory } from 'ecpair';
+import * as tinysecp from 'tiny-secp256k1';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -197,11 +198,11 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
               keyValue={keyDetail.compressed}
               className="grow shrink basis-0 max-w-none"
             />
-            {/* <KeyCard
+            <KeyCard
               title="Uncompressed key"
-              keyValue={keyDetail.uncompressed}
+              keyValue={uncompressPublicKey(keyDetail.compressed)}
               className="grow shrink basis-0 max-w-none"
-            /> */}
+            />
           </div>
         </div>
 
@@ -440,4 +441,16 @@ const KeyGenAuthoredTable: React.FC<KeyGenAuthoredTableProps> = ({ data }) => {
       title="DKG Authorities"
     />
   );
+};
+
+const uncompressPublicKey = (compressed: string): `0x${string}` => {
+  const ECPair = ECPairFactory(tinysecp);
+  const dkgPubKey = ECPair.fromPublicKey(
+    Buffer.from(compressed.slice(2), 'hex'),
+    {
+      compressed: false,
+    }
+  ).publicKey.toString('hex');
+  // now we remove the `04` prefix byte and return it.
+  return `0x${dkgPubKey.slice(2)}`;
 };
