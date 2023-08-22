@@ -14,7 +14,7 @@
     "gql:codegen": "graphql-codegen --config apps/stats-dapp/codegen.yml",
     "fetch:onChainConfig": "TS_NODE_PROJECT=\"tools/tsconfig.json\" ts-node-esm tools/scripts/fetchingOnChainConfig.ts",
     "build:bridge": "yarn nx build bridge-dapp",
-    "build:stats": "yarn gql:codegen && yarn nx build stats-dapp",
+    "build:stats": "yarn nx build stats-dapp",
     "build:webbsite": "nx build webbsite",
     "build:tangle-website": "nx build tangle-website",
     "build:hubble-stats": "nx build hubble-stats",
@@ -22,7 +22,7 @@
     "build:faucet": "nx build faucet",
     "export:faucet": "nx export faucet",
     "start:bridge": "yarn nx serve bridge-dapp",
-    "start:stats": "yarn gql:codegen && yarn nx serve stats-dapp",
+    "start:stats": "yarn nx serve stats-dapp",
     "start:webbsite": "nx serve webbsite",
     "start:tangle-website": "nx serve tangle-website",
     "start:hubble-stats": "nx serve hubble-stats",
@@ -285,7 +285,7 @@
     "typescript": "^5.1.6",
     "webpack": "^5.82.0",
     "webpack-bundle-analyzer": "^4.8.0",
-    "webpack-cli": "5.1.1",
+    "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.0",
     "webpack-merge": "^5.8.0"
   }

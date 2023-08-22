@@ -6126,17 +6126,17 @@
     tslib "^2.5.3"
 
 "@polkadot/util@11.1.3", "@polkadot/util@12.3.2", "@polkadot/util@^11.1.3", "@polkadot/util@^12.3.1", "@polkadot/util@^12.3.2":
-  version "12.3.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-12.3.2.tgz#f46e147b0e6a426da5ba59df4ce65de1a3effe4a"
-  integrity sha512-y/JShcGyOamCUiSIg++XZuLHt1ktSKBaSH2K5Nw5NXlgP0+7am+GZzqPB8fQ4qhYLruEOv+YRiz0GC1Zr9S+wg==
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-12.4.1.tgz#36604ebb410c3f063fbb20151e804006ddeeddf5"
+  integrity sha512-msKecQxYwi/1AEkBvvqE7SdbomDl/0xUe77jzhU9rtOlmHnUhTei5cOiFlXqMD3vxMH7hfh+80u2MnexXgeqHA==
   dependencies:
-    "@polkadot/x-bigint" "12.3.2"
-    "@polkadot/x-global" "12.3.2"
-    "@polkadot/x-textdecoder" "12.3.2"
-    "@polkadot/x-textencoder" "12.3.2"
+    "@polkadot/x-bigint" "12.4.1"
+    "@polkadot/x-global" "12.4.1"
+    "@polkadot/x-textdecoder" "12.4.1"
+    "@polkadot/x-textencoder" "12.4.1"
     "@types/bn.js" "^5.1.1"
     bn.js "^5.2.1"
-    tslib "^2.5.3"
+    tslib "^2.6.1"
 
 "@polkadot/wasm-bridge@7.2.1":
   version "7.2.1"
@@ -6191,13 +6191,21 @@
   dependencies:
     tslib "^2.5.0"
 
-"@polkadot/x-bigint@12.3.2", "@polkadot/x-bigint@^12.3.1":
+"@polkadot/x-bigint@12.3.2":
   version "12.3.2"
   resolved "https://registry.yarnpkg.com/@polkadot/x-bigint/-/x-bigint-12.3.2.tgz#0e99489cc7938bed40762aaaed58ded6850ab54b"
   integrity sha512-JLqLgfGXe/x+hZJETd5ZqfpVsbwyMsH5Nn1Q20ineMMjXN/ig+kVR8Mc15LXBMuw4g7LldFW6UUrotWnuMI8Yw==
   dependencies:
     "@polkadot/x-global" "12.3.2"
     tslib "^2.5.3"
+
+"@polkadot/x-bigint@12.4.1", "@polkadot/x-bigint@^12.3.1":
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-bigint/-/x-bigint-12.4.1.tgz#0568fb5b025f1668a58e8b1d46bc0806443bbe6b"
+  integrity sha512-Wc5udWkRvZJpdISNmnVEwgtyyb/cPHk2YyqdGv9OnEmrG/gLQpmfPVnoxCYNvxq2qyv4klgAdrKcPTG0XvBOTA==
+  dependencies:
+    "@polkadot/x-global" "12.4.1"
+    tslib "^2.6.1"
 
 "@polkadot/x-fetch@^12.3.1":
   version "12.3.2"
@@ -6215,12 +6223,19 @@
   dependencies:
     tslib "^2.5.0"
 
-"@polkadot/x-global@12.3.2", "@polkadot/x-global@^12.3.1", "@polkadot/x-global@^12.3.2":
+"@polkadot/x-global@12.3.2":
   version "12.3.2"
   resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-12.3.2.tgz#04ac0b0e559a35107f0b95ff7889fcade3796aa3"
   integrity sha512-yVZq6oIegjlyh5rUZiTklgu+fL+W/DG1ypEa02683tUCB3avV5cA3PAHKptMSlb6FpweHu37lKKrqfAWrraDxg==
   dependencies:
     tslib "^2.5.3"
+
+"@polkadot/x-global@12.4.1", "@polkadot/x-global@^12.3.1", "@polkadot/x-global@^12.3.2":
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-12.4.1.tgz#029fe7b61e039521ce4852775f630a7afea5bd0b"
+  integrity sha512-r83Bd/VE6Gq5aXhIX0DUQWn3XF1c9ZH5AxqD1wwUiU3DQ5sKcO9DXRm5+sJ9ZTZrAl0efkix97TAygH+GXWD7Q==
+  dependencies:
+    tslib "^2.6.1"
 
 "@polkadot/x-randomvalues@12.3.2":
   version "12.3.2"
@@ -6230,21 +6245,21 @@
     "@polkadot/x-global" "12.3.2"
     tslib "^2.5.3"
 
-"@polkadot/x-textdecoder@12.3.2":
-  version "12.3.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-12.3.2.tgz#bbd5682744f3552ce5d4d792ff48a3ca525eafcf"
-  integrity sha512-lY5bfA5xArJRWEJlYOlQQMJeTjWD8s0yMhchirVgf5xj8Id9vPGeUoneH+VFDEwgXxrqBvDFJ4smN4T/r6a/fg==
+"@polkadot/x-textdecoder@12.4.1":
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-12.4.1.tgz#0973331818ac58a4d595b4cd4b296139d4a92bb4"
+  integrity sha512-8P4j8ORy4M6mK1+S1VzW/Jv/+LY7hggZUfxOyTbPAZPDACs86qtbVksUMdhh8kJvLwXuqpdAPtGDv7qrTsb3Rw==
   dependencies:
-    "@polkadot/x-global" "12.3.2"
-    tslib "^2.5.3"
+    "@polkadot/x-global" "12.4.1"
+    tslib "^2.6.1"
 
-"@polkadot/x-textencoder@12.3.2":
-  version "12.3.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-12.3.2.tgz#223e6f6dd78e2d81c6dcc6f244c76ceae7b08e32"
-  integrity sha512-iP3qEBiHzBckQ9zeY7ZHRWuu7mCEg5SMpOugs6UODRk8sx6KHzGQYlghBbWLit0uppPDVE0ifEwZ2n73djJHWQ==
+"@polkadot/x-textencoder@12.4.1":
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-12.4.1.tgz#876ae8412cbd8f134f618612ba35b47354ef7a2c"
+  integrity sha512-L/q7BOTcKAH/9gyH1pGtUXNWGZW/uzN9Z2vnJfrAifdXWKiALOeK2WmiObhGKWf8gXlooxEhjbJQUigI1J41rg==
   dependencies:
-    "@polkadot/x-global" "12.3.2"
-    tslib "^2.5.3"
+    "@polkadot/x-global" "12.4.1"
+    tslib "^2.6.1"
 
 "@polkadot/x-ws@^11.1.3":
   version "11.1.3"
@@ -10284,17 +10299,17 @@
   resolved "https://registry.yarnpkg.com/@webb-tools/wasm-utils/-/wasm-utils-0.1.4-126.tgz#6062d028ca426eb03ae9d37eb789b6ab32b361a0"
   integrity sha512-jdXU5ymruJUkfY7fxtzoL7Q25yjqdkMDzU0vBtZZDjhhJiCMxhzB5y9KkFI00VrysqRbCDHL1GiKnRtkntAUag==
 
-"@webpack-cli/configtest@^2.1.0", "@webpack-cli/configtest@^2.1.1":
+"@webpack-cli/configtest@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@webpack-cli/configtest/-/configtest-2.1.1.tgz#3b2f852e91dac6e3b85fb2a314fb8bef46d94646"
   integrity sha512-wy0mglZpDSiSS0XHrVR+BAdId2+yxPSoJW8fsna3ZpYSlufjvxnP4YbKTCBZnNIcGN4r6ZPXV55X4mYExOfLmw==
 
-"@webpack-cli/info@^2.0.1", "@webpack-cli/info@^2.0.2":
+"@webpack-cli/info@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@webpack-cli/info/-/info-2.0.2.tgz#cc3fbf22efeb88ff62310cf885c5b09f44ae0fdd"
   integrity sha512-zLHQdI/Qs1UyT5UBdWNqsARasIA+AaF8t+4u2aS2nEpBQh2mWIVb8qAklq0eUENnC5mOItrIB4LiS9xMtph18A==
 
-"@webpack-cli/serve@^2.0.4", "@webpack-cli/serve@^2.0.5":
+"@webpack-cli/serve@^2.0.5":
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-2.0.5.tgz#325db42395cd49fe6c14057f9a900e427df8810e"
   integrity sha512-lqaoKnRYBdo1UgDX8uF24AfGMifWK19TxPmM5FHc2vAGxrJ/qtyUyFBWoY1tISZdelsQ5fBcOusifo5o5wSJxQ==
@@ -29947,26 +29962,7 @@ webpack-bundle-analyzer@^4.8.0:
     sirv "^1.0.7"
     ws "^7.3.1"
 
-webpack-cli@5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-5.1.1.tgz#c211ac6d911e77c512978f7132f0d735d4a97ace"
-  integrity sha512-OLJwVMoXnXYH2ncNGU8gxVpUtm3ybvdioiTvHgUyBuyMLKiVvWy+QObzBsMtp5pH7qQoEuWgeEUQ/sU3ZJFzAw==
-  dependencies:
-    "@discoveryjs/json-ext" "^0.5.0"
-    "@webpack-cli/configtest" "^2.1.0"
-    "@webpack-cli/info" "^2.0.1"
-    "@webpack-cli/serve" "^2.0.4"
-    colorette "^2.0.14"
-    commander "^10.0.1"
-    cross-spawn "^7.0.3"
-    envinfo "^7.7.3"
-    fastest-levenshtein "^1.0.12"
-    import-local "^3.0.2"
-    interpret "^3.1.1"
-    rechoir "^0.8.0"
-    webpack-merge "^5.7.3"
-
-webpack-cli@^5.0.1:
+webpack-cli@5.1.4, webpack-cli@^5.0.1:
   version "5.1.4"
   resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-5.1.4.tgz#c8e046ba7eaae4911d7e71e2b25b776fcc35759b"
   integrity sha512-pIDJHIEI9LR0yxHXQ+Qh95k2EvXpWzZ5l+d+jIo+RdSm9MiHfzazIxwwni/p7+x4eJZuvG1AJwgC4TNQ7NRgsg==

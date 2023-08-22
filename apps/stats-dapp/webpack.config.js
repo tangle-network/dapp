@@ -11,8 +11,10 @@ const path = require('path'),
     require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'),
   HtmlWebPackPlugin = require('html-webpack-plugin'),
-  CopyWebpackPlugin = require('copy-webpack-plugin');
+  CopyWebpackPlugin = require('copy-webpack-plugin'),
+  { commandSync } = require('execa');
 
+const { workspaceRoot } = require('nx/src/utils/workspace-root');
 const findPackages = require('../../tools/scripts/findPackages');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -41,6 +43,11 @@ const plugins = fs.existsSync(path.join(__dirname, 'src/public'))
   : [];
 
 function createWebpackBase() {
+  commandSync('yarn fetch:onChainConfig', {
+    cwd: workspaceRoot,
+    stdio: 'inherit',
+  });
+
   console.log(
     'Running webpack in: ',
     isDevelopment ? 'development' : 'production'

@@ -9,6 +9,7 @@
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "dependsOn": ["gql-codegen", "^build"],
       "options": {
         "outputPath": "dist/apps/stats-dapp",
         "compiler": "babel",
@@ -53,6 +54,7 @@
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
+      "dependsOn": ["gql-codegen"],
       "options": {
         "buildTarget": "stats-dapp:build",
         "webpackConfig": "apps/stats-dapp/webpack.config.js"
@@ -77,6 +79,13 @@
       "options": {
         "jestConfig": "apps/stats-dapp/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "gql-codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn gql:codegen",
+        "color": true
       }
     }
   }
