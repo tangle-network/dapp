@@ -3,10 +3,11 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl, getVolume24h } from './reusable';
 import {
-  vAnchorAddresses,
-  availableSubgraphUrls,
-  startingEpoch,
-  numOfDatesFromStart,
+  VANCHOR_ADDRESSES,
+  ACTIVE_SUBGRAPH_URLS,
+  STARTING_EPOCH,
+  NUM_DATES_FROM_START,
+  DATE_START,
 } from '../constants';
 import { getDateFromEpoch, getEpochArray } from '../utils';
 
@@ -37,10 +38,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   try {
     const fetchedTvlData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        numOfDatesFromStart
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_START,
+        NUM_DATES_FROM_START
       );
 
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
@@ -58,10 +59,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   try {
     const fetchedDepositData =
       await vAnchorClient.Deposit.GetVAnchorsDepositByChainsByDateRange(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        numOfDatesFromStart
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_START,
+        NUM_DATES_FROM_START
       );
 
     depositData = fetchedDepositData.reduce(
@@ -82,10 +83,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   try {
     const fetchedWithdrawalData =
       await vAnchorClient.Withdrawal.GetVAnchorsWithdrawalByChainsByDateRange(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(startingEpoch),
-        numOfDatesFromStart
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_START,
+        NUM_DATES_FROM_START
       );
 
     withdrawalData = fetchedWithdrawalData.reduce(
@@ -105,8 +106,8 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   }
 
   const volumeData: VolumeDataType = getEpochArray(
-    startingEpoch,
-    numOfDatesFromStart
+    STARTING_EPOCH,
+    NUM_DATES_FROM_START
   ).reduce((volumeMap, epoch) => {
     volumeMap[epoch] = {
       deposit: depositData[epoch] ?? 0,

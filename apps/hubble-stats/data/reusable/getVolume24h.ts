@@ -1,18 +1,22 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { vAnchorAddresses, availableSubgraphUrls } from '../../constants';
-import { getDateFromEpoch, getEpochFromDate } from '../../utils';
+import {
+  VANCHOR_ADDRESSES,
+  ACTIVE_SUBGRAPH_URLS,
+  DATE_NOW,
+  DATE_24H,
+} from '../../constants';
 
 const getVolume24h = async (): Promise<number | undefined> => {
   let volume24h: number | undefined;
   try {
     const volumeVAnchorsByChainsData =
       await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60),
-        getDateFromEpoch(getEpochFromDate(new Date()))
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_24H,
+        DATE_NOW
       );
 
     volume24h = volumeVAnchorsByChainsData?.reduce(

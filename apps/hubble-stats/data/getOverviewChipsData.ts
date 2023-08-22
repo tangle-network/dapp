@@ -2,7 +2,7 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl } from './reusable';
-import { vAnchorAddresses, availableSubgraphUrls } from '../constants';
+import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;
@@ -17,8 +17,8 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
   try {
     const volumeVAnchorsByChainsData =
       await vAnchorClient.Volume.GetVAnchorsVolumeByChains(
-        availableSubgraphUrls,
-        vAnchorAddresses
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES
       );
 
     volume = volumeVAnchorsByChainsData?.reduce(

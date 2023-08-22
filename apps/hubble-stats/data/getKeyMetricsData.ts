@@ -2,13 +2,17 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl, getVolume24h } from './reusable';
-import { getDateFromEpoch, getEpochFromDate } from '../utils';
-import { vAnchorAddresses, availableSubgraphUrls } from '../constants';
+import {
+  VANCHOR_ADDRESSES,
+  ACTIVE_SUBGRAPH_URLS,
+  DATE_24H,
+  DATE_48H,
+} from '../constants';
 
 type KeyMetricDataType = {
   tvl: number | undefined;
   tvlChangeRate: number | undefined;
-  volume: number | undefined;
+  volume24h: number | undefined;
   volumeChangeRate: number | undefined;
   relayerFees: number | undefined;
   wrappingFees: number | undefined;
@@ -16,16 +20,14 @@ type KeyMetricDataType = {
 
 export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   const tvl = await getTvl();
-  const volume = await getVolume24h();
+  const volume24h = await getVolume24h();
 
   let relayerFees: number | undefined;
-  let wrappingFees: number | undefined;
-
   try {
     const relayerFeesVAnchorsByChainsData =
       await vAnchorClient.RelayerFee.GetVAnchorsTotalRelayerFeeByChains(
-        availableSubgraphUrls,
-        vAnchorAddresses
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES
       );
 
     relayerFees = relayerFeesVAnchorsByChainsData?.reduce(
@@ -44,11 +46,12 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
     relayerFees = undefined;
   }
 
+  let wrappingFees: number | undefined;
   try {
     const wrappingFeesVAnchorsByChainsData =
       await vAnchorClient.WrappingFee.GetVAnchorsTotalWrappingFeeByChains(
-        availableSubgraphUrls,
-        vAnchorAddresses
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES
       );
 
     wrappingFees = wrappingFeesVAnchorsByChainsData?.reduce(
@@ -71,12 +74,10 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   try {
     const tvlVAnchorsByChainsData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains15MinsInterval(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        // 48h before
-        getDateFromEpoch(getEpochFromDate(new Date()) - 2 * 24 * 60 * 60),
-        // 24h before
-        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60)
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_48H,
+        DATE_24H
       );
 
     // get the latest item since it's the most updated
@@ -104,10 +105,10 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   try {
     const volumeVAnchorsByChainsData =
       await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
-        availableSubgraphUrls,
-        vAnchorAddresses,
-        getDateFromEpoch(getEpochFromDate(new Date()) - 2 * 24 * 60 * 60),
-        getDateFromEpoch(getEpochFromDate(new Date()) - 24 * 60 * 60)
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        DATE_48H,
+        DATE_24H
       );
 
     volume48h = volumeVAnchorsByChainsData?.reduce(
@@ -127,16 +128,16 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
 
   // follow Uniswap's formula
   const volumeChangeRate =
-    typeof volume === 'number' && typeof volume48h === 'number'
-      ? volume === volume48h
+    typeof volume24h === 'number' && typeof volume48h === 'number'
+      ? volume24h === volume48h
         ? 0
-        : ((volume - volume48h) / volume48h) * 100
+        : ((volume24h - volume48h) / volume48h) * 100
       : undefined;
 
   return {
     tvl,
     tvlChangeRate,
-    volume,
+    volume24h,
     volumeChangeRate,
     relayerFees,
     wrappingFees,
