@@ -41,7 +41,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         </span>
 
         {/* Change Rate */}
-        {changeRate && (
+        {typeof changeRate === 'number' && (
           <span>
             <Typography
               variant="body2"

@@ -17,12 +17,12 @@ const getVolume24h = async (): Promise<number | undefined> => {
 
     volume24h = volumeVAnchorsByChainsData?.reduce(
       (volumeTotal, vAnchorsByChain) => {
-        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+        const volumeVAnchorsByChain = vAnchorsByChain.reduce(
           (volumeTotalByChain, vAnchor) =>
             volumeTotalByChain + +formatEther(BigInt(vAnchor.volume ?? 0)),
           0
         );
-        return volumeTotal + depositVAnchorsByChain;
+        return volumeTotal + volumeVAnchorsByChain;
       },
       0
     );

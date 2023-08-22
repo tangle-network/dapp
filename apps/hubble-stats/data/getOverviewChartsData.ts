@@ -110,7 +110,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   ).reduce((volumeMap, epoch) => {
     volumeMap[epoch] = {
       deposit: depositData[epoch] ?? 0,
-      withdrawal: 0.01,
+      withdrawal: withdrawalData[epoch] ?? 0,
     };
     return volumeMap;
   }, {} as VolumeDataType);

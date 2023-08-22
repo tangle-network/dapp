@@ -1,5 +1,5 @@
 const getEpochFromDate = (date: Date): number => {
-  return date.getTime() / 1000;
+  return Math.floor(date.getTime() / 1000);
 };
 
 export default getEpochFromDate;
