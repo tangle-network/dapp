@@ -82,7 +82,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
         </AvatarGroup>
         <Link to={fullDetailUrl}>
           <Button variant="link" as="span" size="sm">
-            See full details
+            View Details
           </Button>
         </Link>
       </div>

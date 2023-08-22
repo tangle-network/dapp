@@ -32,7 +32,7 @@ export const Filter = forwardRef<HTMLDivElement, FilterProps>(
           className="font-bold"
         />
 
-        <DropdownBody className="py-2 min-w-[300px]" size="sm">
+        <DropdownBody className="py-2 min-w-[300px] bg-mono-0 dark:bg-mono-180" size="sm">
           {/** Title */}
           <div className="flex items-center justify-between px-4 py-2">
             <Typography variant="h5" fw="bold">

@@ -411,14 +411,14 @@ const DetailsView: FC<{
               </div>
 
               <Progress
-                value={stats.uptime}
+                value={parseFloat(stats.uptime.toFixed(2))}
                 size="lg"
                 prefixLabel="UPTIME "
                 suffixLabel="%"
               />
 
               <Progress
-                value={stats.reputation}
+                value={parseFloat(stats.reputation.toFixed(2))}
                 size="lg"
                 prefixLabel="REPUTATION "
                 suffixLabel="%"

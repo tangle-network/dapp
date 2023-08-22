@@ -212,6 +212,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
           <TimeLine>
             {keyDetail.history.map((hist, idx) => {
+              console.log(hist);
               const { at, hash, status } = hist;
 
               switch (status) {
