@@ -52,9 +52,6 @@ jobs:
       - name: Install deps
         run: yarn install
 
-      - name: Generate stats-dapp codegen
-        run: yarn gql:codegen
-
       - name: build
         run: yarn nx run-many --all --target=build
         # Fix: JavaScript heap out of memory
