@@ -1,8 +1,6 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import cx from 'classnames';
-import { cloneElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
 
 /**
@@ -38,12 +36,13 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
           'bg-mono-20 dark:bg-mono-160',
           'webb-shadow-sm'
         )}
+        side="bottom"
         {...props}
       >
         <TooltipPrimitive.Arrow className="fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm" />
         <div
           className={twMerge(
-            'body4 text-mono-140 dark:text-mono-80 font-normal',
+            'text-mono-140 dark:text-mono-80 font-normal',
             className
           )}
         >

@@ -127,14 +127,12 @@ const Authorities = () => {
       {
         titleProps: {
           title: 'Keygen',
-          info: 'Keygen',
         },
         value: threshold?.keyGen ?? 'loading..',
       },
       {
         titleProps: {
           title: 'Signature',
-          info: 'Signature',
         },
         value: threshold?.signature ?? 'loading..',
       },
@@ -167,7 +165,7 @@ const Authorities = () => {
       <Card>
         <TitleWithInfo
           title="Network Thresholds"
-          info="Network Thresholds"
+          info="Minimum participants needed for key generation (keygen) and signing a valid signature in Distributed Key Generation (DKG)."
           variant="h5"
         />
 
@@ -194,7 +192,11 @@ const Authorities = () => {
                 <Typography variant="body2" fw="semibold">
                   /
                 </Typography>
-                <KeyValueWithButton size="sm" keyValue={publicKey.compressed} />
+                <KeyValueWithButton
+                  size="sm"
+                  label="key:"
+                  keyValue={publicKey.compressed}
+                />
               </div>
 
               <Button variant="link" size="sm">

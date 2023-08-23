@@ -26,17 +26,6 @@ export function getProposalsData(
   const bytes = hexToU8a(data);
 
   switch (propType) {
-    case ProposalType.AnchorCreate: {
-      const decoded = AnchorCreateProposal.fromBytes(bytes);
-      return {
-        encodedCall: decoded.encodedCall,
-        functionSignature: u8aToHex(decoded.header.functionSignature),
-        nonce: String(decoded.header.nonce),
-        chainType: String(decoded.header.resourceId.chainType),
-        chainId: String(decoded.header.resourceId.chainId),
-        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
-      };
-    }
     case ProposalType.AnchorUpdate: {
       const decoded = AnchorUpdateProposal.fromBytes(bytes);
       return {

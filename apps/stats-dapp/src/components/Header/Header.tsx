@@ -3,6 +3,7 @@ import {
   logoConfig,
   headerNavs,
   NetworkType,
+  STATS_DOCUS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import {
   Button,
@@ -92,7 +93,7 @@ export const Header: FC<HeaderProps> = ({
                   className="px-4 py-3.5 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0  dark:hover:bg-mono-180"
                   icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
-                    window.open('https://docs.webb.tools', '_blank');
+                    window.open(STATS_DOCUS_URL, '_blank');
                   }}
                 >
                   <Typography variant="label" fw="bold">

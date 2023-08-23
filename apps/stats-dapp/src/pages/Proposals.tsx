@@ -14,14 +14,12 @@ const Proposals = () => {
       {
         titleProps: {
           title: 'Proposal Threshold',
-          info: 'Proposal Threshold',
         },
         value: proposerThreshold,
       },
       {
         titleProps: {
           title: 'Proposers',
-          info: 'Proposers',
         },
         value: proposerCount,
       },
@@ -34,7 +32,7 @@ const Proposals = () => {
         <TitleWithInfo
           title="Proposals Status"
           variant="h5"
-          info="Proposals Status"
+          info="Minimum votes (as set by the 'Proposal Threshold') from the 'Proposers' needed to pass a proposal to DKG for signing."
         />
 
         <Stats items={statsItems} />
