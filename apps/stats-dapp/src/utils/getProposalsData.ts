@@ -1,12 +1,11 @@
 import { ProposalType } from '../generated/graphql';
 import {
-  AnchorCreateProposal,
   AnchorUpdateProposal,
   EVMProposal,
   FeeRecipientUpdateProposal,
   MaxDepositLimitProposal,
   MinWithdrawalLimitProposal,
-  RefreshVoteProposal,
+  RefreshProposal,
   RescueTokensProposal,
   ResourceIdUpdateProposal,
   SetTreasuryHandlerProposal,
@@ -14,8 +13,9 @@ import {
   TokenAddProposal,
   TokenRemoveProposal,
   WrappingFeeUpdateProposal,
-} from '@webb-tools/sdk-core';
+} from '@webb-tools/proposals';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { AnchorCreateProposal } from '@webb-tools/sdk-core';
 
 export function getProposalsData(
   propType: ProposalType,
@@ -90,7 +90,7 @@ export function getProposalsData(
       };
     }
     case ProposalType.Refresh: {
-      const decoded = RefreshVoteProposal.fromBytes(bytes);
+      const decoded = RefreshProposal.fromBytes(bytes);
       return {
         nonce: String(decoded.nonce),
         publicKey: String(decoded.publicKey),
