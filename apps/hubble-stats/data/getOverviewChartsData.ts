@@ -34,20 +34,20 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   const currentTvl = await getTvl();
   const volume24h = await getVolume24h();
 
-  let tvlData: { [epoch: string]: number } = {};
+  let tvlData: { [epoch: string]: bigint } = {};
   try {
     const fetchedTvlData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        DATE_START,
+        STARTING_EPOCH,
         NUM_DATES_FROM_START
       );
 
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
-      Object.keys(tvlDataByChain).forEach((epoch: string) => {
-        if (!tvlMap[epoch]) tvlMap[epoch] = 0;
-        tvlMap[epoch] += +formatEther(BigInt(tvlDataByChain[epoch]));
+      Object.keys(tvlDataByChain).forEach((epoch) => {
+        if (!tvlMap[epoch]) tvlMap[epoch] = BigInt(0);
+        tvlMap[epoch] += BigInt(tvlDataByChain[epoch]);
       });
       return tvlMap;
     }, {});
@@ -55,21 +55,21 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     tvlData = {};
   }
 
-  let depositData: { [epoch: string]: number } = {};
+  let depositData: { [epoch: string]: bigint } = {};
   try {
     const fetchedDepositData =
       await vAnchorClient.Deposit.GetVAnchorsDepositByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        DATE_START,
+        STARTING_EPOCH,
         NUM_DATES_FROM_START
       );
 
     depositData = fetchedDepositData.reduce(
       (depositMap, depositDataByChain) => {
         Object.keys(depositDataByChain).forEach((epoch: string) => {
-          if (!depositMap[epoch]) depositMap[epoch] = 0;
-          depositMap[epoch] += +formatEther(BigInt(depositDataByChain[epoch]));
+          if (!depositMap[epoch]) depositMap[epoch] = BigInt(0);
+          depositMap[epoch] += BigInt(depositDataByChain[epoch]);
         });
         return depositMap;
       },
@@ -79,23 +79,21 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     depositData = {};
   }
 
-  let withdrawalData: { [epoch: string]: number } = {};
+  let withdrawalData: { [epoch: string]: bigint } = {};
   try {
     const fetchedWithdrawalData =
       await vAnchorClient.Withdrawal.GetVAnchorsWithdrawalByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        DATE_START,
+        STARTING_EPOCH,
         NUM_DATES_FROM_START
       );
 
     withdrawalData = fetchedWithdrawalData.reduce(
       (withdrawalMap, withdrawalDataByChain) => {
         Object.keys(withdrawalDataByChain).forEach((epoch: string) => {
-          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = 0;
-          withdrawalMap[epoch] += +formatEther(
-            BigInt(withdrawalDataByChain[epoch])
-          );
+          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = BigInt(0);
+          withdrawalMap[epoch] += BigInt(withdrawalDataByChain[epoch]);
         });
         return withdrawalMap;
       },
@@ -110,8 +108,10 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     NUM_DATES_FROM_START
   ).reduce((volumeMap, epoch) => {
     volumeMap[epoch] = {
-      deposit: depositData[epoch] ?? 0,
-      withdrawal: withdrawalData[epoch] ?? 0,
+      deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
+      withdrawal: withdrawalData[epoch]
+        ? +formatEther(withdrawalData[epoch])
+        : 0,
     };
     return volumeMap;
   }, {} as VolumeDataType);
@@ -122,7 +122,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     tvlData: Object.keys(tvlData).map((epoch) => {
       return {
         date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: tvlData[+epoch],
+        value: +formatEther(tvlData[+epoch]),
       };
     }),
     volumeData: Object.keys(volumeData).map((epoch) => {

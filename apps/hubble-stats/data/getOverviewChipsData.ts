@@ -24,8 +24,8 @@ export default async function getOverviewChipsData(): Promise<OverviewChipsDataT
     volume = volumeVAnchorsByChainsData?.reduce(
       (volumeTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (volumeTotalByChain, vAnchor) =>
-            volumeTotalByChain + +formatEther(BigInt(vAnchor.volume ?? 0)),
+          (volumeTotalByChain, vAnchorVolume) =>
+            volumeTotalByChain + +formatEther(BigInt(vAnchorVolume ?? 0)),
           0
         );
         return volumeTotal + depositVAnchorsByChain;
