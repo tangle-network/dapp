@@ -8,7 +8,7 @@ import { OverviewChartsDataType } from '../../data';
 
 const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
   currentTvl,
-  currentVolume,
+  volume24h,
   tvlData,
   volumeData,
 }) => {
@@ -39,7 +39,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
       {/* 24 Hour Volume Chart Container */}
       <ChartContainer
         heading="Volume 24H"
-        currentValue={currentVolume}
+        currentValue={volume24h}
         value={volumeValue}
         date={volumeDate}
         className="bg-glass dark:bg-glass_dark"

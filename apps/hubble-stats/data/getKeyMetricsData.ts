@@ -128,12 +128,10 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   }
 
   // follow Uniswap's formula
-  // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L91
+  // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L93
   const volumeChangeRate =
-    typeof volume24h === 'number' && typeof volume48h === 'number'
-      ? volume24h === volume48h
-        ? 0
-        : ((volume24h - volume48h) / volume48h) * 100
+    volume24h && volume48h
+      ? ((volume24h - volume48h) / volume48h) * 100
       : undefined;
 
   return {

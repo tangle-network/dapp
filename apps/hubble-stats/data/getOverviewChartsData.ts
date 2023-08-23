@@ -16,7 +16,7 @@ type VolumeDataType = {
 
 export type OverviewChartsDataType = {
   currentTvl: number | undefined;
-  currentVolume: number | undefined;
+  volume24h: number | undefined;
   tvlData: {
     date: Date;
     value: number;
@@ -117,7 +117,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
 
   return {
     currentTvl,
-    currentVolume: volume24h,
+    volume24h,
     tvlData: Object.keys(tvlData).map((epoch) => {
       return {
         date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
