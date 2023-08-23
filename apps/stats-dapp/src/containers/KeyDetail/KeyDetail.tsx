@@ -212,7 +212,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
 
           <TimeLine>
             {keyDetail.history.map((hist, idx) => {
-              console.log(hist);
               const { at, hash, status } = hist;
 
               switch (status) {
@@ -328,11 +327,13 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
             )}
           >
             <Typography variant="h4" fw="bold" className="block">
-              {keyDetail.numberOfValidators}
+              {keyDetail.numberOfValidators ?? '--'}
             </Typography>
-            <Typography variant="body1" fw="bold" className="block">
-              {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
-            </Typography>
+            {typeof keyDetail.numberOfValidators === 'number' && (
+              <Typography variant="body1" fw="bold" className="block">
+                {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
+              </Typography>
+            )}
           </div>
         </div>
 
