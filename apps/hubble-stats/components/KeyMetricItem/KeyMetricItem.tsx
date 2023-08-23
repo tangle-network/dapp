@@ -4,6 +4,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
 import { MetricItemProps } from './types';
+import { getRoundedDownWith2Decimals } from '../../utils';
 
 const KeyMetricItem: FC<MetricItemProps> = ({
   title,
@@ -32,11 +33,8 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           >
             {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
-              ? value.toFixed(2)
-              : getRoundedAmountString(value, 2, {
-                  roundingFunction: Math.floor,
-                  totalLength: 0,
-                })}
+              ? Math.floor(value * 100) / 100
+              : getRoundedDownWith2Decimals(value)}
           </Typography>
         </span>
 
