@@ -10160,6 +10160,13 @@
   dependencies:
     "@webb-tools/sdk-core" "0.1.4-126"
 
+"@webb-tools/proposals@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@webb-tools/proposals/-/proposals-1.0.8.tgz#e0c2800d35b2a502160ff8dc90fcf04e94108547"
+  integrity sha512-+sEUol/3irOLHSMFxNvxigqQVT+lRqRL99vh0AsGYorBb+dtX/YWKbNKm5u52HWQFZgQ1fHMKWQhTnB4VonPYQ==
+  dependencies:
+    "@webb-tools/utils" "^1.0.8"
+
 "@webb-tools/protocol-substrate-types@0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@webb-tools/protocol-substrate-types/-/protocol-substrate-types-0.0.10.tgz#1fb383c97f63bfc7e7f302f97cb747b0d79c4276"
