@@ -7,7 +7,6 @@ import {
   ACTIVE_SUBGRAPH_URLS,
   STARTING_EPOCH,
   NUM_DATES_FROM_START,
-  DATE_START,
 } from '../constants';
 import { getDateFromEpoch, getEpochArray } from '../utils';
 

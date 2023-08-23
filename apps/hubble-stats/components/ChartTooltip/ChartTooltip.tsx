@@ -21,7 +21,7 @@ const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
           />
           <Typography variant="body2">
             {item.label}: {item.valuePrefix}
-            {item.value}
+            {item.value.toFixed(2)}
           </Typography>
         </div>
       ))}
