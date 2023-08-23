@@ -1,7 +1,7 @@
 import vAnchorClient from '@webb-tools/vanchor-client';
 import { getDateFromEpoch, getEpochFromDate } from '../utils';
 
-export const VANCHOR_ADDRESSES = ['0x91eb86019fd8d7c5a9e31143d422850a13f670a3'];
+export const VANCHOR_ADDRESSES = ['0x7aA556dD0AF8bed063444E14A6A9af46C9266973'];
 
 export const LIVE_SUBGRAPH_URLS = [
   vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
@@ -15,7 +15,7 @@ export const LOCAL_SUBGRAPH_URLS = [
   vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
 ];
 
-export const ACTIVE_SUBGRAPH_URLS = LOCAL_SUBGRAPH_URLS;
+export const ACTIVE_SUBGRAPH_URLS = LIVE_SUBGRAPH_URLS;
 
 export const STARTING_EPOCH = 1692057600;
 

@@ -32,7 +32,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           >
             {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
-              ? value
+              ? value.toFixed(2)
               : getRoundedAmountString(value, 2, {
                   roundingFunction: Math.floor,
                   totalLength: 0,
@@ -41,21 +41,23 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         </span>
 
         {/* Change Rate */}
-        {typeof changeRate === 'number' && (
-          <span>
-            <Typography
-              variant="body2"
-              fw="bold"
-              className={cx({
-                '!text-green-70': changeRate >= 0,
-                '!text-red-70': changeRate < 0,
-              })}
-            >
-              ({changeRate >= 0 ? `+` : `-`}
-              {getRoundedAmountString(Math.abs(changeRate), 2)}%)
-            </Typography>
-          </span>
-        )}
+        {typeof changeRate === 'number' &&
+          Number.isFinite(changeRate) &&
+          !Number.isNaN(changeRate) && (
+            <span>
+              <Typography
+                variant="body2"
+                fw="bold"
+                className={cx({
+                  '!text-green-70': changeRate >= 0,
+                  '!text-red-70': changeRate < 0,
+                })}
+              >
+                ({changeRate >= 0 ? `+` : `-`}
+                {getRoundedAmountString(Math.abs(changeRate), 2)}%)
+              </Typography>
+            </span>
+          )}
       </div>
     </div>
   );
