@@ -107,7 +107,7 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
   columnHelper.accessor('id', {
     header: '',
     cell: (props) => {
-      const id = props.row.original.publicKey;
+      const id = props.row.original.id;
       return (
         <Link to={`/keys/drawer/${id}`}>
           <Button variant="link" as="span" size="sm">
