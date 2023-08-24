@@ -54,6 +54,7 @@ export * from './FlaskLineIcon';
 export * from './FoldersFillIcon';
 export * from './ForumIcon';
 export { default as GasStationFill } from './GasStationFill';
+export { default as SettingsFillIcon } from './SettingsFillIcon';
 export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
