@@ -1,6 +1,7 @@
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { sessionFrame } from './hooks';
 
 /**
  * Chain metadata
@@ -61,6 +62,10 @@ type StatsProvidervalue = {
   // dkg keys data from polkadot api
   dkgDataFromPolkadotAPI: {
     currentSessionNumber: number;
+    currentSessionTimeFrame: {
+      start: Date;
+      end: Date;
+    };
     currentKey: string;
     nextSessionNumber: number;
     nextKey: string;
@@ -118,6 +123,10 @@ const statsContext: React.Context<StatsProvidervalue> =
     polkadotEndpoint: '',
     dkgDataFromPolkadotAPI: {
       currentSessionNumber: 0,
+      currentSessionTimeFrame: {
+        start: new Date(),
+        end: new Date(),
+      },
       currentKey: '',
       nextSessionNumber: 0,
       nextKey: '',
@@ -179,6 +188,10 @@ export const StatsProvider: React.FC<
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [dkgDataFromPolkadotAPI, setDkgDataFromPolkadotAPI] = useState({
     currentSessionNumber: 0,
+    currentSessionTimeFrame: {
+      start: new Date(),
+      end: new Date(),
+    },
     currentKey: '',
     nextSessionNumber: 0,
     nextKey: '',
@@ -267,8 +280,28 @@ export const StatsProvider: React.FC<
       const proposerCount = await apiPromise.query.dkgProposals.proposerCount();
       const proposerThreshold =
         await apiPromise.query.dkgProposals.proposerThreshold();
+      const lastSessionRotationBlockNumber =
+        await apiPromise.query.dkg.lastSessionRotationBlock();
+      const lastSessionRotaionBlockHash =
+        await apiPromise.rpc.chain.getBlockHash(
+          lastSessionRotationBlockNumber.toString()
+        );
+      const lastSessionRotationBlock = await apiPromise.rpc.chain.getBlock(
+        lastSessionRotaionBlockHash
+      );
+      const lastSessionRotationBlockTimestamp =
+        lastSessionRotationBlock.block.extrinsics[0].method.args[0].toJSON();
+      const [start, end] = sessionFrame(
+        new Date(lastSessionRotationBlockTimestamp as string).toString(),
+        sessionHeight
+      );
+
       setDkgDataFromPolkadotAPI({
         currentSessionNumber,
+        currentSessionTimeFrame: {
+          start: start ?? new Date(),
+          end: end ?? new Date(),
+        },
         currentKey,
         nextSessionNumber,
         nextKey,

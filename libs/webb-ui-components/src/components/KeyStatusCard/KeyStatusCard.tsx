@@ -65,7 +65,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       </div>
 
       {/* * Content */}
-      <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
+      <TimeProgress startTime={startTime} endTime={endTime} />
 
       {/** Bottom */}
       <div className="flex items-center justify-between">
