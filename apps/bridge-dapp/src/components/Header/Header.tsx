@@ -11,7 +11,7 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useConnectWallet } from '../../hooks';
 import { ChainListCardWrapper } from '../ChainListCardWrapper';
 import { WalletDropdown } from './WalletDropdown';
@@ -38,86 +38,75 @@ export const Header: FC<HeaderProps> = () => {
     [activeAccount, activeChain, activeWallet, loading]
   );
 
-  const location = useLocation();
-
-  const items = location.pathname.split('/').filter((item) => item !== '');
-
   return (
-    <header className="flex justify-between py-4">
-      <Breadcrumbs>
-        <NavLink to="/bridge">
-          <BreadcrumbsItem
-            icon={<ContrastTwoLine width={24} height={24} />}
-            className="!pl-0"
-          >
-            Hubble
-          </BreadcrumbsItem>
-        </NavLink>
+    <header className="px-4 pt-6 pb-10">
+      <div className="flex justify-between max-w-[1160px] h-[40px] mx-auto">
+        <Breadcrumbs>
+          <NavLink to="/bridge">
+            <BreadcrumbsItem
+              icon={<ContrastTwoLine width={24} height={24} />}
+              className="!pl-0"
+            >
+              Hubble
+            </BreadcrumbsItem>
+          </NavLink>
+          <BreadcrumbsItem isLast={true}>Bridge</BreadcrumbsItem>
+        </Breadcrumbs>
 
-        {items.map((item, index) => (
-          <BreadcrumbsItem
-            key={index}
-            isLast={index === items.length - 1}
-            className="capitalize"
-          >
-            {item}
-          </BreadcrumbsItem>
-        ))}
-      </Breadcrumbs>
+        <div className="flex items-center space-x-2">
+          {/** Wallet is actived */}
+          {isDisplayNetworkSwitcherAndWalletButton &&
+          activeAccount &&
+          activeWallet &&
+          activeChain ? (
+            <div className="hidden lg:!flex items-center space-x-2">
+              <ChainButton
+                chain={activeChain}
+                status="success"
+                onClick={() => setMainComponent(<ChainListCardWrapper />)}
+              />
+              <WalletDropdown account={activeAccount} wallet={activeWallet} />
+            </div>
+          ) : (
+            <Button
+              isLoading={loading}
+              loadingText="Connecting..."
+              onClick={handleConnectWalletClick}
+              className="hidden lg:!flex justify-center items-center"
+            >
+              Connect wallet
+            </Button>
+          )}
 
-      <div className="flex items-center space-x-2">
-        {/** Wallet is actived */}
-        {isDisplayNetworkSwitcherAndWalletButton &&
-        activeAccount &&
-        activeWallet &&
-        activeChain ? (
-          <div className="hidden lg:!flex items-center space-x-2">
-            <ChainButton
-              chain={activeChain}
-              status="success"
-              onClick={() => setMainComponent(<ChainListCardWrapper />)}
+          <NavigationMenu>
+            <NavigationMenuTrigger />
+            {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
+            <NavigationMenuContent
+              version={process.env.BRIDGE_VERSION}
+              onTestnetClick={() =>
+                window.open(
+                  'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
+                  '_blank'
+                )
+              }
+              onFaucetClick={() => {
+                window.open('https://faucet.webb.tools/', '_blank');
+              }}
+              onHelpCenterClick={() =>
+                window.open('https://t.me/webbprotocol', '_blank')
+              }
+              onRequestFeaturesClick={() =>
+                window.open(
+                  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=',
+                  '_blank'
+                )
+              }
+              onAboutClick={() =>
+                window.open('https://www.webb.tools/', '_blank')
+              }
             />
-            <WalletDropdown account={activeAccount} wallet={activeWallet} />
-          </div>
-        ) : (
-          <Button
-            isLoading={loading}
-            loadingText="Connecting..."
-            onClick={handleConnectWalletClick}
-            className="hidden lg:!flex justify-center items-center"
-          >
-            Connect wallet
-          </Button>
-        )}
-
-        <NavigationMenu>
-          <NavigationMenuTrigger />
-          {/** TODO: Refactor these links into a config file and make the menu items dynamically based on the config */}
-          <NavigationMenuContent
-            version={process.env.BRIDGE_VERSION}
-            onTestnetClick={() =>
-              window.open(
-                'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
-                '_blank'
-              )
-            }
-            onFaucetClick={() => {
-              window.open('https://faucet.webb.tools/', '_blank');
-            }}
-            onHelpCenterClick={() =>
-              window.open('https://t.me/webbprotocol', '_blank')
-            }
-            onRequestFeaturesClick={() =>
-              window.open(
-                'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=&template=feature_request.md&title=',
-                '_blank'
-              )
-            }
-            onAboutClick={() =>
-              window.open('https://www.webb.tools/', '_blank')
-            }
-          />
-        </NavigationMenu>
+          </NavigationMenu>
+        </div>
       </div>
     </header>
   );

@@ -1,25 +1,24 @@
 import { Transition } from '@headlessui/react';
-import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
   Banner,
   Footer,
+  SideBarItemProps,
+  SideBarFooterType,
   Logo,
   LogoWithoutName,
   SideBar,
-  SideBarFooterType,
-  SideBarItemProps,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
-import { Outlet } from 'react-router';
 import { Header } from '../../components/Header';
+import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
+  WEBB_DAPP_NEW_ISSUE_URL,
+  WEBB_MKT_URL,
+  WEBB_FAUCET_URL,
   STATS_URL,
   TANGLE_MKT_URL,
-  WEBB_DAPP_NEW_ISSUE_URL,
   WEBB_DOCS_URL,
-  WEBB_FAUCET_URL,
-  WEBB_MKT_URL,
 } from '../../constants';
 
 const items: SideBarItemProps[] = [
@@ -86,13 +85,11 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
           footer={footer}
         />
 
-        <div className="flex flex-col w-full mx-auto overflow-y-auto">
-          <div className="w-full px-4 mx-auto max-w-[1565px] space-y-6">
-            <Header />
-            <main className="w-full">
-              <Outlet />
-            </main>
-            <Footer isMinimal className="w-full py-12 mx-auto" />
+        <div className="w-full mx-auto flex flex-col justify-between overflow-y-auto">
+          <Header />
+          <main className="px-4 lg:px-0">{children}</main>
+          <div className="px-4">
+            <Footer isMinimal className="w-full mx-auto" />
           </div>
         </div>
       </div>
