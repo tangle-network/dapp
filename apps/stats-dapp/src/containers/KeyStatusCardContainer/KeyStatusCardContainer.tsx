@@ -1,5 +1,7 @@
 import { KeyStatusCard } from '@webb-tools/webb-ui-components/components/KeyStatusCard';
 import { useStatsContext } from '../../provider/stats-provider';
+import { useBlocks } from '../../provider/hooks';
+import { useMemo } from 'react';
 
 /**
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
@@ -16,6 +18,16 @@ export const KeyStatusCardContainer = () => {
 
   const { time } = useStatsContext();
 
+  const { val: blocksData } = useBlocks();
+
+  const showDetails = useMemo(() => {
+    if (blocksData?.finalized - blocksData?.latestIndexedBlock < 5) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [blocksData]);
+
   return (
     <KeyStatusCard
       title="Active Key"
@@ -29,6 +41,7 @@ export const KeyStatusCardContainer = () => {
       authorities={new Set<string>(currentAuthorities) ?? new Set<string>()}
       totalAuthorities={0}
       fullDetailUrl={currentKey ? `drawer/${currentKey}` : ''}
+      showDetails={showDetails}
     />
   );
 };
