@@ -4,11 +4,11 @@ import { FC, lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { HashRouter } from 'react-router-dom';
 import { Layout } from '../containers';
+import Deposit from '../pages/Hubble/Bridge/Deposit';
+import Transfer from '../pages/Hubble/Bridge/Transfer';
+import Withdraw from '../pages/Hubble/Bridge/Withdraw';
 
 const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
-const Deposit = lazy(() => import('../pages/Hubble/Bridge/Deposit'));
-const Transfer = lazy(() => import('../pages/Hubble/Bridge/Transfer'));
-const Withdraw = lazy(() => import('../pages/Hubble/Bridge/Withdraw'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
 const Account = lazy(() => import('../pages/Account'));
 const Ecosystem = lazy(() => import('../pages/Ecosystem'));

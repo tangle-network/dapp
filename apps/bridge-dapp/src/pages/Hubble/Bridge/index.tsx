@@ -38,7 +38,7 @@ import { downloadNotes } from '../../../utils';
 const shieldedAssetsTab = 'Shielded Assets';
 const spendNotesTab = 'Available Spend Notes';
 
-const Bridge: FC<{ children?: React.ReactNode }> = ({ children }) => {
+const Bridge: FC = () => {
   // State for the tabs
   const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
 
