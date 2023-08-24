@@ -23,7 +23,7 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
     <div
       {...props}
       className={twMerge(
-        'w-full lg:max-w-xl min-h-[710px] h-full bg-mono-0 dark:bg-mono-190',
+        'w-full lg:max-w-xl min-h-[var(--card-height)] h-full bg-mono-0 dark:bg-mono-190',
         'p-9 rounded-xl space-y-4 grow',
         'border border-mono-40 dark:border-mono-160',
         'flex flex-col',
