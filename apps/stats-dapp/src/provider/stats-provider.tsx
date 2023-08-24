@@ -67,6 +67,7 @@ type StatsProvidervalue = {
       end: Date;
     };
     currentKey: string;
+    currentAuthorities: string[];
     nextSessionNumber: number;
     nextKey: string;
     proposerCount: number;
@@ -128,6 +129,7 @@ const statsContext: React.Context<StatsProvidervalue> =
         end: new Date(),
       },
       currentKey: '',
+      currentAuthorities: [],
       nextSessionNumber: 0,
       nextKey: '',
       proposerCount: 0,
@@ -193,6 +195,7 @@ export const StatsProvider: React.FC<
       end: new Date(),
     },
     currentKey: '',
+    currentAuthorities: [] as string[],
     nextSessionNumber: 0,
     nextKey: '',
     proposerCount: 0,
@@ -295,6 +298,8 @@ export const StatsProvider: React.FC<
         new Date(lastSessionRotationBlockTimestamp as string).toString(),
         sessionHeight
       );
+      const currentAuthoritySet = await apiPromise.query.dkg.authorities();
+      const currentAuthorities = currentAuthoritySet.toJSON();
 
       setDkgDataFromPolkadotAPI({
         currentSessionNumber,
@@ -303,6 +308,7 @@ export const StatsProvider: React.FC<
           end: end ?? new Date(),
         },
         currentKey,
+        currentAuthorities: currentAuthorities as string[],
         nextSessionNumber,
         nextKey,
         proposerCount: Number(proposerCount.toString()),

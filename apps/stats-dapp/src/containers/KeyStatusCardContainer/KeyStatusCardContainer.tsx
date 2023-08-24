@@ -1,10 +1,6 @@
 import { KeyStatusCard } from '@webb-tools/webb-ui-components/components/KeyStatusCard';
-import { KeyStatusCardProps } from '@webb-tools/webb-ui-components/components/KeyStatusCard/types';
-import { Spinner } from '@webb-tools/icons';
-import React, { FC, forwardRef, useMemo } from 'react';
-import { KeyStatusCardContainerProps } from './types';
 import { useStatsContext } from '../../provider/stats-provider';
-import { PublicKey, useActiveKeys } from '../../provider/hooks';
+
 /**
  * The wrapper of UI component. Handle logic and mapping fields between backend API and component API
  */
@@ -14,6 +10,7 @@ export const KeyStatusCardContainer = () => {
       currentSessionNumber,
       currentKey,
       currentSessionTimeFrame: { start: sessionStart, end: sessionEnd },
+      currentAuthorities,
     },
   } = useStatsContext();
 
@@ -29,7 +26,7 @@ export const KeyStatusCardContainer = () => {
       keyVal={currentKey ?? ''}
       startTime={sessionStart}
       endTime={sessionEnd}
-      authorities={new Set<string>()}
+      authorities={new Set<string>(currentAuthorities) ?? new Set<string>()}
       totalAuthorities={0}
       fullDetailUrl={currentKey ? `drawer/${currentKey}` : ''}
     />
