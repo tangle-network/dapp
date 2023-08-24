@@ -68,10 +68,13 @@ type StatsProvidervalue = {
     };
     currentKey: string;
     currentAuthorities: string[];
+    nextAuthorities: string[];
     nextSessionNumber: number;
     nextKey: string;
     proposerCount: number;
     proposerThreshold: number;
+    keygenThreshold: number;
+    signatureThreshold: number;
   };
 };
 
@@ -130,10 +133,13 @@ const statsContext: React.Context<StatsProvidervalue> =
       },
       currentKey: '',
       currentAuthorities: [],
+      nextAuthorities: [],
       nextSessionNumber: 0,
       nextKey: '',
       proposerCount: 0,
       proposerThreshold: 0,
+      keygenThreshold: 0,
+      signatureThreshold: 0,
     },
   });
 
@@ -196,10 +202,13 @@ export const StatsProvider: React.FC<
     },
     currentKey: '',
     currentAuthorities: [] as string[],
+    nextAuthorities: [] as string[],
     nextSessionNumber: 0,
     nextKey: '',
     proposerCount: 0,
     proposerThreshold: 0,
+    keygenThreshold: 0,
+    signatureThreshold: 0,
   });
 
   useEffect(() => {
@@ -300,6 +309,11 @@ export const StatsProvider: React.FC<
       );
       const currentAuthoritySet = await apiPromise.query.dkg.authorities();
       const currentAuthorities = currentAuthoritySet.toJSON();
+      const keygenThreshold = await apiPromise.query.dkg.keygenThreshold();
+      const signatureThreshold =
+        await apiPromise.query.dkg.signatureThreshold();
+      const nextAuthoritiesSet = await apiPromise.query.dkg.nextAuthorities();
+      const nextAuthorities = nextAuthoritiesSet.toJSON();
 
       setDkgDataFromPolkadotAPI({
         currentSessionNumber,
@@ -309,10 +323,13 @@ export const StatsProvider: React.FC<
         },
         currentKey,
         currentAuthorities: currentAuthorities as string[],
+        nextAuthorities: nextAuthorities as string[],
         nextSessionNumber,
         nextKey,
         proposerCount: Number(proposerCount.toString()),
         proposerThreshold: Number(proposerThreshold.toString()),
+        keygenThreshold: Number(keygenThreshold.toString()),
+        signatureThreshold: Number(signatureThreshold.toString()),
       });
     };
 

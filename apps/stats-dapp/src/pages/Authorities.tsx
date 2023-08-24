@@ -26,15 +26,8 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { ComponentProps, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
-
 import { AuthoritiesTable } from '../containers';
-import {
-  DiscreteList,
-  PublicKey,
-  UpcomingThreshold,
-  useActiveKeys,
-  useThresholds,
-} from '../provider/hooks';
+import { UpcomingThreshold, useThresholds } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
@@ -74,7 +67,7 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     ),
 
     cell: (props) => {
-      const authorities = props.getValue<DiscreteList>();
+      const authorities = props.getValue();
       if (!authorities.count) {
         return (
           <Typography variant="body1" ta="right">
@@ -98,51 +91,54 @@ const Authorities = () => {
   const thresholds = useThresholds();
 
   const {
-    error,
-    isFailed,
-    isLoading: activeKeyDataIsLoading,
-    val: activeKeyData,
-  } = useActiveKeys();
-
-  const { currentKey } = useMemo<{
-    currentKey: PublicKey | null | undefined;
-  }>(() => {
-    return {
-      currentKey: activeKeyData ? activeKeyData[0] : null,
-    };
-  }, [activeKeyData]);
-
-  const { time } = useStatsContext();
-
-  const [threshold, upComingThresholds] = useMemo(() => {
-    if (thresholds.val) {
-      return thresholds.val;
-    }
-    return [null, null];
-  }, [thresholds]);
+    time,
+    dkgDataFromPolkadotAPI: {
+      keygenThreshold,
+      signatureThreshold,
+      currentKey,
+      currentSessionNumber,
+      currentSessionTimeFrame: { start: sessionStart, end: sessionEnd },
+      nextAuthorities,
+    },
+  } = useStatsContext();
 
   const statsItems = useMemo<ComponentProps<typeof Stats>['items']>(() => {
-    const threshold = thresholds.val?.[0];
     return [
       {
         titleProps: {
           title: 'Keygen',
         },
-        value: threshold?.keyGen ?? 'loading..',
+        value: keygenThreshold ?? 'loading..',
       },
       {
         titleProps: {
           title: 'Signature',
         },
-        value: threshold?.signature ?? 'loading..',
+        value: signatureThreshold ?? 'loading..',
       },
     ];
-  }, [thresholds]);
+  }, [keygenThreshold, signatureThreshold]);
 
-  const data = useMemo(
-    () => (upComingThresholds ? Object.values(upComingThresholds) : []),
-    [upComingThresholds]
-  );
+  const data = useMemo(() => {
+    return [
+      {
+        stats: 'Next',
+        session: String(currentSessionNumber + 1),
+        keyGen: keygenThreshold,
+        signature: signatureThreshold,
+        authoritySet: {
+          count: nextAuthorities.length,
+          firstElements: nextAuthorities,
+        },
+        proposer: 'SomeProposerValue',
+      },
+    ];
+  }, [
+    currentSessionNumber,
+    keygenThreshold,
+    nextAuthorities,
+    signatureThreshold,
+  ]);
 
   const table = useReactTable<UpcomingThreshold>({
     columns,
@@ -153,12 +149,13 @@ const Authorities = () => {
     },
   });
 
-  const { keyGen, publicKey, signature } = threshold ?? {};
   const isLoading =
-    thresholds.isLoading ||
-    keyGen === undefined ||
-    signature === undefined ||
-    publicKey === undefined;
+    !currentSessionNumber ||
+    !keygenThreshold ||
+    !signatureThreshold ||
+    nextAuthorities.length === 0 ||
+    !sessionStart ||
+    !sessionEnd;
 
   return (
     <div className="flex flex-col space-y-4">
@@ -177,25 +174,21 @@ const Authorities = () => {
           <>
             <Stats items={statsItems} className="pb-0" />
 
-            <TimeProgress
-              startTime={currentKey?.start ?? null}
-              endTime={currentKey?.end ?? null}
-              now={time}
-            />
+            <TimeProgress startTime={sessionStart} endTime={sessionEnd} />
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Chip color="green">
-                  {publicKey.isCurrent ? 'Current' : 'Next'}
+                  {currentSessionNumber ? 'Current' : 'Next'}
                 </Chip>
-                <LabelWithValue label="session:" value={publicKey.session} />
+                <LabelWithValue label="session:" value={currentSessionNumber} />
                 <Typography variant="body2" fw="semibold">
                   /
                 </Typography>
                 <KeyValueWithButton
                   size="sm"
                   label="key:"
-                  keyValue={publicKey.compressed}
+                  keyValue={currentKey}
                 />
               </div>
 
