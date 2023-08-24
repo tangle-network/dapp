@@ -7,6 +7,7 @@ import {
   useValidatorListingLazyQuery,
   useValidatorOfSessionLazyQuery,
   useValidatorSessionsLazyQuery,
+  useLatestSessionIdQuery,
 } from '../../generated/graphql';
 import { thresholdMap } from '../hooks/mappers/thresholds';
 import { mapAuthorities, mapSessionAuthValidatorNode } from './mappers';
@@ -280,8 +281,10 @@ export function useAuthorities(
     isLoading: true,
     isFailed: false,
   });
-  const metaData = useCurrentMetaData();
   const [call, query] = useValidatorListingLazyQuery();
+
+  const latestIndexedSessionId = useLatestSessionIdQuery();
+
   // fetch the data once the filter has changed
   useEffect(() => {
     const filter = reqQuery.filter;
@@ -295,12 +298,14 @@ export function useAuthorities(
         ? (filter.uptime.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
         : []
     );
-    if (metaData.val) {
+    if (latestIndexedSessionId.data) {
       call({
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
-          sessionId: metaData.val.activeSession,
+          sessionId: String(
+            latestIndexedSessionId.data?.sessions?.totalCount - 1
+          ),
           reputationFilter: reputation ?? undefined,
           uptimeFilter: uptime ?? undefined,
           validatorId: filter.search
@@ -318,7 +323,7 @@ export function useAuthorities(
         });
       });
     }
-  }, [reqQuery, call, metaData]);
+  }, [reqQuery, call, latestIndexedSessionId]);
 
   useEffect(() => {
     const subscription = query.observable

@@ -98,3 +98,9 @@ query LatestThresholds(
     }
   }
 }
+
+query LatestSessionId {
+	sessions {
+    totalCount
+  }
+}
