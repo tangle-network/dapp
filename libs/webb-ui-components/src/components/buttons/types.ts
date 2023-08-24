@@ -211,3 +211,5 @@ export type LoadingPillProps = PropsOf<'button'> & {
    */
   status?: LoadingPillStatus;
 };
+
+export interface IconButtonProps extends ButtonProps {}

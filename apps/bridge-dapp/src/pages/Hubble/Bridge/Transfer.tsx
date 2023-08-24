@@ -1,4 +1,4 @@
-import cx from 'classnames';
+import { Transition } from '@headlessui/react';
 import {
   AccountCircleLineIcon,
   ArrowRight,
@@ -8,14 +8,15 @@ import {
 import {
   Button,
   FeeDetails,
+  IconWithTooltip,
   TextField,
   TitleWithInfo,
   ToggleCard,
   TransactionInputCard,
 } from '@webb-tools/webb-ui-components';
+import cx from 'classnames';
 import { useState } from 'react';
 import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
-import { Transition } from '@headlessui/react';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
@@ -66,12 +67,21 @@ const Transfer = () => {
                 <TextField.Input placeholder="0x..." />
 
                 <TextField.Slot>
-                  <button>
-                    <AccountCircleLineIcon size="lg" />
-                  </button>
-                  <button>
-                    <ClipboardLineIcon size="lg" />
-                  </button>
+                  <IconWithTooltip
+                    icon={
+                      <AccountCircleLineIcon
+                        size="lg"
+                        className="!fill-current"
+                      />
+                    }
+                    content="Send to self"
+                  />
+                  <IconWithTooltip
+                    icon={
+                      <ClipboardLineIcon size="lg" className="!fill-current" />
+                    }
+                    content="Patse from clipboard"
+                  />
                 </TextField.Slot>
               </TextField.Root>
             </div>
@@ -95,12 +105,21 @@ const Transfer = () => {
                 <TextField.Input placeholder="0x..." />
 
                 <TextField.Slot>
-                  <button>
-                    <AccountCircleLineIcon size="lg" />
-                  </button>
-                  <button>
-                    <ClipboardLineIcon size="lg" />
-                  </button>
+                  <IconWithTooltip
+                    icon={
+                      <AccountCircleLineIcon
+                        size="lg"
+                        className="!fill-current"
+                      />
+                    }
+                    content="Send to self"
+                  />
+                  <IconWithTooltip
+                    icon={
+                      <ClipboardLineIcon size="lg" className="!fill-current" />
+                    }
+                    content="Patse from clipboard"
+                  />
                 </TextField.Slot>
               </TextField.Root>
             </Transition>

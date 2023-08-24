@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { BRIDGE_TABS } from '../../constants';
 import { BridgeTabsContainerProps } from './types';
+import { IconButton } from '@webb-tools/webb-ui-components';
 
 const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
   children,
@@ -38,8 +39,8 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
               className={cx(
                 'h4 font-bold',
                 activeTab === tab
-                  ? 'dark:radix-state-active:!text-mono-0'
-                  : 'text-mono-100 radix-state-active:text-mono-200'
+                  ? 'text-mono-200 dark:text-mono-0'
+                  : 'text-mono-100'
               )}
             >
               {`${tab[0].toUpperCase()}${tab.substring(1)}`}
@@ -48,15 +49,9 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
         ))}
 
         <li key={`button`} className="last:ml-auto" title="Setting">
-          <button
-            {...settingBtnProps}
-            className={twMerge(
-              'w-10 h-10 flex items-center justify-center',
-              settingBtnProps?.className
-            )}
-          >
+          <IconButton {...settingBtnProps}>
             <SettingsFillIcon size="lg" />
-          </button>
+          </IconButton>
         </li>
       </ul>
 

@@ -12,6 +12,7 @@ import {
   ToggleCard,
   FeeDetails,
   Button,
+  IconWithTooltip,
 } from '@webb-tools/webb-ui-components';
 import { useState } from 'react';
 import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
@@ -66,12 +67,21 @@ const Withdraw = () => {
                 <TextField.Input placeholder="0x..." />
 
                 <TextField.Slot>
-                  <button>
-                    <AccountCircleLineIcon size="lg" />
-                  </button>
-                  <button>
-                    <ClipboardLineIcon size="lg" />
-                  </button>
+                  <IconWithTooltip
+                    icon={
+                      <AccountCircleLineIcon
+                        size="lg"
+                        className="!fill-current"
+                      />
+                    }
+                    content="Send to self"
+                  />
+                  <IconWithTooltip
+                    icon={
+                      <ClipboardLineIcon size="lg" className="!fill-current" />
+                    }
+                    content="Patse from clipboard"
+                  />
                 </TextField.Slot>
               </TextField.Root>
             </div>
@@ -95,12 +105,21 @@ const Withdraw = () => {
                 <TextField.Input placeholder="0x..." />
 
                 <TextField.Slot>
-                  <button>
-                    <AccountCircleLineIcon size="lg" />
-                  </button>
-                  <button>
-                    <ClipboardLineIcon size="lg" />
-                  </button>
+                  <IconWithTooltip
+                    icon={
+                      <AccountCircleLineIcon
+                        size="lg"
+                        className="!fill-current"
+                      />
+                    }
+                    content="Send to self"
+                  />
+                  <IconWithTooltip
+                    icon={
+                      <ClipboardLineIcon size="lg" className="!fill-current" />
+                    }
+                    content="Patse from clipboard"
+                  />
                 </TextField.Slot>
               </TextField.Root>
             </Transition>
