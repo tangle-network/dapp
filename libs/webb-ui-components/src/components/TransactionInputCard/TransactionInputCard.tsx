@@ -260,6 +260,7 @@ const TransactionInputCardBody = forwardRef<
               placeholder="0"
               min={0}
               {...customAmountProps}
+              isDisabledHoverStyle
               type="number"
               inputMode="numeric"
               value={amount}

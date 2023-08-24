@@ -61,7 +61,11 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         collapsible
         type="single"
       >
-        <AccordionItem value="fee-details" className="p-0">
+        <AccordionItem
+          value="fee-details"
+          className="p-0"
+          disabled={!items?.length}
+        >
           <AccordionButtonBase
             className={cx(
               'grop flex items-center justify-between w-full',

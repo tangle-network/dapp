@@ -11,6 +11,11 @@ export type TextFieldContextValue = {
    * with the `TextField` component.
    */
   error?: string;
+
+  /**
+   * If `true`, the text field hover style will be disabled.
+   */
+  isDisabledHoverStyle?: boolean;
 };
 
 export interface TextFieldRootProps

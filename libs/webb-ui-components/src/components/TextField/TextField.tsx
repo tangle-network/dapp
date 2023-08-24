@@ -17,7 +17,14 @@ const TextFieldContext = createContext<TextFieldContextValue | undefined>(
 
 const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
   (props, forwardedRef) => {
-    const { children, className, isDisabled, error, ...restProps } = props;
+    const {
+      children,
+      className,
+      isDisabled,
+      error,
+      isDisabledHoverStyle,
+      ...restProps
+    } = props;
 
     return (
       <>
@@ -29,9 +36,10 @@ const TextFieldRoot = forwardRef<React.ElementRef<'div'>, TextFieldRootProps>(
             'bg-[#F7F8F7]/50 dark:bg-mono-180',
             'outline outline-1 outline-offset-1 outline-transparent',
             cx({
-              'dark:hover:bg-mono-170': !isDisabled && !error,
+              'dark:hover:bg-mono-170':
+                !isDisabledHoverStyle && !isDisabled && !error,
               'hover:outline-mono-40 dark:hover:outline-mono-160':
-                !isDisabled && !error,
+                !isDisabledHoverStyle && !isDisabled && !error,
               'outline-red-70 dark:outline-red-90': error,
             }),
             className
@@ -88,7 +96,8 @@ const TextFieldInput = forwardRef<
   const context = useContext(TextFieldContext);
   const hasRoot = context !== undefined;
 
-  const { className, isDisabled, error, ...inputProps } = props;
+  const { className, isDisabled, error, isDisabledHoverStyle, ...inputProps } =
+    props;
 
   const input = (
     <>
@@ -116,7 +125,11 @@ const TextFieldInput = forwardRef<
   return hasRoot ? (
     input
   ) : (
-    <TextFieldRoot isDisabled={isDisabled} error={error}>
+    <TextFieldRoot
+      isDisabled={isDisabled}
+      error={error}
+      isDisabledHoverStyle={isDisabledHoverStyle}
+    >
       {input}
     </TextFieldRoot>
   );
