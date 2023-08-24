@@ -1,10 +1,10 @@
+import { ArrowRight } from '@webb-tools/icons';
 import {
   Button,
   FeeDetails,
   TransactionInputCard,
 } from '@webb-tools/webb-ui-components';
 import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
-import { ArrowRight } from '@webb-tools/icons';
 
 const Deposit = () => {
   return (
