@@ -203,7 +203,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.HermesOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.HermesOrbit,
-    name: 'Hermes Orbit',
+    name: 'Orbit Hermes',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
@@ -236,7 +236,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.AthenaOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.AthenaOrbit,
-    name: 'Athena Orbit',
+    name: 'Orbit Athena',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
@@ -269,7 +269,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.DemeterOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.DemeterOrbit,
-    name: 'Demeter Orbit',
+    name: 'Orbit Demeter',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
