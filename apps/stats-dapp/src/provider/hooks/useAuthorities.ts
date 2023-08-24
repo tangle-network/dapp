@@ -283,7 +283,10 @@ export function useAuthorities(
   });
   const [call, query] = useValidatorListingLazyQuery();
 
-  const latestIndexedSessionId = useLatestSessionIdQuery();
+  const latestIndexedSessionId = useLatestSessionIdQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
 
   // fetch the data once the filter has changed
   useEffect(() => {
@@ -383,7 +386,10 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     isLoading: true,
     val: null,
   });
-  const metaData = useCurrentMetaData();
+  const latestIndexedSessionId = useLatestSessionIdQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
   const { authorityId } = pageQuery.filter;
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
   const [callValidatorOfSession, queryValidatorOfSession] =
@@ -406,10 +412,12 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     });
   }, [authorityId, callKeyGen, setKeyGens, pageQuery]);
   useEffect(() => {
-    if (metaData.val) {
+    if (latestIndexedSessionId.data) {
       callValidatorOfSession({
         variables: {
-          sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
+          sessionValidatorId: `${
+            latestIndexedSessionId.data?.sessions?.totalCount - 1
+          }-${authorityId}`,
           validatorId: authorityId,
         },
       }).catch((e) => {
@@ -421,7 +429,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
         });
       });
     }
-  }, [metaData, callValidatorOfSession, authorityId]);
+  }, [latestIndexedSessionId, callValidatorOfSession, authorityId]);
   useEffect(() => {
     const subscription = queryKeyGen.observable
       .map((res): AuthorityDetails['keyGens'] => {
