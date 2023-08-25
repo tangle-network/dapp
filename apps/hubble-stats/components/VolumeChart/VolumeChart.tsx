@@ -52,13 +52,13 @@ const VolumeChart: FC<VolumeChartProps> = ({
                       color: '#624FBE',
                       label: 'Deposits',
                       value: payload[0].payload['deposit'],
-                      valuePrefix: '$',
+                      valueSuffix: ' tTNT',
                     },
                     {
                       color: '#B5A9F2',
                       label: 'Withdrawals',
                       value: payload[0].payload['withdrawal'],
-                      valuePrefix: '$',
+                      valueSuffix: ' tTNT',
                     },
                   ]}
                 />

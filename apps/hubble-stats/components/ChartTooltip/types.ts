@@ -5,5 +5,6 @@ export interface ChartTooltipProps {
     label: string;
     value: number;
     valuePrefix?: string;
+    valueSuffix?: string;
   }>;
 }

@@ -20,8 +20,9 @@ const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
             style={{ backgroundColor: item.color }}
           />
           <Typography variant="body2">
-            {item.label}: {item.valuePrefix}
+            {item.label}: {item.valuePrefix ?? ''}
             {item.value.toFixed(2)}
+            {item.valueSuffix ?? ''}
           </Typography>
         </div>
       ))}
