@@ -60,7 +60,7 @@ export const Header: FC<HeaderProps> = () => {
             isLast={index === items.length - 1}
             className="capitalize"
           >
-            {item}
+            {item.split('-').join(' ')}
           </BreadcrumbsItem>
         ))}
       </Breadcrumbs>

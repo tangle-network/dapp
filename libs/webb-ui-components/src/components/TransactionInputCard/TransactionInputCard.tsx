@@ -175,7 +175,7 @@ const TransactionMaxAmountButton = forwardRef<
           fw="bold"
           className="!text-inherit group-hover:group-enabled:underline"
         >
-          {maxAmount ?? '--'} {tokenSymbol ?? ''}
+          {maxAmount?.toFixed(2) ?? '--'} {tokenSymbol ?? ''}
         </Typography>
       </button>
     );

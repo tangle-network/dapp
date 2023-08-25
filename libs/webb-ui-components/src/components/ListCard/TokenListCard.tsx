@@ -14,7 +14,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     {
       onChange,
       onClose,
-      onConnect,
       popularTokens,
       selectTokens,
       title = 'Select a Token',

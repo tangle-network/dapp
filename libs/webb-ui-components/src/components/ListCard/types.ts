@@ -255,11 +255,6 @@ export interface TokenListCardProps
   onChange?: (nextToken: AssetType) => void;
 
   /**
-   * The callback when the user hit connect account or wallet
-   */
-  onConnect?: PropsOf<'button'>['onClick'];
-
-  /**
    * The type of transaction this token list card is used for
    */
   txnType?: 'deposit' | 'transfer' | 'withdraw';

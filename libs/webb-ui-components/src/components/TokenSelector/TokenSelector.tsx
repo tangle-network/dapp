@@ -31,6 +31,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       isDisabled,
       isActive,
       tokenType = 'unshielded',
+      placeHolder = 'Select token',
       ...props
     },
     ref
@@ -79,7 +80,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
           component="span"
           className="block truncate text-mono-200 dark:text-mono-40"
         >
-          {children ?? 'Select token'}
+          {children ?? placeHolder}
         </Typography>
 
         <ChevronDown

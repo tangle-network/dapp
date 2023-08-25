@@ -25,4 +25,11 @@ export interface TokenSelectorProps
    * If `true`, the component will display as disable state
    */
   isDisabled?: boolean;
+
+  /**
+   * The placeholder for the component
+   * when the children is not provided
+   * @default 'Select token'
+   */
+  placeHolder?: string;
 }

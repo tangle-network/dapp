@@ -1,5 +1,6 @@
 export * from './useAddCurrency';
 export * from './useConnectWallet';
+export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
 export * from './useRelayerManager';
