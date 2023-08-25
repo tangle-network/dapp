@@ -2,12 +2,8 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl, getVolume24h } from './reusable';
-import {
-  VANCHOR_ADDRESSES,
-  ACTIVE_SUBGRAPH_URLS,
-  DATE_24H,
-  DATE_48H,
-} from '../constants';
+import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
+import { getValidDatesToQuery } from '../utils';
 
 type KeyMetricDataType = {
   tvl: number | undefined;
@@ -19,6 +15,8 @@ type KeyMetricDataType = {
 };
 
 export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
+  const [_, date24h, date48h] = getValidDatesToQuery();
+
   const tvl = await getTvl();
   const volume24h = await getVolume24h();
 
@@ -76,8 +74,8 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
       await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        DATE_48H,
-        DATE_24H
+        date48h,
+        date24h
       );
 
     // get the latest item since it's the most updated
@@ -108,8 +106,8 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
       await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        DATE_48H,
-        DATE_24H
+        date48h,
+        date24h
       );
 
     volume48h = volumeVAnchorsByChainsData?.reduce(

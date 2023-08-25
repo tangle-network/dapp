@@ -2,13 +2,13 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl, getVolume24h } from './reusable';
+import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 import {
-  VANCHOR_ADDRESSES,
-  ACTIVE_SUBGRAPH_URLS,
-  STARTING_EPOCH,
-  NUM_DATES_FROM_START,
-} from '../constants';
-import { getDateFromEpoch, getEpochArray } from '../utils';
+  getDateFromEpoch,
+  getEpochDailyFromStart,
+  getEpochStart,
+  getNumDatesFromStart,
+} from '../utils';
 
 type VolumeDataType = {
   [epoch: string]: { deposit: number; withdrawal: number };
@@ -30,6 +30,9 @@ export type OverviewChartsDataType = {
 };
 
 export default async function getOverviewChartsData(): Promise<OverviewChartsDataType> {
+  const startingEpoch = getEpochStart();
+  const numDatesFromStart = getNumDatesFromStart();
+
   const currentTvl = await getTvl();
   const volume24h = await getVolume24h();
 
@@ -39,8 +42,8 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
       await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        STARTING_EPOCH,
-        NUM_DATES_FROM_START
+        startingEpoch,
+        numDatesFromStart
       );
 
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
@@ -60,8 +63,8 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
       await vAnchorClient.Deposit.GetVAnchorsDepositByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        STARTING_EPOCH,
-        NUM_DATES_FROM_START
+        startingEpoch,
+        numDatesFromStart
       );
 
     depositData = fetchedDepositData.reduce(
@@ -84,8 +87,8 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
       await vAnchorClient.Withdrawal.GetVAnchorsWithdrawalByChainsByDateRange(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
-        STARTING_EPOCH,
-        NUM_DATES_FROM_START
+        startingEpoch,
+        numDatesFromStart
       );
 
     withdrawalData = fetchedWithdrawalData.reduce(
@@ -102,18 +105,18 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     withdrawalData = {};
   }
 
-  const volumeData: VolumeDataType = getEpochArray(
-    STARTING_EPOCH,
-    NUM_DATES_FROM_START
-  ).reduce((volumeMap, epoch) => {
-    volumeMap[epoch] = {
-      deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
-      withdrawal: withdrawalData[epoch]
-        ? +formatEther(withdrawalData[epoch])
-        : 0,
-    };
-    return volumeMap;
-  }, {} as VolumeDataType);
+  const volumeData: VolumeDataType = getEpochDailyFromStart().reduce(
+    (volumeMap, epoch) => {
+      volumeMap[epoch] = {
+        deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
+        withdrawal: withdrawalData[epoch]
+          ? +formatEther(withdrawalData[epoch])
+          : 0,
+      };
+      return volumeMap;
+    },
+    {} as VolumeDataType
+  );
 
   return {
     currentTvl,
