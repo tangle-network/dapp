@@ -1,5 +1,14 @@
-import { rand, randEthereumAddress, randNumber } from '@ngneat/falso';
-import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
+import fetchAnchorMetadata from '@webb-tools/dapp-config/anchors/fetchAnchorMetadata';
+
+import {
+  V_ANCHORS,
+  ACTIVE_SUBGRAPH_URLS,
+  DATE_NOW,
+  DATE_24H,
+  VAnchorType,
+} from '../constants';
 
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
@@ -8,11 +17,6 @@ type ShieldedTablesDataType = {
   assetsData: ShieldedAssetType[];
   poolsData: ShieldedPoolType[];
 };
-
-const typedChainIds = [
-  1099511627781, 1099511628196, 1099511629063, 1099511670889, 1099511707777,
-  1099512049389, 1099512162129, 1099522782887,
-];
 
 const tokens = [
   'dai',
@@ -26,52 +30,153 @@ const tokens = [
   'arbitrum',
 ];
 
-const getNewAsset = (): ShieldedAssetType => {
+const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
+  const tokenSymbol = vanchor.fungibleTokenSymbol;
+  const vAnchorAddress = vanchor.address;
+
+  const { wrappableCurrencies } = await fetchAnchorMetadata(
+    vAnchorAddress,
+    // currently the data for Orbit chains are the same
+    vanchor.supportedChains[0]
+  );
+
+  let deposits24h: number | undefined;
+  try {
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorDepositByChainsAndByToken15MinsInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        tokenSymbol,
+        DATE_24H,
+        DATE_NOW
+      );
+
+    deposits24h = depositVAnchorsByChainsData?.reduce(
+      (deposit, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositByChain, vAnchorDeposit) =>
+            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
+          0
+        );
+        return deposit + depositVAnchorsByChain;
+      },
+      0
+    );
+  } catch {
+    deposits24h = undefined;
+  }
+
+  let tvl: number | undefined;
+  try {
+    const tvlVAnchorsByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsAndByTokenDayInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        tokenSymbol,
+        DATE_24H,
+        DATE_NOW
+      );
+
+    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
+      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
+        (tvlTotalByChain, vAnchor) =>
+          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
+        0
+      );
+      return tvlTotal + tvlVAnchorsByChain;
+    }, 0);
+  } catch {
+    tvl = undefined;
+  }
+
   return {
-    address: randEthereumAddress(),
-    symbol: 'webbParachain',
-    url: '#',
-    poolType: rand(['single', 'multi']),
-    composition: [
-      ...new Set(
-        rand(tokens, {
-          length: randNumber({ min: 2, max: 4 }),
-        })
-      ),
-    ],
-    deposits24h: randNumber({ min: 1000, max: 9999 }),
-    tvl: randNumber({ min: 1_000_000, max: 50_000_000 }),
-    typedChainIds: [
-      ...new Set(
-        rand(typedChainIds, {
-          length: randNumber({ min: 2, max: typedChainIds.length }),
-        })
-      ),
-    ],
+    address: vanchor.fungibleTokenAddress,
+    // TO UPDATE
+    symbol: vanchor.fungibleTokenSymbol,
+    url: undefined,
+    poolType: vanchor.poolType,
+    // TO UPDATE
+    composition: wrappableCurrencies.map((item) => item.symbol),
+    deposits24h,
+    tvl,
+    typedChainIds: vanchor.supportedChains,
   };
 };
 
-const getNewPool = (): ShieldedPoolType => {
+const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
+  const vAnchorAddress = vanchor.address;
+
+  const { wrappableCurrencies, isNativeAllowed } = await fetchAnchorMetadata(
+    vAnchorAddress,
+    // currently the data for Orbit chains are the same
+    vanchor.supportedChains[0]
+  );
+
+  const tokenNum =
+    // filter zero address
+    wrappableCurrencies.filter((item) => BigInt(item.address) !== BigInt(0))
+      .length +
+    // check native token
+    (isNativeAllowed ? 1 : 0) +
+    // this is for fungible token
+    1;
+
+  let deposits24h: number | undefined;
+  try {
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        DATE_24H,
+        DATE_NOW
+      );
+
+    deposits24h = depositVAnchorsByChainsData?.reduce(
+      (deposit, vAnchorsByChain) => {
+        if (vAnchorsByChain === null) return deposit;
+        return deposit + +formatEther(BigInt(vAnchorsByChain?.deposit ?? 0));
+      },
+      0
+    );
+  } catch {
+    deposits24h = undefined;
+  }
+
+  let tvl: number | undefined;
+  try {
+    const tvlVAnchorsByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsDayInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        DATE_24H,
+        DATE_NOW
+      );
+
+    tvl = tvlVAnchorsByChainsData?.reduce((tvl, vAnchorsByChain) => {
+      if (vAnchorsByChain === null) return tvl;
+      return tvl + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0));
+    }, 0);
+  } catch {
+    tvl = undefined;
+  }
+
   return {
-    address: randEthereumAddress(),
-    symbol: 'MASP-1',
-    poolType: rand(['single', 'multi']),
-    token: randNumber({ min: 1, max: 4 }),
-    deposits24h: randNumber({ min: 1000, max: 9999 }),
-    tvl: randNumber({ min: 1_000_000, max: 50_000_000 }),
-    typedChainIds: [
-      ...new Set(
-        rand(typedChainIds, {
-          length: randNumber({ min: 2, max: typedChainIds.length }),
-        })
-      ),
-    ],
+    address: vanchor.address,
+    symbol: vanchor.fungibleTokenName,
+    poolType: vanchor.poolType,
+    token: tokenNum,
+    deposits24h,
+    tvl,
+    typedChainIds: vanchor.supportedChains,
   };
 };
 
 export default async function getShieldedTablesData(): Promise<ShieldedTablesDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
-  const assetsData = arrayFrom(8, () => getNewAsset());
-  const poolsData = arrayFrom(8, () => getNewPool());
+  const assetsData = await Promise.all(
+    V_ANCHORS.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
+  );
+  const poolsData = await Promise.all(
+    V_ANCHORS.map((vanchor) => getPoolInfoFromVAnchor(vanchor))
+  );
   return { assetsData, poolsData };
 }

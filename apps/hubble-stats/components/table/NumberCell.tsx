@@ -16,20 +16,22 @@ const NumberCell: FC<NumberCellProps> = ({
     <Typography
       variant="body1"
       className={twMerge(
-        'text-mono-140 dark:text-mono-40 text-center uppercase',
+        'text-mono-140 dark:text-mono-40 text-center',
         className
       )}
     >
-      {value && (prefix ?? '')}
+      {typeof value === 'number' && (prefix ?? '')}
       {isProtected
         ? '****'
         : typeof value === 'number' && value < 10000
-        ? value
+        ? Number.isInteger(value)
+          ? value
+          : value.toFixed(2)
         : getRoundedAmountString(value, 2, {
             roundingFunction: Math.floor,
             totalLength: 0,
           })}
-      {value && (suffix ? ` ${suffix}` : '')}
+      {typeof value === 'number' && (suffix ? ` ${suffix}` : '')}
     </Typography>
   );
 };

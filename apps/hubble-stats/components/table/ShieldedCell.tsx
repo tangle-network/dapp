@@ -2,9 +2,9 @@ import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import {
-  ExternalLinkLine,
   ShieldedAssetDark,
   ShieldedAssetLight,
+  ExternalLinkLine,
 } from '@webb-tools/icons';
 
 import { ShieldedCellProps } from './types';
@@ -32,9 +32,9 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
           </Typography>
 
           {/* TODO: update href */}
-          <a href="#" target="_blank" rel="noreferrer">
+          {/* <a href="#" target="_blank" rel="noreferrer">
             <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

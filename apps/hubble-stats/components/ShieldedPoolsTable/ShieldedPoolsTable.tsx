@@ -48,11 +48,11 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
-    cell: (props) => <NumberCell value={props.getValue()} />,
+    cell: (props) => <NumberCell suffix=" tTNT" value={props.getValue()} />,
   }),
   columnHelper.accessor('tvl', {
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
-    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+    cell: (props) => <NumberCell value={props.getValue()} suffix=" tTNT" />,
   }),
   columnHelper.accessor('typedChainIds', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,

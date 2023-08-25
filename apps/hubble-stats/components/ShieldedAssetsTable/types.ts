@@ -1,14 +1,15 @@
-import { PoolType } from '../PoolTypeChip/types';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
+import { PoolType } from '../PoolTypeChip/types';
 export interface ShieldedAssetType {
   address: string;
   symbol: string;
-  url: string;
+  url: string | undefined;
   poolType: PoolType;
   composition: string[];
-  deposits24h: number;
-  tvl: number;
-  typedChainIds: number[];
+  deposits24h: number | undefined;
+  tvl: number | undefined;
+  typedChainIds: PresetTypedChainId[];
 }
 
 export interface ShieldedAssetsTableProps {
