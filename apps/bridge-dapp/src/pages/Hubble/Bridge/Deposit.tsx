@@ -48,7 +48,7 @@ const Deposit = () => {
     wrappableCfg,
   } = useWatchSearchParams();
 
-  const balances = useCurrenciesBalances(allCurrencies);
+  const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
 
   const amountProps = useMemo(
     () => ({

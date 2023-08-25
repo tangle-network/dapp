@@ -6,10 +6,12 @@ import { useEffect, useState } from 'react';
 /**
  * Fetch the balances of the currencies list
  * @param currencies the currencies list to fetching the balance
+ * @param typedChainId the typed chain id (if not provided, will use the active chain)
  * @returns an object where the key is currency id and the value is currency balance
  */
 export const useCurrenciesBalances = (
-  currencies: Currency[]
+  currencies: Currency[],
+  typedChainId?: number
 ): Record<Currency['id'], number> => {
   const { activeApi, activeChain, activeAccount } = useWebContext();
 
@@ -19,16 +21,18 @@ export const useCurrenciesBalances = (
   useEffect(() => {
     let isSubscribe = true;
 
-    if (!activeApi || !activeChain) {
+    const typedChainIdToUse =
+      typedChainId ??
+      (activeChain &&
+        calculateTypedChainId(activeChain.chainType, activeChain.id));
+
+    if (!activeApi || typeof typedChainIdToUse !== 'number') {
       return;
     }
 
     const subscriptions = currencies.map((currency) => {
       return activeApi.methods.chainQuery
-        .tokenBalanceByCurrencyId(
-          calculateTypedChainId(activeChain.chainType, activeChain.id),
-          currency.id
-        )
+        .tokenBalanceByCurrencyId(typedChainIdToUse, currency.id)
         .subscribe((currencyBalance) => {
           if (isSubscribe) {
             setBalances((prev) => {
@@ -49,7 +53,7 @@ export const useCurrenciesBalances = (
       isSubscribe = false;
       subscriptions.forEach((subscription) => subscription.unsubscribe());
     };
-  }, [activeApi, activeChain, activeAccount, currencies]);
+  }, [activeApi, activeChain, activeAccount, currencies, typedChainId]);
 
   return balances;
 };
