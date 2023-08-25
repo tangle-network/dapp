@@ -1,41 +1,136 @@
-import { randNumber } from '@ngneat/falso';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
+
+import { getTvl, getVolume24h } from './reusable';
+import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
+import {
+  getDateFromEpoch,
+  getEpochDailyFromStart,
+  getEpochStart,
+  getNumDatesFromStart,
+} from '../utils';
+
+type VolumeDataType = {
+  [epoch: string]: { deposit: number; withdrawal: number };
+};
 
 export type OverviewChartsDataType = {
-  currentTvl: number;
-  currentVolume: number;
+  currentTvl: number | undefined;
+  volume24h: number | undefined;
   tvlData: {
     date: Date;
     value: number;
   }[];
   volumeData: {
     date: Date;
-    value: number;
+    deposit: number;
+    withdrawal: number;
   }[];
 };
 
 export default async function getOverviewChartsData(): Promise<OverviewChartsDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
+  const startingEpoch = getEpochStart();
+  const numDatesFromStart = getNumDatesFromStart();
+
+  const currentTvl = await getTvl();
+  const volume24h = await getVolume24h();
+
+  let tvlData: { [epoch: string]: bigint } = {};
+  try {
+    const fetchedTvlData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        startingEpoch,
+        numDatesFromStart
+      );
+
+    tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
+      Object.keys(tvlDataByChain).forEach((epoch) => {
+        if (!tvlMap[epoch]) tvlMap[epoch] = BigInt(0);
+        tvlMap[epoch] += BigInt(tvlDataByChain[epoch]);
+      });
+      return tvlMap;
+    }, {});
+  } catch (e) {
+    tvlData = {};
+  }
+
+  let depositData: { [epoch: string]: bigint } = {};
+  try {
+    const fetchedDepositData =
+      await vAnchorClient.Deposit.GetVAnchorsDepositByChainsByDateRange(
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        startingEpoch,
+        numDatesFromStart
+      );
+
+    depositData = fetchedDepositData.reduce(
+      (depositMap, depositDataByChain) => {
+        Object.keys(depositDataByChain).forEach((epoch: string) => {
+          if (!depositMap[epoch]) depositMap[epoch] = BigInt(0);
+          depositMap[epoch] += BigInt(depositDataByChain[epoch]);
+        });
+        return depositMap;
+      },
+      {}
+    );
+  } catch (e) {
+    depositData = {};
+  }
+
+  let withdrawalData: { [epoch: string]: bigint } = {};
+  try {
+    const fetchedWithdrawalData =
+      await vAnchorClient.Withdrawal.GetVAnchorsWithdrawalByChainsByDateRange(
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES,
+        startingEpoch,
+        numDatesFromStart
+      );
+
+    withdrawalData = fetchedWithdrawalData.reduce(
+      (withdrawalMap, withdrawalDataByChain) => {
+        Object.keys(withdrawalDataByChain).forEach((epoch: string) => {
+          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = BigInt(0);
+          withdrawalMap[epoch] += BigInt(withdrawalDataByChain[epoch]);
+        });
+        return withdrawalMap;
+      },
+      {}
+    );
+  } catch (e) {
+    withdrawalData = {};
+  }
+
+  const volumeData: VolumeDataType = getEpochDailyFromStart().reduce(
+    (volumeMap, epoch) => {
+      volumeMap[epoch] = {
+        deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
+        withdrawal: withdrawalData[epoch]
+          ? +formatEther(withdrawalData[epoch])
+          : 0,
+      };
+      return volumeMap;
+    },
+    {} as VolumeDataType
+  );
+
   return {
-    currentTvl: randNumber({ min: 10_000_000, max: 20_000_000 }),
-    currentVolume: randNumber({ min: 1_000_000, max: 10_000_000 }),
-    tvlData: [...Array(100).keys()].map((i) => {
+    currentTvl,
+    volume24h,
+    tvlData: Object.keys(tvlData).map((epoch) => {
       return {
-        // Getting warning in console: Only plain objects can be passed to Client Components from Server Components. Date objects are not supported.
-        // Fix: https://github.com/vercel/next.js/issues/11993#issuecomment-617375501
-        date: JSON.parse(
-          JSON.stringify(new Date(Date.now() + i * 24 * 60 * 60 * 1000))
-        ),
-        value: randNumber({ min: 1_000_000, max: 10_000_000 }),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
+        value: +formatEther(tvlData[+epoch]),
       };
     }),
-    volumeData: [...Array(100).keys()].map((i) => {
+    volumeData: Object.keys(volumeData).map((epoch) => {
       return {
-        // Getting warning in console: Only plain objects can be passed to Client Components from Server Components. Date objects are not supported.
-        // Fix: https://github.com/vercel/next.js/issues/11993#issuecomment-617375501
-        date: JSON.parse(
-          JSON.stringify(new Date(Date.now() + i * 24 * 60 * 60 * 1000))
-        ),
-        value: randNumber({ min: 1_000_000, max: 10_000_000 }),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
+        deposit: volumeData[+epoch].deposit,
+        withdrawal: volumeData[+epoch].withdrawal,
       };
     }),
   };

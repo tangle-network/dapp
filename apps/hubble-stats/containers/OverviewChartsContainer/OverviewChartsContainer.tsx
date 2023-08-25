@@ -2,13 +2,13 @@ import OverviewChartsCmp from './OverviewChartsCmp';
 import { getOverviewChartsData } from '../../data';
 
 export default async function OverviewChartsContainer() {
-  const { currentTvl, currentVolume, tvlData, volumeData } =
+  const { currentTvl, volume24h, tvlData, volumeData } =
     await getOverviewChartsData();
 
   return (
     <OverviewChartsCmp
       currentTvl={currentTvl}
-      currentVolume={currentVolume}
+      volume24h={volume24h}
       tvlData={tvlData}
       volumeData={volumeData}
     />

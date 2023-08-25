@@ -1,7 +1,8 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { vAnchorAddresses, allSubgraphUrls } from '../constants';
+import { getTvl } from './reusable';
+import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;
@@ -9,43 +10,25 @@ type OverviewChipsDataType = {
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
-  let tvl: number | undefined;
+  const tvl = await getTvl();
+
   let volume: number | undefined;
 
   try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains(
-        allSubgraphUrls,
-        vAnchorAddresses
+    const volumeVAnchorsByChainsData =
+      await vAnchorClient.Volume.GetVAnchorsVolumeByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES
       );
 
-    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
-      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
-        (tvlTotalByChain, vAnchor) =>
-          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked)),
-        0
-      );
-      return tvlTotal + tvlVAnchorsByChain;
-    }, 0);
-  } catch {
-    tvl = undefined;
-  }
-
-  try {
-    const depositVAnchorsByChainsData =
-      await vAnchorClient.Deposit.GetVAnchorsDepositByChains(
-        allSubgraphUrls,
-        vAnchorAddresses
-      );
-
-    volume = depositVAnchorsByChainsData?.reduce(
-      (depositTotal, vAnchorsByChain) => {
+    volume = volumeVAnchorsByChainsData?.reduce(
+      (volumeTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (tvlTotalByChain, vAnchor) =>
-            tvlTotalByChain + +formatEther(BigInt(vAnchor.deposit)),
+          (volumeTotalByChain, vAnchorVolume) =>
+            volumeTotalByChain + +formatEther(BigInt(vAnchorVolume ?? 0)),
           0
         );
-        return depositTotal + depositVAnchorsByChain;
+        return volumeTotal + depositVAnchorsByChain;
       },
       0
     );

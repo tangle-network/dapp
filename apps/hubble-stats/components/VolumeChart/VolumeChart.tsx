@@ -1,43 +1,27 @@
 'use client';
 
-import { FC, useMemo } from 'react';
-import {
-  ResponsiveContainer,
-  AreaChart as AreaChartCmp,
-  Area,
-  Tooltip,
-  XAxis,
-} from 'recharts';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
+import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
 
 import { ChartTooltip } from '..';
-import { AreaChartProps } from './types';
+import { VolumeChartProps } from './types';
 
-const AreaChart: FC<AreaChartProps> = ({
+const VolumeChart: FC<VolumeChartProps> = ({
   data,
-  setDate,
   setValue,
+  setDate,
   width = '100%',
   height = 180,
-  showTooltip = true,
-  tooltipLabel = '',
-  tooltipValuePrefix = '',
 }) => {
-  const [isDarkMode] = useDarkMode();
-
-  const fillColor = useMemo(
-    () => (isDarkMode ? '#C6BBFA' : '#624FBE'),
-    [isDarkMode]
-  );
-
   return (
     <ResponsiveContainer width={width} height={height}>
-      <AreaChartCmp
+      <BarChart
         data={data}
         onMouseLeave={() => {
-          setDate && setDate(null);
           setValue && setValue(null);
+          setDate && setDate(null);
         }}
+        barGap={0}
       >
         <XAxis
           dataKey="date"
@@ -56,41 +40,38 @@ const AreaChart: FC<AreaChartProps> = ({
           interval="preserveStartEnd"
         />
         <Tooltip
-          contentStyle={{ display: 'none' }}
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
-              setValue && setValue(payload[0].payload['value']);
+              setValue && setValue(payload[0].payload['deposit']);
               setDate && setDate(payload[0].payload['date']);
-              if (!showTooltip) {
-                return null;
-              }
               return (
                 <ChartTooltip
                   date={payload[0].payload['date']}
                   info={[
                     {
-                      color: fillColor,
-                      label: tooltipLabel,
-                      value: payload[0].payload['value'],
-                      valuePrefix: tooltipValuePrefix,
+                      color: '#624FBE',
+                      label: 'Deposits',
+                      value: payload[0].payload['deposit'],
+                      valueSuffix: ' tTNT',
+                    },
+                    {
+                      color: '#B5A9F2',
+                      label: 'Withdrawals',
+                      value: payload[0].payload['withdrawal'],
+                      valueSuffix: ' tTNT',
                     },
                   ]}
                 />
               );
             }
-
             return null;
           }}
         />
-        <Area
-          dataKey="value"
-          stroke={fillColor}
-          fillOpacity={0}
-          strokeWidth={2}
-        />
-      </AreaChartCmp>
+        <Bar dataKey="deposit" fill="#624FBE" />
+        <Bar dataKey="withdrawal" fill="#B5A9F2" />
+      </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export default AreaChart;
+export default VolumeChart;
