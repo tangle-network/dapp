@@ -25,7 +25,6 @@ export type OverviewChartsDataType = {
     date: Date;
     deposit: number;
     withdrawal: number;
-    volume: number;
   }[];
 };
 
@@ -132,7 +131,6 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
         date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
         deposit: volumeData[+epoch].deposit,
         withdrawal: volumeData[+epoch].withdrawal,
-        volume: volumeData[+epoch].deposit + volumeData[+epoch].withdrawal,
       };
     }),
   };

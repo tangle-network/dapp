@@ -42,7 +42,7 @@ const VolumeChart: FC<VolumeChartProps> = ({
         <Tooltip
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
-              setValue && setValue(payload[0].payload['volume']);
+              setValue && setValue(payload[0].payload['deposit']);
               setDate && setDate(payload[0].payload['date']);
               return (
                 <ChartTooltip
