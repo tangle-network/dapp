@@ -30,7 +30,6 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
           >
             {shortenHex(address, 4)}
           </Typography>
-
           {/* TODO: update href */}
           {/* <a href="#" target="_blank" rel="noreferrer">
             <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
