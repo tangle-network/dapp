@@ -12,10 +12,10 @@ export const LOCAL_SUBGRAPH_URLS = [
   vAnchorClient.SubgraphUrl.vAnchorDemeterLocal,
 ];
 
-export const ACTIVE_SUBGRAPH_URLS = process.env.USING_LIVE_SUBGRAPHS
-  ? LIVE_SUBGRAPH_URLS
-  : LOCAL_SUBGRAPH_URLS;
+export const ACTIVE_SUBGRAPH_URLS = process.env.USING_LOCAL_SUBGRAPHS
+  ? LOCAL_SUBGRAPH_URLS
+  : LIVE_SUBGRAPH_URLS;
 
-export const VANCHOR_ADDRESSES: string[] = JSON.parse(
-  process.env.VANCHOR_ADDRESSES ?? '[]'
-);
+export const VANCHOR_ADDRESSES: string[] = process.env.VANCHOR_ADDRESSES
+  ? JSON.parse(process.env.VANCHOR_ADDRESSES)
+  : ['0x7aA556dD0AF8bed063444E14A6A9af46C9266973'];
