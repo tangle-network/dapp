@@ -16,7 +16,7 @@ export default async function KeyMetricsTableContainer() {
   const Tvl = (
     <KeyMetricItem
       title="TVL"
-      prefix="$"
+      suffix=" tTNT"
       value={tvl}
       changeRate={tvlChangeRate}
     />
@@ -25,18 +25,18 @@ export default async function KeyMetricsTableContainer() {
   const Volume = (
     <KeyMetricItem
       title="Volume 24H"
-      prefix="$"
+      suffix=" tTNT"
       value={volume24h}
       changeRate={volumeChangeRate}
     />
   );
 
   const RelayerFees = (
-    <KeyMetricItem title="Relayer Fees" prefix="$" value={relayerFees} />
+    <KeyMetricItem title="Relayer Fees" suffix=" tTNT" value={relayerFees} />
   );
 
   const WrappingFees = (
-    <KeyMetricItem title="Wrapping Fees" prefix="$" value={wrappingFees} />
+    <KeyMetricItem title="Wrapping Fees" suffix=" tTNT" value={wrappingFees} />
   );
 
   return (

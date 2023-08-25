@@ -25,6 +25,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={currentTvl}
         value={tvlValue}
         date={tvlDate}
+        valueSuffix=" tTNT"
         className="bg-glass dark:bg-glass_dark"
       >
         <AreaChart
@@ -42,6 +43,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={volume24h}
         value={volumeValue}
         date={volumeDate}
+        valueSuffix=" tTNT"
         className="bg-glass dark:bg-glass_dark"
       >
         <VolumeChart

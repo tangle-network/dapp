@@ -13,6 +13,9 @@ export type ChartContainerProps = {
 
   className?: string;
   children: React.ReactNode;
+
+  valuePrefix?: string;
+  valueSuffix?: string;
 };
 
 export type DaysFilterType = 'day' | 'week' | 'month';

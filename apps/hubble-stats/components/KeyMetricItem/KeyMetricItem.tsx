@@ -11,6 +11,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
   value,
   prefix,
   changeRate,
+  suffix,
 }) => {
   return (
     <div
@@ -29,12 +30,13 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           <Typography
             variant="body1"
             fw="black"
-            className="uppercase text-mono-140 dark:text-mono-40"
+            className="text-mono-140 dark:text-mono-40"
           >
             {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
               ? Math.floor(value * 100) / 100
               : getRoundedDownWith2Decimals(value)}
+            {typeof value === 'number' && (suffix ?? '')}
           </Typography>
         </span>
 
