@@ -8,7 +8,7 @@ import {
   FeeDetails,
   TransactionInputCard,
 } from '@webb-tools/webb-ui-components';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
@@ -41,6 +41,7 @@ const Deposit = () => {
     amount,
     destTypedChainId,
     fungibleCfg,
+    onAmountChange,
     searchParams,
     setSearchParams,
     srcTypedChainId,
@@ -52,14 +53,9 @@ const Deposit = () => {
   const amountProps = useMemo(
     () => ({
       amount,
-      onAmountChange: (amount: number) =>
-        setSearchParams((prev) => {
-          const nextParams = new URLSearchParams(prev);
-          nextParams.set(AMOUNT_KEY, parseEther(`${amount}`).toString());
-          return nextParams;
-        }),
+      onAmountChange,
     }),
-    [amount, setSearchParams]
+    [amount, onAmountChange]
   );
 
   const handleMaxBtnClick = useCallback(
@@ -167,29 +163,30 @@ const Deposit = () => {
 export default Deposit;
 
 function useWatchSearchParams() {
-  const [searchParams, setSearchParams] = useSearchParams({
-    [AMOUNT_KEY]: `0`,
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { allCurrencies, fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
 
   const { activeChain, apiConfig, activeApi } = useWebContext();
 
-  const [srcTypedChainId, destTypedChainId, tokenId, amount] = useMemo(() => {
-    const sourceStr = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
-    const destStr = searchParams.get(DEST_CHAIN_KEY) ?? '';
+  const [srcTypedChainId, destTypedChainId, tokenId, amountStr] =
+    useMemo(() => {
+      const sourceStr = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
+      const destStr = searchParams.get(DEST_CHAIN_KEY) ?? '';
 
-    const tokenStr = searchParams.get(TOKEN_KEY) ?? '';
+      const tokenStr = searchParams.get(TOKEN_KEY) ?? '';
 
-    const amountStr = searchParams.get('amount') ?? '';
+      const amountStr = searchParams.get('amount') ?? '';
 
-    return [
-      !Number.isNaN(parseInt(sourceStr)) ? parseInt(sourceStr) : undefined,
-      !Number.isNaN(parseInt(destStr)) ? parseInt(destStr) : undefined,
-      !Number.isNaN(parseInt(tokenStr)) ? parseInt(tokenStr) : undefined,
-      amountStr.length ? +formatEther(BigInt(amountStr)) : undefined,
-    ];
-  }, [searchParams]);
+      return [
+        !Number.isNaN(parseInt(sourceStr)) ? parseInt(sourceStr) : undefined,
+        !Number.isNaN(parseInt(destStr)) ? parseInt(destStr) : undefined,
+        !Number.isNaN(parseInt(tokenStr)) ? parseInt(tokenStr) : undefined,
+        amountStr.length ? formatEther(BigInt(amountStr)) : '',
+      ];
+    }, [searchParams]);
+
+  const [amount, setAmount] = useState(amountStr);
 
   useEffect(() => {
     setSearchParams((prev) => {
@@ -287,11 +284,44 @@ function useWatchSearchParams() {
     }
   }, [apiConfig.anchors, destTypedChainId, fungibleCfg, setSearchParams]);
 
+  useEffect(() => {
+    function updateParams() {
+      if (!amount) {
+        return setSearchParams((prev) => {
+          const nextParams = new URLSearchParams(prev);
+          nextParams.delete(AMOUNT_KEY);
+          return nextParams;
+        });
+      }
+
+      setSearchParams((prev) => {
+        const nextParams = new URLSearchParams(prev);
+        nextParams.set(AMOUNT_KEY, `${parseEther(amount)}`);
+        return nextParams;
+      });
+    }
+
+    const timeout = setTimeout(updateParams, 500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [amount, setSearchParams]);
+
+  const handleAmountChange = useCallback((amount: string) => {
+    const validationRegex = /^\d*\.?\d*$/;
+    const isValid = validationRegex.test(amount);
+    if (isValid) {
+      setAmount(amount);
+    }
+  }, []);
+
   return {
     allCurrencies,
     amount,
     destTypedChainId,
     fungibleCfg,
+    onAmountChange: handleAmountChange,
     searchParams,
     setSearchParams,
     srcTypedChainId,

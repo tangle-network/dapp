@@ -30,12 +30,12 @@ export type TransactionInputCardContextValue = {
   /**
    * The amount of the transaction input card.
    */
-  amount?: number;
+  amount?: string;
 
   /**
    * The callback function to handle the amount change.
    */
-  onAmountChange?: (amount: number) => void;
+  onAmountChange?: (amount: string) => void;
 
   /**
    * The boolean to indicate if the transaction input amount is fixed.

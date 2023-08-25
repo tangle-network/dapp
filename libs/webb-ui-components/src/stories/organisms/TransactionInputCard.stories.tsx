@@ -27,7 +27,7 @@ export const Default: Story = {
 };
 
 const FilledComponent = () => {
-  const [value, setValue] = useState<undefined | number>();
+  const [value, setValue] = useState<string>('');
   const [isFixedAmount, setIsFixedAmount] = useState(false);
 
   return (

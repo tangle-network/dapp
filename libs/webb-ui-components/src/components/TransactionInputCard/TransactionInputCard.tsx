@@ -147,7 +147,7 @@ const TransactionMaxAmountButton = forwardRef<
         disabled={props.disabled ?? typeof maxAmount !== 'number'}
         onClick={
           typeof maxAmount === 'number'
-            ? () => onAmountChange?.(maxAmount)
+            ? () => onAmountChange?.(`${maxAmount}`)
             : undefined
         }
         className={twMerge(
@@ -234,7 +234,7 @@ const TransactionInputCardBody = forwardRef<
       }
 
       return (e: React.ChangeEvent<HTMLInputElement>) => {
-        onAmountChange(+e.target.value);
+        onAmountChange(e.target.value);
       };
     }, [onAmountChange]);
 
@@ -252,17 +252,21 @@ const TransactionInputCardBody = forwardRef<
             <AdjustAmount
               min={0}
               {...fixedAmountProps}
-              value={amount}
-              onChange={onAmountChange}
+              value={typeof amount === 'string' ? Number(amount) : undefined}
+              onChange={
+                typeof onAmountChange === 'function'
+                  ? (nextVal) => onAmountChange(`${nextVal}`)
+                  : undefined
+              }
             />
           ) : (
             <TextFieldInput
-              placeholder="0"
+              placeholder="0.0"
               min={0}
               {...customAmountProps}
               isDisabledHoverStyle
-              type="number"
-              inputMode="numeric"
+              inputMode="decimal"
+              pattern="[0-9]*\.?[0-9]*"
               value={amount}
               onChange={handleTextFieldChange}
             />

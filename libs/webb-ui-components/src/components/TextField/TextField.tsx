@@ -103,6 +103,7 @@ const TextFieldInput = forwardRef<
     <>
       <input
         spellCheck="false"
+        type="text"
         {...inputProps}
         disabled={context?.isDisabled ?? isDisabled}
         ref={forwardedRef}
