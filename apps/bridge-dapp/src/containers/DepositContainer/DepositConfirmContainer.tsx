@@ -49,9 +49,11 @@ export const DepositConfirmContainer = forwardRef<
       removeNoteFromNoteManager,
     } = useVAnchor();
 
-    const [txId, setTxId] = useState('');
+    const {
+      txQueue: { currentTxId },
+    } = useWebContext();
 
-    const stage = useLatestTransactionStage(txId);
+    const stage = useLatestTransactionStage(currentTxId);
 
     const progress = useTransactionProgressValue(stage);
 
@@ -60,7 +62,8 @@ export const DepositConfirmContainer = forwardRef<
       [stage]
     );
 
-    const { activeApi, activeChain, apiConfig, txQueue } = useWebContext();
+    const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
+      useWebContext();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -116,6 +119,7 @@ export const DepositConfirmContainer = forwardRef<
         sourceChainId: sourceTypedChainId,
         targetChainId: destTypedChainId,
         sourceIdentifyingData,
+        targetIdentifyingData,
         tokenSymbol,
       } = note.note;
 
@@ -158,12 +162,12 @@ export const DepositConfirmContainer = forwardRef<
         token: tokenSymbol,
         tokenURI,
         providerType: activeApi.type,
+        address: activeAccount?.address,
+        recipient: targetIdentifyingData,
       });
-
-      setTxId(tx.id);
+      txQueueApi.registerTransaction(tx);
 
       try {
-        txQueueApi.registerTransaction(tx);
         const args = await api?.prepareTransaction(
           tx,
           note,
@@ -225,35 +229,22 @@ export const DepositConfirmContainer = forwardRef<
       } finally {
         onResetState?.();
       }
-    }, [
-      api,
-      activeApi,
-      activeChain,
-      depositTxInProgress,
-      downloadNote,
-      note,
-      wrappableToken,
-      apiConfig,
-      startNewTransaction,
-      onResetState,
-      txQueueApi,
-      fungibleTokenId,
-      removeNoteFromNoteManager,
-      addNoteToNoteManager,
-    ]);
+    }, [api, activeApi, activeChain, depositTxInProgress, downloadNote, note, wrappableToken, apiConfig, activeAccount?.address, startNewTransaction, onResetState, txQueueApi, addNoteToNoteManager, fungibleTokenId, removeNoteFromNoteManager]); // prettier-ignore
 
     const cardTitle = useMemo(() => {
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
     const txStatusMessage = useMemo(() => {
-      if (!txId) {
+      if (!currentTxId) {
         return '';
       }
 
-      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      const txPayload = txPayloads.find(
+        (txPayload) => txPayload.id === currentTxId
+      );
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
-    }, [txId, txPayloads]);
+    }, [currentTxId, txPayloads]);
 
     return (
       <DepositConfirm
