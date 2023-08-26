@@ -100,7 +100,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         ) : null}
 
         {/** Select tokens */}
-        <div className="flex flex-col p-2 space-y-2">
+        <div className="flex flex-col p-2 space-y-2 grow">
           <Typography
             variant="body4"
             className="uppercase text-mono-200 dark:text-mono-0"
@@ -110,7 +110,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           </Typography>
 
           {/** Token list */}
-          <ScrollArea className="min-w-[350px] h-[376px]">
+          <ScrollArea className="h-full">
             <ul>
               {filteredSelect.map((current, idx) => (
                 <TokenListItem
