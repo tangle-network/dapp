@@ -1,4 +1,3 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Button,
   Modal,

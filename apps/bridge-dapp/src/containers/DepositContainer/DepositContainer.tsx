@@ -314,17 +314,6 @@ export const DepositContainer = forwardRef<
       ].some((val) => !val);
     }, [amount, destChainInputValue, selectedSourceChain, selectedToken]);
 
-    const currentNativeCurrency = useMemo(() => {
-      if (!activeChain) {
-        return undefined;
-      }
-
-      return getNativeCurrencyFromConfig(
-        currencies,
-        calculateTypedChainId(activeChain.chainType, activeChain.id)
-      );
-    }, [activeChain, currencies]);
-
     const handleTokenChange = useCallback(
       async (newToken: AssetType) => {
         const selectedToken = Object.values(fungibleCurrencies).find(
@@ -627,7 +616,12 @@ export const DepositContainer = forwardRef<
       return {
         className: 'min-w-[550px] h-[710px]',
         selectTokens: tokens,
-        value: destChainInputValue,
+        value: bridgeFungibleCurrency
+          ? {
+              name: bridgeFungibleCurrency.currency.view.name,
+              symbol: bridgeFungibleCurrency.currency.view.symbol,
+            }
+          : undefined,
         title: 'Select a token to Deposit',
         popularTokens: [],
         unavailableTokens: populatedAllTokens,
@@ -645,12 +639,11 @@ export const DepositContainer = forwardRef<
         },
         onClose: () => setMainComponentName(undefined),
         txnType: 'deposit',
-      };
+      } satisfies TokenListCardProps;
     }, [
       wrappableCurrency,
       bridgeFungibleCurrency,
       getPossibleFungibleCurrencies,
-      destChainInputValue,
       populatedAllTokens,
       balances,
       activeChain,

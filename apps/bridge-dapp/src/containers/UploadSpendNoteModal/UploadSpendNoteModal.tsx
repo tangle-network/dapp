@@ -1,4 +1,4 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
 import {
   Button,
@@ -16,7 +16,6 @@ import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { PasteModalContent } from './PasteModalContent';
 import { RefHandle, UploadSpendNoteModalProps } from './types';
 import { UploadModalContent } from './UploadModalContent';
-import { useVAnchor } from '@webb-tools/react-hooks';
 
 export const UploadSpendNoteModal: FC<UploadSpendNoteModalProps> = ({
   isOpen,

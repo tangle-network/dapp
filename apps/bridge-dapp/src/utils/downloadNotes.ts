@@ -1,6 +1,5 @@
 import { downloadString } from '@webb-tools/browser-utils';
 import { Note } from '@webb-tools/sdk-core';
-import React from 'react';
 
 /**
  * Convert notes to strings and download them as json file

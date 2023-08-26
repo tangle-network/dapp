@@ -1,4 +1,3 @@
-import { Bridge } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ChainListCard, useWebbUI } from '@webb-tools/webb-ui-components';
@@ -81,13 +80,6 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
           calculateTypedChainId(chain.chainType, chain.id)
         );
 
-      let bridge: Bridge | undefined;
-      const bridgeConfig =
-        fungibleCurrency && apiConfig.bridgeByAsset[fungibleCurrency.id];
-      if (bridgeConfig) {
-        bridge = new Bridge(fungibleCurrency, bridgeConfig.anchors);
-      }
-
       // If the selected chain is supported by the active wallet
       if (isSupported) {
         await switchChain(chain, activeWallet);
@@ -99,9 +91,7 @@ export const ChainListCardWrapper: FC<ChainListCardWrapperProps> = ({
     },
     [
       activeWallet,
-      apiConfig.bridgeByAsset,
       chainsConfig,
-      fungibleCurrency,
       onChange,
       setMainComponent,
       switchChain,

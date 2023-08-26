@@ -1,4 +1,3 @@
-import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';

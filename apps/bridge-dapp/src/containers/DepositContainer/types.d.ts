@@ -1,10 +1,5 @@
 import { ChainBase } from '@webb-tools/dapp-config';
 import { Note } from '@webb-tools/sdk-core';
-import { TransactionPayload } from '@webb-tools/webb-ui-components';
-import {
-  ChainType,
-  TokenType,
-} from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { BridgeTabContainerProps } from '../types';
 

@@ -6,11 +6,11 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { downloadString } from '@webb-tools/browser-utils';
-import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
-import { DepositConfirm, useCopyable } from '@webb-tools/webb-ui-components';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { isViemError } from '@webb-tools/web3-api-provider';
+import { DepositConfirm } from '@webb-tools/webb-ui-components';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
 import {
   useLatestTransactionStage,
@@ -24,7 +24,6 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
-import { isViemError } from '@webb-tools/web3-api-provider';
 
 export const DepositConfirmContainer = forwardRef<
   HTMLDivElement,

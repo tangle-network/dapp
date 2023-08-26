@@ -1,10 +1,8 @@
-import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { BridgeTabContainerProps } from '../types';
 import { ActiveWebbRelayer, Currency } from '@webb-tools/abstract-api-provider';
-import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Chain } from '@webb-tools/dapp-config';
 import { Note } from '@webb-tools/sdk-core';
-import { TransactionPayload } from '@webb-tools/webb-ui-components';
+import { PropsOf } from '@webb-tools/webb-ui-components/types';
+import { BridgeTabContainerProps } from '../types';
 
 export type CurrencyRecord = Record<Currency['id'], Currency>;
 

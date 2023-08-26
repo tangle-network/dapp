@@ -1,5 +1,4 @@
 import { Currency } from '@webb-tools/abstract-api-provider';
-import { CurrencyConfig } from '@webb-tools/dapp-config';
 import { Note, Utxo } from '@webb-tools/sdk-core';
 import { TitleWithInfo } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';

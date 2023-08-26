@@ -1,5 +1,4 @@
 import { randRecentDate } from '@ngneat/falso';
-import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import {
@@ -16,8 +15,8 @@ import { hexToU8a } from '@webb-tools/utils';
 import { ArrayElement } from '@webb-tools/webb-ui-components/types';
 import { useEffect, useMemo, useState } from 'react';
 
-import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
 import { formatUnits } from 'viem';
+import { SpendNoteDataType } from '../containers/note-account-tables/SpendNotesTableContainer/types';
 import { getVAnchorActionClass } from '../utils';
 
 const createdTime = randRecentDate();

@@ -40,14 +40,10 @@ const spendNotesTab = 'Available Spend Notes';
 
 const Bridge: FC = () => {
   // State for the tabs
-  const [activeTab, setActiveTab] = useState<BridgeTabType>('Deposit');
+  const [, setActiveTab] = useState<BridgeTabType>('Deposit');
 
   const { customMainComponent } = useWebbUI();
-  const {
-    activeFeedback,
-    noteManager,
-    txQueue: { txPayloads },
-  } = useWebContext();
+  const { activeFeedback, noteManager } = useWebContext();
 
   // Upload modal state
   const [isUploadModalOpen, setUploadModalIsOpen] = useState(false);
@@ -157,13 +153,7 @@ const Bridge: FC = () => {
 
   // Try again for try another wallet link
   // in the token list
-  const { TryAnotherWalletModal, onTryAnotherWallet } =
-    useTryAnotherWalletWithView();
-
-  const isDisplayTxQueueCard = useMemo(
-    () => txPayloads.length > 0,
-    [txPayloads]
-  );
+  const { TryAnotherWalletModal } = useTryAnotherWalletWithView();
 
   const noteAccountTabsRightButtons = useMemo(
     () => (
