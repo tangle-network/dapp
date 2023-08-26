@@ -145,7 +145,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
 
   private constructor(
     executor: PromiseExec<DonePayload>,
-    public readonly name: string,
+    public readonly name: 'Deposit' | 'Transfer' | 'Withdraw',
     public readonly metaData: TransactionMetaData,
     private readonly _status: BehaviorSubject<
       [
@@ -157,7 +157,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     super(executor);
   }
 
-  static new<T>(name: string, metadata: TransactionMetaData): Transaction<T> {
+  static new<T>(
+    name: 'Deposit' | 'Transfer' | 'Withdraw',
+    metadata: TransactionMetaData
+  ): Transaction<T> {
     const status = new BehaviorSubject<
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
     >([TransactionState.Ideal, undefined]);

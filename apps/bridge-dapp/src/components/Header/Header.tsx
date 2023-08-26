@@ -15,6 +15,7 @@ import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
 import { useConnectWallet, useNavigateWithPersistParams } from '../../hooks';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
+import TxProgressDropdown from './TxProgressDropdown';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -65,6 +66,8 @@ export const Header: FC<HeaderProps> = () => {
       </Breadcrumbs>
 
       <div className="flex items-center space-x-2">
+        <TxProgressDropdown />
+
         {/** Wallet is actived */}
         {isDisplayNetworkSwitcherAndWalletButton &&
         activeAccount &&

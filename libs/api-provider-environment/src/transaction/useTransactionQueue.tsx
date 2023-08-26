@@ -3,12 +3,9 @@ import {
   Transaction,
   TransactionState,
   TransactionStatusValue,
+  WebbProviderType,
 } from '@webb-tools/abstract-api-provider';
-import {
-  ApiConfig,
-  ChainConfig,
-  CurrencyConfig,
-} from '@webb-tools/dapp-config';
+import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TransactionItemStatus,
@@ -16,10 +13,10 @@ import {
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-function transactionItemStatusFromTxStatus(
+export function transactionItemStatusFromTxStatus(
   txStatus: TransactionState
 ): TransactionItemStatus {
   switch (txStatus) {
@@ -33,6 +30,26 @@ function transactionItemStatusFromTxStatus(
       return 'in-progress';
   }
 }
+
+export const getExplorerURI = (
+  explorerUri: string,
+  addOrTxHash: string,
+  variant: 'tx' | 'address',
+  txProviderType: WebbProviderType
+): URL => {
+  switch (txProviderType) {
+    case 'web3':
+      return new URL(`${variant}/${addOrTxHash}`, explorerUri);
+
+    case 'polkadot': {
+      const path = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+      return new URL(`${path}`, explorerUri);
+    }
+
+    default:
+      return new URL('');
+  }
+};
 
 function mapTxToPayload(
   tx: Transaction<any>,
@@ -55,26 +72,6 @@ function mapTxToPayload(
 
   const txProviderType = tx.metaData.providerType;
 
-  const getExplorerURI = (
-    addOrTxHash: string,
-    variant: 'tx' | 'address'
-  ): string => {
-    explorerUri = explorerUri.endsWith('/') ? explorerUri : explorerUri + '/';
-
-    switch (txProviderType) {
-      case 'web3':
-        return `${explorerUri}${variant}/${addOrTxHash}`;
-
-      case 'polkadot': {
-        const prefix = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
-        return `${explorerUri}${prefix}`;
-      }
-
-      default:
-        return '';
-    }
-  };
-
   return {
     id: tx.id,
     txStatus: {
@@ -84,7 +81,13 @@ function mapTxToPayload(
       recipient: tx.metaData.recipient,
     },
     amount: getRoundedAmountString(amount),
-    getExplorerURI,
+    getExplorerURI: (addOrTxHash: string, variant: 'tx' | 'address') =>
+      getExplorerURI(
+        explorerUri,
+        addOrTxHash,
+        variant,
+        txProviderType
+      ).toString(),
     timestamp: tx.timestamp,
     token,
     tokenURI,
@@ -100,7 +103,7 @@ function mapTxToPayload(
   };
 }
 
-function getTxMessageFromStatus<Key extends TransactionState>(
+export function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
 ): string {
