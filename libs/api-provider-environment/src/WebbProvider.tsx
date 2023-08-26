@@ -298,7 +298,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
           const acs = await accounts.accounts();
           const active = acs[0] || null;
           setAccounts(acs);
-          _setActiveAccount(active);
+
+          if (active) {
+            setActiveAccount(active, {
+              networkStorage: _networkStorage ?? networkStorage,
+              chain,
+              activeApi: nextActiveApi,
+            });
+          }
         });
       } else {
         setActiveApi(nextActiveApi);
@@ -306,7 +313,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         _setActiveAccount(null);
       }
     },
-    [setActiveAccount]
+    [networkStorage, setActiveAccount]
   );
 
   /// Error handler for the `WebbError`
@@ -535,8 +542,11 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                 updatedChainId,
               ]: number[]) => {
                 const nextChain = Object.values(chains).find(
-                  (chain) => chain.id === updatedChainId
+                  (chain) =>
+                    chain.id === updatedChainId &&
+                    chain.chainType === ChainType.EVM
                 );
+                const activeChain = nextChain ? nextChain : chain;
 
                 try {
                   /// this will throw if the user switched to unsupported chain
@@ -556,7 +566,7 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                     secondaryMessage: `Connection is switched to ${name} chain`,
                   });
                   setActiveWallet(wallet);
-                  setActiveChain(nextChain ? nextChain : chain);
+                  setActiveChain(activeChain);
 
                   const bridgeOptions: Record<number, Bridge> = {};
 
@@ -596,6 +606,14 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
                   // set the available bridges of the new chain
                   webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
                   webbWeb3Provider.state.activeBridge = defaultBridge;
+
+                  appEvent.send('networkSwitched', [
+                    {
+                      chainType: activeChain.chainType,
+                      chainId: activeChain.id,
+                    },
+                    wallet.id,
+                  ]);
                 } catch (e) {
                   /// set the chain to be undefined as this won't be usable
                   // TODO mark the api as not ready
@@ -831,7 +849,10 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
       // Set the default network to the last selected network
       const networkStorage = await netStorageFactory();
       await Promise.all([
-        networkStorage.set('defaultNetwork', chain.chainId),
+        networkStorage.set(
+          'defaultNetwork',
+          calculateTypedChainId(chain.chainType, chain.chainId)
+        ),
         networkStorage.set('defaultWallet', wallet),
       ]);
     });
