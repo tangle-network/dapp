@@ -586,7 +586,7 @@ export class WebbPolkadot
     const api = provider || this.api;
     const treeData = await api.query.merkleTreeBn254.trees(treeId);
     if (treeData.isNone) {
-      throw WebbError.from(WebbErrorCodes.TreeNotFound);
+      throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
     }
 
     const treeMedata = treeData.unwrap();

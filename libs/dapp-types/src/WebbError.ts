@@ -53,8 +53,8 @@ export enum WebbErrorCodes {
   TransactionInProgress,
   // Not implemented
   NotImplemented,
-  /// The tree not found
-  TreeNotFound,
+  /// The anchor identifier is not found
+  AnchorIdNotFound,
   // Insufficient disk space
   InsufficientDiskSpace,
   // Invalid arguments
@@ -256,10 +256,10 @@ export class WebbError extends Error {
           message: `Missing endpoints in the configuration`,
         };
 
-      case WebbErrorCodes.TreeNotFound:
+      case WebbErrorCodes.AnchorIdNotFound:
         return {
           code,
-          message: `Not found tree for the given tree id`,
+          message: `Not found the anchor identifier`,
         };
 
       case WebbErrorCodes.NotImplemented:

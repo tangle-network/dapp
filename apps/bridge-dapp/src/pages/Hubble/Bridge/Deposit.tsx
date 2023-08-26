@@ -1,15 +1,24 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { ArrowRight } from '@webb-tools/icons';
 import { useCurrenciesBalances, useNoteAccount } from '@webb-tools/react-hooks';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   FeeDetails,
   TransactionInputCard,
   numberToString,
 } from '@webb-tools/webb-ui-components';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
@@ -26,9 +35,9 @@ import {
   TOKEN_KEY,
 } from '../../../constants';
 import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
-import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import { DepositConfirmContainer } from '../../../containers/DepositContainer/DepositConfirmContainer';
 import { useConnectWallet } from '../../../hooks';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const Deposit = () => {
   const navigate = useNavigate();
@@ -48,9 +57,12 @@ const Deposit = () => {
 
   const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
 
-  const depositBtnProps = useDepoistButtonProps({
-    balance: wrappableCfg ? balances[wrappableCfg.id] : undefined,
-  });
+  const { depositConfirmComponent, ...depositBtnProps } = useDepositButtonProps(
+    {
+      balance: wrappableCfg ? balances[wrappableCfg.id] : undefined,
+      fungible: fungibleCfg,
+    }
+  );
 
   const amountProps = useMemo(
     () => ({
@@ -63,6 +75,10 @@ const Deposit = () => {
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.includes(lastPath)) {
     return <Outlet />;
+  }
+
+  if (depositConfirmComponent !== null) {
+    return depositConfirmComponent;
   }
 
   return (
@@ -312,14 +328,29 @@ function useWatchSearchParams() {
   };
 }
 
-function useDepoistButtonProps({ balance }: { balance?: number }) {
-  const { activeApi, activeWallet, switchChain } = useWebContext();
+function useDepositButtonProps({
+  balance,
+  fungible,
+}: {
+  balance?: number;
+  fungible?: CurrencyConfig;
+}) {
+  const { activeApi, activeWallet, switchChain, apiConfig, noteManager } =
+    useWebContext();
 
   const { toggleModal } = useConnectWallet();
 
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const [searchParams] = useSearchParams();
+
+  const [generatingNote, setGeneratingNote] = useState(false);
+
+  const [depositConfirmComponent, setDepositConfirmComponent] =
+    useState<React.ReactElement<
+      ComponentProps<typeof DepositConfirmContainer>,
+      typeof DepositConfirmContainer
+    > | null>(null);
 
   const [amount, tokenId, poolId, srcTypedId, destTypedId] = useMemo(() => {
     return [
@@ -425,16 +456,100 @@ function useDepoistButtonProps({ balance }: { balance?: number }) {
     return toggleModal(true, nextChain);
   }, [activeWallet, hasNoteAccount, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
 
-  const handleBtnClick = useCallback(() => {
+  const handleBtnClick = useCallback(async () => {
     if (conncnt) {
       handleSwitchChain();
       return;
     }
-  }, [conncnt, handleSwitchChain]);
+
+    if (!noteManager || !activeApi) {
+      const err = WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady);
+      console.error(err)
+      return;
+    }
+
+    if (!fungible) {
+      const err = WebbError.getErrorMessage(WebbErrorCodes.NoFungibleTokenAvailable);
+      console.error(err);
+      return;
+    }
+
+    const srcTypedIdNum = Number(srcTypedId);
+    const destTypedIdNum = Number(destTypedId);
+    const poolIdNum = Number(poolId);
+
+    if (Number.isNaN(srcTypedIdNum) || Number.isNaN(destTypedIdNum) || Number.isNaN(poolIdNum)) {
+      const err = WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain);
+      console.error(err);
+      return;
+    }
+
+    const srcChain = chainsPopulated[srcTypedIdNum];
+    const destChain = chainsPopulated[destTypedIdNum];
+
+    if (!srcChain || !destChain) {
+      const err = WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain);
+      console.error(err);
+      return;
+    }
+
+    setGeneratingNote(true);
+
+    const srcAnchorId = apiConfig.getAnchorIdentifier(
+      poolIdNum,
+      srcTypedIdNum
+    );
+
+    const destAnchorId = apiConfig.getAnchorIdentifier(
+      poolIdNum,
+      destTypedIdNum
+    );
+
+    if (!srcAnchorId || !destAnchorId) {
+      const err = WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound);
+      console.error(err);
+      return;
+    }
+
+    const amountBig = BigInt(amount);
+    const transactNote = await noteManager.generateNote(
+      activeApi.backend,
+      srcTypedIdNum,
+      srcAnchorId,
+      destTypedIdNum,
+      destAnchorId,
+      fungible.symbol,
+      fungible.decimals,
+      amountBig
+    )
+
+    setGeneratingNote(false);
+
+    setDepositConfirmComponent(
+      <DepositConfirmContainer
+        fungibleTokenId={poolIdNum}
+        wrappableTokenId={tokenId ? Number(tokenId) : undefined}
+        amount={+formatEther(amountBig)}
+        sourceChain={{
+          name: srcChain.name,
+          type: srcChain.group
+        }}
+        destChain={{
+          name: destChain.name,
+          type: destChain.group
+        }}
+        note={transactNote}
+        onResetState={() => setDepositConfirmComponent(null)}
+      />
+    )
+  }, [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, noteManager, poolId, srcTypedId, tokenId]); // prettier-ignore
 
   return {
     children,
+    isLoading: generatingNote,
+    loadingText: 'Generating note...',
     onClick: handleBtnClick,
     isDisabled,
+    depositConfirmComponent,
   };
 }

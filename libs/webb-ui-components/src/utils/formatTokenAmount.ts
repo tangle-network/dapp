@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import round from 'lodash/round';
 
 const generateNumber = (decimalDigits: number) => {
   return parseFloat(

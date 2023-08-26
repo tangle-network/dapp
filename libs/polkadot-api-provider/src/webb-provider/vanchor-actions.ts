@@ -915,7 +915,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       ).unwrapOr(null);
 
       if (!destTree) {
-        throw WebbError.from(WebbErrorCodes.TreeNotFound);
+        throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
       }
 
       destRelayedRoot = destTree.root.toHex();
