@@ -1,7 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { ArrowRight } from '@webb-tools/icons';
-import { useCurrenciesBalances } from '@webb-tools/react-hooks';
+import { useCurrenciesBalances, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Button,
@@ -27,6 +27,8 @@ import {
 } from '../../../constants';
 import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import { useConnectWallet } from '../../../hooks';
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 
 const Deposit = () => {
   const navigate = useNavigate();
@@ -311,7 +313,11 @@ function useWatchSearchParams() {
 }
 
 function useDepoistButtonProps({ balance }: { balance?: number }) {
-  const { activeApi } = useWebContext();
+  const { activeApi, activeWallet, switchChain } = useWebContext();
+
+  const { toggleModal } = useConnectWallet();
+
+  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const [searchParams] = useSearchParams();
 
@@ -349,13 +355,17 @@ function useDepoistButtonProps({ balance }: { balance?: number }) {
       return 'Connect Wallet';
     }
 
+    if (!hasNoteAccount) {
+      return 'Create Note Account';
+    }
+
     const activeId = activeApi.typedChainidSubject.getValue();
     if (`${activeId}` !== srcTypedId) {
       return 'Switch Chain';
     }
 
     return undefined;
-  }, [activeApi, srcTypedId]);
+  }, [activeApi, hasNoteAccount, srcTypedId]);
 
   const amountCnt = useMemo(() => {
     if (typeof balance !== 'number') {
@@ -398,8 +408,33 @@ function useDepoistButtonProps({ balance }: { balance?: number }) {
     return !allInputsFilled || !validAmount;
   }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]);
 
+  const handleSwitchChain = useCallback(() => {
+    if (!hasNoteAccount) {
+      return setOpenNoteAccountModal(true);
+    }
+
+    const nextChain = chainsPopulated[Number(srcTypedId)];
+    if (!nextChain) {
+      return;
+    }
+
+    if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
+      return switchChain(nextChain, activeWallet);
+    }
+
+    return toggleModal(true, nextChain);
+  }, [activeWallet, hasNoteAccount, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
+
+  const handleBtnClick = useCallback(() => {
+    if (conncnt) {
+      handleSwitchChain();
+      return;
+    }
+  }, [conncnt, handleSwitchChain]);
+
   return {
     children,
+    onClick: handleBtnClick,
     isDisabled,
   };
 }
