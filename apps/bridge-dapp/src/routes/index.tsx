@@ -79,6 +79,10 @@ const BridgeRoutes = () => {
             </Route>
             <Route path={TRANSFER_PATH} element={<Transfer />} />
             <Route path={WITHDRAW_PATH} element={<Withdraw />} />
+            <Route
+              path={SELECT_SOURCE_CHAIN_PATH}
+              element={<SelectChain chainType="source" />}
+            />
             <Route path="*" element={<Navigate to={DEPOSIT_PATH} />} />
           </Route>
           <Route

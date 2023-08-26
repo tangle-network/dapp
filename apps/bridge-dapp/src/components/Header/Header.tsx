@@ -8,12 +8,11 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useConnectWallet } from '../../hooks';
-import { ChainListCardWrapper } from '../ChainListCardWrapper';
+import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
+import { useConnectWallet, useNavigateWithPersistParams } from '../../hooks';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
 
@@ -23,7 +22,7 @@ import { HeaderProps } from './types';
 export const Header: FC<HeaderProps> = () => {
   const { activeAccount, activeWallet, activeChain, loading } = useWebContext();
 
-  const { setMainComponent } = useWebbUI();
+  const navigate = useNavigateWithPersistParams();
 
   const { toggleModal } = useConnectWallet();
 
@@ -75,7 +74,9 @@ export const Header: FC<HeaderProps> = () => {
             <ChainButton
               chain={activeChain}
               status="success"
-              onClick={() => setMainComponent(<ChainListCardWrapper />)}
+              onClick={() =>
+                navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`)
+              }
             />
             <WalletDropdown account={activeAccount} wallet={activeWallet} />
           </div>

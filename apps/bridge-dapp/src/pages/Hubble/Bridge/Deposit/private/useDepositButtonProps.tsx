@@ -24,8 +24,15 @@ function useDepositButtonProps({
   balance?: number;
   fungible?: CurrencyConfig;
 }) {
-  const { activeApi, activeWallet, switchChain, apiConfig, noteManager } =
-    useWebContext();
+  const {
+    activeApi,
+    activeWallet,
+    switchChain,
+    apiConfig,
+    noteManager,
+    loading,
+    isConnecting,
+  } = useWebContext();
 
   const { toggleModal } = useConnectWallet();
 
@@ -127,6 +134,18 @@ function useDepositButtonProps({
 
     return !allInputsFilled || !validAmount;
   }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]);
+
+  const isLoading = useMemo(() => {
+    return loading || isConnecting || generatingNote;
+  }, [generatingNote, isConnecting, loading]);
+
+  const loadingText = useMemo(() => {
+    if (generatingNote) {
+      return 'Generating note...';
+    }
+
+    return 'Connecting...';
+  }, [generatingNote]);
 
   const handleSwitchChain = useCallback(() => {
     if (!hasNoteAccount) {
@@ -235,8 +254,8 @@ function useDepositButtonProps({
 
   return {
     children,
-    isLoading: generatingNote,
-    loadingText: 'Generating note...',
+    isLoading,
+    loadingText,
     onClick: handleBtnClick,
     isDisabled,
     depositConfirmComponent,

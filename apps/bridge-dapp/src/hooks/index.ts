@@ -3,6 +3,7 @@ export * from './useConnectWallet';
 export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
+export { default as useNavigateWithPersistParams } from './useNavigateWithPersistParams';
 export * from './useRelayerManager';
 export * from './useShieldedAssets';
 export * from './useSpendNotes';
