@@ -12,6 +12,7 @@ import {
 import { createContext, forwardRef, useContext, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
+import { toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { TextFieldInput } from '../TextField';
@@ -175,7 +176,8 @@ const TransactionMaxAmountButton = forwardRef<
           fw="bold"
           className="!text-inherit group-hover:group-enabled:underline"
         >
-          {maxAmount?.toFixed(2) ?? '--'} {tokenSymbol ?? ''}
+          {typeof maxAmount === 'number' ? toFixed(maxAmount) : '--'}{' '}
+          {tokenSymbol ?? ''}
         </Typography>
       </button>
     );

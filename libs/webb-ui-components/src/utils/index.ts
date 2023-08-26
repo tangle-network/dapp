@@ -8,3 +8,4 @@ export * from './shortenHex';
 export * from './shortenString';
 export * from './getHumanFileSize';
 export * from './formatTokenAmount';
+export { default as toFixed } from './toFixed';
