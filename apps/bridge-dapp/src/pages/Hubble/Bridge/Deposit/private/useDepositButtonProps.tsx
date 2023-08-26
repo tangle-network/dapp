@@ -34,7 +34,7 @@ function useDepositButtonProps({
     isConnecting,
   } = useWebContext();
 
-  const { toggleModal } = useConnectWallet();
+  const { toggleModal, isWalletConnected } = useConnectWallet();
 
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
@@ -109,16 +109,16 @@ function useDepositButtonProps({
   }, [amount, balance, validAmount]);
 
   const children = useMemo(() => {
+    if (conncnt) {
+      return conncnt;
+    }
+
     if (inputCnt) {
       return inputCnt;
     }
 
     if (amountCnt) {
       return amountCnt;
-    }
-
-    if (conncnt) {
-      return conncnt;
     }
 
     if (tokenId !== poolId) {
@@ -129,11 +129,15 @@ function useDepositButtonProps({
   }, [amountCnt, conncnt, inputCnt, poolId, tokenId]);
 
   const isDisabled = useMemo(() => {
+    if (!isWalletConnected || !hasNoteAccount) {
+      return false;
+    }
+
     const allInputsFilled =
       !!amount && !!tokenId && !!poolId && !!srcTypedId && !!destTypedId;
 
     return !allInputsFilled || !validAmount;
-  }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]);
+  }, [amount, destTypedId, hasNoteAccount, isWalletConnected, poolId, srcTypedId, tokenId, validAmount]); // prettier-ignore
 
   const isLoading = useMemo(() => {
     return loading || isConnecting || generatingNote;
@@ -147,27 +151,29 @@ function useDepositButtonProps({
     return 'Connecting...';
   }, [generatingNote]);
 
-  const handleSwitchChain = useCallback(() => {
-    if (!hasNoteAccount) {
-      return setOpenNoteAccountModal(true);
-    }
-
+  const handleSwitchChain = useCallback(async () => {
     const nextChain = chainsPopulated[Number(srcTypedId)];
     if (!nextChain) {
       return;
     }
 
-    if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-      return switchChain(nextChain, activeWallet);
+    if (!isWalletConnected) {
+      if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
+        await switchChain(nextChain, activeWallet);
+      } else {
+        toggleModal(true, nextChain);
+      }
+      return;
     }
 
-    return toggleModal(true, nextChain);
-  }, [activeWallet, hasNoteAccount, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
+    if (!hasNoteAccount) {
+      setOpenNoteAccountModal(true);
+    }
+  }, [activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
 
   const handleBtnClick = useCallback(async () => {
     if (conncnt) {
-      handleSwitchChain();
-      return;
+      return handleSwitchChain();
     }
 
     if (!noteManager || !activeApi) {

@@ -13,7 +13,7 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
 
   useEffect(() => {
     setIsOpen(open ?? defaultOpen);
-  }, [open, setIsOpen]);
+  }, [defaultOpen, open, setIsOpen]);
 
   const onOpenChange = useCallback(
     (open: boolean) => {

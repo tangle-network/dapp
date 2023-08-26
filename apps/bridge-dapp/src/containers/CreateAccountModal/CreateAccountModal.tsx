@@ -19,6 +19,7 @@ import {
 import cx from 'classnames';
 import Lottie from 'lottie-react';
 import { FC, useCallback, useState } from 'react';
+import { NOTE_ACCOUNT_DOCS_URL } from '../../constants/links';
 import { createSignInMessage } from '../../constants/signIn';
 import congratsJson from './congrats.json';
 import privacySecurityJson from './privacy-security.json';
@@ -185,7 +186,7 @@ export const CreateAccountModal: FC<CreateAccountModalProps> = ({
           <Button
             variant="secondary"
             isFullWidth
-            href="https://docs.webb.tools/docs/dapps/hubble-bridge/usage-guide/account/"
+            href={NOTE_ACCOUNT_DOCS_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
