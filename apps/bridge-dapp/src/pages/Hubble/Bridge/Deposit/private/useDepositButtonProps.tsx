@@ -7,6 +7,7 @@ import numberToString from '@webb-tools/webb-ui-components/utils/numberToString'
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
+import SlideAnimation from '../../../../../components/SlideAnimation';
 import {
   AMOUNT_KEY,
   DEST_CHAIN_KEY,
@@ -240,21 +241,23 @@ function useDepositButtonProps({
     setGeneratingNote(false);
 
     setDepositConfirmComponent(
-      <DepositConfirmContainer
-        fungibleTokenId={poolIdNum}
-        wrappableTokenId={tokenId ? Number(tokenId) : undefined}
-        amount={+formatEther(amountBig)}
-        sourceChain={{
-          name: srcChain.name,
-          type: srcChain.group
-        }}
-        destChain={{
-          name: destChain.name,
-          type: destChain.group
-        }}
-        note={transactNote}
-        onResetState={() => setDepositConfirmComponent(null)}
-      />
+      <SlideAnimation>
+        <DepositConfirmContainer
+          fungibleTokenId={poolIdNum}
+          wrappableTokenId={tokenId ? Number(tokenId) : undefined}
+          amount={+formatEther(amountBig)}
+          sourceChain={{
+            name: srcChain.name,
+            type: srcChain.group
+          }}
+          destChain={{
+            name: destChain.name,
+            type: destChain.group
+          }}
+          note={transactNote}
+          onResetState={() => setDepositConfirmComponent(null)}
+        />
+      </SlideAnimation>
     )
   }, [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, noteManager, poolId, srcTypedId, tokenId]); // prettier-ignore
 

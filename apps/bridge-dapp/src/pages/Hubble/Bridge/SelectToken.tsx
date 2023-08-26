@@ -8,6 +8,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { POOL_KEY, TOKEN_KEY } from '../../../constants';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import { TokenType } from '@webb-tools/webb-ui-components/types';
+import SlideAnimation from '../../../components/SlideAnimation';
 
 const SelectToken: FC<{ tokenType?: TokenType }> = ({
   tokenType = 'unshielded',
@@ -103,16 +104,18 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
   );
 
   return (
-    <TokenListCard
-      className="h-[var(--card-height)]"
-      title={`Select a ${tokenType === 'shielded' ? 'pool' : 'token'}`}
-      popularTokens={popularTokens}
-      selectTokens={selectTokens}
-      unavailableTokens={unavailableTokens}
-      onChange={handleTokenChange}
-      onClose={() => handleClose()}
-      txnType={'deposit'}
-    />
+    <SlideAnimation>
+      <TokenListCard
+        className="h-[var(--card-height)]"
+        title={`Select a ${tokenType === 'shielded' ? 'pool' : 'token'}`}
+        popularTokens={popularTokens}
+        selectTokens={selectTokens}
+        unavailableTokens={unavailableTokens}
+        onChange={handleTokenChange}
+        onClose={() => handleClose()}
+        txnType={'deposit'}
+      />
+    </SlideAnimation>
   );
 };
 

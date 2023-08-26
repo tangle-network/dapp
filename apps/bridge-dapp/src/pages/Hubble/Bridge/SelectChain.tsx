@@ -9,6 +9,7 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
@@ -118,16 +119,18 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   );
 
   return (
-    <ChainListCard
-      className="h-[var(--card-height)]"
-      chainType={chainType}
-      chains={chains}
-      currentActiveChain={activeChain?.name}
-      defaultCategory={activeChain?.tag}
-      isConnectingToChain={loading}
-      onChange={handleChainChange}
-      onClose={() => handleClose()}
-    />
+    <SlideAnimation>
+      <ChainListCard
+        className="h-[var(--card-height)]"
+        chainType={chainType}
+        chains={chains}
+        currentActiveChain={activeChain?.name}
+        defaultCategory={activeChain?.tag}
+        isConnectingToChain={loading}
+        onChange={handleChainChange}
+        onClose={() => handleClose()}
+      />
+    </SlideAnimation>
   );
 };
 

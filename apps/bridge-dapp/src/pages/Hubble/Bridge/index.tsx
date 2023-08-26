@@ -191,7 +191,7 @@ const Bridge: FC = () => {
 
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex justify-center min-h-[var(--card-height)]">
         <ErrorBoundary fallback={<ErrorFallback className="mx-auto" />}>
           {customMainComponent}
           {/** Bridge tabs */}
