@@ -7,20 +7,17 @@ import {
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
 import { downloadString } from '@webb-tools/browser-utils';
-import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
-import {
-  ChainType,
-  Note,
-  calculateTypedChainId,
-  parseTypedChainId,
-} from '@webb-tools/sdk-core';
+import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   TransferConfirm,
   getRoundedAmountString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { ContractFunctionRevertedError, formatEther } from 'viem';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -33,8 +30,6 @@ import {
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
-import { ContractFunctionRevertedError, formatEther } from 'viem';
-import { isViemError } from '@webb-tools/web3-api-provider';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
@@ -95,29 +90,6 @@ export const TransferConfirmContainer = forwardRef<
         ? activeApi.state.activeBridge.targets[targetChainId]
         : undefined,
     });
-
-    const activeChains = useMemo<string[]>(() => {
-      if (!activeApi) {
-        return [];
-      }
-
-      return Array.from(
-        Object.values(activeApi.state.getBridgeOptions())
-          .reduce((acc, bridge) => {
-            const chains = Object.keys(bridge.targets).map(
-              (presetTypeChainId) => {
-                const chain = chainsPopulated[Number(presetTypeChainId)];
-                return chain;
-              }
-            );
-
-            chains.forEach((chain) => acc.add(chain.name));
-
-            return acc;
-          }, new Set<string>())
-          .values()
-      );
-    }, [activeApi]);
 
     const isTransfering = useMemo(
       () => stage !== TransactionState.Ideal,
@@ -306,7 +278,6 @@ export const TransferConfirmContainer = forwardRef<
         {...props}
         ref={ref}
         title={isTransfering ? 'Transfer in Progress...' : undefined}
-        activeChains={activeChains}
         amount={amount}
         changeAmount={changeAmount}
         sourceChain={{

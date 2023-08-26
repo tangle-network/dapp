@@ -22,7 +22,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
     {
       actionBtnProps,
-      activeChains,
       amount,
       wrappingAmount,
       checkboxProps,
@@ -32,8 +31,6 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       feeToken,
       note,
       onClose,
-      isCopied,
-      onCopy,
       onDownload,
       txStatusMessage,
       progress = null,
@@ -77,7 +74,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}

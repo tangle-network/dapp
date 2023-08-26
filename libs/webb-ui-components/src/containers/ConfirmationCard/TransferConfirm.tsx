@@ -41,7 +41,6 @@ const defaultRecipientTitleProps: NonNullable<
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
     {
-      activeChains,
       actionBtnProps,
       amount,
       changeAmount,
@@ -52,8 +51,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       feeToken,
       note,
       onClose,
-      isCopied,
-      onCopy,
       onDownload,
       progress,
       recipientTitleProps,

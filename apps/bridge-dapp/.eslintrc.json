@@ -1,6 +1,7 @@
 {
   "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
   "ignorePatterns": ["!**/*", "node_modules/**", "build/**"],
+  "plugins": ["unused-imports"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -14,5 +15,8 @@
       "files": ["*.js", "*.jsx"],
       "rules": {}
     }
-  ]
+  ],
+  "rules": {
+    "no-unused-vars": "warn"
+  }
 }

@@ -31,7 +31,6 @@ export const WithdrawConfirm = forwardRef<
   (
     {
       actionBtnProps,
-      activeChains,
       amount,
       changeAmount,
       checkboxProps,
@@ -40,10 +39,8 @@ export const WithdrawConfirm = forwardRef<
       fee,
       feeInfo,
       fungibleTokenSymbol: token1Symbol,
-      isCopied,
       note,
       onClose,
-      onCopy,
       onDownload,
       progress,
       receivingInfo,

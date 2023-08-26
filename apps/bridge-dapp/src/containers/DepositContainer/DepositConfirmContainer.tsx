@@ -74,13 +74,6 @@ export const DepositConfirmContainer = forwardRef<
       );
     }, []);
 
-    // Copy for the deposit confirm
-    const { copy, isCopied } = useCopyable();
-    const handleCopy = useCallback(
-      (note: Note): void => copy(note.serialize()),
-      [copy]
-    );
-
     const fungibleToken = useMemo(() => {
       return new Currency(apiConfig.currencies[fungibleTokenId]);
     }, [apiConfig.currencies, fungibleTokenId]);
@@ -250,29 +243,6 @@ export const DepositConfirmContainer = forwardRef<
       addNoteToNoteManager,
     ]);
 
-    const activeChains = useMemo<string[]>(() => {
-      if (!activeApi) {
-        return [];
-      }
-
-      return Array.from(
-        Object.values(activeApi.state.getBridgeOptions())
-          .reduce((acc, bridge) => {
-            const chains = Object.keys(bridge.targets).map(
-              (presetTypeChainId) => {
-                const chain = chainsPopulated[Number(presetTypeChainId)];
-                return chain;
-              }
-            );
-
-            chains.forEach((chain) => acc.add(chain.name));
-
-            return acc;
-          }, new Set<string>())
-          .values()
-      );
-    }, [activeApi]);
-
     const cardTitle = useMemo(() => {
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
@@ -288,8 +258,8 @@ export const DepositConfirmContainer = forwardRef<
 
     return (
       <DepositConfirm
+        className="min-h-[var(--card-height)]"
         title={cardTitle}
-        activeChains={activeChains}
         ref={ref}
         note={note.note.serialize()}
         progress={progress}
@@ -307,8 +277,6 @@ export const DepositConfirmContainer = forwardRef<
           isDisabled: depositTxInProgress,
           onChange: () => setChecked((prev) => !prev),
         }}
-        isCopied={isCopied}
-        onCopy={() => handleCopy(note)}
         onDownload={() => downloadNote(note)}
         amount={amount}
         wrappingAmount={String(amount)}

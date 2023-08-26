@@ -11,11 +11,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   amount?: number | string;
 
   /**
-   * The active chain
-   */
-  activeChains: string[];
-
-  /**
    * The card title
    */
   title?: string;
@@ -66,22 +61,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The note string
    */
   note?: string | null;
-
-  /**
-   * The copy props
-   */
-  copyProps?: UseCopyableReturnType;
-
-  /**
-   * The boolean value indicating if the copy button is click
-   */
-  isCopied?: boolean;
-
-  /**
-   * Callback when user hits copy button
-   * @returns void
-   */
-  onCopy?: () => void;
 
   /**
    * Callback when user hits download button

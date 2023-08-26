@@ -6,7 +6,6 @@ import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
   getRoundedAmountString,
-  useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
@@ -17,6 +16,8 @@ import {
   TransactionState,
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
+import { isViemError } from '@webb-tools/web3-api-provider';
+import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
 import {
   useLatestTransactionStage,
   useTransactionProgressValue,
@@ -28,8 +29,6 @@ import {
   getTransactionHash,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
-import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
-import { isViemError } from '@webb-tools/web3-api-provider';
 
 export const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -93,38 +92,6 @@ export const WithdrawConfirmContainer = forwardRef<
     const withdrawTxInProgress = useMemo(() => {
       return stage !== TransactionState.Ideal;
     }, [stage]);
-
-    const activeChains = useMemo<string[]>(() => {
-      if (!activeApi) {
-        return [];
-      }
-
-      return Array.from(
-        Object.values(activeApi.state.getBridgeOptions())
-          .reduce((acc, bridge) => {
-            const chains = Object.keys(bridge.targets).map(
-              (presetTypeChainId) => {
-                const chain = chainsPopulated[Number(presetTypeChainId)];
-                return chain;
-              }
-            );
-
-            chains.forEach((chain) => acc.add(chain.name));
-
-            return acc;
-          }, new Set<string>())
-          .values()
-      );
-    }, [activeApi]);
-
-    // Copy for the deposit confirm
-    const { copy, isCopied } = useCopyable();
-    const handleCopy = useCallback(
-      (note: string | undefined): void => {
-        copy(note ?? '');
-      },
-      [copy]
-    );
 
     // Download for the deposit confirm
     const downloadNote = useCallback((note: string) => {
@@ -375,7 +342,6 @@ export const WithdrawConfirmContainer = forwardRef<
         {...props}
         ref={ref}
         title={cardTitle}
-        activeChains={activeChains}
         sourceChain={{
           name: chainsPopulated[sourceTypedChainId].name,
           type: chainsPopulated[sourceTypedChainId].group ?? 'webb-dev',
@@ -406,8 +372,6 @@ export const WithdrawConfirmContainer = forwardRef<
         refundAmount={isRefund ? formattedRefund : undefined}
         refundToken={isRefund ? refundToken : undefined}
         receivingInfo={receivingInfo}
-        isCopied={isCopied}
-        onCopy={() => handleCopy(changeNote?.serialize())}
         onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         remainingAmount={remainingAmount}
