@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { ArrowRight } from '@webb-tools/icons';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -7,6 +7,7 @@ import {
   Button,
   FeeDetails,
   TransactionInputCard,
+  numberToString,
 } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
@@ -28,10 +29,6 @@ import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const Deposit = () => {
-  const isDisabledDepositBtn = true;
-
-  const depositBtnCnt = isDisabledDepositBtn ? 'Enter inputs' : 'Deposit';
-
   const navigate = useNavigate();
 
   const { pathname } = useLocation();
@@ -43,12 +40,15 @@ const Deposit = () => {
     fungibleCfg,
     onAmountChange,
     searchParams,
-    setSearchParams,
     srcTypedChainId,
     wrappableCfg,
   } = useWatchSearchParams();
 
   const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
+
+  const depositBtnProps = useDepoistButtonProps({
+    balance: wrappableCfg ? balances[wrappableCfg.id] : undefined,
+  });
 
   const amountProps = useMemo(
     () => ({
@@ -56,21 +56,6 @@ const Deposit = () => {
       onAmountChange,
     }),
     [amount, onAmountChange]
-  );
-
-  const handleMaxBtnClick = useCallback(
-    (currencyCfg?: CurrencyConfig) => {
-      if (!currencyCfg || !balances[currencyCfg.id]) {
-        return;
-      }
-
-      setSearchParams((prev) => {
-        const nextParams = new URLSearchParams(prev);
-        nextParams.set(AMOUNT_KEY, balances[currencyCfg.id].toString());
-        return nextParams;
-      });
-    },
-    [balances, setSearchParams]
   );
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
@@ -97,9 +82,7 @@ const Deposit = () => {
                   })
                 }
               />
-              <TransactionInputCard.MaxAmountButton
-                onClick={() => handleMaxBtnClick(wrappableCfg)}
-              />
+              <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body
@@ -130,9 +113,7 @@ const Deposit = () => {
                   })
                 }
               />
-              <TransactionInputCard.MaxAmountButton
-                onClick={() => handleMaxBtnClick(fungibleCfg)}
-              />
+              <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body
@@ -151,9 +132,7 @@ const Deposit = () => {
         <div className="flex flex-col justify-between grow">
           <FeeDetails />
 
-          <Button isFullWidth isDisabled={isDisabledDepositBtn}>
-            {depositBtnCnt}
-          </Button>
+          <Button isFullWidth {...depositBtnProps} />
         </div>
       </div>
     </BridgeTabsContainer>
@@ -208,6 +187,7 @@ function useWatchSearchParams() {
     return activeApi?.state.activeBridge;
   }, [activeApi]);
 
+  // Find default pool id when source chain is changed
   const defaultPoolId = useMemo(() => {
     if (!srcTypedChainId) {
       return;
@@ -244,7 +224,7 @@ function useWatchSearchParams() {
 
   // Remove token if it is not supported
   useEffect(() => {
-    if (!tokenId) {
+    if (typeof tokenId !== 'number') {
       return;
     }
 
@@ -284,6 +264,7 @@ function useWatchSearchParams() {
     }
   }, [apiConfig.anchors, destTypedChainId, fungibleCfg, setSearchParams]);
 
+  // Update amount on search params with debounce
   useEffect(() => {
     function updateParams() {
       if (!amount) {
@@ -326,5 +307,99 @@ function useWatchSearchParams() {
     setSearchParams,
     srcTypedChainId,
     wrappableCfg,
+  };
+}
+
+function useDepoistButtonProps({ balance }: { balance?: number }) {
+  const { activeApi } = useWebContext();
+
+  const [searchParams] = useSearchParams();
+
+  const [amount, tokenId, poolId, srcTypedId, destTypedId] = useMemo(() => {
+    return [
+      searchParams.get(AMOUNT_KEY) ?? '',
+      searchParams.get(TOKEN_KEY) ?? '',
+      searchParams.get(POOL_KEY) ?? '',
+      searchParams.get(SOURCE_CHAIN_KEY) ?? '',
+      searchParams.get(DEST_CHAIN_KEY) ?? '',
+    ];
+  }, [searchParams]);
+
+  const validAmount = useMemo(() => {
+    if (!balance || !amount) {
+      return false;
+    }
+
+    const parsedBalance = parseEther(numberToString(balance));
+    const parsedAmount = BigInt(amount); // amount from search params is parsed already
+
+    return parsedAmount !== ZERO_BIG_INT && parsedAmount <= parsedBalance;
+  }, [amount, balance]);
+
+  const inputCnt = useMemo(() => {
+    if (!amount || !tokenId || !poolId || !srcTypedId || !destTypedId) {
+      return 'Enter inputs';
+    }
+
+    return undefined;
+  }, [amount, destTypedId, poolId, srcTypedId, tokenId]);
+
+  const conncnt = useMemo(() => {
+    if (!activeApi) {
+      return 'Connect Wallet';
+    }
+
+    const activeId = activeApi.typedChainidSubject.getValue();
+    if (`${activeId}` !== srcTypedId) {
+      return 'Switch Chain';
+    }
+
+    return undefined;
+  }, [activeApi, srcTypedId]);
+
+  const amountCnt = useMemo(() => {
+    if (typeof balance !== 'number') {
+      return 'Loading balance...';
+    }
+
+    if (BigInt(amount) === ZERO_BIG_INT) {
+      return 'Enter amount';
+    }
+
+    if (!validAmount) {
+      return 'Insufficient balance';
+    }
+  }, [amount, balance, validAmount]);
+
+  const children = useMemo(() => {
+    if (inputCnt) {
+      return inputCnt;
+    }
+
+    if (amountCnt) {
+      return amountCnt;
+    }
+
+    if (conncnt) {
+      return conncnt;
+    }
+
+    if (tokenId !== poolId) {
+      return 'Wrap and Deposit';
+    }
+
+    return 'Deposit';
+  }, [amountCnt, conncnt, inputCnt, poolId, tokenId]);
+
+  const isDisabled = useMemo(() => {
+    const allInputsFilled =
+      !!amount && !!tokenId && !!poolId && !!srcTypedId && !!destTypedId;
+
+    return !allInputsFilled || !validAmount;
+  }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]);
+
+  return {
+    children,
+    isDisabled,
   };
 }

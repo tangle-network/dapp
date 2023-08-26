@@ -1,3 +1,6 @@
+import isScientificNotation from './isScientificNotation';
+import numberToString from './numberToString';
+
 /**
  * Truncate the decimal places of a number without rounding
  * @param value the value to be truncated the decimal places
@@ -5,8 +8,12 @@
  * @returns the truncated value
  */
 function toFixed(value: number, fractionDigits = 2): number {
+  const valueStr = isScientificNotation(value)
+    ? numberToString(value)
+    : `${value}`;
+
   const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${fractionDigits}})?`);
-  const matched = value.toString().match(regex);
+  const matched = valueStr.match(regex);
   if (!matched || matched[0] == null) {
     return value;
   }
