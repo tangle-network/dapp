@@ -1,4 +1,4 @@
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight, GasStationFill } from '@webb-tools/icons';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import {
   Button,
@@ -127,7 +127,15 @@ const Deposit = () => {
         </div>
 
         <div className="flex flex-col justify-between grow">
-          <FeeDetails />
+          <FeeDetails
+            info="The fee pays for the transaction to be processed on the network."
+            items={[
+              {
+                name: 'Gas',
+                Icon: <GasStationFill />,
+              },
+            ]}
+          />
 
           <Button isFullWidth {...depositBtnProps} />
         </div>
