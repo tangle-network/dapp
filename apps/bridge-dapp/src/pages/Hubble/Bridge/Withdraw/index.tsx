@@ -8,6 +8,7 @@ import {
   FileCopyLine,
   GasStationFill,
   SettingsFillIcon,
+  TokenIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
@@ -18,6 +19,7 @@ import {
   TitleWithInfo,
   ToggleCard,
   TransactionInputCard,
+  Typography,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -54,7 +56,7 @@ const Withdraw = () => {
 
   const balances = useBalancesFromNotes();
 
-  const { apiConfig, activeAccount } = useWebContext();
+  const { apiConfig, activeAccount, activeChain } = useWebContext();
 
   const { notificationApi } = useWebbUI();
 
@@ -313,6 +315,26 @@ const Withdraw = () => {
                   value={refundAmount}
                   onChange={(e) => setRefundAmount(e.target.value)}
                 />
+
+                {activeChain && (
+                  <TextField.Slot>
+                    <div className="flex items-center gap-2">
+                      <TokenIcon
+                        size="lg"
+                        name={activeChain.nativeCurrency.symbol}
+                      />
+
+                      <Typography
+                        variant="h5"
+                        fw="bold"
+                        component="span"
+                        className="block"
+                      >
+                        {activeChain.nativeCurrency.symbol}
+                      </Typography>
+                    </div>
+                  </TextField.Slot>
+                )}
               </TextField.Root>
             </Transition>
           </div>
