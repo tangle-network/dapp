@@ -1,9 +1,11 @@
 import { Transition } from '@headlessui/react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import {
   AccountCircleLineIcon,
   ArrowRight,
   ClipboardLineIcon,
+  FileCopyLine,
   GasStationFill,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
@@ -15,6 +17,8 @@ import {
   TitleWithInfo,
   ToggleCard,
   TransactionInputCard,
+  useCopyable,
+  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -22,7 +26,10 @@ import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
+  HAS_REFUND_KEY,
   POOL_KEY,
+  RECIPIENT_KEY,
+  REFUND_AMOUNT_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
   SELECT_SHIELDED_POOL_PATH,
   SELECT_TOKEN_PATH,
@@ -31,6 +38,7 @@ import {
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
+import useStateWithRoute from '../../../../hooks/useStateWithRoute';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
@@ -44,11 +52,21 @@ const Withdraw = () => {
 
   const balances = useBalancesFromNotes();
 
-  const { apiConfig } = useWebContext();
+  const { apiConfig, activeAccount } = useWebContext();
 
-  const [hasRefund, setHasRefund] = useState(false);
+  const { notificationApi } = useWebbUI();
+
+  const { copy, isCopied } = useCopyable();
 
   const [amount, setAmount] = useAmountWithRoute();
+
+  const [refundAmount, setRefundAmount] = useAmountWithRoute(REFUND_AMOUNT_KEY);
+
+  const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
+
+  const [hasRefund, setHasRefund] = useStateWithRoute(HAS_REFUND_KEY);
+
+  const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
 
   const [destTypedChainId, poolId, tokenId] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
@@ -89,6 +107,29 @@ const Withdraw = () => {
     [navigate]
   );
 
+  const handlePasteButtonClick = useCallback(async () => {
+    try {
+      const addr = await window.navigator.clipboard.readText();
+
+      setRecipient(addr);
+    } catch (e) {
+      notificationApi({
+        message: 'Failed to read clipboard',
+        secondaryMessage:
+          'Please change your browser settings to allow clipboard access.',
+        variant: 'warning',
+      });
+    }
+  }, [notificationApi, setRecipient]);
+
+  const handleSendToSelfClick = useCallback(() => {
+    if (!activeAccount) {
+      return;
+    }
+
+    setRecipient(activeAccount.address);
+  }, [activeAccount, setRecipient]);
+
   // Set default poolid and destTypedChainId on first render
   useEffect(() => {
     const entries = Object.entries(balances);
@@ -107,6 +148,19 @@ const Withdraw = () => {
       }
     }
   }, [balances, destTypedChainId, poolId, setSearchParams]);
+
+  // Validate recipient input address after 1s
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (recipient && !isValidAddress(recipient)) {
+        setRecipientErrorMsg('Invalid address');
+      } else {
+        setRecipientErrorMsg('');
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [recipient]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -172,32 +226,59 @@ const Withdraw = () => {
                 info="Recipient Shielded Account"
               />
 
-              <TextField.Root className="max-w-none">
-                <TextField.Input placeholder="0x..." />
+              <TextField.Root className="max-w-none" error={recipientErrorMsg}>
+                <TextField.Input
+                  placeholder="0x..."
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                />
 
                 <TextField.Slot>
-                  <IconWithTooltip
-                    icon={
-                      <AccountCircleLineIcon
-                        size="lg"
-                        className="!fill-current"
+                  {recipient ? (
+                    <IconWithTooltip
+                      icon={
+                        <FileCopyLine size="lg" className="!fill-current" />
+                      }
+                      content={isCopied ? 'Copied' : 'Copy'}
+                      overrideTooltipTriggerProps={{
+                        onClick: isCopied ? undefined : () => copy(recipient),
+                      }}
+                    />
+                  ) : (
+                    <>
+                      <IconWithTooltip
+                        icon={
+                          <AccountCircleLineIcon
+                            size="lg"
+                            className="!fill-current"
+                          />
+                        }
+                        content="Send to self"
+                        overrideTooltipTriggerProps={{
+                          onClick: handleSendToSelfClick,
+                        }}
                       />
-                    }
-                    content="Send to self"
-                  />
-                  <IconWithTooltip
-                    icon={
-                      <ClipboardLineIcon size="lg" className="!fill-current" />
-                    }
-                    content="Patse from clipboard"
-                  />
+                      <IconWithTooltip
+                        icon={
+                          <ClipboardLineIcon
+                            size="lg"
+                            className="!fill-current"
+                          />
+                        }
+                        content="Patse from clipboard"
+                        overrideTooltipTriggerProps={{
+                          onClick: handlePasteButtonClick,
+                        }}
+                      />
+                    </>
+                  )}
                 </TextField.Slot>
               </TextField.Root>
             </div>
 
             <Transition
               className="space-y-2"
-              show={hasRefund}
+              show={!!hasRefund}
               enter="transition-opacity duration-200"
               enterFrom="opacity-0"
               enterTo="opacity-100"
@@ -206,30 +287,16 @@ const Withdraw = () => {
               leaveTo="opacity-0"
             >
               <TitleWithInfo
-                title="Refund Wallet Address"
-                info="Refund Wallet"
+                title="Refund Amount"
+                info="The native token will be refunded to the recipient on the destination chain."
               />
 
               <TextField.Root className="max-w-none">
-                <TextField.Input placeholder="0x..." />
-
-                <TextField.Slot>
-                  <IconWithTooltip
-                    icon={
-                      <AccountCircleLineIcon
-                        size="lg"
-                        className="!fill-current"
-                      />
-                    }
-                    content="Send to self"
-                  />
-                  <IconWithTooltip
-                    icon={
-                      <ClipboardLineIcon size="lg" className="!fill-current" />
-                    }
-                    content="Patse from clipboard"
-                  />
-                </TextField.Slot>
+                <TextField.Input
+                  placeholder="0.0"
+                  value={refundAmount}
+                  onChange={(e) => setRefundAmount(e.target.value)}
+                />
               </TextField.Root>
             </Transition>
           </div>
@@ -244,12 +311,20 @@ const Withdraw = () => {
               description={`Get ${TOKEN_NAME} on transactions on ${CHAIN_NAME}`}
               className="max-w-none"
               switcherProps={{
-                checked: hasRefund,
-                onCheckedChange: setHasRefund,
+                checked: !!hasRefund,
+                onCheckedChange: () =>
+                  setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
               }}
             />
 
-            <FeeDetails />
+            <FeeDetails
+              items={[
+                {
+                  name: 'Gas',
+                  Icon: <GasStationFill />,
+                },
+              ]}
+            />
           </div>
 
           <Button isFullWidth>Transfer</Button>

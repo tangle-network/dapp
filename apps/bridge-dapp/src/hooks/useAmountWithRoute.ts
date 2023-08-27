@@ -3,14 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
 import { AMOUNT_KEY } from '../constants';
 
-const useAmountWithRoute = () => {
+const useAmountWithRoute = (key = AMOUNT_KEY) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const amountStr = useMemo(() => {
-    const amountStr = searchParams.get(AMOUNT_KEY) ?? '';
+    const amountStr = searchParams.get(key) ?? '';
 
     return amountStr.length ? formatEther(BigInt(amountStr)) : '';
-  }, [searchParams]);
+  }, [key, searchParams]);
 
   const [amount, setAmount] = useState(amountStr);
 
@@ -31,14 +31,14 @@ const useAmountWithRoute = () => {
       if (!amount) {
         return setSearchParams((prev) => {
           const nextParams = new URLSearchParams(prev);
-          nextParams.delete(AMOUNT_KEY);
+          nextParams.delete(key);
           return nextParams;
         });
       }
 
       setSearchParams((prev) => {
         const nextParams = new URLSearchParams(prev);
-        nextParams.set(AMOUNT_KEY, `${parseEther(amount)}`);
+        nextParams.set(key, `${parseEther(amount)}`);
         return nextParams;
       });
     }
@@ -48,7 +48,7 @@ const useAmountWithRoute = () => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [amount, setSearchParams]);
+  }, [amount, key, setSearchParams]);
 
   return [amount, onAmountChange] as const;
 };

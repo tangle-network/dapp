@@ -9,5 +9,6 @@ export { default as useNavigateWithPersistParams } from './useNavigateWithPersis
 export * from './useRelayerManager';
 export * from './useShieldedAssets';
 export * from './useSpendNotes';
+export { default as useStateWithRoute } from './useStateWithRoute';
 export * from './useTransactionProgressValue';
 export * from './useTryAnotherWalletWithView';
