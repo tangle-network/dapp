@@ -1,4 +1,6 @@
 export * from './useAddCurrency';
+export { default as useAmountWithRoute } from './useAmountWithRoute';
+export { default as useChainsFromNote } from './useChainsFromNote';
 export * from './useConnectWallet';
 export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export * from './useLatestTransactionStage';
@@ -9,4 +11,3 @@ export * from './useShieldedAssets';
 export * from './useSpendNotes';
 export * from './useTransactionProgressValue';
 export * from './useTryAnotherWalletWithView';
-export { default as useAmountWithRoute } from './useAmountWithRoute';

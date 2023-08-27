@@ -19,11 +19,13 @@ import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { getActiveSourceChains } from '../../../utils/getActiveSourceChains';
+import useChainsFromNote from '../../../hooks/useChainsFromNote';
 
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
 }) => {
-  const { apiConfig, activeWallet, loading, switchChain } = useWebContext();
+  const { apiConfig, activeWallet, activeChain, loading, switchChain } =
+    useWebContext();
 
   const { toggleModal } = useConnectWallet();
 
@@ -33,7 +35,13 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 
   const [searchParams] = useSearchParams();
 
+  const destTypedChainIds = useChainsFromNote();
+
   const { fungibleCfg } = useCurrenciesFromRoute();
+
+  const currentTab = useMemo(() => {
+    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
+  }, [pathname]);
 
   const srcChain = useMemo(() => {
     const typedChainId = searchParams.get(SOURCE_CHAIN_KEY);
@@ -44,7 +52,28 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
     return apiConfig.chains[+typedChainId];
   }, [apiConfig.chains, searchParams]);
 
+  const destChain = useMemo(() => {
+    const typedChainId = searchParams.get(DEST_CHAIN_KEY);
+    if (!typedChainId) {
+      return undefined;
+    }
+
+    return apiConfig.chains[+typedChainId];
+  }, [apiConfig.chains, searchParams]);
+
   const chains = useMemo<Array<ChainType>>(() => {
+    if (currentTab === 'withdraw' && chainType === 'dest') {
+      return Array.from(destTypedChainIds)
+        .map((id) => apiConfig.chains[id])
+        .map(
+          (c) =>
+            ({
+              name: c.name,
+              tag: c.tag,
+            } satisfies ChainType)
+        );
+    }
+
     if (chainType === 'dest') {
       if (!fungibleCfg) {
         return [];
@@ -67,15 +96,33 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         tag: val.tag,
       } satisfies ChainType;
     });
-  }, [apiConfig.anchors, apiConfig.chains, chainType, fungibleCfg]);
+  }, [apiConfig.anchors, apiConfig.chains, chainType, currentTab, destTypedChainIds, fungibleCfg]); // prettier-ignore
 
-  const isOnBridgeTab = useMemo(() => {
-    return !!BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const defaultCategory = useMemo<ChainListCardProps['defaultCategory']>(() => {
+    if (chainType === 'dest') {
+      return;
+    }
+
+    if (currentTab === 'deposit') {
+      return srcChain?.tag;
+    }
+  }, [chainType, currentTab, srcChain?.tag]);
+
+  const onlyCategory = useMemo<ChainListCardProps['onlyCategory']>(() => {
+    if (chainType === 'source') {
+      return;
+    }
+
+    if (currentTab === 'deposit') {
+      return srcChain?.tag ?? destChain?.tag;
+    }
+
+    return destChain?.tag;
+  }, [chainType, currentTab, destChain?.tag, srcChain?.tag]);
 
   const handleClose = useCallback(
     (typedChainId?: number) => {
-      if (!isOnBridgeTab) {
+      if (currentTab == null) {
         navigate(-1);
         return;
       }
@@ -95,7 +142,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         search: params.toString(),
       });
     },
-    [chainType, isOnBridgeTab, navigate, pathname, searchParams]
+    [chainType, currentTab, navigate, pathname, searchParams]
   );
 
   const handleChainChange = useCallback(
@@ -110,7 +157,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 
       // If the source chain is render on the bridge tab,
       // we just need to set the query param and close the modal
-      if (isOnBridgeTab) {
+      if (currentTab) {
         return handleClose(calculateTypedChainId(chain.chainType, chain.id));
       }
 
@@ -123,7 +170,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 
       handleClose();
     },
-    [activeWallet, handleClose, isOnBridgeTab, switchChain, toggleModal]
+    [activeWallet, currentTab, handleClose, switchChain, toggleModal]
   );
 
   return (
@@ -132,8 +179,9 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         className="h-[var(--card-height)]"
         chainType={chainType}
         chains={chains}
-        currentActiveChain={srcChain?.name}
-        defaultCategory={srcChain?.tag}
+        currentActiveChain={activeChain?.name}
+        defaultCategory={defaultCategory}
+        onlyCategory={onlyCategory}
         isConnectingToChain={loading}
         onChange={handleChainChange}
         onClose={() => handleClose()}

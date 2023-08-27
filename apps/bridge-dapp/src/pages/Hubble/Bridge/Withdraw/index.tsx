@@ -17,16 +17,27 @@ import {
   TransactionInputCard,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { DEST_CHAIN_KEY, POOL_KEY, TOKEN_KEY } from '../../../../constants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import {
+  BRIDGE_TABS,
+  DEST_CHAIN_KEY,
+  POOL_KEY,
+  SELECT_DESTINATION_CHAIN_PATH,
+  TOKEN_KEY,
+} from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
+import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
 
 const Withdraw = () => {
+  const { pathname } = useLocation();
+
+  const navigate = useNavigateWithPersistParams();
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const balances = useBalancesFromNotes();
@@ -65,6 +76,10 @@ const Withdraw = () => {
     return fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId];
   }, [balances, destTypedChainId, fungibleCfg]);
 
+  const handleChainClick = useCallback(() => {
+    navigate(SELECT_DESTINATION_CHAIN_PATH);
+  }, [navigate]);
+
   // Set default poolid and destTypedChainId on first render
   useEffect(() => {
     const entries = Object.entries(balances);
@@ -84,6 +99,11 @@ const Withdraw = () => {
     }
   }, [balances, destTypedChainId, poolId, setSearchParams]);
 
+  const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
+  if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
+    return <Outlet />;
+  }
+
   return (
     <BridgeTabsContainer>
       <div className="flex flex-col space-y-4 grow">
@@ -96,7 +116,7 @@ const Withdraw = () => {
             onAmountChange={setAmount}
           >
             <TransactionInputCard.Header>
-              <TransactionInputCard.ChainSelector />
+              <TransactionInputCard.ChainSelector onClick={handleChainClick} />
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
@@ -112,7 +132,7 @@ const Withdraw = () => {
             onAmountChange={setAmount}
           >
             <TransactionInputCard.Header>
-              <TransactionInputCard.ChainSelector />
+              <TransactionInputCard.ChainSelector onClick={handleChainClick} />
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
