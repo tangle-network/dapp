@@ -1,15 +1,14 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { formatEther, parseEther } from 'viem';
 import {
-  AMOUNT_KEY,
   DEST_CHAIN_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
 } from '../../../../../constants';
+import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
 import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 
 function useWatchSearchParams() {
@@ -19,24 +18,20 @@ function useWatchSearchParams() {
 
   const { activeChain, apiConfig, activeApi } = useWebContext();
 
-  const [srcTypedChainId, destTypedChainId, tokenId, amountStr] =
-    useMemo(() => {
-      const sourceStr = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
-      const destStr = searchParams.get(DEST_CHAIN_KEY) ?? '';
+  const [srcTypedChainId, destTypedChainId, tokenId] = useMemo(() => {
+    const sourceStr = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
+    const destStr = searchParams.get(DEST_CHAIN_KEY) ?? '';
 
-      const tokenStr = searchParams.get(TOKEN_KEY) ?? '';
+    const tokenStr = searchParams.get(TOKEN_KEY) ?? '';
 
-      const amountStr = searchParams.get('amount') ?? '';
+    return [
+      !Number.isNaN(parseInt(sourceStr)) ? parseInt(sourceStr) : undefined,
+      !Number.isNaN(parseInt(destStr)) ? parseInt(destStr) : undefined,
+      !Number.isNaN(parseInt(tokenStr)) ? parseInt(tokenStr) : undefined,
+    ];
+  }, [searchParams]);
 
-      return [
-        !Number.isNaN(parseInt(sourceStr)) ? parseInt(sourceStr) : undefined,
-        !Number.isNaN(parseInt(destStr)) ? parseInt(destStr) : undefined,
-        !Number.isNaN(parseInt(tokenStr)) ? parseInt(tokenStr) : undefined,
-        amountStr.length ? formatEther(BigInt(amountStr)) : '',
-      ];
-    }, [searchParams]);
-
-  const [amount, setAmount] = useState(amountStr);
+  const [amount, setAmount] = useAmountWithRoute();
 
   useEffect(() => {
     setSearchParams((prev) => {
@@ -135,45 +130,12 @@ function useWatchSearchParams() {
     }
   }, [apiConfig.anchors, destTypedChainId, fungibleCfg, setSearchParams]);
 
-  // Update amount on search params with debounce
-  useEffect(() => {
-    function updateParams() {
-      if (!amount) {
-        return setSearchParams((prev) => {
-          const nextParams = new URLSearchParams(prev);
-          nextParams.delete(AMOUNT_KEY);
-          return nextParams;
-        });
-      }
-
-      setSearchParams((prev) => {
-        const nextParams = new URLSearchParams(prev);
-        nextParams.set(AMOUNT_KEY, `${parseEther(amount)}`);
-        return nextParams;
-      });
-    }
-
-    const timeout = setTimeout(updateParams, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [amount, setSearchParams]);
-
-  const handleAmountChange = useCallback((amount: string) => {
-    const validationRegex = /^\d*\.?\d*$/;
-    const isValid = validationRegex.test(amount);
-    if (isValid) {
-      setAmount(amount);
-    }
-  }, []);
-
   return {
     allCurrencies,
     amount,
     destTypedChainId,
     fungibleCfg,
-    onAmountChange: handleAmountChange,
+    onAmountChange: setAmount,
     searchParams,
     setSearchParams,
     srcTypedChainId,

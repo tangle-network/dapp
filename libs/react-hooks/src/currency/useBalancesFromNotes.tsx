@@ -12,7 +12,11 @@ import { useNoteAccount } from '../useNoteAccount';
  * The return type of the useBalancesFromNotes
  * Record of balances (currencyId => Record<typedChainId, balance>)
  */
-type UseBalancesFromNotesReturnType = Record<number, Record<number, number>>;
+type UseBalancesFromNotesReturnType = {
+  [currencyId: number]: {
+    [typedChainId: number]: number;
+  };
+};
 
 /**
  * Get the balances of each fungible currency

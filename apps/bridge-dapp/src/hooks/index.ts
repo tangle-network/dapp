@@ -1,14 +1,12 @@
 export * from './useAddCurrency';
-export { default as useChainsFromNote } from './useChainsFromNote';
 export * from './useConnectWallet';
 export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
 export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
 export { default as useNavigateWithPersistParams } from './useNavigateWithPersistParams';
-export * from './useNotesBalances';
-export { default as useNotesBalances } from './useNotesBalances';
 export * from './useRelayerManager';
 export * from './useShieldedAssets';
 export * from './useSpendNotes';
 export * from './useTransactionProgressValue';
 export * from './useTryAnotherWalletWithView';
+export { default as useAmountWithRoute } from './useAmountWithRoute';

@@ -1,37 +1,46 @@
-import cx from 'classnames';
+import { Transition } from '@headlessui/react';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
-  ArrowRight,
   AccountCircleLineIcon,
+  ArrowRight,
   ClipboardLineIcon,
   GasStationFill,
 } from '@webb-tools/icons';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
-  TransactionInputCard,
-  TitleWithInfo,
-  TextField,
-  ToggleCard,
-  FeeDetails,
   Button,
+  FeeDetails,
   IconWithTooltip,
+  TextField,
+  TitleWithInfo,
+  ToggleCard,
+  TransactionInputCard,
 } from '@webb-tools/webb-ui-components';
-import { useMemo, useState } from 'react';
-import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
-import { Transition } from '@headlessui/react';
+import cx from 'classnames';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { DEST_CHAIN_KEY, TOKEN_KEY } from '../../../../constants';
+import { DEST_CHAIN_KEY, POOL_KEY, TOKEN_KEY } from '../../../../constants';
+import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
 
 const Withdraw = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const balances = useBalancesFromNotes();
+
+  const { apiConfig } = useWebContext();
+
   const [hasRefund, setHasRefund] = useState(false);
 
-  const [searchParams] = useSearchParams();
+  const [amount, setAmount] = useAmountWithRoute();
 
   const [destTypedChainId, poolId, tokenId] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
 
-    const poolId = parseInt(searchParams.get('poolId') ?? '');
+    const poolId = parseInt(searchParams.get(POOL_KEY) ?? '');
     const tokenId = parseInt(searchParams.get(TOKEN_KEY) ?? '');
 
     return [
@@ -41,11 +50,51 @@ const Withdraw = () => {
     ];
   }, [searchParams]);
 
+  const [fungibleCfg, wrappableCfg] = useMemo(() => {
+    return [
+      typeof poolId === 'number' ? apiConfig.currencies[poolId] : undefined,
+      typeof tokenId === 'number' ? apiConfig.currencies[tokenId] : undefined,
+    ];
+  }, [poolId, tokenId, apiConfig.currencies]);
+
+  const fungibleMaxAmount = useMemo(() => {
+    if (!destTypedChainId) {
+      return;
+    }
+
+    return fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId];
+  }, [balances, destTypedChainId, fungibleCfg]);
+
+  // Set default poolid and destTypedChainId on first render
+  useEffect(() => {
+    const entries = Object.entries(balances);
+    if (!destTypedChainId && !poolId && entries.length > 0) {
+      // Find first pool & destTypedChainId from balances
+      const [currencyId, balanceRecord] = entries[0];
+      const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
+
+      if (currencyId && typedChainId) {
+        setSearchParams((prev) => {
+          const params = new URLSearchParams(prev);
+          params.set(DEST_CHAIN_KEY, typedChainId);
+          params.set(POOL_KEY, currencyId);
+          return params;
+        });
+      }
+    }
+  }, [balances, destTypedChainId, poolId, setSearchParams]);
+
   return (
     <BridgeTabsContainer>
       <div className="flex flex-col space-y-4 grow">
         <div className="space-y-2">
-          <TransactionInputCard.Root typedChainId={destTypedChainId}>
+          <TransactionInputCard.Root
+            typedChainId={destTypedChainId}
+            tokenSymbol={fungibleCfg?.symbol}
+            maxAmount={fungibleMaxAmount}
+            amount={amount}
+            onAmountChange={setAmount}
+          >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector />
               <TransactionInputCard.MaxAmountButton />
@@ -56,7 +105,12 @@ const Withdraw = () => {
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
 
-          <TransactionInputCard.Root typedChainId={destTypedChainId}>
+          <TransactionInputCard.Root
+            typedChainId={destTypedChainId}
+            tokenSymbol={wrappableCfg?.symbol}
+            amount={amount}
+            onAmountChange={setAmount}
+          >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector />
               <TransactionInputCard.MaxAmountButton />

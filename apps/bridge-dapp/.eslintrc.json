@@ -1,5 +1,9 @@
 {
-  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "extends": [
+    "plugin:@nx/react",
+    "../../.eslintrc.json",
+    "plugin:react-hooks/recommended"
+  ],
   "ignorePatterns": ["!**/*", "node_modules/**", "build/**"],
   "plugins": ["unused-imports"],
   "overrides": [
