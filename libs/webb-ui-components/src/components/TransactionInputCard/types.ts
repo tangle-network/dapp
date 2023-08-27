@@ -4,6 +4,7 @@ import { AdjustAmount } from '../BridgeInputs';
 import { TextFieldInput } from '../TextField';
 import TokenSelector from '../TokenSelector';
 import { TitleWithInfo } from '../TitleWithInfo';
+import { IconBase } from '@webb-tools/icons/types';
 
 export type TransactionInputCardContextValue = {
   /**
@@ -55,6 +56,13 @@ export interface TransactionInputCardRootProps
 export interface TransactionChainSelectorProps
   extends PropsOf<'button'>,
     Pick<TransactionInputCardContextValue, 'typedChainId'> {}
+
+export interface TransactionButtonProps extends PropsOf<'button'> {
+  /**
+   * The icon of the transaction button.
+   */
+  Icon?: React.ReactElement<IconBase>;
+}
 
 export interface TransactionMaxAmountButtonProps
   extends PropsOf<'button'>,

@@ -84,7 +84,7 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
           ? {
               balance: balances[cfg.id] ?? 0,
             }
-          : currentTxType === 'withdraw' && destTypedChainId
+          : currentTxType === 'withdraw' && destTypedChainId && tokenType === 'shielded'
           ? {
               balance: balancesFromNotes[cfg.id]?.[destTypedChainId] ?? 0,
             }
@@ -96,7 +96,7 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
         assetBalanceProps,
       } satisfies AssetType;
     });
-  }, [balances, balancesFromNotes, currentTxType, destTypedChainId, fungibleCurrencies]); // prettier-ignore
+  }, [balances, balancesFromNotes, currentTxType, destTypedChainId, fungibleCurrencies, tokenType]); // prettier-ignore
 
   const unavailableTokens = useMemo<Array<AssetType>>(() => {
     const currency =

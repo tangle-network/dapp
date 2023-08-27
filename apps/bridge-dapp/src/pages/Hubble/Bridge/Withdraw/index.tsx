@@ -7,6 +7,7 @@ import {
   ClipboardLineIcon,
   FileCopyLine,
   GasStationFill,
+  SettingsFillIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
@@ -214,7 +215,9 @@ const Withdraw = () => {
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
-              <TransactionInputCard.MaxAmountButton />
+              <TransactionInputCard.Button Icon={<SettingsFillIcon />}>
+                Relayer
+              </TransactionInputCard.Button>
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body

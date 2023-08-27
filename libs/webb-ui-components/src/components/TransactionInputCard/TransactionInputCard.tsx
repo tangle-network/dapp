@@ -9,7 +9,13 @@ import {
   WalletFillIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
-import { createContext, forwardRef, useContext, useMemo } from 'react';
+import {
+  cloneElement,
+  createContext,
+  forwardRef,
+  useContext,
+  useMemo,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { toFixed } from '../../utils';
@@ -19,6 +25,7 @@ import { TextFieldInput } from '../TextField';
 import { TitleWithInfo } from '../TitleWithInfo';
 import TokenSelector from '../TokenSelector';
 import {
+  TransactionButtonProps,
   TransactionChainSelectorProps,
   TransactionInputCardBodyProps,
   TransactionInputCardContextValue,
@@ -119,6 +126,43 @@ const TransactionChainSelector = forwardRef<
 });
 TransactionChainSelector.displayName = 'TransactionChainSelector';
 
+const TransactionButton = forwardRef<
+  React.ElementRef<'button'>,
+  TransactionButtonProps
+>(({ className, children, Icon, ...props }, ref) => {
+  return (
+    <button
+      {...props}
+      className={twMerge(
+        'group flex items-center gap-1',
+        'text-mono-170 dark:text-mono-80',
+        'hover:enabled:text-mono-190 dark:hover:enabled:text-mono-20',
+        'disabled:text-mono-100 dark:disabled:text-mono-100',
+        className
+      )}
+      ref={ref}
+    >
+      {Icon &&
+        cloneElement(Icon, {
+          ...Icon.props,
+          className: twMerge('!fill-current', Icon.props.className),
+        })}
+      {typeof children === 'string' || typeof children === 'number' ? (
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="!text-inherit group-hover:group-enabled:underline"
+        >
+          {children}
+        </Typography>
+      ) : (
+        children
+      )}
+    </button>
+  );
+});
+TransactionButton.displayName = 'TransactionButton';
+
 const TransactionMaxAmountButton = forwardRef<
   React.ElementRef<'button'>,
   TransactionMaxAmountButtonProps
@@ -141,8 +185,15 @@ const TransactionMaxAmountButton = forwardRef<
     const maxAmount = maxAmountProp ?? context.maxAmount;
     const onAmountChange = onAmountChangeProp ?? context.onAmountChange;
 
+    const buttonCnt = useMemo(() => {
+      const amount = typeof maxAmount === 'number' ? toFixed(maxAmount) : '--';
+      const tokenSym = tokenSymbol ?? '';
+
+      return `${amount} ${tokenSym}`.trim();
+    }, [maxAmount, tokenSymbol]);
+
     return (
-      <button
+      <TransactionButton
         {...props}
         ref={ref}
         disabled={props.disabled ?? typeof maxAmount !== 'number'}
@@ -151,35 +202,22 @@ const TransactionMaxAmountButton = forwardRef<
             ? () => onAmountChange?.(`${maxAmount}`)
             : undefined
         }
-        className={twMerge(
-          'group flex items-center gap-1',
-          'text-mono-170 dark:text-mono-80',
-          'hover:enabled:text-mono-190 dark:hover:enabled:text-mono-20',
-          'disabled:text-mono-100 dark:disabled:text-mono-100',
-          className
-        )}
+        Icon={
+          accountType === 'note' ? (
+            <>
+              <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+              <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+            </>
+          ) : (
+            <>
+              <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
+              <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+            </>
+          )
+        }
       >
-        {accountType === 'note' ? (
-          <>
-            <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-            <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-          </>
-        ) : (
-          <>
-            <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-            <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
-          </>
-        )}
-
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="!text-inherit group-hover:group-enabled:underline"
-        >
-          {typeof maxAmount === 'number' ? toFixed(maxAmount) : '--'}{' '}
-          {tokenSymbol ?? ''}
-        </Typography>
-      </button>
+        {buttonCnt}
+      </TransactionButton>
     );
   }
 );
@@ -345,6 +383,7 @@ const TransactionInputCard = Object.assign(
     Body: TransactionInputCardBody,
     Footer: TransactionInputCardFooter,
     ChainSelector: TransactionChainSelector,
+    Button: TransactionButton,
     MaxAmountButton: TransactionMaxAmountButton,
   }
 );
@@ -357,5 +396,6 @@ export {
   TransactionInputCardFooter,
   TransactionInputCardHeader,
   TransactionInputCardRoot,
+  TransactionButton,
   TransactionMaxAmountButton,
 };
