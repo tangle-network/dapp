@@ -292,6 +292,10 @@ const TransactionInputCardBody = forwardRef<
             <AdjustAmount
               min={0}
               {...fixedAmountProps}
+              className={twMerge(
+                'max-w-[var(--adjust-amount-width)]',
+                fixedAmountProps?.className
+              )}
               value={typeof amount === 'string' ? Number(amount) : undefined}
               onChange={
                 typeof onAmountChange === 'function'
