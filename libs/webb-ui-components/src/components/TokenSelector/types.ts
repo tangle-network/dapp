@@ -32,4 +32,10 @@ export interface TokenSelectorProps
    * @default 'Select token'
    */
   placeHolder?: string;
+
+  /**
+   * Boolean indicate to render the dropdown chevron icon
+   * @default true
+   */
+  isDropdown?: boolean;
 }

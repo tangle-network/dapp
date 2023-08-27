@@ -32,6 +32,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       isActive,
       tokenType = 'unshielded',
       placeHolder = 'Select token',
+      isDropdown = true,
       ...props
     },
     ref
@@ -83,15 +84,17 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
           {children ?? placeHolder}
         </Typography>
 
-        <ChevronDown
-          size="lg"
-          className={twMerge(
-            'group-disabled:hidden',
-            'fill-mono-120 dark:fill-mono-100',
-            'shrink-0 grow-0',
-            getFlexBasic('lg')
-          )}
-        />
+        {isDropdown && (
+          <ChevronDown
+            size="lg"
+            className={twMerge(
+              'group-disabled:hidden',
+              'fill-mono-120 dark:fill-mono-100',
+              'shrink-0 grow-0',
+              getFlexBasic('lg')
+            )}
+          />
+        )}
       </button>
     );
   }

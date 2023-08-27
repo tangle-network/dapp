@@ -65,7 +65,7 @@ const TxProgressDropdown = () => {
       </DropdownTrigger>
 
       <DropdownPortal>
-        <DropdownBody className="mt-4 max-h-80 w-[32rem]">
+        <DropdownBody className="mt-4 max-h-80 w-[32rem] overflow-scroll overflow-x-hidden">
           {txQueue.map((tx) => {
             let srcAccountType: TxInfo['accountType'] | undefined = undefined;
             let destAccountType: TxInfo['accountType'] | undefined = undefined;

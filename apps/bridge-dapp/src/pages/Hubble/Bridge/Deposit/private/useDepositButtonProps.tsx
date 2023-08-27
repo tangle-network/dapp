@@ -28,6 +28,7 @@ function useDepositButtonProps({
   const {
     activeApi,
     activeWallet,
+    activeChain,
     switchChain,
     apiConfig,
     noteManager,
@@ -155,10 +156,13 @@ function useDepositButtonProps({
   const handleSwitchChain = useCallback(async () => {
     const nextChain = chainsPopulated[Number(srcTypedId)];
     if (!nextChain) {
+      console.error(WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain));
       return;
     }
 
-    if (!isWalletConnected) {
+    const isNextChainActive = activeChain?.id === nextChain.id && activeChain?.chainType === nextChain.chainType;
+
+    if (!isWalletConnected || !isNextChainActive) {
       if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
         await switchChain(nextChain, activeWallet);
       } else {
@@ -170,7 +174,7 @@ function useDepositButtonProps({
     if (!hasNoteAccount) {
       setOpenNoteAccountModal(true);
     }
-  }, [activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
+  }, [activeChain?.chainType, activeChain?.id, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
 
   const handleBtnClick = useCallback(async () => {
     if (conncnt) {

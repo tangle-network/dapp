@@ -23,8 +23,7 @@ import { getActiveSourceChains } from '../../../utils/getActiveSourceChains';
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
 }) => {
-  const { apiConfig, activeChain, activeWallet, loading, switchChain } =
-    useWebContext();
+  const { apiConfig, activeWallet, loading, switchChain } = useWebContext();
 
   const { toggleModal } = useConnectWallet();
 
@@ -35,6 +34,15 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   const [searchParams] = useSearchParams();
 
   const { fungibleCfg } = useCurrenciesFromRoute();
+
+  const srcChain = useMemo(() => {
+    const typedChainId = searchParams.get(SOURCE_CHAIN_KEY);
+    if (!typedChainId) {
+      return undefined;
+    }
+
+    return apiConfig.chains[+typedChainId];
+  }, [apiConfig.chains, searchParams]);
 
   const chains = useMemo<Array<ChainType>>(() => {
     if (chainType === 'dest') {
@@ -124,8 +132,8 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         className="h-[var(--card-height)]"
         chainType={chainType}
         chains={chains}
-        currentActiveChain={activeChain?.name}
-        defaultCategory={activeChain?.tag}
+        currentActiveChain={srcChain?.name}
+        defaultCategory={srcChain?.tag}
         isConnectingToChain={loading}
         onChange={handleChainChange}
         onClose={() => handleClose()}

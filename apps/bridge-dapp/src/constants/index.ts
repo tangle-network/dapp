@@ -32,4 +32,8 @@ export const POOL_KEY = 'pool';
 /** Key for transaction amount query param */
 export const AMOUNT_KEY = 'amount';
 
-export const BRIDGE_TABS = [DEPOSIT_PATH, TRANSFER_PATH, WITHDRAW_PATH];
+export const BRIDGE_TABS = [
+  DEPOSIT_PATH,
+  TRANSFER_PATH,
+  WITHDRAW_PATH,
+] as const;

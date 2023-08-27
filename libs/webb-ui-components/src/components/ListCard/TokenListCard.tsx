@@ -91,6 +91,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 <TokenSelector
                   key={`${current.name}-${idx}`}
                   onClick={() => onItemChange(current)}
+                  isDropdown={false}
                 >
                   {current.symbol}
                 </TokenSelector>

@@ -7,7 +7,12 @@ import { TokenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
-import { POOL_KEY, SOURCE_CHAIN_KEY, TOKEN_KEY } from '../../../constants';
+import {
+  BRIDGE_TABS,
+  POOL_KEY,
+  SOURCE_CHAIN_KEY,
+  TOKEN_KEY,
+} from '../../../constants';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const SelectToken: FC<{ tokenType?: TokenType }> = ({
@@ -16,6 +21,10 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const currentTxType = useMemo(() => {
+    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
+  }, [pathname]);
 
   const srcTypedChainId = useMemo(
     () =>
@@ -121,7 +130,7 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
         unavailableTokens={unavailableTokens}
         onChange={handleTokenChange}
         onClose={() => handleClose()}
-        txnType={'deposit'}
+        txnType={currentTxType}
       />
     </SlideAnimation>
   );
