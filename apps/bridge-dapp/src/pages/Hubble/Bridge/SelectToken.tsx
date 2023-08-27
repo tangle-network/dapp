@@ -1,6 +1,9 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { useCurrenciesBalances } from '@webb-tools/react-hooks';
+import {
+  useBalancesFromNotes,
+  useCurrenciesBalances,
+} from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TokenType } from '@webb-tools/webb-ui-components/types';
@@ -9,6 +12,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
+  DEST_CHAIN_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
@@ -26,13 +30,17 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
     return BRIDGE_TABS.find((tab) => pathname.includes(tab));
   }, [pathname]);
 
-  const srcTypedChainId = useMemo(
-    () =>
-      searhParams.get(SOURCE_CHAIN_KEY)
-        ? Number(searhParams.get(SOURCE_CHAIN_KEY))
-        : undefined,
-    [searhParams]
-  );
+  const [srcTypedChainId, destTypedChainId] = useMemo(() => {
+    const srcTypedId = searhParams.get(SOURCE_CHAIN_KEY)
+      ? Number(searhParams.get(SOURCE_CHAIN_KEY))
+      : undefined;
+
+    const destTypedId = searhParams.get(DEST_CHAIN_KEY)
+      ? Number(searhParams.get(DEST_CHAIN_KEY))
+      : undefined;
+
+    return [srcTypedId, destTypedId];
+  }, [searhParams]);
 
   const { apiConfig } = useWebContext();
 
@@ -41,9 +49,13 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
     allCurrencyCfgs,
     fungibleCurrencies,
     wrappableCurrencies,
-  } = useCurrenciesFromRoute();
+  } = useCurrenciesFromRoute(
+    currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
+  );
 
   const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
+
+  const balancesFromNotes = useBalancesFromNotes();
 
   const popularTokens = useMemo<Array<AssetType>>(() => {
     // No popular tokens for shielded
@@ -51,30 +63,40 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
       return [];
     }
 
-    return wrappableCurrencies.map(
-      (cfg) =>
-        ({
-          name: cfg.name,
-          symbol: cfg.symbol,
-          assetBalanceProps: {
-            balance: balances[cfg.id] ?? 0,
-          },
-        } satisfies AssetType)
-    );
-  }, [balances, tokenType, wrappableCurrencies]);
+    return wrappableCurrencies.map((cfg) => {
+      return {
+        name: cfg.name,
+        symbol: cfg.symbol,
+        assetBalanceProps:
+          currentTxType === 'deposit'
+            ? {
+                balance: balances[cfg.id] ?? 0,
+              }
+            : undefined,
+      } satisfies AssetType;
+    });
+  }, [balances, currentTxType, tokenType, wrappableCurrencies]);
 
   const selectTokens = useMemo<Array<AssetType>>(() => {
-    return fungibleCurrencies.map(
-      (cfg) =>
-        ({
-          name: cfg.name,
-          symbol: cfg.symbol,
-          assetBalanceProps: {
-            balance: balances[cfg.id] ?? 0,
-          },
-        } satisfies AssetType)
-    );
-  }, [balances, fungibleCurrencies]);
+    return fungibleCurrencies.map((cfg) => {
+      const assetBalanceProps: AssetType['assetBalanceProps'] =
+        currentTxType === 'deposit'
+          ? {
+              balance: balances[cfg.id] ?? 0,
+            }
+          : currentTxType === 'withdraw' && destTypedChainId
+          ? {
+              balance: balancesFromNotes[cfg.id]?.[destTypedChainId] ?? 0,
+            }
+          : undefined;
+
+      return {
+        name: cfg.name,
+        symbol: cfg.symbol,
+        assetBalanceProps,
+      } satisfies AssetType;
+    });
+  }, [balances, balancesFromNotes, currentTxType, destTypedChainId, fungibleCurrencies]); // prettier-ignore
 
   const unavailableTokens = useMemo<Array<AssetType>>(() => {
     const currency =

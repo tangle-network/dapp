@@ -85,6 +85,11 @@ const BridgeRoutes = () => {
                   path={SELECT_DESTINATION_CHAIN_PATH}
                   element={<SelectChain chainType="dest" />}
                 />
+                <Route
+                  path={SELECT_SHIELDED_POOL_PATH}
+                  element={<SelectToken tokenType="shielded" />}
+                />
+                <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
               </Route>
               <Route
                 path={SELECT_SOURCE_CHAIN_PATH}

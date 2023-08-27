@@ -24,6 +24,8 @@ import {
   DEST_CHAIN_KEY,
   POOL_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
+  SELECT_SHIELDED_POOL_PATH,
+  SELECT_TOKEN_PATH,
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
@@ -80,6 +82,13 @@ const Withdraw = () => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
   }, [navigate]);
 
+  const handleTokenClick = useCallback(
+    (isShielded?: boolean) => {
+      navigate(isShielded ? SELECT_SHIELDED_POOL_PATH : SELECT_TOKEN_PATH);
+    },
+    [navigate]
+  );
+
   // Set default poolid and destTypedChainId on first render
   useEffect(() => {
     const entries = Object.entries(balances);
@@ -120,7 +129,12 @@ const Withdraw = () => {
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
-            <TransactionInputCard.Body />
+            <TransactionInputCard.Body
+              tokenSelectorProps={{
+                placeHolder: 'Select pool',
+                onClick: () => handleTokenClick(true),
+              }}
+            />
           </TransactionInputCard.Root>
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
@@ -136,7 +150,11 @@ const Withdraw = () => {
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
-            <TransactionInputCard.Body />
+            <TransactionInputCard.Body
+              tokenSelectorProps={{
+                onClick: () => handleTokenClick(),
+              }}
+            />
           </TransactionInputCard.Root>
 
           <div className="flex gap-2">

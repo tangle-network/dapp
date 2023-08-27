@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { POOL_KEY, SOURCE_CHAIN_KEY, TOKEN_KEY } from '../constants';
 
-function useCurrenciesFromRoute() {
+function useCurrenciesFromRoute(typedChainId?: number) {
   const {
     apiConfig: { currencies, fungibleToWrappableMap },
   } = useWebContext();
@@ -49,17 +49,23 @@ function useCurrenciesFromRoute() {
       (currencyCfg) => currencyCfg.role === CurrencyRole.Governable
     );
 
-    if (!srcTypedChainId) {
+    if (typeof typedChainId === 'number') {
+      return currencyCfgs.filter((currencyCfg) =>
+        Array.from(currencyCfg.addresses.keys()).includes(typedChainId)
+      );
+    }
+
+    if (typeof srcTypedChainId !== 'number') {
       return currencyCfgs;
     }
 
     return currencyCfgs.filter((currencyCfg) =>
       Array.from(currencyCfg.addresses.keys()).includes(srcTypedChainId)
     );
-  }, [currencies, srcTypedChainId]);
+  }, [currencies, srcTypedChainId, typedChainId]);
 
   const wrappableCurrencies = useMemo<Array<CurrencyConfig>>(() => {
-    if (!fungibleCfg || !srcTypedChainId) {
+    if (!fungibleCfg) {
       return [];
     }
 
@@ -68,13 +74,19 @@ function useCurrenciesFromRoute() {
       return [];
     }
 
-    const wrappableSet = wrappableMap.get(srcTypedChainId);
+    const wrappableSet =
+      typeof typedChainId === 'number'
+        ? wrappableMap.get(typedChainId)
+        : typeof srcTypedChainId === 'number'
+        ? wrappableMap.get(srcTypedChainId)
+        : undefined;
+
     if (!wrappableSet) {
       return [];
     }
 
     return Array.from(wrappableSet.values()).map((id) => currencies[id]);
-  }, [currencies, fungibleCfg, fungibleToWrappableMap, srcTypedChainId]);
+  }, [currencies, fungibleCfg, fungibleToWrappableMap, srcTypedChainId, typedChainId]); // prettier-ignore
 
   const allCurrencyCfgs = useMemo(() => {
     return [...fungibleCurrencies, ...wrappableCurrencies];
