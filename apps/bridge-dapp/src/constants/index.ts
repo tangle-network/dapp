@@ -29,6 +29,9 @@ export const TOKEN_KEY = 'token';
 /** Key for wrappable currency query param */
 export const POOL_KEY = 'pool';
 
+/** Key for fixed amount or custom amount */
+export const IS_CUSTOM_AMOUNT_KEY = 'isCustomAmount';
+
 /** Key for transaction amount query param */
 export const AMOUNT_KEY = 'amount';
 

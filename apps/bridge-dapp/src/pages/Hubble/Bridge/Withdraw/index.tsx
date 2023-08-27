@@ -27,6 +27,7 @@ import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
   HAS_REFUND_KEY,
+  IS_CUSTOM_AMOUNT_KEY,
   POOL_KEY,
   RECIPIENT_KEY,
   REFUND_AMOUNT_KEY,
@@ -65,6 +66,8 @@ const Withdraw = () => {
   const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
 
   const [hasRefund, setHasRefund] = useStateWithRoute(HAS_REFUND_KEY);
+
+  const [isCustom, setIsCustom] = useStateWithRoute(IS_CUSTOM_AMOUNT_KEY);
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
 
@@ -177,6 +180,10 @@ const Withdraw = () => {
             maxAmount={fungibleMaxAmount}
             amount={amount}
             onAmountChange={setAmount}
+            isFixedAmount={!isCustom}
+            onIsFixedAmountChange={() =>
+              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
+            }
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
@@ -189,6 +196,8 @@ const Withdraw = () => {
                 onClick: () => handleTokenClick(true),
               }}
             />
+
+            <TransactionInputCard.Footer />
           </TransactionInputCard.Root>
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
@@ -198,6 +207,10 @@ const Withdraw = () => {
             tokenSymbol={wrappableCfg?.symbol}
             amount={amount}
             onAmountChange={setAmount}
+            isFixedAmount={!isCustom}
+            onIsFixedAmountChange={() =>
+              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
+            }
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
