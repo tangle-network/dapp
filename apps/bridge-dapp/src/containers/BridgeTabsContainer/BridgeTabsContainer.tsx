@@ -18,7 +18,7 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
   // Find active tab from pathname
   const activeTab = pathname
     .split('/')
-    .find((path) => BRIDGE_TABS.includes(path));
+    .find((path) => !!BRIDGE_TABS.find((tab) => tab === path));
 
   return (
     <div

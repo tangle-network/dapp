@@ -81,11 +81,11 @@ function useWatchSearchParams() {
   }, [activeBridge, apiConfig.anchors, srcTypedChainId]);
 
   useEffect(() => {
-    setSearchParams((prev) => {
-      if (!defaultPoolId) {
-        return prev;
-      }
+    if (!defaultPoolId) {
+      return;
+    }
 
+    setSearchParams((prev) => {
       const nextParams = new URLSearchParams(prev);
       nextParams.set(POOL_KEY, `${defaultPoolId}`);
 

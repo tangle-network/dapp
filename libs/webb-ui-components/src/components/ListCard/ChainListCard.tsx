@@ -59,7 +59,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   ) => {
     // State for network category
     const [networkCategory, setNetworkCategory] = useState<ChainType['tag']>(
-      onlyCategory ?? defaultCategory
+      () => onlyCategory ?? defaultCategory
     );
 
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);

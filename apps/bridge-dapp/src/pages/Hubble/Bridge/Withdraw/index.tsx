@@ -14,9 +14,11 @@ import {
   Button,
   IconWithTooltip,
 } from '@webb-tools/webb-ui-components';
-import { useState } from 'react';
-import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
+import { useMemo, useState } from 'react';
+import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import { Transition } from '@headlessui/react';
+import { useSearchParams } from 'react-router-dom';
+import { DEST_CHAIN_KEY, TOKEN_KEY } from '../../../../constants';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
@@ -24,11 +26,26 @@ const CHAIN_NAME = 'Polygon Mumbai';
 const Withdraw = () => {
   const [hasRefund, setHasRefund] = useState(false);
 
+  const [searchParams] = useSearchParams();
+
+  const [destTypedChainId, poolId, tokenId] = useMemo(() => {
+    const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
+
+    const poolId = parseInt(searchParams.get('poolId') ?? '');
+    const tokenId = parseInt(searchParams.get(TOKEN_KEY) ?? '');
+
+    return [
+      Number.isNaN(destTypedId) ? undefined : destTypedId,
+      Number.isNaN(poolId) ? undefined : poolId,
+      Number.isNaN(tokenId) ? undefined : tokenId,
+    ];
+  }, [searchParams]);
+
   return (
     <BridgeTabsContainer>
       <div className="flex flex-col space-y-4 grow">
         <div className="space-y-2">
-          <TransactionInputCard.Root>
+          <TransactionInputCard.Root typedChainId={destTypedChainId}>
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector />
               <TransactionInputCard.MaxAmountButton />
@@ -39,7 +56,7 @@ const Withdraw = () => {
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
 
-          <TransactionInputCard.Root>
+          <TransactionInputCard.Root typedChainId={destTypedChainId}>
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector />
               <TransactionInputCard.MaxAmountButton />

@@ -144,7 +144,7 @@ export const WithdrawContainer = forwardRef<
     return wrappableCurrency;
   }, [isUnwrap, wrappableCurrency]);
 
-  const liquidity = useCurrencyBalance(unwrap, fungibleAddress);
+  const liquidity = useCurrencyBalance(unwrap?.id, fungibleAddress);
 
   const { isWalletConnected, toggleModal, walletState } = useConnectWallet();
 
