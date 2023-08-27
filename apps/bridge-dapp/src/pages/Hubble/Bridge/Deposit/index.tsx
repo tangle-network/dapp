@@ -7,6 +7,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
   SELECT_DESTINATION_CHAIN_PATH,
@@ -15,9 +16,8 @@ import {
   SELECT_TOKEN_PATH,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
-import useWatchSearchParams from './private/useWatchSearchParams';
 import useDepositButtonProps from './private/useDepositButtonProps';
-import SlideAnimation from '../../../../components/SlideAnimation';
+import useWatchSearchParams from './private/useWatchSearchParams';
 
 const Deposit = () => {
   const navigate = useNavigate();

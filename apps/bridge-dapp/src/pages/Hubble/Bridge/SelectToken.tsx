@@ -3,12 +3,12 @@ import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-conf
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { TokenType } from '@webb-tools/webb-ui-components/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { POOL_KEY, TOKEN_KEY } from '../../../constants';
-import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
-import { TokenType } from '@webb-tools/webb-ui-components/types';
 import SlideAnimation from '../../../components/SlideAnimation';
+import { POOL_KEY, SOURCE_CHAIN_KEY, TOKEN_KEY } from '../../../constants';
+import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 
 const SelectToken: FC<{ tokenType?: TokenType }> = ({
   tokenType = 'unshielded',
@@ -16,6 +16,14 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const srcTypedChainId = useMemo(
+    () =>
+      searhParams.get(SOURCE_CHAIN_KEY)
+        ? Number(searhParams.get(SOURCE_CHAIN_KEY))
+        : undefined,
+    [searhParams]
+  );
 
   const { apiConfig } = useWebContext();
 
@@ -26,7 +34,7 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
     wrappableCurrencies,
   } = useCurrenciesFromRoute();
 
-  const balances = useCurrenciesBalances(allCurrencies);
+  const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
 
   const popularTokens = useMemo<Array<AssetType>>(() => {
     // No popular tokens for shielded
