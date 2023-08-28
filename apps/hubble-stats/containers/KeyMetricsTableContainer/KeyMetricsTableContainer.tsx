@@ -5,27 +5,18 @@ import { getKeyMetricsData } from '../../data';
 
 export default async function KeyMetricsTableContainer() {
   const {
-    totalTx,
-    txChangeRate,
     tvl,
     tvlChangeRate,
-    volume,
+    volume24h,
     volumeChangeRate,
-    fees,
+    relayerFees,
+    wrappingFees,
   } = await getKeyMetricsData();
-
-  const TotalTx = (
-    <KeyMetricItem
-      title="Total Transactions"
-      value={totalTx}
-      changeRate={txChangeRate}
-    />
-  );
 
   const Tvl = (
     <KeyMetricItem
       title="TVL"
-      prefix="$"
+      suffix=" tTNT"
       value={tvl}
       changeRate={tvlChangeRate}
     />
@@ -33,14 +24,20 @@ export default async function KeyMetricsTableContainer() {
 
   const Volume = (
     <KeyMetricItem
-      title="Total Volume"
-      prefix="$"
-      value={volume}
+      title="Volume 24H"
+      suffix=" tTNT"
+      value={volume24h}
       changeRate={volumeChangeRate}
     />
   );
 
-  const Fees = <KeyMetricItem title="Total Fees" prefix="$" value={fees} />;
+  const RelayerFees = (
+    <KeyMetricItem title="Relayer Fees" suffix=" tTNT" value={relayerFees} />
+  );
+
+  const WrappingFees = (
+    <KeyMetricItem title="Wrapping Fees" suffix=" tTNT" value={wrappingFees} />
+  );
 
   return (
     <div
@@ -52,21 +49,21 @@ export default async function KeyMetricsTableContainer() {
     >
       {/* Tablet and Desktop */}
       <div className="w-full hidden md:table table-fixed border-collapse">
-        {TotalTx}
         {Tvl}
         {Volume}
-        {Fees}
+        {RelayerFees}
+        {WrappingFees}
       </div>
 
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="w-full table table-fixed border-collapse">
-          {TotalTx}
           {Tvl}
+          {Volume}
         </div>
         <div className="w-full table table-fixed border-collapse">
-          {Volume}
-          {Fees}
+          {RelayerFees}
+          {WrappingFees}
         </div>
       </div>
     </div>
