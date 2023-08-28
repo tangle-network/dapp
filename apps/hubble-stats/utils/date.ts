@@ -24,10 +24,11 @@ export const getEpochNow = () => getEpochFromDate(new Date());
 /**
  * Total number of days have passed since the starting epoch
  */
+
+const EPOCH_START = 1692144000;
+
 export const getEpochStart = () => {
-  // Currently set this as the epoch that's exactly 7 days ago
-  const epoch7d = getEpochNow() - 6 * EPOCH_DAY_INTERVAL;
-  return Math.floor(epoch7d / EPOCH_DAY_INTERVAL) * EPOCH_DAY_INTERVAL;
+  return EPOCH_START;
 };
 
 export const getDateNow = () => getDateFromEpoch(getEpochFromDate(new Date()));

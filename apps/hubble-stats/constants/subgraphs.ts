@@ -4,6 +4,7 @@ export const LIVE_SUBGRAPH_URLS = [
   vAnchorClient.SubgraphUrl.vAnchorOrbitAthena,
   vAnchorClient.SubgraphUrl.vAnchorOrbitHermes,
   vAnchorClient.SubgraphUrl.vAnchorOrbitDemeter,
+  vAnchorClient.SubgraphUrl.vAnchorTangleTestnet,
 ];
 
 export const LOCAL_SUBGRAPH_URLS = [
