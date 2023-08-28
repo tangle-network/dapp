@@ -28,10 +28,10 @@ import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
 import { GetContractReturnType, PublicClient } from 'viem';
 
 export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
-  async mapRelayerIntoActive(
+  mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
-  ): Promise<OptionalActiveRelayer> {
+  ): OptionalActiveRelayer {
     if (!relayer) {
       return null;
     }

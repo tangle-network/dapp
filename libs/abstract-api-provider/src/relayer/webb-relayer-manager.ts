@@ -39,11 +39,8 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
     this.listUpdated = this._listUpdated.asObservable();
   }
 
-  async setActiveRelayer(
-    relayer: WebbRelayer | null,
-    typedChainId: number
-  ): Promise<void> {
-    const active = await this.mapRelayerIntoActive(relayer, typedChainId);
+  setActiveRelayer(relayer: WebbRelayer | null, typedChainId: number): void {
+    const active = this.mapRelayerIntoActive(relayer, typedChainId);
 
     this.activeRelayer = active;
     this.activeRelayerSubject.next(active);
@@ -57,7 +54,7 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
   abstract mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
-  ): Promise<OptionalActiveRelayer>;
+  ): OptionalActiveRelayer;
 
   /*
    *  get a list of the suitable relayers for a given query

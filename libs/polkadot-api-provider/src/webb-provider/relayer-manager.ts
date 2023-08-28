@@ -26,7 +26,7 @@ export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
   async mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
-  ): Promise<OptionalActiveRelayer> {
+  ): OptionalActiveRelayer {
     if (!relayer) {
       return null;
     }
