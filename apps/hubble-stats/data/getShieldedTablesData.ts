@@ -3,7 +3,11 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 import fetchAnchorMetadata from '@webb-tools/web3-api-provider/src/fetchAnchorMetadata';
 
 import { getValidDatesToQuery } from '../utils';
-import { V_ANCHORS, ACTIVE_SUBGRAPH_URLS, VAnchorType } from '../constants';
+import {
+  ACTIVE_SUBGRAPH_URLS,
+  VANCHORS_MAP,
+  VANCHOR_ADDRESSES,
+} from '../constants';
 
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
@@ -15,9 +19,9 @@ type ShieldedTablesDataType = {
 
 const [dateNow, date24h] = getValidDatesToQuery();
 
-const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
+const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
+  const vanchor = VANCHORS_MAP[vAnchorAddress];
   const tokenSymbol = vanchor.fungibleTokenSymbol;
-  const vAnchorAddress = vanchor.address;
 
   const { wrappableCurrencies } = await fetchAnchorMetadata(
     vAnchorAddress,
@@ -86,8 +90,8 @@ const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
   };
 };
 
-const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
-  const vAnchorAddress = vanchor.address;
+const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
+  const vanchor = VANCHORS_MAP[vAnchorAddress];
 
   const { wrappableCurrencies, isNativeAllowed } = await fetchAnchorMetadata(
     vAnchorAddress,
@@ -144,7 +148,7 @@ const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
   }
 
   return {
-    address: vanchor.address,
+    address: vAnchorAddress,
     symbol: vanchor.fungibleTokenName,
     poolType: vanchor.poolType,
     token: tokenNum,
@@ -156,10 +160,10 @@ const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
 
 export default async function getShieldedTablesData(): Promise<ShieldedTablesDataType> {
   const assetsData = await Promise.all(
-    V_ANCHORS.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
+    VANCHOR_ADDRESSES.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
   );
   const poolsData = await Promise.all(
-    V_ANCHORS.map((vanchor) => getPoolInfoFromVAnchor(vanchor))
+    VANCHOR_ADDRESSES.map((vanchor) => getPoolInfoFromVAnchor(vanchor))
   );
   return { assetsData, poolsData };
 }

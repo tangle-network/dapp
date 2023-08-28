@@ -1,10 +1,8 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { PoolType } from '../components/PoolTypeChip/types';
 
 export type VAnchorType = {
-  name: string;
   address: string;
   poolType: PoolType;
   fungibleTokenName: string;
@@ -13,10 +11,19 @@ export type VAnchorType = {
   supportedChains: PresetTypedChainId[];
 };
 
-export const V_ANCHORS: VAnchorType[] = [
+export type VAnchorMapType = Record<
+  string,
   {
-    name: '',
-    address: '0x7aA556dD0AF8bed063444E14A6A9af46C9266973',
+    poolType: PoolType;
+    fungibleTokenName: string;
+    fungibleTokenSymbol: string;
+    fungibleTokenAddress: string;
+    supportedChains: PresetTypedChainId[];
+  }
+>;
+
+export const VANCHORS_MAP: VAnchorMapType = {
+  ['0x7aA556dD0AF8bed063444E14A6A9af46C9266973']: {
     poolType: 'single',
     fungibleTokenName: 'Webb Wrapped tTNT',
     fungibleTokenSymbol: 'webbtTNT',
@@ -27,6 +34,6 @@ export const V_ANCHORS: VAnchorType[] = [
       PresetTypedChainId.AthenaOrbit,
     ],
   },
-];
+};
 
-export const VANCHOR_ADDRESSES = V_ANCHORS.map((anchor) => anchor.address);
+export const VANCHOR_ADDRESSES = Object.keys(VANCHORS_MAP);
