@@ -35,6 +35,7 @@ import {
   RECIPIENT_KEY,
   REFUND_AMOUNT_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
+  SELECT_RELAYER_PATH,
   SELECT_SHIELDED_POOL_PATH,
   SELECT_TOKEN_PATH,
   TOKEN_KEY,
@@ -217,7 +218,10 @@ const Withdraw = () => {
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
-              <TransactionInputCard.Button Icon={<SettingsFillIcon />}>
+              <TransactionInputCard.Button
+                Icon={<SettingsFillIcon />}
+                onClick={() => navigate(SELECT_RELAYER_PATH)}
+              >
                 Relayer
               </TransactionInputCard.Button>
             </TransactionInputCard.Header>

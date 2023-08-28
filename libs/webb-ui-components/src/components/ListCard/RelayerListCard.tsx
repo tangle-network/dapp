@@ -89,7 +89,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         </div>
 
         {/** Token list */}
-        <ScrollArea className={cx('min-w-[350px] h-[376px]', disconnectClsx)}>
+        <ScrollArea className={cx('h-full', disconnectClsx)}>
           <RadioGroup
             value={selectedRelayer?.address}
             onValueChange={handleValueChange}

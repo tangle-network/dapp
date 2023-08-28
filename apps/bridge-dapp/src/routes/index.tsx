@@ -10,6 +10,7 @@ import {
   ECOSYSTEM_PATH,
   NOTE_ACCOUNT_PATH,
   SELECT_DESTINATION_CHAIN_PATH,
+  SELECT_RELAYER_PATH,
   SELECT_SHIELDED_POOL_PATH,
   SELECT_SOURCE_CHAIN_PATH,
   SELECT_TOKEN_PATH,
@@ -20,6 +21,7 @@ import {
 import { Layout } from '../containers';
 import Deposit from '../pages/Hubble/Bridge/Deposit';
 import SelectChain from '../pages/Hubble/Bridge/SelectChain';
+import SelectRelayer from '../pages/Hubble/Bridge/SelectRelayer';
 import SelectToken from '../pages/Hubble/Bridge/SelectToken';
 import Transfer from '../pages/Hubble/Bridge/Transfer';
 import Withdraw from '../pages/Hubble/Bridge/Withdraw';
@@ -90,6 +92,7 @@ const BridgeRoutes = () => {
                   element={<SelectToken tokenType="shielded" />}
                 />
                 <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
+                <Route path={SELECT_RELAYER_PATH} element={<SelectRelayer />} />
               </Route>
               <Route
                 path={SELECT_SOURCE_CHAIN_PATH}

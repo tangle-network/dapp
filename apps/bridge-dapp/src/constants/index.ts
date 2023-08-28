@@ -16,6 +16,7 @@ export const SELECT_SOURCE_CHAIN_PATH = 'select-source-chain';
 export const SELECT_DESTINATION_CHAIN_PATH = 'select-destination-chain';
 export const SELECT_TOKEN_PATH = 'select-token';
 export const SELECT_SHIELDED_POOL_PATH = 'select-shielded-pool';
+export const SELECT_RELAYER_PATH = 'select-relayer';
 
 /** Key for source chain query params */
 export const SOURCE_CHAIN_KEY = 'source';
@@ -43,6 +44,9 @@ export const REFUND_AMOUNT_KEY = 'refund';
 
 /** Key for recipient query param */
 export const RECIPIENT_KEY = 'recipient';
+
+/** Key for relayer endpoint query param */
+export const RELAYER_ENDPOINT_KEY = 'relayer';
 
 export const BRIDGE_TABS = [
   DEPOSIT_PATH,
