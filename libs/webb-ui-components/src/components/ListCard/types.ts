@@ -2,6 +2,7 @@ import { ComponentProps } from 'react';
 import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
 import { AvatarProps } from '../Avatar';
 import { ScrollArea } from '../ScrollArea';
+import { InputProps } from '../Input';
 
 export type ChainType = {
   /**
@@ -232,6 +233,8 @@ export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * will be displayed at the bottom of the card
    */
   Footer?: React.ReactNode;
+
+  overrideInputProps?: Partial<InputProps>;
 }
 
 export interface TokenListCardProps

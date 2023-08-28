@@ -1,6 +1,6 @@
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 
@@ -35,44 +35,16 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       onConnectWallet,
       relayers,
       value: selectedRelayer,
+      overrideInputProps,
       Footer,
       ...props
     },
     ref
   ) => {
-    // Search text
-    const [searchText, setSearchText] = useState('');
-
-    const filteredList = useMemo(
-      () =>
-        relayers.filter(
-          (r) =>
-            r.address.toLowerCase().includes(searchText.toLowerCase()) ||
-            r.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-            r.percentage?.toString().includes(searchText.toLowerCase())
-        ),
-      [relayers, searchText]
-    );
-
     const disconnectClsx = useMemo(
       () => cx({ 'opacity-40 pointer-events-none': isDisconnected }),
       [isDisconnected]
     );
-
-    const handleValueChange = useMemo(() => {
-      if (typeof onChange !== 'function') {
-        return undefined;
-      }
-
-      return (nextVal: string) => {
-        console.log('nextVal', nextVal);
-        const nextRelayer = relayers.find((r) => r.address === nextVal);
-
-        if (nextRelayer) {
-          onChange(nextRelayer);
-        }
-      };
-    }, [onChange, relayers]);
 
     return (
       <ListCardWrapper
@@ -87,93 +59,123 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
             id="relayer"
             rightIcon={<Search />}
             placeholder="Enter custom relayer URL here"
-            value={searchText}
-            onChange={(val) => setSearchText(val.toString())}
+            debounceTime={500}
+            {...overrideInputProps}
           />
         </div>
 
-        <div className="flex flex-col p-2 space-y-2 grow">
-          <Typography
-            variant="body4"
-            className="uppercase text-mono-200 dark:text-mono-0"
-            fw="bold"
-          >
-            Available relayers ({filteredList.length})
-          </Typography>
-
-          <ScrollArea className={cx('h-full', disconnectClsx)}>
-            <RadioGroup
-              value={selectedRelayer?.address}
-              onValueChange={handleValueChange}
+        {relayers.length > 0 && (
+          <div className="flex flex-col p-2 space-y-2 grow">
+            <Typography
+              variant="body4"
+              className="uppercase text-mono-200 dark:text-mono-0"
+              fw="bold"
             >
-              <ul>
-                {filteredList.map((current, idx) => {
-                  return (
-                    <ListItem
-                      key={`${current.address}-${idx}`}
-                      className="flex items-center justify-between"
-                      isDisabled={current.isDisabled}
-                    >
-                      <RadioItem
-                        id={current.address}
-                        value={current.address}
-                        className="w-full overflow-hidden"
-                        overrideRadixRadioItemProps={
-                          typeof current.isDisabled === 'boolean'
-                            ? { disabled: current.isDisabled }
-                            : undefined
-                        }
-                      >
-                        <label
-                          className="flex items-center justify-between grow"
-                          htmlFor={current.address}
-                        >
-                          <div className="flex items-center max-w-xs space-x-2 grow">
-                            <Avatar
-                              theme={current.theme}
-                              value={current.address}
-                              className={`${getFlexBasic()} shrink-0`}
-                            />
+              Available relayers ({relayers.length})
+            </Typography>
 
-                            <Typography
-                              variant="h5"
-                              fw="bold"
-                              className="truncate"
-                            >
-                              {current.name ?? shortenString(current.address)}
-                            </Typography>
-
-                            <a
-                              href={current.externalUrl}
-                              rel="noreferrer noopener"
-                              target="_blank"
-                            >
-                              <ExternalLinkLine />
-                            </a>
-                          </div>
-
-                          {typeof current.percentage === 'number' && (
-                            <Typography
-                              component="p"
-                              variant="body1"
-                              fw="bold"
-                              className="min-w-[100px] text-mono-100 dark:text-mono-80"
-                            >
-                              Fee{' '}
-                              <span className="text-mono-140 dark:text-mono-0 ">
-                                {current.percentage.toFixed(2)} %
-                              </span>
-                            </Typography>
-                          )}
-                        </label>
-                      </RadioItem>
-                    </ListItem>
+            <ScrollArea className={cx('h-full', disconnectClsx)}>
+              <RadioGroup
+                value={selectedRelayer?.address ?? ''}
+                onValueChange={(nextAddr) => {
+                  const nextRelayer = relayers.find(
+                    (relayer) => relayer.address === nextAddr
                   );
-                })}
-              </ul>
-            </RadioGroup>
-          </ScrollArea>
-        </div>
+
+                  if (nextRelayer) {
+                    onChange?.(nextRelayer);
+                  }
+                }}
+              >
+                <ul>
+                  {relayers.map((current, idx) => {
+                    return (
+                      <ListItem
+                        key={`${current.address}-${idx}`}
+                        className="flex items-center justify-between"
+                        isDisabled={current.isDisabled}
+                      >
+                        <RadioItem
+                          id={current.address}
+                          value={current.address}
+                          className="w-full overflow-hidden"
+                          overrideRadixRadioItemProps={
+                            typeof current.isDisabled === 'boolean'
+                              ? {
+                                  disabled: current.isDisabled,
+                                }
+                              : undefined
+                          }
+                        >
+                          <label
+                            className="flex items-center justify-between grow"
+                            htmlFor={current.address}
+                          >
+                            <div className="flex items-center max-w-xs space-x-2 grow">
+                              <Avatar
+                                theme={current.theme}
+                                value={current.address}
+                                className={`${getFlexBasic()} shrink-0`}
+                              />
+
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                className="truncate"
+                              >
+                                {current.name ?? shortenString(current.address)}
+                              </Typography>
+
+                              <a
+                                href={current.externalUrl}
+                                rel="noreferrer noopener"
+                                target="_blank"
+                              >
+                                <ExternalLinkLine />
+                              </a>
+                            </div>
+
+                            {typeof current.percentage === 'number' && (
+                              <Typography
+                                component="p"
+                                variant="body1"
+                                fw="bold"
+                                className="min-w-[100px] text-mono-100 dark:text-mono-80"
+                              >
+                                Fee{' '}
+                                <span className="text-mono-140 dark:text-mono-0 ">
+                                  {current.percentage.toFixed(2)} %
+                                </span>
+                              </Typography>
+                            )}
+                          </label>
+                        </RadioItem>
+                      </ListItem>
+                    );
+                  })}
+                </ul>
+              </RadioGroup>
+            </ScrollArea>
+          </div>
+        )}
+
+        {relayers.length === 0 && (
+          <div className="flex flex-col items-center justify-center space-y-4 grow">
+            <Typography variant="h5" fw="bold" ta="center">
+              No Relayer Found.
+            </Typography>
+
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className="max-w-xs mt-1 text-mono-100 dark:text-mono-80"
+              ta="center"
+            >
+              You can add a custom relayer by entering the URL in the search box
+              above.
+            </Typography>
+          </div>
+        )}
 
         {/** Disconnect view */}
         <div

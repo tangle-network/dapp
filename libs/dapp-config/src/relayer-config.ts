@@ -23,9 +23,6 @@ export type RelayerCMDBase = 'evm' | 'substrate';
 
 export const relayerConfig: RelayerConfig[] = [
   {
-    endpoint: 'http://localhost:9955',
-  },
-  {
     endpoint: 'https://relayer1.webb.tools',
   },
   {

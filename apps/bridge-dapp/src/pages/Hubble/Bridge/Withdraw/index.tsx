@@ -119,7 +119,7 @@ const Withdraw = () => {
     return activeApi?.state.activeBridge;
   }, [activeApi?.state.activeBridge]);
 
-  // Set default poolid and destTypedChainId on first render
+  // Set default poolId and destTypedChainId on first render
   useEffect(() => {
     if (loading || isConnecting) {
       return;

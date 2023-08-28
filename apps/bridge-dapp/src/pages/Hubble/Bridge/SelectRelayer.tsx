@@ -1,5 +1,7 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
+import { Search } from '@webb-tools/icons/Search';
 import WalletFillIcon from '@webb-tools/icons/WalletFillIcon';
 import { useRelayers } from '@webb-tools/react-hooks';
 import {
@@ -10,21 +12,21 @@ import { RelayerListCard } from '@webb-tools/webb-ui-components/components/ListC
 import { RelayerType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import ToggleCard from '@webb-tools/webb-ui-components/components/ToggleCard';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_PATH,
   DEST_CHAIN_KEY,
-  NO_RELAYER,
+  NO_RELAYER_KEY,
   POOL_KEY,
-  RELAYER_ENDPOINT_KEY,
   SELECT_SOURCE_CHAIN_PATH,
 } from '../../../constants';
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
-import useStateWithRoute from '../../../hooks/useStateWithRoute';
+import { useRelayerManager } from '../../../hooks/useRelayerManager';
 
 const SelectRelayer = () => {
   const { pathname } = useLocation();
@@ -37,7 +39,25 @@ const SelectRelayer = () => {
 
   const { toggleModal } = useConnectWallet();
 
-  const [noRelayer, setNoRelayer] = useStateWithRoute(NO_RELAYER);
+  const [noRelayer, setNoRelayer] = useState(
+    () => searchParams.get(NO_RELAYER_KEY) ?? ''
+  );
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (noRelayer) {
+        next.set(NO_RELAYER_KEY, noRelayer);
+      } else {
+        next.delete(NO_RELAYER_KEY);
+      }
+
+      return next;
+    });
+  }, [noRelayer, setSearchParams]);
+
+  const [customRelayer, setCustomRelayer] = useState('');
+  const [customerRelayerError, setCustomerRelayerError] = useState('');
 
   const [destTypedChainId, poolId] = useMemo(() => {
     const typedChainId = searchParams.get(DEST_CHAIN_KEY) ?? '';
@@ -66,6 +86,14 @@ const SelectRelayer = () => {
     relayersState: { relayers, activeRelayer },
     setRelayer,
   } = useRelayers(useRelayersArgs);
+
+  useEffect(() => {
+    if (noRelayer && activeRelayer) {
+      setRelayer(null);
+    }
+  }, [activeRelayer, noRelayer, setRelayer]);
+
+  const { getInfo, addRelayer } = useRelayerManager();
 
   const destChainCfg = useMemo(() => {
     if (typeof destTypedChainId !== 'number') {
@@ -98,12 +126,13 @@ const SelectRelayer = () => {
           name: new URL(relayer.endpoint).host,
           externalUrl: relayer.infoUri,
           theme,
+          isDisabled: Boolean(noRelayer),
         };
 
         return r;
       })
       .filter((r): r is RelayerType => r !== undefined);
-  }, [destChainCfg, relayers]);
+  }, [destChainCfg, noRelayer, relayers]);
 
   const selectedRelayer = useMemo<RelayerType | undefined>(() => {
     return activeRelayer?.beneficiary && destChainCfg
@@ -134,24 +163,12 @@ const SelectRelayer = () => {
 
       // Next relayer is null or equal to active relayer
       if (nextRelayer && nextRelayer.endpoint !== activeRelayer?.endpoint) {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          next.set(RELAYER_ENDPOINT_KEY, nextRelayer.endpoint);
-          return next;
-        });
         setRelayer(nextRelayer);
       } else {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-          next.delete(RELAYER_ENDPOINT_KEY);
-          return next;
-        });
         setRelayer(null);
       }
-
-      handleClose();
     },
-    [activeRelayer?.endpoint, handleClose, relayers, setRelayer, setSearchParams] // prettier-ignore
+    [relayers, activeRelayer, setRelayer]
   );
 
   const handleConnectWallet = useCallback(() => {
@@ -169,18 +186,59 @@ const SelectRelayer = () => {
     }
   }, [destChainCfg, navigate, toggleModal]);
 
-  // Set relayer endpoint in search params on mount
-  useEffect(() => {
-    setSearchParams((prev) => {
-      if (!activeRelayer || prev.has(RELAYER_ENDPOINT_KEY)) {
-        return prev;
-      }
+  const testAndAddCustomRelayer = useCallback(async () => {
+    if (!customRelayer) {
+      return;
+    }
 
-      const next = new URLSearchParams(prev);
-      next.set(RELAYER_ENDPOINT_KEY, activeRelayer.endpoint);
-      return next;
-    });
-  }, [activeRelayer, setSearchParams]);
+    const error = 'Invalid input. Pleas check your search and try again.';
+    if (!isValidUrl(customRelayer)) {
+      setCustomerRelayerError(error);
+      return;
+    }
+
+    const relayer = relayers.find((r) => r.endpoint === customRelayer);
+    if (relayer) {
+      return; // If relayer already exists, do nothing
+    }
+
+    const info = await getInfo(customRelayer);
+    if (!info) {
+      setCustomerRelayerError(error);
+      return;
+    }
+
+    addRelayer(customRelayer);
+    setCustomerRelayerError('');
+  }, [addRelayer, customRelayer, getInfo, relayers]);
+
+  const handleCustomRelayerChange = useCallback((nextRelayer: string) => {
+    setCustomRelayer(nextRelayer);
+    setCustomerRelayerError('');
+  }, []);
+
+  const toggleNoRelayer = useCallback(
+    (nextChecked: boolean) => {
+      setNoRelayer(() => (nextChecked ? '1' : ''));
+
+      if (nextChecked) {
+        setRelayer(null);
+      }
+    },
+    [setNoRelayer, setRelayer]
+  );
+
+  const isDisabled = useMemo(() => {
+    if (relayersForDisplay.length === 0 && !noRelayer) {
+      return true;
+    }
+
+    if (relayersForDisplay.length > 0 && !selectedRelayer && !noRelayer) {
+      return true;
+    }
+
+    return false;
+  }, [relayersForDisplay.length, noRelayer, selectedRelayer]);
 
   const relayerBtnText = useMemo(() => {
     if (noRelayer) {
@@ -197,9 +255,19 @@ const SelectRelayer = () => {
         className="h-[var(--card-height)]"
         value={selectedRelayer}
         relayers={relayersForDisplay}
-        onClose={() => handleClose()}
+        onClose={handleClose}
         onChange={handleRelayerChange}
         onConnectWallet={handleConnectWallet}
+        overrideInputProps={{
+          rightIcon: (
+            <IconButton onClick={() => testAndAddCustomRelayer()}>
+              <Search />
+            </IconButton>
+          ),
+          value: customRelayer,
+          onChange: handleCustomRelayerChange,
+          errorMessage: customerRelayerError,
+        }}
         Footer={
           <div className="mt-4 space-y-4">
             <ToggleCard
@@ -207,13 +275,18 @@ const SelectRelayer = () => {
               Icon={<WalletFillIcon size="lg" />}
               switcherProps={{
                 checked: !!noRelayer,
-                onCheckedChange: (checked) => setNoRelayer(checked ? '1' : ''),
+                onCheckedChange: toggleNoRelayer,
               }}
               title="No relayer (not recommended)"
               info="For maximum privacy it is recommended to make use of a relayer to perform the transaction. The relayer will be the one to submit the transaction to the chain and send the funds to the recipient address."
             />
 
-            <Button isFullWidth className={cx({ hidden: isDisconnected })}>
+            <Button
+              isFullWidth
+              isDisabled={isDisabled}
+              className={cx({ hidden: isDisconnected })}
+              onClick={handleClose}
+            >
               {relayerBtnText}
             </Button>
           </div>
