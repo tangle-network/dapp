@@ -1,3 +1,4 @@
+import '@webb-tools/dkg-substrate-types';
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -278,16 +279,18 @@ export const StatsProvider: React.FC<
       const currentDKGPublicKey = await apiPromise.query.dkg.dkgPublicKey();
       const currentSessionNumber = currentDKGPublicKey[0].toNumber();
       const currentKey = currentDKGPublicKey[1].toString();
-      let nextDKGPublicKey = await apiPromise.query.dkg.nextDKGPublicKey();
+      const nextDKGPublicKey = (
+        await apiPromise.query.dkg.nextDKGPublicKey()
+      ).unwrapOr(null);
+
       let nextSessionNumber = 0;
       let nextKey = '';
-      if (nextDKGPublicKey.isEmpty) {
+      if (!nextDKGPublicKey) {
         nextSessionNumber = currentSessionNumber + 1;
         nextKey = '';
       } else {
-        nextDKGPublicKey = JSON.parse(nextDKGPublicKey.toString());
-        nextSessionNumber = nextDKGPublicKey[0];
-        nextKey = nextDKGPublicKey[1];
+        nextSessionNumber = nextDKGPublicKey[0].toNumber();
+        nextKey = nextDKGPublicKey[1].toString();
       }
       const proposerCount = await apiPromise.query.dkgProposals.proposerCount();
       const proposerThreshold =
