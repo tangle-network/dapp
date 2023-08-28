@@ -16,7 +16,8 @@ function useWatchSearchParams() {
 
   const { allCurrencies, fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
 
-  const { activeChain, apiConfig, activeApi } = useWebContext();
+  const { activeChain, apiConfig, activeApi, loading, isConnecting } =
+    useWebContext();
 
   const [srcTypedChainId, destTypedChainId, tokenId] = useMemo(() => {
     const sourceStr = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
@@ -34,20 +35,26 @@ function useWatchSearchParams() {
   const [amount, setAmount] = useAmountWithRoute();
 
   useEffect(() => {
-    setSearchParams((prev) => {
-      if (prev.has(SOURCE_CHAIN_KEY) || !activeChain) {
-        return prev;
-      }
+    if (loading || isConnecting) {
+      return;
+    }
 
-      const typedChainId = calculateTypedChainId(
-        activeChain.chainType,
-        activeChain.id
-      );
+    if (srcTypedChainId) {
+      return;
+    }
+
+    const defaultChain = Object.values(apiConfig.chains)[0];
+    const typedChainId = activeChain
+      ? calculateTypedChainId(activeChain.chainType, activeChain.id)
+      : calculateTypedChainId(defaultChain.chainType, defaultChain.id);
+
+    setSearchParams(prev => {
       const nextParams = new URLSearchParams(prev);
       nextParams.set(SOURCE_CHAIN_KEY, `${typedChainId}`);
       return nextParams;
-    });
-  }, [activeChain, setSearchParams]);
+    })
+
+  }, [activeChain, apiConfig.chains, isConnecting, loading, setSearchParams, srcTypedChainId]); // prettier-ignore
 
   const activeBridge = useMemo(() => {
     return activeApi?.state.activeBridge;

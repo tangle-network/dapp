@@ -44,6 +44,7 @@ import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useStateWithRoute from '../../../../hooks/useStateWithRoute';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
@@ -57,7 +58,14 @@ const Withdraw = () => {
 
   const balances = useBalancesFromNotes();
 
-  const { apiConfig, activeAccount, activeChain } = useWebContext();
+  const {
+    apiConfig,
+    activeApi,
+    activeAccount,
+    activeChain,
+    loading,
+    isConnecting,
+  } = useWebContext();
 
   const { notificationApi } = useWebbUI();
 
@@ -103,6 +111,95 @@ const Withdraw = () => {
     return fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId];
   }, [balances, destTypedChainId, fungibleCfg]);
 
+  const activeBridge = useMemo(() => {
+    return activeApi?.state.activeBridge;
+  }, [activeApi?.state.activeBridge]);
+
+  // Set default poolid and destTypedChainId on first render
+  useEffect(() => {
+    if (loading || isConnecting) {
+      return;
+    }
+
+    if (typeof destTypedChainId === 'number' && typeof poolId === 'number') {
+      return
+    }
+
+    const entries = Object.entries(balances);
+    if (entries.length > 0) {
+      // Find first pool & destTypedChainId from balances
+      const [currencyId, balanceRecord] = entries[0];
+      const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
+
+      if (currencyId && typedChainId) {
+        setSearchParams((prev) => {
+          const params = new URLSearchParams(prev);
+
+          if (typeof destTypedChainId !== 'number') {
+            params.set(DEST_CHAIN_KEY, typedChainId);
+          }
+
+          if (typeof poolId !== 'number') {
+            params.set(POOL_KEY, currencyId);
+          }
+
+          return params;
+        });
+        return;
+      }
+    }
+
+    if (activeChain && activeBridge) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+
+        const typedChainId = calculateTypedChainId(
+          activeChain.chainType,
+          activeChain.id
+        );
+
+        if (typeof destTypedChainId !== 'number') {
+          next.set(DEST_CHAIN_KEY, `${typedChainId}`);
+        }
+
+        if (typeof poolId !== 'number') {
+          next.set(POOL_KEY, `${activeBridge.currency.id}`);
+        }
+
+        return next;
+      });
+      return;
+    }
+
+    // Here is when no balances and active connection
+    const [defaultPool, anchors] = Object.entries(apiConfig.anchors)[0]
+    const [defaultTypedId] = Object.entries(anchors)[0]
+
+    const nextParams = new URLSearchParams();
+    if (typeof poolId !== 'number' && defaultPool) {
+      nextParams.set(POOL_KEY, defaultPool);
+    }
+
+    if (typeof destTypedChainId !== 'number' && defaultTypedId) {
+      nextParams.set(DEST_CHAIN_KEY, defaultTypedId);
+    }
+
+    setSearchParams(nextParams);
+  }, [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]); // prettier-ignore
+
+  // Validate recipient input address after 1s
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (recipient && !isValidAddress(recipient)) {
+        setRecipientErrorMsg('Invalid address');
+      } else {
+        setRecipientErrorMsg('');
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [recipient]);
+
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
   }, [navigate]);
@@ -131,43 +228,16 @@ const Withdraw = () => {
 
   const handleSendToSelfClick = useCallback(() => {
     if (!activeAccount) {
+      notificationApi({
+        message: 'Failed to get active account',
+        secondaryMessage: 'Please check your wallet connection and try again.',
+        variant: 'warning',
+      });
       return;
     }
 
     setRecipient(activeAccount.address);
-  }, [activeAccount, setRecipient]);
-
-  // Set default poolid and destTypedChainId on first render
-  useEffect(() => {
-    const entries = Object.entries(balances);
-    if (!destTypedChainId && !poolId && entries.length > 0) {
-      // Find first pool & destTypedChainId from balances
-      const [currencyId, balanceRecord] = entries[0];
-      const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
-
-      if (currencyId && typedChainId) {
-        setSearchParams((prev) => {
-          const params = new URLSearchParams(prev);
-          params.set(DEST_CHAIN_KEY, typedChainId);
-          params.set(POOL_KEY, currencyId);
-          return params;
-        });
-      }
-    }
-  }, [balances, destTypedChainId, poolId, setSearchParams]);
-
-  // Validate recipient input address after 1s
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (recipient && !isValidAddress(recipient)) {
-        setRecipientErrorMsg('Invalid address');
-      } else {
-        setRecipientErrorMsg('');
-      }
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [recipient]);
+  }, [activeAccount, notificationApi, setRecipient]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
