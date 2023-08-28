@@ -1,17 +1,18 @@
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
 import cx from 'classnames';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 
 import { Avatar } from '../Avatar';
-import { Button } from '../buttons';
 import { Input } from '../Input';
+import { RadioGroup, RadioItem } from '../Radio';
 import { ScrollArea } from '../ScrollArea';
+import { Button } from '../buttons';
 import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
-import { RelayerListCardProps, RelayerType } from './types';
-import { RadioGroup, RadioItem } from '../Radio';
+import { RelayerListCardProps } from './types';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The relayer list card component
@@ -34,6 +35,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       onConnectWallet,
       relayers,
       value: selectedRelayer,
+      Footer,
       ...props
     },
     ref
@@ -46,6 +48,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
         relayers.filter(
           (r) =>
             r.address.toLowerCase().includes(searchText.toLowerCase()) ||
+            r.name?.toLowerCase().includes(searchText.toLowerCase()) ||
             r.percentage?.toString().includes(searchText.toLowerCase())
         ),
       [relayers, searchText]
@@ -62,6 +65,7 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       }
 
       return (nextVal: string) => {
+        console.log('nextVal', nextVal);
         const nextRelayer = relayers.find((r) => r.address === nextVal);
 
         if (nextRelayer) {
@@ -82,80 +86,94 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
           <Input
             id="relayer"
             rightIcon={<Search />}
-            placeholder="Search relayers"
+            placeholder="Enter custom relayer URL here"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
           />
         </div>
 
-        {/** Token list */}
-        <ScrollArea className={cx('h-full', disconnectClsx)}>
-          <RadioGroup
-            value={selectedRelayer?.address}
-            onValueChange={handleValueChange}
+        <div className="flex flex-col p-2 space-y-2 grow">
+          <Typography
+            variant="body4"
+            className="uppercase text-mono-200 dark:text-mono-0"
+            fw="bold"
           >
-            <ul className="p-2">
-              {filteredList.map((current, idx) => {
-                return (
-                  <ListItem
-                    key={`${current.address}-${idx}`}
-                    className="flex items-center justify-between"
-                    isDisabled={current.isDisabled}
-                  >
-                    <RadioItem
-                      id={current.address}
-                      value={current.address}
-                      className="w-full"
-                      overrideRadixRadioItemProps={
-                        typeof current.isDisabled === 'boolean'
-                          ? { disabled: current.isDisabled }
-                          : undefined
-                      }
+            Available relayers ({filteredList.length})
+          </Typography>
+
+          <ScrollArea className={cx('h-full', disconnectClsx)}>
+            <RadioGroup
+              value={selectedRelayer?.address}
+              onValueChange={handleValueChange}
+            >
+              <ul>
+                {filteredList.map((current, idx) => {
+                  return (
+                    <ListItem
+                      key={`${current.address}-${idx}`}
+                      className="flex items-center justify-between"
+                      isDisabled={current.isDisabled}
                     >
-                      <label
-                        className="flex items-center justify-between w-full"
-                        htmlFor={current.address}
+                      <RadioItem
+                        id={current.address}
+                        value={current.address}
+                        className="w-full overflow-hidden"
+                        overrideRadixRadioItemProps={
+                          typeof current.isDisabled === 'boolean'
+                            ? { disabled: current.isDisabled }
+                            : undefined
+                        }
                       >
-                        <div className="flex items-center space-x-2">
-                          <Avatar
-                            theme={current.theme}
-                            value={current.address}
-                          />
+                        <label
+                          className="flex items-center justify-between grow"
+                          htmlFor={current.address}
+                        >
+                          <div className="flex items-center max-w-xs space-x-2 grow">
+                            <Avatar
+                              theme={current.theme}
+                              value={current.address}
+                              className={`${getFlexBasic()} shrink-0`}
+                            />
 
-                          <Typography variant="h5" fw="bold">
-                            {shortenString(current.address)}
-                          </Typography>
+                            <Typography
+                              variant="h5"
+                              fw="bold"
+                              className="truncate"
+                            >
+                              {current.name ?? shortenString(current.address)}
+                            </Typography>
 
-                          <a
-                            href={current.externalUrl}
-                            rel="noreferrer noopener"
-                            target="_blank"
-                          >
-                            <ExternalLinkLine />
-                          </a>
-                        </div>
+                            <a
+                              href={current.externalUrl}
+                              rel="noreferrer noopener"
+                              target="_blank"
+                            >
+                              <ExternalLinkLine />
+                            </a>
+                          </div>
 
-                        {typeof current.percentage === 'number' && (
-                          <Typography
-                            component="p"
-                            variant="body1"
-                            fw="bold"
-                            className="min-w-[100px] text-mono-100 dark:text-mono-80"
-                          >
-                            Fee{' '}
-                            <span className="text-mono-140 dark:text-mono-0 ">
-                              {current.percentage.toFixed(2)} %
-                            </span>
-                          </Typography>
-                        )}
-                      </label>
-                    </RadioItem>
-                  </ListItem>
-                );
-              })}
-            </ul>
-          </RadioGroup>
-        </ScrollArea>
+                          {typeof current.percentage === 'number' && (
+                            <Typography
+                              component="p"
+                              variant="body1"
+                              fw="bold"
+                              className="min-w-[100px] text-mono-100 dark:text-mono-80"
+                            >
+                              Fee{' '}
+                              <span className="text-mono-140 dark:text-mono-0 ">
+                                {current.percentage.toFixed(2)} %
+                              </span>
+                            </Typography>
+                          )}
+                        </label>
+                      </RadioItem>
+                    </ListItem>
+                  );
+                })}
+              </ul>
+            </RadioGroup>
+          </ScrollArea>
+        </div>
 
         {/** Disconnect view */}
         <div
@@ -182,6 +200,8 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
             To choose a relayer please Connect a wallet
           </Button>
         </div>
+
+        {Footer}
       </ListCardWrapper>
     );
   }

@@ -34,6 +34,7 @@ import {
   POOL_KEY,
   RECIPIENT_KEY,
   REFUND_AMOUNT_KEY,
+  RELAYER_ENDPOINT_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
   SELECT_RELAYER_PATH,
   SELECT_SHIELDED_POOL_PATH,
@@ -82,6 +83,9 @@ const Withdraw = () => {
   const [isCustom, setIsCustom] = useStateWithRoute(IS_CUSTOM_AMOUNT_KEY);
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
+
+  // State for active selected relayer
+  const [relayer, setRelayer] = useStateWithRoute(RELAYER_ENDPOINT_KEY);
 
   const [destTypedChainId, poolId, tokenId] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
@@ -199,6 +203,21 @@ const Withdraw = () => {
 
     return () => clearTimeout(timeout);
   }, [recipient]);
+
+  // Side effect for active relayer subsription
+  useEffect(() => {
+    if (!activeApi) {
+      return;
+    }
+
+    const sub = activeApi.relayerManager.activeRelayerWatcher.subscribe(
+      (relayer) => {
+        setRelayer(relayer?.endpoint ?? '');
+      }
+    );
+
+    return () => sub.unsubscribe();
+  }, [activeApi, setRelayer]);
 
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);

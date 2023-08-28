@@ -45,6 +45,9 @@ export const REFUND_AMOUNT_KEY = 'refund';
 /** Key for recipient query param */
 export const RECIPIENT_KEY = 'recipient';
 
+/** Key for no relayer query params */
+export const NO_RELAYER = 'noRelayer';
+
 /** Key for relayer endpoint query param */
 export const RELAYER_ENDPOINT_KEY = 'relayer';
 

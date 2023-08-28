@@ -27,6 +27,12 @@ export type RelayerType = {
   address: string;
 
   /**
+   * Name of the relayer, if not provided
+   * the relayer address will be used to display
+   */
+  name?: string;
+
+  /**
    * External url
    */
   externalUrl: string;
@@ -220,6 +226,12 @@ export interface RelayerListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * The event handler when the relayer is disabled and user hit connect wallet button on the card
    */
   onConnectWallet?: PropsOf<'button'>['onClick'];
+
+  /**
+   * The Footer of the relayer list card
+   * will be displayed at the bottom of the card
+   */
+  Footer?: React.ReactNode;
 }
 
 export interface TokenListCardProps
