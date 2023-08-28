@@ -1,6 +1,6 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
-import fetchAnchorMetadata from '@webb-tools/dapp-config/anchors/fetchAnchorMetadata';
+import fetchAnchorMetadata from '@webb-tools/web3-api-provider/src/fetchAnchorMetadata';
 
 import {
   V_ANCHORS,
