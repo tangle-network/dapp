@@ -2,13 +2,8 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 import fetchAnchorMetadata from '@webb-tools/web3-api-provider/src/fetchAnchorMetadata';
 
-import {
-  V_ANCHORS,
-  ACTIVE_SUBGRAPH_URLS,
-  DATE_NOW,
-  DATE_24H,
-  VAnchorType,
-} from '../constants';
+import { getValidDatesToQuery } from '../utils';
+import { V_ANCHORS, ACTIVE_SUBGRAPH_URLS, VAnchorType } from '../constants';
 
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
@@ -18,17 +13,7 @@ type ShieldedTablesDataType = {
   poolsData: ShieldedPoolType[];
 };
 
-const tokens = [
-  'dai',
-  'eth',
-  'usdc',
-  'usdt',
-  'moondev',
-  'matic',
-  'weth',
-  'op',
-  'arbitrum',
-];
+const [dateNow, date24h] = getValidDatesToQuery();
 
 const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
   const tokenSymbol = vanchor.fungibleTokenSymbol;
@@ -47,8 +32,8 @@ const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
         tokenSymbol,
-        DATE_24H,
-        DATE_NOW
+        date24h,
+        dateNow
       );
 
     deposits24h = depositVAnchorsByChainsData?.reduce(
@@ -73,8 +58,8 @@ const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
         tokenSymbol,
-        DATE_24H,
-        DATE_NOW
+        date24h,
+        dateNow
       );
 
     tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
@@ -91,11 +76,9 @@ const getAssetInfoFromVAnchor = async (vanchor: VAnchorType) => {
 
   return {
     address: vanchor.fungibleTokenAddress,
-    // TO UPDATE
     symbol: vanchor.fungibleTokenSymbol,
     url: undefined,
     poolType: vanchor.poolType,
-    // TO UPDATE
     composition: wrappableCurrencies.map((item) => item.symbol),
     deposits24h,
     tvl,
@@ -118,7 +101,7 @@ const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
       .length +
     // check native token
     (isNativeAllowed ? 1 : 0) +
-    // this is for fungible token
+    // plus one for fungible token
     1;
 
   let deposits24h: number | undefined;
@@ -127,8 +110,8 @@ const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
       await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
-        DATE_24H,
-        DATE_NOW
+        date24h,
+        dateNow
       );
 
     deposits24h = depositVAnchorsByChainsData?.reduce(
@@ -148,8 +131,8 @@ const getPoolInfoFromVAnchor = async (vanchor: VAnchorType) => {
       await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsDayInterval(
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
-        DATE_24H,
-        DATE_NOW
+        date24h,
+        dateNow
       );
 
     tvl = tvlVAnchorsByChainsData?.reduce((tvl, vAnchorsByChain) => {
