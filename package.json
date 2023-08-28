@@ -229,7 +229,7 @@
     "dotenv": "16.0.3",
     "encoding": "^0.1.13",
     "eslint": "~8.40.0",
-    "eslint-config-next": "13.4.2",
+    "eslint-config-next": "13.4.19",
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.27.5",
