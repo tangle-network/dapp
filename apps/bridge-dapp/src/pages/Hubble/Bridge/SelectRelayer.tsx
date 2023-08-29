@@ -27,11 +27,12 @@ import {
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { useRelayerManager } from '../../../hooks/useRelayerManager';
+import useStateWithRoute from '../../../hooks/useStateWithRoute';
 
 const SelectRelayer = () => {
   const { pathname } = useLocation();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const { apiConfig, loading, isConnecting, activeApi } = useWebContext();
 
@@ -39,22 +40,7 @@ const SelectRelayer = () => {
 
   const { toggleModal } = useConnectWallet();
 
-  const [noRelayer, setNoRelayer] = useState(
-    () => searchParams.get(NO_RELAYER_KEY) ?? ''
-  );
-
-  useEffect(() => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (noRelayer) {
-        next.set(NO_RELAYER_KEY, noRelayer);
-      } else {
-        next.delete(NO_RELAYER_KEY);
-      }
-
-      return next;
-    });
-  }, [noRelayer, setSearchParams]);
+  const [noRelayer, setNoRelayer] = useStateWithRoute(NO_RELAYER_KEY);
 
   const [customRelayer, setCustomRelayer] = useState('');
   const [customerRelayerError, setCustomerRelayerError] = useState('');
@@ -87,6 +73,7 @@ const SelectRelayer = () => {
     setRelayer,
   } = useRelayers(useRelayersArgs);
 
+  // If no relayer is selected, set the active relayer to null
   useEffect(() => {
     if (noRelayer && activeRelayer) {
       setRelayer(null);
@@ -220,12 +207,8 @@ const SelectRelayer = () => {
   const toggleNoRelayer = useCallback(
     (nextChecked: boolean) => {
       setNoRelayer(() => (nextChecked ? '1' : ''));
-
-      if (nextChecked) {
-        setRelayer(null);
-      }
     },
-    [setNoRelayer, setRelayer]
+    [setNoRelayer]
   );
 
   const isDisabled = useMemo(() => {

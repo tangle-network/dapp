@@ -58,6 +58,8 @@ const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
           <Input
             id="relayer"
             rightIcon={<Search />}
+            spellCheck={false}
+            autoComplete="off"
             placeholder="Enter custom relayer URL here"
             debounceTime={500}
             {...overrideInputProps}

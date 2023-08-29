@@ -24,13 +24,14 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
   HAS_REFUND_KEY,
   IS_CUSTOM_AMOUNT_KEY,
+  NO_RELAYER_KEY,
   POOL_KEY,
   RECIPIENT_KEY,
   REFUND_AMOUNT_KEY,
@@ -98,6 +99,10 @@ const Withdraw = () => {
       Number.isNaN(poolId) ? undefined : poolId,
       Number.isNaN(tokenId) ? undefined : tokenId,
     ];
+  }, [searchParams]);
+
+  const noRelayer = useMemo(() => {
+    return !!searchParams.get(NO_RELAYER_KEY);
   }, [searchParams]);
 
   const [fungibleCfg, wrappableCfg] = useMemo(() => {
@@ -218,6 +223,46 @@ const Withdraw = () => {
 
     return () => sub.unsubscribe();
   }, [activeApi, setRelayer]);
+
+  const hasSetDefaultRelayer = useRef(false);
+
+  // Side effect for setting the default relayer
+  // when the relayer list is loaded and no active relayer
+  useEffect(() => {
+    if (!activeApi || noRelayer || hasSetDefaultRelayer.current) {
+      return;
+    }
+
+    const sub = activeApi.relayerManager.listUpdated.subscribe(async () => {
+      const typedChainIdToUse =
+        destTypedChainId ?? activeApi.typedChainidSubject.getValue();
+
+      const target =
+        typeof poolId === 'number'
+          ? apiConfig.anchors[poolId]?.[typedChainIdToUse]
+          : '';
+
+      const relayers =
+        await activeApi.relayerManager.getRelayersByChainAndAddress(
+          typedChainIdToUse,
+          target
+        );
+
+      const active = activeApi.relayerManager.activeRelayer;
+      if (!active && relayers.length > 0) {
+        activeApi.relayerManager.setActiveRelayer(
+          relayers[0],
+          typedChainIdToUse
+        );
+        hasSetDefaultRelayer.current = true;
+      }
+    });
+
+    // trigger the relayer list update on mount
+    activeApi.relayerManager.listUpdated$.next();
+
+    return () => sub.unsubscribe();
+  }, [activeApi, apiConfig.anchors, destTypedChainId, noRelayer, poolId]);
 
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);

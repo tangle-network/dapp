@@ -30,6 +30,8 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
   private _listUpdated = new Subject<void>();
 
   public readonly listUpdated: Observable<void>;
+  public readonly listUpdated$ = this._listUpdated;
+
   protected relayers: WebbRelayer[];
   public activeRelayer: OptionalActiveRelayer = null;
 

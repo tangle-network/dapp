@@ -31,33 +31,24 @@ export const useRelayers = (props: UseRelayersProps) => {
       return;
     }
 
-    const onListUpdate = async () => {
-      const typedChainIdToUse =
-        typedChainId ?? activeApi.typedChainidSubject.getValue();
+    const relayersSub = activeApi.relayerManager.listUpdated.subscribe(
+      async () => {
+        const typedChainIdToUse =
+          typedChainId ?? activeApi.typedChainidSubject.getValue();
 
-      const relayers =
-        await activeApi.relayerManager.getRelayersByChainAndAddress(
-          typedChainIdToUse,
-          `${target ?? ''}`
-        );
+        const relayers =
+          await activeApi.relayerManager.getRelayersByChainAndAddress(
+            typedChainIdToUse,
+            `${target ?? ''}`
+          );
 
-      setRelayersState((prev) => ({
-        ...prev,
-        loading: false,
-        relayers,
-      }));
-
-      const activeRelayer = activeApi.relayerManager.activeRelayer;
-      if (!activeRelayer && relayers.length > 0) {
-        activeApi.relayerManager.setActiveRelayer(
-          relayers[0],
-          typedChainIdToUse
-        );
+        setRelayersState((prev) => ({
+          ...prev,
+          loading: false,
+          relayers,
+        }));
       }
-    };
-
-    const relayersSub =
-      activeApi.relayerManager.listUpdated.subscribe(onListUpdate);
+    );
 
     const activeSub = activeApi.relayerManager.activeRelayerWatcher.subscribe(
       (next) => {
@@ -68,8 +59,8 @@ export const useRelayers = (props: UseRelayersProps) => {
       }
     );
 
-    // Initially list updated not called, so we need to call it manually
-    onListUpdate();
+    // trigger the relayer list update on mount
+    activeApi.relayerManager.listUpdated$.next();
 
     return () => {
       relayersSub.unsubscribe();
