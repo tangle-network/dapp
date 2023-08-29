@@ -247,7 +247,7 @@ const SelectRelayer = () => {
         overrideInputProps={{
           rightIcon: (
             <IconButton
-              isDisabled={customRelayerLoading}
+              disabled={customRelayerLoading}
               onClick={() => testAndAddCustomRelayer()}
             >
               {customRelayerLoading ? <Spinner /> : <Search />}

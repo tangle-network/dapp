@@ -7,7 +7,9 @@ import {
   FileCopyLine,
   GasStationFill,
   SettingsFillIcon,
+  ShieldKeyholeFillIcon,
   TokenIcon,
+  WalletFillIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
@@ -28,6 +30,7 @@ import cx from 'classnames';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { formatEther } from 'viem';
+import TxInfoItem from '../../../../components/TxInfoItem';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
@@ -194,6 +197,14 @@ const Withdraw = () => {
     setSearchParams(nextParams);
   }, [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]); // prettier-ignore
 
+  // If no active relayer, reset refund states
+  useEffect(() => {
+    if (!activeRelayer && (hasRefund || refundAmount)) {
+      setHasRefund('');
+      setRefundAmount('');
+    }
+  }, [activeRelayer, hasRefund, refundAmount, setHasRefund, setRefundAmount]);
+
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
   }, [navigate]);
@@ -240,6 +251,24 @@ const Withdraw = () => {
     totalFeeWei,
     gasFeeInfo,
   } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
+
+  const remainingBalance = useMemo(() => {
+    if (!poolId || !destTypedChainId) {
+      return;
+    }
+
+    const balance = balances[poolId]?.[destTypedChainId];
+    if (typeof balance !== 'number') {
+      return;
+    }
+
+    const remain = balance - parseFloat(amount);
+    if (remain < 0) {
+      return;
+    }
+
+    return remain;
+  }, [amount, balances, destTypedChainId, poolId]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -425,7 +454,7 @@ const Withdraw = () => {
               }
               className="max-w-none"
               switcherProps={{
-                checked: !!activeRelayer && !!hasRefund,
+                checked: !!hasRefund,
                 disabled: !activeRelayer,
                 onCheckedChange: () =>
                   setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
@@ -456,6 +485,31 @@ const Withdraw = () => {
                 ].filter((item) => Boolean(item)) as Array<FeeItem>
               }
             />
+
+            <div className="space-y-2">
+              <TxInfoItem
+                leftContent={{
+                  title: 'Remaining Balance',
+                }}
+                rightIcon={<ShieldKeyholeFillIcon />}
+                rightText={
+                  typeof remainingBalance === 'number'
+                    ? remainingBalance.toString().slice(0, 10)
+                    : '--'
+                }
+              />
+              {refundAmount && hasRefund && (
+                <TxInfoItem
+                  leftContent={{
+                    title: 'Refund',
+                  }}
+                  rightIcon={<WalletFillIcon />}
+                  rightText={`${refundAmount} ${
+                    activeChain?.nativeCurrency.symbol ?? ''
+                  }`.trim()}
+                />
+              )}
+            </div>
           </div>
 
           <Button isFullWidth>Transfer</Button>
