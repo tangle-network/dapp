@@ -204,7 +204,7 @@ const TxProgressorFooter = forwardRef<
 
         <div className="flex items-center justify-between">
           <p className="flex items-center gap-1">
-            <StatusIndicator size={14} variant={status} />
+            <StatusIndicator animated size={14} variant={status} />
 
             {statusMessage && (
               <Typography

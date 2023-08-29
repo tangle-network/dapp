@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import { forwardRef } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { StatusIndicatorProps, StatusVariant } from './types';
 
 const classes: {
@@ -27,7 +28,7 @@ const classes: {
 };
 
 const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
-  ({ variant = 'info', size = 12, ...props }, ref) => {
+  ({ animated, variant = 'info', size = 12, ...props }, ref) => {
     // We use haft size to make sure the component is corectly centered
     const haftSize = size / 2;
 
@@ -39,6 +40,7 @@ const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
         fill="none"
         ref={ref}
         {...props}
+        className={twMerge('rounded-full', props.className)}
       >
         <rect
           x={haftSize / 2}
@@ -54,7 +56,11 @@ const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
           width={haftSize * 1.5}
           height={haftSize * 1.5}
           rx={haftSize * 0.75}
-          className={classes[variant].stroke}
+          className={twMerge(
+            cx({ 'animate-ping': animated }),
+            'origin-center',
+            classes[variant].stroke
+          )}
           strokeOpacity="0.3"
           strokeWidth={haftSize / 2}
         />

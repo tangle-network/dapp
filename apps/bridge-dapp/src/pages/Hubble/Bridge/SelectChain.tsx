@@ -19,7 +19,6 @@ import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { getActiveSourceChains } from '../../../utils/getActiveSourceChains';
-import useChainsFromNote from '../../../hooks/useChainsFromNote';
 
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
@@ -34,8 +33,6 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   const navigate = useNavigateWithPersistParams();
 
   const [searchParams] = useSearchParams();
-
-  const destTypedChainIds = useChainsFromNote();
 
   const { fungibleCfg } = useCurrenciesFromRoute();
 
@@ -63,15 +60,13 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 
   const chains = useMemo<Array<ChainType>>(() => {
     if (currentTab === 'withdraw' && chainType === 'dest') {
-      return Array.from(destTypedChainIds)
-        .map((id) => apiConfig.chains[id])
-        .map(
-          (c) =>
-            ({
-              name: c.name,
-              tag: c.tag,
-            } satisfies ChainType)
-        );
+      return Object.values(getActiveSourceChains(apiConfig.chains)).map(
+        (c) =>
+          ({
+            name: c.name,
+            tag: c.tag,
+          } satisfies ChainType)
+      );
     }
 
     if (chainType === 'dest') {
@@ -96,7 +91,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
         tag: val.tag,
       } satisfies ChainType;
     });
-  }, [apiConfig.anchors, apiConfig.chains, chainType, currentTab, destTypedChainIds, fungibleCfg]); // prettier-ignore
+  }, [apiConfig.anchors, apiConfig.chains, chainType, currentTab, fungibleCfg]);
 
   const defaultCategory = useMemo<ChainListCardProps['defaultCategory']>(() => {
     if (chainType === 'dest') {

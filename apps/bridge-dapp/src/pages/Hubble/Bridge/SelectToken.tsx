@@ -30,6 +30,8 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
     return BRIDGE_TABS.find((tab) => pathname.includes(tab));
   }, [pathname]);
 
+  const { apiConfig } = useWebContext();
+
   const [srcTypedChainId, destTypedChainId] = useMemo(() => {
     const srcTypedId = searhParams.get(SOURCE_CHAIN_KEY)
       ? Number(searhParams.get(SOURCE_CHAIN_KEY))
@@ -42,7 +44,27 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
     return [srcTypedId, destTypedId];
   }, [searhParams]);
 
-  const { apiConfig } = useWebContext();
+  const [srcChainCfg, destChainCfg] = useMemo(() => {
+    const srcChainCfg =
+      typeof srcTypedChainId === 'number'
+        ? apiConfig.chains[srcTypedChainId]
+        : undefined;
+
+    const destChainCfg =
+      typeof destTypedChainId === 'number'
+        ? apiConfig.chains[destTypedChainId]
+        : undefined;
+
+    return [srcChainCfg, destChainCfg];
+  }, [apiConfig.chains, destTypedChainId, srcTypedChainId]);
+
+  const blockExplorer = useMemo(() => {
+    if (currentTxType === 'deposit' && srcChainCfg) {
+      return srcChainCfg.blockExplorers?.default.url;
+    } else if (currentTxType === 'withdraw' && destChainCfg) {
+      return destChainCfg.blockExplorers?.default.url;
+    }
+  }, [currentTxType, destChainCfg, srcChainCfg]);
 
   const {
     allCurrencies,
@@ -90,13 +112,24 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
             }
           : undefined;
 
+      let tokenAddress: string | undefined;
+      if (currentTxType === 'deposit' && typeof srcTypedChainId === 'number'){
+        tokenAddress = cfg.addresses.get(srcTypedChainId);
+      } else if (currentTxType === 'withdraw' && typeof destTypedChainId === 'number') {
+        tokenAddress = cfg.addresses.get(destTypedChainId);
+      }
+
+      const explorerUrl = blockExplorer && tokenAddress ? new URL(`address/${tokenAddress}`, blockExplorer) : undefined
+
       return {
         name: cfg.name,
         symbol: cfg.symbol,
         assetBalanceProps,
+        tokenType,
+        explorerUrl: explorerUrl?.toString(),
       } satisfies AssetType;
     });
-  }, [balances, balancesFromNotes, currentTxType, destTypedChainId, fungibleCurrencies, tokenType]); // prettier-ignore
+  }, [balances, balancesFromNotes, blockExplorer, currentTxType, destTypedChainId, fungibleCurrencies, srcTypedChainId, tokenType]); // prettier-ignore
 
   const unavailableTokens = useMemo<Array<AssetType>>(() => {
     const currency =

@@ -14,4 +14,9 @@ export interface StatusIndicatorProps extends ComponentProps<'svg'> {
    * @default 12
    */
   size?: number;
+
+  /**
+   * Whether the status indicator should be animated.
+   */
+  animated?: boolean;
 }

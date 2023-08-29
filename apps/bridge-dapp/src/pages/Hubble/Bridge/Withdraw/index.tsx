@@ -494,7 +494,9 @@ const Withdraw = () => {
                 rightIcon={<ShieldKeyholeFillIcon />}
                 rightText={
                   typeof remainingBalance === 'number'
-                    ? remainingBalance.toString().slice(0, 10)
+                    ? `${remainingBalance.toString().slice(0, 10)} ${
+                        fungibleCfg?.symbol ?? ''
+                      }`.trim()
                     : '--'
                 }
               />
