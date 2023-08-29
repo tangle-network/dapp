@@ -32,6 +32,7 @@ export const VANCHORS_MAP: VAnchorMapType = {
       PresetTypedChainId.HermesOrbit,
       PresetTypedChainId.DemeterOrbit,
       PresetTypedChainId.AthenaOrbit,
+      PresetTypedChainId.TangleTestnet,
     ],
   },
 };
