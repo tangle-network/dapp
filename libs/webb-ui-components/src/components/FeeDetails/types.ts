@@ -35,6 +35,11 @@ export type FeeItem = {
    * The fee value in USD.
    */
   valueInUsd?: number;
+
+  /**
+   * Indicates if the fee is loading.
+   */
+  isLoading?: boolean;
 };
 
 /**
@@ -55,6 +60,11 @@ export type FeeDetailsProps = Omit<AccordionSingleProps, 'type'> & {
    * The total fee token symbol to display and render the token icon.
    */
   totalFeeToken?: string;
+
+  /**
+   * Indicates if the total fee is loading.
+   */
+  isTotalLoading?: boolean;
 
   /**
    * Fee fee items to display.

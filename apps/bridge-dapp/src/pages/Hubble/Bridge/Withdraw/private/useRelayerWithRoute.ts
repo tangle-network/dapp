@@ -6,8 +6,9 @@ import {
   POOL_KEY,
   RELAYER_ENDPOINT_KEY,
 } from '../../../../../constants';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types';
 
 const useRelayerWithRoute = () => {
   const [searchParams] = useSearchParams();
@@ -16,6 +17,8 @@ const useRelayerWithRoute = () => {
 
   // State for active selected relayer
   const [relayer, setRelayer] = useStateWithRoute(RELAYER_ENDPOINT_KEY);
+  const [activeRelayer, setActiveRelayer] =
+    useState<OptionalActiveRelayer>(null);
 
   const [destTypedChainId, poolId, noRelayer] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
@@ -38,6 +41,7 @@ const useRelayerWithRoute = () => {
       (relayer) => {
         // console.log('relayer', relayer);
         setRelayer(relayer?.endpoint ?? '');
+        setActiveRelayer(relayer);
       }
     );
 
@@ -100,17 +104,9 @@ const useRelayerWithRoute = () => {
     return () => sub.unsubscribe();
   }, [activeApi, apiConfig.anchors, destTypedChainId, noRelayer, poolId]);
 
-  const relayerInstance = useMemo(() => {
-    const relayers = activeApi?.relayerManager.getRelayers({});
-    if (!relayers) {
-      return undefined;
-    }
-
-    return relayers.find((r) => r.endpoint === relayer);
-  }, [activeApi?.relayerManager, relayer]);
-
   return {
-    relayerInstance,
+    relayer,
+    activeRelayer,
   };
 };
 

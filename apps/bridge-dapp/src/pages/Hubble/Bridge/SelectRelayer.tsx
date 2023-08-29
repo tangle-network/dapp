@@ -2,6 +2,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { Search } from '@webb-tools/icons/Search';
+import { Spinner } from '@webb-tools/icons/Spinner';
 import WalletFillIcon from '@webb-tools/icons/WalletFillIcon';
 import { useRelayers } from '@webb-tools/react-hooks';
 import {
@@ -44,6 +45,7 @@ const SelectRelayer = () => {
 
   const [customRelayer, setCustomRelayer] = useState('');
   const [customerRelayerError, setCustomerRelayerError] = useState('');
+  const [customRelayerLoading, setCustomRelayerLoading] = useState(false);
 
   const [destTypedChainId, poolId] = useMemo(() => {
     const typedChainId = searchParams.get(DEST_CHAIN_KEY) ?? '';
@@ -177,7 +179,7 @@ const SelectRelayer = () => {
     if (!customRelayer) {
       return;
     }
-
+    setCustomRelayerLoading(true);
     const error = 'Invalid input. Pleas check your search and try again.';
     if (!isValidUrl(customRelayer)) {
       setCustomerRelayerError(error);
@@ -197,6 +199,7 @@ const SelectRelayer = () => {
 
     addRelayer(customRelayer);
     setCustomerRelayerError('');
+    setCustomRelayerLoading(false);
   }, [addRelayer, customRelayer, getInfo, relayers]);
 
   const handleCustomRelayerChange = useCallback((nextRelayer: string) => {
@@ -243,8 +246,11 @@ const SelectRelayer = () => {
         onConnectWallet={handleConnectWallet}
         overrideInputProps={{
           rightIcon: (
-            <IconButton onClick={() => testAndAddCustomRelayer()}>
-              <Search />
+            <IconButton
+              isDisabled={customRelayerLoading}
+              onClick={() => testAndAddCustomRelayer()}
+            >
+              {customRelayerLoading ? <Spinner /> : <Search />}
             </IconButton>
           ),
           value: customRelayer,

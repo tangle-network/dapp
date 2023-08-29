@@ -1,6 +1,13 @@
+import {
+  ArrowDropDownFill,
+  CornerDownRightLine,
+  TokenIcon,
+} from '@webb-tools/icons';
 import cx from 'classnames';
-import { cloneElement, forwardRef } from 'react';
+import { cloneElement, forwardRef, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography/Typography';
+import numberToString from '../../utils/numberToString';
 import {
   Accordion,
   AccordionButtonBase,
@@ -9,12 +16,6 @@ import {
 } from '../Accordion';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { FeeDetailsProps } from './types';
-import { Typography } from '../../typography/Typography';
-import {
-  ArrowDropDownFill,
-  CornerDownRightLine,
-  TokenIcon,
-} from '@webb-tools/icons';
 
 /**
  * FeeDetails component is used to display fees for a transaction.
@@ -48,7 +49,18 @@ import {
  * ```
  */
 const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
-  ({ className, info, totalFee, totalFeeToken = '', items, ...props }, ref) => {
+  (
+    {
+      className,
+      info,
+      totalFee,
+      totalFeeToken = '',
+      items,
+      isTotalLoading,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <Accordion
         {...props}
@@ -80,14 +92,25 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             />
 
             <div className="flex items-center">
-              <Typography variant="body1" fw="bold">
-                {typeof totalFee === 'number'
-                  ? `~${totalFee} ${totalFeeToken}`.trim()
-                  : '-'}
-              </Typography>
+              {isTotalLoading ? (
+                <div className="animate-pulse">
+                  <div className="h-5 rounded-md w-14 bg-slate-200 dark:bg-mono-160" />
+                </div>
+              ) : (
+                <>
+                  <Typography variant="body1" fw="bold">
+                    {typeof totalFee === 'number'
+                      ? `~${numberToString(totalFee).slice(
+                          0,
+                          10
+                        )} ${totalFeeToken}`.trim()
+                      : '-'}
+                  </Typography>
 
-              {typeof totalFee === 'number' && totalFeeToken && (
-                <TokenIcon name={totalFeeToken} className="ml-2" />
+                  {typeof totalFee === 'number' && totalFeeToken && (
+                    <TokenIcon name={totalFeeToken} className="ml-2" />
+                  )}
+                </>
               )}
 
               <ArrowDropDownFill
@@ -112,7 +135,15 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
             <div className="px-5 pt-0 pb-3 space-y-2">
               {items?.map(
                 (
-                  { name, info, tokenSymbol = '', value, Icon, valueInUsd },
+                  {
+                    name,
+                    info,
+                    tokenSymbol = '',
+                    value,
+                    Icon,
+                    valueInUsd,
+                    isLoading,
+                  },
                   index
                 ) => (
                   <div
@@ -142,24 +173,35 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                     </div>
 
                     <div className="flex items-start gap-2 !text-inherit">
-                      <Typography
-                        variant="body1"
-                        fw="bold"
-                        className="text-mono-200 dark:text-mono-40"
-                      >
-                        {typeof value === 'number'
-                          ? `~${value} ${tokenSymbol}`.trim()
-                          : '-'}
-                      </Typography>
+                      {isLoading ? (
+                        <div className="animate-pulse">
+                          <div className="h-5 rounded-md w-14 bg-slate-200 dark:bg-mono-160" />
+                        </div>
+                      ) : (
+                        <>
+                          <Typography
+                            variant="body1"
+                            fw="bold"
+                            className="text-mono-200 dark:text-mono-40"
+                          >
+                            {typeof value === 'number'
+                              ? `~${numberToString(value).slice(
+                                  0,
+                                  10
+                                )} ${tokenSymbol}`.trim()
+                              : '-'}
+                          </Typography>
 
-                      {typeof valueInUsd === 'number' && (
-                        <Typography
-                          variant="body1"
-                          fw="semibold"
-                          className="!text-inherit"
-                        >
-                          {`(≈${valueInUsd})`}
-                        </Typography>
+                          {typeof valueInUsd === 'number' && (
+                            <Typography
+                              variant="body1"
+                              fw="semibold"
+                              className="!text-inherit"
+                            >
+                              {`(≈${valueInUsd})`}
+                            </Typography>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>

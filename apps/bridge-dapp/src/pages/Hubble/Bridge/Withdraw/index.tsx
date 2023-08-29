@@ -20,12 +20,15 @@ import {
   ToggleCard,
   TransactionInputCard,
   Typography,
+  numberToString,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { formatEther, parseEther } from 'viem';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
@@ -37,12 +40,10 @@ import {
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import { useMaxFeeInfo } from '../../../../hooks/useMaxFeeInfo';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useInputs from './private/useInputs';
 import useRelayerWithRoute from './private/useRelayerWithRoute';
-
-const TOKEN_NAME = 'Matic';
-const CHAIN_NAME = 'Polygon Mumbai';
 
 const Withdraw = () => {
   const { pathname } = useLocation();
@@ -80,7 +81,9 @@ const Withdraw = () => {
     setRefundAmount,
   } = useInputs();
 
-  const { relayerInstance } = useRelayerWithRoute();
+  const [refundAmountError, setRefundAmountError] = useState('');
+
+  const { activeRelayer } = useRelayerWithRoute();
 
   const [destTypedChainId, poolId, tokenId] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
@@ -113,6 +116,14 @@ const Withdraw = () => {
   const activeBridge = useMemo(() => {
     return activeApi?.state.activeBridge;
   }, [activeApi?.state.activeBridge]);
+
+  const destChainCfg = useMemo(() => {
+    if (typeof destTypedChainId !== 'number') {
+      return;
+    }
+
+    return apiConfig.chains[destTypedChainId];
+  }, [apiConfig.chains, destTypedChainId]);
 
   // Set default poolId and destTypedChainId on first render
   useEffect(() => {
@@ -225,6 +236,98 @@ const Withdraw = () => {
     setRecipient(activeAccount.address);
   }, [activeAccount, notificationApi, setRecipient]);
 
+  const feeArgs = useMemo(
+    () => ({
+      fungibleCurrencyId: fungibleCfg?.id,
+    }),
+    [fungibleCfg?.id]
+  );
+
+  const { isLoading, feeInfo, fetchFeeInfo } = useMaxFeeInfo(feeArgs);
+
+  const gasFeeInfo = useMemo(() => {
+    if (typeof feeInfo === 'bigint') {
+      return feeInfo;
+    }
+
+    return undefined;
+  }, [feeInfo]);
+
+  const relayerFeeInfo = useMemo(() => {
+    if (typeof feeInfo === 'object' && feeInfo != null) {
+      return feeInfo;
+    }
+
+    return undefined;
+  }, [feeInfo]);
+
+  const totalFeeWei = useMemo(() => {
+    if (typeof gasFeeInfo === 'bigint') {
+      return gasFeeInfo;
+    }
+
+    if (!relayerFeeInfo) {
+      return;
+    }
+
+    let total = relayerFeeInfo.estimatedFee;
+    if (hasRefund && refundAmount) {
+      const refundCost =
+        parseFloat(refundAmount) *
+        parseFloat(formatEther(relayerFeeInfo.refundExchangeRate));
+
+      total += parseEther(numberToString(refundCost));
+    }
+
+    return total;
+  }, [gasFeeInfo, hasRefund, refundAmount, relayerFeeInfo]);
+
+  const totalFeeToken = useMemo(() => {
+    if (activeRelayer) {
+      return fungibleCfg?.symbol;
+    }
+
+    return destChainCfg?.nativeCurrency.symbol;
+  }, [activeRelayer, destChainCfg?.nativeCurrency.symbol, fungibleCfg?.symbol]);
+
+  // Side effect for auto fetching fee info
+  // when all inputs are filled and valid
+  useEffect(() => {
+    if (!amount || !fungibleCfg || !wrappableCfg) {
+      return;
+    }
+
+    if (!destTypedChainId || !recipient || recipientErrorMsg) {
+      return;
+    }
+
+    fetchFeeInfo(activeRelayer);
+  }, [activeRelayer, amount, destTypedChainId, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg, wrappableCfg]) // prettier-ignore
+
+  // Side effect for validating the refund amount with max refund from relayer
+  useEffect(() => {
+    if (!relayerFeeInfo || !refundAmount) {
+      setRefundAmountError('');
+      return;
+    }
+
+    const validate = () => {
+      const max = relayerFeeInfo.maxRefund;
+      const refundAmountBig = parseEther(refundAmount);
+      if (refundAmountBig > max) {
+        // Truncate the amount string to 6 decimal places
+        const truncatedAmount = formatEther(max).slice(0, 10);
+        setRefundAmountError(`Max refund is ${truncatedAmount}`);
+      } else {
+        setRefundAmountError('');
+      }
+    };
+
+    const timeout = setTimeout(validate, 500);
+
+    return () => clearTimeout(timeout);
+  }, [relayerFeeInfo, refundAmount]);
+
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
     return <Outlet />;
@@ -299,10 +402,7 @@ const Withdraw = () => {
                 }
               )}
             >
-              <TitleWithInfo
-                title="Recipient Shielded Account"
-                info="Recipient Shielded Account"
-              />
+              <TitleWithInfo title="Recipient Wallet Address" />
 
               <TextField.Root className="max-w-none" error={recipientErrorMsg}>
                 <TextField.Input
@@ -369,7 +469,7 @@ const Withdraw = () => {
                 info="The native token will be refunded to the recipient on the destination chain."
               />
 
-              <TextField.Root className="max-w-none">
+              <TextField.Root className="max-w-none" error={refundAmountError}>
                 <TextField.Input
                   placeholder="0.0"
                   value={refundAmount}
@@ -406,23 +506,43 @@ const Withdraw = () => {
               title="Enable refund"
               info="Refund"
               Icon={<GasStationFill size="lg" />}
-              description={`Get ${TOKEN_NAME} on transactions on ${CHAIN_NAME}`}
+              description={
+                destChainCfg
+                  ? `Get ${destChainCfg.nativeCurrency.symbol} on transactions on ${destChainCfg.name}`
+                  : undefined
+              }
               className="max-w-none"
               switcherProps={{
-                checked: !!hasRefund,
-                disabled: !relayerInstance,
+                checked: !!activeRelayer && !!hasRefund,
+                disabled: !activeRelayer,
                 onCheckedChange: () =>
                   setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
               }}
             />
 
             <FeeDetails
-              items={[
-                {
-                  name: 'Gas',
-                  Icon: <GasStationFill />,
-                },
-              ]}
+              isTotalLoading={isLoading}
+              totalFee={
+                typeof totalFeeWei === 'bigint'
+                  ? +formatEther(totalFeeWei)
+                  : undefined
+              }
+              totalFeeToken={
+                typeof totalFeeWei === 'bigint' ? totalFeeToken : undefined
+              }
+              items={
+                [
+                  typeof gasFeeInfo === 'bigint'
+                    ? ({
+                        name: 'Gas',
+                        isLoading,
+                        Icon: <GasStationFill />,
+                        value: +formatEther(gasFeeInfo),
+                        tokenSymbol: destChainCfg?.nativeCurrency.symbol,
+                      } satisfies FeeItem)
+                    : undefined,
+                ].filter((item) => Boolean(item)) as Array<FeeItem>
+              }
             />
           </div>
 
