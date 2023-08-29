@@ -14,11 +14,12 @@ const useStateWithRoute = (key: string) => {
   useEffect(() => {
     function updateParams() {
       if (!state) {
-        return setSearchParams((prev) => {
+        setSearchParams((prev) => {
           const nextParams = new URLSearchParams(prev);
           nextParams.delete(key);
           return nextParams;
         });
+        return;
       }
 
       setSearchParams((prev) => {

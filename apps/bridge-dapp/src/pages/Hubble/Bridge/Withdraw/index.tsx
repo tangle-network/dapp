@@ -1,6 +1,5 @@
 import { Transition } from '@headlessui/react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import {
   AccountCircleLineIcon,
   ArrowRight,
@@ -11,6 +10,7 @@ import {
   TokenIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   FeeDetails,
@@ -24,18 +24,12 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
-  HAS_REFUND_KEY,
-  IS_CUSTOM_AMOUNT_KEY,
-  NO_RELAYER_KEY,
   POOL_KEY,
-  RECIPIENT_KEY,
-  REFUND_AMOUNT_KEY,
-  RELAYER_ENDPOINT_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
   SELECT_RELAYER_PATH,
   SELECT_SHIELDED_POOL_PATH,
@@ -43,10 +37,9 @@ import {
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
-import useAmountWithRoute from '../../../../hooks/useAmountWithRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
-import useStateWithRoute from '../../../../hooks/useStateWithRoute';
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import useInputs from './private/useInputs';
+import useRelayerWithRoute from './private/useRelayerWithRoute';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';
@@ -73,20 +66,21 @@ const Withdraw = () => {
 
   const { copy, isCopied } = useCopyable();
 
-  const [amount, setAmount] = useAmountWithRoute();
+  const {
+    amount,
+    hasRefund,
+    isCustom,
+    recipient,
+    recipientErrorMsg,
+    refundAmount,
+    setAmount,
+    setHasRefund,
+    setIsCustom,
+    setRecipient,
+    setRefundAmount,
+  } = useInputs();
 
-  const [refundAmount, setRefundAmount] = useAmountWithRoute(REFUND_AMOUNT_KEY);
-
-  const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
-
-  const [hasRefund, setHasRefund] = useStateWithRoute(HAS_REFUND_KEY);
-
-  const [isCustom, setIsCustom] = useStateWithRoute(IS_CUSTOM_AMOUNT_KEY);
-
-  const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
-
-  // State for active selected relayer
-  const [relayer, setRelayer] = useStateWithRoute(RELAYER_ENDPOINT_KEY);
+  const { relayerInstance } = useRelayerWithRoute();
 
   const [destTypedChainId, poolId, tokenId] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
@@ -99,10 +93,6 @@ const Withdraw = () => {
       Number.isNaN(poolId) ? undefined : poolId,
       Number.isNaN(tokenId) ? undefined : tokenId,
     ];
-  }, [searchParams]);
-
-  const noRelayer = useMemo(() => {
-    return !!searchParams.get(NO_RELAYER_KEY);
   }, [searchParams]);
 
   const [fungibleCfg, wrappableCfg] = useMemo(() => {
@@ -195,74 +185,6 @@ const Withdraw = () => {
 
     setSearchParams(nextParams);
   }, [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]); // prettier-ignore
-
-  // Validate recipient input address after 1s
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (recipient && !isValidAddress(recipient)) {
-        setRecipientErrorMsg('Invalid address');
-      } else {
-        setRecipientErrorMsg('');
-      }
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [recipient]);
-
-  // Side effect for active relayer subsription
-  useEffect(() => {
-    if (!activeApi) {
-      return;
-    }
-
-    const sub = activeApi.relayerManager.activeRelayerWatcher.subscribe(
-      (relayer) => {
-        setRelayer(relayer?.endpoint ?? '');
-      }
-    );
-
-    return () => sub.unsubscribe();
-  }, [activeApi, setRelayer]);
-
-  const hasSetDefaultRelayer = useRef(false);
-
-  // Side effect for setting the default relayer
-  // when the relayer list is loaded and no active relayer
-  useEffect(() => {
-    if (!activeApi || noRelayer || hasSetDefaultRelayer.current) {
-      return;
-    }
-
-    const sub = activeApi.relayerManager.listUpdated.subscribe(async () => {
-      const typedChainIdToUse =
-        destTypedChainId ?? activeApi.typedChainidSubject.getValue();
-
-      const target =
-        typeof poolId === 'number'
-          ? apiConfig.anchors[poolId]?.[typedChainIdToUse]
-          : '';
-
-      const relayers =
-        await activeApi.relayerManager.getRelayersByChainAndAddress(
-          typedChainIdToUse,
-          target
-        );
-
-      const active = activeApi.relayerManager.activeRelayer;
-      if (!active && relayers.length > 0) {
-        activeApi.relayerManager.setActiveRelayer(
-          relayers[0],
-          typedChainIdToUse
-        );
-        hasSetDefaultRelayer.current = true;
-      }
-    });
-
-    // trigger the relayer list update on mount
-    activeApi.relayerManager.listUpdated$.next();
-
-    return () => sub.unsubscribe();
-  }, [activeApi, apiConfig.anchors, destTypedChainId, noRelayer, poolId]);
 
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
@@ -488,6 +410,7 @@ const Withdraw = () => {
               className="max-w-none"
               switcherProps={{
                 checked: !!hasRefund,
+                disabled: !relayerInstance,
                 onCheckedChange: () =>
                   setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
               }}
