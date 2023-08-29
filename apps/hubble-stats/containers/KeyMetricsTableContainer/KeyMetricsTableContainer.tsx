@@ -7,8 +7,8 @@ export default async function KeyMetricsTableContainer() {
   const {
     tvl,
     tvlChangeRate,
-    volume24h,
-    volumeChangeRate,
+    deposit24h,
+    depositChangeRate,
     relayerFees,
     wrappingFees,
   } = await getKeyMetricsData();
@@ -22,17 +22,22 @@ export default async function KeyMetricsTableContainer() {
     />
   );
 
-  const Volume = (
+  const Deposit = (
     <KeyMetricItem
-      title="Volume 24H"
+      title="Deposits 24H"
       suffix=" tTNT"
-      value={volume24h}
-      changeRate={volumeChangeRate}
+      value={deposit24h}
+      changeRate={depositChangeRate}
     />
   );
 
   const RelayerFees = (
-    <KeyMetricItem title="Relayer Fees" suffix=" tTNT" value={relayerFees} />
+    <KeyMetricItem
+      title="Relayer Fees"
+      suffix=" tTNT"
+      value={relayerFees}
+      tooltip="The net earnings made by relayers after transaction costs."
+    />
   );
 
   const WrappingFees = (
@@ -50,7 +55,7 @@ export default async function KeyMetricsTableContainer() {
       {/* Tablet and Desktop */}
       <div className="w-full hidden md:table table-fixed border-collapse">
         {Tvl}
-        {Volume}
+        {Deposit}
         {RelayerFees}
         {WrappingFees}
       </div>
@@ -59,7 +64,7 @@ export default async function KeyMetricsTableContainer() {
       <div className="block md:hidden">
         <div className="w-full table table-fixed border-collapse">
           {Tvl}
-          {Volume}
+          {Deposit}
         </div>
         <div className="w-full table table-fixed border-collapse">
           {RelayerFees}

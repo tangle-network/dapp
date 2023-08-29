@@ -6,38 +6,38 @@ import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;
-  volume: number | undefined;
+  deposit: number | undefined;
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
   const tvl = await getTvl();
 
-  let volume: number | undefined;
+  let deposit: number | undefined;
 
   try {
-    const volumeVAnchorsByChainsData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChains(
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorsDepositByChains(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES
       );
 
-    volume = volumeVAnchorsByChainsData?.reduce(
-      (volumeTotal, vAnchorsByChain) => {
+    deposit = depositVAnchorsByChainsData?.reduce(
+      (depositTotal, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (volumeTotalByChain, vAnchorVolume) =>
-            volumeTotalByChain + +formatEther(BigInt(vAnchorVolume ?? 0)),
+          (depositTotalByChain, vAnchorDeposit) =>
+            depositTotalByChain + +formatEther(BigInt(vAnchorDeposit ?? 0)),
           0
         );
-        return volumeTotal + depositVAnchorsByChain;
+        return depositTotal + depositVAnchorsByChain;
       },
       0
     );
   } catch {
-    volume = undefined;
+    deposit = undefined;
   }
 
   return {
     tvl,
-    volume,
+    deposit,
   };
 }

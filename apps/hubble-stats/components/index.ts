@@ -2,6 +2,7 @@ export * from './AreaChart';
 export * from './BarChart';
 export * from './Breadcrumbs';
 export * from './ChartTooltip';
+export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';
 export * from './NetworkPoolTable';
 export * from './NetworkTokenTable';

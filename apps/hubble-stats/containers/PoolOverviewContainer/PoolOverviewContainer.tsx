@@ -79,7 +79,7 @@ export default async function PoolOverviewContainer({
             className="flex-[1]"
           />
           <PoolOverviewItem
-            title="24h deposits"
+            title="Deposits 24H"
             suffix=" tTNT"
             value={deposit24h}
             changeRate={depositChangeRate}
