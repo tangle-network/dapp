@@ -10,7 +10,7 @@ import {
 import {
   AuthorityQuery,
   AuthorityStats,
-  DiscreteList,
+  AuthoritySet,
   KeyGenKeyListItem,
   useAuthority,
   useAuthorityAccount,
@@ -92,7 +92,7 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
       />
     ),
     cell: (props) => {
-      const authorities = props.getValue<DiscreteList>();
+      const authorities = props.getValue<AuthoritySet>();
       return (
         <AvatarGroup total={authorities.count}>
           {authorities.firstElements.map((au, idx) => (

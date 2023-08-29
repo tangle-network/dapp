@@ -118,7 +118,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     homeLink: 'https://walletconnect.com/',
     connector: new WalletConnectConnector({
       options: {
-        projectId: 'de112797b33e6ac6f567cea75d8260a7' ?? '',
+        projectId: process.env['BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID'] ?? '',
       },
     }),
   },

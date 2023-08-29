@@ -21,11 +21,13 @@ export const KeyStatusCardContainer = () => {
   const { val: blocksData } = useBlocks();
 
   const showDetails = useMemo(() => {
-    if (blocksData?.finalized - blocksData?.latestIndexedBlock < 5) {
-      return true;
-    } else {
-      return false;
+    if (blocksData?.finalized && blocksData?.latestIndexedBlock) {
+      if (blocksData.finalized - blocksData.latestIndexedBlock < 5) {
+        return true;
+      }
     }
+
+    return false;
   }, [blocksData]);
 
   return (

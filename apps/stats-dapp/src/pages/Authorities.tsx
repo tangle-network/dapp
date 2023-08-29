@@ -27,7 +27,7 @@ import { ComponentProps, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import { AuthoritiesTable } from '../containers';
-import { UpcomingThreshold, useThresholds } from '../provider/hooks';
+import { AuthoritySet, UpcomingThreshold } from '../provider/hooks';
 import { getChipColorByKeyType } from '../utils';
 
 const columnHelper = createColumnHelper<UpcomingThreshold>();
@@ -67,7 +67,8 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
     ),
 
     cell: (props) => {
-      const authorities = props.getValue();
+      const authorities = props.getValue<AuthoritySet>();
+
       if (!authorities.count) {
         return (
           <Typography variant="body1" ta="right">
@@ -88,10 +89,7 @@ const columns: ColumnDef<UpcomingThreshold, any>[] = [
 ];
 
 const Authorities = () => {
-  const thresholds = useThresholds();
-
   const {
-    time,
     dkgDataFromPolkadotAPI: {
       keygenThreshold,
       signatureThreshold,
@@ -119,18 +117,18 @@ const Authorities = () => {
     ];
   }, [keygenThreshold, signatureThreshold]);
 
-  const data = useMemo(() => {
+  const data: UpcomingThreshold[] = useMemo(() => {
     return [
       {
-        stats: 'Next',
+        stats: 'Next' as const,
         session: String(currentSessionNumber + 1),
-        keyGen: keygenThreshold,
-        signature: signatureThreshold,
+        keyGen: String(keygenThreshold),
+        signature: String(signatureThreshold),
         authoritySet: {
           count: nextAuthorities.length,
           firstElements: nextAuthorities,
         },
-        proposer: 'SomeProposerValue',
+        proposer: '',
       },
     ];
   }, [
