@@ -46,6 +46,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 import { ECPairFactory } from 'ecpair';
 import * as tinysecp from 'tiny-secp256k1';
+import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -222,7 +223,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -234,7 +235,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-2">
                           {/* <KeyValueWithButton
@@ -254,7 +255,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       title={status}
                       time={at}
                       txHash={hash}
-                      externalUrl="https://webb.tools"
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-4">
                           <LabelWithValue
