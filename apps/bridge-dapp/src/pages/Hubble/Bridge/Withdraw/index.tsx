@@ -20,15 +20,14 @@ import {
   ToggleCard,
   TransactionInputCard,
   Typography,
-  numberToString,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import { formatEther, parseEther } from 'viem';
+import { formatEther } from 'viem';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
@@ -40,8 +39,8 @@ import {
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
-import { useMaxFeeInfo } from '../../../../hooks/useMaxFeeInfo';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
+import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
 import useRelayerWithRoute from './private/useRelayerWithRoute';
 
@@ -80,8 +79,6 @@ const Withdraw = () => {
     setRecipient,
     setRefundAmount,
   } = useInputs();
-
-  const [refundAmountError, setRefundAmountError] = useState('');
 
   const { activeRelayer } = useRelayerWithRoute();
 
@@ -236,97 +233,13 @@ const Withdraw = () => {
     setRecipient(activeAccount.address);
   }, [activeAccount, notificationApi, setRecipient]);
 
-  const feeArgs = useMemo(
-    () => ({
-      fungibleCurrencyId: fungibleCfg?.id,
-    }),
-    [fungibleCfg?.id]
-  );
-
-  const { isLoading, feeInfo, fetchFeeInfo } = useMaxFeeInfo(feeArgs);
-
-  const gasFeeInfo = useMemo(() => {
-    if (typeof feeInfo === 'bigint') {
-      return feeInfo;
-    }
-
-    return undefined;
-  }, [feeInfo]);
-
-  const relayerFeeInfo = useMemo(() => {
-    if (typeof feeInfo === 'object' && feeInfo != null) {
-      return feeInfo;
-    }
-
-    return undefined;
-  }, [feeInfo]);
-
-  const totalFeeWei = useMemo(() => {
-    if (typeof gasFeeInfo === 'bigint') {
-      return gasFeeInfo;
-    }
-
-    if (!relayerFeeInfo) {
-      return;
-    }
-
-    let total = relayerFeeInfo.estimatedFee;
-    if (hasRefund && refundAmount) {
-      const refundCost =
-        parseFloat(refundAmount) *
-        parseFloat(formatEther(relayerFeeInfo.refundExchangeRate));
-
-      total += parseEther(numberToString(refundCost));
-    }
-
-    return total;
-  }, [gasFeeInfo, hasRefund, refundAmount, relayerFeeInfo]);
-
-  const totalFeeToken = useMemo(() => {
-    if (activeRelayer) {
-      return fungibleCfg?.symbol;
-    }
-
-    return destChainCfg?.nativeCurrency.symbol;
-  }, [activeRelayer, destChainCfg?.nativeCurrency.symbol, fungibleCfg?.symbol]);
-
-  // Side effect for auto fetching fee info
-  // when all inputs are filled and valid
-  useEffect(() => {
-    if (!amount || !fungibleCfg || !wrappableCfg) {
-      return;
-    }
-
-    if (!destTypedChainId || !recipient || recipientErrorMsg) {
-      return;
-    }
-
-    fetchFeeInfo(activeRelayer);
-  }, [activeRelayer, amount, destTypedChainId, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg, wrappableCfg]) // prettier-ignore
-
-  // Side effect for validating the refund amount with max refund from relayer
-  useEffect(() => {
-    if (!relayerFeeInfo || !refundAmount) {
-      setRefundAmountError('');
-      return;
-    }
-
-    const validate = () => {
-      const max = relayerFeeInfo.maxRefund;
-      const refundAmountBig = parseEther(refundAmount);
-      if (refundAmountBig > max) {
-        // Truncate the amount string to 6 decimal places
-        const truncatedAmount = formatEther(max).slice(0, 10);
-        setRefundAmountError(`Max refund is ${truncatedAmount}`);
-      } else {
-        setRefundAmountError('');
-      }
-    };
-
-    const timeout = setTimeout(validate, 500);
-
-    return () => clearTimeout(timeout);
-  }, [relayerFeeInfo, refundAmount]);
+  const {
+    isLoading,
+    refundAmountError,
+    totalFeeToken,
+    totalFeeWei,
+    gasFeeInfo,
+  } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -504,7 +417,6 @@ const Withdraw = () => {
           <div className="space-y-4">
             <ToggleCard
               title="Enable refund"
-              info="Refund"
               Icon={<GasStationFill size="lg" />}
               description={
                 destChainCfg
