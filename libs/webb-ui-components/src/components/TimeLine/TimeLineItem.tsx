@@ -108,7 +108,7 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
             {title}
           </Typography>
           <Typography variant="utility" className="inline-block capitalize">
-            {formatRelative(time, new Date()).replace('at', '-')}
+            {formatRelative(time, new Date())}
           </Typography>
         </div>
 
