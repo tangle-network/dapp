@@ -3,6 +3,7 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { PoolType } from '../PoolTypeChip/types';
 export interface ShieldedAssetType {
   address: string;
+  poolAddress: string;
   symbol: string;
   url: string | undefined;
   poolType: PoolType;

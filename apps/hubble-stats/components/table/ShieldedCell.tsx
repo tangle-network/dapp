@@ -1,28 +1,29 @@
 import { FC } from 'react';
+import Link from 'next/link';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import {
-  ShieldedAssetDark,
-  ShieldedAssetLight,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
+import { ExternalLinkLine } from '@webb-tools/icons';
 
 import { ShieldedCellProps } from './types';
 
-const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
+const ShieldedCell: FC<ShieldedCellProps> = ({
+  title,
+  address,
+  poolAddress,
+}) => {
   return (
     <div className="flex items-center gap-2">
-      <ShieldedAssetLight className="block dark:hidden" />
-      <ShieldedAssetDark className="hidden dark:block" />
-
       <div className="flex flex-col">
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-140 dark:text-mono-40"
-        >
-          {title}
-        </Typography>
+        <Link href={`/pool/${poolAddress}`}>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-140 dark:text-mono-40 hover:underline"
+          >
+            {title}
+          </Typography>
+        </Link>
+
         <div className="flex items-center gap-1">
           <Typography
             variant="body1"

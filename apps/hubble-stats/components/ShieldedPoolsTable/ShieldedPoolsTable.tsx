@@ -29,6 +29,7 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
       <ShieldedCell
         title={props.row.original.symbol}
         address={props.row.original.address}
+        poolAddress={props.row.original.address}
       />
     ),
   }),

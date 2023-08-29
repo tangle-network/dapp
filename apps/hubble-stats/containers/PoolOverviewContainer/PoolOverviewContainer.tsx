@@ -15,16 +15,8 @@ export default async function PoolOverviewContainer({
 }: {
   poolAddress: string;
 }) {
-  const {
-    name,
-    url,
-    type,
-    deposits24h,
-    depositsChangeRate,
-    tvl,
-    tvlChangeRate,
-    fees24h,
-  } = await getPoolOverviewData(poolAddress);
+  const { name, url, type, deposit24h, depositChangeRate, tvl, tvlChangeRate } =
+    await getPoolOverviewData(poolAddress);
 
   return (
     <div
@@ -64,9 +56,10 @@ export default async function PoolOverviewContainer({
               {shortenHex(poolAddress)}
             </Typography>
 
-            <a href={url} target="_blank" rel="noreferrer">
+            {/* TODO: update href later */}
+            {/* <a href={url} target="_blank" rel="noreferrer">
               <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-            </a>
+            </a> */}
           </div>
 
           {/* Type */}
@@ -79,23 +72,18 @@ export default async function PoolOverviewContainer({
         {/* 24h deposits + TVL + 24h fees */}
         <div className="flex">
           <PoolOverviewItem
-            title="24h deposits"
-            value={deposits24h}
-            changeRate={depositsChangeRate}
-            className="flex-[1]"
-          />
-          <PoolOverviewItem
             title="tvl"
             value={tvl}
             changeRate={tvlChangeRate}
-            prefix="$"
-            className="flex-[1] border-x border-mono-40 dark:border-mono-140"
+            suffix=" tTNT"
+            className="flex-[1]"
           />
           <PoolOverviewItem
-            title="24h fees"
-            value={fees24h}
-            prefix="$"
-            className="flex-[1]"
+            title="24h deposits"
+            suffix=" tTNT"
+            value={deposit24h}
+            changeRate={depositChangeRate}
+            className="flex-[1] border-l border-mono-40 dark:border-mono-140"
           />
         </div>
       </div>

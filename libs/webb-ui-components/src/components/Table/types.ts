@@ -48,6 +48,11 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
    * The table title to display in the pagination
    */
   title?: string;
+
+  /**
+   * Handle when the row is clicked
+   */
+  onRowClick?: () => void;
 }
 
 /**

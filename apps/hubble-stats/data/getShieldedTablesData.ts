@@ -80,6 +80,7 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
 
   return {
     address: vanchor.fungibleTokenAddress,
+    poolAddress: vAnchorAddress,
     symbol: vanchor.fungibleTokenSymbol,
     url: undefined,
     poolType: vanchor.poolType,

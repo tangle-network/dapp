@@ -10,18 +10,20 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
   title,
   value,
   changeRate,
-  prefix,
+  prefix = '',
+  suffix = '',
   className,
 }) => {
   return (
     <div className={cx('px-2', className)}>
       <div className="flex justify-center items-center gap-1">
         <Typography variant="h5" fw="black" className="text-center">
-          {value && (prefix ?? '')}
+          {typeof value === 'number' && prefix}
           {getRoundedAmountString(value, 1, {
             roundingFunction: Math.floor,
             totalLength: 0,
           })}
+          {typeof value === 'number' && suffix}
         </Typography>
         {changeRate && (
           <Typography
