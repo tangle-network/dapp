@@ -222,7 +222,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
+                      blockHash={hash}
                       externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
@@ -234,7 +234,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
+                      blockHash={hash}
                       externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-2">
@@ -254,7 +254,7 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
+                      blockHash={hash}
                       externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-4">

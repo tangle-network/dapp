@@ -76,7 +76,7 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
       isLoading,
       time,
       title,
-      txHash,
+      blockHash,
       ...props
     },
     ref
@@ -112,13 +112,13 @@ export const TimeLineItem = forwardRef<HTMLDivElement, TimeLineItemProps>(
           </Typography>
         </div>
 
-        {txHash && (
+        {blockHash && (
           <div className="flex items-center ml-8 space-x-1">
             <LabelWithValue
               labelVariant="body3"
-              label="tx hash:"
-              value={shortenHex(txHash, 3)}
-              valueTooltip={txHash}
+              label="block hash:"
+              value={shortenHex(blockHash, 3)}
+              valueTooltip={blockHash}
             />
             <a href={externalUrl} target="_blank" rel="noopener noreferrer">
               <ExternalLinkLine />
