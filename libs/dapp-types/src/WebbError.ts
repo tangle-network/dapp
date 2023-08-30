@@ -69,6 +69,8 @@ export enum WebbErrorCodes {
   SwitchChainFailed,
   // Failed to send the transaction to the relayer
   FailedToSendTx,
+  // Key pair not found
+  KeyPairNotFound,
 }
 
 // An Error message with error metadata
@@ -308,6 +310,12 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to send the transaction to the relayer',
+        };
+
+      case WebbErrorCodes.KeyPairNotFound:
+        return {
+          code,
+          message: 'Key pair not found',
         };
 
       default:

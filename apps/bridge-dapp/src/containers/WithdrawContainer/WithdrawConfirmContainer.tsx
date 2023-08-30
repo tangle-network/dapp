@@ -6,7 +6,6 @@ import { ChainType, Note } from '@webb-tools/sdk-core';
 import {
   WithdrawConfirm,
   getRoundedAmountString,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
@@ -54,6 +53,7 @@ export const WithdrawConfirmContainer = forwardRef<
       sourceTypedChainId,
       targetTypedChainId,
       unwrapCurrency: { value: unwrapCurrency } = {},
+      onClose,
       ...props
     },
     ref
@@ -66,15 +66,11 @@ export const WithdrawConfirmContainer = forwardRef<
       removeNoteFromNoteManager,
     } = useVAnchor();
 
-    const { setMainComponent } = useWebbUI();
-
     const { activeApi, apiConfig, txQueue } = useWebContext();
 
-    const { api: txQueueApi, txPayloads } = txQueue;
+    const { api: txQueueApi, txPayloads, currentTxId } = txQueue;
 
-    const [txId, setTxId] = useState('');
-
-    const stage = useLatestTransactionStage(txId);
+    const stage = useLatestTransactionStage(currentTxId);
 
     const progressValue = useTransactionProgressValue(stage);
 
@@ -153,7 +149,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
       if (withdrawTxInProgress) {
         txQueueApi.startNewTransaction();
-        setMainComponent(undefined);
+        onClose?.();
         return;
       }
 
@@ -162,6 +158,7 @@ export const WithdrawConfirmContainer = forwardRef<
       const note: Note = availableNotes[0];
       const {
         sourceChainId: sourceTypedChainId,
+        sourceIdentifyingData,
         targetChainId: destTypedChainId,
         denomination,
         tokenSymbol,
@@ -196,13 +193,12 @@ export const WithdrawConfirmContainer = forwardRef<
         token: tokenSymbol,
         tokenURI,
         providerType: activeApi.type,
+        address: sourceIdentifyingData,
+        recipient,
       });
-
-      setTxId(tx.id);
+      txQueueApi.registerTransaction(tx);
 
       try {
-        txQueueApi.registerTransaction(tx);
-
         if (changeNote) {
           await addNoteToNoteManager(changeNote);
         }
@@ -268,39 +264,20 @@ export const WithdrawConfirmContainer = forwardRef<
 
         captureSentryException(error, 'transactionType', 'withdraw');
       } finally {
-        setMainComponent(undefined);
         onResetState?.();
       }
-    }, [
-      availableNotes,
-      vAnchorApi,
-      activeApi,
-      withdrawTxInProgress,
-      changeNote,
-      downloadNote,
-      unwrapCurrency,
-      apiConfig,
-      amountAfterFee,
-      txQueueApi,
-      setMainComponent,
-      refundAmount,
-      changeUtxo,
-      recipient,
-      fee,
-      activeRelayer,
-      addNoteToNoteManager,
-      removeNoteFromNoteManager,
-      onResetState,
-    ]);
+    }, [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, downloadNote, fee, onClose, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]); // prettier-ignore
 
     const txStatusMessage = useMemo(() => {
-      if (!txId) {
+      if (!currentTxId) {
         return '';
       }
 
-      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
+      const txPayload = txPayloads.find(
+        (txPayload) => txPayload.id === currentTxId
+      );
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
-    }, [txId, txPayloads]);
+    }, [currentTxId, txPayloads]);
 
     const formattedFee = useMemo(() => {
       const feeInEthers = formatEther(fee);
@@ -340,6 +317,7 @@ export const WithdrawConfirmContainer = forwardRef<
     return (
       <WithdrawConfirm
         {...props}
+        className="min-h-[var(--card-height)]"
         ref={ref}
         title={cardTitle}
         sourceChain={{
@@ -377,7 +355,6 @@ export const WithdrawConfirmContainer = forwardRef<
         remainingAmount={remainingAmount}
         feeInfo={feeInfo}
         fee={formattedFee}
-        onClose={() => setMainComponent(undefined)}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
         progress={progressValue}

@@ -1,5 +1,6 @@
 import { HTMLMotionProps, motion } from 'framer-motion';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const SlideAnimation: FC<HTMLMotionProps<'div'>> = ({ children, ...props }) => {
   return (
@@ -9,6 +10,7 @@ const SlideAnimation: FC<HTMLMotionProps<'div'>> = ({ children, ...props }) => {
       exit={{ y: -100, opacity: 0 }}
       transition={{ duration: 0.25 }}
       {...props}
+      className={twMerge('w-full max-w-xl', props.className)}
     >
       {children}
     </motion.div>

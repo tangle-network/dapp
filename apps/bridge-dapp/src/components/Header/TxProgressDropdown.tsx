@@ -54,6 +54,15 @@ const TxProgressDropdown = () => {
     };
   }, [currentTx]);
 
+  // Sort the latest tx to the top
+  const sortedTxQueue = useMemo(
+    () =>
+      txQueue
+        .slice()
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
+    [txQueue]
+  );
+
   if (!txQueue.length) {
     return null;
   }
@@ -66,7 +75,7 @@ const TxProgressDropdown = () => {
 
       <DropdownPortal>
         <DropdownBody className="mt-4 max-h-80 w-[32rem] overflow-scroll overflow-x-hidden">
-          {txQueue.map((tx) => {
+          {sortedTxQueue.map((tx) => {
             let srcAccountType: TxInfo['accountType'] | undefined = undefined;
             let destAccountType: TxInfo['accountType'] | undefined = undefined;
 
