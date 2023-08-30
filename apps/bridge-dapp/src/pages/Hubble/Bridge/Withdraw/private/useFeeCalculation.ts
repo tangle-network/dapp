@@ -47,13 +47,13 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
 
   const fungibleCfg = useMemo(() => {
     if (poolId) {
-      return apiConfig.currencies[+poolId];
+      return apiConfig.currencies[parseInt(poolId)];
     }
   }, [apiConfig.currencies, poolId]);
 
   const destChainCfg = useMemo(() => {
     if (destChainId) {
-      return apiConfig.chains[+destChainId];
+      return apiConfig.chains[parseInt(destChainId)];
     }
   }, [apiConfig.chains, destChainId]);
 

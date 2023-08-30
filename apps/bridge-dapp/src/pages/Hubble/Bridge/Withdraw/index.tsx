@@ -1,7 +1,5 @@
 import { Transition } from '@headlessui/react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import {
   AccountCircleLineIcon,
   ArrowRight,
@@ -13,8 +11,6 @@ import {
   TokenIcon,
   WalletFillIcon,
 } from '@webb-tools/icons';
-import { NoteManager } from '@webb-tools/note-manager/note-manager';
-import { useNoteAccount, useVAnchor } from '@webb-tools/react-hooks';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
@@ -31,15 +27,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import cx from 'classnames';
-import {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import { formatEther, formatUnits, parseEther, parseUnits } from 'viem';
+import { formatEther, parseEther } from 'viem';
+import SlideAnimation from '../../../../components/SlideAnimation';
 import TxInfoItem from '../../../../components/TxInfoItem';
 import {
   BRIDGE_TABS,
@@ -52,16 +43,11 @@ import {
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
-import { useConnectWallet } from '../../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
 import useRelayerWithRoute from './private/useRelayerWithRoute';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import utxoFromVAnchorNote from '@webb-tools/abstract-api-provider/utils/utxoFromVAnchorNote';
-import SlideAnimation from '../../../../components/SlideAnimation';
-import { WithdrawConfirmContainer } from '../../../../containers/WithdrawContainer/WithdrawConfirmContainer';
-import { Currency } from '@webb-tools/abstract-api-provider/currency/currency';
+import useWithdrawButtonProps from './private/useWithdrawButtonProps';
 
 const Withdraw = () => {
   const { pathname } = useLocation();
@@ -79,9 +65,6 @@ const Withdraw = () => {
     activeChain,
     loading,
     isConnecting,
-    activeWallet,
-    switchChain,
-    noteManager,
   } = useWebContext();
 
   const { notificationApi } = useWebbUI();
@@ -129,7 +112,9 @@ const Withdraw = () => {
       return;
     }
 
-    return fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId];
+    if (fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId]) {
+      return Number(formatEther(balances[fungibleCfg.id][destTypedChainId]));
+    }
   }, [balances, destTypedChainId, fungibleCfg]);
 
   const activeBridge = useMemo(() => {
@@ -286,7 +271,7 @@ const Withdraw = () => {
     }
 
     const remain = parseEther(amount) - totalFeeWei;
-    return +formatEther(remain);
+    return parseFloat(formatEther(remain));
   }, [activeRelayer, amount, totalFeeWei]);
 
   const remainingBalance = useMemo(() => {
@@ -311,283 +296,11 @@ const Withdraw = () => {
     return remain;
   }, [amount, balances, destTypedChainId, poolId]);
 
-  const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
-
-  const { isWalletConnected, toggleModal } = useConnectWallet();
-
-  const isValidAmount = useMemo(() => {
-    if (!fungibleCfg) {
-      return false;
-    }
-
-    if (typeof destTypedChainId !== 'number') {
-      return false;
-    }
-
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-      return false;
-    }
-
-    const balance = balances[fungibleCfg.id]?.[destTypedChainId];
-    if (typeof balance !== 'number') {
-      return false;
-    }
-
-    if (typeof receivingAmount !== 'number') {
-      return false;
-    }
-
-    return parsedAmount <= balance && receivingAmount >= 0;
-  }, [amount, balances, destTypedChainId, fungibleCfg, receivingAmount]);
-
-  const connCnt = useMemo(() => {
-    if (!activeApi) {
-      return 'Connect Wallet';
-    }
-
-    if (!hasNoteAccount) {
-      return 'Create Note Account';
-    }
-
-    const activeId = activeApi.typedChainidSubject.getValue();
-    if (activeId !== destTypedChainId) {
-      return 'Switch Chain';
-    }
-
-    return undefined;
-  }, [activeApi, destTypedChainId, hasNoteAccount]);
-
-  const inputCnt = useMemo(() => {
-    if (!destTypedChainId) {
-      return 'Select chain';
-    }
-
-    if (!fungibleCfg) {
-      return 'Select pool';
-    }
-
-    if (!wrappableCfg) {
-      return 'Select withdraw token';
-    }
-
-    if (!recipient) {
-      return 'Enter recipient';
-    }
-
-    if (hasRefund && !refundAmount) {
-      return 'Enter refund amount';
-    }
-
-    if (!isValidAmount) {
-      return 'Insufficient balance';
-    }
-  }, [destTypedChainId, fungibleCfg, hasRefund, isValidAmount, recipient, refundAmount, wrappableCfg]); // prettier-ignore
-
-  const btnText = useMemo(() => {
-    if (connCnt) {
-      return connCnt;
-    }
-
-    if (inputCnt) {
-      return inputCnt;
-    }
-
-    if (fungibleCfg && fungibleCfg.id !== wrappableCfg?.id) {
-      return 'Withdraw and Unwrap';
-    }
-
-    return 'Withdraw';
-  }, [connCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
-
-  const isDisabled = useMemo(() => {
-    if (!isWalletConnected || !hasNoteAccount) {
-      return false;
-    }
-
-    const allInputsFilled =
-      !!amount &&
-      !!fungibleCfg &&
-      !!wrappableCfg &&
-      !!recipient &&
-      (hasRefund ? !!refundAmount : true);
-
-    return !allInputsFilled || !isValidAmount;
-  }, [amount, fungibleCfg, hasNoteAccount, hasRefund, isValidAmount, isWalletConnected, recipient, refundAmount, wrappableCfg]); // prettier-ignore
-
-  const isLoading = useMemo(() => {
-    return loading || isConnecting;
-  }, [isConnecting, loading]);
-
-  const { api: vAnchorApi } = useVAnchor();
-
-  const [withdrawConfirmComponent, setWithdrawConfirmComponent] =
-    useState<React.ReactElement<
-      ComponentProps<typeof WithdrawConfirmContainer>,
-      typeof WithdrawConfirmContainer
-    > | null>(null);
-
-  const handleSwitchChain = useCallback(async () => {
-    const nextChain = chainsPopulated[Number(destTypedChainId)];
-    if (!nextChain) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain));
-      return;
-    }
-
-    const isNextChainActive = activeChain?.id === nextChain.id && activeChain?.chainType === nextChain.chainType;
-
-    if (!isWalletConnected || !isNextChainActive) {
-      if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-        await switchChain(nextChain, activeWallet);
-      } else {
-        toggleModal(true, nextChain);
-      }
-      return;
-    }
-
-    if (!hasNoteAccount) {
-      setOpenNoteAccountModal(true);
-    }
-  }, [activeChain?.chainType, activeChain?.id, activeWallet, destTypedChainId, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, switchChain, toggleModal]); // prettier-ignore
-
-  const handleWithdrawBtnClick = useCallback(async () => {
-    if (connCnt) {
-      return await handleSwitchChain();
-    }
-
-    // For type assertion
-    const _validAmount =
-      isValidAmount && !!amount && typeof receivingAmount === 'number';
-
-    const allInputsFilled =
-      !!destChainCfg && !!fungibleCfg && !!destTypedChainId && _validAmount;
-
-    const doesApiReady = !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
-
-    if (!allInputsFilled || !doesApiReady) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady));
-      return;
-    }
-
-    if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments));
-      return;
-    }
-
-    const anchorId = activeApi.state.activeBridge.targets[destTypedChainId]
-    if (!anchorId) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound));
-      return;
-    }
-
-    const resourceId = await vAnchorApi.getResourceId(
-      anchorId,
-      destChainCfg.id,
-      destChainCfg.chainType
-    );
-
-    const avaiNotes = (
-      noteManager.getNotesOfChain(resourceId.toString()) ?? []
-    ).filter(
-      (note) =>
-        note.note.tokenSymbol === fungibleCfg.symbol &&
-        !!fungibleCfg.addresses.get(+note.note.targetChainId)
-    );
-
-    const fungibleDecimals = fungibleCfg.decimals;
-    const amountFloat = parseFloat(amount);
-    const amountBig = parseUnits(amount, fungibleDecimals);
-
-    // Get the notes that will be spent for this withdraw
-    const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
-    if (!inputNotes) {
-      console.error(
-        WebbError.getErrorMessage(WebbErrorCodes.NoteParsingFailure)
-      );
-      return;
-    }
-
-    // Sum up the amount of the input notes to calculate the change amount
-    const totalAmountInput = inputNotes.reduce(
-      (acc, note) => acc + BigInt(note.note.amount),
-      ZERO_BIG_INT
-    );
-
-    const changeAmount = totalAmountInput - amountBig;
-    if (changeAmount < 0) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments));
-      return;
-    }
-
-    const keypair = noteManager.getKeypair();
-    if (!keypair.privkey) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.KeyPairNotFound));
-      return;
-    }
-
-    const changeNote =
-      changeAmount > 0
-        ? await noteManager.generateNote(
-            activeApi.backend,
-            destTypedChainId,
-            anchorId,
-            destTypedChainId,
-            anchorId,
-            fungibleCfg.symbol,
-            fungibleDecimals,
-            changeAmount
-          )
-        : undefined;
-
-    // Generate change utxo (or dummy utxo if the changeAmount is `0`)
-    const changeUtxo = changeNote
-      ? await utxoFromVAnchorNote(
-          changeNote.note,
-          changeNote.note.index ? +changeNote.note.index : 0
-        )
-      : await activeApi.generateUtxo({
-          curve: noteManager.defaultNoteGenInput.curve,
-          backend: activeApi.backend,
-          amount: changeAmount.toString(),
-          chainId: `${destTypedChainId}`,
-          keypair,
-          originChainId: `${destTypedChainId}`,
-          index: activeApi.state.defaultUtxoIndex.toString(),
-        });
-
-    setWithdrawConfirmComponent(
-      <WithdrawConfirmContainer
-        changeUtxo={changeUtxo}
-        changeNote={changeNote}
-        changeAmount={+formatUnits(changeAmount, fungibleDecimals)}
-        sourceTypedChainId={destTypedChainId}
-        targetTypedChainId={destTypedChainId}
-        availableNotes={inputNotes}
-        amount={amountFloat}
-        fee={typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT}
-        amountAfterFee={parseEther(`${receivingAmount}`)}
-        isRefund={!hasRefund}
-        fungibleCurrency={{
-          value: new Currency(fungibleCfg),
-        }}
-        unwrapCurrency={
-          wrappableCfg && wrappableCfg.id !== fungibleCfg.id
-            ? { value: new Currency(wrappableCfg) }
-            : undefined
-        }
-        refundAmount={parseEther(`${refundAmount}`)}
-        refundToken={destChainCfg.nativeCurrency.symbol}
-        recipient={recipient}
-        onResetState={() => {
-          setSearchParams({});
-          setWithdrawConfirmComponent(null)
-        }}
-        onClose={() => {
-          setWithdrawConfirmComponent(null)
-        }}
-      />
-    );
-  }, [activeApi, amount, connCnt, destChainCfg, destTypedChainId, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, noteManager, receivingAmount, recipient, refundAmount, setSearchParams, totalFeeWei, vAnchorApi, wrappableCfg]); // prettier-ignore
+  const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({
+    balances,
+    receivingAmount,
+    totalFeeWei,
+  });
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -792,7 +505,7 @@ const Withdraw = () => {
               isTotalLoading={isLoadingFee}
               totalFee={
                 typeof totalFeeWei === 'bigint'
-                  ? +formatEther(totalFeeWei)
+                  ? parseFloat(formatEther(totalFeeWei))
                   : undefined
               }
               totalFeeToken={
@@ -805,7 +518,7 @@ const Withdraw = () => {
                         name: 'Gas',
                         isLoading: isLoadingFee,
                         Icon: <GasStationFill />,
-                        value: +formatEther(gasFeeInfo),
+                        value: parseFloat(formatEther(gasFeeInfo)),
                         tokenSymbol: destChainCfg?.nativeCurrency.symbol,
                       } satisfies FeeItem)
                     : undefined,
@@ -824,15 +537,7 @@ const Withdraw = () => {
             />
           </div>
 
-          <Button
-            isLoading={isLoading}
-            loadingText="Connecting..."
-            isFullWidth
-            isDisabled={isDisabled}
-            onClick={handleWithdrawBtnClick}
-          >
-            {btnText}
-          </Button>
+          <Button loadingText="Connecting..." {...buttonProps} isFullWidth />
         </div>
       </div>
     </BridgeTabsContainer>

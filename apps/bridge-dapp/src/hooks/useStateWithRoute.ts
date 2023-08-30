@@ -36,6 +36,10 @@ const useStateWithRoute = (key: string) => {
     };
   }, [key, setSearchParams, state]);
 
+  useEffect(() => {
+    setState(initial);
+  }, [initial]);
+
   return [state, setState] as const;
 };
 

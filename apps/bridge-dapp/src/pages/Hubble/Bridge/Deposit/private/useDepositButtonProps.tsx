@@ -5,10 +5,12 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
 import {
   AMOUNT_KEY,
+  BRIDGE_PATH,
+  DEPOSIT_PATH,
   DEST_CHAIN_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
@@ -40,6 +42,7 @@ function useDepositButtonProps({
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [generatingNote, setGeneratingNote] = useState(false);
 
@@ -247,7 +250,7 @@ function useDepositButtonProps({
       <DepositConfirmContainer
         fungibleTokenId={poolIdNum}
         wrappableTokenId={tokenId ? Number(tokenId) : undefined}
-        amount={+formatEther(amountBig)}
+        amount={parseFloat(formatEther(amountBig))}
         sourceChain={{
           name: srcChain.name,
           type: srcChain.group
@@ -257,10 +260,16 @@ function useDepositButtonProps({
           type: destChain.group
         }}
         note={transactNote}
-        onResetState={() => setDepositConfirmComponent(null)}
+        onResetState={() => {
+          setDepositConfirmComponent(null)
+          navigate(`/${BRIDGE_PATH}/${DEPOSIT_PATH}`)
+        }}
+        onClose={() => {
+          setDepositConfirmComponent(null)
+        }}
       />
     )
-  }, [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, noteManager, poolId, srcTypedId, tokenId]); // prettier-ignore
+  }, [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, navigate, noteManager, poolId, srcTypedId, tokenId]); // prettier-ignore
 
   return {
     children,

@@ -18,6 +18,7 @@ import {
   TOKEN_KEY,
 } from '../../../constants';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import { formatEther } from 'viem';
 
 const SelectToken: FC<{ tokenType?: TokenType }> = ({
   tokenType = 'unshielded',
@@ -108,7 +109,9 @@ const SelectToken: FC<{ tokenType?: TokenType }> = ({
             }
           : currentTxType === 'withdraw' && destTypedChainId && tokenType === 'shielded'
           ? {
-              balance: balancesFromNotes[cfg.id]?.[destTypedChainId] ?? 0,
+              balance: balancesFromNotes[cfg.id]?.[destTypedChainId] ? Number(
+                formatEther(balancesFromNotes[cfg.id][destTypedChainId])
+              ) : 0,
             }
           : undefined;
 

@@ -68,9 +68,11 @@ export const WithdrawConfirmContainer = forwardRef<
 
     const { activeApi, apiConfig, txQueue } = useWebContext();
 
-    const { api: txQueueApi, txPayloads, currentTxId } = txQueue;
+    const { api: txQueueApi, txPayloads } = txQueue;
 
-    const stage = useLatestTransactionStage(currentTxId);
+    const [txId, setTxId] = useState('');
+
+    const stage = useLatestTransactionStage(txId);
 
     const progressValue = useTransactionProgressValue(stage);
 
@@ -149,7 +151,7 @@ export const WithdrawConfirmContainer = forwardRef<
 
       if (withdrawTxInProgress) {
         txQueueApi.startNewTransaction();
-        onClose?.();
+        onResetState?.();
         return;
       }
 
@@ -196,6 +198,7 @@ export const WithdrawConfirmContainer = forwardRef<
         address: sourceIdentifyingData,
         recipient,
       });
+      setTxId(tx.id)
       txQueueApi.registerTransaction(tx);
 
       try {
@@ -263,21 +266,17 @@ export const WithdrawConfirmContainer = forwardRef<
         tx.fail(errorMessage);
 
         captureSentryException(error, 'transactionType', 'withdraw');
-      } finally {
-        onResetState?.();
       }
-    }, [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, downloadNote, fee, onClose, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]); // prettier-ignore
+    }, [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, downloadNote, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]); // prettier-ignore
 
     const txStatusMessage = useMemo(() => {
-      if (!currentTxId) {
+      if (!txId) {
         return '';
       }
 
-      const txPayload = txPayloads.find(
-        (txPayload) => txPayload.id === currentTxId
-      );
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
-    }, [currentTxId, txPayloads]);
+    }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
       const feeInEthers = formatEther(fee);
@@ -365,6 +364,7 @@ export const WithdrawConfirmContainer = forwardRef<
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
         txStatusMessage={txStatusMessage}
+        onClose={onClose}
       />
     );
   }

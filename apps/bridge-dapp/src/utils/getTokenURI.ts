@@ -6,7 +6,7 @@ export const getTokenURI = (currency: CurrencyConfig, typedChainId: string) => {
 
   if (!explorerUrl) return '#';
 
-  const addr = currency.addresses.get(+typedChainId);
+  const addr = currency.addresses.get(parseInt(typedChainId));
 
   return new URL(`/address/${addr ?? ''}`, explorerUrl).toString();
 };

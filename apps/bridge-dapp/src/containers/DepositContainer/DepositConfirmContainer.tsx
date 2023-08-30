@@ -36,6 +36,7 @@ export const DepositConfirmContainer = forwardRef<
       fungibleTokenId,
       note,
       onResetState,
+      onClose,
       sourceChain,
       wrappableTokenId,
     },
@@ -49,11 +50,9 @@ export const DepositConfirmContainer = forwardRef<
       removeNoteFromNoteManager,
     } = useVAnchor();
 
-    const {
-      txQueue: { currentTxId },
-    } = useWebContext();
+    const [txId, setTxId] = useState('');
 
-    const stage = useLatestTransactionStage(currentTxId);
+    const stage = useLatestTransactionStage(txId);
 
     const progress = useTransactionProgressValue(stage);
 
@@ -165,6 +164,7 @@ export const DepositConfirmContainer = forwardRef<
         address: activeAccount?.address,
         recipient: targetIdentifyingData,
       });
+      setTxId(tx.id)
       txQueueApi.registerTransaction(tx);
 
       try {
@@ -226,8 +226,6 @@ export const DepositConfirmContainer = forwardRef<
         tx.fail(errorMessage);
 
         captureSentryException(error, 'transactionType', 'deposit');
-      } finally {
-        onResetState?.();
       }
     }, [api, activeApi, activeChain, depositTxInProgress, downloadNote, note, wrappableToken, apiConfig, activeAccount?.address, startNewTransaction, onResetState, txQueueApi, addNoteToNoteManager, fungibleTokenId, removeNoteFromNoteManager]); // prettier-ignore
 
@@ -236,15 +234,13 @@ export const DepositConfirmContainer = forwardRef<
     }, [stage, wrappingFlow]);
 
     const txStatusMessage = useMemo(() => {
-      if (!currentTxId) {
+      if (!txId) {
         return '';
       }
 
-      const txPayload = txPayloads.find(
-        (txPayload) => txPayload.id === currentTxId
-      );
+      const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
-    }, [currentTxId, txPayloads]);
+    }, [txId, txPayloads]);
 
     return (
       <DepositConfirm
@@ -275,7 +271,7 @@ export const DepositConfirmContainer = forwardRef<
         destChain={destChain}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
         txStatusMessage={txStatusMessage}
-        onClose={onResetState}
+        onClose={onClose}
       />
     );
   }

@@ -46,7 +46,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       return undefined;
     }
 
-    return apiConfig.chains[+typedChainId];
+    return apiConfig.chains[parseInt(typedChainId)];
   }, [apiConfig.chains, searchParams]);
 
   const destChain = useMemo(() => {
@@ -55,7 +55,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       return undefined;
     }
 
-    return apiConfig.chains[+typedChainId];
+    return apiConfig.chains[parseInt(typedChainId)];
   }, [apiConfig.chains, searchParams]);
 
   const chains = useMemo<Array<ChainType>>(() => {
@@ -75,7 +75,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       }
 
       return Object.keys(apiConfig.anchors[fungibleCfg.id])
-        .map((typedChainId) => apiConfig.chains[+typedChainId])
+        .map((typedChainId) => apiConfig.chains[parseInt(typedChainId)])
         .map(
           (c) =>
             ({

@@ -199,7 +199,7 @@ const TransactionMaxAmountButton = forwardRef<
         disabled={props.disabled ?? typeof maxAmount !== 'number'}
         onClick={
           typeof maxAmount === 'number'
-            ? () => onAmountChange?.(`${maxAmount}`)
+            ? () => onAmountChange?.(`${toFixed(maxAmount, 5)}`)
             : undefined
         }
         Icon={

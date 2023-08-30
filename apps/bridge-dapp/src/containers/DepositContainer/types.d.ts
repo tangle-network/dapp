@@ -49,4 +49,9 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * @returns void
    */
   onResetState?: () => void;
+
+  /**
+   * The callback to close the card
+   */
+  onClose?: () => void;
 }

@@ -50,6 +50,10 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
     };
   }, [amount, key, setSearchParams]);
 
+  useEffect(() => {
+    setAmount(amountStr);
+  }, [amountStr]);
+
   return [amount, onAmountChange] as const;
 };
 

@@ -14,7 +14,7 @@ import { useNoteAccount } from '../useNoteAccount';
  */
 type UseBalancesFromNotesReturnType = {
   [currencyId: number]: {
-    [typedChainId: number]: number;
+    [typedChainId: number]: bigint;
   };
 };
 
@@ -78,13 +78,8 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then create a new record with the amount of the note
             // on the current chain and return
             if (!existedRecord) {
-              const amount = +formatUnits(
-                BigInt(note.amount),
-                +note.denomination
-              );
-
               acc[fungible.id] = {
-                [typedChainId]: amount,
+                [typedChainId]: BigInt(note.amount),
               };
 
               return;
@@ -98,14 +93,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then add the amount of the note to the existed amount
             // and return
             if (existedAmount) {
-              const amount = +formatUnits(
-                BigInt(note.amount),
-                +note.denomination
-              );
-
               acc[fungible.id] = {
                 ...existedRecord,
-                [typedChainId]: existedAmount + amount,
+                [typedChainId]: existedAmount + BigInt(note.amount),
               };
 
               return;
@@ -114,14 +104,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // If the amount on the current chain does not exist
             // then create a new record with the amount of the note
             // on the current chain and return
-            const amount = +formatUnits(
-              BigInt(note.amount),
-              +note.denomination
-            );
-
             acc[fungible.id] = {
               ...existedRecord,
-              [typedChainId]: amount,
+              [typedChainId]: BigInt(note.amount),
             };
           });
         } catch (error) {
@@ -130,7 +115,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
 
         return acc;
       },
-      {} as Record<number, Record<number, number>>
+      {} as UseBalancesFromNotesReturnType
     );
   }, [allFungibles, allNotes, apiConfig]);
 };

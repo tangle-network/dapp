@@ -32,7 +32,7 @@ function useCurrenciesFromRoute(typedChainId?: number) {
       return undefined;
     }
 
-    return currencies[+fungibleId];
+    return currencies[parseInt(fungibleId)];
   }, [currencies, searhParams]);
 
   const wrappableCfg = useMemo(() => {
@@ -41,7 +41,7 @@ function useCurrenciesFromRoute(typedChainId?: number) {
       return undefined;
     }
 
-    return currencies[+tokenId];
+    return currencies[parseInt(tokenId)];
   }, [currencies, searhParams]);
 
   const fungibleCurrencies = useMemo(() => {

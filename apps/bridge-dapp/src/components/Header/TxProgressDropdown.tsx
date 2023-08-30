@@ -27,10 +27,23 @@ const TxProgressDropdown = () => {
   const [pillStatus, setPillStatus] =
     useState<ComponentProps<typeof LoadingPill>['status']>('loading');
 
-  const currentTx = useMemo(
-    () => txQueue.find((tx) => tx.id === currentTxId),
-    [currentTxId, txQueue]
+  // Sort the latest tx to the top
+  const sortedTxQueue = useMemo(
+    () =>
+      txQueue
+        .slice()
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
+    [txQueue]
   );
+
+  const currentTx = useMemo(() => {
+    if (typeof currentTxId === 'string') {
+      return sortedTxQueue.find((tx) => tx.id === currentTxId);
+    }
+
+    // Get the latest tx
+    return sortedTxQueue[0];
+  }, [currentTxId, sortedTxQueue]);
 
   useEffect(() => {
     if (!currentTx) {
@@ -53,15 +66,6 @@ const TxProgressDropdown = () => {
       sub.unsubscribe();
     };
   }, [currentTx]);
-
-  // Sort the latest tx to the top
-  const sortedTxQueue = useMemo(
-    () =>
-      txQueue
-        .slice()
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
-    [txQueue]
-  );
 
   if (!txQueue.length) {
     return null;
