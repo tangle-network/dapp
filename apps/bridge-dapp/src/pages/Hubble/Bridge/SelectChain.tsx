@@ -98,10 +98,10 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       return;
     }
 
-    if (currentTab === 'deposit') {
-      return srcChain?.tag;
+    if (!currentTab || currentTab === 'deposit') {
+      return srcChain?.tag ?? activeChain?.tag;
     }
-  }, [chainType, currentTab, srcChain?.tag]);
+  }, [activeChain?.tag, chainType, currentTab, srcChain?.tag]);
 
   const onlyCategory = useMemo<ChainListCardProps['onlyCategory']>(() => {
     if (chainType === 'source') {

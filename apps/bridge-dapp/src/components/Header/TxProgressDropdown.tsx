@@ -117,9 +117,7 @@ const TxProgressDropdown = () => {
                 }
               : {
                   onClick: () => {
-                    if (status !== 'completed') {
-                      api.dismissTransaction(tx.id);
-                    }
+                    api.dismissTransaction(tx.id);
                   },
                   children: 'Dismiss',
                 };

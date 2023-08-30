@@ -194,11 +194,11 @@ const SelectRelayer = () => {
     const info = await getInfo(customRelayer);
     if (!info) {
       setCustomerRelayerError(error);
-      return;
+    } else {
+      addRelayer(customRelayer);
+      setCustomerRelayerError('');
     }
 
-    addRelayer(customRelayer);
-    setCustomerRelayerError('');
     setCustomRelayerLoading(false);
   }, [addRelayer, customRelayer, getInfo, relayers]);
 

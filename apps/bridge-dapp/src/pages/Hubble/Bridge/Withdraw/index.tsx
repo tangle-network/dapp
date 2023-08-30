@@ -29,7 +29,7 @@ import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/ty
 import cx from 'classnames';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
-import { formatEther } from 'viem';
+import { formatEther, parseEther } from 'viem';
 import TxInfoItem from '../../../../components/TxInfoItem';
 import {
   BRIDGE_TABS,
@@ -46,6 +46,8 @@ import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersi
 import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
 import useRelayerWithRoute from './private/useRelayerWithRoute';
+import { useNoteAccount } from '@webb-tools/react-hooks';
+import { useConnectWallet } from '../../../../hooks/useConnectWallet';
 
 const Withdraw = () => {
   const { pathname } = useLocation();
@@ -245,12 +247,30 @@ const Withdraw = () => {
   }, [activeAccount, notificationApi, setRecipient]);
 
   const {
-    isLoading,
+    gasFeeInfo,
+    isLoading: isLoadingFee,
     refundAmountError,
     totalFeeToken,
     totalFeeWei,
-    gasFeeInfo,
   } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
+
+  const receivingAmount = useMemo(() => {
+    if (!amount) {
+      return;
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (!activeRelayer) {
+      return parsedAmount;
+    }
+
+    if (typeof totalFeeWei !== 'bigint') {
+      return;
+    }
+
+    const remain = parseEther(amount) - totalFeeWei;
+    return +formatEther(remain);
+  }, [activeRelayer, amount, totalFeeWei]);
 
   const remainingBalance = useMemo(() => {
     if (!poolId || !destTypedChainId) {
@@ -262,6 +282,10 @@ const Withdraw = () => {
       return;
     }
 
+    if (!amount) {
+      return balance;
+    }
+
     const remain = balance - parseFloat(amount);
     if (remain < 0) {
       return;
@@ -269,6 +293,110 @@ const Withdraw = () => {
 
     return remain;
   }, [amount, balances, destTypedChainId, poolId]);
+
+  const { hasNoteAccount } = useNoteAccount();
+
+  const { isWalletConnected } = useConnectWallet();
+
+  const isValidAmount = useMemo(() => {
+    if (!fungibleCfg) {
+      return false;
+    }
+
+    if (typeof destTypedChainId !== 'number') {
+      return false;
+    }
+
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount)) {
+      return false;
+    }
+
+    const balance = balances[fungibleCfg.id]?.[destTypedChainId];
+    if (typeof balance !== 'number') {
+      return false;
+    }
+
+    return parsedAmount <= balance;
+  }, [amount, balances, destTypedChainId, fungibleCfg]);
+
+  const connCnt = useMemo(() => {
+    if (!activeApi) {
+      return 'Connect Wallet';
+    }
+
+    if (!hasNoteAccount) {
+      return 'Create Note Account';
+    }
+
+    const activeId = activeApi.typedChainidSubject.getValue();
+    if (activeId !== destTypedChainId) {
+      return 'Switch Chain';
+    }
+
+    return undefined;
+  }, [activeApi, destTypedChainId, hasNoteAccount]);
+
+  const inputCnt = useMemo(() => {
+    if (!destTypedChainId) {
+      return 'Select chain';
+    }
+
+    if (!fungibleCfg) {
+      return 'Select pool';
+    }
+
+    if (!wrappableCfg) {
+      return 'Select withdraw token';
+    }
+
+    if (!recipient) {
+      return 'Enter recipient';
+    }
+
+    if (hasRefund && !refundAmount) {
+      return 'Enter refund amount';
+    }
+
+    if (!isValidAmount) {
+      return 'Insufficient balance';
+    }
+  }, [destTypedChainId, fungibleCfg, hasRefund, isValidAmount, recipient, refundAmount, wrappableCfg]); // prettier-ignore
+
+  const btnText = useMemo(() => {
+    if (connCnt) {
+      return connCnt;
+    }
+
+    if (inputCnt) {
+      return inputCnt;
+    }
+
+    if (fungibleCfg && fungibleCfg.id !== wrappableCfg?.id) {
+      return 'Withdraw and Unwrap';
+    }
+
+    return 'Withdraw';
+  }, [connCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
+
+  const isDisabled = useMemo(() => {
+    if (!isWalletConnected || !hasNoteAccount) {
+      return false;
+    }
+
+    const allInputsFilled =
+      !!amount &&
+      !!fungibleCfg &&
+      !!wrappableCfg &&
+      !!recipient &&
+      (hasRefund ? !!refundAmount : true);
+
+    return !allInputsFilled || !isValidAmount;
+  }, [amount, fungibleCfg, hasNoteAccount, hasRefund, isValidAmount, isWalletConnected, recipient, refundAmount, wrappableCfg]); // prettier-ignore
+
+  const isLoading = useMemo(() => {
+    return loading || isConnecting;
+  }, [isConnecting, loading]);
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
   if (lastPath && !BRIDGE_TABS.find((tab) => lastPath === tab)) {
@@ -462,7 +590,7 @@ const Withdraw = () => {
             />
 
             <FeeDetails
-              isTotalLoading={isLoading}
+              isTotalLoading={isLoadingFee}
               totalFee={
                 typeof totalFeeWei === 'bigint'
                   ? +formatEther(totalFeeWei)
@@ -476,7 +604,7 @@ const Withdraw = () => {
                   typeof gasFeeInfo === 'bigint'
                     ? ({
                         name: 'Gas',
-                        isLoading,
+                        isLoading: isLoadingFee,
                         Icon: <GasStationFill />,
                         value: +formatEther(gasFeeInfo),
                         tokenSymbol: destChainCfg?.nativeCurrency.symbol,
@@ -486,35 +614,25 @@ const Withdraw = () => {
               }
             />
 
-            <div className="space-y-2">
-              <TxInfoItem
-                leftContent={{
-                  title: 'Remaining Balance',
-                }}
-                rightIcon={<ShieldKeyholeFillIcon />}
-                rightText={
-                  typeof remainingBalance === 'number'
-                    ? `${remainingBalance.toString().slice(0, 10)} ${
-                        fungibleCfg?.symbol ?? ''
-                      }`.trim()
-                    : '--'
-                }
-              />
-              {refundAmount && hasRefund && (
-                <TxInfoItem
-                  leftContent={{
-                    title: 'Refund',
-                  }}
-                  rightIcon={<WalletFillIcon />}
-                  rightText={`${refundAmount} ${
-                    activeChain?.nativeCurrency.symbol ?? ''
-                  }`.trim()}
-                />
-              )}
-            </div>
+            <TxInfoContainer
+              hasRefund={!!hasRefund}
+              refundAmount={refundAmount}
+              refundToken={activeChain?.nativeCurrency.symbol}
+              remaining={remainingBalance}
+              remainingToken={fungibleCfg?.symbol}
+              receivingAmount={receivingAmount}
+              receivingToken={wrappableCfg?.symbol}
+            />
           </div>
 
-          <Button isFullWidth>Transfer</Button>
+          <Button
+            isLoading={isLoading}
+            loadingText="Connecting..."
+            isFullWidth
+            isDisabled={isDisabled}
+          >
+            {btnText}
+          </Button>
         </div>
       </div>
     </BridgeTabsContainer>
@@ -522,3 +640,61 @@ const Withdraw = () => {
 };
 
 export default Withdraw;
+
+const TxInfoContainer = ({
+  hasRefund,
+  receivingAmount,
+  receivingToken,
+  refundAmount,
+  refundToken,
+  remaining,
+  remainingToken,
+}: {
+  hasRefund?: boolean;
+  receivingAmount?: number;
+  receivingToken?: string;
+  refundAmount?: string;
+  refundToken?: string;
+  remaining?: number;
+  remainingToken?: string;
+}) => {
+  return (
+    <div className="space-y-2">
+      <TxInfoItem
+        leftContent={{
+          title: 'Receiving',
+        }}
+        rightIcon={<WalletFillIcon />}
+        rightText={
+          typeof receivingAmount === 'number'
+            ? `${receivingAmount.toString().slice(0, 10)} ${
+                receivingToken ?? ''
+              }`.trim()
+            : '--'
+        }
+      />
+      {refundAmount && hasRefund && (
+        <TxInfoItem
+          leftContent={{
+            title: 'Refund',
+          }}
+          rightIcon={<WalletFillIcon />}
+          rightText={`${refundAmount} ${refundToken ?? ''}`.trim()}
+        />
+      )}
+      <TxInfoItem
+        leftContent={{
+          title: 'Remaining Balance',
+        }}
+        rightIcon={<ShieldKeyholeFillIcon />}
+        rightText={
+          typeof remaining === 'number'
+            ? `${remaining.toString().slice(0, 10)} ${
+                remainingToken ?? ''
+              }`.trim()
+            : '--'
+        }
+      />
+    </div>
+  );
+};
