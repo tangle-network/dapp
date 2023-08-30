@@ -133,7 +133,7 @@ export const ProposalsTable = () => {
     () => ({
       offset: pagination.pageIndex * pageSize,
       perPage: pagination.pageSize,
-      orderBy: ProposalBatchesOrderBy.IdDesc,
+      orderBy: ProposalBatchesOrderBy.BlockNumberDesc,
       filter: null,
     }),
     [

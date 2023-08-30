@@ -34,6 +34,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
   title,
   titleInfo,
   totalAuthorities,
+  showDetails,
   ...props
 }) => {
   const randomAddress =
@@ -65,7 +66,7 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
       </div>
 
       {/* * Content */}
-      <TimeProgress now={instance} startTime={startTime} endTime={endTime} />
+      <TimeProgress startTime={startTime} endTime={endTime} />
 
       {/** Bottom */}
       <div className="flex items-center justify-between">
@@ -80,11 +81,23 @@ export const KeyStatusCard: React.FC<KeyStatusCardProps> = ({
                 />
               ))}
         </AvatarGroup>
-        <Link to={fullDetailUrl}>
-          <Button variant="link" as="span" size="sm">
+        {showDetails ? (
+          <Link to={fullDetailUrl}>
+            <Button variant="link" as="span" size="sm">
+              View Details
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            variant="link"
+            as="span"
+            size="sm"
+            isDisabled={true}
+            className="cursor-not-allowed"
+          >
             View Details
           </Button>
-        </Link>
+        )}
       </div>
     </Card>
   );
