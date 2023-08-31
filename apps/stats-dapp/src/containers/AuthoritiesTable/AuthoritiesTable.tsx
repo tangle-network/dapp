@@ -40,6 +40,7 @@ import { FC, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthoritiesTableProps } from './types';
 import { CountryIcon } from '../../components/CountryIcon/CountryIcon';
+import { Spinner } from '@webb-tools/icons';
 
 const columnHelper = createColumnHelper<AuthorityListItem>();
 
@@ -200,6 +201,10 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const tableIsLoading = useMemo(() => {
+    return totalItems === 0 ? true : false;
+  }, [totalItems]);
+
   return (
     <CardTable
       titleProps={{
@@ -266,12 +271,18 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
         </Filter>
       }
     >
-      <Table
-        tableProps={table as RTTable<unknown>}
-        isPaginated
-        totalRecords={totalItems}
-        title="DKG Authorities"
-      />
+      {!tableIsLoading ? (
+        <Table
+          tableProps={table as RTTable<unknown>}
+          isPaginated
+          totalRecords={totalItems}
+          title="DKG Authorities"
+        />
+      ) : (
+        <div className="h-[400px] flex items-center flex-col justify-center">
+          <Spinner size="xl" />
+        </div>
+      )}
     </CardTable>
   );
 };
