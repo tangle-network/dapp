@@ -12,11 +12,19 @@
         "root": "apps/hubble-stats",
         "outputPath": "dist/apps/hubble-stats"
       },
+      "dependsOn": ["fetch-on-chain-config", "^build"],
       "configurations": {
         "development": {
           "outputPath": "apps/hubble-stats"
         },
         "production": {}
+      }
+    },
+    "fetch-on-chain-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn fetch:onChainConfig",
+        "color": true
       }
     },
     "serve": {

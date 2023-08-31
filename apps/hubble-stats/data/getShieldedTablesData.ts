@@ -8,7 +8,6 @@ import {
   VANCHORS_MAP,
   VANCHOR_ADDRESSES,
 } from '../constants';
-
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
 

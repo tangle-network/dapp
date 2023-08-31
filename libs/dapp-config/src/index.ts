@@ -34,5 +34,6 @@ export * from './bridges';
 export * from './chains';
 export * from './constants';
 export * from './currencies';
+export * from './signature-bridges';
 export * from './utils';
 export * from './wallets';

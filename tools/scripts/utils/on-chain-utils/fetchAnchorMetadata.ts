@@ -1,3 +1,5 @@
+import assert from 'assert';
+import { getContract } from 'viem';
 import { ApiPromise } from '@polkadot/api';
 import { Option } from '@polkadot/types';
 import {
@@ -20,8 +22,8 @@ import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/src/utils/getViemClient';
-import assert from 'assert';
-import { getContract } from 'viem';
+import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
+import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
@@ -205,12 +207,21 @@ async function fetchEVMAnchorMetadata(
       };
     }, {} as Record<string, string>);
 
+  const { timestamp: creationTimestamp } = await client.getBlock({
+    blockNumber: BigInt(anchorDeploymentBlock[typedChainId][anchorAddress]),
+  });
+
+  const treasuryAddress = await fungibleContract.read.feeRecipient();
+
   return {
     address: anchorAddress,
     fungibleCurrency,
     wrappableCurrencies,
     isNativeAllowed,
     linkableAnchor,
+    signatureBridge: anchorSignatureBridge[typedChainId][anchorAddress],
+    treasuryAddress,
+    creationTimestamp: Number(creationTimestamp),
   };
 }
 

@@ -1,4 +1,7 @@
 import { randNumber, randEthereumAddress } from '@ngneat/falso';
+import fetchAnchorMetadata from '@webb-tools/web3-api-provider/src/fetchAnchorMetadata';
+
+import { VANCHORS_MAP } from '../constants';
 
 type PoolMetadataDataType = {
   name: string;
@@ -14,13 +17,14 @@ type PoolMetadataDataType = {
 export default async function getPoolMetadataData(
   poolAddress: string
 ): Promise<PoolMetadataDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
+  const vanchor = VANCHORS_MAP[poolAddress];
+
   return {
-    name: 'Webb Parachain',
-    symbol: 'webbPRC',
+    name: vanchor.fungibleTokenName,
+    symbol: vanchor.fungibleTokenSymbol,
     signatureBridge: randEthereumAddress(),
-    vAnchor: randEthereumAddress(),
-    fungibleToken: randEthereumAddress(),
+    vAnchor: poolAddress,
+    fungibleToken: vanchor.fungibleTokenAddress,
     treasuryAddress: randEthereumAddress(),
     wrappingFees: randNumber({ min: 1, max: 99 }),
     creationDate: '13 August 2023',
