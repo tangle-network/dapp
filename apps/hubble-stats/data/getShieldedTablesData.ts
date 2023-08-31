@@ -50,21 +50,16 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   let tvl: number | undefined;
   try {
     const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsAndByTokenDayInterval(
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsAndByToken(
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
-        tokenSymbol,
-        date24h,
-        dateNow
+        tokenSymbol
       );
 
     tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
-      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
-        (tvlTotalByChain, vAnchor) =>
-          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
-        0
+      return (
+        tvlTotal + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0))
       );
-      return tvlTotal + tvlVAnchorsByChain;
     }, 0);
   } catch {
     tvl = undefined;
@@ -117,11 +112,9 @@ const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
   let tvl: number | undefined;
   try {
     const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsDayInterval(
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
         ACTIVE_SUBGRAPH_URLS,
-        vAnchorAddress,
-        date24h,
-        dateNow
+        vAnchorAddress
       );
 
     tvl = tvlVAnchorsByChainsData?.reduce((tvl, vAnchorsByChain) => {
@@ -139,6 +132,7 @@ const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
     token: tokenNum,
     deposits24h,
     tvl,
+    currency: vanchor.fungibleTokenSymbol,
     typedChainIds: vanchor.supportedChains,
   };
 };

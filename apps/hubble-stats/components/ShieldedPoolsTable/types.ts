@@ -9,6 +9,7 @@ export interface ShieldedPoolType {
   token: number;
   deposits24h: number | undefined;
   tvl: number | undefined;
+  currency: string;
   typedChainIds: PresetTypedChainId[];
 }
 
