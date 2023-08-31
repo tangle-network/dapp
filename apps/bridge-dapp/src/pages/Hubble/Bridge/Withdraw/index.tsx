@@ -7,9 +7,7 @@ import {
   FileCopyLine,
   GasStationFill,
   SettingsFillIcon,
-  ShieldKeyholeFillIcon,
   TokenIcon,
-  WalletFillIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
@@ -31,7 +29,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
 import SlideAnimation from '../../../../components/SlideAnimation';
-import TxInfoItem from '../../../../components/TxInfoItem';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
@@ -43,6 +40,7 @@ import {
   TOKEN_KEY,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
@@ -130,76 +128,80 @@ const Withdraw = () => {
   }, [apiConfig.chains, destTypedChainId]);
 
   // Set default poolId and destTypedChainId on first render
-  useEffect(() => {
-    if (loading || isConnecting) {
-      return;
-    }
+  useEffect(
+    () => {
+      if (loading || isConnecting) {
+        return;
+      }
 
-    if (typeof destTypedChainId === 'number' && typeof poolId === 'number') {
-      return
-    }
+      if (typeof destTypedChainId === 'number' && typeof poolId === 'number') {
+        return;
+      }
 
-    const entries = Object.entries(balances);
-    if (entries.length > 0) {
-      // Find first pool & destTypedChainId from balances
-      const [currencyId, balanceRecord] = entries[0];
-      const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
+      const entries = Object.entries(balances);
+      if (entries.length > 0) {
+        // Find first pool & destTypedChainId from balances
+        const [currencyId, balanceRecord] = entries[0];
+        const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
 
-      if (currencyId && typedChainId) {
+        if (currencyId && typedChainId) {
+          setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+
+            if (typeof destTypedChainId !== 'number') {
+              params.set(DEST_CHAIN_KEY, typedChainId);
+            }
+
+            if (typeof poolId !== 'number') {
+              params.set(POOL_KEY, currencyId);
+            }
+
+            return params;
+          });
+          return;
+        }
+      }
+
+      if (activeChain && activeBridge) {
         setSearchParams((prev) => {
-          const params = new URLSearchParams(prev);
+          const next = new URLSearchParams(prev);
+
+          const typedChainId = calculateTypedChainId(
+            activeChain.chainType,
+            activeChain.id
+          );
 
           if (typeof destTypedChainId !== 'number') {
-            params.set(DEST_CHAIN_KEY, typedChainId);
+            next.set(DEST_CHAIN_KEY, `${typedChainId}`);
           }
 
           if (typeof poolId !== 'number') {
-            params.set(POOL_KEY, currencyId);
+            next.set(POOL_KEY, `${activeBridge.currency.id}`);
           }
 
-          return params;
+          return next;
         });
         return;
       }
-    }
 
-    if (activeChain && activeBridge) {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
+      // Here is when no balances and active connection
+      const [defaultPool, anchors] = Object.entries(apiConfig.anchors)[0];
+      const [defaultTypedId] = Object.entries(anchors)[0];
 
-        const typedChainId = calculateTypedChainId(
-          activeChain.chainType,
-          activeChain.id
-        );
+      const nextParams = new URLSearchParams();
+      if (typeof poolId !== 'number' && defaultPool) {
+        nextParams.set(POOL_KEY, defaultPool);
+      }
 
-        if (typeof destTypedChainId !== 'number') {
-          next.set(DEST_CHAIN_KEY, `${typedChainId}`);
-        }
+      if (typeof destTypedChainId !== 'number' && defaultTypedId) {
+        nextParams.set(DEST_CHAIN_KEY, defaultTypedId);
+      }
 
-        if (typeof poolId !== 'number') {
-          next.set(POOL_KEY, `${activeBridge.currency.id}`);
-        }
-
-        return next;
-      });
-      return;
-    }
-
-    // Here is when no balances and active connection
-    const [defaultPool, anchors] = Object.entries(apiConfig.anchors)[0]
-    const [defaultTypedId] = Object.entries(anchors)[0]
-
-    const nextParams = new URLSearchParams();
-    if (typeof poolId !== 'number' && defaultPool) {
-      nextParams.set(POOL_KEY, defaultPool);
-    }
-
-    if (typeof destTypedChainId !== 'number' && defaultTypedId) {
-      nextParams.set(DEST_CHAIN_KEY, defaultTypedId);
-    }
-
-    setSearchParams(nextParams);
-  }, [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]); // prettier-ignore
+      setSearchParams(nextParams);
+    },
+    // prettier-ignore
+    [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]
+  );
 
   // If no active relayer, reset refund states
   useEffect(() => {
@@ -548,63 +550,3 @@ const Withdraw = () => {
 };
 
 export default Withdraw;
-
-const TxInfoContainer = ({
-  hasRefund,
-  receivingAmount,
-  receivingToken,
-  refundAmount,
-  refundToken,
-  remaining,
-  remainingToken,
-}: {
-  hasRefund?: boolean;
-  receivingAmount?: number;
-  receivingToken?: string;
-  refundAmount?: string;
-  refundToken?: string;
-  remaining?: number;
-  remainingToken?: string;
-}) => {
-  return (
-    <div className="space-y-2">
-      <TxInfoItem
-        leftContent={{
-          title: 'Receiving',
-        }}
-        rightIcon={<WalletFillIcon />}
-        rightText={
-          typeof receivingAmount === 'number'
-            ? receivingAmount < 0
-              ? '< 0'
-              : `${receivingAmount.toString().slice(0, 10)} ${
-                  receivingToken ?? ''
-                }`.trim()
-            : '--'
-        }
-      />
-      {refundAmount && hasRefund && (
-        <TxInfoItem
-          leftContent={{
-            title: 'Refund',
-          }}
-          rightIcon={<WalletFillIcon />}
-          rightText={`${refundAmount} ${refundToken ?? ''}`.trim()}
-        />
-      )}
-      <TxInfoItem
-        leftContent={{
-          title: 'Remaining Balance',
-        }}
-        rightIcon={<ShieldKeyholeFillIcon />}
-        rightText={
-          typeof remaining === 'number'
-            ? `${remaining.toString().slice(0, 10)} ${
-                remainingToken ?? ''
-              }`.trim()
-            : '--'
-        }
-      />
-    </div>
-  );
-};

@@ -16,7 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { useState } from 'react';
-import BridgeTabsContainer from '../../../containers/BridgeTabsContainer';
+import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 
 const TOKEN_NAME = 'Matic';
 const CHAIN_NAME = 'Polygon Mumbai';

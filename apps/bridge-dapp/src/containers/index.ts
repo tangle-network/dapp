@@ -5,3 +5,4 @@ export * from './Layout';
 export * from './TransferContainer';
 export * from './UploadSpendNoteModal';
 export * from './WithdrawContainer';
+export { default as TxInfoContainer } from './TxInfoContainer';
