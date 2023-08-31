@@ -27,7 +27,7 @@ import { TransferConfirmContainer } from '../../../../../containers/TransferCont
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 
 export type UseTransferButtonPropsArgs = {
-  balances: ReturnType<typeof useBalancesFromNotes>;
+  balances: ReturnType<typeof useBalancesFromNotes>['balances'];
   receivingAmount?: number;
   isFeeLoading?: boolean;
   totalFeeWei?: bigint;

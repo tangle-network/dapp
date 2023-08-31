@@ -108,7 +108,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
       return;
     }
 
-    if (currentTab === 'deposit') {
+    if (currentTab === 'deposit' || currentTab === 'transfer') {
       return srcChain?.tag ?? destChain?.tag;
     }
 

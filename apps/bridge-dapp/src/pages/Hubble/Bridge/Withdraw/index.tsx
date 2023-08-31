@@ -54,7 +54,7 @@ const Withdraw = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const balances = useBalancesFromNotes();
+  const { balances, initialized } = useBalancesFromNotes();
 
   const {
     apiConfig,
@@ -130,7 +130,7 @@ const Withdraw = () => {
   // Set default poolId and destTypedChainId on first render
   useEffect(
     () => {
-      if (loading || isConnecting) {
+      if (loading || isConnecting || !initialized) {
         return;
       }
 
@@ -200,7 +200,7 @@ const Withdraw = () => {
       setSearchParams(nextParams);
     },
     // prettier-ignore
-    [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, isConnecting, loading, poolId, setSearchParams]
+    [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, initialized, isConnecting, loading, poolId, setSearchParams]
   );
 
   // If no active relayer, reset refund states

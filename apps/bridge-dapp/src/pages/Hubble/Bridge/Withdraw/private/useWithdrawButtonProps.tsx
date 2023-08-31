@@ -30,7 +30,7 @@ import { WithdrawConfirmContainer } from '../../../../../containers/WithdrawCont
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 
 export type UseWithdrawButtonPropsArgs = {
-  balances: ReturnType<typeof useBalancesFromNotes>;
+  balances: ReturnType<typeof useBalancesFromNotes>['balances'];
   receivingAmount?: number;
   isFeeLoading?: boolean;
   totalFeeWei?: bigint;

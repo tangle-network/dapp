@@ -5,17 +5,25 @@ import { CurrencyRole } from '@webb-tools/dapp-types';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import { useNoteAccount } from '../useNoteAccount';
+
+/**
+ * The type of the balances from notes
+ * Record of balances (currencyId => Record<typedChainId, balance>)
+ */
+export type BalancesFromNotesType = {
+  [currencyId: number]: {
+    [typedChainId: number]: bigint;
+  };
+};
 
 /**
  * The return type of the useBalancesFromNotes
  * Record of balances (currencyId => Record<typedChainId, balance>)
  */
 type UseBalancesFromNotesReturnType = {
-  [currencyId: number]: {
-    [typedChainId: number]: bigint;
-  };
+  balances: BalancesFromNotesType;
+  initialized: boolean;
 };
 
 /**
@@ -26,7 +34,7 @@ type UseBalancesFromNotesReturnType = {
 export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
   const { apiConfig } = useWebContext();
 
-  const { allNotes } = useNoteAccount();
+  const { allNotes, allNotesInitialized } = useNoteAccount();
 
   const allFungibles = useMemo(() => {
     return Currency.fromArray(
@@ -34,7 +42,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
     );
   }, [apiConfig]);
 
-  return useMemo(() => {
+  const balances = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(
       (acc, [resourceIdStr, notes]) => {
         try {
@@ -115,7 +123,12 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
 
         return acc;
       },
-      {} as UseBalancesFromNotesReturnType
+      {} as BalancesFromNotesType
     );
   }, [allFungibles, allNotes, apiConfig]);
+
+  return {
+    balances,
+    initialized: allNotesInitialized,
+  };
 };

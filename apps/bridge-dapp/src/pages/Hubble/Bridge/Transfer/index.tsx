@@ -49,7 +49,7 @@ const Transfer = () => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const balances = useBalancesFromNotes();
+  const { balances, initialized } = useBalancesFromNotes();
 
   const navigate = useNavigateWithPersistParams();
 
@@ -120,7 +120,7 @@ const Transfer = () => {
   // Set default poolId and destTypedChainId on first render
   useEffect(
     () => {
-      if (loading || isConnecting) {
+      if (loading || isConnecting || !initialized) {
         return;
       }
 
@@ -190,7 +190,7 @@ const Transfer = () => {
       setSearchParams(nextParams);
     },
     // prettier-ignore
-    [activeBridge, activeChain, apiConfig.anchors, balances, isConnecting, loading, poolId, setSearchParams, srcTypedChainId]
+    [activeBridge, activeChain, apiConfig.anchors, balances, initialized, isConnecting, loading, poolId, setSearchParams, srcTypedChainId]
   );
 
   const handleChainClick = useCallback(

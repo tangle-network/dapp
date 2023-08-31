@@ -5,6 +5,7 @@ import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { formatEther } from 'viem';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
@@ -13,7 +14,6 @@ import {
   SOURCE_CHAIN_KEY,
 } from '../../../constants';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
-import { formatEther } from 'viem';
 
 const SelectPool: FC = () => {
   const [searhParams] = useSearchParams();
@@ -64,7 +64,7 @@ const SelectPool: FC = () => {
     currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
   );
 
-  const balancesFromNotes = useBalancesFromNotes();
+  const { balances: balancesFromNotes } = useBalancesFromNotes();
 
   const selectTokens = useMemo<Array<AssetType>>(
     () => {
@@ -118,20 +118,29 @@ const SelectPool: FC = () => {
 
   const unavailableTokens = useMemo<Array<AssetType>>(
     () => {
-      if (currentTxType !== 'withdraw') {
+      if (currentTxType === 'deposit') {
         return [];
       }
 
-      // Get all currency ids that are not in the fungible currencies
-      const unavaiIds = Object.keys(balancesFromNotes).filter(
-        (id) => !fungibleCurrencies.find((cfg) => cfg.id.toString() === id)
-      );
-
-      return unavaiIds.reduce((acc, id) => {
+      return Object.keys(balancesFromNotes).reduce((acc, id) => {
         const balanceRec = balancesFromNotes[+id];
         const currency = apiConfig.currencies[+id];
 
         Object.entries(balanceRec).forEach(([typedId, balance]) => {
+          if (
+            currentTxType === 'withdraw' &&
+            typedId === destTypedChainId?.toString()
+          ) {
+            return;
+          }
+
+          if (
+            currentTxType === 'transfer' &&
+            typedId === srcTypedChainId?.toString()
+          ) {
+            return;
+          }
+
           const chainCfg = apiConfig.chains[+typedId];
           if (typeof balance === 'bigint') {
             acc.push({
@@ -150,7 +159,7 @@ const SelectPool: FC = () => {
       }, [] as Array<AssetType>);
     },
     // prettier-ignore
-    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, fungibleCurrencies]
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, destTypedChainId, srcTypedChainId]
   );
 
   const handleClose = useCallback(

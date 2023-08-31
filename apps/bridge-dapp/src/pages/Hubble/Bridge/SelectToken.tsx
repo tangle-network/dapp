@@ -82,16 +82,12 @@ const SelectToken: FC = () => {
       return fungible.addresses.get(destTypedChainId);
     }
 
-    if (typeof srcTypedChainId === 'number') {
-      return fungible.addresses.get(srcTypedChainId);
-    }
-
     return undefined;
-  }, [apiConfig.currencies, destTypedChainId, searhParams, srcTypedChainId]);
+  }, [apiConfig.currencies, destTypedChainId, searhParams]);
 
   const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
     allCurrencies,
-    srcTypedChainId,
+    currentTxType === 'withdraw' ? destTypedChainId : srcTypedChainId,
     currentTxType === 'withdraw' ? fungibleAddress : undefined
   );
 

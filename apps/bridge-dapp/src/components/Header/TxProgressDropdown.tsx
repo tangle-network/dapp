@@ -122,18 +122,12 @@ const TxProgressDropdown = () => {
                 ? getExplorerURI(blockExplorer, tx.txHash, 'tx', providerType)
                 : undefined;
 
-            const btnProps = completedTxUrl
-              ? {
-                  href: completedTxUrl.toString(),
-                  target: '_blank',
-                  children: 'View on explorer',
-                }
-              : {
-                  onClick: () => {
-                    api.dismissTransaction(tx.id);
-                  },
-                  children: 'Dismiss',
-                };
+            const btnProps = {
+              onClick: () => {
+                api.dismissTransaction(tx.id);
+              },
+              children: 'Dismiss',
+            };
 
             return (
               <TxProgressor.Root key={tx.id}>
@@ -170,6 +164,7 @@ const TxProgressDropdown = () => {
                     tx.currentStatus[1]
                   )}
                   actionProps={btnProps}
+                  externalUrl={completedTxUrl}
                 />
               </TxProgressor.Root>
             );
