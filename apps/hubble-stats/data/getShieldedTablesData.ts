@@ -1,6 +1,5 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
-import fetchAnchorMetadata from '@webb-tools/web3-api-provider/src/fetchAnchorMetadata';
 
 import { getValidDatesToQuery } from '../utils';
 import {
@@ -21,12 +20,6 @@ const [dateNow, date24h] = getValidDatesToQuery();
 const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
   const tokenSymbol = vanchor.fungibleTokenSymbol;
-
-  const { wrappableCurrencies } = await fetchAnchorMetadata(
-    vAnchorAddress,
-    // currently the data for Orbit chains are the same
-    vanchor.supportedChains[0]
-  );
 
   let deposits24h: number | undefined;
   try {
@@ -83,7 +76,7 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
     symbol: vanchor.fungibleTokenSymbol,
     url: undefined,
     poolType: vanchor.poolType,
-    composition: wrappableCurrencies.map((item) => item.symbol),
+    composition: vanchor.composition,
     deposits24h,
     tvl,
     typedChainIds: vanchor.supportedChains,
@@ -93,18 +86,10 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
 const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
 
-  const { wrappableCurrencies, isNativeAllowed } = await fetchAnchorMetadata(
-    vAnchorAddress,
-    // currently the data for Orbit chains are the same
-    vanchor.supportedChains[0]
-  );
-
   const tokenNum =
-    // filter zero address
-    wrappableCurrencies.filter((item) => BigInt(item.address) !== BigInt(0))
-      .length +
+    vanchor.composition.length +
     // check native token
-    (isNativeAllowed ? 1 : 0) +
+    (vanchor.isNativeAllowed ? 1 : 0) +
     // plus one for fungible token
     1;
 
