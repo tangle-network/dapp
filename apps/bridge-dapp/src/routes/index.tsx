@@ -25,6 +25,7 @@ import SelectRelayer from '../pages/Hubble/Bridge/SelectRelayer';
 import SelectToken from '../pages/Hubble/Bridge/SelectToken';
 import Transfer from '../pages/Hubble/Bridge/Transfer';
 import Withdraw from '../pages/Hubble/Bridge/Withdraw';
+import SelectPool from '../pages/Hubble/Bridge/SelectPool';
 
 const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));
@@ -66,6 +67,7 @@ const BridgeRoutes = () => {
                 </CSuspense>
               }
             >
+              {/** Deposit */}
               <Route path={DEPOSIT_PATH} element={<Deposit />}>
                 <Route
                   path={SELECT_SOURCE_CHAIN_PATH}
@@ -78,10 +80,12 @@ const BridgeRoutes = () => {
                 <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
                 <Route
                   path={SELECT_SHIELDED_POOL_PATH}
-                  element={<SelectToken tokenType="shielded" />}
+                  element={<SelectPool />}
                 />
               </Route>
+              {/** Transfer */}
               <Route path={TRANSFER_PATH} element={<Transfer />} />
+              {/** Withdraw */}
               <Route path={WITHDRAW_PATH} element={<Withdraw />}>
                 <Route
                   path={SELECT_DESTINATION_CHAIN_PATH}
@@ -89,7 +93,7 @@ const BridgeRoutes = () => {
                 />
                 <Route
                   path={SELECT_SHIELDED_POOL_PATH}
-                  element={<SelectToken tokenType="shielded" />}
+                  element={<SelectPool />}
                 />
                 <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
                 <Route path={SELECT_RELAYER_PATH} element={<SelectRelayer />} />

@@ -35,7 +35,7 @@ const Deposit = () => {
     wrappableCfg,
   } = useWatchSearchParams();
 
-  const balances = useCurrenciesBalances(allCurrencies, srcTypedChainId);
+  const { balances } = useCurrenciesBalances(allCurrencies, srcTypedChainId);
 
   const { depositConfirmComponent, ...depositBtnProps } = useDepositButtonProps(
     {

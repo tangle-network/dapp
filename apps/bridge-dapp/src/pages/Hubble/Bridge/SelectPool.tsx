@@ -1,8 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
-import { useCurrenciesBalances } from '@webb-tools/react-hooks';
+import { useBalancesFromNotes } from '@webb-tools/react-hooks';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
@@ -13,11 +11,11 @@ import {
   DEST_CHAIN_KEY,
   POOL_KEY,
   SOURCE_CHAIN_KEY,
-  TOKEN_KEY,
 } from '../../../constants';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import { formatEther } from 'viem';
 
-const SelectToken: FC = () => {
+const SelectPool: FC = () => {
   const [searhParams] = useSearchParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -62,91 +60,67 @@ const SelectToken: FC = () => {
     }
   }, [currentTxType, destChainCfg, srcChainCfg]);
 
-  const { allCurrencies, allCurrencyCfgs, wrappableCurrencies } =
-    useCurrenciesFromRoute(
-      currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
-    );
-
-  const fungibleAddress = useMemo(() => {
-    const poolId = searhParams.get(POOL_KEY);
-    if (!poolId) {
-      return;
-    }
-
-    const fungible = apiConfig.currencies[Number(poolId)];
-    if (!fungible) {
-      return;
-    }
-
-    if (typeof destTypedChainId === 'number') {
-      return fungible.addresses.get(destTypedChainId);
-    }
-
-    if (typeof srcTypedChainId === 'number') {
-      return fungible.addresses.get(srcTypedChainId);
-    }
-
-    return undefined;
-  }, [apiConfig.currencies, destTypedChainId, searhParams, srcTypedChainId]);
-
-  const { balances, isLoading: isBalancesLoading } = useCurrenciesBalances(
-    allCurrencies,
-    srcTypedChainId,
-    currentTxType === 'withdraw' ? fungibleAddress : undefined
+  const { fungibleCurrencies } = useCurrenciesFromRoute(
+    currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
   );
+
+  const balancesFromNotes = useBalancesFromNotes();
 
   const selectTokens = useMemo<Array<AssetType>>(
     () => {
-      const currencies =
-        currentTxType === 'deposit' ? wrappableCurrencies : allCurrencyCfgs;
-
-      return currencies.map((currencyCfg) => {
-        const addr =
-          typeof srcTypedChainId === 'number'
-            ? currencyCfg.addresses.get(srcTypedChainId)
-            : undefined;
-
-        let balanceProps: AssetType['assetBalanceProps'] = undefined;
-        let badgeProps: AssetType['assetBadgeProps'] = undefined;
+      return fungibleCurrencies.map((currencyCfg) => {
+        let addr: string | undefined = undefined;
+        let assetBalance: AssetType['assetBalanceProps'] = undefined;
+        let chainName: string | undefined = undefined;
 
         if (
-          !isBalancesLoading &&
-          currencyCfg.role !== CurrencyRole.Governable
+          currentTxType === 'deposit' &&
+          typeof srcTypedChainId === 'number'
         ) {
-          if (balances[currencyCfg.id]) {
-            balanceProps = {
-              balance: balances[currencyCfg.id],
+          addr = currencyCfg.addresses.get(srcTypedChainId);
+        } else if (
+          currentTxType === 'withdraw' &&
+          typeof destTypedChainId === 'number'
+        ) {
+          addr = currencyCfg.addresses.get(destTypedChainId);
+        }
+
+        // Display the pool note balance
+        if (
+          currentTxType === 'withdraw' &&
+          typeof destTypedChainId === 'number'
+        ) {
+          const balance = balancesFromNotes[currencyCfg.id]?.[destTypedChainId];
+          if (typeof balance === 'bigint') {
+            assetBalance = {
+              balance: +formatEther(balance),
             };
-          } else {
-            badgeProps = {
-              variant: 'warning',
-              children: 'No balance',
-            };
+            chainName = apiConfig.chains[destTypedChainId].name;
           }
         }
 
         return {
           name: currencyCfg.name,
           symbol: currencyCfg.symbol,
-          tokenType: 'unshielded',
+          tokenType: 'shielded',
           explorerUrl:
-            blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
-              ? new URL(`/address${addr}`, blockExplorer).toString()
+            blockExplorer && addr
+              ? new URL(`/address/${addr}`, blockExplorer).toString()
               : undefined,
-          assetBalanceProps: balanceProps,
-          assetBadgeProps: badgeProps,
+          assetBalanceProps: assetBalance,
+          chainName,
         } satisfies AssetType;
       });
     },
     // prettier-ignore
-    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId, wrappableCurrencies]
+    [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, destTypedChainId, fungibleCurrencies, srcTypedChainId]
   );
 
   const handleClose = useCallback(
     (selectedCfg?: CurrencyConfig) => {
       const params = new URLSearchParams(searhParams);
       if (selectedCfg) {
-        params.set(TOKEN_KEY, `${selectedCfg.id}`);
+        params.set(POOL_KEY, `${selectedCfg.id}`);
       }
 
       const path = pathname.split('/').slice(0, -1).join('/');
@@ -173,10 +147,10 @@ const SelectToken: FC = () => {
     <SlideAnimation>
       <TokenListCard
         className="h-[var(--card-height)]"
-        title="Select a token"
+        title={`Select pool to ${currentTxType}`}
         popularTokens={[]}
         selectTokens={selectTokens}
-        unavailableTokens={[]} // TODO: Add unavailable tokens
+        unavailableTokens={[]} // TODO: add unavailable tokens
         onChange={handleTokenChange}
         onClose={() => handleClose()}
         txnType={currentTxType}
@@ -185,4 +159,4 @@ const SelectToken: FC = () => {
   );
 };
 
-export default SelectToken;
+export default SelectPool;

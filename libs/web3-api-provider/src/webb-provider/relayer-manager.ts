@@ -171,6 +171,10 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
           tx?.cancelToken.abortSignal
         );
 
+        console.log(
+          `Got ${leaves.length} leaves from relayer ${relayers[i].endpoint}`
+        );
+
         const result = await this.validateRelayerLeaves(
           treeHeight,
           leaves,

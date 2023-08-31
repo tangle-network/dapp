@@ -102,7 +102,7 @@ export const DepositContainer = forwardRef<
       [fungibleCurrencies, wrappableCurrencies]
     );
 
-    const balances = useCurrenciesBalances(allTokens);
+    const { balances } = useCurrenciesBalances(allTokens);
 
     const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
