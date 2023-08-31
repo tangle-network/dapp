@@ -1,5 +1,7 @@
 function isScientificNotation(value: number): boolean {
-  return /\d+\.?\d*e[+-]*\d+/i.test(value.toString());
+  const stringValue = value.toString();
+  const scientificNotationRegex = /\d+\.?\d*e[+-]*\d+/i;
+  return scientificNotationRegex.test(stringValue);
 }
 
 export default isScientificNotation;
