@@ -3,10 +3,12 @@ import utxoFromVAnchorNote from '@webb-tools/abstract-api-provider/utils/utxoFro
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { CurrencyRole } from '@webb-tools/dapp-types/Currency';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { NoteManager } from '@webb-tools/note-manager/note-manager';
 import {
   useBalancesFromNotes,
+  useCurrencyBalance,
   useNoteAccount,
   useVAnchor,
 } from '@webb-tools/react-hooks';
@@ -93,9 +95,48 @@ function useWithdrawButtonProps({
     ];
   }, [apiConfig.chains, apiConfig.currencies, destTypedChainId, poolId, tokenId]); // prettier-ignore
 
+  const fungibleAddress = useMemo(() => {
+    if (typeof destTypedChainId !== 'number' || !fungibleCfg) {
+      return undefined;
+    }
+
+    return fungibleCfg.addresses.get(destTypedChainId);
+  }, [destTypedChainId, fungibleCfg]);
+
+  const liquidityPool = useCurrencyBalance(
+    wrappableCfg && wrappableCfg.role !== CurrencyRole.Governable
+      ? wrappableCfg.id
+      : undefined,
+    fungibleAddress,
+    destTypedChainId
+  );
+
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
   const { isWalletConnected, toggleModal } = useConnectWallet();
+
+  const isSucficientLiq = useMemo(() => {
+    if (!wrappableCfg) {
+      // No wrappable selected, no need to check
+      return true;
+    }
+
+    // Wrappable is the same as fungible, no unwrap
+    if (wrappableCfg.id === fungibleCfg?.id) {
+      return true;
+    }
+
+    // No amount, no need to check
+    if (!amount) {
+      return true;
+    }
+
+    if (!liquidityPool) {
+      return false;
+    }
+
+    return liquidityPool >= Number(amount);
+  }, [amount, fungibleCfg?.id, liquidityPool, wrappableCfg]);
 
   const isValidAmount = useMemo(() => {
     if (!fungibleCfg) {
@@ -155,31 +196,43 @@ function useWithdrawButtonProps({
     return undefined;
   }, [activeApi, destTypedChainId, hasNoteAccount]);
 
-  const inputCnt = useMemo(() => {
-    if (!destTypedChainId) {
-      return 'Select chain';
-    }
+  const inputCnt = useMemo(
+    () => {
+      if (!destTypedChainId) {
+        return 'Select chain';
+      }
 
-    if (!fungibleCfg) {
-      return 'Select pool';
-    }
+      if (!fungibleCfg) {
+        return 'Select pool';
+      }
 
-    if (!wrappableCfg) {
-      return 'Select withdraw token';
-    }
+      if (!amount) {
+        return 'Enter amount';
+      }
 
-    if (!recipient) {
-      return 'Enter recipient';
-    }
+      if (!wrappableCfg) {
+        return 'Select withdraw token';
+      }
 
-    if (hasRefund && !refundAmount) {
-      return 'Enter refund amount';
-    }
+      if (!recipient) {
+        return 'Enter recipient';
+      }
 
-    if (!isValidAmount) {
-      return 'Insufficient balance';
-    }
-  }, [destTypedChainId, fungibleCfg, hasRefund, isValidAmount, recipient, refundAmount, wrappableCfg]); // prettier-ignore
+      if (hasRefund && !refundAmount) {
+        return 'Enter refund amount';
+      }
+
+      if (!isSucficientLiq) {
+        return 'Insufficient liquidity';
+      }
+
+      if (!isValidAmount) {
+        return 'Insufficient balance';
+      }
+    },
+    // prettier-ignore
+    [amount, destTypedChainId, fungibleCfg, hasRefund, isSucficientLiq, isValidAmount, recipient, refundAmount, wrappableCfg]
+  );
 
   const btnText = useMemo(() => {
     if (inputCnt) {
@@ -197,29 +250,34 @@ function useWithdrawButtonProps({
     return 'Withdraw';
   }, [connCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
 
-  const isDisabled = useMemo(() => {
-    const allInputsFilled =
-      !!amount &&
-      !!fungibleCfg &&
-      !!wrappableCfg &&
-      !!recipient
+  const isDisabled = useMemo(
+    () => {
+      const allInputsFilled =
+        !!amount && !!fungibleCfg && !!wrappableCfg && !!recipient;
 
-    const userInputValid = allInputsFilled && isValidAmount && isValidRefund;
-    if (!userInputValid) {
-      return true;
-    }
+      const userInputValid =
+        allInputsFilled && isSucficientLiq && isValidAmount && isValidRefund;
+      if (!userInputValid) {
+        return true;
+      }
 
-    if (!isWalletConnected || !hasNoteAccount) {
+      if (!isWalletConnected || !hasNoteAccount) {
+        return false;
+      }
+
+      const isDestChainActive =
+        destChainCfg &&
+        destChainCfg.id === activeChain?.id &&
+        destChainCfg.chainType === activeChain?.chainType;
+      if (!activeChain || !isDestChainActive) {
+        return false;
+      }
+
       return false;
-    }
-
-    const isDestChainActive = destChainCfg && destChainCfg.id === activeChain?.id && destChainCfg.chainType === activeChain?.chainType;
-    if (!activeChain || !isDestChainActive ) {
-      return false;
-    }
-
-    return false;
-  }, [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isValidAmount, isValidRefund, isWalletConnected, recipient, wrappableCfg]); // prettier-ignore
+    },
+    // prettier-ignore
+    [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isSucficientLiq, isValidAmount, isValidRefund, isWalletConnected, recipient, wrappableCfg]
+  );
 
   const isLoading = useMemo(() => {
     return loading || isConnecting;
@@ -233,172 +291,201 @@ function useWithdrawButtonProps({
       typeof WithdrawConfirmContainer
     > | null>(null);
 
-  const handleSwitchChain = useCallback(async () => {
-    if (typeof destTypedChainId !== 'number') {
-      return;
-    }
-
-    const nextChain = chainsPopulated[destTypedChainId];
-    if (!nextChain) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain));
-      return;
-    }
-
-    const isNextChainActive = activeChain?.id === nextChain.id && activeChain?.chainType === nextChain.chainType;
-
-    if (!isWalletConnected || !isNextChainActive) {
-      if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
-        await switchChain(nextChain, activeWallet);
-      } else {
-        toggleModal(true, nextChain);
+  const handleSwitchChain = useCallback(
+    async () => {
+      if (typeof destTypedChainId !== 'number') {
+        return;
       }
-      return;
-    }
 
-    if (!hasNoteAccount) {
-      setOpenNoteAccountModal(true);
-    }
-  }, [activeChain?.chainType, activeChain?.id, activeWallet, destTypedChainId, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, switchChain, toggleModal]); // prettier-ignore
+      const nextChain = chainsPopulated[destTypedChainId];
+      if (!nextChain) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain)
+        );
+        return;
+      }
 
-  const handleWithdrawBtnClick = useCallback(async () => {
-    if (connCnt) {
-      return await handleSwitchChain();
-    }
+      const isNextChainActive =
+        activeChain?.id === nextChain.id &&
+        activeChain?.chainType === nextChain.chainType;
 
-    // For type assertion
-    const _validAmount =
-      isValidAmount && !!amount && typeof receivingAmount === 'number';
-
-    const allInputsFilled =
-      !!destChainCfg && !!fungibleCfg && !!destTypedChainId && !!recipient && _validAmount;
-
-    const doesApiReady = !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
-
-    if (!allInputsFilled || !doesApiReady) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady));
-      return;
-    }
-
-    if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments));
-      return;
-    }
-
-    const anchorId = activeApi.state.activeBridge.targets[destTypedChainId]
-    if (!anchorId) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound));
-      return;
-    }
-
-    const resourceId = await vAnchorApi.getResourceId(
-      anchorId,
-      destChainCfg.id,
-      destChainCfg.chainType
-    );
-
-    const avaiNotes = (
-      noteManager.getNotesOfChain(resourceId.toString()) ?? []
-    ).filter(
-      (note) =>
-        note.note.tokenSymbol === fungibleCfg.symbol &&
-        !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
-    );
-
-    const fungibleDecimals = fungibleCfg.decimals;
-    const amountFloat = parseFloat(amount);
-    const amountBig = parseUnits(amount, fungibleDecimals);
-
-    // Get the notes that will be spent for this withdraw
-    const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
-    if (!inputNotes) {
-      console.error(
-        WebbError.getErrorMessage(WebbErrorCodes.NoteParsingFailure)
-      );
-      return;
-    }
-
-    // Sum up the amount of the input notes to calculate the change amount
-    const totalAmountInput = inputNotes.reduce(
-      (acc, note) => acc + BigInt(note.note.amount),
-      ZERO_BIG_INT
-    );
-
-    const changeAmount = totalAmountInput - amountBig;
-    if (changeAmount < 0) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments));
-      return;
-    }
-
-    const keypair = noteManager.getKeypair();
-    if (!keypair.privkey) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.KeyPairNotFound));
-      return;
-    }
-
-    const changeNote =
-      changeAmount > 0
-        ? await noteManager.generateNote(
-            activeApi.backend,
-            destTypedChainId,
-            anchorId,
-            destTypedChainId,
-            anchorId,
-            fungibleCfg.symbol,
-            fungibleDecimals,
-            changeAmount
-          )
-        : undefined;
-
-    // Generate change utxo (or dummy utxo if the changeAmount is `0`)
-    const changeUtxo = changeNote
-      ? await utxoFromVAnchorNote(
-          changeNote.note,
-          changeNote.note.index ? parseInt(changeNote.note.index) : 0
-        )
-      : await activeApi.generateUtxo({
-          curve: noteManager.defaultNoteGenInput.curve,
-          backend: activeApi.backend,
-          amount: changeAmount.toString(),
-          chainId: `${destTypedChainId}`,
-          keypair,
-          originChainId: `${destTypedChainId}`,
-          index: activeApi.state.defaultUtxoIndex.toString(),
-        });
-
-    setWithdrawConfirmComponent(
-      <WithdrawConfirmContainer
-        changeUtxo={changeUtxo}
-        changeNote={changeNote}
-        changeAmount={parseFloat(formatUnits(changeAmount, fungibleDecimals))}
-        sourceTypedChainId={destTypedChainId}
-        targetTypedChainId={destTypedChainId}
-        availableNotes={inputNotes}
-        amount={amountFloat}
-        fee={typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT}
-        amountAfterFee={parseEther(`${receivingAmount}`)}
-        isRefund={!hasRefund}
-        fungibleCurrency={{
-          value: new Currency(fungibleCfg),
-        }}
-        unwrapCurrency={
-          wrappableCfg && wrappableCfg.id !== fungibleCfg.id
-            ? { value: new Currency(wrappableCfg) }
-            : undefined
+      if (!isWalletConnected || !isNextChainActive) {
+        if (activeWallet && nextChain.wallets.includes(activeWallet.id)) {
+          await switchChain(nextChain, activeWallet);
+        } else {
+          toggleModal(true, nextChain);
         }
-        refundAmount={hasRefund && refundAmount ? parseEther(`${refundAmount}`) : undefined}
-        refundToken={destChainCfg.nativeCurrency.symbol}
-        recipient={recipient}
-        onResetState={() => {
-          resetFeeInfo?.()
-          setWithdrawConfirmComponent(null)
-          navigate(`/${BRIDGE_PATH}/${WITHDRAW_PATH}`)
-        }}
-        onClose={() => {
-          setWithdrawConfirmComponent(null)
-        }}
-      />
-    );
-  }, [activeApi, amount, connCnt, destChainCfg, destTypedChainId, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, totalFeeWei, vAnchorApi, wrappableCfg]); // prettier-ignore
+        return;
+      }
+
+      if (!hasNoteAccount) {
+        setOpenNoteAccountModal(true);
+      }
+    },
+    // prettier-ignore
+    [activeChain?.chainType, activeChain?.id, activeWallet, destTypedChainId, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, switchChain, toggleModal]
+  );
+
+  const handleWithdrawBtnClick = useCallback(
+    async () => {
+      if (connCnt) {
+        return await handleSwitchChain();
+      }
+
+      // For type assertion
+      const _validAmount =
+        isValidAmount && !!amount && typeof receivingAmount === 'number';
+
+      const allInputsFilled =
+        !!destChainCfg &&
+        !!fungibleCfg &&
+        !!destTypedChainId &&
+        !!recipient &&
+        _validAmount;
+
+      const doesApiReady =
+        !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
+
+      if (!allInputsFilled || !doesApiReady) {
+        console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady));
+        return;
+      }
+
+      if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments)
+        );
+        return;
+      }
+
+      const anchorId = activeApi.state.activeBridge.targets[destTypedChainId];
+      if (!anchorId) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound)
+        );
+        return;
+      }
+
+      const resourceId = await vAnchorApi.getResourceId(
+        anchorId,
+        destChainCfg.id,
+        destChainCfg.chainType
+      );
+
+      const avaiNotes = (
+        noteManager.getNotesOfChain(resourceId.toString()) ?? []
+      ).filter(
+        (note) =>
+          note.note.tokenSymbol === fungibleCfg.symbol &&
+          !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
+      );
+
+      const fungibleDecimals = fungibleCfg.decimals;
+      const amountFloat = parseFloat(amount);
+      const amountBig = parseUnits(amount, fungibleDecimals);
+
+      // Get the notes that will be spent for this withdraw
+      const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
+      if (!inputNotes) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.NoteParsingFailure)
+        );
+        return;
+      }
+
+      // Sum up the amount of the input notes to calculate the change amount
+      const totalAmountInput = inputNotes.reduce(
+        (acc, note) => acc + BigInt(note.note.amount),
+        ZERO_BIG_INT
+      );
+
+      const changeAmount = totalAmountInput - amountBig;
+      if (changeAmount < 0) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments)
+        );
+        return;
+      }
+
+      const keypair = noteManager.getKeypair();
+      if (!keypair.privkey) {
+        console.error(
+          WebbError.getErrorMessage(WebbErrorCodes.KeyPairNotFound)
+        );
+        return;
+      }
+
+      const changeNote =
+        changeAmount > 0
+          ? await noteManager.generateNote(
+              activeApi.backend,
+              destTypedChainId,
+              anchorId,
+              destTypedChainId,
+              anchorId,
+              fungibleCfg.symbol,
+              fungibleDecimals,
+              changeAmount
+            )
+          : undefined;
+
+      // Generate change utxo (or dummy utxo if the changeAmount is `0`)
+      const changeUtxo = changeNote
+        ? await utxoFromVAnchorNote(
+            changeNote.note,
+            changeNote.note.index ? parseInt(changeNote.note.index) : 0
+          )
+        : await activeApi.generateUtxo({
+            curve: noteManager.defaultNoteGenInput.curve,
+            backend: activeApi.backend,
+            amount: changeAmount.toString(),
+            chainId: `${destTypedChainId}`,
+            keypair,
+            originChainId: `${destTypedChainId}`,
+            index: activeApi.state.defaultUtxoIndex.toString(),
+          });
+
+      setWithdrawConfirmComponent(
+        <WithdrawConfirmContainer
+          changeUtxo={changeUtxo}
+          changeNote={changeNote}
+          changeAmount={parseFloat(formatUnits(changeAmount, fungibleDecimals))}
+          sourceTypedChainId={destTypedChainId}
+          targetTypedChainId={destTypedChainId}
+          availableNotes={inputNotes}
+          amount={amountFloat}
+          fee={typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT}
+          amountAfterFee={parseEther(`${receivingAmount}`)}
+          isRefund={!hasRefund}
+          fungibleCurrency={{
+            value: new Currency(fungibleCfg),
+          }}
+          unwrapCurrency={
+            wrappableCfg && wrappableCfg.id !== fungibleCfg.id
+              ? { value: new Currency(wrappableCfg) }
+              : undefined
+          }
+          refundAmount={
+            hasRefund && refundAmount
+              ? parseEther(`${refundAmount}`)
+              : undefined
+          }
+          refundToken={destChainCfg.nativeCurrency.symbol}
+          recipient={recipient}
+          onResetState={() => {
+            resetFeeInfo?.();
+            setWithdrawConfirmComponent(null);
+            navigate(`/${BRIDGE_PATH}/${WITHDRAW_PATH}`);
+          }}
+          onClose={() => {
+            setWithdrawConfirmComponent(null);
+          }}
+        />
+      );
+    },
+    // prettier-ignore
+    [activeApi, amount, connCnt, destChainCfg, destTypedChainId, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, totalFeeWei, vAnchorApi, wrappableCfg]
+  );
 
   return {
     isLoading,

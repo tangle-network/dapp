@@ -268,7 +268,7 @@ const Withdraw = () => {
     }
 
     if (typeof totalFeeWei !== 'bigint') {
-      return;
+      return parsedAmount;
     }
 
     const remain = parseEther(amount) - totalFeeWei;

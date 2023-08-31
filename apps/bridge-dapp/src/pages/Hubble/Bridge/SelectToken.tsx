@@ -120,7 +120,10 @@ const SelectToken: FC = () => {
           } else {
             badgeProps = {
               variant: 'warning',
-              children: 'No balance',
+              children:
+                currentTxType === 'withdraw'
+                  ? 'Insufficient liquidity'
+                  : 'No balance',
             };
           }
         }

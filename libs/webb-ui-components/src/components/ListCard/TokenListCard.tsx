@@ -101,27 +101,55 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         ) : null}
 
         {/** Select tokens */}
-        <div className="flex flex-col p-2 space-y-2 grow">
-          <Typography
-            variant="body4"
-            className="uppercase text-mono-200 dark:text-mono-0"
-            fw="bold"
-          >
-            Select token
-          </Typography>
+        <div className="flex flex-col px-2 space-y-2 grow">
+          <div>
+            <Typography
+              variant="body4"
+              className="uppercase text-mono-200 dark:text-mono-0"
+              fw="bold"
+            >
+              Select token
+            </Typography>
 
-          {/** Token list */}
-          <ScrollArea className="h-full">
-            <ul>
-              {filteredSelect.map((current, idx) => (
-                <TokenListItem
-                  key={`${current.name}-${idx}`}
-                  {...current}
-                  onClick={() => onItemChange(current)}
-                />
-              ))}
-            </ul>
-          </ScrollArea>
+            {/** Token list */}
+            <ScrollArea className="h-full py-2">
+              <ul>
+                {filteredSelect.map((current, idx) => (
+                  <TokenListItem
+                    key={`${current.name}-${idx}`}
+                    {...current}
+                    onClick={() => onItemChange(current)}
+                  />
+                ))}
+              </ul>
+            </ScrollArea>
+          </div>
+
+          {unavailableTokens.length ? (
+            <div>
+              <Typography
+                variant="body4"
+                className="uppercase text-mono-200 dark:text-mono-0"
+                fw="bold"
+              >
+                Unavailable token
+              </Typography>
+
+              {/** Token list */}
+              <ScrollArea className="h-full py-2">
+                <ul>
+                  {unavailableTokens.map((current, idx) => (
+                    <TokenListItem
+                      isDisabled
+                      key={`${current.name}-${idx}`}
+                      {...current}
+                      onClick={() => onItemChange(current)}
+                    />
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          ) : null}
         </div>
 
         {/* Alert Component */}

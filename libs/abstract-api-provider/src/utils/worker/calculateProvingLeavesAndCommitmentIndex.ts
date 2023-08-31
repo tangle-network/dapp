@@ -5,18 +5,6 @@ import { MerkleTree } from '@webb-tools/sdk-core';
 self.onmessage = async (e) => {
   const { levels, leaves, targetRoot, commitment } = e.data;
 
-  self.postMessage({
-    log: `leaves: ${leaves.length}`,
-  });
-  self.postMessage({
-    log: `targetRoot: ${targetRoot}`,
-  });
-
-  const mt = new MerkleTree(levels, leaves);
-  self.postMessage({
-    log: `mt root: ${mt.root().toHexString()}`,
-  });
-
   const tree = MerkleTree.createTreeWithRoot(levels, leaves, targetRoot);
 
   if (!tree) {

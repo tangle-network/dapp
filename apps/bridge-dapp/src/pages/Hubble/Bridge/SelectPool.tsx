@@ -116,6 +116,43 @@ const SelectPool: FC = () => {
     [apiConfig.chains, balancesFromNotes, blockExplorer, currentTxType, destTypedChainId, fungibleCurrencies, srcTypedChainId]
   );
 
+  const unavailableTokens = useMemo<Array<AssetType>>(
+    () => {
+      if (currentTxType !== 'withdraw') {
+        return [];
+      }
+
+      // Get all currency ids that are not in the fungible currencies
+      const unavaiIds = Object.keys(balancesFromNotes).filter(
+        (id) => !fungibleCurrencies.find((cfg) => cfg.id.toString() === id)
+      );
+
+      return unavaiIds.reduce((acc, id) => {
+        const balanceRec = balancesFromNotes[+id];
+        const currency = apiConfig.currencies[+id];
+
+        Object.entries(balanceRec).forEach(([typedId, balance]) => {
+          const chainCfg = apiConfig.chains[+typedId];
+          if (typeof balance === 'bigint') {
+            acc.push({
+              name: currency.name,
+              symbol: currency.symbol,
+              tokenType: 'shielded',
+              assetBalanceProps: {
+                balance: +formatEther(balance),
+              },
+              chainName: chainCfg.name,
+            } satisfies AssetType);
+          }
+        });
+
+        return acc;
+      }, [] as Array<AssetType>);
+    },
+    // prettier-ignore
+    [apiConfig.chains, apiConfig.currencies, balancesFromNotes, currentTxType, fungibleCurrencies]
+  );
+
   const handleClose = useCallback(
     (selectedCfg?: CurrencyConfig) => {
       const params = new URLSearchParams(searhParams);
@@ -150,7 +187,7 @@ const SelectPool: FC = () => {
         title={`Select pool to ${currentTxType}`}
         popularTokens={[]}
         selectTokens={selectTokens}
-        unavailableTokens={[]} // TODO: add unavailable tokens
+        unavailableTokens={unavailableTokens}
         onChange={handleTokenChange}
         onClose={() => handleClose()}
         txnType={currentTxType}
