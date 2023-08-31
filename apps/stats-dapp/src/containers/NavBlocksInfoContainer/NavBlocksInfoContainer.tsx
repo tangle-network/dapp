@@ -9,33 +9,28 @@ import {
   FileCodeLineIcon,
   GraphIcon,
   BlockIcon,
-  RefreshLineIcon,
   Spinner,
+  RefreshLineIcon,
 } from '@webb-tools/icons';
 import {
   Breadcrumbs,
   BreadcrumbsItem,
   Chip,
 } from '@webb-tools/webb-ui-components';
-import { PublicKey, useActiveKeys, useBlocks } from '../../provider/hooks';
+import { useBlocks } from '../../provider/hooks';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useStatsContext } from '../../provider/stats-provider';
 
 export const NavBoxInfoContainer = () => {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter((x) => x);
   const currentPage = useMemo(() => pathnames[0], [pathnames]);
   const subPage = useMemo(() => pathnames[1], [pathnames]);
+  const {
+    dkgDataFromPolkadotAPI: { currentSessionNumber },
+  } = useStatsContext();
 
-  const { val: keyData } = useActiveKeys();
   const { val: blocksData } = useBlocks();
-
-  const { currentKey } = useMemo<{
-    currentKey: PublicKey | null | undefined;
-  }>(() => {
-    return {
-      currentKey: keyData ? keyData[0] : null, // current key
-    };
-  }, [keyData]);
 
   const { bestBlock, finalizedBlock } = useMemo<{
     bestBlock: number | null | undefined;
@@ -127,8 +122,8 @@ export const NavBoxInfoContainer = () => {
             size="lg"
             className="fill-blue-90 dark:fill-blue-30"
           />{' '}
-          {currentKey ? (
-            `Session: ${Number(currentKey?.session).toLocaleString()}`
+          {currentSessionNumber ? (
+            `Session: ${currentSessionNumber}`
           ) : (
             <Spinner size="md" />
           )}

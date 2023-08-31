@@ -12,9 +12,9 @@ export interface TimeLineItemProps extends PropsOf<'div'>, IWebbComponentBase {
    */
   time: Date;
   /**
-   * The transaction hash
+   * The block hash
    */
-  txHash: string;
+  blockHash: string;
   /**
    * External url to the transaction
    */

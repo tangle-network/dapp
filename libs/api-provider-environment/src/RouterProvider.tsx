@@ -1,9 +1,16 @@
 import { AnimatePresence } from 'framer-motion';
-import { cloneElement, createElement, FC, ReactElement, useMemo } from 'react';
 import {
-  Navigate,
+  cloneElement,
+  createElement,
+  FC,
+  ReactElement,
+  useEffect,
+  useMemo,
+} from 'react';
+import {
   HashRouter as Router,
   useLocation,
+  useNavigate,
   useRoutes,
 } from 'react-router-dom';
 
@@ -31,6 +38,14 @@ export interface RouterConfigData {
   title?: string;
 }
 
+export const Redirect: FC<{ to: string }> = ({ to }) => {
+  const navigate = useNavigate();
+
+  useEffect(() => navigate(to), [navigate, to]);
+
+  return null;
+};
+
 interface Props {
   config: RouterConfigData[];
   setTitle?: StoreData['ui']['setTitle'];
@@ -44,7 +59,7 @@ const Routes: FC<Props> = ({ config }) => {
     inner.forEach((item) => {
       // process redirect
       if (item.redirectTo) {
-        item.element = <Navigate to={item.redirectTo} />;
+        item.element = <Redirect to={item.redirectTo} />;
       }
 
       if (item.title && item.element) {
@@ -57,7 +72,7 @@ const Routes: FC<Props> = ({ config }) => {
 
   const element = useRoutes(_config, { ...location, key: location.pathname });
 
-  return <AnimatePresence mode="wait">{element}</AnimatePresence>;
+  return <AnimatePresence mode="wait">{element};</AnimatePresence>;
 };
 
 export const RouterProvider: FC<Props> = ({ config }) => {
@@ -74,11 +89,7 @@ export const RouterProvider: FC<Props> = ({ config }) => {
 
       // process redirect
       if (item.redirectTo) {
-        item.element = <Navigate to={item.redirectTo} />;
-      }
-
-      if (item.title && item.element) {
-        item.element = createElement(withTitle(item.element, item.title));
+        item.element = <Redirect to={item.redirectTo} />;
       }
     });
 

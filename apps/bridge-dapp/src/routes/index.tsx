@@ -21,11 +21,11 @@ import {
 import { Layout } from '../containers';
 import Deposit from '../pages/Hubble/Bridge/Deposit';
 import SelectChain from '../pages/Hubble/Bridge/SelectChain';
+import SelectPool from '../pages/Hubble/Bridge/SelectPool';
 import SelectRelayer from '../pages/Hubble/Bridge/SelectRelayer';
 import SelectToken from '../pages/Hubble/Bridge/SelectToken';
 import Transfer from '../pages/Hubble/Bridge/Transfer';
 import Withdraw from '../pages/Hubble/Bridge/Withdraw';
-import SelectPool from '../pages/Hubble/Bridge/SelectPool';
 
 const Bridge = lazy(() => import('../pages/Hubble/Bridge'));
 const WrapAndUnwrap = lazy(() => import('../pages/Hubble/WrapAndUnwrap'));

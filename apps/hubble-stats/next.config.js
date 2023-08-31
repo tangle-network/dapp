@@ -22,6 +22,7 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     // it makes a WebAssembly modules async modules
     config.experiments = {
+      ...config.experiments,
       syncWebAssembly: true,
       asyncWebAssembly: true,
       layers: true,
@@ -35,8 +36,20 @@ const nextConfig = {
       config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
     }
 
+    // Hide Critical dependency warning from @graphql-mesh/* packages
+    // https://github.com/i18next/next-i18next/issues/1545#issuecomment-1005990731
+    // NOTE: This is a workaround as
+    // @graphql-mesh/config is not compatible to React or any other environment that uses bundler or something else
+    // Check this issue https://github.com/Urigo/graphql-mesh/issues/2256#issuecomment-852846813
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    };
+
     return config;
   },
+
+  transpilePackages: ['@webb-tools/vanchor-client'],
 };
 
 const plugins = [

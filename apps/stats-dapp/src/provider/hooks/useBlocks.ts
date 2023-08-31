@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useStatsContext } from '../../provider/stats-provider';
 import { Loadable } from '../../provider/hooks/types';
-import type { BlockNumber, Header } from '@polkadot/types/interfaces/runtime';
+import { useLatestIndexedBlockQuery } from '../../generated/graphql';
 
 /**
  *
@@ -13,6 +13,7 @@ import type { BlockNumber, Header } from '@polkadot/types/interfaces/runtime';
 type BlocksValue = {
   best: number;
   finalized: number;
+  latestIndexedBlock: number;
 };
 
 type LatestBlocksValue = Loadable<BlocksValue>;
@@ -22,6 +23,10 @@ type LatestBlocksValue = Loadable<BlocksValue>;
  * */
 export function useBlocks(): LatestBlocksValue {
   const { api } = useStatsContext();
+  const latestIndexBlockValue = useLatestIndexedBlockQuery({
+    pollInterval: 10000,
+    fetchPolicy: 'network-only',
+  });
 
   const [bestBlock, setBestBlock] = useState<number>();
   const [finalizedBlock, setFinalizedBlock] = useState<number>();
@@ -40,12 +45,13 @@ export function useBlocks(): LatestBlocksValue {
       val: {
         best: bestBlock,
         finalized: finalizedBlock,
+        latestIndexedBlock: latestIndexBlockValue.data?.blocks?.totalCount || 0,
       },
       isLoading: false,
       isFailed: false,
       error: undefined,
     };
-  }, [bestBlock, finalizedBlock]);
+  }, [bestBlock, finalizedBlock, latestIndexBlockValue]);
 
   useEffect(() => {
     if (api) {
