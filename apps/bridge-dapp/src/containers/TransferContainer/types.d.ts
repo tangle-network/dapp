@@ -93,6 +93,11 @@ export interface TransferConfirmContainerProps
   onResetState?: () => void;
 
   /**
+   * The callback to close the card
+   */
+  onClose?: () => void;
+
+  /**
    * The fee amount
    */
   feeInWei?: bigint | null;

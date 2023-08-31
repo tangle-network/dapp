@@ -83,8 +83,24 @@ const BridgeRoutes = () => {
                   element={<SelectPool />}
                 />
               </Route>
+
               {/** Transfer */}
-              <Route path={TRANSFER_PATH} element={<Transfer />} />
+              <Route path={TRANSFER_PATH} element={<Transfer />}>
+                <Route
+                  path={SELECT_SOURCE_CHAIN_PATH}
+                  element={<SelectChain chainType="source" />}
+                />
+                <Route
+                  path={SELECT_DESTINATION_CHAIN_PATH}
+                  element={<SelectChain chainType="dest" />}
+                />
+                <Route
+                  path={SELECT_SHIELDED_POOL_PATH}
+                  element={<SelectPool />}
+                />
+                <Route path={SELECT_RELAYER_PATH} element={<SelectRelayer />} />
+              </Route>
+
               {/** Withdraw */}
               <Route path={WITHDRAW_PATH} element={<Withdraw />}>
                 <Route
@@ -98,12 +114,16 @@ const BridgeRoutes = () => {
                 <Route path={SELECT_TOKEN_PATH} element={<SelectToken />} />
                 <Route path={SELECT_RELAYER_PATH} element={<SelectRelayer />} />
               </Route>
+
+              {/** Select connected chain */}
               <Route
                 path={SELECT_SOURCE_CHAIN_PATH}
                 element={<SelectChain chainType="source" />}
               />
+
               <Route path="*" element={<Navigate to={DEPOSIT_PATH} />} />
             </Route>
+
             <Route
               path={WRAP_UNWRAP_PATH}
               element={
@@ -112,6 +132,7 @@ const BridgeRoutes = () => {
                 </CSuspense>
               }
             />
+
             <Route
               path={NOTE_ACCOUNT_PATH}
               element={
@@ -120,6 +141,7 @@ const BridgeRoutes = () => {
                 </CSuspense>
               }
             />
+
             <Route
               path={ECOSYSTEM_PATH}
               element={
@@ -128,6 +150,7 @@ const BridgeRoutes = () => {
                 </CSuspense>
               }
             />
+
             <Route path="*" element={<Navigate to={BRIDGE_PATH} />} />
           </Route>
         </Routes>

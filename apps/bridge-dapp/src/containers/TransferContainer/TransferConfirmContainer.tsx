@@ -14,7 +14,6 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   TransferConfirm,
   getRoundedAmountString,
-  useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
@@ -50,6 +49,7 @@ export const TransferConfirmContainer = forwardRef<
       transferUtxo,
       inputNotes,
       onResetState,
+      onClose,
       feeInWei: feeAmount,
       feeToken,
       ...props
@@ -65,9 +65,8 @@ export const TransferConfirmContainer = forwardRef<
       removeNoteFromNoteManager,
     } = useVAnchor();
 
-    const { activeApi, activeChain, apiConfig, txQueue } = useWebContext();
-
-    const { setMainComponent } = useWebbUI();
+    const { activeApi, activeChain, apiConfig, txQueue, noteManager } =
+      useWebContext();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -97,160 +96,145 @@ export const TransferConfirmContainer = forwardRef<
     );
 
     // The callback for the transfer button
-    const handleTransferExecute = useCallback(async () => {
-      if (inputNotes.length === 0) {
-        logger.error('No input notes provided');
-        captureSentryException(
-          new Error('No input notes provided'),
-          'transactionType',
-          'transfer'
+    const handleTransferExecute = useCallback(
+      async () => {
+        if (inputNotes.length === 0) {
+          logger.error('No input notes provided');
+          captureSentryException(
+            new Error('No input notes provided'),
+            'transactionType',
+            'transfer'
+          );
+          return;
+        }
+
+        if (!vAnchorApi || !activeApi) {
+          logger.error('No vAnchor API provided');
+          captureSentryException(
+            new Error('No vAnchor API provided'),
+            'transactionType',
+            'transfer'
+          );
+          return;
+        }
+
+        if (isTransfering) {
+          txQueueApi.startNewTransaction();
+          onResetState?.();
+          return;
+        }
+
+        if (changeNote) {
+          const changeNoteStr = changeNote.serialize();
+          downloadString(
+            JSON.stringify(changeNoteStr),
+            changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
+          );
+        }
+
+        const note: Note = inputNotes[0];
+        const {
+          sourceChainId: sourceTypedChainId,
+          targetChainId: destTypedChainId,
+          tokenSymbol,
+        } = note.note;
+
+        const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+          tokenSymbol,
+          +destTypedChainId
         );
-        return;
-      }
+        if (!currency) {
+          console.error(`Currency not found for symbol ${tokenSymbol}`);
+          captureSentryException(
+            new Error(`Currency not found for symbol ${tokenSymbol}`),
+            'transactionType',
+            'transfer'
+          );
+          return;
+        }
+        const tokenURI = getTokenURI(currency, destTypedChainId);
 
-      if (!vAnchorApi || !activeApi) {
-        logger.error('No vAnchor API provided');
-        captureSentryException(
-          new Error('No vAnchor API provided'),
-          'transactionType',
-          'transfer'
-        );
-        return;
-      }
+        const tx = Transaction.new<NewNotesTxResult>('Transfer', {
+          amount,
+          tokens: [tokenSymbol, tokenSymbol],
+          wallets: {
+            src: +sourceTypedChainId,
+            dest: +destTypedChainId,
+          },
+          token: tokenSymbol,
+          tokenURI,
+          providerType: activeApi.type,
+          address: noteManager?.getKeypair().toString(),
+          recipient,
+        });
 
-      if (isTransfering) {
-        txQueueApi.startNewTransaction();
-        setMainComponent(undefined);
-        return;
-      }
-
-      if (changeNote) {
-        const changeNoteStr = changeNote.serialize();
-        downloadString(
-          JSON.stringify(changeNoteStr),
-          changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
-        );
-      }
-
-      const note: Note = inputNotes[0];
-      const {
-        sourceChainId: sourceTypedChainId,
-        targetChainId: destTypedChainId,
-        tokenSymbol,
-      } = note.note;
-
-      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
-        tokenSymbol,
-        +destTypedChainId
-      );
-      if (!currency) {
-        console.error(`Currency not found for symbol ${tokenSymbol}`);
-        captureSentryException(
-          new Error(`Currency not found for symbol ${tokenSymbol}`),
-          'transactionType',
-          'transfer'
-        );
-        return;
-      }
-      const tokenURI = getTokenURI(currency, destTypedChainId);
-
-      const tx = Transaction.new<NewNotesTxResult>('Transfer', {
-        amount,
-        tokens: [tokenSymbol, tokenSymbol],
-        wallets: {
-          src: +sourceTypedChainId,
-          dest: +destTypedChainId,
-        },
-        token: tokenSymbol,
-        tokenURI,
-        providerType: activeApi.type,
-      });
-
-      setTxId(tx.id);
-
-      try {
+        setTxId(tx.id);
         txQueueApi.registerTransaction(tx);
 
-        // Add the change note before sending the tx
-        if (changeNote) {
-          await addNoteToNoteManager(changeNote);
-        }
-
-        const txPayload: TransferTransactionPayloadType = {
-          notes: inputNotes,
-          changeUtxo,
-          transferUtxo,
-          feeAmount: feeAmount ?? ZERO_BIG_INT,
-        };
-
-        const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
-
-        const outputNotes = changeNote ? [changeNote] : [];
-
-        if (activeRelayer) {
-          await vAnchorApi.transactWithRelayer(
-            activeRelayer,
-            args,
-            outputNotes
-          );
-        } else {
-          const transactionHash = await vAnchorApi.transact(...args);
-
-          // Notification Success Transaction
-          tx.txHash = transactionHash;
-          tx.next(TransactionState.Done, {
-            txHash: transactionHash,
-            outputNotes,
-          });
-        }
-
-        // Cleanup NoteAccount state
-        for (const note of inputNotes) {
-          await removeNoteFromNoteManager(note);
-        }
-      } catch (error) {
-        console.error('Error occured while transfering', error);
-        changeNote && (await removeNoteFromNoteManager(changeNote));
-        tx.txHash = getTransactionHash(error);
-
-        let errorMessage = getErrorMessage(error);
-        if (isViemError(error)) {
-          errorMessage = error.shortMessage;
-
-          const revertError = error.walk(
-            (err) => err instanceof ContractFunctionRevertedError
-          );
-
-          if (revertError instanceof ContractFunctionRevertedError) {
-            errorMessage = revertError.reason ?? revertError.shortMessage;
+        try {
+          // Add the change note before sending the tx
+          if (changeNote) {
+            await addNoteToNoteManager(changeNote);
           }
+
+          const txPayload: TransferTransactionPayloadType = {
+            notes: inputNotes,
+            changeUtxo,
+            transferUtxo,
+            feeAmount: feeAmount ?? ZERO_BIG_INT,
+          };
+
+          const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
+
+          const outputNotes = changeNote ? [changeNote] : [];
+
+          if (activeRelayer) {
+            await vAnchorApi.transactWithRelayer(
+              activeRelayer,
+              args,
+              outputNotes
+            );
+          } else {
+            const transactionHash = await vAnchorApi.transact(...args);
+
+            // Notification Success Transaction
+            tx.txHash = transactionHash;
+            tx.next(TransactionState.Done, {
+              txHash: transactionHash,
+              outputNotes,
+            });
+          }
+
+          // Cleanup NoteAccount state
+          for (const note of inputNotes) {
+            await removeNoteFromNoteManager(note);
+          }
+        } catch (error) {
+          console.error('Error occured while transfering', error);
+          changeNote && (await removeNoteFromNoteManager(changeNote));
+          tx.txHash = getTransactionHash(error);
+
+          let errorMessage = getErrorMessage(error);
+          if (isViemError(error)) {
+            errorMessage = error.shortMessage;
+
+            const revertError = error.walk(
+              (err) => err instanceof ContractFunctionRevertedError
+            );
+
+            if (revertError instanceof ContractFunctionRevertedError) {
+              errorMessage = revertError.reason ?? revertError.shortMessage;
+            }
+          }
+
+          tx.fail(errorMessage);
+
+          captureSentryException(error, 'transactionType', 'transfer');
         }
-
-        tx.fail(errorMessage);
-
-        captureSentryException(error, 'transactionType', 'transfer');
-      } finally {
-        setMainComponent(undefined);
-        onResetState?.();
-      }
-    }, [
-      inputNotes,
-      vAnchorApi,
-      activeApi,
-      isTransfering,
-      changeNote,
-      apiConfig,
-      amount,
-      txQueueApi,
-      setMainComponent,
-      changeUtxo,
-      transferUtxo,
-      feeAmount,
-      activeRelayer,
-      addNoteToNoteManager,
-      removeNoteFromNoteManager,
-      onResetState,
-    ]);
+      },
+      // prettier-ignore
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+    );
 
     const txStatusMessage = useMemo(() => {
       if (!txId) {
@@ -276,6 +260,7 @@ export const TransferConfirmContainer = forwardRef<
     return (
       <TransferConfirm
         {...props}
+        className="min-h-[var(--card-height)]"
         ref={ref}
         title={isTransfering ? 'Transfer in Progress...' : undefined}
         amount={amount}
@@ -302,7 +287,7 @@ export const TransferConfirmContainer = forwardRef<
         }
         fee={formattedFee}
         feeToken={feeToken}
-        onClose={() => setMainComponent(undefined)}
+        onClose={onClose}
         checkboxProps={{
           children: 'I have copied the change note',
           isChecked,

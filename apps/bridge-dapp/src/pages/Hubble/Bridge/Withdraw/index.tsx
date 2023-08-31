@@ -252,7 +252,7 @@ const Withdraw = () => {
 
   const {
     gasFeeInfo,
-    isLoading: isLoadingFee,
+    isLoading: isFeeLoading,
     refundAmountError,
     totalFeeToken,
     totalFeeWei,
@@ -302,6 +302,7 @@ const Withdraw = () => {
   const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({
     balances,
     receivingAmount,
+    isFeeLoading,
     totalFeeWei,
     refundAmountError,
     resetFeeInfo: resetMaxFeeInfo,
@@ -507,7 +508,7 @@ const Withdraw = () => {
             />
 
             <FeeDetails
-              isTotalLoading={isLoadingFee}
+              isTotalLoading={isFeeLoading}
               totalFee={
                 typeof totalFeeWei === 'bigint'
                   ? parseFloat(formatEther(totalFeeWei))
@@ -521,7 +522,7 @@ const Withdraw = () => {
                   typeof gasFeeInfo === 'bigint'
                     ? ({
                         name: 'Gas',
-                        isLoading: isLoadingFee,
+                        isLoading: isFeeLoading,
                         Icon: <GasStationFill />,
                         value: parseFloat(formatEther(gasFeeInfo)),
                         tokenSymbol: destChainCfg?.nativeCurrency.symbol,
