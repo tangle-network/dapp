@@ -17,7 +17,7 @@ type VAnchorType = {
   supportedChains: PresetTypedChainId[];
 };
 
-const getAnchorMapFromOnChainData = (
+const getVAnchorMapFromOnChainData = (
   data: any,
   activeTypedChainIds: number[]
 ) => {
@@ -85,4 +85,4 @@ const getAnchorMapFromOnChainData = (
     }, {} as Record<string, VAnchorType>);
 };
 
-export default getAnchorMapFromOnChainData;
+export default getVAnchorMapFromOnChainData;
