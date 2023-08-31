@@ -23,7 +23,7 @@ import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
 export class PolkadotRelayerManager extends WebbRelayerManager<'polkadot'> {
   supportedPallet = 'VAnchorBn254';
 
-  async mapRelayerIntoActive(
+  mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
   ): OptionalActiveRelayer {
