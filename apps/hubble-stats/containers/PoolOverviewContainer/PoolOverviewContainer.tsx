@@ -1,11 +1,7 @@
 import cx from 'classnames';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Typography, CopyWithTooltip } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import {
-  ShieldedAssetLight,
-  ShieldedAssetDark,
-  ExternalLinkLine,
-} from '@webb-tools/icons';
+import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
 
 import { PoolTypeChip, PoolOverviewItem } from '../../components';
 import { getPoolOverviewData } from '../../data';
@@ -56,10 +52,11 @@ export default async function PoolOverviewContainer({
               {shortenHex(poolAddress)}
             </Typography>
 
-            {/* TODO: update href later */}
-            {/* <a href={url} target="_blank" rel="noreferrer">
-              <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-            </a> */}
+            <CopyWithTooltip
+              textToCopy={poolAddress}
+              isButton={false}
+              className="text-mono-140 dark:text-mono-40"
+            />
           </div>
 
           {/* Type */}

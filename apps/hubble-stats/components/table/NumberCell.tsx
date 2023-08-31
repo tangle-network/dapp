@@ -23,10 +23,6 @@ const NumberCell: FC<NumberCellProps> = ({
       {typeof value === 'number' && (prefix ?? '')}
       {isProtected
         ? '****'
-        : typeof value === 'number' && value < 10000
-        ? Number.isInteger(value)
-          ? value
-          : value.toFixed(2)
         : getRoundedAmountString(value, 2, {
             roundingFunction: Math.floor,
             totalLength: 0,

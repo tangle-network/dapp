@@ -209,7 +209,7 @@
     "@webb-tools/test-utils": "0.1.4-126",
     "@webb-tools/tokens": "1.0.8",
     "@webb-tools/utils": "0.5.39",
-    "@webb-tools/vanchor-client": "0.1.19",
+    "@webb-tools/vanchor-client": "0.1.20",
     "@webb-tools/wasm-utils": "0.1.4-126",
     "autoprefixer": "10.4.14",
     "babel-jest": "29.5.0",
