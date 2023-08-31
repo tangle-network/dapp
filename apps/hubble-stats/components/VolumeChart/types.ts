@@ -1,13 +1,11 @@
-export type AreaChartProps = {
+export type VolumeChartProps = {
   data: Array<{
     date: Date;
-    value: number;
+    deposit: number;
+    withdrawal: number;
   }>;
   setValue: (value: number | null) => void;
   setDate: (date: Date | null) => void;
   width?: number | string;
   height?: number | string;
-  showTooltip?: boolean;
-  tooltipLabel?: string;
-  tooltipValuePrefix?: string;
 };

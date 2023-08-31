@@ -46,6 +46,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 import { ECPairFactory } from 'ecpair';
 import * as tinysecp from 'tiny-secp256k1';
+import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -221,8 +222,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -233,8 +234,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-2">
                           {/* <KeyValueWithButton
@@ -253,8 +254,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools"
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                       extraContent={
                         <div className="flex items-center space-x-4">
                           <LabelWithValue
@@ -327,11 +328,13 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
             )}
           >
             <Typography variant="h4" fw="bold" className="block">
-              {keyDetail.numberOfValidators}
+              {keyDetail.numberOfValidators ?? '--'}
             </Typography>
-            <Typography variant="body1" fw="bold" className="block">
-              {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
-            </Typography>
+            {typeof keyDetail.numberOfValidators === 'number' && (
+              <Typography variant="body1" fw="bold" className="block">
+                {keyDetail.numberOfValidators > 1 ? 'Authorities' : 'Authority'}
+              </Typography>
+            )}
           </div>
         </div>
 

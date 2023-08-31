@@ -1,6 +1,6 @@
 export type ChartContainerProps = {
   heading?: string;
-  currentValue: number;
+  currentValue?: number;
   value: number | null;
   date: Date | null;
   filterType?: 'days' | 'tokensAndChains';
@@ -13,6 +13,9 @@ export type ChartContainerProps = {
 
   className?: string;
   children: React.ReactNode;
+
+  valuePrefix?: string;
+  valueSuffix?: string;
 };
 
 export type DaysFilterType = 'day' | 'week' | 'month';

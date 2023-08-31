@@ -60,7 +60,7 @@ export const ProposalDetail = () => {
   useEffect(() => {
     const proposalIds = localStorage.getItem('proposalIds');
     if (proposalIds) {
-      setProposalIds(JSON.parse(proposalIds));
+      setProposalIds(JSON.parse(proposalIds).reverse());
     }
   }, [proposalBatchId]);
 

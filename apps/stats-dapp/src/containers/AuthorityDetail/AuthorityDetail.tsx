@@ -10,7 +10,7 @@ import {
 import {
   AuthorityQuery,
   AuthorityStats,
-  DiscreteList,
+  AuthoritySet,
   KeyGenKeyListItem,
   useAuthority,
   useAuthorityAccount,
@@ -92,7 +92,7 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
       />
     ),
     cell: (props) => {
-      const authorities = props.getValue<DiscreteList>();
+      const authorities = props.getValue<AuthoritySet>();
       return (
         <AvatarGroup total={authorities.count}>
           {authorities.firstElements.map((au, idx) => (
@@ -107,7 +107,7 @@ const columns: ColumnDef<KeyGenKeyListItem, any>[] = [
   columnHelper.accessor('id', {
     header: '',
     cell: (props) => {
-      const id = props.row.original.publicKey;
+      const id = props.row.original.id;
       return (
         <Link to={`/keys/drawer/${id}`}>
           <Button variant="link" as="span" size="sm">
@@ -411,14 +411,14 @@ const DetailsView: FC<{
               </div>
 
               <Progress
-                value={stats.uptime}
+                value={parseFloat(stats.uptime.toFixed(2))}
                 size="lg"
                 prefixLabel="UPTIME "
                 suffixLabel="%"
               />
 
               <Progress
-                value={stats.reputation}
+                value={parseFloat(stats.reputation.toFixed(2))}
                 size="lg"
                 prefixLabel="REPUTATION "
                 suffixLabel="%"
