@@ -1,8 +1,8 @@
 export * from './CreateAccountModal';
 export * from './DeleteNotesModal';
-export * from './DepositContainer';
+export { default as DepositConfirmContainer } from './DepositConfirmContainer';
 export * from './Layout';
-export * from './TransferContainer';
-export * from './UploadSpendNoteModal';
-export * from './WithdrawContainer';
+export { default as TransferConfirmContainer } from './TransferConfirmContainer';
 export { default as TxInfoContainer } from './TxInfoContainer';
+export * from './UploadSpendNoteModal';
+export { default as WithdrawConfirmContainer } from './WithdrawConfirmContainer';

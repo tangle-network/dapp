@@ -29,7 +29,7 @@ import {
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
 
-export const WithdrawConfirmContainer = forwardRef<
+const WithdrawConfirmContainer = forwardRef<
   HTMLDivElement,
   WithdrawConfirmContainerProps
 >(
@@ -369,3 +369,5 @@ export const WithdrawConfirmContainer = forwardRef<
     );
   }
 );
+
+export default WithdrawConfirmContainer;

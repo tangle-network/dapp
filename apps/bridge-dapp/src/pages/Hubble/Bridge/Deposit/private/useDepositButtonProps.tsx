@@ -16,7 +16,7 @@ import {
   SOURCE_CHAIN_KEY,
   TOKEN_KEY,
 } from '../../../../../constants';
-import { DepositConfirmContainer } from '../../../../../containers/DepositContainer/DepositConfirmContainer';
+import DepositConfirmContainer from '../../../../../containers/DepositConfirmContainer/DepositConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 
 function useDepositButtonProps({

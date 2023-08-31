@@ -32,7 +32,7 @@ import { TransferConfirmContainerProps } from './types';
 
 const logger = LoggerService.get('TransferConfirmContainer');
 
-export const TransferConfirmContainer = forwardRef<
+const TransferConfirmContainer = forwardRef<
   HTMLDivElement,
   TransferConfirmContainerProps
 >(
@@ -303,3 +303,5 @@ export const TransferConfirmContainer = forwardRef<
     );
   }
 );
+
+export default TransferConfirmContainer;

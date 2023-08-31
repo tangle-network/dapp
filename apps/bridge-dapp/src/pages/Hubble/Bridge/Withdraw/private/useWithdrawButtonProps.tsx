@@ -26,7 +26,7 @@ import {
   TOKEN_KEY,
   WITHDRAW_PATH,
 } from '../../../../../constants';
-import { WithdrawConfirmContainer } from '../../../../../containers/WithdrawContainer/WithdrawConfirmContainer';
+import WithdrawConfirmContainer from '../../../../../containers/WithdrawConfirmContainer/WithdrawConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 
 export type UseWithdrawButtonPropsArgs = {

@@ -25,7 +25,7 @@ import {
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
 
-export const DepositConfirmContainer = forwardRef<
+const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
   DepositConfirmContainerProps
 >(
@@ -276,3 +276,5 @@ export const DepositConfirmContainer = forwardRef<
     );
   }
 );
+
+export default DepositConfirmContainer;

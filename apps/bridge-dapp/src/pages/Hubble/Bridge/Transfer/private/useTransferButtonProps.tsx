@@ -23,7 +23,7 @@ import {
   SOURCE_CHAIN_KEY,
   TRANSFER_PATH,
 } from '../../../../../constants';
-import { TransferConfirmContainer } from '../../../../../containers/TransferContainer/TransferConfirmContainer';
+import TransferConfirmContainer from '../../../../../containers/TransferConfirmContainer/TransferConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 
 export type UseTransferButtonPropsArgs = {

@@ -1,11 +1,6 @@
-import { ChainBase } from '@webb-tools/dapp-config';
-import { Note } from '@webb-tools/sdk-core';
+import { ChainGroup } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { Note } from '@webb-tools/sdk-core/note';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { BridgeTabContainerProps } from '../types';
-
-export interface DepositContainerProps
-  extends BridgeTabContainerProps,
-    PropsOf<'div'> {}
 
 export interface DepositConfirmContainerProps extends PropsOf<'div'> {
   /**
@@ -22,7 +17,7 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * The source chain
    */
   sourceChain?: {
-    type: ChainBase;
+    type: ChainGroup;
     name: string;
   };
 
@@ -30,7 +25,7 @@ export interface DepositConfirmContainerProps extends PropsOf<'div'> {
    * The destination chain
    */
   destChain?: {
-    type: ChainBase;
+    type: ChainGroup;
     name: string;
   };
 

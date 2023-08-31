@@ -1,6 +1,6 @@
 import { ActiveWebbRelayer, Currency } from '@webb-tools/abstract-api-provider';
 import { Chain } from '@webb-tools/dapp-config';
-import { Note } from '@webb-tools/sdk-core';
+import { Note, Utxo } from '@webb-tools/sdk-core';
 import { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { BridgeTabContainerProps } from '../types';
 
