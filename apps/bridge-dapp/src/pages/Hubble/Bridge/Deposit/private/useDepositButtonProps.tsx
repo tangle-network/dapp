@@ -113,16 +113,16 @@ function useDepositButtonProps({
   }, [amount, balance, validAmount]);
 
   const children = useMemo(() => {
-    if (conncnt) {
-      return conncnt;
-    }
-
     if (inputCnt) {
       return inputCnt;
     }
 
     if (amountCnt) {
       return amountCnt;
+    }
+
+    if (conncnt) {
+      return conncnt;
     }
 
     if (tokenId !== poolId) {

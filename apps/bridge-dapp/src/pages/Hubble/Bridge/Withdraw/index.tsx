@@ -254,6 +254,7 @@ const Withdraw = () => {
     refundAmountError,
     totalFeeToken,
     totalFeeWei,
+    resetMaxFeeInfo,
   } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
 
   const receivingAmount = useMemo(() => {
@@ -280,26 +281,28 @@ const Withdraw = () => {
     }
 
     const balance = balances[poolId]?.[destTypedChainId];
-    if (typeof balance !== 'number') {
+    if (typeof balance !== 'bigint') {
       return;
     }
 
     if (!amount) {
-      return balance;
+      return Number(formatEther(balance));
     }
 
-    const remain = balance - parseFloat(amount);
+    const remain = balance - parseEther(amount);
     if (remain < 0) {
       return;
     }
 
-    return remain;
+    return Number(formatEther(remain));
   }, [amount, balances, destTypedChainId, poolId]);
 
   const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({
     balances,
     receivingAmount,
     totalFeeWei,
+    refundAmountError,
+    resetFeeInfo: resetMaxFeeInfo,
   });
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);

@@ -31,12 +31,16 @@ export type UseWithdrawButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>;
   receivingAmount?: number;
   totalFeeWei?: bigint;
+  refundAmountError?: string;
+  resetFeeInfo?: () => void;
 };
 
 function useWithdrawButtonProps({
   balances,
   receivingAmount,
   totalFeeWei,
+  refundAmountError,
+  resetFeeInfo,
 }: UseWithdrawButtonPropsArgs) {
   const navigate = useNavigate();
 
@@ -118,6 +122,22 @@ function useWithdrawButtonProps({
     return parseEther(amount) <= balance && receivingAmount >= 0;
   }, [amount, balances, destTypedChainId, fungibleCfg, receivingAmount]);
 
+  const isValidRefund = useMemo(() => {
+    if (!hasRefund) {
+      return true;
+    }
+
+    if (!refundAmount) {
+      return false;
+    }
+
+    if (refundAmountError) {
+      return false;
+    }
+
+    return true;
+  }, [hasRefund, refundAmount, refundAmountError]);
+
   const connCnt = useMemo(() => {
     if (!activeApi) {
       return 'Connect Wallet';
@@ -162,12 +182,12 @@ function useWithdrawButtonProps({
   }, [destTypedChainId, fungibleCfg, hasRefund, isValidAmount, recipient, refundAmount, wrappableCfg]); // prettier-ignore
 
   const btnText = useMemo(() => {
-    if (connCnt) {
-      return connCnt;
-    }
-
     if (inputCnt) {
       return inputCnt;
+    }
+
+    if (connCnt) {
+      return connCnt;
     }
 
     if (fungibleCfg && fungibleCfg.id !== wrappableCfg?.id) {
@@ -178,19 +198,28 @@ function useWithdrawButtonProps({
   }, [connCnt, fungibleCfg, inputCnt, wrappableCfg?.id]);
 
   const isDisabled = useMemo(() => {
-    if (!isWalletConnected || !hasNoteAccount) {
-      return false;
-    }
-
     const allInputsFilled =
       !!amount &&
       !!fungibleCfg &&
       !!wrappableCfg &&
-      !!recipient &&
-      (hasRefund ? !!refundAmount : true);
+      !!recipient
 
-    return !allInputsFilled || !isValidAmount;
-  }, [amount, fungibleCfg, hasNoteAccount, hasRefund, isValidAmount, isWalletConnected, recipient, refundAmount, wrappableCfg]); // prettier-ignore
+    const userInputValid = allInputsFilled && isValidAmount && isValidRefund;
+    if (!userInputValid) {
+      return true;
+    }
+
+    if (!isWalletConnected || !hasNoteAccount) {
+      return false;
+    }
+
+    const isDestChainActive = destChainCfg && destChainCfg.id === activeChain?.id && destChainCfg.chainType === activeChain?.chainType;
+    if (!activeChain || !isDestChainActive ) {
+      return false;
+    }
+
+    return false;
+  }, [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isValidAmount, isValidRefund, isWalletConnected, recipient, wrappableCfg]); // prettier-ignore
 
   const isLoading = useMemo(() => {
     return loading || isConnecting;
@@ -360,6 +389,7 @@ function useWithdrawButtonProps({
         refundToken={destChainCfg.nativeCurrency.symbol}
         recipient={recipient}
         onResetState={() => {
+          resetFeeInfo?.()
           setWithdrawConfirmComponent(null)
           navigate(`/${BRIDGE_PATH}/${WITHDRAW_PATH}`)
         }}
@@ -368,7 +398,7 @@ function useWithdrawButtonProps({
         }}
       />
     );
-  }, [activeApi, amount, connCnt, destChainCfg, destTypedChainId, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, totalFeeWei, vAnchorApi, wrappableCfg]); // prettier-ignore
+  }, [activeApi, amount, connCnt, destChainCfg, destTypedChainId, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, resetFeeInfo, totalFeeWei, vAnchorApi, wrappableCfg]); // prettier-ignore
 
   return {
     isLoading,

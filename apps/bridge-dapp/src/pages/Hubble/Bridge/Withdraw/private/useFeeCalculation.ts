@@ -66,7 +66,8 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
     [fungibleCfg?.id]
   );
 
-  const { isLoading, feeInfo, fetchFeeInfo } = useMaxFeeInfo(feeArgs);
+  const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =
+    useMaxFeeInfo(feeArgs);
 
   const gasFeeInfo = useMemo(() => {
     if (typeof feeInfo === 'bigint') {
@@ -159,5 +160,6 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
     refundAmountError,
     totalFeeToken,
     totalFeeWei,
+    resetMaxFeeInfo,
   };
 }
