@@ -201,10 +201,6 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const tableIsLoading = useMemo(() => {
-    return totalItems === 0 ? true : false;
-  }, [totalItems]);
-
   return (
     <CardTable
       titleProps={{
@@ -271,7 +267,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
         </Filter>
       }
     >
-      {!tableIsLoading ? (
+      {!authorities.isLoading ? (
         <Table
           tableProps={table as RTTable<unknown>}
           isPaginated
