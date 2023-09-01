@@ -239,6 +239,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   // Effect to subscribe to noteManager
   useEffect(() => {
     if (!noteManager) {
+      setAllNotesInitialized(true);
       return;
     }
 

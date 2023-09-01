@@ -123,7 +123,7 @@ function useTransferButtonProps({
 
     const balance = balances[fungibleCfg.id]?.[srcTypedChainId];
     if (typeof balance !== 'bigint') {
-      return false;
+      return true;
     }
 
     if (typeof receivingAmount !== 'number') {
@@ -197,7 +197,7 @@ function useTransferButtonProps({
         typeof destTypedChainId === 'number';
 
       const userInputValid = allInputsFilled && isValidAmount;
-      if (!userInputValid || typeof totalFeeWei !== 'bigint' || isFeeLoading) {
+      if (!userInputValid || isFeeLoading) {
         return true;
       }
 
@@ -217,7 +217,7 @@ function useTransferButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, isFeeLoading, isValidAmount, isWalletConnected, recipient, srcChain, totalFeeWei]
+    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, isFeeLoading, isValidAmount, isWalletConnected, recipient, srcChain]
   );
 
   const isLoading = useMemo(() => {

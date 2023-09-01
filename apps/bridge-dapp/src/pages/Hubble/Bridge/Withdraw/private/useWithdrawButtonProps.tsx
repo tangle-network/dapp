@@ -133,11 +133,17 @@ function useWithdrawButtonProps({
       return true;
     }
 
+    const amountFloat = Number(amount);
+
+    if (typeof liquidityPool !== 'number' && amountFloat > 0) {
+      return true;
+    }
+
     if (!liquidityPool) {
       return false;
     }
 
-    return liquidityPool >= Number(amount);
+    return liquidityPool >= amountFloat;
   }, [amount, fungibleCfg?.id, liquidityPool, wrappableCfg]);
 
   const isValidAmount = useMemo(() => {
@@ -153,8 +159,13 @@ function useWithdrawButtonProps({
       return false;
     }
 
+    const amountFloat = parseFloat(amount);
     const balance = balances[fungibleCfg.id]?.[destTypedChainId];
-    if (typeof balance !== 'bigint') {
+    if (typeof balance !== 'bigint' && amountFloat > 0) {
+      return true;
+    }
+
+    if (!balance || amountFloat <= 0) {
       return false;
     }
 
@@ -259,7 +270,8 @@ function useWithdrawButtonProps({
 
       const userInputValid =
         allInputsFilled && isSucficientLiq && isValidAmount && isValidRefund;
-      if (!userInputValid || typeof totalFeeWei !== 'bigint' || isFeeLoading) {
+
+      if (!userInputValid || isFeeLoading) {
         return true;
       }
 
@@ -278,7 +290,7 @@ function useWithdrawButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isFeeLoading, isSucficientLiq, isValidAmount, isValidRefund, isWalletConnected, recipient, totalFeeWei, wrappableCfg]
+    [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isFeeLoading, isSucficientLiq, isValidAmount, isValidRefund, isWalletConnected, recipient, wrappableCfg]
   );
 
   const isLoading = useMemo(() => {

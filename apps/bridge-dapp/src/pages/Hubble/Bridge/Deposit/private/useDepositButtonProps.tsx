@@ -63,7 +63,20 @@ function useDepositButtonProps({
   }, [searchParams]);
 
   const validAmount = useMemo(() => {
-    if (!balance || !amount) {
+    if (!amount) {
+      return false;
+    }
+
+    const amountFloat = parseFloat(amount);
+
+    // If balance is not a number, but amount is entered and > 0,
+    // it means user not connected to wallet but entered amount
+    // so we allow it
+    if (typeof balance !== 'number' && amountFloat > 0) {
+      return true;
+    }
+
+    if (!balance || amountFloat <= 0) {
       return false;
     }
 
@@ -99,10 +112,6 @@ function useDepositButtonProps({
   }, [activeApi, hasNoteAccount, srcTypedId]);
 
   const amountCnt = useMemo(() => {
-    if (typeof balance !== 'number') {
-      return 'Loading balance...';
-    }
-
     if (BigInt(amount) === ZERO_BIG_INT) {
       return 'Enter amount';
     }
@@ -110,7 +119,7 @@ function useDepositButtonProps({
     if (!validAmount) {
       return 'Insufficient balance';
     }
-  }, [amount, balance, validAmount]);
+  }, [amount, validAmount]);
 
   const children = useMemo(() => {
     if (inputCnt) {
@@ -133,15 +142,15 @@ function useDepositButtonProps({
   }, [amountCnt, conncnt, inputCnt, poolId, tokenId]);
 
   const isDisabled = useMemo(() => {
-    if (!isWalletConnected || !hasNoteAccount) {
-      return false;
-    }
-
     const allInputsFilled =
       !!amount && !!tokenId && !!poolId && !!srcTypedId && !!destTypedId;
 
-    return !allInputsFilled || !validAmount;
-  }, [amount, destTypedId, hasNoteAccount, isWalletConnected, poolId, srcTypedId, tokenId, validAmount]); // prettier-ignore
+    if (!allInputsFilled || !validAmount) {
+      return true;
+    }
+
+    return false;
+  }, [amount, destTypedId, poolId, srcTypedId, tokenId, validAmount]); // prettier-ignore
 
   const isLoading = useMemo(() => {
     return loading || isConnecting || generatingNote;
