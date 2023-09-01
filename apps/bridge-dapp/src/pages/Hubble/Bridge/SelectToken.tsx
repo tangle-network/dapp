@@ -193,7 +193,7 @@ const getBadgeProps = (
 ) =>
   !isLoading &&
   !balances[currencyCfg.id] &&
-  currencyCfg.role !== CurrencyRole.Governable
+  (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
     ? {
         variant: 'warning' as const,
         children:
