@@ -12,10 +12,7 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
-import {
-  useLatestTransactionStage,
-  useTransactionProgressValue,
-} from '../../hooks';
+import { useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getCardTitle,
@@ -51,10 +48,9 @@ const DepositConfirmContainer = forwardRef<
     } = useVAnchor();
 
     const [txId, setTxId] = useState('');
+    const [totalStep, setTotalStep] = useState<number | undefined>();
 
     const stage = useLatestTransactionStage(txId);
-
-    const progress = useTransactionProgressValue(stage);
 
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
@@ -165,6 +161,7 @@ const DepositConfirmContainer = forwardRef<
         recipient: targetIdentifyingData,
       });
       setTxId(tx.id)
+      setTotalStep(tx.totalSteps)
       txQueueApi.registerTransaction(tx);
 
       try {
@@ -233,13 +230,18 @@ const DepositConfirmContainer = forwardRef<
       return getCardTitle(stage, wrappingFlow).trim();
     }, [stage, wrappingFlow]);
 
-    const txStatusMessage = useMemo(() => {
+    const [txStatusMessage, currentStep] = useMemo(() => {
       if (!txId) {
-        return '';
+        return ['', undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+      const message = txPayload
+        ? txPayload.txStatus.message?.replace('...', '')
+        : '';
+
+      const step = txPayload?.currentStep;
+      return [message, step];
     }, [txId, txPayloads]);
 
     return (
@@ -248,7 +250,6 @@ const DepositConfirmContainer = forwardRef<
         title={cardTitle}
         ref={ref}
         note={note.note.serialize()}
-        progress={progress}
         actionBtnProps={{
           isDisabled: depositTxInProgress ? false : !checked,
           children: depositTxInProgress
@@ -263,6 +264,8 @@ const DepositConfirmContainer = forwardRef<
           isDisabled: depositTxInProgress,
           onChange: () => setChecked((prev) => !prev),
         }}
+        totalProgress={totalStep}
+        progress={currentStep}
         onDownload={() => downloadNote(note)}
         amount={amount}
         wrappingAmount={String(amount)}

@@ -97,8 +97,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
-    tx.next(TransactionState.PreparingTransaction, undefined);
-
     // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
     if (!wrapUnwrapAssetId) {
       const activeBridge = this.inner.state.activeBridge;

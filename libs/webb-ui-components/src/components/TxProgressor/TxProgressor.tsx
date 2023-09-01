@@ -1,6 +1,5 @@
 'use client';
 
-import cx from 'classnames';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
   ArrowRight,
@@ -11,6 +10,7 @@ import {
   TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
@@ -19,8 +19,9 @@ import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { shortenHex, shortenString } from '../../utils';
 import { ChainChip } from '../ChainChip/ChainChip';
-import { Button } from '../buttons';
 import { Chip, ChipProps } from '../Chip';
+import SteppedProgress from '../Progress/SteppedProgress';
+import { Button } from '../buttons';
 import {
   TxInfo,
   TxProgressorBodyProps,
@@ -28,7 +29,6 @@ import {
   TxProgressorHeaderProps,
   TxProgressorRootProps,
 } from './types';
-import { SteppedProgress } from '../Progress';
 
 const TxProgressorRoot = forwardRef<
   React.ElementRef<'div'>,
@@ -292,8 +292,8 @@ export default TxProgressor;
 
 export {
   TxProgressor,
-  TxProgressorRoot,
-  TxProgressorHeader,
   TxProgressorBody,
   TxProgressorFooter,
+  TxProgressorHeader,
+  TxProgressorRoot,
 };

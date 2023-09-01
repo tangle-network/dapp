@@ -7,19 +7,17 @@ import {
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  Avatar,
-  Button,
-  ChainChip,
-  CheckBox,
-  Chip,
-  CopyWithTooltip,
-  InfoItem,
-  Progress,
-  TitleWithInfo,
-  TokenWithAmount,
-} from '../../components';
-import { Typography } from '../../typography';
+import { Avatar } from '../../components/Avatar/Avatar';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
+import { ChainChip } from '../../components/ChainChip/ChainChip';
+import { CheckBox } from '../../components/CheckBox/Checkbox';
+import { Chip } from '../../components/Chip/Chip';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
+import SteppedProgress from '../../components/Progress/SteppedProgress';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
+import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
+import Button from '../../components/buttons/Button';
+import { Typography } from '../../typography/Typography';
 import {
   formatTokenAmount,
   getRoundedAmountString,
@@ -53,6 +51,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       onClose,
       onDownload,
       progress,
+      totalProgress,
       recipientTitleProps,
       recipientPublicKey,
       relayerAddress,
@@ -124,7 +123,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           </div>
 
           {/** Transaction progress */}
-          {typeof progress === 'number' ? (
+          {typeof progress === 'number' && typeof totalProgress === 'number' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
@@ -134,7 +133,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 />
                 <Chip color="blue">{txStatusMessage}</Chip>
               </div>
-              <Progress value={progress} />
+              <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
           ) : null}
 

@@ -165,6 +165,10 @@ const TxProgressDropdown = () => {
                   )}
                   actionProps={btnProps}
                   externalUrl={completedTxUrl}
+                  steppedProgressProps={{
+                    steps: tx.totalSteps,
+                    activeStep: tx.stepSubject.getValue(),
+                  }}
                 />
               </TxProgressor.Root>
             );

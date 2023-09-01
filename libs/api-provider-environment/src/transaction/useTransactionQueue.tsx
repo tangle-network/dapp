@@ -71,6 +71,7 @@ function mapTxToPayload(
   const destChainName = chainConfig[wallets.dest]?.name;
 
   const txProviderType = tx.metaData.providerType;
+  const currentStep = tx.stepSubject.getValue();
 
   return {
     id: tx.id,
@@ -80,6 +81,7 @@ function mapTxToPayload(
       txHash: tx.txHash,
       recipient: tx.metaData.recipient,
     },
+    currentStep,
     amount: getRoundedAmountString(amount),
     getExplorerURI: (addOrTxHash: string, variant: 'tx' | 'address') =>
       getExplorerURI(
@@ -113,9 +115,6 @@ export function getTxMessageFromStatus<Key extends TransactionState>(
 
     case TransactionState.Ideal:
       return 'Transaction in-progress';
-
-    case TransactionState.PreparingTransaction:
-      return 'Preparing transaction';
 
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';

@@ -7,22 +7,20 @@ import {
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  Avatar,
-  Button,
-  ChainChip,
-  CheckBox,
-  Chip,
-  CopyWithTooltip,
-  InfoItem,
-  Progress,
-  TitleWithInfo,
-  TokenWithAmount,
-} from '../../components';
+import { Avatar } from '../../components/Avatar/Avatar';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
+import { ChainChip } from '../../components/ChainChip/ChainChip';
+import { CheckBox } from '../../components/CheckBox/Checkbox';
+import { Chip } from '../../components/Chip/Chip';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
+import SteppedProgress from '../../components/Progress/SteppedProgress';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
+import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
+import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
 import { formatTokenAmount, shortenString } from '../../utils';
-import { WithdrawConfirmationProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
+import { WithdrawConfirmationProps } from './types';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -43,6 +41,7 @@ export const WithdrawConfirm = forwardRef<
       onClose,
       onDownload,
       progress,
+      totalProgress,
       receivingInfo,
       recipientAddress,
       refundAmount,
@@ -100,7 +99,7 @@ export const WithdrawConfirm = forwardRef<
           </div>
 
           {/** Transaction progress */}
-          {typeof progress === 'number' ? (
+          {typeof progress === 'number' && typeof totalProgress === 'number' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
@@ -110,7 +109,7 @@ export const WithdrawConfirm = forwardRef<
                 />
                 <Chip color="blue">{txStatusMessage}</Chip>
               </div>
-              <Progress value={progress} />
+              <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
           ) : null}
 

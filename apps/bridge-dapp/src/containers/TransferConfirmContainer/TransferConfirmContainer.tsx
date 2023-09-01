@@ -17,10 +17,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import {
-  useLatestTransactionStage,
-  useTransactionProgressValue,
-} from '../../hooks';
+import { useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getErrorMessage,
@@ -71,10 +68,9 @@ const TransferConfirmContainer = forwardRef<
     const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+    const [totalStep, setTotalStep] = useState<number | undefined>();
 
     const stage = useLatestTransactionStage(txId);
-
-    const progress = useTransactionProgressValue(stage);
 
     const targetChainId = useMemo(
       () => calculateTypedChainId(destChain.chainType, destChain.id),
@@ -169,6 +165,7 @@ const TransferConfirmContainer = forwardRef<
         });
 
         setTxId(tx.id);
+        setTotalStep(tx.totalSteps);
         txQueueApi.registerTransaction(tx);
 
         try {
@@ -236,13 +233,17 @@ const TransferConfirmContainer = forwardRef<
       [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
     );
 
-    const txStatusMessage = useMemo(() => {
+    const [txStatusMessage, currentStep] = useMemo(() => {
       if (!txId) {
-        return '';
+        return ['', undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+      const message = txPayload
+        ? txPayload.txStatus.message?.replace('...', '')
+        : '';
+
+      return [message, txPayload?.currentStep];
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
@@ -263,6 +264,8 @@ const TransferConfirmContainer = forwardRef<
         className="min-h-[var(--card-height)]"
         ref={ref}
         title={isTransfering ? 'Transfer in Progress...' : undefined}
+        totalProgress={totalStep}
+        progress={currentStep}
         amount={amount}
         changeAmount={changeAmount}
         sourceChain={{
@@ -274,7 +277,6 @@ const TransferConfirmContainer = forwardRef<
           type: destChain.group ?? 'webb-dev',
         }}
         note={changeNote?.serialize()}
-        progress={progress}
         recipientTitleProps={{
           info: <RecipientPublicKeyTooltipContent />,
         }}

@@ -48,6 +48,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   progress?: number | null;
 
   /**
+   * Total progress (total number of steps)
+   */
+  totalProgress?: number;
+
+  /**
    * Fee amount
    */
   fee?: number | string;

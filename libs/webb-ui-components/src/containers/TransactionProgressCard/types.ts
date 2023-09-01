@@ -102,9 +102,13 @@ export interface TransactionPayload {
    *  */
   timestamp: Date;
   /**
-   *  Transaction status
+   * Transaction status
    *  */
   txStatus: TransactionStatus;
+  /**
+   * The current step
+   */
+  currentStep: number;
   /**
    *  The transaction related token names
    *  */

@@ -17,10 +17,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
-import {
-  useLatestTransactionStage,
-  useTransactionProgressValue,
-} from '../../hooks';
+import { useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getErrorMessage,
@@ -71,10 +68,9 @@ const WithdrawConfirmContainer = forwardRef<
     const { api: txQueueApi, txPayloads } = txQueue;
 
     const [txId, setTxId] = useState('');
+    const [totalStep, setTotalStep] = useState<number | undefined>();
 
     const stage = useLatestTransactionStage(txId);
-
-    const progressValue = useTransactionProgressValue(stage);
 
     const {
       relayersState: { activeRelayer },
@@ -199,6 +195,7 @@ const WithdrawConfirmContainer = forwardRef<
         recipient,
       });
       setTxId(tx.id)
+      setTotalStep(tx.totalSteps)
       txQueueApi.registerTransaction(tx);
 
       try {
@@ -269,13 +266,16 @@ const WithdrawConfirmContainer = forwardRef<
       }
     }, [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, downloadNote, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]); // prettier-ignore
 
-    const txStatusMessage = useMemo(() => {
+    const [txStatusMessage, currentStep] = useMemo(() => {
       if (!txId) {
-        return '';
+        return ['', undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
-      return txPayload ? txPayload.txStatus.message?.replace('...', '') : '';
+      const message = txPayload
+        ? txPayload.txStatus.message?.replace('...', '')
+        : '';
+      return [message, txPayload?.currentStep];
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
@@ -319,6 +319,8 @@ const WithdrawConfirmContainer = forwardRef<
         className="min-h-[var(--card-height)]"
         ref={ref}
         title={cardTitle}
+        totalProgress={totalStep}
+        progress={currentStep}
         sourceChain={{
           name: chainsPopulated[sourceTypedChainId].name,
           type: chainsPopulated[sourceTypedChainId].group ?? 'webb-dev',
@@ -356,7 +358,6 @@ const WithdrawConfirmContainer = forwardRef<
         fee={formattedFee}
         note={changeNote?.serialize()}
         changeAmount={changeAmount}
-        progress={progressValue}
         recipientAddress={recipient}
         relayerAddress={activeRelayer?.beneficiary}
         relayerExternalUrl={activeRelayer?.endpoint}

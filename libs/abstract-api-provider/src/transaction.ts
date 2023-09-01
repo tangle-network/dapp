@@ -14,11 +14,11 @@ export interface NewNotesTxResult extends TXresultBase {
   outputNotes: Note[];
 }
 
+export type TransactionName = 'Deposit' | 'Transfer' | 'Withdraw';
+
 export enum TransactionState {
   Cancelling, // Withdraw canceled
   Ideal, // initial status where the instance is Idea and ready for a withdraw
-
-  PreparingTransaction, // Preparing the arguments for a transaction
 
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
   FetchingLeavesFromRelayer, // The leaves of the merkle tree need to be obtained from the relayer
@@ -79,8 +79,6 @@ type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
 
-  [TransactionState.PreparingTransaction]: undefined;
-
   [TransactionState.FetchingFixtures]: FixturesProgress;
 
   [TransactionState.FetchingLeavesFromRelayer]: undefined;
@@ -135,17 +133,45 @@ type PromiseExec<T> = (
   reject: (reason?: any) => void
 ) => void;
 
+// The total steps for each transaction
+// this not include the initial step and combine the
+// failed and done into one step
+const totalStepConfig: {
+  [key in TransactionName]: number;
+} = {
+  Deposit: 5,
+  Transfer: 6,
+  Withdraw: 6,
+};
+
+// List of transatcion state that
+// not include the transaction step
+// that should be skipped
+const skipState: TransactionState[] = [
+  TransactionState.Ideal,
+  TransactionState.ValidatingLeaves,
+];
+
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
+
   readonly id = String(Date.now() + Math.random());
   readonly timestamp = new Date();
+
   private _txHash: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
 
+  public static readonly totalStepsCfg = totalStepConfig;
+
+  public readonly totalSteps = totalStepConfig[this.name];
+
+  // 0 for the initial step
+  public readonly stepSubject = new BehaviorSubject<number>(0);
+
   private constructor(
     executor: PromiseExec<DonePayload>,
-    public readonly name: 'Deposit' | 'Transfer' | 'Withdraw',
+    public readonly name: TransactionName,
     public readonly metaData: TransactionMetaData,
     private readonly _status: BehaviorSubject<
       [
@@ -158,7 +184,7 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   }
 
   static new<T>(
-    name: 'Deposit' | 'Transfer' | 'Withdraw',
+    name: TransactionName,
     metadata: TransactionMetaData
   ): Transaction<T> {
     const status = new BehaviorSubject<
@@ -197,6 +223,11 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   ) {
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
+
+    // Update the step
+    if (!skipState.includes(status)) {
+      this.stepSubject.next(this.stepSubject.value + 1);
+    }
   }
 
   fail(error: string): void {

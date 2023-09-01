@@ -93,8 +93,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
-    tx.next(TransactionState.PreparingTransaction, undefined);
-
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
       const tokenWrapper = await this.getTokenWrapperContract(payload);
@@ -191,10 +189,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
       txArgs;
 
-    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
-
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(contractAddress);
+
+    tx.next(TransactionState.GeneratingZk, undefined);
 
     const chainId = await vAnchorContract.read.getChainId();
 
@@ -219,6 +217,10 @@ export class Web3VAnchorActions extends VAnchorActions<
       [outputUtxos[0], outputUtxos[1]],
       ...restArgs
     );
+
+    tx.next(TransactionState.InitializingTransaction, undefined);
+
+    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
     const relayedDepositTxPayload =
       relayedVAnchorWithdraw.generateWithdrawRequest<
@@ -320,7 +322,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     );
 
     tx.txHash = '';
-    tx.next(TransactionState.SendingTransaction, '');
 
     const typedChainId = this.inner.typedChainId;
 
@@ -760,6 +761,8 @@ export class Web3VAnchorActions extends VAnchorActions<
       }
     }
 
+    console.log('Note index: ', parsedNote.index);
+    console.log('Commitment index: ', commitmentIndex);
     const utxo = await utxoFromVAnchorNote(parsedNote, commitmentIndex);
 
     return {
