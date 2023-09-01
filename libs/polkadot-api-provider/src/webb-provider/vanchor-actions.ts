@@ -887,9 +887,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
     if (tx) {
       tx.next(TransactionState.FetchingLeaves, {
-        end: undefined,
-        currentRange: [0, 1],
-        start: 0,
+        start: 0, // Dummy value
+        end: 0, // Dummy value
+        current: 0, // Dummy value
       });
     }
 

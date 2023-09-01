@@ -423,7 +423,8 @@ export class WebbPolkadot
     if (!leavesFromRelayers) {
       tx?.next(TransactionState.FetchingLeaves, {
         start: 0, // Dummy values
-        currentRange: [0, 0], // Dummy values
+        current: 0, // Dummy values
+        end: 0,
       });
 
       // check if we already cached some values.

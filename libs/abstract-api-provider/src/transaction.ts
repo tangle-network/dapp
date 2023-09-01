@@ -61,8 +61,8 @@ export type FixturesProgress = {
 
 type LeavesProgress = {
   start: number;
-  currentRange: [number, number];
-  end?: number;
+  current: number;
+  end: number;
 };
 
 type IntermediateProgress = {
@@ -75,7 +75,7 @@ type FailedTransaction = {
   txHash?: string;
 };
 
-type TransactionStatusMap<DonePayload> = {
+export type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
 
@@ -134,14 +134,14 @@ type PromiseExec<T> = (
 ) => void;
 
 // The total steps for each transaction
-// this not include the initial step and combine the
-// failed and done into one step
+// this not include the initial step, the
+// failed and done step.
 const totalStepConfig: {
   [key in TransactionName]: number;
 } = {
-  Deposit: 5,
-  Transfer: 6,
-  Withdraw: 6,
+  Deposit: 4,
+  Transfer: 5,
+  Withdraw: 5,
 };
 
 // List of transatcion state that
@@ -225,7 +225,16 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     this._status.next([status, data]);
 
     // Update the step
-    if (!skipState.includes(status)) {
+    if (skipState.includes(status)) {
+      return;
+    }
+
+    if (
+      status === TransactionState.Done ||
+      status === TransactionState.Failed
+    ) {
+      this.stepSubject.next(this.totalSteps + 1);
+    } else {
       this.stepSubject.next(this.stepSubject.value + 1);
     }
   }

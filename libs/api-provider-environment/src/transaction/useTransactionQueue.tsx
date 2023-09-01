@@ -2,6 +2,7 @@ import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
+  TransactionStatusMap,
   TransactionStatusValue,
   WebbProviderType,
 } from '@webb-tools/abstract-api-provider';
@@ -10,6 +11,7 @@ import { ChainIcon } from '@webb-tools/icons';
 import {
   TransactionItemStatus,
   TransactionPayload,
+  calculateProgressPercentage,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
@@ -248,7 +250,14 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
           }
 
           const nextStatus = transactionItemStatusFromTxStatus(nextTxState);
-          const nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
+          let nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
+          if (nextTxState === TransactionState.FetchingLeaves) {
+            const { current, end, start } =
+              nextTxData as TransactionStatusMap<unknown>[TransactionState.FetchingLeaves];
+
+            const percentage = calculateProgressPercentage(start, end, current);
+            nextMessage = `Fetching transaction leaves on chain... ${percentage}%`;
+          }
 
           if (
             nextStatus === currentPayload.txStatus.status &&
@@ -275,7 +284,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         }
       );
 
-      // Substart to the transaction hash
+      // Subscribe to the transaction hash
       const hashSub = tx.$txHash.subscribe((nextTxHash) => {
         const payloads = txPayloads$.getValue();
         const currentPayload = payloads.find((payload) => payload.id === tx.id);
@@ -304,8 +313,34 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         txPayloads$.next(nextPayloads);
       });
 
+      // Subscribe to the transaction step
+      const stepSub = tx.stepSubject.subscribe((nextStep) => {
+        const payloads = txPayloads$.getValue();
+        const currentPayload = payloads.find((payload) => payload.id === tx.id);
+
+        if (!currentPayload) {
+          return;
+        }
+
+        if (nextStep === currentPayload.currentStep) {
+          return;
+        }
+
+        const nextPayloads = payloads.map((payload) => {
+          if (payload.id === tx.id) {
+            return {
+              ...payload,
+              currentStep: nextStep,
+            };
+          }
+          return payload;
+        });
+
+        txPayloads$.next(nextPayloads);
+      });
+
       // Update the subscriptions ref
-      subscriptions.current.set(tx.id, [statusSub, hashSub]);
+      subscriptions.current.set(tx.id, [statusSub, hashSub, stepSub]);
     },
     []
   );

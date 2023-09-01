@@ -873,6 +873,13 @@ export class Web3VAnchorActions extends VAnchorActions<
       PublicClient
     >
   ): Promise<void> | never {
+    tx.next(TransactionState.Intermediate, {
+      name: 'Checking approval',
+      data: {
+        tokenAddress: wrapUnwrapToken,
+      },
+    });
+
     const { note } = payload;
     const { amount } = note;
 

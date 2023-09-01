@@ -56,6 +56,7 @@ import {
 } from '@webb-tools/sdk-core';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
+import calculateProgressPercentage from '@webb-tools/webb-ui-components/utils/calculateProgressPercentage';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import { BehaviorSubject } from 'rxjs';
@@ -78,13 +79,13 @@ import {
 } from 'wagmi/actions';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
-import VAnchor from './VAnchor';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -356,11 +357,6 @@ export class WebbWeb3Provider
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leavesFromRelayers || leavesFromRelayers.commitmentIndex === -1) {
-      tx?.next(TransactionState.FetchingLeaves, {
-        start: 0, // Dummy values
-        currentRange: [0, 0], // Dummy values
-      });
-
       const isLocal = LOCALNET_CHAIN_IDS.includes(+`${evmId}`);
 
       // check if we already cached some values in the storage and the chain id is not local
@@ -388,7 +384,14 @@ export class WebbWeb3Provider
         BigInt(lastQueriedBlock + 1),
         ZERO_BIG_INT,
         getPublicClient({ chainId: +evmId.toString() }),
-        vAnchorContract
+        vAnchorContract,
+        (fromBlock, toBlock, currentBlock) => {
+          tx?.next(TransactionState.FetchingLeaves, {
+            start: +fromBlock.toString(),
+            end: +toBlock.toString(),
+            current: +currentBlock.toString(),
+          });
+        }
       );
 
       // Merge the leaves from chain with the stored leaves
@@ -464,12 +467,11 @@ export class WebbWeb3Provider
         const toBlockNumber = +toBlock.toString();
         const currenctBlockNumber = +currenctBlock.toString();
 
-        const percentage =
-          ((currenctBlockNumber - fromBlockNumber) /
-            (toBlockNumber - fromBlockNumber + 1)) *
-          100;
-
-        const progress = percentage >= 100 ? 100 : percentage;
+        const progress = calculateProgressPercentage(
+          fromBlockNumber,
+          toBlockNumber,
+          currenctBlockNumber
+        );
 
         NoteManager.syncNotesProgress = progress;
       }
@@ -814,7 +816,12 @@ export class WebbWeb3Provider
     vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
       PublicClient
-    >
+    >,
+    onBlockProcessed?: (
+      fromBlock: bigint,
+      toBlock: bigint,
+      currentBlock: bigint
+    ) => void
   ): Promise<{ lastQueriedBlock: bigint; newLeaves: Array<Hash> }> {
     const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
 
@@ -822,7 +829,9 @@ export class WebbWeb3Provider
       publicClient,
       vAnchorContract,
       startingBlock,
-      latestBlock
+      latestBlock,
+      (currentBlock) =>
+        onBlockProcessed?.(startingBlock, latestBlock, currentBlock)
     );
 
     return {
