@@ -59,6 +59,10 @@ export interface KeyStatusCardDataProps {
    * Time instance
    * */
   instance: ISubQlTime;
+  /**
+   * Show view details if true (default: true) false when indexing is not complete
+   */
+  showDetails: boolean;
 }
 
 /**

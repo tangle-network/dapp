@@ -4,12 +4,14 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
 import { MetricItemProps } from './types';
+import { getRoundedDownWith2Decimals } from '../../utils';
 
 const KeyMetricItem: FC<MetricItemProps> = ({
   title,
   value,
   prefix,
   changeRate,
+  suffix,
 }) => {
   return (
     <div
@@ -28,34 +30,34 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           <Typography
             variant="body1"
             fw="black"
-            className="uppercase text-mono-140 dark:text-mono-40"
+            className="text-mono-140 dark:text-mono-40"
           >
-            {value && (prefix ?? '')}
+            {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
-              ? value
-              : getRoundedAmountString(value, 2, {
-                  roundingFunction: Math.floor,
-                  totalLength: 0,
-                })}
+              ? Math.floor(value * 100) / 100
+              : getRoundedDownWith2Decimals(value)}
+            {typeof value === 'number' && (suffix ?? '')}
           </Typography>
         </span>
 
         {/* Change Rate */}
-        {changeRate && (
-          <span>
-            <Typography
-              variant="body2"
-              fw="bold"
-              className={cx({
-                '!text-green-70': changeRate >= 0,
-                '!text-red-70': changeRate < 0,
-              })}
-            >
-              ({changeRate >= 0 ? `+` : `-`}
-              {getRoundedAmountString(Math.abs(changeRate), 2)}%)
-            </Typography>
-          </span>
-        )}
+        {typeof changeRate === 'number' &&
+          Number.isFinite(changeRate) &&
+          !Number.isNaN(changeRate) && (
+            <span>
+              <Typography
+                variant="body2"
+                fw="bold"
+                className={cx({
+                  '!text-green-70': changeRate >= 0,
+                  '!text-red-70': changeRate < 0,
+                })}
+              >
+                ({changeRate >= 0 ? `+` : `-`}
+                {getRoundedAmountString(Math.abs(changeRate), 2)}%)
+              </Typography>
+            </span>
+          )}
       </div>
     </div>
   );

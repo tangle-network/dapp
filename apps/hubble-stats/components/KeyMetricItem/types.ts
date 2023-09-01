@@ -3,4 +3,5 @@ export interface MetricItemProps {
   value?: number;
   changeRate?: number;
   prefix?: string;
+  suffix?: string;
 }

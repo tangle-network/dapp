@@ -1,14 +1,14 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { DaysFilterType, ChartContainer } from '@webb-tools/webb-ui-components';
+import { ChartContainer } from '@webb-tools/webb-ui-components';
 
-import { AreaChart, BarChart } from '../../components';
+import { AreaChart, VolumeChart } from '../../components';
 import { OverviewChartsDataType } from '../../data';
 
 const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
   currentTvl,
-  currentVolume,
+  volume24h,
   tvlData,
   volumeData,
 }) => {
@@ -16,7 +16,6 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
   const [tvlDate, setTVLDate] = useState<Date | null>(null);
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
-  const [volumeDataType, setVolumeDataType] = useState<DaysFilterType>('week');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -26,23 +25,28 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={currentTvl}
         value={tvlValue}
         date={tvlDate}
+        valueSuffix=" tTNT"
         className="bg-glass dark:bg-glass_dark"
       >
-        <AreaChart data={tvlData} setDate={setTVLDate} setValue={setTvlValue} />
+        <AreaChart
+          data={tvlData}
+          setDate={setTVLDate}
+          setValue={setTvlValue}
+          tooltipLabel="TVL"
+          tooltipValuePrefix="$"
+        />
       </ChartContainer>
 
       {/* 24 Hour Volume Chart Container */}
       <ChartContainer
         heading="Volume 24H"
-        currentValue={currentVolume}
+        currentValue={volume24h}
         value={volumeValue}
         date={volumeDate}
-        filterType="days"
-        daysFilterType={volumeDataType}
-        setDaysFilterType={setVolumeDataType}
+        valueSuffix=" tTNT"
         className="bg-glass dark:bg-glass_dark"
       >
-        <BarChart
+        <VolumeChart
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}

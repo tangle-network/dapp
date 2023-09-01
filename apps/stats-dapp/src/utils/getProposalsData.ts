@@ -1,12 +1,11 @@
 import { ProposalType } from '../generated/graphql';
 import {
-  AnchorCreateProposal,
   AnchorUpdateProposal,
   EVMProposal,
   FeeRecipientUpdateProposal,
   MaxDepositLimitProposal,
   MinWithdrawalLimitProposal,
-  RefreshVoteProposal,
+  RefreshProposal,
   RescueTokensProposal,
   ResourceIdUpdateProposal,
   SetTreasuryHandlerProposal,
@@ -14,8 +13,9 @@ import {
   TokenAddProposal,
   TokenRemoveProposal,
   WrappingFeeUpdateProposal,
-} from '@webb-tools/sdk-core';
+} from '@webb-tools/proposals';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { AnchorCreateProposal } from '@webb-tools/sdk-core';
 
 export function getProposalsData(
   propType: ProposalType,
@@ -26,17 +26,6 @@ export function getProposalsData(
   const bytes = hexToU8a(data);
 
   switch (propType) {
-    case ProposalType.AnchorCreate: {
-      const decoded = AnchorCreateProposal.fromBytes(bytes);
-      return {
-        encodedCall: decoded.encodedCall,
-        functionSignature: u8aToHex(decoded.header.functionSignature),
-        nonce: String(decoded.header.nonce),
-        chainType: String(decoded.header.resourceId.chainType),
-        chainId: String(decoded.header.resourceId.chainId),
-        targetSystem: u8aToHex(decoded.header.resourceId.targetSystem),
-      };
-    }
     case ProposalType.AnchorUpdate: {
       const decoded = AnchorUpdateProposal.fromBytes(bytes);
       return {
@@ -90,7 +79,7 @@ export function getProposalsData(
       };
     }
     case ProposalType.Refresh: {
-      const decoded = RefreshVoteProposal.fromBytes(bytes);
+      const decoded = RefreshProposal.fromBytes(bytes);
       return {
         nonce: String(decoded.nonce),
         publicKey: String(decoded.publicKey),

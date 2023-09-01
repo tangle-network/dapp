@@ -1,9 +1,9 @@
 query MetaData {
-  sessions(first: 1, orderBy: [BLOCK_NUMBER_DESC] filter: {
-    publicKeyId: {
-      isNull: false
-    }
-  }) {
+  sessions(
+    first: 1
+    orderBy: [BLOCK_NUMBER_DESC]
+    filter: { publicKeyId: { isNull: false } }
+  ) {
     nodes {
       id
       blockNumber
@@ -16,7 +16,11 @@ query MetaData {
 }
 
 query LastBlock {
-  blocks(first: 1, filter: { timestamp: { isNull: false } }, orderBy: [NUMBER_DESC]) {
+  blocks(
+    first: 1
+    filter: { timestamp: { isNull: false } }
+    orderBy: [NUMBER_DESC]
+  ) {
     nodes {
       timestamp
       number
@@ -30,5 +34,11 @@ query countries {
       code
       id
     }
+  }
+}
+
+query LatestIndexedBlock {
+  blocks {
+    totalCount
   }
 }

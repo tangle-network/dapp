@@ -25,6 +25,8 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
       heading,
       currentValue,
       value,
+      valuePrefix = '',
+      valueSuffix = '',
       date,
       filterType,
       daysFilterType,
@@ -62,10 +64,11 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
                 fw="bold"
                 className="!text-[24px] !leading-[36px] text-mono-200 dark:text-mono-0"
               >
-                {`$${getRoundedAmountString(value ?? currentValue, 2, {
+                {`${valuePrefix}
+                ${getRoundedAmountString(value ?? currentValue, 2, {
                   roundingFunction: Math.floor,
                   totalLength: 0,
-                })}`}
+                })}${valueSuffix}`}
               </Typography>
 
               <Typography

@@ -58,6 +58,10 @@ export const TANGLE_DOCS_URL =
 export const WEBB_DAPP_NEW_ISSUE_URL =
   'https://github.com/webb-tools/webb-dapp/issues/new/choose';
 export const WEBB_FAUCET_URL = 'https://faucet.webb.tools/';
+export const STATS_DOCUS_URL =
+  'https://docs.webb.tools/docs/projects/stats-dapp/overview/';
+export const POLKADOT_EXPLORER_URL =
+  'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer/query/';
 
 export const webbNetworks: webbNetworksType[] = [
   {
