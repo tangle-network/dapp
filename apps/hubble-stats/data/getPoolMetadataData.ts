@@ -1,19 +1,21 @@
-import { randNumber } from '@ngneat/falso';
-
 import {
   getDateFromEpoch,
   getWrappingFeesPercentageByFungibleToken,
 } from '../utils';
 import { VANCHORS_MAP } from '../constants';
+import {
+  WrappingFeesByChainType,
+  AddressWithExplorerUrlsType,
+} from '../components/PoolMetadataTable/types';
 
 type PoolMetadataDataType = {
   name: string;
   symbol: string;
-  signatureBridge: string;
-  vAnchor: string;
-  fungibleToken: string;
-  treasuryAddress: string;
-  wrappingFees: number;
+  signatureBridge: AddressWithExplorerUrlsType;
+  vAnchor: AddressWithExplorerUrlsType;
+  fungibleToken: AddressWithExplorerUrlsType;
+  treasuryAddress: AddressWithExplorerUrlsType;
+  wrappingFees: WrappingFeesByChainType;
   creationDate: string;
 };
 
@@ -23,8 +25,17 @@ export default async function getPoolMetadataData(
   const vanchor = VANCHORS_MAP[poolAddress];
   const creationDate = getDateFromEpoch(vanchor.creationTimestamp);
 
-  const wrappingFees: Record<number, number | undefined> = {};
   const supportedChains = vanchor.supportedChains;
+
+  // TODO: Replace this with the real explorer URLs
+  const explorerUrls = supportedChains.reduce((map, typedChainId) => {
+    return {
+      ...map,
+      [typedChainId]: '#',
+    };
+  }, {});
+
+  const wrappingFees: WrappingFeesByChainType = {};
   for (const typedChainId of supportedChains) {
     let feesPercentage: number | undefined;
     try {
@@ -41,11 +52,17 @@ export default async function getPoolMetadataData(
   return {
     name: vanchor.fungibleTokenName,
     symbol: vanchor.fungibleTokenSymbol,
-    signatureBridge: vanchor.signatureBridge,
-    vAnchor: poolAddress,
-    fungibleToken: vanchor.fungibleTokenAddress,
-    treasuryAddress: vanchor.treasuryAddress,
-    wrappingFees: randNumber({ min: 1, max: 99 }),
+    signatureBridge: { address: vanchor.signatureBridge, urls: explorerUrls },
+    vAnchor: { address: poolAddress, urls: explorerUrls },
+    fungibleToken: {
+      address: vanchor.fungibleTokenAddress,
+      urls: explorerUrls,
+    },
+    treasuryAddress: {
+      address: vanchor.treasuryAddress,
+      urls: explorerUrls,
+    },
+    wrappingFees,
     creationDate: new Date(creationDate).toLocaleDateString('en-US', {
       day: 'numeric',
       month: 'long',
