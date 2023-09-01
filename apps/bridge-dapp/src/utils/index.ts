@@ -6,4 +6,6 @@ export * from './getDefaultConnection';
 export * from './getMessageFromTransactionState';
 export * from './getTokenURI';
 export { default as getVAnchorActionClass } from './getVAnchorActionClass';
+export { default as handleMutateNoteIndex } from './handleMutateNoteIndex';
+export { default as handleStoreNote } from './handleStoreNote';
 export * from './isValidNote';

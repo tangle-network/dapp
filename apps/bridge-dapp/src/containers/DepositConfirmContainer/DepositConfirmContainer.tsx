@@ -19,6 +19,7 @@ import {
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
+  handleMutateNoteIndex,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
 
@@ -88,143 +89,146 @@ const DepositConfirmContainer = forwardRef<
       [wrappableTokenId]
     );
 
-    const handleExecuteDeposit = useCallback(async () => {
-      if (!api || !activeApi || !activeChain) {
-        captureSentryException(
-          new Error('No api or chain found'),
-          'transactionType',
-          'deposit'
-        );
-        return;
-      }
-
-      // Set transaction payload for transaction processing card
-      // Start a new transaction
-      if (depositTxInProgress) {
-        startNewTransaction();
-        onResetState?.();
-        return;
-      }
-
-      downloadNote(note);
-
-      const {
-        amount,
-        denomination,
-        sourceChainId: sourceTypedChainId,
-        targetChainId: destTypedChainId,
-        sourceIdentifyingData,
-        targetIdentifyingData,
-        tokenSymbol,
-      } = note.note;
-
-      // Calculate the amount
-      const formattedAmount = formatUnits(BigInt(amount), +denomination);
-
-      // Get the deposit token symbol
-      let srcTokenSymbol = tokenSymbol;
-
-      if (wrappableToken) {
-        srcTokenSymbol = wrappableToken.view.symbol;
-      }
-
-      // Get the destination token symbol
-      const destToken = tokenSymbol;
-
-      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
-        tokenSymbol,
-        +destTypedChainId
-      );
-      if (!currency) {
-        console.error(`Currency not found for symbol ${tokenSymbol}`);
-        captureSentryException(
-          new Error(`Currency not found for symbol ${tokenSymbol}`),
-          'transactionType',
-          'deposit'
-        );
-        return;
-      }
-
-      const tokenURI = getTokenURI(currency, destTypedChainId);
-
-      const tx = Transaction.new<NewNotesTxResult>('Deposit', {
-        amount: +formattedAmount,
-        tokens: [srcTokenSymbol, destToken],
-        wallets: {
-          src: +sourceTypedChainId,
-          dest: +destTypedChainId,
-        },
-        token: tokenSymbol,
-        tokenURI,
-        providerType: activeApi.type,
-        address: activeAccount?.address,
-        recipient: targetIdentifyingData,
-      });
-      setTxId(tx.id)
-      setTotalStep(tx.totalSteps)
-      txQueueApi.registerTransaction(tx);
-
-      try {
-        const args = await api?.prepareTransaction(
-          tx,
-          note,
-          wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
-        );
-        if (!args) {
-          return txQueueApi.cancelTransaction(tx.id);
+    const handleExecuteDeposit = useCallback(
+      async () => {
+        if (!api || !activeApi || !activeChain) {
+          captureSentryException(
+            new Error('No api or chain found'),
+            'transactionType',
+            'deposit'
+          );
+          return;
         }
 
-        await addNoteToNoteManager(note);
+        // Set transaction payload for transaction processing card
+        // Start a new transaction
+        if (depositTxInProgress) {
+          startNewTransaction();
+          onResetState?.();
+          return;
+        }
 
-        const nextIdx = Number(
-          await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
+        const {
+          amount,
+          denomination,
+          sourceChainId: sourceTypedChainId,
+          targetChainId: destTypedChainId,
+          sourceIdentifyingData,
+          targetIdentifyingData,
+          tokenSymbol,
+        } = note.note;
+
+        // Calculate the amount
+        const formattedAmount = formatUnits(BigInt(amount), +denomination);
+
+        // Get the deposit token symbol
+        let srcTokenSymbol = tokenSymbol;
+
+        if (wrappableToken) {
+          srcTokenSymbol = wrappableToken.view.symbol;
+        }
+
+        // Get the destination token symbol
+        const destToken = tokenSymbol;
+
+        const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+          tokenSymbol,
+          +destTypedChainId
         );
-        const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
+        if (!currency) {
+          console.error(`Currency not found for symbol ${tokenSymbol}`);
+          captureSentryException(
+            new Error(`Currency not found for symbol ${tokenSymbol}`),
+            'transactionType',
+            'deposit'
+          );
+          return;
+        }
 
-        const transactionHash = await api.transact(...args);
+        const tokenURI = getTokenURI(currency, destTypedChainId);
 
-        tx.txHash = transactionHash;
-
-        const noteIndex = await api.getLeafIndex(
-          transactionHash,
-          note,
-          indexBeforeInsert,
-          sourceIdentifyingData
-        );
-
-        const indexedNote = await Note.deserialize(note.serialize());
-        indexedNote.mutateIndex(noteIndex.toString());
-        await removeNoteFromNoteManager(note);
-        await addNoteToNoteManager(indexedNote);
-
-        // Notification Success Transaction
-        tx.next(TransactionState.Done, {
-          txHash: transactionHash,
-          outputNotes: [indexedNote],
+        const tx = Transaction.new<NewNotesTxResult>('Deposit', {
+          amount: +formattedAmount,
+          tokens: [srcTokenSymbol, destToken],
+          wallets: {
+            src: +sourceTypedChainId,
+            dest: +destTypedChainId,
+          },
+          token: tokenSymbol,
+          tokenURI,
+          providerType: activeApi.type,
+          address: activeAccount?.address,
+          recipient: targetIdentifyingData,
         });
-      } catch (error) {
-        console.error(error);
-        removeNoteFromNoteManager(note);
-        tx.txHash = getTransactionHash(error);
+        setTxId(tx.id);
+        setTotalStep(tx.totalSteps);
+        txQueueApi.registerTransaction(tx);
 
-        let errorMessage = getErrorMessage(error);
-        if (isViemError(error)) {
-          errorMessage = error.shortMessage;
+        try {
+          const args = await api?.prepareTransaction(
+            tx,
+            note,
+            wrappableToken?.getAddressOfChain(+sourceTypedChainId) ?? ''
+          );
+          if (!args) {
+            return txQueueApi.cancelTransaction(tx.id);
+          }
 
-          const revertError = error.walk(
-            (err) => err instanceof ContractFunctionRevertedError
+          const nextIdx = Number(
+            await api.getNextIndex(+sourceTypedChainId, fungibleTokenId)
           );
 
-          if (revertError instanceof ContractFunctionRevertedError) {
-            errorMessage = revertError.reason ?? revertError.shortMessage;
+          const indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
+
+          const transactionHash = await api.transact(...args);
+
+          downloadNote(note);
+          await addNoteToNoteManager(note);
+
+          await api.waitForFinalization(transactionHash);
+
+          const indexedNote = await handleMutateNoteIndex(
+            api,
+            transactionHash,
+            note,
+            indexBeforeInsert,
+            sourceIdentifyingData
+          );
+
+          await addNoteToNoteManager(indexedNote);
+          await removeNoteFromNoteManager(note);
+
+          // Notification Success Transaction
+          tx.next(TransactionState.Done, {
+            txHash: transactionHash,
+            outputNotes: [indexedNote],
+          });
+        } catch (error) {
+          console.error(error);
+          removeNoteFromNoteManager(note);
+          tx.txHash = getTransactionHash(error);
+
+          let errorMessage = getErrorMessage(error);
+          if (isViemError(error)) {
+            errorMessage = error.shortMessage;
+
+            const revertError = error.walk(
+              (err) => err instanceof ContractFunctionRevertedError
+            );
+
+            if (revertError instanceof ContractFunctionRevertedError) {
+              errorMessage = revertError.reason ?? revertError.shortMessage;
+            }
           }
+
+          tx.fail(errorMessage);
+
+          captureSentryException(error, 'transactionType', 'deposit');
         }
-
-        tx.fail(errorMessage);
-
-        captureSentryException(error, 'transactionType', 'deposit');
-      }
-    }, [api, activeApi, activeChain, depositTxInProgress, downloadNote, note, wrappableToken, apiConfig, activeAccount?.address, startNewTransaction, onResetState, txQueueApi, addNoteToNoteManager, fungibleTokenId, removeNoteFromNoteManager]); // prettier-ignore
+      },
+      // prettier-ignore
+      [api, activeApi, activeChain, depositTxInProgress, downloadNote, note, wrappableToken, apiConfig, activeAccount?.address, startNewTransaction, onResetState, txQueueApi, addNoteToNoteManager, fungibleTokenId, removeNoteFromNoteManager]
+    );
 
     const cardTitle = useMemo(() => {
       return getCardTitle(stage, wrappingFlow).trim();

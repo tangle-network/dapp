@@ -6,7 +6,6 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { LoggerService } from '@webb-tools/app-util';
-import { downloadString } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
@@ -16,6 +15,7 @@ import {
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
 import { useLatestTransactionStage } from '../../hooks';
 import {
@@ -23,6 +23,8 @@ import {
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
+  handleMutateNoteIndex,
+  handleStoreNote,
 } from '../../utils';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferConfirmContainerProps } from './types';
@@ -120,26 +122,19 @@ const TransferConfirmContainer = forwardRef<
           return;
         }
 
-        if (changeNote) {
-          const changeNoteStr = changeNote.serialize();
-          downloadString(
-            JSON.stringify(changeNoteStr),
-            changeNoteStr.slice(0, changeNoteStr.length - 10) + '.json'
-          );
-        }
-
         const note: Note = inputNotes[0];
         const {
           sourceChainId: sourceTypedChainId,
           targetChainId: destTypedChainId,
+          sourceIdentifyingData,
           tokenSymbol,
         } = note.note;
 
-        const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+        const destCurrency = apiConfig.getCurrencyBySymbolAndTypedChainId(
           tokenSymbol,
           +destTypedChainId
         );
-        if (!currency) {
+        if (!destCurrency) {
           console.error(`Currency not found for symbol ${tokenSymbol}`);
           captureSentryException(
             new Error(`Currency not found for symbol ${tokenSymbol}`),
@@ -148,7 +143,7 @@ const TransferConfirmContainer = forwardRef<
           );
           return;
         }
-        const tokenURI = getTokenURI(currency, destTypedChainId);
+        const tokenURI = getTokenURI(destCurrency, destTypedChainId);
 
         const tx = Transaction.new<NewNotesTxResult>('Transfer', {
           amount,
@@ -169,11 +164,6 @@ const TransferConfirmContainer = forwardRef<
         txQueueApi.registerTransaction(tx);
 
         try {
-          // Add the change note before sending the tx
-          if (changeNote) {
-            await addNoteToNoteManager(changeNote);
-          }
-
           const txPayload: TransferTransactionPayloadType = {
             notes: inputNotes,
             changeUtxo,
@@ -185,21 +175,49 @@ const TransferConfirmContainer = forwardRef<
 
           const outputNotes = changeNote ? [changeNote] : [];
 
+          let indexBeforeInsert: number | undefined;
+          if (changeNote) {
+            const nextIdx = Number(
+              await vAnchorApi.getNextIndex(+sourceTypedChainId, currency.id)
+            );
+
+            indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
+          }
+
+          let transactionHash: Hash;
+
           if (activeRelayer) {
-            await vAnchorApi.transactWithRelayer(
+            await handleStoreNote(changeNote, addNoteToNoteManager);
+            transactionHash = await vAnchorApi.transactWithRelayer(
               activeRelayer,
               args,
               outputNotes
             );
           } else {
-            const transactionHash = await vAnchorApi.transact(...args);
+            transactionHash = await vAnchorApi.transact(...args);
+
+            await handleStoreNote(changeNote, addNoteToNoteManager);
+
+            await vAnchorApi.waitForFinalization(transactionHash);
 
             // Notification Success Transaction
-            tx.txHash = transactionHash;
             tx.next(TransactionState.Done, {
               txHash: transactionHash,
               outputNotes,
             });
+          }
+
+          if (typeof indexBeforeInsert === 'number' && changeNote) {
+            const noteWithIdx = await handleMutateNoteIndex(
+              vAnchorApi,
+              transactionHash,
+              changeNote,
+              indexBeforeInsert,
+              sourceIdentifyingData
+            );
+
+            await addNoteToNoteManager(noteWithIdx);
+            await removeNoteFromNoteManager(changeNote);
           }
 
           // Cleanup NoteAccount state
@@ -230,7 +248,7 @@ const TransferConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
     );
 
     const [txStatusMessage, currentStep] = useMemo(() => {

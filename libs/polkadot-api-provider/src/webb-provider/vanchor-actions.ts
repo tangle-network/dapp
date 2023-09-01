@@ -56,6 +56,7 @@ import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
+import type { HexString } from '@polkadot/util/types';
 
 export class PolkadotVAnchorActions extends VAnchorActions<
   'polkadot',
@@ -128,7 +129,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[]
-  ): Promise<void> {
+  ): Promise<HexString> {
     const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
@@ -175,8 +176,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
         extensionRoots: [],
       },
     } satisfies WithdrawRelayerArgs<'substrate', CMDSwitcher<'substrate'>>);
-
-    let txHash = '';
 
     // Subscribe to the relayer's transaction status.
     relayedVAnchorWithdraw.watcher.subscribe(async ([results, message]) => {
@@ -228,12 +227,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Send the transaction to the relayer.
     relayedVAnchorWithdraw.send(relayTxPayload, chainId);
 
-    const results = await relayedVAnchorWithdraw.await();
-    if (results) {
-      const [, message] = results;
-      txHash = message ?? '';
-      tx.txHash = txHash;
-    }
+    const [, txHash = ''] = await relayedVAnchorWithdraw.await();
+    tx.txHash = txHash;
+    return ensureHex(txHash);
   }
 
   async transact(
@@ -302,6 +298,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const txHash = await polkadotTx.call(activeAccount.address);
 
     return ensureHex(txHash);
+  }
+
+  async waitForFinalization(hash: `0x${string}`): Promise<void> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async isPairRegistered(

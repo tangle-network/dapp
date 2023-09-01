@@ -205,7 +205,7 @@ export abstract class VAnchorActions<
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<ProviderType>,
     changeNotes: Note[]
-  ): Promise<void>;
+  ): Promise<Hash>;
 
   /**
    * The transact function
@@ -223,4 +223,6 @@ export abstract class VAnchorActions<
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<Hash>;
+
+  abstract waitForFinalization(hash: Hash): Promise<void>;
 }

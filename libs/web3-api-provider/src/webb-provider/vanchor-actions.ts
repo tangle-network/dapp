@@ -183,9 +183,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'web3'>,
     changeNotes: Note[]
-  ): Promise<void> | never {
-    let txHash = '';
-
+  ): Promise<Hash> | never {
     const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
       txArgs;
 
@@ -296,12 +294,9 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     // Send the transaction to the relayer.
     relayedVAnchorWithdraw.send(relayedDepositTxPayload, +`${chainId}`);
-    const results = await relayedVAnchorWithdraw.await();
-    if (results) {
-      const [, message] = results;
-      txHash = message ?? '';
-      tx.txHash = txHash;
-    }
+    const [, txHash = ''] = await relayedVAnchorWithdraw.await();
+    tx.txHash = txHash;
+    return ensureHex(txHash);
   }
 
   async transact(
@@ -350,10 +345,12 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     tx.txHash = hash;
 
+    return hash;
+  }
+
+  async waitForFinalization(hash: Hash): Promise<void> {
     // Wait for the transaction to be finalized.
     await this.inner.publicClient.waitForTransactionReceipt({ hash });
-
-    return hash;
   }
 
   // Check if the evm address and keyData pairing has already registered.

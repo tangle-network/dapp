@@ -1,5 +1,4 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { downloadString } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT, chainsPopulated } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note } from '@webb-tools/sdk-core';
@@ -16,13 +15,20 @@ import {
   WithdrawTransactionPayloadType,
 } from '@webb-tools/abstract-api-provider';
 import { isViemError } from '@webb-tools/web3-api-provider';
-import { ContractFunctionRevertedError, formatEther, formatUnits } from 'viem';
+import {
+  ContractFunctionRevertedError,
+  Hash,
+  formatEther,
+  formatUnits,
+} from 'viem';
 import { useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
+  handleMutateNoteIndex,
+  handleStoreNote,
 } from '../../utils';
 import { WithdrawConfirmContainerProps } from './types';
 
@@ -87,11 +93,6 @@ const WithdrawConfirmContainer = forwardRef<
       return stage !== TransactionState.Ideal;
     }, [stage]);
 
-    // Download for the deposit confirm
-    const downloadNote = useCallback((note: string) => {
-      downloadString(note, note.slice(0, note.length - 10) + '.json');
-    }, []);
-
     const avatarTheme = useMemo(() => {
       return chainsPopulated[targetTypedChainId].chainType === ChainType.EVM
         ? 'ethereum'
@@ -133,138 +134,165 @@ const WithdrawConfirmContainer = forwardRef<
     }, [stage, unwrapCurrency]);
 
     // The main action onClick handler
-    const handleExecuteWithdraw = useCallback(async () => {
-      if (availableNotes.length === 0 || !vAnchorApi || !activeApi) {
-        captureSentryException(
-          new Error(
-            'No notes available to withdraw or vAnchorApi not available'
-          ),
-          'transactionType',
-          'withdraw'
-        );
-        return;
-      }
-
-      if (withdrawTxInProgress) {
-        txQueueApi.startNewTransaction();
-        onResetState?.();
-        return;
-      }
-
-      changeNote && downloadNote(changeNote.serialize());
-
-      const note: Note = availableNotes[0];
-      const {
-        sourceChainId: sourceTypedChainId,
-        sourceIdentifyingData,
-        targetChainId: destTypedChainId,
-        denomination,
-        tokenSymbol,
-      } = note.note;
-
-      const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
-
-      const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
-        tokenSymbol,
-        +destTypedChainId
-      );
-      if (!currency) {
-        console.error(`Currency not found for symbol ${tokenSymbol}`);
-        captureSentryException(
-          new Error(`Currency not found for symbol ${tokenSymbol}`),
-          'transactionType',
-          'withdraw'
-        );
-        return;
-      }
-      const tokenURI = getTokenURI(currency, destTypedChainId);
-
-      const amount = Number(formatUnits(amountAfterFee, +denomination));
-
-      const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
-        amount,
-        tokens: [tokenSymbol, unwrapTokenSymbol],
-        wallets: {
-          src: +sourceTypedChainId,
-          dest: +destTypedChainId,
-        },
-        token: tokenSymbol,
-        tokenURI,
-        providerType: activeApi.type,
-        address: sourceIdentifyingData,
-        recipient,
-      });
-      setTxId(tx.id)
-      setTotalStep(tx.totalSteps)
-      txQueueApi.registerTransaction(tx);
-
-      try {
-        if (changeNote) {
-          await addNoteToNoteManager(changeNote);
+    const handleExecuteWithdraw = useCallback(
+      async () => {
+        if (availableNotes.length === 0 || !vAnchorApi || !activeApi) {
+          captureSentryException(
+            new Error(
+              'No notes available to withdraw or vAnchorApi not available'
+            ),
+            'transactionType',
+            'withdraw'
+          );
+          return;
         }
 
-        const refund = refundAmount ?? ZERO_BIG_INT;
+        if (withdrawTxInProgress) {
+          txQueueApi.startNewTransaction();
+          onResetState?.();
+          return;
+        }
 
-        const txPayload: WithdrawTransactionPayloadType = {
-          notes: availableNotes,
-          changeUtxo,
+        const note: Note = availableNotes[0];
+        const {
+          sourceChainId: sourceTypedChainId,
+          sourceIdentifyingData,
+          targetChainId: destTypedChainId,
+          denomination,
+          tokenSymbol,
+        } = note.note;
+
+        const unwrapTokenSymbol = unwrapCurrency?.view.symbol ?? tokenSymbol;
+
+        const currency = apiConfig.getCurrencyBySymbolAndTypedChainId(
+          tokenSymbol,
+          +destTypedChainId
+        );
+        if (!currency) {
+          console.error(`Currency not found for symbol ${tokenSymbol}`);
+          captureSentryException(
+            new Error(`Currency not found for symbol ${tokenSymbol}`),
+            'transactionType',
+            'withdraw'
+          );
+          return;
+        }
+        const tokenURI = getTokenURI(currency, destTypedChainId);
+
+        const amount = Number(formatUnits(amountAfterFee, +denomination));
+
+        const tx = Transaction.new<NewNotesTxResult>('Withdraw', {
+          amount,
+          tokens: [tokenSymbol, unwrapTokenSymbol],
+          wallets: {
+            src: +sourceTypedChainId,
+            dest: +destTypedChainId,
+          },
+          token: tokenSymbol,
+          tokenURI,
+          providerType: activeApi.type,
+          address: sourceIdentifyingData,
           recipient,
-          refundAmount: refund,
-          feeAmount: fee,
-        };
+        });
+        setTxId(tx.id);
+        setTotalStep(tx.totalSteps);
+        txQueueApi.registerTransaction(tx);
 
-        const args = await vAnchorApi.prepareTransaction(
-          tx,
-          txPayload,
-          unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
-        );
+        try {
+          const refund = refundAmount ?? ZERO_BIG_INT;
 
-        const outputNotes = changeNote ? [changeNote] : [];
+          const txPayload: WithdrawTransactionPayloadType = {
+            notes: availableNotes,
+            changeUtxo,
+            recipient,
+            refundAmount: refund,
+            feeAmount: fee,
+          };
 
-        if (activeRelayer) {
-          await vAnchorApi.transactWithRelayer(
-            activeRelayer,
-            args,
-            outputNotes
-          );
-        } else {
-          const transactionHash = await vAnchorApi.transact(...args);
-
-          // Notification Success Transaction
-          tx.txHash = transactionHash;
-          tx.next(TransactionState.Done, {
-            txHash: transactionHash,
-            outputNotes,
-          });
-        }
-
-        // Cleanup NoteAccount state
-        await Promise.all(
-          availableNotes.map((note) => removeNoteFromNoteManager(note))
-        );
-      } catch (error) {
-        console.log('Error while executing withdraw', error);
-        changeNote && (await removeNoteFromNoteManager(changeNote));
-        tx.txHash = getTransactionHash(error);
-
-        let errorMessage = getErrorMessage(error);
-        if (isViemError(error)) {
-          errorMessage = error.shortMessage;
-
-          const revertError = error.walk(
-            (err) => err instanceof ContractFunctionRevertedError
+          const args = await vAnchorApi.prepareTransaction(
+            tx,
+            txPayload,
+            unwrapCurrency?.getAddressOfChain(+destTypedChainId) ?? ''
           );
 
-          if (revertError instanceof ContractFunctionRevertedError) {
-            errorMessage = revertError.reason ?? revertError.shortMessage;
+          const outputNotes = changeNote ? [changeNote] : [];
+
+          let indexBeforeInsert: number | undefined;
+          if (changeNote) {
+            const nextIdx = Number(
+              await vAnchorApi.getNextIndex(+sourceTypedChainId, currency.id)
+            );
+
+            indexBeforeInsert = nextIdx === 0 ? nextIdx : nextIdx - 1;
           }
+
+          let transactionHash: Hash;
+
+          if (activeRelayer) {
+            await handleStoreNote(changeNote, addNoteToNoteManager);
+            transactionHash = await vAnchorApi.transactWithRelayer(
+              activeRelayer,
+              args,
+              outputNotes
+            );
+          } else {
+            transactionHash = await vAnchorApi.transact(...args);
+
+            await handleStoreNote(changeNote, addNoteToNoteManager);
+
+            await vAnchorApi.waitForFinalization(transactionHash);
+
+            // Notification Success Transaction
+            tx.txHash = transactionHash;
+            tx.next(TransactionState.Done, {
+              txHash: transactionHash,
+              outputNotes,
+            });
+          }
+
+          if (typeof indexBeforeInsert === 'number' && changeNote) {
+            const noteWithIdx = await handleMutateNoteIndex(
+              vAnchorApi,
+              transactionHash,
+              changeNote,
+              indexBeforeInsert,
+              sourceIdentifyingData
+            );
+
+            await addNoteToNoteManager(noteWithIdx);
+            await removeNoteFromNoteManager(changeNote);
+          }
+
+          // Cleanup NoteAccount state
+          await Promise.all(
+            availableNotes.map((note) => removeNoteFromNoteManager(note))
+          );
+        } catch (error) {
+          console.log('Error while executing withdraw', error);
+          changeNote && (await removeNoteFromNoteManager(changeNote));
+          tx.txHash = getTransactionHash(error);
+
+          let errorMessage = getErrorMessage(error);
+          if (isViemError(error)) {
+            errorMessage = error.shortMessage;
+
+            const revertError = error.walk(
+              (err) => err instanceof ContractFunctionRevertedError
+            );
+
+            if (revertError instanceof ContractFunctionRevertedError) {
+              errorMessage = revertError.reason ?? revertError.shortMessage;
+            }
+          }
+
+          tx.fail(errorMessage);
+
+          captureSentryException(error, 'transactionType', 'withdraw');
         }
-
-        tx.fail(errorMessage);
-
-        captureSentryException(error, 'transactionType', 'withdraw');
-      }
-    }, [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, downloadNote, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]); // prettier-ignore
+      },
+      // prettier-ignore
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
+    );
 
     const [txStatusMessage, currentStep] = useMemo(() => {
       if (!txId) {
@@ -351,7 +379,6 @@ const WithdrawConfirmContainer = forwardRef<
         refundAmount={isRefund ? formattedRefund : undefined}
         refundToken={isRefund ? refundToken : undefined}
         receivingInfo={receivingInfo}
-        onDownload={() => downloadNote(changeNote?.serialize() ?? '')}
         amount={amount}
         remainingAmount={remainingAmount}
         feeInfo={feeInfo}
