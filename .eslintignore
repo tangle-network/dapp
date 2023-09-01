@@ -5,3 +5,4 @@
 /**/next.config.js
 /**/.eslintrc.js
 /**/jest.config.ts
+/**/.netlify
