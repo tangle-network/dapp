@@ -6,7 +6,7 @@ name: deploy-bridge-dapp 🌐
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    branches: [develop]
+    branches: [develop, hubble-bridge-v2]
     paths:
       - 'apps/bridge-dapp/**'
 
