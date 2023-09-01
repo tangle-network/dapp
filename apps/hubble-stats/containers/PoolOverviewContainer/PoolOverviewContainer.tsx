@@ -15,8 +15,15 @@ export default async function PoolOverviewContainer({
 }: {
   poolAddress: string;
 }) {
-  const { name, url, type, deposit24h, depositChangeRate, tvl, tvlChangeRate } =
-    await getPoolOverviewData(poolAddress);
+  const {
+    name,
+    fungibleTokenSymbol,
+    type,
+    deposit24h,
+    depositChangeRate,
+    tvl,
+    tvlChangeRate,
+  } = await getPoolOverviewData(poolAddress);
 
   return (
     <div
@@ -67,19 +74,19 @@ export default async function PoolOverviewContainer({
         </div>
 
         {/* 24h deposits + TVL + 24h fees */}
-        <div className="flex">
+        <div className="flex items-center">
           <PoolOverviewItem
             title="tvl"
             value={tvl}
             changeRate={tvlChangeRate}
-            suffix=" tTNT"
+            suffix={` ${fungibleTokenSymbol}`}
             className="flex-[1]"
           />
           <PoolOverviewItem
             title="Deposits 24H"
-            suffix=" tTNT"
             value={deposit24h}
             changeRate={depositChangeRate}
+            suffix={` ${fungibleTokenSymbol}`}
             className="flex-[1] border-l border-mono-40 dark:border-mono-140"
           />
         </div>

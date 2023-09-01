@@ -17,14 +17,23 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
   return (
     <div className={cx('px-2', className)}>
       <div className="flex justify-center items-center gap-1">
-        <Typography variant="h5" fw="black" className="text-center">
-          {typeof value === 'number' && prefix}
-          {getRoundedAmountString(value, 1, {
-            roundingFunction: Math.floor,
-            totalLength: 0,
-          })}
-          {typeof value === 'number' && suffix}
-        </Typography>
+        <div className="flex items-center gap-0.5">
+          <Typography variant="h5" fw="black">
+            {typeof value === 'number' && prefix}
+            {getRoundedAmountString(value, 1, {
+              roundingFunction: Math.floor,
+              totalLength: 0,
+            })}
+          </Typography>
+          {typeof value === 'number' && (
+            <Typography
+              variant="body2"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {suffix}
+            </Typography>
+          )}
+        </div>
         {changeRate && (
           <Typography
             variant="utility"

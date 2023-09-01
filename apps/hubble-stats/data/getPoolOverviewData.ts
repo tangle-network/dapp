@@ -8,7 +8,7 @@ import { PoolType } from '../components/PoolTypeChip/types';
 
 type PoolOverviewType = {
   name: string;
-  url: string;
+  fungibleTokenSymbol: string;
   type: PoolType;
   deposit24h: number | undefined;
   depositChangeRate: number | undefined;
@@ -109,7 +109,7 @@ export default async function getPoolOverviewData(
 
   return {
     name: vanchor.fungibleTokenName,
-    url: '#',
+    fungibleTokenSymbol: vanchor.fungibleTokenSymbol,
     type: 'single',
     deposit24h,
     depositChangeRate,
