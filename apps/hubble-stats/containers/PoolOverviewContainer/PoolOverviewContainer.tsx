@@ -1,9 +1,13 @@
 import cx from 'classnames';
-import { Typography, CopyWithTooltip } from '@webb-tools/webb-ui-components';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
 
-import { PoolTypeChip, PoolOverviewItem } from '../../components';
+import {
+  PoolTypeChip,
+  PoolOverviewItem,
+  CopyIconWithTooltip,
+} from '../../components';
 import { getPoolOverviewData } from '../../data';
 
 export default async function PoolOverviewContainer({
@@ -52,11 +56,7 @@ export default async function PoolOverviewContainer({
               {shortenHex(poolAddress)}
             </Typography>
 
-            <CopyWithTooltip
-              textToCopy={poolAddress}
-              isButton={false}
-              className="text-mono-140 dark:text-mono-40"
-            />
+            <CopyIconWithTooltip textToCopy={poolAddress} />
           </div>
 
           {/* Type */}
