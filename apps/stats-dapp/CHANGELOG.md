@@ -130,7 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed, Changed and Added
 
 - Adds proposal hooks in stats-dapp to fetch batched proposals ([#1511](https://github.com/webb-tools/webb-dapp/pull/1511))
-- Adds proposal table, proposal status container, fixes theme toggle and dropdown issue ([#1525](https://github.com/webb-tools/webb-dapp/pull/15125))
+- Adds proposal table, proposal status container, fixes theme toggle and dropdown issue ([#1525](https://github.com/webb-tools/webb-dapp/pull/1525))
 - Adds Proposal Details Page to stats-dapp ([#1549](https://github.com/webb-tools/webb-dapp/pull/1549))
 - Stats dApp Fixes: footer, compressed key flex & proposal detail page color ([#1554](https://github.com/webb-tools/webb-dapp/pull/1554))
 - Use PolkadotAPI to show live chain data and Bug fixes in stats-dapp ([#1566](https://github.com/webb-tools/webb-dapp/pull/1566))
