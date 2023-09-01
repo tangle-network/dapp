@@ -1,6 +1,5 @@
 export * from './arrayFrom';
 export * from './calculateDateProgress';
-export { default as calculateProgressPercentage } from './calculateProgressPercentage';
 export * from './formatDateToUtc';
 export * from './formatTokenAmount';
 export * from './getHumanFileSize';

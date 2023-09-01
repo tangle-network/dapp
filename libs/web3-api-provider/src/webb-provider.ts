@@ -18,6 +18,7 @@ import {
   WebbState,
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
+import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { EventBus } from '@webb-tools/app-util';
 import {
   fetchVAnchorKeyFromAws,
@@ -56,7 +57,6 @@ import {
 } from '@webb-tools/sdk-core';
 import { ZkComponents, hexToU8a } from '@webb-tools/utils';
 import type { Backend } from '@webb-tools/wasm-utils';
-import calculateProgressPercentage from '@webb-tools/webb-ui-components/utils/calculateProgressPercentage';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import { BehaviorSubject } from 'rxjs';

@@ -6,12 +6,12 @@ import {
   TransactionStatusValue,
   WebbProviderType,
 } from '@webb-tools/abstract-api-provider';
+import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TransactionItemStatus,
   TransactionPayload,
-  calculateProgressPercentage,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
