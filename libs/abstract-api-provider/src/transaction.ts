@@ -133,25 +133,6 @@ type PromiseExec<T> = (
   reject: (reason?: any) => void
 ) => void;
 
-// The total steps for each transaction
-// this not include the initial step, the
-// failed and done step.
-const totalStepConfig: {
-  [key in TransactionName]: number;
-} = {
-  Deposit: 4,
-  Transfer: 5,
-  Withdraw: 5,
-};
-
-// List of transatcion state that
-// not include the transaction step
-// that should be skipped
-const skipState: TransactionState[] = [
-  TransactionState.Ideal,
-  TransactionState.ValidatingLeaves,
-];
-
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
 
@@ -162,9 +143,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     string | undefined
   >(undefined);
 
-  public static readonly totalStepsCfg = totalStepConfig;
-
-  public readonly totalSteps = totalStepConfig[this.name];
+  // Find the max step in the transactionStepMap
+  public readonly totalSteps = Object.values(
+    transactionStepMap[this.name]
+  ).reduce((prev, cur) => (cur > prev ? cur : prev), 0);
 
   // 0 for the initial step
   public readonly stepSubject = new BehaviorSubject<number>(0);
@@ -224,18 +206,17 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
 
-    // Update the step
-    if (skipState.includes(status)) {
-      return;
-    }
-
     if (
       status === TransactionState.Done ||
       status === TransactionState.Failed
     ) {
       this.stepSubject.next(this.totalSteps + 1);
-    } else {
-      this.stepSubject.next(this.stepSubject.value + 1);
+      return;
+    }
+
+    const step = transactionStepMap[this.name][status];
+    if (typeof step === 'number') {
+      this.stepSubject.next(step);
     }
   }
 
@@ -284,3 +265,32 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     }
   };
 }
+
+export type TransactionMap = {
+  [key in TransactionName]: Partial<Record<TransactionState, number>>;
+};
+
+const transactionStepMap: TransactionMap = {
+  Deposit: {
+    [TransactionState.Intermediate]: 1,
+    [TransactionState.GeneratingZk]: 2,
+    [TransactionState.InitializingTransaction]: 3,
+    [TransactionState.SendingTransaction]: 4,
+  },
+  Transfer: {
+    [TransactionState.FetchingLeavesFromRelayer]: 1,
+    [TransactionState.FetchingLeaves]: 2,
+    [TransactionState.GeneratingZk]: 3,
+    [TransactionState.InitializingTransaction]: 4,
+    [TransactionState.SendingTransaction]: 5,
+    [TransactionState.Intermediate]: 5,
+  },
+  Withdraw: {
+    [TransactionState.FetchingLeavesFromRelayer]: 1,
+    [TransactionState.FetchingLeaves]: 2,
+    [TransactionState.GeneratingZk]: 3,
+    [TransactionState.InitializingTransaction]: 4,
+    [TransactionState.SendingTransaction]: 5,
+    [TransactionState.Intermediate]: 5,
+  },
+};
