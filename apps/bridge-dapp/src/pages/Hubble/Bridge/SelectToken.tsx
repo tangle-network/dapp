@@ -62,10 +62,9 @@ const SelectToken: FC = () => {
     }
   }, [currentTxType, destChainCfg, srcChainCfg]);
 
-  const { allCurrencies, allCurrencyCfgs, wrappableCurrencies } =
-    useCurrenciesFromRoute(
-      currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
-    );
+  const { allCurrencies, allCurrencyCfgs } = useCurrenciesFromRoute(
+    currentTxType === 'deposit' ? srcTypedChainId : destTypedChainId
+  );
 
   const fungibleAddress = useMemo(() => {
     const poolId = searhParams.get(POOL_KEY);
@@ -92,53 +91,36 @@ const SelectToken: FC = () => {
   );
 
   const selectTokens = useMemo<Array<AssetType>>(
-    () => {
-      const currencies =
-        currentTxType === 'deposit' ? wrappableCurrencies : allCurrencyCfgs;
+    () =>
+      allCurrencyCfgs.map((currencyCfg) => {
+        const balanceProps = getBalanceProps(
+          currencyCfg,
+          balances,
+          isBalancesLoading,
+          currentTxType
+        );
 
-      return currencies.map((currencyCfg) => {
-        const addr =
-          typeof srcTypedChainId === 'number'
-            ? currencyCfg.addresses.get(srcTypedChainId)
-            : undefined;
+        const badgeProps = getBadgeProps(
+          currencyCfg,
+          balances,
+          isBalancesLoading,
+          currentTxType
+        );
 
-        let balanceProps: AssetType['assetBalanceProps'] = undefined;
-        let badgeProps: AssetType['assetBadgeProps'] = undefined;
-
-        if (
-          !isBalancesLoading &&
-          currencyCfg.role !== CurrencyRole.Governable
-        ) {
-          if (balances[currencyCfg.id]) {
-            balanceProps = {
-              balance: balances[currencyCfg.id],
-            };
-          } else {
-            badgeProps = {
-              variant: 'warning',
-              children:
-                currentTxType === 'withdraw'
-                  ? 'Insufficient liquidity'
-                  : 'No balance',
-            };
-          }
-        }
+        const address = getAddress(currencyCfg, srcTypedChainId);
+        const explorerUrl = getExplorerUrl(address, blockExplorer);
 
         return {
           name: currencyCfg.name,
           symbol: currencyCfg.symbol,
           tokenType: 'unshielded',
-          explorerUrl:
-            blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
-              ? new URL(`/address${addr}`, blockExplorer).toString()
-              : undefined,
+          explorerUrl: explorerUrl,
           assetBalanceProps: balanceProps,
           assetBadgeProps: badgeProps,
         } satisfies AssetType;
-      });
-    },
+      }),
     // prettier-ignore
-    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId, wrappableCurrencies]
+    [allCurrencyCfgs, balances, blockExplorer, currentTxType, isBalancesLoading, srcTypedChainId]
   );
 
   const handleClose = useCallback(
@@ -185,3 +167,41 @@ const SelectToken: FC = () => {
 };
 
 export default SelectToken;
+
+const getAddress = (currencyCfg: CurrencyConfig, srcTypedChainId?: number) =>
+  typeof srcTypedChainId === 'number'
+    ? currencyCfg.addresses.get(srcTypedChainId)
+    : undefined;
+
+const getBalanceProps = (
+  currencyCfg: CurrencyConfig,
+  balances: Record<number, number>,
+  isLoading?: boolean,
+  txType?: string
+) =>
+  !isLoading &&
+  balances[currencyCfg.id] &&
+  (txType !== 'withdraw' || currencyCfg.role !== CurrencyRole.Governable)
+    ? { balance: balances[currencyCfg.id] }
+    : undefined;
+
+const getBadgeProps = (
+  currencyCfg: CurrencyConfig,
+  balances: Record<number, number>,
+  isLoading?: boolean,
+  txType?: string
+) =>
+  !isLoading &&
+  !balances[currencyCfg.id] &&
+  currencyCfg.role !== CurrencyRole.Governable
+    ? {
+        variant: 'warning' as const,
+        children:
+          txType === 'withdraw' ? 'Insufficient liquidity' : 'No balance',
+      }
+    : undefined;
+
+const getExplorerUrl = (addr?: string, blockExplorer?: string) =>
+  blockExplorer && addr && BigInt(addr) !== ZERO_BIG_INT
+    ? new URL(`/address${addr}`, blockExplorer).toString()
+    : undefined;

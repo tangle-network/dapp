@@ -1,6 +1,10 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { CurrencyConfig } from '@webb-tools/dapp-config/currencies/currency-config.interface';
-import { useBalancesFromNotes } from '@webb-tools/react-hooks';
+import {
+  BalancesFromNotesType,
+  useBalancesFromNotes,
+} from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { TokenListCard } from '@webb-tools/webb-ui-components';
 import { AssetType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { FC, useCallback, useMemo } from 'react';
@@ -66,48 +70,39 @@ const SelectPool: FC = () => {
 
   const { balances: balancesFromNotes } = useBalancesFromNotes();
 
-  const selectTokens = useMemo<Array<AssetType>>(
+  const pools = useMemo<Array<AssetType>>(
     () => {
       return fungibleCurrencies.map((currencyCfg) => {
-        let addr: string | undefined = undefined;
-        let assetBalance: AssetType['assetBalanceProps'] = undefined;
-        let chainName: string | undefined = undefined;
+        const assetBalanceProps = getBalanceProps(
+          currencyCfg,
+          balancesFromNotes,
+          currentTxType,
+          srcTypedChainId,
+          destTypedChainId
+        );
 
-        if (
-          currentTxType === 'deposit' &&
-          typeof srcTypedChainId === 'number'
-        ) {
-          addr = currencyCfg.addresses.get(srcTypedChainId);
-        } else if (
-          currentTxType === 'withdraw' &&
-          typeof destTypedChainId === 'number'
-        ) {
-          addr = currencyCfg.addresses.get(destTypedChainId);
-        }
+        const chainName = getChainName(
+          apiConfig.chains,
+          currentTxType,
+          srcTypedChainId,
+          destTypedChainId
+        );
 
-        // Display the pool note balance
-        if (
-          currentTxType === 'withdraw' &&
-          typeof destTypedChainId === 'number'
-        ) {
-          const balance = balancesFromNotes[currencyCfg.id]?.[destTypedChainId];
-          if (typeof balance === 'bigint') {
-            assetBalance = {
-              balance: +formatEther(balance),
-            };
-            chainName = apiConfig.chains[destTypedChainId].name;
-          }
-        }
+        const addr = getAddress(
+          currencyCfg,
+          currentTxType,
+          srcTypedChainId,
+          destTypedChainId
+        );
+
+        const explorerUrl = getExplorerUrl(blockExplorer, addr);
 
         return {
           name: currencyCfg.name,
           symbol: currencyCfg.symbol,
           tokenType: 'shielded',
-          explorerUrl:
-            blockExplorer && addr
-              ? new URL(`/address/${addr}`, blockExplorer).toString()
-              : undefined,
-          assetBalanceProps: assetBalance,
+          explorerUrl,
+          assetBalanceProps,
           chainName,
         } satisfies AssetType;
       });
@@ -195,7 +190,7 @@ const SelectPool: FC = () => {
         className="h-[var(--card-height)]"
         title={`Select pool to ${currentTxType}`}
         popularTokens={[]}
-        selectTokens={selectTokens}
+        selectTokens={pools}
         unavailableTokens={unavailableTokens}
         onChange={handleTokenChange}
         onClose={() => handleClose()}
@@ -206,3 +201,66 @@ const SelectPool: FC = () => {
 };
 
 export default SelectPool;
+
+const getAddress = (
+  currencyCfg: CurrencyConfig,
+  txType?: string,
+  srcTypedChainId?: number,
+  destTypedChainId?: number
+) =>
+  (txType === 'deposit' || txType === 'transfer') &&
+  typeof srcTypedChainId === 'number'
+    ? currencyCfg.addresses.get(srcTypedChainId)
+    : txType === 'withdraw' && typeof destTypedChainId === 'number'
+    ? currencyCfg.addresses.get(destTypedChainId)
+    : undefined;
+
+const getExplorerUrl = (blockExplorer?: string, address?: string) =>
+  blockExplorer && address
+    ? new URL(`/address/${address}`, blockExplorer).toString()
+    : undefined;
+
+const getBalanceProps = (
+  currency: CurrencyConfig,
+  balances: BalancesFromNotesType,
+  txType?: string,
+  srcTypedChainId?: number,
+  destTypedChainId?: number
+) => {
+  if (txType === 'withdraw' && typeof destTypedChainId === 'number') {
+    const balance = balances[currency.id]?.[destTypedChainId];
+    if (typeof balance === 'bigint') {
+      return {
+        balance: +formatEther(balance),
+      };
+    }
+  }
+
+  if (txType === 'transfer' && typeof srcTypedChainId === 'number') {
+    const balance = balances[currency.id]?.[srcTypedChainId];
+    if (typeof balance === 'bigint') {
+      return {
+        balance: +formatEther(balance),
+      };
+    }
+  }
+
+  return undefined;
+};
+
+const getChainName = (
+  chainsConfig: Record<number, ChainConfig>,
+  txType?: string,
+  srcTypedChainId?: number,
+  destTypedChainId?: number
+) => {
+  if (txType === 'withdraw' && typeof destTypedChainId === 'number') {
+    return chainsConfig[destTypedChainId]?.name;
+  }
+
+  if (txType && txType !== 'withdraw' && typeof srcTypedChainId === 'number') {
+    return chainsConfig[srcTypedChainId]?.name;
+  }
+
+  return undefined;
+};

@@ -40,23 +40,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       [searchText]
     );
 
-    const onItemChange = useCallback(
-      (nextItem: AssetType) => {
-        // Check if the selected token is in the unavailable list
-        const isInUnavailableList = unavailableTokens.find(
-          (tk) => tk.name === nextItem.name && tk.symbol === nextItem.symbol
-        );
-
-        // Do not change the selected token if it is in the unavailable list
-        if (isInUnavailableList) {
-          return;
-        }
-
-        onChange?.(nextItem);
-      },
-      [onChange, unavailableTokens]
-    );
-
     const { filteredPopular, filteredSelect } = useMemo(
       () => ({
         filteredPopular: getFilterList(popularTokens),
@@ -90,7 +73,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               {filteredPopular.map((current, idx) => (
                 <TokenSelector
                   key={`${current.name}-${idx}`}
-                  onClick={() => onItemChange(current)}
+                  onClick={() => onChange?.(current)}
                   isDropdown={false}
                 >
                   {current.symbol}
@@ -117,8 +100,9 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                 {filteredSelect.map((current, idx) => (
                   <TokenListItem
                     key={`${current.name}-${idx}`}
+                    className="cursor-pointer"
                     {...current}
-                    onClick={() => onItemChange(current)}
+                    onClick={() => onChange?.(current)}
                   />
                 ))}
               </ul>
@@ -143,7 +127,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
                       isDisabled
                       key={`${current.name}-${idx}`}
                       {...current}
-                      onClick={() => onItemChange(current)}
                     />
                   ))}
                 </ul>
