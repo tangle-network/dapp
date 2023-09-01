@@ -468,7 +468,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               return {
                 id: publicKey.id,
                 session: session && session.id ? session.id : '',
-                publicKey: '', // publicKey.uncompressed!
+                publicKey: publicKey.compressed ?? '',
                 height: `${publicKey.block?.number ?? '-'}`,
                 authority: {
                   count: session.sessionValidators.totalCount,
