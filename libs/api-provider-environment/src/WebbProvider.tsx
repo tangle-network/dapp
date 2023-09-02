@@ -53,6 +53,7 @@ import constants from './constants';
 import { unsupportedChain } from './error';
 import { insufficientApiInterface } from './error/interactive-errors/insufficient-api-interface';
 import onChainDataJson from './generated/on-chain-config.json';
+import ModalQueueManagerProvider from './modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from './store';
 import { useTxApiQueue } from './transaction';
 import { WebbContext } from './webb-context';
@@ -919,7 +920,9 @@ const WebbProviderInner: FC<WebbProviderProps> = ({ children, appEvent }) => {
         txQueue,
       }}
     >
-      <StoreProvider>{children}</StoreProvider>
+      <ModalQueueManagerProvider>
+        <StoreProvider>{children}</StoreProvider>
+      </ModalQueueManagerProvider>
     </WebbContext.Provider>
   );
 };
