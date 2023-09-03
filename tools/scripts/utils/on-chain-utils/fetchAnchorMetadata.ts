@@ -29,7 +29,7 @@ async function fetchEVMAnchorMetadata(
   anchorAddress: string,
   typedChainId: number
 ): Promise<AnchorMetadata> {
-  if (anchorDeploymentBlock?.[typedChainId]?.[anchorAddress] !== 1) {
+  if (anchorDeploymentBlock?.[typedChainId]?.[anchorAddress] === undefined) {
     throw new Error(
       `Getting Deployment Block: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
     );

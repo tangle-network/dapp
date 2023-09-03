@@ -25,7 +25,9 @@ export const getEpochNow = () => getEpochFromDate(new Date());
  * Total number of days have passed since the starting epoch
  */
 
-const EPOCH_START = 1692144000;
+const EPOCH_START = process.env.HUBBLE_STATS_EPOCH_START
+  ? +process.env.HUBBLE_STATS_EPOCH_START
+  : 1692144000;
 
 export const getEpochStart = () => {
   return EPOCH_START;
