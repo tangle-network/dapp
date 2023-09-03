@@ -5,24 +5,24 @@ import {
 } from '@webb-tools/sdk-core/typed-chain-id';
 import { LOCALNET_CHAIN_IDS } from '../chains';
 
-const localAnchorRecord = process.env.LOCAL_ORBIT_ANCHOR_ADDRESS
-  ? LOCALNET_CHAIN_IDS.reduce<Record<number, Record<string, string>>>(
-      (acc, chainId) => {
-        const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
-        const anchorAddress: string = process.env
-          .LOCAL_ORBIT_ANCHOR_ADDRESS as string;
+type AnchorWithSignatureBridgeMapType = Record<string, string>;
+type ChainWithAnchorsMapType = Record<number, AnchorWithSignatureBridgeMapType>;
 
-        acc[typedChainId] = {
-          [anchorAddress]: '',
-        };
+const localAnchorRecord = process.env.BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS
+  ? LOCALNET_CHAIN_IDS.reduce<ChainWithAnchorsMapType>((acc, chainId) => {
+      const typedChainId = calculateTypedChainId(ChainType.EVM, chainId);
+      const anchorAddress: string = process.env
+        .BRIDGE_DAPP_LOCAL_ORBIT_ANCHOR_ADDRESS as string;
 
-        return acc;
-      },
-      {}
-    )
+      acc[typedChainId] = {
+        [anchorAddress]: '',
+      };
+
+      return acc;
+    }, {})
   : {};
 
-export const anchorSignatureBridge: Record<number, Record<string, string>> = {
+export const anchorSignatureBridge: ChainWithAnchorsMapType = {
   // EVM
   [PresetTypedChainId.ArbitrumTestnet]: {
     '0x38e7aa90c77f86747fab355eecaa0c2e4c3a463d': '',

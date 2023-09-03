@@ -18,9 +18,10 @@ const Breadcrumbs: FC = () => {
   const parts = pathname.split('/');
   let activeItem = parts[parts.length - 1];
 
-  // if current path is /pool/<poolAddress>
+  // check if current path is /pool/<poolAddress>
   if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
     const poolAddress = parts[2];
+    // if invalid poolAddress, the breadcrumb only show the default item
     if (!VANCHORS_MAP[poolAddress]) {
       activeItem = '';
     } else {

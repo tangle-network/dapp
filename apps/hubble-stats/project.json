@@ -20,13 +20,6 @@
         "production": {}
       }
     },
-    "fetch-on-chain-config": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn fetch:onChainConfig",
-        "color": true
-      }
-    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
@@ -34,6 +27,7 @@
         "buildTarget": "hubble-stats:build",
         "dev": true
       },
+      "dependsOn": ["fetch-on-chain-config", "^build"],
       "configurations": {
         "development": {
           "buildTarget": "hubble-stats:build:development",
@@ -43,6 +37,13 @@
           "buildTarget": "hubble-stats:build:production",
           "dev": false
         }
+      }
+    },
+    "fetch-on-chain-config": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn fetch:onChainConfig",
+        "color": true
       }
     },
     "export": {
