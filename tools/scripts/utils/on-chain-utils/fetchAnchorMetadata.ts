@@ -29,6 +29,18 @@ async function fetchEVMAnchorMetadata(
   anchorAddress: string,
   typedChainId: number
 ): Promise<AnchorMetadata> {
+  if (anchorDeploymentBlock?.[typedChainId]?.[anchorAddress] !== 1) {
+    throw new Error(
+      `Getting Deployment Block: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+    );
+  }
+
+  if (anchorSignatureBridge?.[typedChainId]?.[anchorAddress] === undefined) {
+    throw new Error(
+      `Getting Signature Bridge: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+    );
+  }
+
   const client = getViemClient(typedChainId);
 
   const anchorAddrHex = `0x${anchorAddress.replace(/^0x/, '')}` as const;
