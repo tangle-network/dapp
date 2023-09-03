@@ -1,6 +1,5 @@
 import { NextSeo } from 'next-seo';
-import Lottie from 'react-lottie-player';
-
+import { twMerge } from 'tailwind-merge';
 import {
   ApplicationsAndInfrastructureSection,
   HeroSection,
@@ -26,14 +25,30 @@ export function Index() {
         }}
       />
 
-      <div className="relative w-full">
-        <Lottie
+      <div
+        className={twMerge(
+          'flex items-center justify-center',
+          'w-screen h-[calc(100vh-var(--header-height))]',
+          'bg-[url(/animations/hero-loop.gif)] bg-cover bg-bottom bg-no-repeat)]'
+        )}
+      >
+        {/*         <Lottie
           path="/animations/hero-loop.json"
           play
           loop
-          className="w-full h-full"
+          className="absolute inset-0"
           rendererSettings={{ preserveAspectRatio: 'xMidYMax slice' }}
-        />
+        /> */}
+        {/* <Image
+          className="object-cover"
+          src={'/animations/hero-loop.gif'}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          fill
+          priority
+          alt={`Hero loop animation`}
+          unoptimized={true}
+        /> */}
+
         <HeroSection />
       </div>
 
