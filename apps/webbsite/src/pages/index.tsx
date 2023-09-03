@@ -29,7 +29,7 @@ export function Index() {
         className={twMerge(
           'flex items-center justify-center',
           'w-screen h-[calc(100vh-var(--header-height))]',
-          'bg-[url(/animations/hero-loop.gif)] bg-cover bg-bottom bg-no-repeat)]'
+          'bg-[url(/animations/hero-loop.gif)] bg-cover bg-center bg-no-repeat)]'
         )}
       >
         {/*         <Lottie
