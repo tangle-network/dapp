@@ -1,28 +1,32 @@
 import { FC } from 'react';
+import Link from 'next/link';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { ShieldedAssetDark, ShieldedAssetLight } from '@webb-tools/icons';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import {
-  ExternalLinkLine,
-  ShieldedAssetDark,
-  ShieldedAssetLight,
-} from '@webb-tools/icons';
 
 import { ShieldedCellProps } from './types';
 
-const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
+const ShieldedCell: FC<ShieldedCellProps> = ({
+  title,
+  address,
+  poolAddress,
+}) => {
   return (
     <div className="flex items-center gap-2">
       <ShieldedAssetLight className="block dark:hidden" />
       <ShieldedAssetDark className="hidden dark:block" />
 
       <div className="flex flex-col">
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-140 dark:text-mono-40"
-        >
-          {title}
-        </Typography>
+        <Link href={`/pool/${poolAddress}`}>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-140 dark:text-mono-40 hover:underline"
+          >
+            {title}
+          </Typography>
+        </Link>
+
         <div className="flex items-center gap-1">
           <Typography
             variant="body1"
@@ -30,11 +34,10 @@ const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
           >
             {shortenHex(address, 4)}
           </Typography>
-
           {/* TODO: update href */}
-          <a href="#" target="_blank" rel="noreferrer">
+          {/* <a href="#" target="_blank" rel="noreferrer">
             <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

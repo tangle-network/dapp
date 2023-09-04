@@ -2,26 +2,27 @@ import { Chip } from '@webb-tools/webb-ui-components';
 import { BlockIcon } from '@webb-tools/icons';
 
 import { getOverviewChipsData } from '../../data';
-import { getRoundedDownWith2Decimals } from '../../utils';
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 export default async function OverviewChipsContainer() {
-  const { tvl, volume } = await getOverviewChipsData();
+  const { tvl, deposit } = await getOverviewChipsData();
 
   return (
     <div className="hidden md:flex items-center gap-4">
       <Chip color="blue" className="normal-case">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        TVL: {typeof tvl === 'number'
-          ? getRoundedDownWith2Decimals(tvl)
+        TVL:{' '}
+        {typeof tvl === 'number'
+          ? getRoundedDownNumberWith2Decimals(tvl)
           : '-'}{' '}
         tTNT
       </Chip>
 
       <Chip color="blue" className="normal-case">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        VOLUME:{' '}
-        {typeof volume === 'number'
-          ? getRoundedDownWith2Decimals(volume)
+        DEPOSITS:{' '}
+        {typeof deposit === 'number'
+          ? getRoundedDownNumberWith2Decimals(deposit)
           : '-'}{' '}
         tTNT
       </Chip>

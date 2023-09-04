@@ -1,4 +1,4 @@
-import { parseTypedChainId } from '@webb-tools/sdk-core';
+import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { Chain, PublicClient, createPublicClient, fallback, http } from 'viem';
 import {
   VIEM_NOT_SUPPORTED_MULTICALL_CHAINS,

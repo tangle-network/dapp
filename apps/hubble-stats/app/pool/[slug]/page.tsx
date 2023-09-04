@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+
 import {
   NetworkTablesContainer,
   PoolChartsContainer,
@@ -5,9 +7,15 @@ import {
   PoolOverviewContainer,
   PoolTransactionsTableContainer,
 } from '../../../containers';
+import { VANCHORS_MAP } from '../../../constants';
 
 export default function Pool({ params }: { params: { slug: string } }) {
   const poolAddress = params.slug;
+
+  // if poolAddress slug is not valid, return 404
+  if (!VANCHORS_MAP[poolAddress]) {
+    notFound();
+  }
 
   return (
     <div className="py-4 space-y-8">

@@ -49,6 +49,21 @@ export interface AnchorMetadata {
    * Record of linkable typed chain -> anchor address
    */
   linkableAnchor: Record<string, string>;
+
+  /**
+   * The address of the Signature Bridge to the Anchor
+   */
+  signatureBridge?: string;
+
+  /**
+   * The address of the contract that handles fees for the anchor
+   */
+  treasuryAddress?: string;
+
+  /**
+   * The timestamp when the anchor was created
+   */
+  creationTimestamp?: number;
 }
 
 export type ConfigType = Record<

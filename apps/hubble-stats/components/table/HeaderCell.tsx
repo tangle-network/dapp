@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { IconWithTooltip, Typography } from '@webb-tools/webb-ui-components';
-import { InformationLine } from '@webb-tools/icons';
+import { Typography } from '@webb-tools/webb-ui-components';
 
+import { InfoIconWithTooltip } from '..';
 import { HeaderCellProps } from './types';
 
 const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
@@ -11,17 +11,13 @@ const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
       variant="body1"
       fw="bold"
       className={twMerge(
-        'text-mono-140 dark:text-mono-40 flex-[1] flex items-center justify-center whitespace-nowrap',
+        'text-mono-140 dark:text-mono-40 flex-[1] whitespace-nowrap',
+        'flex items-center justify-center gap-0.5',
         className
       )}
     >
       {title}
-      {tooltip && (
-        <IconWithTooltip
-          icon={<InformationLine className="fill-mono-140 dark:fill-mono-40" />}
-          content={tooltip}
-        />
-      )}
+      {tooltip && <InfoIconWithTooltip content={tooltip} />}
     </Typography>
   );
 };

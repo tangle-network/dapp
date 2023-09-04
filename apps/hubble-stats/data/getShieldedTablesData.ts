@@ -1,6 +1,12 @@
-import { rand, randEthereumAddress, randNumber } from '@ngneat/falso';
-import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getValidDatesToQuery } from '../utils';
+import {
+  ACTIVE_SUBGRAPH_URLS,
+  VANCHORS_MAP,
+  VANCHOR_ADDRESSES,
+} from '../constants';
 import { ShieldedAssetType } from '../components/ShieldedAssetsTable/types';
 import { ShieldedPoolType } from '../components/ShieldedPoolsTable/types';
 
@@ -9,69 +15,134 @@ type ShieldedTablesDataType = {
   poolsData: ShieldedPoolType[];
 };
 
-const typedChainIds = [
-  1099511627781, 1099511628196, 1099511629063, 1099511670889, 1099511707777,
-  1099512049389, 1099512162129, 1099522782887,
-];
+const [dateNow, date24h] = getValidDatesToQuery();
 
-const tokens = [
-  'dai',
-  'eth',
-  'usdc',
-  'usdt',
-  'moondev',
-  'matic',
-  'weth',
-  'op',
-  'arbitrum',
-];
+const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
+  const vanchor = VANCHORS_MAP[vAnchorAddress];
+  const tokenSymbol = vanchor.fungibleTokenSymbol;
 
-const getNewAsset = (): ShieldedAssetType => {
+  let deposits24h: number | undefined;
+  try {
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorDepositByChainsAndByToken15MinsInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        tokenSymbol,
+        date24h,
+        dateNow
+      );
+
+    deposits24h = depositVAnchorsByChainsData?.reduce(
+      (deposit, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositByChain, vAnchorDeposit) =>
+            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
+          0
+        );
+        return deposit + depositVAnchorsByChain;
+      },
+      0
+    );
+  } catch {
+    deposits24h = undefined;
+  }
+
+  let tvl: number | undefined;
+  try {
+    const tvlVAnchorsByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsAndByToken(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        tokenSymbol
+      );
+
+    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
+      return (
+        tvlTotal + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0))
+      );
+    }, 0);
+  } catch {
+    tvl = undefined;
+  }
+
   return {
-    address: randEthereumAddress(),
-    symbol: 'webbParachain',
-    url: '#',
-    poolType: rand(['single', 'multi']),
-    composition: [
-      ...new Set(
-        rand(tokens, {
-          length: randNumber({ min: 2, max: 4 }),
-        })
-      ),
-    ],
-    deposits24h: randNumber({ min: 1000, max: 9999 }),
-    tvl: randNumber({ min: 1_000_000, max: 50_000_000 }),
-    typedChainIds: [
-      ...new Set(
-        rand(typedChainIds, {
-          length: randNumber({ min: 2, max: typedChainIds.length }),
-        })
-      ),
-    ],
+    address: vanchor.fungibleTokenAddress,
+    poolAddress: vAnchorAddress,
+    symbol: vanchor.fungibleTokenSymbol,
+    url: undefined,
+    poolType: vanchor.poolType,
+    composition: vanchor.composition,
+    deposits24h,
+    tvl,
+    typedChainIds: vanchor.supportedChains,
   };
 };
 
-const getNewPool = (): ShieldedPoolType => {
+const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
+  const vanchor = VANCHORS_MAP[vAnchorAddress];
+
+  const tokenNum =
+    vanchor.composition.length +
+    // check native token
+    (vanchor.isNativeAllowed ? 1 : 0) +
+    // plus one for fungible token
+    1;
+
+  let deposits24h: number | undefined;
+  try {
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress,
+        date24h,
+        dateNow
+      );
+
+    deposits24h = depositVAnchorsByChainsData?.reduce(
+      (deposit, vAnchorsByChain) => {
+        if (vAnchorsByChain === null) return deposit;
+        return deposit + +formatEther(BigInt(vAnchorsByChain?.deposit ?? 0));
+      },
+      0
+    );
+  } catch {
+    deposits24h = undefined;
+  }
+
+  let tvl: number | undefined;
+  try {
+    const tvlVAnchorsByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        vAnchorAddress
+      );
+
+    tvl = tvlVAnchorsByChainsData?.reduce((tvl, vAnchorsByChain) => {
+      if (vAnchorsByChain === null) return tvl;
+      return tvl + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0));
+    }, 0);
+  } catch {
+    tvl = undefined;
+  }
+
   return {
-    address: randEthereumAddress(),
-    symbol: 'MASP-1',
-    poolType: rand(['single', 'multi']),
-    token: randNumber({ min: 1, max: 4 }),
-    deposits24h: randNumber({ min: 1000, max: 9999 }),
-    tvl: randNumber({ min: 1_000_000, max: 50_000_000 }),
-    typedChainIds: [
-      ...new Set(
-        rand(typedChainIds, {
-          length: randNumber({ min: 2, max: typedChainIds.length }),
-        })
-      ),
-    ],
+    address: vAnchorAddress,
+    symbol: vanchor.fungibleTokenName,
+    poolType: vanchor.poolType,
+    token: tokenNum,
+    deposits24h,
+    tvl,
+    currency: vanchor.fungibleTokenSymbol,
+    typedChainIds: vanchor.supportedChains,
   };
 };
 
 export default async function getShieldedTablesData(): Promise<ShieldedTablesDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
-  const assetsData = arrayFrom(8, () => getNewAsset());
-  const poolsData = arrayFrom(8, () => getNewPool());
+  const assetsData = await Promise.all(
+    VANCHOR_ADDRESSES.map((vanchor) => getAssetInfoFromVAnchor(vanchor))
+  );
+  const poolsData = await Promise.all(
+    VANCHOR_ADDRESSES.map((vanchor) => getPoolInfoFromVAnchor(vanchor))
+  );
   return { assetsData, poolsData };
 }

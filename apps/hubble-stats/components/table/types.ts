@@ -15,6 +15,7 @@ export interface NumberCellProps {
 export interface ShieldedCellProps {
   title: string;
   address: string;
+  poolAddress: string;
 }
 
 export type ActivityType = 'deposit' | 'transfer' | 'withdraw';

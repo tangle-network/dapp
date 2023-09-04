@@ -32,30 +32,22 @@ export default async function PoolMetadataTableContainer({
     {
       name: 'Signature Bridge',
       detail: signatureBridge,
-      isAddress: true,
-      externalLink: '#',
     },
     {
       name: 'VAnchor',
       detail: vAnchor,
-      isAddress: true,
-      externalLink: '#',
     },
     {
       name: 'Fungible Token',
       detail: fungibleToken,
-      isAddress: true,
-      externalLink: '#',
     },
     {
       name: 'Treasury Address',
       detail: treasuryAddress,
-      isAddress: true,
-      externalLink: '#',
     },
     {
       name: 'Wrapping Fees',
-      detail: `${wrappingFees}%`,
+      detail: wrappingFees,
     },
     {
       name: 'Creation date',

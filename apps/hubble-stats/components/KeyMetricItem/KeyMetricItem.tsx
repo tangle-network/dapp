@@ -3,8 +3,9 @@ import cx from 'classnames';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 
+import { InfoIconWithTooltip } from '..';
 import { MetricItemProps } from './types';
-import { getRoundedDownWith2Decimals } from '../../utils';
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 const KeyMetricItem: FC<MetricItemProps> = ({
   title,
@@ -12,6 +13,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
   prefix,
   changeRate,
   suffix,
+  tooltip,
 }) => {
   return (
     <div
@@ -21,9 +23,12 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         'first-of-type:border-l-0 last-of-type:border-r-0'
       )}
     >
-      <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
-        {title}
-      </Typography>
+      <div className="flex items-center gap-0.5">
+        <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
+          {title}
+        </Typography>
+        {tooltip && <InfoIconWithTooltip content={tooltip} />}
+      </div>
       <div className="flex items-center gap-1">
         {/* Value */}
         <span>
@@ -35,7 +40,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
             {typeof value === 'number' && (prefix ?? '')}
             {typeof value === 'number' && value < 10000
               ? Math.floor(value * 100) / 100
-              : getRoundedDownWith2Decimals(value)}
+              : getRoundedDownNumberWith2Decimals(value)}
             {typeof value === 'number' && (suffix ?? '')}
           </Typography>
         </span>

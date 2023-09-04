@@ -1,5 +1,4 @@
 import { FileCopyLine } from '@webb-tools/icons';
-import cx from 'classnames';
 import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
@@ -21,6 +20,7 @@ import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
 export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
   className,
   textToCopy,
+  isButton = true,
 }) => {
   const { copy, isCopied } = useCopyable();
 
@@ -31,6 +31,7 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
         copy(textToCopy);
       }}
       isCopied={isCopied}
+      isButton={isButton}
     />
   );
 };
@@ -46,6 +47,7 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
   isCopied,
   onClick,
   className,
+  isButton,
 }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -58,9 +60,15 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
         onClick={onClick}
         asChild
       >
-        <Button className="p-2" variant="utility" size="sm">
-          <FileCopyLine className="!fill-current" />
-        </Button>
+        {isButton ? (
+          <Button className="p-2" variant="utility" size="sm">
+            <FileCopyLine className="!fill-current" />
+          </Button>
+        ) : (
+          <span>
+            <FileCopyLine className="!fill-current" />
+          </span>
+        )}
       </TooltipTrigger>
       <TooltipBody>
         <Typography className="capitalize" variant="body3">

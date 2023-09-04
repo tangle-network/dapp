@@ -8,6 +8,11 @@ export interface CopyWithTooltipProps extends WebbComponentBase {
    * Represents the text to copy to clipboard
    */
   textToCopy: string;
+
+  /**
+   * Display the icon inside the button or just the icon
+   */
+  isButton?: boolean;
 }
 
 /**
@@ -19,4 +24,9 @@ export interface CopyWithTooltipUIProps {
   className?: string;
 
   isCopied: boolean;
+
+  /**
+   * Display the icon inside the button or just the icon
+   */
+  isButton?: boolean;
 }
