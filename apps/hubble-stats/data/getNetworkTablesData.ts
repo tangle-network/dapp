@@ -4,8 +4,8 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { NetworkPoolType } from '../components/NetworkPoolTable/types';
 import { NetworkTokenType } from '../components/NetworkTokenTable/types';
-import { getTvlByVAnchor } from './reusable';
 import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
+import { getAggregateValue } from '../utils';
 
 export type NetworkTablesDataType = {
   typedChainIds: number[];
@@ -60,7 +60,6 @@ export default async function getNetworkTablesData(
   poolAddress: string
 ): Promise<NetworkTablesDataType> {
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
-  const tvlAggregate = await getTvlByVAnchor(poolAddress);
   const tvlChainsData = {} as Record<number, number | undefined>;
 
   for (const typedChainId of ACTIVE_CHAINS) {
@@ -79,6 +78,28 @@ export default async function getNetworkTablesData(
     tvlChainsData[typedChainId] = tvlByVAnchorByChain;
   }
 
+  const tvlAggregate = getAggregateValue(tvlChainsData);
+
+  const relayerEarningsChainsData = {} as Record<number, number | undefined>;
+  for (const typedChainId of ACTIVE_CHAINS) {
+    let relayerEarningsByVAnchorByChain: number | undefined;
+    try {
+      const relayerEarningsData =
+        await vAnchorClient.RelayerFee.GetVAnchorTotalRelayerFeeByChain(
+          LIVE_SUBGRAPH_MAP[typedChainId],
+          poolAddress
+        );
+      relayerEarningsByVAnchorByChain = +formatEther(
+        BigInt(relayerEarningsData.totalRelayerFee ?? 0)
+      );
+    } catch (error) {
+      relayerEarningsByVAnchorByChain = undefined;
+    }
+    relayerEarningsChainsData[typedChainId] = relayerEarningsByVAnchorByChain;
+  }
+
+  const relayerEarningsAggregate = getAggregateValue(relayerEarningsChainsData);
+
   return {
     tvlData: [
       {
@@ -90,8 +111,8 @@ export default async function getNetworkTablesData(
     relayerEarningsData: [
       {
         symbol: fungibleTokenSymbol,
-        aggregate: tvlAggregate,
-        chainsData: tvlChainsData,
+        aggregate: relayerEarningsAggregate,
+        chainsData: relayerEarningsChainsData,
       },
     ],
     networkTokenData: [getNewToken()],

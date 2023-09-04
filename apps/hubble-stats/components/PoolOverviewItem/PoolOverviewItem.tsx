@@ -20,7 +20,7 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
         <div className="flex items-center gap-0.5">
           <Typography variant="h5" fw="black">
             {typeof value === 'number' && prefix}
-            {getRoundedAmountString(value, 1, {
+            {getRoundedAmountString(value, 2, {
               roundingFunction: Math.floor,
               totalLength: 0,
             })}

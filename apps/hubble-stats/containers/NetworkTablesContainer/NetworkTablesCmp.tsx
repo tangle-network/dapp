@@ -17,7 +17,6 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
   networkTokenData,
   typedChainIds,
 }) => {
-  console.log('tvlData :', tvlData);
 
   const [activePoolTableTab, setActivePoolTableTab] = useState<
     typeof tvlTab | typeof relayerEarningsTab
