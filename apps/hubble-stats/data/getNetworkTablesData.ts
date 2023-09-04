@@ -1,32 +1,20 @@
 import { randNumber } from '@ngneat/falso';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { NetworkPoolType } from '../components/NetworkPoolTable/types';
 import { NetworkTokenType } from '../components/NetworkTokenTable/types';
+import { getTvlByVAnchor } from './reusable';
+import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
 
-type NetworkTablesDataType = {
+export type NetworkTablesDataType = {
   typedChainIds?: number[];
-  networkPoolData?: NetworkPoolType[];
+  tvlData?: NetworkPoolType[];
+  relayerEarningsData?: NetworkPoolType[];
   networkTokenData?: NetworkTokenType[];
 };
 
-const typedChainIds = [
-  1099511627781, 1099511628196, 1099511629063, 1099511670889, 1099511707777,
-  1099512049389, 1099512162129, 1099522782887,
-];
-
-const getNewPool = (): NetworkPoolType => {
-  return {
-    symbol: 'webbPRC',
-    aggregate: randNumber({ min: 1_000_000, max: 20_000_000 }),
-    chainsData: typedChainIds.reduce(
-      (data, typedChainId) => ({
-        ...data,
-        [typedChainId]: randNumber({ min: 1_000_000, max: 20_000_000 }),
-      }),
-      {}
-    ),
-  };
-};
+const typedChainIds = ACTIVE_CHAINS;
 
 const getNewToken = (): NetworkTokenType => {
   return {
@@ -71,9 +59,42 @@ const getNewToken = (): NetworkTokenType => {
 export default async function getNetworkTablesData(
   poolAddress: string
 ): Promise<NetworkTablesDataType> {
+  const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
+  const tvlAggregate = await getTvlByVAnchor(poolAddress);
+  const tvlChainsData = {} as Record<number, number | undefined>;
+
+  for (const typedChainId of ACTIVE_CHAINS) {
+    let tvlByVAnchorByChain: number | undefined;
+    try {
+      const tvlData =
+        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+          LIVE_SUBGRAPH_MAP[typedChainId],
+          poolAddress
+        );
+
+      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+    } catch (error) {
+      tvlByVAnchorByChain = undefined;
+    }
+    tvlChainsData[typedChainId] = tvlByVAnchorByChain;
+  }
+
   return {
-    typedChainIds,
-    networkPoolData: [getNewPool()],
+    tvlData: [
+      {
+        symbol: fungibleTokenSymbol,
+        aggregate: tvlAggregate,
+        chainsData: tvlChainsData,
+      },
+    ],
+    relayerEarningsData: [
+      {
+        symbol: fungibleTokenSymbol,
+        aggregate: tvlAggregate,
+        chainsData: tvlChainsData,
+      },
+    ],
     networkTokenData: [getNewToken()],
+    typedChainIds,
   };
 }

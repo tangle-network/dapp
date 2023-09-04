@@ -7,7 +7,7 @@ export type NetworkPoolType = {
   /**
    * The aggregate of all the values from different chains
    */
-  aggregate: number;
+  aggregate?: number;
 
   /**
    * The value on each chain indexed by typedChainId
