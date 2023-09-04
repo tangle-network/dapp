@@ -17,7 +17,7 @@ const tokens: Record<string, TokenConfigType> = {
   },
   [PresetTypedChainId.TangleTestnet]: {
     tTNT: zeroAddress,
-    webbtTNT: '0x58BA29259Aab901179A07899235e3CB88afE9079',
+    webbtTNT: '0x981d8781bfCCBdB7C9EF2ABbe6DFa791a85f6Ea5',
   },
 };
 
