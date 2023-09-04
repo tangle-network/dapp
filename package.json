@@ -157,7 +157,7 @@
     "@nx/cypress": "16.1.4",
     "@nx/eslint-plugin": "16.1.4",
     "@nx/jest": "16.1.4",
-    "@nx/js": "16.1.4",
+    "@nx/js": "16.7.4",
     "@nx/linter": "16.1.4",
     "@nx/next": "16.1.4",
     "@nx/react": "16.1.4",
