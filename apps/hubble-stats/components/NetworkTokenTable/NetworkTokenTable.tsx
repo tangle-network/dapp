@@ -21,7 +21,7 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { NetworkTokenType, NetworkTokenTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
-import { getSortedTypedChainIds } from '../../utils';
+import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<NetworkTokenType>();
 
@@ -71,9 +71,17 @@ const staticColumns: ColumnDef<NetworkTokenType, any>[] = [
         className="text-mono-200 dark:text-mono-0"
       />
     ),
-    cell: (props) => (
-      <NumberCell value={props.getValue()} prefix="$" className="lowercase" />
-    ),
+    cell: (props) => {
+      const currency =
+        props.row.getParentRow()?.original.symbol ?? props.row.original.symbol;
+      return (
+        <NumberCell
+          value={props.getValue()}
+          suffix={` ${currency}`}
+          className="lowercase"
+        />
+      );
+    },
   }),
 ];
 
@@ -99,22 +107,30 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
                 chainName={chainsConfig[typedChainId].name}
                 chainType={chainsConfig[typedChainId].group}
                 // shorten the title to last word of the chain name
-                title={chainsConfig[typedChainId].name.split(' ').pop()}
+                title={getShortenChainName(typedChainId)}
               />
             </div>
           ),
           cell: (props) =>
-            typeof props.row.original.chainsData[typedChainId] === 'number' ? (
-              <NumberCell
-                value={props.row.original.chainsData[typedChainId]}
-                prefix={prefixUnit}
-                className="lowercase"
-              />
-            ) : (
-              <Typography variant="body1" ta="center">
-                *
-              </Typography>
-            ),
+            {
+              const currency =
+                props.row.getParentRow()?.original.symbol ??
+                props.row.original.symbol;
+
+              return typeof props.row.original.chainsData[typedChainId] ===
+                'number' ? (
+                <NumberCell
+                  value={props.row.original.chainsData[typedChainId]}
+                  prefix={prefixUnit}
+                  suffix={` ${currency}`}
+                  className="lowercase"
+                />
+              ) : (
+                <Typography variant="body1" ta="center">
+                  *
+                </Typography>
+              );
+            },
         })
       ),
     ],

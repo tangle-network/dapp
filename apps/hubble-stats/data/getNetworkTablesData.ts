@@ -8,9 +8,9 @@ import { getTvlByVAnchor } from './reusable';
 import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
 
 export type NetworkTablesDataType = {
-  typedChainIds?: number[];
-  tvlData?: NetworkPoolType[];
-  relayerEarningsData?: NetworkPoolType[];
+  typedChainIds: number[];
+  tvlData: NetworkPoolType[];
+  relayerEarningsData: NetworkPoolType[];
   networkTokenData?: NetworkTokenType[];
 };
 

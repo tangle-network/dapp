@@ -40,6 +40,7 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
         <NetworkPoolTable
           typedChainIds={typedChainIds}
           data={networkPoolTableData}
+          prefixUnit=""
         />
       </TableAndChartTabs>
 
@@ -52,6 +53,7 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
           <NetworkTokenTable
             typedChainIds={typedChainIds}
             data={networkTokenData}
+            prefixUnit=""
           />
         </TableAndChartTabs>
         {typedChainIds !== undefined && typedChainIds.length > 0 && (

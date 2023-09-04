@@ -47,7 +47,12 @@ const staticColumns: ColumnDef<NetworkPoolType, any>[] = [
         className="text-mono-200 dark:text-mono-0"
       />
     ),
-    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+    cell: (props) => (
+      <NumberCell
+        value={props.getValue()}
+        suffix={` ${props.row.original.symbol}`}
+      />
+    ),
   }),
 ];
 
@@ -82,6 +87,7 @@ const NetworkPoolTable: FC<NetworkPoolTableProps> = ({
               <NumberCell
                 value={props.row.original.chainsData[typedChainId]}
                 prefix={prefixUnit}
+                suffix={` ${props.row.original.symbol}`}
               />
             ) : (
               <Typography variant="body1" ta="center">
