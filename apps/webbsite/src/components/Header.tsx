@@ -57,9 +57,12 @@ export const Header = () => {
 
   return (
     <header
-      className={cx('sticky top-0 z-50 w-full bg-mono-0 min-h-[72px]', {
-        'webb-shadow-sm': scrolled,
-      })}
+      className={cx(
+        'sticky top-0 z-50 w-full bg-mono-0 h-[var(--header-height)]',
+        {
+          'webb-shadow-sm': scrolled,
+        }
+      )}
     >
       <div className="max-w-[1200px] mx-auto p-4 flex items-center justify-between">
         <Link href="/">

@@ -82,6 +82,7 @@ tmp
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/tailwind.json
 
 # Local Netlify folder
 .netlify
