@@ -111,26 +111,25 @@ const NetworkTokenTable: FC<NetworkTokenTableProps> = ({
               />
             </div>
           ),
-          cell: (props) =>
-            {
-              const currency =
-                props.row.getParentRow()?.original.symbol ??
-                props.row.original.symbol;
+          cell: (props) => {
+            const currency =
+              props.row.getParentRow()?.original.symbol ??
+              props.row.original.symbol;
 
-              return typeof props.row.original.chainsData[typedChainId] ===
-                'number' ? (
-                <NumberCell
-                  value={props.row.original.chainsData[typedChainId]}
-                  prefix={prefixUnit}
-                  suffix={` ${currency}`}
-                  className="lowercase"
-                />
-              ) : (
-                <Typography variant="body1" ta="center">
-                  *
-                </Typography>
-              );
-            },
+            return typeof props.row.original.chainsData[typedChainId] ===
+              'number' ? (
+              <NumberCell
+                value={props.row.original.chainsData[typedChainId]}
+                prefix={prefixUnit}
+                suffix={` ${currency}`}
+                className="lowercase"
+              />
+            ) : (
+              <Typography variant="body1" ta="center">
+                *
+              </Typography>
+            );
+          },
         })
       ),
     ],

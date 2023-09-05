@@ -15,4 +15,8 @@ export {
   default as getPoolTransactionsData,
   type PoolTransactionDataType,
 } from './getPoolTransactionsData';
+export {
+  default as getPoolWrappingChartsData,
+  type PoolWrappingChartsDataType,
+} from './getPoolWrappingChartsData';
 export { default as getShieldedTablesData } from './getShieldedTablesData';

@@ -12,6 +12,8 @@ const VolumeChart: FC<VolumeChartProps> = ({
   setDate,
   width = '100%',
   height = 180,
+  tooltipValuePrefix = '',
+  tooltipValueSuffix = '',
 }) => {
   return (
     <ResponsiveContainer width={width} height={height}>
@@ -52,13 +54,15 @@ const VolumeChart: FC<VolumeChartProps> = ({
                       color: '#624FBE',
                       label: 'Deposits',
                       value: payload[0].payload['deposit'],
-                      valueSuffix: ' tTNT',
+                      valuePrefix: tooltipValuePrefix,
+                      valueSuffix: tooltipValueSuffix,
                     },
                     {
                       color: '#B5A9F2',
                       label: 'Withdrawals',
                       value: payload[0].payload['withdrawal'],
-                      valueSuffix: ' tTNT',
+                      valuePrefix: tooltipValuePrefix,
+                      valueSuffix: tooltipValueSuffix,
                     },
                   ]}
                 />

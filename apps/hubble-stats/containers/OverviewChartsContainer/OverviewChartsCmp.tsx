@@ -33,7 +33,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
           setDate={setTVLDate}
           setValue={setTvlValue}
           tooltipLabel="TVL"
-          tooltipValuePrefix="$"
+          tooltipValueSuffix=" tTNT"
         />
       </ChartContainer>
 
@@ -50,6 +50,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}
+          tooltipValueSuffix=" tTNT"
         />
       </ChartContainer>
     </div>

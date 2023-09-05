@@ -7,22 +7,24 @@ export default async function PoolChartsContainer({
   poolAddress: string;
 }) {
   const {
-    currentTvl,
-    currentVolume,
-    currentFees,
+    tvl,
+    deposit24h,
+    relayerEarnings24h,
     tvlData,
     volumeData,
-    feesData,
+    relayerEarningsData,
+    currency,
   } = await getPoolChartsData(poolAddress);
 
   return (
     <PoolChartsCmp
-      currentTvl={currentTvl}
-      currentVolume={currentVolume}
-      currentFees={currentFees}
+      tvl={tvl}
+      deposit24h={deposit24h}
+      relayerEarnings24h={relayerEarnings24h}
       tvlData={tvlData}
       volumeData={volumeData}
-      feesData={feesData}
+      relayerEarningsData={relayerEarningsData}
+      currency={currency}
     />
   );
 }

@@ -1,42 +1,48 @@
 'use client';
 
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import {
   ResponsiveContainer,
-  AreaChart as AreaChartCmp,
-  Area,
-  Tooltip,
+  BarChart as BarChartCmp,
   XAxis,
+  Tooltip,
+  Bar,
 } from 'recharts';
 import { useDarkMode } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltip } from '..';
-import { AreaChartProps } from './types';
+import { BarChartProps } from './types';
 
-const AreaChart: FC<AreaChartProps> = ({
+const BarChart: FC<BarChartProps> = ({
   data,
-  setDate,
   setValue,
+  setDate,
   width = '100%',
   height = 180,
+  fillColor: color = 'blue',
   showTooltip = true,
   tooltipLabel = '',
   tooltipValuePrefix = '',
+  tooltipValueSuffix = '',
 }) => {
   const [isDarkMode] = useDarkMode();
 
-  const fillColor = useMemo(
-    () => (isDarkMode ? '#C6BBFA' : '#624FBE'),
-    [isDarkMode]
-  );
+  let fillColor: string;
+  switch (color) {
+    case 'blue':
+      fillColor = isDarkMode ? '#81B3F6' : '#3D7BCE';
+      break;
+    case 'purple':
+      fillColor = '#B5A9F2';
+  }
 
   return (
     <ResponsiveContainer width={width} height={height}>
-      <AreaChartCmp
+      <BarChartCmp
         data={data}
         onMouseLeave={() => {
-          setDate && setDate(null);
           setValue && setValue(null);
+          setDate && setDate(null);
         }}
       >
         <XAxis
@@ -73,24 +79,19 @@ const AreaChart: FC<AreaChartProps> = ({
                       label: tooltipLabel,
                       value: payload[0].payload['value'],
                       valuePrefix: tooltipValuePrefix,
+                      valueSuffix: tooltipValueSuffix,
                     },
                   ]}
                 />
               );
             }
-
             return null;
           }}
         />
-        <Area
-          dataKey="value"
-          stroke={fillColor}
-          fillOpacity={0}
-          strokeWidth={2}
-        />
-      </AreaChartCmp>
+        <Bar dataKey="value" fill={fillColor} />
+      </BarChartCmp>
     </ResponsiveContainer>
   );
 };
 
-export default AreaChart;
+export default BarChart;

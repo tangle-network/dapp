@@ -1,41 +1,52 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import {
   ChartContainer,
   TableAndChartTabs,
   TabContent,
 } from '@webb-tools/webb-ui-components';
 
-import { AreaChart, BarChart } from '../../components';
+import { AreaChart, BarChart, VolumeChart } from '../../components';
 import { PoolChartsDataType } from '../../data';
 
 const tvlTab = 'TVL';
 const volumeTab = 'Volume';
-const feesTab = 'Fees';
+const relayerEarningTab = 'Relayer Earnings';
 
 const PoolChartsCmp: FC<PoolChartsDataType> = ({
-  currentTvl,
-  currentVolume,
-  currentFees,
+  tvl,
+  deposit24h,
+  relayerEarnings24h,
   tvlData,
   volumeData,
-  feesData,
+  relayerEarningsData,
+  currency,
 }) => {
   const [tvlValue, setTvlValue] = useState<number | null>(null);
   const [tvlDate, setTVLDate] = useState<Date | null>(null);
   const [volumeValue, setVolumeValue] = useState<number | null>(null);
   const [volumeDate, setVolumeDate] = useState<Date | null>(null);
-  const [feesValue, setFeesValue] = useState<number | null>(null);
-  const [feesDate, setFeesDate] = useState<Date | null>(null);
+  const [relayerEarningsValue, setRelayerEarningsValue] = useState<
+    number | null
+  >(null);
+  const [relayerEarningsDate, setRelayerEarningsDate] = useState<Date | null>(
+    null
+  );
+
+  const numberSuffix = useMemo(
+    () => (typeof currency === 'string' ? ` ${currency}` : ''),
+    [currency]
+  );
 
   return (
-    <TableAndChartTabs tabs={[tvlTab, volumeTab, feesTab]}>
+    <TableAndChartTabs tabs={[tvlTab, volumeTab, relayerEarningTab]}>
       {/* TVL */}
       <TabContent value={tvlTab}>
         <ChartContainer
-          currentValue={currentTvl}
+          currentValue={tvl}
           value={tvlValue}
+          valueSuffix={numberSuffix}
           date={tvlDate}
           className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
@@ -43,6 +54,8 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
             data={tvlData}
             setDate={setTVLDate}
             setValue={setTvlValue}
+            tooltipLabel="TVL"
+            tooltipValueSuffix={numberSuffix}
           />
         </ChartContainer>
       </TabContent>
@@ -50,32 +63,37 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
       {/* Volume */}
       <TabContent value={volumeTab}>
         <ChartContainer
-          currentValue={currentVolume}
+          currentValue={deposit24h}
           value={volumeValue}
+          valueSuffix={numberSuffix}
           date={volumeDate}
           className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
-          <BarChart
+          <VolumeChart
             data={volumeData}
             setDate={setVolumeDate}
             setValue={setVolumeValue}
+            tooltipValueSuffix={numberSuffix}
           />
         </ChartContainer>
       </TabContent>
 
-      {/* Fees */}
-      <TabContent value={feesTab}>
+      {/* Relayer Earnings */}
+      <TabContent value={relayerEarningTab}>
         <ChartContainer
-          currentValue={currentFees}
-          value={feesValue}
-          date={feesDate}
+          currentValue={relayerEarnings24h}
+          value={relayerEarningsValue}
+          valueSuffix={numberSuffix}
+          date={relayerEarningsDate}
           className="bg-glass dark:bg-glass_dark lg:max-h-[278px]"
         >
           <BarChart
-            data={feesData}
-            setDate={setFeesDate}
-            setValue={setFeesValue}
+            data={relayerEarningsData}
+            setDate={setRelayerEarningsDate}
+            setValue={setRelayerEarningsValue}
             fillColor="purple"
+            tooltipLabel="Relayer Earnings"
+            tooltipValueSuffix={numberSuffix}
           />
         </ChartContainer>
       </TabContent>

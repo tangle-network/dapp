@@ -1,43 +1,43 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import {
   ResponsiveContainer,
-  BarChart as BarChartCmp,
-  XAxis,
+  AreaChart as AreaChartCmp,
+  Area,
   Tooltip,
-  Bar,
+  XAxis,
 } from 'recharts';
 import { useDarkMode } from '@webb-tools/webb-ui-components';
 
-import { BarChartProps } from './types';
+import { ChartTooltip } from '..';
+import { AreaChartProps } from './types';
 
-const BarChart: FC<BarChartProps> = ({
+const AreaChart: FC<AreaChartProps> = ({
   data,
-  setValue,
   setDate,
+  setValue,
   width = '100%',
   height = 180,
-  fillColor: color = 'blue',
+  showTooltip = true,
+  tooltipLabel = '',
+  tooltipValuePrefix = '',
+  tooltipValueSuffix = '',
 }) => {
   const [isDarkMode] = useDarkMode();
 
-  let fillColor: string;
-  switch (color) {
-    case 'blue':
-      fillColor = isDarkMode ? '#81B3F6' : '#3D7BCE';
-      break;
-    case 'purple':
-      fillColor = '#B5A9F2';
-  }
+  const fillColor = useMemo(
+    () => (isDarkMode ? '#C6BBFA' : '#624FBE'),
+    [isDarkMode]
+  );
 
   return (
     <ResponsiveContainer width={width} height={height}>
-      <BarChartCmp
+      <AreaChartCmp
         data={data}
         onMouseLeave={() => {
-          setValue && setValue(null);
           setDate && setDate(null);
+          setValue && setValue(null);
         }}
       >
         <XAxis
@@ -62,15 +62,36 @@ const BarChart: FC<BarChartProps> = ({
             if (active && payload && payload.length) {
               setValue && setValue(payload[0].payload['value']);
               setDate && setDate(payload[0].payload['date']);
+              if (!showTooltip) {
+                return null;
+              }
+              return (
+                <ChartTooltip
+                  date={payload[0].payload['date']}
+                  info={[
+                    {
+                      color: fillColor,
+                      label: tooltipLabel,
+                      value: payload[0].payload['value'],
+                      valuePrefix: tooltipValuePrefix,
+                      valueSuffix: tooltipValueSuffix,
+                    },
+                  ]}
+                />
+              );
             }
-
             return null;
           }}
         />
-        <Bar dataKey="value" fill={fillColor} />
-      </BarChartCmp>
+        <Area
+          dataKey="value"
+          stroke={fillColor}
+          fillOpacity={0}
+          strokeWidth={2}
+        />
+      </AreaChartCmp>
     </ResponsiveContainer>
   );
 };
 
-export default BarChart;
+export default AreaChart;
