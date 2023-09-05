@@ -10,6 +10,7 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   DepositCard,
   TokenListCard,
+  numberToString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { TokenType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -35,6 +36,7 @@ import { DepositConfirmContainerProps, DepositContainerProps } from './types';
 import { CurrencyType } from '@webb-tools/dapp-types';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
+import { parseUnits } from 'viem';
 
 interface MainComponentPropsVariants {
   ['source-chain-list-card']: ChainListCardWrapperProps;
@@ -426,6 +428,8 @@ export const DepositContainer = forwardRef<
         return;
       }
 
+      const decimals = fungibleCurrency.getDecimals();
+      const amountBI = parseUnits(numberToString(amount), decimals);
       const newNote = await noteManager.generateNote(
         activeApi.backend,
         sourceTypedChainId,
@@ -433,8 +437,8 @@ export const DepositContainer = forwardRef<
         destTypedChainId,
         destId,
         fungibleCurrency.view.symbol,
-        fungibleCurrency.getDecimals(),
-        amount
+        decimals,
+        amountBI
       );
 
       setIsGeneratingNote(false);

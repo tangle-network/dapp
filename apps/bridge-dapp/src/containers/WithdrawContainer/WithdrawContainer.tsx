@@ -25,6 +25,7 @@ import {
   TokenListCard,
   WithdrawCard,
   getRoundedAmountString,
+  numberToString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import {
@@ -342,11 +343,14 @@ export const WithdrawContainer = forwardRef<
       : currentNativeCurrency?.decimals;
 
     if (refundAmount && isRefund) {
-      const parsedRefundAmount = decimals
-        ? parseUnits(`${refundAmount}`, decimals)
-        : parseEther(`${refundAmount}`);
+      const parsedExchangeRate = Number(
+        formatEther(feeInfoOrBigInt.refundExchangeRate)
+      );
+      const refundFee = numberToString(refundAmount * parsedExchangeRate);
 
-      feeWei += parsedRefundAmount * feeInfoOrBigInt.refundExchangeRate;
+      feeWei += decimals
+        ? parseUnits(refundFee, decimals)
+        : parseEther(refundFee);
     }
 
     const feeFormatted = decimals
@@ -419,9 +423,10 @@ export const WithdrawContainer = forwardRef<
     const decimals =
       wrappableCurrency?.getDecimals() ?? fungibleCurrency?.getDecimals();
 
+    const amountStr = numberToString(amount);
     const amountWei = decimals
-      ? parseUnits(`${amount}`, decimals)
-      : parseEther(`${amount}`);
+      ? parseUnits(amountStr, decimals)
+      : parseEther(amountStr);
 
     // If no fee or no active relayer, then return the original amount
     // as the fee is not deducted from the amount
@@ -582,7 +587,7 @@ export const WithdrawContainer = forwardRef<
     // Get the notes that will be spent for this withdraw
     const inputNotes = NoteManager.getNotesFifo(
       availableNotesFromManager ?? [],
-      parseUnits(amount.toString() as `${number}`, fungibleDecimals)
+      parseUnits(numberToString(amount), fungibleDecimals)
     );
 
     if (!inputNotes) {
@@ -595,8 +600,7 @@ export const WithdrawContainer = forwardRef<
     }, BigInt(0));
 
     const changeAmountBI =
-      sumInputNotes -
-      parseUnits(amount.toString() as `${number}`, fungibleDecimals);
+      sumInputNotes - parseUnits(numberToString(amount), fungibleDecimals);
 
     const keypair = noteManager.getKeypair();
     if (!keypair.privkey) {
@@ -620,7 +624,7 @@ export const WithdrawContainer = forwardRef<
         destAddress,
         fungibleCurrency.view.symbol,
         fungibleDecimals,
-        formattedChangeAmount
+        changeAmountBI
       );
     }
 
@@ -672,7 +676,7 @@ export const WithdrawContainer = forwardRef<
         }
         feeInfo={transactionFeeInfo}
         receivingInfo={refundInfo}
-        refundAmount={parseEther(`${refundAmount}`)}
+        refundAmount={parseEther(numberToString(refundAmount))}
         refundToken={currentNativeCurrency?.symbol}
         recipient={recipient}
         onResetState={handleResetState}
