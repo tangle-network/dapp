@@ -4,7 +4,8 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { downloadString } from '@webb-tools/browser-utils';
 import { useVAnchor } from '@webb-tools/react-hooks';
 import { Note } from '@webb-tools/sdk-core';
@@ -22,6 +23,8 @@ import {
   handleMutateNoteIndex,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
+import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
+import { SubmittedTxModal } from '../../components';
 
 const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -60,6 +63,8 @@ const DepositConfirmContainer = forwardRef<
 
     const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
       useWebContext();
+
+    const { enqueue } = useModalQueueManager();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -184,6 +189,21 @@ const DepositConfirmContainer = forwardRef<
 
           downloadNote(note);
           await addNoteToNoteManager(note);
+
+          const explorer =
+            apiConfig.chains[+sourceTypedChainId]?.blockExplorers?.default?.url;
+
+          const url = explorer
+            ? getExplorerURI(explorer, transactionHash, 'tx', activeApi.type)
+            : undefined;
+
+          enqueue(
+            <SubmittedTxModal
+              txType="deposit"
+              txExplorerUrl={url}
+              txHash={transactionHash}
+            />
+          );
 
           await api.waitForFinalization(transactionHash);
 

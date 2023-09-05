@@ -15,11 +15,7 @@ import { STATS_URL } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import {
-  InteractiveFeedbackView,
-  SubmittedTxModal,
-  WalletModal,
-} from '../../../components';
+import { InteractiveFeedbackView, WalletModal } from '../../../components';
 import { FilterButton, ManageButton } from '../../../components/tables';
 import {
   CreateAccountModal,
@@ -285,8 +281,6 @@ const Bridge: FC = () => {
       />
 
       <InteractiveFeedbackView activeFeedback={activeFeedback} />
-
-      <SubmittedTxModal txExplorerUrl={new URL('https://webb.tools')} />
     </>
   );
 };

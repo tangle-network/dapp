@@ -1,5 +1,7 @@
+import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
+import { ExternalLinkLine } from '@webb-tools/icons';
 import ShieldedCheckLineIcon from '@webb-tools/icons/ShieldedCheckLineIcon';
-import { CopyWithTooltip } from '@webb-tools/webb-ui-components/components/CopyWithTooltip';
+import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import {
   Modal,
   ModalContent,
@@ -15,9 +17,12 @@ const SubmittedTxModal: FC<SubmittedTxModalProps> = ({
   txType = 'transaction',
   ...props
 }) => {
+  const { dequeue } = useModalQueueManager();
+
   return (
     <Modal open>
       <ModalContent
+        isCenter
         isOpen
         className="w-full max-w-md rounded-2xl bg-mono-0 dark:bg-mono-160"
       >
@@ -32,33 +37,38 @@ const SubmittedTxModal: FC<SubmittedTxModalProps> = ({
           <ShieldedCheckLineIcon
             width={54}
             height={54}
-            className="fill-green-70 dark:fill-green-30"
+            className="mx-auto fill-green-70 dark:fill-green-30"
           />
 
-          <Typography variant="body1">
+          <Typography variant="body1" ta="center">
             Please allow 5-20 minutes for the funds to arrive at destination
             address.
           </Typography>
 
-          {'txExplorerUrl' in props ? (
+          {'txExplorerUrl' in props && props.txExplorerUrl != null ? (
             <Button
               target="_blank"
               href={props.txExplorerUrl.toString()}
               size="sm"
               variant="link"
-              className="block"
+              className="mx-auto"
+              rightIcon={<ExternalLinkLine className="!fill-current" />}
             >
               Open Explorer
             </Button>
           ) : 'txHash' in props ? (
-            <CopyWithTooltip textToCopy={props.txHash} />
+            <KeyValueWithButton
+              label="Transaction Hash"
+              size="sm"
+              className="mx-auto"
+              keyValue={props.txHash}
+            />
           ) : null}
         </div>
 
         <ModalFooter className="px-8 py-6">
-          <Button isFullWidth>Close</Button>
-          <Button variant="secondary" isFullWidth>
-            View Account
+          <Button isFullWidth onClick={() => dequeue()}>
+            Close
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -1,4 +1,5 @@
 import type { FC, PropsWithChildren } from 'react';
+import { motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import ModalQueueManagerContext, {
   ModalQueueItem,
@@ -32,8 +33,6 @@ const ModalQueueManagerProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [queue]);
   dequeueModal = dequeue;
 
-  console.log('Rendering ModalQueueManagerProvider');
-
   useEffect(() => {
     if (queue.length === 0 || currentModal) {
       return;
@@ -57,7 +56,18 @@ const ModalQueueManagerProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ModalQueueManagerContext.Provider value={{ queue, enqueue, dequeue }}>
       {children}
-      {currentModal}
+
+      {currentModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className={'w-full max-w-xl'}
+        >
+          {currentModal}
+        </motion.div>
+      )}
     </ModalQueueManagerContext.Provider>
   );
 };
