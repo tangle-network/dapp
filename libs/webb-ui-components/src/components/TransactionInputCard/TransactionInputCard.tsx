@@ -18,7 +18,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { toFixed } from '../../utils';
+import { getRoundedAmountString, toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
 import { TextFieldInput } from '../TextField';
@@ -187,9 +187,11 @@ const TransactionMaxAmountButton = forwardRef<
 
     const buttonCnt = useMemo(() => {
       const amount = typeof maxAmount === 'number' ? toFixed(maxAmount) : '--';
+      const fmtAmount =
+        typeof amount === 'number' ? getRoundedAmountString(amount, 2) : amount;
       const tokenSym = tokenSymbol ?? '';
 
-      return `${amount} ${tokenSym}`.trim();
+      return `${fmtAmount} ${tokenSym}`.trim();
     }, [maxAmount, tokenSymbol]);
 
     return (

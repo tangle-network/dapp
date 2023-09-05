@@ -189,12 +189,13 @@ const TransferConfirmContainer = forwardRef<
           let transactionHash: Hash;
 
           if (activeRelayer) {
-            await handleStoreNote(changeNote, addNoteToNoteManager);
             transactionHash = await vAnchorApi.transactWithRelayer(
               activeRelayer,
               args,
               outputNotes
             );
+
+            await handleStoreNote(changeNote, addNoteToNoteManager);
 
             enqueueSubmittedTx(
               transactionHash,
@@ -230,8 +231,8 @@ const TransferConfirmContainer = forwardRef<
               sourceIdentifyingData
             );
 
-            await addNoteToNoteManager(noteWithIdx);
             await removeNoteFromNoteManager(changeNote);
+            await addNoteToNoteManager(noteWithIdx);
           }
 
           // Cleanup NoteAccount state

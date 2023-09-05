@@ -290,6 +290,11 @@ export class NoteManager {
     const noteIndex = targetNotes.findIndex(
       (managedNote) => managedNote.serialize() === note.serialize()
     );
+
+    if (noteIndex === -1) {
+      return;
+    }
+
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
       this.notesMap.set(resourceIdStr, targetNotes);

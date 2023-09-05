@@ -231,12 +231,13 @@ const WithdrawConfirmContainer = forwardRef<
           let transactionHash: Hash;
 
           if (activeRelayer) {
-            await handleStoreNote(changeNote, addNoteToNoteManager);
             transactionHash = await vAnchorApi.transactWithRelayer(
               activeRelayer,
               args,
               outputNotes
             );
+
+            await handleStoreNote(changeNote, addNoteToNoteManager);
 
             enqueueSubmittedTx(
               transactionHash,
@@ -273,8 +274,8 @@ const WithdrawConfirmContainer = forwardRef<
               sourceIdentifyingData
             );
 
-            await addNoteToNoteManager(noteWithIdx);
             await removeNoteFromNoteManager(changeNote);
+            await addNoteToNoteManager(noteWithIdx);
           }
 
           // Cleanup NoteAccount state
@@ -305,7 +306,7 @@ const WithdrawConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
+      [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
     );
 
     const [txStatusMessage, currentStep] = useMemo(() => {

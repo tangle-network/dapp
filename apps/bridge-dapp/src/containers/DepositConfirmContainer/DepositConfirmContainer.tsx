@@ -203,8 +203,8 @@ const DepositConfirmContainer = forwardRef<
             sourceIdentifyingData
           );
 
-          await addNoteToNoteManager(indexedNote);
           await removeNoteFromNoteManager(note);
+          await addNoteToNoteManager(indexedNote);
 
           // Notification Success Transaction
           tx.next(TransactionState.Done, {

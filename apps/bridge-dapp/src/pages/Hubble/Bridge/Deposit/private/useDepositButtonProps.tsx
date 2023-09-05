@@ -87,8 +87,24 @@ function useDepositButtonProps({
   }, [amount, balance]);
 
   const inputCnt = useMemo(() => {
-    if (!amount || !tokenId || !poolId || !srcTypedId || !destTypedId) {
-      return 'Enter inputs';
+    if (!tokenId) {
+      return 'Select token';
+    }
+
+    if (!destTypedId) {
+      return 'Select destination chain';
+    }
+
+    if (!amount) {
+      return 'Enter amount';
+    }
+
+    if (!poolId) {
+      return 'Select pool';
+    }
+
+    if (!srcTypedId) {
+      return 'Select source chain';
     }
 
     return undefined;
