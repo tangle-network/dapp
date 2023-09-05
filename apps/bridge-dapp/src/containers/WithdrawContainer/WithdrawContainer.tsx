@@ -624,7 +624,7 @@ export const WithdrawContainer = forwardRef<
         destAddress,
         fungibleCurrency.view.symbol,
         fungibleDecimals,
-        formattedChangeAmount
+        changeAmountBI
       );
     }
 

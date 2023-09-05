@@ -18,7 +18,6 @@ import {
 } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
-import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { BehaviorSubject } from 'rxjs';
 import { parseUnits } from 'viem';
 
@@ -350,15 +349,9 @@ export class NoteManager {
     destAnchorAddress: string,
     tokenSymbol: string,
     tokenDecimals: number,
-    amount: number | bigint
+    amount: bigint
   ): Promise<Note> {
-    let amountStr: string;
-
-    if (typeof amount === 'number') {
-      amountStr = parseUnits(numberToString(amount), tokenDecimals).toString();
-    } else {
-      amountStr = amount.toString();
-    }
+    const amountStr = amount.toString();
 
     const input: UtxoGenInput = {
       curve: this.defaultNoteGenInput.curve,
