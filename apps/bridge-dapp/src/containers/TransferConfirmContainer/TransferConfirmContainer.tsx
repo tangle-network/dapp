@@ -17,7 +17,7 @@ import {
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import type { Hash } from 'viem';
 import { ContractFunctionRevertedError, formatEther } from 'viem';
-import { useLatestTransactionStage } from '../../hooks';
+import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getErrorMessage,
@@ -63,6 +63,8 @@ const TransferConfirmContainer = forwardRef<
       addNoteToNoteManager,
       removeNoteFromNoteManager,
     } = useVAnchor();
+
+    const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
     const { activeApi, activeChain, apiConfig, txQueue, noteManager } =
       useWebContext();
@@ -193,8 +195,20 @@ const TransferConfirmContainer = forwardRef<
               args,
               outputNotes
             );
+
+            enqueueSubmittedTx(
+              transactionHash,
+              apiConfig.chains[+sourceTypedChainId],
+              'transfer'
+            );
           } else {
             transactionHash = await vAnchorApi.transact(...args);
+
+            enqueueSubmittedTx(
+              transactionHash,
+              apiConfig.chains[+sourceTypedChainId],
+              'transfer'
+            );
 
             await handleStoreNote(changeNote, addNoteToNoteManager);
 
@@ -248,7 +262,7 @@ const TransferConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
     );
 
     const [txStatusMessage, currentStep] = useMemo(() => {

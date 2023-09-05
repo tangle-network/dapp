@@ -21,7 +21,7 @@ import {
   formatEther,
   formatUnits,
 } from 'viem';
-import { useLatestTransactionStage } from '../../hooks';
+import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getErrorMessage,
@@ -68,6 +68,8 @@ const WithdrawConfirmContainer = forwardRef<
       addNoteToNoteManager,
       removeNoteFromNoteManager,
     } = useVAnchor();
+
+    const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
     const { activeApi, apiConfig, txQueue } = useWebContext();
 
@@ -235,8 +237,20 @@ const WithdrawConfirmContainer = forwardRef<
               args,
               outputNotes
             );
+
+            enqueueSubmittedTx(
+              transactionHash,
+              apiConfig.chains[+destTypedChainId],
+              'withdraw'
+            );
           } else {
             transactionHash = await vAnchorApi.transact(...args);
+
+            enqueueSubmittedTx(
+              transactionHash,
+              apiConfig.chains[+sourceTypedChainId],
+              'transfer'
+            );
 
             await handleStoreNote(changeNote, addNoteToNoteManager);
 

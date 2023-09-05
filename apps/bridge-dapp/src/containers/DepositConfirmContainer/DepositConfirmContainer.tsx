@@ -4,7 +4,6 @@ import {
   Transaction,
   TransactionState,
 } from '@webb-tools/abstract-api-provider';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { downloadString } from '@webb-tools/browser-utils';
 import { useVAnchor } from '@webb-tools/react-hooks';
@@ -13,7 +12,7 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
-import { useLatestTransactionStage } from '../../hooks';
+import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
 import {
   captureSentryException,
   getCardTitle,
@@ -23,8 +22,6 @@ import {
   handleMutateNoteIndex,
 } from '../../utils';
 import { DepositConfirmContainerProps } from './types';
-import { useModalQueueManager } from '@webb-tools/api-provider-environment/modal-queue-manager';
-import { SubmittedTxModal } from '../../components';
 
 const DepositConfirmContainer = forwardRef<
   HTMLDivElement,
@@ -64,7 +61,7 @@ const DepositConfirmContainer = forwardRef<
     const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
       useWebContext();
 
-    const { enqueue } = useModalQueueManager();
+    const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
     const { api: txQueueApi, txPayloads } = txQueue;
 
@@ -190,19 +187,10 @@ const DepositConfirmContainer = forwardRef<
           downloadNote(note);
           await addNoteToNoteManager(note);
 
-          const explorer =
-            apiConfig.chains[+sourceTypedChainId]?.blockExplorers?.default?.url;
-
-          const url = explorer
-            ? getExplorerURI(explorer, transactionHash, 'tx', activeApi.type)
-            : undefined;
-
-          enqueue(
-            <SubmittedTxModal
-              txType="deposit"
-              txExplorerUrl={url}
-              txHash={transactionHash}
-            />
+          enqueueSubmittedTx(
+            transactionHash,
+            apiConfig.chains[+sourceTypedChainId],
+            'deposit'
           );
 
           await api.waitForFinalization(transactionHash);
@@ -247,7 +235,7 @@ const DepositConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [api, activeApi, activeChain, depositTxInProgress, downloadNote, note, wrappableToken, apiConfig, activeAccount?.address, startNewTransaction, onResetState, txQueueApi, addNoteToNoteManager, fungibleTokenId, removeNoteFromNoteManager]
+      [api, activeApi, activeChain, depositTxInProgress, note, wrappableToken, apiConfig, activeAccount?.address, txQueueApi, startNewTransaction, onResetState, fungibleTokenId, downloadNote, addNoteToNoteManager, enqueueSubmittedTx, removeNoteFromNoteManager]
     );
 
     const cardTitle = useMemo(() => {
