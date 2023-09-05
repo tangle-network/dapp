@@ -6,7 +6,6 @@ import {
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { parseUnits } from 'viem';
 import Storage from '@webb-tools/dapp-types/Storage';
 import {
   CircomUtxo,
@@ -349,15 +348,9 @@ export class NoteManager {
     destAnchorAddress: string,
     tokenSymbol: string,
     tokenDecimals: number,
-    amount: number | bigint
+    amount: bigint
   ): Promise<Note> {
-    let amountStr: string;
-
-    if (typeof amount === 'number') {
-      amountStr = parseUnits(amount.toString(), tokenDecimals).toString();
-    } else {
-      amountStr = amount.toString();
-    }
+    const amountStr = amount.toString();
 
     const input: UtxoGenInput = {
       curve: this.defaultNoteGenInput.curve,

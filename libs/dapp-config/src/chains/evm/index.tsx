@@ -1,7 +1,7 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
+import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
