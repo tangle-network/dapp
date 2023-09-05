@@ -1,9 +1,9 @@
 import { utxoFromVAnchorNote } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
-  ZERO_BIG_INT,
   Chain,
   CurrencyConfig,
+  ZERO_BIG_INT,
   getNativeCurrencyFromConfig,
 } from '@webb-tools/dapp-config';
 import { isValidPublicKey } from '@webb-tools/dapp-types';
@@ -27,6 +27,7 @@ import {
   TokenListCard,
   TransferCard,
   getRoundedAmountString,
+  numberToString,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { ChainType as InputChainType } from '@webb-tools/webb-ui-components/components/BridgeInputs/types';
@@ -36,8 +37,8 @@ import {
   RelayerType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { TransferCardProps } from '@webb-tools/webb-ui-components/containers/TransferCard/types';
-import { formatEther, parseUnits, formatUnits } from 'viem';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { formatEther, formatUnits, parseUnits } from 'viem';
 import { ChainListCardWrapper } from '../../components';
 import {
   WalletState,
@@ -45,12 +46,12 @@ import {
   useConnectWallet,
   useMaxFeeInfo,
 } from '../../hooks';
+import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 import { useEducationCardStep } from '../../hooks/useEducationCardStep';
 import useStatesFromNotes from '../../hooks/useStatesFromNotes';
 import { TransferConfirmContainer } from './TransferConfirmContainer';
 import { RecipientPublicKeyTooltipContent } from './shared';
 import { TransferContainerProps } from './types';
-import { isTokenAddedToMetamask } from '../../hooks/useAddCurrency';
 
 export const TransferContainer = forwardRef<
   HTMLDivElement,
@@ -531,7 +532,10 @@ export const TransferContainer = forwardRef<
         return undefined;
       }
 
-      return parseUnits(`${transferAmount}`, fungibleCurrency.view.decimals);
+      return parseUnits(
+        numberToString(transferAmount),
+        fungibleCurrency.view.decimals
+      );
     }, [fungibleCurrency, transferAmount]);
 
     // Calculate input notes for current amount

@@ -1,10 +1,9 @@
-import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsPopulated } from '@webb-tools/dapp-config';
 import { useCurrencies, useNoteAccount } from '@webb-tools/react-hooks';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import React from 'react';
-
 import { formatUnits, parseUnits } from 'viem';
 import { ShieldedAssetDataType } from '../containers/note-account-tables/ShieldedAssetsTableContainer/types';
 
@@ -49,7 +48,7 @@ export const useShieldedAssets = (): ShieldedAssetDataType[] => {
 
         if (existedChain) {
           const parsedAvailableBalance = parseUnits(
-            `${existedChain.availableBalance}`,
+            numberToString(existedChain.availableBalance),
             denomination
           );
 

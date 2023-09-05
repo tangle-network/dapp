@@ -6,7 +6,6 @@ import {
   resetNoteStorage,
 } from '@webb-tools/browser-utils/storage';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { parseUnits } from 'viem';
 import Storage from '@webb-tools/dapp-types/Storage';
 import {
   CircomUtxo,
@@ -19,7 +18,9 @@ import {
 } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
+import numberToString from '@webb-tools/webb-ui-components/utils/numberToString';
 import { BehaviorSubject } from 'rxjs';
+import { parseUnits } from 'viem';
 
 type DefaultNoteGenInput = Pick<
   NoteGenInput,
@@ -354,7 +355,7 @@ export class NoteManager {
     let amountStr: string;
 
     if (typeof amount === 'number') {
-      amountStr = parseUnits(amount.toString(), tokenDecimals).toString();
+      amountStr = parseUnits(numberToString(amount), tokenDecimals).toString();
     } else {
       amountStr = amount.toString();
     }
