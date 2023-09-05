@@ -6,14 +6,22 @@ export default async function NetworkTablesContainer({
 }: {
   poolAddress: string;
 }) {
-  const { tvlData, relayerEarningsData, networkTokenData, typedChainIds } =
-    await getNetworkTablesData(poolAddress);
+  const {
+    deposit24hData,
+    withdrawal24hData,
+    relayerEarningsData,
+    twlData,
+    wrappingFeesData,
+    typedChainIds,
+  } = await getNetworkTablesData(poolAddress);
 
   return (
     <NetworkTablesCmp
-      tvlData={tvlData}
+      deposit24hData={deposit24hData}
+      withdrawal24hData={withdrawal24hData}
       relayerEarningsData={relayerEarningsData}
-      networkTokenData={networkTokenData}
+      twlData={twlData}
+      wrappingFeesData={wrappingFeesData}
       typedChainIds={typedChainIds}
     />
   );

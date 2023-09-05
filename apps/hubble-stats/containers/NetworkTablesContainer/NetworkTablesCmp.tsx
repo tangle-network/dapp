@@ -6,30 +6,57 @@ import { TableAndChartTabs, Typography } from '@webb-tools/webb-ui-components';
 import { NetworkPoolTable, NetworkTokenTable } from '../../components';
 import { NetworkTablesDataType } from '../../data/getNetworkTablesData';
 
-const tvlTab = 'TVL' as const;
+const deposit24hTab = '24H Deposits' as const;
+const withdrawal24hTab = '24H Withdrawals' as const;
 const relayerEarningsTab = 'Relayer Earnings' as const;
 const twlTab = 'TWL';
 const wrappingFeesTab = 'Wrapping Fees';
 
 const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
-  tvlData,
+  deposit24hData,
+  withdrawal24hData,
   relayerEarningsData,
-  networkTokenData,
+  twlData,
+  wrappingFeesData,
   typedChainIds,
 }) => {
-
   const [activePoolTableTab, setActivePoolTableTab] = useState<
-    typeof tvlTab | typeof relayerEarningsTab
-  >(tvlTab);
+    typeof deposit24hTab | typeof withdrawal24hTab | typeof relayerEarningsTab
+  >(deposit24hTab);
+
+  const [activeTokenTableTab, setActiveTokenTableTab] = useState<
+    typeof twlTab | typeof wrappingFeesTab
+  >(twlTab);
 
   const networkPoolTableData = useMemo(() => {
-    return activePoolTableTab === tvlTab ? tvlData : relayerEarningsData;
-  }, [tvlData, relayerEarningsData, activePoolTableTab]);
+    switch (activePoolTableTab) {
+      case deposit24hTab:
+        return deposit24hData;
+      case withdrawal24hTab:
+        return withdrawal24hData;
+      case relayerEarningsTab:
+        return relayerEarningsData;
+    }
+  }, [
+    activePoolTableTab,
+    relayerEarningsData,
+    deposit24hData,
+    withdrawal24hData,
+  ]);
+
+  const networkTokenTableData = useMemo(() => {
+    switch (activeTokenTableTab) {
+      case twlTab:
+        return twlData;
+      case wrappingFeesTab:
+        return wrappingFeesData;
+    }
+  }, [activeTokenTableTab, twlData, wrappingFeesData]);
 
   return (
     <div className="space-y-12">
       <TableAndChartTabs
-        tabs={['TVL', 'Relayer Earnings']}
+        tabs={[deposit24hTab, withdrawal24hTab, relayerEarningsTab]}
         headerClassName="w-full overflow-x-auto"
         triggerClassName="whitespace-nowrap"
         onValueChange={(val) =>
@@ -45,13 +72,16 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
 
       <div className="space-y-1">
         <TableAndChartTabs
-          tabs={['TWL', 'Wrapping Fees']}
+          tabs={[twlTab, wrappingFeesTab]}
           headerClassName="w-full overflow-x-auto"
           triggerClassName="whitespace-nowrap"
+          onValueChange={(val) =>
+            setActiveTokenTableTab(val as typeof activeTokenTableTab)
+          }
         >
           <NetworkTokenTable
             typedChainIds={typedChainIds}
-            data={networkTokenData}
+            data={networkTokenTableData}
             prefixUnit=""
           />
         </TableAndChartTabs>

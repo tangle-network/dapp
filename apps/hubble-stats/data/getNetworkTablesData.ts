@@ -9,9 +9,11 @@ import { getAggregateValue } from '../utils';
 
 export type NetworkTablesDataType = {
   typedChainIds: number[];
-  tvlData: NetworkPoolType[];
+  deposit24hData?: NetworkPoolType[];
+  withdrawal24hData?: NetworkPoolType[];
   relayerEarningsData: NetworkPoolType[];
-  networkTokenData?: NetworkTokenType[];
+  twlData?: NetworkTokenType[];
+  wrappingFeesData?: NetworkTokenType[];
 };
 
 const typedChainIds = ACTIVE_CHAINS;
@@ -60,8 +62,8 @@ export default async function getNetworkTablesData(
   poolAddress: string
 ): Promise<NetworkTablesDataType> {
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
-  const tvlChainsData = {} as Record<number, number | undefined>;
 
+  const tvlChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
     let tvlByVAnchorByChain: number | undefined;
     try {
@@ -77,7 +79,6 @@ export default async function getNetworkTablesData(
     }
     tvlChainsData[typedChainId] = tvlByVAnchorByChain;
   }
-
   const tvlAggregate = getAggregateValue(tvlChainsData);
 
   const relayerEarningsChainsData = {} as Record<number, number | undefined>;
@@ -101,7 +102,14 @@ export default async function getNetworkTablesData(
   const relayerEarningsAggregate = getAggregateValue(relayerEarningsChainsData);
 
   return {
-    tvlData: [
+    deposit24hData: [
+      {
+        symbol: fungibleTokenSymbol,
+        aggregate: tvlAggregate,
+        chainsData: tvlChainsData,
+      },
+    ],
+    withdrawal24hData: [
       {
         symbol: fungibleTokenSymbol,
         aggregate: tvlAggregate,
@@ -115,7 +123,8 @@ export default async function getNetworkTablesData(
         chainsData: relayerEarningsChainsData,
       },
     ],
-    networkTokenData: [getNewToken()],
+    twlData: [getNewToken()],
+    wrappingFeesData: [getNewToken()],
     typedChainIds,
   };
 }
