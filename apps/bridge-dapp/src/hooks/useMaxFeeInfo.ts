@@ -1,4 +1,4 @@
-import { fetchFeeData } from '@wagmi/core';
+import { fetchFeeData } from 'wagmi/actions';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,

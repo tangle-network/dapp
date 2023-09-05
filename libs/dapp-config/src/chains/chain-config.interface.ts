@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-import type { Chain } from '@wagmi/chains';
+import type { Chain } from 'viem/chains';
 
 import { AppEnvironment } from '../types';
 

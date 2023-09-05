@@ -1,6 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
+import mergeWith from 'lodash/mergeWith';
 import {
   arbitrumGoerli,
   avalancheFuji,
@@ -11,12 +16,7 @@ import {
   scrollTestnet,
   sepolia,
   type Chain,
-} from '@wagmi/chains';
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-import merge from 'lodash/merge';
-import mergeWith from 'lodash/mergeWith';
-import cloneDeep from 'lodash/cloneDeep';
+} from 'viem/chains';
 import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
@@ -223,15 +223,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development', 'test'],
-    contracts: {
-      multicall3: hostedOrbitMulticall3Address
-        ? {
+    contracts: hostedOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: hermesOrbitMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.AthenaOrbit]: {
     chainType: ChainType.EVM,
@@ -256,15 +256,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development', 'test'],
-    contracts: {
-      multicall3: hostedOrbitMulticall3Address
-        ? {
+    contracts: hostedOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: athenaOrbitMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.DemeterOrbit]: {
     chainType: ChainType.EVM,
@@ -289,15 +289,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development', 'test'],
-    contracts: {
-      multicall3: hostedOrbitMulticall3Address
-        ? {
+    contracts: hostedOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${hostedOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: demeterOrbitMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleTestnet]: {
     chainType: ChainType.EVM,
@@ -326,10 +326,8 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development', 'test'],
-    contracts: {
-      multicall3: undefined,
-    },
-  },
+  } satisfies ChainConfig,
+
   // Localnet
   [PresetTypedChainId.HermesLocalnet]: {
     chainType: ChainType.EVM,
@@ -348,15 +346,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: {
-      multicall3: localOrbitMulticall3Address
-        ? {
+    contracts: localOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: localHermesMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.AthenaLocalnet]: {
     chainType: ChainType.EVM,
@@ -375,15 +373,15 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: {
-      multicall3: localOrbitMulticall3Address
-        ? {
+    contracts: localOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: localAthenaMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 
   [PresetTypedChainId.DemeterLocalnet]: {
     chainType: ChainType.EVM,
@@ -402,13 +400,13 @@ export const chainsConfig: Record<number, ChainConfig> = {
       },
     },
     env: ['development'],
-    contracts: {
-      multicall3: localOrbitMulticall3Address
-        ? {
+    contracts: localOrbitMulticall3Address
+      ? {
+          multicall3: {
             address: `0x${localOrbitMulticall3Address.replace(/^0x/, '')}`,
             blockCreated: localDemeterMulticall3DeploymentBlock,
-          }
-        : undefined,
-    },
-  },
+          },
+        }
+      : undefined,
+  } satisfies ChainConfig,
 };
