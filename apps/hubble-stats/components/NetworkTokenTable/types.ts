@@ -12,7 +12,7 @@ export type NetworkTokenType = {
   /**
    * The aggregate value of all the tokens combine
    */
-  aggregate: number;
+  aggregate?: number;
 
   /**
    * The detailed data of the tokens on each chain

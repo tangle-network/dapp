@@ -55,20 +55,31 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
 
   return (
     <div className="space-y-12">
-      <TableAndChartTabs
-        tabs={[deposit24hTab, withdrawal24hTab, relayerEarningsTab]}
-        headerClassName="w-full overflow-x-auto"
-        triggerClassName="whitespace-nowrap"
-        onValueChange={(val) =>
-          setActivePoolTableTab(val as typeof activePoolTableTab)
-        }
-      >
-        <NetworkPoolTable
-          typedChainIds={typedChainIds}
-          data={networkPoolTableData}
-          prefixUnit=""
-        />
-      </TableAndChartTabs>
+      <div className="space-y-1">
+        <TableAndChartTabs
+          tabs={[deposit24hTab, withdrawal24hTab, relayerEarningsTab]}
+          headerClassName="w-full overflow-x-auto"
+          triggerClassName="whitespace-nowrap"
+          onValueChange={(val) =>
+            setActivePoolTableTab(val as typeof activePoolTableTab)
+          }
+        >
+          <NetworkPoolTable
+            typedChainIds={typedChainIds}
+            data={networkPoolTableData}
+            prefixUnit=""
+          />
+        </TableAndChartTabs>
+        {typedChainIds.length > 0 &&
+          activePoolTableTab === relayerEarningsTab && (
+            <Typography
+              variant="body2"
+              className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
+            >
+              *HISTORICAL RELAYER EARNINGS
+            </Typography>
+          )}
+      </div>
 
       <div className="space-y-1">
         <TableAndChartTabs
@@ -85,14 +96,23 @@ const NetworkTablesCmp: FC<NetworkTablesDataType> = ({
             prefixUnit=""
           />
         </TableAndChartTabs>
-        {typedChainIds !== undefined && typedChainIds.length > 0 && (
+        {typedChainIds.length > 0 && activeTokenTableTab === twlTab && (
           <Typography
             variant="body2"
             className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
           >
-            *TOKEN NOT SUPPORTED ON NETWORK
+            *HISTORICAL TWL
           </Typography>
         )}
+        {typedChainIds.length > 0 &&
+          activeTokenTableTab === wrappingFeesTab && (
+            <Typography
+              variant="body2"
+              className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
+            >
+              *HISTORICAL WRAPPING FEES
+            </Typography>
+          )}
       </div>
     </div>
   );

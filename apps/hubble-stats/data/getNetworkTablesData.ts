@@ -1,4 +1,3 @@
-import { randNumber } from '@ngneat/falso';
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
@@ -9,61 +8,20 @@ import { getAggregateValue } from '../utils';
 
 export type NetworkTablesDataType = {
   typedChainIds: number[];
-  deposit24hData?: NetworkPoolType[];
-  withdrawal24hData?: NetworkPoolType[];
+  deposit24hData: NetworkPoolType[];
+  withdrawal24hData: NetworkPoolType[];
   relayerEarningsData: NetworkPoolType[];
-  twlData?: NetworkTokenType[];
-  wrappingFeesData?: NetworkTokenType[];
-};
-
-const typedChainIds = ACTIVE_CHAINS;
-
-const getNewToken = (): NetworkTokenType => {
-  return {
-    symbol: 'webbPRC',
-    aggregate: randNumber({ min: 1_000_000, max: 20_000_000 }),
-    chainsData: typedChainIds.reduce(
-      (data, typedChainId) => ({
-        ...data,
-        [typedChainId]: randNumber({ min: 1_000_000, max: 20_000_000 }),
-      }),
-      {}
-    ),
-    tokens: [
-      {
-        symbol: 'eth',
-        compositionPercentage: randNumber({ min: 0, max: 100 }),
-        aggregate: randNumber({ min: 1_000_000, max: 20_000_000 }),
-        chainsData: typedChainIds.reduce(
-          (data, typedChainId) => ({
-            ...data,
-            [typedChainId]: randNumber({ min: 1_000, max: 2_000_000 }),
-          }),
-          {}
-        ),
-      },
-      {
-        symbol: 'usdt',
-        compositionPercentage: randNumber({ min: 0, max: 100 }),
-        aggregate: randNumber({ min: 1_000_000, max: 20_000_000 }),
-        chainsData: typedChainIds.reduce(
-          (data, typedChainId) => ({
-            ...data,
-            [typedChainId]: randNumber({ min: 1_000, max: 2_000_000 }),
-          }),
-          {}
-        ),
-      },
-    ],
-  };
+  twlData: NetworkTokenType[];
+  wrappingFeesData: NetworkTokenType[];
 };
 
 export default async function getNetworkTablesData(
   poolAddress: string
 ): Promise<NetworkTablesDataType> {
-  const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
+  const { fungibleTokenSymbol, composition } = VANCHORS_MAP[poolAddress];
 
-  const tvlChainsData = {} as Record<number, number | undefined>;
+  // DEPOSIT 24H
+  const deposit24hChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
     let tvlByVAnchorByChain: number | undefined;
     try {
@@ -77,10 +35,30 @@ export default async function getNetworkTablesData(
     } catch (error) {
       tvlByVAnchorByChain = undefined;
     }
-    tvlChainsData[typedChainId] = tvlByVAnchorByChain;
+    deposit24hChainsData[typedChainId] = tvlByVAnchorByChain;
   }
-  const tvlAggregate = getAggregateValue(tvlChainsData);
+  const deposit24hAggregate = getAggregateValue(deposit24hChainsData);
 
+  // WITHDRAWAL 24H
+  const withdrawal24hChainsData = {} as Record<number, number | undefined>;
+  for (const typedChainId of ACTIVE_CHAINS) {
+    let tvlByVAnchorByChain: number | undefined;
+    try {
+      const tvlData =
+        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+          LIVE_SUBGRAPH_MAP[typedChainId],
+          poolAddress
+        );
+
+      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+    } catch (error) {
+      tvlByVAnchorByChain = undefined;
+    }
+    withdrawal24hChainsData[typedChainId] = tvlByVAnchorByChain;
+  }
+  const withdrawal24hAggregate = getAggregateValue(withdrawal24hChainsData);
+
+  // RELAYER EARNINGS
   const relayerEarningsChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
     let relayerEarningsByVAnchorByChain: number | undefined;
@@ -98,22 +76,75 @@ export default async function getNetworkTablesData(
     }
     relayerEarningsChainsData[typedChainId] = relayerEarningsByVAnchorByChain;
   }
-
   const relayerEarningsAggregate = getAggregateValue(relayerEarningsChainsData);
+
+  // TWL
+  const twlChainsData = {} as Record<number, number | undefined>;
+  for (const typedChainId of ACTIVE_CHAINS) {
+    let tvlByVAnchorByChain: number | undefined;
+    try {
+      const tvlData =
+        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+          LIVE_SUBGRAPH_MAP[typedChainId],
+          poolAddress
+        );
+
+      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+    } catch (error) {
+      tvlByVAnchorByChain = undefined;
+    }
+    twlChainsData[typedChainId] = tvlByVAnchorByChain;
+  }
+  const twlAggregate = getAggregateValue(twlChainsData);
+  const twlTokenData = composition.map((token) => {
+    return {
+      symbol: token,
+      compositionPercentage: 50,
+      aggregate: twlAggregate,
+      chainsData: twlChainsData,
+    };
+  });
+
+  // WRAPPING FEES
+  const wrappingFeesChainsData = {} as Record<number, number | undefined>;
+  for (const typedChainId of ACTIVE_CHAINS) {
+    let tvlByVAnchorByChain: number | undefined;
+    try {
+      const tvlData =
+        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+          LIVE_SUBGRAPH_MAP[typedChainId],
+          poolAddress
+        );
+
+      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+    } catch (error) {
+      tvlByVAnchorByChain = undefined;
+    }
+    wrappingFeesChainsData[typedChainId] = tvlByVAnchorByChain;
+  }
+  const wrappingFeesAggregate = getAggregateValue(wrappingFeesChainsData);
+  const wrappingFeesTokenData = composition.map((token) => {
+    return {
+      symbol: token,
+      compositionPercentage: 50,
+      aggregate: wrappingFeesAggregate,
+      chainsData: wrappingFeesChainsData,
+    };
+  });
 
   return {
     deposit24hData: [
       {
         symbol: fungibleTokenSymbol,
-        aggregate: tvlAggregate,
-        chainsData: tvlChainsData,
+        aggregate: deposit24hAggregate,
+        chainsData: deposit24hChainsData,
       },
     ],
     withdrawal24hData: [
       {
         symbol: fungibleTokenSymbol,
-        aggregate: tvlAggregate,
-        chainsData: tvlChainsData,
+        aggregate: withdrawal24hAggregate,
+        chainsData: withdrawal24hChainsData,
       },
     ],
     relayerEarningsData: [
@@ -123,8 +154,22 @@ export default async function getNetworkTablesData(
         chainsData: relayerEarningsChainsData,
       },
     ],
-    twlData: [getNewToken()],
-    wrappingFeesData: [getNewToken()],
-    typedChainIds,
+    twlData: [
+      {
+        symbol: fungibleTokenSymbol,
+        aggregate: twlAggregate,
+        chainsData: twlChainsData,
+        tokens: twlTokenData,
+      },
+    ],
+    wrappingFeesData: [
+      {
+        symbol: fungibleTokenSymbol,
+        aggregate: wrappingFeesAggregate,
+        chainsData: wrappingFeesChainsData,
+        tokens: wrappingFeesTokenData,
+      },
+    ],
+    typedChainIds: ACTIVE_CHAINS,
   };
 }
