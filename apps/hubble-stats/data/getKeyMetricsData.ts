@@ -1,15 +1,15 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { getTvl, getVolume24h } from './reusable';
+import { getTvl, getDeposit24h } from './reusable';
 import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 import { getValidDatesToQuery } from '../utils';
 
 type KeyMetricDataType = {
   tvl: number | undefined;
   tvlChangeRate: number | undefined;
-  volume24h: number | undefined;
-  volumeChangeRate: number | undefined;
+  deposit24h: number | undefined;
+  depositChangeRate: number | undefined;
   relayerFees: number | undefined;
   wrappingFees: number | undefined;
 };
@@ -18,7 +18,7 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   const [_, date24h, date48h] = getValidDatesToQuery();
 
   const tvl = await getTvl();
-  const volume24h = await getVolume24h();
+  const deposit24h = await getDeposit24h();
 
   let relayerFees: number | undefined;
   try {
@@ -100,43 +100,43 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   const tvlChangeRate =
     tvl && tvl24h ? ((tvl - tvl24h) / tvl24h) * 100 : undefined;
 
-  let volume48h: number | undefined;
+  let deposit48h: number | undefined;
   try {
-    const volumeVAnchorsByChainsData =
-      await vAnchorClient.Volume.GetVAnchorsVolumeByChains15MinsInterval(
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorsDepositByChains15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES,
         date48h,
         date24h
       );
 
-    volume48h = volumeVAnchorsByChainsData?.reduce(
-      (volumeTotal, vAnchorsByChain) => {
-        const volumeVAnchorsByChain = vAnchorsByChain.reduce(
-          (volumeTotalByChain, vAnchor) =>
-            volumeTotalByChain + +formatEther(BigInt(vAnchor.volume ?? 0)),
+    deposit48h = depositVAnchorsByChainsData?.reduce(
+      (depositTotal, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositTotalByChain, vAnchor) =>
+            depositTotalByChain + +formatEther(BigInt(vAnchor.deposit ?? 0)),
           0
         );
-        return volumeTotal + volumeVAnchorsByChain;
+        return depositTotal + depositVAnchorsByChain;
       },
       0
     );
   } catch {
-    volume48h = undefined;
+    deposit48h = undefined;
   }
 
   // follow Uniswap's formula
   // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L93
-  const volumeChangeRate =
-    volume24h && volume48h
-      ? ((volume24h - volume48h) / volume48h) * 100
+  const depositChangeRate =
+    deposit24h && deposit48h
+      ? ((deposit24h - deposit48h) / deposit48h) * 100
       : undefined;
 
   return {
     tvl,
     tvlChangeRate,
-    volume24h,
-    volumeChangeRate,
+    deposit24h,
+    depositChangeRate,
     relayerFees,
     wrappingFees,
   };

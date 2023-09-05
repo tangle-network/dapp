@@ -1,9 +1,13 @@
-import cx from 'classnames';
+import { ShieldedAssetIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import { ExternalLinkLine, ShieldedAssetIcon } from '@webb-tools/icons';
+import cx from 'classnames';
 
-import { PoolTypeChip, PoolOverviewItem } from '../../components';
+import {
+  CopyIconWithTooltip,
+  PoolOverviewItem,
+  PoolTypeChip,
+} from '../../components';
 import { getPoolOverviewData } from '../../data';
 
 export default async function PoolOverviewContainer({
@@ -13,13 +17,12 @@ export default async function PoolOverviewContainer({
 }) {
   const {
     name,
-    url,
+    fungibleTokenSymbol,
     type,
-    deposits24h,
-    depositsChangeRate,
+    deposit24h,
+    depositChangeRate,
     tvl,
     tvlChangeRate,
-    fees24h,
   } = await getPoolOverviewData(poolAddress);
 
   return (
@@ -50,9 +53,7 @@ export default async function PoolOverviewContainer({
               {shortenHex(poolAddress)}
             </Typography>
 
-            <a href={url} target="_blank" rel="noreferrer">
-              <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-            </a>
+            <CopyIconWithTooltip textToCopy={poolAddress} />
           </div>
 
           {/* Type */}
@@ -63,25 +64,20 @@ export default async function PoolOverviewContainer({
         </div>
 
         {/* 24h deposits + TVL + 24h fees */}
-        <div className="flex">
-          <PoolOverviewItem
-            title="24h deposits"
-            value={deposits24h}
-            changeRate={depositsChangeRate}
-            className="flex-[1]"
-          />
+        <div className="flex items-center">
           <PoolOverviewItem
             title="tvl"
             value={tvl}
             changeRate={tvlChangeRate}
-            prefix="$"
-            className="flex-[1] border-x border-mono-40 dark:border-mono-140"
+            suffix={` ${fungibleTokenSymbol}`}
+            className="flex-[1]"
           />
           <PoolOverviewItem
-            title="24h fees"
-            value={fees24h}
-            prefix="$"
-            className="flex-[1]"
+            title="Deposits 24H"
+            value={deposit24h}
+            changeRate={depositChangeRate}
+            suffix={` ${fungibleTokenSymbol}`}
+            className="flex-[1] border-l border-mono-40 dark:border-mono-140"
           />
         </div>
       </div>

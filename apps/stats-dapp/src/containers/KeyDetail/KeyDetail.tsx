@@ -236,14 +236,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       time={at}
                       blockHash={hash}
                       externalUrl={POLKADOT_EXPLORER_URL + hash}
-                      extraContent={
-                        <div className="flex items-center space-x-2">
-                          {/* <KeyValueWithButton
-                            keyValue={keyDetail.uncompressed}
-                            size="sm"
-                          /> */}
-                        </div>
-                      }
                     />
                   );
                 }
@@ -256,37 +248,6 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       time={at}
                       blockHash={hash}
                       externalUrl={POLKADOT_EXPLORER_URL + hash}
-                      extraContent={
-                        <div className="flex items-center space-x-4">
-                          <LabelWithValue
-                            label="Height"
-                            value={keyDetail.height}
-                          />
-                          {/** TODO: Proposal type */}
-                          <LabelWithValue
-                            label="Proposal"
-                            value="KeyRotation"
-                          />
-                          {keyDetail.authorities.length && (
-                            <LabelWithValue
-                              label="Proposers"
-                              value={
-                                <AvatarGroup
-                                  total={keyDetail.authorities.length}
-                                >
-                                  {keyDetail.authorities.map((author, idx) => (
-                                    <Avatar
-                                      key={author.id}
-                                      value={author.account}
-                                      sourceVariant="address"
-                                    />
-                                  ))}
-                                </AvatarGroup>
-                              }
-                            />
-                          )}
-                        </div>
-                      }
                     />
                   );
                 }

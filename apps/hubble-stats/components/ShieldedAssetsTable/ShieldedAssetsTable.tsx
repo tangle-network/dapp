@@ -11,7 +11,12 @@ import {
   ColumnDef,
   Table as RTTable,
 } from '@tanstack/react-table';
-import { Table, fuzzyFilter, IconsGroup } from '@webb-tools/webb-ui-components';
+import {
+  Typography,
+  Table,
+  fuzzyFilter,
+  IconsGroup,
+} from '@webb-tools/webb-ui-components';
 
 import { ShieldedAssetType, ShieldedAssetsTableProps } from './types';
 import { HeaderCell, NumberCell, ShieldedCell } from '../table';
@@ -29,6 +34,7 @@ const columns: ColumnDef<ShieldedAssetType, any>[] = [
       <ShieldedCell
         title={props.row.original.symbol}
         address={props.row.original.address}
+        poolAddress={props.row.original.poolAddress}
       />
     ),
   }),
@@ -42,21 +48,40 @@ const columns: ColumnDef<ShieldedAssetType, any>[] = [
   }),
   columnHelper.accessor('composition', {
     header: () => <HeaderCell title="Composition" />,
-    cell: (props) => (
-      <IconsGroup
-        icons={props.getValue()}
-        type="token"
-        className="justify-center"
-      />
-    ),
+    cell: (props) =>
+      props.getValue().length > 0 ? (
+        <IconsGroup
+          icons={props.getValue()}
+          type="token"
+          className="justify-center"
+        />
+      ) : (
+        <Typography
+          variant="body1"
+          ta="center"
+          className="text-mono-140 dark:text-mono-40"
+        >
+          No composition
+        </Typography>
+      ),
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
-    cell: (props) => <NumberCell value={props.getValue()} />,
+    cell: (props) => (
+      <NumberCell
+        suffix={` ${props.row.original.symbol}`}
+        value={props.getValue()}
+      />
+    ),
   }),
   columnHelper.accessor('tvl', {
     header: () => <HeaderCell title="TVL" tooltip="TVL" />,
-    cell: (props) => <NumberCell value={props.getValue()} prefix="$" />,
+    cell: (props) => (
+      <NumberCell
+        suffix={` ${props.row.original.symbol}`}
+        value={props.getValue()}
+      />
+    ),
   }),
   columnHelper.accessor('typedChainIds', {
     header: () => <HeaderCell title="Chains" className="justify-end" />,

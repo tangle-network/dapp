@@ -9,6 +9,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { CoinIcon, ContrastLine } from '@webb-tools/icons';
 
+import { VANCHORS_MAP } from '../../constants';
+
 import { BreadcrumbType } from './types';
 
 const Breadcrumbs: FC = () => {
@@ -16,9 +18,15 @@ const Breadcrumbs: FC = () => {
   const parts = pathname.split('/');
   let activeItem = parts[parts.length - 1];
 
+  // check if current path is /pool/<poolAddress>
   if (parts.length === 3 && parts[0] === '' && parts[1] === 'pool') {
-    // TODO: handle getting pool name from address and redirect user if invalid address
-    activeItem = 'webbParachain';
+    const poolAddress = parts[2];
+    // if invalid poolAddress, the breadcrumb only show the default item
+    if (!VANCHORS_MAP[poolAddress]) {
+      activeItem = '';
+    } else {
+      activeItem = VANCHORS_MAP[poolAddress].fungibleTokenName;
+    }
   }
 
   const breadCrumbs = useMemo(() => {

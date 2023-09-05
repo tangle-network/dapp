@@ -1,7 +1,7 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { getTvl, getVolume24h } from './reusable';
+import { getTvl, getDeposit24h } from './reusable';
 import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 import {
   getDateFromEpoch,
@@ -16,7 +16,7 @@ type VolumeDataType = {
 
 export type OverviewChartsDataType = {
   currentTvl: number | undefined;
-  volume24h: number | undefined;
+  deposit24h: number | undefined;
   tvlData: {
     date: Date;
     value: number;
@@ -33,7 +33,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   const numDatesFromStart = getNumDatesFromStart();
 
   const currentTvl = await getTvl();
-  const volume24h = await getVolume24h();
+  const deposit24h = await getDeposit24h();
 
   let tvlData: { [epoch: string]: bigint } = {};
   try {
@@ -119,7 +119,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
 
   return {
     currentTvl,
-    volume24h,
+    deposit24h,
     tvlData: Object.keys(tvlData).map((epoch) => {
       return {
         date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),

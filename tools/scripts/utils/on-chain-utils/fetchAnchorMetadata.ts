@@ -1,3 +1,5 @@
+import assert from 'assert';
+import { getContract } from 'viem';
 import { ApiPromise } from '@polkadot/api';
 import { Option } from '@polkadot/types';
 import {
@@ -20,13 +22,25 @@ import '@webb-tools/protocol-substrate-types';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
 import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/src/utils/getViemClient';
-import assert from 'assert';
-import { getContract } from 'viem';
+import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
+import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 
 async function fetchEVMAnchorMetadata(
   anchorAddress: string,
   typedChainId: number
 ): Promise<AnchorMetadata> {
+  if (anchorDeploymentBlock?.[typedChainId]?.[anchorAddress] === undefined) {
+    throw new Error(
+      `Getting Deployment Block: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+    );
+  }
+
+  if (anchorSignatureBridge?.[typedChainId]?.[anchorAddress] === undefined) {
+    throw new Error(
+      `Getting Signature Bridge: Invalid Chain (with TypedChainId ${typedChainId}) or VAnchor address (${anchorAddress})`
+    );
+  }
+
   const client = getViemClient(typedChainId);
 
   const anchorAddrHex = `0x${anchorAddress.replace(/^0x/, '')}` as const;
@@ -205,12 +219,21 @@ async function fetchEVMAnchorMetadata(
       };
     }, {} as Record<string, string>);
 
+  const { timestamp: creationTimestamp } = await client.getBlock({
+    blockNumber: BigInt(anchorDeploymentBlock[typedChainId][anchorAddress]),
+  });
+
+  const treasuryAddress = await fungibleContract.read.feeRecipient();
+
   return {
     address: anchorAddress,
     fungibleCurrency,
     wrappableCurrencies,
     isNativeAllowed,
     linkableAnchor,
+    signatureBridge: anchorSignatureBridge[typedChainId][anchorAddress],
+    treasuryAddress,
+    creationTimestamp: Number(creationTimestamp),
   };
 }
 
