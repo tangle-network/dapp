@@ -63,6 +63,8 @@ export const useBatchedProposals = (
         perPage,
         orderBy,
       },
+      pollInterval: 10000,
+      fetchPolicy: 'network-only',
     });
   }, [offset, perPage]);
 
@@ -126,6 +128,8 @@ export const useBatchedProposal = (
     variables: {
       batchId: batchedProposalQuery,
     },
+    pollInterval: 10000,
+    fetchPolicy: 'network-only',
   });
 
   const [batchedProposal, setBatchedProposal] = useState<BatchedProposal>({

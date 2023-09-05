@@ -1,6 +1,8 @@
+import '@webb-tools/dkg-substrate-types';
 import { useLastBlockQuery, useMetaDataQuery } from '../generated/graphql';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { sessionFrame } from './hooks';
 
 /**
  * Chain metadata
@@ -61,11 +63,19 @@ type StatsProvidervalue = {
   // dkg keys data from polkadot api
   dkgDataFromPolkadotAPI: {
     currentSessionNumber: number;
+    currentSessionTimeFrame: {
+      start: Date;
+      end: Date;
+    };
     currentKey: string;
+    currentAuthorities: string[];
+    nextAuthorities: string[];
     nextSessionNumber: number;
     nextKey: string;
     proposerCount: number;
     proposerThreshold: number;
+    keygenThreshold: number;
+    signatureThreshold: number;
   };
 };
 
@@ -118,11 +128,19 @@ const statsContext: React.Context<StatsProvidervalue> =
     polkadotEndpoint: '',
     dkgDataFromPolkadotAPI: {
       currentSessionNumber: 0,
+      currentSessionTimeFrame: {
+        start: new Date(),
+        end: new Date(),
+      },
       currentKey: '',
+      currentAuthorities: [],
+      nextAuthorities: [],
       nextSessionNumber: 0,
       nextKey: '',
       proposerCount: 0,
       proposerThreshold: 0,
+      keygenThreshold: 0,
+      signatureThreshold: 0,
     },
   });
 
@@ -179,11 +197,19 @@ export const StatsProvider: React.FC<
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [dkgDataFromPolkadotAPI, setDkgDataFromPolkadotAPI] = useState({
     currentSessionNumber: 0,
+    currentSessionTimeFrame: {
+      start: new Date(),
+      end: new Date(),
+    },
     currentKey: '',
+    currentAuthorities: [] as string[],
+    nextAuthorities: [] as string[],
     nextSessionNumber: 0,
     nextKey: '',
     proposerCount: 0,
     proposerThreshold: 0,
+    keygenThreshold: 0,
+    signatureThreshold: 0,
   });
 
   useEffect(() => {
@@ -253,27 +279,60 @@ export const StatsProvider: React.FC<
       const currentDKGPublicKey = await apiPromise.query.dkg.dkgPublicKey();
       const currentSessionNumber = currentDKGPublicKey[0].toNumber();
       const currentKey = currentDKGPublicKey[1].toString();
-      let nextDKGPublicKey = await apiPromise.query.dkg.nextDKGPublicKey();
+      const nextDKGPublicKey = (
+        await apiPromise.query.dkg.nextDKGPublicKey()
+      ).unwrapOr(null);
+
       let nextSessionNumber = 0;
       let nextKey = '';
-      if (nextDKGPublicKey.isEmpty) {
+      if (!nextDKGPublicKey) {
         nextSessionNumber = currentSessionNumber + 1;
         nextKey = '';
       } else {
-        nextDKGPublicKey = JSON.parse(nextDKGPublicKey.toString());
-        nextSessionNumber = nextDKGPublicKey[0];
-        nextKey = nextDKGPublicKey[1];
+        nextSessionNumber = nextDKGPublicKey[0].toNumber();
+        nextKey = nextDKGPublicKey[1].toString();
       }
       const proposerCount = await apiPromise.query.dkgProposals.proposerCount();
       const proposerThreshold =
         await apiPromise.query.dkgProposals.proposerThreshold();
+      const lastSessionRotationBlockNumber =
+        await apiPromise.query.dkg.lastSessionRotationBlock();
+      const lastSessionRotaionBlockHash =
+        await apiPromise.rpc.chain.getBlockHash(
+          lastSessionRotationBlockNumber.toString()
+        );
+      const lastSessionRotationBlock = await apiPromise.rpc.chain.getBlock(
+        lastSessionRotaionBlockHash
+      );
+      const lastSessionRotationBlockTimestamp =
+        lastSessionRotationBlock.block.extrinsics[0].method.args[0].toJSON();
+      const [start, end] = sessionFrame(
+        new Date(lastSessionRotationBlockTimestamp as string).toString(),
+        sessionHeight
+      );
+      const currentAuthoritySet = await apiPromise.query.dkg.authorities();
+      const currentAuthorities = currentAuthoritySet.toJSON();
+      const keygenThreshold = await apiPromise.query.dkg.keygenThreshold();
+      const signatureThreshold =
+        await apiPromise.query.dkg.signatureThreshold();
+      const nextAuthoritiesSet = await apiPromise.query.dkg.nextAuthorities();
+      const nextAuthorities = nextAuthoritiesSet.toJSON();
+
       setDkgDataFromPolkadotAPI({
         currentSessionNumber,
+        currentSessionTimeFrame: {
+          start: start ?? new Date(),
+          end: end ?? new Date(),
+        },
         currentKey,
+        currentAuthorities: currentAuthorities as string[],
+        nextAuthorities: nextAuthorities as string[],
         nextSessionNumber,
         nextKey,
         proposerCount: Number(proposerCount.toString()),
         proposerThreshold: Number(proposerThreshold.toString()),
+        keygenThreshold: Number(keygenThreshold.toString()),
+        signatureThreshold: Number(signatureThreshold.toString()),
       });
     };
 

@@ -5,7 +5,7 @@ import { getOverviewChipsData } from '../../data';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 export default async function OverviewChipsContainer() {
-  const { tvl, deposit24h } = await getOverviewChipsData();
+  const { tvl, deposit } = await getOverviewChipsData();
 
   return (
     <div className="hidden md:flex items-center gap-4">
@@ -20,9 +20,9 @@ export default async function OverviewChipsContainer() {
 
       <Chip color="blue" className="normal-case">
         <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
-        DEPOSITS 24H:{' '}
-        {typeof deposit24h === 'number'
-          ? getRoundedDownNumberWith2Decimals(deposit24h)
+        DEPOSITS:{' '}
+        {typeof deposit === 'number'
+          ? getRoundedDownNumberWith2Decimals(deposit)
           : '-'}{' '}
         tTNT
       </Chip>

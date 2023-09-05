@@ -37,19 +37,19 @@ export const PrivacyConnectedSection = () => {
   const [activeTab, setActiveTab] = useState<TabTypes>('ownership');
 
   return (
-    <section className="max-w-[932px] mx-auto md:py-[156px] flex flex-col justify-center w-full">
+    <section className="max-w-[932px] mx-auto pt-16 md:py-[156px] flex flex-col justify-center w-full">
       <ChainIcon name="webb" size="lg" className="mx-auto" />
 
       <Typography
         variant="mkt-h3"
-        className="px-4 mt-6 text-center text-mono-200 font-black"
+        className="px-4 mt-6 font-black text-center text-mono-200"
       >
         The Future of privacy is Connected
       </Typography>
 
       <Typography
         variant="mkt-body1"
-        className="px-4 mt-6 text-center md:mt-9 text-mono-140 font-medium"
+        className="px-4 mt-6 font-medium text-center md:mt-9 text-mono-140"
       >
         Connecting private applications across chains allows us to scale the
         size of privacy sets to encompass all the users and data possible in our

@@ -1,16 +1,43 @@
-import { getTvl, getDeposit24h } from './reusable';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
+
+import { getTvl } from './reusable';
+import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;
-  deposit24h: number | undefined;
+  deposit: number | undefined;
 };
 
 export default async function getOverviewChipsData(): Promise<OverviewChipsDataType> {
   const tvl = await getTvl();
-  const deposit24h = await getDeposit24h();
+
+  let deposit: number | undefined;
+
+  try {
+    const depositVAnchorsByChainsData =
+      await vAnchorClient.Deposit.GetVAnchorsDepositByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        VANCHOR_ADDRESSES
+      );
+
+    deposit = depositVAnchorsByChainsData?.reduce(
+      (depositTotal, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositTotalByChain, vAnchorDeposit) =>
+            depositTotalByChain + +formatEther(BigInt(vAnchorDeposit ?? 0)),
+          0
+        );
+        return depositTotal + depositVAnchorsByChain;
+      },
+      0
+    );
+  } catch {
+    deposit = undefined;
+  }
 
   return {
     tvl,
-    deposit24h,
+    deposit,
   };
 }

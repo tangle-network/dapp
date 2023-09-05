@@ -7,15 +7,20 @@ import {
   useValidatorListingLazyQuery,
   useValidatorOfSessionLazyQuery,
   useValidatorSessionsLazyQuery,
+  useLatestSessionIdQuery,
 } from '../../generated/graphql';
 import { thresholdMap } from '../hooks/mappers/thresholds';
 import { mapAuthorities, mapSessionAuthValidatorNode } from './mappers';
 import { Loadable, Page, PageInfoQuery } from './types';
 import { useCurrentMetaData } from './useCurrentMetaData';
 import { PublicKey } from './useKeys';
-// import { DiscreteList } from './useProposals';
 import { useActiveSession } from '../stats-provider';
 import { useEffect, useMemo, useState } from 'react';
+
+export type AuthoritySet = {
+  count: number;
+  firstElements: string[];
+};
 
 /**
  * Threshold values
@@ -50,7 +55,7 @@ export type UpcomingThreshold = {
   keyGen: string;
   signature: string;
   proposer: string;
-  authoritySet: any; // DiscreteList
+  authoritySet: AuthoritySet;
 };
 
 export type UpcomingThresholds = Record<
@@ -113,7 +118,10 @@ export type KeyGenKeyListItem = {
   height: string;
   session: string;
   publicKey: string;
-  authority: DiscreteList;
+  authority: {
+    count: number;
+    firstElements: string[];
+  };
 };
 
 type AuthorityDetails = {
@@ -169,7 +177,11 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
           const keyGen = thresholds.KEY_GEN;
           const signature = thresholds.SIGNATURE;
 
-          const publicKey = session.publicKey!;
+          const publicKey = session.publicKey ?? {
+            id: '',
+            compressed: '',
+            uncompressed: '',
+          };
 
           const allAuth = mapAuthorities(session?.sessionValidators);
           const authSet = allAuth.map((auth) => auth.id);
@@ -193,8 +205,8 @@ export function useThresholds(): Loadable<[Thresholds, UpcomingThresholds]> {
                   )
                 : undefined,
               start: sessionTimeStamp ? new Date(sessionTimeStamp) : undefined,
-              compressed: publicKey.compressed!,
-              uncompressed: '', // publicKey.uncompressed!
+              compressed: publicKey.compressed ?? '',
+              uncompressed: '',
               keyGenAuthorities: authSet,
               isCurrent: activeSession === session.id,
               isDone: Number(activeSession) > Number(session.id),
@@ -280,8 +292,13 @@ export function useAuthorities(
     isLoading: true,
     isFailed: false,
   });
-  const metaData = useCurrentMetaData();
   const [call, query] = useValidatorListingLazyQuery();
+
+  const latestIndexedSessionId = useLatestSessionIdQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
+
   // fetch the data once the filter has changed
   useEffect(() => {
     const filter = reqQuery.filter;
@@ -295,12 +312,17 @@ export function useAuthorities(
         ? (filter.uptime.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
         : []
     );
-    if (metaData.val) {
+    if (
+      latestIndexedSessionId.data &&
+      latestIndexedSessionId.data.sessions?.totalCount
+    ) {
       call({
         variables: {
           offset: reqQuery.offset,
           perPage: reqQuery.perPage,
-          sessionId: metaData.val.activeSession,
+          sessionId:
+            String(latestIndexedSessionId.data?.sessions?.totalCount - 1) ??
+            '0',
           reputationFilter: reputation ?? undefined,
           uptimeFilter: uptime ?? undefined,
           validatorId: filter.search
@@ -318,7 +340,7 @@ export function useAuthorities(
         });
       });
     }
-  }, [reqQuery, call, metaData]);
+  }, [reqQuery, call, latestIndexedSessionId]);
 
   useEffect(() => {
     const subscription = query.observable
@@ -328,7 +350,7 @@ export function useAuthorities(
           const items = sessionValidators.nodes
             .filter((v) => v !== null)
             .map((sessionValidator): AuthorityListItem => {
-              const auth = mapSessionAuthValidatorNode(sessionValidator!);
+              const auth = mapSessionAuthValidatorNode(sessionValidator as any);
               return {
                 id: auth.id,
                 location: auth.location ?? undefined,
@@ -378,7 +400,10 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     isLoading: true,
     val: null,
   });
-  const metaData = useCurrentMetaData();
+  const latestIndexedSessionId = useLatestSessionIdQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
   const { authorityId } = pageQuery.filter;
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
   const [callValidatorOfSession, queryValidatorOfSession] =
@@ -401,10 +426,15 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
     });
   }, [authorityId, callKeyGen, setKeyGens, pageQuery]);
   useEffect(() => {
-    if (metaData.val) {
+    if (
+      latestIndexedSessionId.data &&
+      latestIndexedSessionId.data.sessions?.totalCount
+    ) {
       callValidatorOfSession({
         variables: {
-          sessionValidatorId: `${metaData.val.activeSession}-${authorityId}`,
+          sessionValidatorId: `${
+            latestIndexedSessionId.data?.sessions?.totalCount - 1
+          }-${authorityId}`,
           validatorId: authorityId,
         },
       }).catch((e) => {
@@ -416,7 +446,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
         });
       });
     }
-  }, [metaData, callValidatorOfSession, authorityId]);
+  }, [latestIndexedSessionId, callValidatorOfSession, authorityId]);
   useEffect(() => {
     const subscription = queryKeyGen.observable
       .map((res): AuthorityDetails['keyGens'] => {
@@ -426,12 +456,19 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
             // Ensure only session with public keys
             .filter((n) => Boolean(n?.session?.publicKey))
             .map((node): KeyGenKeyListItem => {
-              const session = node!.session!;
-              const publicKey = session.publicKey!;
+              const session = node && node.session ? node.session : null;
+              const publicKey =
+                session && session.publicKey
+                  ? session.publicKey
+                  : {
+                      id: '',
+                      compressed: '',
+                      uncompressed: '',
+                    };
               return {
                 id: publicKey.id,
-                session: session.id,
-                publicKey: '', // publicKey.uncompressed!
+                session: session && session.id ? session.id : '',
+                publicKey: publicKey.compressed ?? '',
                 height: `${publicKey.block?.number ?? '-'}`,
                 authority: {
                   count: session.sessionValidators.totalCount,

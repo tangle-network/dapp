@@ -46,6 +46,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyDetailProps, KeyGenAuthoredTableProps } from './types';
 import { ECPairFactory } from 'ecpair';
 import * as tinysecp from 'tiny-secp256k1';
+import { POLKADOT_EXPLORER_URL } from '@webb-tools/webb-ui-components/constants';
 
 export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
   ({ isPage }, ref) => {
@@ -221,8 +222,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -233,16 +234,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools" // TODO: Determine the external url
-                      extraContent={
-                        <div className="flex items-center space-x-2">
-                          {/* <KeyValueWithButton
-                            keyValue={keyDetail.uncompressed}
-                            size="sm"
-                          /> */}
-                        </div>
-                      }
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
                 }
@@ -253,39 +246,8 @@ export const KeyDetail = forwardRef<HTMLDivElement, KeyDetailProps>(
                       key={`${at.toString()}-${idx}`}
                       title={status}
                       time={at}
-                      txHash={hash}
-                      externalUrl="https://webb.tools"
-                      extraContent={
-                        <div className="flex items-center space-x-4">
-                          <LabelWithValue
-                            label="Height"
-                            value={keyDetail.height}
-                          />
-                          {/** TODO: Proposal type */}
-                          <LabelWithValue
-                            label="Proposal"
-                            value="KeyRotation"
-                          />
-                          {keyDetail.authorities.length && (
-                            <LabelWithValue
-                              label="Proposers"
-                              value={
-                                <AvatarGroup
-                                  total={keyDetail.authorities.length}
-                                >
-                                  {keyDetail.authorities.map((author, idx) => (
-                                    <Avatar
-                                      key={author.id}
-                                      value={author.account}
-                                      sourceVariant="address"
-                                    />
-                                  ))}
-                                </AvatarGroup>
-                              }
-                            />
-                          )}
-                        </div>
-                      }
+                      blockHash={hash}
+                      externalUrl={POLKADOT_EXPLORER_URL + hash}
                     />
                   );
                 }
