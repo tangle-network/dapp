@@ -127,12 +127,6 @@ export const useMaxFeeInfo = (
         }
 
         const gasAmount = gasLimit[currentTypedChainId] ?? gasLimit.default;
-        if (!gasAmount) {
-          throw new Error(
-            `No gas amount config for current chain: ${currentTypedChainId}`
-          );
-        }
-
         const feeInfo = await relayer.getFeeInfo(
           currentTypedChainId,
           vanchorId,
@@ -162,19 +156,13 @@ export const useMaxFeeInfo = (
         activeChain.id
       );
 
-      if (!gasLimit[currentTypedChain]) {
-        throw new Error(
-          `No gas amount config for current chain: ${currentTypedChain}`
-        );
-      }
-
+      const gasAmount = gasLimit[currentTypedChain] ?? gasLimit.default;
       const provider = activeApi.getProvider();
       if (provider instanceof PolkadotProvider) {
         // On Substrate, we use partial fee dirrectly
-        setFeeInfo(gasLimit[currentTypedChain]);
+        setFeeInfo(gasAmount);
         setIsLoading(false);
       } else if (activeApi instanceof WebbWeb3Provider) {
-        const gasAmount = gasLimit[currentTypedChain];
         const walletClient = activeApi.walletClient;
         const publicClient = activeApi.publicClient;
 
