@@ -42,7 +42,7 @@ const TxInfoContainer = ({
             title: 'Refund',
           }}
           rightIcon={<WalletFillIcon />}
-          rightText={`${refundAmount} ${refundToken ?? ''}`.trim()}
+          rightText={`${refundAmount.slice(0, 10)} ${refundToken ?? ''}`.trim()}
         />
       )}
       <TxInfoItem

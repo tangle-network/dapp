@@ -1,18 +1,15 @@
-import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
-import useStateWithRoute from '../../../../../hooks/useStateWithRoute';
+import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
+import { useEffect, useState } from 'react';
 import {
   HAS_REFUND_KEY,
   IS_CUSTOM_AMOUNT_KEY,
   RECIPIENT_KEY,
-  REFUND_AMOUNT_KEY,
 } from '../../../../../constants';
-import { useEffect, useState } from 'react';
-import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
+import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
+import useStateWithRoute from '../../../../../hooks/useStateWithRoute';
 
 const useInputs = () => {
   const [amount, setAmount] = useAmountWithRoute();
-
-  const [refundAmount, setRefundAmount] = useAmountWithRoute(REFUND_AMOUNT_KEY);
 
   const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
 
@@ -38,8 +35,6 @@ const useInputs = () => {
   return {
     amount,
     setAmount,
-    refundAmount,
-    setRefundAmount,
     recipient,
     setRecipient,
     hasRefund,

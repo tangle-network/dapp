@@ -22,7 +22,6 @@ import {
   HAS_REFUND_KEY,
   POOL_KEY,
   RECIPIENT_KEY,
-  REFUND_AMOUNT_KEY,
   TOKEN_KEY,
   WITHDRAW_PATH,
 } from '../../../../../constants';
@@ -32,19 +31,19 @@ import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 export type UseWithdrawButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>['balances'];
   receivingAmount?: number;
+  refundAmount?: bigint;
   isFeeLoading?: boolean;
   totalFeeWei?: bigint;
-  refundAmountError?: string;
   resetFeeInfo?: () => void;
 };
 
 function useWithdrawButtonProps({
   balances,
-  receivingAmount,
   isFeeLoading,
-  totalFeeWei,
-  refundAmountError,
+  receivingAmount,
+  refundAmount,
   resetFeeInfo,
+  totalFeeWei,
 }: UseWithdrawButtonPropsArgs) {
   const navigate = useNavigate();
 
@@ -77,16 +76,11 @@ function useWithdrawButtonProps({
     ];
   }, [searchParams]);
 
-  const [recipient, hasRefund, refundAmount] = useMemo(() => {
+  const [recipient, hasRefund] = useMemo(() => {
     const recipientStr = searchParams.get(RECIPIENT_KEY) ?? '';
     const hasRefundStr = searchParams.get(HAS_REFUND_KEY) ?? '';
-    const refundAmountStr = searchParams.get(REFUND_AMOUNT_KEY) ?? '';
 
-    return [
-      recipientStr ? recipientStr : undefined,
-      !!hasRefundStr,
-      refundAmountStr ? formatEther(BigInt(refundAmountStr)) : undefined,
-    ];
+    return [recipientStr ? recipientStr : undefined, !!hasRefundStr];
   }, [searchParams]);
 
   const [fungibleCfg, wrappableCfg, destChainCfg] = useMemo(() => {
@@ -176,22 +170,6 @@ function useWithdrawButtonProps({
     return parseEther(amount) <= balance && receivingAmount >= 0;
   }, [amount, balances, destTypedChainId, fungibleCfg, receivingAmount]);
 
-  const isValidRefund = useMemo(() => {
-    if (!hasRefund) {
-      return true;
-    }
-
-    if (!refundAmount) {
-      return false;
-    }
-
-    if (refundAmountError) {
-      return false;
-    }
-
-    return true;
-  }, [hasRefund, refundAmount, refundAmountError]);
-
   const connCnt = useMemo(() => {
     if (!activeApi) {
       return 'Connect Wallet';
@@ -231,10 +209,6 @@ function useWithdrawButtonProps({
         return 'Enter recipient';
       }
 
-      if (hasRefund && !refundAmount) {
-        return 'Enter refund amount';
-      }
-
       if (!isSucficientLiq) {
         return 'Insufficient liquidity';
       }
@@ -244,7 +218,7 @@ function useWithdrawButtonProps({
       }
     },
     // prettier-ignore
-    [amount, destTypedChainId, fungibleCfg, hasRefund, isSucficientLiq, isValidAmount, recipient, refundAmount, wrappableCfg]
+    [amount, destTypedChainId, fungibleCfg, isSucficientLiq, isValidAmount, recipient, wrappableCfg]
   );
 
   const btnText = useMemo(() => {
@@ -269,7 +243,7 @@ function useWithdrawButtonProps({
         !!amount && !!fungibleCfg && !!wrappableCfg && !!recipient;
 
       const userInputValid =
-        allInputsFilled && isSucficientLiq && isValidAmount && isValidRefund;
+        allInputsFilled && isSucficientLiq && isValidAmount;
 
       if (!userInputValid || isFeeLoading) {
         return true;
@@ -290,7 +264,7 @@ function useWithdrawButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isFeeLoading, isSucficientLiq, isValidAmount, isValidRefund, isWalletConnected, recipient, wrappableCfg]
+    [activeChain, amount, destChainCfg, fungibleCfg, hasNoteAccount, isFeeLoading, isSucficientLiq, isValidAmount, isWalletConnected, recipient, wrappableCfg]
   );
 
   const isLoading = useMemo(() => {
@@ -479,11 +453,7 @@ function useWithdrawButtonProps({
               ? { value: new Currency(wrappableCfg) }
               : undefined
           }
-          refundAmount={
-            hasRefund && refundAmount
-              ? parseEther(`${refundAmount}`)
-              : undefined
-          }
+          refundAmount={hasRefund ? refundAmount : undefined}
           refundToken={destChainCfg.nativeCurrency.symbol}
           recipient={recipient}
           onResetState={() => {

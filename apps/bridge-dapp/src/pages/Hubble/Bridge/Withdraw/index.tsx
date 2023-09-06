@@ -1,4 +1,3 @@
-import { Transition } from '@headlessui/react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
   AccountCircleLineIcon,
@@ -7,7 +6,6 @@ import {
   FileCopyLine,
   GasStationFill,
   SettingsFillIcon,
-  TokenIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
@@ -19,12 +17,10 @@ import {
   TitleWithInfo,
   ToggleCard,
   TransactionInputCard,
-  Typography,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
-import cx from 'classnames';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
@@ -75,12 +71,10 @@ const Withdraw = () => {
     isCustom,
     recipient,
     recipientErrorMsg,
-    refundAmount,
     setAmount,
     setHasRefund,
     setIsCustom,
     setRecipient,
-    setRefundAmount,
   } = useInputs();
 
   const { activeRelayer } = useRelayerWithRoute();
@@ -203,14 +197,6 @@ const Withdraw = () => {
     [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, initialized, isConnecting, loading, poolId, setSearchParams]
   );
 
-  // If no active relayer, reset refund states
-  useEffect(() => {
-    if (!activeRelayer && (hasRefund || refundAmount)) {
-      setHasRefund('');
-      setRefundAmount('');
-    }
-  }, [activeRelayer, hasRefund, refundAmount, setHasRefund, setRefundAmount]);
-
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
   }, [navigate]);
@@ -253,10 +239,10 @@ const Withdraw = () => {
   const {
     gasFeeInfo,
     isLoading: isFeeLoading,
-    refundAmountError,
+    refundAmount,
+    resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-    resetMaxFeeInfo,
   } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
 
   const receivingAmount = useMemo(() => {
@@ -304,7 +290,6 @@ const Withdraw = () => {
     receivingAmount,
     isFeeLoading,
     totalFeeWei,
-    refundAmountError,
     resetFeeInfo: resetMaxFeeInfo,
   });
 
@@ -381,15 +366,7 @@ const Withdraw = () => {
           </TransactionInputCard.Root>
 
           <div className="flex gap-2">
-            <div
-              className={cx(
-                'transition-[flex-grow] ease-in-out duration-200 space-y-2',
-                {
-                  'grow-0': hasRefund,
-                  grow: !hasRefund,
-                }
-              )}
-            >
+            <div className="transition-[flex-grow] ease-in-out duration-200 space-y-2 grow">
               <TitleWithInfo title="Recipient Wallet Address" />
 
               <TextField.Root className="max-w-none" error={recipientErrorMsg}>
@@ -441,50 +418,6 @@ const Withdraw = () => {
                 </TextField.Slot>
               </TextField.Root>
             </div>
-
-            <Transition
-              className="space-y-2"
-              show={!!hasRefund}
-              enter="transition-opacity duration-200"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <TitleWithInfo
-                title="Refund Amount"
-                info="The native token will be refunded to the recipient on the destination chain."
-              />
-
-              <TextField.Root className="max-w-none" error={refundAmountError}>
-                <TextField.Input
-                  placeholder="0.0"
-                  value={refundAmount}
-                  onChange={(e) => setRefundAmount(e.target.value)}
-                />
-
-                {activeChain && (
-                  <TextField.Slot>
-                    <div className="flex items-center gap-2">
-                      <TokenIcon
-                        size="lg"
-                        name={activeChain.nativeCurrency.symbol}
-                      />
-
-                      <Typography
-                        variant="h5"
-                        fw="bold"
-                        component="span"
-                        className="block"
-                      >
-                        {activeChain.nativeCurrency.symbol}
-                      </Typography>
-                    </div>
-                  </TextField.Slot>
-                )}
-              </TextField.Root>
-            </Transition>
           </div>
         </div>
 
@@ -534,7 +467,11 @@ const Withdraw = () => {
 
             <TxInfoContainer
               hasRefund={!!hasRefund}
-              refundAmount={refundAmount}
+              refundAmount={
+                typeof refundAmount === 'bigint'
+                  ? formatEther(refundAmount)
+                  : undefined
+              }
               refundToken={activeChain?.nativeCurrency.symbol}
               remaining={remainingBalance}
               remainingToken={fungibleCfg?.symbol}

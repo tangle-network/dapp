@@ -39,9 +39,6 @@ export const AMOUNT_KEY = 'amount';
 /** Key for has reund query param */
 export const HAS_REFUND_KEY = 'hasRefund';
 
-/** Key for transaction refund amount query param */
-export const REFUND_AMOUNT_KEY = 'refund';
-
 /** Key for recipient query param */
 export const RECIPIENT_KEY = 'recipient';
 
