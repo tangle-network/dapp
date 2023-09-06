@@ -1,13 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbProviderType } from '@webb-tools/abstract-api-provider';
 import {
   Capabilities,
   ChainNameIntoChainId,
   RelayerInfo,
   WebbRelayer,
-  WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
