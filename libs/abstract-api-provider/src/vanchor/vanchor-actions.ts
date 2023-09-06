@@ -39,8 +39,8 @@ export type TransferTransactionPayloadType = {
   changeUtxo: Utxo;
   transferUtxo: Utxo;
   feeAmount: bigint;
-  refundAmount?: bigint;
-  refundRecipient?: string;
+  refundAmount: bigint;
+  refundRecipient: string;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)

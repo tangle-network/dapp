@@ -132,14 +132,15 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
         return;
       }
 
-      if (!refundRecipient || refundRecipientError) {
+      // If refund is enabled, refund recipient must be filled and valid
+      if (hasRefund && (!refundRecipient || refundRecipientError)) {
         return;
       }
 
-      fetchFeeInfo(activeRelayer);
+      fetchFeeInfo(hasRefund ? activeRelayer : undefined);
     },
     // prettier-ignore
-    [activeRelayer, amount, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg, refundRecipient, refundRecipientError]
+    [activeRelayer, amount, fetchFeeInfo, fungibleCfg, hasRefund, recipient, recipientErrorMsg, refundRecipient, refundRecipientError]
   );
 
   return {

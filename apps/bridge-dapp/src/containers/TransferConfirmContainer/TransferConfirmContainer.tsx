@@ -9,6 +9,7 @@ import { LoggerService } from '@webb-tools/app-util';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { useRelayers, useVAnchor } from '@webb-tools/react-hooks';
 import { ChainType, Note, calculateTypedChainId } from '@webb-tools/sdk-core';
+import { ZERO_ADDRESS } from '@webb-tools/utils';
 import { isViemError } from '@webb-tools/web3-api-provider';
 import {
   TransferConfirm,
@@ -174,8 +175,8 @@ const TransferConfirmContainer = forwardRef<
             changeUtxo,
             transferUtxo,
             feeAmount: feeAmount ?? ZERO_BIG_INT,
-            refundAmount,
-            refundRecipient,
+            refundAmount: refundAmount ?? ZERO_BIG_INT,
+            refundRecipient: refundRecipient ?? ZERO_ADDRESS,
           };
 
           const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');

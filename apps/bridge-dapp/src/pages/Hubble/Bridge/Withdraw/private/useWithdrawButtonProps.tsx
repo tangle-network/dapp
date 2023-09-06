@@ -444,7 +444,7 @@ function useWithdrawButtonProps({
           amount={amountFloat}
           fee={typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT}
           amountAfterFee={parseEther(`${receivingAmount}`)}
-          isRefund={!hasRefund}
+          isRefund={hasRefund}
           fungibleCurrency={{
             value: new Currency(fungibleCfg),
           }}

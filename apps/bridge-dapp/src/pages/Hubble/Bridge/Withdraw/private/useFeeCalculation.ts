@@ -119,17 +119,21 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
 
   // Side effect for auto fetching fee info
   // when all inputs are filled and valid
-  useEffect(() => {
-    if (!amount || !fungibleCfg || !tokenId) {
-      return;
-    }
+  useEffect(
+    () => {
+      if (!amount || !fungibleCfg || !tokenId) {
+        return;
+      }
 
-    if (!destChainCfg || !recipient || recipientErrorMsg) {
-      return;
-    }
+      if (!destChainCfg || !recipient || recipientErrorMsg) {
+        return;
+      }
 
-    fetchFeeInfo(activeRelayer);
-  }, [activeRelayer, amount, destChainCfg, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg, tokenId]) // prettier-ignore
+      fetchFeeInfo(hasRefund ? activeRelayer : undefined);
+    },
+    // prettier-ignore
+    [activeRelayer, amount, destChainCfg, fetchFeeInfo, fungibleCfg, hasRefund, recipient, recipientErrorMsg, tokenId]
+  );
 
   return {
     gasFeeInfo,

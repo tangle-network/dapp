@@ -18,7 +18,11 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
 import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
-import { formatTokenAmount, shortenString } from '../../utils';
+import {
+  formatTokenAmount,
+  getRoundedAmountString,
+  shortenString,
+} from '../../utils';
 import { Section, WrapperSection } from './WrapperSection';
 import { WithdrawConfirmationProps } from './types';
 
@@ -69,7 +73,7 @@ export const WithdrawConfirm = forwardRef<
         } + ${refundAmount} ${refundToken ?? ''}`;
       }
 
-      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`;
+      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`.trim();
     }, [
       remainingAmount,
       refundAmount,
@@ -77,6 +81,21 @@ export const WithdrawConfirm = forwardRef<
       token1Symbol,
       token2Symbol,
     ]);
+
+    const changeAmountContent = useMemo(() => {
+      if (typeof changeAmount === 'undefined') {
+        return '--';
+      }
+
+      if (typeof changeAmount === 'string') {
+        return `${changeAmount.slice(0, 10)} ${token1Symbol}`.trim();
+      }
+
+      const formated = getRoundedAmountString(changeAmount, 3, {
+        roundingFunction: Math.round,
+      });
+      return `${formated} ${token1Symbol ?? ''}`.trim();
+    }, [changeAmount, token1Symbol]);
 
     return (
       <div
@@ -300,7 +319,7 @@ export const WithdrawConfirm = forwardRef<
                   title: 'Change Amount',
                   info: 'Change Amount',
                 }}
-                rightContent={changeAmount?.toString()}
+                rightContent={changeAmountContent}
               />
               <InfoItem
                 leftTextProps={{

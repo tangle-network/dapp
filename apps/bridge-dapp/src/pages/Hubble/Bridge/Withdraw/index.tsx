@@ -197,6 +197,13 @@ const Withdraw = () => {
     [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, initialized, isConnecting, loading, poolId, setSearchParams]
   );
 
+  // If no active relayer, reset refund states
+  useEffect(() => {
+    if (!activeRelayer && hasRefund) {
+      setHasRefund('');
+    }
+  }, [activeRelayer, hasRefund, setHasRefund]);
+
   const handleChainClick = useCallback(() => {
     navigate(SELECT_DESTINATION_CHAIN_PATH);
   }, [navigate]);

@@ -213,13 +213,16 @@ function useTransferButtonProps({
         !!amount &&
         !!fungibleCfg &&
         !!recipient &&
-        typeof destTypedChainId === 'number' &&
-        hasRefund
-          ? !!refundRecipient
-          : true;
+        typeof destTypedChainId === 'number';
+
+      const refundFilled = hasRefund ? !!refundRecipient : true;
 
       const userInputValid =
-        allInputsFilled && isValidAmount && !refundRecipientError;
+        allInputsFilled &&
+        refundFilled &&
+        isValidAmount &&
+        !refundRecipientError;
+
       if (!userInputValid || isFeeLoading) {
         return true;
       }
