@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation';
 
 import {
-  NetworkTablesContainer,
-  PoolChartsContainer,
-  PoolMetadataTableContainer,
   PoolOverviewCardContainer,
-  PoolTransactionsTableContainer,
+  PoolOverviewChartsContainer,
   PoolWrappingChartsContainer,
+  PoolTransactionsTableContainer,
+  PoolOverviewTableContainer,
+  PoolWrappingTableContainer,
+  PoolMetadataTableContainer,
 } from '../../../containers';
 import { VANCHORS_MAP } from '../../../constants';
 
@@ -28,14 +29,19 @@ export default function Pool({ params }: { params: { slug: string } }) {
           <PoolOverviewCardContainer poolAddress={poolAddress} />
         </div>
         {/* @ts-expect-error Server Component */}
-        <PoolChartsContainer poolAddress={poolAddress} />
+        <PoolOverviewChartsContainer poolAddress={poolAddress} />
 
         {/* @ts-expect-error Server Component */}
         <PoolWrappingChartsContainer poolAddress={poolAddress} />
       </div>
 
-      {/* @ts-expect-error Server Component */}
-      <NetworkTablesContainer poolAddress={poolAddress} />
+      <div className="space-y-12">
+        {/* @ts-expect-error Server Component */}
+        <PoolOverviewTableContainer poolAddress={poolAddress} />
+
+        {/* @ts-expect-error Server Component */}
+        <PoolWrappingTableContainer poolAddress={poolAddress} />
+      </div>
 
       {/* @ts-expect-error Server Component */}
       <PoolTransactionsTableContainer poolAddress={poolAddress} />

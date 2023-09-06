@@ -3,8 +3,6 @@ export * from './ChartTooltip';
 export * from './CopyIconWithTooltip';
 export * from './InfoIconWithTooltip';
 export * from './KeyMetricItem';
-export * from './NetworkPoolTable';
-export * from './NetworkTokenTable';
 export * from './PoolMetadataTable';
 export * from './PoolOverviewCardItem';
 export * from './PoolOverviewTable';

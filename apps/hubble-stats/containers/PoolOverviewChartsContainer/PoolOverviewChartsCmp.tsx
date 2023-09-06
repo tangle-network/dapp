@@ -14,7 +14,7 @@ const tvlTab = 'TVL';
 const volumeTab = 'Volume';
 const relayerEarningTab = 'Relayer Earnings';
 
-const PoolChartsCmp: FC<PoolChartsDataType> = ({
+const PoolOverviewChartsCmp: FC<PoolChartsDataType> = ({
   tvl,
   deposit24h,
   relayerEarnings24h,
@@ -101,4 +101,4 @@ const PoolChartsCmp: FC<PoolChartsDataType> = ({
   );
 };
 
-export default PoolChartsCmp;
+export default PoolOverviewChartsCmp;

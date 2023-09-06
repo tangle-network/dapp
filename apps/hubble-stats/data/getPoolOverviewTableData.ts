@@ -1,24 +1,21 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { NetworkPoolType } from '../components/NetworkPoolTable/types';
-import { NetworkTokenType } from '../components/NetworkTokenTable/types';
+import { PoolOverviewDataType } from '../components/PoolOverviewTable/types';
 import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
 import { getAggregateValue } from '../utils';
 
-export type NetworkTablesDataType = {
+export type PoolOverviewTableDataType = {
   typedChainIds: number[];
-  deposit24hData: NetworkPoolType[];
-  withdrawal24hData: NetworkPoolType[];
-  relayerEarningsData: NetworkPoolType[];
-  twlData: NetworkTokenType[];
-  wrappingFeesData: NetworkTokenType[];
+  deposit24hData: PoolOverviewDataType[];
+  withdrawal24hData: PoolOverviewDataType[];
+  relayerEarningsData: PoolOverviewDataType[];
 };
 
-export default async function getNetworkTablesData(
+export default async function getPoolOverviewTableData(
   poolAddress: string
-): Promise<NetworkTablesDataType> {
-  const { fungibleTokenSymbol, composition } = VANCHORS_MAP[poolAddress];
+): Promise<PoolOverviewTableDataType> {
+  const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
 
   // DEPOSIT 24H
   const deposit24hChainsData = {} as Record<number, number | undefined>;
@@ -78,60 +75,6 @@ export default async function getNetworkTablesData(
   }
   const relayerEarningsAggregate = getAggregateValue(relayerEarningsChainsData);
 
-  // TWL
-  const twlChainsData = {} as Record<number, number | undefined>;
-  for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
-    try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
-          LIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
-        );
-
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
-    } catch (error) {
-      tvlByVAnchorByChain = undefined;
-    }
-    twlChainsData[typedChainId] = tvlByVAnchorByChain;
-  }
-  const twlAggregate = getAggregateValue(twlChainsData);
-  const twlTokenData = composition.map((token) => {
-    return {
-      symbol: token,
-      compositionPercentage: 50,
-      aggregate: twlAggregate,
-      chainsData: twlChainsData,
-    };
-  });
-
-  // WRAPPING FEES
-  const wrappingFeesChainsData = {} as Record<number, number | undefined>;
-  for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
-    try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
-          LIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
-        );
-
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
-    } catch (error) {
-      tvlByVAnchorByChain = undefined;
-    }
-    wrappingFeesChainsData[typedChainId] = tvlByVAnchorByChain;
-  }
-  const wrappingFeesAggregate = getAggregateValue(wrappingFeesChainsData);
-  const wrappingFeesTokenData = composition.map((token) => {
-    return {
-      symbol: token,
-      compositionPercentage: 50,
-      aggregate: wrappingFeesAggregate,
-      chainsData: wrappingFeesChainsData,
-    };
-  });
-
   return {
     deposit24hData: [
       {
@@ -152,22 +95,6 @@ export default async function getNetworkTablesData(
         symbol: fungibleTokenSymbol,
         aggregate: relayerEarningsAggregate,
         chainsData: relayerEarningsChainsData,
-      },
-    ],
-    twlData: [
-      {
-        symbol: fungibleTokenSymbol,
-        aggregate: twlAggregate,
-        chainsData: twlChainsData,
-        tokens: twlTokenData,
-      },
-    ],
-    wrappingFeesData: [
-      {
-        symbol: fungibleTokenSymbol,
-        aggregate: wrappingFeesAggregate,
-        chainsData: wrappingFeesChainsData,
-        tokens: wrappingFeesTokenData,
       },
     ],
     typedChainIds: ACTIVE_CHAINS,
