@@ -47,22 +47,31 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
     deposits24h = undefined;
   }
 
-  let tvl: number | undefined;
+  let withdrawals24h: number | undefined;
   try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChainsAndByToken(
+    const withdrawalVAnchorsByChainsData =
+      await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChainsAndByToken15MinsInterval(
         ACTIVE_SUBGRAPH_URLS,
         vAnchorAddress,
-        tokenSymbol
+        tokenSymbol,
+        date24h,
+        dateNow
       );
 
-    tvl = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
-      return (
-        tvlTotal + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0))
-      );
-    }, 0);
+    withdrawals24h = withdrawalVAnchorsByChainsData?.reduce(
+      (withdrawal, vAnchorsByChain) => {
+        const withdrawalVAnchorsByChain = vAnchorsByChain.reduce(
+          (withdrawalByChain, vAnchorWithdrawal) =>
+            withdrawalByChain +
+            +formatEther(BigInt(vAnchorWithdrawal.withdrawal ?? 0)),
+          0
+        );
+        return withdrawal + withdrawalVAnchorsByChain;
+      },
+      0
+    );
   } catch {
-    tvl = undefined;
+    withdrawals24h = undefined;
   }
 
   return {
@@ -73,7 +82,7 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
     poolType: vanchor.poolType,
     composition: vanchor.composition,
     deposits24h,
-    tvl,
+    withdrawals24h,
     typedChainIds: vanchor.supportedChains,
   };
 };

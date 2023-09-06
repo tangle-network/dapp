@@ -74,8 +74,8 @@ const columns: ColumnDef<ShieldedAssetType, any>[] = [
       />
     ),
   }),
-  columnHelper.accessor('tvl', {
-    header: () => <HeaderCell title="TVL" tooltip="TVL" />,
+  columnHelper.accessor('withdrawals24h', {
+    header: () => <HeaderCell title="24H Withdrawals" />,
     cell: (props) => (
       <NumberCell
         suffix={` ${props.row.original.symbol}`}
