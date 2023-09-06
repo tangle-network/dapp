@@ -33,8 +33,14 @@ export default async function getPoolOverviewCardData(
       );
 
     deposit24h = depositVAnchorByChainsData.reduce(
-      (depositTotal, vAnchorByChain) =>
-        depositTotal + +formatEther(BigInt(vAnchorByChain?.deposit ?? 0)),
+      (deposit, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositByChain, vAnchorDeposit) =>
+            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
+          0
+        );
+        return deposit + depositVAnchorsByChain;
+      },
       0
     );
   } catch {
@@ -52,8 +58,14 @@ export default async function getPoolOverviewCardData(
       );
 
     deposit48h = depositVAnchorByChainsData.reduce(
-      (depositTotal, vAnchorByChain) =>
-        depositTotal + +formatEther(BigInt(vAnchorByChain?.deposit ?? 0)),
+      (deposit, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositByChain, vAnchorDeposit) =>
+            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
+          0
+        );
+        return deposit + depositVAnchorsByChain;
+      },
       0
     );
   } catch {
@@ -88,10 +100,12 @@ export default async function getPoolOverviewCardData(
       );
 
     tvl24h = tvlVAnchorsByChainsData.reduce((tvlTotal, vAnchorsByChain) => {
-      if (!vAnchorsByChain) return tvlTotal;
-      return (
-        tvlTotal + +formatEther(BigInt(vAnchorsByChain.totalValueLocked ?? 0))
+      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
+        (tvlTotalByChain, vAnchor) =>
+          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
+        0
       );
+      return tvlTotal + tvlVAnchorsByChain;
     }, 0);
   } catch {
     tvl24h = undefined;

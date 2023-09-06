@@ -3,7 +3,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { PoolOverviewDataType } from '../components/PoolOverviewTable/types';
 import { ACTIVE_CHAINS, VANCHORS_MAP, LIVE_SUBGRAPH_MAP } from '../constants';
-import { getAggregateValue } from '../utils';
+import { getAggregateValue, getValidDatesToQuery } from '../utils';
 
 export type PoolOverviewTableDataType = {
   typedChainIds: number[];
@@ -15,43 +15,56 @@ export type PoolOverviewTableDataType = {
 export default async function getPoolOverviewTableData(
   poolAddress: string
 ): Promise<PoolOverviewTableDataType> {
+  const [dateNow, date24h] = getValidDatesToQuery();
+
   const { fungibleTokenSymbol } = VANCHORS_MAP[poolAddress];
 
   // DEPOSIT 24H
   const deposit24hChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
+    let deposit24hByVAnchorByChain: number | undefined;
     try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+      const deposit24hData =
+        await vAnchorClient.Deposit.GetVAnchorDepositByChain15MinsInterval(
           LIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
+          poolAddress,
+          date24h,
+          dateNow
         );
 
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+      deposit24hByVAnchorByChain = deposit24hData.reduce((deposit, item) => {
+        return deposit + +formatEther(BigInt(item.deposit ?? 0));
+      }, 0);
     } catch (error) {
-      tvlByVAnchorByChain = undefined;
+      deposit24hByVAnchorByChain = undefined;
     }
-    deposit24hChainsData[typedChainId] = tvlByVAnchorByChain;
+    deposit24hChainsData[typedChainId] = deposit24hByVAnchorByChain;
   }
   const deposit24hAggregate = getAggregateValue(deposit24hChainsData);
 
   // WITHDRAWAL 24H
   const withdrawal24hChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
+    let withdrawal24hByVAnchorByChain: number | undefined;
     try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+      const withdrawal24hData =
+        await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChain15MinsInterval(
           LIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
+          poolAddress,
+          date24h,
+          dateNow
         );
 
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+      withdrawal24hByVAnchorByChain = withdrawal24hData.reduce(
+        (withdrawal, item) => {
+          return withdrawal + +formatEther(BigInt(item.withdrawal ?? 0));
+        },
+        0
+      );
     } catch (error) {
-      tvlByVAnchorByChain = undefined;
+      withdrawal24hByVAnchorByChain = undefined;
     }
-    withdrawal24hChainsData[typedChainId] = tvlByVAnchorByChain;
+    withdrawal24hChainsData[typedChainId] = withdrawal24hByVAnchorByChain;
   }
   const withdrawal24hAggregate = getAggregateValue(withdrawal24hChainsData);
 
@@ -61,12 +74,12 @@ export default async function getPoolOverviewTableData(
     let relayerEarningsByVAnchorByChain: number | undefined;
     try {
       const relayerEarningsData =
-        await vAnchorClient.RelayerFee.GetVAnchorTotalRelayerFeeByChain(
+        await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChain(
           LIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress
         );
       relayerEarningsByVAnchorByChain = +formatEther(
-        BigInt(relayerEarningsData.totalRelayerFee ?? 0)
+        BigInt(relayerEarningsData.profit ?? 0)
       );
     } catch (error) {
       relayerEarningsByVAnchorByChain = undefined;
