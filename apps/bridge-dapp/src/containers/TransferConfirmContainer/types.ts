@@ -106,4 +106,19 @@ export interface TransferConfirmContainerProps
    * The fee token
    */
   feeToken?: string;
+
+  /**
+   * The refund recipient
+   */
+  refundRecipient?: string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: bigint;
+
+  /**
+   * The refund token
+   */
+  refundToken?: string;
 }

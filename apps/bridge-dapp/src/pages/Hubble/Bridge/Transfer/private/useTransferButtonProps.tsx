@@ -36,6 +36,9 @@ export type UseTransferButtonPropsArgs = {
   feeToken?: string;
   resetFeeInfo?: () => void;
   activeRelayer: OptionalActiveRelayer;
+  refundAmount?: bigint;
+  refundToken?: string;
+  refundRecipientError?: string;
 };
 
 function useTransferButtonProps({
@@ -44,8 +47,11 @@ function useTransferButtonProps({
   isFeeLoading,
   totalFeeWei,
   feeToken,
+  refundAmount,
+  refundToken,
   resetFeeInfo,
   activeRelayer,
+  refundRecipientError,
 }: UseTransferButtonPropsArgs) {
   const navigate = useNavigate();
 
@@ -212,7 +218,8 @@ function useTransferButtonProps({
           ? !!refundRecipient
           : true;
 
-      const userInputValid = allInputsFilled && isValidAmount;
+      const userInputValid =
+        allInputsFilled && isValidAmount && !refundRecipientError;
       if (!userInputValid || isFeeLoading) {
         return true;
       }
@@ -233,7 +240,7 @@ function useTransferButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, hasRefund, isFeeLoading, isValidAmount, isWalletConnected, recipient, refundRecipient, srcChain]
+    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, hasRefund, isFeeLoading, isValidAmount, isWalletConnected, recipient, refundRecipient, refundRecipientError, srcChain]
   );
 
   const isLoading = useMemo(() => {
@@ -299,13 +306,18 @@ function useTransferButtonProps({
         !!srcTypedChainId &&
         !!destTypedChainId &&
         !!recipient &&
+        (hasRefund ? !!refundRecipient : true) &&
         _validAmount;
 
       const doesApiReady =
         !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
 
       if (!allInputsFilled || !doesApiReady || !destChain) {
-        console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady));
+        console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady), {
+          allInputsFilled,
+          doesApiReady,
+          destChain,
+        });
         return;
       }
 
@@ -339,7 +351,6 @@ function useTransferButtonProps({
       );
 
       const fungibleDecimals = fungibleCfg.decimals;
-      const amountFloat = parseFloat(amount);
       const amountBig = parseUnits(amount, fungibleDecimals);
 
       // Get the notes that will be spent for this withdraw
@@ -424,7 +435,7 @@ function useTransferButtonProps({
       setTransferConfirmComponent(
         <TransferConfirmContainer
           inputNotes={inputNotes}
-          amount={amountFloat}
+          amount={receivingAmount}
           feeInWei={
             typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT
           }
@@ -445,11 +456,14 @@ function useTransferButtonProps({
           onClose={() => {
             setTransferConfirmComponent(null);
           }}
+          refundAmount={refundAmount}
+          refundToken={refundToken}
+          refundRecipient={refundRecipient}
         />
       );
     },
     // prettier-ignore
-    [activeApi, activeRelayer, amount, connCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleSwitchChain, isValidAmount, navigate, noteManager, receivingAmount, recipient, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]
+    [activeApi, activeRelayer, amount, connCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]
   );
 
   return {

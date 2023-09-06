@@ -51,6 +51,9 @@ const TransferConfirmContainer = forwardRef<
       onClose,
       feeInWei: feeAmount,
       feeToken,
+      refundRecipient,
+      refundAmount,
+      refundToken,
       ...props
     },
     ref
@@ -171,9 +174,13 @@ const TransferConfirmContainer = forwardRef<
             changeUtxo,
             transferUtxo,
             feeAmount: feeAmount ?? ZERO_BIG_INT,
+            refundAmount,
+            refundRecipient,
           };
 
           const args = await vAnchorApi.prepareTransaction(tx, txPayload, '');
+
+          console.log('args', args);
 
           const outputNotes = changeNote ? [changeNote] : [];
 
@@ -263,7 +270,7 @@ const TransferConfirmContainer = forwardRef<
         }
       },
       // prettier-ignore
-      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
+      [activeApi, activeRelayer, addNoteToNoteManager, amount, apiConfig, changeNote, changeUtxo, currency.id, enqueueSubmittedTx, feeAmount, inputNotes, isTransfering, noteManager, onResetState, recipient, refundAmount, refundRecipient, removeNoteFromNoteManager, transferUtxo, txQueueApi, vAnchorApi]
     );
 
     const [txStatusMessage, currentStep] = useMemo(() => {
@@ -334,6 +341,12 @@ const TransferConfirmContainer = forwardRef<
           children: isTransfering ? 'Make Another Transaction' : 'Transfer',
         }}
         txStatusMessage={txStatusMessage}
+        refundAmount={
+          typeof refundAmount === 'bigint'
+            ? formatEther(refundAmount)
+            : undefined
+        }
+        refundToken={refundToken}
       />
     );
   }

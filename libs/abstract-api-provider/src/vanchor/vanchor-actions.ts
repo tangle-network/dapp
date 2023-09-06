@@ -39,6 +39,8 @@ export type TransferTransactionPayloadType = {
   changeUtxo: Utxo;
   transferUtxo: Utxo;
   feeAmount: bigint;
+  refundAmount?: bigint;
+  refundRecipient?: string;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
@@ -109,7 +111,13 @@ export const isVAnchorTransferPayload = (
     'transferUtxo' in payload &&
     payload['transferUtxo'] instanceof Utxo &&
     'feeAmount' in payload &&
-    typeof payload['feeAmount'] === 'bigint'
+    typeof payload['feeAmount'] === 'bigint' &&
+    ('refundAmount' in payload
+      ? typeof payload['refundAmount'] === 'bigint'
+      : true) &&
+    ('refundRecipient' in payload
+      ? typeof payload['refundRecipient'] === 'string'
+      : true)
   );
 };
 

@@ -275,10 +275,15 @@ const Transfer = () => {
   const {
     gasFeeInfo,
     isLoading: isFeeLoading,
+    refundAmount,
+    resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-    resetMaxFeeInfo,
-  } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
+  } = useFeeCalculation({
+    activeRelayer,
+    recipientErrorMsg,
+    refundRecipientError: refundRecipientErrorMsg,
+  });
 
   const receivingAmount = useMemo(() => {
     if (!amount) {
@@ -327,7 +332,10 @@ const Transfer = () => {
     totalFeeWei,
     feeToken: totalFeeToken,
     activeRelayer,
+    refundAmount,
+    refundToken: destChainCfg?.nativeCurrency.symbol,
     resetFeeInfo: resetMaxFeeInfo,
+    refundRecipientError: refundRecipientErrorMsg,
   });
 
   const lastPath = useMemo(() => pathname.split('/').pop(), [pathname]);
@@ -489,6 +497,13 @@ const Transfer = () => {
             />
 
             <TxInfoContainer
+              hasRefund={!!hasRefund}
+              refundAmount={
+                typeof refundAmount === 'bigint'
+                  ? formatEther(refundAmount)
+                  : undefined
+              }
+              refundToken={destChainCfg?.nativeCurrency.symbol}
               remaining={remainingBalance}
               remainingToken={fungibleCfg?.symbol}
               receivingAmount={receivingAmount}

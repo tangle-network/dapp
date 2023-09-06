@@ -201,4 +201,14 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
    * Recipient public key
    */
   recipientPublicKey?: string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: number | string;
+
+  /**
+   * The refund token symbol
+   */
+  refundToken?: string;
 }

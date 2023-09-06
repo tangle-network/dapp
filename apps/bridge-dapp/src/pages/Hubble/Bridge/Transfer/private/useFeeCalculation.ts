@@ -4,19 +4,24 @@ import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   AMOUNT_KEY,
+  HAS_REFUND_KEY,
   POOL_KEY,
   RECIPIENT_KEY,
+  REFUND_RECIPIENT_KEY,
   SOURCE_CHAIN_KEY,
 } from '../../../../../constants';
 import { useMaxFeeInfo } from '../../../../../hooks/useMaxFeeInfo';
+import { formatEther, parseEther } from 'viem';
+import { numberToString } from '@webb-tools/webb-ui-components';
 
 export type UseFeeCalculationArgs = {
   activeRelayer?: OptionalActiveRelayer;
+  refundRecipientError?: string;
   recipientErrorMsg?: string;
 };
 
 export default function useFeeCalculation(args: UseFeeCalculationArgs) {
-  const { activeRelayer, recipientErrorMsg } = args;
+  const { activeRelayer, refundRecipientError, recipientErrorMsg } = args;
 
   const { apiConfig } = useWebContext();
 
@@ -28,6 +33,13 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
       searchParams.get(POOL_KEY),
       searchParams.get(SOURCE_CHAIN_KEY),
       searchParams.get(RECIPIENT_KEY),
+    ];
+  }, [searchParams]);
+
+  const [hasRefund, refundRecipient] = useMemo(() => {
+    return [
+      !!searchParams.get(HAS_REFUND_KEY),
+      searchParams.get(REFUND_RECIPIENT_KEY),
     ];
   }, [searchParams]);
 
@@ -69,6 +81,14 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
     return undefined;
   }, [feeInfo]);
 
+  const refundAmount = useMemo(() => {
+    if (!relayerFeeInfo) {
+      return;
+    }
+
+    return relayerFeeInfo.maxRefund;
+  }, [relayerFeeInfo]);
+
   const totalFeeWei = useMemo(() => {
     if (typeof gasFeeInfo === 'bigint') {
       return gasFeeInfo;
@@ -78,8 +98,19 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
       return;
     }
 
-    return relayerFeeInfo.estimatedFee;
-  }, [gasFeeInfo, relayerFeeInfo]);
+    let total = relayerFeeInfo.estimatedFee;
+    if (hasRefund && refundAmount) {
+      const parsedRefund = parseFloat(formatEther(refundAmount));
+      const parsedExchangeRate = parseFloat(
+        formatEther(relayerFeeInfo.refundExchangeRate)
+      );
+
+      const refundCost = parsedRefund * parsedExchangeRate;
+      total += parseEther(numberToString(refundCost));
+    }
+
+    return total;
+  }, [gasFeeInfo, hasRefund, refundAmount, relayerFeeInfo]);
 
   const totalFeeToken = useMemo(() => {
     if (activeRelayer) {
@@ -101,17 +132,22 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
         return;
       }
 
+      if (!refundRecipient || refundRecipientError) {
+        return;
+      }
+
       fetchFeeInfo(activeRelayer);
     },
     // prettier-ignore
-    [activeRelayer, amount, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg]
+    [activeRelayer, amount, fetchFeeInfo, fungibleCfg, recipient, recipientErrorMsg, refundRecipient, refundRecipientError]
   );
 
   return {
     gasFeeInfo,
     isLoading,
+    refundAmount,
+    resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-    resetMaxFeeInfo,
   };
 }

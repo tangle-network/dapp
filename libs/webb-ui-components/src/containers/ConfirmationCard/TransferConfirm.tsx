@@ -61,6 +61,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       txStatusMessage,
       title = 'Confirm Transfer',
       fungibleTokenSymbol: token1Symbol,
+      refundAmount,
+      refundToken,
       ...props
     },
     ref
@@ -73,7 +75,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       const formated = getRoundedAmountString(amount, 3, {
         roundingFunction: Math.round,
       });
-      return `${formated} ${token1Symbol ?? ''}`;
+      return `${formated} ${token1Symbol ?? ''}`.trim();
     }, [amount, token1Symbol]);
 
     const changeAmountContent = useMemo(() => {
@@ -84,7 +86,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       const formated = getRoundedAmountString(changeAmount, 3, {
         roundingFunction: Math.round,
       });
-      return `${formated} ${token1Symbol ?? ''}`;
+      return `${formated} ${token1Symbol ?? ''}`.trim();
     }, [changeAmount, token1Symbol]);
 
     const feeContent = useMemo(() => {
@@ -96,11 +98,26 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         const formatedFee = getRoundedAmountString(fee, 3, {
           roundingFunction: Math.round,
         });
-        return `${formatedFee} ${feeToken ?? ''}`;
+        return `${formatedFee} ${feeToken ?? ''}`.trim();
       }
 
       return '--';
     }, [fee, feeToken]);
+
+    const refundContent = useMemo(() => {
+      if (typeof refundAmount === 'undefined') {
+        return;
+      }
+
+      if (typeof refundAmount === 'string') {
+        return `${refundAmount.slice(0, 10)} ${refundToken ?? ''}`.trim();
+      }
+
+      const formated = getRoundedAmountString(refundAmount, 3, {
+        roundingFunction: Math.round,
+      });
+      return `${formated} ${refundToken ?? ''}`.trim();
+    }, [refundAmount, refundToken]);
 
     return (
       <div
@@ -320,6 +337,15 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 }}
                 rightContent={amountContent}
               />
+              {refundContent && (
+                <InfoItem
+                  leftTextProps={{
+                    variant: 'body1',
+                    title: 'Refund',
+                  }}
+                  rightContent={refundContent}
+                />
+              )}
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
