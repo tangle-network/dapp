@@ -32,7 +32,7 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
         dateNow
       );
 
-    deposits24h = depositVAnchorsByChainsData?.reduce(
+    deposits24h = depositVAnchorsByChainsData.reduce(
       (deposit, vAnchorsByChain) => {
         const depositVAnchorsByChain = vAnchorsByChain.reduce(
           (depositByChain, vAnchorDeposit) =>
@@ -58,7 +58,7 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
         dateNow
       );
 
-    withdrawals24h = withdrawalVAnchorsByChainsData?.reduce(
+    withdrawals24h = withdrawalVAnchorsByChainsData.reduce(
       (withdrawal, vAnchorsByChain) => {
         const withdrawalVAnchorsByChain = vAnchorsByChain.reduce(
           (withdrawalByChain, vAnchorWithdrawal) =>
@@ -108,9 +108,13 @@ const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
       );
 
     deposits24h = depositVAnchorsByChainsData?.reduce(
-      (deposit, vAnchorsByChain) => {
-        if (vAnchorsByChain === null) return deposit;
-        return deposit + +formatEther(BigInt(vAnchorsByChain?.deposit ?? 0));
+      (depositTotal, vAnchorsByChain) => {
+        const depositVAnchorsByChain = vAnchorsByChain.reduce(
+          (depositTotalByChain, vAnchor) =>
+            depositTotalByChain + +formatEther(BigInt(vAnchor.deposit ?? 0)),
+          0
+        );
+        return depositTotal + depositVAnchorsByChain;
       },
       0
     );

@@ -23,7 +23,7 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   let relayerFees: number | undefined;
   try {
     const relayerFeesVAnchorsByChainsData =
-      await vAnchorClient.RelayerFee.GetVAnchorsTotalRelayerFeeByChains(
+      await vAnchorClient.RelayerFee.GetVAnchorsRelayerFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES
       );
@@ -32,8 +32,7 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
       (relayerFeesTotal, vAnchorsByChain) => {
         const relayerFeesVAnchorsByChain = vAnchorsByChain.reduce(
           (relayerFeesTotalByChain, vAnchor) =>
-            relayerFeesTotalByChain +
-            +formatEther(BigInt(vAnchor.totalRelayerFee ?? 0)),
+            relayerFeesTotalByChain + +formatEther(BigInt(vAnchor.profit ?? 0)),
           0
         );
         return relayerFeesTotal + relayerFeesVAnchorsByChain;
@@ -47,7 +46,7 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   let wrappingFees: number | undefined;
   try {
     const wrappingFeesVAnchorsByChainsData =
-      await vAnchorClient.WrappingFee.GetVAnchorsTotalWrappingFeeByChains(
+      await vAnchorClient.WrappingFee.GetVAnchorsWrappingFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES
       );
@@ -57,7 +56,7 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
         const wrappingFeesVAnchorsByChain = vAnchorsByChain.reduce(
           (wrappingFeesTotalByChain, vAnchor) =>
             wrappingFeesTotalByChain +
-            +formatEther(BigInt(vAnchor.totalWrappingFee ?? 0)),
+            +formatEther(BigInt(vAnchor.wrappingFee ?? 0)),
           0
         );
         return wrappingFeesTotal + wrappingFeesVAnchorsByChain;
