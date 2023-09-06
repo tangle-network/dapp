@@ -15,6 +15,8 @@ type VAnchorType = {
   creationTimestamp: number;
   composition: string[];
   supportedChains: PresetTypedChainId[];
+  nativeTokenByChain: Record<PresetTypedChainId, string>;
+  wrappableTokensByChain: Record<PresetTypedChainId, string[]>;
 };
 
 const getVAnchorMapFromOnChainData = (
@@ -25,6 +27,7 @@ const getVAnchorMapFromOnChainData = (
     .filter((typedChainId) => activeTypedChainIds.includes(+typedChainId))
     .reduce((map, typedChainId) => {
       const onChainData = data[+typedChainId];
+      const nativeCurrency = onChainData.nativeCurrency;
       const anchorMetadatas = onChainData.anchorMetadatas;
       let updatedMap = map;
 
@@ -39,10 +42,16 @@ const getVAnchorMapFromOnChainData = (
           creationTimestamp,
         } = anchorMetadata;
 
+        const wrappableTokens = wrappableCurrencies.map(
+          (token: any) => token.symbol
+        );
+
         if (!map[anchorAddress]) {
           const newVAnchor = {
             address: anchorAddress,
             poolType: 'single',
+            nativeTokenName: nativeCurrency.name,
+            nativeTokenSymbol: nativeCurrency.symbol,
             fungibleTokenName: fungibleCurrency.name,
             fungibleTokenSymbol: fungibleCurrency.symbol,
             fungibleTokenAddress: fungibleCurrency.address,
@@ -50,8 +59,16 @@ const getVAnchorMapFromOnChainData = (
             signatureBridge,
             treasuryAddress,
             creationTimestamp,
-            composition: wrappableCurrencies.map((token: any) => token.symbol),
+            composition: isNativeAllowed
+              ? [wrappableTokens, nativeCurrency.symbol]
+              : wrappableTokens,
             supportedChains: [+typedChainId],
+            nativeTokenByChain: {
+              [+typedChainId]: nativeCurrency.symbol,
+            },
+            wrappableTokensByChain: {
+              [+typedChainId]: wrappableTokens,
+            },
           } as VAnchorType;
           updatedMap = {
             ...updatedMap,
@@ -63,15 +80,31 @@ const getVAnchorMapFromOnChainData = (
             updatedComposition.add(token.symbol);
           }
 
+          if (isNativeAllowed) {
+            updatedComposition.add(nativeCurrency.symbol);
+          }
+
           const updatedSupportedChains = [
             ...map[anchorAddress].supportedChains,
             +typedChainId,
           ];
 
+          const updatedNativeTokenByChain = {
+            ...map[anchorAddress].nativeTokenByChain,
+            [+typedChainId]: nativeCurrency.symbol,
+          };
+
+          const updatedWrappableTokensByChain = {
+            ...map[anchorAddress].wrappableTokensByChain,
+            [+typedChainId]: wrappableTokens,
+          };
+
           const updatedVAnchor = {
             ...map[anchorAddress],
             composition: [...updatedComposition],
             supportedChains: updatedSupportedChains,
+            nativeTokenByChain: updatedNativeTokenByChain,
+            wrappableTokensByChain: updatedWrappableTokensByChain,
           } as VAnchorType;
 
           updatedMap = {

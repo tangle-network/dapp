@@ -43,9 +43,7 @@ const staticColumns: ColumnDef<PoolWrappingDataType, any>[] = [
           <Typography
             variant="body1"
             fw="bold"
-            className={cx('text-mono-200 dark:text-mono-0', {
-              uppercase: isSubToken,
-            })}
+            className="text-mono-200 dark:text-mono-0"
           >
             {props.row.original.symbol}
           </Typography>

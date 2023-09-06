@@ -7,12 +7,12 @@ export type PoolWrappingDataType = {
   /**
    * The percentage of the token in the composition (0 - 100)
    */
-  compositionPercentage?: number;
+  compositionPercentage?: number | undefined;
 
   /**
    * The aggregate value of all the tokens combine
    */
-  aggregate?: number;
+  aggregate?: number | undefined;
 
   /**
    * The detailed data of the tokens on each chain

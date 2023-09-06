@@ -14,61 +14,153 @@ export type PoolWrappingTableDataType = {
 export default async function getPoolWrappingTableData(
   poolAddress: string
 ): Promise<PoolWrappingTableDataType> {
-  const { fungibleTokenSymbol, composition } = VANCHORS_MAP[poolAddress];
+  const {
+    fungibleTokenSymbol,
+    composition,
+    nativeTokenByChain,
+    wrappableTokensByChain,
+  } = VANCHORS_MAP[poolAddress];
 
   // TWL
   const twlChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
+    let twlByVAnchorByChain: number | undefined;
     try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
-          LIVE_SUBGRAPH_MAP[typedChainId],
-          poolAddress
-        );
+      const twlData = await vAnchorClient.TWL.GetVAnchorTWLByChain(
+        LIVE_SUBGRAPH_MAP[typedChainId],
+        poolAddress
+      );
 
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+      twlByVAnchorByChain = +formatEther(BigInt(twlData.total ?? 0));
     } catch (error) {
-      tvlByVAnchorByChain = undefined;
+      twlByVAnchorByChain = undefined;
     }
-    twlChainsData[typedChainId] = tvlByVAnchorByChain;
+    twlChainsData[typedChainId] = twlByVAnchorByChain;
   }
   const twlAggregate = getAggregateValue(twlChainsData);
-  const twlTokenData = composition.map((token) => {
-    return {
-      symbol: token,
-      compositionPercentage: 50,
-      aggregate: twlAggregate,
-      chainsData: twlChainsData,
-    };
-  });
+
+  // TWL by tokens
+  const twlTokensData = await Promise.all(
+    composition.map(async (token) => {
+      const twlTokenChainsData = {} as Record<number, number | undefined>;
+      for (const typedChainId of ACTIVE_CHAINS) {
+        let twlByVAnchorByChain: number | undefined;
+
+        // if token is not supported in the chain, return undefined
+        if (
+          !wrappableTokensByChain[typedChainId].includes(token) &&
+          token !== nativeTokenByChain[typedChainId]
+        ) {
+          twlByVAnchorByChain = undefined;
+          continue;
+        }
+
+        try {
+          const twlData =
+            await vAnchorClient.TWL.GetVAnchorTWLByChainAndByToken(
+              LIVE_SUBGRAPH_MAP[typedChainId],
+              poolAddress,
+              // query for native token needs to convert to ETH
+              token === nativeTokenByChain[typedChainId] ? 'ETH' : token
+            );
+          twlByVAnchorByChain = +formatEther(BigInt(twlData.total ?? 0));
+        } catch (error) {
+          twlByVAnchorByChain = undefined;
+        }
+        twlTokenChainsData[typedChainId] = twlByVAnchorByChain;
+      }
+      const twlTokenAggregate = getAggregateValue(twlTokenChainsData);
+      const compositionPercentage =
+        twlAggregate && twlTokenAggregate
+          ? parseFloat(((twlTokenAggregate / twlAggregate) * 100).toFixed(1))
+          : undefined;
+      return {
+        symbol: token,
+        compositionPercentage,
+        aggregate: twlTokenAggregate,
+        chainsData: twlTokenChainsData,
+      };
+    })
+  );
 
   // WRAPPING FEES
   const wrappingFeesChainsData = {} as Record<number, number | undefined>;
   for (const typedChainId of ACTIVE_CHAINS) {
-    let tvlByVAnchorByChain: number | undefined;
+    let wrappingFeesByVAnchorByChain: number | undefined;
     try {
-      const tvlData =
-        await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChain(
+      const wrappingFeesData =
+        await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChain(
           LIVE_SUBGRAPH_MAP[typedChainId],
           poolAddress
         );
 
-      tvlByVAnchorByChain = +formatEther(BigInt(tvlData.totalValueLocked ?? 0));
+      wrappingFeesByVAnchorByChain = +formatEther(
+        BigInt(wrappingFeesData.wrappingFee ?? 0)
+      );
     } catch (error) {
-      tvlByVAnchorByChain = undefined;
+      wrappingFeesByVAnchorByChain = undefined;
     }
-    wrappingFeesChainsData[typedChainId] = tvlByVAnchorByChain;
+    wrappingFeesChainsData[typedChainId] = wrappingFeesByVAnchorByChain;
   }
   const wrappingFeesAggregate = getAggregateValue(wrappingFeesChainsData);
-  const wrappingFeesTokenData = composition.map((token) => {
-    return {
-      symbol: token,
-      compositionPercentage: 50,
-      aggregate: wrappingFeesAggregate,
-      chainsData: wrappingFeesChainsData,
-    };
-  });
+
+  // WRAPPING FEES by tokens
+  const wrappingFeesTokesData = await Promise.all(
+    composition.map(async (token) => {
+      const wrappingFeesTokenChainsData = {} as Record<
+        number,
+        number | undefined
+      >;
+      for (const typedChainId of ACTIVE_CHAINS) {
+        let wrappingFeesByVAnchorByChain: number | undefined;
+
+        // if token is not supported in the chain, return undefined
+        if (
+          !wrappableTokensByChain[typedChainId].includes(token) &&
+          token !== nativeTokenByChain[typedChainId]
+        ) {
+          wrappingFeesByVAnchorByChain = undefined;
+          continue;
+        }
+
+        try {
+          const wrappingFeesData =
+            await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChainAndByToken(
+              LIVE_SUBGRAPH_MAP[typedChainId],
+              poolAddress,
+              // query for native token needs to convert to ETH
+              token === nativeTokenByChain[typedChainId] ? 'ETH' : token
+            );
+
+          wrappingFeesByVAnchorByChain = +formatEther(
+            BigInt(wrappingFeesData.wrappingFee ?? 0)
+          );
+        } catch (error) {
+          wrappingFeesByVAnchorByChain = undefined;
+        }
+        wrappingFeesTokenChainsData[typedChainId] =
+          wrappingFeesByVAnchorByChain;
+      }
+      const wrappingFeesTokenAggregate = getAggregateValue(
+        wrappingFeesTokenChainsData
+      );
+      const compositionPercentage =
+        wrappingFeesAggregate && wrappingFeesTokenAggregate
+          ? parseFloat(
+              (
+                (wrappingFeesTokenAggregate / wrappingFeesAggregate) *
+                100
+              ).toFixed(1)
+            )
+          : undefined;
+      return {
+        symbol: token,
+        compositionPercentage,
+        aggregate: wrappingFeesTokenAggregate,
+        chainsData: wrappingFeesTokenChainsData,
+      };
+    })
+  );
 
   return {
     twlData: [
@@ -76,7 +168,7 @@ export default async function getPoolWrappingTableData(
         symbol: fungibleTokenSymbol,
         aggregate: twlAggregate,
         chainsData: twlChainsData,
-        tokens: twlTokenData,
+        tokens: twlTokensData,
       },
     ],
     wrappingFeesData: [
@@ -84,7 +176,7 @@ export default async function getPoolWrappingTableData(
         symbol: fungibleTokenSymbol,
         aggregate: wrappingFeesAggregate,
         chainsData: wrappingFeesChainsData,
-        tokens: wrappingFeesTokenData,
+        tokens: wrappingFeesTokesData,
       },
     ],
     typedChainIds: ACTIVE_CHAINS,
