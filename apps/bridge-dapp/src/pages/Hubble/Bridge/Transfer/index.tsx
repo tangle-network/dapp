@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import {
   AccountCircleLineIcon,
@@ -15,13 +16,13 @@ import {
   IconWithTooltip,
   TextField,
   TitleWithInfo,
+  ToggleCard,
   TransactionInputCard,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
-import cx from 'classnames';
-import { useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { formatEther, parseEther } from 'viem';
@@ -57,6 +58,7 @@ const Transfer = () => {
     apiConfig,
     activeApi,
     activeChain,
+    activeAccount,
     loading,
     isConnecting,
     noteManager,
@@ -64,15 +66,18 @@ const Transfer = () => {
 
   const { notificationApi } = useWebbUI();
 
-  const { copy, isCopied } = useCopyable();
-
   const {
     amount,
-    setAmount,
+    hasRefund,
     isCustom,
-    setIsCustom,
     recipient,
+    refundRecipient,
+    setRefundRecipient,
+    refundRecipientErrorMsg,
     recipientErrorMsg,
+    setAmount,
+    setHasRefund,
+    setIsCustom,
     setRecipient,
   } = useInputs();
 
@@ -91,11 +96,19 @@ const Transfer = () => {
     ];
   }, [searchParams]);
 
-  const srcChainCfg = useMemo(() => {
-    return typeof srcTypedChainId === 'number'
-      ? apiConfig.chains[srcTypedChainId]
-      : undefined;
-  }, [apiConfig.chains, srcTypedChainId]);
+  const [srcChainCfg, destChainCfg] = useMemo(() => {
+    const src =
+      typeof srcTypedChainId === 'number'
+        ? apiConfig.chains[srcTypedChainId]
+        : undefined;
+
+    const dest =
+      typeof destTypedChainId === 'number'
+        ? apiConfig.chains[destTypedChainId]
+        : undefined;
+
+    return [src, dest];
+  }, [apiConfig.chains, destTypedChainId, srcTypedChainId]);
 
   const fungibleCfg = useMemo(() => {
     return typeof poolId === 'number'
@@ -193,6 +206,18 @@ const Transfer = () => {
     [activeBridge, activeChain, apiConfig.anchors, balances, initialized, isConnecting, loading, poolId, setSearchParams, srcTypedChainId]
   );
 
+  // If no active relayer, reset refund states
+  useEffect(
+    () => {
+      if (!activeRelayer && (hasRefund || refundRecipient)) {
+        setHasRefund('');
+        setRefundRecipient('');
+      }
+    },
+    // prettier-ignore
+    [activeRelayer, hasRefund, refundRecipient, setHasRefund, setRefundRecipient]
+  );
+
   const handleChainClick = useCallback(
     (destChain?: boolean) => {
       navigate(
@@ -220,6 +245,19 @@ const Transfer = () => {
       });
     }
   }, [notificationApi, setRecipient]);
+
+  const handleSendToSelfRefundClick = useCallback(() => {
+    if (!activeAccount) {
+      notificationApi({
+        message: 'Failed to get account',
+        secondaryMessage: 'Please connect your wallet first.',
+        variant: 'warning',
+      });
+      return;
+    }
+
+    setRefundRecipient(activeAccount.address);
+  }, [activeAccount, notificationApi, setRefundRecipient]);
 
   const handleSendToSelfClick = useCallback(() => {
     if (!noteManager) {
@@ -369,64 +407,62 @@ const Transfer = () => {
             />
           </TransactionInputCard.Root>
 
-          <div
-            className={cx(
-              'transition-[flex-grow] ease-in-out duration-200 space-y-2 grow'
-            )}
-          >
-            <TitleWithInfo title="Recipient Shielded Account" />
-
-            <TextField.Root className="max-w-none" error={recipientErrorMsg}>
-              <TextField.Input
-                placeholder="0x..."
+          <div className="flex gap-2">
+            <div className="w-0 space-y-2 duration-200 ease-in-out grow shrink basic-0">
+              <TitleWithInfo title="Recipient Shielded Account" />
+              <RecipientInput
+                error={recipientErrorMsg}
                 value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
+                onValueChange={setRecipient}
+                onPasteButtonClick={handlePasteButtonClick}
+                onSendToSelfClick={handleSendToSelfClick}
               />
+            </div>
 
-              <TextField.Slot>
-                {recipient ? (
-                  <IconWithTooltip
-                    icon={<FileCopyLine size="lg" className="!fill-current" />}
-                    content={isCopied ? 'Copied' : 'Copy'}
-                    overrideTooltipTriggerProps={{
-                      onClick: isCopied ? undefined : () => copy(recipient),
-                    }}
-                  />
-                ) : (
-                  <>
-                    <IconWithTooltip
-                      icon={
-                        <AccountCircleLineIcon
-                          size="lg"
-                          className="!fill-current"
-                        />
-                      }
-                      content="Send to self"
-                      overrideTooltipTriggerProps={{
-                        onClick: handleSendToSelfClick,
-                      }}
-                    />
-                    <IconWithTooltip
-                      icon={
-                        <ClipboardLineIcon
-                          size="lg"
-                          className="!fill-current"
-                        />
-                      }
-                      content="Patse from clipboard"
-                      overrideTooltipTriggerProps={{
-                        onClick: handlePasteButtonClick,
-                      }}
-                    />
-                  </>
-                )}
-              </TextField.Slot>
-            </TextField.Root>
+            <Transition
+              className="w-0 space-y-2 grow shrink basis-0"
+              show={!!hasRefund}
+              enter="transition-opacity duration-200"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <TitleWithInfo
+                title="Refund Wallet Address"
+                info="The wallet address to receive the refund."
+              />
+              <RecipientInput
+                error={refundRecipientErrorMsg}
+                value={refundRecipient}
+                onValueChange={setRefundRecipient}
+                onPasteButtonClick={handlePasteButtonClick}
+                onSendToSelfClick={handleSendToSelfRefundClick}
+              />
+            </Transition>
           </div>
         </div>
 
         <div className="flex flex-col justify-between gap-4 grow">
           <div className="space-y-4">
+            <ToggleCard
+              title="Enable refund"
+              Icon={<GasStationFill size="lg" />}
+              description={
+                destChainCfg
+                  ? `Get ${destChainCfg.nativeCurrency.symbol} on transactions on ${destChainCfg.name}`
+                  : undefined
+              }
+              className="max-w-none"
+              switcherProps={{
+                checked: !!hasRefund,
+                disabled: !activeRelayer,
+                onCheckedChange: () =>
+                  setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
+              }}
+            />
+
             <FeeDetails
               isTotalLoading={isFeeLoading}
               totalFee={
@@ -468,3 +504,62 @@ const Transfer = () => {
 };
 
 export default Transfer;
+
+type RecipientInputProps = {
+  error?: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  onSendToSelfClick: () => void;
+  onPasteButtonClick: () => void;
+};
+
+const RecipientInput: FC<RecipientInputProps> = ({
+  onPasteButtonClick,
+  onSendToSelfClick,
+  onValueChange,
+  value,
+  error,
+}) => {
+  const { copy, isCopied } = useCopyable();
+
+  return (
+    <TextField.Root className="max-w-none" error={error}>
+      <TextField.Input
+        placeholder="0x..."
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+      />
+
+      <TextField.Slot>
+        {value ? (
+          <IconWithTooltip
+            icon={<FileCopyLine size="lg" className="!fill-current" />}
+            content={isCopied ? 'Copied' : 'Copy'}
+            overrideTooltipTriggerProps={{
+              onClick: isCopied ? undefined : () => copy(value),
+            }}
+          />
+        ) : (
+          <>
+            <IconWithTooltip
+              icon={
+                <AccountCircleLineIcon size="lg" className="!fill-current" />
+              }
+              content="Send to self"
+              overrideTooltipTriggerProps={{
+                onClick: onSendToSelfClick,
+              }}
+            />
+            <IconWithTooltip
+              icon={<ClipboardLineIcon size="lg" className="!fill-current" />}
+              content="Patse from clipboard"
+              overrideTooltipTriggerProps={{
+                onClick: onPasteButtonClick,
+              }}
+            />
+          </>
+        )}
+      </TextField.Slot>
+    </TextField.Root>
+  );
+};

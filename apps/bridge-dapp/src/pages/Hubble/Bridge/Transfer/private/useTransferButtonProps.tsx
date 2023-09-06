@@ -18,8 +18,10 @@ import {
   AMOUNT_KEY,
   BRIDGE_PATH,
   DEST_CHAIN_KEY,
+  HAS_REFUND_KEY,
   POOL_KEY,
   RECIPIENT_KEY,
+  REFUND_RECIPIENT_KEY,
   SOURCE_CHAIN_KEY,
   TRANSFER_PATH,
 } from '../../../../../constants';
@@ -72,6 +74,13 @@ function useTransferButtonProps({
       !Number.isNaN(parseInt(poolId)) ? parseInt(poolId) : undefined,
       recipientStr ? recipientStr : undefined,
     ];
+  }, [searchParams]);
+
+  const [hasRefund, refundRecipient] = useMemo(() => {
+    const hasRefund = searchParams.has(HAS_REFUND_KEY);
+    const refundRecipientStr = searchParams.get(REFUND_RECIPIENT_KEY) ?? '';
+
+    return [!!hasRefund, refundRecipientStr ? refundRecipientStr : undefined];
   }, [searchParams]);
 
   const [srcTypedChainId, destTypedChainId] = useMemo(() => {
@@ -168,12 +177,16 @@ function useTransferButtonProps({
         return 'Enter recipient';
       }
 
+      if (hasRefund && !refundRecipient) {
+        return 'Enter refund recipient';
+      }
+
       if (!isValidAmount) {
         return 'Insufficient balance';
       }
     },
     // prettier-ignore
-    [amount, srcTypedChainId, destTypedChainId, fungibleCfg, isValidAmount, recipient]
+    [srcTypedChainId, destTypedChainId, fungibleCfg, amount, recipient, hasRefund, refundRecipient, isValidAmount]
   );
 
   const btnText = useMemo(() => {
@@ -194,7 +207,10 @@ function useTransferButtonProps({
         !!amount &&
         !!fungibleCfg &&
         !!recipient &&
-        typeof destTypedChainId === 'number';
+        typeof destTypedChainId === 'number' &&
+        hasRefund
+          ? !!refundRecipient
+          : true;
 
       const userInputValid = allInputsFilled && isValidAmount;
       if (!userInputValid || isFeeLoading) {
@@ -217,7 +233,7 @@ function useTransferButtonProps({
       return false;
     },
     // prettier-ignore
-    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, isFeeLoading, isValidAmount, isWalletConnected, recipient, srcChain]
+    [activeChain, amount, destTypedChainId, fungibleCfg, hasNoteAccount, hasRefund, isFeeLoading, isValidAmount, isWalletConnected, recipient, refundRecipient, srcChain]
   );
 
   const isLoading = useMemo(() => {
