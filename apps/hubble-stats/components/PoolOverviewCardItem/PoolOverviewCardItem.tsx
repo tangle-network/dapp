@@ -4,9 +4,9 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import { ArrowRight } from '@webb-tools/icons';
 
-import { PoolOverviewItemProps } from './types';
+import { PoolOverviewCardItemProps } from './types';
 
-const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
+const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
   title,
   value,
   changeRate,
@@ -72,4 +72,4 @@ const PoolOverviewItem: FC<PoolOverviewItemProps> = ({
   );
 };
 
-export default PoolOverviewItem;
+export default PoolOverviewCardItem;

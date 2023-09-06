@@ -5,12 +5,12 @@ import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
 
 import {
   PoolTypeChip,
-  PoolOverviewItem,
+  PoolOverviewCardItem,
   CopyIconWithTooltip,
 } from '../../components';
-import { getPoolOverviewData } from '../../data';
+import { getPoolOverviewCardData } from '../../data';
 
-export default async function PoolOverviewContainer({
+export default async function PoolOverviewCardContainer({
   poolAddress,
 }: {
   poolAddress: string;
@@ -23,7 +23,7 @@ export default async function PoolOverviewContainer({
     depositChangeRate,
     tvl,
     tvlChangeRate,
-  } = await getPoolOverviewData(poolAddress);
+  } = await getPoolOverviewCardData(poolAddress);
 
   return (
     <div
@@ -75,14 +75,14 @@ export default async function PoolOverviewContainer({
 
         {/* 24h deposits + TVL + 24h fees */}
         <div className="flex items-center">
-          <PoolOverviewItem
+          <PoolOverviewCardItem
             title="tvl"
             value={tvl}
             changeRate={tvlChangeRate}
             suffix={` ${fungibleTokenSymbol}`}
             className="flex-[1]"
           />
-          <PoolOverviewItem
+          <PoolOverviewCardItem
             title="Deposits 24H"
             value={deposit24h}
             changeRate={depositChangeRate}

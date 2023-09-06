@@ -4,7 +4,7 @@ export { OverviewChartsContainer } from './OverviewChartsContainer';
 export { OverviewChipsContainer } from './OverviewChipsContainer';
 export { PoolChartsContainer } from './PoolChartsContainer';
 export { PoolMetadataTableContainer } from './PoolMetadataTableContainer';
-export { PoolOverviewContainer } from './PoolOverviewContainer';
+export { PoolOverviewCardContainer } from './PoolOverviewCardContainer';
 export { PoolTransactionsTableContainer } from './PoolTransactionsTableContainer';
 export { PoolWrappingChartsContainer } from './PoolWrappingChartsContainer';
 export { ShieldedTablesContainer } from './ShieldedTablesContainer';

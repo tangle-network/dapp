@@ -1,4 +1,4 @@
-export interface PoolOverviewItemProps {
+export interface PoolOverviewCardItemProps {
   title: string;
   value?: number;
   changeRate?: number;

@@ -6,9 +6,11 @@ export * from './KeyMetricItem';
 export * from './NetworkPoolTable';
 export * from './NetworkTokenTable';
 export * from './PoolMetadataTable';
-export * from './PoolOverviewItem';
+export * from './PoolOverviewCardItem';
+export * from './PoolOverviewTable';
 export * from './PoolTransactionsTable';
 export * from './PoolTypeChip';
+export * from './PoolWrappingTable';
 export * from './ShieldedAssetsTable';
 export * from './ShieldedPoolsTable';
 

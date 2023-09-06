@@ -4,7 +4,7 @@ import {
   NetworkTablesContainer,
   PoolChartsContainer,
   PoolMetadataTableContainer,
-  PoolOverviewContainer,
+  PoolOverviewCardContainer,
   PoolTransactionsTableContainer,
   PoolWrappingChartsContainer,
 } from '../../../containers';
@@ -25,7 +25,7 @@ export default function Pool({ params }: { params: { slug: string } }) {
           {/* TypeScript doesn't understand async components. */}
           {/* Current approach: https://github.com/vercel/next.js/issues/42292#issuecomment-1298459024 */}
           {/* @ts-expect-error Server Component */}
-          <PoolOverviewContainer poolAddress={poolAddress} />
+          <PoolOverviewCardContainer poolAddress={poolAddress} />
         </div>
         {/* @ts-expect-error Server Component */}
         <PoolChartsContainer poolAddress={poolAddress} />

@@ -16,7 +16,7 @@ type PoolOverviewType = {
   tvlChangeRate: number | undefined;
 };
 
-export default async function getPoolOverviewData(
+export default async function getPoolOverviewCardData(
   poolAddress: string
 ): Promise<PoolOverviewType> {
   const vanchor = VANCHORS_MAP[poolAddress];

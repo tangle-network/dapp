@@ -10,7 +10,7 @@ export {
   type PoolChartsDataType,
 } from './getPoolChartsData';
 export { default as getPoolMetadataData } from './getPoolMetadataData';
-export { default as getPoolOverviewData } from './getPoolOverviewData';
+export { default as getPoolOverviewCardData } from './getPoolOverviewCardData';
 export {
   default as getPoolTransactionsData,
   type PoolTransactionDataType,
