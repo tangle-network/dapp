@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - develop
-      # Bridge V2 feature branch
-      - hubble-bridge-v2
     paths: [
         'libs/webb-ui-components/src/stories/**',
         'libs/webb-ui-components/.storybook/**',

@@ -2,8 +2,7 @@ name: clean 🧹
 
 on:
   pull_request:
-    # hubble-bridge-v2 is feature branch
-    branches: [develop, staging, master, hubble-bridge-v2]
+    branches: [develop, staging, master]
 
   workflow_dispatch:
 

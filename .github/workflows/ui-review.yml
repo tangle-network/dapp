@@ -6,8 +6,7 @@ name: 'visual ✨'
 on:
   pull_request:
     # types: [opened, synchronize, reopened, ready_for_review]
-    # hubble-bridge-v2 is feature branch
-    branches: [develop, hubble-bridge-v2]
+    branches: [develop]
 
   workflow_dispatch:
 
