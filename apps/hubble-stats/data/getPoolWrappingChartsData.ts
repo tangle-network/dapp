@@ -1,4 +1,15 @@
 import { randNumber } from '@ngneat/falso';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
+
+import { ACTIVE_SUBGRAPH_URLS, VANCHORS_MAP } from '../constants';
+import {
+  getDateFromEpoch,
+  getEpochDailyFromStart,
+  getEpochStart,
+  getNumDatesFromStart,
+  getValidDatesToQuery,
+} from '../utils';
 
 export type PoolWrappingChartsDataType = {
   currency?: string;
@@ -17,29 +28,110 @@ export type PoolWrappingChartsDataType = {
 export default async function getPoolWrappingChartsData(
   poolAddress: string
 ): Promise<PoolWrappingChartsDataType> {
-  await new Promise((r) => setTimeout(r, 1000));
+  const vanchor = VANCHORS_MAP[poolAddress];
+  const { fungibleTokenSymbol } = vanchor;
+
+  const startingEpoch = getEpochStart();
+  const numDatesFromStart = getNumDatesFromStart();
+  const [dateNow, date24h] = getValidDatesToQuery();
+
+  // TWL
+  let twl: number | undefined;
+  try {
+    const twlVAnchorByChainsData =
+      await vAnchorClient.TWL.GetVAnchorTWLByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress
+      );
+
+    twl = twlVAnchorByChainsData.reduce(
+      (twl, vAnchorByChain) =>
+        twl + +formatEther(BigInt(vAnchorByChain?.total ?? 0)),
+      0
+    );
+  } catch {
+    twl = undefined;
+  }
+
+  // Wrapping Fees
+  let wrappingFees24h: number | undefined;
+  try {
+    const twlVAnchorByChainsData =
+      await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress
+      );
+
+    wrappingFees24h = twlVAnchorByChainsData.reduce(
+      (twl, vAnchorByChain) =>
+        twl + +formatEther(BigInt(vAnchorByChain?.wrappingFee ?? 0)),
+      0
+    );
+  } catch {
+    wrappingFees24h = undefined;
+  }
+
+  // TWL Data
+  let twlData: { [epoch: string]: bigint } = {};
+  try {
+    const fetchedTwlData =
+      await vAnchorClient.TWL.GetVAnchorTWLByChainsByDateRange(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress,
+        startingEpoch,
+        numDatesFromStart
+      );
+
+    twlData = fetchedTwlData.reduce((twlMap, twlDataByChain) => {
+      Object.keys(twlDataByChain).forEach((epoch) => {
+        if (!twlMap[epoch]) twlMap[epoch] = BigInt(0);
+        twlMap[epoch] += BigInt(twlDataByChain[epoch]);
+      });
+      return twlMap;
+    }, {});
+  } catch (e) {
+    twlData = {};
+  }
+
+  // Wrapping Fees Data
+  let wrappingFeesData: { [epoch: string]: bigint } = {};
+  try {
+    const fetchedWrappingFeesData =
+      await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChainsByDateRange(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress,
+        startingEpoch,
+        numDatesFromStart
+      );
+
+    wrappingFeesData = fetchedWrappingFeesData.reduce(
+      (wrappingFeesMap, wrappingFeesDataByChain) => {
+        Object.keys(wrappingFeesDataByChain).forEach((epoch: string) => {
+          if (!wrappingFeesMap[epoch]) wrappingFeesMap[epoch] = BigInt(0);
+          wrappingFeesMap[epoch] += BigInt(wrappingFeesDataByChain[epoch]);
+        });
+        return wrappingFeesMap;
+      },
+      {}
+    );
+  } catch (e) {
+    wrappingFeesData = {};
+  }
+
   return {
-    currency: 'webbtTNT',
-    twl: randNumber({ min: 10_000_000, max: 20_000_000 }),
+    currency: fungibleTokenSymbol,
+    twl,
     wrappingFees24h: randNumber({ min: 1_000, max: 10_000 }),
-    twlData: [...Array(100).keys()].map((i) => {
+    twlData: Object.keys(twlData).map((epoch) => {
       return {
-        // Getting warning in console: Only plain objects can be passed to Client Components from Server Components. Date objects are not supported.
-        // Fix: https://github.com/vercel/next.js/issues/11993#issuecomment-617375501
-        date: JSON.parse(
-          JSON.stringify(new Date(Date.now() + i * 24 * 60 * 60 * 1000))
-        ),
-        value: randNumber({ min: 1_000_000, max: 10_000_000 }),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
+        value: +formatEther(twlData[+epoch]),
       };
     }),
-    wrappingFeesData: [...Array(100).keys()].map((i) => {
+    wrappingFeesData: Object.keys(wrappingFeesData).map((epoch) => {
       return {
-        // Getting warning in console: Only plain objects can be passed to Client Components from Server Components. Date objects are not supported.
-        // Fix: https://github.com/vercel/next.js/issues/11993#issuecomment-617375501
-        date: JSON.parse(
-          JSON.stringify(new Date(Date.now() + i * 24 * 60 * 60 * 1000))
-        ),
-        value: randNumber({ min: 1_000_000, max: 10_000_000 }),
+        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
+        value: +formatEther(wrappingFeesData[+epoch]),
       };
     }),
   };

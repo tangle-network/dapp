@@ -5,9 +5,9 @@ export {
 } from './getOverviewChartsData';
 export { default as getOverviewChipsData } from './getOverviewChipsData';
 export {
-  default as getPoolChartsData,
-  type PoolChartsDataType,
-} from './getPoolChartsData';
+  default as getPoolOverviewChartsData,
+  type PoolOverviewChartsDataType,
+} from './getPoolOverviewChartsData';
 export { default as getPoolMetadataData } from './getPoolMetadataData';
 export { default as getPoolOverviewCardData } from './getPoolOverviewCardData';
 export {

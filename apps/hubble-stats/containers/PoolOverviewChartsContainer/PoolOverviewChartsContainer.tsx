@@ -1,5 +1,5 @@
 import PoolOverviewChartsCmp from './PoolOverviewChartsCmp';
-import { getPoolChartsData } from '../../data';
+import { getPoolOverviewChartsData } from '../../data';
 
 export default async function PoolOverviewChartsContainer({
   poolAddress,
@@ -14,7 +14,7 @@ export default async function PoolOverviewChartsContainer({
     volumeData,
     relayerEarningsData,
     currency,
-  } = await getPoolChartsData(poolAddress);
+  } = await getPoolOverviewChartsData(poolAddress);
 
   return (
     <PoolOverviewChartsCmp

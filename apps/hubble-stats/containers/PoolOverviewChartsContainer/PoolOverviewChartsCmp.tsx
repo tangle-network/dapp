@@ -8,13 +8,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 
 import { AreaChart, BarChart, VolumeChart } from '../../components';
-import { PoolChartsDataType } from '../../data';
+import { PoolOverviewChartsDataType } from '../../data';
 
 const tvlTab = 'TVL';
-const volumeTab = 'Volume';
-const relayerEarningTab = 'Relayer Earnings';
+const volumeTab = 'Volume 24H ';
+const relayerEarningTab = 'Relayer Earnings 24H';
 
-const PoolOverviewChartsCmp: FC<PoolChartsDataType> = ({
+const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
   tvl,
   deposit24h,
   relayerEarnings24h,
