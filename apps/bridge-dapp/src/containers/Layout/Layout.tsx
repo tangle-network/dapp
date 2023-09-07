@@ -1,72 +1,15 @@
 import { Transition } from '@headlessui/react';
-import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
   Banner,
   Footer,
-  Logo,
-  LogoWithoutName,
   SideBar,
-  SideBarFooterType,
-  SideBarItemProps,
 } from '@webb-tools/webb-ui-components/components';
 import cx from 'classnames';
 import { FC, useState } from 'react';
 import { Outlet } from 'react-router';
 import { Header } from '../../components/Header';
-import {
-  STATS_URL,
-  TANGLE_MKT_URL,
-  WEBB_DAPP_NEW_ISSUE_URL,
-  WEBB_DOCS_URL,
-  WEBB_FAUCET_URL,
-  WEBB_MKT_URL,
-} from '../../constants';
-
-const items: SideBarItemProps[] = [
-  {
-    name: 'Hubble',
-    isInternal: true,
-    href: '',
-    Icon: ContrastTwoLine,
-    subItems: [
-      {
-        name: 'Bridge',
-        isInternal: true,
-        href: '/bridge',
-      },
-      {
-        name: 'Faucet',
-        isInternal: false,
-        href: WEBB_FAUCET_URL,
-      },
-    ],
-  },
-  {
-    name: 'Tangle Network',
-    isInternal: false,
-    href: '',
-    Icon: Tangle,
-    subItems: [
-      {
-        name: 'DKG Explorer',
-        isInternal: false,
-        href: STATS_URL,
-      },
-      {
-        name: 'Homepage',
-        isInternal: false,
-        href: TANGLE_MKT_URL,
-      },
-    ],
-  },
-];
-
-const footer: SideBarFooterType = {
-  name: 'Webb Docs',
-  isInternal: false,
-  href: WEBB_DOCS_URL,
-  Icon: DocumentationIcon,
-};
+import { WEBB_DAPP_NEW_ISSUE_URL } from '../../constants';
+import sidebarProps from '../../constants/sidebar';
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -78,13 +21,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex flex-col justify-between h-screen min-w-full min-h-full bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')] bg-top object-fill bg-no-repeat bg-cover">
       <div className="flex flex-1 overflow-hidden">
-        <SideBar
-          items={items}
-          Logo={Logo}
-          ClosedLogo={LogoWithoutName}
-          logoLink={WEBB_MKT_URL}
-          footer={footer}
-        />
+        <SideBar {...sidebarProps} className="hidden lg:flex" />
 
         <div className="flex flex-col w-full mx-auto overflow-y-auto">
           <div className="w-full px-4 mx-auto max-w-[1565px] space-y-6">

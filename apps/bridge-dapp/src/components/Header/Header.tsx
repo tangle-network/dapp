@@ -8,14 +8,16 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
+  SideBarMenu,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { BRIDGE_PATH, SELECT_SOURCE_CHAIN_PATH } from '../../constants';
+import sidebarProps from '../../constants/sidebar';
 import { useConnectWallet, useNavigateWithPersistParams } from '../../hooks';
+import TxProgressDropdown from './TxProgressDropdown';
 import { WalletDropdown } from './WalletDropdown';
 import { HeaderProps } from './types';
-import TxProgressDropdown from './TxProgressDropdown';
 
 /**
  * The statistic `Header` for `Layout` container
@@ -44,26 +46,33 @@ export const Header: FC<HeaderProps> = () => {
 
   return (
     <header className="flex justify-between py-4">
-      <Breadcrumbs>
-        <NavLink to="/bridge">
-          <BreadcrumbsItem
-            icon={<ContrastTwoLine width={24} height={24} />}
-            className="!pl-0"
-          >
-            Hubble
-          </BreadcrumbsItem>
-        </NavLink>
+      <div className="flex items-center gap-2">
+        <SideBarMenu
+          {...sidebarProps}
+          className="lg:hidden"
+          overrideContentProps={{ className: 'top-0' }}
+        />
+        <Breadcrumbs>
+          <NavLink to="/bridge">
+            <BreadcrumbsItem
+              icon={<ContrastTwoLine width={24} height={24} />}
+              className="!pl-0"
+            >
+              Hubble
+            </BreadcrumbsItem>
+          </NavLink>
 
-        {items.map((item, index) => (
-          <BreadcrumbsItem
-            key={index}
-            isLast={index === items.length - 1}
-            className="capitalize"
-          >
-            {item.split('-').join(' ')}
-          </BreadcrumbsItem>
-        ))}
-      </Breadcrumbs>
+          {items.map((item, index) => (
+            <BreadcrumbsItem
+              key={index}
+              isLast={index === items.length - 1}
+              className="capitalize"
+            >
+              {item.split('-').join(' ')}
+            </BreadcrumbsItem>
+          ))}
+        </Breadcrumbs>
+      </div>
 
       <div className="flex items-center space-x-2">
         <TxProgressDropdown />

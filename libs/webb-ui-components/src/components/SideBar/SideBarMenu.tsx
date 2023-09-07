@@ -9,7 +9,19 @@ import { SideBarLogo, SideBarItems, SideBarFooter } from '.';
 import { SidebarProps } from './types';
 
 export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
-  ({ Logo, ClosedLogo, logoLink, items, footer, className, ...props }, ref) => {
+  (
+    {
+      Logo,
+      ClosedLogo,
+      logoLink,
+      items,
+      footer,
+      className,
+      overrideContentProps,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div
         className={twMerge('flex items-center', className)}
@@ -27,11 +39,13 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.1)] animate-[showDialogOverlay_150ms]" />
             <Dialog.Content
+              {...overrideContentProps}
               className={twMerge(
                 'w-[280px] h-full outline-none overflow-auto py-6 px-4',
                 '!bg-mono-0 dark:!bg-mono-160 fixed left-0',
                 'animate-[sideBarSlideLeftToRight_400ms]',
-                'flex flex-col justify-between'
+                'flex flex-col justify-between',
+                overrideContentProps?.className
               )}
             >
               <div>
