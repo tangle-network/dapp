@@ -9,6 +9,9 @@ module.exports = {
     '../src/**/*.stories.mdx',
     '../src/**/*.stories.@(js|jsx|ts|tsx)',
   ],
+  features: {
+    storyStoreV7: false, // 👈 Opt out of on-demand story loading
+  },
   addons: [
     ...rootMain.addons,
     {
