@@ -19,6 +19,9 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
 
   const name = useMemo(() => {
     const chainName = nameProp?.toLowerCase() || '';
+    if (chainName.includes('tangle') && !chainName.includes('transparent')) {
+      return 'tangle';
+    }
     return chainName.replace(/\s/g, '-');
   }, [nameProp]);
 

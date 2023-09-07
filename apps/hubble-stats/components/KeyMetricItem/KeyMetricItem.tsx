@@ -31,9 +31,9 @@ const KeyMetricItem: FC<MetricItemProps> = ({
       </div>
       <div className="flex items-center gap-1">
         {/* Value */}
-        <span>
+        <div className="flex items-center gap-0.5">
           <Typography
-            variant="body1"
+            variant="body2"
             fw="black"
             className="text-mono-140 dark:text-mono-40"
           >
@@ -41,9 +41,17 @@ const KeyMetricItem: FC<MetricItemProps> = ({
             {typeof value === 'number' && value < 10000
               ? Math.floor(value * 100) / 100
               : getRoundedDownNumberWith2Decimals(value)}
-            {typeof value === 'number' && (suffix ?? '')}
           </Typography>
-        </span>
+          {typeof value === 'number' && suffix && (
+            <Typography
+              variant="body3"
+              fw="bold"
+              className="text-mono-140 dark:text-mono-40"
+            >
+              {suffix}
+            </Typography>
+          )}
+        </div>
 
         {/* Change Rate */}
         {typeof changeRate === 'number' &&
@@ -51,7 +59,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           !Number.isNaN(changeRate) && (
             <span>
               <Typography
-                variant="body2"
+                variant="body4"
                 fw="bold"
                 className={cx({
                   '!text-green-70': changeRate >= 0,

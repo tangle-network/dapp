@@ -15,7 +15,7 @@ export default async function OverviewChipsContainer() {
         {typeof tvl === 'number'
           ? getRoundedDownNumberWith2Decimals(tvl)
           : '-'}{' '}
-        tTNT
+        webbtTNT
       </Chip>
 
       <Chip color="blue" className="normal-case">
@@ -24,7 +24,7 @@ export default async function OverviewChipsContainer() {
         {typeof deposit === 'number'
           ? getRoundedDownNumberWith2Decimals(deposit)
           : '-'}{' '}
-        tTNT
+        webbtTNT
       </Chip>
     </div>
   );
