@@ -21,7 +21,7 @@ export default function Pool({ params }: { params: { slug: string } }) {
 
   return (
     <div className="py-4 space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-[400px_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,_1fr)_minmax(0,_1fr)] gap-4">
         <div className="self-end">
           {/* TypeScript doesn't understand async components. */}
           {/* Current approach: https://github.com/vercel/next.js/issues/42292#issuecomment-1298459024 */}
