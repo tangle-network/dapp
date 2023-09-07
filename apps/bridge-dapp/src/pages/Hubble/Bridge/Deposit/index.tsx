@@ -2,8 +2,10 @@ import { ArrowRight, GasStationFill } from '@webb-tools/icons';
 import { useCurrenciesBalances } from '@webb-tools/react-hooks';
 import {
   Button,
+  ConnectWalletMobileButton,
   FeeDetails,
   TransactionInputCard,
+  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
@@ -21,6 +23,8 @@ import useWatchSearchParams from './private/useWatchSearchParams';
 
 const Deposit = () => {
   const navigate = useNavigate();
+
+  const { isMobile } = useCheckMobile();
 
   const { pathname } = useLocation();
 
@@ -142,7 +146,11 @@ const Deposit = () => {
             ]}
           />
 
-          <Button isFullWidth {...depositBtnProps} />
+          {!isMobile ? (
+            <Button isFullWidth {...depositBtnProps} />
+          ) : (
+            <ConnectWalletMobileButton isFullWidth />
+          )}
         </div>
       </div>
     </BridgeTabsContainer>

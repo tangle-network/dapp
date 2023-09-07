@@ -11,12 +11,14 @@ import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalanc
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
+  ConnectWalletMobileButton,
   FeeDetails,
   IconWithTooltip,
   TextField,
   TitleWithInfo,
   ToggleCard,
   TransactionInputCard,
+  useCheckMobile,
   useCopyable,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
@@ -47,6 +49,8 @@ const Withdraw = () => {
   const { pathname } = useLocation();
 
   const navigate = useNavigateWithPersistParams();
+
+  const { isMobile } = useCheckMobile();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -488,7 +492,11 @@ const Withdraw = () => {
             />
           </div>
 
-          <Button loadingText="Connecting..." {...buttonProps} isFullWidth />
+          {!isMobile ? (
+            <Button loadingText="Connecting..." {...buttonProps} isFullWidth />
+          ) : (
+            <ConnectWalletMobileButton isFullWidth />
+          )}
         </div>
       </div>
     </BridgeTabsContainer>

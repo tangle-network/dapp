@@ -25,13 +25,13 @@ const BridgeTabsContainer: FC<BridgeTabsContainerProps> = ({
       {...props}
       className={twMerge(
         'w-full max-w-xl min-h-[var(--card-height)] h-full bg-mono-0 dark:bg-mono-190',
-        'p-9 rounded-xl space-y-4 grow',
+        'p-9 mx-auto rounded-xl space-y-4 grow',
         'border border-mono-40 dark:border-mono-160',
         'flex flex-col',
         className
       )}
     >
-      <ul className="flex items-center gap-4 pb-4">
+      <ul className="flex items-center gap-4 pb-4 overflow-x-scroll">
         {BRIDGE_TABS.map((tab, idx) => (
           <li key={`${tab}-${idx}`}>
             <Link

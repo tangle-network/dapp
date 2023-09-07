@@ -42,7 +42,6 @@ const Bridge: FC = () => {
   // State for the tabs
   const [, setActiveTab] = useState<BridgeTabType>('Deposit');
 
-  const { customMainComponent } = useWebbUI();
   const { activeFeedback, noteManager } = useWebContext();
 
   // Upload modal state
@@ -157,7 +156,7 @@ const Bridge: FC = () => {
 
   const noteAccountTabsRightButtons = useMemo(
     () => (
-      <div className="flex items-center space-x-2">
+      <div className="items-center hidden space-x-2 md:flex">
         <ManageButton
           onUpload={handleOpenUploadModal}
           onDownload={handleDownloadAllNotes}
@@ -192,8 +191,7 @@ const Bridge: FC = () => {
   return (
     <>
       <ErrorBoundary fallback={<ErrorFallback className="mx-auto" />}>
-        <div className="flex justify-center min-h-[var(--card-height)]">
-          {customMainComponent}
+        <div className="min-h-[var(--card-height)]">
           {/** Bridge tabs */}
           <Outlet />
 
