@@ -11,7 +11,7 @@ import { AreaChart, BarChart } from '../../components';
 import { PoolWrappingChartsDataType } from '../../data';
 
 const twlTab = 'TWL';
-const wrappingFeesTab = 'Wrapping Fees';
+const wrappingFeesTab = 'Wrapping Fees 24H';
 
 const PoolWrappingChartsCmp: FC<PoolWrappingChartsDataType> = ({
   twl,

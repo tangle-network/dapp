@@ -13,11 +13,10 @@ const NumberCell: FC<NumberCellProps> = ({
   className,
 }) => {
   return (
-    <div className="flex items-center gap-1 justify-center">
-      <Typography
-        variant="body1"
-        className={twMerge('text-mono-140 dark:text-mono-40', className)}
-      >
+    <div
+      className={twMerge('flex items-center gap-1 justify-center', className)}
+    >
+      <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
         {typeof value === 'number' && (prefix ?? '')}
         {isProtected
           ? '****'

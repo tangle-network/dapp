@@ -121,7 +121,7 @@ export default async function getPoolWrappingChartsData(
   return {
     currency: fungibleTokenSymbol,
     twl,
-    wrappingFees24h: randNumber({ min: 1_000, max: 10_000 }),
+    wrappingFees24h,
     twlData: Object.keys(twlData).map((epoch) => {
       return {
         date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),

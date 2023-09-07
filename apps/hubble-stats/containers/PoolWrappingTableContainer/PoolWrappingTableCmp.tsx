@@ -7,7 +7,7 @@ import { PoolWrappingTable } from '../../components';
 import { PoolWrappingTableDataType } from '../../data/getPoolWrappingTableData';
 
 const twlTab = 'TWL';
-const wrappingFeesTab = 'Wrapping Fees 24H';
+const wrappingFeesTab = 'Wrapping Fees';
 
 const PoolWrappingTableCmp: FC<PoolWrappingTableDataType> = ({
   twlData,
