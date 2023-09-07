@@ -19,7 +19,7 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains';
 
 import { PoolOverviewDataType, PoolOverviewTableProps } from './types';
 import { HeaderCell, NumberCell } from '../table';
-import { getSortedTypedChainIds } from '../../utils';
+import { getSortedTypedChainIds, getShortenChainName } from '../../utils';
 
 const columnHelper = createColumnHelper<PoolOverviewDataType>();
 
@@ -78,7 +78,7 @@ const PoolOverviewTable: FC<PoolOverviewTableProps> = ({
                 chainName={chainsConfig[typedChainId].name}
                 chainType={chainsConfig[typedChainId].group}
                 // shorten the title to last word of the chain name
-                title={chainsConfig[typedChainId].name.split(' ').pop()}
+                title={getShortenChainName(typedChainId)}
               />
             </div>
           ),

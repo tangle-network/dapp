@@ -304,7 +304,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
     id: EVMChainId.TangleTestnet,
     name: 'Tangle Testnet',
     network: 'Tangle',
-    group: 'webb-dev',
+    group: 'tangle',
     tag: 'test',
     nativeCurrency: {
       name: 'Test Tangle Network Token',

@@ -48,7 +48,7 @@ const PoolWrappingTableCmp: FC<PoolWrappingTableDataType> = ({
           variant="body2"
           className="font-bold !text-[12px] text-mono-120 dark:text-mono-80 text-right"
         >
-          *HISTORICAL TWL
+          *TOTAL WRAPPED LOCKED
         </Typography>
       )}
       {typedChainIds.length > 0 && activeTokenTableTab === wrappingFeesTab && (
