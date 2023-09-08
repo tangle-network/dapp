@@ -10431,10 +10431,10 @@
     ethers "5.7.0"
     snarkjs "^0.6.10"
 
-"@webb-tools/vanchor-client@0.1.22":
-  version "0.1.22"
-  resolved "https://registry.yarnpkg.com/@webb-tools/vanchor-client/-/vanchor-client-0.1.22.tgz#525419b530b8444067d985a225c1d1f1024b3a02"
-  integrity sha512-ZrM+9sY2OQLBxFyVDoX4rBDo7UQBDKb6Lh5y6IwgfQ64+sCttJUHcy3war66Mnk4Cq7F/O7Wb+U/2+fpTCZglA==
+"@webb-tools/vanchor-client@0.1.23":
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/@webb-tools/vanchor-client/-/vanchor-client-0.1.23.tgz#6ad33c6a9fd7e0f45fd60b7e6fa1c60c5671a864"
+  integrity sha512-SemxBMrZ5M/CwZr3di4IprYWJ6opAjjJXWLOTc5Si6dhPhu8o5ZSO8Y9ibhxq6XmP6923VdWXWIX9j97+Usuww==
   dependencies:
     "@graphprotocol/client-cli" "3.0.0"
     ts-node "10.9.1"
