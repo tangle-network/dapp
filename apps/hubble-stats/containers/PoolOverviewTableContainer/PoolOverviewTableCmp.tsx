@@ -6,8 +6,8 @@ import { TableAndChartTabs, Typography } from '@webb-tools/webb-ui-components';
 import { PoolOverviewTable } from '../../components';
 import { PoolOverviewTableDataType } from '../../data/getPoolOverviewTableData';
 
-const deposit24hTab = '24H Deposits' as const;
-const withdrawal24hTab = '24H Withdrawals' as const;
+const deposit24hTab = 'Deposits 24H' as const;
+const withdrawal24hTab = 'Withdrawals 24H' as const;
 const relayerEarningsTab = 'Relayer Earnings' as const;
 
 const PoolOverviewTableCmp: FC<PoolOverviewTableDataType> = ({
