@@ -8,6 +8,7 @@ import {
   useValidatorOfSessionLazyQuery,
   useValidatorSessionsLazyQuery,
   useLatestSessionIdQuery,
+  useAuthorityUptimesQuery,
 } from '../../generated/graphql';
 import { thresholdMap } from '../hooks/mappers/thresholds';
 import { mapAuthorities, mapSessionAuthValidatorNode } from './mappers';
@@ -294,6 +295,15 @@ export function useAuthorities(
   });
   const [call, query] = useValidatorListingLazyQuery();
 
+  const authoritiesUptime = useAuthorityUptimesQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
+
+  const authoritiesUptimes = useMemo(() => {
+    return authoritiesUptime.data?.authorityUpTimes?.nodes;
+  }, [authoritiesUptime]);
+
   const latestIndexedSessionId = useLatestSessionIdQuery({
     pollInterval: 1000,
     fetchPolicy: 'network-only',
@@ -351,10 +361,14 @@ export function useAuthorities(
             .filter((v) => v !== null)
             .map((sessionValidator): AuthorityListItem => {
               const auth = mapSessionAuthValidatorNode(sessionValidator as any);
+              const authority = authoritiesUptimes?.find(
+                (item) => item?.authorityId === auth.id
+              );
+              const uptime = authority ? authority.uptime : 0;
               return {
                 id: auth.id,
                 location: auth.location ?? undefined,
-                uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
+                uptime: uptime,
                 reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
               };
             });
