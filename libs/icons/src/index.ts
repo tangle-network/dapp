@@ -1,4 +1,7 @@
+export { default as AccountCircleLineIcon } from './AccountCircleLineIcon';
 export * from './AddBoxLineIcon';
+export * from './AddCircleFillIcon';
+export * from './AddCircleLineIcon';
 export * from './ArrowDropDownFill';
 export * from './ArrowDropUpFill';
 export * from './ArrowLeft';
@@ -12,23 +15,24 @@ export * from './BlockIcon';
 export * from './BookOpenLineIcon';
 export * from './ChainIcon';
 export * from './CheckboxBlankCircleLine';
-export * from './CheckboxCircleLine';
 export * from './CheckboxCircleFill';
+export * from './CheckboxCircleLine';
 export * from './CheckboxFill';
 export * from './ChevronDown';
 export * from './ChevronLeft';
 export * from './ChevronRight';
 export * from './ChevronUp';
+export { default as ClipboardLineIcon } from './ClipboardLineIcon';
 export * from './Close';
 export * from './CloseCircleLineIcon';
 export * from './CoinIcon';
 export * from './Common2Icon';
 export * from './CommonWealth';
-export * from './Copyright';
-export * from './CornerDownRightLine';
-export * from './CopyLinkFill';
 export * from './ContrastLine';
 export * from './ContrastTwoLine';
+export * from './CopyLinkFill';
+export * from './Copyright';
+export * from './CornerDownRightLine';
 export * from './DatabaseLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
@@ -50,11 +54,14 @@ export * from './FilterIcon2';
 export * from './FlaskLineIcon';
 export * from './FoldersFillIcon';
 export * from './ForumIcon';
+export { default as GasStationFill } from './GasStationFill';
 export * from './GithubFill';
 export * from './GraphIcon';
 export * from './GridFillIcon';
 export * from './HamburgerMenu';
 export * from './HelpLineIcon';
+export * from './IndeterminateCircleFillIcon';
+export * from './IndeterminateCircleLineIcon';
 export * from './InformationLine';
 export * from './InformationLineFill';
 export * from './KeyIcon';
@@ -65,14 +72,17 @@ export * from './Mail';
 export * from './Memu';
 export * from './MoonLine';
 export * from './QRCode';
-export * from './RefreshIcon';
+export { default as RefreshLineIcon } from './RefreshLineIcon';
 export * from './Save';
 export * from './SaveWithBg';
 export * from './Search';
 export * from './SendPlanLineIcon';
-export * from './ShieldedAssetDark';
-export * from './ShieldedAssetLight';
-export * from './ShieldKeyholeIcon';
+export { default as SettingsFillIcon } from './SettingsFillIcon';
+export { default as ShieldKeyholeFillIcon } from './ShieldKeyholeFillIcon';
+export * from './ShieldKeyholeLineIcon';
+export { default as ShieldKeyholeLineIcon } from './ShieldKeyholeLineIcon';
+export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
+export { default as ShieldedCheckLineIcon } from './ShieldedCheckLineIcon';
 export * from './ShuffleLine';
 export * from './SosLineIcon';
 export * from './SparklingIcon';
@@ -87,20 +97,24 @@ export * from './TwitterFill';
 export * from './UploadCloudIcon';
 export * from './UsageGuideIcon';
 export * from './UserStarFillIcon';
-export * from './WalletLineIcon';
+export { default as WalletFillIcon } from './WalletFillIcon';
+export { default as WalletLineIcon } from './WalletLineIcon';
 export * from './YouTubeFill';
 
 // Wallet icons
 export * from './wallets';
 
 // imagre URIs
-export * from './AlertFill';
 export * from './Alert';
+export * from './AlertFill';
 export * from './PartyFill';
 
 // Tangle Icons
 export * from './Tangle';
 export * from './TangleIcon';
+
+export * from './StatusIndicator';
+export { default as StatusIndicator } from './StatusIndicator';
 
 // Proposal Badges
 export * from './ProposalBadge';

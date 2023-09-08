@@ -1,12 +1,20 @@
-import { IWebbComponentBase, PropsOf } from '../../types';
+import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
 
 export interface TokenSelectorProps
   extends IWebbComponentBase,
-    PropsOf<'button'> {
+    Omit<PropsOf<'button'>, 'disabled'> {
   /**
    * The chidren must be a token symbol (e.g. eth, dot, ...)
+   * for rendering the token icon and displaying.
+   * If not provided, the component will display the placeholder
    */
-  children: string;
+  children?: string;
+
+  /**
+   * The token type
+   * @default 'unshielded'
+   */
+  tokenType?: TokenType;
 
   /**
    * If `true`, the component will display as disable state
@@ -14,7 +22,20 @@ export interface TokenSelectorProps
   isActive?: boolean;
 
   /**
-   * The callback when user clicks on the token
+   * If `true`, the component will display as disable state
    */
-  onTokenClick?: (symbol: string) => void;
+  isDisabled?: boolean;
+
+  /**
+   * The placeholder for the component
+   * when the children is not provided
+   * @default 'Select token'
+   */
+  placeHolder?: string;
+
+  /**
+   * Boolean indicate to render the dropdown chevron icon
+   * @default true
+   */
+  isDropdown?: boolean;
 }

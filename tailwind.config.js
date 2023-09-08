@@ -1,7 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-
 const preset = require('@webb-tools/tailwind-preset');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   presets: [preset],
   mode: 'jit',

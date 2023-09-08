@@ -1,14 +1,14 @@
 import {
   ArrowRight,
   ExternalLinkLine,
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import Lottie from 'lottie-react';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button } from '../../components/Button';
+import { Button } from '../../components/buttons';
 import { Chip, ChipColors } from '../../components/Chip';
 import { Disclaimer } from '../../components/Disclaimer';
 import { Typography } from '../../typography';
@@ -169,18 +169,18 @@ export const TransactionProgressCard = forwardRef<
       switch (method) {
         case 'Withdraw':
           return [
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
             <WalletLineIcon size={'lg'} />,
           ];
         case 'Deposit':
           return [
             <WalletLineIcon size={'lg'} />,
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
           ];
         case 'Transfer':
           return [
-            <ShieldKeyholeIcon size={'lg'} />,
-            <ShieldKeyholeIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
+            <ShieldKeyholeLineIcon size={'lg'} />,
           ];
       }
     }, [method]);

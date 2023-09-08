@@ -1,4 +1,4 @@
-import { ButtonProps } from '../Button/types';
+import { ButtonProps } from '../buttons/types';
 import { IWebbComponentBase } from '../../types';
 
 export interface ConnectWalletMobileButtonProps

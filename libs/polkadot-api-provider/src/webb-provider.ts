@@ -423,7 +423,8 @@ export class WebbPolkadot
     if (!leavesFromRelayers) {
       tx?.next(TransactionState.FetchingLeaves, {
         start: 0, // Dummy values
-        currentRange: [0, 0], // Dummy values
+        current: 0, // Dummy values
+        end: 0,
       });
 
       // check if we already cached some values.
@@ -586,7 +587,7 @@ export class WebbPolkadot
     const api = provider || this.api;
     const treeData = await api.query.merkleTreeBn254.trees(treeId);
     if (treeData.isNone) {
-      throw WebbError.from(WebbErrorCodes.TreeNotFound);
+      throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
     }
 
     const treeMedata = treeData.unwrap();

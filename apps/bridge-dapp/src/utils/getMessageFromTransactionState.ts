@@ -1,5 +1,4 @@
 import { TransactionState } from '@webb-tools/abstract-api-provider';
-import React from 'react';
 
 export const getMessageFromTransactionState = (state: TransactionState) => {
   switch (state) {

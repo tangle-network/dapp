@@ -5,7 +5,7 @@ import { Typography } from '../../typography/Typography';
 import { Close as CloseIcon } from '@webb-tools/icons';
 
 export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
-  ({ children, className, onClose, ...props }, ref) => {
+  ({ children, className, onClose, titleVariant = 'h5', ...props }, ref) => {
     return (
       <div
         {...props}
@@ -15,7 +15,7 @@ export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
         )}
         ref={ref}
       >
-        <Typography variant="h5" fw="bold">
+        <Typography variant={titleVariant} fw="bold">
           {children}
         </Typography>
 

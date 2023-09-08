@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
 
 import { Typography } from '../../typography/Typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
 

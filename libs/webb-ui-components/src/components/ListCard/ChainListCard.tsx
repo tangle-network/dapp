@@ -1,18 +1,46 @@
-import { ChainIcon, InformationLine, Search } from '@webb-tools/icons';
+import { ChainIcon, Search } from '@webb-tools/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Alert } from '../Alert';
 import { Chip } from '../Chip';
 import { Input } from '../Input';
+import { RadioGroup, RadioItem } from '../Radio';
 import { ScrollArea } from '../ScrollArea';
+import { Button } from '../buttons';
 import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
 import { ChainListCardProps, ChainType } from './types';
-import { RadioGroup, RadioItem } from '../Radio';
-import { Alert } from '../Alert';
 
-export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
+/**
+ * The ChainListCard component is used to display a list of chains.
+ *
+ * Props:
+ * - `chains`: The list of chains to display.
+ * - `chainType`: The type of chain to display.
+ * - `currentActiveChain`: The current active chain.
+ * - `defaultCategory`: The default category to display.
+ * - `onChange`: The callback function when the chain is changed.
+ * - `onClose`: The callback function when the card is closed.
+ * - `onlyCategory`: The category to display.
+ * - `overrideScrollAreaProps`: The props to override the scroll area.
+ * - `isConnectingToChain`: Whether the chain is connecting.
+ * - `value`: The selected chain.
+ *
+ * @example
+ * ```tsx
+ * <ChainListCard
+ *  chains={chains}
+ *  chainType="source"
+ *  currentActiveChain={currentActiveChain}
+ *  defaultCategory="test"
+ *  onChange={setSourceChain}
+ *  onClose={() => setShowSourceChainList(false)}
+ *  onlyCategory="test"
+ * />
+ * ```
+ */
+const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   (
     {
       chains,
@@ -31,7 +59,7 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
   ) => {
     // State for network category
     const [networkCategory, setNetworkCategory] = useState<ChainType['tag']>(
-      onlyCategory ?? defaultCategory
+      () => onlyCategory ?? defaultCategory
     );
 
     const [chain, setChain] = useState<ChainType | undefined>(selectedChain);
@@ -49,23 +77,21 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       return () => {
         subscribe = false;
       };
-    }, [selectedChain, setChain]);
+    }, [selectedChain]);
 
     const onChainChange = useCallback(
       (nextChain: ChainType) => {
         setChain(nextChain);
         onChange?.(nextChain);
       },
-      [onChange, setChain]
+      [onChange]
     );
 
     const filteredChains = useMemo(
       () =>
         chains
-          .filter(
-            (c) =>
-              c.name.toLowerCase().includes(searchText.toLowerCase()) ||
-              c.symbol.toLowerCase().includes(searchText.toLowerCase())
+          .filter((c) =>
+            c.name.toLowerCase().includes(searchText.toLowerCase())
           ) // Filter by search text
           .filter((chain) => chain.tag === networkCategory), // Filter by network category
       [chains, searchText, networkCategory]
@@ -142,13 +168,17 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
               return (
                 <ListItem
-                  key={`${currentChain.name}-${currentChain.symbol}${idx}`}
+                  key={`${currentChain.name}-${idx}`}
                   className="flex items-center justify-between"
                   onClick={() => onChainChange(currentChain)}
                 >
                   <div className="flex items-center space-x-2">
                     <ChainIcon
-                      isActive={isConnected}
+                      status={
+                        isConnected && !isConnectingToChain
+                          ? 'success'
+                          : undefined
+                      }
                       size="lg"
                       name={currentChain.name}
                     />
@@ -171,7 +201,9 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                   {!isConnected && !isConnectingToChain ? (
                     <div className="hidden group-hover:block">
                       <Button variant="link" size="sm">
-                        Select
+                        {currentChain.needSwitchWallet
+                          ? 'Switch wallet'
+                          : 'Select'}
                       </Button>
                     </div>
                   ) : null}
@@ -238,3 +270,5 @@ export const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
     );
   }
 );
+
+export default ChainListCard;

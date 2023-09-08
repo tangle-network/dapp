@@ -1,5 +1,5 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 /**
  * Check if the address is valid or not,

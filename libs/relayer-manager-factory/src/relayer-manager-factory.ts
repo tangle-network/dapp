@@ -1,13 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbProviderType } from '@webb-tools/abstract-api-provider';
 import {
   Capabilities,
   ChainNameIntoChainId,
   RelayerInfo,
   WebbRelayer,
-  WebbRelayerManager,
 } from '@webb-tools/abstract-api-provider/relayer';
 import { LoggerService } from '@webb-tools/browser-utils';
 import {
@@ -116,7 +114,9 @@ export class WebbRelayerManagerFactory {
     return this.capabilities;
   }
 
-  public async fetchCapabilities(endpoint: string): Promise<Capabilities> {
+  public async fetchCapabilities(
+    endpoint: string
+  ): Promise<Capabilities | null> {
     try {
       const response = await fetch(`${endpoint}/api/v1/info`);
       const info: RelayerInfo = await response.json();
@@ -129,6 +129,8 @@ export class WebbRelayerManagerFactory {
     } catch (error) {
       console.error('Error fetching relayer info: ', error);
     }
+
+    return null;
   }
 
   // Examine the data for saved (already fetched) capabilities. For easier
@@ -184,10 +186,10 @@ export class WebbRelayerManagerFactory {
     });
 
     switch (type) {
-      case 'evm':
-        return new Web3RelayerManager(relayers) as any;
       case 'substrate':
         return new PolkadotRelayerManager(relayers) as any;
+      default:
+        return new Web3RelayerManager(relayers) as any;
     }
   }
 }

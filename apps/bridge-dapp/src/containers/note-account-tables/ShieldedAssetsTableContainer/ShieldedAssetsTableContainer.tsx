@@ -19,9 +19,9 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   formatTokenAmount,
   fuzzyFilter,
+  IconsGroup,
   IconWithTooltip,
   Table,
-  IconsGroup,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
@@ -127,7 +127,7 @@ export const ShieldedAssetsTableContainer: FC<
 }) => {
   const { isSyncingNote } = useNoteAccount();
 
-  const { switchChain, activeChain, activeWallet } = useWebContext();
+  const { switchChain, activeWallet } = useWebContext();
 
   const promptChainSwitch = useCallback(
     async (chain: Chain) => {

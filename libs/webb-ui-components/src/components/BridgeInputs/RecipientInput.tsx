@@ -3,7 +3,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Input } from '../Input';
 import { Label } from '../Label';
 import { notificationApi } from '../Notification';

@@ -1,4 +1,3 @@
-import { Transition } from '@headlessui/react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { FC, useCallback, useEffect, useState } from 'react';
 
@@ -13,7 +12,7 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
 
   useEffect(() => {
     setIsOpen(open ?? defaultOpen);
-  }, [open, setIsOpen]);
+  }, [defaultOpen, open, setIsOpen]);
 
   const onOpenChange = useCallback(
     (open: boolean) => {

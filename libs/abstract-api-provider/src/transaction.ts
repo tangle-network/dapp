@@ -14,11 +14,11 @@ export interface NewNotesTxResult extends TXresultBase {
   outputNotes: Note[];
 }
 
+export type TransactionName = 'Deposit' | 'Transfer' | 'Withdraw';
+
 export enum TransactionState {
   Cancelling, // Withdraw canceled
   Ideal, // initial status where the instance is Idea and ready for a withdraw
-
-  PreparingTransaction, // Preparing the arguments for a transaction
 
   FetchingFixtures, // Zero-knowledge files need to be obtained over the network and may take time.
   FetchingLeavesFromRelayer, // The leaves of the merkle tree need to be obtained from the relayer
@@ -61,8 +61,8 @@ export type FixturesProgress = {
 
 type LeavesProgress = {
   start: number;
-  currentRange: [number, number];
-  end?: number;
+  current: number;
+  end: number;
 };
 
 type IntermediateProgress = {
@@ -75,11 +75,9 @@ type FailedTransaction = {
   txHash?: string;
 };
 
-type TransactionStatusMap<DonePayload> = {
+export type TransactionStatusMap<DonePayload> = {
   [TransactionState.Cancelling]: undefined;
   [TransactionState.Ideal]: undefined;
-
-  [TransactionState.PreparingTransaction]: undefined;
 
   [TransactionState.FetchingFixtures]: FixturesProgress;
 
@@ -137,15 +135,25 @@ type PromiseExec<T> = (
 
 export class Transaction<DonePayload> extends Promise<DonePayload> {
   cancelToken: CancellationToken = new CancellationToken();
+
   readonly id = String(Date.now() + Math.random());
   readonly timestamp = new Date();
+
   private _txHash: BehaviorSubject<string | undefined> = new BehaviorSubject<
     string | undefined
   >(undefined);
 
+  // Find the max step in the transactionStepMap
+  public readonly totalSteps = Object.values(
+    transactionStepMap[this.name]
+  ).reduce((prev, cur) => (cur > prev ? cur : prev), 0);
+
+  // 0 for the initial step
+  public readonly stepSubject = new BehaviorSubject<number>(0);
+
   private constructor(
     executor: PromiseExec<DonePayload>,
-    public readonly name: string,
+    public readonly name: TransactionName,
     public readonly metaData: TransactionMetaData,
     private readonly _status: BehaviorSubject<
       [
@@ -157,7 +165,10 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     super(executor);
   }
 
-  static new<T>(name: string, metadata: TransactionMetaData): Transaction<T> {
+  static new<T>(
+    name: TransactionName,
+    metadata: TransactionMetaData
+  ): Transaction<T> {
     const status = new BehaviorSubject<
       [StatusKey, TransactionStatusMap<T>[keyof TransactionStatusMap<T>]]
     >([TransactionState.Ideal, undefined]);
@@ -194,6 +205,19 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
   ) {
     console.log('Transaction update status', [status, data]);
     this._status.next([status, data]);
+
+    if (
+      status === TransactionState.Done ||
+      status === TransactionState.Failed
+    ) {
+      this.stepSubject.next(this.totalSteps + 1);
+      return;
+    }
+
+    const step = transactionStepMap[this.name][status];
+    if (typeof step === 'number') {
+      this.stepSubject.next(step);
+    }
   }
 
   fail(error: string): void {
@@ -241,3 +265,32 @@ export class Transaction<DonePayload> extends Promise<DonePayload> {
     }
   };
 }
+
+export type TransactionMap = {
+  [key in TransactionName]: Partial<Record<TransactionState, number>>;
+};
+
+const transactionStepMap: TransactionMap = {
+  Deposit: {
+    [TransactionState.Intermediate]: 1,
+    [TransactionState.GeneratingZk]: 2,
+    [TransactionState.InitializingTransaction]: 3,
+    [TransactionState.SendingTransaction]: 4,
+  },
+  Transfer: {
+    [TransactionState.FetchingLeavesFromRelayer]: 1,
+    [TransactionState.FetchingLeaves]: 2,
+    [TransactionState.GeneratingZk]: 3,
+    [TransactionState.InitializingTransaction]: 4,
+    [TransactionState.SendingTransaction]: 5,
+    [TransactionState.Intermediate]: 5,
+  },
+  Withdraw: {
+    [TransactionState.FetchingLeavesFromRelayer]: 1,
+    [TransactionState.FetchingLeaves]: 2,
+    [TransactionState.GeneratingZk]: 3,
+    [TransactionState.InitializingTransaction]: 4,
+    [TransactionState.SendingTransaction]: 5,
+    [TransactionState.Intermediate]: 5,
+  },
+};

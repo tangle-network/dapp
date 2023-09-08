@@ -42,6 +42,10 @@ function calculateProvingLeavesAndCommitmentIndex(
 
     worker.onmessage = (e) => {
       const { data } = e;
+      if (data.log) {
+        return console.log(data.log);
+      }
+
       if (data.error) {
         reject(data.error);
       } else {

@@ -4,7 +4,7 @@ import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import { useCallback } from 'react';
 
 type RelayerManagerApi = {
-  getInfo: (endpoint: string) => Promise<Capabilities>;
+  getInfo: (endpoint: string) => Promise<Capabilities | null>;
   addRelayer: (endpoint: string) => Promise<WebbRelayer>;
 };
 
@@ -26,7 +26,7 @@ export const useRelayerManager = (): RelayerManagerApi => {
 
   const getInfo = useCallback(async (endpoint: string) => {
     const relayerManagerFactory = await getRelayerManagerFactory();
-    return relayerManagerFactory.fetchCapabilities(endpoint) ?? ({} as any);
+    return relayerManagerFactory.fetchCapabilities(endpoint);
   }, []);
 
   return {

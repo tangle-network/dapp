@@ -11,11 +11,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   amount?: number | string;
 
   /**
-   * The active chain
-   */
-  activeChains: string[];
-
-  /**
    * The card title
    */
   title?: string;
@@ -53,6 +48,11 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
   progress?: number | null;
 
   /**
+   * Total progress (total number of steps)
+   */
+  totalProgress?: number;
+
+  /**
    * Fee amount
    */
   fee?: number | string;
@@ -66,22 +66,6 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The note string
    */
   note?: string | null;
-
-  /**
-   * The copy props
-   */
-  copyProps?: UseCopyableReturnType;
-
-  /**
-   * The boolean value indicating if the copy button is click
-   */
-  isCopied?: boolean;
-
-  /**
-   * Callback when user hits copy button
-   * @returns void
-   */
-  onCopy?: () => void;
 
   /**
    * Callback when user hits download button
@@ -217,4 +201,14 @@ export interface TransferConfirmProps extends ConfirmationCardProps {
    * Recipient public key
    */
   recipientPublicKey?: string;
+
+  /**
+   * The refund amount
+   */
+  refundAmount?: number | string;
+
+  /**
+   * The refund token symbol
+   */
+  refundToken?: string;
 }

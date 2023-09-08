@@ -4,7 +4,7 @@ import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { ListItem } from '../ListCard/ListItem';
 import { WalletConnectionCardProps } from './types';
 
@@ -49,7 +49,7 @@ export const WalletConnectionCard = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-180',
+          'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
           className
         )}
         ref={ref}
@@ -75,14 +75,20 @@ export const WalletConnectionCard = forwardRef<
               {wallets.map((wallet) => (
                 <ListItem
                   key={wallet.id}
-                  className="px-[34px] py-[10px] flex items-center space-x-2 cursor-pointer"
+                  className="cursor-pointer"
                   onClick={() => onWalletSelect?.(wallet)}
                 >
-                  {wallet.Logo}
+                  <div className="flex items-center gap-2">
+                    {wallet.Logo}
 
-                  <Typography variant="body1" fw="bold" className="capitalize">
-                    {wallet.title}
-                  </Typography>
+                    <Typography
+                      variant="body1"
+                      fw="bold"
+                      className="capitalize"
+                    >
+                      {wallet.title}
+                    </Typography>
+                  </div>
                 </ListItem>
               ))}
             </ul>

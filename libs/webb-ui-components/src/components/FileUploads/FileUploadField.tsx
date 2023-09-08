@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { FileUploadFieldProps } from './types';
 
 export const FileUploadField: FC<FileUploadFieldProps> = ({

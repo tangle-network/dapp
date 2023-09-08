@@ -2,15 +2,15 @@ import { useMemo } from 'react';
 import {
   GridFillIcon,
   KeyIcon,
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   TeamFillIcon,
   UserStarFillIcon,
   FoldersFillIcon,
   FileCodeLineIcon,
   GraphIcon,
   BlockIcon,
-  RefreshIcon,
   Spinner,
+  RefreshLineIcon,
 } from '@webb-tools/icons';
 import {
   Breadcrumbs,
@@ -76,7 +76,7 @@ export const NavBoxInfoContainer = () => {
           <BreadcrumbsItem
             icon={
               currentPage === 'keys' ? (
-                <ShieldKeyholeIcon />
+                <ShieldKeyholeLineIcon />
               ) : currentPage === 'authorities' && subPage !== 'history' ? (
                 <UserStarFillIcon />
               ) : currentPage === 'authorities' && subPage === 'history' ? (
@@ -118,7 +118,10 @@ export const NavBoxInfoContainer = () => {
           )}
         </Chip>
         <Chip color="blue">
-          <RefreshIcon size="lg" className="fill-blue-90 dark:fill-blue-30" />{' '}
+          <RefreshLineIcon
+            size="lg"
+            className="fill-blue-90 dark:fill-blue-30"
+          />{' '}
           {currentSessionNumber ? (
             `Session: ${currentSessionNumber}`
           ) : (

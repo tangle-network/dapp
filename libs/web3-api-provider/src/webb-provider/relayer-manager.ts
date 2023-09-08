@@ -28,10 +28,10 @@ import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
 import { GetContractReturnType, PublicClient } from 'viem';
 
 export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
-  async mapRelayerIntoActive(
+  mapRelayerIntoActive(
     relayer: OptionalRelayer,
     typedChainId: number
-  ): Promise<OptionalActiveRelayer> {
+  ): OptionalActiveRelayer {
     if (!relayer) {
       return null;
     }
@@ -169,6 +169,10 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
           typedChainId,
           vanchorContract.address,
           tx?.cancelToken.abortSignal
+        );
+
+        console.log(
+          `Got ${leaves.length} leaves from relayer ${relayers[i].endpoint}`
         );
 
         const result = await this.validateRelayerLeaves(

@@ -3,8 +3,8 @@ import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
-import { TokenSelector } from '../TokenSelector';
-import { AssetListItem } from './AssetListItem';
+import TokenSelector from '../TokenSelector';
+import TokenListItem from './TokenListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
@@ -14,7 +14,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     {
       onChange,
       onClose,
-      onConnect,
       popularTokens,
       selectTokens,
       title = 'Select a Token',
@@ -25,8 +24,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     },
     ref
   ) => {
-    const [, setAsset] = useState<AssetType | undefined>(() => selectedAsset);
-
     // Search text
     const [searchText, setSearchText] = useState('');
 
@@ -36,30 +33,14 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
           (r) =>
             r.name.toLowerCase().includes(searchText.toLowerCase()) ||
             r.symbol.toString().includes(searchText.toLowerCase()) ||
-            r.balance?.toString().includes(searchText.toLowerCase())
+            r.assetBalanceProps?.balance
+              ?.toString()
+              .includes(searchText.toLowerCase())
         ),
       [searchText]
     );
 
-    const onItemChange = useCallback(
-      (nextItem: AssetType) => {
-        // Check if the selected token is in the unavailable list
-        const isInUnavailableList = unavailableTokens.find(
-          (tk) => tk.name === nextItem.name && tk.symbol === nextItem.symbol
-        );
-
-        // Do not change the selected token if it is in the unavailable list
-        if (isInUnavailableList) {
-          return;
-        }
-
-        setAsset(nextItem);
-        onChange?.(nextItem);
-      },
-      [onChange, setAsset, unavailableTokens]
-    );
-
-    const { filteredPopular, filteredSelect, filteredUnavailable } = useMemo(
+    const { filteredPopular, filteredSelect } = useMemo(
       () => ({
         filteredPopular: getFilterList(popularTokens),
         filteredSelect: getFilterList(selectTokens),
@@ -92,8 +73,8 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               {filteredPopular.map((current, idx) => (
                 <TokenSelector
                   key={`${current.name}-${idx}`}
-                  onClick={() => onItemChange(current)}
-                  onTokenClick={current.onTokenClick}
+                  onClick={() => onChange?.(current)}
+                  isDropdown={false}
                 >
                   {current.symbol}
                 </TokenSelector>
@@ -103,27 +84,55 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         ) : null}
 
         {/** Select tokens */}
-        <div className="flex flex-col p-2 space-y-2">
-          <Typography
-            variant="body4"
-            className="uppercase text-mono-200 dark:text-mono-0"
-            fw="bold"
-          >
-            Select token
-          </Typography>
+        <div className="flex flex-col px-2 space-y-2 grow">
+          <div>
+            <Typography
+              variant="body4"
+              className="uppercase text-mono-200 dark:text-mono-0"
+              fw="bold"
+            >
+              Select token
+            </Typography>
 
-          {/** Token list */}
-          <ScrollArea className="min-w-[350px] h-[376px]">
-            <ul>
-              {filteredSelect.map((current, idx) => (
-                <AssetListItem
-                  key={`${current.name}-${idx}`}
-                  {...current}
-                  onClick={() => onItemChange(current)}
-                />
-              ))}
-            </ul>
-          </ScrollArea>
+            {/** Token list */}
+            <ScrollArea className="h-full py-2">
+              <ul>
+                {filteredSelect.map((current, idx) => (
+                  <TokenListItem
+                    key={`${current.name}-${idx}`}
+                    className="cursor-pointer"
+                    {...current}
+                    onClick={() => onChange?.(current)}
+                  />
+                ))}
+              </ul>
+            </ScrollArea>
+          </div>
+
+          {unavailableTokens.length ? (
+            <div>
+              <Typography
+                variant="body4"
+                className="uppercase text-mono-200 dark:text-mono-0"
+                fw="bold"
+              >
+                Unavailable token
+              </Typography>
+
+              {/** Token list */}
+              <ScrollArea className="h-full py-2">
+                <ul>
+                  {unavailableTokens.map((current, idx) => (
+                    <TokenListItem
+                      isDisabled
+                      key={`${current.name}-${idx}`}
+                      {...current}
+                    />
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          ) : null}
         </div>
 
         {/* Alert Component */}

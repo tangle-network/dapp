@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { BannerPropsType } from './types';
 import { BlockIcon, Close, GraphIcon } from '@webb-tools/icons';
 import { Typography } from '../../typography';

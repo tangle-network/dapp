@@ -22,6 +22,7 @@ import type {
   WebbApiProvider,
   WebbProviderType,
 } from '../webb-provider.interface';
+import { NeighborEdge } from './types';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
   Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
@@ -39,6 +40,8 @@ export type TransferTransactionPayloadType = {
   changeUtxo: Utxo;
   transferUtxo: Utxo;
   feeAmount: bigint;
+  refundAmount: bigint;
+  refundRecipient: string;
 };
 
 // Union type of all the payloads that can be used in a transaction (Deposit, Transfer, Withdraw)
@@ -109,7 +112,13 @@ export const isVAnchorTransferPayload = (
     'transferUtxo' in payload &&
     payload['transferUtxo'] instanceof Utxo &&
     'feeAmount' in payload &&
-    typeof payload['feeAmount'] === 'bigint'
+    typeof payload['feeAmount'] === 'bigint' &&
+    ('refundAmount' in payload
+      ? typeof payload['refundAmount'] === 'bigint'
+      : true) &&
+    ('refundRecipient' in payload
+      ? typeof payload['refundRecipient'] === 'string'
+      : true)
   );
 };
 
@@ -205,7 +214,7 @@ export abstract class VAnchorActions<
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<ProviderType>,
     changeNotes: Note[]
-  ): Promise<void>;
+  ): Promise<Hash>;
 
   /**
    * The transact function
@@ -223,4 +232,11 @@ export abstract class VAnchorActions<
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>
   ): Promise<Hash>;
+
+  abstract waitForFinalization(hash: Hash): Promise<void>;
+
+  abstract getLatestNeighborEdges(
+    fungibleId: number,
+    typedChainId?: number
+  ): Promise<ReadonlyArray<NeighborEdge>>;
 }

@@ -48,6 +48,8 @@ import { firstValueFrom } from 'rxjs';
 import * as snarkjs from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
+import type { HexString } from '@polkadot/util/types';
+import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import assert from 'assert';
@@ -97,8 +99,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
-    tx.next(TransactionState.PreparingTransaction, undefined);
-
     // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
     if (!wrapUnwrapAssetId) {
       const activeBridge = this.inner.state.activeBridge;
@@ -130,7 +130,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[]
-  ): Promise<void> {
+  ): Promise<HexString> {
     const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
@@ -177,8 +177,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
         extensionRoots: [],
       },
     } satisfies WithdrawRelayerArgs<'substrate', CMDSwitcher<'substrate'>>);
-
-    let txHash = '';
 
     // Subscribe to the relayer's transaction status.
     relayedVAnchorWithdraw.watcher.subscribe(async ([results, message]) => {
@@ -230,12 +228,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Send the transaction to the relayer.
     relayedVAnchorWithdraw.send(relayTxPayload, chainId);
 
-    const results = await relayedVAnchorWithdraw.await();
-    if (results) {
-      const [, message] = results;
-      txHash = message ?? '';
-      tx.txHash = txHash;
-    }
+    const [, txHash = ''] = await relayedVAnchorWithdraw.await();
+    tx.txHash = txHash;
+    return ensureHex(txHash);
   }
 
   async transact(
@@ -304,6 +299,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const txHash = await polkadotTx.call(activeAccount.address);
 
     return ensureHex(txHash);
+  }
+
+  async waitForFinalization(hash: `0x${string}`): Promise<void> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   async isPairRegistered(
@@ -421,6 +420,13 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       inputUtxos,
       leavesMap,
     };
+  }
+
+  async getLatestNeighborEdges(
+    fungibleId: number,
+    typedChainId?: number | undefined
+  ): Promise<readonly NeighborEdge[]> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   // ------------------ Private ------------------
@@ -889,9 +895,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
     if (tx) {
       tx.next(TransactionState.FetchingLeaves, {
-        end: undefined,
-        currentRange: [0, 1],
-        start: 0,
+        start: 0, // Dummy value
+        end: 0, // Dummy value
+        current: 0, // Dummy value
       });
     }
 
@@ -915,7 +921,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       ).unwrapOr(null);
 
       if (!destTree) {
-        throw WebbError.from(WebbErrorCodes.TreeNotFound);
+        throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
       }
 
       destRelayedRoot = destTree.root.toHex();

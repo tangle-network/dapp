@@ -7,22 +7,24 @@ import {
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  Avatar,
-  Button,
-  ChainChip,
-  CheckBox,
-  Chip,
-  CopyWithTooltip,
-  InfoItem,
-  Progress,
-  TitleWithInfo,
-  TokenWithAmount,
-} from '../../components';
+import { Avatar } from '../../components/Avatar/Avatar';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
+import { ChainChip } from '../../components/ChainChip/ChainChip';
+import { CheckBox } from '../../components/CheckBox/Checkbox';
+import { Chip } from '../../components/Chip/Chip';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
+import SteppedProgress from '../../components/Progress/SteppedProgress';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
+import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
+import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
-import { formatTokenAmount, shortenString } from '../../utils';
-import { WithdrawConfirmationProps } from './types';
+import {
+  formatTokenAmount,
+  getRoundedAmountString,
+  shortenString,
+} from '../../utils';
 import { Section, WrapperSection } from './WrapperSection';
+import { WithdrawConfirmationProps } from './types';
 
 export const WithdrawConfirm = forwardRef<
   HTMLDivElement,
@@ -31,7 +33,6 @@ export const WithdrawConfirm = forwardRef<
   (
     {
       actionBtnProps,
-      activeChains,
       amount,
       changeAmount,
       checkboxProps,
@@ -40,12 +41,11 @@ export const WithdrawConfirm = forwardRef<
       fee,
       feeInfo,
       fungibleTokenSymbol: token1Symbol,
-      isCopied,
       note,
       onClose,
-      onCopy,
       onDownload,
       progress,
+      totalProgress,
       receivingInfo,
       recipientAddress,
       refundAmount,
@@ -73,7 +73,7 @@ export const WithdrawConfirm = forwardRef<
         } + ${refundAmount} ${refundToken ?? ''}`;
       }
 
-      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`;
+      return `${remainingAmount} ${token2Symbol ?? token1Symbol}`.trim();
     }, [
       remainingAmount,
       refundAmount,
@@ -82,11 +82,26 @@ export const WithdrawConfirm = forwardRef<
       token2Symbol,
     ]);
 
+    const changeAmountContent = useMemo(() => {
+      if (typeof changeAmount === 'undefined') {
+        return '--';
+      }
+
+      if (typeof changeAmount === 'string') {
+        return `${changeAmount.slice(0, 10)} ${token1Symbol}`.trim();
+      }
+
+      const formated = getRoundedAmountString(changeAmount, 3, {
+        roundingFunction: Math.round,
+      });
+      return `${formated} ${token1Symbol ?? ''}`.trim();
+    }, [changeAmount, token1Symbol]);
+
     return (
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -103,7 +118,7 @@ export const WithdrawConfirm = forwardRef<
           </div>
 
           {/** Transaction progress */}
-          {typeof progress === 'number' ? (
+          {typeof progress === 'number' && typeof totalProgress === 'number' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
@@ -113,7 +128,7 @@ export const WithdrawConfirm = forwardRef<
                 />
                 <Chip color="blue">{txStatusMessage}</Chip>
               </div>
-              <Progress value={progress} />
+              <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
           ) : null}
 
@@ -304,7 +319,7 @@ export const WithdrawConfirm = forwardRef<
                   title: 'Change Amount',
                   info: 'Change Amount',
                 }}
-                rightContent={changeAmount?.toString()}
+                rightContent={changeAmountContent}
               />
               <InfoItem
                 leftTextProps={{

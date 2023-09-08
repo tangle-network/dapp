@@ -1,4 +1,6 @@
+import { withThemeByClassName } from '@storybook/addon-styling';
 import '../src/tailwind.css';
+import './override.css';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -10,3 +12,13 @@ export const parameters = {
     },
   },
 };
+
+export const decorators = [
+  withThemeByClassName({
+    themes: {
+      light: '',
+      dark: 'dark',
+    },
+    defaultTheme: 'light',
+  }),
+];

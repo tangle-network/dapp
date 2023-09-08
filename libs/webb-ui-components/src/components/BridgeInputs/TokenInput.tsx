@@ -1,5 +1,5 @@
 import {
-  ShieldKeyholeIcon,
+  ShieldKeyholeLineIcon,
   TokenIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
@@ -110,13 +110,13 @@ export const TokenInput = forwardRef<HTMLDivElement, TokenInputComponentProps>(
           <div className="flex flex-col items-end justify-between">
             <div className="flex items-center gap-1.5">
               {token?.balanceType === 'note' ? (
-                <ShieldKeyholeIcon size="md" />
+                <ShieldKeyholeLineIcon size="md" />
               ) : (
                 <WalletLineIcon size="md" />
               )}
 
               <TitleWithInfo
-                title={`${balance} ${balanceInUsd ? `≈ $${balanceInUsd}` : ''}`}
+                title={`${balance} ${balanceInUsd ? `≈$${balanceInUsd}` : ''}`}
                 variant="utility"
                 titleComponent="span"
                 className="text-mono-100 dark:text-mono-80"

@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Chip } from '../Chip';
 import { Divider } from '../Divider';
 import { AmountMenuProps } from './types';

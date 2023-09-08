@@ -26,5 +26,5 @@ export interface TokenIconBase
   /**
    * The symbol for the cryptocurrency to get the icon
    */
-  name: string;
+  name?: string;
 }

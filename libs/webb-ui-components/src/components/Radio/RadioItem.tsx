@@ -48,7 +48,7 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
             )}
           />
         </RadioGroup.Item>
-        {label && (
+        {typeof label === 'string' || typeof label === 'number' ? (
           <Typography
             component="label"
             variant="body1"
@@ -60,6 +60,8 @@ export const RadioItem = forwardRef<HTMLDivElement, RadioItemProps>(
           >
             {label}
           </Typography>
+        ) : (
+          label
         )}
       </div>
     );

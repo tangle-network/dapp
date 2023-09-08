@@ -5,14 +5,26 @@ import { CurrencyRole } from '@webb-tools/dapp-types';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { hexToU8a } from '@webb-tools/utils';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import { useNoteAccount } from '../useNoteAccount';
+
+/**
+ * The type of the balances from notes
+ * Record of balances (currencyId => Record<typedChainId, balance>)
+ */
+export type BalancesFromNotesType = {
+  [currencyId: number]: {
+    [typedChainId: number]: bigint;
+  };
+};
 
 /**
  * The return type of the useBalancesFromNotes
  * Record of balances (currencyId => Record<typedChainId, balance>)
  */
-type UseBalancesFromNotesReturnType = Record<number, Record<number, number>>;
+type UseBalancesFromNotesReturnType = {
+  balances: BalancesFromNotesType;
+  initialized: boolean;
+};
 
 /**
  * Get the balances of each fungible currency
@@ -22,7 +34,7 @@ type UseBalancesFromNotesReturnType = Record<number, Record<number, number>>;
 export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
   const { apiConfig } = useWebContext();
 
-  const { allNotes } = useNoteAccount();
+  const { allNotes, allNotesInitialized } = useNoteAccount();
 
   const allFungibles = useMemo(() => {
     return Currency.fromArray(
@@ -30,7 +42,7 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
     );
   }, [apiConfig]);
 
-  return useMemo(() => {
+  const balances = useMemo(() => {
     return Array.from(allNotes.entries()).reduce(
       (acc, [resourceIdStr, notes]) => {
         try {
@@ -74,13 +86,8 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then create a new record with the amount of the note
             // on the current chain and return
             if (!existedRecord) {
-              const amount = +formatUnits(
-                BigInt(note.amount),
-                +note.denomination
-              );
-
               acc[fungible.id] = {
-                [typedChainId]: amount,
+                [typedChainId]: BigInt(note.amount),
               };
 
               return;
@@ -94,14 +101,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // then add the amount of the note to the existed amount
             // and return
             if (existedAmount) {
-              const amount = +formatUnits(
-                BigInt(note.amount),
-                +note.denomination
-              );
-
               acc[fungible.id] = {
                 ...existedRecord,
-                [typedChainId]: existedAmount + amount,
+                [typedChainId]: existedAmount + BigInt(note.amount),
               };
 
               return;
@@ -110,14 +112,9 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
             // If the amount on the current chain does not exist
             // then create a new record with the amount of the note
             // on the current chain and return
-            const amount = +formatUnits(
-              BigInt(note.amount),
-              +note.denomination
-            );
-
             acc[fungible.id] = {
               ...existedRecord,
-              [typedChainId]: amount,
+              [typedChainId]: BigInt(note.amount),
             };
           });
         } catch (error) {
@@ -126,7 +123,12 @@ export const useBalancesFromNotes = (): UseBalancesFromNotesReturnType => {
 
         return acc;
       },
-      {} as Record<number, Record<number, number>>
+      {} as BalancesFromNotesType
     );
   }, [allFungibles, allNotes, apiConfig]);
+
+  return {
+    balances,
+    initialized: allNotesInitialized,
+  };
 };

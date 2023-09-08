@@ -1,12 +1,11 @@
-import cx from 'classnames';
+import { ShieldedAssetIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
-
+import cx from 'classnames';
 import {
-  PoolTypeChip,
-  PoolOverviewCardItem,
   CopyIconWithTooltip,
+  PoolOverviewCardItem,
+  PoolTypeChip,
 } from '../../components';
 import { getPoolOverviewCardData } from '../../data';
 
@@ -37,17 +36,7 @@ export default async function PoolOverviewCardContainer({
       <div className="w-full space-y-4">
         <div className="flex flex-col items-center gap-1">
           {/* Icon */}
-          <ShieldedAssetLight
-            width={40}
-            height={48}
-            className="block dark:hidden"
-          />
-
-          <ShieldedAssetDark
-            width={40}
-            height={48}
-            className="hidden dark:block"
-          />
+          <ShieldedAssetIcon size="xl" />
 
           {/* Name */}
           <Typography variant="h5" fw="bold">

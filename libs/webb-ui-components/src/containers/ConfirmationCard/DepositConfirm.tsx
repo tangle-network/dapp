@@ -1,28 +1,24 @@
 import { ArrowRight, Close, Download } from '@webb-tools/icons';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import {
-  Button,
-  ChainChip,
-  CheckBox,
-  Chip,
-  CopyWithTooltip,
-  InfoItem,
-  Progress,
-  TitleWithInfo,
-  TokenWithAmount,
-} from '../../components';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
+import { ChainChip } from '../../components/ChainChip/ChainChip';
+import { CheckBox } from '../../components/CheckBox/Checkbox';
+import { Chip } from '../../components/Chip/Chip';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
+import SteppedProgress from '../../components/Progress/SteppedProgress';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
+import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
+import Button from '../../components/buttons/Button';
 import { Typography } from '../../typography';
 import { formatTokenAmount, getRoundedAmountString } from '../../utils';
-import { DepositConfirmProps } from './types';
 import { Section, WrapperSection } from './WrapperSection';
+import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
   (
     {
       actionBtnProps,
-      activeChains,
       amount,
       wrappingAmount,
       checkboxProps,
@@ -32,11 +28,10 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       feeToken,
       note,
       onClose,
-      isCopied,
-      onCopy,
       onDownload,
       txStatusMessage,
       progress = null,
+      totalProgress,
       sourceChain,
       title = 'Confirm Deposit',
       fungibleTokenSymbol,
@@ -77,7 +72,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -94,7 +89,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
           </div>
 
           {/** Transaction progress */}
-          {typeof progress === 'number' ? (
+          {typeof progress === 'number' && typeof totalProgress === 'number' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
@@ -104,7 +99,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
                 />
                 <Chip color="blue">{txStatusMessage}</Chip>
               </div>
-              <Progress value={progress} />
+              <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
           ) : null}
 

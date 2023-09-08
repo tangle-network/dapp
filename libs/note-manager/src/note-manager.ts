@@ -19,7 +19,6 @@ import {
 import { hexToU8a } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject } from 'rxjs';
-import { parseUnits } from 'viem';
 
 type DefaultNoteGenInput = Pick<
   NoteGenInput,
@@ -149,7 +148,8 @@ export class NoteManager {
     let currentAmount = ZERO_BIG_INT;
     const currentNotes: Note[] = [];
 
-    for (const note of notes) {
+    const sortedNotes = NoteManager.sortNotes(notes);
+    for (const note of sortedNotes) {
       if (currentAmount >= targetAmount) {
         break;
       }
@@ -164,6 +164,41 @@ export class NoteManager {
   static keypairFromNote(note: Note): Keypair {
     const secrets = note.note.secrets.split(':');
     return new Keypair(`0x${secrets[2]}`);
+  }
+
+  /**
+   * Sort the notes by indx in ascending order
+   * and the zero and undefined index will be put at the end
+   * @param notes the notes to sort
+   */
+  static sortNotes(notes: ReadonlyArray<Note>): ReadonlyArray<Note> {
+    return notes.slice().sort((a, b) => {
+      // Place undefined values at the end
+      if (!a.note.index) {
+        return 1;
+      }
+
+      if (!b.note.index) {
+        return -1;
+      }
+
+      const aIndex = BigInt(a.note.index);
+      const bIndex = BigInt(b.note.index);
+
+      // Place zero values before undefined but after other numbers
+      if (aIndex === ZERO_BIG_INT) {
+        return 1;
+      }
+
+      if (bIndex === ZERO_BIG_INT) {
+        return -1;
+      }
+
+      // Regular ascending sort for other numbers
+      const idx = aIndex - bIndex;
+
+      return idx > 0 ? 1 : idx < 0 ? -1 : 0;
+    });
   }
 
   get $notesUpdated() {
@@ -291,6 +326,11 @@ export class NoteManager {
     const noteIndex = targetNotes.findIndex(
       (managedNote) => managedNote.serialize() === note.serialize()
     );
+
+    if (noteIndex === -1) {
+      return;
+    }
+
     targetNotes.splice(noteIndex, 1);
     if (targetNotes.length != 0) {
       this.notesMap.set(resourceIdStr, targetNotes);

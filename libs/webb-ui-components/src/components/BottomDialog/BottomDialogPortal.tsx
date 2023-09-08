@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Close } from '@webb-tools/icons';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Typography } from '../../typography';
 import { BottomDialogPortalProps } from './types';
 

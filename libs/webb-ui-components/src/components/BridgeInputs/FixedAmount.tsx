@@ -2,7 +2,7 @@ import { ChevronDown } from '@webb-tools/icons';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { AmountMenu } from '../AmountMenu';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Label } from '../Label';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InputWrapper } from './InputWrapper';
@@ -28,7 +28,6 @@ import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
  * <FixedAmount {...fixedAmountProps} className={cx({ hidden: amountType !== 'fixed' })} hidden={amountType !== 'fixed'} />
  * ```
  */
-
 export const FixedAmount = forwardRef<HTMLDivElement, FixedAmountProps>(
   (
     {

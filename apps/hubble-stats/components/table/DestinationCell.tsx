@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
+import { ShieldedAssetIcon } from '@webb-tools/icons';
 
 import { DestinationCellProps } from './types';
 
@@ -14,8 +14,7 @@ const DestinationCell: FC<DestinationCellProps> = ({ className }) => {
         className
       )}
     >
-      <ShieldedAssetLight className="block dark:hidden w-4 h-4 opacity-70" />
-      <ShieldedAssetDark className="hidden dark:block w-4 h-4 opacity-70" />
+      <ShieldedAssetIcon className="opacity-70" />
       shielded
     </span>
   );

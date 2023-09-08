@@ -3,7 +3,7 @@ import { Chain, WalletConfig } from '@webb-tools/dapp-config';
 import { WalletId, WebbError } from '@webb-tools/dapp-types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
 /**

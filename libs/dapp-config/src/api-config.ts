@@ -3,7 +3,7 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types';
+import { CurrencyRole, CurrencyType } from '@webb-tools/dapp-types/Currency';
 import { TypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import {

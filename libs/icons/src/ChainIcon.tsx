@@ -1,13 +1,14 @@
 import React, { cloneElement, useMemo } from 'react';
 import { Spinner } from './Spinner';
+import StatusIndicator from './StatusIndicator';
+import { StatusIndicatorProps } from './StatusIndicator/types';
 import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
-export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
-  isActive,
-  ...props
-}) => {
+export const ChainIcon: React.FC<
+  TokenIconBase & { status?: StatusIndicatorProps['variant'] }
+> = ({ status, ...props }) => {
   const {
     className,
     name: nameProp,
@@ -41,17 +42,26 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
 
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
+    const sizeInNumber = parseInt(sizeInPx);
     const props: React.SVGProps<SVGSVGElement> = {
       className,
-      width: parseInt(sizeInPx),
-      height: parseInt(sizeInPx),
+      width: sizeInNumber,
+      height: sizeInNumber,
       ...restProps,
     };
 
-    return isActive ? (
+    return typeof status !== 'undefined' ? (
       <div className="relative">
         {cloneElement(svgElement, props)}
-        <span className="inline-block absolute w-1.5 h-1.5 bg-green-50 dark:bg-green-40 rounded-full top-0 right-0" />
+        <StatusIndicator
+          variant={status}
+          size={sizeInNumber / 2}
+          className="absolute inline-block"
+          style={{
+            top: -(sizeInNumber / 4),
+            right: -(sizeInNumber / 4),
+          }}
+        />
       </div>
     ) : (
       cloneElement(svgElement, props)

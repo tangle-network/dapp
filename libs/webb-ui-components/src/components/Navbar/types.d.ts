@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import { PropsOf } from '../../types';
-import { Button } from '../Button';
+import { Button } from '../buttons';
 
 /**
  * The generic link interface for both

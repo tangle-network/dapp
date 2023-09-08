@@ -1,6 +1,6 @@
-import { IconBase } from '@webb-tools/icons/types';
-
-import { LogoProps } from '../Logo/types';
+import type { IconBase } from '@webb-tools/icons/types';
+import type { LogoProps } from '../Logo/types';
+import type { DialogContentProps } from '@radix-ui/react-dialog';
 
 export type SideBarFooterType = {
   name: string;
@@ -24,6 +24,7 @@ export interface SidebarProps extends SideBarLogoProps {
   items: SideBarItemProps[];
   footer: SideBarFooterType;
   className?: string;
+  overrideContentProps?: DialogContentProps;
 }
 
 export interface SideBarItemsProps {

@@ -53,8 +53,8 @@ export enum WebbErrorCodes {
   TransactionInProgress,
   // Not implemented
   NotImplemented,
-  /// The tree not found
-  TreeNotFound,
+  /// The anchor identifier is not found
+  AnchorIdNotFound,
   // Insufficient disk space
   InsufficientDiskSpace,
   // Invalid arguments
@@ -69,6 +69,12 @@ export enum WebbErrorCodes {
   SwitchChainFailed,
   // Failed to send the transaction to the relayer
   FailedToSendTx,
+  // Key pair not found
+  KeyPairNotFound,
+  // Notes are not ready
+  NotesNotReady,
+  // Unknown error
+  UnknownError,
 }
 
 // An Error message with error metadata
@@ -256,10 +262,10 @@ export class WebbError extends Error {
           message: `Missing endpoints in the configuration`,
         };
 
-      case WebbErrorCodes.TreeNotFound:
+      case WebbErrorCodes.AnchorIdNotFound:
         return {
           code,
-          message: `Not found tree for the given tree id`,
+          message: `Not found the anchor identifier`,
         };
 
       case WebbErrorCodes.NotImplemented:
@@ -308,6 +314,19 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Failed to send the transaction to the relayer',
+        };
+
+      case WebbErrorCodes.KeyPairNotFound:
+        return {
+          code,
+          message: 'Key pair not found',
+        };
+
+      case WebbErrorCodes.NotesNotReady:
+        return {
+          code,
+          message:
+            'Some of the notes are not ready, maybe waiting for 5-20 minutes and try again',
         };
 
       default:

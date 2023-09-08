@@ -2,7 +2,7 @@ import { TransactionState } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useEffect, useState } from 'react';
 
-export const useLatestTransactionStage = (transactionId: string) => {
+export const useLatestTransactionStage = (transactionId?: string | null) => {
   const [stage, setStage] = useState<TransactionState>(TransactionState.Ideal);
 
   const {

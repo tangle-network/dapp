@@ -1,6 +1,11 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
+import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import cloneDeep from 'lodash/cloneDeep';
+import merge from 'lodash/merge';
+import mergeWith from 'lodash/mergeWith';
 import {
   arbitrumGoerli,
   avalancheFuji,
@@ -12,11 +17,6 @@ import {
   sepolia,
   type Chain,
 } from 'viem/chains';
-import { EVMChainId, PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
-import merge from 'lodash/merge';
-import mergeWith from 'lodash/mergeWith';
-import cloneDeep from 'lodash/cloneDeep';
 import { DEFAULT_EVM_CURRENCY } from '../../currencies';
 import { ChainConfig, WebbExtendedChain } from '../chain-config.interface';
 
@@ -203,7 +203,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.HermesOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.HermesOrbit,
-    name: 'Hermes Orbit',
+    name: 'Orbit Hermes',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
@@ -236,7 +236,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.AthenaOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.AthenaOrbit,
-    name: 'Athena Orbit',
+    name: 'Orbit Athena',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
@@ -269,7 +269,7 @@ export const chainsConfig: Record<number, ChainConfig> = {
   [PresetTypedChainId.DemeterOrbit]: {
     chainType: ChainType.EVM,
     id: EVMChainId.DemeterOrbit,
-    name: 'Demeter Orbit',
+    name: 'Orbit Demeter',
     network: 'Orbit',
     group: 'orbit',
     tag: 'test',
@@ -319,10 +319,24 @@ export const chainsConfig: Record<number, ChainConfig> = {
     },
     rpcUrls: {
       default: {
-        http: ['https://tangle-standalone-archive.webb.tools'],
+        http: [
+          'https://tangle-standalone-archive.webb.tools',
+          'https://tangle-standalone1.webb.tools',
+          'https://tangle-standalone2.webb.tools',
+          'https://tangle-standalone3.webb.tools',
+          'https://tangle-standalone4.webb.tools',
+          'https://tangle-standalone5.webb.tools',
+        ],
       },
       public: {
-        http: ['https://tangle-standalone-archive.webb.tools'],
+        http: [
+          'https://tangle-standalone-archive.webb.tools',
+          'https://tangle-standalone1.webb.tools',
+          'https://tangle-standalone2.webb.tools',
+          'https://tangle-standalone3.webb.tools',
+          'https://tangle-standalone4.webb.tools',
+          'https://tangle-standalone5.webb.tools',
+        ],
       },
     },
     env: ['development', 'test'],

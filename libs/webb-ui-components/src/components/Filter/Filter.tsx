@@ -2,7 +2,7 @@ import { FilterIcon, Search } from '@webb-tools/icons';
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 
-import { Button } from '../Button';
+import { Button } from '../buttons';
 import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown';
 import { Input } from '../Input';
 import { FilterProps } from './types';

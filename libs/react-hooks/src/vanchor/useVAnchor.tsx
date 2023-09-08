@@ -9,14 +9,11 @@ export interface VAnchorAPI {
   addNoteToNoteManager(note: Note): Promise<void>;
   removeNoteFromNoteManager(note: Note): Promise<void>;
   cancel(): Promise<void>;
-  error: string;
   api: VAnchorActions<any> | null;
   startNewTransaction(): void;
 }
 
 export const useVAnchor = (): VAnchorAPI => {
-  const [error] = useState('');
-
   const {
     activeApi,
     txQueue: { api: txQueueApi },
@@ -98,7 +95,6 @@ export const useVAnchor = (): VAnchorAPI => {
     addNoteToNoteManager,
     api,
     cancel,
-    error,
     removeNoteFromNoteManager,
     startNewTransaction: txQueueApi.startNewTransaction,
   };

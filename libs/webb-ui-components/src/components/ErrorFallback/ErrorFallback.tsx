@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 
 import * as constants from '../../constants';
 import { Typography } from '../../typography';
-import { Button, ButtonProps } from '../Button';
+import { Button, ButtonProps } from '../buttons';
 import { ErrorFallbackProps } from './types';
 
 const telegramInfo = constants.defaultSocialConfigs.find(
@@ -112,7 +112,7 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
         {...props}
         className={twMerge(
           'bg-mono-0 dark:bg-mono-180 p-6 rounded-lg',
-          'max-w-[550px] space-y-4',
+          'max-w-xl space-y-4',
           className
         )}
         ref={ref}

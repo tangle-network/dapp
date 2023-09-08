@@ -21,9 +21,13 @@ type OnTryAgainCB = (
 export type UseNoteAccountReturnType = {
   /**
    * The notes map Map<chainId, Note[]>
-   *
    */
   allNotes: Map<string, Note[]>;
+
+  /**
+   * The flag to indicate if all notes are initialized
+   */
+  allNotesInitialized: boolean;
 
   /**
    * The flag to indicate if the user has a note account
@@ -85,6 +89,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   const [isSyncingNote, setIsSyncingNote] = useState(false);
 
   const [allNotes, setAllNotes] = useState<Map<string, Note[]>>(new Map());
+  const [allNotesInitialized, setAllNotesInitialized] = useState(false);
 
   const [isOpenNoteAccountModal, setIsOpenNoteAccountModal] = useState(false);
 
@@ -234,12 +239,14 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
   // Effect to subscribe to noteManager
   useEffect(() => {
     if (!noteManager) {
+      setAllNotesInitialized(true);
       return;
     }
 
     // When the noteManager has its notes updated, update the react state for allNotes
     const noteUpdatedSub = noteManager.$notesUpdated.subscribe(() => {
       setAllNotes(new Map([...noteManager.getAllNotes()]));
+      setAllNotesInitialized(true);
     });
 
     // Subscribe to the noteManager syncing state
@@ -278,6 +285,7 @@ export const useNoteAccount = (): UseNoteAccountReturnType => {
 
   return {
     allNotes,
+    allNotesInitialized,
     hasNoteAccount,
     isOpenNoteAccountModal,
     isSuccessfullyCreatedNoteAccount,

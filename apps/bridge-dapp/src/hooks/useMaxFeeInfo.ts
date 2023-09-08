@@ -1,4 +1,4 @@
-import { fetchFeeData } from '@wagmi/core';
+import { fetchFeeData } from 'wagmi/actions';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,
@@ -16,7 +16,7 @@ import { getErrorMessage } from '../utils';
 /**
  * Get the max fee info for the current active chain
  * @returns an object with the following properties:
- * - feeInfo: RelayerFeeInfo | BigNumber | null
+ * - feeInfo: RelayerFeeInfo | null
  * - fetchMaxFeeInfo: () => Promise<void> | never
  * - fetchMaxFeeInfoFromRelayer: (relayer: ActiveWebbRelayer) => Promise<void> | never
  * - resetMaxFeeInfo: () => void

@@ -1,19 +1,32 @@
 import { ExternalLinkLine, Search } from '@webb-tools/icons';
-import { Typography } from '../../typography';
-import { shortenString } from '../../utils';
-import { getRoundedAmountString } from '../../utils';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { Typography } from '../../typography';
+import { shortenString } from '../../utils';
 
 import { Avatar } from '../Avatar';
-import { Button } from '../Button';
 import { Input } from '../Input';
+import { RadioGroup, RadioItem } from '../Radio';
 import { ScrollArea } from '../ScrollArea';
+import { Button } from '../buttons';
 import { ListCardWrapper } from './ListCardWrapper';
 import { ListItem } from './ListItem';
-import { RelayerListCardProps, RelayerType } from './types';
+import { RelayerListCardProps } from './types';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 
-export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
+/**
+ * The relayer list card component
+ *
+ * Props:
+ *
+ * - `isDisconnected`: If the user is disconnected
+ * - `onChange`: The callback when the relayer is changed
+ * - `onClose`: The callback when the card is closed
+ * - `onConnectWallet`: The callback when the user clicks on the connect wallet button
+ * - `relayers`: The list of relayers
+ * - `value`: The selected relayer
+ */
+const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
   (
     {
       isDisconnected,
@@ -22,48 +35,12 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
       onConnectWallet,
       relayers,
       value: selectedRelayer,
+      overrideInputProps,
+      Footer,
       ...props
     },
     ref
   ) => {
-    const [, setRelayer] = useState<RelayerType | undefined>(
-      () => selectedRelayer
-    );
-
-    // Search text
-    const [searchText, setSearchText] = useState('');
-
-    useEffect(() => {
-      let subscribe = true;
-
-      if (subscribe) {
-        setRelayer(selectedRelayer);
-      }
-
-      return () => {
-        subscribe = false;
-      };
-    }, [selectedRelayer, setRelayer]);
-
-    const onItemChange = useCallback(
-      (nextItem: RelayerType) => {
-        setRelayer(nextItem);
-        onChange?.(nextItem);
-      },
-      [onChange, setRelayer]
-    );
-
-    const filteredList = useMemo(
-      () =>
-        relayers.filter(
-          (r) =>
-            r.address.toLowerCase().includes(searchText.toLowerCase()) ||
-            r.fee?.toString().includes(searchText.toLowerCase()) ||
-            r.percentage?.toString().includes(searchText.toLowerCase())
-        ),
-      [relayers, searchText]
-    );
-
     const disconnectClsx = useMemo(
       () => cx({ 'opacity-40 pointer-events-none': isDisconnected }),
       [isDisconnected]
@@ -81,65 +58,126 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
           <Input
             id="relayer"
             rightIcon={<Search />}
-            placeholder="Search relayers"
-            value={searchText}
-            onChange={(val) => setSearchText(val.toString())}
+            spellCheck={false}
+            autoComplete="off"
+            placeholder="Enter custom relayer URL here"
+            debounceTime={500}
+            {...overrideInputProps}
           />
         </div>
 
-        {/** Token list */}
-        <ScrollArea className={cx('min-w-[350px] h-[376px]', disconnectClsx)}>
-          <ul className="p-2">
-            {filteredList.map((current, idx) => {
-              return (
-                <ListItem
-                  key={`${current.address}-${idx}`}
-                  className="flex items-center justify-between"
-                  onClick={() => onItemChange(current)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <Avatar theme={current.theme} value={current.address} />
+        {relayers.length > 0 && (
+          <div className="flex flex-col p-2 space-y-2 grow">
+            <Typography
+              variant="body4"
+              className="uppercase text-mono-200 dark:text-mono-0"
+              fw="bold"
+            >
+              Available relayers ({relayers.length})
+            </Typography>
 
-                    <Typography variant="h5" fw="bold">
-                      {shortenString(current.address)}
-                    </Typography>
+            <ScrollArea className={cx('h-full', disconnectClsx)}>
+              <RadioGroup
+                value={selectedRelayer?.address ?? ''}
+                onValueChange={(nextAddr) => {
+                  const nextRelayer = relayers.find(
+                    (relayer) => relayer.address === nextAddr
+                  );
 
-                    <a
-                      href={current.externalUrl}
-                      rel="noreferrer noopener"
-                      target="_blank"
-                    >
-                      <ExternalLinkLine />
-                    </a>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    {current.fee && (
-                      <Typography
-                        variant="utility"
-                        className="uppercase text-mono-100 dark:text-mono-80"
+                  if (nextRelayer) {
+                    onChange?.(nextRelayer);
+                  }
+                }}
+              >
+                <ul>
+                  {relayers.map((current, idx) => {
+                    return (
+                      <ListItem
+                        key={`${current.address}-${idx}`}
+                        className="flex items-center justify-between"
+                        isDisabled={current.isDisabled}
                       >
-                        Fee:{' '}
-                        {getRoundedAmountString(
-                          parseFloat(current.fee.toString())
-                        )}
-                      </Typography>
-                    )}
+                        <RadioItem
+                          id={current.address}
+                          value={current.address}
+                          className="w-full overflow-hidden"
+                          overrideRadixRadioItemProps={
+                            typeof current.isDisabled === 'boolean'
+                              ? {
+                                  disabled: current.isDisabled,
+                                }
+                              : undefined
+                          }
+                        >
+                          <label
+                            className="flex items-center justify-between grow"
+                            htmlFor={current.address}
+                          >
+                            <div className="flex items-center max-w-xs space-x-2 grow">
+                              <Avatar
+                                theme={current.theme}
+                                value={current.address}
+                                className={`${getFlexBasic()} shrink-0`}
+                              />
 
-                    {current.percentage && (
-                      <Typography
-                        variant="utility"
-                        className="uppercase text-mono-140 dark:text-mono-0"
-                      >
-                        {current.percentage.toFixed(2)} %
-                      </Typography>
-                    )}
-                  </div>
-                </ListItem>
-              );
-            })}
-          </ul>
-        </ScrollArea>
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                className="truncate"
+                              >
+                                {current.name ?? shortenString(current.address)}
+                              </Typography>
+
+                              <a
+                                href={current.externalUrl}
+                                rel="noreferrer noopener"
+                                target="_blank"
+                              >
+                                <ExternalLinkLine />
+                              </a>
+                            </div>
+
+                            {typeof current.percentage === 'number' && (
+                              <Typography
+                                component="p"
+                                variant="body1"
+                                fw="bold"
+                                className="min-w-[100px] text-mono-100 dark:text-mono-80"
+                              >
+                                Fee{' '}
+                                <span className="text-mono-140 dark:text-mono-0 ">
+                                  {current.percentage.toFixed(2)} %
+                                </span>
+                              </Typography>
+                            )}
+                          </label>
+                        </RadioItem>
+                      </ListItem>
+                    );
+                  })}
+                </ul>
+              </RadioGroup>
+            </ScrollArea>
+          </div>
+        )}
+
+        {relayers.length === 0 && (
+          <div className="flex flex-col items-center justify-center space-y-4 grow">
+            <Typography variant="h5" fw="bold" ta="center">
+              No Relayer Found.
+            </Typography>
+
+            <Typography
+              variant="body1"
+              fw="semibold"
+              className="max-w-xs mt-1 text-mono-100 dark:text-mono-80"
+              ta="center"
+            >
+              You can add a custom relayer by entering the URL in the search box
+              above.
+            </Typography>
+          </div>
+        )}
 
         {/** Disconnect view */}
         <div
@@ -166,7 +204,11 @@ export const RelayerListCard = forwardRef<HTMLDivElement, RelayerListCardProps>(
             To choose a relayer please Connect a wallet
           </Button>
         </div>
+
+        {Footer}
       </ListCardWrapper>
     );
   }
 );
+
+export default RelayerListCard;

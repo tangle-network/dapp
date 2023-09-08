@@ -12,8 +12,14 @@ export const ListItem = forwardRef<
     <li
       {...props}
       className={twMerge(
-        'px-4 py-2 hover:bg-blue-10 dark:hover:bg-blue-120 group',
-        cx({ 'opacity-50': isDisabled }),
+        'group max-w-lg px-4 py-2 rounded-lg',
+        'flex items-center justify-between',
+        'bg-mono-0 dark:bg-mono-190',
+
+        cx({
+          'hover:bg-blue-10 dark:hover:bg-blue-120': !isDisabled,
+          'opacity-50': isDisabled,
+        }),
         className
       )}
       ref={ref}

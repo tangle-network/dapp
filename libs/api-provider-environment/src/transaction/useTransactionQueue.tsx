@@ -2,24 +2,24 @@ import {
   NewNotesTxResult,
   Transaction,
   TransactionState,
+  TransactionStatusMap,
   TransactionStatusValue,
+  WebbProviderType,
 } from '@webb-tools/abstract-api-provider';
-import {
-  ApiConfig,
-  ChainConfig,
-  CurrencyConfig,
-} from '@webb-tools/dapp-config';
+import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
+import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TransactionItemStatus,
   TransactionPayload,
   getRoundedAmountString,
+  toFixed,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
 
-function transactionItemStatusFromTxStatus(
+export function transactionItemStatusFromTxStatus(
   txStatus: TransactionState
 ): TransactionItemStatus {
   switch (txStatus) {
@@ -33,6 +33,26 @@ function transactionItemStatusFromTxStatus(
       return 'in-progress';
   }
 }
+
+export const getExplorerURI = (
+  explorerUri: string,
+  addOrTxHash: string,
+  variant: 'tx' | 'address',
+  txProviderType: WebbProviderType
+): URL => {
+  switch (txProviderType) {
+    case 'web3':
+      return new URL(`${variant}/${addOrTxHash}`, explorerUri);
+
+    case 'polkadot': {
+      const path = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
+      return new URL(`${path}`, explorerUri);
+    }
+
+    default:
+      return new URL('');
+  }
+};
 
 function mapTxToPayload(
   tx: Transaction<any>,
@@ -54,26 +74,7 @@ function mapTxToPayload(
   const destChainName = chainConfig[wallets.dest]?.name;
 
   const txProviderType = tx.metaData.providerType;
-
-  const getExplorerURI = (
-    addOrTxHash: string,
-    variant: 'tx' | 'address'
-  ): string => {
-    explorerUri = explorerUri.endsWith('/') ? explorerUri : explorerUri + '/';
-
-    switch (txProviderType) {
-      case 'web3':
-        return `${explorerUri}${variant}/${addOrTxHash}`;
-
-      case 'polkadot': {
-        const prefix = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
-        return `${explorerUri}${prefix}`;
-      }
-
-      default:
-        return '';
-    }
-  };
+  const currentStep = tx.stepSubject.getValue();
 
   return {
     id: tx.id,
@@ -83,8 +84,15 @@ function mapTxToPayload(
       txHash: tx.txHash,
       recipient: tx.metaData.recipient,
     },
+    currentStep,
     amount: getRoundedAmountString(amount),
-    getExplorerURI,
+    getExplorerURI: (addOrTxHash: string, variant: 'tx' | 'address') =>
+      getExplorerURI(
+        explorerUri,
+        addOrTxHash,
+        variant,
+        txProviderType
+      ).toString(),
     timestamp: tx.timestamp,
     token,
     tokenURI,
@@ -100,7 +108,7 @@ function mapTxToPayload(
   };
 }
 
-function getTxMessageFromStatus<Key extends TransactionState>(
+export function getTxMessageFromStatus<Key extends TransactionState>(
   txStatus: Key,
   transactionStatusValue: TransactionStatusValue<Key>
 ): string {
@@ -110,9 +118,6 @@ function getTxMessageFromStatus<Key extends TransactionState>(
 
     case TransactionState.Ideal:
       return 'Transaction in-progress';
-
-    case TransactionState.PreparingTransaction:
-      return 'Preparing transaction';
 
     case TransactionState.FetchingFixtures:
       return 'Fetching transaction fixtures';
@@ -246,7 +251,15 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
           }
 
           const nextStatus = transactionItemStatusFromTxStatus(nextTxState);
-          const nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
+          let nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
+          if (nextTxState === TransactionState.FetchingLeaves) {
+            const { current, end, start } =
+              nextTxData as TransactionStatusMap<unknown>[TransactionState.FetchingLeaves];
+
+            const percentage = calculateProgressPercentage(start, end, current);
+            const formattedPercentage = toFixed(percentage);
+            nextMessage = `Fetching transaction leaves on chain... ${formattedPercentage}%`;
+          }
 
           if (
             nextStatus === currentPayload.txStatus.status &&
@@ -273,7 +286,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         }
       );
 
-      // Substart to the transaction hash
+      // Subscribe to the transaction hash
       const hashSub = tx.$txHash.subscribe((nextTxHash) => {
         const payloads = txPayloads$.getValue();
         const currentPayload = payloads.find((payload) => payload.id === tx.id);
@@ -302,8 +315,34 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
         txPayloads$.next(nextPayloads);
       });
 
+      // Subscribe to the transaction step
+      const stepSub = tx.stepSubject.subscribe((nextStep) => {
+        const payloads = txPayloads$.getValue();
+        const currentPayload = payloads.find((payload) => payload.id === tx.id);
+
+        if (!currentPayload) {
+          return;
+        }
+
+        if (nextStep === currentPayload.currentStep) {
+          return;
+        }
+
+        const nextPayloads = payloads.map((payload) => {
+          if (payload.id === tx.id) {
+            return {
+              ...payload,
+              currentStep: nextStep,
+            };
+          }
+          return payload;
+        });
+
+        txPayloads$.next(nextPayloads);
+      });
+
       // Update the subscriptions ref
-      subscriptions.current.set(tx.id, [statusSub, hashSub]);
+      subscriptions.current.set(tx.id, [statusSub, hashSub, stepSub]);
     },
     []
   );

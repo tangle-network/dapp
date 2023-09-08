@@ -7,19 +7,17 @@ import {
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import {
-  Avatar,
-  Button,
-  ChainChip,
-  CheckBox,
-  Chip,
-  CopyWithTooltip,
-  InfoItem,
-  Progress,
-  TitleWithInfo,
-  TokenWithAmount,
-} from '../../components';
-import { Typography } from '../../typography';
+import { Avatar } from '../../components/Avatar/Avatar';
+import { InfoItem } from '../../components/BridgeInputs/InfoItem';
+import { ChainChip } from '../../components/ChainChip/ChainChip';
+import { CheckBox } from '../../components/CheckBox/Checkbox';
+import { Chip } from '../../components/Chip/Chip';
+import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
+import SteppedProgress from '../../components/Progress/SteppedProgress';
+import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
+import { TokenWithAmount } from '../../components/TokenWithAmount/TokenWithAmount';
+import Button from '../../components/buttons/Button';
+import { Typography } from '../../typography/Typography';
 import {
   formatTokenAmount,
   getRoundedAmountString,
@@ -41,7 +39,6 @@ const defaultRecipientTitleProps: NonNullable<
 export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
   (
     {
-      activeChains,
       actionBtnProps,
       amount,
       changeAmount,
@@ -52,10 +49,9 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       feeToken,
       note,
       onClose,
-      isCopied,
-      onCopy,
       onDownload,
       progress,
+      totalProgress,
       recipientTitleProps,
       recipientPublicKey,
       relayerAddress,
@@ -65,6 +61,8 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       txStatusMessage,
       title = 'Confirm Transfer',
       fungibleTokenSymbol: token1Symbol,
+      refundAmount,
+      refundToken,
       ...props
     },
     ref
@@ -77,7 +75,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       const formated = getRoundedAmountString(amount, 3, {
         roundingFunction: Math.round,
       });
-      return `${formated} ${token1Symbol ?? ''}`;
+      return `${formated} ${token1Symbol ?? ''}`.trim();
     }, [amount, token1Symbol]);
 
     const changeAmountContent = useMemo(() => {
@@ -88,7 +86,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       const formated = getRoundedAmountString(changeAmount, 3, {
         roundingFunction: Math.round,
       });
-      return `${formated} ${token1Symbol ?? ''}`;
+      return `${formated} ${token1Symbol ?? ''}`.trim();
     }, [changeAmount, token1Symbol]);
 
     const feeContent = useMemo(() => {
@@ -100,17 +98,32 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
         const formatedFee = getRoundedAmountString(fee, 3, {
           roundingFunction: Math.round,
         });
-        return `${formatedFee} ${feeToken ?? ''}`;
+        return `${formatedFee} ${feeToken ?? ''}`.trim();
       }
 
       return '--';
     }, [fee, feeToken]);
 
+    const refundContent = useMemo(() => {
+      if (typeof refundAmount === 'undefined') {
+        return;
+      }
+
+      if (typeof refundAmount === 'string') {
+        return `${refundAmount.slice(0, 10)} ${refundToken ?? ''}`.trim();
+      }
+
+      const formated = getRoundedAmountString(refundAmount, 3, {
+        roundingFunction: Math.round,
+      });
+      return `${formated} ${refundToken ?? ''}`.trim();
+    }, [refundAmount, refundToken]);
+
     return (
       <div
         {...props}
         className={twMerge(
-          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 min-w-[550px] min-h-[710px] flex flex-col justify-between gap-9',
+          'p-4 rounded-lg bg-mono-0 dark:bg-mono-180 flex flex-col justify-between gap-9',
           className
         )}
         ref={ref}
@@ -127,7 +140,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
           </div>
 
           {/** Transaction progress */}
-          {typeof progress === 'number' ? (
+          {typeof progress === 'number' && typeof totalProgress === 'number' ? (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <TitleWithInfo
@@ -137,7 +150,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 />
                 <Chip color="blue">{txStatusMessage}</Chip>
               </div>
-              <Progress value={progress} />
+              <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
           ) : null}
 
@@ -324,6 +337,15 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 }}
                 rightContent={amountContent}
               />
+              {refundContent && (
+                <InfoItem
+                  leftTextProps={{
+                    variant: 'body1',
+                    title: 'Refund',
+                  }}
+                  rightContent={refundContent}
+                />
+              )}
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',

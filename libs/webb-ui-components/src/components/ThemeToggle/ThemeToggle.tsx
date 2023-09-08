@@ -17,19 +17,26 @@ export const ThemeToggle = () => {
       className={`relative inline-block w-14 h-8 align-middle select-none transition duration-200 ease-in rounded-full ${
         isDarkMode ? 'bg-mono-200' : 'bg-blue-10'
       }`}
+      onClick={(eve) => {
+        eve.preventDefault();
+        toggleThemeMode();
+      }}
     >
       <input
         type="checkbox"
         name="toggle"
         id="toggle"
-        className="toggle-checkbox hidden"
+        className="hidden toggle-checkbox"
         checked={isDarkMode}
-        onChange={() => toggleThemeMode()}
+        onChange={(eve) => {
+          eve.stopPropagation();
+          toggleThemeMode();
+        }}
       />
       <label
         htmlFor="toggle"
-        className="toggle-label block overflow-hidden h-6 rounded-full cursor-pointer"
-      ></label>
+        className="block h-6 overflow-hidden rounded-full cursor-pointer toggle-label"
+      />
       <div
         className={`toggle-icon absolute inset-y-0 left-0 flex items-center transition-transform duration-200 ease-in  ${
           !isDarkMode ? 'translate-x-full' : ''

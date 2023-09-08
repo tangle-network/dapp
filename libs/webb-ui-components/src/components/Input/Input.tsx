@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InputProps } from './types';
+import { Typography } from '../../typography/Typography';
 
 /**
  * The `Input` component
@@ -116,10 +117,10 @@ export const Input: React.FC<InputProps> = (props) => {
   const inputClsxBase = useMemo(
     () =>
       cx(
-        'form-input w-full transition-none text-[16px] leading-[30px] bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-40 py-2',
+        'form-input w-full transition-none text-[16px] leading-[30px] bg-mono-0 rounded-lg text-mono-140 dark:bg-mono-200 dark:text-mono-40 invalid:border-red-70 dark:invalid:border-red-50 py-2',
         paddingX,
         isInvalid
-          ? ('border-red-40' as const)
+          ? ('border-red-70 dark:border-red-50' as const)
           : ('border-mono-80 dark:border-mono-120' as const)
       ),
     [isInvalid, paddingX]
@@ -201,9 +202,14 @@ export const Input: React.FC<InputProps> = (props) => {
       </div>
 
       {errorMessage && (
-        <span className="block mt-2 ml-4 utility text-red dark:text-red-50">
+        <Typography
+          component="p"
+          variant="body4"
+          fw="bold"
+          className="mt-2 text-red-70 dark:text-red-50"
+        >
           {errorMessage}
-        </span>
+        </Typography>
       )}
     </div>
   );
