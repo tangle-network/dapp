@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltipProps } from './types';
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
 
 const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
   return (
@@ -21,7 +22,7 @@ const ChartTooltip: FC<ChartTooltipProps> = ({ date, info }) => {
           />
           <Typography variant="body2">
             {item.label}: {item.valuePrefix ?? ''}
-            {item.value.toFixed(2)}
+            {getRoundedDownNumberWith2Decimals(item.value)}
             {item.valueSuffix ?? ''}
           </Typography>
         </div>

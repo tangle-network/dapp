@@ -48,7 +48,10 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
     );
 
     const iconName = useMemo(
-      () => (chainName === 'tangle' ? 'tangle transparent' : chainName),
+      () =>
+        chainName.toLowerCase().includes('tangle')
+          ? 'tangle transparent'
+          : chainName,
       [chainName]
     );
 

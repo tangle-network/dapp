@@ -25,7 +25,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={currentTvl}
         value={tvlValue}
         date={tvlDate}
-        valueSuffix=" tTNT"
+        valueSuffix=" webbtTNT"
         className="bg-glass dark:bg-glass_dark"
       >
         <AreaChart
@@ -33,7 +33,7 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
           setDate={setTVLDate}
           setValue={setTvlValue}
           tooltipLabel="TVL"
-          tooltipValuePrefix="$"
+          tooltipValueSuffix=" webbtTNT"
         />
       </ChartContainer>
 
@@ -43,13 +43,14 @@ const OverviewChartsCmp: FC<OverviewChartsDataType> = ({
         currentValue={deposit24h}
         value={volumeValue}
         date={volumeDate}
-        valueSuffix=" tTNT"
+        valueSuffix=" webbtTNT"
         className="bg-glass dark:bg-glass_dark"
       >
         <VolumeChart
           data={volumeData}
           setDate={setVolumeDate}
           setValue={setVolumeValue}
+          tooltipValueSuffix=" webbtTNT"
         />
       </ChartContainer>
     </div>

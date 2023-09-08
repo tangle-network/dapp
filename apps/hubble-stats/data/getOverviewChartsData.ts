@@ -4,15 +4,11 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 import { getTvl, getDeposit24h } from './reusable';
 import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
 import {
-  getDateFromEpoch,
-  getEpochDailyFromStart,
   getEpochStart,
   getNumDatesFromStart,
+  getFormattedDataForBasicChart,
+  getFormattedDataForVolumeChart,
 } from '../utils';
-
-type VolumeDataType = {
-  [epoch: string]: { deposit: number; withdrawal: number };
-};
 
 export type OverviewChartsDataType = {
   currentTvl: number | undefined;
@@ -35,7 +31,7 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
   const currentTvl = await getTvl();
   const deposit24h = await getDeposit24h();
 
-  let tvlData: { [epoch: string]: bigint } = {};
+  let tvlData: { [epoch: string]: number } = {};
   try {
     const fetchedTvlData =
       await vAnchorClient.TotalValueLocked.GetVAnchorsTVLByChainsByDateRange(
@@ -47,16 +43,16 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
 
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
       Object.keys(tvlDataByChain).forEach((epoch) => {
-        if (!tvlMap[epoch]) tvlMap[epoch] = BigInt(0);
-        tvlMap[epoch] += BigInt(tvlDataByChain[epoch]);
+        if (!tvlMap[epoch]) tvlMap[epoch] = 0;
+        tvlMap[epoch] += +formatEther(BigInt(tvlDataByChain[epoch]));
       });
       return tvlMap;
-    }, {});
+    }, {} as { [epoch: string]: number });
   } catch (e) {
     tvlData = {};
   }
 
-  let depositData: { [epoch: string]: bigint } = {};
+  let depositData: { [epoch: string]: number } = {};
   try {
     const fetchedDepositData =
       await vAnchorClient.Deposit.GetVAnchorsDepositByChainsByDateRange(
@@ -69,18 +65,18 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     depositData = fetchedDepositData.reduce(
       (depositMap, depositDataByChain) => {
         Object.keys(depositDataByChain).forEach((epoch: string) => {
-          if (!depositMap[epoch]) depositMap[epoch] = BigInt(0);
-          depositMap[epoch] += BigInt(depositDataByChain[epoch]);
+          if (!depositMap[epoch]) depositMap[epoch] = 0;
+          depositMap[epoch] += +formatEther(BigInt(depositDataByChain[epoch]));
         });
         return depositMap;
       },
-      {}
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     depositData = {};
   }
 
-  let withdrawalData: { [epoch: string]: bigint } = {};
+  let withdrawalData: { [epoch: string]: number } = {};
   try {
     const fetchedWithdrawalData =
       await vAnchorClient.Withdrawal.GetVAnchorsWithdrawalByChainsByDateRange(
@@ -93,45 +89,23 @@ export default async function getOverviewChartsData(): Promise<OverviewChartsDat
     withdrawalData = fetchedWithdrawalData.reduce(
       (withdrawalMap, withdrawalDataByChain) => {
         Object.keys(withdrawalDataByChain).forEach((epoch: string) => {
-          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = BigInt(0);
-          withdrawalMap[epoch] += BigInt(withdrawalDataByChain[epoch]);
+          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = 0;
+          withdrawalMap[epoch] += +formatEther(
+            BigInt(withdrawalDataByChain[epoch])
+          );
         });
         return withdrawalMap;
       },
-      {}
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     withdrawalData = {};
   }
 
-  const volumeData: VolumeDataType = getEpochDailyFromStart().reduce(
-    (volumeMap, epoch) => {
-      volumeMap[epoch] = {
-        deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
-        withdrawal: withdrawalData[epoch]
-          ? +formatEther(withdrawalData[epoch])
-          : 0,
-      };
-      return volumeMap;
-    },
-    {} as VolumeDataType
-  );
-
   return {
     currentTvl,
     deposit24h,
-    tvlData: Object.keys(tvlData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: +formatEther(tvlData[+epoch]),
-      };
-    }),
-    volumeData: Object.keys(volumeData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        deposit: volumeData[+epoch].deposit,
-        withdrawal: volumeData[+epoch].withdrawal,
-      };
-    }),
+    tvlData: getFormattedDataForBasicChart(tvlData),
+    volumeData: getFormattedDataForVolumeChart(depositData, withdrawalData),
   };
 }

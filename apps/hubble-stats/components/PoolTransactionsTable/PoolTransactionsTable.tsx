@@ -41,7 +41,7 @@ const columns: ColumnDef<PoolTransactionType, any>[] = [
       <NumberCell
         value={props.row.original.tokenAmount}
         suffix={props.row.original.tokenSymbol}
-        className="text-left"
+        className="justify-start"
         isProtected={props.row.original.activity === 'transfer'}
       />
     ),

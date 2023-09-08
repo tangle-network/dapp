@@ -33,6 +33,7 @@ export * from './ContrastTwoLine';
 export * from './CopyLinkFill';
 export * from './Copyright';
 export * from './CornerDownRightLine';
+export * from './DatabaseLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
 export * from './DeleteBinWithBg';

@@ -13,22 +13,31 @@ const NumberCell: FC<NumberCellProps> = ({
   className,
 }) => {
   return (
-    <Typography
-      variant="body1"
-      className={twMerge(
-        'text-mono-140 dark:text-mono-40 text-center',
-        className
-      )}
+    <div
+      className={twMerge('flex items-center gap-1 justify-center', className)}
     >
-      {typeof value === 'number' && (prefix ?? '')}
-      {isProtected
-        ? '****'
-        : getRoundedAmountString(value, 2, {
-            roundingFunction: Math.floor,
-            totalLength: 0,
-          })}
-      {typeof value === 'number' && (suffix ? ` ${suffix}` : '')}
-    </Typography>
+      <Typography variant="body1" className="text-mono-140 dark:text-mono-40">
+        {typeof value === 'number' && (prefix ?? '')}
+        {isProtected
+          ? '****'
+          : getRoundedAmountString(value, 2, {
+              roundingFunction: Math.floor,
+              totalLength: 0,
+            })}
+      </Typography>
+
+      {typeof value === 'number' &&
+        (suffix ? (
+          <Typography
+            variant="body2"
+            className="text-mono-140 dark:text-mono-40"
+          >
+            {suffix}
+          </Typography>
+        ) : (
+          ''
+        ))}
+    </div>
   );
 };
 

@@ -21,9 +21,6 @@ export const getEpochArray = (
 const EPOCH_DAY_INTERVAL = 24 * 60 * 60;
 
 export const getEpochNow = () => getEpochFromDate(new Date());
-/**
- * Total number of days have passed since the starting epoch
- */
 
 const EPOCH_START = process.env.HUBBLE_STATS_EPOCH_START
   ? +process.env.HUBBLE_STATS_EPOCH_START
@@ -42,6 +39,9 @@ export const getValidDatesToQuery = () => {
   return [getDateNow(), getDate24H(), getDate48H()];
 };
 
+/**
+ * Total number of days have passed since the starting epoch
+ */
 export const getNumDatesFromStart = () => {
   return (
     1 +
@@ -53,4 +53,24 @@ export const getNumDatesFromStart = () => {
 
 export const getEpochDailyFromStart = () => {
   return getEpochArray(getEpochStart(), getNumDatesFromStart());
+};
+
+export const getTimePassedByEpoch = (epoch: number): string => {
+  const now = Date.now() / 1000;
+  const secondsAgo = now - epoch;
+
+  if (secondsAgo < 60) {
+    return `${Math.floor(secondsAgo)} ${
+      secondsAgo === 1 ? 'second' : 'seconds'
+    } ago`;
+  } else if (secondsAgo < 3600) {
+    const minutesAgo = Math.floor(secondsAgo / 60);
+    return `${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago`;
+  } else if (secondsAgo < 86400) {
+    const hoursAgo = Math.floor(secondsAgo / 3600);
+    return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago`;
+  } else {
+    const daysAgo = Math.floor(secondsAgo / 86400);
+    return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
+  }
 };

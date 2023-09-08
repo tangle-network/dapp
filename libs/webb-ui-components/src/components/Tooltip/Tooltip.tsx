@@ -34,7 +34,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
           'radix-side-right:animate-slide-left-fade',
           'radix-side-bottom:animate-slide-up-fade',
           'radix-side-left:animate-slide-right-fade',
-          'inline-flex items-center break-all rounded p-2 min-w-0 max-w-[300px]',
+          'inline-flex items-center break-all rounded p-2',
           'bg-mono-20 dark:bg-mono-160',
           'webb-shadow-sm'
         )}
@@ -43,7 +43,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
         <TooltipPrimitive.Arrow className="fill-current text-mono-20 dark:text-mono-160 webb-shadow-sm" />
         <div
           className={twMerge(
-            'body4 text-mono-140 dark:text-mono-80 font-normal',
+            'body4 text-mono-140 dark:text-mono-80 font-normal min-w-0 max-w-[300px]',
             className
           )}
         >

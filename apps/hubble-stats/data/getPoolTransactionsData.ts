@@ -1,33 +1,64 @@
-import { rand, randEthereumAddress, randFloat } from '@ngneat/falso';
-import { arrayFrom } from '@webb-tools/webb-ui-components/utils';
+import { formatEther } from 'viem';
+import vAnchorClient from '@webb-tools/vanchor-client';
 
+import {
+  VANCHORS_MAP,
+  LIVE_SUBGRAPH_MAP,
+  ACTIVE_SUBGRAPH_URLS,
+} from '../constants';
+import { getTimePassedByEpoch } from '../utils';
 import { PoolTransactionType } from '../components/PoolTransactionsTable/types';
 
-const typedChainIds = [
-  1099511627781, 1099511628196, 1099511629063, 1099511670889, 1099511707777,
-  1099512049389, 1099512162129, 1099522782887,
-];
+const TRANSACTIONS_LIMIT = 100;
 
 export type PoolTransactionDataType = {
   transactions: PoolTransactionType[];
 };
 
-const getNewTx = (): PoolTransactionType => {
-  return {
-    txHash: randEthereumAddress(),
-    activity: rand(['deposit', 'transfer', 'withdraw']),
-    tokenAmount: randFloat({ min: 0, max: 20, fraction: 2 }),
-    tokenSymbol: rand(['ETH', 'WETH', 'webbPRC']),
-    sourceTypedChainId: rand(typedChainIds),
-    destinationTypedChainId: undefined,
-    time: 'Today',
-  };
-};
-
 export default async function getPoolTransactionsData(
   poolAddress: string
 ): Promise<PoolTransactionDataType> {
+  const { nativeTokenByChain } = VANCHORS_MAP[poolAddress];
+
+  const subgraphByTypedChainIdMap = Object.keys(LIVE_SUBGRAPH_MAP).reduce(
+    (map, typedChainId) => {
+      map[LIVE_SUBGRAPH_MAP[+typedChainId]] = +typedChainId;
+      return map;
+    },
+    {} as Record<string, number>
+  );
+
+  const fetchedTransactions =
+    await vAnchorClient.Transaction.GetVAnchorTransactionsByChains(
+      ACTIVE_SUBGRAPH_URLS,
+      poolAddress,
+      TRANSACTIONS_LIMIT
+    );
+
+  const transactions: PoolTransactionType[] = fetchedTransactions.map((tx) => {
+    const amount = +formatEther(BigInt(tx.amount));
+    const activity =
+      amount > 0 ? 'deposit' : amount < 0 ? 'withdraw' : 'transfer';
+
+    const sourceTypedChainId = subgraphByTypedChainIdMap[tx.subgraphUrl];
+    // check for native token
+    const tokenSymbol =
+      BigInt(tx.tokenAddress) === BigInt(0)
+        ? nativeTokenByChain[sourceTypedChainId]
+        : tx.tokenSymbol;
+
+    return {
+      txHash: tx.txHash,
+      activity,
+      tokenAmount: Math.abs(amount),
+      tokenSymbol,
+      sourceTypedChainId,
+      destinationTypedChainId: undefined,
+      time: getTimePassedByEpoch(tx.timestamp),
+    };
+  });
+
   return {
-    transactions: arrayFrom(15, () => getNewTx()),
+    transactions,
   };
 }
