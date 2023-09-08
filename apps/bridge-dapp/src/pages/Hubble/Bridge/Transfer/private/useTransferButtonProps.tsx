@@ -28,6 +28,7 @@ import {
 import TransferConfirmContainer from '../../../../../containers/TransferConfirmContainer/TransferConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 import handleTxError from '../../../../../utils/handleTxError';
+import validateNoteLeafIndex from '../../../../../utils/validateNoteLeafIndex';
 
 export type UseTransferButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>['balances'];
@@ -348,6 +349,28 @@ function useTransferButtonProps({
         const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
         if (!inputNotes) {
           throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
+        }
+
+        // Validate the input notes
+        const edges = await vAnchorApi.getLatestNeighborEdges(
+          fungibleCfg.id,
+          srcTypedChainId
+        );
+        const nextIdx = await vAnchorApi.getNextIndex(
+          srcTypedChainId,
+          fungibleCfg.id
+        );
+
+        const valid = inputNotes.every((note) => {
+          if (note.note.targetChainId === srcTypedChainId.toString()) {
+            return note.note.index ? BigInt(note.note.index) < nextIdx : true;
+          } else {
+            return validateNoteLeafIndex(note, edges);
+          }
+        });
+
+        if (!valid) {
+          throw WebbError.from(WebbErrorCodes.NotesNotReady);
         }
 
         // Sum up the amount of the input notes to calculate the change amount

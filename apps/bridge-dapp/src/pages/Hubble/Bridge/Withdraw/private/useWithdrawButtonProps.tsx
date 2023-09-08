@@ -388,6 +388,7 @@ function useWithdrawButtonProps({
             return validateNoteLeafIndex(note, edges);
           }
         });
+
         if (!valid) {
           throw WebbError.from(WebbErrorCodes.NotesNotReady);
         }
