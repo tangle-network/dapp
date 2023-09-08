@@ -27,6 +27,7 @@ import {
 } from '../../../../../constants';
 import TransferConfirmContainer from '../../../../../containers/TransferConfirmContainer/TransferConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import handleTxError from '../../../../../utils/handleTxError';
 
 export type UseTransferButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>['balances'];
@@ -266,10 +267,7 @@ function useTransferButtonProps({
 
       const nextChain = chainsPopulated[srcTypedChainId];
       if (!nextChain) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain)
-        );
-        return;
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
       }
 
       const isNextChainActive =
@@ -295,175 +293,159 @@ function useTransferButtonProps({
 
   const handleTransferBtnClick = useCallback(
     async () => {
-      if (connCnt) {
-        return await handleSwitchChain();
-      }
+      try {
+        if (connCnt) {
+          return await handleSwitchChain();
+        }
 
-      // For type assertion
-      const _validAmount =
-        isValidAmount && !!amount && typeof receivingAmount === 'number';
+        // For type assertion
+        const _validAmount =
+          isValidAmount && !!amount && typeof receivingAmount === 'number';
 
-      const allInputsFilled =
-        !!srcChain &&
-        !!fungibleCfg &&
-        !!srcTypedChainId &&
-        !!destTypedChainId &&
-        !!recipient &&
-        (hasRefund ? !!refundRecipient : true) &&
-        _validAmount;
+        const allInputsFilled =
+          !!srcChain &&
+          !!fungibleCfg &&
+          !!srcTypedChainId &&
+          !!destTypedChainId &&
+          !!recipient &&
+          (hasRefund ? !!refundRecipient : true) &&
+          _validAmount;
 
-      const doesApiReady =
-        !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
+        const doesApiReady =
+          !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
 
-      if (!allInputsFilled || !doesApiReady || !destChain) {
-        console.error(WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady), {
-          allInputsFilled,
-          doesApiReady,
-          destChain,
+        if (!allInputsFilled || !doesApiReady || !destChain) {
+          throw WebbError.from(WebbErrorCodes.ApiNotReady);
+        }
+
+        if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
+          throw WebbError.from(WebbErrorCodes.InvalidArguments);
+        }
+
+        const anchorId = activeApi.state.activeBridge.targets[srcTypedChainId];
+        if (!anchorId) {
+          throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
+        }
+
+        const resourceId = await vAnchorApi.getResourceId(
+          anchorId,
+          srcChain.id,
+          srcChain.chainType
+        );
+
+        const avaiNotes = (
+          noteManager.getNotesOfChain(resourceId.toString()) ?? []
+        ).filter(
+          (note) =>
+            note.note.tokenSymbol === fungibleCfg.symbol &&
+            !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
+        );
+
+        const fungibleDecimals = fungibleCfg.decimals;
+        const amountBig = parseUnits(amount, fungibleDecimals);
+
+        // Get the notes that will be spent for this withdraw
+        const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
+        if (!inputNotes) {
+          throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
+        }
+
+        // Sum up the amount of the input notes to calculate the change amount
+        const totalAmountInput = inputNotes.reduce(
+          (acc, note) => acc + BigInt(note.note.amount),
+          ZERO_BIG_INT
+        );
+
+        const changeAmount = totalAmountInput - amountBig;
+        if (changeAmount < 0) {
+          throw WebbError.from(WebbErrorCodes.InvalidArguments);
+        }
+
+        const keypair = noteManager.getKeypair();
+        if (!keypair.privkey) {
+          throw WebbError.from(WebbErrorCodes.KeyPairNotFound);
+        }
+
+        // Setup the recipient's keypair.
+        const recipientKeypair = Keypair.fromString(recipient);
+
+        const utxoAmount =
+          activeRelayer && typeof totalFeeWei == 'bigint'
+            ? amountBig - totalFeeWei
+            : amountBig;
+
+        const transferUtxo = await activeApi.generateUtxo({
+          curve: noteManager.defaultNoteGenInput.curve,
+          backend: activeApi.backend,
+          amount: utxoAmount.toString(),
+          chainId: destTypedChainId.toString(),
+          keypair: recipientKeypair,
+          originChainId: srcTypedChainId.toString(),
+          index: activeApi.state.defaultUtxoIndex.toString(),
         });
-        return;
-      }
 
-      if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments)
-        );
-        return;
-      }
+        const changeNote =
+          changeAmount > 0
+            ? await noteManager.generateNote(
+                activeApi.backend,
+                srcTypedChainId,
+                anchorId,
+                srcTypedChainId,
+                anchorId,
+                fungibleCfg.symbol,
+                fungibleDecimals,
+                changeAmount
+              )
+            : undefined;
 
-      const anchorId = activeApi.state.activeBridge.targets[srcTypedChainId];
-      if (!anchorId) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound)
-        );
-        return;
-      }
-
-      const resourceId = await vAnchorApi.getResourceId(
-        anchorId,
-        srcChain.id,
-        srcChain.chainType
-      );
-
-      const avaiNotes = (
-        noteManager.getNotesOfChain(resourceId.toString()) ?? []
-      ).filter(
-        (note) =>
-          note.note.tokenSymbol === fungibleCfg.symbol &&
-          !!fungibleCfg.addresses.get(parseInt(note.note.targetChainId))
-      );
-
-      const fungibleDecimals = fungibleCfg.decimals;
-      const amountBig = parseUnits(amount, fungibleDecimals);
-
-      // Get the notes that will be spent for this withdraw
-      const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
-      if (!inputNotes) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.NoteParsingFailure)
-        );
-        return;
-      }
-
-      // Sum up the amount of the input notes to calculate the change amount
-      const totalAmountInput = inputNotes.reduce(
-        (acc, note) => acc + BigInt(note.note.amount),
-        ZERO_BIG_INT
-      );
-
-      const changeAmount = totalAmountInput - amountBig;
-      if (changeAmount < 0) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments)
-        );
-        return;
-      }
-
-      const keypair = noteManager.getKeypair();
-      if (!keypair.privkey) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.KeyPairNotFound)
-        );
-        return;
-      }
-
-      // Setup the recipient's keypair.
-      const recipientKeypair = Keypair.fromString(recipient);
-
-      const utxoAmount =
-        activeRelayer && typeof totalFeeWei == 'bigint'
-          ? amountBig - totalFeeWei
-          : amountBig;
-
-      const transferUtxo = await activeApi.generateUtxo({
-        curve: noteManager.defaultNoteGenInput.curve,
-        backend: activeApi.backend,
-        amount: utxoAmount.toString(),
-        chainId: destTypedChainId.toString(),
-        keypair: recipientKeypair,
-        originChainId: srcTypedChainId.toString(),
-        index: activeApi.state.defaultUtxoIndex.toString(),
-      });
-
-      const changeNote =
-        changeAmount > 0
-          ? await noteManager.generateNote(
-              activeApi.backend,
-              srcTypedChainId,
-              anchorId,
-              srcTypedChainId,
-              anchorId,
-              fungibleCfg.symbol,
-              fungibleDecimals,
-              changeAmount
+        // Generate change utxo (or dummy utxo if the changeAmount is `0`)
+        const changeUtxo = changeNote
+          ? await utxoFromVAnchorNote(
+              changeNote.note,
+              changeNote.note.index ? parseInt(changeNote.note.index) : 0
             )
-          : undefined;
+          : await activeApi.generateUtxo({
+              curve: noteManager.defaultNoteGenInput.curve,
+              backend: activeApi.backend,
+              amount: changeAmount.toString(),
+              chainId: `${srcTypedChainId}`,
+              keypair,
+              originChainId: `${srcTypedChainId}`,
+              index: activeApi.state.defaultUtxoIndex.toString(),
+            });
 
-      // Generate change utxo (or dummy utxo if the changeAmount is `0`)
-      const changeUtxo = changeNote
-        ? await utxoFromVAnchorNote(
-            changeNote.note,
-            changeNote.note.index ? parseInt(changeNote.note.index) : 0
-          )
-        : await activeApi.generateUtxo({
-            curve: noteManager.defaultNoteGenInput.curve,
-            backend: activeApi.backend,
-            amount: changeAmount.toString(),
-            chainId: `${srcTypedChainId}`,
-            keypair,
-            originChainId: `${srcTypedChainId}`,
-            index: activeApi.state.defaultUtxoIndex.toString(),
-          });
-
-      setTransferConfirmComponent(
-        <TransferConfirmContainer
-          inputNotes={inputNotes}
-          amount={receivingAmount}
-          feeInWei={
-            typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT
-          }
-          feeToken={feeToken}
-          changeAmount={Number(formatEther(changeAmount))}
-          currency={new Currency(fungibleCfg)}
-          destChain={destChain}
-          recipient={recipient}
-          relayer={activeRelayer}
-          note={changeNote}
-          changeUtxo={changeUtxo}
-          transferUtxo={transferUtxo}
-          onResetState={() => {
-            resetFeeInfo?.();
-            setTransferConfirmComponent(null);
-            navigate(`/${BRIDGE_PATH}/${TRANSFER_PATH}`);
-          }}
-          onClose={() => {
-            setTransferConfirmComponent(null);
-          }}
-          refundAmount={refundAmount}
-          refundToken={refundToken}
-          refundRecipient={refundRecipient}
-        />
-      );
+        setTransferConfirmComponent(
+          <TransferConfirmContainer
+            inputNotes={inputNotes}
+            amount={receivingAmount}
+            feeInWei={
+              typeof totalFeeWei === 'bigint' ? totalFeeWei : ZERO_BIG_INT
+            }
+            feeToken={feeToken}
+            changeAmount={Number(formatEther(changeAmount))}
+            currency={new Currency(fungibleCfg)}
+            destChain={destChain}
+            recipient={recipient}
+            relayer={activeRelayer}
+            note={changeNote}
+            changeUtxo={changeUtxo}
+            transferUtxo={transferUtxo}
+            onResetState={() => {
+              resetFeeInfo?.();
+              setTransferConfirmComponent(null);
+              navigate(`/${BRIDGE_PATH}/${TRANSFER_PATH}`);
+            }}
+            onClose={() => {
+              setTransferConfirmComponent(null);
+            }}
+            refundAmount={refundAmount}
+            refundToken={refundToken}
+            refundRecipient={refundRecipient}
+          />
+        );
+      } catch (error) {
+        handleTxError(error, 'Transfer');
+      }
     },
     // prettier-ignore
     [activeApi, activeRelayer, amount, connCnt, destChain, destTypedChainId, feeToken, fungibleCfg, handleSwitchChain, hasRefund, isValidAmount, navigate, noteManager, receivingAmount, recipient, refundAmount, refundRecipient, refundToken, resetFeeInfo, srcChain, srcTypedChainId, totalFeeWei, vAnchorApi]

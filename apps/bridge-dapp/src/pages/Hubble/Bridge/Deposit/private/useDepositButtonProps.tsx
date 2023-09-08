@@ -18,6 +18,7 @@ import {
 } from '../../../../../constants';
 import DepositConfirmContainer from '../../../../../containers/DepositConfirmContainer/DepositConfirmContainer';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import handleTxError from '../../../../../utils/handleTxError';
 
 function useDepositButtonProps({
   balance,
@@ -183,8 +184,7 @@ function useDepositButtonProps({
   const handleSwitchChain = useCallback(async () => {
     const nextChain = chainsPopulated[Number(srcTypedId)];
     if (!nextChain) {
-      console.error(WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain));
-      return;
+      throw WebbError.from(WebbErrorCodes.UnsupportedChain);
     }
 
     const isNextChainActive = activeChain?.id === nextChain.id && activeChain?.chainType === nextChain.chainType;
@@ -204,96 +204,90 @@ function useDepositButtonProps({
   }, [activeChain?.chainType, activeChain?.id, activeWallet, hasNoteAccount, isWalletConnected, setOpenNoteAccountModal, srcTypedId, switchChain, toggleModal]); // prettier-ignore
 
   const handleBtnClick = useCallback(async () => {
-    if (conncnt) {
-      return handleSwitchChain();
+    try {
+      if (conncnt) {
+        return await handleSwitchChain();
+      }
+
+      if (!noteManager || !activeApi) {
+        throw WebbError.from(WebbErrorCodes.ApiNotReady);
+      }
+
+      if (!fungible) {
+        throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
+      }
+
+      const srcTypedIdNum = Number(srcTypedId);
+      const destTypedIdNum = Number(destTypedId);
+      const poolIdNum = Number(poolId);
+
+      if (Number.isNaN(srcTypedIdNum) || Number.isNaN(destTypedIdNum) || Number.isNaN(poolIdNum)) {
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+      }
+
+      const srcChain = chainsPopulated[srcTypedIdNum];
+      const destChain = chainsPopulated[destTypedIdNum];
+
+      if (!srcChain || !destChain) {
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
+      }
+
+      setGeneratingNote(true);
+
+      const srcAnchorId = apiConfig.getAnchorIdentifier(
+        poolIdNum,
+        srcTypedIdNum
+      );
+
+      const destAnchorId = apiConfig.getAnchorIdentifier(
+        poolIdNum,
+        destTypedIdNum
+      );
+
+      if (!srcAnchorId || !destAnchorId) {
+        throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
+      }
+
+      const amountBig = BigInt(amount);
+      const transactNote = await noteManager.generateNote(
+        activeApi.backend,
+        srcTypedIdNum,
+        srcAnchorId,
+        destTypedIdNum,
+        destAnchorId,
+        fungible.symbol,
+        fungible.decimals,
+        amountBig
+      )
+
+      setGeneratingNote(false);
+
+      setDepositConfirmComponent(
+        <DepositConfirmContainer
+          fungibleTokenId={poolIdNum}
+          wrappableTokenId={tokenId ? Number(tokenId) : undefined}
+          amount={parseFloat(formatEther(amountBig))}
+          sourceChain={{
+            name: srcChain.name,
+            type: srcChain.group
+          }}
+          destChain={{
+            name: destChain.name,
+            type: destChain.group
+          }}
+          note={transactNote}
+          onResetState={() => {
+            setDepositConfirmComponent(null)
+            navigate(`/${BRIDGE_PATH}/${DEPOSIT_PATH}`)
+          }}
+          onClose={() => {
+            setDepositConfirmComponent(null)
+          }}
+        />
+      )
+    } catch (error) {
+      handleTxError(error, 'Deposit');
     }
-
-    if (!noteManager || !activeApi) {
-      const err = WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady);
-      console.error(err)
-      return;
-    }
-
-    if (!fungible) {
-      const err = WebbError.getErrorMessage(WebbErrorCodes.NoFungibleTokenAvailable);
-      console.error(err);
-      return;
-    }
-
-    const srcTypedIdNum = Number(srcTypedId);
-    const destTypedIdNum = Number(destTypedId);
-    const poolIdNum = Number(poolId);
-
-    if (Number.isNaN(srcTypedIdNum) || Number.isNaN(destTypedIdNum) || Number.isNaN(poolIdNum)) {
-      const err = WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain);
-      console.error(err);
-      return;
-    }
-
-    const srcChain = chainsPopulated[srcTypedIdNum];
-    const destChain = chainsPopulated[destTypedIdNum];
-
-    if (!srcChain || !destChain) {
-      const err = WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain);
-      console.error(err);
-      return;
-    }
-
-    setGeneratingNote(true);
-
-    const srcAnchorId = apiConfig.getAnchorIdentifier(
-      poolIdNum,
-      srcTypedIdNum
-    );
-
-    const destAnchorId = apiConfig.getAnchorIdentifier(
-      poolIdNum,
-      destTypedIdNum
-    );
-
-    if (!srcAnchorId || !destAnchorId) {
-      const err = WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound);
-      console.error(err);
-      return;
-    }
-
-    const amountBig = BigInt(amount);
-    const transactNote = await noteManager.generateNote(
-      activeApi.backend,
-      srcTypedIdNum,
-      srcAnchorId,
-      destTypedIdNum,
-      destAnchorId,
-      fungible.symbol,
-      fungible.decimals,
-      amountBig
-    )
-
-    setGeneratingNote(false);
-
-    setDepositConfirmComponent(
-      <DepositConfirmContainer
-        fungibleTokenId={poolIdNum}
-        wrappableTokenId={tokenId ? Number(tokenId) : undefined}
-        amount={parseFloat(formatEther(amountBig))}
-        sourceChain={{
-          name: srcChain.name,
-          type: srcChain.group
-        }}
-        destChain={{
-          name: destChain.name,
-          type: destChain.group
-        }}
-        note={transactNote}
-        onResetState={() => {
-          setDepositConfirmComponent(null)
-          navigate(`/${BRIDGE_PATH}/${DEPOSIT_PATH}`)
-        }}
-        onClose={() => {
-          setDepositConfirmComponent(null)
-        }}
-      />
-    )
   }, [activeApi, amount, apiConfig, conncnt, destTypedId, fungible, handleSwitchChain, navigate, noteManager, poolId, srcTypedId, tokenId]); // prettier-ignore
 
   return {

@@ -289,10 +289,7 @@ function useWithdrawButtonProps({
 
       const nextChain = chainsPopulated[destTypedChainId];
       if (!nextChain) {
-        console.error(
-          WebbError.getErrorMessage(WebbErrorCodes.UnsupportedChain)
-        );
-        return;
+        throw WebbError.from(WebbErrorCodes.UnsupportedChain);
       }
 
       const isNextChainActive =
