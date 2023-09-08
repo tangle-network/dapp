@@ -1,5 +1,4 @@
 const preset = require('@webb-tools/tailwind-preset');
-const defaultTheme = require('tailwindcss/defaultTheme');
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
 const { join } = require('path');
 

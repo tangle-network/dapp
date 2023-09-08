@@ -3,7 +3,6 @@ import isValidPublicKey from '@webb-tools/dapp-types/utils/isValidPublicKey';
 import { useEffect, useState } from 'react';
 import {
   HAS_REFUND_KEY,
-  IS_CUSTOM_AMOUNT_KEY,
   RECIPIENT_KEY,
   REFUND_RECIPIENT_KEY,
 } from '../../../../../constants';
@@ -19,8 +18,6 @@ const useInputs = () => {
 
   const [refundRecipient, setRefundRecipient] =
     useStateWithRoute(REFUND_RECIPIENT_KEY);
-
-  const [isCustom, setIsCustom] = useStateWithRoute(IS_CUSTOM_AMOUNT_KEY);
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
 
@@ -62,14 +59,12 @@ const useInputs = () => {
   return {
     amount,
     hasRefund,
-    isCustom,
     recipient,
     recipientErrorMsg,
     refundRecipient,
     refundRecipientErrorMsg,
     setAmount,
     setHasRefund,
-    setIsCustom,
     setRecipient,
     setRefundRecipient,
   };

@@ -73,7 +73,6 @@ const Transfer = () => {
   const {
     amount,
     hasRefund,
-    isCustom,
     recipient,
     refundRecipient,
     setRefundRecipient,
@@ -81,7 +80,6 @@ const Transfer = () => {
     recipientErrorMsg,
     setAmount,
     setHasRefund,
-    setIsCustom,
     setRecipient,
   } = useInputs();
 
@@ -365,10 +363,6 @@ const Transfer = () => {
             maxAmount={fungibleMaxAmount}
             amount={amount}
             onAmountChange={setAmount}
-            isFixedAmount={!isCustom}
-            onIsFixedAmountChange={() =>
-              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
-            }
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector
@@ -383,8 +377,6 @@ const Transfer = () => {
                 onClick: () => handleTokenClick(),
               }}
             />
-
-            <TransactionInputCard.Footer />
           </TransactionInputCard.Root>
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
@@ -394,10 +386,6 @@ const Transfer = () => {
             tokenSymbol={fungibleCfg?.symbol}
             amount={amount}
             onAmountChange={setAmount}
-            isFixedAmount={!isCustom}
-            onIsFixedAmountChange={() =>
-              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
-            }
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector

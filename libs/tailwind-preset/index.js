@@ -225,6 +225,7 @@ const animation = {
     'drawer-content-right-slide-out 150ms cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
   content: [],
@@ -233,6 +234,10 @@ module.exports = {
       colors,
       keyframes,
       animation,
+      boxShadow: {
+        'webb-lg': '0px 8px 50px 0px rgba(0, 0, 0, 0.2)',
+        'webb-lg-dark': '0px 8px 50px 0px rgba(0, 0, 0, 0.1)',
+      },
     },
   },
   variants: {

@@ -12,7 +12,7 @@ export const Switcher = forwardRef<HTMLButtonElement, SwitcherProps>(
         twMerge(
           cx(
             'group',
-            'radix-state-checked:bg-blue-10 dark:radix-state-checked:bg-blue-90',
+            'radix-state-checked:bg-blue-40 dark:radix-state-checked:bg-blue-90',
             'radix-state-unchecked:bg-mono-80 dark:radix-state-unchecked:bg-mono-140',
             'relative inline-flex h-3 w-[28px] flex-shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out',
             'focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75',
