@@ -7,9 +7,6 @@ import { ChainButtonProps } from './types';
 
 const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
   ({ className, chain, status, ...props }, ref) => {
-    // Get last word of chain name to prevent long names from overflowing
-    const shortName = chain.name.split(' ').pop() ?? 'Unknown';
-
     return (
       <button
         {...props}
@@ -31,7 +28,7 @@ const ChainButton = forwardRef<HTMLButtonElement, ChainButtonProps>(
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
             name={chain.name}
           />
-          <p className="font-bold">{shortName}</p>
+          <p className="font-bold">{chain.name}</p>
           <ChevronDown
             size="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
