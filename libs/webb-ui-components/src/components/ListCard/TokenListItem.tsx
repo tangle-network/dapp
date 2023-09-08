@@ -157,7 +157,7 @@ const TokenListItem = forwardRef<
               component="span"
               variant="h5"
               fw="bold"
-              className="block capitalize cursor-default"
+              className="block cursor-default"
             >
               {symbol}
             </Typography>
@@ -166,7 +166,7 @@ const TokenListItem = forwardRef<
               component="span"
               variant="body1"
               fw="bold"
-              className="capitalize cursor-default text-mono-100 dark:text-mono-80"
+              className="cursor-default text-mono-100 dark:text-mono-80"
             >
               {name}{' '}
               {typeof explorerUrl === 'string' && (
