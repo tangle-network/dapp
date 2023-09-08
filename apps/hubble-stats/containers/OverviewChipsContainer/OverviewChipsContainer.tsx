@@ -1,5 +1,5 @@
 import { Chip } from '@webb-tools/webb-ui-components';
-import { BlockIcon } from '@webb-tools/icons';
+import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
 
 import { getOverviewChipsData } from '../../data';
 import { getRoundedDownNumberWith2Decimals } from '../../utils';
@@ -10,7 +10,7 @@ export default async function OverviewChipsContainer() {
   return (
     <div className="hidden md:flex items-center gap-4">
       <Chip color="blue" className="normal-case">
-        <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
+        <DatabaseLine size="lg" className="fill-blue-90 dark:fill-blue-30" />
         TVL:{' '}
         {typeof tvl === 'number'
           ? getRoundedDownNumberWith2Decimals(tvl)
@@ -19,7 +19,7 @@ export default async function OverviewChipsContainer() {
       </Chip>
 
       <Chip color="blue" className="normal-case">
-        <BlockIcon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
+        <ArrowRightUp size="lg" className="fill-blue-90 dark:fill-blue-30" />
         DEPOSITS:{' '}
         {typeof deposit === 'number'
           ? getRoundedDownNumberWith2Decimals(deposit)

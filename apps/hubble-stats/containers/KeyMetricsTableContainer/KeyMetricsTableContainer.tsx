@@ -33,7 +33,7 @@ export default async function KeyMetricsTableContainer() {
 
   const RelayerFees = (
     <KeyMetricItem
-      title="Relayer Fees"
+      title="Relayer Earnings"
       suffix=" webbtTNT"
       value={relayerFees}
       tooltip="The net earnings made by relayers after transaction costs."

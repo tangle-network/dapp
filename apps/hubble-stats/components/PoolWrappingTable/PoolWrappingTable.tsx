@@ -72,13 +72,7 @@ const staticColumns: ColumnDef<PoolWrappingDataType, any>[] = [
     cell: (props) => {
       const currency =
         props.row.getParentRow()?.original.symbol ?? props.row.original.symbol;
-      return (
-        <NumberCell
-          value={props.getValue()}
-          suffix={` ${currency}`}
-          className="lowercase"
-        />
-      );
+      return <NumberCell value={props.getValue()} suffix={` ${currency}`} />;
     },
   }),
 ];
