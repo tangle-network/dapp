@@ -1,4 +1,5 @@
 import {
+  useAuthorityUptimesQuery,
   usePublicKeyLazyQuery,
   usePublicKeysLazyQuery,
   useSessionKeyIdsLazyQuery,
@@ -12,7 +13,7 @@ import {
   useStaticConfig,
   useStatsContext,
 } from '../stats-provider';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   Loadable,
@@ -442,6 +443,16 @@ export function useKey(id: string): PublicKeyDetailsPage {
     isFailed: false,
     isLoading: true,
   });
+
+  const authoritiesUptime = useAuthorityUptimesQuery({
+    pollInterval: 1000,
+    fetchPolicy: 'network-only',
+  });
+
+  const authoritiesUptimes = useMemo(() => {
+    return authoritiesUptime.data?.authorityUpTimes?.nodes;
+  }, [authoritiesUptime]);
+
   useEffect(() => {
     call({
       variables: {
@@ -477,12 +488,16 @@ export function useKey(id: string): PublicKeyDetailsPage {
           const authorities = sessionAuthorities
             .filter((auth) => auth.isBest)
             .map((auth): KeyGenAuthority => {
+              const authority = authoritiesUptimes?.find(
+                (item) => item?.authorityId === auth.id
+              );
+              const uptime = authority ? authority.uptime : 0;
               return {
                 account: auth.id,
                 id: auth.id,
                 location: 'any',
                 reputation: Number(auth.reputation) * Math.pow(10, -7),
-                uptime: Number(auth.uptime) * Math.pow(10, -7),
+                uptime: uptime,
               };
             });
           const validators = sessionAuthorities.length;
