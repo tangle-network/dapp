@@ -27,7 +27,7 @@ const Layout = async ({ children }: { children?: React.ReactNode }) => {
         </div>
         <div className="flex-grow" />
         {/* Footer */}
-        <Footer isMinimal className="max-w-none" />
+        <Footer isMinimal className="max-w-none mx-0" />
       </main>
     </body>
   );
