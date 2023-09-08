@@ -23,14 +23,15 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
       <div className="flex flex-1 overflow-hidden">
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
-        <div className="flex flex-col w-full mx-auto overflow-y-auto">
-          <div className="w-full px-4 mx-auto max-w-[1565px] space-y-6">
+        <div className="flex flex-col w-full mx-auto overflow-y-auto px-4 max-w-[1565px] gap-6 justify-between">
+          <div className="space-y-6">
             <Header />
             <main className="w-full">
               <Outlet />
             </main>
-            <Footer isMinimal className="w-full py-12 mx-auto" />
           </div>
+
+          <Footer isMinimal className="w-full py-12 mx-auto" />
         </div>
       </div>
 
