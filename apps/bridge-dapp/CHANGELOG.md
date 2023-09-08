@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this app will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -152,3 +152,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Close confirm containers when txn is dismissed ([#1362](https://github.com/webb-tools/webb-dapp/pull/1362))
 - Removes extra bg image on bridge ([#1367](https://github.com/webb-tools/webb-dapp/pull/1367))
 - Relayer URL and Disable Radio When No Chains To Select ([#1379](https://github.com/webb-tools/webb-dapp/pull/1379))
+
+## [1.0.0] - 2023-09-09
+
+### Fixed, Changed and Added
+
+- Release new Hubble Bridge UI
+- Custom the relayer enpoint
+- Inputs sync with the URL
+- User interaction without wallet connected
+- New complete transaction flow with modal
+- Refund feature on the transfer flow
+- Leaf index validation with edge data on chain on withdraw and transfer flow
