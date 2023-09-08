@@ -21,7 +21,7 @@ import { Typography } from '../../typography';
 import { getRoundedAmountString, toFixed } from '../../utils';
 import { AdjustAmount } from '../BridgeInputs';
 import { Switcher } from '../Switcher';
-import { TextFieldInput } from '../TextField';
+import TextField from '../TextField';
 import { TitleWithInfo } from '../TitleWithInfo';
 import TokenSelector from '../TokenSelector';
 import {
@@ -63,9 +63,9 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full max-w-lg rounded-lg p-3 space-y-2',
-          'bg-[#F7F8F7]/50 dark:bg-mono-180',
-          'hover:bg-mono-20 dark:bg-mono-180',
+          'w-full max-w-lg rounded-lg px-3 py-1.5 space-y-2',
+          'bg-mono-20 dark:bg-mono-180',
+          'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
           className
         )}
       >
@@ -306,16 +306,17 @@ const TransactionInputCardBody = forwardRef<
               }
             />
           ) : (
-            <TextFieldInput
-              placeholder="0.0"
-              min={0}
-              {...customAmountProps}
-              isDisabledHoverStyle
-              inputMode="decimal"
-              pattern="[0-9]*\.?[0-9]*"
-              value={amount}
-              onChange={handleTextFieldChange}
-            />
+            <TextField.Root isDisabledHoverStyle className="!bg-transparent">
+              <TextField.Input
+                placeholder="0.0"
+                min={0}
+                {...customAmountProps}
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                value={amount}
+                onChange={handleTextFieldChange}
+              />
+            </TextField.Root>
           )}
         </div>
 
@@ -363,7 +364,7 @@ const TransactionInputCardFooter = forwardRef<
       <div
         {...props}
         ref={ref}
-        className={twMerge('py-1 flex items-center justify-between', className)}
+        className={twMerge('py-1 flex gap-2 items-center', className)}
       >
         <TitleWithInfo
           {...labelWithTooltipProps}
@@ -397,11 +398,11 @@ const TransactionInputCard = Object.assign(
 export default TransactionInputCard;
 
 export {
+  TransactionButton,
   TransactionChainSelector,
   TransactionInputCardBody,
   TransactionInputCardFooter,
   TransactionInputCardHeader,
   TransactionInputCardRoot,
-  TransactionButton,
   TransactionMaxAmountButton,
 };

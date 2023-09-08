@@ -100,6 +100,7 @@
     "chromatic": "^6.14.0",
     "circomlibjs": "0.0.8",
     "country-flag-icons": "^1.5.5",
+    "decimal.js": "^10.4.3",
     "detect-browser": "^5.2.0",
     "github-markdown-css": "^5.2.0",
     "graphql": "^16.6.0",

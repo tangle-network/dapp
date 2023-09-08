@@ -30,6 +30,7 @@ import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
   DEST_CHAIN_KEY,
+  NO_RELAYER_KEY,
   POOL_KEY,
   SELECT_DESTINATION_CHAIN_PATH,
   SELECT_RELAYER_PATH,
@@ -37,6 +38,10 @@ import {
   SELECT_TOKEN_PATH,
   TOKEN_KEY,
 } from '../../../../constants';
+import {
+  CUSTOM_AMOUNT_TOOLTIP_CONTENT,
+  FIXED_AMOUNT_TOOLTIP_CONTENT,
+} from '../../../../constants/tooltipContent';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
@@ -83,16 +88,19 @@ const Withdraw = () => {
 
   const { activeRelayer } = useRelayerWithRoute();
 
-  const [destTypedChainId, poolId, tokenId] = useMemo(() => {
+  const [destTypedChainId, poolId, tokenId, noRelayer] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
 
     const poolId = parseInt(searchParams.get(POOL_KEY) ?? '');
     const tokenId = parseInt(searchParams.get(TOKEN_KEY) ?? '');
 
+    const noRelayer = searchParams.get(NO_RELAYER_KEY);
+
     return [
       Number.isNaN(destTypedId) ? undefined : destTypedId,
       Number.isNaN(poolId) ? undefined : poolId,
       Number.isNaN(tokenId) ? undefined : tokenId,
+      Boolean(noRelayer),
     ];
   }, [searchParams]);
 
@@ -343,9 +351,18 @@ const Withdraw = () => {
                 placeHolder: 'Select pool',
                 onClick: () => handleTokenClick(true),
               }}
+              fixedAmountProps={{
+                step: 0.01,
+              }}
             />
 
-            <TransactionInputCard.Footer />
+            <TransactionInputCard.Footer
+              labelWithTooltipProps={{
+                info: isCustom
+                  ? CUSTOM_AMOUNT_TOOLTIP_CONTENT
+                  : FIXED_AMOUNT_TOOLTIP_CONTENT,
+              }}
+            />
           </TransactionInputCard.Root>
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
@@ -366,7 +383,7 @@ const Withdraw = () => {
                 Icon={<SettingsFillIcon />}
                 onClick={() => navigate(SELECT_RELAYER_PATH)}
               >
-                Relayer
+                {noRelayer ? 'No Relayer' : 'Relayer'}
               </TransactionInputCard.Button>
             </TransactionInputCard.Header>
 

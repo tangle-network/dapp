@@ -4,6 +4,7 @@ import {
   IndeterminateCircleFillIcon,
   IndeterminateCircleLineIcon,
 } from '@webb-tools/icons';
+import Decimal from 'decimal.js';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Input } from '../Input';
@@ -62,29 +63,29 @@ export const AdjustAmount = forwardRef<HTMLDivElement, AdjustAmountProps>(
     );
 
     const handleMinusClick = useCallback(() => {
-      const nextVal = value - step;
+      const nextVal = new Decimal(value).minus(step);
 
       // If the component is disabled or `min` is defined and `nextVal` is less than `min`,
       // then we don't need to update the value
-      if (isDisabled || (typeof min === 'number' && nextVal < min)) {
+      if (isDisabled || (typeof min === 'number' && nextVal.lt(min))) {
         return;
       }
 
-      setValue(nextVal);
-      onChange?.(nextVal);
+      setValue(nextVal.toNumber());
+      onChange?.(nextVal.toNumber());
     }, [isDisabled, min, onChange, step, value]);
 
     const handlePlusClick = useCallback(() => {
-      const nextVal = value + step;
+      const nextVal = new Decimal(value).plus(step);
 
       // If the component is disabled or `max` is defined and `nextVal` is greater than `max`,
       // then we don't need to update the value
-      if (isDisabled || (typeof max === 'number' && nextVal > max)) {
+      if (isDisabled || (typeof max === 'number' && nextVal.gt(max))) {
         return;
       }
 
-      setValue(nextVal);
-      onChange?.(nextVal);
+      setValue(nextVal.toNumber());
+      onChange?.(nextVal.toNumber());
     }, [isDisabled, max, onChange, step, value]);
 
     return (
