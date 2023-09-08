@@ -38,7 +38,7 @@ const Breadcrumbs: FC = () => {
           <ContrastLine className={activeItem !== '' ? 'fill-mono-120' : ''} />
         ),
         href: '/',
-        textClassName: '!text-[12px] lg:!text-[16px]',
+        textClassName: '!text-[12px] lg:!text-[16px] normal-case',
       },
     ];
 
@@ -48,7 +48,7 @@ const Breadcrumbs: FC = () => {
         isLast: true,
         icon: <CoinIcon />,
         href: '',
-        textClassName: '!text-[12px] lg:!text-[16px]',
+        textClassName: '!text-[12px] lg:!text-[16px] normal-case',
       });
     }
 

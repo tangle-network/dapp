@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ShieldedAssetLight } from '@webb-tools/icons';
+import { ShieldedAssetLight, ShieldedAssetDark } from '@webb-tools/icons';
 
 import { DestinationCellProps } from './types';
 
@@ -8,13 +8,14 @@ const DestinationCell: FC<DestinationCellProps> = ({ className }) => {
   return (
     <span
       className={twMerge(
-        'w-fit bg-[#ECF4FF] px-2 py-1.5 rounded-md',
+        'w-fit bg-blue-10 dark:bg-mono-140 px-2 py-1.5 rounded-md',
         'inline-flex items-center gap-1',
-        'uppercase text-[12px] leading-[15px] font-bold !text-mono-120',
+        'uppercase text-[12px] leading-[15px] font-bold !text-mono-120 dark:!text-mono-40',
         className
       )}
     >
-      <ShieldedAssetLight className="w-4 h-4" />
+      <ShieldedAssetLight className="block dark:hidden w-4 h-4 opacity-70" />
+      <ShieldedAssetDark className="hidden dark:block w-4 h-4 opacity-70" />
       shielded
     </span>
   );

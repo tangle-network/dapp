@@ -41,11 +41,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   triggerClassName
                 )}
               >
-                <Typography
-                  variant="mkt-body2"
-                  fw="black"
-                  className="!text-current"
-                >
+                <Typography variant="h5" fw="black" className="!text-current">
                   {tab}
                 </Typography>
               </TabTrigger>
