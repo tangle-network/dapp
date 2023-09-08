@@ -141,9 +141,9 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
     <div>
       <div
         className={cx(
-          'w-full mx-auto flex-1 pb-10',
-          "bg-[url('assets/stats-bg.png')] dark:bg-[url('assets/stats-dark-bg.png')]",
-          'bg-no-repeat bg-cover'
+          'w-full mx-auto flex-1',
+          "bg-[url('assets/stats-bg.jpeg')] dark:bg-[url('assets/stats-dark-bg.jpeg')]",
+          'bg-no-repeat bg-cover bg-fixed'
         )}
       >
         <Header
@@ -157,23 +157,15 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
           <StatsProvider
             subqueryEndpoint={subqueryEndpoint}
             polkadotEndpoint={polkadotEndpoint}
-            dkgDataFromPolkadotAPI={{
-              currentKey: '',
-              currentSessionNumber: 0,
-              nextKey: '',
-              nextSessionNumber: 0,
-              proposerCount: 0,
-              proposerThreshold: 0,
-            }}
           >
             <NavBoxInfoContainer />
             <main className="max-w-[1160px] mx-auto">{children}</main>
           </StatsProvider>
         </ApolloProvider>
-      </div>
 
-      <div className="max-w-[1160px] mx-auto">
-        <Footer />
+        <div className="max-w-[1160px] mx-auto">
+          <Footer logoType="tangle" />
+        </div>
       </div>
     </div>
   );

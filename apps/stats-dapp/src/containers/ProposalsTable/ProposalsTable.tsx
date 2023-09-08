@@ -191,7 +191,7 @@ export const ProposalsTable = () => {
     <CardTable
       titleProps={{
         title: 'All Proposals',
-        info: 'All proposals',
+        info: 'List of all the proposal batches in the DKG.',
         variant: 'h5',
       }}
       leftTitle={

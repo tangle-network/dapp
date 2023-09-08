@@ -201,7 +201,7 @@ const Authorities = () => {
       <CardTable
         titleProps={{
           title: 'Upcoming Thresholds',
-          info: 'Upcoming Thresholds',
+          info: 'Minimum participants needed for key generation (keygen) and signing a valid signature in Distributed Key Generation (DKG) in the next session.',
           variant: 'h5',
         }}
       >

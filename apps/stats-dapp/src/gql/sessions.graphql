@@ -82,17 +82,11 @@ query SessionThresholds($sessionId: String!) {
   }
 }
 
-query LatestThresholds(
-  $first:Int,
-  $filter:SessionFilter
-) {
-  sessions(
-    first: $first,
-    filter: $filter,
-    orderBy: [BLOCK_NUMBER_DESC] ){
+query LatestThresholds($first: Int, $filter: SessionFilter) {
+  sessions(first: $first, filter: $filter, orderBy: [BLOCK_NUMBER_DESC]) {
     nodes {
       id
-      thresholds{
+      thresholds {
         ...ThresholdValue
       }
     }
@@ -100,7 +94,20 @@ query LatestThresholds(
 }
 
 query LatestSessionId {
-	sessions {
+  sessions {
     totalCount
+  }
+}
+
+query AuthorityUptimes {
+  authorityUpTimes {
+    totalCount
+    nodes {
+      authorityId
+      uptime
+      totalHeartbeats
+      sessionNumber
+      blockNumber
+    }
   }
 }

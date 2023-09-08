@@ -180,6 +180,7 @@ export const StatsProvider: React.FC<
     | 'time'
     | 'api'
     | 'sessionHeight'
+    | 'dkgDataFromPolkadotAPI'
   >
 > = (props) => {
   const [blockTime, setBlockTime] = useState(0);

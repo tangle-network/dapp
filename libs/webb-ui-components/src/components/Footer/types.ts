@@ -6,4 +6,5 @@ export interface FooterProps extends PropsOf<'footer'> {
    */
   isNext?: boolean;
   isMinimal?: boolean;
+  logoType?: 'webb' | 'tangle';
 }
