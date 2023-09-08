@@ -9,7 +9,7 @@ export interface ShieldedAssetType {
   poolType: PoolType;
   composition: string[];
   deposits24h: number | undefined;
-  tvl: number | undefined;
+  withdrawals24h: number | undefined;
   typedChainIds: PresetTypedChainId[];
 }
 

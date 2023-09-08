@@ -29,6 +29,7 @@ export * from './CornerDownRightLine';
 export * from './CopyLinkFill';
 export * from './ContrastLine';
 export * from './ContrastTwoLine';
+export * from './DatabaseLine';
 export * from './DefaultTokenIcon';
 export * from './DeleteBinIcon';
 export * from './DeleteBinWithBg';

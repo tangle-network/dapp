@@ -59,17 +59,28 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
             )}
 
             <div className="flex flex-row items-center gap-2">
-              <Typography
-                variant="h4"
-                fw="bold"
-                className="!text-[24px] !leading-[36px] text-mono-200 dark:text-mono-0"
-              >
-                {`${valuePrefix}
+              <div className="flex items-center gap-1">
+                <Typography
+                  variant="h4"
+                  fw="bold"
+                  className="!text-[24px] !leading-[36px] text-mono-200 dark:text-mono-0"
+                >
+                  {`${valuePrefix}
                 ${getRoundedAmountString(value ?? currentValue, 2, {
                   roundingFunction: Math.floor,
                   totalLength: 0,
-                })}${valueSuffix}`}
-              </Typography>
+                })}`}
+                </Typography>
+                {
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="text-mono-200 dark:text-mono-0"
+                  >
+                    {valueSuffix}
+                  </Typography>
+                }
+              </div>
 
               <Typography
                 variant="body4"

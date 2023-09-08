@@ -8,7 +8,7 @@ const InfoIconWithTooltip: FC<InfoIconWithTooltipProps> = ({ content }) => {
   return (
     <IconWithTooltip
       icon={<InformationLine className="fill-mono-140 dark:fill-mono-40" />}
-      content={<p className="break-normal">{content}</p>}
+      content={<p className="break-normal max-w-max">{content}</p>}
     />
   );
 };

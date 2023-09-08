@@ -42,10 +42,8 @@ const columns: ColumnDef<ShieldedPoolType, any>[] = [
     ),
   }),
   columnHelper.accessor('token', {
-    header: () => <HeaderCell title="Token #" className="justify-end" />,
-    cell: (props) => (
-      <NumberCell value={props.getValue()} className="text-right" />
-    ),
+    header: () => <HeaderCell title="Token #" />,
+    cell: (props) => <NumberCell value={props.getValue()} />,
   }),
   columnHelper.accessor('deposits24h', {
     header: () => <HeaderCell title="24H Deposits" />,
