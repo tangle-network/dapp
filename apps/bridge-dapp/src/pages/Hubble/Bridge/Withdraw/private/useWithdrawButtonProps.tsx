@@ -338,16 +338,16 @@ function useWithdrawButtonProps({
           !!activeApi?.state.activeBridge && !!vAnchorApi && !!noteManager;
 
         if (!allInputsFilled || !doesApiReady) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady);
+          throw WebbError.from(WebbErrorCodes.ApiNotReady);
         }
 
         if (activeApi.state.activeBridge?.currency.id !== fungibleCfg.id) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments);
+          throw WebbError.from(WebbErrorCodes.InvalidArguments);
         }
 
         const anchorId = activeApi.state.activeBridge.targets[destTypedChainId];
         if (!anchorId) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.AnchorIdNotFound);
+          throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
         }
 
         const resourceId = await vAnchorApi.getResourceId(
@@ -371,7 +371,7 @@ function useWithdrawButtonProps({
         // Get the notes that will be spent for this withdraw
         const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
         if (!inputNotes) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.NoteParsingFailure);
+          throw WebbError.from(WebbErrorCodes.NoteParsingFailure);
         }
 
         // Validate the input notes
@@ -379,11 +379,20 @@ function useWithdrawButtonProps({
           fungibleCfg.id,
           destTypedChainId
         );
-        const valid = inputNotes.every((note) =>
-          validateNoteLeafIndex(note, edges)
+        const nextIdx = await vAnchorApi.getNextIndex(
+          destTypedChainId,
+          fungibleCfg.id
         );
+
+        const valid = inputNotes.every((note) => {
+          if (note.note.targetChainId === destTypedChainId.toString()) {
+            return note.note.index ? BigInt(note.note.index) < nextIdx : true;
+          } else {
+            return validateNoteLeafIndex(note, edges);
+          }
+        });
         if (!valid) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.NotesNotReady);
+          throw WebbError.from(WebbErrorCodes.NotesNotReady);
         }
 
         // Sum up the amount of the input notes to calculate the change amount
@@ -394,12 +403,12 @@ function useWithdrawButtonProps({
 
         const changeAmount = totalAmountInput - amountBig;
         if (changeAmount < 0) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments);
+          throw WebbError.from(WebbErrorCodes.InvalidArguments);
         }
 
         const keypair = noteManager.getKeypair();
         if (!keypair.privkey) {
-          throw WebbError.getErrorMessage(WebbErrorCodes.KeyPairNotFound);
+          throw WebbError.from(WebbErrorCodes.KeyPairNotFound);
         }
 
         const changeNote =

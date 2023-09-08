@@ -13,6 +13,7 @@ import {
   TransactionItemStatus,
   TransactionPayload,
   getRoundedAmountString,
+  toFixed,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -256,7 +257,8 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
               nextTxData as TransactionStatusMap<unknown>[TransactionState.FetchingLeaves];
 
             const percentage = calculateProgressPercentage(start, end, current);
-            nextMessage = `Fetching transaction leaves on chain... ${percentage}%`;
+            const formattedPercentage = toFixed(percentage);
+            nextMessage = `Fetching transaction leaves on chain... ${formattedPercentage}%`;
           }
 
           if (
