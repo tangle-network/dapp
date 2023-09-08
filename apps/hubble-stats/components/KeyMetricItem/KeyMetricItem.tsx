@@ -33,7 +33,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
         {/* Value */}
         <div className="flex items-center gap-0.5">
           <Typography
-            variant="body2"
+            variant="body1"
             fw="black"
             className="text-mono-140 dark:text-mono-40"
           >
@@ -44,7 +44,7 @@ const KeyMetricItem: FC<MetricItemProps> = ({
           </Typography>
           {typeof value === 'number' && suffix && (
             <Typography
-              variant="body3"
+              variant="body2"
               fw="bold"
               className="text-mono-140 dark:text-mono-40"
             >

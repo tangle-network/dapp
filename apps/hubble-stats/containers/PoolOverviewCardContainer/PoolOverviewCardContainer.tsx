@@ -74,20 +74,19 @@ export default async function PoolOverviewCardContainer({
         </div>
 
         {/* 24h deposits + TVL + 24h fees */}
-        <div className="flex items-center">
+        <div className="grid grid-cols-2">
           <PoolOverviewCardItem
             title="tvl"
             value={tvl}
             changeRate={tvlChangeRate}
             suffix={` ${fungibleTokenSymbol}`}
-            className="flex-[1]"
           />
           <PoolOverviewCardItem
             title="Deposits 24H"
             value={deposit24h}
             changeRate={depositChangeRate}
             suffix={` ${fungibleTokenSymbol}`}
-            className="flex-[1] border-l border-mono-40 dark:border-mono-140"
+            className="border-l border-mono-40 dark:border-mono-140"
           />
         </div>
       </div>
