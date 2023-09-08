@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Security-related changes, such as vulnerability patches
 
-## [1.0.0] - 2023-09-09
+## [0.0.1] - 2023-09-09
 
 ### Added
 
