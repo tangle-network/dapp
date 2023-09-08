@@ -16,6 +16,7 @@ import {
   utxoFromVAnchorNote,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
+import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import {
   bridgeStorageFactory,
   registrationStorageFactory,
@@ -361,6 +362,28 @@ export class Web3VAnchorActions extends VAnchorActions<
   async waitForFinalization(hash: Hash): Promise<void> {
     // Wait for the transaction to be finalized.
     await this.inner.publicClient.waitForTransactionReceipt({ hash });
+  }
+
+  async getLatestNeighborEdges(
+    fungibleId: number,
+    typedChainIdArg?: number | undefined
+  ): Promise<ReadonlyArray<NeighborEdge>> {
+    const typedChainId = typedChainIdArg ?? this.inner.typedChainId;
+    const anchorId = this.inner.config.getAnchorIdentifier(
+      fungibleId,
+      typedChainId
+    );
+
+    if (!anchorId) {
+      throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
+    }
+
+    const vAnchorContract = this.inner.getVAnchorContractByAddressAndProvider(
+      anchorId,
+      getPublicClient({ chainId: parseTypedChainId(typedChainId).chainId })
+    );
+
+    return vAnchorContract.read.getLatestNeighborEdges();
   }
 
   // Check if the evm address and keyData pairing has already registered.

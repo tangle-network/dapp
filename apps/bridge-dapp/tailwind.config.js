@@ -1,5 +1,3 @@
-/** @type {import('tailwindcss').Config} */
-
 const preset = require('@webb-tools/tailwind-preset');
 const defaultTheme = require('tailwindcss/defaultTheme');
 const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
@@ -13,9 +11,10 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    screens: {
-      mob: '481px',
-      ...defaultTheme.screens,
+    extend: {
+      screens: {
+        mob: '481px',
+      },
     },
   },
   plugins: [],

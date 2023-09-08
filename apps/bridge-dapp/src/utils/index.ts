@@ -8,4 +8,6 @@ export * from './getTokenURI';
 export { default as getVAnchorActionClass } from './getVAnchorActionClass';
 export { default as handleMutateNoteIndex } from './handleMutateNoteIndex';
 export { default as handleStoreNote } from './handleStoreNote';
+export { default as handleTxError } from './handleTxError';
 export * from './isValidNote';
+export { default as validateNoteLeafIndex } from './validateNoteLeafIndex';

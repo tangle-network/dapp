@@ -48,6 +48,8 @@ import { firstValueFrom } from 'rxjs';
 import * as snarkjs from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
+import type { HexString } from '@polkadot/util/types';
+import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import assert from 'assert';
@@ -56,7 +58,6 @@ import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
-import type { HexString } from '@polkadot/util/types';
 
 export class PolkadotVAnchorActions extends VAnchorActions<
   'polkadot',
@@ -419,6 +420,13 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       inputUtxos,
       leavesMap,
     };
+  }
+
+  async getLatestNeighborEdges(
+    fungibleId: number,
+    typedChainId?: number | undefined
+  ): Promise<readonly NeighborEdge[]> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
   // ------------------ Private ------------------

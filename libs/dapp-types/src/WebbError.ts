@@ -71,6 +71,10 @@ export enum WebbErrorCodes {
   FailedToSendTx,
   // Key pair not found
   KeyPairNotFound,
+  // Notes are not ready
+  NotesNotReady,
+  // Unknown error
+  UnknownError,
 }
 
 // An Error message with error metadata
@@ -316,6 +320,13 @@ export class WebbError extends Error {
         return {
           code,
           message: 'Key pair not found',
+        };
+
+      case WebbErrorCodes.NotesNotReady:
+        return {
+          code,
+          message:
+            'Some of the notes are not ready, maybe waiting for 5-20 minutes and try again',
         };
 
       default:

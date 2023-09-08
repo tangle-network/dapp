@@ -22,6 +22,7 @@ import type {
   WebbApiProvider,
   WebbProviderType,
 } from '../webb-provider.interface';
+import { NeighborEdge } from './types';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =
   Awaited<Parameters<VAnchorActions<ProviderType>['transact']>>;
@@ -233,4 +234,9 @@ export abstract class VAnchorActions<
   ): Promise<Hash>;
 
   abstract waitForFinalization(hash: Hash): Promise<void>;
+
+  abstract getLatestNeighborEdges(
+    fungibleId: number,
+    typedChainId?: number
+  ): Promise<ReadonlyArray<NeighborEdge>>;
 }
