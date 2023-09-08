@@ -53,24 +53,20 @@ export const Header: FC<HeaderProps> = () => {
           overrideContentProps={{ className: 'top-0' }}
         />
         <Breadcrumbs>
-          <NavLink to="/bridge">
-            <BreadcrumbsItem
-              icon={<ContrastTwoLine width={24} height={24} />}
-              className="!pl-0"
-            >
-              Hubble
-            </BreadcrumbsItem>
-          </NavLink>
-
-          {items.map((item, index) => (
-            <BreadcrumbsItem
-              key={index}
-              isLast={index === items.length - 1}
-              className="capitalize"
-            >
-              {item.split('-').join(' ')}
-            </BreadcrumbsItem>
-          ))}
+          {items.map((item, index) => {
+            return (
+              <NavLink to={'/'}>
+                <BreadcrumbsItem
+                  key={index}
+                  isLast={index === items.length - 1}
+                  icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
+                  className="capitalize"
+                >
+                  {index === 0 ? `Hubble ${item}` : item.split('-').join(' ')}
+                </BreadcrumbsItem>
+              </NavLink>
+            );
+          })}
         </Breadcrumbs>
       </div>
 
