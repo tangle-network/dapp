@@ -3,16 +3,12 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { ACTIVE_SUBGRAPH_URLS, VANCHORS_MAP } from '../constants';
 import {
-  getDateFromEpoch,
-  getEpochDailyFromStart,
   getEpochStart,
   getNumDatesFromStart,
   getValidDatesToQuery,
+  getFormattedDataForBasicChart,
+  getFormattedDataForVolumeChart,
 } from '../utils';
-
-type VolumeDataType = {
-  [epoch: string]: { deposit: number; withdrawal: number };
-};
 
 export type PoolOverviewChartsDataType = {
   currency?: string;
@@ -116,7 +112,7 @@ export default async function getPoolOverviewChartsData(
   }
 
   // TVL DATA
-  let tvlData: { [epoch: string]: bigint } = {};
+  let tvlData: { [epoch: string]: number } = {};
   try {
     const fetchedTvlData =
       await vAnchorClient.TotalValueLocked.GetVAnchorTVLByChainsByDateRange(
@@ -128,16 +124,17 @@ export default async function getPoolOverviewChartsData(
 
     tvlData = fetchedTvlData.reduce((tvlMap, tvlDataByChain) => {
       Object.keys(tvlDataByChain).forEach((epoch) => {
-        if (!tvlMap[epoch]) tvlMap[epoch] = BigInt(0);
-        tvlMap[epoch] += BigInt(tvlDataByChain[epoch]);
+        if (!tvlMap[epoch]) tvlMap[epoch] = 0;
+        tvlMap[epoch] += +formatEther(BigInt(tvlDataByChain[epoch]));
       });
       return tvlMap;
-    }, {});
+    }, {} as { [epoch: string]: number });
   } catch (e) {
     tvlData = {};
   }
 
-  let depositData: { [epoch: string]: bigint } = {};
+  // DEPOSIT DATA
+  let depositData: { [epoch: string]: number } = {};
   try {
     const fetchedDepositData =
       await vAnchorClient.Deposit.GetVAnchorDepositByChainsByDateRange(
@@ -150,18 +147,19 @@ export default async function getPoolOverviewChartsData(
     depositData = fetchedDepositData.reduce(
       (depositMap, depositDataByChain) => {
         Object.keys(depositDataByChain).forEach((epoch: string) => {
-          if (!depositMap[epoch]) depositMap[epoch] = BigInt(0);
-          depositMap[epoch] += BigInt(depositDataByChain[epoch]);
+          if (!depositMap[epoch]) depositMap[epoch] = 0;
+          depositMap[epoch] += +formatEther(BigInt(depositDataByChain[epoch]));
         });
         return depositMap;
       },
-      {}
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     depositData = {};
   }
 
-  let withdrawalData: { [epoch: string]: bigint } = {};
+  // WITHDRAWAL DATA
+  let withdrawalData: { [epoch: string]: number } = {};
   try {
     const fetchedWithdrawalData =
       await vAnchorClient.Withdrawal.GetVAnchorWithdrawalByChainsByDateRange(
@@ -174,31 +172,20 @@ export default async function getPoolOverviewChartsData(
     withdrawalData = fetchedWithdrawalData.reduce(
       (withdrawalMap, withdrawalDataByChain) => {
         Object.keys(withdrawalDataByChain).forEach((epoch: string) => {
-          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = BigInt(0);
-          withdrawalMap[epoch] += BigInt(withdrawalDataByChain[epoch]);
+          if (!withdrawalMap[epoch]) withdrawalMap[epoch] = 0;
+          withdrawalMap[epoch] += +formatEther(
+            BigInt(withdrawalDataByChain[epoch])
+          );
         });
         return withdrawalMap;
       },
-      {}
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     withdrawalData = {};
   }
 
-  const volumeData: VolumeDataType = getEpochDailyFromStart().reduce(
-    (volumeMap, epoch) => {
-      volumeMap[epoch] = {
-        deposit: depositData[epoch] ? +formatEther(depositData[epoch]) : 0,
-        withdrawal: withdrawalData[epoch]
-          ? +formatEther(withdrawalData[epoch])
-          : 0,
-      };
-      return volumeMap;
-    },
-    {} as VolumeDataType
-  );
-
-  let relayerEarningsData: { [epoch: string]: bigint } = {};
+  let relayerEarningsData: { [epoch: string]: number } = {};
   try {
     const fetchedRelayerFeesData =
       await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChainsByDateRange(
@@ -211,14 +198,14 @@ export default async function getPoolOverviewChartsData(
     relayerEarningsData = fetchedRelayerFeesData.reduce(
       (relayerEarningsMap, relayerEarningsByChain) => {
         Object.keys(relayerEarningsByChain).forEach((epoch) => {
-          if (!relayerEarningsMap[epoch]) relayerEarningsMap[epoch] = BigInt(0);
-          relayerEarningsMap[epoch] += BigInt(
-            relayerEarningsByChain[epoch].profit
+          if (!relayerEarningsMap[epoch]) relayerEarningsMap[epoch] = 0;
+          relayerEarningsMap[epoch] += +formatEther(
+            BigInt(relayerEarningsByChain[epoch].profit)
           );
         });
         return relayerEarningsMap;
       },
-      {} as { [epoch: string]: bigint }
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     relayerEarningsData = {};
@@ -229,24 +216,8 @@ export default async function getPoolOverviewChartsData(
     tvl,
     deposit24h,
     relayerEarnings24h,
-    tvlData: Object.keys(tvlData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: +formatEther(tvlData[+epoch]),
-      };
-    }),
-    volumeData: Object.keys(volumeData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        deposit: volumeData[+epoch].deposit,
-        withdrawal: volumeData[+epoch].withdrawal,
-      };
-    }),
-    relayerEarningsData: Object.keys(relayerEarningsData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: +formatEther(relayerEarningsData[+epoch]),
-      };
-    }),
+    tvlData: getFormattedDataForBasicChart(tvlData),
+    volumeData: getFormattedDataForVolumeChart(depositData, withdrawalData),
+    relayerEarningsData: getFormattedDataForBasicChart(relayerEarningsData),
   };
 }

@@ -90,9 +90,8 @@ const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
 const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
 
-  const tokenNum =
-    // plus one for fungible token
-    vanchor.composition.length + 1;
+  // plus one for fungible token
+  const tokenNum = vanchor.composition.length + 1;
 
   let deposits24h: number | undefined;
   try {

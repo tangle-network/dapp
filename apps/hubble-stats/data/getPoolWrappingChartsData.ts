@@ -1,14 +1,11 @@
-import { randNumber } from '@ngneat/falso';
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { ACTIVE_SUBGRAPH_URLS, VANCHORS_MAP } from '../constants';
 import {
-  getDateFromEpoch,
-  getEpochDailyFromStart,
   getEpochStart,
   getNumDatesFromStart,
-  getValidDatesToQuery,
+  getFormattedDataForBasicChart,
 } from '../utils';
 
 export type PoolWrappingChartsDataType = {
@@ -33,7 +30,6 @@ export default async function getPoolWrappingChartsData(
 
   const startingEpoch = getEpochStart();
   const numDatesFromStart = getNumDatesFromStart();
-  const [dateNow, date24h] = getValidDatesToQuery();
 
   // TWL
   let twl: number | undefined;
@@ -72,7 +68,7 @@ export default async function getPoolWrappingChartsData(
   }
 
   // TWL Data
-  let twlData: { [epoch: string]: bigint } = {};
+  let twlData: { [epoch: string]: number } = {};
   try {
     const fetchedTwlData =
       await vAnchorClient.TWL.GetVAnchorTWLByChainsByDateRange(
@@ -84,17 +80,17 @@ export default async function getPoolWrappingChartsData(
 
     twlData = fetchedTwlData.reduce((twlMap, twlDataByChain) => {
       Object.keys(twlDataByChain).forEach((epoch) => {
-        if (!twlMap[epoch]) twlMap[epoch] = BigInt(0);
-        twlMap[epoch] += BigInt(twlDataByChain[epoch]);
+        if (!twlMap[epoch]) twlMap[epoch] = 0;
+        twlMap[epoch] += +formatEther(BigInt(twlDataByChain[epoch]));
       });
       return twlMap;
-    }, {});
+    }, {} as { [epoch: string]: number });
   } catch (e) {
     twlData = {};
   }
 
   // Wrapping Fees Data
-  let wrappingFeesData: { [epoch: string]: bigint } = {};
+  let wrappingFeesData: { [epoch: string]: number } = {};
   try {
     const fetchedWrappingFeesData =
       await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChainsByDateRange(
@@ -107,12 +103,14 @@ export default async function getPoolWrappingChartsData(
     wrappingFeesData = fetchedWrappingFeesData.reduce(
       (wrappingFeesMap, wrappingFeesDataByChain) => {
         Object.keys(wrappingFeesDataByChain).forEach((epoch: string) => {
-          if (!wrappingFeesMap[epoch]) wrappingFeesMap[epoch] = BigInt(0);
-          wrappingFeesMap[epoch] += BigInt(wrappingFeesDataByChain[epoch]);
+          if (!wrappingFeesMap[epoch]) wrappingFeesMap[epoch] = 0;
+          wrappingFeesMap[epoch] += +formatEther(
+            BigInt(wrappingFeesDataByChain[epoch])
+          );
         });
         return wrappingFeesMap;
       },
-      {}
+      {} as { [epoch: string]: number }
     );
   } catch (e) {
     wrappingFeesData = {};
@@ -122,17 +120,7 @@ export default async function getPoolWrappingChartsData(
     currency: fungibleTokenSymbol,
     twl,
     wrappingFees24h,
-    twlData: Object.keys(twlData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: +formatEther(twlData[+epoch]),
-      };
-    }),
-    wrappingFeesData: Object.keys(wrappingFeesData).map((epoch) => {
-      return {
-        date: JSON.parse(JSON.stringify(getDateFromEpoch(+epoch))),
-        value: +formatEther(wrappingFeesData[+epoch]),
-      };
-    }),
+    twlData: getFormattedDataForBasicChart(twlData),
+    wrappingFeesData: getFormattedDataForBasicChart(wrappingFeesData),
   };
 }

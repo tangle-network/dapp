@@ -22,6 +22,23 @@ export default async function getPoolOverviewCardData(
   const vanchor = VANCHORS_MAP[poolAddress];
   const [dateNow, date24h, date48h] = getValidDatesToQuery();
 
+  let tvl: number | undefined;
+  try {
+    const tvlVAnchorByChainsData =
+      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
+        ACTIVE_SUBGRAPH_URLS,
+        poolAddress
+      );
+
+    tvl = tvlVAnchorByChainsData.reduce(
+      (tvl, vAnchorByChain) =>
+        tvl + +formatEther(BigInt(vAnchorByChain?.totalValueLocked ?? 0)),
+      0
+    );
+  } catch {
+    tvl = undefined;
+  }
+
   let deposit24h: number | undefined;
   try {
     const depositVAnchorByChainsData =
@@ -72,50 +89,6 @@ export default async function getPoolOverviewCardData(
     deposit48h = undefined;
   }
 
-  let tvl: number | undefined;
-  try {
-    const tvlVAnchorByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
-        ACTIVE_SUBGRAPH_URLS,
-        poolAddress
-      );
-
-    tvl = tvlVAnchorByChainsData.reduce(
-      (tvl, vAnchorByChain) =>
-        tvl + +formatEther(BigInt(vAnchorByChain?.totalValueLocked ?? 0)),
-      0
-    );
-  } catch {
-    tvl = undefined;
-  }
-
-  let tvl24h: number | undefined;
-  try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
-        poolAddress,
-        date48h,
-        date24h
-      );
-
-    tvl24h = tvlVAnchorsByChainsData.reduce((tvlTotal, vAnchorsByChain) => {
-      const tvlVAnchorsByChain = vAnchorsByChain.reduce(
-        (tvlTotalByChain, vAnchor) =>
-          tvlTotalByChain + +formatEther(BigInt(vAnchor.totalValueLocked ?? 0)),
-        0
-      );
-      return tvlTotal + tvlVAnchorsByChain;
-    }, 0);
-  } catch {
-    tvl24h = undefined;
-  }
-
-  // follow Uniswap's formula
-  // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L95
-  const tvlChangeRate =
-    tvl && tvl24h ? ((tvl - tvl24h) / tvl24h) * 100 : undefined;
-
   const depositChangeRate =
     deposit24h && deposit48h
       ? ((deposit24h - deposit48h) / deposit48h) * 100
@@ -128,6 +101,7 @@ export default async function getPoolOverviewCardData(
     deposit24h,
     depositChangeRate,
     tvl,
-    tvlChangeRate,
+    // tvl calculation for 24h is not correct at the moment
+    tvlChangeRate: undefined,
   };
 }
