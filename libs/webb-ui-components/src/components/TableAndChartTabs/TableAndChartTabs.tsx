@@ -42,9 +42,9 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                 )}
               >
                 <Typography
-                  variant="mkt-body2"
+                  variant="h5"
                   fw="black"
-                  className="!text-current"
+                  className="!text-current !text-[20px] !leading-[30px]"
                 >
                   {tab}
                 </Typography>

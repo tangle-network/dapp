@@ -3,7 +3,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl, getDeposit24h } from './reusable';
 import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
-import { getValidDatesToQuery } from '../utils';
+import { getValidDatesToQuery, getChangeRate } from '../utils';
 
 type KeyMetricDataType = {
   tvl: number | undefined;
@@ -22,18 +22,17 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
 
   let relayerFees: number | undefined;
   try {
-    const relayerFeesVAnchorsByChainsData =
-      await vAnchorClient.RelayerFee.GetVAnchorsTotalRelayerFeeByChains(
+    const fetchedRelayerFeesData =
+      await vAnchorClient.RelayerFee.GetVAnchorsRelayerFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES
       );
 
-    relayerFees = relayerFeesVAnchorsByChainsData?.reduce(
+    relayerFees = fetchedRelayerFeesData.reduce(
       (relayerFeesTotal, vAnchorsByChain) => {
         const relayerFeesVAnchorsByChain = vAnchorsByChain.reduce(
           (relayerFeesTotalByChain, vAnchor) =>
-            relayerFeesTotalByChain +
-            +formatEther(BigInt(vAnchor.totalRelayerFee ?? 0)),
+            relayerFeesTotalByChain + +formatEther(BigInt(vAnchor.profit ?? 0)),
           0
         );
         return relayerFeesTotal + relayerFeesVAnchorsByChain;
@@ -46,18 +45,18 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
 
   let wrappingFees: number | undefined;
   try {
-    const wrappingFeesVAnchorsByChainsData =
-      await vAnchorClient.WrappingFee.GetVAnchorsTotalWrappingFeeByChains(
+    const fetchedWrappingFeesData =
+      await vAnchorClient.WrappingFee.GetVAnchorsWrappingFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
         VANCHOR_ADDRESSES
       );
 
-    wrappingFees = wrappingFeesVAnchorsByChainsData?.reduce(
+    wrappingFees = fetchedWrappingFeesData?.reduce(
       (wrappingFeesTotal, vAnchorsByChain) => {
         const wrappingFeesVAnchorsByChain = vAnchorsByChain.reduce(
           (wrappingFeesTotalByChain, vAnchor) =>
             wrappingFeesTotalByChain +
-            +formatEther(BigInt(vAnchor.totalWrappingFee ?? 0)),
+            +formatEther(BigInt(vAnchor.wrappingFee ?? 0)),
           0
         );
         return wrappingFeesTotal + wrappingFeesVAnchorsByChain;
@@ -67,38 +66,6 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
   } catch {
     wrappingFees = undefined;
   }
-
-  let tvl24h: number | undefined;
-  try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorsTotalValueLockedByChains15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
-        VANCHOR_ADDRESSES,
-        date48h,
-        date24h
-      );
-
-    // get the latest item since it's the most updated
-    // this is to prevent the case when there is no data for certain 15mins intervals
-    tvl24h = tvlVAnchorsByChainsData?.reduce((tvlTotal, vAnchorsByChain) => {
-      if (vAnchorsByChain.length === 0) return tvlTotal;
-      return (
-        tvlTotal +
-        +formatEther(
-          BigInt(
-            vAnchorsByChain[vAnchorsByChain.length - 1].totalValueLocked ?? 0
-          )
-        )
-      );
-    }, 0);
-  } catch {
-    tvl24h = undefined;
-  }
-
-  // follow Uniswap's formula
-  // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L95
-  const tvlChangeRate =
-    tvl && tvl24h ? ((tvl - tvl24h) / tvl24h) * 100 : undefined;
 
   let deposit48h: number | undefined;
   try {
@@ -125,16 +92,12 @@ export default async function getKeyMetricsData(): Promise<KeyMetricDataType> {
     deposit48h = undefined;
   }
 
-  // follow Uniswap's formula
-  // https://github.com/Uniswap/v3-info/blob/master/src/data/protocol/overview.ts#L93
-  const depositChangeRate =
-    deposit24h && deposit48h
-      ? ((deposit24h - deposit48h) / deposit48h) * 100
-      : undefined;
+  const depositChangeRate = getChangeRate(deposit24h, deposit48h);
 
   return {
     tvl,
-    tvlChangeRate,
+    // tvl calculation for 24h is not correct at the moment
+    tvlChangeRate: undefined,
     deposit24h,
     depositChangeRate,
     relayerFees,

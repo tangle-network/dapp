@@ -27,7 +27,7 @@
         "buildTarget": "hubble-stats:build",
         "dev": true
       },
-      "dependsOn": ["fetch-on-chain-config", "^build"],
+      "dependsOn": ["fetch-on-chain-config", "^serve"],
       "configurations": {
         "development": {
           "buildTarget": "hubble-stats:build:development",

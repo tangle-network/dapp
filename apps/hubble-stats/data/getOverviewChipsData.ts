@@ -2,7 +2,7 @@ import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { getTvl } from './reusable';
-import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../constants';
+import { ACTIVE_SUBGRAPH_URLS, VANCHOR_ADDRESSES } from '../constants';
 
 type OverviewChipsDataType = {
   tvl: number | undefined;

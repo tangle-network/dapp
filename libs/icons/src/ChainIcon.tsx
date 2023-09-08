@@ -4,9 +4,6 @@ import { useDynamicSVGImport } from './hooks/useDynamicSVGImport';
 import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
-// If the chain name contains `tangle`, then it is a tangle chain
-const TANGLE_CHAIN = 'tangle';
-
 export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
   isActive,
   ...props
@@ -22,10 +19,9 @@ export const ChainIcon: React.FC<TokenIconBase & { isActive?: boolean }> = ({
 
   const name = useMemo(() => {
     const chainName = nameProp?.toLowerCase() || '';
-    if (chainName.includes(TANGLE_CHAIN)) {
-      return TANGLE_CHAIN;
+    if (chainName.includes('tangle') && !chainName.includes('transparent')) {
+      return 'tangle';
     }
-
     return chainName.replace(/\s/g, '-');
   }, [nameProp]);
 
