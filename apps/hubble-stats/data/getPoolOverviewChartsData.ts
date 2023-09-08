@@ -14,7 +14,7 @@ export type PoolOverviewChartsDataType = {
   currency?: string;
   tvl: number | undefined;
   deposit24h: number | undefined;
-  relayerEarnings24h: number | undefined;
+  relayerEarnings: number | undefined;
   tvlData: {
     date: Date;
     value: number;
@@ -85,30 +85,23 @@ export default async function getPoolOverviewChartsData(
   }
 
   // RELAYER EARNINGS 24H
-  let relayerEarnings24h: number | undefined;
+  let relayerEarnings: number | undefined;
   try {
-    const relayerEarningsVAnchorByChainsData =
-      await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChains15MinsInterval(
+    const fetchedRelayerEarningsData =
+      await vAnchorClient.RelayerFee.GetVAnchorRelayerFeeByChains(
         ACTIVE_SUBGRAPH_URLS,
-        poolAddress,
-        date24h,
-        dateNow
+        poolAddress
       );
 
-    relayerEarnings24h = relayerEarningsVAnchorByChainsData.reduce(
-      (relayerEarnings, vAnchorsByChain) => {
-        const relayerEarningsVAnchorsByChain = vAnchorsByChain.reduce(
-          (relayerEarningsByChain, vAnchorDeposit) =>
-            relayerEarningsByChain +
-            +formatEther(BigInt(vAnchorDeposit.profit ?? 0)),
-          0
-        );
-        return relayerEarnings + relayerEarningsVAnchorsByChain;
+    relayerEarnings = fetchedRelayerEarningsData.reduce(
+      (total, relayerFeeByChain) => {
+        return total + +formatEther(BigInt(relayerFeeByChain.profit ?? 0));
       },
       0
     );
+
   } catch {
-    relayerEarnings24h = undefined;
+    relayerEarnings = undefined;
   }
 
   // TVL DATA
@@ -215,7 +208,7 @@ export default async function getPoolOverviewChartsData(
     currency: fungibleTokenSymbol,
     tvl,
     deposit24h,
-    relayerEarnings24h,
+    relayerEarnings,
     tvlData: getFormattedDataForBasicChart(tvlData),
     volumeData: getFormattedDataForVolumeChart(depositData, withdrawalData),
     relayerEarningsData: getFormattedDataForBasicChart(relayerEarningsData),

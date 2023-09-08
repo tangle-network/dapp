@@ -11,7 +11,7 @@ import {
 export type PoolWrappingChartsDataType = {
   currency?: string;
   twl: number | undefined;
-  wrappingFees24h: number | undefined;
+  wrappingFees: number | undefined;
   twlData: {
     date: Date;
     value: number;
@@ -50,7 +50,7 @@ export default async function getPoolWrappingChartsData(
   }
 
   // Wrapping Fees
-  let wrappingFees24h: number | undefined;
+  let wrappingFees: number | undefined;
   try {
     const twlVAnchorByChainsData =
       await vAnchorClient.WrappingFee.GetVAnchorWrappingFeeByChains(
@@ -58,13 +58,13 @@ export default async function getPoolWrappingChartsData(
         poolAddress
       );
 
-    wrappingFees24h = twlVAnchorByChainsData.reduce(
+    wrappingFees = twlVAnchorByChainsData.reduce(
       (twl, vAnchorByChain) =>
         twl + +formatEther(BigInt(vAnchorByChain?.wrappingFee ?? 0)),
       0
     );
   } catch {
-    wrappingFees24h = undefined;
+    wrappingFees = undefined;
   }
 
   // TWL Data
@@ -119,7 +119,7 @@ export default async function getPoolWrappingChartsData(
   return {
     currency: fungibleTokenSymbol,
     twl,
-    wrappingFees24h,
+    wrappingFees,
     twlData: getFormattedDataForBasicChart(twlData),
     wrappingFeesData: getFormattedDataForBasicChart(wrappingFeesData),
   };

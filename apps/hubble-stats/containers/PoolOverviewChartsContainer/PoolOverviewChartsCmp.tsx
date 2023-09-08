@@ -17,7 +17,7 @@ const relayerEarningTab = 'Relayer Earnings';
 const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
   tvl,
   deposit24h,
-  relayerEarnings24h,
+  relayerEarnings,
   tvlData,
   volumeData,
   relayerEarningsData,
@@ -81,7 +81,7 @@ const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
       {/* Relayer Earnings */}
       <TabContent value={relayerEarningTab}>
         <ChartContainer
-          currentValue={relayerEarnings24h}
+          currentValue={relayerEarnings}
           value={relayerEarningsValue}
           valueSuffix={numberSuffix}
           date={relayerEarningsDate}

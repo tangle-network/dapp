@@ -6,13 +6,13 @@ export default async function PoolWrappingChartsContainer({
 }: {
   poolAddress: string;
 }) {
-  const { twl, wrappingFees24h, twlData, wrappingFeesData, currency } =
+  const { twl, wrappingFees, twlData, wrappingFeesData, currency } =
     await getPoolWrappingChartsData(poolAddress);
 
   return (
     <PoolWrappingChartsCmp
       twl={twl}
-      wrappingFees24h={wrappingFees24h}
+      wrappingFees={wrappingFees}
       twlData={twlData}
       wrappingFeesData={wrappingFeesData}
       currency={currency}

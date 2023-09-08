@@ -114,7 +114,6 @@ const PoolWrappingTable: FC<PoolWrappingTableProps> = ({
                 value={props.row.original.chainsData[typedChainId]}
                 prefix={prefixUnit}
                 suffix={` ${currency}`}
-                className="lowercase"
               />
             ) : (
               <Typography variant="body1" ta="center">

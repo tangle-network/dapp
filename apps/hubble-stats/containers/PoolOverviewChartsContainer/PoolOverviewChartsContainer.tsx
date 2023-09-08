@@ -9,7 +9,7 @@ export default async function PoolOverviewChartsContainer({
   const {
     tvl,
     deposit24h,
-    relayerEarnings24h,
+    relayerEarnings,
     tvlData,
     volumeData,
     relayerEarningsData,
@@ -20,7 +20,7 @@ export default async function PoolOverviewChartsContainer({
     <PoolOverviewChartsCmp
       tvl={tvl}
       deposit24h={deposit24h}
-      relayerEarnings24h={relayerEarnings24h}
+      relayerEarnings={relayerEarnings}
       tvlData={tvlData}
       volumeData={volumeData}
       relayerEarningsData={relayerEarningsData}
