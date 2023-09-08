@@ -205,7 +205,7 @@ export const AuthoritiesTable: FC<AuthoritiesTableProps> = ({
     <CardTable
       titleProps={{
         title: 'DKG Authorities',
-        info: 'DKG Authorities',
+        info: 'List of all the authorities in the DKG with their uptime and reputation.',
         variant: 'h5',
       }}
       leftTitle={

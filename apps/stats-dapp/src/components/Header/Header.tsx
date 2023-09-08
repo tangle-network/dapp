@@ -1,6 +1,6 @@
 import {
   webbAppConfig,
-  logoConfig,
+  tangleLogoConfig,
   headerNavs,
   NetworkType,
   STATS_DOCUS_URL,
@@ -10,9 +10,9 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  Logo,
   MenuItem,
   ThemeSwitcherButton,
+  TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import {
   BookOpenLineIcon,
@@ -42,8 +42,8 @@ export const Header: FC<HeaderProps> = ({
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
       <div className="relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto">
-        <NavLink to={logoConfig.path}>
-          <Logo />
+        <NavLink to={tangleLogoConfig.path}>
+          <TangleLogo />
         </NavLink>
 
         <nav className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 rounded-full bg-mono-20 dark:bg-mono-140 py-1.5">

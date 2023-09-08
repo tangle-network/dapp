@@ -51,6 +51,13 @@ export const STATS_URL = 'https://stats.webb.tools/';
 export const WEBB_MKT_URL = 'https://webb.tools/';
 export const TANGLE_MKT_URL = 'https://tangle.webb.tools/';
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
+export const WEBB_GITHUB_URL = 'https://github.com/webb-tools';
+export const TANGLE_TESTNET_EXPLORER_URL =
+  'https://tangle-testnet-explorer.webb.tools/';
+export const WEBB_DOCS_COMMUNITY_URL =
+  'https://docs.webb.tools/docs/tangle-network/community/';
+export const WEBB_YOUTUBE_URL =
+  'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw';
 export const BRIDGE_DOCS_URL =
   'https://docs.webb.tools/docs/projects/hubble-bridge/overview/';
 export const TANGLE_DOCS_URL =
@@ -62,6 +69,11 @@ export const STATS_DOCUS_URL =
   'https://docs.webb.tools/docs/projects/stats-dapp/overview/';
 export const POLKADOT_EXPLORER_URL =
   'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer/query/';
+
+export const tangleLogoConfig: Link = {
+  name: 'Tangle Logo',
+  path: TANGLE_MKT_URL,
+};
 
 export const webbNetworks: webbNetworksType[] = [
   {
@@ -131,13 +143,13 @@ export const footerNavs: FooterNavsType = {
   ],
   network: [
     {
-      name: 'statistics',
-      href: 'STATS_URL',
+      name: 'Block Explorer',
+      href: TANGLE_TESTNET_EXPLORER_URL,
       ...commonExternalProps,
     },
     {
       name: 'tangle',
-      href: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftangle-standalone-archive.webb.tools%2F#/explorer',
+      href: TANGLE_MKT_URL,
       ...commonExternalProps,
     },
   ],
@@ -149,14 +161,14 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'source code',
-      href: 'https://github.com/webb-tools',
+      href: WEBB_GITHUB_URL,
       ...commonExternalProps,
     },
   ],
   resources: [
     {
       name: 'community',
-      href: 'https://t.me/webbprotocol',
+      href: WEBB_DOCS_COMMUNITY_URL,
       ...commonExternalProps,
     },
   ],
@@ -168,7 +180,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'jobs',
-      href: 'https://angel.co/company/webb-4/jobs',
+      href: WEBB_DOCS_URL,
       ...commonExternalProps,
     },
   ],
@@ -183,11 +195,6 @@ export const bottomLinks: ExternalLink[] = [
   {
     name: 'Privacy Policy',
     href: 'https://webb.tools/privacy-policy',
-    ...commonExternalProps,
-  },
-  {
-    name: 'Security',
-    href: '#',
     ...commonExternalProps,
   },
 ];
@@ -232,7 +239,7 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
   {
     name: 'youTube',
     Icon: YouTubeFill,
-    href: 'https://webb.tools/blog/videos',
+    href: WEBB_YOUTUBE_URL,
     ...commonExternalProps,
   },
 ];

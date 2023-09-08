@@ -2,12 +2,12 @@ import Link from 'next/link';
 import { FC, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-
 import * as constants from '../../constants';
 import type { ExternalLink, Link as ILink } from '../../types';
 import { Typography } from '../../typography/Typography';
 import { Divider } from '../Divider';
 import { Logo } from '../Logo';
+import { TangleLogo } from '../TangleLogo';
 import { Socials } from '../Socials';
 import { FooterProps } from './types';
 
@@ -15,7 +15,7 @@ import { FooterProps } from './types';
  * The statistic `Footer` for `Layout` container
  */
 export const Footer = forwardRef<HTMLElement, FooterProps>(
-  ({ className, isNext, isMinimal, ...props }, ref) => {
+  ({ className, isNext, isMinimal, logoType, ...props }, ref) => {
     return (
       <footer
         {...props}
@@ -56,12 +56,26 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           <div className="mx-auto w-[360px] md:w-[768px] lg:w-[1160px] px-2">
             <div className="flex justify-between pb-6 flex-wrap gap-6 md:gap-0">
               {isNext ? (
-                <Link className="block" href={constants.logoConfig.path}>
-                  <Logo />
+                <Link
+                  className="block"
+                  href={
+                    logoType === 'tangle'
+                      ? constants.tangleLogoConfig.path
+                      : constants.logoConfig.path
+                  }
+                >
+                  {logoType === 'tangle' ? <TangleLogo /> : <Logo />}
                 </Link>
               ) : (
-                <NavLink className="block" to={constants.logoConfig.path}>
-                  <Logo />
+                <NavLink
+                  className="block"
+                  to={
+                    logoType === 'tangle'
+                      ? constants.tangleLogoConfig.path
+                      : constants.logoConfig.path
+                  }
+                >
+                  {logoType === 'tangle' ? <TangleLogo /> : <Logo />}
                 </NavLink>
               )}
 
