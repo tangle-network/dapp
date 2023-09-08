@@ -54,6 +54,8 @@ export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 export const WEBB_GITHUB_URL = 'https://github.com/webb-tools';
 export const TANGLE_TESTNET_EXPLORER_URL =
   'https://tangle-testnet-explorer.webb.tools/';
+export const TANGLE_STANDALONE_EXPLORER_URL =
+  'https://polkadot.js.org/apps/?rpc=wss://tangle-standalone-archive.webb.tools#/explorer';
 export const WEBB_DOCS_COMMUNITY_URL =
   'https://docs.webb.tools/docs/tangle-network/community/';
 export const WEBB_YOUTUBE_URL =
@@ -148,8 +150,8 @@ export const footerNavs: FooterNavsType = {
       ...commonExternalProps,
     },
     {
-      name: 'tangle',
-      href: TANGLE_MKT_URL,
+      name: 'polkadot explorer',
+      href: TANGLE_STANDALONE_EXPLORER_URL,
       ...commonExternalProps,
     },
   ],
@@ -180,7 +182,7 @@ export const footerNavs: FooterNavsType = {
     },
     {
       name: 'jobs',
-      href: WEBB_DOCS_URL,
+      href: 'https://wellfound.com/company/webb-4',
       ...commonExternalProps,
     },
   ],
@@ -215,7 +217,7 @@ export const defaultSocialConfigs: Array<SocialConfigsType> = [
   {
     name: 'discord',
     Icon: DiscordFill,
-    href: 'https://discord.com/invite/cv8EfJu3Tn',
+    href: 'https://discord.com/invite/xnDGzdjt',
     ...commonExternalProps,
   },
   {
