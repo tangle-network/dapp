@@ -135,3 +135,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stats dApp Fixes: footer, compressed key flex & proposal detail page color ([#1554](https://github.com/webb-tools/webb-dapp/pull/1554))
 - Use PolkadotAPI to show live chain data and Bug fixes in stats-dapp ([#1566](https://github.com/webb-tools/webb-dapp/pull/1566))
 - Stats dApp fixes and adds rotated key status to key timeline ([#1576](https://github.com/webb-tools/webb-dapp/pull/1576))
+
+## [0.0.14] - 2023-09-09
+
+### Fixed, Changed and Added
+
+- DKG Stats Bug Fixes and UI enhancements ([#1560](https://github.com/webb-tools/webb-dapp/pull/1560))
