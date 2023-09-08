@@ -1,10 +1,10 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
-import { VANCHOR_ADDRESSES, ACTIVE_SUBGRAPH_URLS } from '../../constants';
+import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
 import { getValidDatesToQuery } from '../../utils';
 
-const getDeposit24hAllChainsByVAnchor = async (
+const getDeposit24hByVAnchor = async (
   vAnchorAddress: string
 ): Promise<number | undefined> => {
   const [dateNow, date24h] = getValidDatesToQuery();
@@ -37,4 +37,4 @@ const getDeposit24hAllChainsByVAnchor = async (
   return deposit24h;
 };
 
-export default getDeposit24hAllChainsByVAnchor;
+export default getDeposit24hByVAnchor;

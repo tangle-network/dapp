@@ -1,11 +1,11 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getTvlByVAnchor, getDeposit24hByVAnchor } from './reusable';
 import { ACTIVE_SUBGRAPH_URLS, VANCHORS_MAP } from '../constants';
 import {
   getEpochStart,
   getNumDatesFromStart,
-  getValidDatesToQuery,
   getFormattedDataForBasicChart,
   getFormattedDataForVolumeChart,
 } from '../utils';
@@ -35,54 +35,12 @@ export default async function getPoolOverviewChartsData(
 ): Promise<PoolOverviewChartsDataType> {
   const startingEpoch = getEpochStart();
   const numDatesFromStart = getNumDatesFromStart();
-  const [dateNow, date24h] = getValidDatesToQuery();
 
   const vanchor = VANCHORS_MAP[poolAddress];
   const { fungibleTokenSymbol } = vanchor;
 
-  // TVL
-  let tvl: number | undefined;
-  try {
-    const tvlVAnchorByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
-        ACTIVE_SUBGRAPH_URLS,
-        poolAddress
-      );
-
-    tvl = tvlVAnchorByChainsData.reduce(
-      (tvl, vAnchorByChain) =>
-        tvl + +formatEther(BigInt(vAnchorByChain?.totalValueLocked ?? 0)),
-      0
-    );
-  } catch {
-    tvl = undefined;
-  }
-
-  // DEPOSIT 24H
-  let deposit24h: number | undefined;
-  try {
-    const depositVAnchorByChainsData =
-      await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
-        poolAddress,
-        date24h,
-        dateNow
-      );
-
-    deposit24h = depositVAnchorByChainsData.reduce(
-      (deposit, vAnchorsByChain) => {
-        const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (depositByChain, vAnchorDeposit) =>
-            depositByChain + +formatEther(BigInt(vAnchorDeposit.deposit ?? 0)),
-          0
-        );
-        return deposit + depositVAnchorsByChain;
-      },
-      0
-    );
-  } catch {
-    deposit24h = undefined;
-  }
+  const tvl = await getTvlByVAnchor(poolAddress);
+  const deposit24h = await getDeposit24hByVAnchor(poolAddress);
 
   // RELAYER EARNINGS 24H
   let relayerEarnings: number | undefined;
@@ -99,7 +57,6 @@ export default async function getPoolOverviewChartsData(
       },
       0
     );
-
   } catch {
     relayerEarnings = undefined;
   }

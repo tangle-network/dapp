@@ -1,6 +1,7 @@
 import { formatEther } from 'viem';
 import vAnchorClient from '@webb-tools/vanchor-client';
 
+import { getTvlByVAnchor, getDeposit24hByVAnchor } from './reusable';
 import { getValidDatesToQuery } from '../utils';
 import {
   ACTIVE_SUBGRAPH_URLS,
@@ -15,11 +16,11 @@ type ShieldedTablesDataType = {
   poolsData: ShieldedPoolType[];
 };
 
-const [dateNow, date24h] = getValidDatesToQuery();
-
 const getAssetInfoFromVAnchor = async (vAnchorAddress: string) => {
   const vanchor = VANCHORS_MAP[vAnchorAddress];
   const tokenSymbol = vanchor.fungibleTokenSymbol;
+
+  const [dateNow, date24h] = getValidDatesToQuery();
 
   let deposits24h: number | undefined;
   try {
@@ -93,46 +94,8 @@ const getPoolInfoFromVAnchor = async (vAnchorAddress: string) => {
   // plus one for fungible token
   const tokenNum = vanchor.composition.length + 1;
 
-  let deposits24h: number | undefined;
-  try {
-    const depositVAnchorsByChainsData =
-      await vAnchorClient.Deposit.GetVAnchorDepositByChains15MinsInterval(
-        ACTIVE_SUBGRAPH_URLS,
-        vAnchorAddress,
-        date24h,
-        dateNow
-      );
-
-    deposits24h = depositVAnchorsByChainsData?.reduce(
-      (depositTotal, vAnchorsByChain) => {
-        const depositVAnchorsByChain = vAnchorsByChain.reduce(
-          (depositTotalByChain, vAnchor) =>
-            depositTotalByChain + +formatEther(BigInt(vAnchor.deposit ?? 0)),
-          0
-        );
-        return depositTotal + depositVAnchorsByChain;
-      },
-      0
-    );
-  } catch {
-    deposits24h = undefined;
-  }
-
-  let tvl: number | undefined;
-  try {
-    const tvlVAnchorsByChainsData =
-      await vAnchorClient.TotalValueLocked.GetVAnchorTotalValueLockedByChains(
-        ACTIVE_SUBGRAPH_URLS,
-        vAnchorAddress
-      );
-
-    tvl = tvlVAnchorsByChainsData?.reduce((tvl, vAnchorsByChain) => {
-      if (vAnchorsByChain === null) return tvl;
-      return tvl + +formatEther(BigInt(vAnchorsByChain?.totalValueLocked ?? 0));
-    }, 0);
-  } catch {
-    tvl = undefined;
-  }
+  const deposits24h = await getDeposit24hByVAnchor(vAnchorAddress);
+  const tvl = await getTvlByVAnchor(vAnchorAddress);
 
   return {
     address: vAnchorAddress,

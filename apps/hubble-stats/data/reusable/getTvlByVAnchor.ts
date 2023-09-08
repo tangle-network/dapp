@@ -3,7 +3,7 @@ import vAnchorClient from '@webb-tools/vanchor-client';
 
 import { ACTIVE_SUBGRAPH_URLS } from '../../constants';
 
-const getTvlAllChainsByVAnchor = async (
+const getTvlByVAnchor = async (
   vAnchorAddress: string
 ): Promise<number | undefined> => {
   let tvl: number | undefined;
@@ -26,4 +26,4 @@ const getTvlAllChainsByVAnchor = async (
   return tvl;
 };
 
-export default getTvlAllChainsByVAnchor;
+export default getTvlByVAnchor;
