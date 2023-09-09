@@ -222,7 +222,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: ['https://hermes-testnet.webb.tools'],
       },
     },
-    env: ['development', 'test'],
     contracts: hostedOrbitMulticall3Address
       ? {
           multicall3: {
@@ -255,7 +254,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: ['https://athena-testnet.webb.tools'],
       },
     },
-    env: ['development', 'test'],
     contracts: hostedOrbitMulticall3Address
       ? {
           multicall3: {
@@ -288,7 +286,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         http: ['https://demeter-testnet.webb.tools'],
       },
     },
-    env: ['development', 'test'],
     contracts: hostedOrbitMulticall3Address
       ? {
           multicall3: {
@@ -339,7 +336,6 @@ export const chainsConfig: Record<number, ChainConfig> = {
         ],
       },
     },
-    env: ['development', 'test'],
   } satisfies ChainConfig,
 
   // Localnet
