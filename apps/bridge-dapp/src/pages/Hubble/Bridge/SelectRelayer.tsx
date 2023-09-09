@@ -20,10 +20,12 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_PATH,
+  BRIDGE_TABS,
   DEST_CHAIN_KEY,
   NO_RELAYER_KEY,
   POOL_KEY,
   SELECT_SOURCE_CHAIN_PATH,
+  SOURCE_CHAIN_KEY,
 } from '../../../constants';
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
@@ -47,8 +49,15 @@ const SelectRelayer = () => {
   const [customerRelayerError, setCustomerRelayerError] = useState('');
   const [customRelayerLoading, setCustomRelayerLoading] = useState(false);
 
-  const [destTypedChainId, poolId] = useMemo(() => {
-    const typedChainId = searchParams.get(DEST_CHAIN_KEY) ?? '';
+  const txType = useMemo(() => {
+    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
+  }, [pathname]);
+
+  const [typedChainId, poolId] = useMemo(() => {
+    const typedChainId =
+      searchParams.get(
+        txType === 'transfer' ? SOURCE_CHAIN_KEY : DEST_CHAIN_KEY
+      ) ?? '';
 
     const poolId = searchParams.get(POOL_KEY) ?? '';
 
@@ -56,17 +65,17 @@ const SelectRelayer = () => {
       Number.isNaN(parseInt(typedChainId)) ? undefined : parseInt(typedChainId),
       Number.isNaN(parseInt(poolId)) ? undefined : parseInt(poolId),
     ];
-  }, [searchParams]);
+  }, [searchParams, txType]);
 
   const useRelayersArgs = useMemo(
     () => ({
-      typedChainId: destTypedChainId ?? undefined,
+      typedChainId: typedChainId ?? undefined,
       target:
-        typeof poolId === 'number' && typeof destTypedChainId === 'number'
-          ? apiConfig.anchors[poolId]?.[destTypedChainId]
+        typeof poolId === 'number' && typeof typedChainId === 'number'
+          ? apiConfig.anchors[poolId]?.[typedChainId]
           : undefined,
     }),
-    [apiConfig.anchors, destTypedChainId, poolId]
+    [apiConfig.anchors, typedChainId, poolId]
   );
 
   // Given the user inputs above, fetch relayers state
@@ -84,31 +93,31 @@ const SelectRelayer = () => {
 
   const { getInfo, addRelayer } = useRelayerManager();
 
-  const destChainCfg = useMemo(() => {
-    if (typeof destTypedChainId !== 'number') {
+  const chainCfg = useMemo(() => {
+    if (typeof typedChainId !== 'number') {
       return;
     }
 
-    return apiConfig.chains[destTypedChainId];
-  }, [apiConfig.chains, destTypedChainId]);
+    return apiConfig.chains[typedChainId];
+  }, [apiConfig.chains, typedChainId]);
 
   const relayersForDisplay = useMemo<Array<RelayerType>>(() => {
-    if (!destChainCfg) {
+    if (!chainCfg) {
       return [];
     }
 
     return relayers
       .map((relayer) => {
         const relayerData = relayer.capabilities.supportedChains[
-          destChainCfg.chainType === ChainType.EVM ? 'evm' : 'substrate'
-        ].get(calculateTypedChainId(destChainCfg.chainType, destChainCfg.id));
+          chainCfg.chainType === ChainType.EVM ? 'evm' : 'substrate'
+        ].get(calculateTypedChainId(chainCfg.chainType, chainCfg.id));
 
         if (!relayerData?.beneficiary) {
           return undefined;
         }
 
         const theme: RelayerType['theme'] =
-          destChainCfg.chainType === ChainType.EVM ? 'ethereum' : 'substrate';
+          chainCfg.chainType === ChainType.EVM ? 'ethereum' : 'substrate';
 
         const r: RelayerType = {
           address: relayerData.beneficiary,
@@ -121,18 +130,18 @@ const SelectRelayer = () => {
         return r;
       })
       .filter((r): r is RelayerType => r !== undefined);
-  }, [destChainCfg, noRelayer, relayers]);
+  }, [chainCfg, noRelayer, relayers]);
 
   const selectedRelayer = useMemo<RelayerType | undefined>(() => {
-    return activeRelayer?.beneficiary && destChainCfg
+    return activeRelayer?.beneficiary && chainCfg
       ? ({
           address: activeRelayer.beneficiary,
           externalUrl: activeRelayer.infoUri,
           theme:
-            destChainCfg.chainType === ChainType.EVM ? 'ethereum' : 'substrate',
+            chainCfg.chainType === ChainType.EVM ? 'ethereum' : 'substrate',
         } satisfies RelayerType)
       : undefined;
-  }, [activeRelayer?.beneficiary, activeRelayer?.infoUri, destChainCfg]);
+  }, [activeRelayer?.beneficiary, activeRelayer?.infoUri, chainCfg]);
 
   const isDisconnected = useMemo(
     () => !loading && !isConnecting && !activeApi?.relayerManager,
@@ -161,19 +170,18 @@ const SelectRelayer = () => {
   );
 
   const handleConnectWallet = useCallback(() => {
-    if (destChainCfg) {
+    if (chainCfg) {
       toggleModal(
         true,
         Object.values(chainsPopulated).find(
           (chain) =>
-            chain.chainType === destChainCfg.chainType &&
-            chain.id === destChainCfg.id
+            chain.chainType === chainCfg.chainType && chain.id === chainCfg.id
         )
       );
     } else {
       navigate(`/${BRIDGE_PATH}/${SELECT_SOURCE_CHAIN_PATH}`);
     }
-  }, [destChainCfg, navigate, toggleModal]);
+  }, [chainCfg, navigate, toggleModal]);
 
   const testAndAddCustomRelayer = useCallback(async () => {
     if (!customRelayer) {
