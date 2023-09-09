@@ -114,7 +114,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
     });
   }
 
-  async getRelayersByChainAndAddress(typedChainId: number, address: string) {
+  getRelayersByChainAndAddress(typedChainId: number, address: string) {
     const chainId = parseTypedChainId(typedChainId).chainId;
     return this.getRelayers({
       baseOn: 'evm',
@@ -197,6 +197,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
         // Return the leaves for proving
         return result;
       } catch (e) {
+        console.error('Error fetching leaves from relayer', e);
         tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }

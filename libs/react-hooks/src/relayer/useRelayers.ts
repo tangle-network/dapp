@@ -36,11 +36,10 @@ export const useRelayers = (props: UseRelayersProps) => {
         const typedChainIdToUse =
           typedChainId ?? activeApi.typedChainidSubject.getValue();
 
-        const relayers =
-          await activeApi.relayerManager.getRelayersByChainAndAddress(
-            typedChainIdToUse,
-            `${target ?? ''}`
-          );
+        const relayers = activeApi.relayerManager.getRelayersByChainAndAddress(
+          typedChainIdToUse,
+          `${target ?? ''}`
+        );
 
         setRelayersState((prev) => ({
           ...prev,

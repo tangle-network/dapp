@@ -362,7 +362,7 @@ function useTransferButtonProps({
         );
 
         const valid = inputNotes.every((note) => {
-          if (note.note.targetChainId === srcTypedChainId.toString()) {
+          if (note.note.sourceChainId === srcTypedChainId.toString()) {
             return note.note.index ? BigInt(note.note.index) < nextIdx : true;
           } else {
             return validateNoteLeafIndex(note, edges);

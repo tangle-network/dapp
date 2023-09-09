@@ -104,6 +104,42 @@ const useRelayerWithRoute = () => {
     return () => sub.unsubscribe();
   }, [activeApi, apiConfig.anchors, destTypedChainId, noRelayer, poolId]);
 
+  // Side effect to update the active relayer
+  // when the destination chain id or pool id changes
+  // and the current active relayer not support the chain or pool
+  useEffect(() => {
+    if (typeof destTypedChainId !== 'number' || typeof poolId !== 'number') {
+      return;
+    }
+
+    const relayerManager = activeApi?.relayerManager;
+    if (!relayerManager) {
+      return;
+    }
+
+    const anchorId = apiConfig.anchors[poolId]?.[destTypedChainId];
+    if (!anchorId) {
+      return;
+    }
+
+    const relayers = relayerManager.getRelayersByChainAndAddress(
+      destTypedChainId,
+      anchorId
+    );
+
+    const active = relayerManager.activeRelayer;
+    if (!active) {
+      return;
+    }
+
+    const found = relayers.find((r) => r.endpoint === active.endpoint);
+    if (found) {
+      return;
+    }
+
+    relayerManager.setActiveRelayer(relayers[0] ?? null, destTypedChainId);
+  }, [poolId, destTypedChainId, activeApi?.relayerManager, apiConfig.anchors]);
+
   return {
     relayer,
     activeRelayer,

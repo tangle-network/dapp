@@ -10,7 +10,10 @@ import {
   REFUND_RECIPIENT_KEY,
   SOURCE_CHAIN_KEY,
 } from '../../../../../constants';
-import { useMaxFeeInfo } from '../../../../../hooks/useMaxFeeInfo';
+import {
+  type MaxFeeInfoOption,
+  useMaxFeeInfo,
+} from '../../../../../hooks/useMaxFeeInfo';
 import { formatEther, parseEther } from 'viem';
 import { numberToString } from '@webb-tools/webb-ui-components';
 
@@ -56,10 +59,12 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
   }, [apiConfig.chains, srcTypedChainId]);
 
   const feeArgs = useMemo(
-    () => ({
-      fungibleCurrencyId: fungibleCfg?.id,
-    }),
-    [fungibleCfg?.id]
+    () =>
+      ({
+        fungibleCurrencyId: fungibleCfg?.id,
+        typedChainId: srcTypedChainId ? parseInt(srcTypedChainId) : undefined,
+      } satisfies MaxFeeInfoOption),
+    [fungibleCfg?.id, srcTypedChainId]
   );
 
   const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =

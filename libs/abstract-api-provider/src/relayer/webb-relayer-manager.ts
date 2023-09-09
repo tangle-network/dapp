@@ -68,7 +68,7 @@ export abstract class WebbRelayerManager<Provider extends WebbProviderType> {
   abstract getRelayersByChainAndAddress(
     typedChainId: number,
     address: string
-  ): Promise<WebbRelayer[]>;
+  ): Array<WebbRelayer>;
 
   /**
    * Fetch leaves from relayers
