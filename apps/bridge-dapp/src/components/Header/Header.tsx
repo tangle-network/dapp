@@ -55,9 +55,8 @@ export const Header: FC<HeaderProps> = () => {
         <Breadcrumbs>
           {items.map((item, index) => {
             return (
-              <NavLink to={'/'}>
+              <NavLink key={index} to={'/'}>
                 <BreadcrumbsItem
-                  key={index}
                   isLast={index === items.length - 1}
                   icon={index === 0 ? <ContrastTwoLine size="lg" /> : undefined}
                   className="capitalize"

@@ -382,7 +382,7 @@ function useWithdrawButtonProps({
         );
 
         const valid = inputNotes.every((note) => {
-          if (note.note.targetChainId === destTypedChainId.toString()) {
+          if (note.note.sourceChainId === destTypedChainId.toString()) {
             return note.note.index ? BigInt(note.note.index) < nextIdx : true;
           } else {
             return validateNoteLeafIndex(note, edges);
