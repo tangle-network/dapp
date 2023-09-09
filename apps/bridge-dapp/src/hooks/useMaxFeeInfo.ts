@@ -1,4 +1,4 @@
-import { fetchFeeData } from 'wagmi/actions';
+import { fetchFeeData, getPublicClient } from 'wagmi/actions';
 import {
   ActiveWebbRelayer,
   RelayerFeeInfo,
@@ -7,10 +7,13 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import gasLimit from '@webb-tools/dapp-config/gasLimitConfig';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { PolkadotProvider } from '@webb-tools/polkadot-api-provider';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import {
+  calculateTypedChainId,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getErrorMessage } from '../utils';
 
 /**
@@ -68,6 +71,11 @@ export type MaxFeeInfoOption = {
    * Fungible currency id
    */
   fungibleCurrencyId?: number;
+
+  /**
+   * The typed chain id if not provided, the hook will calculate the typed chain id from the active chain
+   */
+  typedChainId?: number;
 };
 
 /**
@@ -94,11 +102,23 @@ export const useMaxFeeInfo = (
   // State to store the error
   const [error, setError] = useState<unknown | null>(null);
 
+  const typedChainId = useMemo(() => {
+    if (typeof opt?.typedChainId === 'number') {
+      return opt.typedChainId;
+    }
+
+    if (!activeChain) {
+      return undefined;
+    }
+
+    return calculateTypedChainId(activeChain.chainType, activeChain.id);
+  }, [activeChain, opt?.typedChainId]);
+
   const fetchMaxFeeInfoFromRelayer = useCallback(
     async (relayer: ActiveWebbRelayer): Promise<void> => {
       try {
-        if (!activeChain) {
-          throw new Error('No active chain');
+        if (typeof typedChainId !== 'number') {
+          throw new Error('No typed chain id selected');
         }
 
         if (!relayer) {
@@ -112,23 +132,18 @@ export const useMaxFeeInfo = (
         setError(null);
         setIsLoading(true);
 
-        const currentTypedChainId = calculateTypedChainId(
-          activeChain.chainType,
-          activeChain.id
-        );
-
         const vanchorId = apiConfig.getAnchorIdentifier(
           opt.fungibleCurrencyId,
-          currentTypedChainId
+          typedChainId
         );
         if (!vanchorId) {
           console.error('No anchor address in current active chain');
           return;
         }
 
-        const gasAmount = gasLimit[currentTypedChainId] ?? gasLimit.default;
+        const gasAmount = gasLimit[typedChainId] ?? gasLimit.default;
         const feeInfo = await relayer.getFeeInfo(
-          currentTypedChainId,
+          typedChainId,
           vanchorId,
           gasAmount
         );
@@ -140,36 +155,29 @@ export const useMaxFeeInfo = (
         setIsLoading(false);
       }
     },
-    [activeChain, apiConfig, opt?.fungibleCurrencyId]
+    [apiConfig, opt?.fungibleCurrencyId, typedChainId]
   );
 
   const calculateFeeInfo = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      if (!activeChain || !activeApi) {
+      if (!activeApi || typeof typedChainId !== 'number') {
         return;
       }
 
-      const currentTypedChain = calculateTypedChainId(
-        activeChain.chainType,
-        activeChain.id
-      );
-
-      const gasAmount = gasLimit[currentTypedChain] ?? gasLimit.default;
+      const gasAmount = gasLimit[typedChainId] ?? gasLimit.default;
       const provider = activeApi.getProvider();
       if (provider instanceof PolkadotProvider) {
         // On Substrate, we use partial fee dirrectly
         setFeeInfo(gasAmount);
         setIsLoading(false);
       } else if (activeApi instanceof WebbWeb3Provider) {
-        const walletClient = activeApi.walletClient;
-        const publicClient = activeApi.publicClient;
+        const chainId = parseTypedChainId(typedChainId).chainId;
+        const publicClient = getPublicClient({ chainId });
 
         const { maxFeePerGas, gasPrice, maxPriorityFeePerGas } =
-          await fetchFeeData({
-            chainId: walletClient.chain?.id,
-          });
+          await fetchFeeData({ chainId });
 
         let actualGasPrice = await publicClient.getGasPrice();
         if (gasPrice && gasPrice > actualGasPrice) {
@@ -193,7 +201,7 @@ export const useMaxFeeInfo = (
     } finally {
       setIsLoading(false);
     }
-  }, [activeApi, activeChain]);
+  }, [activeApi, typedChainId]);
 
   const fetchFeeInfo = useCallback(
     async (activeRelayer?: ActiveWebbRelayer | null) => {

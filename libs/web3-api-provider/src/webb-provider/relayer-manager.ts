@@ -114,7 +114,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3'> {
     });
   }
 
-  async getRelayersByChainAndAddress(typedChainId: number, address: string) {
+  getRelayersByChainAndAddress(typedChainId: number, address: string) {
     const chainId = parseTypedChainId(typedChainId).chainId;
     return this.getRelayers({
       baseOn: 'evm',

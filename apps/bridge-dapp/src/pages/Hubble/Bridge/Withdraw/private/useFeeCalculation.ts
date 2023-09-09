@@ -12,7 +12,10 @@ import {
   RECIPIENT_KEY,
   TOKEN_KEY,
 } from '../../../../../constants';
-import { useMaxFeeInfo } from '../../../../../hooks/useMaxFeeInfo';
+import {
+  MaxFeeInfoOption,
+  useMaxFeeInfo,
+} from '../../../../../hooks/useMaxFeeInfo';
 
 export type UseFeeCalculationArgs = {
   activeRelayer?: OptionalActiveRelayer;
@@ -53,10 +56,12 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
   }, [apiConfig.chains, destChainId]);
 
   const feeArgs = useMemo(
-    () => ({
-      fungibleCurrencyId: fungibleCfg?.id,
-    }),
-    [fungibleCfg?.id]
+    () =>
+      ({
+        fungibleCurrencyId: fungibleCfg?.id,
+        typedChainId: destChainId ? parseInt(destChainId) : undefined,
+      } satisfies MaxFeeInfoOption),
+    [destChainId, fungibleCfg?.id]
   );
 
   const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =
