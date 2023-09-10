@@ -45,9 +45,9 @@ import {
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
+import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
 import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
-import useRelayerWithRoute from './private/useRelayerWithRoute';
 import useWithdrawButtonProps from './private/useWithdrawButtonProps';
 
 const Withdraw = () => {
@@ -86,8 +86,6 @@ const Withdraw = () => {
     setRecipient,
   } = useInputs();
 
-  const { activeRelayer } = useRelayerWithRoute();
-
   const [destTypedChainId, poolId, tokenId, noRelayer] = useMemo(() => {
     const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
 
@@ -103,6 +101,8 @@ const Withdraw = () => {
       Boolean(noRelayer),
     ];
   }, [searchParams]);
+
+  const activeRelayer = useRelayerWithRoute(destTypedChainId);
 
   const [fungibleCfg, wrappableCfg] = useMemo(() => {
     return [

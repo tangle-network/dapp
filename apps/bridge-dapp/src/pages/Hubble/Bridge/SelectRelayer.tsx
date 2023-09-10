@@ -15,8 +15,9 @@ import ToggleCard from '@webb-tools/webb-ui-components/components/ToggleCard';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import cx from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { BooleanParam, useQueryParam } from 'use-query-params';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_PATH,
@@ -30,7 +31,6 @@ import {
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { useRelayerManager } from '../../../hooks/useRelayerManager';
-import useStateWithRoute from '../../../hooks/useStateWithRoute';
 
 const SelectRelayer = () => {
   const { pathname } = useLocation();
@@ -43,7 +43,7 @@ const SelectRelayer = () => {
 
   const { toggleModal } = useConnectWallet();
 
-  const [noRelayer, setNoRelayer] = useStateWithRoute(NO_RELAYER_KEY);
+  const [noRelayer, setNoRelayer] = useQueryParam(NO_RELAYER_KEY, BooleanParam);
 
   const [customRelayer, setCustomRelayer] = useState('');
   const [customerRelayerError, setCustomerRelayerError] = useState('');
@@ -84,13 +84,6 @@ const SelectRelayer = () => {
     setRelayer,
   } = useRelayers(useRelayersArgs);
 
-  // If no relayer is selected, set the active relayer to null
-  useEffect(() => {
-    if (noRelayer && activeRelayer) {
-      setRelayer(null);
-    }
-  }, [activeRelayer, noRelayer, setRelayer]);
-
   const { getInfo, addRelayer } = useRelayerManager();
 
   const chainCfg = useMemo(() => {
@@ -130,7 +123,7 @@ const SelectRelayer = () => {
         return r;
       })
       .filter((r): r is RelayerType => r !== undefined);
-  }, [chainCfg, noRelayer, relayers]);
+  }, [noRelayer, chainCfg, relayers]);
 
   const selectedRelayer = useMemo<RelayerType | undefined>(() => {
     return activeRelayer?.beneficiary && chainCfg
@@ -217,9 +210,16 @@ const SelectRelayer = () => {
 
   const toggleNoRelayer = useCallback(
     (nextChecked: boolean) => {
-      setNoRelayer(() => (nextChecked ? '1' : ''));
+      if (!nextChecked) {
+        setNoRelayer(undefined);
+        return;
+      }
+
+      // If no relayer is selected, set the active relayer to null
+      setNoRelayer(nextChecked);
+      setRelayer(null);
     },
-    [setNoRelayer]
+    [setNoRelayer, setRelayer]
   );
 
   const isDisabled = useMemo(() => {
@@ -271,7 +271,7 @@ const SelectRelayer = () => {
               className={cx('max-w-none', { hidden: isDisconnected })}
               Icon={<WalletFillIcon size="lg" />}
               switcherProps={{
-                checked: !!noRelayer,
+                checked: Boolean(noRelayer),
                 onCheckedChange: toggleNoRelayer,
               }}
               title="No relayer (not recommended)"

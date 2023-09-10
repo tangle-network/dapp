@@ -8,6 +8,7 @@ export * from './useLatestTransactionStage';
 export * from './useMaxFeeInfo';
 export { default as useNavigateWithPersistParams } from './useNavigateWithPersistParams';
 export * from './useRelayerManager';
+export { default as useRelayerWithRoute } from './useRelayerWithRoute';
 export * from './useShieldedAssets';
 export * from './useSpendNotes';
 export { default as useStateWithRoute } from './useStateWithRoute';

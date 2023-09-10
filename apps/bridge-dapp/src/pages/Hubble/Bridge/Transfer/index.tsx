@@ -42,9 +42,9 @@ import {
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
+import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
 import useFeeCalculation from './private/useFeeCalculation';
 import useInputs from './private/useInputs';
-import useRelayerWithRoute from './private/useRelayerWithRoute';
 import useTransferButtonProps from './private/useTransferButtonProps';
 
 const Transfer = () => {
@@ -82,8 +82,6 @@ const Transfer = () => {
     setHasRefund,
     setRecipient,
   } = useInputs();
-
-  const { activeRelayer } = useRelayerWithRoute();
 
   const [srcTypedChainId, destTypedChainId, poolId] = useMemo(() => {
     const srcTypedId = parseInt(searchParams.get(SOURCE_CHAIN_KEY) ?? '');
@@ -208,18 +206,6 @@ const Transfer = () => {
     [activeBridge, activeChain, apiConfig.anchors, balances, initialized, isConnecting, loading, poolId, setSearchParams, srcTypedChainId]
   );
 
-  // If no active relayer, reset refund states
-  useEffect(
-    () => {
-      if (!activeRelayer && (hasRefund || refundRecipient)) {
-        setHasRefund('');
-        setRefundRecipient('');
-      }
-    },
-    // prettier-ignore
-    [activeRelayer, hasRefund, refundRecipient, setHasRefund, setRefundRecipient]
-  );
-
   const handleChainClick = useCallback(
     (destChain?: boolean) => {
       navigate(
@@ -273,6 +259,8 @@ const Transfer = () => {
     const noteAccPub = noteManager.getKeypair().toString();
     setRecipient(noteAccPub);
   }, [noteManager, notificationApi, setRecipient]);
+
+  const activeRelayer = useRelayerWithRoute(srcTypedChainId);
 
   const {
     gasFeeInfo,
