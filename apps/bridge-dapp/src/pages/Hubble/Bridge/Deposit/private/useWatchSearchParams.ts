@@ -34,27 +34,30 @@ function useWatchSearchParams() {
 
   const [amount, setAmount] = useAmountWithRoute();
 
-  useEffect(() => {
-    if (loading || isConnecting) {
-      return;
-    }
+  useEffect(
+    () => {
+      if (loading || isConnecting) {
+        return;
+      }
 
-    if (srcTypedChainId) {
-      return;
-    }
+      if (typeof srcTypedChainId === 'number') {
+        return;
+      }
 
-    const defaultChain = Object.values(apiConfig.chains)[0];
-    const typedChainId = activeChain
-      ? calculateTypedChainId(activeChain.chainType, activeChain.id)
-      : calculateTypedChainId(defaultChain.chainType, defaultChain.id);
+      const defaultChain = Object.values(apiConfig.chains)[0];
+      const typedChainId = activeChain
+        ? calculateTypedChainId(activeChain.chainType, activeChain.id)
+        : calculateTypedChainId(defaultChain.chainType, defaultChain.id);
 
-    setSearchParams(prev => {
-      const nextParams = new URLSearchParams(prev);
-      nextParams.set(SOURCE_CHAIN_KEY, `${typedChainId}`);
-      return nextParams;
-    })
-
-  }, [activeChain, apiConfig.chains, isConnecting, loading, setSearchParams, srcTypedChainId]); // prettier-ignore
+      setSearchParams((prev) => {
+        const nextParams = new URLSearchParams(prev);
+        nextParams.set(SOURCE_CHAIN_KEY, `${typedChainId}`);
+        return nextParams;
+      });
+    },
+    // prettier-ignore
+    [activeChain, apiConfig.chains, isConnecting, loading, setSearchParams, srcTypedChainId]
+  );
 
   const activeBridge = useMemo(() => {
     return activeApi?.state.activeBridge;

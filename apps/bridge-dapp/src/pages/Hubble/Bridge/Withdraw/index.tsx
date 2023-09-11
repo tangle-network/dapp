@@ -391,6 +391,9 @@ const Withdraw = () => {
               tokenSelectorProps={{
                 onClick: () => handleTokenClick(),
               }}
+              fixedAmountProps={{
+                step: 0.01,
+              }}
             />
           </TransactionInputCard.Root>
 
