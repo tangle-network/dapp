@@ -11,7 +11,7 @@ import { AreaChart, BarChart, VolumeChart } from '../../components';
 import { PoolOverviewChartsDataType } from '../../data';
 
 const tvlTab = 'TVL';
-const volumeTab = 'Volume 24H';
+const volumeTab = 'Volume';
 const relayerEarningTab = 'Relayer Earnings';
 
 const PoolOverviewChartsCmp: FC<PoolOverviewChartsDataType> = ({
