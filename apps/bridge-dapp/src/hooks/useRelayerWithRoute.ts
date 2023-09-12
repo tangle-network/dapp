@@ -2,44 +2,56 @@ import { type OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/re
 import { WebbRelayer } from '@webb-tools/abstract-api-provider/relayer/webb-relayer';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { StringParam, useQueryParam } from 'use-query-params';
-import { NO_RELAYER_KEY, POOL_KEY, RELAYER_ENDPOINT_KEY } from '../constants';
+import {
+  BooleanParam,
+  NumberParam,
+  StringParam,
+  useQueryParams,
+} from 'use-query-params';
+import {
+  HAS_REFUND_KEY,
+  NO_RELAYER_KEY,
+  POOL_KEY,
+  REFUND_RECIPIENT_KEY,
+  RELAYER_ENDPOINT_KEY,
+} from '../constants';
 
-const useRelayerWithRoute = (typedChainId?: number) => {
-  const [searchParams] = useSearchParams();
-
+const useRelayerWithRoute = (typedChainId?: number | null) => {
   const { activeApi, apiConfig } = useWebContext();
 
   // State for active relayer
-  const [relayerUrl, setRelayerUrl] = useQueryParam(
-    RELAYER_ENDPOINT_KEY,
-    StringParam
-  );
+  const [query, setQuery] = useQueryParams({
+    [RELAYER_ENDPOINT_KEY]: StringParam,
+    [POOL_KEY]: NumberParam,
+    [NO_RELAYER_KEY]: BooleanParam,
+    [HAS_REFUND_KEY]: BooleanParam,
+    [REFUND_RECIPIENT_KEY]: StringParam,
+  });
 
-  const [poolId, noRelayer] = useMemo(() => {
-    const poolId = parseInt(searchParams.get(POOL_KEY) ?? '');
-
-    return [
-      Number.isNaN(poolId) ? undefined : poolId,
-      !!searchParams.get(NO_RELAYER_KEY),
-    ];
-  }, [searchParams]);
+  const {
+    [RELAYER_ENDPOINT_KEY]: relayerUrl,
+    [NO_RELAYER_KEY]: noRelayer,
+    [POOL_KEY]: poolId,
+  } = query;
 
   // Side effect for active relayer subsription
   useEffect(() => {
     const sub = activeApi?.relayerManager.activeRelayerWatcher.subscribe(
       (relayer) => {
-        if (relayer) {
-          setRelayerUrl(relayer.endpoint);
-        } else {
-          setRelayerUrl(undefined);
-        }
+        setQuery({
+          [RELAYER_ENDPOINT_KEY]: relayer?.endpoint,
+          ...(relayer == null
+            ? {
+                [HAS_REFUND_KEY]: undefined,
+                [REFUND_RECIPIENT_KEY]: undefined,
+              }
+            : {}),
+        });
       }
     );
 
     return () => sub?.unsubscribe();
-  }, [setRelayerUrl, activeApi]);
+  }, [activeApi?.relayerManager.activeRelayerWatcher, setQuery]);
 
   const anchorId = useMemo(() => {
     if (typeof poolId !== 'number' || typeof typedChainId !== 'number') {
@@ -49,6 +61,8 @@ const useRelayerWithRoute = (typedChainId?: number) => {
     return apiConfig.anchors[poolId]?.[typedChainId];
   }, [apiConfig.anchors, poolId, typedChainId]);
 
+  // Side effect to check if active relayer is supported
+  // If not, set the first supported relayer as active
   useEffect(() => {
     if (typeof anchorId !== 'string' || typeof typedChainId !== 'number') {
       return;

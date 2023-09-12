@@ -1,68 +1,60 @@
 import { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { numberToString } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
+import { formatEther, parseEther } from 'viem';
 import {
   AMOUNT_KEY,
   HAS_REFUND_KEY,
-  POOL_KEY,
   RECIPIENT_KEY,
   REFUND_RECIPIENT_KEY,
-  SOURCE_CHAIN_KEY,
 } from '../../../../../constants';
+import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
+import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import {
-  type MaxFeeInfoOption,
   useMaxFeeInfo,
+  type MaxFeeInfoOption,
 } from '../../../../../hooks/useMaxFeeInfo';
-import { formatEther, parseEther } from 'viem';
-import { numberToString } from '@webb-tools/webb-ui-components';
 
-export type UseFeeCalculationArgs = {
+export default function useFeeCalculation(args: {
+  typedChainId?: number | null;
   activeRelayer?: OptionalActiveRelayer;
   refundRecipientError?: string;
   recipientErrorMsg?: string;
-};
+}) {
+  const {
+    activeRelayer,
+    refundRecipientError,
+    recipientErrorMsg,
+    typedChainId,
+  } = args;
 
-export default function useFeeCalculation(args: UseFeeCalculationArgs) {
-  const { activeRelayer, refundRecipientError, recipientErrorMsg } = args;
+  const { activeApi, apiConfig } = useWebContext();
 
-  const { apiConfig } = useWebContext();
+  const [query] = useQueryParams({
+    [AMOUNT_KEY]: StringParam,
+    [RECIPIENT_KEY]: StringParam,
+    [HAS_REFUND_KEY]: BooleanParam,
+    [REFUND_RECIPIENT_KEY]: StringParam,
+  });
 
-  const [searchParams] = useSearchParams();
+  const {
+    [AMOUNT_KEY]: amount,
+    [HAS_REFUND_KEY]: hasRefund,
+    [REFUND_RECIPIENT_KEY]: refundRecipient,
+    [RECIPIENT_KEY]: recipient,
+  } = query;
 
-  const [amount, poolId, srcTypedChainId, recipient] = useMemo(() => {
-    return [
-      searchParams.get(AMOUNT_KEY),
-      searchParams.get(POOL_KEY),
-      searchParams.get(SOURCE_CHAIN_KEY),
-      searchParams.get(RECIPIENT_KEY),
-    ];
-  }, [searchParams]);
-
-  const [hasRefund, refundRecipient] = useMemo(() => {
-    return [
-      !!searchParams.get(HAS_REFUND_KEY),
-      searchParams.get(REFUND_RECIPIENT_KEY),
-    ];
-  }, [searchParams]);
-
-  const fungibleCfg = useMemo(() => {
-    if (poolId) {
-      return apiConfig.currencies[parseInt(poolId)];
-    }
-  }, [apiConfig.currencies, poolId]);
-
-  const srcChainCfg = useMemo(() => {
-    if (srcTypedChainId) {
-      return apiConfig.chains[parseInt(srcTypedChainId)];
-    }
-  }, [apiConfig.chains, srcTypedChainId]);
+  const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
+  const { fungibleCfg } = useCurrenciesFromRoute();
 
   const feeArgs = useMemo(
     () =>
       ({
         fungibleCurrencyId: fungibleCfg?.id,
-        typedChainId: srcTypedChainId ? parseInt(srcTypedChainId) : undefined,
+        typedChainId:
+          typeof srcTypedChainId === 'number' ? srcTypedChainId : undefined,
       } satisfies MaxFeeInfoOption),
     [fungibleCfg?.id, srcTypedChainId]
   );
@@ -125,11 +117,19 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
     return srcChainCfg?.nativeCurrency.symbol;
   }, [activeRelayer, fungibleCfg?.symbol, srcChainCfg?.nativeCurrency.symbol]);
 
+  const anchorId = useMemo(() => {
+    if (typeof typedChainId !== 'number' || !fungibleCfg) {
+      return;
+    }
+
+    return apiConfig.getAnchorIdentifier(fungibleCfg.id, typedChainId);
+  }, [apiConfig, fungibleCfg, typedChainId]);
+
   // Side effect for auto fetching fee info
   // when all inputs are filled and valid
   useEffect(
     () => {
-      if (!amount || !fungibleCfg) {
+      if (!amount || !anchorId || typeof typedChainId !== 'number') {
         return;
       }
 
@@ -142,10 +142,19 @@ export default function useFeeCalculation(args: UseFeeCalculationArgs) {
         return;
       }
 
-      fetchFeeInfo(hasRefund ? activeRelayer : undefined);
+      const hasSupport =
+        activeRelayer &&
+        activeApi?.relayerManager &&
+        activeRelayer.isSupported(
+          typedChainId,
+          anchorId,
+          activeApi.relayerManager.cmdKey
+        );
+
+      fetchFeeInfo(hasRefund && hasSupport ? activeRelayer : undefined);
     },
     // prettier-ignore
-    [activeRelayer, amount, fetchFeeInfo, fungibleCfg, hasRefund, recipient, recipientErrorMsg, refundRecipient, refundRecipientError]
+    [activeApi?.relayerManager, activeRelayer, amount, anchorId, fetchFeeInfo, hasRefund, recipient, recipientErrorMsg, refundRecipient, refundRecipientError, typedChainId]
   );
 
   return {

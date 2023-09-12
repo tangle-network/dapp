@@ -1,36 +1,46 @@
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import isValidPublicKey from '@webb-tools/dapp-types/utils/isValidPublicKey';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  BooleanParam,
+  StringParam,
+  useQueryParams,
+  type UrlUpdateType,
+} from 'use-query-params';
 import {
   HAS_REFUND_KEY,
   RECIPIENT_KEY,
   REFUND_RECIPIENT_KEY,
 } from '../../../../../constants';
 import useAmountWithRoute from '../../../../../hooks/useAmountWithRoute';
-import useStateWithRoute from '../../../../../hooks/useStateWithRoute';
+import useDefaultChainAndPool from '../../../../../hooks/useDefaultChainAndPool';
+import objectToSearchString from '../../../../../utils/objectToSearchString';
 
 const useInputs = () => {
   const [amount, setAmount] = useAmountWithRoute();
 
-  const [recipient, setRecipient] = useStateWithRoute(RECIPIENT_KEY);
+  const [query, setQuery] = useQueryParams(
+    {
+      [RECIPIENT_KEY]: StringParam,
+      [HAS_REFUND_KEY]: BooleanParam,
+      [REFUND_RECIPIENT_KEY]: StringParam,
+    },
+    { objectToSearchString }
+  );
 
-  const [hasRefund, setHasRefund] = useStateWithRoute(HAS_REFUND_KEY);
-
-  const [refundRecipient, setRefundRecipient] =
-    useStateWithRoute(REFUND_RECIPIENT_KEY);
+  const {
+    [RECIPIENT_KEY]: recipient,
+    [HAS_REFUND_KEY]: hasRefund,
+    [REFUND_RECIPIENT_KEY]: refundRecipient,
+  } = query;
 
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
 
   const [refundRecipientErrorMsg, setRefundRecipientErrorMsg] = useState('');
 
-  // Reset the refund recipient if the user toggles the refund switch
-  useEffect(() => {
-    if (!hasRefund) {
-      setRefundRecipient('');
-    }
-  }, [hasRefund, setRefundRecipient]);
+  useDefaultChainAndPool();
 
-  // Validate recipient input address after 0.5s
+  // Validate recipient public key after 0.5s
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (recipient && !isValidPublicKey(recipient)) {
@@ -43,7 +53,7 @@ const useInputs = () => {
     return () => clearTimeout(timeout);
   }, [recipient]);
 
-  // Validate refund recipient input address after 0.5s
+  // Validate refund recipient wallet address after 0.5s
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (refundRecipient && !isValidAddress(refundRecipient)) {
@@ -56,17 +66,48 @@ const useInputs = () => {
     return () => clearTimeout(timeout);
   }, [refundRecipient]);
 
+  const onHasRefundChange = useCallback(
+    (
+      newValue:
+        | typeof hasRefund
+        | ((latestValue: typeof hasRefund) => typeof hasRefund),
+      updateType?: UrlUpdateType
+    ) => {
+      let nextValue: typeof hasRefund;
+      if (typeof newValue === 'function') {
+        nextValue = newValue(hasRefund);
+      } else {
+        nextValue = newValue;
+      }
+
+      setQuery(
+        {
+          [HAS_REFUND_KEY]: nextValue,
+          ...(Boolean(nextValue) === false
+            ? {
+                [REFUND_RECIPIENT_KEY]: undefined,
+              }
+            : {}),
+        },
+        updateType
+      );
+    },
+    [hasRefund, setQuery]
+  );
+
   return {
     amount,
-    hasRefund,
-    recipient,
+    hasRefund: Boolean(hasRefund),
+    recipient: recipient ?? '',
     recipientErrorMsg,
-    refundRecipient,
+    refundRecipient: refundRecipient ?? '',
     refundRecipientErrorMsg,
     setAmount,
-    setHasRefund,
-    setRecipient,
-    setRefundRecipient,
+    setHasRefund: onHasRefundChange,
+    setRecipient: (recipient: string) =>
+      setQuery({ [RECIPIENT_KEY]: recipient }),
+    setRefundRecipient: (refundRecipient: string) =>
+      setQuery({ [REFUND_RECIPIENT_KEY]: refundRecipient }),
   };
 };
 
