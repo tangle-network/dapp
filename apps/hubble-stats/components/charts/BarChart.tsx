@@ -62,7 +62,7 @@ const BarChart: FC<BarChartProps> = ({
           interval="preserveStartEnd"
         />
         <Tooltip
-          contentStyle={{ display: 'none' }}
+          cursor={{ opacity: isDarkMode ? 0.2 : 1 }}
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
               setValue && setValue(payload[0].payload['value']);

@@ -1,4 +1,10 @@
-import { Chip } from '@webb-tools/webb-ui-components';
+import {
+  Chip,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { ArrowRightUp, DatabaseLine } from '@webb-tools/icons';
 
 import { getOverviewChipsData } from '../../data';
@@ -18,14 +24,24 @@ export default async function OverviewChipsContainer() {
         webbtTNT
       </Chip>
 
-      <Chip color="blue" className="normal-case">
-        <ArrowRightUp size="lg" className="fill-blue-90 dark:fill-blue-30" />
-        DEPOSITS:{' '}
-        {typeof deposit === 'number'
-          ? getRoundedDownNumberWith2Decimals(deposit)
-          : '-'}{' '}
-        webbtTNT
-      </Chip>
+      <Tooltip>
+        <TooltipTrigger>
+          <Chip color="blue" className="normal-case">
+            <ArrowRightUp
+              size="lg"
+              className="fill-blue-90 dark:fill-blue-30"
+            />
+            DEPOSITS:{' '}
+            {typeof deposit === 'number'
+              ? getRoundedDownNumberWith2Decimals(deposit)
+              : '-'}{' '}
+            webbtTNT
+          </Chip>
+        </TooltipTrigger>
+        <TooltipBody>
+          <Typography variant="body2">Historical Deposit Volume</Typography>
+        </TooltipBody>
+      </Tooltip>
     </div>
   );
 }
