@@ -46,9 +46,12 @@ const ExplorerUrlsDropdown: FC<{
           size="sm"
         >
           {Object.keys(data.urls).map((typedChainId) => (
-            <div
+            <a
               key={typedChainId}
               className="flex items-center justify-between px-4 py-2"
+              href={data.urls[+typedChainId]}
+              target="_blank"
+              rel="noreferrer"
             >
               <div className="flex items-center gap-2">
                 <ChainIcon name={chainsConfig[+typedChainId].name} size="lg" />
@@ -60,14 +63,8 @@ const ExplorerUrlsDropdown: FC<{
                   {getShortenChainName(+typedChainId)}
                 </Typography>
               </div>
-              <a
-                href={data.urls[+typedChainId]}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-              </a>
-            </div>
+              <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
+            </a>
           ))}
         </DropdownBody>
       </Dropdown>

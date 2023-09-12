@@ -23,6 +23,7 @@ export type ActivityType = 'deposit' | 'transfer' | 'withdraw';
 export interface ActivityCellProps {
   txHash: string;
   activity: ActivityType;
+  sourceTypedChainId: number;
 }
 
 export interface TimeCellProps {

@@ -32,6 +32,7 @@ const columns: ColumnDef<PoolTransactionType, any>[] = [
       <ActivityCell
         txHash={props.row.original.txHash}
         activity={props.row.original.activity}
+        sourceTypedChainId={props.row.original.sourceTypedChainId}
       />
     ),
   }),

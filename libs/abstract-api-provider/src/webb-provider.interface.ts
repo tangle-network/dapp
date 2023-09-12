@@ -9,7 +9,7 @@ import { ApiConfig } from '@webb-tools/dapp-config';
 import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import { ZkComponents } from '@webb-tools/utils';
+import type { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
@@ -23,6 +23,7 @@ import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import type {WebbProviderType} from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -188,8 +189,6 @@ export type NotificationHandler = ((
   // remove the notification programmatically
   remove(key: string | number): void;
 };
-
-export type WebbProviderType = 'web3' | 'polkadot';
 
 /**
  * The representation of an api provider

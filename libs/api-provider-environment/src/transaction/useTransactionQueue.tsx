@@ -4,8 +4,7 @@ import {
   TransactionState,
   TransactionStatusMap,
   TransactionStatusValue,
-  WebbProviderType,
-} from '@webb-tools/abstract-api-provider';
+} from '@webb-tools/abstract-api-provider/transaction';
 import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
@@ -18,6 +17,7 @@ import {
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
+import { getExplorerURI } from './utils';
 
 export function transactionItemStatusFromTxStatus(
   txStatus: TransactionState
@@ -33,26 +33,6 @@ export function transactionItemStatusFromTxStatus(
       return 'in-progress';
   }
 }
-
-export const getExplorerURI = (
-  explorerUri: string,
-  addOrTxHash: string,
-  variant: 'tx' | 'address',
-  txProviderType: WebbProviderType
-): URL => {
-  switch (txProviderType) {
-    case 'web3':
-      return new URL(`${variant}/${addOrTxHash}`, explorerUri);
-
-    case 'polkadot': {
-      const path = variant === 'tx' ? `explorer/query/${addOrTxHash}` : '';
-      return new URL(`${path}`, explorerUri);
-    }
-
-    default:
-      return new URL('');
-  }
-};
 
 function mapTxToPayload(
   tx: Transaction<any>,
