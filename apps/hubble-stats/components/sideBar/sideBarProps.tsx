@@ -64,6 +64,7 @@ const sideBarFooter: SideBarFooterType = {
   isInternal: false,
   href: WEBB_DOCS_URL,
   Icon: DocumentationIcon,
+  useNextThemesForThemeToggle: true,
 };
 
 const sideBarProps: SidebarProps = {

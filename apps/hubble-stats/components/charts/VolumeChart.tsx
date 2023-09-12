@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltip } from '..';
 import { VolumeChartProps } from './types';

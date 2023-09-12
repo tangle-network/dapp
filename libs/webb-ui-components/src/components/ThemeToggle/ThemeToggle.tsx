@@ -1,5 +1,11 @@
+import { FC, useMemo } from 'react';
 import { MoonLine, SunLine } from '@webb-tools/icons';
-import { useDarkMode } from '../../hooks/useDarkMode';
+import {
+  useDarkMode as useNormalDarkMode,
+  useNextDarkMode,
+} from '../../hooks/useDarkMode';
+
+import { ThemeToggleProps } from './types';
 
 /**
  * ThemeToggle (Dark/Light) Component
@@ -9,7 +15,16 @@ import { useDarkMode } from '../../hooks/useDarkMode';
  *  <ThemeToggle />
  * ```
  */
-export const ThemeToggle = () => {
+
+export const ThemeToggle: FC<ThemeToggleProps> = ({
+  useNextThemes = false,
+}) => {
+  const useDarkMode = useMemo(
+    () => (useNextThemes ? useNextDarkMode : useNormalDarkMode),
+    [useNextThemes]
+  );
+
+  // const [isMounted, setIsMounted] = useState(false);
   const [isDarkMode, toggleThemeMode] = useDarkMode();
 
   return (

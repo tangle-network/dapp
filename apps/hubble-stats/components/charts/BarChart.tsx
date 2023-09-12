@@ -8,7 +8,7 @@ import {
   Tooltip,
   Bar,
 } from 'recharts';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltip } from '..';
 import { BarChartProps } from './types';
