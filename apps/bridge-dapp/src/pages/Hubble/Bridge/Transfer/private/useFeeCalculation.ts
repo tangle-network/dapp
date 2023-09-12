@@ -1,5 +1,6 @@
 import { OptionalActiveRelayer } from '@webb-tools/abstract-api-provider/relayer/types';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { numberToString } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo } from 'react';
 import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
@@ -10,7 +11,6 @@ import {
   RECIPIENT_KEY,
   REFUND_RECIPIENT_KEY,
 } from '../../../../../constants';
-import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
 import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import {
   useMaxFeeInfo,
@@ -46,7 +46,6 @@ export default function useFeeCalculation(args: {
     [RECIPIENT_KEY]: recipient,
   } = query;
 
-  const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
   const { fungibleCfg } = useCurrenciesFromRoute();
 
   const feeArgs = useMemo(
@@ -54,9 +53,9 @@ export default function useFeeCalculation(args: {
       ({
         fungibleCurrencyId: fungibleCfg?.id,
         typedChainId:
-          typeof srcTypedChainId === 'number' ? srcTypedChainId : undefined,
+          typeof typedChainId === 'number' ? typedChainId : undefined,
       } satisfies MaxFeeInfoOption),
-    [fungibleCfg?.id, srcTypedChainId]
+    [fungibleCfg?.id, typedChainId]
   );
 
   const { isLoading, feeInfo, fetchFeeInfo, resetMaxFeeInfo } =
@@ -114,8 +113,12 @@ export default function useFeeCalculation(args: {
       return fungibleCfg?.symbol;
     }
 
-    return srcChainCfg?.nativeCurrency.symbol;
-  }, [activeRelayer, fungibleCfg?.symbol, srcChainCfg?.nativeCurrency.symbol]);
+    if (typeof typedChainId !== 'number') {
+      return;
+    }
+
+    return chainsPopulated[typedChainId].nativeCurrency.symbol;
+  }, [activeRelayer, fungibleCfg?.symbol, typedChainId]);
 
   const anchorId = useMemo(() => {
     if (typeof typedChainId !== 'number' || !fungibleCfg) {

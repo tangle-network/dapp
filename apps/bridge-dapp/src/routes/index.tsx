@@ -117,8 +117,8 @@ const BridgeRoutes = () => {
                 {/** Withdraw */}
                 <Route path={WITHDRAW_PATH} element={<Withdraw />}>
                   <Route
-                    path={SELECT_DESTINATION_CHAIN_PATH}
-                    element={<SelectChain chainType="dest" />}
+                    path={SELECT_SOURCE_CHAIN_PATH}
+                    element={<SelectChain chainType="source" />}
                   />
                   <Route
                     path={SELECT_SHIELDED_POOL_PATH}

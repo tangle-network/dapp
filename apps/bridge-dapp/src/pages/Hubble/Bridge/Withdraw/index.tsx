@@ -8,7 +8,6 @@ import {
   SettingsFillIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -23,20 +22,18 @@ import {
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
-import { useCallback, useEffect, useMemo } from 'react';
-import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { BooleanParam, useQueryParam } from 'use-query-params';
 import { formatEther, parseEther } from 'viem';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
-  DEST_CHAIN_KEY,
   NO_RELAYER_KEY,
-  POOL_KEY,
-  SELECT_DESTINATION_CHAIN_PATH,
   SELECT_RELAYER_PATH,
   SELECT_SHIELDED_POOL_PATH,
+  SELECT_SOURCE_CHAIN_PATH,
   SELECT_TOKEN_PATH,
-  TOKEN_KEY,
 } from '../../../../constants';
 import {
   CUSTOM_AMOUNT_TOOLTIP_CONTENT,
@@ -44,6 +41,8 @@ import {
 } from '../../../../constants/tooltipContent';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
 import TxInfoContainer from '../../../../containers/TxInfoContainer';
+import useChainsFromRoute from '../../../../hooks/useChainsFromRoute';
+import useCurrenciesFromRoute from '../../../../hooks/useCurrenciesFromRoute';
 import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useRelayerWithRoute from '../../../../hooks/useRelayerWithRoute';
 import useFeeCalculation from './private/useFeeCalculation';
@@ -57,18 +56,9 @@ const Withdraw = () => {
 
   const { isMobile } = useCheckMobile();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { balances } = useBalancesFromNotes();
 
-  const { balances, initialized } = useBalancesFromNotes();
-
-  const {
-    apiConfig,
-    activeApi,
-    activeAccount,
-    activeChain,
-    loading,
-    isConnecting,
-  } = useWebContext();
+  const { activeAccount, activeChain } = useWebContext();
 
   const { notificationApi } = useWebbUI();
 
@@ -81,143 +71,30 @@ const Withdraw = () => {
     recipient,
     recipientErrorMsg,
     setAmount,
+    setCustomAmount,
     setHasRefund,
-    setIsCustom,
     setRecipient,
   } = useInputs();
 
-  const [destTypedChainId, poolId, tokenId, noRelayer] = useMemo(() => {
-    const destTypedId = parseInt(searchParams.get(DEST_CHAIN_KEY) ?? '');
+  const [noRelayer] = useQueryParam(NO_RELAYER_KEY, BooleanParam);
 
-    const poolId = parseInt(searchParams.get(POOL_KEY) ?? '');
-    const tokenId = parseInt(searchParams.get(TOKEN_KEY) ?? '');
+  const { fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
+  const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
 
-    const noRelayer = searchParams.get(NO_RELAYER_KEY);
-
-    return [
-      Number.isNaN(destTypedId) ? undefined : destTypedId,
-      Number.isNaN(poolId) ? undefined : poolId,
-      Number.isNaN(tokenId) ? undefined : tokenId,
-      Boolean(noRelayer),
-    ];
-  }, [searchParams]);
-
-  const activeRelayer = useRelayerWithRoute(destTypedChainId);
-
-  const [fungibleCfg, wrappableCfg] = useMemo(() => {
-    return [
-      typeof poolId === 'number' ? apiConfig.currencies[poolId] : undefined,
-      typeof tokenId === 'number' ? apiConfig.currencies[tokenId] : undefined,
-    ];
-  }, [poolId, tokenId, apiConfig.currencies]);
+  const activeRelayer = useRelayerWithRoute(srcTypedChainId);
 
   const fungibleMaxAmount = useMemo(() => {
-    if (!destTypedChainId) {
+    if (typeof srcTypedChainId !== 'number') {
       return;
     }
 
-    if (fungibleCfg && balances[fungibleCfg.id]?.[destTypedChainId]) {
-      return Number(formatEther(balances[fungibleCfg.id][destTypedChainId]));
+    if (fungibleCfg && balances[fungibleCfg.id]?.[srcTypedChainId]) {
+      return Number(formatEther(balances[fungibleCfg.id][srcTypedChainId]));
     }
-  }, [balances, destTypedChainId, fungibleCfg]);
-
-  const activeBridge = useMemo(() => {
-    return activeApi?.state.activeBridge;
-  }, [activeApi?.state.activeBridge]);
-
-  const destChainCfg = useMemo(() => {
-    if (typeof destTypedChainId !== 'number') {
-      return;
-    }
-
-    return apiConfig.chains[destTypedChainId];
-  }, [apiConfig.chains, destTypedChainId]);
-
-  // Set default poolId and destTypedChainId on first render
-  useEffect(
-    () => {
-      if (loading || isConnecting || !initialized) {
-        return;
-      }
-
-      if (typeof destTypedChainId === 'number' && typeof poolId === 'number') {
-        return;
-      }
-
-      const entries = Object.entries(balances);
-      if (entries.length > 0) {
-        // Find first pool & destTypedChainId from balances
-        const [currencyId, balanceRecord] = entries[0];
-        const [typedChainId] = Object.entries(balanceRecord)?.[0] ?? [];
-
-        if (currencyId && typedChainId) {
-          setSearchParams((prev) => {
-            const params = new URLSearchParams(prev);
-
-            if (typeof destTypedChainId !== 'number') {
-              params.set(DEST_CHAIN_KEY, typedChainId);
-            }
-
-            if (typeof poolId !== 'number') {
-              params.set(POOL_KEY, currencyId);
-            }
-
-            return params;
-          });
-          return;
-        }
-      }
-
-      if (activeChain && activeBridge) {
-        setSearchParams((prev) => {
-          const next = new URLSearchParams(prev);
-
-          const typedChainId = calculateTypedChainId(
-            activeChain.chainType,
-            activeChain.id
-          );
-
-          if (typeof destTypedChainId !== 'number') {
-            next.set(DEST_CHAIN_KEY, `${typedChainId}`);
-          }
-
-          if (typeof poolId !== 'number') {
-            next.set(POOL_KEY, `${activeBridge.currency.id}`);
-          }
-
-          return next;
-        });
-        return;
-      }
-
-      // Here is when no balances and active connection
-      const [defaultPool, anchors] = Object.entries(apiConfig.anchors)[0];
-      const [defaultTypedId] = Object.entries(anchors)[0];
-
-      const nextParams = new URLSearchParams();
-      if (typeof poolId !== 'number' && defaultPool) {
-        nextParams.set(POOL_KEY, defaultPool);
-      }
-
-      if (typeof destTypedChainId !== 'number' && defaultTypedId) {
-        nextParams.set(DEST_CHAIN_KEY, defaultTypedId);
-      }
-
-      setSearchParams(nextParams);
-    },
-    // prettier-ignore
-    [activeBridge, activeChain, apiConfig.anchors, balances, destTypedChainId, initialized, isConnecting, loading, poolId, setSearchParams]
-  );
-
-  // If no active relayer, reset refund states
-  useEffect(() => {
-    if (!activeRelayer && hasRefund) {
-      setHasRefund('');
-    }
-  }, [activeRelayer, hasRefund, setHasRefund]);
+  }, [balances, fungibleCfg, srcTypedChainId]);
 
   const handleChainClick = useCallback(() => {
-    navigate(SELECT_DESTINATION_CHAIN_PATH);
+    navigate(SELECT_SOURCE_CHAIN_PATH);
   }, [navigate]);
 
   const handleTokenClick = useCallback(
@@ -231,7 +108,7 @@ const Withdraw = () => {
     try {
       const addr = await window.navigator.clipboard.readText();
 
-      setRecipient(addr);
+      setRecipient(addr.slice(0, 200)); // limit to 200 chars
     } catch (e) {
       notificationApi({
         message: 'Failed to read clipboard',
@@ -262,7 +139,11 @@ const Withdraw = () => {
     resetMaxFeeInfo,
     totalFeeToken,
     totalFeeWei,
-  } = useFeeCalculation({ activeRelayer, recipientErrorMsg });
+  } = useFeeCalculation({
+    activeRelayer,
+    recipientErrorMsg,
+    typedChainId: srcTypedChainId,
+  });
 
   const receivingAmount = useMemo(() => {
     if (!amount) {
@@ -283,11 +164,11 @@ const Withdraw = () => {
   }, [activeRelayer, amount, totalFeeWei]);
 
   const remainingBalance = useMemo(() => {
-    if (!poolId || !destTypedChainId) {
+    if (!fungibleCfg?.id || typeof srcTypedChainId !== 'number') {
       return;
     }
 
-    const balance = balances[poolId]?.[destTypedChainId];
+    const balance = balances[fungibleCfg.id]?.[srcTypedChainId];
     if (typeof balance !== 'bigint') {
       return;
     }
@@ -302,7 +183,7 @@ const Withdraw = () => {
     }
 
     return Number(formatEther(remain));
-  }, [amount, balances, destTypedChainId, poolId]);
+  }, [amount, balances, fungibleCfg?.id, srcTypedChainId]);
 
   const { withdrawConfirmComponent, ...buttonProps } = useWithdrawButtonProps({
     balances,
@@ -331,15 +212,13 @@ const Withdraw = () => {
       <div className="flex flex-col space-y-4 grow">
         <div className="space-y-2">
           <TransactionInputCard.Root
-            typedChainId={destTypedChainId}
+            typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={fungibleCfg?.symbol}
             maxAmount={fungibleMaxAmount}
             amount={amount}
             onAmountChange={setAmount}
             isFixedAmount={!isCustom}
-            onIsFixedAmountChange={() =>
-              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
-            }
+            onIsFixedAmountChange={() => setCustomAmount(!isCustom)}
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
@@ -368,14 +247,12 @@ const Withdraw = () => {
           <ArrowRight size="lg" className="mx-auto rotate-90" />
 
           <TransactionInputCard.Root
-            typedChainId={destTypedChainId}
+            typedChainId={srcTypedChainId ?? undefined}
             tokenSymbol={wrappableCfg?.symbol}
             amount={amount}
             onAmountChange={setAmount}
             isFixedAmount={!isCustom}
-            onIsFixedAmountChange={() =>
-              setIsCustom((prev) => (prev.length > 0 ? '' : '1'))
-            }
+            onIsFixedAmountChange={() => setCustomAmount(!isCustom)}
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector onClick={handleChainClick} />
@@ -459,16 +336,15 @@ const Withdraw = () => {
               title="Enable refund"
               Icon={<GasStationFill size="lg" />}
               description={
-                destChainCfg
-                  ? `Get ${destChainCfg.nativeCurrency.symbol} on transactions on ${destChainCfg.name}`
+                srcChainCfg
+                  ? `Get ${srcChainCfg.nativeCurrency.symbol} on transactions on ${srcChainCfg.name}`
                   : undefined
               }
               className="max-w-none"
               switcherProps={{
-                checked: !!hasRefund,
+                checked: hasRefund,
                 disabled: !activeRelayer,
-                onCheckedChange: () =>
-                  setHasRefund((prev) => (prev.length > 0 ? '' : '1')),
+                onCheckedChange: () => setHasRefund(!hasRefund),
               }}
             />
 
@@ -490,7 +366,7 @@ const Withdraw = () => {
                         isLoading: isFeeLoading,
                         Icon: <GasStationFill />,
                         value: parseFloat(formatEther(gasFeeInfo)),
-                        tokenSymbol: destChainCfg?.nativeCurrency.symbol,
+                        tokenSymbol: srcChainCfg?.nativeCurrency.symbol,
                       } satisfies FeeItem)
                     : undefined,
                 ].filter((item) => Boolean(item)) as Array<FeeItem>
@@ -498,7 +374,7 @@ const Withdraw = () => {
             />
 
             <TxInfoContainer
-              hasRefund={!!hasRefund}
+              hasRefund={hasRefund}
               refundAmount={
                 typeof refundAmount === 'bigint'
                   ? formatEther(refundAmount)
