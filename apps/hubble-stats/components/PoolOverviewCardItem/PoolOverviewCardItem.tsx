@@ -34,7 +34,7 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
             </Typography>
           )}
         </div>
-        {changeRate && (
+        {typeof changeRate === 'number' && (
           <Typography
             variant="utility"
             tw="black"
