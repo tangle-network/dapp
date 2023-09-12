@@ -49,18 +49,13 @@ function useCurrenciesFromRoute(typedChainId?: number) {
       (currencyCfg) => currencyCfg.role === CurrencyRole.Governable
     );
 
-    if (typeof typedChainId === 'number') {
-      return currencyCfgs.filter((currencyCfg) =>
-        Array.from(currencyCfg.addresses.keys()).includes(typedChainId)
-      );
-    }
-
-    if (typeof srcTypedChainId !== 'number') {
+    const typedChainIdToUse = typedChainId ?? srcTypedChainId;
+    if (typeof typedChainIdToUse !== 'number') {
       return currencyCfgs;
     }
 
     return currencyCfgs.filter((currencyCfg) =>
-      Array.from(currencyCfg.addresses.keys()).includes(srcTypedChainId)
+      Array.from(currencyCfg.addresses.keys()).includes(typedChainIdToUse)
     );
   }, [currencies, srcTypedChainId, typedChainId]);
 
@@ -74,13 +69,12 @@ function useCurrenciesFromRoute(typedChainId?: number) {
       return [];
     }
 
-    const wrappableSet =
-      typeof typedChainId === 'number'
-        ? wrappableMap.get(typedChainId)
-        : typeof srcTypedChainId === 'number'
-        ? wrappableMap.get(srcTypedChainId)
-        : undefined;
+    const typedChainIdToUse = typedChainId ?? srcTypedChainId;
+    if (typeof typedChainIdToUse !== 'number') {
+      return [];
+    }
 
+    const wrappableSet = wrappableMap.get(typedChainIdToUse);
     if (!wrappableSet) {
       return [];
     }

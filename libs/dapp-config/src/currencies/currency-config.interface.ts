@@ -12,6 +12,9 @@ export interface CurrencyView {
 }
 
 export interface CurrencyConfig extends CurrencyView {
+  /**
+   * Map of typed chain id to anchor identifier (address on evm and tree id on substrate)
+   */
   addresses: Map<number, string>;
   role: CurrencyRole;
 }
