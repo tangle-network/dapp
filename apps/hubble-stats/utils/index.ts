@@ -1,4 +1,5 @@
 export { default as getAggregateValue } from './getAggregateValue';
+export { default as getBlockExplorerUrlByAddressByChains } from './getBlockExplorerUrlByAddressByChains';
 export { default as getChainNamesByTypedId } from './getChainNamesByTypedId';
 export { default as getChangeRate } from './getChangeRate';
 export { default as getFormattedDataForBasicChart } from './getFormattedDataForBasicChart';

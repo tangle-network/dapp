@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -12,6 +12,47 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { CopyIconWithTooltip } from '../CopyIconWithTooltip';
 import { AddressWithExplorerUrlsType } from './types';
 import { getShortenChainName } from '../../utils';
+
+const ExplorerUrlsDropdownItem: FC<{
+  typedChainId: number;
+  href: string | undefined;
+}> = ({ href, typedChainId }) => {
+  const chainIconAndName = useMemo(
+    () => (
+      <div className="flex items-center gap-2">
+        <ChainIcon name={chainsConfig[typedChainId].name} size="lg" />
+        <Typography
+          variant="body1"
+          ta="center"
+          className="text-mono-140 dark:text-mono-0 group-hover:underline"
+        >
+          {getShortenChainName(typedChainId)}
+        </Typography>
+      </div>
+    ),
+    [typedChainId]
+  );
+
+  if (href === undefined) {
+    return (
+      <div className="group flex items-center justify-between px-4 py-2">
+        {chainIconAndName}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      className="group flex items-center justify-between px-4 py-2"
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {chainIconAndName}
+      <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
+    </a>
+  );
+};
 
 const ExplorerUrlsDropdown: FC<{
   data: AddressWithExplorerUrlsType;
@@ -27,47 +68,35 @@ const ExplorerUrlsDropdown: FC<{
         <CopyIconWithTooltip textToCopy={data.address} />
       </Typography>
 
-      <Dropdown>
-        <DropdownBasicButton className="group">
-          <div className="flex items-center gap-1">
-            <Typography
-              variant="body1"
-              ta="center"
-              className="text-current text-mono-140 dark:text-mono-40"
-            >
-              View on Explorer
-            </Typography>
-            <ChevronDown className="fill-mono-140 dark:fill-mono-40 transition-transform duration-300 ease-in-out group-radix-state-open:rotate-180" />
-          </div>
-        </DropdownBasicButton>
+      {Object.keys(data.urls).length > 0 && (
+        <Dropdown>
+          <DropdownBasicButton className="group">
+            <div className="flex items-center gap-1">
+              <Typography
+                variant="body1"
+                ta="center"
+                className="text-current text-mono-140 dark:text-mono-40"
+              >
+                View on Explorer
+              </Typography>
+              <ChevronDown className="fill-mono-140 dark:fill-mono-40 transition-transform duration-300 ease-in-out group-radix-state-open:rotate-180" />
+            </div>
+          </DropdownBasicButton>
 
-        <DropdownBody
-          className="overflow-hidden overflow-y-auto bg-mono-0 dark:bg-mono-180 max-h-[180px]"
-          size="sm"
-        >
-          {Object.keys(data.urls).map((typedChainId) => (
-            <a
-              key={typedChainId}
-              className="flex items-center justify-between px-4 py-2"
-              href={data.urls[+typedChainId]}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="flex items-center gap-2">
-                <ChainIcon name={chainsConfig[+typedChainId].name} size="lg" />
-                <Typography
-                  variant="body1"
-                  ta="center"
-                  className="text-mono-140 dark:text-mono-0"
-                >
-                  {getShortenChainName(+typedChainId)}
-                </Typography>
-              </div>
-              <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />
-            </a>
-          ))}
-        </DropdownBody>
-      </Dropdown>
+          <DropdownBody
+            className="overflow-hidden overflow-y-auto bg-mono-0 dark:bg-mono-180 max-h-[180px]"
+            size="sm"
+          >
+            {Object.keys(data.urls).map((typedChainId) => (
+              <ExplorerUrlsDropdownItem
+                key={typedChainId}
+                href={data.urls[+typedChainId]}
+                typedChainId={+typedChainId}
+              />
+            ))}
+          </DropdownBody>
+        </Dropdown>
+      )}
     </div>
   );
 };

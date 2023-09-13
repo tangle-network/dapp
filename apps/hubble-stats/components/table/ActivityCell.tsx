@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { chainsConfig } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 
 import { ActivityCellProps } from './types';
