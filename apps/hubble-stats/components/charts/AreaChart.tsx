@@ -8,7 +8,7 @@ import {
   Tooltip,
   XAxis,
 } from 'recharts';
-import { useDarkMode } from '@webb-tools/webb-ui-components';
+import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltip } from '..';
 import { AreaChartProps } from './types';

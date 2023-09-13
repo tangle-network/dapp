@@ -14,6 +14,7 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
   href,
   className,
   isExpanded,
+  useNextThemesForThemeToggle,
 }) => {
   return (
     <div className={twMerge('flex items-center justify-between', className)}>
@@ -56,7 +57,9 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
         )}
       </div>
 
-      {isExpanded && <ThemeToggle />}
+      {isExpanded && (
+        <ThemeToggle useNextThemes={useNextThemesForThemeToggle} />
+      )}
     </div>
   );
 };

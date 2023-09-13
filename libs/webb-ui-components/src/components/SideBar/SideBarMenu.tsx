@@ -58,6 +58,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
                 Icon={footer.Icon}
                 isInternal={footer.isInternal}
                 href={footer.href}
+                useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
                 isExpanded
                 className="gap-2 p-2"
               />
