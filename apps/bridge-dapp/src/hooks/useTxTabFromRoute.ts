@@ -8,7 +8,7 @@ import { BRIDGE_TABS } from '../constants';
  * @returns the current transaction tab on the bridge,
  * available values are `deposit`, `withdraw`, `transfer` or `undefined`
  */
-const useCurrentTransaction = () => {
+const useTxTabFromRoute = () => {
   const { pathname } = useLocation();
 
   return useMemo(() => {
@@ -16,4 +16,4 @@ const useCurrentTransaction = () => {
   }, [pathname]);
 };
 
-export default useCurrentTransaction;
+export default useTxTabFromRoute;

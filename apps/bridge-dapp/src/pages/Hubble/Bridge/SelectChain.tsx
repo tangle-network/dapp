@@ -22,7 +22,7 @@ import {
 import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
-import useCurrentTransaction from '../../../hooks/useCurrentTransaction';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { getActiveSourceChains } from '../../../utils/getActiveSourceChains';
 import getParam from '../../../utils/getParam';
@@ -38,7 +38,7 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   const navigate = useNavigateWithPersistParams();
 
   const chainsCfg = useChains(chainType);
-  const currentTab = useCurrentTransaction();
+  const currentTab = useTxTabFromRoute();
 
   const updateParams = useUpdateParams();
 
@@ -173,7 +173,7 @@ const useChainCategoryProps = (
 ) => {
   const { activeChain } = useWebContext();
 
-  const currentTx = useCurrentTransaction();
+  const currentTx = useTxTabFromRoute();
 
   const { srcChainCfg } = useChainsFromRoute();
 

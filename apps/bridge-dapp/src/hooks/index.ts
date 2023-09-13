@@ -4,7 +4,7 @@ export { default as useChainsFromNote } from './useChainsFromNote';
 export { default as useChainsFromRoute } from './useChainsFromRoute';
 export * from './useConnectWallet';
 export { default as useCurrenciesFromRoute } from './useCurrenciesFromRoute';
-export { default as useCurrentTransaction } from './useCurrentTransaction';
+export { default as useTxTabFromRoute } from './useTxTabFromRoute';
 export { default as useDefaultChainAndPool } from './useDefaultChainAndPool';
 export { default as useEnqueueSubmittedTx } from './useEnqueueSubmittedTx';
 export * from './useLatestTransactionStage';
