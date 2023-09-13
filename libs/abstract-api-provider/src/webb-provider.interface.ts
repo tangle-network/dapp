@@ -9,7 +9,7 @@ import { ApiConfig } from '@webb-tools/dapp-config';
 import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import type { ZkComponents } from '@webb-tools/utils';
+import { ZkComponents } from '@webb-tools/utils';
 import { Backend } from '@webb-tools/wasm-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GetContractReturnType, PublicClient } from 'viem';
@@ -23,12 +23,13 @@ import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-import type { WebbProviderType } from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
   crowdloan: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
 }
+
+export type WebbProviderType = 'web3' | 'polkadot';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<
