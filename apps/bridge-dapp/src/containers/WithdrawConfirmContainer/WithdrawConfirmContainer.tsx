@@ -290,16 +290,18 @@ const WithdrawConfirmContainer = forwardRef<
       [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
     );
 
-    const [txStatusMessage, currentStep] = useMemo(() => {
+    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
       if (!txId) {
-        return ['', undefined];
+        return ['', undefined, undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       const message = txPayload
         ? txPayload.txStatus.message?.replace('...', '')
         : '';
-      return [message, txPayload?.currentStep];
+
+      const txStatus = txPayload?.txStatus.status;
+      return [message, txPayload?.currentStep, txStatus];
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
@@ -387,6 +389,13 @@ const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusColor={
+          txStatus === 'completed'
+            ? 'green'
+            : txStatus === 'warning'
+            ? 'red'
+            : undefined
+        }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
       />

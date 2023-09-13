@@ -251,9 +251,9 @@ const DepositConfirmContainer = forwardRef<
       return getCardTitle(stage, currentTx.name, wrappingFlow).trim();
     }, [currentTx, stage, wrappingFlow]);
 
-    const [txStatusMessage, currentStep] = useMemo(() => {
+    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
       if (!txId) {
-        return ['', undefined];
+        return ['', undefined, undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
@@ -262,7 +262,9 @@ const DepositConfirmContainer = forwardRef<
         : '';
 
       const step = txPayload?.currentStep;
-      return [message, step];
+      const status = txPayload?.txStatus.status;
+
+      return [message, step, status];
     }, [txId, txPayloads]);
 
     return (
@@ -294,6 +296,13 @@ const DepositConfirmContainer = forwardRef<
         sourceChain={sourceChain}
         destChain={destChain}
         wrappableTokenSymbol={wrappableToken?.view.symbol}
+        txStatusColor={
+          txStatus === 'completed'
+            ? 'green'
+            : txStatus === 'warning'
+            ? 'red'
+            : undefined
+        }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
       />

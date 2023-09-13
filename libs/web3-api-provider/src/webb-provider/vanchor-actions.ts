@@ -94,6 +94,8 @@ export class Web3VAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapToken: string
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
+    tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
+
     if (isVAnchorDepositPayload(payload)) {
       // Get the wrapped token and check the balance and approvals
       const tokenWrapper = await this.getTokenWrapperContract(payload);
