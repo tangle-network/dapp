@@ -1,4 +1,4 @@
-import { RowData, useReactTable } from '@tanstack/react-table';
+import { RowData, useReactTable, Row } from '@tanstack/react-table';
 import { PropsOf, WebbComponentBase, IWebbComponentBase } from '../../types';
 
 /**
@@ -35,6 +35,11 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
   thClassName?: string;
 
   /**
+   * The optional class name for overriding style table row component
+   */
+  trClassName?: string;
+
+  /**
    * The optional class name for overriding style TData component
    */
   tdClassName?: string;
@@ -52,7 +57,7 @@ export interface TableProps<T extends RowData> extends WebbComponentBase {
   /**
    * Handle when the row is clicked
    */
-  onRowClick?: () => void;
+  onRowClick?: (row: Row<any>) => void;
 }
 
 /**

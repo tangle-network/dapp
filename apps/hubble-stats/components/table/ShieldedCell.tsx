@@ -1,29 +1,22 @@
+import { FC } from 'react';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
-import Link from 'next/link';
-import { FC } from 'react';
 import ShieldedAssetIcon from '@webb-tools/icons/ShieldedAssetIcon';
 import { ShieldedCellProps } from './types';
 
-const ShieldedCell: FC<ShieldedCellProps> = ({
-  title,
-  address,
-  poolAddress,
-}) => {
+const ShieldedCell: FC<ShieldedCellProps> = ({ title, address }) => {
   return (
     <div className="flex items-center gap-2">
       <ShieldedAssetIcon />
 
       <div className="flex flex-col">
-        <Link href={`/pool/${poolAddress}`}>
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-140 dark:text-mono-40 hover:underline"
-          >
-            {title}
-          </Typography>
-        </Link>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-140 dark:text-mono-40"
+        >
+          {title}
+        </Typography>
 
         <div className="flex items-center gap-1">
           <Typography
