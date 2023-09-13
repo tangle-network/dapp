@@ -1,4 +1,4 @@
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider';
 
 export const getExplorerURI = (
   explorerUri: string,
