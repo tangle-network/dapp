@@ -1,7 +1,7 @@
 import {
   getDateFromEpoch,
   getWrappingFeesPercentageByFungibleToken,
-  getBlockExplorerUrlByAddressByChains,
+  getExplorerUrlByAddressByChains,
 } from '../utils';
 import { VANCHORS_MAP } from '../constants';
 import {
@@ -54,28 +54,22 @@ export default async function getPoolMetadataData(
     symbol: fungibleTokenSymbol,
     signatureBridge: {
       address: signatureBridge,
-      urls: getBlockExplorerUrlByAddressByChains(
-        signatureBridge,
-        supportedChains
-      ),
+      urls: getExplorerUrlByAddressByChains(signatureBridge, supportedChains),
     },
     vAnchor: {
       address: poolAddress,
-      urls: getBlockExplorerUrlByAddressByChains(poolAddress, supportedChains),
+      urls: getExplorerUrlByAddressByChains(poolAddress, supportedChains),
     },
     fungibleToken: {
       address: fungibleTokenAddress,
-      urls: getBlockExplorerUrlByAddressByChains(
+      urls: getExplorerUrlByAddressByChains(
         fungibleTokenAddress,
         supportedChains
       ),
     },
     treasuryAddress: {
       address: treasuryAddress,
-      urls: getBlockExplorerUrlByAddressByChains(
-        treasuryAddress,
-        supportedChains
-      ),
+      urls: getExplorerUrlByAddressByChains(treasuryAddress, supportedChains),
     },
     wrappingFees,
     creationDate: new Date(creationDate).toLocaleDateString('en-US', {

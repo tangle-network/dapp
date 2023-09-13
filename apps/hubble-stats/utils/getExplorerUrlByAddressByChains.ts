@@ -1,7 +1,7 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 
-const getBlockExplorerUrlByAddressByChains = (
+const getExplorerUrlByAddressByChains = (
   address: string,
   typedChainIds: number[]
 ): Record<number, string | undefined> => {
@@ -23,4 +23,4 @@ const getBlockExplorerUrlByAddressByChains = (
   }, {});
 };
 
-export default getBlockExplorerUrlByAddressByChains;
+export default getExplorerUrlByAddressByChains;

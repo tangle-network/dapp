@@ -45,8 +45,11 @@ const ExplorerUrlsDropdownItem: FC<{
     <a
       className="group flex items-center justify-between px-4 py-2"
       href={href}
-      target="_blank"
-      rel="noreferrer"
+      // target="_blank" not working, change to use window.open
+      onClick={(e) => {
+        e.preventDefault();
+        window.open(href, '_blank');
+      }}
     >
       {chainIconAndName}
       <ExternalLinkLine className="fill-mono-140 dark:fill-mono-40" />

@@ -96,13 +96,13 @@ const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
       chainsConfig[sourceTypedChainId]?.blockExplorers?.default?.url;
 
     if (blockExplorerUrl !== undefined) {
-      const explorerURI = getExplorerURI(
+      const txExplorerURI = getExplorerURI(
         blockExplorerUrl,
         txHash,
         'tx',
         'web3'
       );
-      window.open(explorerURI, '_blank');
+      window.open(txExplorerURI, '_blank');
     }
   };
 
