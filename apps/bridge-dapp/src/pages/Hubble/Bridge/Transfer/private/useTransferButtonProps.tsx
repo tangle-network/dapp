@@ -27,7 +27,6 @@ import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import handleTxError from '../../../../../utils/handleTxError';
-import validateNoteLeafIndex from '../../../../../utils/validateNoteLeafIndex';
 
 export type UseTransferButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>['balances'];
@@ -334,22 +333,11 @@ function useTransferButtonProps({
         }
 
         // Validate the input notes
-        const edges = await vAnchorApi.getLatestNeighborEdges(
-          fungibleCfg.id,
-          srcTypedChainId
-        );
-        const nextIdx = await vAnchorApi.getNextIndex(
+        const valid = await vAnchorApi.validateInputNotes(
+          inputNotes,
           srcTypedChainId,
           fungibleCfg.id
         );
-
-        const valid = inputNotes.every((note) => {
-          if (note.note.sourceChainId === srcTypedChainId.toString()) {
-            return note.note.index ? BigInt(note.note.index) < nextIdx : true;
-          } else {
-            return validateNoteLeafIndex(note, edges);
-          }
-        });
 
         if (!valid) {
           throw WebbError.from(WebbErrorCodes.NotesNotReady);

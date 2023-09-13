@@ -16,6 +16,7 @@ import {
   utxoFromVAnchorNote,
   VAnchorActions,
 } from '@webb-tools/abstract-api-provider';
+import validateNoteLeafIndex from '@webb-tools/abstract-api-provider/utils/validateNoteLeafIndex';
 import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import {
   bridgeStorageFactory,
@@ -675,6 +676,23 @@ export class Web3VAnchorActions extends VAnchorActions<
     chainType: ChainType
   ): Promise<ResourceId> {
     return new ResourceId(anchorAddress, chainType, chainId);
+  }
+
+  async validateInputNotes(
+    notes: readonly Note[],
+    typedChainId: number,
+    fungibleId: number
+  ): Promise<boolean> {
+    const edges = await this.getLatestNeighborEdges(fungibleId, typedChainId);
+    const nextIdx = await this.getNextIndex(typedChainId, fungibleId);
+
+    return notes.every((note) => {
+      if (note.note.sourceChainId === typedChainId.toString()) {
+        return note.note.index ? BigInt(note.note.index) < nextIdx : true;
+      } else {
+        return validateNoteLeafIndex(note, edges);
+      }
+    });
   }
 
   // ================== PRIVATE METHODS ===================

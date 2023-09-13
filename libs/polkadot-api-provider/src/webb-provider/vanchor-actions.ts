@@ -431,6 +431,14 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     throw WebbError.from(WebbErrorCodes.NotImplemented);
   }
 
+  async validateInputNotes(
+    notes: readonly Note[],
+    typedChainId: number,
+    fungibleId: number
+  ): Promise<boolean> {
+    throw WebbError.from(WebbErrorCodes.NotImplemented);
+  }
+
   // ------------------ Private ------------------
 
   private async prepareDepositTransaction(

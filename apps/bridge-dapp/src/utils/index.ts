@@ -11,4 +11,3 @@ export { default as handleStoreNote } from './handleStoreNote';
 export { default as handleTxError } from './handleTxError';
 export * from './isValidNote';
 export { default as objectToSearchString } from './objectToSearchString';
-export { default as validateNoteLeafIndex } from './validateNoteLeafIndex';
