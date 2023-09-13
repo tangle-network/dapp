@@ -1,5 +1,5 @@
 import type { Transaction } from '@webb-tools/abstract-api-provider/transaction';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/webb-provider.interface';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import {
   getTxMessageFromStatus,
   transactionItemStatusFromTxStatus,

@@ -23,13 +23,12 @@ import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import { WebbProviderType } from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
   crowdloan: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
 }
-
-export type WebbProviderType = 'web3' | 'polkadot';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<

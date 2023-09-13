@@ -18,10 +18,8 @@ import {
   Transaction,
   TransactionState,
 } from '../transaction';
-import type {
-  WebbApiProvider,
-  WebbProviderType,
-} from '../webb-provider.interface';
+import type { WebbApiProvider } from '../webb-provider.interface';
+import { WebbProviderType } from '../types';
 import { NeighborEdge } from './types';
 
 export type ParametersOfTransactMethod<ProviderType extends WebbProviderType> =

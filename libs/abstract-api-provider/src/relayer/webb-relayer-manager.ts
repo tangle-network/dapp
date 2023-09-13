@@ -14,7 +14,7 @@ import {
   TransactionState,
 } from '../transaction';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
-import { WebbProviderType } from '../webb-provider.interface';
+import { WebbProviderType } from '../types';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
 import { WebbRelayer } from './webb-relayer';
 
