@@ -73,6 +73,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             Icon={footer.Icon}
             isInternal={footer.isInternal}
             href={footer.href}
+            useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
             isExpanded={isSidebarOpen}
             className={isSidebarOpen ? 'p-2' : 'pl-1'}
           />

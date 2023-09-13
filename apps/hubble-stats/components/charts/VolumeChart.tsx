@@ -2,6 +2,7 @@
 
 import { FC } from 'react';
 import { ResponsiveContainer, BarChart, XAxis, Tooltip, Bar } from 'recharts';
+import { useNextDarkMode as useDarkMode } from '@webb-tools/webb-ui-components';
 
 import { ChartTooltip } from '..';
 import { VolumeChartProps } from './types';
@@ -15,6 +16,8 @@ const VolumeChart: FC<VolumeChartProps> = ({
   tooltipValuePrefix = '',
   tooltipValueSuffix = '',
 }) => {
+  const [isDarkMode] = useDarkMode();
+
   return (
     <ResponsiveContainer width={width} height={height}>
       <BarChart
@@ -42,6 +45,7 @@ const VolumeChart: FC<VolumeChartProps> = ({
           interval="preserveStartEnd"
         />
         <Tooltip
+          cursor={{ opacity: isDarkMode ? 0.2 : 1 }}
           content={({ active, payload }) => {
             if (active && payload && payload.length) {
               setValue && setValue(payload[0].payload['deposit']);

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
+import { useTheme } from 'next-themes';
 import useLocalStorageState from 'use-local-storage-state';
 
 type SupportTheme = 'light' | 'dark';
@@ -70,6 +71,24 @@ export function useDarkMode(
     },
     [theme, setTheme]
   );
+
+  return [isDarkMode, toggleThemeMode];
+}
+
+export function useNextDarkMode(): [boolean, ToggleThemeModeFunc] {
+  const { theme, setTheme } = useTheme();
+
+  const isDarkMode = useMemo(() => theme === 'dark', [theme]);
+
+  const toggleThemeMode = useCallback<ToggleThemeModeFunc>(() => {
+    if (!isBrowser()) return;
+
+    const _nextThemeMode = theme === 'dark' ? 'light' : 'dark';
+
+    if (_nextThemeMode === theme) return;
+
+    setTheme(_nextThemeMode);
+  }, [theme, setTheme]);
 
   return [isDarkMode, toggleThemeMode];
 }
