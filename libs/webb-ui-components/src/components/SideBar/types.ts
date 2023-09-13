@@ -7,6 +7,7 @@ export type SideBarFooterType = {
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
+  useNextThemesForThemeToggle?: boolean;
 };
 
 export interface SideBarFooterProps extends SideBarFooterType {

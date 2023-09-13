@@ -1,8 +1,8 @@
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import '@webb-tools/webb-ui-components/tailwind.css';
 import { Metadata } from 'next';
 
 import { Layout } from '../containers';
+import { NextThemeProvider } from './providers';
 
 export const metadata: Metadata = {
   title: 'Hubble Stats',
@@ -18,13 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <WebbUIProvider defaultThemeMode="light">
-        {/* TODO: Upgrade to Next.js 13.4.2 might resolve this issue */}
-        {/* https://github.com/webb-tools/webb-dapp/issues/1228 */}
-        {/* @ts-expect-error Server Component */}
-        <Layout>{children}</Layout>
-      </WebbUIProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
+        <NextThemeProvider>
+          <Layout>{children}</Layout>
+        </NextThemeProvider>
+      </body>
     </html>
   );
 }

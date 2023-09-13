@@ -1,6 +1,14 @@
+'use client';
+
 import { MoonLine, SunLine } from '@webb-tools/icons';
-import { useDarkMode } from '../../hooks/useDarkMode';
 import cx from 'classnames';
+import { FC, useEffect, useMemo, useState } from 'react';
+import {
+  useNextDarkMode,
+  useDarkMode as useNormalDarkMode,
+} from '../../hooks/useDarkMode';
+
+import { ThemeToggleProps } from './types';
 
 /**
  * ThemeToggle (Dark/Light) Component
@@ -10,8 +18,30 @@ import cx from 'classnames';
  *  <ThemeToggle />
  * ```
  */
-export const ThemeToggle = () => {
+
+export const ThemeToggle: FC<ThemeToggleProps> = ({
+  useNextThemes = false,
+}) => {
+  const useDarkMode = useMemo(
+    () => (useNextThemes ? useNextDarkMode : useNormalDarkMode),
+    [useNextThemes]
+  );
+
+  const [isMounted, setIsMounted] = useState(false);
   const [isDarkMode, toggleThemeMode] = useDarkMode();
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // If we use next themes, we don't want to show the UI
+  // until the compoennt is mounted, this prevents
+  // hydration mismatch
+  // Check: https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch
+  if (!isMounted && useNextThemes) {
+    return null;
+  }
 
   return (
     <div
