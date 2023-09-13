@@ -12,7 +12,11 @@ import { isViemError } from '@webb-tools/web3-api-provider';
 import { DepositConfirm } from '@webb-tools/webb-ui-components';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ContractFunctionRevertedError, formatUnits } from 'viem';
-import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
+import {
+  useCurrentTx,
+  useEnqueueSubmittedTx,
+  useLatestTransactionStage,
+} from '../../hooks';
 import {
   captureSentryException,
   getCardTitle,
@@ -52,7 +56,6 @@ const DepositConfirmContainer = forwardRef<
     const [totalStep, setTotalStep] = useState<number | undefined>();
 
     const stage = useLatestTransactionStage(txId);
-
     const depositTxInProgress = useMemo(
       () => stage !== TransactionState.Ideal,
       [stage]
@@ -60,6 +63,8 @@ const DepositConfirmContainer = forwardRef<
 
     const { activeApi, activeAccount, activeChain, apiConfig, txQueue } =
       useWebContext();
+
+    const currentTx = useCurrentTx(txQueue.txQueue, txId);
 
     const enqueueSubmittedTx = useEnqueueSubmittedTx();
 
@@ -239,8 +244,12 @@ const DepositConfirmContainer = forwardRef<
     );
 
     const cardTitle = useMemo(() => {
-      return getCardTitle(stage, wrappingFlow).trim();
-    }, [stage, wrappingFlow]);
+      if (!currentTx) {
+        return undefined;
+      }
+
+      return getCardTitle(stage, currentTx.name, wrappingFlow).trim();
+    }, [currentTx, stage, wrappingFlow]);
 
     const [txStatusMessage, currentStep] = useMemo(() => {
       if (!txId) {

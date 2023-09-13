@@ -14,6 +14,7 @@ import type { LoadingPillStatus } from '@webb-tools/webb-ui-components/component
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard';
 import { useEffect, useMemo, useState } from 'react';
 import TxItem from './TxItem';
+import useCurrentTx from '../../../hooks/useCurrentTx';
 
 const TxProgressDropdown = () => {
   const { txQueue: txQueue_ } = useWebContext();
@@ -25,7 +26,7 @@ const TxProgressDropdown = () => {
   // Sort the latest tx to the top
   const sortedTxQueue = useSortedTxQueue(txQueue);
 
-  const currentTx = useCurrentTx(sortedTxQueue, currentTxId);
+  const currentTx = useCurrentTx(sortedTxQueue, currentTxId, { latest: true });
 
   useEffect(() => {
     if (!currentTx) {
@@ -48,7 +49,7 @@ const TxProgressDropdown = () => {
   }
 
   return (
-    <Dropdown>
+    <Dropdown radixRootProps={{ defaultOpen: true }}>
       <DropdownTrigger asChild>
         <LoadingPill status={pillStatus} />
       </DropdownTrigger>
@@ -74,20 +75,6 @@ const useSortedTxQueue = (txQueue: Array<Transaction<unknown>>) => {
         .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
     [txQueue]
   );
-};
-
-const useCurrentTx = (
-  txQueue: Array<Transaction<unknown>>,
-  txId: string | null
-) => {
-  return useMemo(() => {
-    if (typeof txId === 'string') {
-      return txQueue.find((tx) => tx.id === txId);
-    }
-
-    // Get the latest tx
-    return txQueue[0];
-  }, [txId, txQueue]);
 };
 
 const getPillStatus = (txStatus: TransactionItemStatus): LoadingPillStatus =>

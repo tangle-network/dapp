@@ -15,4 +15,5 @@ export { default as useRelayerWithRoute } from './useRelayerWithRoute';
 export * from './useShieldedAssets';
 export * from './useSpendNotes';
 export { default as useStateWithRoute } from './useStateWithRoute';
+export { default as useCurrentTx } from './useCurrentTx';
 export * from './useTryAnotherWalletWithView';

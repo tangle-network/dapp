@@ -1,8 +1,12 @@
-import { TransactionState } from '@webb-tools/abstract-api-provider';
+import {
+  type TransactionName,
+  TransactionState,
+} from '@webb-tools/abstract-api-provider/transaction';
 
 export const getCardTitle = (
   stage: TransactionState,
-  wrappingFlow: boolean
+  txName: TransactionName,
+  wrappingFlow?: boolean
 ) => {
   let status = '';
 
@@ -27,8 +31,48 @@ export const getCardTitle = (
     }
   }
 
-  if (!status)
-    return wrappingFlow ? 'Confirm Wrap and Deposit' : 'Confirm Deposit';
+  if (!status) {
+    return getDefaultTitle(txName, wrappingFlow);
+  }
+  return getStatusTitle(status, txName, wrappingFlow);
+};
 
-  return wrappingFlow ? `Wrap and Deposit ${status}` : `Deposit ${status}`;
+const getDefaultTitle = (txName: TransactionName, wrappingFlow?: boolean) => {
+  switch (txName) {
+    case 'Deposit': {
+      return wrappingFlow ? 'Confirm Wrap and Deposit' : 'Confirm Deposit';
+    }
+
+    case 'Withdraw': {
+      return wrappingFlow ? 'Confirm Unwrap and Withdraw' : 'Confirm Withdraw';
+    }
+
+    case 'Transfer': {
+      return 'Confirm Transfer';
+    }
+  }
+};
+
+const getStatusTitle = (
+  status: string,
+  txName: TransactionName,
+  wrappingFlow?: boolean
+) => {
+  switch (txName) {
+    case 'Deposit': {
+      return wrappingFlow
+        ? `Wrapping and Depositing ${status}`
+        : `Depositing ${status}`;
+    }
+
+    case 'Withdraw': {
+      return wrappingFlow
+        ? `Unwrapping and Withdrawing ${status}`
+        : `Withdrawing ${status}`;
+    }
+
+    case 'Transfer': {
+      return `Transferring ${status}`;
+    }
+  }
 };

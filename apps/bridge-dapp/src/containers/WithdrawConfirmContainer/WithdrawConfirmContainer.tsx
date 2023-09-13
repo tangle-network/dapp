@@ -21,9 +21,14 @@ import {
   formatEther,
   formatUnits,
 } from 'viem';
-import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
+import {
+  useCurrentTx,
+  useEnqueueSubmittedTx,
+  useLatestTransactionStage,
+} from '../../hooks';
 import {
   captureSentryException,
+  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -101,39 +106,15 @@ const WithdrawConfirmContainer = forwardRef<
         : 'substrate';
     }, [targetTypedChainId]);
 
+    const currentTx = useCurrentTx(txQueue.txQueue, txId);
+
     const cardTitle = useMemo(() => {
-      let status = '';
-
-      switch (stage) {
-        case TransactionState.Ideal: {
-          break;
-        }
-
-        case TransactionState.Done: {
-          status = 'Completed';
-          break;
-        }
-
-        case TransactionState.Failed: {
-          status = 'Failed';
-          break;
-        }
-
-        default: {
-          status = 'in Progress...';
-          break;
-        }
+      if (!currentTx) {
+        return;
       }
 
-      if (!status)
-        return unwrapCurrency
-          ? 'Confirm Unwrap and Withdraw'
-          : 'Confirm Withdraw';
-
-      return unwrapCurrency
-        ? `Unwrap and Withdraw ${status}`
-        : `Withdraw ${status}`;
-    }, [stage, unwrapCurrency]);
+      return getCardTitle(stage, currentTx.name, Boolean(unwrapCurrency));
+    }, [currentTx, stage, unwrapCurrency]);
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
