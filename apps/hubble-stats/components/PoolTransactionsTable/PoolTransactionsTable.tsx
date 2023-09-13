@@ -10,9 +10,11 @@ import {
   getPaginationRowModel,
   ColumnDef,
   Table as RTTable,
+  Row,
 } from '@tanstack/react-table';
 import { Table, fuzzyFilter, ChainChip } from '@webb-tools/webb-ui-components';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 
 import { PoolTransactionType, PoolTransactionsTableProps } from './types';
 import {
@@ -28,12 +30,7 @@ const columnHelper = createColumnHelper<PoolTransactionType>();
 const columns: ColumnDef<PoolTransactionType, any>[] = [
   columnHelper.accessor('activity', {
     header: () => <HeaderCell title="Pool Type" className="justify-start" />,
-    cell: (props) => (
-      <ActivityCell
-        txHash={props.row.original.txHash}
-        activity={props.row.original.activity}
-      />
-    ),
+    cell: (props) => <ActivityCell activity={props.row.original.activity} />,
   }),
   columnHelper.accessor('tokenAmount', {
     header: () => <HeaderCell title="Token Amount" className="justify-start" />,
@@ -91,15 +88,35 @@ const PoolTransactionsTable: FC<PoolTransactionsTableProps> = ({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const onRowClick = (row: Row<PoolTransactionType>) => {
+    const sourceTypedChainId = row.original.sourceTypedChainId;
+    const txHash = row.original.txHash;
+
+    const blockExplorerUrl =
+      chainsConfig[sourceTypedChainId]?.blockExplorers?.default?.url;
+
+    if (blockExplorerUrl !== undefined) {
+      const txExplorerURI = getExplorerURI(
+        blockExplorerUrl,
+        txHash,
+        'tx',
+        'web3'
+      );
+      window.open(txExplorerURI, '_blank');
+    }
+  };
+
   return (
     <div className="overflow-hidden rounded-lg border border-mono-40 dark:border-mono-160">
       <Table
         tableClassName="block overflow-x-auto max-w-[-moz-fit-content] max-w-fit max-w-fit md:table md:max-w-none"
         thClassName="border-t-0 bg-mono-0"
+        trClassName="cursor-pointer"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table as RTTable<unknown>}
         isPaginated
         totalRecords={data.length}
+        onRowClick={onRowClick}
       />
     </div>
   );

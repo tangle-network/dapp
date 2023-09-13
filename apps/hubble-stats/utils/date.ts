@@ -21,6 +21,8 @@ export const getEpochArray = (
 const EPOCH_DAY_INTERVAL = 24 * 60 * 60;
 
 export const getEpochNow = () => getEpochFromDate(new Date());
+export const getEpoch24H = () =>
+  getEpochFromDate(new Date()) - EPOCH_DAY_INTERVAL;
 
 const EPOCH_START = process.env.HUBBLE_STATS_EPOCH_START
   ? +process.env.HUBBLE_STATS_EPOCH_START

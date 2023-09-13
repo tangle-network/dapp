@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
-import { ShieldKeyholeLineIcon } from '@webb-tools/icons';
+import { ShieldedAssetIcon } from '@webb-tools/icons';
 import {
   ChainChip,
   Table,
@@ -28,7 +28,7 @@ const staticColumns: ColumnDef<PoolOverviewDataType, any>[] = [
     header: () => null,
     cell: (props) => (
       <div className="flex items-center gap-1">
-        <ShieldKeyholeLineIcon />
+        <ShieldedAssetIcon size="lg" />
         <Typography
           variant="body1"
           fw="bold"

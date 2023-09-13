@@ -4,6 +4,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
 import { ArrowRight } from '@webb-tools/icons';
 
+import { getRoundedDownNumberWith2Decimals } from '../../utils';
 import { PoolOverviewCardItemProps } from './types';
 
 const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
@@ -20,10 +21,7 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
         <div className="flex items-center gap-0.5">
           <Typography variant="h5" fw="black">
             {typeof value === 'number' && prefix}
-            {getRoundedAmountString(value, 2, {
-              roundingFunction: Math.floor,
-              totalLength: 0,
-            })}
+            {getRoundedDownNumberWith2Decimals(value)}
           </Typography>
           {typeof value === 'number' && (
             <Typography
@@ -34,7 +32,7 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
             </Typography>
           )}
         </div>
-        {changeRate && (
+        {typeof changeRate === 'number' && (
           <Typography
             variant="utility"
             tw="black"
@@ -53,7 +51,7 @@ const PoolOverviewCardItem: FC<PoolOverviewCardItemProps> = ({
                 'rotate-90 !fill-red-70': changeRate < 0,
               })}
             />
-            {getRoundedAmountString(Math.abs(changeRate), 1)}%
+            {getRoundedAmountString(Math.abs(changeRate), 2)}%
           </Typography>
         )}
       </div>

@@ -16,7 +16,8 @@
         "name": "next"
       }
     ],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

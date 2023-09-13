@@ -23,6 +23,7 @@ import { ActionEvent, NewNotesTxResult, Transaction } from './transaction';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
+import { WebbProviderType } from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -188,8 +189,6 @@ export type NotificationHandler = ((
   // remove the notification programmatically
   remove(key: string | number): void;
 };
-
-export type WebbProviderType = 'web3' | 'polkadot';
 
 /**
  * The representation of an api provider
