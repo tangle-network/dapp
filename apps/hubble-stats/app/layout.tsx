@@ -1,8 +1,8 @@
-import { Metadata } from 'next';
 import '@webb-tools/webb-ui-components/tailwind.css';
+import { Metadata } from 'next';
 
-import { NextThemeProvider } from './providers';
 import { Layout } from '../containers';
+import { NextThemeProvider } from './providers';
 
 export const metadata: Metadata = {
   title: 'Hubble Stats',
@@ -19,12 +19,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <NextThemeProvider>
-        {/* TODO: Upgrade to Next.js 13.4.2 might resolve this issue */}
-        {/* https://github.com/webb-tools/webb-dapp/issues/1228 */}
-        {/* @ts-expect-error Server Component */}
-        <Layout>{children}</Layout>
-      </NextThemeProvider>
+      <body className="flex h-screen bg-cover bg-body dark:bg-body_dark">
+        <NextThemeProvider>
+          <Layout>{children}</Layout>
+        </NextThemeProvider>
+      </body>
     </html>
   );
 }
