@@ -1,16 +1,19 @@
 // Copyright 2022 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
-import { filter } from 'rxjs/operators';
-
 import { LoggerService } from '@webb-tools/browser-utils';
-import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
+import type { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
+  ChainType,
+  parseTypedChainId,
+} from '@webb-tools/sdk-core/typed-chain-id';
+import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import type {
   CMDSwitcher,
   Capabilities,
+  RelayedChainConfig,
   RelayedChainInput,
   RelayerCMDKey,
   RelayerMessage,
@@ -324,6 +327,57 @@ export class WebbRelayer {
   get infoUri() {
     // Use URL class to ensure the full url is valid (e.g. with trailing slash)
     return new URL(this.infoRoute, this.endpoint).toString();
+  }
+
+  private isEVMSupported(
+    relayerChainCfg: RelayedChainConfig<'evm'>,
+    anchorId: string
+  ): boolean {
+    const supportAnchor = relayerChainCfg.contracts.find(
+      (contract) => BigInt(contract.address) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
+    );
+
+    return Boolean(supportAnchor);
+  }
+
+  private isSubstrateSupported(
+    relayerChainCfg: RelayedChainConfig<'substrate'>,
+    anchorId: string
+  ): boolean {
+    const supportAnchor = relayerChainCfg.pallets.find(
+      (pallet) => BigInt(pallet.pallet) === BigInt(anchorId) // Use BigInt to prevent case-sensitive comparison
+    );
+
+    return Boolean(supportAnchor);
+  }
+
+  isSupported(
+    typedChainId: number,
+    anchorId: string,
+    basedOn: RelayerCMDBase
+  ): boolean {
+    if (basedOn === 'evm') {
+      const relayerChainCfg =
+        this.capabilities.supportedChains.evm.get(typedChainId);
+      if (!relayerChainCfg) {
+        return false;
+      }
+
+      return this.isEVMSupported(relayerChainCfg, anchorId);
+    }
+
+    if (basedOn === 'substrate') {
+      const relayerChainCfg =
+        this.capabilities.supportedChains.substrate.get(typedChainId);
+      if (!relayerChainCfg) {
+        return false;
+      }
+
+      return this.isSubstrateSupported(relayerChainCfg, anchorId);
+    }
+
+    console.error(WebbError.getErrorMessage(WebbErrorCodes.InvalidArguments));
+    return false;
   }
 
   async initWithdraw<Target extends RelayerCMDKey>(target: Target) {

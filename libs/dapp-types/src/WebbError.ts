@@ -73,6 +73,8 @@ export enum WebbErrorCodes {
   KeyPairNotFound,
   // Notes are not ready
   NotesNotReady,
+  // Invalid amount
+  InvalidAmount,
   // Unknown error
   UnknownError,
 }
@@ -327,6 +329,12 @@ export class WebbError extends Error {
           code,
           message:
             'Some of the notes are not ready, maybe waiting for 5-20 minutes and try again',
+        };
+
+      case WebbErrorCodes.InvalidAmount:
+        return {
+          code,
+          message: 'Invalid amount',
         };
 
       default:

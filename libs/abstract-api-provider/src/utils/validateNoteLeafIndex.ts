@@ -1,5 +1,5 @@
-import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
-import { Note } from '@webb-tools/sdk-core/note';
+import type { Note } from '@webb-tools/sdk-core/note';
+import type { NeighborEdge } from '../vanchor/types';
 
 function validateNoteLeafIndex(
   note: Note,

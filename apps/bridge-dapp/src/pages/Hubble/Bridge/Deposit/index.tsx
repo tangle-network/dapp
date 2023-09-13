@@ -8,7 +8,7 @@ import {
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 import SlideAnimation from '../../../../components/SlideAnimation';
 import {
   BRIDGE_TABS,
@@ -18,11 +18,12 @@ import {
   SELECT_TOKEN_PATH,
 } from '../../../../constants';
 import BridgeTabsContainer from '../../../../containers/BridgeTabsContainer';
+import useNavigateWithPersistParams from '../../../../hooks/useNavigateWithPersistParams';
 import useDepositButtonProps from './private/useDepositButtonProps';
 import useWatchSearchParams from './private/useWatchSearchParams';
 
 const Deposit = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateWithPersistParams();
 
   const { isMobile } = useCheckMobile();
 
@@ -34,7 +35,6 @@ const Deposit = () => {
     destTypedChainId,
     fungibleCfg,
     onAmountChange,
-    searchParams,
     srcTypedChainId,
     wrappableCfg,
   } = useWatchSearchParams();
@@ -81,23 +81,14 @@ const Deposit = () => {
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector
-                onClick={() =>
-                  navigate({
-                    pathname: SELECT_SOURCE_CHAIN_PATH,
-                    search: searchParams.toString(),
-                  })
-                }
+                onClick={() => navigate(SELECT_SOURCE_CHAIN_PATH)}
               />
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
 
             <TransactionInputCard.Body
               tokenSelectorProps={{
-                onClick: () =>
-                  navigate({
-                    pathname: SELECT_TOKEN_PATH,
-                    search: searchParams.toString(),
-                  }),
+                onClick: () => navigate(SELECT_TOKEN_PATH),
               }}
             />
           </TransactionInputCard.Root>
@@ -112,12 +103,7 @@ const Deposit = () => {
           >
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector
-                onClick={() =>
-                  navigate({
-                    pathname: SELECT_DESTINATION_CHAIN_PATH,
-                    search: searchParams.toString(),
-                  })
-                }
+                onClick={() => navigate(SELECT_DESTINATION_CHAIN_PATH)}
               />
               <TransactionInputCard.MaxAmountButton />
             </TransactionInputCard.Header>
@@ -125,11 +111,7 @@ const Deposit = () => {
             <TransactionInputCard.Body
               tokenSelectorProps={{
                 placeHolder: 'Select pool',
-                onClick: () =>
-                  navigate({
-                    pathname: SELECT_SHIELDED_POOL_PATH,
-                    search: searchParams.toString(),
-                  }),
+                onClick: () => navigate(SELECT_SHIELDED_POOL_PATH),
               }}
             />
           </TransactionInputCard.Root>

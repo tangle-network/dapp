@@ -58,6 +58,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
       relayerExternalUrl,
       relayerAvatarTheme,
       sourceChain,
+      txStatusColor = 'blue',
       txStatusMessage,
       title = 'Confirm Transfer',
       fungibleTokenSymbol: token1Symbol,
@@ -148,7 +149,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                   variant="utility"
                   titleClassName="text-mono-200 dark:text-mono-0"
                 />
-                <Chip color="blue">{txStatusMessage}</Chip>
+                <Chip color={txStatusColor}>{txStatusMessage}</Chip>
               </div>
               <SteppedProgress steps={totalProgress} activeStep={progress} />
             </div>
@@ -332,8 +333,7 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
               <InfoItem
                 leftTextProps={{
                   variant: 'body1',
-                  title: 'Transfering',
-                  info: 'Transfering',
+                  title: 'Transferring',
                 }}
                 rightContent={amountContent}
               />
@@ -350,7 +350,6 @@ export const TransferConfirm = forwardRef<HTMLDivElement, TransferConfirmProps>(
                 leftTextProps={{
                   variant: 'body1',
                   title: 'Change Amount',
-                  info: 'Change Amount',
                 }}
                 rightContent={changeAmountContent}
               />

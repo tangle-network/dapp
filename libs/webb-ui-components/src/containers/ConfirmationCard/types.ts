@@ -1,8 +1,13 @@
-import { PropsOf } from '../../types';
-import { ComponentProps } from 'react';
-import { Avatar, Button, CheckBox, TitleWithInfo } from '../../components';
-import { UseCopyableReturnType } from '../../hooks';
-import { ChainGroup } from '@webb-tools/dapp-config';
+import type { PropsOf } from '../../types';
+import type { ComponentProps } from 'react';
+import type {
+  Avatar,
+  Button,
+  CheckBox,
+  ChipColors,
+  TitleWithInfo,
+} from '../../components';
+import type { ChainGroup } from '@webb-tools/dapp-config';
 
 export interface ConfirmationCardProps extends PropsOf<'div'> {
   /**
@@ -82,6 +87,12 @@ export interface ConfirmationCardProps extends PropsOf<'div'> {
    * The transaction status message
    */
   txStatusMessage?: string;
+
+  /**
+   * The status chip color
+   * @default 'blue'
+   */
+  txStatusColor?: ChipColors;
 }
 
 export interface DepositConfirmProps extends ConfirmationCardProps {

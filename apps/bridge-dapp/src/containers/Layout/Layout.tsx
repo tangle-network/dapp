@@ -11,6 +11,8 @@ import { Header } from '../../components/Header';
 import { WEBB_DAPP_NEW_ISSUE_URL } from '../../constants';
 import sidebarProps from '../../constants/sidebar';
 
+const heightClsx = cx('min-h-screen h-full');
+
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
 
@@ -19,11 +21,17 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col justify-between h-screen min-w-full min-h-full bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')] bg-top object-fill bg-no-repeat bg-cover">
-      <div className="flex flex-1 overflow-hidden">
+    <div
+      className={cx(
+        "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
+        'bg-top object-fill bg-no-repeat bg-cover',
+        heightClsx
+      )}
+    >
+      <div className={cx('flex', heightClsx)}>
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
-        <div className="flex flex-col w-full mx-auto overflow-y-auto px-4 max-w-[1565px] gap-6 justify-between">
+        <div className="flex flex-col w-full mx-auto px-4 max-w-[1565px] gap-6 justify-between">
           <div className="space-y-6">
             <Header />
             <main className="w-full">

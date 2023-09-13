@@ -9,26 +9,24 @@ import { NoteManager } from '@webb-tools/note-manager/';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import { useNoteAccount } from '@webb-tools/react-hooks/useNoteAccount';
 import { useVAnchor } from '@webb-tools/react-hooks/vanchor/useVAnchor';
-import { Keypair } from '@webb-tools/sdk-core';
+import { Keypair, calculateTypedChainId } from '@webb-tools/sdk-core';
 import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
-import { formatEther, parseEther, parseUnits } from 'viem';
+import { BooleanParam, StringParam, useQueryParams } from 'use-query-params';
+import { formatEther } from 'viem';
 import {
   AMOUNT_KEY,
   BRIDGE_PATH,
-  DEST_CHAIN_KEY,
   HAS_REFUND_KEY,
-  POOL_KEY,
   RECIPIENT_KEY,
   REFUND_RECIPIENT_KEY,
-  SOURCE_CHAIN_KEY,
   TRANSFER_PATH,
 } from '../../../../../constants';
 import TransferConfirmContainer from '../../../../../containers/TransferConfirmContainer/TransferConfirmContainer';
+import useChainsFromRoute from '../../../../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../../../../hooks/useConnectWallet';
+import useCurrenciesFromRoute from '../../../../../hooks/useCurrenciesFromRoute';
 import handleTxError from '../../../../../utils/handleTxError';
-import validateNoteLeafIndex from '../../../../../utils/validateNoteLeafIndex';
 
 export type UseTransferButtonPropsArgs = {
   balances: ReturnType<typeof useBalancesFromNotes>['balances'];
@@ -57,12 +55,9 @@ function useTransferButtonProps({
 }: UseTransferButtonPropsArgs) {
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
-
   const {
     activeApi,
     activeChain,
-    apiConfig,
     isConnecting,
     loading,
     switchChain,
@@ -70,56 +65,28 @@ function useTransferButtonProps({
     noteManager,
   } = useWebContext();
 
-  const [amount, poolId, recipient] = useMemo(() => {
-    const amountStr = searchParams.get(AMOUNT_KEY) ?? '';
+  const [query] = useQueryParams({
+    [AMOUNT_KEY]: StringParam,
+    [RECIPIENT_KEY]: StringParam,
+    [HAS_REFUND_KEY]: BooleanParam,
+    [REFUND_RECIPIENT_KEY]: StringParam,
+  });
 
-    const poolId = searchParams.get(POOL_KEY) ?? '';
+  const {
+    [AMOUNT_KEY]: amount,
+    [RECIPIENT_KEY]: recipient,
+    [HAS_REFUND_KEY]: hasRefund,
+    [REFUND_RECIPIENT_KEY]: refundRecipient,
+  } = query;
 
-    const recipientStr = searchParams.get(RECIPIENT_KEY) ?? '';
+  const {
+    srcChainCfg: srcChain,
+    srcTypedChainId,
+    destChainCfg: destChain,
+    destTypedChainId,
+  } = useChainsFromRoute();
 
-    return [
-      amountStr ? formatEther(BigInt(amountStr)) : undefined,
-      !Number.isNaN(parseInt(poolId)) ? parseInt(poolId) : undefined,
-      recipientStr ? recipientStr : undefined,
-    ];
-  }, [searchParams]);
-
-  const [hasRefund, refundRecipient] = useMemo(() => {
-    const hasRefund = searchParams.has(HAS_REFUND_KEY);
-    const refundRecipientStr = searchParams.get(REFUND_RECIPIENT_KEY) ?? '';
-
-    return [!!hasRefund, refundRecipientStr ? refundRecipientStr : undefined];
-  }, [searchParams]);
-
-  const [srcTypedChainId, destTypedChainId] = useMemo(() => {
-    const srcTypedChainId = searchParams.get(SOURCE_CHAIN_KEY) ?? '';
-    const destTypedIdStr = searchParams.get(DEST_CHAIN_KEY) ?? '';
-
-    return [
-      !Number.isNaN(parseInt(srcTypedChainId))
-        ? parseInt(srcTypedChainId)
-        : undefined,
-      !Number.isNaN(parseInt(destTypedIdStr))
-        ? parseInt(destTypedIdStr)
-        : undefined,
-    ];
-  }, [searchParams]);
-
-  const [fungibleCfg, srcChain, destChain] = useMemo(
-    () => {
-      return [
-        typeof poolId === 'number' ? apiConfig.currencies[poolId] : undefined,
-        typeof srcTypedChainId === 'number'
-          ? chainsPopulated[srcTypedChainId]
-          : undefined,
-        typeof destTypedChainId === 'number'
-          ? chainsPopulated[destTypedChainId]
-          : undefined,
-      ];
-    },
-    // prettier-ignore
-    [apiConfig.currencies, destTypedChainId, poolId, srcTypedChainId]
-  );
+  const { fungibleCfg } = useCurrenciesFromRoute();
 
   const { hasNoteAccount, setOpenNoteAccountModal } = useNoteAccount();
 
@@ -134,7 +101,7 @@ function useTransferButtonProps({
       return false;
     }
 
-    if (!amount || Number.isNaN(Number(amount)) || Number(amount) <= 0) {
+    if (typeof amount !== 'string' || amount.length === 0) {
       return false;
     }
 
@@ -147,7 +114,15 @@ function useTransferButtonProps({
       return false;
     }
 
-    return parseEther(amount) <= balance && receivingAmount >= 0;
+    try {
+      const amountBI = BigInt(amount);
+      return (
+        amountBI > ZERO_BIG_INT && amountBI <= balance && receivingAmount >= 0
+      );
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }, [amount, balances, srcTypedChainId, fungibleCfg, receivingAmount]);
 
   const connCnt = useMemo(() => {
@@ -169,15 +144,20 @@ function useTransferButtonProps({
 
   const inputCnt = useMemo(
     () => {
-      if (!srcTypedChainId || !destTypedChainId) {
-        return 'Select chain';
+      if (typeof srcTypedChainId !== 'number') {
+        return 'Select source chain';
+      }
+
+      if (typeof destTypedChainId !== 'number') {
+        return 'Select destination chain';
       }
 
       if (!fungibleCfg) {
         return 'Select pool';
       }
 
-      if (!amount || Number.isNaN(Number(amount)) || Number(amount) <= 0) {
+      const amountFilled = typeof amount === 'string' && amount.length > 0;
+      if (amountFilled && BigInt(amount) <= ZERO_BIG_INT) {
         return 'Enter amount';
       }
 
@@ -212,7 +192,8 @@ function useTransferButtonProps({
   const isDisabled = useMemo(
     () => {
       const allInputsFilled =
-        !!amount &&
+        typeof amount === 'string' &&
+        amount.length > 0 &&
         !!fungibleCfg &&
         !!recipient &&
         typeof destTypedChainId === 'number';
@@ -343,7 +324,7 @@ function useTransferButtonProps({
         );
 
         const fungibleDecimals = fungibleCfg.decimals;
-        const amountBig = parseUnits(amount, fungibleDecimals);
+        const amountBig = BigInt(amount);
 
         // Get the notes that will be spent for this withdraw
         const inputNotes = NoteManager.getNotesFifo(avaiNotes, amountBig);
@@ -352,22 +333,11 @@ function useTransferButtonProps({
         }
 
         // Validate the input notes
-        const edges = await vAnchorApi.getLatestNeighborEdges(
-          fungibleCfg.id,
-          srcTypedChainId
-        );
-        const nextIdx = await vAnchorApi.getNextIndex(
+        const valid = await vAnchorApi.validateInputNotes(
+          inputNotes,
           srcTypedChainId,
           fungibleCfg.id
         );
-
-        const valid = inputNotes.every((note) => {
-          if (note.note.sourceChainId === srcTypedChainId.toString()) {
-            return note.note.index ? BigInt(note.note.index) < nextIdx : true;
-          } else {
-            return validateNoteLeafIndex(note, edges);
-          }
-        });
 
         if (!valid) {
           throw WebbError.from(WebbErrorCodes.NotesNotReady);
@@ -447,7 +417,11 @@ function useTransferButtonProps({
             feeToken={feeToken}
             changeAmount={Number(formatEther(changeAmount))}
             currency={new Currency(fungibleCfg)}
-            destChain={destChain}
+            destChain={
+              chainsPopulated[
+                calculateTypedChainId(destChain.chainType, destChain.id)
+              ]
+            }
             recipient={recipient}
             relayer={activeRelayer}
             note={changeNote}
@@ -463,7 +437,7 @@ function useTransferButtonProps({
             }}
             refundAmount={refundAmount}
             refundToken={refundToken}
-            refundRecipient={refundRecipient}
+            refundRecipient={refundRecipient ?? ''} // Already checked in `allInputsFilled`
           />
         );
       } catch (error) {

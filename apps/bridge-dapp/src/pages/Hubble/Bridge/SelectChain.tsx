@@ -1,143 +1,74 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { type ApiConfig } from '@webb-tools/dapp-config/api-config';
+import type { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import ChainListCard from '@webb-tools/webb-ui-components/components/ListCard/ChainListCard';
-import {
+import type {
   ChainListCardProps,
   ChainType,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { FC, useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type FC } from 'react';
 import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import { NumberParam } from 'use-query-params';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
-  BRIDGE_TABS,
   DEST_CHAIN_KEY,
+  POOL_KEY,
   SOURCE_CHAIN_KEY,
+  TOKEN_KEY,
 } from '../../../constants';
+import useChainsFromRoute from '../../../hooks/useChainsFromRoute';
 import { useConnectWallet } from '../../../hooks/useConnectWallet';
 import useCurrenciesFromRoute from '../../../hooks/useCurrenciesFromRoute';
+import useTxTabFromRoute from '../../../hooks/useTxTabFromRoute';
 import useNavigateWithPersistParams from '../../../hooks/useNavigateWithPersistParams';
 import { getActiveSourceChains } from '../../../utils/getActiveSourceChains';
+import getParam from '../../../utils/getParam';
 
 const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
   chainType,
 }) => {
-  const { apiConfig, activeWallet, activeChain, loading, switchChain } =
-    useWebContext();
-
+  const { activeWallet, activeChain, loading, switchChain } = useWebContext();
   const { toggleModal } = useConnectWallet();
 
   const { pathname } = useLocation();
-
+  const [searchParams] = useSearchParams();
   const navigate = useNavigateWithPersistParams();
 
-  const [searchParams] = useSearchParams();
+  const chainsCfg = useChains(chainType);
+  const currentTab = useTxTabFromRoute();
 
-  const { fungibleCfg } = useCurrenciesFromRoute();
+  const updateParams = useUpdateParams();
 
-  const currentTab = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
-
-  const srcChain = useMemo(() => {
-    const typedChainId = searchParams.get(SOURCE_CHAIN_KEY);
-    if (!typedChainId) {
-      return undefined;
-    }
-
-    return apiConfig.chains[parseInt(typedChainId)];
-  }, [apiConfig.chains, searchParams]);
-
-  const destChain = useMemo(() => {
-    const typedChainId = searchParams.get(DEST_CHAIN_KEY);
-    if (!typedChainId) {
-      return undefined;
-    }
-
-    return apiConfig.chains[parseInt(typedChainId)];
-  }, [apiConfig.chains, searchParams]);
-
-  const chains = useMemo<Array<ChainType>>(() => {
-    if (currentTab === 'withdraw' && chainType === 'dest') {
-      return Object.values(getActiveSourceChains(apiConfig.chains)).map(
+  const chains = useMemo<Array<ChainType>>(
+    () =>
+      chainsCfg.map(
         (c) =>
           ({
             name: c.name,
             tag: c.tag,
           } satisfies ChainType)
-      );
-    }
-
-    if (chainType === 'dest') {
-      if (!fungibleCfg) {
-        return [];
-      }
-
-      return Object.keys(apiConfig.anchors[fungibleCfg.id])
-        .map((typedChainId) => apiConfig.chains[parseInt(typedChainId)])
-        .map(
-          (c) =>
-            ({
-              name: c.name,
-              tag: c.tag,
-            } satisfies ChainType)
-        );
-    }
-
-    return getActiveSourceChains(apiConfig.chains).map((val) => {
-      return {
-        name: val.name,
-        tag: val.tag,
-      } satisfies ChainType;
-    });
-  }, [apiConfig.anchors, apiConfig.chains, chainType, currentTab, fungibleCfg]);
-
-  const defaultCategory = useMemo<ChainListCardProps['defaultCategory']>(() => {
-    if (chainType === 'dest') {
-      return;
-    }
-
-    if (!currentTab || currentTab === 'deposit') {
-      return srcChain?.tag ?? activeChain?.tag;
-    }
-  }, [activeChain?.tag, chainType, currentTab, srcChain?.tag]);
-
-  const onlyCategory = useMemo<ChainListCardProps['onlyCategory']>(() => {
-    if (chainType === 'source') {
-      return;
-    }
-
-    if (currentTab === 'deposit' || currentTab === 'transfer') {
-      return srcChain?.tag ?? destChain?.tag;
-    }
-
-    return destChain?.tag;
-  }, [chainType, currentTab, destChain?.tag, srcChain?.tag]);
+      ),
+    [chainsCfg]
+  );
 
   const handleClose = useCallback(
-    (typedChainId?: number) => {
-      if (currentTab == null) {
-        navigate(-1);
-        return;
-      }
-
+    (nextTypedChainId?: number) => {
       const path = pathname.split('/').slice(0, -1).join('/');
+      let nextParams = new URLSearchParams(searchParams);
 
-      const params = new URLSearchParams(searchParams);
-      if (typedChainId) {
-        params.set(
-          chainType === 'dest' ? DEST_CHAIN_KEY : SOURCE_CHAIN_KEY,
-          typedChainId.toString()
-        );
+      if (typeof nextTypedChainId === 'number') {
+        nextParams = updateParams(nextParams, nextTypedChainId, chainType);
       }
 
       navigate({
         pathname: path,
-        search: params.toString(),
+        search: nextParams.toString(),
       });
     },
-    [chainType, currentTab, navigate, pathname, searchParams]
+    [chainType, navigate, pathname, searchParams, updateParams]
   );
 
   const handleChainChange = useCallback(
@@ -168,6 +99,8 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
     [activeWallet, currentTab, handleClose, switchChain, toggleModal]
   );
 
+  const { defaultCategory, onlyCategory } = useChainCategoryProps(chainType);
+
   return (
     <SlideAnimation>
       <ChainListCard
@@ -186,3 +119,187 @@ const SelectChain: FC<{ chainType: ChainListCardProps['chainType'] }> = ({
 };
 
 export default SelectChain;
+
+/**
+ * Get the chains to select for the given chain type
+ * @param chainType the chain type for getting the chains
+ * @returns the chains to select for the given chain type
+ */
+const useChains = (
+  chainType: ChainListCardProps['chainType'] = 'source'
+): ReadonlyArray<ChainConfig> => {
+  const { apiConfig } = useWebContext();
+
+  const { fungibleCfg } = useCurrenciesFromRoute();
+
+  if (chainType === 'source') {
+    return getActiveSourceChains(apiConfig.chains);
+  }
+
+  if (!fungibleCfg) {
+    return [];
+  }
+
+  const anchorRec = apiConfig.anchors[fungibleCfg.id];
+  if (!anchorRec) {
+    return [];
+  }
+
+  return Object.keys(anchorRec).map((typedChainId) => {
+    return apiConfig.chains[parseInt(typedChainId)];
+  });
+};
+
+/**
+ * Get the default and only category for the chain list card
+ *
+ * - Default category:
+ *  + Deposit & Transfer
+ *   * Chain type: source => activeChain ?? 'test'
+ *   * Chain type: dest => undefined
+ *  + Withdraw => source => active chain ?? 'test'
+ *
+ * - Only category:
+ *  + Deposit & Transfer
+ *   * Chain type: source => undefined
+ *   * Chain type: dest => category of source chain ?? undefined
+ *  + Withdraw => undefined
+ *
+ * @param chainType whether 'source' or 'dest' (default: 'source')
+ * @return {defaultCategory, onlyCategory}
+ */
+const useChainCategoryProps = (
+  chainType: ChainListCardProps['chainType'] = 'source'
+) => {
+  const { activeChain } = useWebContext();
+
+  const currentTx = useTxTabFromRoute();
+
+  const { srcChainCfg } = useChainsFromRoute();
+
+  const defaultCategory = useMemo<ChainListCardProps['defaultCategory']>(() => {
+    if (chainType === 'source') {
+      return srcChainCfg?.tag ?? activeChain?.tag ?? 'test';
+    }
+  }, [activeChain?.tag, chainType, srcChainCfg?.tag]);
+
+  const onlyCategory = useMemo<ChainListCardProps['onlyCategory']>(() => {
+    if (
+      (currentTx === 'deposit' || currentTx === 'transfer') &&
+      chainType === 'dest'
+    ) {
+      return srcChainCfg?.tag;
+    }
+  }, [chainType, currentTx, srcChainCfg?.tag]);
+
+  return { defaultCategory, onlyCategory };
+};
+
+/**
+ * Check whether the current token id is supported for the given typed chain id
+ * @param params the query params to get the token id and pool id to check
+ * @param nextTypedChainId the typed chain id for checking the token id
+ * @param apiCfg the api config
+ * @returns Check whether the token id is supported for the given typed chain id
+ */
+const isTokenSupported = (
+  params: URLSearchParams,
+  nextTypedChainId: number,
+  fungibleToWrappableMap: ApiConfig['fungibleToWrappableMap']
+): boolean => {
+  const poolId = getParam(params, POOL_KEY, NumberParam);
+  if (typeof poolId !== 'number') {
+    return false;
+  }
+
+  const tokenId = getParam(params, TOKEN_KEY, NumberParam);
+  if (typeof tokenId !== 'number') {
+    return false;
+  }
+
+  const wrappableMap = fungibleToWrappableMap.get(poolId);
+  if (!wrappableMap) {
+    return false;
+  }
+
+  const wrappableSet = wrappableMap.get(nextTypedChainId);
+  if (!wrappableSet) {
+    return false;
+  }
+
+  return wrappableSet.has(tokenId);
+};
+
+/**
+ * Check whether the dest chain id is supported for the given typed chain id
+ * @param params the query params to get the dest chain id
+ * @param nextTypedChainId the next typed chain id for checking the dest chain id
+ * @param anchorsCfg the anchor config
+ * @returns Check whether the dest chain id is supported for the given typed chain id
+ */
+const isDestChainSupported = (
+  params: URLSearchParams,
+  nextTypedChainId: number,
+  anchorsCfg: ApiConfig['anchors']
+): boolean => {
+  const destChainId = getParam(params, DEST_CHAIN_KEY, NumberParam);
+  if (typeof destChainId !== 'number') {
+    return false;
+  }
+
+  // Check if exist in the anchors config
+  // at least one record has the dest chain id and the next typed chain id
+  return Object.values(anchorsCfg).some((anchorRecord) => {
+    const keys = Object.keys(anchorRecord);
+
+    const includeDest = keys.includes(destChainId.toString());
+    const includeNext = keys.includes(nextTypedChainId.toString());
+
+    return includeDest && includeNext;
+  });
+};
+
+const useUpdateParams = () => {
+  const { apiConfig } = useWebContext();
+
+  return useCallback(
+    (
+      prevParams: URLSearchParams,
+      nextTypedChainId: number,
+      chainType: ChainListCardProps['chainType']
+    ) => {
+      const nextParams = new URLSearchParams(prevParams);
+      const key = chainType === 'source' ? SOURCE_CHAIN_KEY : DEST_CHAIN_KEY;
+      nextParams.set(key, nextTypedChainId.toString());
+
+      if (chainType === 'dest') {
+        return nextParams;
+      }
+
+      // For source chain, we need to check
+      // 1. Whether the current selected token is still supported
+      // 2. Whether the current destination chain is still supported
+
+      const tokenSupported = isTokenSupported(
+        nextParams,
+        nextTypedChainId,
+        apiConfig.fungibleToWrappableMap
+      );
+      if (!tokenSupported) {
+        nextParams.delete(TOKEN_KEY);
+      }
+
+      const destChainSupported = isDestChainSupported(
+        nextParams,
+        nextTypedChainId,
+        apiConfig.anchors
+      );
+      if (!destChainSupported) {
+        nextParams.delete(DEST_CHAIN_KEY);
+      }
+
+      return nextParams;
+    },
+    [apiConfig.anchors, apiConfig.fungibleToWrappableMap]
+  );
+};

@@ -21,9 +21,14 @@ import {
   formatEther,
   formatUnits,
 } from 'viem';
-import { useEnqueueSubmittedTx, useLatestTransactionStage } from '../../hooks';
+import {
+  useCurrentTx,
+  useEnqueueSubmittedTx,
+  useLatestTransactionStage,
+} from '../../hooks';
 import {
   captureSentryException,
+  getCardTitle,
   getErrorMessage,
   getTokenURI,
   getTransactionHash,
@@ -101,39 +106,15 @@ const WithdrawConfirmContainer = forwardRef<
         : 'substrate';
     }, [targetTypedChainId]);
 
+    const currentTx = useCurrentTx(txQueue.txQueue, txId);
+
     const cardTitle = useMemo(() => {
-      let status = '';
-
-      switch (stage) {
-        case TransactionState.Ideal: {
-          break;
-        }
-
-        case TransactionState.Done: {
-          status = 'Completed';
-          break;
-        }
-
-        case TransactionState.Failed: {
-          status = 'Failed';
-          break;
-        }
-
-        default: {
-          status = 'in Progress...';
-          break;
-        }
+      if (!currentTx) {
+        return;
       }
 
-      if (!status)
-        return unwrapCurrency
-          ? 'Confirm Unwrap and Withdraw'
-          : 'Confirm Withdraw';
-
-      return unwrapCurrency
-        ? `Unwrap and Withdraw ${status}`
-        : `Withdraw ${status}`;
-    }, [stage, unwrapCurrency]);
+      return getCardTitle(stage, currentTx.name, Boolean(unwrapCurrency));
+    }, [currentTx, stage, unwrapCurrency]);
 
     // The main action onClick handler
     const handleExecuteWithdraw = useCallback(
@@ -309,16 +290,18 @@ const WithdrawConfirmContainer = forwardRef<
       [activeApi, activeRelayer, addNoteToNoteManager, amountAfterFee, apiConfig, availableNotes, changeNote, changeUtxo, enqueueSubmittedTx, fee, onResetState, recipient, refundAmount, removeNoteFromNoteManager, txQueueApi, unwrapCurrency, vAnchorApi, withdrawTxInProgress]
     );
 
-    const [txStatusMessage, currentStep] = useMemo(() => {
+    const [txStatusMessage, currentStep, txStatus] = useMemo(() => {
       if (!txId) {
-        return ['', undefined];
+        return ['', undefined, undefined];
       }
 
       const txPayload = txPayloads.find((txPayload) => txPayload.id === txId);
       const message = txPayload
         ? txPayload.txStatus.message?.replace('...', '')
         : '';
-      return [message, txPayload?.currentStep];
+
+      const txStatus = txPayload?.txStatus.status;
+      return [message, txPayload?.currentStep, txStatus];
     }, [txId, txPayloads]);
 
     const formattedFee = useMemo(() => {
@@ -406,6 +389,13 @@ const WithdrawConfirmContainer = forwardRef<
         relayerAvatarTheme={avatarTheme}
         fungibleTokenSymbol={fungibleCurrency.view.symbol}
         wrappableTokenSymbol={unwrapCurrency?.view.symbol}
+        txStatusColor={
+          txStatus === 'completed'
+            ? 'green'
+            : txStatus === 'warning'
+            ? 'red'
+            : undefined
+        }
         txStatusMessage={txStatusMessage}
         onClose={onClose}
       />
