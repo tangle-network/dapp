@@ -16,13 +16,11 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
 import cx from 'classnames';
 import { useCallback, useMemo, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { BooleanParam, useQueryParam } from 'use-query-params';
+import { useLocation } from 'react-router-dom';
+import { BooleanParam, NumberParam, useQueryParams } from 'use-query-params';
 import SlideAnimation from '../../../components/SlideAnimation';
 import {
   BRIDGE_PATH,
-  BRIDGE_TABS,
-  DEST_CHAIN_KEY,
   NO_RELAYER_KEY,
   POOL_KEY,
   SELECT_SOURCE_CHAIN_PATH,
@@ -35,37 +33,27 @@ import { useRelayerManager } from '../../../hooks/useRelayerManager';
 const SelectRelayer = () => {
   const { pathname } = useLocation();
 
-  const [searchParams] = useSearchParams();
-
   const { apiConfig, loading, isConnecting, activeApi } = useWebContext();
 
   const navigate = useNavigateWithPersistParams();
 
   const { toggleModal } = useConnectWallet();
 
-  const [noRelayer, setNoRelayer] = useQueryParam(NO_RELAYER_KEY, BooleanParam);
-
   const [customRelayer, setCustomRelayer] = useState('');
   const [customerRelayerError, setCustomerRelayerError] = useState('');
   const [customRelayerLoading, setCustomRelayerLoading] = useState(false);
 
-  const txType = useMemo(() => {
-    return BRIDGE_TABS.find((tab) => pathname.includes(tab));
-  }, [pathname]);
+  const [query, setQuery] = useQueryParams({
+    [NO_RELAYER_KEY]: BooleanParam,
+    [SOURCE_CHAIN_KEY]: NumberParam,
+    [POOL_KEY]: NumberParam,
+  });
 
-  const [typedChainId, poolId] = useMemo(() => {
-    const typedChainId =
-      searchParams.get(
-        txType === 'transfer' ? SOURCE_CHAIN_KEY : DEST_CHAIN_KEY
-      ) ?? '';
-
-    const poolId = searchParams.get(POOL_KEY) ?? '';
-
-    return [
-      Number.isNaN(parseInt(typedChainId)) ? undefined : parseInt(typedChainId),
-      Number.isNaN(parseInt(poolId)) ? undefined : parseInt(poolId),
-    ];
-  }, [searchParams, txType]);
+  const {
+    [NO_RELAYER_KEY]: noRelayer,
+    [SOURCE_CHAIN_KEY]: typedChainId,
+    [POOL_KEY]: poolId,
+  } = query;
 
   const useRelayersArgs = useMemo(
     () => ({
@@ -180,7 +168,7 @@ const SelectRelayer = () => {
     if (!customRelayer) {
       return;
     }
-    setCustomRelayerLoading(true);
+
     const error = 'Invalid input. Pleas check your search and try again.';
     if (!isValidUrl(customRelayer)) {
       setCustomerRelayerError(error);
@@ -192,11 +180,12 @@ const SelectRelayer = () => {
       return; // If relayer already exists, do nothing
     }
 
+    setCustomRelayerLoading(true);
     const info = await getInfo(customRelayer);
     if (!info) {
       setCustomerRelayerError(error);
     } else {
-      addRelayer(customRelayer);
+      await addRelayer(customRelayer);
       setCustomerRelayerError('');
     }
 
@@ -211,15 +200,15 @@ const SelectRelayer = () => {
   const toggleNoRelayer = useCallback(
     (nextChecked: boolean) => {
       if (!nextChecked) {
-        setNoRelayer(undefined);
+        setQuery({ [NO_RELAYER_KEY]: undefined });
         return;
       }
 
       // If no relayer is selected, set the active relayer to null
-      setNoRelayer(nextChecked);
+      setQuery({ [NO_RELAYER_KEY]: nextChecked });
       setRelayer(null);
     },
-    [setNoRelayer, setRelayer]
+    [setQuery, setRelayer]
   );
 
   const isDisabled = useMemo(() => {

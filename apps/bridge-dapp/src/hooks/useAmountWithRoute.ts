@@ -22,6 +22,11 @@ const useAmountWithRoute = (key = AMOUNT_KEY) => {
   }, [key, searchParams]);
 
   const [amount, setAmount] = useState(amountStr);
+
+  useEffect(() => {
+    setAmount(amountStr);
+  }, [amountStr]);
+
   const [, setAmountParam] = useQueryParam(AMOUNT_KEY, StringParam);
 
   const onAmountChange = useCallback(

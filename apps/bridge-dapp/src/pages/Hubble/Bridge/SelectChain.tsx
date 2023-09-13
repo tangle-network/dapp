@@ -179,9 +179,9 @@ const useChainCategoryProps = (
 
   const defaultCategory = useMemo<ChainListCardProps['defaultCategory']>(() => {
     if (chainType === 'source') {
-      return activeChain?.tag && 'test';
+      return srcChainCfg?.tag ?? activeChain?.tag ?? 'test';
     }
-  }, [activeChain?.tag, chainType]);
+  }, [activeChain?.tag, chainType, srcChainCfg?.tag]);
 
   const onlyCategory = useMemo<ChainListCardProps['onlyCategory']>(() => {
     if (

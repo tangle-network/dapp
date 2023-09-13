@@ -8,6 +8,7 @@ import {
   SettingsFillIcon,
 } from '@webb-tools/icons';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
+import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -81,7 +82,17 @@ const Withdraw = () => {
   const { fungibleCfg, wrappableCfg } = useCurrenciesFromRoute();
   const { srcChainCfg, srcTypedChainId } = useChainsFromRoute();
 
-  const activeRelayer = useRelayerWithRoute(srcTypedChainId);
+  const typedChainId = useMemo(() => {
+    if (typeof srcTypedChainId === 'number') {
+      return srcTypedChainId;
+    }
+
+    if (activeChain) {
+      return calculateTypedChainId(activeChain.chainType, activeChain.id);
+    }
+  }, [activeChain, srcTypedChainId]);
+
+  const activeRelayer = useRelayerWithRoute(typedChainId);
 
   const fungibleMaxAmount = useMemo(() => {
     if (typeof srcTypedChainId !== 'number') {
