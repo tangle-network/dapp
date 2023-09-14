@@ -11,7 +11,7 @@ import { Header } from '../../components/Header';
 import { WEBB_DAPP_NEW_ISSUE_URL } from '../../constants';
 import sidebarProps from '../../constants/sidebar';
 
-const heightClsx = cx('min-h-screen h-full');
+const heightClsx = cx('h-screen');
 
 export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [showBanner, setShowBanner] = useState(true);
@@ -25,8 +25,8 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
       <div className={cx('flex', heightClsx)}>
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
-        <div className="flex flex-col w-full mx-auto px-4 max-w-[1565px] gap-6 justify-between">
-          <div className="space-y-6">
+        <div className="flex flex-col justify-between w-full gap-6 px-4 mx-auto overflow-y-auto">
+          <div className="space-y-6 max-w-[1565px] mx-auto w-full">
             <Header />
             <main className="w-full">
               <Outlet />
