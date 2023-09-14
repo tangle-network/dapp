@@ -17,7 +17,13 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
   useNextThemesForThemeToggle,
 }) => {
   return (
-    <div className={twMerge('flex items-center justify-between', className)}>
+    <div
+      className={twMerge(
+        'flex items-center',
+        isExpanded ? 'justify-between' : 'justify-center',
+        className
+      )}
+    >
       <div className="flex items-center justify-between group">
         <Link href={href} aTagProps={{ target: '_blank' }}>
           <Icon

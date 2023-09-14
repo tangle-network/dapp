@@ -19,7 +19,13 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   const [activeItem, setActiveItem] = useState<number | null>(0);
 
   return (
-    <div className={twMerge('flex flex-col gap-4 mt-11', className)}>
+    <div
+      className={twMerge(
+        'flex flex-col mt-11',
+        isExpanded ? 'gap-1' : 'gap-4',
+        className
+      )}
+    >
       {items.map((itemProps, idx) => (
         <SideBarItem
           key={idx}
@@ -70,68 +76,52 @@ export const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
         <Link href={href} aTagProps={{ target: '_blank' }}>
           <div
             className={twMerge(
-              'flex items-center cursor-pointer select-none',
-              isExpanded
-                ? 'hover:bg-mono-20 dark:hover:bg-mono-170 hover:rounded-full'
-                : '',
-              isActive && isExpanded
-                ? 'bg-mono-20 dark:bg-mono-170 rounded-full'
-                : '',
-              isExpanded ? 'justify-between px-2 py-3' : 'justify-center'
+              'cursor-pointer select-none rounded-full',
+              !isExpanded ? 'px-3 py-2' : 'flex items-center',
+              isActive && (subItems.length === 0 || !isExpanded)
+                ? 'text-mono-200 dark:text-mono-0'
+                : 'text-mono-100 dark:text-mono-100',
+              isExpanded ? 'hover:bg-mono-20 dark:hover:bg-mono-160' : '',
+              isExpanded ? 'justify-between px-1 py-3' : 'justify-center',
+              isActive && (subItems.length === 0 || !isExpanded)
+                ? 'bg-mono-20 dark:bg-mono-160'
+                : ''
             )}
           >
-            <div className="flex gap-[16px]">
-              <div
-                className={
-                  !isExpanded
-                    ? twMerge(
-                        isActive
-                          ? 'rounded-full bg-mono-20 dark:bg-mono-170 '
-                          : '',
-                        'p-3'
-                      )
-                    : ''
-                }
-              >
-                <Icon
-                  width={24}
-                  height={24}
-                  className={
-                    isActive
-                      ? '!fill-mono-200 dark:!fill-mono-0'
-                      : '!fill-mono-100 dark:!fill-mono-60'
-                  }
-                />
-              </div>
+            <div
+              className={twMerge(
+                'flex gap-4 !text-inherit',
+                !isExpanded && 'justify-center'
+              )}
+            >
+              <Icon width={24} height={24} className="!fill-current" />
 
               {isExpanded && (
-                <Typography
-                  variant="body1"
-                  className={twMerge(
-                    'text-mono-100 dark:text-mono-60',
-                    isActive ? 'text-mono-200 dark:text-mono-0' : ''
-                  )}
-                >
+                <Typography variant="body1" className="!text-inherit">
                   {name}
                 </Typography>
               )}
             </div>
 
             {isExpanded && (
-              <div>
+              <>
                 {!isInternal && href && subItems.length <= 0 ? (
-                  <ExternalLinkLine />
+                  <ExternalLinkLine className="!fill-current" />
                 ) : subItems.length > 0 ? (
-                  <div>{isDropdownOpen ? <ChevronDown /> : <ChevronUp />}</div>
+                  isDropdownOpen ? (
+                    <ChevronDown className="!fill-current" />
+                  ) : (
+                    <ChevronUp className="!fill-current" />
+                  )
                 ) : null}
-              </div>
+              </>
             )}
           </div>
         </Link>
       </div>
 
       {isExpanded && isDropdownOpen && (
-        <ul className="flex flex-col gap-7 pl-12 pr-5">
+        <ul className="flex flex-col gap-1">
           {subItems.map((subItemProps, index) => (
             <SubItem
               key={index}

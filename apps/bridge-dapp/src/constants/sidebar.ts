@@ -7,7 +7,6 @@ import {
   type SidebarProps,
 } from '@webb-tools/webb-ui-components';
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
-import { LogoWithoutName } from '@webb-tools/webb-ui-components/components/LogoWithoutName';
 import {
   STATS_URL,
   TANGLE_MKT_URL,
@@ -65,7 +64,6 @@ const footer: SideBarFooterType = {
 const sidebar: SidebarProps = {
   items: items,
   Logo: Logo,
-  ClosedLogo: LogoWithoutName,
   logoLink: WEBB_MKT_URL,
   footer: footer,
 };

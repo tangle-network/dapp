@@ -1,17 +1,16 @@
-import {
-  Logo,
-  LogoWithoutName,
-  SideBarItemProps,
-  SideBarFooterType,
-  SidebarProps,
-} from '@webb-tools/webb-ui-components';
 import { ContrastTwoLine, DocumentationIcon, Tangle } from '@webb-tools/icons';
 import {
+  Logo,
+  SideBarFooterType,
+  SideBarItemProps,
+  SidebarProps,
+} from '@webb-tools/webb-ui-components';
+import {
   BRIDGE_URL,
-  WEBB_FAUCET_URL,
   STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
+  WEBB_FAUCET_URL,
   WEBB_MKT_URL,
 } from '@webb-tools/webb-ui-components/constants';
 
@@ -69,7 +68,6 @@ const sideBarFooter: SideBarFooterType = {
 
 const sideBarProps: SidebarProps = {
   Logo,
-  ClosedLogo: LogoWithoutName,
   items: sideBarItems,
   footer: sideBarFooter,
   logoLink: WEBB_MKT_URL,

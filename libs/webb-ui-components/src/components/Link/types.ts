@@ -8,4 +8,5 @@ export type LinkProps = {
   aTagProps?: React.AnchorHTMLAttributes<HTMLAnchorElement>;
   nextLinkProps?: Omit<NextLinkProps, 'href'>;
   reactRouterLinkProps?: Omit<ReactRouterLinkProps, 'to'>;
+  className?: string;
 };
