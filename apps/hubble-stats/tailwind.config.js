@@ -21,8 +21,6 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        body: "url('/static/assets/bg.jpeg')",
-        body_dark: "url('/static/assets/bg-dark.jpeg')",
         glass:
           'linear-gradient(180deg,rgba(255,255,255,0.80) 0%,rgba(255,255,255,0.00) 100%)',
         glass_dark:

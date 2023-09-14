@@ -53,7 +53,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <DefaultSeo {...metadata} />
-      <div className="hero-bg">
+      <div>
         <Header />
 
         <main className="mt-[72px]">

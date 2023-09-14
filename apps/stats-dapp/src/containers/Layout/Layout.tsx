@@ -139,13 +139,7 @@ export const Layout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <div>
-      <div
-        className={cx(
-          'w-full mx-auto flex-1',
-          "bg-[url('assets/stats-bg.jpeg')] dark:bg-[url('assets/stats-dark-bg.jpeg')]",
-          'bg-no-repeat bg-cover bg-fixed'
-        )}
-      >
+      <div className={cx('w-full mx-auto flex-1 bg-body')}>
         <Header
           selectedNetwork={selectedNetwork}
           setUserSelectedNetwork={setUserSelectedNetwork}

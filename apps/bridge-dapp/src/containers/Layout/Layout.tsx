@@ -21,13 +21,7 @@ export const Layout: FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div
-      className={cx(
-        "bg-[url('assets/bridge-bg.png')] dark:bg-[url('assets/bridge-dark-bg.png')]",
-        'bg-top object-fill bg-no-repeat bg-cover',
-        heightClsx
-      )}
-    >
+    <div className={cx('bg-body', heightClsx)}>
       <div className={cx('flex', heightClsx)}>
         <SideBar {...sidebarProps} className="hidden lg:flex" />
 
