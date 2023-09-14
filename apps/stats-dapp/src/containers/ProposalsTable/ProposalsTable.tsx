@@ -289,7 +289,7 @@ export const ProposalsTable = () => {
           </Accordion>
         </Filter>
       }
-      className="h-[800px]"
+      className="h-fit-content"
     >
       {data.length > 0 ? (
         <Table
@@ -299,7 +299,7 @@ export const ProposalsTable = () => {
           title="Proposals"
         />
       ) : (
-        <div className="h-[800px] flex items-center flex-col justify-center">
+        <div className="h-[740px] flex items-center flex-col justify-center">
           <Spinner size="xl" />
         </div>
       )}

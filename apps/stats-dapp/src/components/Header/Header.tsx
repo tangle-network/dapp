@@ -41,7 +41,7 @@ export const Header: FC<HeaderProps> = ({
 }) => {
   return (
     <header className="bg-mono-0 dark:bg-mono-180">
-      <div className="relative flex items-center justify-between py-4 mb-6 max-w-[1160px] mx-auto">
+      <div className="relative flex items-center justify-between py-4 max-w-[1160px] mx-auto">
         <NavLink to={tangleLogoConfig.path}>
           <TangleLogo />
         </NavLink>

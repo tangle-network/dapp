@@ -17,6 +17,7 @@ import { useCurrentMetaData } from './useCurrentMetaData';
 import { PublicKey } from './useKeys';
 import { useActiveSession } from '../stats-provider';
 import { useEffect, useMemo, useState } from 'react';
+import { useReputations } from './useReputation';
 
 export type AuthoritySet = {
   count: number;
@@ -66,15 +67,17 @@ export type UpcomingThresholds = Record<
 
 /**
  * Authority list item
- * @param id - Authority id
+ * @param id - Authority account id
  * @param location - Authority location
  * @param uptime - Validator uptime
+ * @param authorityId - Authority id
  * */
 export type AuthorityListItem = {
   id: string;
   location?: string;
   uptime: number;
   reputation: number;
+  authorityId: string;
 };
 
 /**
@@ -294,6 +297,7 @@ export function useAuthorities(
     isFailed: false,
   });
   const [call, query] = useValidatorListingLazyQuery();
+  const authorityReputations = useReputations();
 
   const authoritiesUptime = useAuthorityUptimesQuery({
     pollInterval: 1000,
@@ -309,19 +313,7 @@ export function useAuthorities(
     fetchPolicy: 'network-only',
   });
 
-  // fetch the data once the filter has changed
   useEffect(() => {
-    const filter = reqQuery.filter;
-    const reputation = rangeIntoIntFilter(
-      filter.reputation
-        ? (filter.reputation.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
-        : []
-    );
-    const uptime = rangeIntoIntFilter(
-      filter.uptime
-        ? (filter.uptime.map((i) => (i ? i * Math.pow(10, 7) : i)) as Range)
-        : []
-    );
     if (
       latestIndexedSessionId.data &&
       latestIndexedSessionId.data.sessions?.totalCount
@@ -333,13 +325,6 @@ export function useAuthorities(
           sessionId:
             String(latestIndexedSessionId.data?.sessions?.totalCount - 1) ??
             '0',
-          reputationFilter: reputation ?? undefined,
-          uptimeFilter: uptime ?? undefined,
-          validatorId: filter.search
-            ? {
-                equalTo: filter.search,
-              }
-            : undefined,
         },
       }).catch((e) => {
         setAuthorities({
@@ -365,11 +350,17 @@ export function useAuthorities(
                 (item) => item?.authorityId === auth.id
               );
               const uptime = authority ? authority.uptime : 0;
+
               return {
                 id: auth.id,
                 location: auth.location ?? undefined,
                 uptime: uptime,
-                reputation: auth ? auth.reputation * Math.pow(10, -7) : 0,
+                reputation: auth
+                  ? (auth.reputation /
+                      authorityReputations.highestReputationScore) *
+                    100
+                  : 0,
+                authorityId: auth.authorityId,
               };
             });
           return {
@@ -422,6 +413,8 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
   const [callKeyGen, queryKeyGen] = useValidatorSessionsLazyQuery();
   const [callValidatorOfSession, queryValidatorOfSession] =
     useValidatorOfSessionLazyQuery();
+  const authorityReputations = useReputations();
+
   useEffect(() => {
     callKeyGen({
       variables: {
@@ -528,6 +521,7 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
           const keyGen = thresholds.KEY_GEN;
 
           const auth = mapSessionAuthValidatorNode(sessionValidator);
+
           const stats: AuthorityStats = {
             numberOfKeys: String(counter),
             location: auth.location,
@@ -543,7 +537,10 @@ export function useAuthority(pageQuery: AuthorityQuery): AuthorityDetails {
               val: String(keyGen?.pending ?? '-'),
               inTheSet: auth.isBest,
             },
-            reputation: Number(auth.reputation) * Math.pow(10, -7),
+            reputation:
+              (Number(auth.reputation) /
+                authorityReputations.highestReputationScore) *
+              100,
             uptime: Number(auth?.uptime ?? 0) * Math.pow(10, -7),
           };
           return {
